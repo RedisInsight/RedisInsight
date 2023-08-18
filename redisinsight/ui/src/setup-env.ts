@@ -7,6 +7,5 @@ window.app = {
   ...window.app,
   config: {
     apiPort: '5001',
-    segmentWriteKey: '',
   }
 }

@@ -51,6 +51,7 @@ export interface Instance extends DatabaseInstanceResponse {
   isRediStack?: boolean
   visible?: boolean
   loading?: boolean
+  isFreeDb?: boolean
 }
 
 interface CaCertificate {
@@ -139,6 +140,7 @@ export interface InstanceRedisCloud {
   statusAdded?: AddRedisDatabaseStatus
   messageAdded?: string
   databaseDetails?: InstanceRedisCluster
+  free: boolean,
 }
 
 export interface IBulkOperationResult {
@@ -298,6 +300,7 @@ export interface RedisCloudSubscription {
   provider: string
   region: string
   status: RedisCloudSubscriptionStatus
+  free: boolean
 }
 
 export interface DatabaseConfigInfo {
@@ -323,6 +326,7 @@ export interface InitialStateInstances {
   editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
   instanceInfo: RedisNodeInfoResponse
+  freeInstance: Nullable<Instance>
   importInstances: {
     loading: boolean
     error: string
@@ -379,6 +383,7 @@ export interface InitialStateCloud {
   error: string
   credentials: Nullable<ICredentialsRedisCloud>
   subscriptions: Nullable<RedisCloudSubscription[]>
+  isAutodiscoverySSO: boolean
   account: {
     data: Nullable<RedisCloudAccount>
     error: string

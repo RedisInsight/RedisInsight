@@ -21,25 +21,94 @@
 }
 
 .content {
-  max-width: 550px;
-  margin: 17vh auto 0;
-  height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px 0;
 }
 
 .controls {
-  margin: 7vh auto 0;
-  max-width: 414px;
+  margin-top: 40px;
+  text-align: left;
+}
+
+.controlsGroup {
+  margin-bottom: 40px;
+}
+
+.controlsGroupTitle {
+  margin-bottom: 12px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  padding: 15px 40px 15px 15px;
+  background-color: var(--euiColorLightestShade);
+  border-radius: 8px;
+  border: 1px solid var(--separatorColorLight);
+  box-shadow: 4px 4px 20px 0 rgba(0, 0, 0, 0.2);
+
+  cursor: pointer;
+
+  transition: transform ease .2s;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  .btnIcon {
+    margin-right: 16px;
+
+    width: 24px;
+    height: 24px;
+  }
+
+  .btnTitle {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .btnText {
+    font-size: 12px;
+    line-height: 15px;
+  }
+
+  .arrowIcon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+  }
+
+  .cloudIcon {
+    fill: none !important;
+  }
+}
+
+.btn.promoButton {
+  min-height: 80px;
+
+  color: var(--htmlColor) !important;
 }
 
 .logo {
   display: inline-block;
-  width: 215px;
-  height: 45px;
-  margin-bottom: 48px;
+  width: 285px;
+  height: auto;
+  margin-bottom: 12px;
 }
 
 .title {
-  font-size: 32px;
+  font-size: 24px !important;
   font-weight: 500 !important;
 }
 
@@ -54,5 +123,20 @@
   padding-top: 8px;
   font-size: 14px;
   color: var(--euiTextColor) !important;
-  opacity: 0.7;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.links {
+  font-size: 14px;
+  margin-top: 60px;
+
+  a {
+    color: var(--euiTextColor);
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }

@@ -1,5 +1,7 @@
 import { join } from 'path';
 import * as os from 'os';
+import { RequestMethod } from '@nestjs/common';
+import { version } from '../package.json';
 
 const homedir = join(__dirname, '..');
 
@@ -38,6 +40,7 @@ export default {
     clientCertificates: join(homedir, 'client_certificates'),
   },
   server: {
+    version,
     env: 'development',
     listenInterface: process.env.RI_HOSTNAME ?? '0.0.0.0',
     port: 5000,
@@ -71,11 +74,6 @@ export default {
     database: join(homedir, 'redisinsight.db'),
     synchronize: process.env.DB_SYNC ? process.env.DB_SYNC === 'true' : false,
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
-  },
-  redis_cloud: {
-    url: process.env.REDIS_CLOUD_URL || 'https://api-cloudapi.qa.redislabs.com/v1',
-    cloudDiscoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
-    cloudDatabaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,
   },
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
@@ -215,5 +213,34 @@ export default {
       // eslint-disable-next-line max-len
       || 'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
     syncInterval: parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) || 1_000 * 60 * 60 * 4, // 4h
+  },
+  cloud: {
+    apiUrl: process.env.RI_CLOUD_API_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
+    capiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api-k8s-cloudapi.qa.redislabs.com/v1',
+    capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
+    freeSubscriptionName: process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'My free subscription',
+    freeDatabaseName: process.env.RI_CLOUD_FREE_DATABASE_NAME || 'Redis-Stack-in-Redis-Enterprise-Cloud',
+    defaultPlanRegion: process.env.RI_CLOUD_DEFAULT_PLAN_REGION || 'eu-west-1',
+    jobIterationInterval: parseInt(process.env.RI_CLOUD_JOB_ITERATION_INTERVAL, 10) || 10_000, // 10 sec
+    discoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
+    databaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,
+    idp: {
+      google: {
+        authorizeUrl: process.env.RI_CLOUD_IDP_GOOGLE_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_GOOGLE_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_GOOGLE_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
+        clientId: process.env.RI_CLOUD_IDP_GOOGLE_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_GOOGLE_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        idp: process.env.RI_CLOUD_IDP_GOOGLE_ID,
+      },
+      github: {
+        authorizeUrl: process.env.RI_CLOUD_IDP_GH_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_GH_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_GH_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
+        clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        idp: process.env.RI_CLOUD_IDP_GH_ID,
+      },
+    },
   },
 };

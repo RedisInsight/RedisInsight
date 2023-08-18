@@ -1,9 +1,10 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useFormik, FormikErrors } from 'formik'
 import { isEmpty } from 'lodash'
 import {
   EuiButton,
+  EuiCollapsibleNavGroup,
   EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
@@ -18,18 +19,20 @@ import {
 
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { FeatureFlagComponent, OAuthSocial, OAuthSocialType } from 'uiSrc/components'
+import { FeatureFlags } from 'uiSrc/constants'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
 
 export interface Props {
-  accessKey: string;
-  secretKey: string;
-  flexGroupClassName: string;
-  flexItemClassName: string;
-  onClose?: () => void;
-  onSubmit: ({ accessKey, secretKey }: ICloudConnectionSubmit) => void;
-  loading: boolean;
+  accessKey: string
+  secretKey: string
+  flexGroupClassName: string
+  flexItemClassName: string
+  onClose?: () => void
+  onSubmit: ({ accessKey, secretKey }: ICloudConnectionSubmit) => void
+  loading: boolean
 }
 
 interface ISubmitButton {
@@ -43,25 +46,27 @@ interface Values {
 }
 
 const fieldDisplayNames: Values = {
-  accessKey: 'Enter Cloud API Access Key',
-  secretKey: 'Enter Cloud API Secret Key',
+  accessKey: 'Enter API Account Key',
+  secretKey: 'Enter API User Key',
 }
 
 const Message = () => (
-  <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
-    {`If you have a subscription on Redis Enterprise Cloud, your databases can automatically
-     be added in RedisInsight by entering the API key. These API keys can be enabled by following the steps
+  <>
+    <EuiText color="subdued" size="s" className={styles.message} data-testid="summary">
+      {`Enter API keys to discover and add databases.
+    API keys can be enabled by following the steps
     mentioned in the `}
-    <EuiLink
-      color="text"
-      className={styles.link}
-      external={false}
-      target="_blank"
-      href="https://docs.redis.com/latest/rc/api/get-started/enable-the-api/"
-    >
-      documentation.
-    </EuiLink>
-  </EuiText>
+      <EuiLink
+        color="text"
+        className={styles.link}
+        external={false}
+        target="_blank"
+        href="https://docs.redis.com/latest/rc/api/get-started/enable-the-api/"
+      >
+        documentation.
+      </EuiLink>
+    </EuiText>
+  </>
 )
 
 const CloudConnectionForm = (props: Props) => {
@@ -75,9 +80,14 @@ const CloudConnectionForm = (props: Props) => {
     loading,
   } = props
 
+  const [domReady, setDomReady] = useState(false)
   const [errors, setErrors] = useState<FormikErrors<Values>>(
     accessKey || secretKey ? {} : fieldDisplayNames
   )
+
+  useEffect(() => {
+    setDomReady(true)
+  }, [])
 
   const validate = (values: Values) => {
     const errs: FormikErrors<Values> = {}
@@ -152,6 +162,8 @@ const CloudConnectionForm = (props: Props) => {
   )
 
   const Footer = () => {
+    if (!domReady) return null
+
     const footerEl = document.getElementById('footerDatabaseForm')
     if (footerEl) {
       return ReactDOM.createPortal(
@@ -165,51 +177,79 @@ const CloudConnectionForm = (props: Props) => {
     return null
   }
 
+  const CloudApiForm = (
+    <div className={styles.cloudApi}>
+      <Message />
+      <br />
+      <EuiWindowEvent event="keydown" handler={onKeyDown} />
+      <EuiForm component="form" onSubmit={formik.handleSubmit}>
+        <EuiFlexGroup className={flexGroupClassName}>
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiFormRow label="API Account Key*">
+              <EuiFieldText
+                name="accessKey"
+                id="accessKey"
+                data-testid="access-key"
+                maxLength={200}
+                placeholder={fieldDisplayNames.accessKey}
+                value={formik.values.accessKey}
+                autoComplete="off"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                }}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiFlexGroup className={flexGroupClassName}>
+          <EuiFlexItem className={flexItemClassName}>
+            <EuiFormRow label="API User Key*">
+              <EuiFieldText
+                name="secretKey"
+                id="secretKey"
+                data-testid="secret-key"
+                maxLength={200}
+                placeholder={fieldDisplayNames.secretKey}
+                value={formik.values.secretKey}
+                autoComplete="off"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                }}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <Footer />
+      </EuiForm>
+    </div>
+  )
+
   return (
     <>
       <div className="getStartedForm">
-        <Message />
-        <br />
-        <EuiWindowEvent event="keydown" handler={onKeyDown} />
-        <EuiForm component="form" onSubmit={formik.handleSubmit}>
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Cloud API Access Key*">
-                <EuiFieldText
-                  name="accessKey"
-                  id="accessKey"
-                  data-testid="access-key"
-                  maxLength={200}
-                  placeholder={fieldDisplayNames.accessKey}
-                  value={formik.values.accessKey}
-                  autoComplete="off"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
-                  }}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={flexItemClassName}>
-              <EuiFormRow label="Cloud API Secret Key*">
-                <EuiFieldText
-                  name="secretKey"
-                  id="secretKey"
-                  data-testid="secret-key"
-                  maxLength={200}
-                  placeholder={fieldDisplayNames.secretKey}
-                  value={formik.values.secretKey}
-                  autoComplete="off"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
-                  }}
-                />
-              </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-          <Footer />
-        </EuiForm>
+        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+          <EuiText color="subdued" size="s">Connect with:</EuiText>
+          <EuiCollapsibleNavGroup
+            isCollapsible
+            className={styles.accordion}
+            title="Use Cloud Account"
+            initialIsOpen={false}
+            data-testid="use-cloud-account-accordion"
+          >
+            <OAuthSocial type={OAuthSocialType.Autodiscovery} hideTitle />
+          </EuiCollapsibleNavGroup>
+        </FeatureFlagComponent>
+        <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={CloudApiForm}>
+          <EuiCollapsibleNavGroup
+            isCollapsible
+            className={styles.accordion}
+            title="Use Cloud API Keys"
+            initialIsOpen={false}
+            data-testid="use-cloud-keys-accordion"
+          >
+            {CloudApiForm}
+          </EuiCollapsibleNavGroup>
+        </FeatureFlagComponent>
       </div>
     </>
   )

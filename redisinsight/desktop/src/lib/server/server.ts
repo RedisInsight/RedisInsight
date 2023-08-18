@@ -19,14 +19,22 @@ export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
   }
 }
 
-let backendGracefulShutdown: Function
+let gracefulShutdown: Function
+let beApp: any
 export const launchApiServer = async () => {
   try {
     const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
     process.env.API_PORT = detectPortConst?.toString()
+
+    if (process.env.APPIMAGE) {
+      process.env.BUILD_PACKAGE = 'appimage'
+    }
+
     log.info('Available port:', detectPortConst)
-    const { gracefulShutdown: beGracefulShutdown, app: beApp } = await server()
-    backendGracefulShutdown = beGracefulShutdown
+
+    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server()
+    gracefulShutdown = gracefulShutdownFn
+    beApp = apiApp
 
     const winAuthService = beApp?.select?.(WindowAuthModule).get?.(WindowAuthService)
     winAuthService.setStrategy(new ElectronWindowAuthStrategy())
@@ -36,4 +44,5 @@ export const launchApiServer = async () => {
   }
 }
 
-export const getBackendGracefulShutdown = () => backendGracefulShutdown?.()
+export const getBackendGracefulShutdown = () => gracefulShutdown?.()
+export const getBackendApp = () => beApp

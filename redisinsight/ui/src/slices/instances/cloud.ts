@@ -6,12 +6,14 @@ import { apiService } from 'uiSrc/services'
 import {
   getApiErrorMessage,
   getApiErrorsFromBulkOperation,
+  getAxiosError,
   isStatusSuccessful,
   Maybe,
   Nullable,
 } from 'uiSrc/utils'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import {
+  EnhancedAxiosError,
   ICredentialsRedisCloud,
   InitialStateCloud,
   InstanceRedisCloud,
@@ -27,6 +29,7 @@ export const initialState: InitialStateCloud = {
   dataAdded: [],
   subscriptions: null,
   credentials: null,
+  isAutodiscoverySSO: false,
   account: {
     error: '',
     data: null,
@@ -91,6 +94,7 @@ const cloudSlice = createSlice({
 
       state.data = map(payload?.data, (instance) => ({
         ...instance,
+        free: !!instance?.cloudDetails?.free,
         subscriptionName:
           find(
             state.subscriptions,
@@ -144,6 +148,9 @@ const cloudSlice = createSlice({
     resetLoadedRedisCloud: (state, { payload }: PayloadAction<LoadedCloud>) => {
       state.loaded[payload] = false
     },
+    setIsAutodiscoverySSO: (state, { payload }: PayloadAction<boolean>) => {
+      state.isAutodiscoverySSO = payload
+    },
   },
 })
 
@@ -164,6 +171,7 @@ export const {
   resetDataRedisCloud,
   resetSubscriptionsRedisCloud,
   resetLoadedRedisCloud,
+  setIsAutodiscoverySSO,
 } = cloudSlice.actions
 
 // A selector
@@ -172,27 +180,30 @@ export const cloudSelector = (state: RootState) => state.connections.cloud
 // The reducer
 export default cloudSlice.reducer
 
-const generateAuthHeaders = (credentials: Nullable<ICredentialsRedisCloud>) => {
-  return {
-    'x-cloud-api-key': credentials?.accessKey || '',
-    'x-cloud-api-secret': credentials?.secretKey || '',
-  }
-}
+const generateAuthHeaders = (credentials: Nullable<ICredentialsRedisCloud>) => ({
+  'x-cloud-api-key': credentials?.accessKey || '',
+  'x-cloud-api-secret': credentials?.secretKey || '',
+})
 
 // Asynchronous thunk action
 export function fetchSubscriptionsRedisCloud(
-  credentials: ICredentialsRedisCloud,
-  onSuccessAction?: () => void
+  credentials: Nullable<ICredentialsRedisCloud>,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
 ) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadSubscriptionsRedisCloud())
 
     try {
+      const state = stateInit()
+      const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.get(
-        `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}`
+          : `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
         {
           headers: {
-            ...generateAuthHeaders(credentials),
+            ...(!isAutodiscoverySSO ? generateAuthHeaders(credentials) : {}),
           }
         }
       )
@@ -208,24 +219,31 @@ export function fetchSubscriptionsRedisCloud(
         dispatch<any>(fetchAccountRedisCloud(credentials))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
+      const err = getAxiosError(error as EnhancedAxiosError)
+
       dispatch(loadSubscriptionsRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(err))
+      onFailAction?.()
     }
   }
 }
 
 // Asynchronous thunk action
-export function fetchAccountRedisCloud(credentials: ICredentialsRedisCloud) {
-  return async (dispatch: AppDispatch) => {
+export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCloud>) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadAccountRedisCloud())
 
     try {
+      const state = stateInit()
+      const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.get(
-        `${ApiEndpoints.REDIS_CLOUD_ACCOUNT}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT}`
+          : `${ApiEndpoints.REDIS_CLOUD_ACCOUNT}`,
         {
           headers: {
-            ...generateAuthHeaders(credentials),
+            ...(!isAutodiscoverySSO ? generateAuthHeaders(credentials) : {}),
           }
         }
       )
@@ -243,21 +261,25 @@ export function fetchAccountRedisCloud(credentials: ICredentialsRedisCloud) {
 
 // Asynchronous thunk action
 export function fetchInstancesRedisCloud(payload: {
-  subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[];
+  subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[];
   credentials: Nullable<ICredentialsRedisCloud>;
 }) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadInstancesRedisCloud())
 
     try {
+      const state = stateInit()
+      const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES}`
+          : `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
         {
           subscriptions: payload.subscriptions,
         },
         {
           headers: {
-            ...generateAuthHeaders(payload.credentials),
+            ...(!isAutodiscoverySSO ? generateAuthHeaders(payload.credentials) : {}),
           }
         }
       )
@@ -277,21 +299,25 @@ export function fetchInstancesRedisCloud(payload: {
 
 // Asynchronous thunk action
 export function addInstancesRedisCloud(payload: {
-  databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId'>[];
+  databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[];
   credentials: Nullable<ICredentialsRedisCloud>;
 }) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(createInstancesRedisCloud())
 
     try {
+      const state = stateInit()
+      const { isAutodiscoverySSO } = state.connections.cloud
       const { data, status } = await apiService.post(
-        `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
+        isAutodiscoverySSO
+          ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES}`
+          : `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
         {
           databases: payload.databases,
         },
         {
           headers: {
-            ...generateAuthHeaders(payload.credentials),
+            ...(!isAutodiscoverySSO ? generateAuthHeaders(payload.credentials) : {}),
           }
         }
       )

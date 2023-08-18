@@ -21,6 +21,7 @@ export class ServerModule {
         },
       ],
       imports: [FeatureModule],
+      exports: [ServerService],
     };
   }
 }

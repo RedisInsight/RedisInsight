@@ -17,9 +17,10 @@ import { BrowserHistoryEntity } from 'src/modules/browser/entities/browser-histo
 import { CustomTutorialEntity } from 'src/modules/custom-tutorial/entities/custom-tutorial.entity';
 import { FeatureEntity } from 'src/modules/feature/entities/feature.entity';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
-import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
+import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
 
 const dbConfig = config.get('db');
 
@@ -46,6 +47,7 @@ const ormConfig = {
     FeatureEntity,
     FeaturesConfigEntity,
     CloudDatabaseDetailsEntity,
+    CloudCapiKeyEntity,
   ],
   migrations,
 };

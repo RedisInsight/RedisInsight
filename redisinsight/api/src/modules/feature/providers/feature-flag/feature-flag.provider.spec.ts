@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
+  mockFeature,
   mockFeaturesConfig,
   mockFeaturesConfigService, mockInsightsRecommendationsFlagStrategy, mockSettingsService,
 } from 'src/__mocks__';
@@ -11,6 +12,7 @@ import {
   InsightsRecommendationsFlagStrategy,
 } from 'src/modules/feature/providers/feature-flag/strategies/insights-recommendations.flag.strategy';
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
+import { knownFeatures } from 'src/modules/feature/constants/known-features';
 
 describe('FeatureFlagProvider', () => {
   let service: FeatureFlagProvider;
@@ -55,10 +57,11 @@ describe('FeatureFlagProvider', () => {
         .mockReturnValue(mockInsightsRecommendationsFlagStrategy as unknown as InsightsRecommendationsFlagStrategy);
 
       expect(await service.calculate(
-        KnownFeatures.InsightsRecommendations,
+        knownFeatures[KnownFeatures.InsightsRecommendations],
         mockFeaturesConfig[KnownFeatures.InsightsRecommendations],
-      )).toEqual(true);
+      )).toEqual(mockFeature);
       expect(mockInsightsRecommendationsFlagStrategy.calculate).toHaveBeenCalledWith(
+        knownFeatures[KnownFeatures.InsightsRecommendations],
         mockFeaturesConfig[KnownFeatures.InsightsRecommendations],
       );
     });

@@ -6,7 +6,7 @@ export interface StateContentCreateRedis {
   error: string
 }
 
-export interface ContentCreateRedis {
+export interface ContentFeatureCreateRedis {
   title: string
   description?: string
   links: Record<string, {
@@ -17,6 +17,12 @@ export interface ContentCreateRedis {
   styles?: {
     [Theme.Dark]: Record<string, any>
     [Theme.Light]: Record<string, any>
+  }
+}
+
+export interface ContentCreateRedis extends ContentFeatureCreateRedis {
+  features?: {
+    [key: string]: ContentFeatureCreateRedis
   }
 }
 

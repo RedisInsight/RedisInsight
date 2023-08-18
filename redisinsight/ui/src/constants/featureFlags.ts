@@ -1,3 +1,4 @@
 export enum FeatureFlags {
-  insightsRecommendations = 'insightsRecommendations'
+  insightsRecommendations = 'insightsRecommendations',
+  cloudSso = 'cloudSso',
 }

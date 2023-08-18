@@ -15,7 +15,7 @@ import {
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceSelector, freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -29,13 +29,13 @@ import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/ap
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { findMarkdownPathByPath } from 'uiSrc/utils'
 import {
-  findMarkdownPathByPath,
   sortRecommendations,
   renderRecommendationBadgesLegend,
   renderRecommendationBadges,
   renderRecommendationContent,
-} from 'uiSrc/utils'
+} from 'uiSrc/utils/recommendation/utils'
 
 import styles from './styles.module.scss'
 

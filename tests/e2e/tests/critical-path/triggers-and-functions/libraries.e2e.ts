@@ -10,7 +10,7 @@ import {
     ossClusterRedisGears,
     ossStandaloneRedisGears
 } from '../../../helpers/conf';
-import {  rte } from '../../../helpers/constants';
+import { rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 

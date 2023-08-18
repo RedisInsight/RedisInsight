@@ -18,4 +18,12 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
+  overrides: [
+    {
+      files: [ '**/*.spec.ts' ],
+      rules: {
+        'no-duplicate-string': 'off',
+      }
+    }
+  ]
 };

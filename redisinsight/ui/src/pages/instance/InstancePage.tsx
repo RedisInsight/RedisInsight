@@ -14,7 +14,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchRecommendationsAction,
-  resetRecommendationsHighlighting
+  resetRecommendationsHighlighting,
 } from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,

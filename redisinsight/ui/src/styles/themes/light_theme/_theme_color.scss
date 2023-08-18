@@ -96,6 +96,8 @@ $successBorderColor: #5BC69B;
 $warningBorderColor: #FFAF2B;
 $errorBorderColor: #F74B57;
 
+$overlayMaskBgColor: rgba(255, 255, 255, 0.66);
+
 // Types colors
 $typeHashColor: #cdddf8;
 $typeListColor: #a5d4c3;
@@ -154,3 +156,8 @@ $recommendationLiveBorderColor: #B37A1E;
 $recommendationColor: #415681;
 $triggerIconActiveColor: #FFAF2B;
 $triggerIconTextColor: #3D3D3D;
+
+// cloud sso
+$cloudSsoGoogle: #A2B8F2;
+$cloudSsoGithub: #393939;
+$cloudSsoAdvantagesBgColor: #F5F8FF;

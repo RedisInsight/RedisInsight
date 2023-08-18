@@ -15,7 +15,7 @@ import { clientCertTransformer } from 'src/modules/certificate/transformers/clie
 import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-options.dto';
 import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
 import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.transformer';
-import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/cloud-database-details';
+import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
 
 @ApiExtraModels(
   CreateCaCertificateDto, UseCaCertificateDto,

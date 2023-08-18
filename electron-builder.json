@@ -15,6 +15,12 @@
     "node_modules/sqlite3",
     "node_modules/cpu-features"
   ],
+  "protocols": [{
+    "name": "RedisInsight",
+    "role": "Viewer",
+    "schemes": ["redisinsight"]
+  }
+  ],
   "mac": {
     "target": [
       {

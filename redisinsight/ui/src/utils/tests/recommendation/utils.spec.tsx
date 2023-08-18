@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import {
   addUtmToLink,
   sortRecommendations,
@@ -6,7 +7,7 @@ import {
   renderRecommendationBadgesLegend,
   renderRecommendationBadges,
   renderRecommendationContent,
-} from 'uiSrc/utils'
+} from '../../recommendation/utils'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 
@@ -111,6 +112,10 @@ const mockContent: IRecommendationContent[] = [
   {
     type: 'code-link',
     value: 'link',
+  },
+  {
+    type: 'link-sso',
+    value: 'link-sso',
   },
 ]
 

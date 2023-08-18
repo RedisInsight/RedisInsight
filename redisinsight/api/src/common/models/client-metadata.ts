@@ -1,4 +1,4 @@
-import { Session } from 'src/common/models/session';
+import { Session, SessionMetadata } from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
   IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min,
@@ -14,7 +14,7 @@ export enum ClientContext {
 export class ClientMetadata {
   @IsNotEmpty()
   @Type(() => Session)
-  session: Session;
+  sessionMetadata: SessionMetadata;
 
   @IsNotEmpty()
   @IsString()

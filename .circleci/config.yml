@@ -808,12 +808,11 @@ jobs:
       - run:
           name: Run install all dependencies
           command: |
-            # yarn install
-            # yarn --cwd redisinsight/api install
-            # yarn --cwd tests/e2e install
+            yarn install
+            yarn --cwd redisinsight/api install
+            yarn --cwd tests/e2e install
             # Install plugins dependencies
             export pluginsOnlyInstall=1
-            # yarn build:statics
             bash ./scripts/build-statics.sh
       - run:
           name: Generate licenses csv files and send csv data to google sheet

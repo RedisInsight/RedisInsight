@@ -1029,8 +1029,8 @@ workflows:
             parameters:
               rte: *iTestsNamesShort
           name: ITest - << matrix.rte >> (code)
-          requires:
-            - UTest - API
+#          requires:
+#            - UTest - API
   # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
   e2e-tests:
     jobs:

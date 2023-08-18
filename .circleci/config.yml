@@ -814,7 +814,7 @@ jobs:
             # Install plugins dependencies
             export pluginsOnlyInstall=1
             # yarn build:statics
-            sh ./scripts/build-statics.sh
+            bash ./scripts/build-statics.sh
       - run:
           name: Generate licenses csv files and send csv data to google sheet
           command: |
@@ -1076,6 +1076,8 @@ workflows:
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:
+      - licenses-check:
+          name: Process licenses of packages
       # Approve to run all (unit, integration, e2e) tests
       - approve:
           name: Start All Tests
@@ -1146,10 +1148,6 @@ workflows:
           env: dev
           requires:
             - Setup sign certificates (dev)
-      - licenses-check:
-          name: Process licenses of packages
-          requires: &devBuildRequire
-            - Setup build (dev)
       - linux:
           name: Build app - Linux (dev)
           env: dev

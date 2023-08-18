@@ -15,7 +15,7 @@ const JsonPrimitive = ({ data, lastElement = true }: IDefaultProps) => {
     valueStyle = 'json-pretty__string-value'
   } else if (isBoolean(data)) {
     stringValue = data ? 'true' : 'false'
-    valueStyle = 'json-pretty__null-value'
+    valueStyle = 'json-pretty__boolean-value'
   } else if (isNumber(data)) {
     stringValue = data.toString()
     valueStyle = 'json-pretty__number-value'

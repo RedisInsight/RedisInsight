@@ -7,7 +7,8 @@ const JsonArray = ({ data, space = 2, gap = 0, lastElement = true }: IJsonArrayP
   <span data-testid="json-array-component">
     {'[\n'}
     {data.map((value, idx) => (
-      <Fragment key={`${value}-idx}`}>
+      // eslint-disable-next-line react/no-array-index-key
+      <Fragment key={idx}>
         {!!space && Array.from({ length: space + gap }, () => ' ')}
         <JsonPretty
           data={value}

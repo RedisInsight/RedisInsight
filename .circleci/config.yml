@@ -573,6 +573,7 @@ jobs:
             export RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
+            export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage

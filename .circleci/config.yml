@@ -808,9 +808,9 @@ jobs:
       - run:
           name: Run install all dependencies
           command: |
-            yarn install
-            yarn --cwd redisinsight/api install
-            yarn --cwd tests/e2e install
+            # yarn install
+            # yarn --cwd redisinsight/api install
+            # yarn --cwd tests/e2e install
             # Install plugins dependencies
             echo "export pluginsOnlyInstall=1" >> $BASH_ENV
             yarn build:statics

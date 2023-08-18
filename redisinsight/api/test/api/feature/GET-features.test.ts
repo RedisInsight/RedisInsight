@@ -61,6 +61,7 @@ describe('GET /features', () => {
 
         // remove all configs
         await featureConfigRepository.delete({});
+        await featureRepository.delete({});
         await syncEndpoint();
         await waitForFlags({
           features: {

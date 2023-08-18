@@ -802,6 +802,9 @@ jobs:
     executor: linux-executor
     steps:
       - checkout
+      - restore_cache:
+          <<: *uiDepsCacheKey
+          <<: *apiDepsCacheKey
       - run:
           name: Run install all dependencies
           command: |
@@ -809,6 +812,7 @@ jobs:
             yarn --cwd redisinsight/api install
             yarn --cwd tests/e2e install
             # Install plugins dependencies
+            echo "export pluginsOnlyInstall=1" >> $BASH_ENV
             yarn build:statics
       - run:
           name: Generate licenses csv files and send csv data to google sheet

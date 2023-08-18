@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.0.5",
+  "version": "2.30.0",
   "description": "RedisInsight API",
   "private": true,
   "author": {
@@ -24,7 +24,7 @@
     "start:dev": "cross-env NODE_ENV=development BUILD_TYPE=DOCKER_ON_PREMISE SERVER_STATIC_CONTENT=1 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:stage": "cross-env NODE_ENV=staging BUILD_TYPE=DOCKER_ON_PREMISE SERVER_STATIC_CONTENT=true node dist/src/main",
-    "start:prod": "cross-env NODE_ENV=production node dist/src/main",
+    "start:prod": "cross-env NODE_ENV=production BUILD_TYPE=DOCKER_ON_PREMISE node dist/src/main",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/jest -w 1",
     "test:watch": "cross-env NODE_ENV=test jest --watch -w 1",
     "test:cov": "cross-env NODE_ENV=test ./node_modules/.bin/jest --forceExit --coverage -w 1",
@@ -41,7 +41,8 @@
     "nanoid": "^3.1.31",
     "word-wrap": "1.2.4",
     "mocha/minimatch": "^3.0.5",
-    "@nestjs/platform-socket.io/socket.io": "^4.7.1"
+    "@nestjs/platform-socket.io/socket.io": "^4.7.1",
+    "**/semver": "^7.5.2"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.11",
@@ -53,6 +54,7 @@
     "@nestjs/swagger": "^6.1.2",
     "@nestjs/typeorm": "^9.0.1",
     "@nestjs/websockets": "^9.0.11",
+    "@okta/okta-auth-js": "^7.3.0",
     "adm-zip": "^0.5.9",
     "analytics-node": "^4.0.1",
     "axios": "^0.25.0",
@@ -148,7 +150,9 @@
       ".spec.ts$"
     ],
     "testEnvironment": "node",
-    "setupFilesAfterEnv": ["<rootDir>/../.jest.setup.ts"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/../.jest.setup.ts"
+    ],
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",

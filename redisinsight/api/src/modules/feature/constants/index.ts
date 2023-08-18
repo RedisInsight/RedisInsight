@@ -1,3 +1,5 @@
+import { Feature } from 'src/modules/feature/model/feature';
+
 export enum FeatureServerEvents {
   FeaturesRecalculate = 'FeaturesRecalculate',
   FeaturesRecalculated = 'FeaturesRecalculated',
@@ -10,6 +12,7 @@ export enum FeatureEvents {
 export enum FeatureStorage {
   Env = 'env',
   Database = 'database',
+  Custom = 'custom',
 }
 export enum FeatureConfigConfigDestination {
   Default = 'default',
@@ -18,11 +21,11 @@ export enum FeatureConfigConfigDestination {
 
 export enum KnownFeatures {
   InsightsRecommendations = 'insightsRecommendations',
+  CloudSso = 'cloudSso',
 }
 
-export const knownFeatures = [
-  {
-    name: KnownFeatures.InsightsRecommendations,
-    storage: FeatureStorage.Database,
-  },
-];
+export interface IFeatureFlag {
+  name: string;
+  storage: string;
+  factory?: () => Feature;
+}

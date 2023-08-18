@@ -6,7 +6,9 @@ import {
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
-import { KnownFeatures } from 'src/modules/feature/constants';
+import { IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants';
+import { CloudSsoFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso.flag.strategy';
+import { Feature } from 'src/modules/feature/model/feature';
 
 @Injectable()
 export class FeatureFlagProvider {
@@ -24,15 +26,19 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
+    this.strategies.set(KnownFeatures.CloudSso, new CloudSsoFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
   }
 
   getStrategy(name: string): FeatureFlagStrategy {
     return this.strategies.get(name) || this.getStrategy('default');
   }
 
-  calculate(name: string, featureConditions: any): Promise<boolean> {
-    const strategy = this.getStrategy(name);
+  calculate(knownFeature: IFeatureFlag, featureConditions: any): Promise<Feature> {
+    const strategy = this.getStrategy(knownFeature.name);
 
-    return strategy.calculate(featureConditions);
+    return strategy.calculate(knownFeature, featureConditions);
   }
 }

@@ -3,9 +3,11 @@ import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { ApiEndpoints } from 'uiSrc/constants'
+
 import { monitorSelector, resetProfiler, stopMonitor } from 'uiSrc/slices/cli/monitor'
-import { cutDurationText, getBaseApiUrl } from 'uiSrc/utils'
+import { cutDurationText } from 'uiSrc/utils'
+import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
+import { fetchMonitorLog } from 'uiSrc/slices/cli/cli-output'
 
 import styles from './styles.module.scss'
 
@@ -26,8 +28,6 @@ const MonitorLog = () => {
       })
     )
   )
-  const baseApiUrl = getBaseApiUrl()
-  const linkToDownload = `${baseApiUrl}/api/${ApiEndpoints.PROFILER_LOGS}/${logFileId}`
 
   const downloadBtnProps: any = {
     target: DOWNLOAD_IFRAME_NAME
@@ -42,6 +42,12 @@ const MonitorLog = () => {
     if (width < SMALL_SCREEN_RESOLUTION) return 6
     if (width < MIDDLE_SCREEN_RESOLUTION) return 12
     return 18
+  }
+
+  const handleDownloadLog = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+
+    dispatch(fetchMonitorLog(logFileId || '', downloadFile))
   }
 
   return (
@@ -76,10 +82,10 @@ const MonitorLog = () => {
                   <EuiButton
                     size="s"
                     color="secondary"
-                    href={linkToDownload}
                     iconType="download"
                     className={styles.btn}
                     data-testid="download-log-btn"
+                    onClick={handleDownloadLog}
                     {...downloadBtnProps}
                   >
                     {width > SMALL_SCREEN_RESOLUTION && ' Download '}

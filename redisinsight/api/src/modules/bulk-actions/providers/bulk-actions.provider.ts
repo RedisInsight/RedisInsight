@@ -37,7 +37,7 @@ export class BulkActionsProvider {
 
     // todo: add multi user support
     const client = await this.databaseConnectionService.getOrCreateClient({
-      session: undefined,
+      sessionMetadata: undefined,
       databaseId: dto.databaseId,
       context: ClientContext.Common,
       db: dto.db,

@@ -35,6 +35,9 @@ import { Feature1684931530343 } from './1684931530343-feature';
 import { DatabaseRedisServer1686719451753 } from './1686719451753-database-redis-server';
 import { DatabaseRecommendationUnique1687435940110 } from './1687435940110-database-recommendation-unique';
 import { CloudDatabaseDetails1687166457712 } from './1687166457712-cloud-database-details';
+import { FreeCloudDatabase1688989337247 } from './1688989337247-freeCloudDatabase';
+import { CloudCapiKeys1691061058385 } from './1691061058385-cloud-capi-keys';
+import { FeatureSso1691476419592 } from './1691476419592-feature-sso';
 
 export default [
   initialMigration1614164490968,
@@ -74,4 +77,7 @@ export default [
   DatabaseRedisServer1686719451753,
   DatabaseRecommendationUnique1687435940110,
   CloudDatabaseDetails1687166457712,
+  FreeCloudDatabase1688989337247,
+  CloudCapiKeys1691061058385,
+  FeatureSso1691476419592,
 ];

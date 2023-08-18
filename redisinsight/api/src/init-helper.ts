@@ -1,6 +1,7 @@
 import * as fs from 'fs-extra';
-import config from 'src/utils/config';
 import { join } from 'path';
+
+import config from 'src/utils/config';
 
 const PATH_CONFIG = config.get('dir_path');
 const DB_CONFIG = config.get('db');

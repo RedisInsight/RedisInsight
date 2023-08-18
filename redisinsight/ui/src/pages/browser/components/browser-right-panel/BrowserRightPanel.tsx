@@ -28,7 +28,6 @@ export interface Props {
   isBulkActionsPanelOpen: boolean
   handleBulkActionsPanel: (value: boolean) => void
   isCreateIndexPanelOpen: boolean
-  handleCreateIndexPanel?: (value: boolean) => void
   closeRightPanels: () => void
 }
 

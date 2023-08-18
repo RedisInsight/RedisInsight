@@ -1,4 +1,4 @@
-const { TextDecoder, TextEncoder } = require('util');
+const { TextDecoder, TextEncoder } = require('util')
 
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
@@ -54,10 +54,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      statements: 78,
-      branches: 61,
-      functions: 70,
-      lines: 79,
+      statements: 80,
+      branches: 63,
+      functions: 72,
+      lines: 80,
     },
     // './redisinsight/ui/src/slices/**/*.ts': {
     //   statements: 90,
@@ -67,4 +67,4 @@ module.exports = {
     TextDecoder,
     TextEncoder,
   },
-};
+}

@@ -1,0 +1,41 @@
+.container {
+  max-width: 400px;
+
+  margin: -10vh auto 0;
+  text-align: center;
+}
+
+.img {
+  max-width: 248px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 18px !important;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addKey {
+  height: 36px !important;
+  width: 78px !important;
+  margin-right: 12px;
+
+  :global(.euiButton__text) {
+    font-size: 14px !important;
+  }
+}
+
+.uploadBtn {
+  margin-left: 12px;
+  height: 36px !important;
+
+
+  :global(.euiButton__text) {
+    font-size: 14px !important;
+  }
+}

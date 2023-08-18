@@ -16,11 +16,16 @@ const updateSettings = (data) => request(server).patch('/settings').send(data);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-
-const waitForFlags = async (flags: any) => {
+const waitForFlags = async (flags: any, action?: Function) => {
   const client = await getSocket('');
 
   await new Promise((res, rej) => {
+    try {
+      action?.()?.catch(rej);
+    } catch (e) {
+      rej(e);
+    }
+
     client.once('features', (data) => {
       expect(flags).to.deep.eq(data);
       res(true);
@@ -52,27 +57,41 @@ describe('GET /features', () => {
             insightsRecommendations: {
               perc: [],
               flag: true,
-            }
+            },
+            cloudSso: {
+              perc: [[0, 100]],
+              flag: true,
+            },
           },
         })).catch(console.error);
 
         // remove all configs
         await featureConfigRepository.delete({});
-        await syncEndpoint();
+        await featureRepository.delete({});
         await waitForFlags({
           features: {
             insightsRecommendations: {
               flag: false,
+              name: 'insightsRecommendations',
+            },
+            cloudSso: {
+              flag: false,
+              name: 'cloudSso',
             },
           },
-        });
+        }, syncEndpoint);
       },
       statusCode: 200,
       responseBody: {
         features: {
           insightsRecommendations: {
             flag: false,
-          }
+            name: 'insightsRecommendations',
+          },
+          cloudSso: {
+            flag: false,
+            name: 'cloudSso',
+          },
         }
       }
     },
@@ -88,27 +107,40 @@ describe('GET /features', () => {
             insightsRecommendations: {
               perc: [[config.controlNumber - 1, config.controlNumber + 1]],
               flag: true,
-            }
+            },
+            cloudSso: {
+              perc: [[0, 100]],
+              flag: true,
+            },
           },
         })).catch(console.error);
 
         // remove all configs
 
-        await syncEndpoint();
         await waitForFlags({
           features: {
             insightsRecommendations: {
               flag: true,
+              name: 'insightsRecommendations',
+            },
+            cloudSso: {
+              flag: false,
+              name: 'cloudSso',
             },
           },
-        });
+        }, syncEndpoint);
       },
       statusCode: 200,
       responseBody: {
         features: {
           insightsRecommendations: {
             flag: true,
-          }
+            name: 'insightsRecommendations',
+          },
+          cloudSso: {
+            flag: false,
+            name: 'cloudSso',
+          },
         }
       }
     },
@@ -129,25 +161,38 @@ describe('GET /features', () => {
                 value: true,
                 cond: 'eq',
               }],
-            }
+            },
+            cloudSso: {
+              perc: [[0, 100]],
+              flag: true,
+            },
           },
         })).catch(console.error);
 
-        await syncEndpoint();
         await waitForFlags({
           features: {
             insightsRecommendations: {
               flag: true,
+              name: 'insightsRecommendations',
+            },
+            cloudSso: {
+              flag: false,
+              name: 'cloudSso',
             },
           },
-        });
+        }, syncEndpoint);
       },
       statusCode: 200,
       responseBody: {
         features: {
           insightsRecommendations: {
             flag: true,
-          }
+            name: 'insightsRecommendations',
+          },
+          cloudSso: {
+            flag: false,
+            name: 'cloudSso',
+          },
         }
       }
     },
@@ -159,6 +204,11 @@ describe('GET /features', () => {
             features: {
               insightsRecommendations: {
                 flag: false,
+                name: 'insightsRecommendations',
+              },
+              cloudSso: {
+                flag: false,
+                name: 'cloudSso',
               },
             },
           }).then(res).catch(rej);
@@ -175,7 +225,12 @@ describe('GET /features', () => {
         features: {
           insightsRecommendations: {
             flag: false,
-          }
+            name: 'insightsRecommendations',
+          },
+          cloudSso: {
+            flag: false,
+            name: 'cloudSso',
+          },
         }
       }
     },

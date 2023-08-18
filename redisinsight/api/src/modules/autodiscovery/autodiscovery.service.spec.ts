@@ -1,4 +1,5 @@
 import * as utils from 'src/utils';
+import { when } from 'jest-when';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
@@ -6,7 +7,6 @@ import {
   mockDatabaseService,
   mockIORedisClient, mockRedisConnectionFactory,
   mockRedisServerInfoResponse,
-  mockServerConfig,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -15,6 +15,7 @@ import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.se
 import { DatabaseService } from 'src/modules/database/database.service';
 import { mocked } from 'ts-jest/utils';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import config from 'src/utils/config';
 
 jest.mock(
   'src/modules/autodiscovery/utils/autodiscovery.util',
@@ -34,14 +35,26 @@ jest.mock(
   })),
 );
 
+jest.mock('src/utils/config', jest.fn(
+  () => jest.requireActual('src/utils/config') as object,
+));
+
+const mockServerConfig = config.get('server');
+
 describe('AutodiscoveryService', () => {
   let service: AutodiscoveryService;
   let settingsService: MockType<SettingsService>;
   let databaseService: MockType<DatabaseService>;
   let redisConnectionFactory: MockType<RedisConnectionFactory>;
+  let configGetSpy;
 
   beforeEach(async () => {
     jest.clearAllMocks();
+
+    configGetSpy = jest.spyOn(config, 'get');
+
+    when(configGetSpy).calledWith('server').mockReturnValue(mockServerConfig);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AutodiscoveryService,

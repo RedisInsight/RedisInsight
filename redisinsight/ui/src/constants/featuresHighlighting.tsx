@@ -12,11 +12,7 @@ interface BuildHighlightingFeature {
 }
 
 export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
-  [PageNames.triggeredFunctions]: {
-    type: 'tooltip',
-    title: 'Triggers and Functions',
-    content: 'Triggers and Functions can execute server-side functions triggered by events or data operations to decrease latency and react in real time to database events.',
-    page: PageNames.triggeredFunctions,
-    asPageFeature: true
+  cloudButton: {
+    type: 'plain'
   }
 } as const

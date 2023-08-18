@@ -10,7 +10,9 @@ import {
 } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
-import { IRecommendationContent, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
@@ -143,6 +145,29 @@ const renderContentElement = (
         >
           {value.name}
         </EuiLink>
+      )
+    case 'link-sso':
+      return (
+        <OAuthSsoHandlerDialog>
+          {(ssoCloudHandlerClick) => (
+            <EuiLink
+              key={`${telemetry.telemetryName}-${idx}`}
+              external={false}
+              data-testid={`link-sso-${telemetry.telemetryName}-${idx}`}
+              target="_blank"
+              onClick={(e) => {
+                ssoCloudHandlerClick?.(e, telemetry.telemetryName as OAuthSocialSource)
+              }}
+              href={addUtmToLink(value.href, telemetry.telemetryName)}
+            >
+              {value.name}
+            </EuiLink>
+          )}
+        </OAuthSsoHandlerDialog>
+      )
+    case 'connect-btn':
+      return (
+        <OAuthConnectFreeDb source={telemetry.telemetryName as OAuthSocialSource} />
       )
     case 'code-link':
       return (

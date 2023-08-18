@@ -138,7 +138,7 @@ const ConsumersViewWrapper = (props: Props) => {
     },
     {
       id: 'idle',
-      label: 'Idle Time, ms',
+      label: 'Idle Time, msec',
       minWidth: 140,
       maxWidth: 140,
       absoluteWidth: 140,

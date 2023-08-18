@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { DurationUnits, SortOrder, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
+import { DURATION_UNITS, DurationUnits, SortOrder, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
@@ -49,7 +49,7 @@ const SlowLogTable = (props: Props) => {
     },
     {
       id: 'durationUs',
-      label: `Duration, ${durationUnit}`,
+      label: `Duration, ${DURATION_UNITS.find(({ value }) => value === durationUnit)?.inputDisplay}`,
       minWidth: 110,
       absoluteWidth: 'auto',
       textAlignment: TableCellTextAlignment.Right,

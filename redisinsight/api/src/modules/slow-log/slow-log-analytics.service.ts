@@ -37,8 +37,9 @@ export class SlowLogAnalyticsService extends TelemetryBaseService {
       TelemetryEvents.SlowlogSetLogSlowerThan,
       {
         databaseId,
-        previousValue,
-        currentValue,
+        // convert microseconds to milliseconds
+        previousValueInMSeconds: previousValue / 1_000,
+        currentValueInMSeconds: currentValue / 1_000,
       },
     );
   }

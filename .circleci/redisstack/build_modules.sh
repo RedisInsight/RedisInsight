@@ -24,6 +24,7 @@ rm -rf redisinsight/build.zip
 cp LICENSE ./redisinsight
 
 cd redisinsight && tar -czvf build.tar.gz \
+--exclude="api/node_modules/**/build/node_gyp_bins/python3" \
 api/node_modules \
 api/dist \
 ui/dist \

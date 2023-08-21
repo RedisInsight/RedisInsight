@@ -25,6 +25,7 @@ const triggersAndFunctionsFunctionsPage = new TriggersAndFunctionsFunctionsPage(
 
 const libraryName = Common.generateWord(5);
 const streamKeyName = Common.generateWord(5);
+const libNameFromFile = 'lib';
 
 const filePathes = {
     upload: path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt'),
@@ -140,10 +141,13 @@ test('Verify that library and functions can be deleted', async t => {
     await t.click(triggersAndFunctionsLibrariesPage.functionsLink);
     await t.expect(await triggersAndFunctionsFunctionsPage.getFunctionsNameSelector(LIBRARIES_LIST[1].name).exists).notOk(`the functions ${LIBRARIES_LIST[1].name} was not deleted`);
 });
-test('Verify that library can be uploaded', async t => {
+test.after(async() => {
+    await browserPage.Cli.sendCommandInCli(`TFUNCTION DELETE ${libNameFromFile}`);
+    // Delete database
+    await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
+})('Verify that library can be uploaded', async t => {
     const configuration = '{"redisgears_2.lock-redis-timeout": 1000}';
     const functionNameFromFile = 'function';
-    const libNameFromFile = 'lib';
 
     await t.click(browserPage.NavigationPanel.triggeredFunctionsButton);
     await t.expect(triggersAndFunctionsFunctionsPage.noLibrariesLink.exists).ok('no libraries title is displayed');

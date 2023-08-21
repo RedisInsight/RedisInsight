@@ -27,4 +27,17 @@ describe('JsonArray', () => {
 
     expect(screen.getByTestId('json-array-component')).toHaveTextContent('[ 123 ]')
   })
+
+  it('should not render empty space and line break', () => {
+    render(<JsonArray data={[]} lastElement />)
+
+    expect(screen.getByTestId('json-array-component')).toHaveTextContent('[', { normalizeWhitespace: false })
+  })
+
+  it('should render empty space and line break', () => {
+    const renderedArray = '[\n  123\n]'
+    render(<JsonArray data={mockArray} lastElement />)
+
+    expect(screen.getByTestId('json-array-component')).toHaveTextContent(renderedArray, { normalizeWhitespace: false })
+  })
 })

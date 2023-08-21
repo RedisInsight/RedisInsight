@@ -8,7 +8,8 @@ const JsonObject = ({ data, space = 2, gap = 0, lastElement = true }: IJsonObjec
 
   return (
     <span data-testid="json-object-component">
-      {'{\n'}
+      {'{'}
+      {!!keys.length && '\n'}
       {keys.map((key, idx) => (
         <Fragment key={key}>
           {!!space && Array.from({ length: space + gap }, () => ' ')}
@@ -24,7 +25,7 @@ const JsonObject = ({ data, space = 2, gap = 0, lastElement = true }: IJsonObjec
           />
         </Fragment>
       ))}
-      {!!gap && Array.from({ length: gap }, () => ' ')}
+      {!!keys.length && !!gap && Array.from({ length: gap }, () => ' ')}
       {'}'}
       {!lastElement && ','}
       {'\n'}

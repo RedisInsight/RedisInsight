@@ -9,6 +9,7 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import { IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants';
 import { CloudSsoFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso.flag.strategy';
 import { Feature } from 'src/modules/feature/model/feature';
+import { SimpleFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/simple.flag.strategy';
 
 @Injectable()
 export class FeatureFlagProvider {
@@ -27,6 +28,10 @@ export class FeatureFlagProvider {
       this.settingsService,
     ));
     this.strategies.set(KnownFeatures.CloudSso, new CloudSsoFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.RedisModuleFilter, new SimpleFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 2.32,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -42,6 +42,18 @@
             ]
           }
         }
+      }
+    },
+    "redisModuleFilter": {
+      "flag": true,
+      "perc": [[0, 100]],
+      "data": {
+        "hideByName": [
+          {
+            "expression": "RedisGraphStub",
+            "options": "i"
+          }
+        ]
       }
     }
   }

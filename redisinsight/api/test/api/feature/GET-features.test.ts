@@ -16,10 +16,16 @@ const updateSettings = (data) => request(server).patch('/settings').send(data);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const waitForFlags = async (flags: any) => {
+const waitForFlags = async (flags: any, action?: Function) => {
   const client = await getSocket('');
 
   await new Promise((res, rej) => {
+    try {
+      action?.()?.catch(rej);
+    } catch (e) {
+      rej(e);
+    }
+
     client.once('features', (data) => {
       expect(flags).to.deep.eq(data);
       res(true);
@@ -61,7 +67,7 @@ describe('GET /features', () => {
 
         // remove all configs
         await featureConfigRepository.delete({});
-        await syncEndpoint();
+        await featureRepository.delete({});
         await waitForFlags({
           features: {
             insightsRecommendations: {
@@ -73,7 +79,7 @@ describe('GET /features', () => {
               name: 'cloudSso',
             },
           },
-        });
+        }, syncEndpoint);
       },
       statusCode: 200,
       responseBody: {
@@ -111,7 +117,6 @@ describe('GET /features', () => {
 
         // remove all configs
 
-        await syncEndpoint();
         await waitForFlags({
           features: {
             insightsRecommendations: {
@@ -123,7 +128,7 @@ describe('GET /features', () => {
               name: 'cloudSso',
             },
           },
-        });
+        }, syncEndpoint);
       },
       statusCode: 200,
       responseBody: {
@@ -164,7 +169,6 @@ describe('GET /features', () => {
           },
         })).catch(console.error);
 
-        await syncEndpoint();
         await waitForFlags({
           features: {
             insightsRecommendations: {
@@ -176,7 +180,7 @@ describe('GET /features', () => {
               name: 'cloudSso',
             },
           },
-        });
+        }, syncEndpoint);
       },
       statusCode: 200,
       responseBody: {

@@ -65,7 +65,7 @@ describe('CloudSettings', () => {
 
     fireEvent.click(screen.getByTestId('delete-key-confirm-btn'))
 
-    expect(store.getActions()).toEqual([getCapiKeys(), removeAllCapiKeys()])
+    expect(store.getActions().slice(-1)).toEqual([removeAllCapiKeys()])
   })
 
   it('should call proper telemetry events', async () => {

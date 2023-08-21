@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import JSONPretty from 'react-json-pretty'
+import JSONBigInt from 'json-bigint'
 import { formatRedisReply } from 'redisinsight-plugin-sdk'
+import JsonPretty from './components/json-pretty'
 
 interface Props {
   value: string
@@ -14,7 +15,7 @@ const JSONView = (props: Props) => {
 
   useEffect(() => {
     try {
-      JSON.parse(value)
+      JSONBigInt({ useNativeBigInt: true }).parse(value)
     } catch (_err) {
       const formatResponse = async () => {
         const formattedResponse = await formatRedisReply(value, command)
@@ -31,7 +32,7 @@ const JSONView = (props: Props) => {
       )}
       {!formattedValue && (
         <div className="jsonViewer" data-testid="json-view">
-          <JSONPretty json={value} space={2} />
+          <JsonPretty data={JSONBigInt({ useNativeBigInt: true }).parse(value)} space={2} />
         </div>
       )}
     </>

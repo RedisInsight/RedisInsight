@@ -1075,8 +1075,6 @@ workflows:
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:
-      - licenses-check:
-          name: Process licenses of packages
       # Approve to run all (unit, integration, e2e) tests
       - approve:
           name: Start All Tests

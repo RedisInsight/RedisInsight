@@ -1,6 +1,8 @@
 import cx from 'classnames'
 import React from 'react'
-import JSONPretty from 'react-json-pretty'
+import JSONBigInt from 'json-bigint'
+
+import JsonPretty from 'uiSrc/components/json-viewer/components/json-pretty'
 
 interface Props {
   value: string
@@ -12,12 +14,12 @@ const JSONViewer = (props: Props) => {
   const { value, expanded = false, space = 2 } = props
 
   try {
-    JSON.parse(value)
+    const data = JSONBigInt({ useNativeBigInt: true }).parse(value)
 
     return {
       value: (
         <div className={cx('jsonViewer', { 'jsonViewer-collapsed': !expanded })} data-testid="value-as-json">
-          <JSONPretty json={value} space={space} />
+          <JsonPretty data={data} space={space} />
         </div>
       ),
       isValid: true

@@ -5,6 +5,7 @@ import { isUndefined } from 'lodash'
 import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
 import { loads as loadsPickle } from 'jpickle'
+import JSONBigInt from 'json-bigint'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
@@ -19,7 +20,6 @@ import {
   hexToBuffer,
   stringToBuffer,
   binaryToBuffer,
-  replaceBigIntWithString
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -73,7 +73,7 @@ const formattingBuffer = (
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(reply.data)
-        const value = JSON.stringify(decoded)
+        const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -82,7 +82,7 @@ const formattingBuffer = (
     case KeyValueFormat.PHP: {
       try {
         const decoded = unserialize(Buffer.from(reply.data), { encoding: 'binary' })
-        const value = JSON.stringify(decoded)
+        const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -91,7 +91,7 @@ const formattingBuffer = (
     case KeyValueFormat.JAVA: {
       try {
         const decoded = bufferToJava(reply)
-        const value = JSON.stringify(replaceBigIntWithString(decoded))
+        const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -100,7 +100,7 @@ const formattingBuffer = (
     case KeyValueFormat.Protobuf: {
       try {
         const decoded = getData(Buffer.from(reply.data))
-        const value = JSON.stringify(decoded)
+        const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -117,7 +117,7 @@ const formattingBuffer = (
           }
         }
 
-        const value = JSON.stringify(decoded)
+        const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }

@@ -223,6 +223,7 @@ export const mockFeaturesConfigService = jest.fn(() => ({
 }));
 
 export const mockFeatureService = jest.fn(() => ({
+  getByName: jest.fn().mockResolvedValue(undefined),
   isFeatureEnabled: jest.fn().mockResolvedValue(true),
 }));
 

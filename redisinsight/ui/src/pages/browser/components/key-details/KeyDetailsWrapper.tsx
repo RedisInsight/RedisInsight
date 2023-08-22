@@ -33,6 +33,7 @@ export interface Props {
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => void
   onRemoveKey: () => void
   keyProp: RedisResponseBuffer | null
+  totalKeys: number
 }
 
 const KeyDetailsWrapper = (props: Props) => {
@@ -43,7 +44,8 @@ const KeyDetailsWrapper = (props: Props) => {
     onCloseKey,
     onEditKey,
     onRemoveKey,
-    keyProp
+    keyProp,
+    totalKeys
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -155,6 +157,7 @@ const KeyDetailsWrapper = (props: Props) => {
       onRemoveKey={onRemoveKey}
       onEditTTL={handleEditTTL}
       onEditKey={handleEditKey}
+      totalKeys={totalKeys}
     />
   )
 }

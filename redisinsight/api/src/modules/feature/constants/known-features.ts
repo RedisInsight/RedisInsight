@@ -11,4 +11,8 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     storage: FeatureStorage.Database,
     factory: CloudSsoFeatureFlag.getFeature,
   },
+  [KnownFeatures.RedisModuleFilter]: {
+    name: KnownFeatures.RedisModuleFilter,
+    storage: FeatureStorage.Database,
+  },
 };

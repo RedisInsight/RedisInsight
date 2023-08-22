@@ -55,10 +55,11 @@ export interface Props {
   onRemoveKey: () => void
   onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
+  totalKeys: number
 }
 
 const KeyDetails = ({ ...props }: Props) => {
-  const { onClosePanel, onRemoveKey } = props
+  const { onClosePanel, onRemoveKey, totalKeys } = props
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const { type: selectedKeyType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {
     type: KeyTypes.String,
@@ -168,7 +169,15 @@ const KeyDetails = ({ ...props }: Props) => {
                     <p data-testid="no-keys-selected-text">
                       {error}
                     </p>
-                  ) : (<ExploreGuides />)}
+                  ) : (
+                    <>
+                      {totalKeys > 0 ? (
+                        <span data-testid="select-key-message">
+                          Select the key from the list on the left to see the details of the key.
+                        </span>
+                      ) : (<ExploreGuides />)}
+                    </>
+                  )}
                 </EuiText>
               </div>
             </>

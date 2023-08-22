@@ -16,19 +16,22 @@ const REDISTACK_OPTIONAL_MODULES: Array<string | Array<string>> = [
   [RedisDefaultModules.RedisGears, RedisDefaultModules.RedisGears2]
 ]
 
+const MIN_MODULES_LENGTH = REDISTACK_REQUIRE_MODULES.length
+const MAX_MODULES_LENGTH = REDISTACK_REQUIRE_MODULES.length + REDISTACK_OPTIONAL_MODULES.length
+
 const checkRediStackModules = (modules: any[]) => {
   if (!modules?.length) return false
   const moduleNames = map(modules, 'name').sort()
 
-  if (modules.length === REDISTACK_REQUIRE_MODULES.length) {
+  if (modules.length === MIN_MODULES_LENGTH) {
     return moduleNames
       .every((m, index) => (isArray(REDISTACK_REQUIRE_MODULES[index])
         ? (REDISTACK_REQUIRE_MODULES[index] as Array<string>).some((rm) => rm === m)
         : REDISTACK_REQUIRE_MODULES[index] === m))
   }
 
-  if (modules.length > REDISTACK_REQUIRE_MODULES.length
-    && modules.length <= (REDISTACK_REQUIRE_MODULES.length + REDISTACK_OPTIONAL_MODULES.length)) {
+  if (modules.length > MIN_MODULES_LENGTH
+    && modules.length <= (MAX_MODULES_LENGTH)) {
     let isCustomModule = false
     const rediStackModules = concat(REDISTACK_REQUIRE_MODULES, REDISTACK_OPTIONAL_MODULES).sort()
 
@@ -39,9 +42,11 @@ const checkRediStackModules = (modules: any[]) => {
 
       if (moduleName) {
         remove(acc, (name) => moduleName === name)
+
         return acc
       }
       isCustomModule = true
+
       return acc
     }, moduleNames)
 

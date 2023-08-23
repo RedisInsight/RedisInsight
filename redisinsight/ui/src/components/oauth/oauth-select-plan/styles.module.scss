@@ -135,8 +135,13 @@
   margin-left: 8px;
 }
 
+.tfOptionIconTooltip {
+  display: inline;
+}
+
 .tfOptionIcon {
   display: inline-block !important;
   width: 16px !important;
   margin-left: 11px;
+  margin-bottom: 0 !important;
 }

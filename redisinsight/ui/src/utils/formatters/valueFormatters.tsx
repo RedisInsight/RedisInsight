@@ -1,4 +1,4 @@
-import { decode, encode } from '@msgpack/msgpack'
+import { unpack, pack } from 'msgpackr';
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer'
 import { isUndefined } from 'lodash'
@@ -72,7 +72,7 @@ const formattingBuffer = (
     case KeyValueFormat.JSON: return bufferToJSON(reply, props as FormattingProps)
     case KeyValueFormat.Msgpack: {
       try {
-        const decoded = decode(reply.data)
+        const decoded = unpack(new Uint8Array(reply.data));
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -180,7 +180,7 @@ const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): 
     case KeyValueFormat.Msgpack: {
       try {
         const json = JSON.parse(value)
-        const encoded = encode(json)
+        const encoded = pack(json)
         return anyToBuffer(encoded)
       } catch (e) {
         return stringToBuffer(value, format)

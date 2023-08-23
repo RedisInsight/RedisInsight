@@ -225,7 +225,6 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "34.6.0",
-    "@msgpack/msgpack": "^2.7.2",
     "@reduxjs/toolkit": "^1.6.2",
     "@stablelib/snappy": "^1.0.2",
     "axios": "^0.25.0",
@@ -252,6 +251,7 @@
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
     "lz4js": "^0.2.0",
+    "msgpackr": "^1.9.7",
     "pako": "^2.1.0",
     "php-serialize": "^4.0.2",
     "rawproto": "^0.7.6",

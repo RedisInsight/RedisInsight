@@ -28,10 +28,16 @@
     <string>UUK47G4BAZ.com.redis.RedisInsight</string>
     <key>com.apple.developer.team-identifier</key>
     <string>UUK47G4BAZ</string>
-    <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+    <key>CFBundleURLTypes</key>
     <array>
-      <string>/.redisinsight-v2/</string>
-      <string>/.redisinsight-v2-stage/</string>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>redisinsight</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>redisinsight://</string>
+            </array>
+        </dict>
     </array>
   </dict>
 </plist>

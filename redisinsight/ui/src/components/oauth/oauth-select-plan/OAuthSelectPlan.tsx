@@ -9,6 +9,7 @@ import {
   EuiText,
   EuiTextColor,
   EuiTitle,
+  EuiToolTip,
 } from '@elastic/eui'
 import { toNumber, filter, get, find, first } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
@@ -101,11 +102,16 @@ const OAuthSelectPlan = () => {
         {`${countryName} (${cityName})`}
         <EuiTextColor className={styles.regionName}>{region}</EuiTextColor>
         { tfProviderRegions?.includes(region) && (
-          <EuiIcon
-            type={theme === Theme.Dark ? TriggeredFunctionsDarkSVG : TriggeredFunctionsLightSVG}
-            className={styles.tfOptionIcon}
-            data-testid={`tf-icon-${region}`}
-          />
+          <EuiToolTip
+            content="Triggers and functions are available in this region"
+            anchorClassName={styles.tfOptionIconTooltip}
+          >
+            <EuiIcon
+              type={theme === Theme.Dark ? TriggeredFunctionsDarkSVG : TriggeredFunctionsLightSVG}
+              className={styles.tfOptionIcon}
+              data-testid={`tf-icon-${region}`}
+            />
+          </EuiToolTip>
         )}
       </EuiText>
     )

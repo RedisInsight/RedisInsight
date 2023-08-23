@@ -2,15 +2,23 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
-.container {
-  @include euiScrollBar;
-
+.wrapper {
   flex: 1;
   height: 100%;
   width: 100%;
   background-color: var(--euiColorEmptyShade);
-  color: var(--euiTextSubduedColor) !important;
   border: 1px solid var(--euiColorLightShade);
+
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  @include euiScrollBar;
+  color: var(--euiTextSubduedColor) !important;
+
+  flex: 1;
+  width: 100%;
   overflow: auto;
 }
 
@@ -20,6 +28,9 @@
   align-items: center;
   justify-content: flex-end;
   padding: 0 12px;
+
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--tableDarkestBorderColor);
 }
 
 .noResults {

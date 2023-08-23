@@ -30,6 +30,7 @@ import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiS
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import ExploreGuides from 'uiSrc/components/explore-guides'
+import { Nullable } from 'uiSrc/utils'
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
 import StringDetails from '../../string-details/StringDetails'
@@ -56,10 +57,11 @@ export interface Props {
   onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
   totalKeys: number
+  keysLastRefreshTime: Nullable<number>
 }
 
 const KeyDetails = ({ ...props }: Props) => {
-  const { onClosePanel, onRemoveKey, totalKeys } = props
+  const { onClosePanel, onRemoveKey, totalKeys, keysLastRefreshTime } = props
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const { type: selectedKeyType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {
     type: KeyTypes.String,
@@ -139,6 +141,16 @@ const KeyDetails = ({ ...props }: Props) => {
     [KeyTypes.Stream]: <StreamDetailsWrapper isFooterOpen={isAddItemPanelOpen} />,
   }
 
+  const NoKeysSelectedMessage = () => (
+    <>
+      {totalKeys > 0 ? (
+        <span data-testid="select-key-message">
+          Select the key from the list on the left to see the details of the key.
+        </span>
+      ) : (<ExploreGuides />)}
+    </>
+  )
+
   return (
     <div className={styles.page}>
       <EuiFlexGroup
@@ -169,15 +181,7 @@ const KeyDetails = ({ ...props }: Props) => {
                     <p data-testid="no-keys-selected-text">
                       {error}
                     </p>
-                  ) : (
-                    <>
-                      {totalKeys > 0 ? (
-                        <span data-testid="select-key-message">
-                          Select the key from the list on the left to see the details of the key.
-                        </span>
-                      ) : (<ExploreGuides />)}
-                    </>
-                  )}
+                  ) : (!!keysLastRefreshTime && <NoKeysSelectedMessage />)}
                 </EuiText>
               </div>
             </>

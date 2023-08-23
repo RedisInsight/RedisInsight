@@ -1,5 +1,5 @@
 {
-  "version": 2.32,
+  "version": 2.3201,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -50,7 +50,7 @@
       "data": {
         "hideByName": [
           {
-            "expression": "RedisGraphStub",
+            "expression": "^RedisGraph.",
             "options": "i"
           }
         ]

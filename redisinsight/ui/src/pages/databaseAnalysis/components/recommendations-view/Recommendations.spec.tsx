@@ -4,10 +4,14 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 
+import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import Recommendations from './Recommendations'
 
+const recommendationsContent = MOCK_RECOMMENDATIONS
 const mockdbAnalysisSelector = jest.requireActual('uiSrc/slices/analytics/dbAnalysis')
+const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -18,6 +22,17 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     push: jest.fn,
+  }),
+}))
+
+jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
+  ...jest.requireActual('uiSrc/slices/recommendations/recommendations'),
+  recommendationsSelector: jest.fn().mockReturnValue({
+    data: {
+      recommendations: [],
+      totalUnread: 0,
+    },
+    isContentVisible: false,
   }),
 }))
 
@@ -70,6 +85,15 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     provider: 'RE_CLOUD'
   }),
 }))
+
+beforeEach(() => {
+  (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ...mockRecommendationsSelector,
+    data: { recommendations: [{ name: 'RTS' }] },
+    isContentVisible: true,
+    content: recommendationsContent,
+  }))
+})
 
 describe('Recommendations', () => {
   it('should render', () => {

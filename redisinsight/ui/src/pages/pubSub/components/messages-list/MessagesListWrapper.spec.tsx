@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import store, { RootState } from 'uiSrc/slices/store'
+import { RootState, store } from 'uiSrc/slices/store'
 import { render } from 'uiSrc/utils/test-utils'
 
 import MessagesListWrapper from './MessagesListWrapper'

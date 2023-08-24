@@ -10,15 +10,14 @@ import {
 } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
 
 import styles from './styles.module.scss'
-
-const recommendationsContent = _content as IRecommendationsStatic
 
 const utmSource = 'redisinsight'
 const utmMedium = 'recommendation'
@@ -147,6 +146,29 @@ const renderContentElement = (
           {value.name}
         </EuiLink>
       )
+    case 'link-sso':
+      return (
+        <OAuthSsoHandlerDialog>
+          {(ssoCloudHandlerClick) => (
+            <EuiLink
+              key={`${telemetry.telemetryName}-${idx}`}
+              external={false}
+              data-testid={`link-sso-${telemetry.telemetryName}-${idx}`}
+              target="_blank"
+              onClick={(e) => {
+                ssoCloudHandlerClick?.(e, telemetry.telemetryName as OAuthSocialSource)
+              }}
+              href={addUtmToLink(value.href, telemetry.telemetryName)}
+            >
+              {value.name}
+            </EuiLink>
+          )}
+        </OAuthSsoHandlerDialog>
+      )
+    case 'connect-btn':
+      return (
+        <OAuthConnectFreeDb source={telemetry.telemetryName as OAuthSocialSource} />
+      )
     case 'code-link':
       return (
         <EuiLink
@@ -205,12 +227,13 @@ const renderRecommendationContent = (
 ) => (
   elements?.map((item, idx) => renderContentElement(item, params, telemetry, insights, idx)))
 
-const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [
-  ({ name }) => name !== 'searchJSON',
-  ({ name }) => name !== 'searchIndexes',
-  ({ name }) => recommendationsContent[name]?.redisStack,
-  ({ name }) => name,
-])
+const sortRecommendations = (recommendations: any[], recommendationsContent: IRecommendationsStatic) =>
+  sortBy(recommendations, [
+    ({ name }) => name !== 'searchJSON',
+    ({ name }) => name !== 'searchIndexes',
+    ({ name }) => recommendationsContent[name]?.redisStack,
+    ({ name }) => name,
+  ])
 
 export {
   addUtmToLink,

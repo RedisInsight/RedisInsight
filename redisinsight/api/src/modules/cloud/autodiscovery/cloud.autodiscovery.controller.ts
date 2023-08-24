@@ -1,30 +1,35 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Get,
-  Post, Res,
+  Controller,
+  Get,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import { ApiHeaders, ApiTags } from '@nestjs/swagger';
-import { CloudAccountInfo, CloudDatabase, CloudSubscription } from 'src/modules/cloud/autodiscovery/models';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Response } from 'express';
 import { ActionStatus } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
 import { CloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/cloud-autodiscovery.service';
-import {
-  AddCloudDatabaseResponse,
-  AddCloudDatabasesDto,
-  CloudAuthDto,
-  GetCloudDatabasesDto,
-} from 'src/modules/cloud/autodiscovery/dto';
-import { CloudAuthHeaders } from 'src/modules/cloud/autodiscovery/decorators/cloud-auth.decorator';
+import { CloudAuthHeaders } from 'src/modules/cloud/common/decorators/cloud-auth.decorator';
 import config from 'src/utils/config';
+import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
+import { CloudAccountInfo } from 'src/modules/cloud/user/models';
+import { CloudSubscription } from 'src/modules/cloud/subscription/models';
+import { CloudAutodiscoveryAuthType } from 'src/modules/cloud/autodiscovery/models';
+import { CloudDatabase } from 'src/modules/cloud/database/models';
+import {
+  DiscoverCloudDatabasesDto,
+  ImportCloudDatabaseResponse,
+  ImportCloudDatabasesDto,
+} from 'src/modules/cloud/autodiscovery/dto';
 
-const cloudConf = config.get('redis_cloud');
+const cloudConf = config.get('cloud');
 
 @ApiTags('Cloud Autodiscovery')
 @ApiHeaders([{
@@ -33,7 +38,7 @@ const cloudConf = config.get('redis_cloud');
   name: 'x-cloud-api-secret',
 }])
 @UsePipes(new ValidationPipe({ transform: true }))
-@UseInterceptors(new TimeoutInterceptor(undefined, cloudConf.cloudDiscoveryTimeout))
+@UseInterceptors(new TimeoutInterceptor(undefined, cloudConf.discoveryTimeout))
 @Controller('cloud/autodiscovery')
 export class CloudAutodiscoveryController {
   constructor(private service: CloudAutodiscoveryService) {}
@@ -51,7 +56,7 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getAccount(@CloudAuthHeaders() authDto: CloudAuthDto): Promise<CloudAccountInfo> {
+  async getAccount(@CloudAuthHeaders() authDto: CloudCapiAuthDto): Promise<CloudAccountInfo> {
     return await this.service.getAccount(authDto);
   }
 
@@ -69,8 +74,8 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getSubscriptions(@CloudAuthHeaders() authDto: CloudAuthDto): Promise<CloudSubscription[]> {
-    return await this.service.getSubscriptions(authDto);
+  async discoverSubscriptions(@CloudAuthHeaders() authDto: CloudCapiAuthDto): Promise<CloudSubscription[]> {
+    return await this.service.discoverSubscriptions(authDto, CloudAutodiscoveryAuthType.Credentials);
   }
 
   @Post('get-databases')
@@ -88,11 +93,11 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getDatabases(
-    @CloudAuthHeaders() authDto: CloudAuthDto,
-      @Body() dto: GetCloudDatabasesDto,
+  async discoverDatabases(
+    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+      @Body() dto: DiscoverCloudDatabasesDto,
   ): Promise<CloudDatabase[]> {
-    return await this.service.getDatabases(authDto, dto);
+    return await this.service.discoverDatabases(authDto, dto, CloudAutodiscoveryAuthType.Credentials);
   }
 
   @Post('databases')
@@ -104,20 +109,19 @@ export class CloudAutodiscoveryController {
       {
         status: 201,
         description: 'Added databases list.',
-        type: AddCloudDatabaseResponse,
+        type: ImportCloudDatabaseResponse,
         isArray: true,
       },
     ],
   })
-  async addRedisCloudDatabases(
-    @CloudAuthHeaders() authDto: CloudAuthDto,
-      @Body() dto: AddCloudDatabasesDto,
+  async addDiscoveredDatabases(
+    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+      @Body() dto: ImportCloudDatabasesDto,
       @Res() res: Response,
   ): Promise<Response> {
-    const { databases } = dto;
-    const result = await this.service.addRedisCloudDatabases(authDto, databases);
+    const result = await this.service.addRedisCloudDatabases(authDto, dto.databases);
     const hasSuccessResult = result.some(
-      (addResponse: AddCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: ImportCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

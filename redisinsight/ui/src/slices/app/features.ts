@@ -25,7 +25,10 @@ export const initialState: StateAppFeatures = {
     features: {
       [FeatureFlags.insightsRecommendations]: {
         flag: false
-      }
+      },
+      [FeatureFlags.cloudSso]: {
+        flag: false
+      },
     }
   }
 }

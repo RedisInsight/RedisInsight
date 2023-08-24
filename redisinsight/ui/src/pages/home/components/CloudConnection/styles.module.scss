@@ -1,12 +1,11 @@
-.message {
+.cloudApi {
   margin-top: 5px;
   padding: 16px;
   background-color: var(--euiColorLightestShade);
-  font-family: 'Graphik', sans-serif;
-  color: var(--euiTextSubduedColor) !important;
-  border: 1px solid var(--euiColorLightShade);
+  border-radius: 4px;
 
-  :global(.euiTextColor), :global(.euiLink) {
+  :global(.euiTextColor),
+  :global(.euiLink) {
     color: currentColor !important;
   }
 }
@@ -16,5 +15,70 @@
 
   &:hover {
     text-decoration: none !important;
+  }
+}
+
+.divider {
+  width: 224px;
+  margin: 16px auto;
+  color: var(--htmlColor) !important;
+
+  &:before,
+  &:after {
+    content: "";
+    display: inline-block;
+    width: 80px;
+    height: 1px;
+    background-color: var(--tableLightestBorderColor);
+    margin-top: -3px;
+    margin-bottom: 4px;
+  }
+
+  &:before {
+    margin-right: 22px;
+  }
+  &:after {
+    margin-left: 22px;
+  }
+}
+
+.messageTitle {
+  text-align: center;
+  font-size: 14px !important;
+  font-style: normal;
+  font-weight: 400 !important;
+  line-height: 150% !important;
+  color: var(--htmlColor) !important;
+}
+
+.message {
+  padding: 0 26px;
+  text-align: center;
+  font-family: "Graphik", sans-serif;
+  color: var(--euiTextSubduedColor) !important;
+}
+
+.accordion {
+  background: var(--euiColorLightestShade);
+  border-radius: 4px;
+  padding: 12px 18px !important;
+  margin-top: 14px !important;
+
+  :global {
+    .euiAccordion__triggerWrapper {
+      background: var(--euiColorLightestShade);
+      padding: 0 !important;
+    }
+
+    .euiAccordion__triggerWrapper h3 {
+      font-size: 14px !important;
+      line-height: 14px !important;
+      font-weight: 400 !important;
+      height: auto !important;
+    }
+
+    .euiCollapsibleNavGroup__children {
+      padding: 12px 0 0 !important;
+    }
   }
 }

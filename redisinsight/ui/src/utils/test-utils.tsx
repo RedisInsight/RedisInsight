@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
 import { render as rtlRender, waitFor } from '@testing-library/react'
 
-import rootStore, { RootState } from 'uiSrc/slices/store'
+import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { initialState as initialStateCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { initialState as initialStateClientCerts } from 'uiSrc/slices/instances/clientCerts'
@@ -30,6 +30,7 @@ import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/r
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
+import { initialState as initialStateAppActionBarReducer } from 'uiSrc/slices/app/actionBar'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -39,6 +40,7 @@ import { initialState as initialStateWBEGuides } from 'uiSrc/slices/workbench/wb
 import { initialState as initialStateWBETutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { initialState as initialStateWBECustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { initialState as initialStateCreateRedisButtons } from 'uiSrc/slices/content/create-redis-buttons'
+import { initialState as initialStateGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { initialState as initialStateSlowLog } from 'uiSrc/slices/analytics/slowlog'
 import { initialState as initialClusterDetails } from 'uiSrc/slices/analytics/clusterDetails'
 import { initialState as initialStateAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -47,6 +49,7 @@ import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/redisearch'
 import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -66,7 +69,8 @@ const initialStateDefault: RootState = {
     redisCommands: cloneDeep(initialStateAppRedisCommands),
     plugins: cloneDeep(initialStateAppPluginsReducer),
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
-    features: cloneDeep(initialStateAppFeaturesReducer)
+    features: cloneDeep(initialStateAppFeaturesReducer),
+    actionBar: cloneDeep(initialStateAppActionBarReducer),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -103,7 +107,8 @@ const initialStateDefault: RootState = {
     customTutorials: cloneDeep(initialStateWBECustomTutorials),
   },
   content: {
-    createRedisButtons: cloneDeep(initialStateCreateRedisButtons)
+    createRedisButtons: cloneDeep(initialStateCreateRedisButtons),
+    guideLinks: cloneDeep(initialStateGuideLinks),
   },
   analytics: {
     settings: cloneDeep(initialStateAnalyticsSettings),
@@ -113,7 +118,10 @@ const initialStateDefault: RootState = {
   },
   recommendations: cloneDeep(initialStateRecommendations),
   pubsub: cloneDeep(initialStatePubSub),
-  triggeredFunctions: cloneDeep(initialStateTriggeredFunctions)
+  triggeredFunctions: cloneDeep(initialStateTriggeredFunctions),
+  oauth: {
+    cloud: cloneDeep(initialStateOAuth),
+  },
 }
 
 // mocked store

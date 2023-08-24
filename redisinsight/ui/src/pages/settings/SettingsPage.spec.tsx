@@ -1,11 +1,21 @@
 import React from 'react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import SettingsPage from './SettingsPage'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    cloudSso: {
+      flag: false
+    }
+  }),
 }))
 
 /**
@@ -48,6 +58,29 @@ describe('SettingsPage', () => {
 
     expect(
       container.querySelector('[data-test-subj="accordion-workbench-settings"]')
+    ).toBeInTheDocument()
+    expect(render(<SettingsPage />)).toBeTruthy()
+  })
+
+  it('should not render cloud accordion without feature flag', () => {
+    const { container } = render(<SettingsPage />)
+
+    expect(
+      container.querySelector('[data-test-subj="accordion-cloud-settings"]')
+    ).not.toBeInTheDocument()
+    expect(render(<SettingsPage />)).toBeTruthy()
+  })
+
+  it('should render cloud accordion with feature flag', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      cloudSso: {
+        flag: true
+      }
+    })
+    const { container } = render(<SettingsPage />)
+
+    expect(
+      container.querySelector('[data-test-subj="accordion-cloud-settings"]')
     ).toBeInTheDocument()
     expect(render(<SettingsPage />)).toBeTruthy()
   })

@@ -4,10 +4,12 @@ import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyName = `KeyForSearch*?[]789${Common.generateWord(10)}`;
 let keyName2 = Common.generateWord(10);
@@ -57,9 +59,9 @@ test('Verify that user can filter per exact key without using any patterns', asy
 test
     .after(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyName);
-        await browserPage.deleteKeyByName(keyName2);
-        await browserPage.deleteKeyByName(searchedValueWithEscapedSymbols);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName2, ossStandaloneConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(valueWithEscapedSymbols, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can filter per combined pattern with ?, *, [xy], [^x], [a-z] and escaped special symbols', async t => {
         keyName = `KeyForSearch${Common.generateWord(10)}`;

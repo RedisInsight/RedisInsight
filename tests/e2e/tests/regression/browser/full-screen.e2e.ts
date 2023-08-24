@@ -4,10 +4,12 @@ import { rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const keyName = Common.generateWord(20);
 const keyValue = Common.generateWord(20);
@@ -29,7 +31,7 @@ test
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can switch to full screen from key details in Browser', async t => {
         // Save tables size before switching to full screen mode
@@ -46,7 +48,10 @@ test
         const widthAfterExitFullScreen = await browserPage.keyDetailsTable.clientWidth;
         await t.expect(widthAfterExitFullScreen).lt(widthAfterFullScreen, 'Width after switching from full screen not less then before');
     });
-test('Verify that when no keys are selected user can click on "Close" control for right table and see key list in full screen', async t => {
+test.before(async() => {
+    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+    await browserPage.Cli.sendCommandInCli('flushdb');
+})('Verify that when no keys are selected user can click on "Close" control for right table and see key list in full screen', async t => {
     // Verify that user sees two panels(key list and empty details panel) opening Browser page for the first time
     await t.expect(browserPage.noKeysToDisplayText.visible).ok('No keys selected panel not displayed');
     // Save key table size before switching to full screen
@@ -65,7 +70,7 @@ test
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when user closes key details in full screen mode the list of keys displayed in full screen', async t => {
         // Save keys table size before switching to full screen
@@ -91,7 +96,7 @@ test
         await browserPage.openKeyDetails(keyName);
     })
     .after(async() => {
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that when users close key details not in full mode, they can see full key list screen', async t => {
         // Save key list table size before switching to full screen

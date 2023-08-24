@@ -25,8 +25,8 @@
     "lint:e2e": "yarn --cwd tests/e2e lint",
     "package": "yarn package:dev",
     "package:prod": "ts-node ./scripts/prebuild.js dist && yarn build:prod && electron-builder build -p never",
-    "package:stage": "ts-node ./scripts/prebuild.js dist && yarn build:stage && electron-builder build -p never",
-    "package:mas": "electron-builder build -p never -m mas:universal -c ./electron-builder-mas.js",
+    "package:stage": "ts-node ./scripts/prebuild.js dist && yarn build:stage && electron-builder build -p never -c.mac.bundleVersion=$CIRCLE_BUILD_NUM",
+    "package:mas": "electron-builder build -p never -m mas:universal -c.mac.bundleVersion=$CIRCLE_BUILD_NUM -c ./electron-builder-mas.js",
     "package:mas:dev": "electron-builder build -p never -m mas-dev:universal -c ./electron-builder-mas.js",
     "package:dev": "yarn build && cross-env DEBUG=electron-builder electron-builder build -p never",
     "package:win": "yarn build:prod && electron-builder build --win --x64 -p never",
@@ -80,7 +80,11 @@
   "homepage": "https://github.com/RedisInsight/RedisInsight#readme",
   "resolutions": {
     "**/node-sass": "^8.0.0",
-    "**/trim": "0.0.3"
+    "**/trim": "0.0.3",
+    "word-wrap": "1.2.4",
+    "electron-builder/app-builder-lib/@electron/universal/dir-compare/minimatch": "^3.0.5",
+    "**/semver": "^7.5.2",
+    "rawproto/protobufjs": "^7.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -125,6 +129,7 @@
     "@types/ioredis": "^4.26.0",
     "@types/is-glob": "^4.0.2",
     "@types/jest": "^27.5.2",
+    "@types/json-bigint": "^1.0.1",
     "@types/jsonpath": "^0.2.0",
     "@types/lodash": "^4.14.171",
     "@types/node": "14.14.10",
@@ -243,6 +248,7 @@
     "html-react-parser": "^1.2.4",
     "java-object-serialization": "^0.1.1",
     "jpickle": "^0.4.1",
+    "json-bigint": "^1.0.0",
     "jsonpath": "^1.1.1",
     "lodash": "^4.17.21",
     "lz4js": "^0.2.0",
@@ -253,7 +259,6 @@
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",
     "react-hotkeys-hook": "^3.3.1",
-    "react-json-pretty": "^2.2.0",
     "react-jsx-parser": "^1.28.4",
     "react-monaco-editor": "^0.45.0",
     "react-redux": "^7.2.2",

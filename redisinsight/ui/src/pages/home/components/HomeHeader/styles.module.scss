@@ -99,31 +99,6 @@
   }
 }
 
-.containerWelc {
-  .separator {
-    width: 150px;
-    height: 0;
-    border-top-width: 1px;
-    margin: 25px auto 20px;
-  }
-  .otherGuides {
-    flex-wrap: wrap;
-    & > div {
-      min-width: 20%;
-      &:nth-of-type(3n + 1) {
-        a {
-          text-align: left;
-        }
-      }
-      &:nth-of-type(3n + 3) {
-        a {
-          text-align: right;
-        }
-      }
-    }
-  }
-}
-
 .searchContainer {
   max-width: 320px;
 }
@@ -161,4 +136,21 @@
   @media (min-width: 1101px) and (max-width: 1249px) {
     display: flex !important;
   }
+}
+
+.cloudSsoPromoBtnAnchor {
+  position: relative;
+  display: flex !important;
+  max-width: 348px;
+}
+.cloudSsoPromoTooltip {
+  display: flex;
+  flex-direction: row;
+  line-height: normal;
+  font-size: 12px !important;
+}
+.cloudSsoPromoTooltipIcon {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 8px;
 }

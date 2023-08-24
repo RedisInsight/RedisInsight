@@ -9,23 +9,31 @@ import {
   EuiTextColor,
 } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
+import cx from 'classnames'
 import {
   errorsSelector,
+  infiniteNotificationsSelector,
   messagesSelector,
+  removeInfiniteNotification,
   removeMessage,
 } from 'uiSrc/slices/app/notifications'
 import { setReleaseNotesViewed } from 'uiSrc/slices/app/info'
-import { IError, IMessage } from 'uiSrc/slices/interfaces'
+import { IError, IMessage, InfiniteMessage } from 'uiSrc/slices/interfaces'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
+import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 
+import { CustomErrorCodes } from 'uiSrc/constants'
 import errorMessages from './error-messages'
+import { InfiniteMessagesIds } from './components'
 
 import styles from './styles.module.scss'
 
 const Notifications = () => {
   const messagesData = useSelector(messagesSelector)
   const errorsData = useSelector(errorsSelector)
+  const infiniteNotifications = useSelector(infiniteNotificationsSelector)
+
   const dispatch = useDispatch()
 
   const removeToast = ({ id }: Toast) => {
@@ -83,18 +91,45 @@ const Notifications = () => {
     })
 
   const getErrorsToasts = (errors: IError[]) =>
-    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name }) => {
+    errors.map(({ id = '', message = DEFAULT_ERROR_MESSAGE, instanceId = '', name, title, additionalInfo }) => {
       if (ApiEncryptionErrors.includes(name)) {
         return errorMessages.ENCRYPTION(id, () => removeToast({ id }), instanceId)
       }
-      return errorMessages.DEFAULT(id, message, () => removeToast({ id }))
+
+      if (additionalInfo?.errorCode === CustomErrorCodes.CloudCapiKeyUnauthorized) {
+        return errorMessages.CLOUD_CAPI_KEY_UNAUTHORIZED(
+          { id, message, title },
+          additionalInfo,
+          () => removeToast({ id })
+        )
+      }
+      return errorMessages.DEFAULT(id, message, () => removeToast({ id }), title)
     })
+
+  const getInfiniteToasts = (data: InfiniteMessage[]): Toast[] => data.map((message: InfiniteMessage) => {
+    const { id, Inner, className = '' } = message
+
+    return {
+      id,
+      className: cx(styles.infiniteMessage, className),
+      text: Inner,
+      color: 'success',
+      onClose: () => {
+        if (id === InfiniteMessagesIds.oAuthProgress) {
+          dispatch(showOAuthProgress(false))
+        }
+        dispatch(removeInfiniteNotification(id))
+      },
+      toastLifeTimeMs: 3_600_000,
+    }
+  })
 
   return (
     <EuiGlobalToastList
       toasts={[
         ...getSuccessToasts(messagesData),
         ...getErrorsToasts(errorsData),
+        ...getInfiniteToasts(infiniteNotifications),
       ]}
       dismissToast={removeToast}
       toastLifeTimeMs={6000}

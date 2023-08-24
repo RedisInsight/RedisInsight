@@ -1,8 +1,16 @@
 import { AxiosError } from 'axios'
 import { first, isArray, get } from 'lodash'
-import { AddRedisDatabaseStatus, IBulkOperationResult } from 'uiSrc/slices/interfaces'
+import { AddRedisDatabaseStatus, EnhancedAxiosError, IBulkOperationResult } from 'uiSrc/slices/interfaces'
+import { parseCloudOAuthError } from 'uiSrc/utils/oauth'
 
 export const DEFAULT_ERROR_MESSAGE = 'Something was wrong!'
+
+export const getAxiosError = (error: EnhancedAxiosError): AxiosError => {
+  if (error?.response?.data.errorCode) {
+    return parseCloudOAuthError(error.response.data)
+  }
+  return error
+}
 
 export function getApiErrorMessage(error: AxiosError): string {
   const errorMessage = error?.response?.data?.message

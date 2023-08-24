@@ -77,7 +77,6 @@ enum ApiEndpoints {
   SETTINGS_AGREEMENTS_SPEC = 'settings/agreements/spec',
 
   WORKBENCH_COMMAND_EXECUTIONS = 'workbench/command-executions',
-  WORKBENCH_COMMANDS_EXECUTION = 'workbench/commands-execution',
 
   PROFILER = 'profiler',
   PROFILER_LOGS = 'profiler/logs',
@@ -90,6 +89,8 @@ enum ApiEndpoints {
   PLUGINS = 'plugins',
   STATE = 'state',
   CONTENT_CREATE_DATABASE = 'static/content/create-redis.json',
+  CONTENT_RECOMMENDATIONS = 'static/content/recommendations.json',
+  CONTENT_GUIDE_LINKS = 'static/content/guide-links.json',
   GUIDES_PATH = 'static/guides',
   TUTORIALS_PATH = 'static/tutorials',
   CUSTOM_TUTORIALS_PATH = 'static/custom-tutorials',
@@ -118,6 +119,19 @@ enum ApiEndpoints {
   HISTORY = 'history',
 
   FEATURES = 'features',
+
+  CLOUD_ME = 'cloud/me',
+  CLOUD_ME_JOBS = 'cloud/me/jobs',
+  CLOUD_ME_ACCOUNTS = 'cloud/me/accounts',
+  CLOUD_CURRENT = 'current',
+
+  CLOUD_SUBSCRIPTION_PLANS = 'cloud/me/subscription/plans',
+
+  CLOUD_ME_AUTODISCOVERY_ACCOUNT = 'cloud/me/autodiscovery/account',
+  CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS = 'cloud/me/autodiscovery/subscriptions',
+  CLOUD_ME_AUTODISCOVERY_GET_DATABASES = 'cloud/me/autodiscovery/get-databases',
+  CLOUD_ME_AUTODISCOVERY_DATABASES = 'cloud/me/autodiscovery/databases',
+  CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
 }
 
 export enum CustomHeaders {

@@ -25,7 +25,6 @@ fixture `Consumer group`
         if (await browserPage.closeKeyButton.visible){
             await t.click(browserPage.closeKeyButton);
         }
-        await browserPage.deleteKeyByName(keyName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that when user enter invalid Group Name the error message appears', async t => {

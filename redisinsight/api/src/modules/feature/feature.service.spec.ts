@@ -4,8 +4,8 @@ import {
   mockFeature, mockFeatureAnalytics, mockFeatureFlagProvider, mockFeatureRepository,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
-  mockFeaturesConfigRepository,
-  MockType, mockUnknownFeature,
+  mockFeaturesConfigRepository, mockFeatureSso,
+  MockType, mockUnknownFeature
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -14,6 +14,7 @@ import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
+import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -81,9 +82,8 @@ describe('FeatureService', () => {
       expect(await service.list())
         .toEqual({
           features: {
-            [KnownFeatures.InsightsRecommendations]: {
-              flag: true,
-            },
+            [KnownFeatures.InsightsRecommendations]: mockFeature,
+            [KnownFeatures.CloudSso]: mockFeatureSso,
           },
         });
     });
@@ -91,8 +91,8 @@ describe('FeatureService', () => {
 
   describe('recalculateFeatureFlags', () => {
     it('should recalculate flags (1 update an 1 delete)', async () => {
-      repository.list.mockResolvedValueOnce([mockFeature, mockUnknownFeature]);
-      repository.list.mockResolvedValueOnce([mockFeature]);
+      repository.list.mockResolvedValueOnce([mockFeature, mockFeatureSso, mockUnknownFeature]);
+      repository.list.mockResolvedValueOnce([mockFeature, mockFeatureSso]);
       configsRepository.getOrCreate.mockResolvedValueOnce(mockFeaturesConfig);
 
       await service.recalculateFeatureFlags();
@@ -107,9 +107,8 @@ describe('FeatureService', () => {
       expect(analytics.sendFeatureFlagRecalculated).toHaveBeenCalledWith({
         configVersion: mockFeaturesConfig.data.version,
         features: {
-          [KnownFeatures.InsightsRecommendations]: {
-            flag: true,
-          },
+          [KnownFeatures.InsightsRecommendations]: mockFeature,
+          [KnownFeatures.CloudSso]: mockFeatureSso,
         },
       });
     });

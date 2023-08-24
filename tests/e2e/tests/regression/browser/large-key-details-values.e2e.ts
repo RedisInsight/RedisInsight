@@ -4,10 +4,12 @@ import { BrowserPage } from '../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 const field = Common.generateWord(20);
 const value = Common.generateSentence(200);
@@ -26,7 +28,7 @@ fixture `Expand/Collapse large values in key details`
         if (await browserPage.closeKeyButton.visible) {
             await t.click(browserPage.closeKeyButton);
         }
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can click on a row to expand it if any of its cells contains a value which is truncated.', async t => {

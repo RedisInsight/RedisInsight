@@ -34,7 +34,7 @@ export class LocalFeatureRepository extends FeatureRepository {
    * @inheritDoc
    */
   async upsert(feature: Feature): Promise<Feature> {
-    await this.repository.upsert(feature, {
+    await this.repository.upsert(classToClass(FeatureEntity, feature), {
       skipUpdateIfNoValuesChanged: true,
       conflictPaths: ['name'],
     });

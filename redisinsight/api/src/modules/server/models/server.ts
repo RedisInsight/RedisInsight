@@ -7,6 +7,10 @@ export enum BuildType {
   DockerOnPremise = 'DOCKER_ON_PREMISE',
 }
 
+export enum PackageType {
+  AppImage = 'appimage',
+}
+
 export enum AppType {
   RedisStackWeb = 'REDIS_STACK_WEB',
   RedisStackApp = 'REDIS_STACK_ELECTRON',

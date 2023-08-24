@@ -5,11 +5,13 @@ import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { Telemetry } from '../../../helpers/telemetry';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const telemetry = new Telemetry();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyNameBefore = Common.generateWord(10);
 let keyNameAfter = Common.generateWord(10);
@@ -30,7 +32,7 @@ fixture `Edit Key names verification`
     })
     .afterEach(async() => {
         // Clear and delete database
-        await browserPage.deleteKeyByName(keyNameAfter);
+        await apiKeyRequests.deleteKeyByNameApi(keyNameAfter, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test

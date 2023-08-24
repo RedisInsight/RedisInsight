@@ -406,3 +406,68 @@ body {
 .switch-staircase-label {
   padding-right: 10px !important;
 }
+
+
+.theme_DARK {
+    .button-point {
+        background-color: black;
+        border: 1px solid #465282;
+    }
+
+    .button-selected {
+        color: #8BA2FF;
+        background-color: #292F47;
+    }
+}
+
+.theme_LIGHT {
+    .new-button {
+        color: #343741;
+    }
+
+    .button-point {
+        border: 1px solid #243DAC;
+    }
+
+    .button-selected {
+        color: #3163D8;
+        background-color: #D7E3FA;
+    }
+}
+
+.new-button {
+    box-shadow: none!important;
+    border-radius: 2px;
+    cursor: pointer;
+    height: 32px;
+    border: 1px solid hsla(0, 0%, 100%, 0.1);
+    overflow: visible;
+    display: flex;
+
+    div {
+        font-size: 13px;
+        padding: 0px;
+        font-weight: normal;
+        height: 30px;
+        width: 68px;
+    }
+
+    div:first-child {
+        border-radius: 4px;
+        border-right: 0px;
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    div:last-child {
+        border-radius: 4px;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+
+    .button-point {
+        text-transform: capitalize;
+        text-align: center;
+        padding: 6px;
+    }
+}

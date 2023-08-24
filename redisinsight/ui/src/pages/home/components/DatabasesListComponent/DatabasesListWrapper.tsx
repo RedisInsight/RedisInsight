@@ -1,6 +1,7 @@
 import {
   EuiButtonIcon,
   EuiIcon,
+  EuiLink,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
@@ -16,19 +17,16 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { saveAs } from 'file-saver'
 import {
   checkConnectToInstanceAction,
-  deleteInstancesAction, exportInstancesAction,
+  deleteInstancesAction,
+  exportInstancesAction,
   instancesSelector,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
-import {
-  CONNECTION_TYPE_DISPLAY,
-  ConnectionType,
-  Instance,
-} from 'uiSrc/slices/interfaces'
+import { CONNECTION_TYPE_DISPLAY, ConnectionType, Instance, } from 'uiSrc/slices/interfaces'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { PageNames, Pages, Theme } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent, getRedisModulesSummary } from 'uiSrc/telemetry'
+import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { ShowChildByCondition } from 'uiSrc/components'
 import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
@@ -40,6 +38,8 @@ import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-m
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
+import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import DatabasesList from './DatabasesList/DatabasesList'
 
 import styles from './styles.module.scss'
@@ -201,6 +201,12 @@ const DatabasesListWrapper = ({
     ))
   }
 
+  const handleClickGoToCloud = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CLOUD_LINK_CLICKED,
+    })
+  }
+
   const columnsFull: EuiTableFieldDataColumnType<Instance>[] = [
     {
       field: 'name',
@@ -350,11 +356,26 @@ const DatabasesListWrapper = ({
     {
       field: 'controls',
       className: 'column_controls',
-      width: '100px',
+      width: '120px',
       name: '',
       render: function Actions(_act: any, instance: Instance) {
         return (
           <>
+            {instance.cloudDetails && (
+              <EuiToolTip
+                content="Go to Redis Enterprise Cloud"
+              >
+                <EuiLink
+                  target="_blank"
+                  external={false}
+                  href={EXTERNAL_LINKS.cloudConsole}
+                  onClick={handleClickGoToCloud}
+                  data-testid={`cloud-link-${instance.id}`}
+                >
+                  <EuiIcon type={CloudLinkIcon} className={styles.cloudIcon} />
+                </EuiLink>
+              </EuiToolTip>
+            )}
             <EuiButtonIcon
               iconType="pencil"
               className="editInstanceBtn"

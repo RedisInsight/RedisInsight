@@ -33,12 +33,11 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
-import { IRecommendation, IRecommendationsStatic } from 'uiSrc/slices/interfaces/recommendations'
+import { IRecommendation } from 'uiSrc/slices/interfaces/recommendations'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 
-import _content from 'uiSrc/constants/dbAnalysisRecommendations.json'
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
@@ -50,8 +49,6 @@ import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
 import styles from './styles.module.scss'
 
-const recommendationsContent = _content as IRecommendationsStatic
-
 const DELAY_TO_SHOW_ONBOARDING_MS = 500
 
 const LiveTimeRecommendations = () => {
@@ -61,6 +58,7 @@ const LiveTimeRecommendations = () => {
     data: { recommendations, totalUnread },
     isContentVisible,
     isHighlighted,
+    content: recommendationsContent,
   } = useSelector(recommendationsSelector)
   const { items: guides } = useSelector(workbenchGuidesSelector)
   const { items: tutorials } = useSelector(workbenchTutorialsSelector)
@@ -198,6 +196,7 @@ const LiveTimeRecommendations = () => {
         tutorial={recommendationsContent[name]?.tutorial}
         provider={provider}
         params={params}
+        recommendationsContent={recommendationsContent}
       />
     ))
   }

@@ -7,7 +7,7 @@ import { first } from 'lodash'
 import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { mswServer } from 'uiSrc/mocks/server'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import store, { RootState } from 'uiSrc/slices/store'
+import { RootState, store } from 'uiSrc/slices/store'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
@@ -63,6 +63,7 @@ const mockInstances = [
       caCertId: '70b95d32-c19d-4311-bb24-e684af12cf15',
       clientCertPairId: '70b95d32-c19d-4311-b23b24-e684af12cf15',
     },
+    cloudDetails: {}
   },
 ]
 
@@ -163,5 +164,29 @@ describe('DatabasesListWrapper', () => {
         numberOfDatabases: 1
       }
     })
+
+    sendEventTelemetry.mockRestore()
+  })
+
+  it('should show link to cloud console', () => {
+    render(<DatabasesListWrapper {...instance(mockedProps)} />)
+
+    expect(screen.queryByTestId(`cloud-link-${mockInstances[0].id}`)).not.toBeInTheDocument()
+    expect(screen.getByTestId(`cloud-link-${mockInstances[1].id}`)).toBeInTheDocument()
+  })
+
+  it('should call proper telemetry on click cloud console ling', () => {
+    const sendEventTelemetryMock = jest.fn()
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    render(<DatabasesListWrapper {...instance(mockedProps)} />)
+
+    fireEvent.click(screen.getByTestId(`cloud-link-${mockInstances[1].id}`))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_LINK_CLICKED,
+    })
+
+    sendEventTelemetry.mockRestore()
   })
 })

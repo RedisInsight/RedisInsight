@@ -19,7 +19,7 @@ import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto'
 import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
-import { ClientContext, Session } from 'src/common/models';
+import { ClientContext, SessionMetadata } from 'src/common/models';
 import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
@@ -112,7 +112,7 @@ export class DatabaseService {
       try {
         const client = await this.redisConnectionFactory.createRedisConnection(
           {
-            session: {} as Session,
+            sessionMetadata: {} as SessionMetadata,
             databaseId: database.id,
             context: ClientContext.Common,
           },

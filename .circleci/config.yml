@@ -565,6 +565,16 @@ jobs:
               exit 0;
             fi
 
+            export RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
+            export RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE
+            export RI_CLOUD_IDP_ISSUER=$RI_CLOUD_IDP_ISSUER_STAGE
+            export RI_CLOUD_IDP_CLIENT_ID=$RI_CLOUD_IDP_CLIENT_ID_STAGE
+            export RI_CLOUD_IDP_REDIRECT_URI=$RI_CLOUD_IDP_REDIRECT_URI_STAGE
+            export RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
+            export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
+            export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
+            export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
               exit 0;
@@ -641,6 +651,16 @@ jobs:
               exit 0;
             fi
 
+            export RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
+            export RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE
+            export RI_CLOUD_IDP_ISSUER=$RI_CLOUD_IDP_ISSUER_STAGE
+            export RI_CLOUD_IDP_CLIENT_ID=$RI_CLOUD_IDP_CLIENT_ID_STAGE
+            export RI_CLOUD_IDP_REDIRECT_URI=$RI_CLOUD_IDP_REDIRECT_URI_STAGE
+            export RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
+            export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
+            export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
+            export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage && yarn package:mas
               rm -rf release/mac
@@ -696,6 +716,16 @@ jobs:
               rm -rf release/win-unpacked
               exit 0;
             fi
+
+            export RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
+            export RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE
+            export RI_CLOUD_IDP_ISSUER=$RI_CLOUD_IDP_ISSUER_STAGE
+            export RI_CLOUD_IDP_CLIENT_ID=$RI_CLOUD_IDP_CLIENT_ID_STAGE
+            export RI_CLOUD_IDP_REDIRECT_URI=$RI_CLOUD_IDP_REDIRECT_URI_STAGE
+            export RI_CLOUD_IDP_GOOGLE_ID=$RI_CLOUD_IDP_GOOGLE_ID_STAGE
+            export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
+            export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
+            export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
@@ -1014,6 +1044,18 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - Start E2E Tests
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
       - docker:
           name: Build docker image
           requires:
@@ -1024,6 +1066,11 @@ workflows:
           parallelism: 4
           requires:
             - Build docker image
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
     jobs:

@@ -14,7 +14,7 @@ import { ClientContext, ClientMetadata } from 'src/common/models';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
 const mockClientMetadata: ClientMetadata = {
-  session: undefined,
+  sessionMetadata: undefined,
   databaseId: mockDatabase.id,
   context: ClientContext.Browser,
 };

@@ -1,4 +1,4 @@
-import { Session } from 'src/common/models/session';
+import { Session, SessionMetadata } from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
   IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min,
@@ -14,14 +14,18 @@ export enum ClientContext {
 export class ClientMetadata {
   @IsNotEmpty()
   @Type(() => Session)
-  session: Session;
+  sessionMetadata: SessionMetadata;
 
   @IsNotEmpty()
   @IsString()
   databaseId: string;
 
   @IsNotEmpty()
-  @IsEnum(ClientContext)
+  @IsEnum(ClientContext, {
+    message: `context must be a valid enum value. Valid values: ${Object.values(
+      ClientContext,
+    )}.`,
+  })
   context: ClientContext;
 
   @IsOptional()

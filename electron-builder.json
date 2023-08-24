@@ -15,6 +15,12 @@
     "node_modules/sqlite3",
     "node_modules/cpu-features"
   ],
+  "protocols": [{
+    "name": "RedisInsight",
+    "role": "Viewer",
+    "schemes": ["redisinsight"]
+  }
+  ],
   "mac": {
     "target": [
       {
@@ -29,7 +35,6 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "bundleVersion": "88678",
     "icon": "resources/icon.icns",
     "artifactName": "${productName}-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
@@ -98,6 +103,11 @@
       "Redis Inc.",
       "Redis Labs Inc."
     ]
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true
   },
   "linux": {
     "icon": "./resources/icons",

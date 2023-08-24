@@ -21,7 +21,7 @@ import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 import { Default } from 'src/common/decorators';
-import { CloudDatabaseDetails } from 'src/modules/cloud/autodiscovery/models/cloud-database-details';
+import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
 
 const CONNECTIONS_CONFIG = config.get('connections');
 
@@ -274,7 +274,11 @@ export class Database {
     enum: Compressor,
   })
   @Expose()
-  @IsEnum(Compressor)
+  @IsEnum(Compressor, {
+    message: `compressor must be a valid enum value. Valid values: ${Object.values(
+      Compressor,
+    )}.`,
+  })
   @IsOptional()
   compressor?: Compressor = Compressor.NONE;
 

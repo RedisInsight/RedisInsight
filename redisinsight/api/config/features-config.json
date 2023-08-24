@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 2.3201,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -16,6 +16,45 @@
           "cond": "eq"
         }
       ]
+    },
+    "cloudSso": {
+      "flag": true,
+      "perc": [[0,100]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ],
+      "data": {
+        "selectPlan": {
+          "components": {
+            "triggersAndFunctions": [
+              {
+                "provider": "AWS",
+                "regions": ["ap-southeast-1"]
+              },
+              {
+                "provider": "GCP",
+                "regions": ["asia-northeast1"]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "redisModuleFilter": {
+      "flag": true,
+      "perc": [[0, 100]],
+      "data": {
+        "hideByName": [
+          {
+            "expression": "^RedisGraph.",
+            "options": "i"
+          }
+        ]
+      }
     }
   }
 }

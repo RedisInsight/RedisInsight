@@ -71,12 +71,12 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
      */
     async sendTextToMonaco(input: MonacoEditorInputs, commandPart1: string, commandPart2?: string): Promise<void> {
         const inputSelector = Selector(this.inputMonaco.replace(/\$name/g, input));
-
+        await t.click(inputSelector);
         await t
             // remove text since replace doesn't work here
             .pressKey('ctrl+a')
-            .pressKey('delete')
-            .typeText(inputSelector, commandPart1);
+            .pressKey('delete');
+        await t.typeText(inputSelector, commandPart1);
         if (commandPart2) {
             await t.pressKey('enter')
                 .typeText(inputSelector, commandPart2);

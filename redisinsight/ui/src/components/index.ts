@@ -28,6 +28,8 @@ import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 
+export * from './oauth'
+
 export {
   NavigationMenu,
   PageHeader,
@@ -61,5 +63,5 @@ export {
   RecommendationCopyComponent,
   FeatureFlagComponent,
   ModuleNotLoaded,
-  FilterNotAvailable
+  FilterNotAvailable,
 }

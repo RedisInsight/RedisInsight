@@ -1,5 +1,5 @@
 import { commonUrl } from '../../../helpers/conf';
-import { SettingsPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { SettingsPage, MyRedisDatabasePage, WelcomePage } from '../../../pageObjects';
 import { Common } from '../../../helpers/common';
 import { env, rte } from '../../../helpers/constants';
 import { UserAgreementDialog } from '../../../pageObjects/dialogs';
@@ -7,6 +7,7 @@ import { UserAgreementDialog } from '../../../pageObjects/dialogs';
 const userAgreementDialog = new UserAgreementDialog();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
+const welcomePage = new WelcomePage();
 
 fixture `Agreements Verification`
     .meta({ type: 'critical_path', env: env.web, rte: rte.none })
@@ -17,9 +18,8 @@ fixture `Agreements Verification`
     });
 test('Verify that user should accept User Agreements to continue working with the application', async t => {
     await t.expect(userAgreementDialog.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     // Verify that I still has agreements popup & cannot add a database
-    await t.expect(userAgreementDialog.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
+    await t.expect(userAgreementDialog.submitButton.hasAttribute('disabled')).ok('Submit button not disabled by default');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).notOk('User can\'t add a database');
 });
 test('Verify that the encryption enabled by default and specific message', async t => {
@@ -39,9 +39,9 @@ test('Verify that the Welcome page is opened after user agrees', async t => {
     // Verify that I dont have an popup
     await t.expect(userAgreementDialog.userAgreementsPopup.exists).notOk('User Agreements Popup isn\'t shown after accept agreements');
     // Verify that Welcome page is displayed after user agrees
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.welcomePageTitle.exists).ok('Welcome page is displayed');
+    await t.expect(welcomePage.welcomePageTitle.exists).ok('Welcome page is displayed');
     // Verify I can work with the application
-    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
+    await t.click(welcomePage.addDbManuallyBtn);
     await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).ok('User can add a database');
 });
 test('Verify that when user checks "Use recommended settings" option on EULA screen, all options (except Licence Terms) are checked', async t => {

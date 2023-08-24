@@ -2,211 +2,234 @@ import { t } from 'testcafe';
 import { AddNewDatabaseParameters } from '../../pageObjects/components/myRedisDatabase/add-redis-database';
 import {
     HashKeyParameters,
+    StringKeyParameters,
     ListKeyParameters,
     SetKeyParameters,
     SortedSetKeyParameters,
-    StreamKeyParameters,
+    StreamKeyParameters
 } from '../../pageObjects/browser-page';
-import { sendGetRequest, sendPostRequest } from './api-common';
+import { sendDeleteRequest, sendPostRequest } from './api-common';
 import { DatabaseAPIRequests } from './api-database';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-/**
- * Add Hash key
- * @param keyParameters The key parameters
- * @param databaseParameters The database parameters
- */
-export async function addHashKeyApi(
-    keyParameters: HashKeyParameters,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const requestBody = {
-        keyName: keyParameters.keyName,
-        fields: keyParameters.fields,
-    };
-    const response = await sendPostRequest(
-        `/databases/${databaseId}/hash?encoding=buffer`,
-        requestBody
-    );
+const bufferPathMask = '/databases/databaseId/keys?encoding=buffer';
+export class APIKeyRequests {
 
-    await t
-        .expect(response.status)
-        .eql(201, 'The creation of new Hash key request failed');
-}
-
-/**
- * Add Stream key
- * @param keyParameters The key parameters
- * @param databaseParameters The database parameters
- */
-export async function addStreamKeyApi(
-    keyParameters: StreamKeyParameters,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const requestBody = {
-        keyName: keyParameters.keyName,
-        entries: keyParameters.entries,
-    };
-    const response = await sendPostRequest(
-        `/databases/${databaseId}/streams?encoding=buffer`,
-        requestBody
-    );
-
-    await t
-        .expect(response.status)
-        .eql(201, 'The creation of new Stream key request failed');
-}
-
-/**
- * Add Set key
- * @param keyParameters The key parameters
- * @param databaseParameters The database parameters
- */
-export async function addSetKeyApi(
-    keyParameters: SetKeyParameters,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const requestBody = {
-        keyName: keyParameters.keyName,
-        members: keyParameters.members,
-    };
-    const response = await sendPostRequest(
-        `/databases/${databaseId}/set?encoding=buffer`,
-        requestBody
-    );
-
-    await t
-        .expect(response.status)
-        .eql(201, 'The creation of new Set key request failed');
-}
-
-/**
- * Add Sorted Set key
- * @param keyParameters The key parameters
- * @param databaseParameters The database parameters
- */
-export async function addSortedSetKeyApi(
-    keyParameters: SortedSetKeyParameters,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const requestBody = {
-        keyName: keyParameters.keyName,
-        members: keyParameters.members,
-    };
-    const response = await sendPostRequest(
-        `/databases/${databaseId}/zSet?encoding=buffer`,
-        requestBody
-    );
-
-    await t
-        .expect(response.status)
-        .eql(201, 'The creation of new Sorted Set key request failed');
-}
-
-/**
- * Add List key
- * @param keyParameters The key parameters
- * @param databaseParameters The database parameters
- */
-export async function addListKeyApi(
-    keyParameters: ListKeyParameters,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const requestBody = {
-        keyName: keyParameters.keyName,
-        element: keyParameters.element,
-    };
-    const response = await sendPostRequest(
-        `/databases/${databaseId}/list?encoding=buffer`,
-        requestBody
-    );
-
-    await t
-        .expect(response.status)
-        .eql(201, 'The creation of new List key request failed');
-}
-
-/**
- * Search Key by name
- * @param keyName The key name
- * @param databaseParameters The database parameters
- */
-export async function searchKeyByNameApi(
-    keyName: string,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<string[]> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const response = await sendGetRequest(
-        `/databases/${databaseId}/keys?cursor=0&count=5000&match=${keyName}`
-    );
-
-    await t.expect(response.status).eql(200, 'Getting key request failed');
-    return await response.body[0].keys;
-}
-
-/**
- * Delete Key by name if it exists
- * @param keyName The key name
- * @param databaseParameters The database parameters
- */
-export async function deleteKeyByNameApi(
-    keyName: string,
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const isKeyExist = await searchKeyByNameApi(keyName, databaseParameters);
-    if (isKeyExist.length > 0) {
-        const requestBody = { keyNames: [keyName] };
+    /**
+     * Add Hash key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addHashKeyApi(
+        keyParameters: HashKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            fields: keyParameters.fields
+                .map((fields) => ({ ...fields,
+                    field: Buffer.from(fields.field, 'utf-8'),
+                    value: Buffer.from(fields.value, 'utf-8') }))
+        };
         const response = await sendPostRequest(
-            `/databases/${databaseId}/keys`,
+            `/databases/${databaseId}/hash?encoding=buffer`,
             requestBody
         );
 
         await t
             .expect(response.status)
-            .eql(200, 'The deletion of the key request failed');
+            .eql(201, 'The creation of new Hash key request failed');
     }
-}
 
-/**
- * Delete Keys by names
- * @param keyNames The names of keys
- * @param databaseParameters The database parameters
- */
-export async function deleteKeysApi(
-    keyNames: string[],
-    databaseParameters: AddNewDatabaseParameters
-): Promise<void> {
-    const databaseId = await databaseAPIRequests.getDatabaseIdByName(
-        databaseParameters.databaseName
-    );
-    const requestBody = { keyNames: keyNames };
-    const response = await sendPostRequest(
-        `/databases/${databaseId}/keys`,
-        requestBody
-    );
+    /**
+     * Add Stream key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addStreamKeyApi(
+        keyParameters: StreamKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            entries: keyParameters.entries
+                .map((member) =>
+                    ({
+                        ...member,
+                        fields: member.fields.map(({ name, value }) => ({
+                            name: Buffer.from(name, 'utf-8'),
+                            value: Buffer.from(value, 'utf-8')
+                        }))
+                    }))
+        };
+        const response = await sendPostRequest(
+            `/databases/${databaseId}/streams?encoding=buffer`,
+            requestBody
+        );
+        await t
+            .expect(response.status)
+            .eql(201, 'The creation of new Stream key request failed');
+    }
 
-    await t
-        .expect(response.status)
-        .eql(200, 'The deletion of the keys request failed');
+    /**
+     * Add Set key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addSetKeyApi(
+        keyParameters: SetKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            members: keyParameters.members
+                .map((member) => (Buffer.from(member, 'utf-8')))
+        };
+        const response = await sendPostRequest(
+            `/databases/${databaseId}/set?encoding=buffer`,
+            requestBody
+        );
+
+        await t
+            .expect(response.status)
+            .eql(201, 'The creation of new Set key request failed');
+    }
+
+    /**
+     * Add Sorted Set key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addSortedSetKeyApi(
+        keyParameters: SortedSetKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            members: keyParameters.members
+                .map((member) => ({ ...member, name: Buffer.from(member.name, 'utf-8') }))
+        };
+        const response = await sendPostRequest(
+            `/databases/${databaseId}/zSet?encoding=buffer`,
+            requestBody
+        );
+
+        await t
+            .expect(response.status)
+            .eql(201, 'The creation of new Sorted Set key request failed');
+    }
+
+    /**
+     * Add List key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addListKeyApi(
+        keyParameters: ListKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            element: Buffer.from(keyParameters.element, 'utf-8')
+        };
+        const response = await sendPostRequest(
+            `/databases/${databaseId}/list?encoding=buffer`,
+            requestBody
+        );
+
+        await t
+            .expect(response.status)
+            .eql(201, 'The creation of new List key request failed');
+    }
+
+    /**
+     * Add String key
+     * @param keyParameters The key parameters
+     * @param databaseParameters The database parameters
+     */
+    async addStringKeyApi(
+        keyParameters: StringKeyParameters,
+        databaseParameters: AddNewDatabaseParameters
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName
+        );
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            value: Buffer.from(keyParameters.value, 'utf-8')
+        };
+        const response = await sendPostRequest(
+            `/databases/${databaseId}/string?encoding=buffer`,
+            requestBody
+        );
+
+        await t
+            .expect(response.status)
+            .eql(201, 'The creation of new string key request failed');
+    }
+
+    /**
+     * Search Key by name
+     * @param keyName The key name
+     * @param databaseName The database name
+     */
+    async searchKeyByNameApi(
+        keyName: string,
+        databaseName: string
+    ): Promise<string[]> {
+        const requestBody = {
+            cursor: '0',
+            match: keyName
+        };
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseName
+        );
+        const response = await sendPostRequest(
+            bufferPathMask.replace('databaseId', databaseId),
+            requestBody
+        );
+        await t.expect(response.status).eql(200, 'Getting key request failed');
+        return await response.body[0].keys;
+    }
+
+    /**
+     * Delete Key by name if it exists
+     * @param keyName The key name
+     * @param databaseName The database name
+     */
+    async deleteKeyByNameApi(
+        keyName: string,
+        databaseName: string
+    ): Promise<void> {
+        const databaseId = await databaseAPIRequests.getDatabaseIdByName(
+            databaseName
+        );
+        const isKeyExist = await this.searchKeyByNameApi(keyName, databaseName);
+        if (isKeyExist.length > 0) {
+            const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] };
+            const response = await sendDeleteRequest(
+                bufferPathMask.replace('databaseId', databaseId),
+                requestBody
+            );
+            await t
+                .expect(response.status)
+                .eql(200, 'The deletion of the key request failed');
+        }
+    }
 }

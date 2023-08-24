@@ -134,6 +134,7 @@ const mockCommandExecutionRepository = () => ({
   getList: jest.fn(),
   getOne: jest.fn(),
   delete: jest.fn(),
+  deleteAll: jest.fn(),
 });
 
 describe('WorkbenchService', () => {
@@ -387,6 +388,17 @@ describe('WorkbenchService', () => {
       const result = await service.deleteCommandExecution(
         mockWorkbenchClientMetadata.databaseId,
         mockCommandExecution.id,
+      );
+
+      expect(result).toEqual(undefined);
+    });
+  });
+  describe('deleteCommandExecutions', () => {
+    it('should not return anything on delete', async () => {
+      commandExecutionProvider.deleteAll.mockResolvedValueOnce('some response');
+
+      const result = await service.deleteCommandExecutions(
+        mockWorkbenchClientMetadata.databaseId,
       );
 
       expect(result).toEqual(undefined);

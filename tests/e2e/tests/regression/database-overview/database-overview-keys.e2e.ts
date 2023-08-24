@@ -2,13 +2,14 @@ import { DatabaseHelper } from '../../../helpers/database';
 import {
     MyRedisDatabasePage,
     WorkbenchPage,
-    BrowserPage,
+    BrowserPage
 } from '../../../pageObjects';
 import { rte } from '../../../helpers/constants';
 import { cloudDatabaseConfig, commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { Common } from '../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { BrowserActions } from '../../../common-actions/browser-actions';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -16,6 +17,7 @@ const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keys: string[];
 const keyName = Common.generateWord(10);
@@ -42,7 +44,7 @@ fixture `Database overview`
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await databaseHelper.deleteCustomDatabase(`${ossStandaloneRedisearch.databaseName} [db${index}]`);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
-        await browserPage.deleteKeyByName(keyName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneRedisearch.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test

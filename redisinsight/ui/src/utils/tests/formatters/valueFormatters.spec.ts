@@ -1,4 +1,4 @@
-import { pack } from 'msgpackr'
+import { encode } from 'msgpackr'
 import { serialize } from 'php-serialize'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { anyToBuffer, bufferToSerializedFormat, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'
@@ -25,7 +25,7 @@ describe('bufferToSerializedFormat', () => {
   describe(KeyValueFormat.Msgpack, () => {
     describe('should properly serialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
-        input: anyToBuffer(Uint8Array.from(pack(v))),
+        input: anyToBuffer(encode(v)),
         expected: JSON.stringify(v)
       }))
 
@@ -88,7 +88,7 @@ describe('stringToSerializedBufferFormat', () => {
     describe('should properly unserialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: JSON.stringify(v),
-        expected: anyToBuffer(Uint8Array.from(pack(v)))
+        expected: anyToBuffer(encode(v))
       }))
 
       test.each(testValues)('test %j', ({ input, expected }) => {

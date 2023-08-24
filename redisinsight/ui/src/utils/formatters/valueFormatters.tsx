@@ -139,7 +139,7 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
     case KeyValueFormat.Msgpack: {
       try {
-        const decoded = decode(value.data)
+        const decoded = unpack(new Uint8Array(value.data)
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {

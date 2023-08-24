@@ -102,6 +102,13 @@
   :global(.euiTextColor) {
     font-size: 14px !important;
   }
+
+
+  .rspreview {
+    font-size: 12px !important;
+    margin-left: 11px;
+    color: var(--euiColorMediumShade) !important;
+  }
 }
 
 .regionSelectItem {

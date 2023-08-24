@@ -179,6 +179,16 @@ export const mockFeatureSso = Object.assign(new Feature(), {
             regions: ['asia-northeast1'],
           },
         ],
+        redistackPreview: [
+          {
+            provider: 'AWS',
+            regions: ['us-east-2', 'ap-southeast-1', 'sa-east-1']
+          },
+          {
+            provider: 'GCP',
+            regions: ['asia-northeast-1', 'europe-west-1', 'us-central-1']
+          }
+        ],
       },
     },
   },

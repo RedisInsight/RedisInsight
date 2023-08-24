@@ -37,7 +37,7 @@ export interface StateAppOAuth {
   agreement: boolean
 }
 
-export interface TFRegion {
+export interface Region {
   provider: string
   regions: string[]
 }

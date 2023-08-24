@@ -179,7 +179,7 @@ export const mockFeatureSso = Object.assign(new Feature(), {
             regions: ['asia-northeast1'],
           },
         ],
-        redistackPreview: [
+        redisStackPreview: [
           {
             provider: 'AWS',
             regions: ['us-east-2', 'ap-southeast-1', 'sa-east-1']

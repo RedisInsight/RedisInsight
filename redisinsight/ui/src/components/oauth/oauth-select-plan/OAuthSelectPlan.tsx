@@ -51,7 +51,7 @@ const OAuthSelectPlan = () => {
   const { [FeatureFlags.cloudSso]: cloudSsoFeature = {} } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const tfRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.triggersAndFunctions', [])
-  const rsRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.redistackPreview', [])
+  const rsRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.redisStackPreview', [])
 
   const [plans, setPlans] = useState(plansInit || [])
   const [planIdSelected, setPlanIdSelected] = useState('')

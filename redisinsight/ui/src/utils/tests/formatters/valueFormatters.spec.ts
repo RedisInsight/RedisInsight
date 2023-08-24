@@ -25,7 +25,7 @@ describe('bufferToSerializedFormat', () => {
   describe(KeyValueFormat.Msgpack, () => {
     describe('should properly serialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
-        input: anyToBuffer(pack(v)),
+        input: anyToBuffer(Uint8Array.from(pack(v))),
         expected: JSON.stringify(v)
       }))
 
@@ -88,7 +88,7 @@ describe('stringToSerializedBufferFormat', () => {
     describe('should properly unserialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({
         input: JSON.stringify(v),
-        expected: anyToBuffer(pack(v))
+        expected: anyToBuffer(Uint8Array.from(pack(v)))
       }))
 
       test.each(testValues)('test %j', ({ input, expected }) => {

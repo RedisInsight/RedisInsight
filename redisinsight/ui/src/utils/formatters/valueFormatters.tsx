@@ -180,7 +180,7 @@ const stringToSerializedBufferFormat = (format: KeyValueFormat, value: string): 
     case KeyValueFormat.Msgpack: {
       try {
         const json = JSON.parse(value)
-        const encoded = pack(json)
+        const encoded = Uint8Array.from(pack(json))
         return anyToBuffer(encoded)
       } catch (e) {
         return stringToBuffer(value, format)

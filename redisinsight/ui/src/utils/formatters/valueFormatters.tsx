@@ -72,7 +72,7 @@ const formattingBuffer = (
     case KeyValueFormat.JSON: return bufferToJSON(reply, props as FormattingProps)
     case KeyValueFormat.Msgpack: {
       try {
-        const decoded = decode(reply.data);
+        const decoded = decode(Uint8Array.from(reply.data));
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -139,7 +139,7 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
     case KeyValueFormat.Msgpack: {
       try {
-        const decoded = decode(value.data)
+        const decoded = decode(Uint8Array.from(value.data))
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {

@@ -81,7 +81,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(Buffer.from(reply.data), { encoding: 'binary' })
+        const decoded = unserialize(Buffer.from(reply.data), {}, { strict: false, encoding: 'binary' })
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -148,7 +148,7 @@ const bufferToSerializedFormat = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(Buffer.from(value.data), { encoding: 'binary' })
+        const decoded = unserialize(Buffer.from(value.data), {}, { strict: false, encoding: 'binary' })
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {

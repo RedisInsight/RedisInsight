@@ -131,6 +131,15 @@ describe('OAuthSelectPlan', () => {
     expect(tfIconEl).toBeInTheDocument()
   })
 
+  it('if source is not Trigger and Functions region with RS should be selected by default', async () => {
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const tfIconEl = queryByTestId(/rs-text-/)
+
+    expect(tfIconEl).toBeInTheDocument()
+  })
+
   it('Should display region with RS preview text', async () => {
     (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
       isOpenDialog: true,

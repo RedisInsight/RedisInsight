@@ -37,11 +37,10 @@ import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
 
-export const DEFAULT_REGION = 'us-east-2'
-export const DEFAULT_REGION_2 = 'asia-northeast-1'
+export const DEFAULT_REGION = 'us-east-1'
 export const DEFAULT_PROVIDER = OAuthProvider.AWS
 
-const getTFProviderRegions = (regions: Region[], provider: OAuthProvider) =>
+const getProviderRegions = (regions: Region[], provider: OAuthProvider) =>
   (find(regions, { provider }) || {}).regions || []
 
 const OAuthSelectPlan = () => {
@@ -56,14 +55,16 @@ const OAuthSelectPlan = () => {
   const [plans, setPlans] = useState(plansInit || [])
   const [planIdSelected, setPlanIdSelected] = useState('')
   const [providerSelected, setProviderSelected] = useState<OAuthProvider>(DEFAULT_PROVIDER)
-  const [tfProviderRegions, setTfProviderRegions] = useState(getTFProviderRegions(tfRegions, providerSelected))
+  const [tfProviderRegions, setTfProviderRegions] = useState(getProviderRegions(tfRegions, providerSelected))
+  const [rsProviderRegions, setRsProviderRegions] = useState(getProviderRegions(rsRegions, providerSelected))
 
   const dispatch = useDispatch()
 
   const isTFSource = source?.endsWith(OAuthSocialSource.TriggersAndFunctions)
 
   useEffect(() => {
-    setTfProviderRegions(getTFProviderRegions(tfRegions, providerSelected))
+    setTfProviderRegions(getProviderRegions(tfRegions, providerSelected))
+    setRsProviderRegions(getProviderRegions(rsRegions, providerSelected))
   }, [providerSelected])
 
   useEffect(() => {
@@ -72,8 +73,8 @@ const OAuthSelectPlan = () => {
     }
 
     const defaultRegions = isTFSource
-      ? tfProviderRegions || [DEFAULT_REGION, DEFAULT_REGION_2]
-      : [DEFAULT_REGION, DEFAULT_REGION_2]
+      ? tfProviderRegions || rsProviderRegions || [DEFAULT_REGION]
+      : rsProviderRegions || [DEFAULT_REGION]
 
     const filteredPlans = filter(plansInit, { provider: providerSelected })
       .sort((a, b) => (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0))
@@ -84,7 +85,7 @@ const OAuthSelectPlan = () => {
 
     setPlans(filteredPlans)
     setPlanIdSelected(planId)
-  }, [isTFSource, plansInit, providerSelected, tfProviderRegions])
+  }, [isTFSource, plansInit, providerSelected, tfProviderRegions, rsProviderRegions])
 
   const handleOnClose = useCallback(() => {
     sendEventTelemetry({

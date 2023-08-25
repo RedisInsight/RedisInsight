@@ -73,8 +73,8 @@ const OAuthSelectPlan = () => {
     }
 
     const defaultRegions = isTFSource
-      ? tfProviderRegions || rsProviderRegions || [DEFAULT_REGION]
-      : rsProviderRegions || [DEFAULT_REGION]
+      ? [tfProviderRegions, rsProviderRegions, [DEFAULT_REGION]].find((arr) => arr?.length)
+      : [rsProviderRegions, [DEFAULT_REGION]]
 
     const filteredPlans = filter(plansInit, { provider: providerSelected })
       .sort((a, b) => (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0))
@@ -105,7 +105,7 @@ const OAuthSelectPlan = () => {
     const rsProviderRegions: string[] = find(rsRegions, { provider })?.regions || []
 
     return (
-      <EuiText color="subdued" size="s">
+      <EuiText color="subdued" size="s" data-testid={`option-${region}`}>
         {`${countryName} (${cityName})`}
         <EuiTextColor className={styles.regionName}>{region}</EuiTextColor>
         {rsProviderRegions?.includes(region) && (
@@ -166,7 +166,7 @@ const OAuthSelectPlan = () => {
           </EuiTitle>
           <section className={styles.providers}>
             { OAuthProviders.map(({ icon, id, label }) => (
-              <div className={styles.provider}>
+              <div className={styles.provider} key={id}>
                 {id === providerSelected
                   && <div className={cx(styles.providerActiveIcon)}><EuiIcon type="check" /></div>}
                 <EuiButton

@@ -3,8 +3,9 @@ import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, within } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addFreeDb, oauthCloudPlanSelector, oauthCloudSelector, initialState } from 'uiSrc/slices/oauth/cloud'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { MOCK_NO_TF_REGION, MOCK_REGIONS, MOCK_RS_PREVIEW_REGION } from 'uiSrc/constants/mocks/mock-sso'
+import { MOCK_NO_TF_REGION, MOCK_REGIONS, MOCK_RS_PREVIEW_REGION, MOCK_CUSTOM_REGIONS } from 'uiSrc/constants/mocks/mock-sso'
 import OAuthSelectPlan from './OAuthSelectPlan'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -152,6 +153,35 @@ describe('OAuthSelectPlan', () => {
     const rsTextEl = queryByTestId(/rs-text-/)
 
     expect(rsTextEl).toBeInTheDocument()
+  })
+
+  it('should be selected first region by default', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: [MOCK_NO_TF_REGION, ...MOCK_CUSTOM_REGIONS],
+    })
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const selectedEl = queryByTestId('option-custom-1')
+
+    expect(selectedEl).toBeInTheDocument()
+  })
+
+  it('should be selected us-east-1 region by default', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: [MOCK_NO_TF_REGION, ...MOCK_CUSTOM_REGIONS],
+    });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const selectedEl = queryByTestId('option-us-east-1')
+
+    expect(selectedEl).toBeInTheDocument()
   })
 
   it('should display text if no Trigger and Function regions available on this vendor', async () => {

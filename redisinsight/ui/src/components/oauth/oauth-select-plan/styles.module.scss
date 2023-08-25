@@ -145,3 +145,9 @@
   margin-left: 11px;
   margin-bottom: 0 !important;
 }
+
+:global(.euiTextColor).rspreview {
+  font-size: 12px !important;
+  margin-left: 11px;
+  color: var(--euiColorMediumShade) !important;
+}

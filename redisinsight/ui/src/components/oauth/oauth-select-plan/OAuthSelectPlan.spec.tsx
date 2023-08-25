@@ -4,7 +4,7 @@ import { cleanup, fireEvent, mockedStore, render, within } from 'uiSrc/utils/tes
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addFreeDb, oauthCloudPlanSelector, oauthCloudSelector, initialState } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { MOCK_NO_TF_REGION, MOCK_REGIONS } from 'uiSrc/constants/mocks/mock-sso'
+import { MOCK_NO_TF_REGION, MOCK_REGIONS, MOCK_RS_PREVIEW_REGION } from 'uiSrc/constants/mocks/mock-sso'
 import OAuthSelectPlan from './OAuthSelectPlan'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -41,7 +41,17 @@ jest.mock('uiSrc/slices/app/features', () => ({
                 provider: 'GCP',
                 regions: ['asia-northeast1']
               }
-            ]
+            ],
+            redisStackPreview: [
+              {
+                provider: 'AWS',
+                regions: ['us-east-2', 'ap-southeast-1', 'sa-east-1']
+              },
+              {
+                provider: 'GCP',
+                regions: ['asia-northeast-1', 'europe-west-1', 'us-central-1']
+              }
+            ],
           }
         }
       }
@@ -119,6 +129,20 @@ describe('OAuthSelectPlan', () => {
     const tfIconEl = queryByTestId(/tf-icon-/)
 
     expect(tfIconEl).toBeInTheDocument()
+  })
+
+  it('Should display region with RS preview text', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: [MOCK_RS_PREVIEW_REGION],
+    })
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const rsTextEl = queryByTestId(/rs-text-/)
+
+    expect(rsTextEl).toBeInTheDocument()
   })
 
   it('should display text if no Trigger and Function regions available on this vendor', async () => {

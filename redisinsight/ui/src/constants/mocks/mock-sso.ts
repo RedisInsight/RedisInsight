@@ -18,6 +18,26 @@ export const MOCK_NO_TF_REGION = {
   }
 }
 
+export const MOCK_RS_PREVIEW_REGION = {
+  id: 12148,
+  type: 'fixed',
+  name: 'Cache 30MB',
+  provider: 'AWS',
+  price: 0,
+  region: 'us-east-2',
+  regionId: 1,
+  details: {
+    id: 1,
+    name: 'us-east-2',
+    cloud: 'AWS',
+    displayOrder: 1,
+    countryName: 'US West',
+    cityName: 'Oregon',
+    regionId: 1,
+    flag: 'ie'
+  }
+}
+
 export const MOCK_REGIONS = [
   MOCK_NO_TF_REGION,
   {

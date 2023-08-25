@@ -1,5 +1,5 @@
 {
-  "version": 2.3201,
+  "version": 2.3202,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -38,6 +38,16 @@
               {
                 "provider": "GCP",
                 "regions": ["asia-northeast1"]
+              }
+            ],
+            "redisStackPreview": [
+              {
+                "provider": "AWS",
+                "regions": ["us-east-2", "ap-southeast-1", "sa-east-1"]
+              },
+              {
+                "provider": "GCP",
+                "regions": ["asia-northeast-1", "europe-west-1", "us-central-1"]
               }
             ]
           }

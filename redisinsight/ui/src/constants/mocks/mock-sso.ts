@@ -4,11 +4,11 @@ export const MOCK_NO_TF_REGION = {
   name: 'Cache 30MB',
   provider: 'AWS',
   price: 0,
-  region: 'us-east-1',
+  region: 'us-east-2',
   regionId: 4,
   details: {
     id: 4,
-    name: 'us-east-1',
+    name: 'us-east-2',
     cloud: 'AWS',
     displayOrder: 4,
     countryName: 'Europe',

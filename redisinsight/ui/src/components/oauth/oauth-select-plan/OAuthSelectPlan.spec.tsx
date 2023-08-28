@@ -158,7 +158,7 @@ describe('OAuthSelectPlan', () => {
   it('should be selected first region by default', async () => {
     (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
       isOpenDialog: true,
-      data: [MOCK_NO_TF_REGION, ...MOCK_CUSTOM_REGIONS],
+      data: MOCK_CUSTOM_REGIONS,
     })
 
     const container = render(<OAuthSelectPlan />)
@@ -169,19 +169,33 @@ describe('OAuthSelectPlan', () => {
     expect(selectedEl).toBeInTheDocument()
   })
 
-  it('should be selected us-east-1 region by default', async () => {
+  it('should be selected us-east-2 region by default', async () => {
     (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
       isOpenDialog: true,
-      data: [MOCK_NO_TF_REGION, ...MOCK_CUSTOM_REGIONS],
+      data: [MOCK_NO_TF_REGION, MOCK_RS_PREVIEW_REGION, ...MOCK_CUSTOM_REGIONS],
     });
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
 
     const container = render(<OAuthSelectPlan />)
 
     const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
-    const selectedEl = queryByTestId('option-us-east-1')
+    const selectedEl = queryByTestId('option-us-east-2')
 
     expect(selectedEl).toBeInTheDocument()
+  })
+
+  it('Should select region with RS preview text by default', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: [MOCK_RS_PREVIEW_REGION, ...MOCK_CUSTOM_REGIONS],
+    })
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const rsTextEl = queryByTestId(/rs-text-/)
+
+    expect(rsTextEl).toBeInTheDocument()
   })
 
   it('should display text if no Trigger and Function regions available on this vendor', async () => {

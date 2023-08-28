@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom'
 import {
   fetchPlans,
   fetchUserInfo,
-  oauthCloudUserDataSelector,
   setJob,
   setOAuthCloudSource,
   setSignInDialogState,
@@ -22,7 +21,6 @@ import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notific
 
 const ConfigOAuth = () => {
   const { isAutodiscoverySSO } = useSelector(cloudSelector)
-  const userData = useSelector(oauthCloudUserDataSelector)
 
   const isAutodiscoverySSORef = useRef(isAutodiscoverySSO)
 
@@ -35,10 +33,6 @@ const ConfigOAuth = () => {
     // delete
     // dispatch(fetchUserInfo(fetchUserInfoSuccess))
   }, [])
-
-  useEffect(() => {
-    console.log({ userData })
-  }, [userData])
 
   useEffect(() => {
     isAutodiscoverySSORef.current = isAutodiscoverySSO

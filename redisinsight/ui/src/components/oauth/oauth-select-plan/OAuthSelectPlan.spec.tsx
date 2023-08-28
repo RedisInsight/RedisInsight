@@ -3,8 +3,9 @@ import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, within } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addFreeDb, oauthCloudPlanSelector, oauthCloudSelector, initialState } from 'uiSrc/slices/oauth/cloud'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { MOCK_NO_TF_REGION, MOCK_REGIONS, MOCK_RS_PREVIEW_REGION } from 'uiSrc/constants/mocks/mock-sso'
+import { MOCK_NO_TF_REGION, MOCK_REGIONS, MOCK_RS_PREVIEW_REGION, MOCK_CUSTOM_REGIONS } from 'uiSrc/constants/mocks/mock-sso'
 import OAuthSelectPlan from './OAuthSelectPlan'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -131,10 +132,62 @@ describe('OAuthSelectPlan', () => {
     expect(tfIconEl).toBeInTheDocument()
   })
 
+  it('if source is not Trigger and Functions region with RS should be selected by default', async () => {
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const tfIconEl = queryByTestId(/rs-text-/)
+
+    expect(tfIconEl).toBeInTheDocument()
+  })
+
   it('Should display region with RS preview text', async () => {
     (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
       isOpenDialog: true,
       data: [MOCK_RS_PREVIEW_REGION],
+    })
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const rsTextEl = queryByTestId(/rs-text-/)
+
+    expect(rsTextEl).toBeInTheDocument()
+  })
+
+  it('should be selected first region by default', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: MOCK_CUSTOM_REGIONS,
+    })
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const selectedEl = queryByTestId('option-custom-1')
+
+    expect(selectedEl).toBeInTheDocument()
+  })
+
+  it('should be selected us-east-2 region by default', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: [MOCK_NO_TF_REGION, MOCK_RS_PREVIEW_REGION, ...MOCK_CUSTOM_REGIONS],
+    });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
+
+    const container = render(<OAuthSelectPlan />)
+
+    const { queryByTestId } = within(container.queryByTestId('select-oauth-region') as HTMLElement)
+    const selectedEl = queryByTestId('option-us-east-2')
+
+    expect(selectedEl).toBeInTheDocument()
+  })
+
+  it('Should select region with RS preview text by default', async () => {
+    (oauthCloudPlanSelector as jest.Mock).mockReturnValue({
+      isOpenDialog: true,
+      data: [MOCK_RS_PREVIEW_REGION, ...MOCK_CUSTOM_REGIONS],
     })
 
     const container = render(<OAuthSelectPlan />)

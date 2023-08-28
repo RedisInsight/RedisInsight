@@ -4,11 +4,11 @@ export const MOCK_NO_TF_REGION = {
   name: 'Cache 30MB',
   provider: 'AWS',
   price: 0,
-  region: 'eu-west-1',
+  region: 'us-east-2',
   regionId: 4,
   details: {
     id: 4,
-    name: 'eu-west-1',
+    name: 'us-east-2',
     cloud: 'AWS',
     displayOrder: 4,
     countryName: 'Europe',
@@ -89,6 +89,66 @@ export const MOCK_REGIONS = [
     details: {
       id: 27,
       name: 'us-central1',
+      cloud: 'GCP',
+      displayOrder: 17,
+      countryName: 'North America',
+      cityName: 'Iowa',
+      regionId: 27,
+      flag: 'us'
+    }
+  }
+]
+
+export const MOCK_CUSTOM_REGIONS = [
+  {
+    id: 12150,
+    type: 'fixed',
+    name: 'Cache 30MB',
+    provider: 'AWS',
+    price: 0,
+    region: 'custom-1',
+    regionId: 11,
+    details: {
+      id: 11,
+      name: 'custom-1',
+      cloud: 'AWS',
+      displayOrder: 2,
+      countryName: 'Asia Pacific',
+      cityName: 'Singapore',
+      regionId: 11,
+      flag: 'sg'
+    }
+  },
+  {
+    id: 12152,
+    type: 'fixed',
+    name: 'Cache 30MB',
+    provider: 'Azure',
+    price: 0,
+    region: 'custom-2',
+    regionId: 16,
+    details: {
+      id: 16,
+      name: 'custom-2',
+      cloud: 'Azure',
+      displayOrder: 10,
+      countryName: 'East US',
+      cityName: 'Virginia',
+      regionId: 16,
+      flag: 'us'
+    }
+  },
+  {
+    id: 12153,
+    type: 'fixed',
+    name: 'Cache 30MB',
+    provider: 'GCP',
+    price: 0,
+    region: 'custom-3',
+    regionId: 27,
+    details: {
+      id: 27,
+      name: 'custom-3',
       cloud: 'GCP',
       displayOrder: 17,
       countryName: 'North America',

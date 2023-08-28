@@ -4,7 +4,7 @@ import { Buffer } from 'buffer'
 import { isUndefined } from 'lodash'
 import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
-import { loads as loadsPickle } from 'jpickle'
+import { Parser } from 'pickleparser'
 import JSONBigInt from 'json-bigint'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
@@ -108,7 +108,8 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Pickle: {
       try {
-        const decoded = loadsPickle(bufferToUTF8(reply))
+        const parser = new Parser()
+        const decoded = parser.parse(new Uint8Array(reply.data))
 
         if (isUndefined(decoded)) {
           return {

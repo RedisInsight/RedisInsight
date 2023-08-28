@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl } from '../../../helpers/conf';
 import { DatabaseHelper } from '../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { DatabasesActions } from '../../../common-actions/databases-actions';
@@ -84,7 +84,6 @@ fixture `Import databases`
         // Delete all existing connections
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .afterEach(async() => {
@@ -126,7 +125,7 @@ test('Connection import modal window', async t => {
     await t.click(myRedisDatabasePage.removeImportedFileBtn);
     await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
 });
-test('Connection import from JSON', async t => {
+test.only('Connection import from JSON', async t => {
     // Verify that user can import database with mandatory/optional fields
     await databasesActions.importDatabase(rdmData);
 

@@ -142,8 +142,8 @@ const bufferToJava = (reply: RedisResponseBuffer) => {
   const stream = new ObjectInputStream(bufferToUint8Array(reply))
   const decoded = stream.readObject()
 
-  if (typeof(decoded) !== 'object') {
-    return decoded;
+  if (typeof decoded !== 'object') {
+    return decoded
   }
 
   const { fields } = decoded

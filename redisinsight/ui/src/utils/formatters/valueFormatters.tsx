@@ -108,8 +108,8 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Pickle: {
       try {
-        const parser = new Parser();
-        const decoded = parser.parse(new Uint8Array(reply.data));
+        const parser = new Parser()
+        const decoded = parser.parse(new Uint8Array(reply.data))
 
         if (isUndefined(decoded)) {
           return {

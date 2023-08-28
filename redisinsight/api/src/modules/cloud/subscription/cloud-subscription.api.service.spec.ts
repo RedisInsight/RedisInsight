@@ -5,18 +5,17 @@ import {
   mockCloudSubscriptionApiProvider,
   mockCloudSubscriptionCapiService,
   mockCloudSubscriptionRegions,
-  mockCloudUserApiService,
   mockSessionMetadata,
   mockSubscriptionPlanResponse,
-  MockType
+  MockType,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { CloudSubscriptionApiService } from './cloud-subscription.api.service';
 import { CloudUserApiService } from '../user/cloud-user.api.service';
 import { CloudSessionService } from '../session/cloud-session.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api.provider';
-import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 
 describe('CloudSubscriptionApiService', () => {
   let service: CloudSubscriptionApiService;

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { rte } from '../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
-import { commonUrl, ossStandaloneConfig } from '../../../helpers/conf';
+import { commonUrl } from '../../../helpers/conf';
 import { DatabaseHelper } from '../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { DatabasesActions } from '../../../common-actions/databases-actions';
@@ -84,7 +84,6 @@ fixture `Import databases`
         // Delete all existing connections
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
     })
     .afterEach(async() => {

@@ -125,7 +125,7 @@ test('Connection import modal window', async t => {
     await t.click(myRedisDatabasePage.removeImportedFileBtn);
     await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
 });
-test.only('Connection import from JSON', async t => {
+test('Connection import from JSON', async t => {
     // Verify that user can import database with mandatory/optional fields
     await databasesActions.importDatabase(rdmData);
 

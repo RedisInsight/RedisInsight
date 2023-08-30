@@ -1,4 +1,4 @@
-import { mockAuthorization } from 'src/__mocks__/cloud-database';
+import { mockAuthorization } from 'src/__mocks__';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from './cloud.api.provider';
 

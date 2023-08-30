@@ -1,4 +1,4 @@
-import { encode } from '@msgpack/msgpack'
+import { encode } from 'msgpackr'
 import { serialize } from 'php-serialize'
 import { KeyValueFormat } from 'uiSrc/constants'
 import { anyToBuffer, bufferToSerializedFormat, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'

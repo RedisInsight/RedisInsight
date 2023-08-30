@@ -28,7 +28,7 @@ import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { CloudJobStep } from 'uiSrc/electron/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FeatureFlags, Theme } from 'uiSrc/constants'
-import { OAuthSocialSource, TFRegion } from 'uiSrc/slices/interfaces'
+import { OAuthSocialSource, Region } from 'uiSrc/slices/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import TriggeredFunctionsDarkSVG from 'uiSrc/assets/img/sidebar/gears.svg'
 import TriggeredFunctionsLightSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
@@ -37,9 +37,10 @@ import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
 
-export const DEFAULT_REGION = 'us-east-1'
+export const DEFAULT_REGIONS = ['us-east-2', 'asia-northeast-1']
 export const DEFAULT_PROVIDER = OAuthProvider.AWS
-const getTFProviderRegions = (regions: TFRegion[], provider: OAuthProvider) =>
+
+const getProviderRegions = (regions: Region[], provider: OAuthProvider) =>
   (find(regions, { provider }) || {}).regions || []
 
 const OAuthSelectPlan = () => {
@@ -48,38 +49,43 @@ const OAuthSelectPlan = () => {
   const { source } = useSelector(oauthCloudSelector)
   const { [FeatureFlags.cloudSso]: cloudSsoFeature = {} } = useSelector(appFeatureFlagsFeaturesSelector)
 
-  const tfRegions: TFRegion[] = get(cloudSsoFeature, 'data.selectPlan.components.triggersAndFunctions', [])
+  const tfRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.triggersAndFunctions', [])
+  const rsRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.redisStackPreview', [])
 
   const [plans, setPlans] = useState(plansInit || [])
   const [planIdSelected, setPlanIdSelected] = useState('')
   const [providerSelected, setProviderSelected] = useState<OAuthProvider>(DEFAULT_PROVIDER)
-  const [tfProviderRegions, setTfProviderRegions] = useState(getTFProviderRegions(tfRegions, providerSelected))
+  const [tfProviderRegions, setTfProviderRegions] = useState(getProviderRegions(tfRegions, providerSelected))
+  const [rsProviderRegions, setRsProviderRegions] = useState(getProviderRegions(rsRegions, providerSelected))
 
   const dispatch = useDispatch()
 
   const isTFSource = source?.endsWith(OAuthSocialSource.TriggersAndFunctions)
 
   useEffect(() => {
-    setTfProviderRegions(getTFProviderRegions(tfRegions, providerSelected))
-  }, [providerSelected])
+    setTfProviderRegions(getProviderRegions(tfRegions, providerSelected))
+    setRsProviderRegions(getProviderRegions(rsRegions, providerSelected))
+  }, [providerSelected, plansInit])
 
   useEffect(() => {
     if (!plansInit.length) {
       return
     }
 
-    const defaultRegions = isTFSource ? tfProviderRegions || [DEFAULT_REGION] : [DEFAULT_REGION]
+    const defaultRegions = isTFSource
+      ? [tfProviderRegions, DEFAULT_REGIONS].find((arr) => arr?.length)
+      : DEFAULT_REGIONS
 
     const filteredPlans = filter(plansInit, { provider: providerSelected })
       .sort((a, b) => (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0))
 
     const defaultPlan = filteredPlans.find(({ region = '' }) => defaultRegions?.includes(region))
-
-    const planId = (defaultPlan || first(filteredPlans) || {}).id?.toString() || ''
+    const rsPreviewPlan = filteredPlans.find(({ region = '' }) => rsProviderRegions?.includes(region))
+    const planId = (defaultPlan || rsPreviewPlan || first(filteredPlans) || {}).id?.toString() || ''
 
     setPlans(filteredPlans)
     setPlanIdSelected(planId)
-  }, [isTFSource, plansInit, providerSelected, tfProviderRegions])
+  }, [isTFSource, plansInit, providerSelected, tfProviderRegions, rsProviderRegions])
 
   const handleOnClose = useCallback(() => {
     sendEventTelemetry({
@@ -96,11 +102,15 @@ const OAuthSelectPlan = () => {
   const getOptionDisplay = (item: CloudSubscriptionPlanResponse) => {
     const { region = '', details: { countryName = '', cityName = '' }, provider } = item
     const tfProviderRegions: string[] = find(tfRegions, { provider })?.regions || []
+    const rsProviderRegions: string[] = find(rsRegions, { provider })?.regions || []
 
     return (
-      <EuiText color="subdued" size="s">
+      <EuiText color="subdued" size="s" data-testid={`option-${region}`}>
         {`${countryName} (${cityName})`}
         <EuiTextColor className={styles.regionName}>{region}</EuiTextColor>
+        {rsProviderRegions?.includes(region) && (
+          <EuiTextColor className={styles.rspreview} data-testid={`rs-text-${region}`}>(Redis 7.2)</EuiTextColor>
+        )}
         { tfProviderRegions?.includes(region) && (
           <EuiToolTip
             content="Triggers and functions are available in this region"
@@ -156,7 +166,7 @@ const OAuthSelectPlan = () => {
           </EuiTitle>
           <section className={styles.providers}>
             { OAuthProviders.map(({ icon, id, label }) => (
-              <div className={styles.provider}>
+              <div className={styles.provider} key={id}>
                 {id === providerSelected
                   && <div className={cx(styles.providerActiveIcon)}><EuiIcon type="check" /></div>}
                 <EuiButton

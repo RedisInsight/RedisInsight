@@ -24,7 +24,7 @@ export class LocalAgreementsRepository extends AgreementsRepository {
   }
 
   async update(id: string, agreements: Agreements): Promise<Agreements> {
-    await this.repository.update({}, classToClass(AgreementsEntity, agreements));
+    await this.repository.update(id || {}, classToClass(AgreementsEntity, agreements));
 
     return this.getOrCreate();
   }

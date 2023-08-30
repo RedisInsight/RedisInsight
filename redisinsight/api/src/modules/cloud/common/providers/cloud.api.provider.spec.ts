@@ -1,3 +1,4 @@
+import { mockAuthorization } from 'src/__mocks__/cloud-database';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from './cloud.api.provider';
 
@@ -47,7 +48,7 @@ const getHeadersTests = [
   },
   {
     input: { accessToken: 'token' },
-    expected: { authorization: 'Bearer token' },
+    expected: { authorization: mockAuthorization },
   },
   {
     input: { apiSessionId: 'id' },
@@ -59,7 +60,7 @@ const getHeadersTests = [
   },
   {
     input: { accessToken: 'token', apiSessionId: 'id', csrf: 'csrf-token' },
-    expected: { authorization: 'Bearer token', cookie: 'JSESSIONID=id', 'x-csrf-token': 'csrf-token' },
+    expected: { authorization: mockAuthorization, cookie: 'JSESSIONID=id', 'x-csrf-token': 'csrf-token' },
   },
 ];
 

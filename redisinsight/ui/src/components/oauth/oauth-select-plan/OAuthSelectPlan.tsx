@@ -37,7 +37,7 @@ import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
 
-export const DEFAULT_REGIONS = ['us-east-2', 'asia-northeast-1']
+export const DEFAULT_REGIONS = ['us-east-2', 'asia-northeast1']
 export const DEFAULT_PROVIDER = OAuthProvider.AWS
 
 const getProviderRegions = (regions: Region[], provider: OAuthProvider) =>

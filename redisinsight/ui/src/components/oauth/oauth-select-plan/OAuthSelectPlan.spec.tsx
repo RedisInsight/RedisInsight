@@ -50,7 +50,7 @@ jest.mock('uiSrc/slices/app/features', () => ({
               },
               {
                 provider: 'GCP',
-                regions: ['asia-northeast-1', 'europe-west-1', 'us-central-1']
+                regions: ['asia-northeast1', 'europe-west1', 'us-central1']
               }
             ],
           }

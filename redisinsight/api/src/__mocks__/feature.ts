@@ -186,7 +186,7 @@ export const mockFeatureSso = Object.assign(new Feature(), {
           },
           {
             provider: 'GCP',
-            regions: ['asia-northeast-1', 'europe-west-1', 'us-central-1']
+            regions: ['asia-northeast1', 'europe-west1', 'us-central1']
           }
         ],
       },

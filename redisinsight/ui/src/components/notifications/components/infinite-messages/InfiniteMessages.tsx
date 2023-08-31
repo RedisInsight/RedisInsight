@@ -5,6 +5,7 @@ import { CloudJobStep } from 'uiSrc/electron/constants'
 export enum InfiniteMessagesIds {
   oAuthProgress = 'oAuthProgress',
   oAuthSuccess = 'oAuthSuccess',
+  autoCreateDb = 'autoCreateDb'
 }
 
 export const INFINITE_MESSAGES = {
@@ -70,4 +71,29 @@ export const INFINITE_MESSAGES = {
       </div>
     )
   }),
+  AUTO_CREATING_DATABASE: () => ({
+    id: InfiniteMessagesIds.autoCreateDb,
+    Inner: (
+      <div
+        role="presentation"
+        data-testid="pending-create-db-notification"
+      >
+        <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiLoadingSpinner className="infiniteMessage__icon" />
+          </EuiFlexItem>
+          <EuiFlexItem grow>
+            <EuiTitle className="infiniteMessage__title">
+              <span>
+                Connecting to your database
+              </span>
+            </EuiTitle>
+            <EuiText size="xs">
+              This may take several minutes, but it is totally worth it!
+            </EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    )
+  })
 }

@@ -1,21 +1,19 @@
 /* eslint-disable no-nested-ternary */
 import { ConnectionString } from 'connection-string'
-import { isUndefined, pick, toNumber, toString } from 'lodash'
+import { isEmpty, isUndefined, pick, toNumber, toString } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
 import {
+  checkConnectToInstanceAction,
   createInstanceStandaloneAction,
   instancesSelector,
-  updateInstanceAction,
   testInstanceStandaloneAction,
+  updateInstanceAction,
 } from 'uiSrc/slices/instances/instances'
-import {
-  fetchMastersSentinelAction,
-  sentinelSelector,
-} from 'uiSrc/slices/instances/sentinel'
-import { Nullable, removeEmpty } from 'uiSrc/utils'
+import { fetchMastersSentinelAction, sentinelSelector, } from 'uiSrc/slices/instances/sentinel'
+import { Nullable, removeEmpty, transformQueryParamsObject } from 'uiSrc/utils'
 import { localStorageService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
@@ -24,6 +22,9 @@ import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/cons
 import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 
+import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
+import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
+import { getRedirectionPage } from 'uiSrc/utils/routing'
 import InstanceForm from './InstanceForm'
 import { DbConnectionInfo } from './InstanceForm/interfaces'
 import { ADD_NEW, ADD_NEW_CA_CERT, DEFAULT_TIMEOUT, NO_CA_CERT, SshPassType } from './InstanceForm/constants'
@@ -33,6 +34,8 @@ export interface Props {
   isResizablePanel?: boolean
   instanceType: InstanceType
   editMode: boolean
+  urlHandlingAction?: Nullable<UrlHandlingActions>
+  initialValues?: Nullable<Record<string, any>>
   editedInstance: Nullable<Instance>
   onClose?: () => void
   onDbEdited?: () => void
@@ -56,7 +59,7 @@ export enum TitleDatabaseText {
   EditDatabase = 'Edit Redis Database',
 }
 
-const getInitialValues = (editedInstance: Nullable<Instance>) => ({
+const getInitialValues = (editedInstance?: Nullable<Record<string, any>>) => ({
   // undefined - to show default value, empty string - for existing db
   host: editedInstance?.host ?? (editedInstance ? '' : undefined),
   port: editedInstance?.port?.toString() ?? (editedInstance ? '' : undefined),
@@ -84,8 +87,10 @@ const InstanceFormWrapper = (props: Props) => {
     onDbEdited,
     onAliasEdited,
     editedInstance,
+    urlHandlingAction,
+    initialValues: initialValuesProp
   } = props
-  const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance))
+  const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance || initialValuesProp))
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
   const { host, port, name, username, password, timeout, tls, ssh, sshPassType, servername } = initialValues
@@ -95,6 +100,7 @@ const InstanceFormWrapper = (props: Props) => {
   const { data: caCertificates } = useSelector(caCertsSelector)
   const { data: certificates } = useSelector(clientCertsSelector)
   const { server } = useSelector(appInfoSelector)
+  const { properties: urlHandlingProperties } = useSelector(appRedirectionSelector)
 
   const tlsClientAuthRequired = !!editedInstance?.clientCert?.id ?? false
   const selectedTlsClientCertId = editedInstance?.clientCert?.id ?? ADD_NEW
@@ -115,15 +121,30 @@ const InstanceFormWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    editedInstance && setInitialValues({
+    (editedInstance || initialValuesProp) && setInitialValues({
       ...initialValues,
-      ...getInitialValues(editedInstance)
+      ...getInitialValues(editedInstance || initialValuesProp)
     })
     setIsCloneMode(false)
-  }, [editedInstance])
+  }, [editedInstance, initialValuesProp])
 
   const onMastersSentinelFetched = () => {
     history.push(Pages.sentinelDatabases)
+  }
+
+  const handleSuccessConnectWithRedirect = (id: string) => {
+    const { redirect } = urlHandlingProperties
+    dispatch(setUrlHandlingInitialState())
+
+    dispatch(checkConnectToInstanceAction(id, (id) => {
+      if (redirect) {
+        const pageToRedirect = getRedirectionPage(redirect, id)
+
+        if (pageToRedirect) {
+          history.push(pageToRedirect)
+        }
+      }
+    }))
   }
 
   const handleSubmitDatabase = (payload: any) => {
@@ -144,6 +165,23 @@ const InstanceFormWrapper = (props: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_MANUALLY_SUBMITTED
       })
+
+      if (urlHandlingAction === UrlHandlingActions.Connect) {
+        const cloudDetails = transformQueryParamsObject(
+          pick(
+            urlHandlingProperties,
+            ['cloudId', 'subscriptionType', 'planMemoryLimit', 'memoryLimitMeasurementUnit', 'free']
+          )
+        )
+
+        const db = { ...payload }
+        if (!isEmpty(cloudDetails)) {
+          db.cloudDetails = cloudDetails
+        }
+
+        dispatch(createInstanceStandaloneAction(db, undefined, handleSuccessConnectWithRedirect))
+        return
+      }
 
       dispatch(
         createInstanceStandaloneAction(payload, onMastersSentinelFetched)
@@ -289,7 +327,7 @@ const InstanceFormWrapper = (props: Props) => {
           tls: details.protocol === 'rediss',
           ssh: false,
           sshPassType: SshPassType.Password
-        })
+        } as any)
         /*
          * auto fill was successfull so return true
          */
@@ -514,6 +552,8 @@ const InstanceFormWrapper = (props: Props) => {
   }
 
   const handleOnClose = () => {
+    dispatch(setUrlHandlingInitialState())
+
     if (isCloneMode) {
       sendEventTelemetry({
         event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,

@@ -141,9 +141,7 @@ const Config = () => {
     const specConsents = spec?.agreements
     const appliedConsents = config?.agreements
 
-    if (isDifferentConsentsExists(specConsents, appliedConsents)) {
-      dispatch(setSettingsPopupState(true))
-    }
+    dispatch(setSettingsPopupState(isDifferentConsentsExists(specConsents, appliedConsents)))
   }
 
   return null

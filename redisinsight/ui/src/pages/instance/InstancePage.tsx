@@ -86,7 +86,7 @@ const InstancePage = ({ routes = [] }: Props) => {
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
     dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
-  }, [])
+  }, [connectionInstanceId])
 
   useEffect(() => () => {
     setSizes((prevSizes: ResizablePanelSize) => {

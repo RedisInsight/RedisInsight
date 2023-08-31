@@ -9,6 +9,7 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { BuildType } from 'uiSrc/constants/env'
 import { ConsentsSettingsPopup } from 'uiSrc/components'
 import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
+import GlobalUrlHandler from 'uiSrc/components/global-url-handler'
 
 import RedisStackRoutes from './components/RedisStackRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'
@@ -17,12 +18,15 @@ const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
   const { isShowConceptsPopup: isShowConsents } = useSelector(userSettingsSelector)
 
+  const isRedisStack = server?.buildType === BuildType.RedisStack
+
   return (
     <>
       {isShowConsents && (<ConsentsSettingsPopup />)}
+      {!isRedisStack && <GlobalUrlHandler />}
       <Switch>
         {
-          server?.buildType === BuildType.RedisStack
+          isRedisStack
             ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
             : (
               DEFAULT_ROUTES.map((route, i) => (

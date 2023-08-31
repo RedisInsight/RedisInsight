@@ -49,12 +49,14 @@ export const getParsedParamsInQuery = (query: string) => {
 }
 
 export const findMarkdownPathByPath = (manifest: IEnablementAreaItem[], markdownPath: string) => {
+  if (!manifest) return null
+
   const findPath = (data: IEnablementAreaItem[], mdPath: string, path: number[] = []): Nullable<number[]> => {
     for (let i = 0; i < data.length; i++) {
       const obj = data[i]
       const currentPath = [...path, i]
 
-      if (obj.type === EnablementAreaComponent.InternalLink && obj.args?.path === mdPath) {
+      if (obj.type === EnablementAreaComponent.InternalLink && obj.args?.path?.includes(mdPath)) {
         return currentPath
       }
 

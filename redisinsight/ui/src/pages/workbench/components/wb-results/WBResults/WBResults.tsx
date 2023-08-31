@@ -81,7 +81,7 @@ const WBResults = (props: Props) => {
   }
 
   return (
-    <div className={cx(styles.container)}>
+    <div className={styles.wrapper}>
       {!!items.length && (
         <div className={styles.header}>
           <EuiButtonEmpty
@@ -97,56 +97,58 @@ const WBResults = (props: Props) => {
           </EuiButtonEmpty>
         </div>
       )}
-      <div ref={scrollDivRef} />
-      {items.map((
-        {
-          command = '',
-          isOpen = false,
-          result = undefined,
-          summary = undefined,
-          id = '',
-          loading,
-          createdAt,
-          mode,
-          resultsMode,
-          emptyCommand,
-          isNotStored,
-          executionTime,
-          db,
-        }
-      ) => (
-        <QueryCard
-          id={id}
-          key={id}
-          isOpen={isOpen}
-          result={result}
-          summary={summary}
-          clearing={clearing}
-          loading={loading}
-          command={command}
-          createdAt={createdAt}
-          activeMode={activeMode}
-          emptyCommand={emptyCommand}
-          isNotStored={isNotStored}
-          executionTime={executionTime}
-          mode={mode}
-          activeResultsMode={activeResultsMode}
-          resultsMode={resultsMode}
-          db={db}
-          onQueryOpen={() => onQueryOpen(id)}
-          onQueryProfile={(profileType) => handleQueryProfile(
-            profileType,
-            { command, mode, resultsMode },
-          )}
-          onQueryReRun={() => onQueryReRun(
-            command,
-            null,
-            { mode, results: resultsMode, clearEditor: false, },
-          )}
-          onQueryDelete={() => onQueryDelete(id)}
-        />
-      ))}
-      {!items.length && NoResults}
+      <div className={cx(styles.container)}>
+        <div ref={scrollDivRef} />
+        {items.map((
+          {
+            command = '',
+            isOpen = false,
+            result = undefined,
+            summary = undefined,
+            id = '',
+            loading,
+            createdAt,
+            mode,
+            resultsMode,
+            emptyCommand,
+            isNotStored,
+            executionTime,
+            db,
+          }
+        ) => (
+          <QueryCard
+            id={id}
+            key={id}
+            isOpen={isOpen}
+            result={result}
+            summary={summary}
+            clearing={clearing}
+            loading={loading}
+            command={command}
+            createdAt={createdAt}
+            activeMode={activeMode}
+            emptyCommand={emptyCommand}
+            isNotStored={isNotStored}
+            executionTime={executionTime}
+            mode={mode}
+            activeResultsMode={activeResultsMode}
+            resultsMode={resultsMode}
+            db={db}
+            onQueryOpen={() => onQueryOpen(id)}
+            onQueryProfile={(profileType) => handleQueryProfile(
+              profileType,
+              { command, mode, resultsMode },
+            )}
+            onQueryReRun={() => onQueryReRun(
+              command,
+              null,
+              { mode, results: resultsMode, clearEditor: false, },
+            )}
+            onQueryDelete={() => onQueryDelete(id)}
+          />
+        ))}
+        {!items.length && NoResults}
+      </div>
     </div>
   )
 }

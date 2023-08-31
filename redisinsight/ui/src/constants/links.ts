@@ -6,4 +6,5 @@ export const EXTERNAL_LINKS = {
   recommendationFeedback: 'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
   guidesRepo: 'https://github.com/RedisInsight/Tutorials',
   redisStack: 'https://redis.io/docs/about/about-stack/',
+  cloudConsole: 'https://app.redislabs.com/#/databases'
 }

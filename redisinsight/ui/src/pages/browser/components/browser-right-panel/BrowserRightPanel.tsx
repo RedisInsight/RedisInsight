@@ -46,7 +46,7 @@ const BrowserRightPanel = (props: Props) => {
   } = props
 
   const { isBrowserFullScreen, viewType } = useSelector(keysSelector)
-  const { total } = useSelector(keysDataSelector)
+  const { total, lastRefreshTime: keysLastRefreshTime } = useSelector(keysDataSelector)
   const { type, length } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -119,6 +119,7 @@ const BrowserRightPanel = (props: Props) => {
           onEditKey={onEditKey}
           onRemoveKey={onSelectKey}
           totalKeys={total}
+          keysLastRefreshTime={keysLastRefreshTime}
         />
       )}
       {isAddKeyPanelOpen && every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (

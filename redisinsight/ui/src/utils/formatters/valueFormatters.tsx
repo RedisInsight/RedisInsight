@@ -1,10 +1,10 @@
-import { decode, encode } from '@msgpack/msgpack'
+import { decode, encode } from 'msgpackr'
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer'
 import { isUndefined } from 'lodash'
 import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
-import { loads as loadsPickle } from 'jpickle'
+import { Parser } from 'pickleparser'
 import JSONBigInt from 'json-bigint'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
@@ -72,7 +72,7 @@ const formattingBuffer = (
     case KeyValueFormat.JSON: return bufferToJSON(reply, props as FormattingProps)
     case KeyValueFormat.Msgpack: {
       try {
-        const decoded = decode(reply.data)
+        const decoded = decode(Uint8Array.from(reply.data))
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -81,7 +81,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(Buffer.from(reply.data), { encoding: 'binary' })
+        const decoded = unserialize(Buffer.from(reply.data), {}, { strict: false, encoding: 'binary' })
         const value = JSONBigInt.stringify(decoded)
         return JSONViewer({ value, ...props })
       } catch (e) {
@@ -108,7 +108,8 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Pickle: {
       try {
-        const decoded = loadsPickle(bufferToUTF8(reply))
+        const parser = new Parser()
+        const decoded = parser.parse(new Uint8Array(reply.data))
 
         if (isUndefined(decoded)) {
           return {
@@ -139,7 +140,7 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
     case KeyValueFormat.Msgpack: {
       try {
-        const decoded = decode(value.data)
+        const decoded = decode(Uint8Array.from(value.data))
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {
@@ -148,7 +149,7 @@ const bufferToSerializedFormat = (
     }
     case KeyValueFormat.PHP: {
       try {
-        const decoded = unserialize(Buffer.from(value.data), { encoding: 'binary' })
+        const decoded = unserialize(Buffer.from(value.data), {}, { strict: false, encoding: 'binary' })
         const stringified = JSON.stringify(decoded)
         return reSerializeJSON(stringified, space)
       } catch (e) {

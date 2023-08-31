@@ -9,7 +9,7 @@ export const OAuthAdvantages = [
     ],
   },
   {
-    title: 'Document Store with JSON native',
+    title: 'Native support for JSON',
     text: [
       'Hierarchical data structure',
       'Atomic operations and fast access to sub-elements'

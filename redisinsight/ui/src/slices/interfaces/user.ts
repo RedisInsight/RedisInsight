@@ -4,7 +4,7 @@ import { GetAgreementsSpecResponse, GetAppSettingsResponse } from 'apiSrc/module
 export interface StateUserSettings {
   loading: boolean
   error: string
-  isShowConceptsPopup: boolean
+  isShowConceptsPopup: Nullable<boolean>
   config: Nullable<GetAppSettingsResponse>
   spec: Nullable<GetAgreementsSpecResponse>
   workbench: {

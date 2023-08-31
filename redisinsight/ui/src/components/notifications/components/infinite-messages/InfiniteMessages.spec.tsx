@@ -28,4 +28,11 @@ describe('INFINITE_MESSAGES', () => {
       expect(render(<>{Inner}</>)).toBeTruthy()
     })
   })
+
+  describe('AUTO_CREATING_DATABASE', () => {
+    it('should render message', () => {
+      const { Inner } = INFINITE_MESSAGES.AUTO_CREATING_DATABASE
+      expect(render(<>{Inner}</>)).toBeTruthy()
+    })
+  })
 })

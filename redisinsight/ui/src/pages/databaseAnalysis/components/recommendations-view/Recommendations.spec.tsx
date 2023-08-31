@@ -36,34 +36,6 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
   }),
 }))
 
-jest.mock('uiSrc/slices/workbench/wb-guides', () => ({
-  ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
-  workbenchGuidesSelector: jest.fn().mockReturnValue({
-    loading: false,
-    error: '',
-    items: [{
-      label: 'Quick guides',
-      type: 'group',
-      children: [
-        {
-          label: 'Quick guides',
-          type: 'group',
-          children: [
-            {
-              type: 'internal-link',
-              id: 'document-capabilities',
-              label: 'Document Capabilities',
-              args: {
-                path: '/quick-guides/document/introduction.md',
-              },
-            },
-          ]
-        }
-      ]
-    }],
-  }),
-}))
-
 jest.mock('uiSrc/slices/analytics/dbAnalysis', () => ({
   ...jest.requireActual('uiSrc/slices/analytics/dbAnalysis'),
   dbAnalysisSelector: jest.fn().mockReturnValue({
@@ -513,6 +485,6 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
-    expect(pushMock).toBeCalledWith('/instanceId/workbench?path=quick-guides/0/0/0')
+    expect(pushMock).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/document/introduction.md')
   })
 })

@@ -2,7 +2,9 @@ import React from 'react'
 import Router from 'uiSrc/Router'
 import { render } from 'uiSrc/utils/test-utils'
 import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
-import ROUTES from 'uiSrc/components/main-router/constants/commonRoutes'
+
+import { Pages } from 'uiSrc/constants'
+import { SettingsPage } from 'uiSrc/pages'
 
 describe('RouteWithSubRoutes', () => {
   it('should render', () => {
@@ -10,7 +12,8 @@ describe('RouteWithSubRoutes', () => {
       <Router>
         <RouteWithSubRoutes
           key={1}
-          {...ROUTES[0]}
+          path={Pages.settings}
+          component={SettingsPage}
         />
       </Router>
     )).toBeTruthy()

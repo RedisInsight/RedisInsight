@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { ConnectionString } from 'connection-string'
-import { isEmpty, isUndefined, pick, toNumber, toString } from 'lodash'
+import { isUndefined, pick, toNumber, toString } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -175,7 +175,7 @@ const InstanceFormWrapper = (props: Props) => {
         )
 
         const db = { ...payload }
-        if (!isEmpty(cloudDetails)) {
+        if (cloudDetails?.cloudId) {
           db.cloudDetails = cloudDetails
         }
 

@@ -2,7 +2,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { ConnectionString } from 'connection-string'
-import { isNull, isNumber, every, values, pick, isEmpty } from 'lodash'
+import { isNull, isNumber, every, values, pick } from 'lodash'
 import { Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import {
   appRedirectionSelector,
@@ -48,14 +48,18 @@ const GlobalUrlHandler = () => {
   }, [fromUrl, config, isShowConsents])
 
   useEffect(() => {
-    const params = new URLSearchParams(search)
-    const from = params.get('from')
+    try {
+      const params = new URLSearchParams(search)
+      const from = params.get('from')
 
-    if (from) {
-      dispatch(setFromUrl(from))
-      history.replace({
-        search: ''
-      })
+      if (from) {
+        dispatch(setFromUrl(decodeURIComponent(from)))
+        history.replace({
+          search: ''
+        })
+      }
+    } catch (_e) {
+      // do nothing
     }
   }, [search])
 
@@ -90,6 +94,8 @@ const GlobalUrlHandler = () => {
 
       const url = new ConnectionString(redisUrl)
 
+      console.log(url)
+
       /* If a protocol exists, it should be a redis protocol */
       if (url.protocol && !REDIS_URI_SCHEMES.includes(url.protocol)) return
 
@@ -108,7 +114,7 @@ const GlobalUrlHandler = () => {
       } as any
 
       if (isAllObligatoryProvided && requiredTls !== 'true') {
-        if (!isEmpty(cloudDetails)) {
+        if (cloudDetails?.cloudId) {
           db.cloudDetails = cloudDetails
         }
         dispatch(setUrlHandlingInitialState())

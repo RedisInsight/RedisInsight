@@ -311,6 +311,7 @@ const HomePage = () => {
                           editMode={false}
                           width={width}
                           isResizablePanel
+                          initialValues={dbConnection ?? null}
                           editedInstance={sentinelInstance ?? null}
                           onClose={handleClose}
                           isFullWidth={!instances.length}

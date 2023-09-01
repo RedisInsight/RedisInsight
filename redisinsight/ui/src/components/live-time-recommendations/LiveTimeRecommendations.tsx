@@ -30,9 +30,7 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 
-import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { IRecommendation } from 'uiSrc/slices/interfaces/recommendations'
 import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -60,8 +58,6 @@ const LiveTimeRecommendations = () => {
     isHighlighted,
     content: recommendationsContent,
   } = useSelector(recommendationsSelector)
-  const { items: guides } = useSelector(workbenchGuidesSelector)
-  const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const {
     showHiddenRecommendations: isShowHidden,
     treeViewDelimiter: delimiter = '',
@@ -190,9 +186,7 @@ const LiveTimeRecommendations = () => {
         name={name}
         isRead={read}
         vote={vote}
-        guides={guides}
         hide={hide}
-        tutorials={tutorials}
         tutorial={recommendationsContent[name]?.tutorial}
         provider={provider}
         params={params}

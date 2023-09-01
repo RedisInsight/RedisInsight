@@ -16,7 +16,7 @@ import {
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
-import { deepLinkHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
 
 if (!config.isProduction) {
   const sourceMapSupport = require('source-map-support')
@@ -29,6 +29,8 @@ const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.quit()
 }
+
+let deepLink: undefined | string
 
 const init = async () => {
   await launchApiServer()
@@ -53,7 +55,7 @@ const init = async () => {
   try {
     await app.whenReady()
 
-    const deepLink = process.argv?.[1]
+    deepLink = process.argv?.[1] || deepLink
 
     // deep linking
     // register our application to handle custom protocol
@@ -79,5 +81,16 @@ const init = async () => {
     console.log(wrapErrorMessageSensitiveData(error))
   }
 }
+
+// deep link open (darwin)
+// if app is not ready then we store url and continue in init function
+app.on('open-url', async (event, url) => {
+  event.preventDefault()
+
+  deepLink = url
+  if (app.isReady()) {
+    await deepLinkWindowHandler(await deepLinkHandler(url))
+  }
+})
 
 export default init

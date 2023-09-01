@@ -12,12 +12,12 @@ export const resolveHtmlPath = (htmlFileName: string, parsedDeepLink?: IParsedDe
     return url.href
   }
 
-  let resolved = `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`
+  let resolved = `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}#/`
 
   if (parsedDeepLink) {
     try {
       if (parsedDeepLink.initialPage) {
-        resolved += `#${parsedDeepLink.initialPage}`
+        resolved += `${parsedDeepLink.initialPage}`
       }
 
       const queryParameters = new URLSearchParams([

@@ -8,14 +8,22 @@ import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
 
 import { fetchMastersSentinelAction } from './sentinel'
 import { AppDispatch, RootState } from '../store'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  addMessageNotification,
+  removeInfiniteNotification
+} from '../app/notifications'
 import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
+
+const HIDE_CREATING_DB_DELAY_MS = 500
 
 export const initialState: InitialStateInstances = {
   loading: false,
@@ -337,19 +345,21 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
 // Asynchronous thunk action
 export function createInstanceStandaloneAction(
   payload: Instance,
-  onRedirectToSentinel?: () => void
+  onRedirectToSentinel?: () => void,
+  onSuccess?: (id: string) => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.post(`${ApiEndpoints.DATABASES}`, payload)
+      const { data, status } = await apiService.post(`${ApiEndpoints.DATABASES}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
 
         dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(payload.name ?? '')))
+        onSuccess?.(data.id)
       }
     } catch (_error) {
       const error: AxiosError = _error
@@ -363,6 +373,35 @@ export function createInstanceStandaloneAction(
       }
 
       dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function autoCreateAndConnectToInstanceAction(
+  payload: Instance,
+  onSuccess?: (id: string) => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()))
+
+    try {
+      const { status, data } = await apiService.post(`${ApiEndpoints.DATABASES}`, payload)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setAppContextInitialState())
+        dispatch(setConnectedInstanceId(data?.id ?? ''))
+
+        dispatch(checkConnectToInstanceAction(data.id, (id) => {
+          setTimeout(() => {
+            dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
+            onSuccess?.(id)
+          }, HIDE_CREATING_DB_DELAY_MS)
+        }))
+      }
+    } catch (error) {
+      dispatch(addErrorNotification(error as AxiosError))
+      dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
     }
   }
 }

@@ -4,7 +4,7 @@ import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
 import { fireEvent, screen, render, mockedStore, cleanup, act } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, Pages } from 'uiSrc/constants'
+import { Pages } from 'uiSrc/constants'
 
 import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
@@ -99,8 +99,6 @@ describe('Recommendation', () => {
         isRead={false}
         name="searchJSON"
         tutorial="quick-guides/working-with-hash.html"
-        guides={MOCK_GUIDES_ITEMS}
-        tutorials={MOCK_TUTORIALS_ITEMS}
         provider={PROVIDER}
       />
     )
@@ -108,7 +106,8 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?path=quick-guides/0/2`)
+    expect(pushMock)
+      .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=quick-guides/working-with-hash.html`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {
@@ -131,8 +130,6 @@ describe('Recommendation', () => {
         isRead={false}
         name="searchJSON"
         tutorial="/redis_stack/working_with_json.md"
-        guides={MOCK_GUIDES_ITEMS}
-        tutorials={MOCK_TUTORIALS_ITEMS}
         provider={PROVIDER}
       />
     )
@@ -140,7 +137,8 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?path=tutorials/4`)
+    expect(pushMock)
+      .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/redis_stack/working_with_json.md`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {

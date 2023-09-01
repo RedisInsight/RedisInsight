@@ -242,10 +242,7 @@ export function createFreeDbSuccess(id: string, history: any) {
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
         dispatch(checkConnectToInstanceAction(id))
 
-        history.push(Pages.home)
-        setTimeout(() => {
-          history.push(Pages.workbench(id))
-        }, 0)
+        history.push(Pages.workbench(id))
       }
 
       dispatch(showOAuthProgress(true))

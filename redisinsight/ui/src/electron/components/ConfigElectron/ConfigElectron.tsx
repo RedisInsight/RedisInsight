@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 import {
   appAnalyticsInfoSelector,
   appServerInfoSelector,
@@ -15,6 +17,11 @@ const ConfigElectron = () => {
   const serverInfo = useSelector(appServerInfoSelector)
 
   const dispatch = useDispatch()
+  const history = useHistory()
+
+  useEffect(() => {
+    window.app?.deepLinkAction?.(deepLinkAction)
+  }, [])
 
   useEffect(() => {
     if (serverInfo) {
@@ -34,6 +41,14 @@ const ConfigElectron = () => {
       ipcDeleteDownloadedVersion()
     }
   }, [isReleaseNotesViewed])
+
+  const deepLinkAction = (_e: any, url: IParsedDeepLink) => {
+    if (url.from) {
+      history.push({
+        search: `from=${url.from}`
+      })
+    }
+  }
 
   return null
 }

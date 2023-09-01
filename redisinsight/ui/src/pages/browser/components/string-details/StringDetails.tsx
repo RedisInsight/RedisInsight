@@ -90,7 +90,7 @@ const StringDetails = (props: Props) => {
         && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
     setIsEditable(!isCompressed && isFormatEditable(viewFormatProp))
-    setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormat))
+    setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp))
 
     dispatch(setIsStringCompressed(isCompressed))
 
@@ -166,6 +166,7 @@ const StringDetails = (props: Props) => {
                   title={noEditableText}
                   className={styles.tooltip}
                   position="bottom"
+                  data-testid="string-value-tooltip"
                 >
                   <>{value}</>
                 </EuiToolTip>

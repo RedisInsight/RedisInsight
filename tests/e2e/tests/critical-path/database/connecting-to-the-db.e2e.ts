@@ -1,5 +1,5 @@
 import { rte } from '../../../helpers/constants';
-import { BrowserPage, MyRedisDatabasePage } from '../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WelcomePage } from '../../../pageObjects';
 import { commonUrl, invalidOssStandaloneConfig, ossStandaloneForSSHConfig } from '../../../helpers/conf';
 import { DatabaseHelper } from '../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
@@ -11,6 +11,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const welcomePage = new WelcomePage();
 // const browserActions = new BrowserActions();
 
 const sshParams = {
@@ -61,9 +62,14 @@ test
         const defaultPort = '6379';
         const defaultSentinelPort = '26379';
 
-        await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+        if (await welcomePage.addDbManuallyBtn.exists) {
+            await t.click(welcomePage.addDbManuallyBtn);
+        }
+        else {
+            await t
+                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+        }
         // Verify that the Host, Port, Database Alias values pre-populated by default for the manual flow
         await t
             .expect(myRedisDatabasePage.AddRedisDatabase.hostInput.value).eql(defaultHost, 'Default host not prepopulated')

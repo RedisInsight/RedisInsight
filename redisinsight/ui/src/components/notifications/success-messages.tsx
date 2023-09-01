@@ -214,5 +214,13 @@ export default {
         has been added.
       </>
     ),
+  }),
+  REMOVED_ALL_CAPI_KEYS: () => ({
+    title: 'API keys have been removed',
+    message: 'All API keys have been removed from RedisInsight.',
+  }),
+  REMOVED_CAPI_KEY: (name: string) => ({
+    title: 'API Key has been removed',
+    message: `${formatNameShort(name)} has been removed from RedisInsight.`
   })
 }

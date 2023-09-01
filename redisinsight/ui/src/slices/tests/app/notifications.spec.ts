@@ -30,7 +30,9 @@ import reducer, {
   getNotificationsFailed,
   unreadNotificationsAction,
   unreadNotifications,
-  setNewNotificationAction
+  setNewNotificationAction,
+  addInfiniteNotification,
+  removeInfiniteNotification
 } from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({
@@ -394,6 +396,85 @@ describe('slices', () => {
       }
       // Act
       const nextState = reducer(initialState, getNotificationsSuccess(notificationsResponse))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { notifications: nextState },
+      })
+
+      expect(notificationCenterSelector(rootState)).toEqual(state.notificationCenter)
+    })
+  })
+
+  describe('addInfiniteNotification', () => {
+    it('should properly set state with new notification', () => {
+      const notification = {
+        id: 'id',
+        Inner: 'message text'
+      }
+      const state = {
+        ...initialState,
+        infiniteMessages: [notification]
+      }
+      // Act
+      const nextState = reducer(initialState, addInfiniteNotification(notification))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { notifications: nextState },
+      })
+
+      expect(notificationCenterSelector(rootState)).toEqual(state.notificationCenter)
+    })
+
+    it('should properly set state with updated notification', () => {
+      const notification = {
+        id: 'id',
+        Inner: 'updated text'
+      }
+
+      const currentState = {
+        ...initialState,
+        infiniteMessages: [{
+          id: 'id',
+          Inner: 'message text'
+        }]
+      }
+
+      const state = {
+        ...initialState,
+        infiniteMessages: [notification]
+      }
+
+      // Act
+      const nextState = reducer(currentState, addInfiniteNotification(notification))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { notifications: nextState },
+      })
+
+      expect(notificationCenterSelector(rootState)).toEqual(state.notificationCenter)
+    })
+  })
+
+  describe('removeInfiniteNotification', () => {
+    it('should properly remove notification', () => {
+      const notification = {
+        id: 'id',
+        Inner: 'message text'
+      }
+
+      const currentState = {
+        ...initialState,
+        infiniteMessages: [notification]
+      }
+
+      const state = {
+        ...initialState,
+      }
+      // Act
+      const nextState = reducer(currentState, removeInfiniteNotification(notification.id))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

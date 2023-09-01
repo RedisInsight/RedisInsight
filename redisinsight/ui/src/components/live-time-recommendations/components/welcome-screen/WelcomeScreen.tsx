@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiText, EuiButton, EuiPopover, EuiSpacer } from '@elastic/eui'
+import { EuiText, EuiButton } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
 import { recommendationsSelector, setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'

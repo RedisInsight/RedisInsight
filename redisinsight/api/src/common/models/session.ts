@@ -1,12 +1,14 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty, IsObject, IsOptional, IsString,
+} from 'class-validator';
 
-export interface ISession {
+export interface ISessionMetadata {
   userId: string;
   sessionId: string;
   uniqueId?: string;
 }
 
-export class Session implements ISession {
+export class SessionMetadata implements ISessionMetadata {
   @IsNotEmpty()
   @IsString()
   userId: string;
@@ -18,4 +20,14 @@ export class Session implements ISession {
   @IsOptional()
   @IsString()
   uniqueId?: string;
+}
+
+export class Session {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
+  @IsOptional()
+  @IsObject()
+  data?: Record<string, any> = {};
 }

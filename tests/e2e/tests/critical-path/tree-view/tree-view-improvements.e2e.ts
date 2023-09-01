@@ -6,10 +6,12 @@ import { KeyTypesTexts, rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
 import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../helpers/keys';
+import { APIKeyRequests } from '../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
 
 let keyNames: string[];
 let keyName1: string;
@@ -152,7 +154,9 @@ test
     })
     .after(async() => {
         await t.click(browserPage.patternModeBtn);
-        await browserPage.deleteKeysByNames(keyNames.slice(1));
+        for (const element of keyNames.slice(1)) {
+            await apiKeyRequests.deleteKeyByNameApi(element, ossStandaloneConfig.databaseName);
+        }
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Search capability Refreshed Tree view preselected folder', async t => {
         keyName1 = Common.generateWord(10);

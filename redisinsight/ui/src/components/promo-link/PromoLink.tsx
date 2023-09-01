@@ -2,6 +2,7 @@ import React from 'react'
 import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Nullable } from 'uiSrc/utils'
+import { ReactComponent as CloudIcon } from 'uiSrc/assets/img/oauth/cloud.svg'
 
 import styles from './styles.module.scss'
 
@@ -9,7 +10,7 @@ export interface Props {
   title: string
   url: string
   description?: string
-  onClick?: () => void
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
   testId?: string
   icon?: Nullable<string>
   styles?: any
@@ -28,13 +29,13 @@ const PromoLink = (props: Props) => {
       data-testid={testId}
       style={{ ...linkStyles }}
     >
+      <EuiIcon type={CloudIcon} size="m" className={styles.cloudIcon} />
       <EuiText className={styles.title}>
         <span style={{ color: linkStyles?.color }}>{title}</span>
       </EuiText>
       <EuiText className={styles.description}>
         <span style={{ color: linkStyles?.color }}>{description}</span>
       </EuiText>
-      {icon && <EuiIcon type={icon} size="m" className={styles.icon} />}
     </a>
   )
 }

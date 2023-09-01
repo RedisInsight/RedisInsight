@@ -1,4 +1,4 @@
-import { ClientContext, ClientMetadata, Session } from 'src/common/models';
+import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
 import { mockDatabase } from 'src/__mocks__/databases';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -41,6 +41,7 @@ export const mockCreateQueryBuilder = jest.fn(() => ({
   having: jest.fn().mockReturnThis(),
   limit: jest.fn().mockReturnThis(),
   leftJoin: jest.fn().mockReturnThis(),
+  leftJoinAndSelect: jest.fn().mockReturnThis(),
   offset: jest.fn().mockReturnThis(),
   delete: jest.fn().mockReturnThis(),
   whereInIds: jest.fn().mockReturnThis(),
@@ -67,32 +68,32 @@ export const mockRepository = jest.fn(() => ({
   createQueryBuilder: mockCreateQueryBuilder,
 }));
 
-export const mockSession: Session = {
+export const mockSessionMetadata: SessionMetadata = {
   userId: uuidv4(),
   sessionId: uuidv4(),
 };
 
 export const mockCliClientMetadata: ClientMetadata = {
-  session: mockSession,
+  sessionMetadata: mockSessionMetadata,
   databaseId: mockDatabase.id,
   context: ClientContext.CLI,
   uniqueId: uuidv4(),
 };
 
 export const mockWorkbenchClientMetadata: ClientMetadata = {
-  session: mockSession,
+  sessionMetadata: mockSessionMetadata,
   databaseId: mockDatabase.id,
   context: ClientContext.Workbench,
 };
 
 export const mockBrowserClientMetadata: ClientMetadata = {
-  session: mockSession,
+  sessionMetadata: mockSessionMetadata,
   databaseId: mockDatabase.id,
   context: ClientContext.Browser,
 };
 
 export const mockCommonClientMetadata: ClientMetadata = {
-  session: mockSession,
+  sessionMetadata: mockSessionMetadata,
   databaseId: mockDatabase.id,
   context: ClientContext.Common,
 };

@@ -11,6 +11,7 @@ import { BasePage } from './base-page';
 import { InstancePage } from './instance-page';
 import { TriggersAndFunctionsLibrariesPage } from './triggers-and-functions-libraries-page';
 import { TriggersAndFunctionsFunctionsPage } from './triggers-and-functions-functions-page';
+import { WelcomePage } from './welcome-page';
 
 export {
     AutoDiscoverREDatabases,
@@ -25,5 +26,6 @@ export {
     BasePage,
     InstancePage,
     TriggersAndFunctionsLibrariesPage,
-    TriggersAndFunctionsFunctionsPage
+    TriggersAndFunctionsFunctionsPage,
+    WelcomePage,
 };

@@ -24,7 +24,7 @@ export class DatabasesActions {
      */
     async importDatabase(fileParameters: ImportDatabaseParameters): Promise<void> {
         await t
-            .click(myRedisDatabasePage.importDatabasesBtn)
+            .click(await myRedisDatabasePage.importDatabasesBtn)
             .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [fileParameters.path])
             .click(myRedisDatabasePage.submitImportBtn)
             .expect(myRedisDatabasePage.importDialogTitle.textContent).eql('Import Results', `Databases from ${fileParameters.type} not imported`);

@@ -242,7 +242,7 @@ export class BrowserPage extends InstancePage {
     progressLine = Selector('div.euiProgress');
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
-    noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
+    noKeysToDisplayText = Selector('[data-testid=no-result-found-msg]');
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');

@@ -1,4 +1,4 @@
-import { first, isNull, map } from 'lodash'
+import { first, isNull, map, find, orderBy } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
@@ -25,17 +25,20 @@ export const initialState: InitialStateInstances = {
   errorChanging: '',
   changedSuccessfully: false,
   deletedSuccessfully: false,
+  freeInstance: null,
   connectedInstance: {
     id: '',
     name: '',
     host: '',
     port: 0,
+    version: '',
     nameFromProvider: '',
     lastConnection: new Date(),
     connectionType: ConnectionType.Standalone,
     isRediStack: false,
     modules: [],
     loading: false,
+    isFreeDb: false,
   },
   editedInstance: {
     loading: false,
@@ -69,6 +72,10 @@ const instancesSlice = createSlice({
     loadInstancesSuccess: (state, { payload }: { payload: DatabaseInstanceResponse[] }) => {
       state.data = checkRediStack(payload)
       state.loading = false
+      state.freeInstance = find(
+        [...(orderBy(payload, 'lastConnection', 'desc'))],
+        'cloudDetails.free'
+      ) as unknown as Instance || null
       if (state.connectedInstance.id) {
         const isRediStack = state.data.find((db) => db.id === state.connectedInstance.id)?.isRediStack
         state.connectedInstance.isRediStack = isRediStack || false
@@ -144,18 +151,15 @@ const instancesSlice = createSlice({
       state.error = payload
     },
     getDatabaseConfigInfo: (state) => {
-      state.loading = true
       state.error = ''
     },
     getDatabaseConfigInfoSuccess: (state, { payload }) => {
-      state.loading = false
       state.instanceOverview = {
         ...payload,
         version: payload?.version || state.instanceOverview.version || '',
       }
     },
     getDatabaseConfigInfoFailure: (state, { payload }) => {
-      state.loading = false
       state.error = payload
     },
 
@@ -289,6 +293,7 @@ export const {
 
 // selectors
 export const instancesSelector = (state: RootState) => state.connections.instances
+export const freeInstanceSelector = (state: RootState) => state.connections.instances.freeInstance
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
 export const connectedInstanceInfoSelector = (state: RootState) =>

@@ -77,7 +77,7 @@ const RedisCloudSubscriptionsPage = () => {
   }
 
   const handleLoadInstances = (
-    subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[]
+    subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[]
   ) => {
     dispatch(fetchInstancesRedisCloud({ subscriptions, credentials }))
   }

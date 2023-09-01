@@ -1,10 +1,11 @@
 import React from 'react'
 import App from 'uiSrc/App'
-import { ConfigElectron } from './components'
+import { ConfigElectron, ConfigOAuth } from './components'
 
 const AppElectron = () => (
   <App>
     <ConfigElectron />
+    <ConfigOAuth />
   </App>
 )
 

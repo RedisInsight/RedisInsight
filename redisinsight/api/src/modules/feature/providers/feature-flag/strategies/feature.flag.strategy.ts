@@ -7,6 +7,8 @@ import {
   FeatureConfigFilterType,
 } from 'src/modules/feature/model/features-config';
 import config from 'src/utils/config';
+import { Feature } from 'src/modules/feature/model/feature';
+import { IFeatureFlag } from 'src/modules/feature/constants';
 
 export abstract class FeatureFlagStrategy {
   constructor(
@@ -14,7 +16,7 @@ export abstract class FeatureFlagStrategy {
     protected readonly settingsService: SettingsService,
   ) {}
 
-  abstract calculate(data: any): Promise<boolean>;
+  abstract calculate(knownFeature: IFeatureFlag, data: any): Promise<Feature>;
 
   /**
    * Check if controlNumber is in defined range

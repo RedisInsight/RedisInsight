@@ -23,6 +23,7 @@ import { fetchReJSON } from 'uiSrc/slices/browser/rejson'
 import { refreshStream } from 'uiSrc/slices/browser/stream'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { Nullable } from 'uiSrc/utils'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -33,6 +34,8 @@ export interface Props {
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => void
   onRemoveKey: () => void
   keyProp: RedisResponseBuffer | null
+  totalKeys: number
+  keysLastRefreshTime: Nullable<number>
 }
 
 const KeyDetailsWrapper = (props: Props) => {
@@ -43,7 +46,9 @@ const KeyDetailsWrapper = (props: Props) => {
     onCloseKey,
     onEditKey,
     onRemoveKey,
-    keyProp
+    keyProp,
+    totalKeys,
+    keysLastRefreshTime,
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -155,6 +160,8 @@ const KeyDetailsWrapper = (props: Props) => {
       onRemoveKey={onRemoveKey}
       onEditTTL={handleEditTTL}
       onEditKey={handleEditKey}
+      totalKeys={totalKeys}
+      keysLastRefreshTime={keysLastRefreshTime}
     />
   )
 }

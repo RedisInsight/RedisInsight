@@ -31,7 +31,7 @@ export class MyRedisDatabasePage extends BasePage {
     sortByHostAndPort = Selector('span').withAttribute('title', 'Host:Port');
     sortByConnectionType = Selector('span').withAttribute('title', 'Connection Type');
     sortByLastConnection = Selector('span').withAttribute('title', 'Last connection');
-    importDatabasesBtn = Selector('[data-testid=import-dbs-btn]');
+    importDatabasesBtn = Selector('[data-testid=import-from-file-btn]');
     submitImportBtn = Selector('[data-testid=submit-btn]');
     closeDialogBtn = Selector('[aria-label="Closes this modal window"]');
     okDialogBtn = Selector('[data-testid=ok-btn]');

@@ -38,7 +38,7 @@ export interface Props {
   error: string;
   onClose: () => void;
   onBack: () => void;
-  onSubmit: (subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType'>>[]) => void;
+  onSubmit: (subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[]) => void;
 }
 
 interface IPopoverProps {
@@ -88,7 +88,7 @@ const RedisCloudSubscriptions = ({
   }
 
   const handleSubmit = () => {
-    onSubmit(map(selection, ({ id, type }) => ({ subscriptionId: id, subscriptionType: type })))
+    onSubmit(map(selection, ({ id, type, free }) => ({ subscriptionId: id, subscriptionType: type, free })))
   }
 
   const showPopover = () => {

@@ -49,6 +49,11 @@ Alternatively you can also build from source. See our wiki for instructions.
 
 * [How to build](https://github.com/RedisInsight/RedisInsight/wiki/How-to-build-and-contribute)
 
+## How to debug
+If you have any issues occurring in RedisInsight, you can follow the steps below to get more information about the errors and find their root cause.
+
+* [How to debug](https://github.com/RedisInsight/RedisInsight/wiki/How-to-debug)
+
 ## Feedback
 
 * Request a new [feature](https://github.com/RedisInsight/RedisInsight/issues/new?assignees=&labels=&template=feature_request.md&title=%5BFeature+Request%5D%3A)

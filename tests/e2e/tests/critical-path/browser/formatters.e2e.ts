@@ -104,6 +104,11 @@ formattersForEditSet.forEach(formatter => {
         // Verify that valid value can be edited to another valid value
         await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromTextEdit ?? '', `Valid ${formatter.format} value is not saved`);
         await t.expect(browserPage.hashFieldValue.find(browserPage.cssJsonValue).exists).ok(`Value is not formatted to ${formatter.format}`);
+        if(formatter.format === 'JSON'){
+            // bigInt can be displayed for JSON format
+            await browserPage.editHashKeyValue(formatter.fromBigInt ?? '');
+            await t.expect(browserPage.hashFieldValue.innerText).contains(formatter.fromBigInt ?? '', `Valid ${formatter.format} value is not saved`);
+        }
     });
 });
 formattersWithTooltipSet.forEach(formatter => {

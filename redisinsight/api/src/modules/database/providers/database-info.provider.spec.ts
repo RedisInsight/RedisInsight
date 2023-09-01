@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { IRedisClusterNodeAddress, ReplyError } from 'src/models';
 import {
+  mockFeatureService,
   mockIOClusterNode1,
   mockIOClusterNode2,
   mockIORedisClient,
@@ -19,7 +20,7 @@ import {
   mockSentinelMasterEndpoint,
   mockSentinelMasterInDownState,
   mockSentinelMasterInOkState,
-  mockStandaloneRedisInfoReply,
+  mockStandaloneRedisInfoReply, MockType,
 } from 'src/__mocks__';
 import { REDIS_MODULES_COMMANDS, AdditionalRedisModuleName } from 'src/constants';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -27,6 +28,7 @@ import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.d
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { FeatureService } from 'src/modules/feature/feature.service';
 
 const mockClusterNodeAddresses: IRedisClusterNodeAddress[] = [
   {
@@ -80,14 +82,22 @@ const mockSentinelConnectionOptions = {
 
 describe('DatabaseInfoProvider', () => {
   let service: DatabaseInfoProvider;
+  let featureService: MockType<FeatureService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DatabaseInfoProvider],
+      providers: [
+        DatabaseInfoProvider,
+        {
+          provide: FeatureService,
+          useFactory: mockFeatureService,
+        },
+      ],
     }).compile();
 
     service = await module.get(DatabaseInfoProvider);
+    featureService = await module.get(FeatureService);
   });
 
   describe('isCluster', () => {
@@ -262,7 +272,7 @@ describe('DatabaseInfoProvider', () => {
   });
 
   describe('determineDatabaseModules', () => {
-    it('get modules by using MODULE LIST command', async () => {
+    it('get modules by using MODULE LIST command (without filters)', async () => {
       when(mockIORedisClient.call)
         .calledWith('module', ['list'])
         .mockResolvedValue(mockRedisModuleList);
@@ -281,7 +291,37 @@ describe('DatabaseInfoProvider', () => {
         { name: 'customModule', version: 10000, semanticVersion: undefined },
       ]);
     });
-    it('detect all modules by using COMMAND INFO command', async () => {
+    it('get modules by using MODULE LIST command (with filters applied)', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('module', ['list'])
+        .mockResolvedValue(mockRedisModuleList);
+      featureService.getByName.mockResolvedValue({
+        flag: true,
+        data: {
+          hideByName: [
+            {
+              expression: 'rejSoN',
+              options: 'i',
+            },
+          ],
+        },
+      });
+
+      const result = await service.determineDatabaseModules(mockIORedisClient);
+
+      expect(mockIORedisClient.call).not.toHaveBeenCalledWith('command', expect.anything());
+      expect(result).toEqual([
+        { name: AdditionalRedisModuleName.RedisAI, version: 10000, semanticVersion: '1.0.0' },
+        { name: AdditionalRedisModuleName.RedisGraph, version: 10000, semanticVersion: '1.0.0' },
+        { name: AdditionalRedisModuleName.RedisGears, version: 10000, semanticVersion: '1.0.0' },
+        { name: AdditionalRedisModuleName.RedisBloom, version: 10000, semanticVersion: '1.0.0' },
+        // { name: AdditionalRedisModuleName.RedisJSON, version: 10000, semanticVersion: '1.0.0' }, should be ignored
+        { name: AdditionalRedisModuleName.RediSearch, version: 10000, semanticVersion: '1.0.0' },
+        { name: AdditionalRedisModuleName.RedisTimeSeries, version: 10000, semanticVersion: '1.0.0' },
+        { name: 'customModule', version: 10000, semanticVersion: undefined },
+      ]);
+    });
+    it('detect all modules by using COMMAND INFO command (without filter)', async () => {
       when(mockIORedisClient.call)
         .calledWith('module', ['list'])
         .mockRejectedValue(mockUnknownCommandModule);
@@ -301,6 +341,41 @@ describe('DatabaseInfoProvider', () => {
         { name: AdditionalRedisModuleName.RedisGears },
         { name: AdditionalRedisModuleName.RedisBloom },
         { name: AdditionalRedisModuleName.RedisJSON },
+        { name: AdditionalRedisModuleName.RediSearch },
+        { name: AdditionalRedisModuleName.RedisTimeSeries },
+      ]);
+    });
+    it('detect all modules by using COMMAND INFO command (with filter)', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('module', ['list'])
+        .mockRejectedValue(mockUnknownCommandModule);
+      when(mockIORedisClient.call)
+        .calledWith('command', expect.anything())
+        .mockResolvedValue([
+          null,
+          ['somecommand', -1, ['readonly'], 0, 0, -1, []],
+        ]);
+      featureService.getByName.mockResolvedValue({
+        flag: true,
+        data: {
+          hideByName: [
+            {
+              expression: 'rejSoN',
+              options: 'i',
+            },
+          ],
+        },
+      });
+
+      const result = await service.determineDatabaseModules(mockIORedisClient);
+
+      expect(mockIORedisClient.call).toHaveBeenCalledTimes(REDIS_MODULES_COMMANDS.size + 1);
+      expect(result).toEqual([
+        { name: AdditionalRedisModuleName.RedisAI },
+        { name: AdditionalRedisModuleName.RedisGraph },
+        { name: AdditionalRedisModuleName.RedisGears },
+        { name: AdditionalRedisModuleName.RedisBloom },
+        // { name: AdditionalRedisModuleName.RedisJSON }, should be ignored
         { name: AdditionalRedisModuleName.RediSearch },
         { name: AdditionalRedisModuleName.RedisTimeSeries },
       ]);

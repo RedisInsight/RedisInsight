@@ -16,12 +16,11 @@ import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module'
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
 import { TriggeredFunctionsModule } from 'src/modules/triggered-functions/triggered-functions.module';
-import { ServerModule } from 'src/modules/server/server.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
 import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.module';
 import { DatabaseImportModule } from 'src/modules/database-import/database-import.module';
-import { DummyAuthMiddleware } from 'src/common/middlewares/dummy-auth.middleware';
+import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-auth.middleware';
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
 import { CloudModule } from 'src/modules/cloud/cloud.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -40,7 +39,6 @@ const PATH_CONFIG = config.get('dir_path');
   imports: [
     LocalDatabaseModule,
     CoreModule,
-    ServerModule.register(),
     RouterModule.forRoutes(routes),
     AutodiscoveryModule,
     RedisEnterpriseModule,
@@ -61,6 +59,7 @@ const PATH_CONFIG = config.get('dir_path');
     DatabaseAnalysisModule,
     DatabaseImportModule,
     TriggeredFunctionsModule,
+    CloudModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({
@@ -107,7 +106,7 @@ export class AppModule implements OnModuleInit, NestModule {
 
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(DummyAuthMiddleware)
+      .apply(SingleUserAuthMiddleware)
       .exclude(...SERVER_CONFIG.excludeAuthRoutes)
       .forRoutes('*');
 

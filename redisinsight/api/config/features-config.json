@@ -1,5 +1,5 @@
 {
-  "version": 2.32,
+  "version": 2.3204,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -39,6 +39,16 @@
                 "provider": "GCP",
                 "regions": ["asia-northeast1"]
               }
+            ],
+            "redisStackPreview": [
+              {
+                "provider": "AWS",
+                "regions": ["us-east-2", "ap-southeast-1", "sa-east-1"]
+              },
+              {
+                "provider": "GCP",
+                "regions": ["asia-northeast1", "europe-west1", "us-central1"]
+              }
             ]
           }
         }
@@ -50,7 +60,7 @@
       "data": {
         "hideByName": [
           {
-            "expression": "RedisGraphStub",
+            "expression": "^RedisGraph.",
             "options": "i"
           }
         ]

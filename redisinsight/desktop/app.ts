@@ -23,13 +23,6 @@ if (!config.isProduction) {
   sourceMapSupport.install()
 }
 
-const gotTheLock = app.requestSingleInstanceLock()
-
-// deep link open (win)
-if (!gotTheLock) {
-  app.quit()
-}
-
 let deepLink: undefined | string
 
 const init = async () => {

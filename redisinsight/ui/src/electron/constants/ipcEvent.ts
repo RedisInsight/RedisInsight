@@ -8,6 +8,7 @@ enum IpcInvokeEvent {
 enum IpcOnEvent {
   sendWindowId = 'window:send:id',
   cloudOauthCallback = 'cloud:oauth:callback',
+  deepLinkAction = 'deep-link:action',
 }
 
 export {

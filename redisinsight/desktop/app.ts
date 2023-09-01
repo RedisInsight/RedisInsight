@@ -16,6 +16,7 @@ import {
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
+import { deepLinkHandler } from 'desktopSrc/lib/app/deep-link.handlers'
 
 if (!config.isProduction) {
   const sourceMapSupport = require('source-map-support')
@@ -52,19 +53,27 @@ const init = async () => {
   try {
     await app.whenReady()
 
-    // todo: create and move to some on app ready handler
+    const deepLink = process.argv?.[1]
+
     // deep linking
     // register our application to handle custom protocol
     if (process.defaultApp) {
-      if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(process.argv[1])])
+      if (deepLink) {
+        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
       }
     } else {
       app.setAsDefaultProtocolClient(config.schema)
     }
 
     const splashWindow = await windowFactory(WindowType.Splash)
-    await windowFactory(WindowType.Main, splashWindow)
+
+    let parsedDeepLink
+
+    if (deepLink) {
+      parsedDeepLink = await deepLinkHandler(deepLink)
+    }
+
+    await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
   } catch (_err) {
     const error = _err as Error
     console.log(wrapErrorMessageSensitiveData(error))

@@ -132,10 +132,12 @@ describe('DatabaseConnectionService', () => {
       expect(analytics.sendDatabaseConnectedClientListEvent).toHaveBeenCalledWith(
         mockDatabase.id,
         {
-          version: mockRedisGeneralInfo.version,
-          resp: get(mockRedisClientListResult[0], 'resp', ''),
-          libVer: get(mockRedisClientListResult[0], 'lib-ver', ''),
-          libName: get(mockRedisClientListResult[0], 'lib-name', ''),
+          clients: mockRedisClientListResult.map((c) => ({
+            version: mockRedisGeneralInfo.version,
+            resp: get(c, 'resp', 'n/a'),
+            libVer: get(c, 'lib-ver', 'n/a'),
+            libName: get(c, 'lib-name', 'n/a'),
+          })),
         },
       );
     });

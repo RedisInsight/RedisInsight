@@ -164,15 +164,17 @@ export class DatabaseConnectionService {
 
   private async collectClientInfo(clientMetadata: ClientMetadata, client: any, version?: string) {
     try {
-      const [firstClient] = await this.databaseInfoProvider.getClientListInfo(client) || [];
+      const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
 
       this.analytics.sendDatabaseConnectedClientListEvent(
         clientMetadata.databaseId,
         {
-          version: version || '',
-          resp: firstClient?.['resp'] || '',
-          libName: firstClient?.['lib-name'] || '',
-          libVer: firstClient?.['lib-ver'] || '',
+          clients: clients.map((c) => ({
+            version: version || 'n/a',
+            resp: c?.['resp'] || 'n/a',
+            libName: c?.['lib-name'] || 'n/a',
+            libVer: c?.['lib-ver'] || 'n/a',
+          })),
         },
       );
     } catch (error) {

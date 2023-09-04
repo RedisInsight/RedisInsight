@@ -80,6 +80,8 @@ const init = async () => {
 app.on('open-url', async (event, url) => {
   event.preventDefault()
 
+  console.log('open-url', { url })
+
   deepLink = url
   if (app.isReady()) {
     await deepLinkWindowHandler(await deepLinkHandler(url))

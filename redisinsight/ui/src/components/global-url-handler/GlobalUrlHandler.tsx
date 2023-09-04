@@ -37,6 +37,7 @@ const GlobalUrlHandler = () => {
       // @ts-ignore
       const urlProperties = Object.fromEntries(fromParams) || {}
       dispatch(setUrlProperties(urlProperties))
+      dispatch(setFromUrl(null))
 
       const pathname = actionUrl.hostname + actionUrl.pathname
       if (pathname?.replace(/^(\/\/?)/g, '') === UrlHandlingActions.Connect) {
@@ -93,8 +94,6 @@ const GlobalUrlHandler = () => {
       )
 
       const url = new ConnectionString(redisUrl)
-
-      console.log(url)
 
       /* If a protocol exists, it should be a redis protocol */
       if (url.protocol && !REDIS_URI_SCHEMES.includes(url.protocol)) return

@@ -19,6 +19,7 @@ import { Instance, InstanceType } from 'uiSrc/slices/interfaces'
 import { sentinelSelector, resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
+import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
 import InstanceConnections from './InstanceConnections/InstanceConnections'
 import InstanceFormWrapper from '../AddInstanceForm/InstanceFormWrapper'
 import ClusterConnectionFormWrapper from '../ClusterConnection/ClusterConnectionFormWrapper'
@@ -63,6 +64,7 @@ const AddDatabasesContainer = React.memo((props: Props) => {
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { data: sentinelMasters } = useSelector(sentinelSelector)
+  const { action, dbConnection } = useSelector(appRedirectionSelector)
 
   const dispatch = useDispatch()
 
@@ -83,6 +85,12 @@ const AddDatabasesContainer = React.memo((props: Props) => {
       setTypeSelected(InstanceType.Sentinel)
     }
   }, [])
+
+  useEffect(() => {
+    if (action === UrlHandlingActions.Connect) {
+      setConnectionType(AddDbType.manual)
+    }
+  }, [action, dbConnection])
 
   useEffect(() =>
     // ComponentWillUnmount

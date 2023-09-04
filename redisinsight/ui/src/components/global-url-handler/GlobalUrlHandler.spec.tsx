@@ -87,6 +87,7 @@ describe('GlobalUrlHandler', () => {
 
     expect(store.getActions()).toEqual([
       setUrlProperties(urlProperties),
+      setFromUrl(null),
       setUrlHandlingInitialState(),
       addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE())
     ])
@@ -117,6 +118,7 @@ describe('GlobalUrlHandler', () => {
 
     const expectedActions = [
       setUrlProperties(urlProperties),
+      setFromUrl(null),
       setUrlDbConnection({
         action: UrlHandlingActions.Connect,
         dbConnection: {
@@ -127,7 +129,7 @@ describe('GlobalUrlHandler', () => {
           tls: false,
           username: undefined
         }
-      })
+      }),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
@@ -160,6 +162,7 @@ describe('GlobalUrlHandler', () => {
 
     const expectedActions = [
       setUrlProperties(urlProperties),
+      setFromUrl(null),
       setUrlDbConnection({
         action: UrlHandlingActions.Connect,
         dbConnection: {

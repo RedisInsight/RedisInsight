@@ -39,8 +39,6 @@ export const deepLinkWindowHandler = async (parsedDeepLink?: IParsedDeepLink) =>
   // tbd: implement mechanism to find current window
   const [currentWindow] = getWindows().values()
 
-  log.info('deepLinkWindowHandler', { parsedDeepLink })
-
   if (parsedDeepLink) {
     if (parsedDeepLink?.target === '_blank') {
       await windowFactory(WindowType.Main, null, { parsedDeepLink })

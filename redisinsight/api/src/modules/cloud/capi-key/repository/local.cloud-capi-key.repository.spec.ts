@@ -20,6 +20,7 @@ import { LocalCloudCapiKeyRepository } from 'src/modules/cloud/capi-key/reposito
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
 import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
+import { CloudApiBadRequestException } from 'src/modules/cloud/common/exceptions';
 
 describe('LocalCloudCapiKeyRepository', () => {
   let service: LocalCloudCapiKeyRepository;
@@ -94,20 +95,13 @@ describe('LocalCloudCapiKeyRepository', () => {
     });
   });
 
-  // describe('update', () => {
-  //   it('should return features', async () => {
-  //     const result = await service.list();
+  describe('update', () => {
+    it('should return features', async () => {
+      const result = await service.update('id', mockCloudCapiKey);
 
-  //     expect(result).toEqual([mockFeature, mockFeature, mockFeature]);
-  //   });
-  //   it('should return empty list', async () => {
-  //     repository.find.mockResolvedValueOnce([]);
-
-  //     const result = await service.list();
-
-  //     expect(result).toEqual([]);
-  //   });
-  // });
+      expect(result).toEqual(mockCloudCapiKey);
+    });
+  });
 
   describe('getByUserAccount', () => {
     it('should return decrypted and transformed capi key', async () => {
@@ -134,6 +128,35 @@ describe('LocalCloudCapiKeyRepository', () => {
       const result = await service.create(mockCloudCapiKey);
 
       expect(result).toEqual(mockCloudCapiKey);
+    });
+
+    it('should throw CloudApiBadRequestException ON SQL constraint error', async () => {
+      const constraintError: any = new Error('FOREIGN_KEY error');
+      constraintError.code = 'SQLITE_CONSTRAINT';
+
+      repository.save.mockRejectedValueOnce(constraintError);
+
+      try {
+        await service.create(mockCloudCapiKey);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(CloudApiBadRequestException);
+        expect(e.message).toEqual('Such capi key already exists');
+      }
+    });
+
+    it('should throw error', async () => {
+      const constraintError: any = new Error('error');
+      constraintError.code = 'custom_code';
+
+      repository.save.mockRejectedValueOnce(constraintError);
+
+      try {
+        await service.create(mockCloudCapiKey);
+        fail();
+      } catch (e) {
+        expect(e.message).toEqual('error');
+      }
     });
   });
 

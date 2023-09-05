@@ -98,8 +98,6 @@ export const mockCloudApiUser: ICloudApiUser = {
   role: 'owner',
 };
 
-export const mockAuthorization = 'Bearer token';
-
 export const mockCloudUser = Object.assign(new CloudUser(), {
   id: +mockCloudApiUser.id,
   name: mockCloudApiUser.name,

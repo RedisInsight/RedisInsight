@@ -63,7 +63,7 @@ export class DatabaseHelper {
         await t
             .click(
                 myRedisDatabasePage.AddRedisDatabase
-                    .discoverSentinelDatabaseButton
+                    .addRedisDatabaseButton
             )
             .expect(discoverMasterGroupsPage.addPrimaryGroupButton.exists)
             .ok('User is not on the second step of Sentinel flow', {

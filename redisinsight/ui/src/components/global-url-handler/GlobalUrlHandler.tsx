@@ -2,7 +2,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
 import { ConnectionString } from 'connection-string'
-import { isNull, isNumber, every, values, pick, isEmpty } from 'lodash'
+import { isNull, isNumber, every, values, pick } from 'lodash'
 import { Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import {
   appRedirectionSelector,

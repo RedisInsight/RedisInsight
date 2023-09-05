@@ -82,12 +82,6 @@ const HomePage = () => {
   }, [])
 
   useEffect(() => {
-    if (action === UrlHandlingActions.Connect) {
-      setAddDialogIsOpen(true)
-    }
-  }, [action])
-
-  useEffect(() => {
     if (isDeletedInstance) {
       dispatch(fetchInstancesAction())
     }

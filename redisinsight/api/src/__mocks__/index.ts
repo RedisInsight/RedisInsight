@@ -32,3 +32,4 @@ export * from './cloud-user';
 export * from './cloud-common';
 export * from './session';
 export * from './cloud-session';
+export * from './cloud-job';

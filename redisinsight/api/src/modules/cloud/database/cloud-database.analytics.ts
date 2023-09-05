@@ -5,7 +5,6 @@ import { TelemetryEvents } from 'src/constants';
 import { CloudSubscriptionCapiService } from '../subscription/cloud-subscription.capi.service';
 import { CloudSubscriptionType } from '../subscription/models';
 import { CloudCapiAuthDto } from '../common/dto';
-import { catchAclError } from 'src/utils';
 
 @Injectable()
 export class CloudDatabaseAnalytics extends TelemetryBaseService {
@@ -41,6 +40,7 @@ export class CloudDatabaseAnalytics extends TelemetryBaseService {
         },
       );
     } catch (error) {
+      // ignore
     }
   }
 }

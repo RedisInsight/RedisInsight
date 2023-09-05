@@ -1,5 +1,7 @@
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import { CloudCapiKey, ICloudApiCapiAccessKey, ICloudApiCapiKey } from 'src/modules/cloud/capi-key/model';
+import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
+import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockServer } from 'src/__mocks__/server';
 
 export const mockCloudCapiAuthDto: CloudCapiAuthDto = {
@@ -29,6 +31,16 @@ export const mockCloudCapiKey = Object.assign(new CloudCapiKey(), {
   valid: true,
   createdAt: new Date('2020-01-01T00:00:00.000Z'),
   lastUsed: new Date(),
+});
+
+export const mockCapiKeyEncrypted = 'cloudCapiKey.capiKey_ENCRYPTED';
+export const mockCapiSecretEncrypted = 'cloudCapiKey.capiSecret_ENCRYPTED';
+
+export const mockCloudCapiKeyEntity = Object.assign(new CloudCapiKeyEntity(), {
+  ...mockCloudCapiKey,
+  capiKey: mockCapiKeyEncrypted,
+  capiSecret: mockCapiSecretEncrypted,
+  encryption: EncryptionStrategy.KEYTAR,
 });
 
 export const mockCloudCapiKeyApiProvider = jest.fn(() => ({

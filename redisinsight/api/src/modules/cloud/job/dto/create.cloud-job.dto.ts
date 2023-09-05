@@ -6,7 +6,7 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
 // eslint-disable-next-line import/no-cycle
@@ -47,8 +47,8 @@ export class CreateCloudJobDto {
       { $ref: getSchemaPath(CreateDatabaseCloudJobDataDto) },
       { $ref: getSchemaPath(undefined) },
     ],
+    type: cloudJobDataTransformer,
   })
-  @Type(cloudJobDataTransformer)
   @ValidateNested()
   @Expose()
   @IsNotEmpty()

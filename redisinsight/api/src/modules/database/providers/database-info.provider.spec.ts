@@ -25,7 +25,7 @@ import {
 import { REDIS_MODULES_COMMANDS, AdditionalRedisModuleName } from 'src/constants';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { FeatureService } from 'src/modules/feature/feature.service';
@@ -236,9 +236,11 @@ describe('DatabaseInfoProvider', () => {
         .calledWith('client', ['list'])
         .mockRejectedValue(new Error("unknown command 'client'"));
 
-      const result = await service.getClientListInfo(mockIORedisClient);
-
-      expect(result).toBe(undefined);
+      try {
+        await service.getClientListInfo(mockIORedisClient)
+      } catch (err) {
+        expect(err).toBeInstanceOf(InternalServerErrorException);
+      }
     });
   });
 

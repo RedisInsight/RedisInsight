@@ -568,11 +568,12 @@ export function fetchEditedInstanceAction(instance: Instance, onSuccess?: () => 
 export function checkConnectToInstanceAction(
   id: string = '',
   onSuccessAction?: (id: string) => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
+  resetInstance: boolean = true,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
-    dispatch(resetConnectedInstance())
+    resetInstance && dispatch(resetConnectedInstance())
     try {
       const { status } = await apiService.get(`${ApiEndpoints.DATABASES}/${id}/connect`)
 

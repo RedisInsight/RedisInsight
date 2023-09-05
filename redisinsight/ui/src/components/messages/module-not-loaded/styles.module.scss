@@ -47,6 +47,11 @@
       width: 317px;
       margin-bottom: 42px;
     }
+
+    .iconTelescope {
+      width: 250px;
+      margin-left: 15px;
+    }
   }
 
   .list.bloomList {
@@ -148,5 +153,20 @@
 
   &.modal {
     padding: 30px;
+    background-color: var(--browserTableRowEven);
+
+    .title {
+      padding-top: 42px;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .bigText {
+      font-size: 14px;
+    }
+
+    .textFooter {
+      font-weight: 500;
+    }
   }
 }

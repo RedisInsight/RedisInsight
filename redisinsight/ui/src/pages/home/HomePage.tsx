@@ -33,8 +33,6 @@ import HomeHeader from './components/HomeHeader'
 
 import './styles.scss'
 import styles from './styles.module.scss'
-import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
-import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 
 const HomePage = () => {
   const [width, setWidth] = useState(0)

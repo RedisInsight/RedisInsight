@@ -16,7 +16,7 @@ import {
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, Maybe } from 'uiSrc/utils'
+import { Nullable, Maybe, openNewWindowDatabase } from 'uiSrc/utils'
 import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
 import { Pages, Theme } from 'uiSrc/constants'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
@@ -83,7 +83,7 @@ const Recommendation = ({
 
     dispatch(setWorkbenchEAMinimized(false))
     if (tutorial) {
-      history.push(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
+      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
       return
     }
 

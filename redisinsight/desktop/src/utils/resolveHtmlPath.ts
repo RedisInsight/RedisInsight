@@ -17,12 +17,13 @@ export const resolveHtmlPath = (htmlFileName: string, parsedDeepLink?: IParsedDe
   if (parsedDeepLink) {
     try {
       if (parsedDeepLink.initialPage) {
-        resolved += `${parsedDeepLink.initialPage}`
+        const initialPage = parsedDeepLink.initialPage.slice(+parsedDeepLink.initialPage.startsWith('/'))
+        resolved += initialPage
       }
 
       const queryParameters = new URLSearchParams([
-        ['from', parsedDeepLink.from],
-        ['target', parsedDeepLink.target],
+        ['from', parsedDeepLink.from || ''],
+        ['target', parsedDeepLink.target || ''],
       ])
 
       resolved += `?${queryParameters.toString()}`

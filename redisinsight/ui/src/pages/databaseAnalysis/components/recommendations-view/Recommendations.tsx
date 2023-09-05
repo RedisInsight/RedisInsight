@@ -35,6 +35,7 @@ import {
   renderRecommendationBadges,
   renderRecommendationContent,
 } from 'uiSrc/utils/recommendation/utils'
+import { openNewWindowDatabase } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -72,7 +73,7 @@ const Recommendations = () => {
 
     dispatch(setWorkbenchEAMinimized(false))
     if (mdPath) {
-      history.push(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
+      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
       return
     }
 

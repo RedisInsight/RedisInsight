@@ -37,6 +37,7 @@ const GlobalUrlHandler = () => {
       // @ts-ignore
       const urlProperties = Object.fromEntries(fromParams) || {}
       dispatch(setUrlProperties(urlProperties))
+      dispatch(setFromUrl(null))
 
       const pathname = actionUrl.hostname + actionUrl.pathname
       if (pathname?.replace(/^(\/\/?)/g, '') === UrlHandlingActions.Connect) {
@@ -48,14 +49,18 @@ const GlobalUrlHandler = () => {
   }, [fromUrl, config, isShowConsents])
 
   useEffect(() => {
-    const params = new URLSearchParams(search)
-    const from = params.get('from')
+    try {
+      const params = new URLSearchParams(search)
+      const from = params.get('from')
 
-    if (from) {
-      dispatch(setFromUrl(from))
-      history.replace({
-        search: ''
-      })
+      if (from) {
+        dispatch(setFromUrl(decodeURIComponent(from)))
+        history.replace({
+          search: ''
+        })
+      }
+    } catch (_e) {
+      // do nothing
     }
   }, [search])
 
@@ -108,7 +113,7 @@ const GlobalUrlHandler = () => {
       } as any
 
       if (isAllObligatoryProvided && requiredTls !== 'true') {
-        if (!isEmpty(cloudDetails)) {
+        if (cloudDetails?.cloudId) {
           db.cloudDetails = cloudDetails
         }
         dispatch(setUrlHandlingInitialState())

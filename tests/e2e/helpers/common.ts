@@ -207,6 +207,14 @@ export class Common {
     }
 
     /**
+     * generate url base on params to create DB
+     * @param params params for creating DB
+     */
+    static generateUrlTParams(params: Record<string, any>): string {
+        return new URLSearchParams(params).toString();
+    }
+
+    /**
      * Get json property value by property name and path
      * @param expectedText Expected link that is compared with actual
      */

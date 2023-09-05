@@ -1,13 +1,13 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { toString } from 'lodash'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cloneDeep, toString } from 'lodash'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
+import { defaultInstanceChanging } from 'uiSrc/slices/instances/instances'
 import InstanceFormWrapper, { Props } from './InstanceFormWrapper'
-import InstanceForm, {
-  Props as InstanceProps,
-} from './InstanceForm/InstanceForm'
+import InstanceForm, { Props as InstanceProps, } from './InstanceForm/InstanceForm'
 
 const mockedProps = mock<Props>()
 const mockedEditedInstance: Instance = {
@@ -47,7 +47,7 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
-  createInstanceStandaloneAction: () => jest.fn,
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   updateInstanceAction: () => jest.fn,
   testInstanceStandaloneAction: () => jest.fn,
   instancesSelector: jest.fn().mockReturnValue({ loadingChanging: false }),
@@ -67,6 +67,13 @@ jest.mock('uiSrc/slices/instances/sentinel', () => ({
   sentinelSelector: () => jest.fn().mockReturnValue({ loading: false }),
   fetchMastersSentinelAction: () => jest.fn,
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 const MockInstanceForm = (props: InstanceProps) => (
   <div>
@@ -185,5 +192,19 @@ describe('InstanceFormWrapper', () => {
       event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED,
     })
     sendEventTelemetry.mockRestore()
+  })
+
+  it('should call proper actions onSubmit with url handling', () => {
+    render(
+      <InstanceFormWrapper
+        {...instance(mockedProps)}
+        urlHandlingAction={UrlHandlingActions.Connect}
+        initialValues={mockedEditedInstance}
+      />
+    )
+    fireEvent.click(screen.getByTestId('submit-form-btn'))
+    expect(store.getActions()).toEqual([
+      defaultInstanceChanging()
+    ])
   })
 })

@@ -44,12 +44,6 @@ export const initAppHandlers = () => {
     }
   })
 
-  // deep link open (darwin)
-  app.on('open-url', async (event, url) => {
-    event.preventDefault()
-    await deepLinkWindowHandler(await deepLinkHandler(url))
-  })
-
   // deep link open (win + linux)
   app.on('second-instance', async (_event, commandLine) => {
     await deepLinkWindowHandler(await deepLinkHandler(commandLine?.pop()))

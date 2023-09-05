@@ -175,7 +175,7 @@ const InstanceFormWrapper = (props: Props) => {
         )
 
         const db = { ...payload }
-        if (!isEmpty(cloudDetails)) {
+        if (cloudDetails?.cloudId) {
           db.cloudDetails = cloudDetails
         }
 

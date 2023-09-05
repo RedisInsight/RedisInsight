@@ -1,6 +1,7 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
+import reactRouterDom from 'react-router-dom'
 import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, MOCK_CUSTOM_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
@@ -29,6 +30,10 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => {
 })
 
 describe('EnablementArea', () => {
+  beforeEach(() => {
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: jest.fn() })
+    reactRouterDom.useLocation = jest.fn().mockImplementation(() => ({ search: '' }))
+  })
   it('should render', () => {
     expect(render(<EnablementArea
       {...instance(mockedProps)}
@@ -111,6 +116,18 @@ describe('EnablementArea', () => {
     )
 
     expect(queryByTestId('internal-link-internal-page')).toBeInTheDocument()
+  })
+
+  it('should find guide and push proper search path', () => {
+    const search = '?guidePath=/quick-guides/working-with-json.html'
+
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
+    reactRouterDom.useLocation = jest.fn().mockImplementationOnce(() => ({ search }))
+
+    render(<EnablementArea {...instance(mockedProps)} guides={MOCK_GUIDES_ITEMS} onOpenInternalPage={jest.fn} />)
+
+    expect(pushMock).toBeCalledWith({ search: '?path=quick-guides/0/1' })
   })
 
   describe('Custom Tutorials', () => {

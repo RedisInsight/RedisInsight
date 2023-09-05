@@ -311,7 +311,7 @@ export class DatabaseInfoProvider {
         .filter(Boolean)
         .map((r) => convertBulkStringsToObject(r, ' ', '='));
     } catch (error) {
-      return undefined;
+      throw catchAclError(error);
     }
   }
 

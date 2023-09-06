@@ -56,7 +56,7 @@ describe('OAuthConnectFreeDb', () => {
       }
     })
 
-    const expectedActions = [setDefaultInstance(), resetConnectedInstance()]
+    const expectedActions = [setDefaultInstance()]
     expect(store.getActions()).toEqual(expectedActions)
   })
 

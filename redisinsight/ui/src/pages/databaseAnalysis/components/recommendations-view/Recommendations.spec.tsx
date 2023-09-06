@@ -1,5 +1,4 @@
 import React from 'react'
-import reactRouterDom from 'react-router-dom'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
@@ -7,11 +6,17 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
+import { openNewWindowDatabase } from 'uiSrc/utils'
 import Recommendations from './Recommendations'
 
 const recommendationsContent = MOCK_RECOMMENDATIONS
 const mockdbAnalysisSelector = jest.requireActual('uiSrc/slices/analytics/dbAnalysis')
 const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  openNewWindowDatabase: jest.fn(),
+}))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -470,8 +475,8 @@ describe('Recommendations', () => {
   })
 
   it('should call proper telemetry after click go tutorial button', () => {
-    const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    const openNewWindowDatabaseMock = jest.fn();
+    (openNewWindowDatabase as jest.Mock).mockImplementation(() => openNewWindowDatabaseMock);
 
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
@@ -485,6 +490,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
-    expect(pushMock).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/document/introduction.md')
+    expect(openNewWindowDatabase).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/document/introduction.md')
+    openNewWindowDatabase.mockRestore()
   })
 })

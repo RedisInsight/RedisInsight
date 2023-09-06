@@ -28,6 +28,7 @@ import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/ap
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { openNewWindowDatabase } from 'uiSrc/utils'
 
 import {
   sortRecommendations,
@@ -35,7 +36,6 @@ import {
   renderRecommendationBadges,
   renderRecommendationContent,
 } from 'uiSrc/utils/recommendation/utils'
-import { openNewWindowDatabase } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 

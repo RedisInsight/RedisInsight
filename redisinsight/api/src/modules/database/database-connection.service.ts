@@ -165,10 +165,6 @@ export class DatabaseConnectionService {
   private async collectClientInfo(clientMetadata: ClientMetadata, client: any, version?: string) {
     try {
       const intVersion = parseInt(version, 10) || 0;
-      if (intVersion < 7) {
-        return
-      }
-
       const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
 
       this.analytics.sendDatabaseConnectedClientListEvent(
@@ -176,9 +172,9 @@ export class DatabaseConnectionService {
         {
           clients: clients.map((c) => ({
             version: version || 'n/a',
-            resp: c?.['resp'] || 'n/a',
-            libName: c?.['lib-name'] || 'n/a',
-            libVer: c?.['lib-ver'] || 'n/a',
+            resp: intVersion < 7 ? undefined : c?.['resp'] || 'n/a',
+            libName: intVersion < 7 ? undefined : c?.['lib-name'] || 'n/a',
+            libVer: intVersion < 7 ? undefined : c?.['lib-ver'] || 'n/a',
           })),
         },
       );

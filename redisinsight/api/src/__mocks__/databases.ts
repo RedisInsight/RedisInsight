@@ -189,7 +189,7 @@ export const mockDatabaseOverview: DatabaseOverview = {
 };
 
 export const mockRedisServerInfoDto = {
-  redis_version: '6.0.5',
+  redis_version: '7.0.5',
   redis_mode: 'standalone',
   os: 'Linux 4.15.0-1087-gcp x86_64',
   arch_bits: '64',

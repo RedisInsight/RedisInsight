@@ -3,7 +3,8 @@ import {
   mockCloudAccountInfo, mockCloudApiAuthDto,
   mockCloudCapiAuthDto, mockCloudSessionService, mockCloudUserApiProvider,
   mockCloudUserCapiProvider, mockCloudUserRepository, mockSessionMetadata,
-  MockType
+  mockCloudUser,
+  MockType,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';

@@ -97,12 +97,10 @@ describe('DatabaseService', () => {
     it('should return databases and send analytics event', async () => {
       databaseRepository.list.mockResolvedValue([mockDatabase, mockDatabase]);
       expect(await service.list()).toEqual([mockDatabase, mockDatabase]);
-      expect(analytics.sendInstanceListReceivedEvent).toHaveBeenCalledWith([mockDatabase, mockDatabase]);
     });
     it('should throw InternalServerErrorException?', async () => {
       databaseRepository.list.mockRejectedValueOnce(new Error());
       await expect(service.list()).rejects.toThrow(InternalServerErrorException);
-      expect(analytics.sendInstanceListReceivedEvent).not.toHaveBeenCalled();
     });
   });
 

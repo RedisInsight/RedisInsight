@@ -162,7 +162,7 @@ export class DatabaseConnectionService {
     }
   }
 
-  private async collectClientInfo(clientMetadata: ClientMetadata, client: any, version: string) {
+  private async collectClientInfo(clientMetadata: ClientMetadata, client: any, version?: string) {
     try {
       const intVersion = parseInt(version, 10) || 0;
       if (intVersion < 7) {

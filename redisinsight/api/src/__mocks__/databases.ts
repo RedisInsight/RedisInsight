@@ -17,6 +17,7 @@ import {
 } from 'src/__mocks__/ssh';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__mocks__/cloud-database';
+import { mockRedisClientListResult } from 'src/__mocks__/database-info';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -239,6 +240,7 @@ export const mockDatabaseInfoProvider = jest.fn(() => ({
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),
+  getClientListInfo: jest.fn().mockReturnValue(mockRedisClientListResult),
 }));
 
 export const mockDatabaseOverviewProvider = jest.fn(() => ({
@@ -259,4 +261,5 @@ export const mockDatabaseAnalytics = jest.fn(() => ({
   sendInstanceAddFailedEvent: jest.fn(),
   sendInstanceEditedEvent: jest.fn(),
   sendInstanceDeletedEvent: jest.fn(),
+  sendDatabaseConnectedClientListEvent: jest.fn(),
 }));

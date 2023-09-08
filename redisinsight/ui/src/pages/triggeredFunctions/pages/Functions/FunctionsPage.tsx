@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { EuiFieldSearch, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiResizableContainer, } from '@elastic/eui'
+import {
+  EuiFieldSearch,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiLoadingSpinner,
+  EuiResizableContainer,
+  EuiToolTip,
+  EuiButton,
+} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
@@ -105,6 +113,12 @@ const FunctionsPage = () => {
 
   const onAddLibrary = () => {
     dispatch(setAddLibraryFormOpen(true))
+    sendEventTelemetry({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+      }
+    })
     history.push(Pages.triggeredFunctionsLibraries(instanceId))
   }
 
@@ -142,6 +156,25 @@ const FunctionsPage = () => {
               aria-label="Search functions"
               data-testid="search-functions-list"
             />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiToolTip
+              position="bottom"
+              anchorClassName="euiToolTip__btn-disabled"
+              content={isModuleLoaded ? null : 'Triggered Functions is not loaded in current database'}
+            >
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                onClick={onAddLibrary}
+                disabled={!isModuleLoaded}
+                className={styles.addLibrary}
+                data-testid="btn-add-library"
+              >
+                + Library
+              </EuiButton>
+            </EuiToolTip>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>

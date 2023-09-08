@@ -472,7 +472,7 @@ class RejsonDetails extends React.Component<Props, State> {
           deleteMsg={deleteMsg}
           onJSONPropertyEdited={onJSONPropertyEdited}
           instanceId={instanceId}
-          keyName={selectedKey}
+          keyName={bufferToString(selectedKey)}
           value={data as JSONScalarValue}
           handleSubmitUpdateValue={handleSubmitUpdateValue}
           handleSubmitRemoveKey={(path, jsonKeyName) => this.onClickRemoveKey(path, jsonKeyName)}

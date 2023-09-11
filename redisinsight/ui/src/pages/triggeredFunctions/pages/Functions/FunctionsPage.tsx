@@ -117,6 +117,7 @@ const FunctionsPage = () => {
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
       eventData: {
         databaseId: instanceId,
+        tab: 'functions',
       }
     })
     history.push(Pages.triggeredFunctionsLibraries(instanceId))

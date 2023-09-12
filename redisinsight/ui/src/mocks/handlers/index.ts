@@ -6,6 +6,7 @@ import analytics from './analytics'
 import browser from './browser'
 import recommendations from './recommendations'
 import triggeredFunctions from './triggeredFunctions'
+import cloud from './oauth'
 
 // @ts-ignore
 export const handlers: RestHandler<MockedRequest>[] = [].concat(
@@ -16,4 +17,5 @@ export const handlers: RestHandler<MockedRequest>[] = [].concat(
   browser,
   recommendations,
   triggeredFunctions,
+  cloud,
 )

@@ -39,6 +39,7 @@ export const mockDatabase = Object.assign(new Database(), {
   new: false,
   compressor: Compressor.NONE,
   version: '7.0',
+  modules: [{ name: 'custom', version: 1 }]
 });
 
 export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {

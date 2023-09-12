@@ -1,8 +1,7 @@
 import { get } from 'lodash';
 import { TypeHelpOptions } from 'class-transformer';
-// eslint-disable-next-line import/no-cycle
-import { CreateDatabaseCloudJobDataDto } from '../dto';
-import { CloudJobName } from '../constants';
+import { CreateDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto';
+import { CloudJobName } from 'src/modules/cloud/job/constants';
 
 export const cloudJobDataTransformer = (data: TypeHelpOptions) => {
   const jobName = get(data?.object, 'name');

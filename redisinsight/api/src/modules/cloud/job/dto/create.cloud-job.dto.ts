@@ -1,4 +1,6 @@
-import { ApiProperty, ApiPropertyOptional, getSchemaPath } from '@nestjs/swagger';
+import {
+  ApiExtraModels, ApiProperty, ApiPropertyOptional, getSchemaPath,
+} from '@nestjs/swagger';
 import {
   IsEnum,
   IsNotEmpty,
@@ -6,11 +8,10 @@ import {
   IsOptional,
   ValidateNested,
 } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
-// eslint-disable-next-line import/no-cycle
-import { cloudJobDataTransformer } from '../transformers/cloud-job-data.transformer';
+import { cloudJobDataTransformer } from 'src/modules/cloud/job/transformers/cloud-job-data.transformer';
 
 export class CreateDatabaseCloudJobDataDto {
   @ApiProperty({
@@ -22,6 +23,7 @@ export class CreateDatabaseCloudJobDataDto {
   planId: number;
 }
 
+@ApiExtraModels(CreateDatabaseCloudJobDataDto)
 export class CreateCloudJobDto {
   @ApiProperty({
     description: 'Job name to create',
@@ -45,13 +47,12 @@ export class CreateCloudJobDto {
     description: 'Any data for create a job.',
     oneOf: [
       { $ref: getSchemaPath(CreateDatabaseCloudJobDataDto) },
-      { $ref: getSchemaPath(undefined) },
     ],
-    type: cloudJobDataTransformer,
   })
   @ValidateNested()
   @Expose()
   @IsNotEmpty()
   @IsOptional()
+  @Type(cloudJobDataTransformer)
   data: CreateDatabaseCloudJobDataDto | undefined;
 }

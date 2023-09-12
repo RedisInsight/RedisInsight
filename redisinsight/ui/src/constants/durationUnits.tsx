@@ -3,6 +3,7 @@ import { EuiSuperSelectOption } from '@elastic/eui'
 export enum DurationUnits {
   microSeconds = 'µs',
   milliSeconds = 'ms',
+  mSeconds = 'msec',
 }
 
 export const DURATION_UNITS: EuiSuperSelectOption<DurationUnits>[] = [

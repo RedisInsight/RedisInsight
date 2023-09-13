@@ -195,7 +195,7 @@ export class DatabaseAPIRequests {
                 return item.connectionType === connectionType;
             }
         );
-        return response[0].id;
+        return response?.[0]?.id;
     }
 
     /**

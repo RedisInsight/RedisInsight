@@ -22,9 +22,6 @@ fixture `Add DB from SM`
     .afterEach(async() => {
         // Delete all existing connections
         await databaseAPIRequests.deleteAllDatabasesApi();
-    })
-    .beforeEach(async() => {
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test
     .page(commonUrl)('Add DB using url via manual flow', async t => {

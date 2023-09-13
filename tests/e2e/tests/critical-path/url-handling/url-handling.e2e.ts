@@ -22,6 +22,9 @@ fixture `Add DB from SM`
     .afterEach(async() => {
         // Delete all existing connections
         await databaseAPIRequests.deleteAllDatabasesApi();
+    })
+    .beforeEach(async() => {
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .page(commonUrl)('Add DB using url via manual flow', async t => {

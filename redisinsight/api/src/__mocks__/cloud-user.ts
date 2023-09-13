@@ -10,7 +10,7 @@ import {
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import config from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
-import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto } from 'src/__mocks__/cloud-capi-key';
+import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
 
 const serverConfig = config.get('server');
 
@@ -103,7 +103,7 @@ export const mockCloudUser = Object.assign(new CloudUser(), {
   name: mockCloudApiUser.name,
   currentAccountId: +mockCloudApiUser.current_account_id,
   accounts: [mockCloudUserAccount],
-  capiKey: mockCloudCapiAuthDto.capiKey,
+  capiKey: mockCloudCapiKey,
 });
 
 export const mockCloudUserSafe = classToPlain(mockCloudUser); // omits all data in the "security" group
@@ -125,4 +125,7 @@ export const mockCloudUserRepository = jest.fn(() => ({
 
 export const mockCloudUserApiService = jest.fn(() => ({
   getCapiKeys: jest.fn().mockResolvedValue(mockCloudCapiAuthDto),
+  me: jest.fn().mockResolvedValue(mockCloudUser),
+  setCurrentAccount: jest.fn(),
+  updateUser: jest.fn(),
 }));

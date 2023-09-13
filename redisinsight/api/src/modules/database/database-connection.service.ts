@@ -89,6 +89,8 @@ export class DatabaseConnectionService {
       { client, databaseId: clientMetadata.databaseId },
     );
 
+    this.collectClientInfo(clientMetadata, client, generalInfo?.version);
+
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }
 
@@ -157,6 +159,27 @@ export class DatabaseConnectionService {
       );
       this.analytics.sendConnectionFailedEvent(database, exception);
       throw exception;
+    }
+  }
+
+  private async collectClientInfo(clientMetadata: ClientMetadata, client: any, version?: string) {
+    try {
+      const intVersion = parseInt(version, 10) || 0;
+      const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];
+
+      this.analytics.sendDatabaseConnectedClientListEvent(
+        clientMetadata.databaseId,
+        {
+          clients: clients.map((c) => ({
+            version: version || 'n/a',
+            resp: intVersion < 7 ? undefined : c?.['resp'] || 'n/a',
+            libName: intVersion < 7 ? undefined : c?.['lib-name'] || 'n/a',
+            libVer: intVersion < 7 ? undefined : c?.['lib-ver'] || 'n/a',
+          })),
+        },
+      );
+    } catch (error) {
+      // ignore errors
     }
   }
 }

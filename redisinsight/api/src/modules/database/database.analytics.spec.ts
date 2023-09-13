@@ -344,4 +344,22 @@ describe('DatabaseAnalytics', () => {
       );
     });
   });
+
+  describe('sendDatabaseConnectedClientListEvent', () => {
+    it('should emit event', () => {
+      service.sendDatabaseConnectedClientListEvent(mockDatabase.id, {
+        version: mockDatabase.version,
+        resp: '2',
+      });
+
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        TelemetryEvents.DatabaseConnectedClientList,
+        {
+          instanceId: mockDatabase.id,
+          version: mockDatabase.version,
+          resp: '2',
+        },
+      );
+    });
+  });
 });

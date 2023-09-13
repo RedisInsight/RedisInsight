@@ -17,13 +17,9 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 import {
   fetchServerInfo,
-  appAnalyticsInfoSelector,
   appServerInfoSelector,
-  setAnalyticsIdentified,
 } from 'uiSrc/slices/app/info'
 
-import { getTelemetryService } from 'uiSrc/telemetry'
-import { checkIsAnalyticsGranted } from 'uiSrc/telemetry/checkAnalytics'
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
@@ -39,8 +35,6 @@ const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
   const { config, spec } = useSelector(userSettingsSelector)
-  const { segmentWriteKey } = useSelector(appAnalyticsInfoSelector)
-
   const { pathname } = useLocation()
 
   const dispatch = useDispatch()
@@ -73,15 +67,6 @@ const Config = () => {
   }, [spec])
 
   useEffect(() => {
-    if (serverInfo && checkIsAnalyticsGranted()) {
-      (async () => {
-        const telemetryService = getTelemetryService(segmentWriteKey)
-        await telemetryService.identify({ installationId: serverInfo.id, sessionId: serverInfo.sessionId })
-
-        dispatch(setAnalyticsIdentified(true))
-      })()
-    }
-
     featuresHighlight()
     onboardUsers()
   }, [serverInfo, config])

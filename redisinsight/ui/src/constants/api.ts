@@ -132,6 +132,9 @@ enum ApiEndpoints {
   CLOUD_ME_AUTODISCOVERY_GET_DATABASES = 'cloud/me/autodiscovery/get-databases',
   CLOUD_ME_AUTODISCOVERY_DATABASES = 'cloud/me/autodiscovery/databases',
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
+
+  ANALYTICS_SEND_EVENT = 'analytics/send-event',
+  ANALYTICS_SEND_PAGE = 'analytics/send-page',
 }
 
 export enum CustomHeaders {

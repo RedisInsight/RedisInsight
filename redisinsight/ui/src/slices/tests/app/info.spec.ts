@@ -6,14 +6,12 @@ import {
   mockedStore,
 } from 'uiSrc/utils/test-utils'
 
-import { apiService } from 'uiSrc/services'
 import { mswServer } from 'uiSrc/mocks/server'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { APP_INFO_DATA_MOCK } from 'uiSrc/mocks/handlers/app/infoHandlers'
 import reducer, {
   initialState,
-  setAnalyticsIdentified,
   setElectronInfo,
   setReleaseNotesViewed,
   getServerInfo,
@@ -42,30 +40,6 @@ describe('slices', () => {
 
       // Assert
       expect(result).toEqual(nextState)
-    })
-  })
-
-  describe('setAnalyticsIdentified', () => {
-    it('should properly set analytics identified', () => {
-      // Arrange
-      const identified = true
-      const state = {
-        ...initialState,
-        analytics: {
-          ...initialState.analytics,
-          identified
-        }
-      }
-
-      // Act
-      const nextState = reducer(initialState, setAnalyticsIdentified(identified))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { info: nextState },
-      })
-
-      expect(appInfoSelector(rootState)).toEqual(state)
     })
   })
 

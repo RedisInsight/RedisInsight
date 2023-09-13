@@ -8,7 +8,6 @@ import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { clusterDetailsSelector, fetchClusterDetailsAction } from 'uiSrc/slices/analytics/clusterDetails'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
@@ -37,7 +36,6 @@ const ClusterDetailsPage = () => {
     connectionType
   } = useSelector(connectedInstanceSelector)
   const { viewTab } = useSelector(analyticsSettingsSelector)
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { loading, data } = useSelector(clusterDetailsSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
@@ -100,10 +98,10 @@ const ClusterDetailsPage = () => {
   }, [data])
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+    if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
-  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+  }, [connectedInstanceName, isPageViewSent])
 
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({

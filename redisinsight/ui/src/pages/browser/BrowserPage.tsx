@@ -33,7 +33,6 @@ import {
   setBrowserBulkActionOpen,
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -54,7 +53,6 @@ export const secondPanelId = 'keyDetails'
 const BrowserPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
   const {
     panelSizes,
@@ -119,10 +117,10 @@ const BrowserPage = () => {
   }, [selectedKey])
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+    if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
-  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+  }, [connectedInstanceName, isPageViewSent])
 
   const updateWindowDimensions = () => {
     setArePanelsCollapsed(globalThis.innerWidth < widthResponsiveSize)

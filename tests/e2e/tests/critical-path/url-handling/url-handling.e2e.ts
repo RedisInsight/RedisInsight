@@ -56,7 +56,7 @@ test
         await browserPage.Cli.sendCommandInCli('acl DELUSER alice');
         await databaseAPIRequests.deleteAllDatabasesApi();
     })
-    .page(commonUrl)('Add DB automatically', async t => {
+    .page(commonUrl)('Add DB using url automatically', async t => {
         databaseUsername = 'alice';
         databasePassword = 'p1pp0';
         const connectUrlParams = {

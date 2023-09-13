@@ -30,54 +30,6 @@ describe('DatabaseAnalytics', () => {
     sendFailedEventSpy = jest.spyOn(service as any, 'sendFailedEvent');
   });
 
-  describe('sendInstanceListReceivedEvent', () => {
-    it('should emit event with one db in the list', () => {
-      service.sendInstanceListReceivedEvent([mockDatabaseWithTlsAuth]);
-
-      expect(sendEventSpy).toHaveBeenCalledWith(
-        TelemetryEvents.RedisInstanceListReceived,
-        {
-          numberOfDatabases: 1,
-        },
-      );
-    });
-    it('should emit event with several dbs in the list', () => {
-      service.sendInstanceListReceivedEvent([
-        mockDatabaseWithTlsAuth,
-        mockDatabaseWithTlsAuth,
-        mockDatabaseWithTlsAuth,
-      ]);
-
-      expect(sendEventSpy).toHaveBeenCalledWith(
-        TelemetryEvents.RedisInstanceListReceived,
-        {
-          numberOfDatabases: 3,
-        },
-      );
-    });
-    it('should emit event with several empty in the list', () => {
-      service.sendInstanceListReceivedEvent([]);
-
-      expect(sendEventSpy).toHaveBeenCalledWith(
-        TelemetryEvents.RedisInstanceListReceived,
-        {
-          numberOfDatabases: 0,
-        },
-      );
-    });
-    it('should emit event with additional data', () => {
-      service.sendInstanceListReceivedEvent([], { data: 'data' });
-
-      expect(sendEventSpy).toHaveBeenCalledWith(
-        TelemetryEvents.RedisInstanceListReceived,
-        {
-          numberOfDatabases: 0,
-          data: 'data',
-        },
-      );
-    });
-  });
-
   describe('sendInstanceAddedEvent', () => {
     it('should emit event with enabled tls and sni, and ssh', () => {
       service.sendInstanceAddedEvent({

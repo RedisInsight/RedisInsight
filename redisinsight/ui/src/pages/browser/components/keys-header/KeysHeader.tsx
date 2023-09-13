@@ -116,19 +116,7 @@ const KeysHeader = (props: Props) => {
     height: '36px !important',
   }
 
-  const handleRefreshKeys = (enableAutoRefresh: boolean) => {
-    if (!enableAutoRefresh) {
-      sendEventTelemetry({
-        event: getBasedOnViewTypeEvent(
-          viewType,
-          TelemetryEvent.BROWSER_KEY_LIST_REFRESH_CLICKED,
-          TelemetryEvent.TREE_VIEW_KEY_LIST_REFRESH_CLICKED
-        ),
-        eventData: {
-          databaseId: instanceId
-        }
-      })
-    }
+  const handleRefreshKeys = () => {
     dispatch(fetchKeys(
       {
         searchMode,

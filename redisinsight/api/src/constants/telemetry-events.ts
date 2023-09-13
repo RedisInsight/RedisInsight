@@ -13,7 +13,6 @@ export enum TelemetryEvents {
   RedisInstanceDeleted = 'CONFIG_DATABASES_DATABASE_DELETED',
   RedisInstanceEditedByUser = 'CONFIG_DATABASES_DATABASE_EDITED_BY_USER',
   RedisInstanceConnectionFailed = 'DATABASE_CONNECTION_FAILED',
-  RedisInstanceListReceived = 'CONFIG_DATABASES_DATABASE_LIST_DISPLAYED',
 
   // Databases import
   DatabaseImportParseFailed = 'CONFIG_DATABASES_REDIS_IMPORT_PARSE_FAILED',

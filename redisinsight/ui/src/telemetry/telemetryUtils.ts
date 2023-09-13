@@ -18,17 +18,17 @@ import {
 } from './interfaces'
 import { TelemetryEvent } from './events'
 
-const sendEventTelemetry = ({ event, eventData = {} }: ITelemetrySendEvent) => {
+const sendEventTelemetry = async ({ event, eventData = {} }: ITelemetrySendEvent) => {
   try {
-    apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData })
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData })
   } catch (e) {
     // continue regardless of error
   }
 }
 
-const sendPageViewTelemetry = ({ name }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name }: ITelemetrySendPageView) => {
   try {
-    apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name })
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name })
   } catch (e) {
     // continue regardless of error
   }

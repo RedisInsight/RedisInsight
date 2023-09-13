@@ -56,12 +56,12 @@ export class DatabaseAPIRequests {
             requestBody.verifyServerCert = false;
             requestBody.caCert = {
                 name: `ca}-${uniqueId}`,
-                certificate: databaseParameters.caCert.certificate,
+                certificate: databaseParameters.caCert.certificate
             };
             requestBody.clientCert = {
                 name: `client}-${uniqueId}`,
                 certificate: databaseParameters.clientCert!.certificate,
-                key: databaseParameters.clientCert!.key,
+                key: databaseParameters.clientCert!.key
             };
         }
         const response = await sendPostRequest(
@@ -85,7 +85,7 @@ export class DatabaseAPIRequests {
         databasesParameters: AddNewDatabaseParameters[]
     ): Promise<void> {
         if (databasesParameters.length) {
-            databasesParameters.forEach(async (parameter) => {
+            databasesParameters.forEach(async(parameter) => {
                 await this.addNewStandaloneDatabaseApi(parameter);
             });
         }
@@ -101,7 +101,7 @@ export class DatabaseAPIRequests {
         const requestBody = {
             name: databaseParameters.ossClusterDatabaseName,
             host: databaseParameters.ossClusterHost,
-            port: Number(databaseParameters.ossClusterPort),
+            port: Number(databaseParameters.ossClusterPort)
         };
         const response = await sendPostRequest(
             ResourcePath.Databases,
@@ -133,7 +133,7 @@ export class DatabaseAPIRequests {
             host: databaseParameters.sentinelHost,
             port: Number(databaseParameters.sentinelPort),
             password: databaseParameters.sentinelPassword,
-            masters: masters,
+            masters: masters
         };
         const resourcePath =
             ResourcePath.RedisSentinel + ResourcePath.Databases;
@@ -164,7 +164,7 @@ export class DatabaseAPIRequests {
         const allDataBases = await this.getAllDatabases();
         const response = await asyncFilter(
             allDataBases,
-            async (item: databaseParameters) => {
+            async(item: databaseParameters) => {
                 await doAsyncStuff();
                 return item.name === databaseName;
             }
@@ -190,7 +190,7 @@ export class DatabaseAPIRequests {
         let response: databaseParameters[] = [];
         response = await asyncFilter(
             allDataBases,
-            async (item: databaseParameters) => {
+            async(item: databaseParameters) => {
                 await doAsyncStuff();
                 return item.connectionType === connectionType;
             }
@@ -217,6 +217,7 @@ export class DatabaseAPIRequests {
                 );
                 await t.expect(await response.status).eql(200);
             }
+            await this.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         }
     }
 
@@ -237,7 +238,8 @@ export class DatabaseAPIRequests {
                 requestBody
             );
             await t.expect(await response.status).eql(200);
-        } else {
+        }
+        else {
             throw new Error('Error: Missing databaseId');
         }
     }
@@ -249,7 +251,7 @@ export class DatabaseAPIRequests {
     async deleteStandaloneDatabasesByNamesApi(
         databaseNames: string[]
     ): Promise<void> {
-        databaseNames.forEach(async (databaseName) => {
+        databaseNames.forEach(async(databaseName) => {
             const databaseId = await this.getDatabaseIdByName(databaseName);
             if (databaseId) {
                 const requestBody = { ids: [`${databaseId}`] };
@@ -258,7 +260,8 @@ export class DatabaseAPIRequests {
                     requestBody
                 );
                 await t.expect(await response.status).eql(200);
-            } else {
+            }
+            else {
                 throw new Error('Error: Missing databaseId');
             }
         });
@@ -311,14 +314,14 @@ export class DatabaseAPIRequests {
         const databaseIds = await this.getDatabaseByConnectionType(
             connectionType
         );
-        const requestBody = { ids: [`${databaseIds}`] };
-        const response = await sendDeleteRequest(
-            ResourcePath.Databases,
-            requestBody
-        );
-        await t.expect(await response.status).eql(200);
-
-        await this.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        if(databaseIds.length > 0) {
+            const requestBody = { ids: [`${databaseIds}`] };
+            const response = await sendDeleteRequest(
+                ResourcePath.Databases,
+                requestBody
+            );
+            await t.expect(await response.status).eql(200);
+        }
     }
 
     /**
@@ -329,7 +332,7 @@ export class DatabaseAPIRequests {
         databasesParameters: AddNewDatabaseParameters[]
     ): Promise<void> {
         if (databasesParameters.length) {
-            databasesParameters.forEach(async (parameter) => {
+            databasesParameters.forEach(async(parameter) => {
                 await this.deleteStandaloneDatabaseApi(parameter);
             });
         }
@@ -346,7 +349,7 @@ export class DatabaseAPIRequests {
             databaseParameters.ossClusterDatabaseName
         );
         const resourcePath =
-            ResourcePath.Databases + `/${databaseId}` + ResourcePath.ClusterDetails;
+            `${ResourcePath.Databases  }/${databaseId}${  ResourcePath.ClusterDetails}`;
         const response = await sendGetRequest(resourcePath);
 
         await t.expect(await response.status).eql(200);

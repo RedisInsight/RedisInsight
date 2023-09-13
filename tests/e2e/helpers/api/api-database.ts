@@ -314,7 +314,7 @@ export class DatabaseAPIRequests {
         const databaseIds = await this.getDatabaseByConnectionType(
             connectionType
         );
-        if(databaseIds.length > 0) {
+        if(databaseIds?.length > 0) {
             const requestBody = { ids: [`${databaseIds}`] };
             const response = await sendDeleteRequest(
                 ResourcePath.Databases,

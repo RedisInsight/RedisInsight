@@ -10,16 +10,12 @@ const generateUtmQueryTests = [
     input: { source: 'source' },
     expected: new URLSearchParams([
       ['utm_source', 'source'],
-      ['utm_medium', 'undefined'],
-      ['utm_campaign', 'undefined'],
     ]),
   },
   {
     input: { medium: 'medium' },
     expected: new URLSearchParams([
-      ['utm_source', 'undefined'],
       ['utm_medium', 'medium'],
-      ['utm_campaign', 'undefined'],
     ]),
   },
   {
@@ -33,8 +29,6 @@ const generateUtmQueryTests = [
   {
     input: { campaign: 'campaign' },
     expected: new URLSearchParams([
-      ['utm_source', 'undefined'],
-      ['utm_medium', 'undefined'],
       ['utm_campaign', 'campaign'],
     ]),
   },

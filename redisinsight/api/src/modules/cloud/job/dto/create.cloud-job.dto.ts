@@ -4,24 +4,15 @@ import {
 import {
   IsEnum,
   IsNotEmpty,
-  IsNumber,
+  IsNotEmptyObject,
   IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
+import { cloudJobDataTransformer } from 'src/modules/cloud/job/transformers/cloud-job-data.transformer';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
-import { cloudJobDataTransformer } from 'src/modules/cloud/job/transformers/cloud-job-data.transformer';
-
-export class CreateDatabaseCloudJobDataDto {
-  @ApiProperty({
-    description: 'Plan id for create a subscription.',
-    type: Number,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  planId: number;
-}
+import { CreateDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto/create-database.cloud-job.data.dto';
 
 @ApiExtraModels(CreateDatabaseCloudJobDataDto)
 export class CreateCloudJobDto {
@@ -49,10 +40,10 @@ export class CreateCloudJobDto {
       { $ref: getSchemaPath(CreateDatabaseCloudJobDataDto) },
     ],
   })
-  @ValidateNested()
   @Expose()
-  @IsNotEmpty()
   @IsOptional()
+  @IsNotEmptyObject()
   @Type(cloudJobDataTransformer)
-  data: CreateDatabaseCloudJobDataDto | undefined;
+  @ValidateNested()
+  data?: CreateDatabaseCloudJobDataDto;
 }

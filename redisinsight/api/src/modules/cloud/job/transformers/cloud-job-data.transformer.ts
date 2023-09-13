@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { TypeHelpOptions } from 'class-transformer';
-import { CreateDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto';
+import { CreateDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto/create-database.cloud-job.data.dto';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 
 export const cloudJobDataTransformer = (data: TypeHelpOptions) => {

@@ -58,7 +58,50 @@ describe('CloudUserApiProvider', () => {
       mockedAxios.post.mockResolvedValue(response);
 
       expect(await service.getApiSessionId(mockCloudSession)).toEqual(mockCloudApiAuthDto.apiSessionId);
-      expect(mockedAxios.post).toHaveBeenCalledWith('login', {}, mockCloudApiHeaders);
+      expect(mockedAxios.post).toHaveBeenCalledWith('login', {}, {
+        ...mockCloudApiHeaders,
+        params: null,
+      });
+    });
+    it('successfully get api session id (login to api) with utm parameters', async () => {
+      const response = {
+        status: 200,
+        headers: { 'set-cookie': [`anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`] },
+      };
+      mockedAxios.post.mockResolvedValue(response);
+
+      expect(await service.getApiSessionId(
+        mockCloudSession,
+        { source: 's', medium: 'm', campaign: 'c' },
+      )).toEqual(mockCloudApiAuthDto.apiSessionId);
+
+      expect(mockedAxios.post).toHaveBeenCalledWith('login', {}, {
+        ...mockCloudApiHeaders,
+        params: new URLSearchParams([
+          ['utm_source', 's'],
+          ['utm_medium', 'm'],
+          ['utm_campaign', 'c'],
+        ]),
+      });
+    });
+    it('successfully get api session id (login to api) with defined only utm parameters', async () => {
+      const response = {
+        status: 200,
+        headers: { 'set-cookie': [`anything;JSESSIONID=${mockCloudApiAuthDto.apiSessionId};anything;`] },
+      };
+      mockedAxios.post.mockResolvedValue(response);
+
+      expect(await service.getApiSessionId(
+        mockCloudSession,
+        { medium: 'm' },
+      )).toEqual(mockCloudApiAuthDto.apiSessionId);
+
+      expect(mockedAxios.post).toHaveBeenCalledWith('login', {}, {
+        ...mockCloudApiHeaders,
+        params: new URLSearchParams([
+          ['utm_medium', 'm'],
+        ]),
+      });
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);

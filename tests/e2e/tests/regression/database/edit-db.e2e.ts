@@ -26,12 +26,13 @@ fixture `List of Databases`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(database);
     });
 test
     .after(async() => {
         // Delete database
-        await databaseHelper.deleteDatabase(newDatabaseName);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     })('Verify that user can edit DB alias of Standalone DB', async t => {
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         // Edit alias of added database
@@ -61,7 +62,7 @@ test
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     })('Verify that context for previous database not saved after editing port/username/password/certificates/SSH', async t => {
         const command = 'HSET';
 

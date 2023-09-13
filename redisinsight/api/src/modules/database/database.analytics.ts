@@ -132,4 +132,18 @@ export class DatabaseAnalytics extends TelemetryBaseService {
       },
     );
   }
+
+  sendDatabaseConnectedClientListEvent(instanceId: string, additionalData: object = {}): void {
+    try {
+      this.sendEvent(
+        TelemetryEvents.DatabaseConnectedClientList,
+        {
+          instanceId,
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
 }

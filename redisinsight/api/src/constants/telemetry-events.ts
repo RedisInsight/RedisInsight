@@ -5,6 +5,7 @@ export enum TelemetryEvents {
   AnalyticsPermission = 'ANALYTICS_PERMISSION',
   SettingsScanThresholdChanged = 'SETTINGS_KEYS_TO_SCAN_CHANGED',
   SettingsWorkbenchPipelineChanged = 'SETTINGS_WORKBENCH_PIPELINE_CHANGED',
+  DatabaseConnectedClientList = 'DATABASE_CONNECTED_CLIENT_LIST',
 
   // Events for redis instances
   RedisInstanceAdded = 'CONFIG_DATABASES_DATABASE_ADDED',
@@ -29,6 +30,16 @@ export enum TelemetryEvents {
   RECloudDatabasesDiscoveryFailed = 'CONFIG_DATABASES_RE_CLOUD_AUTODISCOVERY_DATABASES_FAILED',
   SentinelMasterGroupsDiscoverySucceed = 'CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUCCEEDED',
   SentinelMasterGroupsDiscoveryFailed = 'CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_FAILED',
+
+  // Events for cloud oauth
+  CloudSignInSucceeded = 'CLOUD_SIGN_IN_SUCCEEDED',
+  CloudSignInFailed = 'CLOUD_SIGN_IN_FAILED',
+  CloudFreeDatabaseCreated = 'CLOUD_FREE_DATABASE_CREATED',
+  CloudFreeDatabaseFailed = 'CLOUD_FREE_DATABASE_FAILED',
+
+  // Event for cloud CAPI keys
+  CloudAccountKeyGenerated = 'CLOUD_ACCOUNT_KEY_GENERATED',
+  CloudAccountKeyGenerationFailed = 'CLOUD_ACCOUNT_KEY_GENERATION_FAILED',
 
   // Events for cli tool
   CliClientCreated = 'CLI_CLIENT_CREATED',

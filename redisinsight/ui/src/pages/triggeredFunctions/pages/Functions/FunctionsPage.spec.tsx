@@ -171,4 +171,27 @@ describe('FunctionsPage', () => {
 
     expect(queryByTestId('total-functions')).not.toBeInTheDocument()
   })
+
+  it('should open library add form and sent proper telemetry event', () => {
+    const sendEventTelemetryMock = jest.fn()
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<FunctionsPage />)
+
+    fireEvent.click(screen.getByTestId('btn-add-library'))
+
+    expect(pushMock)
+      .toBeCalledWith(Pages.triggeredFunctionsLibraries('instanceId'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LOAD_LIBRARY_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        tab: 'functions',
+      }
+    })
+  })
 })

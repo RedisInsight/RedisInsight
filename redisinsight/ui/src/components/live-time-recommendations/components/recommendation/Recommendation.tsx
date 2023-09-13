@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
@@ -16,7 +16,8 @@ import {
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, findMarkdownPathByPath, Maybe, renderRecommendationContent } from 'uiSrc/utils'
+import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
+import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
 import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
@@ -26,6 +27,7 @@ import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendatio
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
+import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
@@ -67,7 +69,9 @@ const Recommendation = ({
   const { theme } = useContext(ThemeContext)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { redisStack, title, liveTitle } = recommendationsContent[name] || {}
+  const { redisStack, title, liveTitle, content = [] } = recommendationsContent[name]
+    || {}
+
   const recommendationTitle = liveTitle || title
 
   const handleRedirect = () => {
@@ -172,7 +176,7 @@ const Recommendation = ({
         </EuiButton>
       )}
       {renderRecommendationContent(
-        recommendationsContent[name]?.content,
+        content,
         params,
         {
           onClickLink: onRecommendationLinkClick,

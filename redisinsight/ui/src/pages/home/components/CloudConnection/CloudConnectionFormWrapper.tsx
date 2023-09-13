@@ -11,13 +11,13 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import CloudConnectionForm from './CloudConnectionForm/CloudConnectionForm'
 
 export interface Props {
-  width: number;
-  onClose?: () => void;
+  width: number
+  onClose?: () => void
 }
 
 export interface ICloudConnectionSubmit {
-  accessKey: string;
-  secretKey: string;
+  accessKey: string
+  secretKey: string
 }
 
 const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
@@ -36,11 +36,11 @@ const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
     []
   )
 
-  const formSubmit = ({ accessKey, secretKey }: ICloudConnectionSubmit) => {
+  const formSubmit = (credentials: ICloudConnectionSubmit) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_RE_CLOUD_AUTODISCOVERY_SUBMITTED
     })
-    dispatch(fetchSubscriptionsRedisCloud({ accessKey, secretKey }, onSuccess))
+    dispatch(fetchSubscriptionsRedisCloud(credentials, onSuccess))
   }
 
   const onSuccess = () => {

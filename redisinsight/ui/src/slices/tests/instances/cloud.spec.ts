@@ -19,6 +19,7 @@ import reducer, {
   loadAccountRedisCloudFailure,
   loadAccountRedisCloudSuccess,
   loadAccountRedisCloud,
+  setIsAutodiscoverySSO,
   fetchSubscriptionsRedisCloud,
   fetchAccountRedisCloud,
   loadInstancesRedisCloud,
@@ -558,6 +559,31 @@ describe('cloud slice', () => {
     })
   })
 
+  describe('setIsAutodiscoverySSO', () => {
+    it('should properly set isAutodiscoverySSO', () => {
+      // Arrange
+      const data = true
+      const state = {
+        ...initialState,
+        isAutodiscoverySSO: true,
+      }
+
+      // Act
+      const nextState = reducer(
+        initialState,
+        setIsAutodiscoverySSO(data)
+      )
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          cloud: nextState,
+        },
+      })
+      expect(cloudSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchSubscriptionsRedisCloud', () => {
       it('call fetchSubscriptionsRedisCloud, loadSubscriptionsRedisCloud, and loadSubscriptionsRedisCloudSuccess when fetch is successed', async () => {
@@ -688,9 +714,9 @@ describe('cloud slice', () => {
       it('call fetchInstancesRedisCloud and loadInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
         const subscriptions = [
-          { subscriptionId: 1, subscriptionType: RedisCloudSubscriptionType.Flexible },
-          { subscriptionId: 2, subscriptionType: RedisCloudSubscriptionType.Flexible },
-          { subscriptionId: 3, subscriptionType: RedisCloudSubscriptionType.Fixed },
+          { subscriptionId: 1, subscriptionType: RedisCloudSubscriptionType.Flexible, free: false },
+          { subscriptionId: 2, subscriptionType: RedisCloudSubscriptionType.Flexible, free: false },
+          { subscriptionId: 3, subscriptionType: RedisCloudSubscriptionType.Fixed, free: true },
         ]
         const credentials = {
           accessKey: '123',
@@ -754,7 +780,7 @@ describe('cloud slice', () => {
     describe('addInstancesRedisCloud', () => {
       it('call addInstancesRedisCloud and createInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
-        const databasesPicked = [{ subscriptionId: '1231', databaseId: '123' }]
+        const databasesPicked = [{ subscriptionId: '1231', databaseId: '123', free: false }]
         const credentials = {
           accessKey: '123',
           secretKey: '123',
@@ -779,7 +805,7 @@ describe('cloud slice', () => {
 
       it('call addInstancesRedisCloud and createInstancesRedisCloudFailure when fetch is failure', async () => {
         // Arrange
-        const databasesPicked = [{ subscriptionId: '1231', databaseId: '123' }]
+        const databasesPicked = [{ subscriptionId: '1231', databaseId: '123', free: false }]
         const credentials = {
           accessKey: '123',
           secretKey: '123',

@@ -21,6 +21,7 @@ export interface ITelemetryInitEvent {
   appType: string;
   controlNumber: number;
   controlGroup: string;
+  appVersion: string;
 }
 
 @Injectable()
@@ -35,6 +36,8 @@ export class AnalyticsService {
 
   private controlGroup: string = '-1';
 
+  private appVersion: string = '2.0.0';
+
   private analytics;
 
   constructor(
@@ -48,12 +51,13 @@ export class AnalyticsService {
   @OnEvent(AppAnalyticsEvents.Initialize)
   public initialize(payload: ITelemetryInitEvent) {
     const {
-      anonymousId, sessionId, appType, controlNumber, controlGroup,
+      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion,
     } = payload;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
     this.appType = appType;
     this.controlGroup = controlGroup;
+    this.appVersion = appVersion;
     this.controlNumber = controlNumber;
     this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey, {
       flushInterval: ANALYTICS_CONFIG.flushInterval,
@@ -87,6 +91,7 @@ export class AnalyticsService {
             buildType: this.appType,
             controlNumber: this.controlNumber,
             controlGroup: this.controlGroup,
+            appVersion: this.appVersion,
           },
         });
       }

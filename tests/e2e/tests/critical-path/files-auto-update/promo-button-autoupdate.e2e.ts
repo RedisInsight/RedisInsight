@@ -1,5 +1,3 @@
-// import { join } from 'path';
-// import * as os from 'os';
 import * as fs from 'fs';
 import { Chance } from 'chance';
 import * as editJsonFile from 'edit-json-file';

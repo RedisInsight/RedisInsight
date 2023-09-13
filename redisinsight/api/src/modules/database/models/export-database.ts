@@ -23,4 +23,5 @@ export class ExportDatabase extends PickType(Database, [
   'clientCert',
   'ssh',
   'sshOptions',
+  'compressor',
 ] as const) {}

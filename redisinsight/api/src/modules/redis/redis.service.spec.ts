@@ -5,7 +5,7 @@ import {
   mockIORedisClient, mockIORedisSentinel,
   mockRedisConnectionFactory,
 } from 'src/__mocks__';
-import { ClientContext, Session } from 'src/common/models';
+import { ClientContext, SessionMetadata } from 'src/common/models';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import apiConfig from 'src/utils/config';
 import { RedisService } from './redis.service';
@@ -15,7 +15,7 @@ const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 describe('RedisService', () => {
   let service: RedisService;
   const mockClientMetadata1 = {
-    session: {
+    sessionMetadata: {
       userId: 'u1',
       sessionId: 's1',
     },
@@ -31,19 +31,19 @@ describe('RedisService', () => {
   });
   const mockRedisClientInstance3 = generateMockRedisClientInstance({
     ...mockClientMetadata1,
-    session: { userId: 'u2', sessionId: 's2' },
+    sessionMetadata: { userId: 'u2', sessionId: 's2' },
     context: ClientContext.Workbench,
     db: 1,
   });
   const mockRedisClientInstance4 = generateMockRedisClientInstance({
     ...mockClientMetadata1,
-    session: { userId: 'u2', sessionId: 's3' },
+    sessionMetadata: { userId: 'u2', sessionId: 's3' },
     db: 2,
   });
   const mockRedisClientInstance5 = generateMockRedisClientInstance({
     ...mockClientMetadata1,
     databaseId: 'd2',
-    session: { userId: 'u2', sessionId: 's4' },
+    sessionMetadata: { userId: 'u2', sessionId: 's4' },
   });
 
   beforeEach(async () => {
@@ -102,7 +102,7 @@ describe('RedisService', () => {
     });
     it('should not fail when there is no client', () => {
       const result = service.getClientInstance({
-        session: undefined,
+        sessionMetadata: undefined,
         databaseId: 'invalid-instance-id',
         context: ClientContext.Common,
       });
@@ -204,7 +204,7 @@ describe('RedisService', () => {
     });
     xit('should correctly find client instances for particular database and user', () => {
       const query = {
-        session: { userId: 'u1' } as Session,
+        sessionMetadata: { userId: 'u1' } as SessionMetadata,
         databaseId: mockDatabase.id,
       };
 
@@ -213,7 +213,7 @@ describe('RedisService', () => {
       expect(result.length).toEqual(2);
       result.forEach((clientInstance) => {
         expect(clientInstance.clientMetadata.databaseId).toEqual(query.databaseId);
-        expect(clientInstance.clientMetadata.session.userId).toEqual(query.session.userId);
+        expect(clientInstance.clientMetadata.sessionMetadata.userId).toEqual(query.sessionMetadata.userId);
       });
 
       expect(service.removeClientInstances(query)).toEqual(2);
@@ -221,14 +221,14 @@ describe('RedisService', () => {
     });
     xit('should correctly find client instances for particular user', () => {
       const query = {
-        session: { userId: 'u2' } as Session,
+        sessionMetadata: { userId: 'u2' } as SessionMetadata,
       };
 
       const result = service.findClientInstances(query);
 
       expect(result.length).toEqual(3);
       result.forEach((clientInstance) => {
-        expect(clientInstance.clientMetadata.session.userId).toEqual(query.session.userId);
+        expect(clientInstance.clientMetadata.sessionMetadata.userId).toEqual(query.sessionMetadata.userId);
       });
       expect(result[0].clientMetadata.databaseId).toEqual(mockDatabase.id);
       expect(result[2].clientMetadata.databaseId).toEqual('d2');

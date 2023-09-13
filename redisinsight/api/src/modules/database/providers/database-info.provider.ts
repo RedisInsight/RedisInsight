@@ -21,9 +21,15 @@ import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { Endpoint } from 'src/common/models';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
+import { FeatureService } from 'src/modules/feature/feature.service';
+import { KnownFeatures } from 'src/modules/feature/constants';
 
 @Injectable()
 export class DatabaseInfoProvider {
+  constructor(
+    private readonly featureService: FeatureService,
+  ) {}
+
   /**
    * Check weather current database is a cluster
    * @param client
@@ -67,6 +73,27 @@ export class DatabaseInfoProvider {
     }));
   }
 
+  public async filterRawModules(modules: any[]): Promise<any[]> {
+    let filteredModules = modules;
+
+    try {
+      const filterModules = await this.featureService.getByName(KnownFeatures.RedisModuleFilter);
+
+      if (filterModules?.flag && filterModules.data?.hideByName?.length) {
+        filteredModules = modules.filter(({ name }) => {
+          const match = filterModules.data.hideByName.find((filter) => filter.expression
+            && (new RegExp(filter.expression, filter.options)).test(name));
+
+          return !match;
+        });
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    return filteredModules;
+  }
+
   /**
    * Determine database modules using "module list" command
    * In case when "module" command is not available use "command info" approach
@@ -75,7 +102,10 @@ export class DatabaseInfoProvider {
   public async determineDatabaseModules(client: any): Promise<AdditionalRedisModule[]> {
     try {
       const reply = await client.call('module', ['list']);
-      const modules = reply.map((module: any[]) => convertStringsArrayToObject(module));
+      const modules = await this.filterRawModules(
+        reply.map((module: any[]) => convertStringsArrayToObject(module)),
+      );
+
       return modules.map(({ name, ver }) => ({
         name: SUPPORTED_REDIS_MODULES[name] ?? name,
         version: ver,
@@ -120,7 +150,8 @@ export class DatabaseInfoProvider {
         // continue regardless of error
       }
     }));
-    return modules;
+
+    return await this.filterRawModules(modules);
   }
 
   /**
@@ -268,6 +299,19 @@ export class DatabaseInfoProvider {
       return reply.length ? parseInt(reply[1], 10) : 1;
     } catch (e) {
       return this.getDatabaseCountFromKeyspace(keyspaceInfo);
+    }
+  }
+
+  public async getClientListInfo(client: any): Promise<any[]> {
+    try {
+      const clientListResponse = await client.call('client', ['list']);
+
+      return clientListResponse
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .map((r) => convertBulkStringsToObject(r, ' ', '='));
+    } catch (error) {
+      throw catchAclError(error);
     }
   }
 

@@ -38,7 +38,7 @@ export class RedisObserverProvider {
         // todo: add multi user support
         // initialize redis observer
         redisObserver.init(this.getRedisClientFn({
-          session: undefined,
+          sessionMetadata: undefined,
           databaseId: instanceId,
           context: ClientContext.Common,
         })).catch();
@@ -54,7 +54,7 @@ export class RedisObserverProvider {
             // todo: add multiuser support
             // try to reconnect
             redisObserver.init(this.getRedisClientFn({
-              session: undefined,
+              sessionMetadata: undefined,
               databaseId: instanceId,
               context: ClientContext.Common,
             })).catch();

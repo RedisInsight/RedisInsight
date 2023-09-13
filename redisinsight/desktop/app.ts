@@ -1,6 +1,6 @@
 /* eslint global-require: off, no-console: off */
 import { app, nativeTheme } from 'electron'
-
+import path from 'path'
 import {
   initElectronHandlers,
   initLogging,
@@ -11,7 +11,8 @@ import {
   installExtensions,
   initTray,
   initAutoUpdaterHandlers,
-  launchApiServer
+  launchApiServer,
+  initCloudHandlers,
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
@@ -27,6 +28,7 @@ const init = async () => {
   initElectronHandlers()
   initAutoUpdaterHandlers()
   initTray()
+  initCloudHandlers()
 
   nativeTheme.themeSource = config.themeSource
 
@@ -42,6 +44,18 @@ const init = async () => {
 
   try {
     await app.whenReady()
+
+    // todo: create and move to some on app ready handler
+    // deep linking
+    // register our application to handle custom protocol
+    if (process.defaultApp) {
+      if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(process.argv[1])])
+      }
+    } else {
+      app.setAsDefaultProtocolClient(config.schema)
+    }
+
     const splashWindow = await windowFactory(WindowType.Splash)
     await windowFactory(WindowType.Main, splashWindow)
   } catch (_err) {

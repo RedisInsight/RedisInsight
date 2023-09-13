@@ -1,4 +1,5 @@
 import { ReplyError } from 'src/models';
+import { AxiosError } from 'axios';
 
 export const mockRedisNoAuthError: ReplyError = {
   name: 'ReplyError',
@@ -46,4 +47,19 @@ export const mockRedisAskError: ReplyError = {
   name: 'ReplyError',
   command: 'GET',
   message: 'ASK 7008 127.0.0.1:7002',
+};
+
+export const mockAxiosBadRequestError: AxiosError = {
+  name: '',
+  message: 'Bad Request',
+  isAxiosError: true,
+  config: null,
+  response: {
+    statusText: 'BadRequest',
+    data: null,
+    headers: {},
+    config: null,
+    status: 400,
+  },
+  toJSON: () => null,
 };

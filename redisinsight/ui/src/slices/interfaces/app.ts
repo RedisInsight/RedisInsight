@@ -6,15 +6,28 @@ import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
+export interface CustomError {
+  error: string
+  message: string
+  statusCode: number
+  errorCode?: number
+  resourceId?: string
+}
+
+export interface EnhancedAxiosError extends AxiosError<CustomError> {
+}
+
 export interface IError extends AxiosError {
   id: string
   instanceId?: string
+  title?: string
+  additionalInfo?: Record<string, any>
 }
 
 export interface IMessage {
   id: string
   title: string
-  message: string
+  message: string | JSX.Element
   group?: string
   className?: string
 }
@@ -153,6 +166,7 @@ export interface StateAppSocketConnection {
 export interface FeatureFlagComponent {
   flag: boolean
   variant?: string
+  data?: any
 }
 
 export interface StateAppFeatures {
@@ -189,9 +203,16 @@ export interface IGlobalNotification {
   categoryColor?: string
 }
 
+export interface InfiniteMessage {
+  id: string
+  Inner: string | JSX.Element
+  className?: string
+}
+
 export interface StateAppNotifications {
   errors: IError[]
   messages: IMessage[]
+  infiniteMessages: InfiniteMessage[]
   notificationCenter: {
     loading: boolean
     lastReceivedNotification: Nullable<IGlobalNotification>
@@ -201,6 +222,24 @@ export interface StateAppNotifications {
     totalUnread: number
     shouldDisplayToast: boolean
   }
+}
+
+export interface StateAppActionBar {
+  status: ActionBarStatus
+  text?: string
+  actions?: ActionBarActions[]
+}
+
+export interface ActionBarActions {
+  onClick: () => void
+  label: string
+}
+
+export enum ActionBarStatus {
+  Progress = 'progress',
+  Success = 'success',
+  Default = 'default',
+  Close = 'close',
 }
 
 export enum RedisResponseEncoding {

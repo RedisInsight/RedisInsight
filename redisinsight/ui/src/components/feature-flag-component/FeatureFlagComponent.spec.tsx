@@ -16,6 +16,7 @@ jest.mock('uiSrc/slices/app/features', () => ({
 }))
 
 const InnerComponent = () => (<span data-testid="inner-component" />)
+const OtherwiseComponent = () => (<span data-testid="otherwise-component" />)
 describe('FeatureFlagComponent', () => {
   it('should not render component by default', () => {
     render(
@@ -41,5 +42,25 @@ describe('FeatureFlagComponent', () => {
     )
 
     expect(screen.getByTestId('inner-component')).toBeInTheDocument()
+  })
+
+  it('should render otherwise component if the feature flag not enabled', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      name: {
+        flag: false
+      }
+    })
+
+    const { queryByTestId } = render(
+      <FeatureFlagComponent
+        name={'name' as FeatureFlags}
+        otherwise={<OtherwiseComponent />}
+      >
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(queryByTestId('inner-component')).not.toBeInTheDocument()
+    expect(queryByTestId('otherwise-component')).toBeInTheDocument()
   })
 })

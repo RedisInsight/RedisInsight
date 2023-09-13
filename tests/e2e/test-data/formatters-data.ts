@@ -4,7 +4,8 @@
 export const formatters = [{
     format: 'JSON',
     fromText: '{ "field": "value" }',
-    fromTextEdit: '{ "field": "value123" }'
+    fromTextEdit: '{ "field": "value123" }',
+    fromBigInt: '{ "field": 248480010225057793 }'
 },
 {
     format: 'Msgpack',
@@ -27,7 +28,7 @@ export const formatters = [{
 {
     format: 'Java serialized',
     fromHexText: 'aced000573720008456d706c6f796565025e743467c6123c0200034900066e756d6265724c0007616464726573737400124c6a6176612f6c616e672f537472696e673b4c00046e616d6571007e000178700000006574001950686f6b6b61204b75616e2c20416d62656874612050656572740009526579616e20416c69',
-    formattedText: '{ "fields": [ { "number": 101 }, { "address": "Phokka Kuan, Ambehta Peer" }, { "name": "Reyan Ali" } ], "annotations": [], "className": "Employee", "serialVersionUid": "170701604314812988" }'
+    formattedText: '{ "fields": [ { "number": 101 }, { "address": "Phokka Kuan, Ambehta Peer" }, { "name": "Reyan Ali" } ], "annotations": [], "className": "Employee", "serialVersionUid": 170701604314812988 }'
 },
 {
     format: 'ASCII',
@@ -61,8 +62,11 @@ export const formatters = [{
  */
 export const phpData = [{
     dataType: 'Object',
-    from: 'a:6:{i:1;s:30:"PHP code tester Sandbox Online";s:5:"emoji";s:24:"😀 😃 😄 😁 😆";i:2;i:5;i:5;i:89009;s:13:"Random number";i:341;s:11:"PHP Version";s:5:"8.1.9";}',
-    converted: '{ "1": "PHP code tester Sandbox Online", "2": 5, "5": 89009, "emoji": "😀 😃 😄 😁 😆", "Random number": 341, "PHP Version": "8.1.9" }'
+    //commented due to bug: RI-4906 it's not a priority. can be removed if users won't submitted bugs for a short period of time
+    //from: 'a:6:{i:1;s:30:"PHP code tester Sandbox Online";s:5:"emoji";s:24:"😀 😃 😄 😁 😆";i:2;i:5;i:5;i:89009;s:13:"Random number";i:341;s:11:"PHP Version";s:5:"8.1.9";}',
+    //converted: '{ "1": "PHP code tester Sandbox Online", "2": 5, "5": 89009, "emoji": "😀 😃 😄 😁 😆", "Random number": 341, "PHP Version": "8.1.9" }'
+    from: 'a:5:{s:1:"1";s:30:"PHP code tester Sandbox Online";s:1:"2";i:5;s:1:"5";i:89009;s:13:"Random number";i:341;s:11:"PHP Version";s:5:"8.1.9";}',
+    converted: '{ "1": "PHP code tester Sandbox Online", "2": 5, "5": 89009, "Random number": 341, "PHP Version": "8.1.9" }'
 },
 {
     dataType: 'Number',

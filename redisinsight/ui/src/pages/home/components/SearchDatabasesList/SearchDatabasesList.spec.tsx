@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
 import { loadInstancesSuccess } from 'uiSrc/slices/instances/instances'
-import store, { RootState } from 'uiSrc/slices/store'
+import { RootState, store } from 'uiSrc/slices/store'
 import { Instance } from 'uiSrc/slices/interfaces'
 import SearchDatabasesList from './SearchDatabasesList'
 

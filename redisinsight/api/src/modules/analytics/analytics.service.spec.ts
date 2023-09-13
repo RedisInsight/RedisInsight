@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAppSettings,
-  mockAppSettingsWithoutPermissions, mockControlGroup, mockControlNumber,
+  mockAppSettingsWithoutPermissions, mockAppVersion, mockControlGroup, mockControlNumber,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -59,6 +59,7 @@ describe('AnalyticsService', () => {
         appType: AppType.Electron,
         controlNumber: mockControlNumber,
         controlGroup: mockControlGroup,
+        appVersion: mockAppVersion,
       });
 
       const anonymousId = service.getAnonymousId();
@@ -76,6 +77,7 @@ describe('AnalyticsService', () => {
         appType: AppType.Electron,
         controlNumber: mockControlNumber,
         controlGroup: mockControlGroup,
+        appVersion: mockAppVersion,
       });
     });
     it('should send event with anonymousId if permission are granted', async () => {
@@ -95,6 +97,7 @@ describe('AnalyticsService', () => {
           buildType: AppType.Electron,
           controlNumber: mockControlNumber,
           controlGroup: mockControlGroup,
+          appVersion: mockAppVersion,
         },
       });
     });
@@ -126,6 +129,7 @@ describe('AnalyticsService', () => {
           buildType: AppType.Electron,
           controlNumber: mockControlNumber,
           controlGroup: mockControlGroup,
+          appVersion: mockAppVersion,
         },
       });
     });

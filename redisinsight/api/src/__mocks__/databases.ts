@@ -15,8 +15,9 @@ import {
   mockSshOptionsPrivateKey,
   mockSshOptionsPrivateKeyEntity,
 } from 'src/__mocks__/ssh';
-import { CloudDatabaseDetails, CloudSubscriptionType } from 'src/modules/cloud/autodiscovery/models';
-import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/autodiscovery/entities/cloud-database-details.entity';
+import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__mocks__/cloud-database';
+import { mockRedisClientListResult } from 'src/__mocks__/database-info';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -40,16 +41,9 @@ export const mockDatabase = Object.assign(new Database(), {
   version: '7.0',
 });
 
-export const mockDatabaseCloudDetails = Object.assign(new CloudDatabaseDetails(), {
-  subscriptionType: CloudSubscriptionType.Fixed,
-  cloudId: 500001,
-  planMemoryLimit: 256,
-  memoryLimitMeasurementUnit: 'MB',
-});
-
 export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {
   ...mockDatabase,
-  cloudDetails: mockDatabaseCloudDetails,
+  cloudDetails: mockCloudDatabaseDetails,
 });
 
 export const mockDatabaseEntity = Object.assign(new DatabaseEntity(), {
@@ -61,7 +55,7 @@ export const mockDatabaseEntityWithCloudDetails = Object.assign(new DatabaseEnti
   ...mockDatabaseEntity,
   cloudDetails: Object.assign(new CloudDatabaseDetailsEntity(), {
     id: 'some-uuid',
-    ...mockDatabaseCloudDetails,
+    ...mockCloudDatabaseDetailsEntity,
   }),
 });
 
@@ -175,7 +169,7 @@ export const mockNewDatabase = Object.assign(new Database(), {
 });
 
 export const mockClientMetadata: ClientMetadata = {
-  session: undefined,
+  sessionMetadata: undefined,
   databaseId: mockDatabase.id,
   context: ClientContext.Common,
 };
@@ -195,7 +189,7 @@ export const mockDatabaseOverview: DatabaseOverview = {
 };
 
 export const mockRedisServerInfoDto = {
-  redis_version: '6.0.5',
+  redis_version: '7.0.5',
   redis_mode: 'standalone',
   os: 'Linux 4.15.0-1087-gcp x86_64',
   arch_bits: '64',
@@ -246,6 +240,7 @@ export const mockDatabaseInfoProvider = jest.fn(() => ({
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),
+  getClientListInfo: jest.fn().mockReturnValue(mockRedisClientListResult),
 }));
 
 export const mockDatabaseOverviewProvider = jest.fn(() => ({
@@ -266,4 +261,5 @@ export const mockDatabaseAnalytics = jest.fn(() => ({
   sendInstanceAddFailedEvent: jest.fn(),
   sendInstanceEditedEvent: jest.fn(),
   sendInstanceDeletedEvent: jest.fn(),
+  sendDatabaseConnectedClientListEvent: jest.fn(),
 }));

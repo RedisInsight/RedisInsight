@@ -21,6 +21,7 @@ import {
 } from 'src/modules/feature/model/features-config';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
+import { knownFeatures } from 'src/modules/feature/constants/known-features';
 
 describe('FeatureFlagStrategy', () => {
   let service: FeatureFlagStrategy;
@@ -367,8 +368,14 @@ describe('FeatureFlagStrategy', () => {
     it('should return false since feature control number is out of range', async () => {
       isInTargetRangeSpy.mockReturnValueOnce(false);
 
-      expect(await service.calculate(mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations]))
-        .toEqual(false);
+      expect(await service.calculate(
+        knownFeatures[KnownFeatures.InsightsRecommendations],
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
+      ))
+        .toEqual({
+          name: KnownFeatures.InsightsRecommendations,
+          flag: false,
+        });
 
       expect(isInTargetRangeSpy).toHaveBeenCalledWith(
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
@@ -380,8 +387,14 @@ describe('FeatureFlagStrategy', () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(false);
 
-      expect(await service.calculate(mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations]))
-        .toEqual(false);
+      expect(await service.calculate(
+        knownFeatures[KnownFeatures.InsightsRecommendations],
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
+      ))
+        .toEqual({
+          name: KnownFeatures.InsightsRecommendations,
+          flag: false,
+        });
 
       expect(isInTargetRangeSpy).toHaveBeenCalledWith(
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
@@ -394,8 +407,14 @@ describe('FeatureFlagStrategy', () => {
       isInTargetRangeSpy.mockReturnValueOnce(true);
       filterSpy.mockReturnValueOnce(true);
 
-      expect(await service.calculate(mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations]))
-        .toEqual(true);
+      expect(await service.calculate(
+        knownFeatures[KnownFeatures.InsightsRecommendations],
+        mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
+      ))
+        .toEqual({
+          name: KnownFeatures.InsightsRecommendations,
+          flag: true,
+        });
 
       expect(isInTargetRangeSpy).toHaveBeenCalledWith(
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
@@ -413,7 +432,11 @@ describe('FeatureFlagStrategy', () => {
         settingsService as unknown as SettingsService,
       );
 
-      expect(await strategy.calculate()).toEqual(false);
+      expect(await strategy.calculate(knownFeatures[KnownFeatures.InsightsRecommendations]))
+        .toEqual({
+          name: KnownFeatures.InsightsRecommendations,
+          flag: false,
+        });
     });
   });
 });

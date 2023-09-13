@@ -1,44 +1,36 @@
 .jsonViewer {
-  .__json {
-    &-pretty__,
-    &-pretty-error__ {
-      font: normal normal normal 13px/18px Inconsolata, monospace;
-      letter-spacing: 0.15px;
-      padding: 0;
-      background: transparent;
-      color: var(--euiTextSubduedColor);
-      margin-bottom: 0;
-      white-space: pre-wrap;
-    }
-
-    &-pretty-error__ {
-      white-space: normal;
-    }
-
-    &-key__ {
-      color: var(--jsonKeyNameColor);
-    }
-
-    &-value__ {
-      color: var(--jsonNumberColor);
-    }
-
-    &-string__ {
-      color: var(--jsonStringColor);
-    }
-
-    &-boolean__ {
-      color: var(--jsonBooleanColor);
-    }
-  }
+  font: normal normal normal 13px/18px Inconsolata, monospace;
+  letter-spacing: 0.15px;
+  padding: 0;
+  background: transparent;
+  color: var(--euiTextSubduedColor);
+  margin-bottom: 0;
+  white-space: pre-wrap;
 
   &-collapsed {
-    .__json-pretty__ {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      width: 100%;
-      overflow: hidden;
-      line-height: inherit;
-    }
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+    line-height: inherit;
+  }
+
+  .json-pretty__key {
+    color: var(--jsonKeyNameColor);
+  }
+
+  .json-pretty__number-value,
+  .json-pretty__bigint-value,
+  .json-pretty__null-value,
+  .json-pretty__other-value {
+    color: var(--jsonNumberColor);
+  }
+
+  .json-pretty__string-value {
+    color: var(--jsonStringColor);
+  }
+
+  .json-pretty__boolean-value {
+    color: var(--jsonBooleanColor);
   }
 }

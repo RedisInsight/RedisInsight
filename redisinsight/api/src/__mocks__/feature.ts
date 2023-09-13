@@ -11,12 +11,14 @@ import { FeatureEntity } from 'src/modules/feature/entities/feature.entity';
 import { mockAppSettings } from 'src/__mocks__/app-settings';
 import config from 'src/utils/config';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 import * as defaultConfig from '../../config/features-config.json';
 
 export const mockFeaturesConfigId = '1';
 export const mockFeaturesConfigVersion = defaultConfig.version + 0.111;
 export const mockControlNumber = 7.68;
 export const mockControlGroup = '7';
+export const mockAppVersion = '2.1.0';
 
 export const mockFeaturesConfigJson = {
   version: mockFeaturesConfigVersion,
@@ -160,6 +162,38 @@ export const mockFeature = Object.assign(new Feature(), {
   flag: true,
 });
 
+export const mockFeatureSso = Object.assign(new Feature(), {
+  name: KnownFeatures.CloudSso,
+  flag: true,
+  strategy: CloudSsoFeatureStrategy.DeepLink,
+  data: {
+    selectPlan: {
+      components: {
+        triggersAndFunctions: [
+          {
+            provider: 'AWS',
+            regions: ['ap-southeast-1'],
+          },
+          {
+            provider: 'GCP',
+            regions: ['asia-northeast1'],
+          },
+        ],
+        redisStackPreview: [
+          {
+            provider: 'AWS',
+            regions: ['us-east-2', 'ap-southeast-1', 'sa-east-1']
+          },
+          {
+            provider: 'GCP',
+            regions: ['asia-northeast1', 'europe-west1', 'us-central1']
+          }
+        ],
+      },
+    },
+  },
+});
+
 export const mockUnknownFeature = Object.assign(new Feature(), {
   name: 'unknown',
   flag: true,
@@ -186,7 +220,7 @@ export const mockFeaturesConfigRepository = jest.fn(() => ({
 export const mockFeatureRepository = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockFeature),
   upsert: jest.fn().mockResolvedValue({ updated: 1 }),
-  list: jest.fn().mockResolvedValue([mockFeature]),
+  list: jest.fn().mockResolvedValue([mockFeature, mockFeatureSso]),
   delete: jest.fn().mockResolvedValue({ deleted: 1 }),
 }));
 
@@ -199,6 +233,7 @@ export const mockFeaturesConfigService = jest.fn(() => ({
 }));
 
 export const mockFeatureService = jest.fn(() => ({
+  getByName: jest.fn().mockResolvedValue(undefined),
   isFeatureEnabled: jest.fn().mockResolvedValue(true),
 }));
 
@@ -210,10 +245,10 @@ export const mockFeatureAnalytics = jest.fn(() => ({
 }));
 
 export const mockInsightsRecommendationsFlagStrategy = {
-  calculate: jest.fn().mockResolvedValue(true),
+  calculate: jest.fn().mockResolvedValue(mockFeature),
 };
 
 export const mockFeatureFlagProvider = jest.fn(() => ({
   getStrategy: jest.fn().mockResolvedValue(mockInsightsRecommendationsFlagStrategy),
-  calculate: jest.fn().mockResolvedValue(true),
+  calculate: jest.fn().mockResolvedValue(mockFeature),
 }));

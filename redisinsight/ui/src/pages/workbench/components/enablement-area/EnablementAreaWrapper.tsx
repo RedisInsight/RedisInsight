@@ -79,6 +79,7 @@ const EnablementAreaWrapper = (props: Props) => {
         path,
         section: getTutorialSection(manifestPath),
         databaseId: instanceId,
+        source: 'Workbench',
       }
     })
   }

@@ -10,6 +10,22 @@ import {
 import { AxisScale, GraphMode, ChartConfigFormProps } from './interfaces'
 import { X_LABEL_MAX_LENGTH, Y_LABEL_MAX_LENGTH, TITLE_MAX_LENGTH } from './constants'
 
+const NewEnumSelect = ({selected, values, onClick}: {select: string, values: string[], onClick: (v: string) => void}) => (
+  <div className="new-button">
+      {
+        values.map(v => (
+          <div
+            title={v.charAt(0).toUpperCase() + v.slice(1)}
+            onClick={() => onClick(v)}
+            className={`button-point ${selected === v ? 'button-selected' : null}`}
+          >
+            {v}
+          </div>
+        ))
+      }
+  </div>
+)
+
 export default function ChartConfigForm(props: ChartConfigFormProps) {
   const [moreOptions, setMoreOptions] = useState(false)
 
@@ -18,12 +34,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
   return (
     <form className="chart-config-form">
       <div className="chart-top-form">
-        <EnumSelect
-          inputLabel="mode"
-          onChange={(e: React.ChangeEvent<{ value: unknown }>) => onChange('mode', e.target.value)}
-          value={value.mode}
-          enumType={GraphMode}
-        />
+        <NewEnumSelect values={Object.keys(GraphMode)} selected={value.mode} onClick={v => onChange('mode', v)} />
         <EuiSwitch
           compressed
           label={<span className="switch-staircase-label">Staircase</span>}

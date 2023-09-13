@@ -206,7 +206,12 @@ const BrowserSearchPanel = (props: Props) => {
       {isPopoverOpen && (
         <EuiModal onClose={hidePopover} className={styles.moduleNotLoaded}>
           <EuiModalBody className={styles.modalBody}>
-            <ModuleNotLoaded moduleName={RedisDefaultModules.Search} type="browser" id="0" />
+            <ModuleNotLoaded
+              moduleName={RedisDefaultModules.Search}
+              type="browser"
+              id="0"
+              onClose={hidePopover}
+            />
           </EuiModalBody>
         </EuiModal>
       )}

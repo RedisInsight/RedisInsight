@@ -26,7 +26,6 @@ export class WorkbenchPage extends InstancePage {
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
     //BUTTONS
-    welcomePageTitle = Selector('[data-testid=welcome-page-title]');
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');

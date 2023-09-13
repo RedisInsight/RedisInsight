@@ -189,6 +189,13 @@
 		"db": "dsad",
         "result": "failed"
     },
+  {
+    "compressor": "Invalid",
+    "host": "localhost",
+    "port": 8102,
+    "name": "rdmCompressorInvalid",
+    "result": "partial"
+  },
 	{
         "host": "localhost",
         "port": 8102,

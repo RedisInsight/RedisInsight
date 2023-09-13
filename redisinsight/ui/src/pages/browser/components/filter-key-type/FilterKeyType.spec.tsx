@@ -25,6 +25,7 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceOverviewSelector: jest.fn().mockReturnValue({
     version: '6.2.1',
   }),

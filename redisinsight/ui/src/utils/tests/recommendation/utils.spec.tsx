@@ -1,4 +1,6 @@
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
+import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import {
   addUtmToLink,
   sortRecommendations,
@@ -6,9 +8,7 @@ import {
   renderRecommendationBadgesLegend,
   renderRecommendationBadges,
   renderRecommendationContent,
-} from 'uiSrc/utils'
-import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
-import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
+} from '../../recommendation/utils'
 
 const mockTelemetryName = 'name'
 
@@ -111,6 +111,10 @@ const mockContent: IRecommendationContent[] = [
   {
     type: 'code-link',
     value: 'link',
+  },
+  {
+    type: 'link-sso',
+    value: 'link-sso',
   },
 ]
 

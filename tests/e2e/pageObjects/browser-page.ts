@@ -105,6 +105,7 @@ export class BrowserPage extends InstancePage {
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
     showFilterHistoryBtn = Selector('[data-testid=show-suggestions-btn]');
     clearFilterHistoryBtn = Selector('[data-testid=clear-history-btn]');
+    guideLinksBtn = Selector('[data-testid^=guide-button-]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -241,7 +242,7 @@ export class BrowserPage extends InstancePage {
     progressLine = Selector('div.euiProgress');
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
-    noKeysToDisplayText = Selector('[data-testid=no-keys-selected-text]');
+    noKeysToDisplayText = Selector('[data-testid=no-result-found-msg]');
     streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
     streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
@@ -1053,6 +1054,11 @@ export class BrowserPage extends InstancePage {
     */
     async clearFilter(): Promise<void> {
         await t.click(this.clearFilterButton);
+    }
+
+    async clickGuideLinksByName(guide: string): Promise<void> {
+        const linkGuide = Selector(`[data-testid="guide-button-${guide}"]`);
+        await t.click(linkGuide);
     }
 }
 

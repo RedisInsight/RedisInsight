@@ -5,12 +5,12 @@ import {
   WebSocketServer, WsException,
 } from '@nestjs/websockets';
 import {
-  Logger, ValidationPipe
+  Logger, ValidationPipe,
 } from '@nestjs/common';
 import config from 'src/utils/config';
 import { CloudJobEvents } from 'src/modules/cloud/common/constants';
 import { CloudJobService } from 'src/modules/cloud/job/cloud-job.service';
-import { MonitorCloudJobDto } from 'src/modules/cloud/job/dto';
+import { MonitorCloudJobDto } from 'src/modules/cloud/job/dto/monitor.cloud-job.dto';
 import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'src/common/constants';

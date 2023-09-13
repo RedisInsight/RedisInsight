@@ -24,7 +24,7 @@ fixture `Add DB from SM`
         await databaseAPIRequests.deleteAllDatabasesApi();
     })
     .beforeEach(async() => {
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTerms();
     });
 test
     .page(commonUrl)('Add DB using url via manual flow', async t => {
@@ -56,7 +56,7 @@ test
         await browserPage.Cli.sendCommandInCli('acl DELUSER alice');
         await databaseAPIRequests.deleteAllDatabasesApi();
     })
-    .page(commonUrl)('Add DB automatically', async t => {
+    .page(commonUrl)('Add DB using url automatically', async t => {
         databaseUsername = 'alice';
         databasePassword = 'p1pp0';
         const connectUrlParams = {

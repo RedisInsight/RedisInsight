@@ -21,7 +21,6 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import AddDatabaseContainer, { AddDbType } from './components/AddDatabases/AddDatabasesContainer'
@@ -61,8 +60,6 @@ const HomePage = () => {
     data: editedInstance,
   } = useSelector(editedInstanceSelector)
 
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
-
   const { contextInstanceId } = useSelector(appContextSelector)
 
   !welcomeIsShow && setTitle('My Redis databases')
@@ -97,13 +94,13 @@ const HomePage = () => {
   }, [isChangedInstance])
 
   useEffect(() => {
-    if (!isPageViewSent && !isChangedInstance && instances.length && analyticsIdentified) {
+    if (!isPageViewSent && !isChangedInstance && instances.length) {
       setIsPageViewSent(true)
       sendPageViewTelemetry({
         name: TelemetryPageView.DATABASES_LIST_PAGE
       })
     }
-  }, [instances, analyticsIdentified, isPageViewSent, isChangedInstance])
+  }, [instances, isPageViewSent, isChangedInstance])
 
   useEffect(() => {
     if (clusterCredentials || cloudCredentials || sentinelInstance) {

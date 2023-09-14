@@ -10,7 +10,6 @@ import {
   setSelectedAnalysisId
 } from 'uiSrc/slices/analytics/dbAnalysis'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
@@ -22,7 +21,6 @@ import styles from './styles.module.scss'
 
 const DatabaseAnalysisPage = () => {
   const { viewTab } = useSelector(analyticsSettingsSelector)
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
   const { data: reports, selectedAnalysis } = useSelector(dbAnalysisReportsSelector)
   const { name: connectedInstanceName, db, provider } = useSelector(connectedInstanceSelector)
@@ -69,10 +67,10 @@ const DatabaseAnalysisPage = () => {
   }
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+    if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
-  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+  }, [connectedInstanceName, isPageViewSent])
 
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({

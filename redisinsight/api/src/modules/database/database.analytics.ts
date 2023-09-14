@@ -13,23 +13,6 @@ export class DatabaseAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendInstanceListReceivedEvent(
-    databases: Database[],
-    additionalData: object = {},
-  ): void {
-    try {
-      this.sendEvent(
-        TelemetryEvents.RedisInstanceListReceived,
-        {
-          numberOfDatabases: databases.length,
-          ...additionalData,
-        },
-      );
-    } catch (e) {
-      // continue regardless of error
-    }
-  }
-
   sendConnectionFailedEvent(instance: Database, exception: HttpException): void {
     this.sendFailedEvent(
       TelemetryEvents.RedisInstanceConnectionFailed,
@@ -131,5 +114,19 @@ export class DatabaseAnalytics extends TelemetryBaseService {
         provider: instance.provider,
       },
     );
+  }
+
+  sendDatabaseConnectedClientListEvent(instanceId: string, additionalData: object = {}): void {
+    try {
+      this.sendEvent(
+        TelemetryEvents.DatabaseConnectedClientList,
+        {
+          instanceId,
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
   }
 }

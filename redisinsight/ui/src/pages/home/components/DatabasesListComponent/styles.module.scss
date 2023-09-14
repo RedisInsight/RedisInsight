@@ -110,3 +110,11 @@ $breakpoint-l: 1400px;
     padding-left: 5px !important;
   }
 }
+
+.cloudIcon {
+  :global {
+    path {
+      fill: var(--euiTextSubduedColor);
+    }
+  }
+}

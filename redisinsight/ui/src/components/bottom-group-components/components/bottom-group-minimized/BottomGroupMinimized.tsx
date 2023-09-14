@@ -136,7 +136,7 @@ const BottomGroupMinimized = () => {
         <>
           <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
           <EuiHideFor sizes={['xs', 's']}>
-            <span>We need your opinion. Please take our survey.</span>
+            <span>We value your input. Please take our survey.</span>
           </EuiHideFor>
           <EuiShowFor sizes={['xs', 's']}>
             <span>Survey</span>

@@ -179,6 +179,16 @@ export const mockFeatureSso = Object.assign(new Feature(), {
             regions: ['asia-northeast1'],
           },
         ],
+        redisStackPreview: [
+          {
+            provider: 'AWS',
+            regions: ['us-east-2', 'ap-southeast-1', 'sa-east-1']
+          },
+          {
+            provider: 'GCP',
+            regions: ['asia-northeast1', 'europe-west1', 'us-central1']
+          }
+        ],
       },
     },
   },
@@ -223,6 +233,7 @@ export const mockFeaturesConfigService = jest.fn(() => ({
 }));
 
 export const mockFeatureService = jest.fn(() => ({
+  getByName: jest.fn().mockResolvedValue(undefined),
   isFeatureEnabled: jest.fn().mockResolvedValue(true),
 }));
 

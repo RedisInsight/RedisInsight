@@ -62,7 +62,7 @@ export abstract class CloudJob {
         // silently ignore callback
       }
     }, 1_000, {
-      maxWait: 1_000,
+      maxWait: 2_000,
     });
   }
 

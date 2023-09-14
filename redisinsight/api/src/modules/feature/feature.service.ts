@@ -21,6 +21,14 @@ export class FeatureService {
     private readonly analytics: FeatureAnalytics,
   ) {}
 
+  async getByName(name: string): Promise<Feature> {
+    try {
+      return await this.repository.get(name);
+    } catch (e) {
+      return null;
+    }
+  }
+
   /**
    * Check if feature enabled
    * @param name

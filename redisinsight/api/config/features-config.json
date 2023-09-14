@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 2.3204,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -39,9 +39,31 @@
                 "provider": "GCP",
                 "regions": ["asia-northeast1"]
               }
+            ],
+            "redisStackPreview": [
+              {
+                "provider": "AWS",
+                "regions": ["us-east-2", "ap-southeast-1", "sa-east-1"]
+              },
+              {
+                "provider": "GCP",
+                "regions": ["asia-northeast1", "europe-west1", "us-central1"]
+              }
             ]
           }
         }
+      }
+    },
+    "redisModuleFilter": {
+      "flag": true,
+      "perc": [[0, 100]],
+      "data": {
+        "hideByName": [
+          {
+            "expression": "^RedisGraph.",
+            "options": "i"
+          }
+        ]
       }
     }
   }

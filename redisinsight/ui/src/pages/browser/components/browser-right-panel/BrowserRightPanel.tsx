@@ -10,6 +10,7 @@ import KeyDetailsWrapper from 'uiSrc/pages/browser/components/key-details/KeyDet
 
 import { updateBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
 import {
+  keysDataSelector,
   keysSelector,
   selectedKeyDataSelector,
   toggleBrowserFullScreen
@@ -45,6 +46,7 @@ const BrowserRightPanel = (props: Props) => {
   } = props
 
   const { isBrowserFullScreen, viewType } = useSelector(keysSelector)
+  const { total, lastRefreshTime: keysLastRefreshTime } = useSelector(keysDataSelector)
   const { type, length } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -116,6 +118,8 @@ const BrowserRightPanel = (props: Props) => {
           onCloseKey={closePanel}
           onEditKey={onEditKey}
           onRemoveKey={onSelectKey}
+          totalKeys={total}
+          keysLastRefreshTime={keysLastRefreshTime}
         />
       )}
       {isAddKeyPanelOpen && every([!isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (

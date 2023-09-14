@@ -60,7 +60,7 @@ describe('LocalAgreementsRepository', () => {
       const result = await service.update(mockUserId, mockAgreements);
 
       expect(result).toEqual(mockAgreements);
-      expect(repository.update).toHaveBeenCalledWith({}, {
+      expect(repository.update).toHaveBeenCalledWith("1", {
         ...mockAgreementsEntity,
       });
     });

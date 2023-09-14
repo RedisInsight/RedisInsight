@@ -546,7 +546,7 @@ export function fetchPatternKeysAction(
           }
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
-              state.browser.keys?.viewType,
+              localStorageService?.get(BrowserStorageItem.browserViewType),
               TelemetryEvent.BROWSER_KEYS_SCANNED_WITH_FILTER_ENABLED,
               TelemetryEvent.TREE_VIEW_KEYS_SCANNED_WITH_FILTER_ENABLED
             ),

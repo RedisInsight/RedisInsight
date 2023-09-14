@@ -14,11 +14,13 @@ import {
 } from './analytics.service';
 
 let mockAnalyticsTrack;
+let mockAnalyticsPage;
 jest.mock(
   'analytics-node',
   () => jest.fn()
     .mockImplementation(() => ({
       track: mockAnalyticsTrack,
+      page: mockAnalyticsPage,
     })),
 );
 
@@ -125,6 +127,73 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
+        properties: {
+          buildType: AppType.Electron,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
+          appVersion: mockAppVersion,
+        },
+      });
+    });
+  });
+
+  describe('sendPage', () => {
+    beforeEach(() => {
+      mockAnalyticsPage = jest.fn();
+      service.initialize({
+        anonymousId: mockAnonymousId,
+        sessionId,
+        appType: AppType.Electron,
+        controlNumber: mockControlNumber,
+        controlGroup: mockControlGroup,
+        appVersion: mockAppVersion,
+      });
+    });
+    it('should send page with anonymousId if permission are granted', async () => {
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
+
+      await service.sendPage({
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: false,
+      });
+
+      expect(mockAnalyticsPage).toHaveBeenCalledWith({
+        anonymousId: mockAnonymousId,
+        integrations: { Amplitude: { session_id: sessionId } },
+        name: TelemetryEvents.ApplicationStarted,
+        properties: {
+          buildType: AppType.Electron,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
+          appVersion: mockAppVersion,
+        },
+      });
+    });
+    it('should not send page if permission are not granted', async () => {
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+
+      await service.sendPage({
+        event: 'SOME_EVENT',
+        eventData: {},
+        nonTracking: false,
+      });
+
+      expect(mockAnalyticsPage).not.toHaveBeenCalled();
+    });
+    it('should send page for non tracking events event if permission are not granted', async () => {
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+
+      await service.sendPage({
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: true,
+      });
+
+      expect(mockAnalyticsPage).toHaveBeenCalledWith({
+        anonymousId: mockAnonymousId,
+        integrations: { Amplitude: { session_id: sessionId } },
+        name: TelemetryEvents.ApplicationStarted,
         properties: {
           buildType: AppType.Electron,
           controlNumber: mockControlNumber,

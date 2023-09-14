@@ -75,12 +75,8 @@ export class AnalyticsService {
       // for analytics is granted or not.
       // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
       const { event, eventData, nonTracking } = payload;
-      const isAnalyticsGranted = !!get(
-        // todo: define how to fetch userId?
-        await this.settingsService.getAppSettings('1'),
-        'agreements.analytics',
-        false,
-      );
+      const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
+
       if (isAnalyticsGranted || nonTracking) {
         this.analytics.track({
           anonymousId: this.anonymousId,
@@ -98,5 +94,46 @@ export class AnalyticsService {
     } catch (e) {
       // continue regardless of error
     }
+  }
+
+  @OnEvent(AppAnalyticsEvents.Page)
+  async sendPage(payload: ITelemetryEvent) {
+    try {
+      // The event is reported only if the user's permission is granted.
+      // The anonymousId is also sent along with the event.
+      //
+      // The `nonTracking` argument can be set to True to mark an event that doesn't track the specific
+      // user in any way. When `nonTracking` is True, the event is sent regardless of whether the user's permission
+      // for analytics is granted or not.
+      // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
+      const { event, eventData, nonTracking } = payload;
+      const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
+
+      if (isAnalyticsGranted || nonTracking) {
+        this.analytics.page({
+          name: event,
+          anonymousId: this.anonymousId,
+          integrations: { Amplitude: { session_id: this.sessionId } },
+          properties: {
+            ...eventData,
+            buildType: this.appType,
+            controlNumber: this.controlNumber,
+            controlGroup: this.controlGroup,
+            appVersion: this.appVersion,
+          },
+        });
+      }
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  private async checkIsAnalyticsGranted() {
+    return !!get(
+      // todo: define how to fetch userId?
+      await this.settingsService.getAppSettings('1'),
+      'agreements.analytics',
+      false,
+    );
   }
 }

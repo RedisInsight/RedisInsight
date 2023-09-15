@@ -92,7 +92,7 @@ test('Verify that user can set slowlog-log-slower-than value in milliseconds and
     let microsecondsDuration = await slowLogPage.slowLogCommandValue.withExactText(command).parent(3).find(slowLogPage.cssSelectorDurationValue).textContent;
     // Change microseconds to  milliseconds in configuration
     await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMilliSecondsUnit);
-    await t.expect(slowLogPage.slowLogTable.find('span').withExactText('Duration, ms').exists).ok('Micro-seconds were converted to milli-seconds');
+    await t.expect(slowLogPage.slowLogTable.find('span').withExactText('Duration, msec').exists).ok('Micro-seconds were converted to milli-seconds');
     let millisecondsDuration = await slowLogPage.slowLogCommandValue.withExactText(command).parent(3).find(slowLogPage.cssSelectorDurationValue).textContent;
     await t.expect(parseFloat(millisecondsDuration)).eql(parseFloat(microsecondsDuration.replace(' ', '')) / 1000);
     // Verify that user can set slowlog-log-slower-than value in microseconds and command duration will be re-calculated to microseconds

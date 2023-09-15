@@ -1,5 +1,6 @@
 import { isArray, isObject } from 'lodash';
 import { getASCIISafeStringFromBuffer } from 'src/utils/cli-helper';
+import { ReplyError } from 'src/models';
 import { IOutputFormatterStrategy } from '../output-formatter.interface';
 
 export class RawFormatterStrategy implements IOutputFormatterStrategy {
@@ -30,8 +31,13 @@ export class RawFormatterStrategy implements IOutputFormatterStrategy {
     return result;
   }
 
-  private formatRedisObjectReply(reply: Object): object {
+  private formatRedisObjectReply(reply: Object): object | string {
     const result = {};
+
+    if (reply instanceof Error) {
+      return reply.toString();
+    }
+
     Object.keys(reply).forEach((key) => {
       result[key] = this.format(reply[key]);
     });

@@ -26,7 +26,7 @@ export const resolveHtmlPath = (htmlFileName: string, parsedDeepLink?: IParsedDe
         ['target', parsedDeepLink.target || ''],
       ])
 
-      resolved += `?${queryParameters.toString()}`
+      resolved += `${resolved.indexOf('?') !== -1 ? '&' : '?'}${queryParameters.toString()}`
     } catch (e) {
       // todo: log error
     }

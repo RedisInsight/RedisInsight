@@ -3,6 +3,7 @@ enum IpcInvokeEvent {
   deleteStoreValue = 'store:delete:value',
   getAppVersion = 'app:get:version',
   cloudOauth = 'cloud:oauth',
+  windowOpen = 'window:open',
 }
 
 enum IpcOnEvent {

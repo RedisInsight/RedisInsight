@@ -8,8 +8,8 @@ import { IpcOnEvent } from 'uiSrc/electron/constants'
 
 export interface IParsedDeepLink {
   initialPage?: string
-  target: string
-  from: string
+  target?: string
+  from?: string
 }
 
 export const deepLinkHandler = async (from?: string): Promise<undefined | IParsedDeepLink> => {

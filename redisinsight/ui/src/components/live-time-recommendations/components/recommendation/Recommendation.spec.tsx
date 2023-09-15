@@ -9,6 +9,7 @@ import { Pages } from 'uiSrc/constants'
 import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
+import { openNewWindowDatabase } from 'uiSrc/utils'
 import Recommendation, { IProps } from './Recommendation'
 
 const recommendationsContent = MOCK_RECOMMENDATIONS
@@ -22,6 +23,11 @@ const instanceMock = {
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  openNewWindowDatabase: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -88,10 +94,10 @@ describe('Recommendation', () => {
     sendEventTelemetry.mockRestore()
   })
 
-  it('should properly push history on workbench page to specific guide', () => {
+  it('should properly call openNewWindowDatabase and open a new window on workbench page to specific guide', () => {
     // will be improved
-    const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    const openNewWindowDatabaseMock = jest.fn();
+    (openNewWindowDatabase as jest.Mock).mockImplementation(() => openNewWindowDatabaseMock)
 
     const { container } = render(
       <Recommendation
@@ -106,7 +112,7 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock)
+    expect(openNewWindowDatabase)
       .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=quick-guides/working-with-hash.html`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
@@ -117,12 +123,13 @@ describe('Recommendation', () => {
       }
     })
     sendEventTelemetry.mockRestore()
+    openNewWindowDatabase.mockRestore()
   })
 
   it('should properly push history on workbench page to specific tutorial', () => {
     // will be improved
-    const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    const openNewWindowDatabaseMock = jest.fn();
+    (openNewWindowDatabase as jest.Mock).mockImplementation(() => openNewWindowDatabaseMock)
 
     const { container } = render(
       <Recommendation
@@ -137,7 +144,7 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock)
+    expect(openNewWindowDatabase)
       .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/redis_stack/working_with_json.md`)
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
@@ -148,6 +155,7 @@ describe('Recommendation', () => {
       }
     })
     sendEventTelemetry.mockRestore()
+    openNewWindowDatabase.mockRestore()
   })
 
   it('should render hide/unhide button', () => {

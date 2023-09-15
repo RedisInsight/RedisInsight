@@ -28,6 +28,7 @@ import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/ap
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { openNewWindowDatabase } from 'uiSrc/utils'
 
 import {
   sortRecommendations,
@@ -72,7 +73,7 @@ const Recommendations = () => {
 
     dispatch(setWorkbenchEAMinimized(false))
     if (mdPath) {
-      history.push(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
+      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
       return
     }
 

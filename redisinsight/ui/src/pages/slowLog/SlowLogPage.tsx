@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { AutoSizer } from 'react-virtualized'
 
-import { DEFAULT_SLOWLOG_MAX_LEN } from 'uiSrc/constants'
+import { DEFAULT_SLOWLOG_MAX_LEN, DurationUnits } from 'uiSrc/constants'
 import { DATE_FORMAT } from 'uiSrc/pages/slowLog/components/SlowLogTable/SlowLogTable'
 import { convertNumberByUnits } from 'uiSrc/pages/slowLog/utils'
 import { appContextDbConfig } from 'uiSrc/slices/app/context'
@@ -140,7 +140,7 @@ const SlowLogPage = () => {
           <EuiText size="xs" color="subdued" data-testid="config-info">
             Execution time: {numberWithSpaces(convertNumberByUnits(slowlogLogSlowerThan, durationUnit))}
               &nbsp;
-            {durationUnit},
+            {durationUnit === DurationUnits.milliSeconds ? DurationUnits.mSeconds : DurationUnits.microSeconds},
             Max length: {numberWithSpaces(slowlogMaxLen)}
           </EuiText>
           )}

@@ -212,7 +212,7 @@ const MessageClaimPopover = (props: Props) => {
                 placeholder="0"
                 className={styles.fieldWithAppend}
                 value={formik.values.minIdleTime}
-                append="ms"
+                append="msec"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
@@ -238,7 +238,7 @@ const MessageClaimPopover = (props: Props) => {
                     placeholder="0"
                     className={styles.fieldWithAppend}
                     value={formik.values.timeCount}
-                    append="ms"
+                    append="msec"
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       formik.setFieldValue(
                         e.target.name,

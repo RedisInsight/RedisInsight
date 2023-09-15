@@ -8,6 +8,7 @@ import {
   DEFAULT_SLOWLOG_DURATION_UNIT,
   KeyTypes,
   DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
+  DurationUnits,
 } from 'uiSrc/constants'
 import { localStorageService, setDBConfigStorageField } from 'uiSrc/services'
 import { RootState } from '../store'

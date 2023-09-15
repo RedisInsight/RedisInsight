@@ -124,10 +124,33 @@ describe('AnalyticsService', () => {
       });
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
+        anonymousId: NON_TRACKING_ANONYMOUS_ID,
+        integrations: { Amplitude: { session_id: sessionId } },
+        event: TelemetryEvents.ApplicationStarted,
+        properties: {
+          anonymousId: mockAnonymousId,
+          buildType: AppType.Electron,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
+          appVersion: mockAppVersion,
+        },
+      });
+    });
+    it('should send event for non tracking with regular payload', async () => {
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
+
+      await service.sendEvent({
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: true,
+      });
+
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
         properties: {
+          anonymousId: undefined,
           buildType: AppType.Electron,
           controlNumber: mockControlNumber,
           controlGroup: mockControlGroup,
@@ -191,10 +214,33 @@ describe('AnalyticsService', () => {
       });
 
       expect(mockAnalyticsPage).toHaveBeenCalledWith({
+        anonymousId: NON_TRACKING_ANONYMOUS_ID,
+        integrations: { Amplitude: { session_id: sessionId } },
+        name: TelemetryEvents.ApplicationStarted,
+        properties: {
+          anonymousId: mockAnonymousId,
+          buildType: AppType.Electron,
+          controlNumber: mockControlNumber,
+          controlGroup: mockControlGroup,
+          appVersion: mockAppVersion,
+        },
+      });
+    });
+    it('should send page for non tracking events with regular payload', async () => {
+      settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
+
+      await service.sendPage({
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: true,
+      });
+
+      expect(mockAnalyticsPage).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         name: TelemetryEvents.ApplicationStarted,
         properties: {
+          anonymousId: undefined,
           buildType: AppType.Electron,
           controlNumber: mockControlNumber,
           controlGroup: mockControlGroup,

@@ -1,18 +1,12 @@
-import { CloudJob, CloudJobOptions, WaitForTaskCloudJob } from 'src/modules/cloud/job/jobs';
+import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
-import {
-  CloudSubscription, CloudSubscriptionType,
-} from 'src/modules/cloud/subscription/models';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import { CloudDatabase } from 'src/modules/cloud/database/models';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { WaitForActiveDatabaseCloudJob } from 'src/modules/cloud/job/jobs/wait-for-active-database.cloud-job';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models';
-import {
-  CloudJobUnexpectedErrorException,
-  CloudTaskNoResourceIdException,
-} from 'src/modules/cloud/job/exceptions';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
@@ -22,13 +16,14 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 
 const cloudConfig = config.get('cloud');
 
-export class CreateFreeDatabaseCloudJob extends CloudJob {
+export class ImportFreeDatabaseCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeDatabase;
 
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
       subscriptionId: number,
+      databaseId: number,
     },
     protected readonly dependencies: {
       cloudDatabaseCapiService: CloudDatabaseCapiService,
@@ -43,66 +38,28 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
   }
 
   async iteration(): Promise<Database> {
-    let freeSubscription: CloudSubscription;
     try {
-      this.logger.log('Create free database');
+      this.logger.log('Importing free database');
 
       this.checkSignal();
 
-      this.changeState({ step: CloudJobStep.Database });
+      this.changeState({ step: CloudJobStep.Import });
 
-      this.logger.debug('Getting subscription metadata');
+      this.logger.debug('Getting database metadata');
 
-      freeSubscription = await this.dependencies.cloudSubscriptionCapiService.getSubscription(
-        this.options.capiCredentials,
-        this.data.subscriptionId,
-        CloudSubscriptionType.Fixed,
-      );
-      let cloudDatabase: CloudDatabase;
-
-      let createFreeDatabaseTask = await this.dependencies.cloudDatabaseCapiService.createFreeDatabase(
-        this.options.capiCredentials,
-        {
-          subscriptionId: freeSubscription.id,
-          subscriptionType: freeSubscription.type,
-        },
-      );
-
-      this.checkSignal();
-
-      createFreeDatabaseTask = await this.runChildJob(
-        WaitForTaskCloudJob,
-        {
-          taskId: createFreeDatabaseTask.taskId,
-        },
-        this.options,
-      );
-
-      const freeDatabaseId = createFreeDatabaseTask?.response?.resourceId;
-
-      if (!freeDatabaseId) {
-        throw new CloudTaskNoResourceIdException();
-      }
-
-      cloudDatabase = {
-        databaseId: freeDatabaseId,
-      } as CloudDatabase;
-
-      if (!cloudDatabase) {
-        throw new CloudJobUnexpectedErrorException('Unable to create free cloud database');
-      }
-
-      this.checkSignal();
-
-      cloudDatabase = await this.runChildJob(
+      const cloudDatabase: CloudDatabase = await this.runChildJob(
         WaitForActiveDatabaseCloudJob,
         {
-          databaseId: cloudDatabase.databaseId,
+          databaseId: this.data.databaseId,
           subscriptionId: this.data.subscriptionId,
           subscriptionType: CloudSubscriptionType.Fixed,
         },
         this.options,
       );
+
+      if (!cloudDatabase) {
+        // todo: throw
+      }
 
       this.checkSignal();
 
@@ -132,20 +89,20 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.changeState({ status: CloudJobStatus.Finished });
 
-      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseCreated({
-        region: freeSubscription?.region || '',
-        provider: freeSubscription?.provider || '',
-      });
+      // this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseCreated({
+      //   region: freeSubscription?.region || '',
+      //   provider: freeSubscription?.provider || '',
+      // });
 
       return database;
     } catch (e) {
-      this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(
-        e,
-        {
-          region: freeSubscription?.region,
-          provider: freeSubscription?.provider,
-        },
-      );
+      // this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(
+      //   e,
+      //   {
+      //     region: freeSubscription?.region,
+      //     provider: freeSubscription?.provider,
+      //   },
+      // );
 
       throw e;
     }

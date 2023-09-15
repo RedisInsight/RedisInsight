@@ -1,17 +1,18 @@
 import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import {
   CloudSubscription,
   CloudSubscriptionStatus,
   CloudSubscriptionType,
 } from 'src/modules/cloud/subscription/models';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
+import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { WaitForTaskCloudJob } from 'src/modules/cloud/job/jobs/wait-for-task.cloud-job';
 import { WaitForActiveSubscriptionCloudJob } from 'src/modules/cloud/job/jobs/wait-for-active-subscription.cloud-job';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobStatus } from 'src/modules/cloud/job/models';
 import {
+  CloudDatabaseAlreadyExistsFreeException,
   CloudPlanNotFoundFreeException,
   CloudSubscriptionUnableToDetermineException,
   CloudTaskNoResourceIdException,
@@ -27,11 +28,11 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
     readonly options: CloudJobOptions,
     private readonly data: {
       planId: number,
-      capiCredentials: CloudCapiAuthDto,
     },
     protected readonly dependencies: {
       cloudSubscriptionCapiService: CloudSubscriptionCapiService,
       cloudTaskCapiService: CloudTaskCapiService,
+      cloudDatabaseCapiService: CloudDatabaseCapiService,
     },
   ) {
     super(options);
@@ -47,14 +48,36 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
     this.logger.debug('Fetching fixed subscriptions');
 
     const fixedSubscriptions = await this.dependencies.cloudSubscriptionCapiService.getSubscriptions(
-      this.data.capiCredentials,
+      this.options.capiCredentials,
       CloudSubscriptionType.Fixed,
     );
 
     freeSubscription = CloudSubscriptionCapiService.findFreeSubscription(fixedSubscriptions);
 
     if (freeSubscription) {
-      throw new CloudSubscriptionAlreadyExistsFreeException();
+      this.logger.debug('Fetching fixed subscription databases');
+
+      const databases = await this.dependencies.cloudDatabaseCapiService.getDatabases(
+        this.options.capiCredentials,
+        {
+          subscriptionId: freeSubscription.id,
+          subscriptionType: CloudSubscriptionType.Fixed,
+        },
+      );
+
+      if (databases?.length) {
+        // throw specific error to be handled on FE side to ask user if he wants to import existing database
+        throw new CloudDatabaseAlreadyExistsFreeException(undefined, {
+          subscriptionId: freeSubscription.id,
+          databaseId: databases[0].databaseId,
+        });
+      }
+
+      // throw specific error to be handled on FE side to ask user if he wants to create new database
+      // in the existing subscription
+      throw new CloudSubscriptionAlreadyExistsFreeException(undefined, {
+        subscriptionId: freeSubscription.id,
+      });
     }
 
     // in case when no free subscriptions found we must create one
@@ -65,7 +88,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
 
       // Get available fixed plans
       const fixedPlans = await this.dependencies.cloudSubscriptionCapiService.getSubscriptionsPlans(
-        this.data.capiCredentials,
+        this.options.capiCredentials,
         CloudSubscriptionType.Fixed,
       );
 
@@ -79,7 +102,7 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
       this.checkSignal();
 
       let createSubscriptionTask = await this.dependencies.cloudSubscriptionCapiService.createFreeSubscription(
-        this.data.capiCredentials,
+        this.options.capiCredentials,
         freePlan.id,
       );
 
@@ -90,8 +113,8 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
         WaitForTaskCloudJob,
         {
           taskId: createSubscriptionTask.taskId,
-          capiCredentials: this.data.capiCredentials,
         },
+        this.options,
       );
 
       const freeSubscriptionId = createSubscriptionTask?.response?.resourceId;
@@ -115,10 +138,10 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
       freeSubscription = await this.runChildJob(
         WaitForActiveSubscriptionCloudJob,
         {
-          capiCredentials: this.data.capiCredentials,
           subscriptionId: freeSubscription.id,
           subscriptionType: CloudSubscriptionType.Fixed,
         },
+        this.options,
       );
     }
 

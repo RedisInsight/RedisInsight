@@ -8,6 +8,7 @@ import { SessionMetadata } from 'src/common/models';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { debounce } from 'lodash';
+import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 
 const cloudConfig = config.get('cloud');
 
@@ -15,6 +16,8 @@ export class CloudJobOptions {
   abortController: AbortController;
 
   sessionMetadata: SessionMetadata;
+
+  capiCredentials?: CloudCapiAuthDto;
 
   utm?: CloudRequestUtm;
 
@@ -70,8 +73,18 @@ export abstract class CloudJob {
     try {
       this.changeState({
         status: CloudJobStatus.Running,
-        step: CloudJobStep.Credentials,
       });
+
+      if (!this.options.capiCredentials) {
+        this.logger.debug('Generating capi credentials');
+
+        this.changeState({ step: CloudJobStep.Credentials });
+
+        this.options.capiCredentials = await this.dependencies.cloudCapiKeyService.getCapiCredentials(
+          this.options.sessionMetadata,
+          this.options.utm,
+        );
+      }
 
       return await this.iteration();
     } catch (e) {
@@ -122,7 +135,7 @@ export abstract class CloudJob {
     );
   }
 
-  public async runChildJob(TargetJob: ClassType<CloudJob>, data: {}, options = {}): Promise<any> {
+  public async runChildJob(TargetJob: ClassType<CloudJob>, data: {}, options: CloudJobOptions): Promise<any> {
     const child = this.createChildJob(TargetJob, data, options);
 
     this.changeState({ child });

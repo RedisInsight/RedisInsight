@@ -19,7 +19,6 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
       databaseId: number,
       subscriptionId: number,
       subscriptionType: CloudSubscriptionType,
-      capiCredentials: CloudCapiAuthDto,
     },
     protected readonly dependencies: {
       cloudDatabaseCapiService: CloudDatabaseCapiService,
@@ -36,7 +35,7 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
     this.logger.debug('Fetching cloud database');
 
     const database = await this.dependencies.cloudDatabaseCapiService.getDatabase(
-      this.data.capiCredentials,
+      this.options.capiCredentials,
       {
         subscriptionId: this.data.subscriptionId,
         subscriptionType: this.data.subscriptionType,

@@ -1,18 +1,16 @@
 import { CloudJob, CloudJobOptions, WaitForTaskCloudJob } from 'src/modules/cloud/job/jobs';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
-import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 import {
-  CloudSubscription,
+  CloudSubscription, CloudSubscriptionType,
 } from 'src/modules/cloud/subscription/models';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
-import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
-import { CreateFreeSubscriptionCloudJob } from 'src/modules/cloud/job/jobs/create-free-subscription.cloud-job';
+import { CloudDatabase } from 'src/modules/cloud/database/models';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { WaitForActiveDatabaseCloudJob } from 'src/modules/cloud/job/jobs/wait-for-active-database.cloud-job';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models';
 import {
-  CloudDatabaseAlreadyExistsFreeException, CloudJobUnexpectedErrorException,
+  CloudJobUnexpectedErrorException,
   CloudTaskNoResourceIdException,
 } from 'src/modules/cloud/job/exceptions';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -30,8 +28,7 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      planId: number,
-      capiCredentials: CloudCapiAuthDto,
+      subscriptionId: number,
     },
     protected readonly dependencies: {
       cloudDatabaseCapiService: CloudDatabaseCapiService,
@@ -52,84 +49,47 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.checkSignal();
 
-      this.logger.debug('Generating capi credentials');
-
-      this.changeState({ step: CloudJobStep.Credentials });
-
-      this.data.capiCredentials = await this.dependencies.cloudCapiKeyService.getCapiCredentials(
-        this.options.sessionMetadata,
-        this.options.utm,
-      );
-
-      this.changeState({ step: CloudJobStep.Subscription });
-
-      this.logger.debug('Get or create free subscription');
-
-      freeSubscription = await this.runChildJob(
-        CreateFreeSubscriptionCloudJob,
-        this.data,
-      );
-
-      this.logger.debug('Get free subscription databases');
-
-      this.checkSignal();
-
       this.changeState({ step: CloudJobStep.Database });
 
-      const databases = await this.dependencies.cloudDatabaseCapiService.getDatabases(
-        this.data.capiCredentials,
+      this.logger.debug('Getting subscription metadata');
+
+      freeSubscription = await this.dependencies.cloudSubscriptionCapiService.getSubscription(
+        this.options.capiCredentials,
+        this.data.subscriptionId,
+        CloudSubscriptionType.Fixed,
+      );
+      let cloudDatabase: CloudDatabase;
+
+      let createFreeDatabaseTask = await this.dependencies.cloudDatabaseCapiService.createFreeDatabase(
+        this.options.capiCredentials,
         {
           subscriptionId: freeSubscription.id,
           subscriptionType: freeSubscription.type,
         },
       );
 
-      let cloudDatabase: CloudDatabase;
+      this.checkSignal();
 
-      if (databases?.length) {
-        [cloudDatabase] = databases;
+      createFreeDatabaseTask = await this.runChildJob(
+        WaitForTaskCloudJob,
+        {
+          taskId: createFreeDatabaseTask.taskId,
+        },
+        this.options,
+      );
 
-        if (cloudDatabase.status !== CloudDatabaseStatus.Pending
-          && cloudDatabase.status !== CloudDatabaseStatus.Draft) {
-          throw new CloudDatabaseAlreadyExistsFreeException();
-        }
-      } else {
-        // create free database
-        this.logger.debug('No free databases found. Create one...');
+      const freeDatabaseId = createFreeDatabaseTask?.response?.resourceId;
 
-        this.checkSignal();
-
-        let createFreeDatabaseTask = await this.dependencies.cloudDatabaseCapiService.createFreeDatabase(
-          this.data.capiCredentials,
-          {
-            subscriptionId: freeSubscription.id,
-            subscriptionType: freeSubscription.type,
-          },
-        );
-
-        this.checkSignal();
-
-        createFreeDatabaseTask = await this.runChildJob(
-          WaitForTaskCloudJob,
-          {
-            taskId: createFreeDatabaseTask.taskId,
-            capiCredentials: this.data.capiCredentials,
-          },
-        );
-
-        const freeDatabaseId = createFreeDatabaseTask?.response?.resourceId;
-
-        if (!freeDatabaseId) {
-          throw new CloudTaskNoResourceIdException();
-        }
-
-        cloudDatabase = {
-          databaseId: freeDatabaseId,
-        } as CloudDatabase;
+      if (!freeDatabaseId) {
+        throw new CloudTaskNoResourceIdException();
       }
 
+      cloudDatabase = {
+        databaseId: freeDatabaseId,
+      } as CloudDatabase;
+
       if (!cloudDatabase) {
-        throw new CloudJobUnexpectedErrorException('Unable to determine or create free cloud database');
+        throw new CloudJobUnexpectedErrorException('Unable to create free cloud database');
       }
 
       this.checkSignal();
@@ -138,10 +98,10 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
         WaitForActiveDatabaseCloudJob,
         {
           databaseId: cloudDatabase.databaseId,
-          subscriptionId: freeSubscription.id,
-          subscriptionType: freeSubscription.type,
-          capiCredentials: this.data.capiCredentials,
+          subscriptionId: this.data.subscriptionId,
+          subscriptionType: CloudSubscriptionType.Fixed,
         },
+        this.options,
       );
 
       this.checkSignal();
@@ -185,8 +145,6 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
           region: freeSubscription?.region,
           provider: freeSubscription?.provider,
         },
-        this.dependencies.cloudSubscriptionCapiService,
-        this.data,
       );
 
       throw e;

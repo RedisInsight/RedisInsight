@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber } from 'class-validator';
 
-export class CreateDatabaseCloudJobDataDto {
+export class CreateSubscriptionAndDatabaseCloudJobDataDto {
   @ApiProperty({
-    description: 'Subscription id for create a database.',
+    description: 'Plan id for create a subscription.',
     type: Number,
   })
   @IsNumber()
   @IsNotEmpty()
-  subscriptionId: number;
+  planId: number;
 }

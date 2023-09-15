@@ -38,73 +38,56 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
   }
 
   async iteration(): Promise<Database> {
-    try {
-      this.logger.log('Importing free database');
+    this.logger.log('Importing free database');
 
-      this.checkSignal();
+    this.checkSignal();
 
-      this.changeState({ step: CloudJobStep.Import });
+    this.changeState({ step: CloudJobStep.Import });
 
-      this.logger.debug('Getting database metadata');
+    this.logger.debug('Getting database metadata');
 
-      const cloudDatabase: CloudDatabase = await this.runChildJob(
-        WaitForActiveDatabaseCloudJob,
-        {
-          databaseId: this.data.databaseId,
-          subscriptionId: this.data.subscriptionId,
-          subscriptionType: CloudSubscriptionType.Fixed,
-        },
-        this.options,
-      );
+    const cloudDatabase: CloudDatabase = await this.runChildJob(
+      WaitForActiveDatabaseCloudJob,
+      {
+        databaseId: this.data.databaseId,
+        subscriptionId: this.data.subscriptionId,
+        subscriptionType: CloudSubscriptionType.Fixed,
+      },
+      this.options,
+    );
 
-      if (!cloudDatabase) {
-        // todo: throw
-      }
-
-      this.checkSignal();
-
-      const {
-        publicEndpoint,
-        name,
-        password,
-      } = cloudDatabase;
-
-      const [host, port] = publicEndpoint.split(':');
-
-      const database = await this.dependencies.databaseService.create({
-        host,
-        port: parseInt(port, 10),
-        name,
-        nameFromProvider: name,
-        password,
-        provider: HostingProvider.RE_CLOUD,
-        cloudDetails: {
-          ...cloudDatabase?.cloudDetails,
-          free: true,
-        },
-        timeout: cloudConfig.cloudDatabaseConnectionTimeout,
-      });
-
-      this.result = { resourceId: database.id };
-
-      this.changeState({ status: CloudJobStatus.Finished });
-
-      // this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseCreated({
-      //   region: freeSubscription?.region || '',
-      //   provider: freeSubscription?.provider || '',
-      // });
-
-      return database;
-    } catch (e) {
-      // this.dependencies.cloudDatabaseAnalytics.sendCloudFreeDatabaseFailed(
-      //   e,
-      //   {
-      //     region: freeSubscription?.region,
-      //     provider: freeSubscription?.provider,
-      //   },
-      // );
-
-      throw e;
+    if (!cloudDatabase) {
+      // todo: throw
     }
+
+    this.checkSignal();
+
+    const {
+      publicEndpoint,
+      name,
+      password,
+    } = cloudDatabase;
+
+    const [host, port] = publicEndpoint.split(':');
+
+    const database = await this.dependencies.databaseService.create({
+      host,
+      port: parseInt(port, 10),
+      name,
+      nameFromProvider: name,
+      password,
+      provider: HostingProvider.RE_CLOUD,
+      cloudDetails: {
+        ...cloudDatabase?.cloudDetails,
+        free: true,
+      },
+      timeout: cloudConfig.cloudDatabaseConnectionTimeout,
+    });
+
+    this.result = { resourceId: database.id };
+
+    this.changeState({ status: CloudJobStatus.Finished });
+
+    return database;
   }
 }

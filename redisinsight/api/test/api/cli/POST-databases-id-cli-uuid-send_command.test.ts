@@ -1063,7 +1063,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command (MULTI)', () => {
       {
         name: 'Should create string',
         data: {
-          command: `set ${constants.TEST_STRING_KEY_1} a`,
+          command: `set ${constants.TEST_STRING_KEY_1} bar`,
           outputFormat: 'RAW',
         },
         responseRawSchema,
@@ -1074,7 +1074,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command (MULTI)', () => {
       {
         name: 'Should create string',
         data: {
-          command: `lpop ${constants.TEST_STRING_KEY_1} some`,
+          command: `incr ${constants.TEST_STRING_KEY_1}`,
           outputFormat: 'RAW',
         },
         responseRawSchema,
@@ -1092,7 +1092,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command (MULTI)', () => {
         checkFn: ({ body }) => {
           expect(body.response).to.deep.eq([
             'OK',
-            'ReplyError: ERR value is out of range, must be positive',
+            'ReplyError: ERR value is not an integer or out of range',
           ]);
         },
       },

@@ -22,7 +22,9 @@ const EmptySlowLog = (props: Props) => {
         </EuiTitle>
         <EuiText color="subdued">
           Either no commands exceeding&nbsp;
-          {numberWithSpaces(convertNumberByUnits(slowlogLogSlowerThan, durationUnit))} {durationUnit}
+          {numberWithSpaces(convertNumberByUnits(slowlogLogSlowerThan, durationUnit))}
+          &nbsp;
+          {durationUnit === DurationUnits.milliSeconds ? DurationUnits.mSeconds : DurationUnits.microSeconds}
           &nbsp;were found or Slow Log is disabled on the server.
         </EuiText>
       </div>

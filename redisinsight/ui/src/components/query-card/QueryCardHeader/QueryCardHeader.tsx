@@ -76,14 +76,14 @@ export interface Props {
 
 const getExecutionTimeString = (value: number): string => {
   if (value < 1) {
-    return '0.001 ms'
+    return '0.001 msec'
   }
-  return `${numberWithSpaces((parseFloat((value / 1000).toFixed(3))))} ms`
+  return `${numberWithSpaces((parseFloat((value / 1000).toFixed(3))))} msec`
 }
 
 const getTruncatedExecutionTimeString = (value: number): string => {
   if (value < 1) {
-    return '0.001 ms'
+    return '0.001 msec'
   }
 
   return truncateMilliseconds(parseFloat((value / 1000).toFixed(3)))

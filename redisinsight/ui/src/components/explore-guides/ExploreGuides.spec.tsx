@@ -24,62 +24,6 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   }),
 }))
 
-jest.mock('uiSrc/slices/workbench/wb-guides', () => ({
-  ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
-  workbenchGuidesSelector: jest.fn().mockReturnValue({
-    loading: false,
-    error: '',
-    items: [{
-      label: 'Quick guides',
-      type: 'group',
-      children: [
-        {
-          label: 'Quick guides',
-          type: 'group',
-          children: [
-            {
-              type: 'internal-link',
-              id: 'document-capabilities',
-              label: 'Document Capabilities',
-              args: {
-                path: '/quick-guides/document/introduction.md',
-              },
-            },
-          ]
-        }
-      ]
-    }],
-  }),
-}))
-
-jest.mock('uiSrc/slices/workbench/wb-tutorials', () => ({
-  ...jest.requireActual('uiSrc/slices/workbench/wb-tutorials'),
-  workbenchTutorialsSelector: jest.fn().mockReturnValue({
-    loading: false,
-    error: '',
-    items: [{
-      label: 'Quick guides',
-      type: 'group',
-      children: [
-        {
-          label: 'Quick guides',
-          type: 'group',
-          children: [
-            {
-              type: 'internal-link',
-              id: 'document-capabilities',
-              label: 'Document Capabilities',
-              args: {
-                path: '/quick-guides/document/working-with-json.md',
-              },
-            },
-          ]
-        }
-      ]
-    }],
-  }),
-}))
-
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
@@ -107,7 +51,8 @@ describe('ExploreGuides', () => {
 
     fireEvent.click(screen.getByTestId('guide-button-Search and Query'))
 
-    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?path=quick-guides/0/0/0`)
+    expect(pushMock)
+      .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/quick-guides/document/introduction.md`)
   })
 
   it('should call proper history push after click on guide with tutorial', () => {
@@ -118,7 +63,9 @@ describe('ExploreGuides', () => {
 
     fireEvent.click(screen.getByTestId('guide-button-JSON'))
 
-    expect(pushMock).toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?path=tutorials/0/0/0`)
+    expect(pushMock).toHaveBeenCalledWith(
+      `${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/quick-guides/document/working-with-json.md`
+    )
   })
 
   it('should call proper telemetry event after click on guide', () => {

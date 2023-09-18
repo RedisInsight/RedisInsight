@@ -3,11 +3,8 @@ import { EuiIcon, EuiText, EuiTitle, EuiSpacer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
-import { findMarkdownPathByPath } from 'uiSrc/utils'
-import { EAManifestFirstKey, Pages } from 'uiSrc/constants'
-import { setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
-import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
-import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+import { Pages } from 'uiSrc/constants'
+import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 
 import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -18,8 +15,6 @@ import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
   const { data } = useSelector(guideLinksSelector)
-  const { items: guides } = useSelector(workbenchGuidesSelector)
-  const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
@@ -41,20 +36,13 @@ const ExploreGuides = () => {
       }
     })
 
+    dispatch(setWorkbenchEAMinimized(false))
     if (tutorial) {
-      const quickGuidesPath = findMarkdownPathByPath(guides, tutorial)
-      if (quickGuidesPath) {
-        history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
-        return
-      }
-
-      const tutorialsPath = findMarkdownPathByPath(tutorials, tutorial)
-      if (tutorialsPath) {
-        history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`)
-        return
-      }
+      history.push(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
+      return
     }
 
+    dispatch(resetWorkbenchEASearch())
     history.push(Pages.workbench(instanceId))
   }
 

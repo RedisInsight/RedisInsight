@@ -11,7 +11,7 @@ import { StateUserSettings } from '../interfaces/user'
 export const initialState: StateUserSettings = {
   loading: false,
   error: '',
-  isShowConceptsPopup: false,
+  isShowConceptsPopup: null,
   config: null,
   spec: null,
   workbench: {

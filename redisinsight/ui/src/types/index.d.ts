@@ -33,6 +33,7 @@ export interface RedisInsight {
 export interface WindowApp {
   sendWindowId: any
   cloudOauthCallback: any
+  deepLinkAction: any
   ipc: IPCHandler
   config: {
     apiPort: string

@@ -1,7 +1,7 @@
 import { EuiResizableContainer } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -63,8 +63,10 @@ export const getDefaultSizes = () => {
 
 const InstancePage = ({ routes = [] }: Props) => {
   const [sizes, setSizes] = useState<ResizablePanelSize>(getDefaultSizes())
+  const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
 
   const dispatch = useDispatch()
+  const history = useHistory()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { data: modulesData } = useSelector(instancesSelector)
@@ -81,12 +83,16 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
+      // rerender children from scratch to clear all component states
+      setIsShouldChildrenRerender(true)
+      requestAnimationFrame(() => setIsShouldChildrenRerender(false))
+
       resetContext()
     }
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
     dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
-  }, [])
+  }, [connectionInstanceId])
 
   useEffect(() => () => {
     setSizes((prevSizes: ResizablePanelSize) => {
@@ -123,6 +129,10 @@ const InstancePage = ({ routes = [] }: Props) => {
       ...newSizes,
     }))
   }, [])
+
+  if (isShouldChildrenRerender) {
+    return null
+  }
 
   return (
     <>

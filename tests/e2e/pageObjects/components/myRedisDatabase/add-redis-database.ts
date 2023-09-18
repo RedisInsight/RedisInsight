@@ -24,7 +24,6 @@ export class AddRedisDatabase {
     databaseIndexCheckbox = Selector('[data-testid=showDb]~div', { timeout: 500 });
     connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
-    discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
     sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
     cloneSentinelNavigation = Selector('[data-testid=sentinel-nav-group-clone]');

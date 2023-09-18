@@ -69,6 +69,7 @@ describe('Config', () => {
       getWBTutorials(),
       getFeatureFlags(),
       getUserConfigSettings(),
+      setSettingsPopupState(false)
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
   })

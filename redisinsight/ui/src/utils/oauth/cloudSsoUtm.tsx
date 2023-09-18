@@ -18,6 +18,10 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
       return CloudSsoUtmCampaign.BrowserOverview
     case OAuthSocialSource.BrowserFiltering:
       return CloudSsoUtmCampaign.BrowserFilter
+    case OAuthSocialSource.WelcomeScreen:
+      return CloudSsoUtmCampaign.WelcomeScreen
+    case OAuthSocialSource.TriggersAndFunctions:
+      return CloudSsoUtmCampaign.TriggersAndFunctions
     // todo: not implemented yet
     // case OAuthSocialSource.Guides:
     //   return CloudSsoUtmCampaign.GuidesAndTutorials

@@ -45,6 +45,8 @@ import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { cloneClassInstance } from 'src/utils';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 
 const listFields = [
   'id', 'name', 'host', 'port', 'db', 'timeout',
@@ -259,6 +261,7 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should create standalone database with cloud details', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
       repository.save.mockResolvedValue(mockDatabaseEntityWithCloudDetails);
 
       const result = await service.create(mockDatabaseWithCloudDetails);
@@ -288,6 +291,19 @@ describe('LocalDatabaseRepository', () => {
       expect(result).toEqual(mockDatabaseWithTlsAuth);
       expect(caCertRepository.create).toHaveBeenCalled();
       expect(clientCertRepository.create).toHaveBeenCalled();
+    });
+
+    it('should throw an error if create called with cloud details and have the same entity', async () => {
+      repository.findOneBy.mockResolvedValueOnce(mockDatabaseEntity);
+      try {
+        await service.create(mockDatabaseEntityWithCloudDetails);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(DatabaseAlreadyExistsException);
+        expect(e.message).toEqual(ERROR_MESSAGES.DATABASE_ALREADY_EXISTS);
+        expect(e.response?.result?.databaseId).toEqual(mockDatabaseEntity.id);
+        expect(repository.save).not.toHaveBeenCalled();
+      }
     });
   });
 

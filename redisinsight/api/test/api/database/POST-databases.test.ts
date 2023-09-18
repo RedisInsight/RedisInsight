@@ -7,10 +7,12 @@ import {
   requirements,
   validateApiCall,
   after,
-  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig,
+  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig, before,
 } from '../deps';
 import { databaseSchema } from './constants';
 import { ServerService } from 'src/modules/server/server.service';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { CustomErrorCodes } from 'src/constants';
 const { rte, request, server, localDb, constants, analytics } = deps;
 
 const endpoint = () => request(server).post(`/${constants.API.DATABASES}`);
@@ -319,6 +321,40 @@ describe('POST /databases', () => {
         const db = await localDb.getInstanceByName(dbName)
         expect(db).to.be.an('object');
         expect(db.new).to.eql(true);
+      });
+      // todo: cover connection error for incorrect username/password
+    });
+    describe('Cloud details', function () {
+      before(localDb.createDatabaseInstances);
+      it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
+        const dbName = constants.getRandomString();
+
+        // preconditions
+        expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID_4)).to.not.eql(null);
+
+        await validateApiCall({
+          endpoint,
+          statusCode: 409,
+          data: {
+            name: dbName,
+            host: constants.TEST_INSTANCE_HOST_4,
+            port: constants.TEST_INSTANCE_PORT_4,
+            cloudDetails: {
+              cloudId: constants.TEST_CLOUD_ID,
+              subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
+            }
+          },
+          // responseSchema,
+          responseBody: {
+            message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
+            statusCode: 409,
+            error: 'DatabaseAlreadyExists',
+            errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+            result: {
+              databaseId: constants.TEST_INSTANCE_ID_4,
+            }
+          },
+        });
       });
       // todo: cover connection error for incorrect username/password
     });

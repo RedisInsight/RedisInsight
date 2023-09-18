@@ -48,6 +48,7 @@ export default {
   REDIS_CLOUD_FORBIDDEN: 'Error fetching account details.',
 
   DATABASE_IS_INACTIVE: 'The database is inactive.',
+  DATABASE_ALREADY_EXISTS: 'The database already exists.',
 
   INCORRECT_CLUSTER_CURSOR_FORMAT: 'Incorrect cluster cursor format.',
   REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT: () => 'Removing multiple elements is available for Redis databases v. 6.2 or later.',

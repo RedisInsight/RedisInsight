@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { set } from 'lodash';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { classToClass } from 'src/utils';
@@ -10,6 +11,7 @@ import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 
 @Injectable()
 export class LocalDatabaseRepository extends DatabaseRepository {
@@ -90,6 +92,17 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    */
   public async create(database: Database): Promise<Database> {
+    // Do not create a connection if it triggered from cloud and have the same fields
+    if (database.cloudDetails) {
+      const existingEntity = await this.findEntity(
+        database,
+        ['host', 'port', 'username', 'password', 'tls'],
+      );
+      if (existingEntity) {
+        throw new DatabaseAlreadyExistsException(existingEntity.id);
+      }
+    }
+
     const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
     return classToClass(
       Database,
@@ -204,5 +217,21 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     }
 
     return decryptedEntity;
+  }
+
+  /**
+   * Find existing entity by array of fields
+   * @param database
+   * @param fields
+   * @private
+   */
+  private async findEntity(database: Database, fields: string[]): Promise<Database | null> {
+    const query: FindOptionsWhere<DatabaseEntity> = {};
+    fields.forEach((field) => {
+      set(query, field, database[field]);
+    });
+
+    const entity = await this.repository.findOneBy(query);
+    return entity ? await this.get(entity.id) : null;
   }
 }

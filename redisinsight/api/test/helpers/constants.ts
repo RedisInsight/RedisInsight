@@ -5,6 +5,7 @@ import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { Vote } from 'src/modules/database-recommendation/models';
+import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 
 const API = {
   DATABASES: 'databases',
@@ -109,6 +110,8 @@ export const constants = {
   TEST_CLOUD_SUBSCRIPTION_NAME: process.env.TEST_CLOUD_SUBSCRIPTION_NAME || 'ITests',
   TEST_CLOUD_SUBSCRIPTION_ID: process.env.TEST_CLOUD_SUBSCRIPTION_ID || 1,
   TEST_CLOUD_DATABASE_NAME: process.env.TEST_CLOUD_DATABASE_NAME || 'ITests-db',
+  TEST_CLOUD_ID: process.env.TEST_CLOUD_ID || 111,
+  TEST_CLOUD_SUBSCRIPTION_TYPE: process.env.TEST_CLOUD_SUBSCRIPTION_TYPE || CloudSubscriptionType.Fixed,
 
   STANDALONE: 'STANDALONE',
   CLUSTER: 'CLUSTER',

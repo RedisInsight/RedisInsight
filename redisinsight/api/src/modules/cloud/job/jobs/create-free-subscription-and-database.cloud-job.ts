@@ -62,6 +62,8 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
       this.options,
     );
 
+    this.result = { resourceId: database.id };
+
     this.changeState({ status: CloudJobStatus.Finished });
 
     return database;

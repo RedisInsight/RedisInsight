@@ -44,7 +44,10 @@ test
     .after(async() => {
         // await deleteDatabase(databaseName);
     })('Verify that user can add a subscription via auto-discover flow', async t => {
-        // Verify that user can see the Cloud auto-discovery option selected by default when switching to the auto-discovery of databases
+        await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverRECloudDatabase(
+            cloudDatabaseConfig.accessKey,
+            cloudDatabaseConfig.secretKey
+        );
         await t.click(
             myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Cloud Subscriptions').exists)

@@ -40,10 +40,7 @@ test
         await t.expect(myRedisDatabasePage.redisStackIcon.visible).ok('Redis Stack icon not found for RE Cloud db with all 5 modules');
     });
 test
-    .meta({ rte: rte.reCloud })
-    .after(async() => {
-        // await deleteDatabase(databaseName);
-    })('Verify that user can add a subscription via auto-discover flow', async t => {
+    .meta({ rte: rte.reCloud })('Verify that user can add a subscription via auto-discover flow', async t => {
         await myRedisDatabasePage.AddRedisDatabase.addAutodiscoverRECloudDatabase(
             cloudDatabaseConfig.accessKey,
             cloudDatabaseConfig.secretKey

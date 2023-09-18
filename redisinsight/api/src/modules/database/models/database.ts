@@ -15,6 +15,7 @@ import {
   MaxLength,
   Min,
   ValidateNested,
+  IsArray,
 } from 'class-validator';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { Endpoint } from 'src/common/models';
@@ -174,6 +175,9 @@ export class Database {
     isArray: true,
   })
   @Expose()
+  @IsOptional()
+  @IsArray()
+  @Type(() => AdditionalRedisModule)
   modules?: AdditionalRedisModule[];
 
   @ApiPropertyOptional({

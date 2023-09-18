@@ -62,6 +62,7 @@ export class DatabaseImportService {
     ['sshPassphrase', ['sshOptions.passphrase', 'sshKeyPassphrase']],
     ['sshAgentPath', ['ssh_agent_path']],
     ['compressor', ['compressor']],
+    ['modules', ['modules']],
   ];
 
   constructor(

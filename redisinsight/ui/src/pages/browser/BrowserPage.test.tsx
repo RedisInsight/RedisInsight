@@ -1,15 +1,13 @@
 /* eslint-disable sonarjs/no-identical-functions */
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, mockedStore, cleanup, act, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { useSelector } from 'react-redux'
+import { render, screen, fireEvent, mockedStore, cleanup, act, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { RootState } from 'uiSrc/slices/store'
+import { toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
-import KeyDetailsWrapper, {
-  Props as KeyDetailsWrapperProps
-} from './components/key-details/KeyDetailsWrapper'
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -316,5 +314,69 @@ describe('KeyDetailsWrapper', () => {
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
     expect(store.getActions()).toEqual([...afterRenderActions])
+  })
+})
+
+describe('back btn', () => {
+  beforeAll(() => {
+    KeyList.mockImplementation(mockKeyList)
+  })
+
+  beforeEach(() => {
+    const state: any = store.getState()
+
+    // key with unprintable characters
+    const selectedKey = {
+      lastRefreshTime: 1664380909470,
+      data: {
+        name: unprintableStringBuffer,
+        type: KeyTypes.Hash,
+        ttl: -1,
+        size: 57,
+        length: 7,
+        nameString: '��',
+      }
+    }
+
+    selectKey(state, selectedKey)
+  })
+
+  it('Should call toggleBrowserFullScreen after back btn click', () => {
+    const state: any = store.getState()
+
+    const selectedKey = {
+      lastRefreshTime: 1664380909470,
+      data: {
+        name: unprintableStringBuffer,
+        type: KeyTypes.String,
+        ttl: -1,
+        size: 57,
+        length: 7,
+        nameString: '��',
+      }
+    }
+
+    // String value with unprintable characters
+    const data = {
+      string: {
+        loading: false,
+        error: '',
+        data: {
+          key: unprintableStringBuffer,
+          value: {
+            type: 'Buffer',
+            data: [172, 237, 0]
+          },
+        }
+      }
+    }
+    selectKey(state, selectedKey, data)
+
+    render(<BrowserPage />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('back-right-panel-btn'))
+    expect(store.getActions()).toEqual([...afterRenderActions, toggleBrowserFullScreen(true)])
   })
 })

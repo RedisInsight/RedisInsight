@@ -13,8 +13,16 @@ $breakpoint-to-hide-resize-panel: 1280px;
   padding: 0 16px;
   height: calc(100% - 280px);
 
+  &.mainWithBackBtn {
+    height: calc(100% - 328px);
+  }
+
   @media only screen and (min-width: 768px) {
     max-width: calc(100vw - 60px);
+
+    &.mainWithBackBtn {
+      height: calc(100% - 108px);
+    }
   }
 }
 
@@ -96,5 +104,9 @@ $breakpoint-to-hide-resize-panel: 1280px;
   @media (max-width: 1123.98px) {
     width: 100% !important;
   }
+}
+
+.backBtn { 
+  margin: 0 0 8px 16px;
 }
 

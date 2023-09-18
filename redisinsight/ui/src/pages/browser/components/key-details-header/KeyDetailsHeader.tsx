@@ -533,18 +533,7 @@ const KeyDetailsHeader = ({
                   </EuiFlexItem>
                 )}
                 <EuiFlexItem grow={false}>
-                  {arePanelsCollapsed && !isFullScreen ? (
-                    <EuiButton
-                      fill
-                      color="secondary"
-                      onClick={() => onClose(keyProp)}
-                      size="s"
-                      iconType="arrowLeft"
-                      className={styles.backBtn}
-                    >
-                      Back
-                    </EuiButton>
-                  ) : (
+                  {(!arePanelsCollapsed || isFullScreen) && (
                     <EuiToolTip
                       content="Close"
                       position="left"

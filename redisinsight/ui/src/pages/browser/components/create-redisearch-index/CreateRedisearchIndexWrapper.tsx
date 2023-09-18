@@ -34,33 +34,21 @@ const CreateRedisearchIndexWrapper = ({ arePanelsCollapsed, onClosePanel, onCrea
           <EuiTitle size="xs" className={styles.header}>
             <h4>New Index</h4>
           </EuiTitle>
-          {arePanelsCollapsed ? (
-            <EuiButton
-              fill
-              color="secondary"
+          {!arePanelsCollapsed && (
+          <EuiToolTip
+            content="Close"
+            position="left"
+            anchorClassName={styles.closeBtnTooltip}
+          >
+            <EuiButtonIcon
+              iconType="cross"
+              color="primary"
+              aria-label="Close panel"
+              className={styles.closeBtn}
+              data-testid="create-index-close-panel"
               onClick={onClosePanel}
-              size="s"
-              iconType="arrowLeft"
-              className={styles.backBtn}
-              data-testid="create-index-back-btn"
-            >
-              Back
-            </EuiButton>
-          ) : (
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.closeBtnTooltip}
-            >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
-                aria-label="Close panel"
-                className={styles.closeBtn}
-                data-testid="create-index-close-panel"
-                onClick={onClosePanel}
-              />
-            </EuiToolTip>
+            />
+          </EuiToolTip>
           )}
         </EuiFlexItem>
         <EuiFlexItem className={styles.header}>

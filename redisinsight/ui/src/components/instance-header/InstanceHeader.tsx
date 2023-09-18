@@ -4,12 +4,12 @@ import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import {
   EuiButtonEmpty,
-  EuiButtonIcon,
   EuiFieldNumber,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
-  EuiToolTip
+  EuiToolTip,
+  EuiText,
 } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
@@ -114,20 +114,23 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                 position="bottom"
                 content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
               >
-                <EuiButtonIcon
-                  display="empty"
-                  size="s"
-                  iconSize="l"
-                  iconType="sortLeft"
+                <EuiText
+                  className={styles.breadCrumbLink}
                   aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
-                  data-testid="my-redis-db-icon"
+                  data-testid="my-redis-db-btn"
                   onClick={goHome}
-                />
+                  onKeyDown={goHome}
+                >
+                  Databases
+                </EuiText>
               </EuiToolTip>
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+                  <EuiFlexItem grow={false}>
+                    <EuiText className={styles.divider}>\</EuiText>
+                  </EuiFlexItem>
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
                     <b className={styles.dbName}>{name}</b>
                   </EuiFlexItem>

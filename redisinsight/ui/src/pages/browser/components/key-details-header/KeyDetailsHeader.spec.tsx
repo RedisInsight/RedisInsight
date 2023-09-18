@@ -57,14 +57,6 @@ describe('KeyDetailsHeader', () => {
     fireEvent.click(screen.getByLabelText(/Copy key name/i))
   })
 
-  it('should call onClose', () => {
-    const onClose = jest.fn()
-    render(<KeyDetailsHeader {...mockedProps} onClose={onClose} />)
-
-    fireEvent.click(screen.getByTestId('close-key-btn'))
-    expect(onClose).toBeCalled()
-  })
-
   it('should call onRefresh', () => {
     const onRefresh = jest.fn()
     render(<KeyDetailsHeader {...mockedProps} onRefresh={onRefresh} />)

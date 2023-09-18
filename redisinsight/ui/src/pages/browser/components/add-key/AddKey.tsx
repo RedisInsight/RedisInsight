@@ -7,7 +7,7 @@ import {
   EuiHealth,
   EuiTitle,
   EuiToolTip,
-  EuiButtonIcon, EuiButton,
+  EuiButtonIcon,
 } from '@elastic/eui'
 import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes } from 'uiSrc/constants'
@@ -118,31 +118,20 @@ const AddKey = (props: Props) => {
             <EuiTitle size="xs">
               <h4>New Key</h4>
             </EuiTitle>
-            {arePanelsCollapsed ? (
-              <EuiButton
-                fill
-                color="secondary"
+            {!arePanelsCollapsed && (
+            <EuiToolTip
+              content="Close"
+              position="left"
+              anchorClassName={styles.closeKeyTooltip}
+            >
+              <EuiButtonIcon
+                iconType="cross"
+                color="primary"
+                aria-label="Close key"
+                className={styles.closeBtn}
                 onClick={() => closeKey()}
-                size="s"
-                iconType="arrowLeft"
-                className={styles.backBtn}
-              >
-                Back
-              </EuiButton>
-            ) : (
-              <EuiToolTip
-                content="Close"
-                position="left"
-                anchorClassName={styles.closeKeyTooltip}
-              >
-                <EuiButtonIcon
-                  iconType="cross"
-                  color="primary"
-                  aria-label="Close key"
-                  className={styles.closeBtn}
-                  onClick={() => closeKey()}
-                />
-              </EuiToolTip>
+              />
+            </EuiToolTip>
             )}
           </EuiFlexItem>
           <div className="eui-yScroll">

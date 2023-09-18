@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
+import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -38,10 +39,7 @@ test
     .after(async() => {
         // Delete all databases
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesApi();
         // Delete exported file
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
         const databaseNames = [
@@ -71,10 +69,7 @@ test
         await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
 
         // Delete databases
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesApi();
         await myRedisDatabasePage.reloadPage();
 
         const exportedData = {
@@ -93,6 +88,8 @@ test
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
+        const moduleIcons = Selector('div').find('[data-testid^=Redi]');
+        await t.expect(moduleIcons.length).eql(1, 'module icon is not displayed');
         await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);

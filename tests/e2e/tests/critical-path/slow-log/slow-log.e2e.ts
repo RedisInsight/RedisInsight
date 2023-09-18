@@ -31,7 +31,7 @@ test('Verify that user can open new Slow Log page using new icon on left app pan
     // Verify that user see "Slow Log" page by default for non OSS Cluster
     await t.expect(overviewPage.overviewTab.withAttribute('aria-selected', 'true').exists).notOk('The Overview tab is displayed for non OSS Cluster db');
     // Verify that user can configure slowlog-max-len for Slow Log and see whole set of commands according to the setting
-    await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
+    await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     await slowLogPage.Cli.sendCommandInCli(command);
     await t.click(slowLogPage.slowLogRefreshButton);
     const duration = await slowLogPage.slowLogCommandValue.withExactText(command).parent(3).find(slowLogPage.cssSelectorDurationValue).textContent;
@@ -50,7 +50,7 @@ test('Verify that user can see "No Slow Logs found" message when slowlog-max-len
     await t.expect(slowLogPage.slowLogEmptyResult.exists).ok('Empty results not found');
     // Verify that user can see not more that number of commands that was specified in configuration
     maxCommandLength = 30;
-    await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
+    await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     await slowLogPage.changeMaxLengthParameter(maxCommandLength);
     // Go to Browser page to scan keys and turn back
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
@@ -58,13 +58,13 @@ test('Verify that user can see "No Slow Logs found" message when slowlog-max-len
     await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     await t.click(slowLogPage.slowLogTab);
     // Compare number of logged commands with maxLength
-    await t.expect(slowLogPage.slowLogCommandStatistics.withText(`${maxCommandLength} entries`).exists).ok('Number of displayed commands is less than ');
+    await t.expect(slowLogPage.slowLogCommandStatistics.withText(`${maxCommandLength} entries`).exists).ok(`Number of displayed commands is less than selected ${maxCommandLength}`);
 });
 test('Verify that users can specify number of commands that they want to display (10, 25, 50, 100, Max) in Slow Log', async t => {
     maxCommandLength = 128;
     const numberOfCommandsArray = [10, 25, 50, 100, -1];
     // Change slower-than parameter
-    await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
+    await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     await slowLogPage.changeMaxLengthParameter(maxCommandLength);
     // Go to Browser page to scan keys and turn back
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
@@ -83,7 +83,7 @@ test('Verify that users can specify number of commands that they want to display
 });
 test('Verify that user can set slowlog-log-slower-than value in milliseconds and command duration will be re-calculated to ms', async t => {
     // Set slower than parameter to log commands
-    await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
+    await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     // Send command in microseconds
     command = 'scan 0 MATCH * COUNT 5000';
     await slowLogPage.Cli.sendCommandInCli(command);
@@ -111,7 +111,7 @@ test('Verify that user can set slowlog-log-slower-than value in milliseconds and
 test('Verify that user can reset settings to default on Slow Log page', async t => {
     // Set slowlog-max-len=0
     command = 'info';
-    await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
+    await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     await slowLogPage.Cli.sendCommandInCli('info');
     await t.click(slowLogPage.slowLogRefreshButton);
     await t.expect(slowLogPage.slowLogCommandValue.withExactText(command).exists).ok('Logged command not found');
@@ -121,11 +121,11 @@ test('Verify that user can reset settings to default on Slow Log page', async t 
     await t.expect(slowLogPage.slowLogEmptyResult.exists).ok('Slow log is not cleared');
 
     // Set slower than parameter and max length
-    await slowLogPage.changeSlowerThanParameter(slowerThanParameter);
+    await slowLogPage.changeSlowerThanParameter(slowerThanParameter, slowLogPage.slowLogConfigureMicroSecondsUnit);
     await slowLogPage.changeMaxLengthParameter(maxCommandLength);
     // Reset settings to default
     await slowLogPage.resetToDefaultConfig();
     // Compare configuration after re-setting
     const configText = await slowLogPage.configInfo.textContent;
-    await t.expect(configText.replace(/\u00a0/g, ' ')).contains('Execution time: 10 000 µs, Max length: 128', 'Not reset configuration');
+    await t.expect(configText.replace(/\u00a0/g, ' ')).contains('Execution time: 10 msec, Max length: 128', 'Not reset configuration');
 });

@@ -43,17 +43,6 @@ export const initialState: StateAppOAuth = {
     name: CloudJobName.CreateFreeSubscriptionAndDatabase,
     status: '',
   },
-  // job: {
-  //   id: localStorageService.get(BrowserStorageItem.OAuthJobId) ?? '',
-  //   name: CloudJobName.CreateFreeSubscriptionAndDatabase,
-  //   status: CloudJobStatus.Failed,
-  //   error: {
-  //     errorCode: CustomErrorCodes.CloudSubscriptionAlreadyExistsFree,
-  //     resource: {
-  //       subscriptionId: 123
-  //     }
-  //   }
-  // },
   source: null,
   agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSocialDialog: false,

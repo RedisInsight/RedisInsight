@@ -59,7 +59,7 @@ export class MyRedisDatabasePage extends BasePage {
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
-    dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
+    dbNameList = Selector('[data-testid^=instance-name] span', { timeout: 3000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     hostPort = Selector('[data-testid=host-port]');
     noResultsFoundMessage = Selector('div').withExactText('No results found');

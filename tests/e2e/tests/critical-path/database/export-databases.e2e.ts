@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
-import { Selector } from 'testcafe';
 import { rte } from '../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../pageObjects';
 import {
@@ -85,11 +84,14 @@ test
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
 
+        const modulesDbRedisStackIcon = myRedisDatabasePage.dbNameList.withExactText(databaseNames[1]).parent('tr')
+            .find(myRedisDatabasePage.cssRedisStackIcon);
+        // Verify that db has redis stack icon
+        await t.expect(modulesDbRedisStackIcon.exists).ok('module icon is displayed');
+
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.clientCertField.textContent).contains('client', 'Client certificate import incorrect');
-        const moduleIcons = Selector('div').find('[data-testid^=Redi]');
-        await t.expect(moduleIcons.length).eql(1, 'module icon is not displayed');
         await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);

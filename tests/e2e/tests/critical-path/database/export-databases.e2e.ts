@@ -84,7 +84,7 @@ test
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
 
-        const modulesDbRedisStackIcon = myRedisDatabasePage.dbNameList.withExactText(databaseNames[1]).parent('tr')
+        const modulesDbRedisStackIcon = myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).parent('tr')
             .find(myRedisDatabasePage.cssRedisStackIcon);
         // Verify that db has redis stack icon
         await t.expect(modulesDbRedisStackIcon.exists).ok('module icon is displayed');

@@ -104,11 +104,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   public async create(database: Database): Promise<Database> {
     await this.checkUniqueness(database);
 
+    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
     return classToClass(
       Database,
       await this.decryptEntity(
         await this.repository.save(
-          classToClass(DatabaseEntity, await this.populateCertificates(database)),
+          await this.encryptEntity(entity),
         ),
       ),
     );

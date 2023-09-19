@@ -4,7 +4,7 @@ import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/clo
 import { CreateFreeSubscriptionCloudJob } from 'src/modules/cloud/job/jobs/create-free-subscription.cloud-job';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
-import { CloudJobStep } from 'src/modules/cloud/job/models';
+import { CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { Database } from 'src/modules/database/models/database';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
@@ -54,12 +54,18 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
 
     this.changeState({ step: CloudJobStep.Database });
 
-    return this.runChildJob(
+    const database = await this.runChildJob(
       CreateFreeDatabaseCloudJob,
       {
         subscriptionId: freeSubscription.id,
       },
       this.options,
     );
+
+    this.result = { resourceId: database.id };
+
+    this.changeState({ status: CloudJobStatus.Finished });
+
+    return database;
   }
 }

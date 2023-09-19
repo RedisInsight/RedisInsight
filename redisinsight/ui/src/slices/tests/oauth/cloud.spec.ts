@@ -886,14 +886,18 @@ describe('oauth cloud slice', () => {
     describe('createFreeDb', () => {
       it('call both addFreeDb and setJob when post is successed', async () => {
       // Arrange
-        const data = { id: '123123', name: CloudJobName.CreateFreeDatabase, status: CloudJobStatus.Running }
+        const data = {
+          id: '123123',
+          name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+          status: CloudJobStatus.Running,
+        }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createFreeDbJob())
+        await store.dispatch<any>(createFreeDbJob({ name: CloudJobName.CreateFreeSubscriptionAndDatabase }))
 
         // Assert
         const expectedActions = [
@@ -916,7 +920,7 @@ describe('oauth cloud slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(createFreeDbJob())
+        await store.dispatch<any>(createFreeDbJob({ name: CloudJobName.CreateFreeSubscriptionAndDatabase }))
 
         // Assert
         const expectedActions = [

@@ -25,7 +25,7 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
-import { CloudJobStep } from 'uiSrc/electron/constants'
+import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FeatureFlags, Theme } from 'uiSrc/constants'
 import { OAuthSocialSource, Region } from 'uiSrc/slices/interfaces'
@@ -147,11 +147,14 @@ const OAuthSelectPlan = () => {
   }
 
   const handleSubmit = () => {
-    dispatch(createFreeDbJob(toNumber(planIdSelected),
-      () => {
+    dispatch(createFreeDbJob({
+      name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+      resources: { planId: toNumber(planIdSelected) },
+      onSuccessAction: () => {
         dispatch(setIsOpenSelectPlanDialog(false))
         dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
-      }))
+      }
+    }))
   }
 
   return (

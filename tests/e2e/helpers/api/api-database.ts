@@ -204,7 +204,6 @@ export class DatabaseAPIRequests {
     async deleteAllDatabasesApi(): Promise<void> {
         const allDatabases = await this.getAllDatabases();
         console.log(`common db count is "${allDatabases}"`);
-        let counter = 0;
         if (allDatabases.length > 0) {
             const databaseIds: string[] = [];
             for (let i = 0; i < allDatabases.length; i++) {
@@ -217,12 +216,10 @@ export class DatabaseAPIRequests {
                     ResourcePath.Databases,
                     requestBody
                 );
-                ++counter;
                 await t.expect(await response.status).eql(200);
             }
             await this.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         }
-        console.log(`common deleted db count is "${counter}"`);
     }
 
     /**

@@ -14,14 +14,14 @@ $breakpoint-to-hide-resize-panel: 1280px;
   height: calc(100% - 280px);
 
   &.mainWithBackBtn {
-    height: calc(100% - 328px);
+    height: calc(100% - 338px);
   }
 
   @media only screen and (min-width: 768px) {
     max-width: calc(100vw - 60px);
 
     &.mainWithBackBtn {
-      height: calc(100% - 108px);
+      height: calc(100% - 118px);
     }
   }
 }

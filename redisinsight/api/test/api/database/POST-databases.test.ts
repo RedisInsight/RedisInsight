@@ -326,8 +326,7 @@ describe('POST /databases', () => {
     });
     describe('Cloud details', function () {
       before(async () => {
-        await (await localDb.getRepository(localDb.repositories.DATABASE)).clear();
-        await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID })
+        await localDb.initLocalDb(deps.rte, deps.server)
       });
       describe('Cloud details without pass and TLS', function () {
         requirements('!rte.tls');
@@ -355,9 +354,12 @@ describe('POST /databases', () => {
               statusCode: 409,
               error: 'DatabaseAlreadyExists',
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-              resource: {
-                databaseId: constants.TEST_INSTANCE_ID,
-              }
+            },
+            checkFn: async ({ body }) => {
+              const database = await (await localDb.getRepository(localDb.repositories.DATABASE))
+                .findOneBy({ host: constants.TEST_REDIS_HOST });
+
+              expect(body.resource.databaseId).to.eq(database.id);
             },
           });
         });
@@ -400,9 +402,12 @@ describe('POST /databases', () => {
               statusCode: 409,
               error: 'DatabaseAlreadyExists',
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-              resource: {
-                databaseId: constants.TEST_INSTANCE_ID,
-              }
+            },
+            checkFn: async ({ body }) => {
+              const database = await (await localDb.getRepository(localDb.repositories.DATABASE))
+                .findOneBy({ host: constants.TEST_REDIS_HOST });
+
+              expect(body.resource.databaseId).to.eq(database.id);
             },
           });
         });

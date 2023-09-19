@@ -12,6 +12,7 @@ import Pagination from './Pagination'
 import UploadTutorialForm from './UploadTutorialForm'
 import WelcomeMyTutorials from './WelcomeMyTutorials'
 import RedisUploadButton from './RedisUploadButton'
+import CloudLink from './CloudLink'
 
 export {
   Code,
@@ -28,4 +29,5 @@ export {
   UploadTutorialForm,
   WelcomeMyTutorials,
   RedisUploadButton,
+  CloudLink,
 }

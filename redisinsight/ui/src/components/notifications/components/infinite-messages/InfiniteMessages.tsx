@@ -27,6 +27,7 @@ export const INFINITE_MESSAGES = {
                 { (step === CloudJobStep.Credentials || !step) && 'Processing Cloud API keys…'}
                 { step === CloudJobStep.Subscription && 'Processing Cloud subscriptions…'}
                 { step === CloudJobStep.Database && 'Creating a free Cloud database…'}
+                { step === CloudJobStep.Import && 'Importing a free Cloud database…'}
               </span>
             </EuiTitle>
             <EuiText size="xs">
@@ -83,7 +84,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Enterprise Cloud subscription.</span></EuiTitle>
         <EuiText size="xs">
-          Do you want to import existing databases into RedisInsight?
+          Do you want to import your existing database into RedisInsight?
         </EuiText>
         <EuiSpacer size="m" />
         <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">

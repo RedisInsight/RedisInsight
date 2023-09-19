@@ -25,6 +25,7 @@ export enum CloudJobStep {
   Credentials = 'credentials',
   Subscription = 'subscription',
   Database = 'database',
+  Import = 'import',
 }
 
 export enum CloudJobName {

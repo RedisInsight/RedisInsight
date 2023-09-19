@@ -23,6 +23,7 @@ export class ModelEncryptor {
   async encryptEntity<T>(entity: T): Promise<T> {
     const encryptedEntity = cloneClassInstance(entity);
 
+    // TODO: implement support depth in field, 'obj.field'
     await Promise.all(this.fields.map(async (field) => {
       if (entity[field]) {
         const { data, encryption } = await this.encryptionService.encrypt(entity[field]);

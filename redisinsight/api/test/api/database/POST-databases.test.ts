@@ -325,6 +325,10 @@ describe('POST /databases', () => {
       // todo: cover connection error for incorrect username/password
     });
     describe('Cloud details', function () {
+      before(async () => {
+        await (await localDb.getRepository(localDb.repositories.DATABASE)).clear();
+        await localDb.createTestDbInstance(rte, {}, { id: constants.TEST_INSTANCE_ID })
+      });
       describe('Cloud details without pass and TLS', function () {
         requirements('!rte.tls');
         it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
@@ -351,9 +355,9 @@ describe('POST /databases', () => {
               statusCode: 409,
               error: 'DatabaseAlreadyExists',
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-            },
-            checkFn: ({ body }) => {
-              expect(body.resource.databaseId).to.be.a('string');
+              resource: {
+                databaseId: constants.TEST_INSTANCE_ID,
+              }
             },
           });
         });
@@ -396,9 +400,9 @@ describe('POST /databases', () => {
               statusCode: 409,
               error: 'DatabaseAlreadyExists',
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-            },
-            checkFn: ({ body }) => {
-              expect(body.resource.databaseId).to.be.a('string');
+              resource: {
+                databaseId: constants.TEST_INSTANCE_ID,
+              }
             },
           });
         });

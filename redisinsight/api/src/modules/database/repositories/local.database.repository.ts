@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { set } from 'lodash';
+import { get, set } from 'lodash';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { classToClass } from 'src/utils';
@@ -18,6 +18,16 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   private readonly modelEncryptor: ModelEncryptor;
 
   private readonly sshModelEncryptor: ModelEncryptor;
+
+  private uniqFieldsForCloudDatabase: string[] = [
+    'host',
+    'port',
+    'username',
+    'password',
+    'caCert.certificate',
+    'clientCert.certificate',
+    'clientCert.key',
+  ]
 
   constructor(
     @InjectRepository(DatabaseEntity)
@@ -92,23 +102,24 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    */
   public async create(database: Database): Promise<Database> {
+    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
+    const encryptedEntity = await this.encryptEntity(entity);
     // Do not create a connection if it triggered from cloud and have the same fields
     if (database.cloudDetails?.cloudId) {
-      const existingEntity = await this.findEntity(
-        database,
-        ['host', 'port', 'username', 'password', 'tls'],
+      const existingDatabaseId = await this.findExactDatabase(
+        encryptedEntity,
+        this.uniqFieldsForCloudDatabase,
       );
-      if (existingEntity) {
-        throw new DatabaseAlreadyExistsException(existingEntity.id);
+      if (existingDatabaseId) {
+        throw new DatabaseAlreadyExistsException(existingDatabaseId);
       }
     }
 
-    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
     return classToClass(
       Database,
       await this.decryptEntity(
         await this.repository.save(
-          await this.encryptEntity(entity),
+          encryptedEntity,
         ),
       ),
     );
@@ -225,13 +236,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param fields
    * @private
    */
-  private async findEntity(database: Database, fields: string[]): Promise<Database | null> {
+  private async findExactDatabase(database: DatabaseEntity, fields: string[]): Promise<string> {
     const query: FindOptionsWhere<DatabaseEntity> = {};
     fields.forEach((field) => {
-      set(query, field, database[field]);
+      set(query, field, get(database, field));
     });
 
-    const entity = await this.repository.findOneBy(query);
-    return entity ? await this.get(entity.id) : null;
+    return (await this.repository.findOneBy(query))?.id;
   }
 }

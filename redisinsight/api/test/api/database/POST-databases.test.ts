@@ -325,36 +325,84 @@ describe('POST /databases', () => {
       // todo: cover connection error for incorrect username/password
     });
     describe('Cloud details', function () {
-      requirements('!rte.acl');
-      it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
-        const dbName = constants.getRandomString();
-        // preconditions
-        expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
+      describe('Cloud details without pass and TLS', function () {
+        requirements('!rte.tls');
+        it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
+          const dbName = constants.getRandomString();
+          // preconditions
+          expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
 
-        await validateApiCall({
-          endpoint,
-          statusCode: 409,
-          data: {
-            name: dbName,
-            host: constants.TEST_REDIS_HOST,
-            port: constants.TEST_REDIS_PORT,
-            cloudDetails: {
-              cloudId: constants.TEST_CLOUD_ID,
-              subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
-            }
-          },
-          responseBody: {
-            message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
+          await validateApiCall({
+            endpoint,
             statusCode: 409,
-            error: 'DatabaseAlreadyExists',
-            errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-            resource: {
-              databaseId: constants.TEST_INSTANCE_ID,
-            }
-          },
+            data: {
+              name: dbName,
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+              username: constants.TEST_REDIS_USER,
+              password: constants.TEST_REDIS_PASSWORD,
+              cloudDetails: {
+                cloudId: constants.TEST_CLOUD_ID,
+                subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
+              },
+            },
+            responseBody: {
+              message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
+              statusCode: 409,
+              error: 'DatabaseAlreadyExists',
+              errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+              resource: {
+                databaseId: constants.TEST_INSTANCE_ID,
+              }
+            },
+          });
         });
       });
-      // todo: cover connection error for incorrect username/password
+      describe('Cloud details with pass and TLS', function () {
+        requirements('rte.tlsAuth');
+        it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
+          const dbName = constants.getRandomString();
+          const newClientCertName = constants.getRandomString();
+          const newCaName = constants.getRandomString();
+          // preconditions
+          expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
+
+          await validateApiCall({
+            endpoint,
+            statusCode: 409,
+            data: {
+              name: dbName,
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+              username: constants.TEST_REDIS_USER,
+              password: constants.TEST_REDIS_PASSWORD,
+              tls: true,
+              cloudDetails: {
+                cloudId: constants.TEST_CLOUD_ID,
+                subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
+              },
+              caCert: {
+                name: newCaName,
+                certificate: constants.TEST_REDIS_TLS_CA,
+              },
+              clientCert: {
+                name: newClientCertName,
+                certificate: constants.TEST_USER_TLS_CERT,
+                key: constants.TEST_USER_TLS_KEY,
+              },
+            },
+            responseBody: {
+              message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
+              statusCode: 409,
+              error: 'DatabaseAlreadyExists',
+              errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+              resource: {
+                databaseId: constants.TEST_INSTANCE_ID,
+              }
+            },
+          });
+        });
+      });
     });
     describe('TLS CA', function () {
       requirements('rte.tls', '!rte.tlsAuth');

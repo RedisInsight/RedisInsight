@@ -30,4 +30,7 @@ export enum CustomErrorCodes {
   CloudSubscriptionUnableToDetermine = 11_111,
   CloudTaskNotFound = 11_112,
   CloudJobNotFound = 11_113,
+
+  // General database errors [11200, 11299]
+  DatabaseAlreadyExists = 11_200,
 }

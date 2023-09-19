@@ -6,11 +6,12 @@ import {
   initialStateDefault,
   mockedStore,
 } from 'uiSrc/utils/test-utils'
-import { apiErrors } from 'uiSrc/constants'
+import { CustomErrorCodes, apiErrors } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack } from 'uiSrc/utils'
-
+import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import reducer, {
   initialState,
   instancesSelector,
@@ -62,8 +63,9 @@ import reducer, {
   testInstanceStandaloneAction,
   updateEditedInstance,
   exportInstancesAction,
+  autoCreateAndConnectToInstanceAction,
 } from '../../instances/instances'
-import { addErrorNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
+import { addErrorNotification, addInfiniteNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
 import { loadMastersSentinel } from '../../instances/sentinel'
 
@@ -996,6 +998,46 @@ describe('instances slice', () => {
 
         expect(store.getActions().splice(0, 3)).toEqual(expectedActions)
       })
+
+      it('should call proper actions on fail with errorCode=11_200 (Database already exists)', async () => {
+        // Arrange
+        const mockId = '123'
+        const mockName = 'name'
+        const requestData = {
+          name: mockName,
+          host: 'localhost',
+          port: 6379,
+        }
+
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: {
+              message: errorMessage,
+              errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+              resource: {
+                databaseId: mockId,
+              }
+            },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(createInstanceStandaloneAction(requestData))
+
+        // Assert
+        const expectedActions = [
+          defaultInstanceChanging(),
+          setAppContextInitialState(),
+          setConnectedInstanceId(mockId),
+          setDefaultInstance(),
+          resetConnectedInstance(),
+        ]
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+      })
     })
 
     describe('deleteInstances', () => {
@@ -1601,6 +1643,77 @@ describe('instances slice', () => {
           addErrorNotification(responsePayload as AxiosError),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('autoCreateAndConnectToInstanceAction', () => {
+      it('call proper actions on success', async () => {
+        // Arrange
+        const mockId = '123'
+        const mockName = 'name'
+        const requestData = {
+          name: mockName,
+          host: 'localhost',
+          port: 6379,
+        }
+
+        const responsePayload = { status: 201, data: { id: mockId, name: mockName } }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(autoCreateAndConnectToInstanceAction(requestData))
+
+        // Assert
+        const expectedActions = [
+          addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()),
+          setAppContextInitialState(),
+          setConnectedInstanceId(mockId),
+          setDefaultInstance(),
+          resetConnectedInstance(),
+        ]
+
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on fail with errorCode=11_200 (Database already exists)', async () => {
+        // Arrange
+        const mockId = '123'
+        const mockName = 'name'
+        const requestData = {
+          name: mockName,
+          host: 'localhost',
+          port: 6379,
+        }
+
+        const errorMessage = 'some error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: {
+              message: errorMessage,
+              errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+              resource: {
+                databaseId: mockId,
+              }
+            },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(autoCreateAndConnectToInstanceAction(requestData))
+
+        // Assert
+        const expectedActions = [
+          addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()),
+          setAppContextInitialState(),
+          setConnectedInstanceId(mockId),
+          setDefaultInstance(),
+          resetConnectedInstance(),
+        ]
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
     })
   })

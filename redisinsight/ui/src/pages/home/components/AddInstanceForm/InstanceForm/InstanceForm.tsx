@@ -8,13 +8,13 @@ import {
   EuiToolTip,
   keys,
 } from '@elastic/eui'
-
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick, toString } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
+
 import { PageNames, Pages } from 'uiSrc/constants'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
@@ -27,11 +27,12 @@ import {
   resetInstanceUpdateAction,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
-
 import { ConnectionType, InstanceType, } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { getDiffKeysOfObjectValues, isRediStack } from 'uiSrc/utils'
+import { Nullable, getDiffKeysOfObjectValues, isRediStack } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
+import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
+import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 
 import {
   ADD_NEW_CA_CERT,
@@ -83,6 +84,7 @@ export interface Props {
   onClose?: () => void
   onAliasEdited?: (value: string) => void
   setErrorMsgRef?: (database: HTMLDivElement | null) => void
+  urlHandlingAction?: Nullable<UrlHandlingActions>
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name, instanceType }: any) => {
@@ -148,6 +150,7 @@ const AddStandaloneForm = (props: Props) => {
   } = props
 
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
+  const { action } = useSelector(appRedirectionSelector)
 
   const prepareInitialValues = () => ({
     host: host ?? getDefaultHost(),
@@ -205,6 +208,7 @@ const AddStandaloneForm = (props: Props) => {
   const formRef = useRef<HTMLDivElement>(null)
 
   const submitIsDisable = () => !isEmpty(errors)
+  const isFromCloud = action === UrlHandlingActions.Connect
 
   const validate = (values: DbConnectionInfo) => {
     const errs: FormikErrors<DbConnectionInfo> = {}
@@ -524,7 +528,7 @@ const AddStandaloneForm = (props: Props) => {
         </div>
       )}
       <div className="getStartedForm" ref={formRef}>
-        {!isEditMode && instanceType === InstanceType.Standalone && (
+        {!isEditMode && instanceType === InstanceType.Standalone && !isFromCloud && (
           <>
             <MessageStandalone />
             <br />
@@ -536,7 +540,7 @@ const AddStandaloneForm = (props: Props) => {
             <br />
           </>
         )}
-        {!isEditMode && (
+        {!isEditMode && !isFromCloud && (
           <EuiForm
             component="form"
             onSubmit={formik.handleSubmit}
@@ -583,7 +587,7 @@ const AddStandaloneForm = (props: Props) => {
             )}
           </EuiForm>
         )}
-        {(isEditMode || isCloneMode) && connectionType !== ConnectionType.Sentinel && (
+        {(isEditMode || isCloneMode || isFromCloud) && connectionType !== ConnectionType.Sentinel && (
           <>
             {!isCloneMode && (
               <DbInfo
@@ -594,6 +598,7 @@ const AddStandaloneForm = (props: Props) => {
                 modules={modules}
                 nameFromProvider={nameFromProvider}
                 nodes={nodes}
+                isFromCloud={isFromCloud}
               />
             )}
             <EuiForm
@@ -608,6 +613,7 @@ const AddStandaloneForm = (props: Props) => {
                 flexGroupClassName={flexGroupClassName}
                 isCloneMode={isCloneMode}
                 isEditMode={isEditMode}
+                isFromCloud={isFromCloud}
                 connectionType={connectionType}
                 instanceType={instanceType}
                 onHostNamePaste={onHostNamePaste}

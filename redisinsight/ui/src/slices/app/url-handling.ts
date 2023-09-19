@@ -31,7 +31,7 @@ export const {
   setUrlHandlingInitialState,
   setFromUrl,
   setUrlDbConnection,
-  setUrlProperties
+  setUrlProperties,
 } = appUrlHandlingSlice.actions
 
 export const appRedirectionSelector = (state: RootState) => state.app.urlHandling

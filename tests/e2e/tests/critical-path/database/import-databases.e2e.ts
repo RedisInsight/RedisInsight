@@ -90,7 +90,12 @@ fixture `Import databases`
         // Delete all existing connections
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
-test('Connection import modal window', async t => {
+test.before(async() => {
+    await databaseAPIRequests.deleteAllDatabasesApi();
+    await databaseHelper.acceptLicenseTerms();
+    await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
+    await myRedisDatabasePage.reloadPage();
+})('Connection import modal window', async t => {
     const tooltipText = 'Import Database Connections';
     const defaultText = 'Select or drag and drop a file';
     const parseFailedMsg = 'Failed to add database connections';

@@ -38,7 +38,10 @@ test
     .after(async() => {
         // Delete all databases
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
-        await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         // await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         // Delete exported file
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
@@ -69,8 +72,10 @@ test
         await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
 
         // Delete databases
-        await databaseAPIRequests.deleteAllDatabasesApi();
-      //  await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
         await myRedisDatabasePage.reloadPage();
 
         const exportedData = {

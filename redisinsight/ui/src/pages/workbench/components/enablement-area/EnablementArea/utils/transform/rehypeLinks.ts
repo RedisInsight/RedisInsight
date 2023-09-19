@@ -13,7 +13,7 @@ export const rehypeLinks = (config?: IConfig): (tree: Node) => void => (tree: an
       if (IS_ABSOLUTE_PATH.test(url)) { // External link
         node.properties.rel = ['nofollow', 'noopener', 'noreferrer']
         node.properties.target = '_blank'
-        // delete node.properties.title
+        delete node.properties.title
       }
       if (url.startsWith('#') && config?.history) {
         const { location: currentLocation } = config.history

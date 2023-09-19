@@ -325,11 +325,10 @@ describe('POST /databases', () => {
       // todo: cover connection error for incorrect username/password
     });
     describe('Cloud details', function () {
-      requirements('rte.acl');
       it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
         const dbName = constants.getRandomString();
         // preconditions
-        expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ACL_ID)).to.not.eql(null);
+        expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
 
         await validateApiCall({
           endpoint,
@@ -338,21 +337,18 @@ describe('POST /databases', () => {
             name: dbName,
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
-            username: constants.TEST_INSTANCE_ACL_USER,
-            password: constants.TEST_INSTANCE_ACL_PASS,
             cloudDetails: {
               cloudId: constants.TEST_CLOUD_ID,
               subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
             }
           },
-          // responseSchema,
           responseBody: {
             message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
             statusCode: 409,
             error: 'DatabaseAlreadyExists',
             errorCode: CustomErrorCodes.DatabaseAlreadyExists,
             result: {
-              databaseId: constants.TEST_INSTANCE_ACL_ID,
+              databaseId: constants.TEST_INSTANCE_ID,
             }
           },
         });

@@ -228,7 +228,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   private async checkUniqueness(database: Database): Promise<void> {
     // Do not create a connection if it triggered from cloud and have the same fields
     if (database.cloudDetails?.cloudId) {
-      const entity = await this.encryptEntity(classToClass(DatabaseEntity, database));
+      const entity = await this.encryptEntity(classToClass(DatabaseEntity, { ...database }));
 
       if (entity.caCert) {
         entity.caCert = await (new ModelEncryptor(this.encryptionService, [

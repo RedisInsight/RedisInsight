@@ -27,7 +27,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     'caCert.certificate',
     'clientCert.certificate',
     'clientCert.key',
-  ]
+  ];
 
   constructor(
     @InjectRepository(DatabaseEntity)
@@ -102,24 +102,13 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    */
   public async create(database: Database): Promise<Database> {
-    const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
-    const encryptedEntity = await this.encryptEntity(entity);
-    // Do not create a connection if it triggered from cloud and have the same fields
-    if (database.cloudDetails?.cloudId) {
-      const existingDatabaseId = await this.findExactDatabase(
-        encryptedEntity,
-        this.uniqFieldsForCloudDatabase,
-      );
-      if (existingDatabaseId) {
-        throw new DatabaseAlreadyExistsException(existingDatabaseId);
-      }
-    }
+    await this.checkUniqueness(database);
 
     return classToClass(
       Database,
       await this.decryptEntity(
         await this.repository.save(
-          encryptedEntity,
+          classToClass(DatabaseEntity, await this.populateCertificates(database)),
         ),
       ),
     );
@@ -231,17 +220,38 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   }
 
   /**
-   * Find existing entity by array of fields
+   * Check uniqueness of the database
    * @param database
-   * @param fields
    * @private
+   * @throws DatabaseAlreadyExistsException
    */
-  private async findExactDatabase(database: DatabaseEntity, fields: string[]): Promise<string> {
-    const query: FindOptionsWhere<DatabaseEntity> = {};
-    fields.forEach((field) => {
-      set(query, field, get(database, field));
-    });
+  private async checkUniqueness(database: Database): Promise<void> {
+    // Do not create a connection if it triggered from cloud and have the same fields
+    if (database.cloudDetails?.cloudId) {
+      const entity = await this.encryptEntity(classToClass(DatabaseEntity, database));
 
-    return (await this.repository.findOneBy(query))?.id;
+      if (entity.caCert) {
+        entity.caCert = await (new ModelEncryptor(this.encryptionService, [
+          'certificate',
+        ])).encryptEntity(entity.caCert);
+      }
+
+      if (entity.clientCert) {
+        entity.clientCert = await (new ModelEncryptor(this.encryptionService, [
+          'certificate', 'key',
+        ])).encryptEntity(entity.clientCert);
+      }
+
+      const query: FindOptionsWhere<DatabaseEntity> = {};
+      this.uniqFieldsForCloudDatabase.forEach((field) => {
+        set(query, field, get(entity, field));
+      });
+
+
+      const existingDatabase = await this.repository.findOneBy(query);
+      if (existingDatabase) {
+        throw new DatabaseAlreadyExistsException(existingDatabase.id);
+      }
+    }
   }
 }

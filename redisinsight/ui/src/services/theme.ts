@@ -1,6 +1,13 @@
 import { isFunction } from 'lodash'
-import { BrowserStorageItem, Theme } from 'uiSrc/constants'
+import { BrowserStorageItem, Theme, THEME_MATCH_MEDIA_DARK } from 'uiSrc/constants'
 import { localStorageService } from './storage'
+
+window.matchMedia(THEME_MATCH_MEDIA_DARK).addEventListener('change', event => {
+  const theme = localStorageService.get(BrowserStorageItem.theme)
+  if (theme === Theme.System) {
+    themeService.applyTheme(theme)
+  }
+})
 
 interface CSSFile {
   use: () => void;
@@ -19,6 +26,16 @@ class ThemeService {
   }
 
   applyTheme(newTheme: Theme) {
+
+    const initialTheme = newTheme
+    if (newTheme === Theme.System) {
+      if (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches) {
+        newTheme = Theme.Dark
+      } else {
+        newTheme = Theme.Light
+      }
+    }
+
     Object.values(this.themes).forEach((theme: CSSFile[]) =>
       theme.forEach(
         (cssFile: CSSFile) => isFunction(cssFile?.unuse) && cssFile.unuse()
@@ -26,7 +43,7 @@ class ThemeService {
     this.themes[newTheme].forEach(
       (cssFile: CSSFile) => isFunction(cssFile?.use) && cssFile.use()
     )
-    localStorageService.set(BrowserStorageItem.theme, newTheme)
+    localStorageService.set(BrowserStorageItem.theme, initialTheme)
   }
 
   static getTheme() {

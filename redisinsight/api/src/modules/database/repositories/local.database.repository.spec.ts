@@ -301,7 +301,7 @@ describe('LocalDatabaseRepository', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(DatabaseAlreadyExistsException);
         expect(e.message).toEqual(ERROR_MESSAGES.DATABASE_ALREADY_EXISTS);
-        expect(e.response?.result?.databaseId).toEqual(mockDatabaseEntity.id);
+        expect(e.response?.resource?.databaseId).toEqual(mockDatabaseEntity.id);
         expect(repository.save).not.toHaveBeenCalled();
       }
     });

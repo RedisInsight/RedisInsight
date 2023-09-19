@@ -9,7 +9,7 @@ export class DatabaseAlreadyExistsException extends HttpException {
       statusCode: HttpStatus.CONFLICT,
       error: 'DatabaseAlreadyExists',
       errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-      result: {
+      resource: {
         databaseId,
       },
     };

@@ -93,7 +93,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    */
   public async create(database: Database): Promise<Database> {
     // Do not create a connection if it triggered from cloud and have the same fields
-    if (database.cloudDetails) {
+    if (database.cloudDetails?.cloudId) {
       const existingEntity = await this.findEntity(
         database,
         ['host', 'port', 'username', 'password', 'tls'],

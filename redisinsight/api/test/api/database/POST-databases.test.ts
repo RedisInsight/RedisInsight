@@ -325,6 +325,7 @@ describe('POST /databases', () => {
       // todo: cover connection error for incorrect username/password
     });
     describe('Cloud details', function () {
+      requirements('!rte.acl');
       it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
         const dbName = constants.getRandomString();
         // preconditions
@@ -347,7 +348,7 @@ describe('POST /databases', () => {
             statusCode: 409,
             error: 'DatabaseAlreadyExists',
             errorCode: CustomErrorCodes.DatabaseAlreadyExists,
-            result: {
+            resource: {
               databaseId: constants.TEST_INSTANCE_ID,
             }
           },

@@ -39,6 +39,7 @@ test
         // Delete all databases
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
         await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         // Delete exported file
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
         const databaseNames = [
@@ -69,6 +70,7 @@ test
 
         // Delete databases
         await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.reloadPage();
 
         const exportedData = {

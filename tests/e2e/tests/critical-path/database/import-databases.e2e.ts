@@ -90,47 +90,41 @@ fixture `Import databases`
         // Delete all existing connections
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
-test
-    .before(async() => {
-        await databaseAPIRequests.deleteAllDatabasesApi();
-        await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
-        await myRedisDatabasePage.reloadPage();
-    })('Connection import modal window', async t => {
-        const tooltipText = 'Import Database Connections';
-        const defaultText = 'Select or drag and drop a file';
-        const parseFailedMsg = 'Failed to add database connections';
-        const parseFailedMsg2 = `Unable to parse ${fileNames.racompassInvalidJson}`;
+test('Connection import modal window', async t => {
+    const tooltipText = 'Import Database Connections';
+    const defaultText = 'Select or drag and drop a file';
+    const parseFailedMsg = 'Failed to add database connections';
+    const parseFailedMsg2 = `Unable to parse ${fileNames.racompassInvalidJson}`;
 
-        // Verify that user can see the “Import Database Connections” tooltip
-        await t.expect(myRedisDatabasePage.importDatabasesBtn.visible).ok('The import databases button not displayed');
-        await t.hover(myRedisDatabasePage.importDatabasesBtn);
-        await t.expect(browserPage.tooltip.innerText).contains(tooltipText, 'The tooltip message not displayed/correct');
+    // Verify that user can see the “Import Database Connections” tooltip
+    await t.expect(myRedisDatabasePage.importDatabasesBtn.visible).ok('The import databases button not displayed');
+    await t.hover(myRedisDatabasePage.importDatabasesBtn);
+    await t.expect(browserPage.tooltip.innerText).contains(tooltipText, 'The tooltip message not displayed/correct');
 
-        // Verify that Import dialogue is not closed when clicking any area outside the box
-        await t.click(myRedisDatabasePage.importDatabasesBtn);
-        await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not opened');
-        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not displayed');
+    // Verify that Import dialogue is not closed when clicking any area outside the box
+    await t.click(myRedisDatabasePage.importDatabasesBtn);
+    await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not opened');
+    await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+    await t.expect(myRedisDatabasePage.importDbDialog.exists).ok('Import Database Connections dialog not displayed');
 
-        // Verify that user see the message when parse error appears
-        await t
-            .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [filePathes.racompassInvalidJsonPath])
-            .click(myRedisDatabasePage.submitImportBtn)
-            .expect(myRedisDatabasePage.failedImportMessage.exists).ok('Failed to add database message not displayed')
-            .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg)
-            .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg2);
+    // Verify that user see the message when parse error appears
+    await t
+        .setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [filePathes.racompassInvalidJsonPath])
+        .click(myRedisDatabasePage.submitImportBtn)
+        .expect(myRedisDatabasePage.failedImportMessage.exists).ok('Failed to add database message not displayed')
+        .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg)
+        .expect(myRedisDatabasePage.failedImportMessage.textContent).contains(parseFailedMsg2);
 
-        // Verify that user can remove file from import input
-        await t.click(myRedisDatabasePage.closeDialogBtn);
-        await t.click(myRedisDatabasePage.importDatabasesBtn);
-        await t.setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [rdmData.path]);
-        // update after resolving testcafe Native Automation mode limitations
-        // await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(fileNames.rdmFullJson, 'Filename not displayed in import input');
-        // Click on remove button
-        await t.click(myRedisDatabasePage.removeImportedFileBtn);
-        await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
-    });
+    // Verify that user can remove file from import input
+    await t.click(myRedisDatabasePage.closeDialogBtn);
+    await t.click(myRedisDatabasePage.importDatabasesBtn);
+    await t.setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [rdmData.path]);
+    // update after resolving testcafe Native Automation mode limitations
+    // await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(fileNames.rdmFullJson, 'Filename not displayed in import input');
+    // Click on remove button
+    await t.click(myRedisDatabasePage.removeImportedFileBtn);
+    await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');
+});
 test('Connection import from JSON', async t => {
     // Verify that user can import database with mandatory/optional fields
     await databasesActions.importDatabase(rdmData);

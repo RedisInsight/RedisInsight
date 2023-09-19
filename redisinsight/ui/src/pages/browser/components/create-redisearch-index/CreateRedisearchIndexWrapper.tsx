@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  EuiButton,
   EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
@@ -35,20 +34,20 @@ const CreateRedisearchIndexWrapper = ({ arePanelsCollapsed, onClosePanel, onCrea
             <h4>New Index</h4>
           </EuiTitle>
           {!arePanelsCollapsed && (
-          <EuiToolTip
-            content="Close"
-            position="left"
-            anchorClassName={styles.closeBtnTooltip}
-          >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
-              aria-label="Close panel"
-              className={styles.closeBtn}
-              data-testid="create-index-close-panel"
-              onClick={onClosePanel}
-            />
-          </EuiToolTip>
+            <EuiToolTip
+              content="Close"
+              position="left"
+              anchorClassName={styles.closeBtnTooltip}
+            >
+              <EuiButtonIcon
+                iconType="cross"
+                color="primary"
+                aria-label="Close panel"
+                className={styles.closeBtn}
+                data-testid="create-index-close-panel"
+                onClick={onClosePanel}
+              />
+            </EuiToolTip>
           )}
         </EuiFlexItem>
         <EuiFlexItem className={styles.header}>

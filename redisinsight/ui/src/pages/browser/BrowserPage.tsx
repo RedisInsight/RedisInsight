@@ -216,16 +216,16 @@ const BrowserPage = () => {
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
-      <div>
-        <EuiButtonEmpty
-          iconType="arrowLeft"
-          onClick={closePanel}
-          className={styles.backBtn}
-          data-testid="back-right-panel-btn"
-        >
-          Back
-        </EuiButtonEmpty>
-      </div>
+        <div>
+          <EuiButtonEmpty
+            iconType="arrowLeft"
+            onClick={closePanel}
+            className={styles.backBtn}
+            data-testid="back-right-panel-btn"
+          >
+            Back
+          </EuiButtonEmpty>
+        </div>
       )}
       <div className={cx({
         [styles.hidden]: isRightPanelFullScreen })}

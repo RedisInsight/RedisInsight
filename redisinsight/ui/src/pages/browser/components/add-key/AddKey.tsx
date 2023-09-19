@@ -119,19 +119,19 @@ const AddKey = (props: Props) => {
               <h4>New Key</h4>
             </EuiTitle>
             {!arePanelsCollapsed && (
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.closeKeyTooltip}
-            >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
-                aria-label="Close key"
-                className={styles.closeBtn}
-                onClick={() => closeKey()}
-              />
-            </EuiToolTip>
+              <EuiToolTip
+                content="Close"
+                position="left"
+                anchorClassName={styles.closeKeyTooltip}
+              >
+                <EuiButtonIcon
+                  iconType="cross"
+                  color="primary"
+                  aria-label="Close key"
+                  className={styles.closeBtn}
+                  onClick={() => closeKey()}
+                />
+              </EuiToolTip>
             )}
           </EuiFlexItem>
           <div className="eui-yScroll">

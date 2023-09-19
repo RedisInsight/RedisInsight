@@ -100,10 +100,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   /**
    * Create database with encrypted sensitive fields
    * @param database
+   * @param uniqueCheck
    */
-  public async create(database: Database): Promise<Database> {
-    await this.checkUniqueness(database);
-
+  public async create(database: Database, uniqueCheck: boolean): Promise<Database> {
+    if (uniqueCheck) {
+      await this.checkUniqueness(database);
+    }
     const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
     return classToClass(
       Database,
@@ -247,7 +249,6 @@ export class LocalDatabaseRepository extends DatabaseRepository {
       this.uniqFieldsForCloudDatabase.forEach((field) => {
         set(query, field, get(entity, field));
       });
-
 
       const existingDatabase = await this.repository.findOneBy(query);
       if (existingDatabase) {

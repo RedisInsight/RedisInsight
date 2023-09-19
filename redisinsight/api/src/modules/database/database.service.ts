@@ -98,15 +98,16 @@ export class DatabaseService {
   /**
    * Create new database with auto-detection of database type, modules, etc.
    * @param dto
+   * @param uniqueCheck
    */
-  async create(dto: CreateDatabaseDto): Promise<Database> {
+  async create(dto: CreateDatabaseDto, uniqueCheck = false): Promise<Database> {
     try {
       this.logger.log('Creating new database.');
 
       const database = await this.repository.create({
         ...await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
         new: true,
-      });
+      }, uniqueCheck);
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {

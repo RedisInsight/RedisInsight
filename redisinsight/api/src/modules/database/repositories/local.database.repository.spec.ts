@@ -253,7 +253,7 @@ describe('LocalDatabaseRepository', () => {
 
   describe('create', () => {
     it('should create standalone database', async () => {
-      const result = await service.create(mockDatabase);
+      const result = await service.create(mockDatabase, false);
 
       expect(result).toEqual(mockDatabase);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -261,10 +261,9 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should create standalone database with cloud details', async () => {
-      repository.findOneBy.mockResolvedValueOnce(null);
       repository.save.mockResolvedValue(mockDatabaseEntityWithCloudDetails);
 
-      const result = await service.create(mockDatabaseWithCloudDetails);
+      const result = await service.create(mockDatabaseWithCloudDetails, false);
 
       expect(result).toEqual(mockDatabaseWithCloudDetails);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -274,7 +273,7 @@ describe('LocalDatabaseRepository', () => {
     it('should create standalone database (with existing certificates)', async () => {
       repository.save.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
-      const result = await service.create(mockDatabaseWithTlsAuth);
+      const result = await service.create(mockDatabaseWithTlsAuth, false);
 
       expect(result).toEqual(mockDatabaseWithTlsAuth);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -286,6 +285,7 @@ describe('LocalDatabaseRepository', () => {
 
       const result = await service.create(
         omit(cloneClassInstance(mockDatabaseWithTlsAuth), 'caCert.id', 'clientCert.id'),
+        false,
       );
 
       expect(result).toEqual(mockDatabaseWithTlsAuth);
@@ -296,7 +296,7 @@ describe('LocalDatabaseRepository', () => {
     it('should throw an error if create called with cloud details and have the same entity', async () => {
       repository.findOneBy.mockResolvedValueOnce(mockDatabaseEntity);
       try {
-        await service.create(mockDatabaseEntityWithCloudDetails);
+        await service.create(mockDatabaseEntityWithCloudDetails, true);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(DatabaseAlreadyExistsException);

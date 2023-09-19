@@ -27,8 +27,9 @@ export abstract class DatabaseRepository {
   /**
    * Create database
    * @param database
+   * @param uniqueCheck
    */
-  abstract create(database: Database): Promise<Database>;
+  abstract create(database: Database, uniqueCheck: boolean): Promise<Database>;
 
   /**
    * Update database with new data

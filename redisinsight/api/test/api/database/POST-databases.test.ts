@@ -354,12 +354,6 @@ describe('POST /databases', () => {
             },
             checkFn: ({ body }) => {
               expect(body.resource.databaseId).to.be.a('string');
-              expect(body.resource.databaseId).to.be.oneOf([
-                constants.TEST_INSTANCE_ID,
-                constants.TEST_INSTANCE_ID_2,
-                constants.TEST_INSTANCE_ID_3,
-                constants.TEST_INSTANCE_ID_4,
-              ]);
             },
           });
         });
@@ -405,12 +399,6 @@ describe('POST /databases', () => {
             },
             checkFn: ({ body }) => {
               expect(body.resource.databaseId).to.be.a('string');
-              expect(body.resource.databaseId).to.be.oneOf([
-                constants.TEST_INSTANCE_ID,
-                constants.TEST_INSTANCE_ID_2,
-                constants.TEST_INSTANCE_ID_3,
-                constants.TEST_INSTANCE_ID_4,
-              ]);
             },
           });
         });

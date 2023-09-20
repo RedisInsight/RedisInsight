@@ -7,17 +7,11 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { AppDispatch, RootState } from '../store'
 import { RedisResponseEncoding, StateAppInfo } from '../interfaces'
 
-const segmentWriteKey = process.env.SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY'
-
 export const initialState: StateAppInfo = {
   loading: true,
   error: '',
   server: null,
   encoding: RedisResponseEncoding.Buffer,
-  analytics: {
-    identified: false,
-    segmentWriteKey,
-  },
   electron: {
     isUpdateAvailable: null,
     updateDownloadedVersion: '',
@@ -32,9 +26,6 @@ const appInfoSlice = createSlice({
   initialState,
   reducers: {
     setServerInfoInitialState: () => initialState,
-    setAnalyticsIdentified: (state, { payload }) => {
-      state.analytics.identified = payload
-    },
     setElectronInfo: (state, { payload }) => {
       state.electron.isUpdateAvailable = payload.isUpdateAvailable
       state.electron.updateDownloadedVersion = payload.updateDownloadedVersion
@@ -64,8 +55,6 @@ const appInfoSlice = createSlice({
 
 // Actions generated from the slice
 export const {
-  setAnalyticsIdentified,
-  setServerInfoInitialState,
   setElectronInfo,
   setReleaseNotesViewed,
   getServerInfo,
@@ -78,7 +67,6 @@ export const {
 // A selector
 export const appInfoSelector = (state: RootState) => state.app.info
 export const appServerInfoSelector = (state: RootState) => state.app.info.server
-export const appAnalyticsInfoSelector = (state: RootState) => state.app.info.analytics
 export const appElectronInfoSelector = (state: RootState) => state.app.info.electron
 
 // The reducer

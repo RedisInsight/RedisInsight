@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 import {
-  appAnalyticsInfoSelector,
   appServerInfoSelector,
   appElectronInfoSelector
 } from 'uiSrc/slices/app/info'
@@ -12,7 +11,6 @@ import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreV
 
 const ConfigElectron = () => {
   let isCheckedUpdates = false
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
   const serverInfo = useSelector(appServerInfoSelector)
 
@@ -30,11 +28,11 @@ const ConfigElectron = () => {
   }, [serverInfo])
 
   useEffect(() => {
-    if (!isCheckedUpdates && serverInfo && analyticsIdentified) {
+    if (!isCheckedUpdates && serverInfo) {
       ipcSendEvents(serverInfo)
       isCheckedUpdates = true
     }
-  }, [serverInfo, analyticsIdentified])
+  }, [serverInfo])
 
   useEffect(() => {
     if (isReleaseNotesViewed) {

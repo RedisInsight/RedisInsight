@@ -8,7 +8,6 @@ import { FeatureFlags, Theme } from 'uiSrc/constants'
 import { setTitle } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
 import { AddDbType } from 'uiSrc/pages/home/components/AddDatabases/AddDatabasesContainer'
@@ -38,7 +37,6 @@ export interface Props {
 const Welcome = ({ onAddInstance }: Props) => {
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
   const [guides, setGuides] = useState<IHelpGuide[]>([])
@@ -91,12 +89,10 @@ const Welcome = ({ onAddInstance }: Props) => {
   ]
 
   useEffect(() => {
-    if (analyticsIdentified) {
-      sendPageViewTelemetry({
-        name: TelemetryPageView.WELCOME_PAGE
-      })
-    }
-  }, [analyticsIdentified])
+    sendPageViewTelemetry({
+      name: TelemetryPageView.WELCOME_PAGE
+    })
+  }, [])
 
   useEffect(() => {
     if (loading || !data || isEmpty(data)) {

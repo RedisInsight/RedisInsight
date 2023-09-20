@@ -37,10 +37,6 @@ export interface StateAppInfo {
   error: string
   server: Nullable<GetServerInfoResponse>
   encoding: RedisResponseEncoding,
-  analytics: {
-    segmentWriteKey: string
-    identified: boolean
-  }
   electron: {
     isUpdateAvailable: Nullable<boolean>
     updateDownloadedVersion: string

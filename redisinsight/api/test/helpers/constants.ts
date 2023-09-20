@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { randomBytes } from 'crypto';
 import { getASCIISafeStringFromBuffer, getBufferFromSafeASCIIString } from "src/utils/cli-helper";
-import { RECOMMENDATION_NAMES } from 'src/constants';
+import { RECOMMENDATION_NAMES, TelemetryEvents } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { Vote } from 'src/modules/database-recommendation/models';
 
@@ -20,6 +20,7 @@ const APP_DEFAULT_SETTINGS = {
   agreements: null,
 };
 const TEST_LIBRARY_NAME = 'lib';
+const TEST_ANALYTICS_PAGE = 'Settings';
 
 const unprintableBuf = Buffer.concat([
   Buffer.from('acedae', 'hex'),
@@ -590,5 +591,9 @@ export const constants = {
   TEST_TRIGGERED_FUNCTIONS_LIBRARY_NAME: TEST_LIBRARY_NAME,
   TEST_TRIGGERED_FUNCTIONS_CODE: `#!js api_version=1.0 name=${TEST_LIBRARY_NAME}\n redis.registerFunction('foo', ()=>{return 'bar'})`,
   TEST_TRIGGERED_FUNCTIONS_CONFIGURATION: "{}",
+
+  TEST_ANALYTICS_EVENT: TelemetryEvents.RedisInstanceAdded,
+  TEST_ANALYTICS_EVENT_DATA: { length: 5 },
+  TEST_ANALYTICS_PAGE,
   // etc...
 }

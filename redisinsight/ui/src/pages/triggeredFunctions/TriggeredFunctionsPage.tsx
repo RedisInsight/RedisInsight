@@ -7,7 +7,6 @@ import InstanceHeader from 'uiSrc/components/instance-header'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 
 import {
   appContextTriggeredFunctions,
@@ -27,7 +26,6 @@ export interface Props {
 }
 
 const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
   const { lastViewedPage } = useSelector(appContextTriggeredFunctions)
 
@@ -81,10 +79,10 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   }, [pathname])
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+    if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
-  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+  }, [connectedInstanceName, isPageViewSent])
 
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({

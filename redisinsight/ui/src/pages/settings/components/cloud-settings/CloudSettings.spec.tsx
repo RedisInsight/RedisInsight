@@ -2,9 +2,10 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 
-import { getCapiKeys, oauthCapiKeysSelector, removeAllCapiKeys } from 'uiSrc/slices/oauth/cloud'
+import { getCapiKeys, getCapiKeysSuccess, oauthCapiKeysSelector, removeAllCapiKeys } from 'uiSrc/slices/oauth/cloud'
 import { apiService } from 'uiSrc/services'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { OAUTH_CLOUD_CAPI_KEYS_DATA } from 'uiSrc/mocks/data/oauth'
 
 import CloudSettings from './CloudSettings'
 
@@ -29,6 +30,22 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 describe('CloudSettings', () => {
+  it('should show delete popover and call proper action on delete', async () => {
+    (oauthCapiKeysSelector as jest.Mock).mockReturnValue({
+      data: OAUTH_CLOUD_CAPI_KEYS_DATA,
+      loading: false
+    })
+    render(<CloudSettings />)
+
+    fireEvent.click(screen.getByTestId('delete-key-btn'))
+    await waitForEuiPopoverVisible()
+
+    fireEvent.click(screen.getByTestId('delete-key-confirm-btn'))
+
+    expect(store.getActions())
+      .toEqual([getCapiKeys(), getCapiKeysSuccess(OAUTH_CLOUD_CAPI_KEYS_DATA), removeAllCapiKeys()])
+  })
+
   it('should render', () => {
     expect(render(<CloudSettings />)).toBeTruthy()
   })
@@ -40,32 +57,14 @@ describe('CloudSettings', () => {
   })
 
   it('should be disabled delete all button', () => {
+    (oauthCapiKeysSelector as jest.Mock).mockReturnValue({
+      data: [],
+      loading: false
+    })
+
     render(<CloudSettings />)
 
     expect(screen.getByTestId('delete-key-btn')).toBeDisabled()
-  })
-
-  it('should show delete popover and call proper action on delete', async () => {
-    (oauthCapiKeysSelector as jest.Mock).mockReturnValue({
-      data: [
-        {
-          id: '1',
-          name: 'RedisInsight-f4868252-a128-4a02-af75-bd3c99898267-2020-11-01T-123',
-          createdAt: '2023-08-02T09:07:41.680Z',
-          lastUsed: '2023-08-02T09:07:41.680Z',
-          valid: true,
-        }
-      ],
-      loading: false
-    })
-    render(<CloudSettings />)
-
-    fireEvent.click(screen.getByTestId('delete-key-btn'))
-    await waitForEuiPopoverVisible()
-
-    fireEvent.click(screen.getByTestId('delete-key-confirm-btn'))
-
-    expect(store.getActions().slice(-1)).toEqual([removeAllCapiKeys()])
   })
 
   it('should call proper telemetry events', async () => {
@@ -74,15 +73,7 @@ describe('CloudSettings', () => {
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock);
 
     (oauthCapiKeysSelector as jest.Mock).mockReturnValue({
-      data: [
-        {
-          id: '1',
-          name: 'RedisInsight-f4868252-a128-4a02-af75-bd3c99898267-2020-11-01T-123',
-          createdAt: '2023-08-02T09:07:41.680Z',
-          lastUsed: '2023-08-02T09:07:41.680Z',
-          valid: true,
-        }
-      ],
+      data: OAUTH_CLOUD_CAPI_KEYS_DATA,
       loading: false
     })
     render(<CloudSettings />)

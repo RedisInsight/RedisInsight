@@ -193,16 +193,6 @@ const getMatchType = (match: string): MatchType => (
     : MatchType.PATTERN
 )
 
-export const getRefreshEventData = (eventData: any, type: string, streamViewType?: StreamViewType) => {
-  if (type === KeyTypes.Stream) {
-    return {
-      ...eventData,
-      streamView: StreamViews[streamViewType!]
-    }
-  }
-  return eventData
-}
-
 const SUPPORTED_REDIS_MODULES = Object.freeze({
   ai: RedisModules.RedisAI,
   graph: RedisModules.RedisGraph,

@@ -56,7 +56,7 @@ describe('QueryCardHeader', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent('12 345 678.91 ms')
+    expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent('12 345 678.91 msec')
   })
 
   it('should render disabled copy button', async () => {

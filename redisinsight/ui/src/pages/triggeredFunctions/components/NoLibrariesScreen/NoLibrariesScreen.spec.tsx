@@ -56,26 +56,9 @@ describe('NoLibrariesScreen', () => {
 
     fireEvent.click(screen.getByTestId('no-libraries-tutorial-link'))
 
-    const expectedActions = [setWorkbenchEAMinimized(false), resetWorkbenchEASearch()]
+    const expectedActions = [setWorkbenchEAMinimized(false)]
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
-    expect(pushMock).toBeCalledWith('/instanceId/workbench?path=quick-guides/0/0/0')
-  })
-
-  it('should call proper actions and push to workbench page', () => {
-    (workbenchGuidesSelector as jest.Mock).mockImplementation(() => ({
-      items: []
-    }))
-
-    const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-
-    render(<NoLibrariesScreen {...instance(mockedProps)} />)
-
-    fireEvent.click(screen.getByTestId('no-libraries-tutorial-link'))
-
-    const expectedActions = [setWorkbenchEAMinimized(false), resetWorkbenchEASearch()]
-    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
-    expect(pushMock).toBeCalledWith('/instanceId/workbench')
+    expect(pushMock).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/triggers-and-functions/introduction.md')
   })
 
   it('should have proper text when module is loaded', () => {
@@ -90,22 +73,5 @@ describe('NoLibrariesScreen', () => {
 
     expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('triggers and functions are not available for this database')
     expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.')
-  })
-
-  it('should call proper actions and push to workbench page', () => {
-    (workbenchGuidesSelector as jest.Mock).mockImplementation(() => ({
-      items: []
-    }))
-
-    const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-
-    render(<NoLibrariesScreen {...instance(mockedProps)} />)
-
-    fireEvent.click(screen.getByTestId('no-libraries-tutorial-link'))
-
-    const expectedActions = [setWorkbenchEAMinimized(false), resetWorkbenchEASearch()]
-    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
-    expect(pushMock).toBeCalledWith('/instanceId/workbench')
   })
 })

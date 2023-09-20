@@ -31,6 +31,7 @@ import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
 import { initialState as initialStateAppActionBarReducer } from 'uiSrc/slices/app/actionBar'
+import { initialState as initialStateAppUrlHandlingReducer } from 'uiSrc/slices/app/url-handling'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -71,6 +72,7 @@ const initialStateDefault: RootState = {
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
     features: cloneDeep(initialStateAppFeaturesReducer),
     actionBar: cloneDeep(initialStateAppActionBarReducer),
+    urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -202,6 +204,7 @@ jest.mock('react-router-dom', () => ({
   }),
   useLocation: () => ({
     pathname: 'pathname',
+    search: '',
   }),
   useParams: () => ({
     instanceId: 'instanceId',
@@ -255,6 +258,11 @@ jest.mock(
 jest.mock('uiSrc/constants/recommendations', () => ({
   ...jest.requireActual('uiSrc/constants/recommendations'),
   ANIMATION_INSIGHT_PANEL_MS: jest.fn().mockReturnValue(0),
+}))
+
+// mock to not import routes
+jest.mock('uiSrc/utils/routing', () => ({
+  getRedirectionPage: jest.fn(),
 }))
 
 export const localStorageMock = {

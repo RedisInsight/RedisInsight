@@ -129,16 +129,16 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
 
   const unitConverter = () => {
     if (Number.isNaN(toNumber(slowerThan))) {
-      return `- ${DurationUnits.milliSeconds}`
+      return `- ${DurationUnits.mSeconds}`
     }
 
     if (slowerThan === `${MINUS_ONE}`) {
-      return `-1 ${DurationUnits.milliSeconds}`
+      return `-1 ${DurationUnits.mSeconds}`
     }
 
     if (durationUnit === DurationUnits.microSeconds) {
       const value = numberWithSpaces(convertNumberByUnits(toNumber(slowerThan), DurationUnits.milliSeconds))
-      return `${value} ${DurationUnits.milliSeconds}`
+      return `${value} ${DurationUnits.mSeconds}`
     }
 
     if (durationUnit === DurationUnits.milliSeconds) {

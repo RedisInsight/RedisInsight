@@ -12,6 +12,8 @@ const getCloudSsoUtmCampaignTestCases = [
   [OAuthSocialSource['triggers and functions'], CloudSsoUtmCampaign.Workbench],
   [OAuthSocialSource.BrowserContentMenu, CloudSsoUtmCampaign.BrowserOverview],
   [OAuthSocialSource.BrowserFiltering, CloudSsoUtmCampaign.BrowserFilter],
+  [OAuthSocialSource.WelcomeScreen, CloudSsoUtmCampaign.WelcomeScreen],
+  [OAuthSocialSource.TriggersAndFunctions, CloudSsoUtmCampaign.TriggersAndFunctions],
   [null, CloudSsoUtmCampaign.Unknown],
   [undefined, CloudSsoUtmCampaign.Unknown],
 ]

@@ -6,12 +6,11 @@ import {
     cloudDatabaseConfig
 } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
-import { MyRedisDatabasePage } from '../../../pageObjects';
+import { AutoDiscoverREDatabases, MyRedisDatabasePage } from '../../../pageObjects';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const databaseHelper = new DatabaseHelper();
-
-let databaseName: string;
 
 fixture `Add database`
     .meta({ type: 'smoke' })
@@ -44,11 +43,15 @@ test
     .meta({ rte: rte.reCloud })
     .after(async() => {
         // await deleteDatabase(databaseName);
-    })('Verify that user can connect to the RE Cloud database via auto-discover flow', async t => {
+    })('Verify that user can add a subscription via auto-discover flow', async t => {
         // Verify that user can see the Cloud auto-discovery option selected by default when switching to the auto-discovery of databases
-        databaseName = await databaseHelper.autodiscoverRECloudDatabase(cloudDatabaseConfig.accessKey, cloudDatabaseConfig.secretKey);
-        // uncomment when fixed db will be added to cloud subscription
-        // await myRedisDatabasePage.clickOnDBByName(databaseName);
-        // // Verify that user can add database from fixed subscription
-        // await t.expect(Common.getPageUrl()).contains('browser', 'The added RE Cloud database not opened');
+        await t.click(
+            myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Cloud Subscriptions').exists)
+            .ok('Subscriptions list not displayed', { timeout: 120000 });
+        // Select subscriptions
+        await t.click(myRedisDatabasePage.AddRedisDatabase.selectAllCheckbox);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.showDatabasesButton);
+        await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Cloud Databases').exists)
+            .ok('database page is not displayed', { timeout: 120000 });
     });

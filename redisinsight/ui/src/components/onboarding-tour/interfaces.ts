@@ -9,6 +9,6 @@ export interface OnboardingTourInner {
 
 export interface OnboardingTourOptions {
   step: number
-  title: string | React.ReactElement
-  Inner: () => OnboardingTourInner
+  title?: string | React.ReactElement
+  Inner?: () => OnboardingTourInner
 }

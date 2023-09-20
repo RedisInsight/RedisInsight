@@ -2,6 +2,7 @@ import contextMenu from 'electron-context-menu'
 import { BrowserWindow } from 'electron'
 import { v4 as uuidv4 } from 'uuid'
 
+import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 import { configMain as config } from 'desktopSrc/config'
 import { updateTray } from 'desktopSrc/lib'
 import { resolveHtmlPath } from 'desktopSrc/utils'
@@ -9,6 +10,10 @@ import { initWindowHandlers } from './window.handlers'
 
 export const windows = new Map<string, BrowserWindow>()
 export const getWindows = () => windows
+export const focusWindow = (win: BrowserWindow) => {
+  if (win.isMinimized()) win.restore()
+  win.focus()
+}
 
 export enum WindowType {
   Splash = 'splash',
@@ -54,7 +59,7 @@ export const createWindow = async ({
     return newWindow
   }
 
-  newWindow.loadURL(resolveHtmlPath(htmlFileName))
+  newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
 
   initWindowHandlers(newWindow, prevWindow, windows, id)
 
@@ -69,7 +74,8 @@ export const createWindow = async ({
 
 export const windowFactory = async (
   windowType: WindowType,
-  prevWindow: BrowserWindow | null = null
+  prevWindow: BrowserWindow | null = null,
+  options?: { parsedDeepLink?: IParsedDeepLink }
 ): Promise<BrowserWindow> => {
   switch (windowType) {
     case WindowType.Splash:
@@ -88,6 +94,7 @@ export const windowFactory = async (
         htmlFileName: 'index.html',
         windowType,
         options: {
+          ...options,
           ...config.mainWindow,
           preloadPath: config.preloadPath
         }

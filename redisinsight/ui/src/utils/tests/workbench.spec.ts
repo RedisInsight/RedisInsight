@@ -58,7 +58,7 @@ const findMarkdownPathByPathTests = [
   { input: 'quick-guides/working-with-hash.html', expected: '0/2' },
   { input: 'quick-guides/document-capabilities.html', expected: '1' },
   { input: '/redis_stack/working_with_json.md', manifest: MOCK_TUTORIALS_ITEMS, expected: '4' },
-  { input: 'quick-guides', expected: null },
+  { input: 'quick-guides', expected: '0/0' },
 ]
 
 describe('findMarkdownPathByPath', () => {

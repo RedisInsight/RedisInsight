@@ -63,9 +63,7 @@ export class DatabaseService {
   async list(): Promise<Database[]> {
     try {
       this.logger.log('Getting databases list');
-      const result = await this.repository.list();
-      this.analytics.sendInstanceListReceivedEvent(result);
-      return result;
+      return await this.repository.list();
     } catch (e) {
       this.logger.error('Failed to get database instance list.', e);
       throw new InternalServerErrorException();

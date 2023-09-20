@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
   EuiTextColor,
@@ -6,16 +6,20 @@ import {
   EuiTitle,
   EuiLink,
   EuiButton,
+  EuiIcon,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg'
 import { ReactComponent as DesktopIcon } from 'uiSrc/assets/img/icons/module_not_loaded.svg'
+import { ReactComponent as TelescopeDark } from 'uiSrc/assets/img/telescope-dark.svg'
+import { ReactComponent as TelescopeLight } from 'uiSrc/assets/img/telescope-light.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
-import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
+import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW, Theme } from 'uiSrc/constants'
 import { RedisDefaultModules, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import styles from './styles.module.scss'
 
@@ -51,6 +55,7 @@ const ListItem = ({ item }: { item: string }) => (
 const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
   const [width, setWidth] = useState(0)
   const freeInstance = useSelector(freeInstanceSelector)
+  const { theme } = useContext(ThemeContext)
 
   const module = MODULE_TEXT_VIEW[moduleName]
 
@@ -78,8 +83,8 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
       {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of open-source Redis`}
     </EuiText>
   ) : (
-    <EuiText className={cx(styles.text, styles.marginBottom)}>
-      Use your Redis Stack database in Redis Enterprise Cloud to start exploring these capabilities.
+    <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
+      Use your free all-in-one Redis Enterprise Cloud database to start exploring these capabilities.
     </EuiText>
   )), [freeInstance])
 
@@ -95,9 +100,18 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     >
       <div className={styles.flex}>
         <div>
-          {width > MAX_ELEMENT_WIDTH
-            ? <DesktopIcon className={styles.bigIcon} />
-            : <MobileIcon className={styles.icon} />}
+          {type !== 'browser' && (
+            width > MAX_ELEMENT_WIDTH
+              ? <DesktopIcon className={styles.bigIcon} />
+              : <MobileIcon className={styles.icon} />
+          )}
+          {type === 'browser' && (
+            <EuiIcon
+              className={styles.iconTelescope}
+              type={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
+              size="original"
+            />
+          )}
         </div>
         <div className={styles.contentWrapper}>
           {renderTitle(width, module)}

@@ -32,6 +32,7 @@ import {
 } from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
 import { setAppContextInitialState } from '../app/context'
+import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm';
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -261,11 +262,16 @@ export function createFreeDbSuccess(id: string, history: any) {
 
 // Asynchronous thunk action
 export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => void, onFailAction?: () => void) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(getUserInfo())
 
     try {
-      const { data, status } = await apiService.get<CloudUser>(ApiEndpoints.CLOUD_ME)
+      const { data, status } = await apiService.get<CloudUser>(
+        ApiEndpoints.CLOUD_ME,
+        {
+          params: getCloudSsoUtmParams(getState().oauth?.cloud?.source),
+        },
+      )
 
       if (isStatusSuccessful(status)) {
         const isMultiAccount = (data?.accounts?.length ?? 0) > 1

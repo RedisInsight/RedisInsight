@@ -4,13 +4,15 @@ import {
   Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CloudJobService } from 'src/modules/cloud/job/cloud-job.service';
-import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
+import { CreateDatabaseCloudJobDataDto } from 'src/modules/cloud/job/dto/create-database.cloud-job.data.dto';
+import { CreateCloudJobDto } from 'src/modules/cloud/job/dto/create.cloud-job.dto';
 import { CloudJobInfo } from 'src/modules/cloud/job/models';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
+@ApiExtraModels(CreateDatabaseCloudJobDataDto)
 @ApiTags('Cloud Jobs')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('cloud/me/jobs')

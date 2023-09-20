@@ -37,13 +37,13 @@ export class CloudUserApiProvider extends CloudApiProvider {
    */
   async getApiSessionId(credentials: ICloudApiCredentials, utm?: CloudRequestUtm): Promise<string> {
     try {
-      const queryParameters = CloudApiProvider.generateUtmQuery(utm);
-      const query = queryParameters ? `?${queryParameters.toString()}` : '';
-
       const { headers } = await this.api.post(
-        `login${query}`,
+        'login',
         {},
-        CloudApiProvider.getHeaders(credentials),
+        {
+          ...CloudApiProvider.getHeaders(credentials),
+          params: CloudApiProvider.generateUtmQuery(utm),
+        },
       );
 
       return get(headers, 'set-cookie', []).find(

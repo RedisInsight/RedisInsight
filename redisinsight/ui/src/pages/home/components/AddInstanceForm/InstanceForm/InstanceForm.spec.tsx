@@ -1186,7 +1186,7 @@ describe('InstanceForm', () => {
     })
   })
 
-  describe.only('cloud', () => {
+  describe('cloud', () => {
     it('some fields should be readonly if instance data source from cloud', () => {
       (appRedirectionSelector as jest.Mock).mockImplementation(() => ({
         action: UrlHandlingActions.Connect,

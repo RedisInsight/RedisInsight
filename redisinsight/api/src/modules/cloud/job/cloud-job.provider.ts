@@ -1,7 +1,7 @@
 import { filter } from 'lodash';
 import { CloudJob } from 'src/modules/cloud/job/jobs';
 import { SessionMetadata } from 'src/common/models';
-import { CreateCloudJobDto } from 'src/modules/cloud/job/dto';
+import { CreateCloudJobDto } from 'src/modules/cloud/job/dto/create.cloud-job.dto';
 import { CloudJobInfo, CloudJobRunMode } from 'src/modules/cloud/job/models';
 import { CloudJobFactory } from 'src/modules/cloud/job/cloud-job.factory';
 import { wrapHttpError } from 'src/common/utils';

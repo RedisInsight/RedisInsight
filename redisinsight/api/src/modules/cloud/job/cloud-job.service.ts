@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
-import { CreateCloudJobDto, MonitorCloudJobDto } from 'src/modules/cloud/job/dto';
+import { CreateCloudJobDto } from 'src/modules/cloud/job/dto/create.cloud-job.dto';
+import { MonitorCloudJobDto } from 'src/modules/cloud/job/dto/monitor.cloud-job.dto';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudJobProvider } from 'src/modules/cloud/job/cloud-job.provider';
 import { CloudJobInfo } from 'src/modules/cloud/job/models';

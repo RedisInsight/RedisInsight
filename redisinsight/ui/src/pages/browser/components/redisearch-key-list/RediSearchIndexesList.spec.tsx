@@ -200,4 +200,25 @@ describe('RediSearchIndexesList', () => {
 
     expect(fetchKeysMock).toBeCalled()
   })
+
+  it('should load indexes after click on refresh', () => {
+    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+      host: '123.23.1.1',
+      modules: [{ name: RedisDefaultModules.Search, }]
+    }))
+
+    render(<RediSearchIndexesList {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('refresh-indexes-btn'))
+
+    const expectedActions = [
+      ...afterRenderActions,
+      loadList(),
+    ]
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions(expectedActions)
+    )
+  })
 })

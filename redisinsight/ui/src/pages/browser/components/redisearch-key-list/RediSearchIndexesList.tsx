@@ -1,8 +1,10 @@
 import {
   EuiButtonEmpty,
+  EuiButtonIcon,
   EuiOutsideClickDetector,
   EuiSuperSelect,
   EuiSuperSelectOption,
+  EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -127,31 +129,53 @@ const RediSearchIndexesList = (props: Props) => {
     })
   }
 
+  const handleRefresh = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    dispatch(fetchRedisearchListAction())
+  }
+
   return (
     <EuiOutsideClickDetector
       onOutsideClick={() => setIsSelectOpen(false)}
     >
       <div className={cx(styles.container)}>
-        <EuiSuperSelect
-          fullWidth
-          itemClassName={cx('withColorDefinition', styles.searchMode)}
-          disabled={loading}
-          isLoading={loading}
-          options={options}
-          isOpen={isSelectOpen}
-          valueOfSelected={index || ''}
-          onChange={onChangeIndex}
-          data-testid="select-search-mode"
-        />
-        {!selectedIndex && (
-          <EuiButtonEmpty
-            className={styles.placeholder}
-            onClick={() => setIsSelectOpen(true)}
-            data-testid="select-index-placeholder"
+        <div className={styles.select}>
+          <EuiSuperSelect
+            fullWidth
+            itemClassName={cx('withColorDefinition', styles.searchMode)}
+            disabled={loading}
+            isLoading={loading}
+            options={options}
+            isOpen={isSelectOpen}
+            valueOfSelected={index || ''}
+            onChange={onChangeIndex}
+            data-testid="select-search-mode"
+          />
+          {!selectedIndex && (
+            <EuiButtonEmpty
+              className={styles.placeholder}
+              onClick={() => setIsSelectOpen(true)}
+              data-testid="select-index-placeholder"
+            >
+              Select Index
+            </EuiButtonEmpty>
+          )}
+        </div>
+        <div className={styles.refresh}>
+          <EuiToolTip
+            content="Refresh Indexes"
           >
-            Select Index
-          </EuiButtonEmpty>
-        )}
+            <EuiButtonIcon
+              size="s"
+              iconType="refresh"
+              disabled={loading}
+              className={styles.refreshBtn}
+              onClick={handleRefresh}
+              aria-label="refresh indexes list"
+              data-testid="refresh-indexes-btn"
+            />
+          </EuiToolTip>
+        </div>
       </div>
     </EuiOutsideClickDetector>
   )

@@ -7,10 +7,12 @@ import {
   requirements,
   validateApiCall,
   after,
-  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig,
+  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig, before,
 } from '../deps';
 import { databaseSchema } from './constants';
 import { ServerService } from 'src/modules/server/server.service';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { CustomErrorCodes } from 'src/constants';
 const { rte, request, server, localDb, constants, analytics } = deps;
 
 const endpoint = () => request(server).post(`/${constants.API.DATABASES}`);
@@ -321,6 +323,95 @@ describe('POST /databases', () => {
         expect(db.new).to.eql(true);
       });
       // todo: cover connection error for incorrect username/password
+    });
+    describe('Cloud details', function () {
+      before(async () => {
+        await localDb.initLocalDb(deps.rte, deps.server)
+      });
+      describe('Cloud details without pass and TLS', function () {
+        requirements('!rte.tls');
+        it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
+          const dbName = constants.getRandomString();
+          // preconditions
+          expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
+
+          await validateApiCall({
+            endpoint,
+            statusCode: 409,
+            data: {
+              name: dbName,
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+              username: constants.TEST_REDIS_USER,
+              password: constants.TEST_REDIS_PASSWORD,
+              cloudDetails: {
+                cloudId: constants.TEST_CLOUD_ID,
+                subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
+              },
+            },
+            responseBody: {
+              message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
+              statusCode: 409,
+              error: 'DatabaseAlreadyExists',
+              errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+            },
+            checkFn: async ({ body }) => {
+              const database = await (await localDb.getRepository(localDb.repositories.DATABASE))
+                .findOneBy({ host: constants.TEST_REDIS_HOST });
+
+              expect(body.resource.databaseId).to.eq(database.id);
+            },
+          });
+        });
+      });
+      describe('Cloud details with pass and TLS', function () {
+        requirements('rte.tlsAuth');
+        it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
+          const dbName = constants.getRandomString();
+          const newClientCertName = constants.getRandomString();
+          const newCaName = constants.getRandomString();
+          // preconditions
+          expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
+
+          await validateApiCall({
+            endpoint,
+            statusCode: 409,
+            data: {
+              name: dbName,
+              host: constants.TEST_REDIS_HOST,
+              port: constants.TEST_REDIS_PORT,
+              username: constants.TEST_REDIS_USER,
+              password: constants.TEST_REDIS_PASSWORD,
+              tls: true,
+              cloudDetails: {
+                cloudId: constants.TEST_CLOUD_ID,
+                subscriptionType: constants.TEST_CLOUD_SUBSCRIPTION_TYPE,
+              },
+              caCert: {
+                name: newCaName,
+                certificate: constants.TEST_REDIS_TLS_CA,
+              },
+              clientCert: {
+                name: newClientCertName,
+                certificate: constants.TEST_USER_TLS_CERT,
+                key: constants.TEST_USER_TLS_KEY,
+              },
+            },
+            responseBody: {
+              message: ERROR_MESSAGES.DATABASE_ALREADY_EXISTS,
+              statusCode: 409,
+              error: 'DatabaseAlreadyExists',
+              errorCode: CustomErrorCodes.DatabaseAlreadyExists,
+            },
+            checkFn: async ({ body }) => {
+              const database = await (await localDb.getRepository(localDb.repositories.DATABASE))
+                .findOneBy({ host: constants.TEST_REDIS_HOST });
+
+              expect(body.resource.databaseId).to.eq(database.id);
+            },
+          });
+        });
+      });
     });
     describe('TLS CA', function () {
       requirements('rte.tls', '!rte.tlsAuth');

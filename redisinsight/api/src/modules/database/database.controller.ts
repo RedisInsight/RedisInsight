@@ -98,7 +98,7 @@ export class DatabaseController {
   async create(
     @Body() dto: CreateDatabaseDto,
   ): Promise<Database> {
-    return await this.service.create(dto);
+    return await this.service.create(dto, true);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

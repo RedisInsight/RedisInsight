@@ -243,7 +243,7 @@ export class DatabaseImportService {
 
       const database = classToClass(Database, dto);
 
-      await this.databaseRepository.create(database);
+      await this.databaseRepository.create(database, false);
 
       return {
         index,

@@ -185,7 +185,7 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
     const linkStyles = stylesCss ? stylesCss[theme] : {}
     const promoLink = (
       <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) => (
+        {(ssoCloudHandlerClick, isSSOEnabled) => (
           <PromoLink
             title={title}
             description={description}
@@ -199,7 +199,10 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
                 : undefined
             }}
             onClick={(e) => {
-              handleCreateDatabaseClick(HELP_LINKS.cloud.event, { source: 'My Redis databases' })
+              !isSSOEnabled && handleCreateDatabaseClick(
+                HELP_LINKS.cloud.event,
+                { source: HELP_LINKS.cloud.sources.databaseList },
+              )
               ssoCloudHandlerClick(e, OAuthSocialSource.ListOfDatabases)
             }}
           />

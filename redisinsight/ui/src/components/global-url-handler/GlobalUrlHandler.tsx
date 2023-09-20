@@ -36,6 +36,11 @@ const GlobalUrlHandler = () => {
 
       // @ts-ignore
       const urlProperties = Object.fromEntries(fromParams) || {}
+
+      // rename cloudBdbId to cloudId
+      urlProperties.cloudId = urlProperties.cloudBdbId
+      delete urlProperties.cloudBdbId
+
       dispatch(setUrlProperties(urlProperties))
       dispatch(setFromUrl(null))
 

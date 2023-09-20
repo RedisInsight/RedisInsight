@@ -3,6 +3,8 @@ import { instance, mock } from 'ts-mockito'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
 import { BuildType } from 'uiSrc/constants/env'
+import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
+import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import InstanceForm, { Props } from './InstanceForm'
 import { ADD_NEW_CA_CERT } from './constants'
 import { DbConnectionInfo } from './interfaces'
@@ -30,6 +32,11 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   resetInstanceUpdateAction: () => jest.fn,
   changeInstanceAliasAction: () => jest.fn,
   setConnectedInstanceId: jest.fn,
+}))
+
+jest.mock('uiSrc/slices/app/url-handling', () => ({
+  ...jest.requireActual('uiSrc/slices/app/url-handling'),
+  appRedirectionSelector: jest.fn().mockReturnValue(() => ({ action: null })),
 }))
 
 describe('InstanceForm', () => {
@@ -1176,6 +1183,27 @@ describe('InstanceForm', () => {
       )
 
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '112')
+    })
+  })
+
+  describe('cloud', () => {
+    it('some fields should be readonly if instance data source from cloud', () => {
+      (appRedirectionSelector as jest.Mock).mockImplementation(() => ({
+        action: UrlHandlingActions.Connect,
+      }))
+
+      const { queryByTestId } = render(
+        <InstanceForm
+          {...instance(mockedProps)}
+          formFields={formFields}
+        />
+      )
+
+      expect(queryByTestId('connection-type')).not.toBeInTheDocument()
+      expect(queryByTestId('host')).not.toBeInTheDocument()
+      expect(queryByTestId('port')).not.toBeInTheDocument()
+      expect(queryByTestId('db-info-port')).toBeInTheDocument()
+      expect(queryByTestId('db-info-host')).toBeInTheDocument()
     })
   })
 })

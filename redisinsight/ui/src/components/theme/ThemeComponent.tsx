@@ -20,7 +20,7 @@ const ThemeComponent = () => {
     }
   }, [])
 
-  return null
+  return <></>
 }
 
 export default ThemeComponent

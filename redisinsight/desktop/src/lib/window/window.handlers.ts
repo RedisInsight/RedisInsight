@@ -10,7 +10,6 @@ import {
   WindowType,
 } from 'desktopSrc/lib'
 import { IpcInvokeEvent, ElectronStorageItem, IpcOnEvent } from 'uiSrc/electron/constants'
-import { Pages } from 'uiSrc/constants/pages'
 
 export const initWindowHandlers = (
   newWindow: BrowserWindow,

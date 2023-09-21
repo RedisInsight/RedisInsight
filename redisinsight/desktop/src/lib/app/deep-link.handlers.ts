@@ -43,6 +43,7 @@ export const deepLinkWindowHandler = async (parsedDeepLink?: IParsedDeepLink) =>
     if (parsedDeepLink?.target === '_blank') {
       await windowFactory(WindowType.Main, null, { parsedDeepLink })
     } else if (currentWindow) {
+      currentWindow?.show()
       currentWindow?.webContents.send(IpcOnEvent.deepLinkAction, parsedDeepLink)
       focusWindow(currentWindow)
     } else {

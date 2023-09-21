@@ -129,7 +129,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
                   <EuiFlexItem grow={false}>
-                    <EuiText className={styles.divider}>\</EuiText>
+                    <EuiText className={styles.divider}>&#62;</EuiText>
                   </EuiFlexItem>
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
                     <b className={styles.dbName}>{name}</b>

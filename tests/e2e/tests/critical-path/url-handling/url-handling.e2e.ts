@@ -17,7 +17,6 @@ let { host, port, databaseName, databaseUsername = '', databasePassword = '' } =
 const redisConnect = 'redisinsight://databases/connect';
 
 fixture `Add DB from SM`
-    .only
     .meta({ type: 'critical_path', rte: rte.none })
     .afterEach(async() => {
         // Delete all existing connections

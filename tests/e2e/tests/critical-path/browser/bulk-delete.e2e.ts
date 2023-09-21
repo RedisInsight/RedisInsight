@@ -16,7 +16,7 @@ const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRe
 const keyToAddParameters = { keysCount: 10000, keyNameStartWith: 'hashKey' };
 const keyToAddParameters2 = { keysCount: 500000, keyNameStartWith: 'hashKey' };
 
-fixture `Bulk Delete`
+fixture`Bulk Delete`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
@@ -27,7 +27,7 @@ fixture `Bulk Delete`
             await t.click(browserPage.Toast.toastCloseButton);
         }
     })
-    .afterEach(async() => {
+    .afterEach(async () => {
         // Clear and delete database
         await deleteAllKeysFromDB(dbParameters.host, dbParameters.port);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
@@ -87,7 +87,7 @@ test('Verify that user can see blue progress line during the process of bulk del
     await t.expect(browserPage.BulkActions.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
 });
 test
-    .before(async() => {
+    .before(async () => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add 1000000 Hash keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
@@ -105,7 +105,7 @@ test
         await t.expect(browserPage.BulkActions.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
 test
-    .before(async() => {
+    .before(async () => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add 500000 keys
         await populateDBWithHashes(dbParameters.host, dbParameters.port, keyToAddParameters2);
@@ -185,3 +185,19 @@ test('Verify that when user clicks on Close button when bulk delete is completed
     await t.expect(browserPage.BulkActions.bulkDeleteCompletedSummary.exists).notOk('Bulk delete completed summary still displayed');
     await t.expect(browserPage.BulkActions.bulkDeleteSummary.textContent).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
 });
+test
+    .before(async () => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
+        await browserPage.addHashKey(keyNames[0], '100000', Common.generateWord(20), Common.generateWord(20));
+    })('Verify that user can see the list of keys when click on “Back” button from the bulk actions', async t => {
+        await t.click(browserPage.bulkActionsButton);
+        await t.expect(browserPage.backToBrowserBtn.exists).notOk('"< Browser" button displayed for normal screen resolution');
+        // Minimize the window to check icon
+        await t.resizeWindow(1200, 900);
+        await t.expect(browserPage.keyDetailsTable.visible).ok('Bulk actions not opened', { timeout: 1000 });
+        // Verify that user can see the “Back” button when work with the bulk actions on small resolutions
+        await t.expect(browserPage.backToBrowserBtn.exists).ok('"< Browser" button not displayed for small screen resolution');
+        await t.click(browserPage.backToBrowserBtn);
+        // Verify that key details closed
+        await t.expect(browserPage.keyDetailsTable.visible).notOk('Bulk actions not closed by clicking on "< Browser" button', { timeout: 1000 });
+    });

@@ -226,7 +226,7 @@ const BrowserPage = () => {
             className={styles.backBtn}
             data-testid="back-right-panel-btn"
           >
-            Back
+            Browser
           </EuiButton>
         </div>
       )}

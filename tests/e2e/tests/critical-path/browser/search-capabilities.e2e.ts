@@ -129,12 +129,13 @@ test
     })('Search by index keys scanned for JSON', async t => {
         keyName = Common.generateWord(10);
         indexName = `idx:${keyName}`;
+        await t.click(browserPage.redisearchModeBtn);
         const command = `FT.CREATE ${indexName} ON JSON PREFIX 1 "device:" SCHEMA id numeric`;
 
         // Create index for JSON keys
         await browserPage.Cli.sendCommandInCli(command);
+        await t.click(browserPage.refreshIndexButton);
         // Verify that user can can get 500 keys (limit 0 500) in Browser view
-        await t.click(browserPage.redisearchModeBtn);
         await browserPage.selectIndexByName(indexName);
         // Verify that all keys are displayed according to selected index
         for (let i = 0; i < 15; i++) {

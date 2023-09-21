@@ -63,7 +63,7 @@ test
             redisUrl: `redis://${databaseUsername}:${databasePassword}@${host}:${port}`,
             databaseAlias: databaseName,
             redirect: 'workbench?guidePath=/quick-guides/document/introduction.md',
-            cloudId: '1232',
+            cloudBdbId: '1232',
             subscriptionType: 'fixed',
             planMemoryLimit: '30',
             memoryLimitMeasurementUnit: 'mb',

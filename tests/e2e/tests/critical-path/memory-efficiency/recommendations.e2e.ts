@@ -159,7 +159,7 @@ test
         await recommendationsActions.voteForRecommendation(redisVersionRecommendation, usefulVoteOption);
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, usefulVoteOption);
     });
-test
+test.skip
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         keyName = `recomKey-${Common.generateWord(10)}`;

@@ -82,7 +82,7 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
           verifyServerCert: false,
           connectionType: ConnectionType.STANDALONE,
           lastConnection: null,
-        });
+        }, false);
       }
       this.logger.log(`Succeed to set predefined database ${id}`);
     } catch (error) {

@@ -1,10 +1,10 @@
-import { first, isNull, map, find, orderBy } from 'lodash'
+import { first, isNull, map, find, orderBy, get } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
+import { ApiEndpoints, BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
@@ -362,8 +362,24 @@ export function createInstanceStandaloneAction(
         onSuccess?.(data.id)
       }
     } catch (_error) {
-      const error: AxiosError = _error
+      const error = _error as AxiosError
       const errorMessage = getApiErrorMessage(error)
+      const errorCode = get(error, 'response.data.errorCode', 0) as CustomErrorCodes
+
+      if (errorCode === CustomErrorCodes.DatabaseAlreadyExists) {
+        const databaseId: string = get(error, 'response.data.resource.databaseId', '')
+
+        dispatch(autoCreateAndConnectToInstanceActionSuccess(
+          databaseId,
+          successMessages.DATABASE_ALREADY_EXISTS(),
+          () => {
+            dispatch(defaultInstanceChangingSuccess())
+            onSuccess?.(databaseId)
+          },
+          () => { dispatch(defaultInstanceChangingFailure(errorMessage)) }
+        ))
+        return
+      }
 
       dispatch(defaultInstanceChangingFailure(errorMessage))
 
@@ -389,20 +405,48 @@ export function autoCreateAndConnectToInstanceAction(
       const { status, data } = await apiService.post(`${ApiEndpoints.DATABASES}`, payload)
 
       if (isStatusSuccessful(status)) {
-        dispatch(setAppContextInitialState())
-        dispatch(setConnectedInstanceId(data?.id ?? ''))
-
-        dispatch(checkConnectToInstanceAction(data.id, (id) => {
-          setTimeout(() => {
-            dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
-            onSuccess?.(id)
-          }, HIDE_CREATING_DB_DELAY_MS)
-        }))
+        dispatch(autoCreateAndConnectToInstanceActionSuccess(
+          data?.id,
+          successMessages.ADDED_NEW_INSTANCE(data?.name),
+          onSuccess,
+        ))
       }
     } catch (error) {
+      const errorCode = get(error, 'response.data.errorCode', 0) as CustomErrorCodes
+
+      if (errorCode === CustomErrorCodes.DatabaseAlreadyExists) {
+        const databaseId = get(error, 'response.data.resource.databaseId', '')
+
+        dispatch(autoCreateAndConnectToInstanceActionSuccess(
+          databaseId,
+          successMessages.DATABASE_ALREADY_EXISTS(),
+          onSuccess,
+        ))
+        return
+      }
       dispatch(addErrorNotification(error as AxiosError))
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
     }
+  }
+}
+
+function autoCreateAndConnectToInstanceActionSuccess(
+  id: string,
+  message: any,
+  onSuccess?: (id: string) => void,
+  onFail?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setAppContextInitialState())
+    dispatch(setConnectedInstanceId(id ?? ''))
+
+    dispatch(checkConnectToInstanceAction(id, (id) => {
+      setTimeout(() => {
+        dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
+        dispatch(addMessageNotification(message))
+        onSuccess?.(id)
+      }, HIDE_CREATING_DB_DELAY_MS)
+    }, onFail))
   }
 }
 

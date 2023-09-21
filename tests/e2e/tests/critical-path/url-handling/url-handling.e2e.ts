@@ -34,8 +34,8 @@ test
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.expect(await myRedisDatabasePage.AddRedisDatabase.hostInput.getAttribute('value')).eql(host, 'Wrong host value');
-        await t.expect(await myRedisDatabasePage.AddRedisDatabase.portInput.getAttribute('value')).eql(port, 'Wrong port value');
+        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).find('span').getAttribute('title')).contains(host, 'Wrong host value');
+        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).find('span').getAttribute('title')).contains(port, 'Wrong port value');
         await t.click(await myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
         await t.wait(3_000);
@@ -61,12 +61,23 @@ test
         const connectUrlParams = {
             redisUrl: `redis://${databaseUsername}:${databasePassword}@${host}:${port}`,
             databaseAlias: databaseName,
-            redirect: 'workbench?guidePath=/quick-guides/document/introduction.md'
+            redirect: 'workbench?guidePath=/quick-guides/document/introduction.md',
+            cloudBdbId: '1232',
+            subscriptionType: 'fixed',
+            planMemoryLimit: '30',
+            memoryLimitMeasurementUnit: 'mb',
+            free: 'true'
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(3_000);
         await t.expect(await workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
+
+        //Verify that the same db is not added
+        await t.navigateTo(generateLink(connectUrlParams));
+        await t.wait(3_000);
+        await t.click(await workbenchPage.NavigationPanel.myRedisDBButton);
+        await t.expect(await myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');
     });
 
 function generateLink(params: Record<string, any>): string {

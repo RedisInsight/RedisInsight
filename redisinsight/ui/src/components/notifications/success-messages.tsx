@@ -222,5 +222,9 @@ export default {
   REMOVED_CAPI_KEY: (name: string) => ({
     title: 'API Key has been removed',
     message: `${formatNameShort(name)} has been removed from RedisInsight.`
-  })
+  }),
+  DATABASE_ALREADY_EXISTS: () => ({
+    title: 'Database already exists',
+    message: 'No new database connections have been added.',
+  }),
 }

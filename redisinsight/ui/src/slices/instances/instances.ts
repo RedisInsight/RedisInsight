@@ -367,12 +367,16 @@ export function createInstanceStandaloneAction(
       const errorCode = get(error, 'response.data.errorCode', 0) as CustomErrorCodes
 
       if (errorCode === CustomErrorCodes.DatabaseAlreadyExists) {
-        const databaseId = get(error, 'response.data.resource.databaseId', '')
+        const databaseId: string = get(error, 'response.data.resource.databaseId', '')
 
         dispatch(autoCreateAndConnectToInstanceActionSuccess(
           databaseId,
           successMessages.DATABASE_ALREADY_EXISTS(),
-          onSuccess,
+          () => {
+            dispatch(defaultInstanceChangingFailure(errorMessage))
+            onSuccess?.(databaseId)
+          },
+          () => { dispatch(defaultInstanceChangingFailure(errorMessage)) }
         ))
         return
       }
@@ -430,6 +434,7 @@ function autoCreateAndConnectToInstanceActionSuccess(
   id: string,
   message: any,
   onSuccess?: (id: string) => void,
+  onFail?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(setAppContextInitialState())
@@ -441,7 +446,7 @@ function autoCreateAndConnectToInstanceActionSuccess(
         dispatch(addMessageNotification(message))
         onSuccess?.(id)
       }, HIDE_CREATING_DB_DELAY_MS)
-    }))
+    }, onFail))
   }
 }
 

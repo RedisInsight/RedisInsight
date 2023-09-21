@@ -261,7 +261,7 @@ test
     .after(async() => {
         //clear database
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexNameBigDb}`);
-        await t.click(browserPage.OverviewPanel.myRedisDbIcon); // go back to database selection page
+        await t.click(browserPage.OverviewPanel.myRedisDBLink); // go back to database selection page
         await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexNameSimpleDb}`);
         await t.click(browserPage.patternModeBtn);
@@ -290,7 +290,7 @@ test
 
         await browserPage.Cli.sendCommandsInCli(commandsForBigStandalone);
 
-        await t.click(browserPage.OverviewPanel.myRedisDbIcon); // go back to database selection page
+        await t.click(browserPage.OverviewPanel.myRedisDBLink); // go back to database selection page
         await myRedisDatabasePage.clickOnDBByName(simpleDbName); // click standalone database
 
         const commandsForStandalone = [
@@ -311,7 +311,7 @@ test
 
         await verifyKeysDisplayedInTheList(keyNames); // verify created keys are visible
 
-        await t.click(browserPage.OverviewPanel.myRedisDbIcon); // go back to database selection page
+        await t.click(browserPage.OverviewPanel.myRedisDBLink); // go back to database selection page
         await myRedisDatabasePage.clickOnDBByName(bigDbName); // click database name from ossStandaloneBigConfig.databaseName
 
         await verifyKeysNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible

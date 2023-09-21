@@ -28,7 +28,6 @@ test('Verify that user can delete key in List mode', async t => {
     await browserPage.deleteKeyByNameFromList(keyName);
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('The Key wasn\'t deleted');
 });
-
 test('Verify that user can delete key in Tree view', async t => {
     // Add new key
     await browserPage.addStringKey(keyName);

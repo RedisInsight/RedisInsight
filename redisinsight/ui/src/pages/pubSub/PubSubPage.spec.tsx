@@ -17,13 +17,6 @@ jest.mock('uiSrc/telemetry', () => ({
   sendPageViewTelemetry: jest.fn()
 }))
 
-jest.mock('uiSrc/slices/app/info', () => ({
-  ...jest.requireActual('uiSrc/slices/app/info'),
-  appAnalyticsInfoSelector: jest.fn().mockReturnValue({
-    identified: true,
-  }),
-}))
-
 /**
  * PubSubPage tests
  *

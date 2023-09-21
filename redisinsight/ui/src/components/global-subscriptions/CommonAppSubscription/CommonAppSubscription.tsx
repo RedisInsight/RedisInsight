@@ -53,7 +53,11 @@ const CommonAppSubscription = () => {
     })
 
     socketRef.current.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
-      if ((data.name as unknown) === CloudJobName.CreateFreeDatabase) {
+      const jobName = data.name as unknown
+      if (
+        jobName === CloudJobName.CreateFreeDatabase
+        || jobName === CloudJobName.CreateFreeSubscriptionAndDatabase
+        || jobName === CloudJobName.ImportFreeDatabase) {
         dispatch(setJob(data))
       }
     })

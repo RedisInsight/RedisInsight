@@ -8,14 +8,12 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { loadPluginsAction } from 'uiSrc/slices/app/plugins'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import WBViewWrapper from './components/wb-view'
 
 const WorkbenchPage = () => {
   const [isPageViewSent, setIsPageViewSent] = useState(false)
 
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -23,10 +21,10 @@ const WorkbenchPage = () => {
   setTitle(`${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)} - Workbench`)
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+    if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
-  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+  }, [connectedInstanceName, isPageViewSent])
 
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({

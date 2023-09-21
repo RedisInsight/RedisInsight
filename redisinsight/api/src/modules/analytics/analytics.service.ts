@@ -6,7 +6,7 @@ import { AppAnalyticsEvents } from 'src/constants';
 import config from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 
-export const NON_TRACKING_ANONYMOUS_ID = 'UNSET';
+export const NON_TRACKING_ANONYMOUS_ID = '00000000-0000-0000-0000-000000000001';
 const ANALYTICS_CONFIG = config.get('analytics');
 
 export interface ITelemetryEvent {
@@ -73,21 +73,19 @@ export class AnalyticsService {
       // The `nonTracking` argument can be set to True to mark an event that doesn't track the specific
       // user in any way. When `nonTracking` is True, the event is sent regardless of whether the user's permission
       // for analytics is granted or not.
-      // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
+      // If permissions not granted
+      // anonymousId will includes "00000000-0000-0000-0000-000000000001" value without any user identifiers.
       const { event, eventData, nonTracking } = payload;
-      const isAnalyticsGranted = !!get(
-        // todo: define how to fetch userId?
-        await this.settingsService.getAppSettings('1'),
-        'agreements.analytics',
-        false,
-      );
+      const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
+
       if (isAnalyticsGranted || nonTracking) {
         this.analytics.track({
-          anonymousId: this.anonymousId,
+          anonymousId: !isAnalyticsGranted && nonTracking ? NON_TRACKING_ANONYMOUS_ID : this.anonymousId,
           integrations: { Amplitude: { session_id: this.sessionId } },
           event,
           properties: {
             ...eventData,
+            anonymousId: !isAnalyticsGranted && nonTracking ? this.anonymousId : undefined,
             buildType: this.appType,
             controlNumber: this.controlNumber,
             controlGroup: this.controlGroup,
@@ -98,5 +96,47 @@ export class AnalyticsService {
     } catch (e) {
       // continue regardless of error
     }
+  }
+
+  @OnEvent(AppAnalyticsEvents.Page)
+  async sendPage(payload: ITelemetryEvent) {
+    try {
+      // The event is reported only if the user's permission is granted.
+      // The anonymousId is also sent along with the event.
+      //
+      // The `nonTracking` argument can be set to True to mark an event that doesn't track the specific
+      // user in any way. When `nonTracking` is True, the event is sent regardless of whether the user's permission
+      // for analytics is granted or not.
+      // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
+      const { event, eventData, nonTracking } = payload;
+      const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
+
+      if (isAnalyticsGranted || nonTracking) {
+        this.analytics.page({
+          name: event,
+          anonymousId: !isAnalyticsGranted && nonTracking ? NON_TRACKING_ANONYMOUS_ID : this.anonymousId,
+          integrations: { Amplitude: { session_id: this.sessionId } },
+          properties: {
+            ...eventData,
+            anonymousId: !isAnalyticsGranted && nonTracking ? this.anonymousId : undefined,
+            buildType: this.appType,
+            controlNumber: this.controlNumber,
+            controlGroup: this.controlGroup,
+            appVersion: this.appVersion,
+          },
+        });
+      }
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  private async checkIsAnalyticsGranted() {
+    return !!get(
+      // todo: define how to fetch userId?
+      await this.settingsService.getAppSettings('1'),
+      'agreements.analytics',
+      false,
+    );
   }
 }

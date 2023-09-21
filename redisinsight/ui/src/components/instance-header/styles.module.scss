@@ -10,8 +10,18 @@
 
   & > div {
     display: flex;
-    &:not(:last-of-type) {
-      margin-right: 12px;
+  }
+
+  .breadCrumbLink {
+    color: var(--euiColorPrimary) !important;
+    font-size: 14px !important;
+    line-height: 20px;
+    font-weight: 400;
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
     }
   }
 }
@@ -37,9 +47,9 @@
 .dbName {
   display: inline-block !important;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 20px;
-  font-weight: 500;
+  font-weight: 400;
   text-overflow: ellipsis;
   max-width: 100%;
   white-space: nowrap;
@@ -59,5 +69,13 @@
 
 .input {
   width: 60px !important;
+}
+
+.divider {
+  color: var(--euiTextSubduedColor);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  margin: 0 8px;
 }
 

@@ -18,18 +18,28 @@ export class CloudApiProvider {
       return null;
     }
 
-    return new URLSearchParams([
-      ['utm_source', utm?.source],
-      ['utm_medium', utm?.medium],
-      ['utm_campaign', utm?.campaign],
-    ]);
+    const params = new URLSearchParams();
+
+    if (utm?.source) {
+      params.append('utm_source', utm.source);
+    }
+
+    if (utm?.medium) {
+      params.append('utm_medium', utm.medium);
+    }
+
+    if (utm?.campaign) {
+      params.append('utm_campaign', utm.campaign);
+    }
+
+    return params;
   }
 
   /**
    * Prepare header for authorized requests
    * @param credentials
    */
-  static getHeaders(credentials: ICloudApiCredentials) {
+  static getHeaders(credentials: ICloudApiCredentials): { headers: {} } {
     const headers = {};
 
     if (credentials?.accessToken) {

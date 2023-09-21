@@ -17,6 +17,7 @@ import {
   Code,
   EmptyPrompt,
   RedisUploadButton,
+  CloudLink,
   Pagination
 } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components'
 import { getTutorialSection } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
@@ -59,7 +60,7 @@ const InternalPage = (props: Props) => {
     manifestPath,
     sourcePath
   } = props
-  const components: any = { LazyCodeButton, Image, Code, RedisUploadButton }
+  const components: any = { LazyCodeButton, Image, Code, RedisUploadButton, CloudLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {

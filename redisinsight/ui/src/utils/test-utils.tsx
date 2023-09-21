@@ -225,15 +225,6 @@ jest.mock(
   () => ({ children }) => children({ height: 600, width: 600 })
 )
 
-jest.mock(
-  'uiSrc/telemetry/checkAnalytics',
-  () => ({
-    checkIsAnalyticsGranted: jest.fn(),
-    getAppType: jest.fn(),
-    getInfoServer: jest.fn().mockReturnValue({}),
-  })
-)
-
 export const MOCKED_HIGHLIGHTING_FEATURES = ['importDatabases', 'anotherFeature']
 jest.mock(
   'uiSrc/constants/featuresHighlighting',

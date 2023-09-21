@@ -22,8 +22,9 @@ import { IError, IMessage, InfiniteMessage } from 'uiSrc/slices/interfaces'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
-
 import { CustomErrorCodes } from 'uiSrc/constants'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -115,9 +116,25 @@ const Notifications = () => {
       text: Inner,
       color: 'success',
       onClose: () => {
-        if (id === InfiniteMessagesIds.oAuthProgress) {
-          dispatch(showOAuthProgress(false))
+        switch (id) {
+          case InfiniteMessagesIds.oAuthProgress:
+            dispatch(showOAuthProgress(false))
+            break
+          case InfiniteMessagesIds.databaseExists:
+            sendEventTelemetry({
+              event: TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE_FORM_CLOSED,
+            })
+            break
+          case InfiniteMessagesIds.subscriptionExists:
+            sendEventTelemetry({
+              event: TelemetryEvent.CLOUD_CREATE_DATABASE_IN_SUBSCRIPTION_FORM_CLOSED,
+            })
+            break
+
+          default:
+            break
         }
+
         dispatch(removeInfiniteNotification(id))
       },
       toastLifeTimeMs: 3_600_000,

@@ -1,4 +1,4 @@
-import { commonUrl, ossStandaloneConfig, ossStandaloneRedisGears } from '../../../helpers/conf';
+import { commonUrl, ossStandaloneRedisGears } from '../../../helpers/conf';
 import { rte } from '../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
@@ -17,7 +17,6 @@ let { host, port, databaseName, databaseUsername = '', databasePassword = '' } =
 const redisConnect = 'redisinsight://databases/connect';
 
 fixture `Add DB from SM`
-    .only
     .meta({ type: 'critical_path', rte: rte.none })
     .afterEach(async() => {
         // Delete all existing connections

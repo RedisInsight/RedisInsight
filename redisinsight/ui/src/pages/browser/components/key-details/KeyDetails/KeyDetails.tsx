@@ -3,7 +3,7 @@ import {
   EuiText,
   EuiFlexGroup,
   EuiButtonIcon,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import { isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'

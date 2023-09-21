@@ -2,7 +2,6 @@ import { EuiTitle } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
@@ -16,7 +15,6 @@ import styles from './styles.module.scss'
 export const PUB_SUB_DEFAULT_CHANNEL = { channel: '*', type: SubscriptionType.PSubscribe }
 
 const PubSubPage = () => {
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -26,10 +24,10 @@ const PubSubPage = () => {
   setTitle(`${dbName} - Pub/Sub`)
 
   useEffect(() => {
-    if (connectedInstanceName && !isPageViewSent && analyticsIdentified) {
+    if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
-  }, [connectedInstanceName, isPageViewSent, analyticsIdentified])
+  }, [connectedInstanceName, isPageViewSent])
 
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({

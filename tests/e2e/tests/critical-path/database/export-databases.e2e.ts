@@ -38,10 +38,8 @@ test
     .after(async() => {
         // Delete all databases
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesApi();
+        // await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
         // Delete exported file
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
         const databaseNames = [
@@ -71,10 +69,7 @@ test
         await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
 
         // Delete databases
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneTlsConfig);
-        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesApi();
         await myRedisDatabasePage.reloadPage();
 
         const exportedData = {
@@ -89,6 +84,11 @@ test
         await t.click(myRedisDatabasePage.okDialogBtn);
         // Verify that user can import exported file with all datatypes and certificates
         await databasesActions.verifyDatabasesDisplayed(exportedData.dbImportedNames);
+
+        const modulesDbRedisStackIcon = myRedisDatabasePage.dbNameList.child('span').withExactText(ossStandaloneConfig.databaseName).parent('tr')
+            .find(myRedisDatabasePage.cssRedisStackIcon);
+        // Verify that db has redis stack icon
+        await t.expect(modulesDbRedisStackIcon.exists).ok('module icon is displayed');
 
         await databaseHelper.clickOnEditDatabaseByName(databaseNames[1]);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('ca', 'CA certificate import incorrect');

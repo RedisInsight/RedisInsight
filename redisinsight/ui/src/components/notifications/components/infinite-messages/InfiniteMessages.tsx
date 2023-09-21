@@ -5,11 +5,13 @@ import { CloudJobStep } from 'uiSrc/electron/constants'
 export enum InfiniteMessagesIds {
   oAuthProgress = 'oAuthProgress',
   oAuthSuccess = 'oAuthSuccess',
-  autoCreateDb = 'autoCreateDb'
+  autoCreateDb = 'autoCreateDb',
+  databaseExists = 'databaseExists',
+  subscriptionExists = 'subscriptionExists',
 }
 
 export const INFINITE_MESSAGES = {
-  PENDING_CREATE_DB: (step: CloudJobStep) => ({
+  PENDING_CREATE_DB: (step?: CloudJobStep) => ({
     id: InfiniteMessagesIds.oAuthProgress,
     Inner: (
       <div
@@ -26,6 +28,7 @@ export const INFINITE_MESSAGES = {
                 { (step === CloudJobStep.Credentials || !step) && 'Processing Cloud API keys…'}
                 { step === CloudJobStep.Subscription && 'Processing Cloud subscriptions…'}
                 { step === CloudJobStep.Database && 'Creating a free Cloud database…'}
+                { step === CloudJobStep.Import && 'Importing a free Cloud database…'}
               </span>
             </EuiTitle>
             <EuiText size="xs">
@@ -65,6 +68,86 @@ export const INFINITE_MESSAGES = {
               data-testid="notification-connect-db"
             >
               Get started
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    )
+  }),
+  DATABASE_EXISTS: (onSuccess?: () => void, onClose?: () => void) => ({
+    id: InfiniteMessagesIds.databaseExists,
+    Inner: (
+      <div
+        role="presentation"
+        onMouseDown={(e) => { e.preventDefault() }}
+        onMouseUp={(e) => { e.preventDefault() }}
+        data-testid="database-exists-notification"
+      >
+        <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Enterprise Cloud subscription.</span></EuiTitle>
+        <EuiText size="xs">
+          Do you want to import your existing database into RedisInsight?
+        </EuiText>
+        <EuiSpacer size="m" />
+        <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              onClick={() => onSuccess?.()}
+              data-testid="import-db-sso-btn"
+            >
+              Import
+            </EuiButton>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              size="s"
+              color="secondary"
+              onClick={() => onClose?.()}
+              data-testid="cancel-import-db-sso-btn"
+            >
+              Cancel
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    )
+  }),
+  SUBSCRIPTION_EXISTS: (onSuccess?: () => void, onClose?: () => void) => ({
+    id: InfiniteMessagesIds.subscriptionExists,
+    Inner: (
+      <div
+        role="presentation"
+        onMouseDown={(e) => { e.preventDefault() }}
+        onMouseUp={(e) => { e.preventDefault() }}
+        data-testid="subscription-exists-notification"
+      >
+        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free Redis Enterprise Cloud database.</span></EuiTitle>
+        <EuiText size="xs">
+          Do you want to create a free database in your existing subscription?
+        </EuiText>
+        <EuiSpacer size="m" />
+        <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              onClick={() => onSuccess?.()}
+              data-testid="create-subscription-sso-btn"
+            >
+              Create
+            </EuiButton>
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              size="s"
+              color="secondary"
+              onClick={() => onClose?.()}
+              data-testid="cancel-create-subscription-sso-btn"
+            >
+              Cancel
             </EuiButton>
           </EuiFlexItem>
         </EuiFlexGroup>

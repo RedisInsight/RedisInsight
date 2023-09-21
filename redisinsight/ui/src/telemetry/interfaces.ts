@@ -6,23 +6,6 @@ export interface ITelemetryIdentify {
   sessionId: number
 }
 
-export interface ITelemetryService {
-  initialize(): Promise<void>
-  pageView(
-    name: string,
-    params: {
-      buildType?: string
-      controlNumber?: number
-      controlGroup?: string
-      appVersion?: string
-      databaseId?: string
-    }
-  ): Promise<void>
-  identify(opts: ITelemetryIdentify): Promise<void>
-  event(opts: ITelemetryEvent): Promise<void>
-  anonymousId: string
-}
-
 export interface ITelemetrySendEvent {
   event: TelemetryEvent
   eventData?: Object

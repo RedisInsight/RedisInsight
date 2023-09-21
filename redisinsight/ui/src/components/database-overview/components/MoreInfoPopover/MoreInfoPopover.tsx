@@ -102,7 +102,11 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
           <h4 className={styles.mi_fieldName}>Modules</h4>
           {
             modules?.map(({ name = '', semanticVersion = '', version = '' }) => (
-              <div key={name} className={cx(styles.mi_moduleName)}>
+              <div
+                key={name}
+                className={cx(styles.mi_moduleName)}
+                data-testid={`${truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}`}
+              >
                 {`${truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)} `}
                 {!!(semanticVersion || version) && (
                   <span className={styles.mi_version}>

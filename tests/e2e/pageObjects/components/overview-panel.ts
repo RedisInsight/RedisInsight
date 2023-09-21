@@ -7,7 +7,7 @@ export class OverviewPanel {
     databaseModules = Selector('[data-testid$=module]');
     overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
     // BUTTONS
-    myRedisDbIcon = Selector('[data-testid=my-redis-db-icon]');
+    myRedisDBLink = Selector('[data-testid=my-redis-db-btn]', { timeout: 1000 });
     overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');
     overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     changeIndexBtn = Selector('[data-testid=change-index-btn]');

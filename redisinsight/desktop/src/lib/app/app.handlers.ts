@@ -1,13 +1,14 @@
 import { app } from 'electron'
 import log from 'electron-log'
-import { getBackendGracefulShutdown, WindowType, getWindows, windowFactory } from 'desktopSrc/lib'
+import { getBackendGracefulShutdown } from 'desktopSrc/lib'
 import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import { showOrCreateWindow } from 'desktopSrc/utils'
 
 export const initAppHandlers = () => {
-  app.on('activate', () => {
+  app.on('activate', async () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (getWindows()?.size === 0) windowFactory(WindowType.Main)
+    await showOrCreateWindow()
   })
 
   app.on('certificate-error', (event, _webContents, _url, _error, _certificate, callback) => {

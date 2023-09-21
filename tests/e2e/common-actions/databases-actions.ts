@@ -1,5 +1,5 @@
-import { Selector, t } from 'testcafe';
 import * as fs from 'fs';
+import { Selector, t } from 'testcafe';
 import { MyRedisDatabasePage } from '../pageObjects';
 import { DatabaseAPIRequests } from '../helpers/api/api-database';
 

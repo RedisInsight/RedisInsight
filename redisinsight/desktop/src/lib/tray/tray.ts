@@ -1,6 +1,7 @@
-import { app, Menu, shell, Tray, nativeImage, BrowserWindow, MenuItemConstructorOptions } from 'electron'
+import { app, Menu, shell, Tray, nativeImage, MenuItemConstructorOptions } from 'electron'
 import path from 'path'
-import { WindowType, getWindows, windowFactory } from 'desktopSrc/lib'
+import { getWindows } from 'desktopSrc/lib'
+import { showOrCreateWindow } from 'desktopSrc/utils'
 // eslint-disable-next-line import/no-cycle
 import { setToQuiting } from './trayManager'
 
@@ -100,14 +101,7 @@ export class TrayBuilder {
     this.tray.setToolTip(name)
   }
 
-  private openApp() {
-    if (getWindows()?.size) {
-      getWindows()?.forEach((window: BrowserWindow) => window.show())
-      app.dock?.show()
-    }
-
-    if (!getWindows()?.size) {
-      windowFactory(WindowType.Main)
-    }
+  private async openApp() {
+    await showOrCreateWindow()
   }
 }

@@ -19,7 +19,8 @@ export class CloudRequestUtm {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  medium?: string;
+  @Default('app')
+  medium? = 'app';
 
   @ApiPropertyOptional({
     type: String,

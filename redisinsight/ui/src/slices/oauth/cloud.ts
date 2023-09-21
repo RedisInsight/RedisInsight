@@ -11,6 +11,7 @@ import {
   InfiniteMessagesIds
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -39,7 +40,7 @@ export const initialState: StateAppOAuth = {
   message: '',
   job: {
     id: localStorageService.get(BrowserStorageItem.OAuthJobId) ?? '',
-    name: CloudJobName.CreateFreeDatabase,
+    name: CloudJobName.CreateFreeSubscriptionAndDatabase,
     status: '',
   },
   source: null,
@@ -261,11 +262,16 @@ export function createFreeDbSuccess(id: string, history: any) {
 
 // Asynchronous thunk action
 export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => void, onFailAction?: () => void) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(getUserInfo())
 
     try {
-      const { data, status } = await apiService.get<CloudUser>(ApiEndpoints.CLOUD_ME)
+      const { data, status } = await apiService.get<CloudUser>(
+        ApiEndpoints.CLOUD_ME,
+        {
+          params: getCloudSsoUtmParams(getState().oauth?.cloud?.source),
+        },
+      )
 
       if (isStatusSuccessful(status)) {
         const isMultiAccount = (data?.accounts?.length ?? 0) > 1
@@ -292,7 +298,21 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
 }
 
 // Asynchronous thunk action
-export function createFreeDbJob(planId: number, onSuccessAction?: () => void, onFailAction?: () => void) {
+export function createFreeDbJob({
+  name,
+  resources = {},
+  onSuccessAction,
+  onFailAction
+}: {
+  name: CloudJobName,
+  resources?: {
+    planId?: number,
+    databaseId?: number,
+    subscriptionId?: number,
+  }
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+}) {
   return async (dispatch: AppDispatch) => {
     dispatch(addFreeDb())
 
@@ -300,15 +320,17 @@ export function createFreeDbJob(planId: number, onSuccessAction?: () => void, on
       const { data, status } = await apiService.post<CloudJobInfo>(
         ApiEndpoints.CLOUD_ME_JOBS,
         {
-          name: CloudJobName.CreateFreeDatabase,
+          name,
           runMode: 'async',
-          data: { planId },
+          data: resources,
         }
       )
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.OAuthJobId, data.id)
-        dispatch(setJob({ id: data.id, name: CloudJobName.CreateFreeDatabase, status: CloudJobStatus.Running }))
+        dispatch(setJob(
+          { id: data.id, name, status: CloudJobStatus.Running }
+        ))
         onSuccessAction?.()
       }
     } catch (_err) {

@@ -38,7 +38,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-const fromUrl = 'redisinsight://databases/connect?redisUrl=redis://default:password@localhost:6379&databaseAlias=My Name&redirect=workbench?guidePath=/quick-guides/document/introduction.md&cloudId=1232&subscriptionType=fixed&planMemoryLimit=30&memoryLimitMeasurementUnit=mb&free=true&target=_blank'
+const fromUrl = 'redisinsight://databases/connect?redisUrl=redis://default:password@localhost:6379&databaseAlias=My Name&redirect=workbench?guidePath=/quick-guides/document/introduction.md&cloudBdbId=1232&subscriptionType=fixed&planMemoryLimit=30&memoryLimitMeasurementUnit=mb&free=true&target=_blank'
 
 describe('GlobalUrlHandler', () => {
   beforeEach(() => {
@@ -84,6 +84,8 @@ describe('GlobalUrlHandler', () => {
     const fromParams = new URLSearchParams(actionUrl.search)
     // @ts-ignore
     const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
 
     expect(store.getActions()).toEqual([
       setUrlProperties(urlProperties),
@@ -115,6 +117,8 @@ describe('GlobalUrlHandler', () => {
     const fromParams = new URLSearchParams(actionUrl.search)
     // @ts-ignore
     const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
 
     const expectedActions = [
       setUrlProperties(urlProperties),
@@ -159,6 +163,8 @@ describe('GlobalUrlHandler', () => {
     const fromParams = new URLSearchParams(actionUrl.search)
     // @ts-ignore
     const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
 
     const expectedActions = [
       setUrlProperties(urlProperties),

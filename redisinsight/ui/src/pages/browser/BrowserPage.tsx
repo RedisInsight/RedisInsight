@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiResizableContainer,
-  EuiButtonEmpty,
+  EuiButton,
 } from '@elastic/eui'
 
 import {
@@ -217,14 +217,17 @@ const BrowserPage = () => {
       <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
         <div>
-          <EuiButtonEmpty
+          <EuiButton
+            fill
+            color="secondary"
             iconType="arrowLeft"
+            size="s"
             onClick={closePanel}
             className={styles.backBtn}
             data-testid="back-right-panel-btn"
           >
             Back
-          </EuiButtonEmpty>
+          </EuiButton>
         </div>
       )}
       <div className={cx({

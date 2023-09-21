@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
+import reactRouterDom from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import {
@@ -45,6 +46,13 @@ jest.mock('uiSrc/slices/app/context', () => ({
   appContextDbIndex: jest.fn().mockReturnValue({
     disabled: false,
   })
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: jest.fn,
+  }),
 }))
 
 describe('InstanceHeader', () => {
@@ -113,5 +121,17 @@ describe('InstanceHeader', () => {
     render(<InstanceHeader {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('change-index-btn')).toBeDisabled()
+  })
+
+  it('should call history push with proper path', () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    render(<InstanceHeader {...instance(mockedProps)} />)
+
+    fireEvent.click(screen.getByTestId('my-redis-db-btn'))
+
+    expect(pushMock).toHaveBeenCalledTimes(1)
+    expect(pushMock).toHaveBeenCalledWith('/')
   })
 })

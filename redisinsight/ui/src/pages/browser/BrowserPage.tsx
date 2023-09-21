@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiResizableContainer,
+  EuiButton,
 } from '@elastic/eui'
 
 import {
@@ -66,7 +67,6 @@ const BrowserPage = () => {
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
   const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
-
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)
@@ -200,12 +200,34 @@ const BrowserPage = () => {
     }
   }
 
+  const closePanel = () => {
+    dispatch(toggleBrowserFullScreen(true))
+
+    setSelectedKey(null)
+    closeRightPanels()
+  }
+
   const isRightPanelOpen = selectedKey !== null || isAddKeyPanelOpen || isBulkActionsPanelOpen || isCreateIndexPanelOpen
   const isRightPanelFullScreen = (isBrowserFullScreen && isRightPanelOpen) || (arePanelsCollapsed && isRightPanelOpen)
 
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
+      {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
+        <div>
+          <EuiButton
+            fill
+            color="secondary"
+            iconType="arrowLeft"
+            size="s"
+            onClick={closePanel}
+            className={styles.backBtn}
+            data-testid="back-right-panel-btn"
+          >
+            Browser
+          </EuiButton>
+        </div>
+      )}
       <div className={cx({
         [styles.hidden]: isRightPanelFullScreen })}
       >
@@ -215,9 +237,17 @@ const BrowserPage = () => {
           handleCreateIndexPanel={handleCreateIndexPanel}
         />
       </div>
-      <div className={styles.main}>
+      <div
+        className={cx(
+          styles.main,
+          { [styles.mainWithBackBtn]: arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen },
+        )}
+      >
         <div className={styles.resizableContainer}>
-          <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>
+          <EuiResizableContainer
+            onPanelWidthChange={onPanelWidthChange}
+            style={{ height: '100%' }}
+          >
             {(EuiResizablePanel, EuiResizableButton) => (
               <>
                 <EuiResizablePanel

@@ -6,7 +6,7 @@ import {
   EuiFlexItem,
   EuiTitle,
   EuiToolTip,
-  EuiButtonIcon, EuiButton,
+  EuiButtonIcon,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
@@ -111,18 +111,7 @@ const BulkActions = (props: Props) => {
               />
             </EuiToolTip>
           )}
-          {arePanelsCollapsed && !isFullScreen ? (
-            <EuiButton
-              fill
-              color="secondary"
-              onClick={closePanel}
-              size="s"
-              iconType="arrowLeft"
-              className={styles.backBtn}
-            >
-              Back
-            </EuiButton>
-          ) : (
+          {(!arePanelsCollapsed || isFullScreen) && (
             <EuiToolTip
               content="Close"
               position="left"

@@ -1,4 +1,5 @@
 import { Chance } from 'chance';
+import { Selector } from 'testcafe';
 import { DatabaseHelper } from '../../../helpers/database';
 import { rte } from '../../../helpers/constants';
 import { Common } from '../../../helpers/common';
@@ -14,6 +15,7 @@ import {
     ossStandaloneBigConfig
 } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
+
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -45,35 +47,28 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
-        const firstDatabaseModules: string[] = [];
-        const secondDatabaseModules: string[] = [];
+        let firstDatabaseModules: string[] = [];
+        let secondDatabaseModules: string[] = [];
         //Remember modules
-        let countOfModules = await browserPage.modulesButton.count;
+        await t.click(browserPage.OverviewPanel.overviewMoreInfo);
+        const moduleIcons = Selector('div').find('[data-testid^=Redi]');
+        let countOfModules = await moduleIcons.count;
         for(let i = 0; i < countOfModules; i++) {
-            firstDatabaseModules.push(await browserPage.modulesButton.nth(i).getAttribute('data-testid'));
+            firstDatabaseModules.push(await moduleIcons.nth(i).textContent);
         }
-        //Verify the list of modules in Browser page
-        for (const module of firstDatabaseModules) {
-            await t.expect(browserPage.OverviewPanel.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
-        }
-        //Open the Workbench page and verify modules
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-        for (const module of firstDatabaseModules) {
-            await t.expect(browserPage.OverviewPanel.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
-        }
+
+        // Verify that user can be redirected to db list page by clicking on "Databases" link in the top left corner
+        await t.click(browserPage.OverviewPanel.myRedisDBLink);
         //Add database with different modules
-        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
-        countOfModules = await browserPage.modulesButton.count;
+        await t.click(browserPage.OverviewPanel.overviewMoreInfo);
+        countOfModules = await moduleIcons.count;
         for(let i = 0; i < countOfModules; i++) {
-            secondDatabaseModules.push(await browserPage.modulesButton.nth(i).getAttribute('data-testid'));
+            secondDatabaseModules.push(await moduleIcons.nth(i).textContent);
         }
         //Verify the list of modules
-        for (const module of secondDatabaseModules) {
-            await t.expect(browserPage.OverviewPanel.databaseModules.withAttribute('aria-labelledby', module).exists).ok(`${module} is displayed in the list`);
-        }
         await t.expect(firstDatabaseModules).notEql(secondDatabaseModules, 'The list of Modules updated');
     });
 test

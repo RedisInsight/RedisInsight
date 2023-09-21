@@ -84,7 +84,7 @@ test
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed when enabled from remote config');
 
         // Verify that recommendations displayed for all databases if option enabled
-        await t.click(browserPage.OverviewPanel.myRedisDbIcon);
+        await t.click(browserPage.OverviewPanel.myRedisDBLink);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed for the other db connection');
         await browserPage.InsightsPanel.toggleInsightsPanel(true);

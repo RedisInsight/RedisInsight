@@ -373,7 +373,7 @@ export function createInstanceStandaloneAction(
           databaseId,
           successMessages.DATABASE_ALREADY_EXISTS(),
           () => {
-            dispatch(defaultInstanceChangingFailure(errorMessage))
+            dispatch(defaultInstanceChangingSuccess())
             onSuccess?.(databaseId)
           },
           () => { dispatch(defaultInstanceChangingFailure(errorMessage)) }

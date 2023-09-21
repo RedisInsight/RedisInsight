@@ -33,6 +33,7 @@ export class AddRedisDatabase {
     showPasswordBtn = Selector('[aria-label^="Show password"]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
     // TEXT INPUTS (also referred to as 'Text fields')
+    disabledDatabaseInfo = Selector('[class=euiListGroupItem__text]');
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');
     databaseAliasInput = Selector('[data-testid=name]');

@@ -85,7 +85,7 @@ export class AnalyticsService {
           event,
           properties: {
             ...eventData,
-            anonymousId: !isAnalyticsGranted && nonTracking ? this.anonymousId : undefined,
+            anonymousId: this.anonymousId,
             buildType: this.appType,
             controlNumber: this.controlNumber,
             controlGroup: this.controlGroup,
@@ -118,7 +118,7 @@ export class AnalyticsService {
           integrations: { Amplitude: { session_id: this.sessionId } },
           properties: {
             ...eventData,
-            anonymousId: !isAnalyticsGranted && nonTracking ? this.anonymousId : undefined,
+            anonymousId: this.anonymousId,
             buildType: this.appType,
             controlNumber: this.controlNumber,
             controlGroup: this.controlGroup,

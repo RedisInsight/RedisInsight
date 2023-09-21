@@ -27,7 +27,7 @@
     "start:prod": "cross-env NODE_ENV=production BUILD_TYPE=DOCKER_ON_PREMISE node dist/src/main",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/jest -w 1",
     "test:watch": "cross-env NODE_ENV=test jest --watch -w 1",
-    "test:cov": "cross-env NODE_ENV=test ./node_modules/.bin/jest --forceExit --coverage -w 1",
+    "test:cov": "cross-env NODE_ENV=test ./node_modules/.bin/jest --forceExit --coverage -w 4",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand -w 1",
     "test:e2e": "jest --config ./test/jest-e2e.json -w 1",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./config/ormconfig.ts",

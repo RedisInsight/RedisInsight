@@ -16,7 +16,6 @@ export class WaitForTaskCloudJob extends CloudJob {
     readonly options: CloudJobOptions,
     private readonly data: {
       taskId: string,
-      capiCredentials: CloudCapiAuthDto,
     },
     protected readonly dependencies: {
       cloudTaskCapiService: CloudTaskCapiService,
@@ -32,7 +31,7 @@ export class WaitForTaskCloudJob extends CloudJob {
 
     this.logger.debug('Fetching cloud task');
 
-    const task = await this.dependencies.cloudTaskCapiService.getTask(this.data.capiCredentials, this.data.taskId);
+    const task = await this.dependencies.cloudTaskCapiService.getTask(this.options.capiCredentials, this.data.taskId);
 
     switch (task?.status) {
       case CloudTaskStatus.Initialized:

@@ -21,7 +21,6 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
     private readonly data: {
       subscriptionId: number,
       subscriptionType: CloudSubscriptionType,
-      capiCredentials: CloudCapiAuthDto,
     },
     protected readonly dependencies: {
       cloudSubscriptionCapiService: CloudSubscriptionCapiService,
@@ -38,7 +37,7 @@ export class WaitForActiveSubscriptionCloudJob extends CloudJob {
     this.logger.debug('Fetching cloud subscription');
 
     const subscription = await this.dependencies.cloudSubscriptionCapiService.getSubscription(
-      this.data.capiCredentials,
+      this.options.capiCredentials,
       this.data.subscriptionId,
       this.data.subscriptionType,
     );

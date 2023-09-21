@@ -61,7 +61,7 @@ const ConfigOAuth = () => {
 
   const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
     if (status === CloudAuthStatus.Succeed) {
-      dispatch(setJob({ id: '', name: CloudJobName.CreateFreeDatabase, status: '' }))
+      dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
       dispatch(showOAuthProgress(true))
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
       dispatch(setSignInDialogState(null))

@@ -73,9 +73,10 @@ describe('CloudDatabaseAnalytics', () => {
     it('should emit error event with selected plan', async () => {
       await service.sendCloudFreeDatabaseFailed(
         httpException,
-        {},
-        cloudSubscriptionCapiService,
-        mockData,
+        {
+          region: mockFreeCloudSubscriptionPlan1.region,
+          provider: mockFreeCloudSubscriptionPlan1.provider,
+        },
       );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
@@ -93,17 +94,12 @@ describe('CloudDatabaseAnalytics', () => {
     await service.sendCloudFreeDatabaseFailed(
       httpException,
       undefined,
-      cloudSubscriptionCapiService,
-      mockData,
     );
 
     expect(sendFailedEventMethod).toHaveBeenCalledWith(
       TelemetryEvents.CloudFreeDatabaseFailed,
       httpException,
-      {
-        region: mockFreeCloudSubscriptionPlan1.region,
-        provider: mockFreeCloudSubscriptionPlan1.provider,
-      },
+      {},
     );
   });
 
@@ -111,8 +107,6 @@ describe('CloudDatabaseAnalytics', () => {
     await service.sendCloudFreeDatabaseFailed(
       httpException,
       undefined,
-      cloudSubscriptionCapiService,
-      { planId: 123, capiCredentials: mockCloudCapiAuthDto },
     );
 
     expect(sendFailedEventMethod).toHaveBeenCalledWith(

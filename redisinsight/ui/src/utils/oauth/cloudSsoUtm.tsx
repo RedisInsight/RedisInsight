@@ -22,9 +22,8 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
       return CloudSsoUtmCampaign.WelcomeScreen
     case OAuthSocialSource.TriggersAndFunctions:
       return CloudSsoUtmCampaign.TriggersAndFunctions
-    // todo: not implemented yet
-    // case OAuthSocialSource.Guides:
-    //   return CloudSsoUtmCampaign.GuidesAndTutorials
+    case OAuthSocialSource.Tutorials:
+      return CloudSsoUtmCampaign.Tutorial
     default:
       return CloudSsoUtmCampaign.Unknown
   }

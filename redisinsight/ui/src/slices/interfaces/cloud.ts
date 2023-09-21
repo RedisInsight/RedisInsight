@@ -82,7 +82,7 @@ export enum CloudSsoUtmCampaign {
   BrowserSearch = 'redisinsight_browser_search',
   BrowserOverview = 'redisinsight_browser_overview',
   BrowserFilter = 'browser_filter',
-  GuidesAndTutorials = 'redisinsight_doc_guide',
+  Tutorial = 'tutorial',
   TriggersAndFunctions = 'redisinsight_triggers_and_functions',
   Unknown = 'other',
 }

@@ -138,6 +138,7 @@ export class BrowserPage extends InstancePage {
     timestampOption = Selector('#time');
     formatSwitcher = Selector('[data-testid=select-format-key-value]', { timeout: 2000 });
     formatSwitcherIcon = Selector('[data-testid^=key-value-formatter-option-selected]');
+    refreshIndexButton = Selector('[data-testid=refresh-indexes-btn]');
     selectIndexDdn = Selector('[data-testid=select-index-placeholder],[data-testid=select-search-mode]', { timeout: 1000 });
     createIndexBtn = Selector('[data-testid=create-index-btn]');
     cancelIndexCreationBtn = Selector('[data-testid=create-index-cancel-btn]');

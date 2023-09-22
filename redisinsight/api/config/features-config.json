@@ -60,6 +60,10 @@
       "data": {
         "hideByName": [
           {
+            "expression": "^RedisGraph.",
+            "options": "i"
+          },
+          {
             "expression": "^RedisStackCompat?.",
             "options": "i"
           }

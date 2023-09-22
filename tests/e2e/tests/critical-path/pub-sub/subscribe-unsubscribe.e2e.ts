@@ -20,7 +20,7 @@ fixture `Subscribe/Unsubscribe from a channel`
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .afterEach(async() => {
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that when user subscribe to the pubsub channel he can see all the messages being published to my database from the moment of my subscription', async t => {
     // Verify that the Channel field placeholder is 'Enter Channel Name'
@@ -66,9 +66,7 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
 });
 test
     .before(async t => {
-        await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.deleteAllDatabasesApi();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

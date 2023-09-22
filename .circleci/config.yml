@@ -555,6 +555,10 @@ jobs:
             yarn --cwd redisinsight/api/ install --ignore-optional
             yarn --cwd redisinsight/ install --ignore-optional
             yarn install
+          no_output_timeout: 15m
+      - run:
+          name: Install plugins dependencies and build plugins
+          command: |
             yarn build:statics
           no_output_timeout: 15m
       - run:
@@ -609,6 +613,7 @@ jobs:
             - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
+
   macosx:
     macos:
       xcode: 14.2.0
@@ -823,6 +828,32 @@ jobs:
       - store_artifacts:
           path: docker-release
           destination: docker-release
+  licenses-check:
+    executor: linux-executor
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *uiDepsCacheKey
+          <<: *apiDepsCacheKey
+      - run:
+          name: Run install all dependencies
+          command: |
+            yarn install
+            yarn --cwd redisinsight/api install
+            yarn --cwd tests/e2e install
+            # Install plugins dependencies
+            export pluginsOnlyInstall=1
+            yarn build:statics
+      - run:
+          name: Generate licenses csv files and send csv data to google sheet
+          command: |
+            npm i -g license-checker
+
+            echo "$GOOGLE_ACCOUNT_SERVICE_KEY_BASE64" | base64 -id > gasKey.json
+            SPREADSHEET_ID=$GOOGLE_SPREADSHEET_DEPENDENCIES_ID node .circleci/deps-licenses-report.js
+      - store_artifacts:
+          path: licenses
+          destination: licenses
 
   # Release jobs
   store-build-artifacts:
@@ -1169,6 +1200,7 @@ workflows:
             - Build app - Linux (dev)
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
+
   # Main workflow for release/* and latest branches only
   release:
     jobs:
@@ -1244,6 +1276,7 @@ workflows:
             - Build app - Linux (stage)
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
+
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
           name: Approved by QA team
@@ -1444,3 +1477,16 @@ workflows:
       #     report: true
       #     requires:
       #       - Build app - Windows (stage)
+
+weekly:
+  triggers:
+    - schedule:
+        cron: '0 0 * * 1'
+        filters:
+          branches:
+            only:
+              - main
+  jobs:
+    # Process all licenses
+    - licenses-check:
+        name: Process licenses of packages

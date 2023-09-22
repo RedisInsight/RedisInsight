@@ -161,12 +161,13 @@ const OAuthSelectPlan = () => {
     <EuiModal className={styles.container} onClose={handleOnClose} data-testid="oauth-select-plan-dialog">
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
-          <EuiText className={styles.subTitle}>
-            Redis Enterprise Cloud
-          </EuiText>
           <EuiTitle size="s">
-            <h2 className={styles.title}>Select cloud vendor</h2>
+            <h2 className={styles.title}>Choose a cloud vendor</h2>
           </EuiTitle>
+          <EuiText className={styles.subTitle}>
+            Select a cloud vendor and region to complete the final step towards
+            your free Redis database. No credit card is required.
+          </EuiText>
           <section className={styles.providers}>
             { OAuthProviders.map(({ icon, id, label }) => (
               <div className={styles.provider} key={id}>

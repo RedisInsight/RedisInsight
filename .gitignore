@@ -58,6 +58,7 @@ main.js.map
 vendor
 redisinsight/main.js.LICENSE.txt
 redisinsight/main.prod.js.LICENSE.txt
+licenses
 
 
 # E2E tests report

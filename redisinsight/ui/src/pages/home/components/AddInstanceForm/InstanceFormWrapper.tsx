@@ -483,14 +483,6 @@ const InstanceFormWrapper = (props: Props) => {
     }
 
     handleSubmitDatabase(removeEmpty(database))
-
-    const databasesCount: number = JSON.parse(
-      localStorageService.get(BrowserStorageItem.instancesCount) || `${0}`
-    )
-    localStorageService.set(
-      BrowserStorageItem.instancesCount,
-      databasesCount + 1
-    )
   }
 
   const handleConnectionFormSubmit = (values: DbConnectionInfo) => {

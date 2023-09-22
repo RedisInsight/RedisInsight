@@ -67,6 +67,7 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
 test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabase(ossStandaloneV5Config);
+        await t.click(pubSubPage.NavigationPanel.myRedisDBButton);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);

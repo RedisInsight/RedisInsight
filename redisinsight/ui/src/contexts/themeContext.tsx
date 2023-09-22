@@ -23,10 +23,10 @@ export class ThemeProvider extends React.Component<Props> {
     super(props)
 
     const storedThemeValue = localStorageService.get(BrowserStorageItem.theme)
-    const usingSystemTheme = localStorageService.get(BrowserStorageItem.theme) === Theme.System
     const theme = !storedThemeValue || !THEME_NAMES.includes(storedThemeValue)
       ? defaultState.theme
       : storedThemeValue
+    const usingSystemTheme = theme === Theme.System
 
     themeService.applyTheme(theme)
 

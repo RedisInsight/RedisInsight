@@ -66,8 +66,7 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
 });
 test
     .before(async t => {
-        await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
@@ -75,8 +74,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
     .after(async() => {
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     })('Verify that user subscription state is changed to unsubscribed, all the messages are cleared and total message counter is reset when user connect to another database', async t => {
         await t.click(pubSubPage.subscribeButton);
         // Publish 10 messages

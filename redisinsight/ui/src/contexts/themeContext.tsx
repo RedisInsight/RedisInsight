@@ -43,6 +43,7 @@ export class ThemeProvider extends React.Component<Props> {
     if (themeValue === Theme.System) {
       actualTheme = this.getSystemTheme()
     }
+    window.app?.ipc?.invoke?.('theme:change', themeValue)
 
     this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
       themeService.applyTheme(themeValue)

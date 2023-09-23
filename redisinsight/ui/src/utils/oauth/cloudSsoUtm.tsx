@@ -32,6 +32,6 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
 // Create search query utm parameters
 export const getCloudSsoUtmParams = (source?: string | null): URLSearchParams => new URLSearchParams([
   ['source', 'redisinsight'],
-  ['medium', 'app'], // todo: distinguish between electron and web?
+  ['medium', 'sso'], // todo: distinguish between electron and web?
   ['campaign', getCloudSsoUtmCampaign(source)],
 ])

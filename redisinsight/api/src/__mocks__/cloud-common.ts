@@ -7,6 +7,6 @@ export const mockCapiUnauthorizedError = {
 
 export const mockUtm = {
   source: 'redisinsight',
-  medium: 'app',
+  medium: 'sso',
   campaign: 'workbench',
 };

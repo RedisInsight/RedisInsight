@@ -22,9 +22,8 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
       return CloudSsoUtmCampaign.WelcomeScreen
     case OAuthSocialSource.TriggersAndFunctions:
       return CloudSsoUtmCampaign.TriggersAndFunctions
-    // todo: not implemented yet
-    // case OAuthSocialSource.Guides:
-    //   return CloudSsoUtmCampaign.GuidesAndTutorials
+    case OAuthSocialSource.Tutorials:
+      return CloudSsoUtmCampaign.Tutorial
     default:
       return CloudSsoUtmCampaign.Unknown
   }
@@ -33,6 +32,6 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
 // Create search query utm parameters
 export const getCloudSsoUtmParams = (source?: string | null): URLSearchParams => new URLSearchParams([
   ['source', 'redisinsight'],
-  ['medium', 'app'], // todo: distinguish between electron and web?
+  ['medium', 'sso'], // todo: distinguish between electron and web?
   ['campaign', getCloudSsoUtmCampaign(source)],
 ])

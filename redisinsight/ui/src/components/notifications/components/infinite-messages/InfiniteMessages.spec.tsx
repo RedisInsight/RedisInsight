@@ -97,4 +97,23 @@ describe('INFINITE_MESSAGES', () => {
       expect(render(<>{Inner}</>)).toBeTruthy()
     })
   })
+
+  describe('APP_UPDATE_AVAILABLE', () => {
+    it('should render message', () => {
+      const { Inner } = INFINITE_MESSAGES.APP_UPDATE_AVAILABLE('1', jest.fn())
+      expect(render(<>{Inner}</>)).toBeTruthy()
+    })
+
+    it('should call onSuccess', () => {
+      const onSuccess = jest.fn()
+      const { Inner } = INFINITE_MESSAGES.APP_UPDATE_AVAILABLE('1', onSuccess)
+      render(<>{Inner}</>)
+
+      fireEvent.click(screen.getByTestId('app-restart-btn'))
+      fireEvent.mouseUp(screen.getByTestId('app-update-available-notification'))
+      fireEvent.mouseDown(screen.getByTestId('app-update-available-notification'))
+
+      expect(onSuccess).toBeCalled()
+    })
+  })
 })

@@ -130,6 +130,11 @@ const Notifications = () => {
               event: TelemetryEvent.CLOUD_CREATE_DATABASE_IN_SUBSCRIPTION_FORM_CLOSED,
             })
             break
+          case InfiniteMessagesIds.appUpdateAvailable:
+            sendEventTelemetry({
+              event: TelemetryEvent.UPDATE_NOTIFICATION_CLOSED,
+            })
+            break
 
           default:
             break

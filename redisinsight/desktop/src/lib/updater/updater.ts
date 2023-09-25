@@ -9,8 +9,7 @@ export const updateDownloaded = (updateInfo: UpdateDownloadedEvent) => {
     const [currentWindow] = getWindows().values()
 
     currentWindow?.webContents.send(IpcOnEvent.appUpdateAvailable, updateInfo)
-  // }, 60 * 1_000) // 1 min
-  }, 10 * 1_000) // 10 sec
+  }, 60 * 1_000) // 1 min
 }
 
 export const checkForUpdate = async (url: string = '') => {

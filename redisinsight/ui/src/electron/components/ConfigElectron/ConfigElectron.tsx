@@ -11,6 +11,7 @@ import { ipcAppRestart, ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/ut
 import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreValues'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
 const ConfigElectron = () => {
   let isCheckedUpdates = false
@@ -53,7 +54,11 @@ const ConfigElectron = () => {
   }
 
   const updateAvailableAction = (_e: any, { version }: UpdateInfo) => {
-    dispatch(addInfiniteNotification(INFINITE_MESSAGES.APP_UPDATE_AVAILABLE(version, ipcAppRestart)))
+    sendEventTelemetry({ event: TelemetryEvent.UPDATE_NOTIFICATION_DISPLAYED })
+    dispatch(addInfiniteNotification(INFINITE_MESSAGES.APP_UPDATE_AVAILABLE(version, () => {
+      sendEventTelemetry({ event: TelemetryEvent.UPDATE_NOTIFICATION_RESTART_CLICKED })
+      ipcAppRestart()
+    })))
   }
 
   return null

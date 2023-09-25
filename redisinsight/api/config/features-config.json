@@ -66,6 +66,10 @@
           {
             "expression": "^RedisStackCompat?.",
             "options": "i"
+          },
+          {
+            "expression": "^rediscompat?.",
+            "options": "i"
           }
         ]
       }

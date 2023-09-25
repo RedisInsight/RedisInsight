@@ -8,6 +8,7 @@ export enum InfiniteMessagesIds {
   autoCreateDb = 'autoCreateDb',
   databaseExists = 'databaseExists',
   subscriptionExists = 'subscriptionExists',
+  appUpdateAvailable = 'appUpdateAvailable',
 }
 
 export const INFINITE_MESSAGES = {
@@ -178,5 +179,41 @@ export const INFINITE_MESSAGES = {
         </EuiFlexGroup>
       </div>
     )
-  })
+  }),
+  APP_UPDATE_AVAILABLE: (version: string, onSuccess: () => void) => ({
+    id: InfiniteMessagesIds.appUpdateAvailable,
+    Inner: (
+      <div
+        role="presentation"
+        onMouseDown={(e) => { e.preventDefault() }}
+        onMouseUp={(e) => { e.preventDefault() }}
+        data-testid="app-update-available-notification"
+      >
+        <EuiTitle className="infiniteMessage__title">
+          <span>
+            New version is now available
+          </span>
+        </EuiTitle>
+        <EuiText size="s" color="subdued">
+          <>
+            With RedisInsight
+            {` ${version} `}
+            you have access to new useful features and optimizations.
+            <br />
+            Restart RedisInsight to install updates.
+          </>
+        </EuiText>
+        <br />
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          onClick={() => onSuccess?.()}
+          data-testid="app-restart-btn"
+        >
+          Restart
+        </EuiButton>
+      </div>
+    )
+  }),
 }

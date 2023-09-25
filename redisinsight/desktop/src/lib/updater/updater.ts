@@ -1,8 +1,19 @@
 import log from 'electron-log'
-import { autoUpdater } from 'electron-updater'
+import { UpdateDownloadedEvent, autoUpdater } from 'electron-updater'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
+import { getWindows } from 'desktopSrc/lib/window'
+import { IpcOnEvent } from 'uiSrc/electron/constants'
 
-export const checkForUpdate = (url: string = '') => {
+export const updateDownloaded = (updateInfo: UpdateDownloadedEvent) => {
+  setTimeout(() => {
+    const [currentWindow] = getWindows().values()
+
+    currentWindow?.webContents.send(IpcOnEvent.appUpdateAvailable, updateInfo)
+  // }, 60 * 1_000) // 1 min
+  }, 10 * 1_000) // 10 sec
+}
+
+export const checkForUpdate = async (url: string = '') => {
   if (!url || process.mas) {
     return
   }
@@ -20,7 +31,12 @@ export const checkForUpdate = (url: string = '') => {
     log.error(wrapErrorMessageSensitiveData(error))
   }
 
-  autoUpdater.checkForUpdatesAndNotify()
   autoUpdater.autoDownload = true
   autoUpdater.autoInstallOnAppQuit = true
+
+  await autoUpdater.checkForUpdates()
+}
+
+export const quitAndInstallUpdate = () => {
+  autoUpdater.quitAndInstall()
 }

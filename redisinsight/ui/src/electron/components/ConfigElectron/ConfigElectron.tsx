@@ -1,13 +1,16 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { UpdateInfo } from 'electron-updater'
 import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 import {
   appServerInfoSelector,
-  appElectronInfoSelector
+  appElectronInfoSelector,
 } from 'uiSrc/slices/app/info'
-import { ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
+import { ipcAppRestart, ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
 import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreValues'
+import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 
 const ConfigElectron = () => {
   let isCheckedUpdates = false
@@ -19,6 +22,7 @@ const ConfigElectron = () => {
 
   useEffect(() => {
     window.app?.deepLinkAction?.(deepLinkAction)
+    window.app?.updateAvailable?.(updateAvailableAction)
   }, [])
 
   useEffect(() => {
@@ -46,6 +50,10 @@ const ConfigElectron = () => {
         search: `from=${url.from}`
       })
     }
+  }
+
+  const updateAvailableAction = (_e: any, { version }: UpdateInfo) => {
+    dispatch(addInfiniteNotification(INFINITE_MESSAGES.APP_UPDATE_AVAILABLE(version, ipcAppRestart)))
   }
 
   return null

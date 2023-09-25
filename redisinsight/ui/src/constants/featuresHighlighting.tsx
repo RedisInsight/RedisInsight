@@ -12,7 +12,5 @@ interface BuildHighlightingFeature {
 }
 
 export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
-  cloudButton: {
-    type: 'plain'
-  }
+
 } as const

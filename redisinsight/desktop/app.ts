@@ -33,8 +33,6 @@ const init = async () => {
   initTray()
   initCloudHandlers()
 
-  nativeTheme.themeSource = config.themeSource
-
   app.setName(config.name)
   app.setAppUserModelId(config.name)
   if (process.platform !== 'darwin') {

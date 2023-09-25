@@ -30,8 +30,13 @@ export class UTF8FormatterStrategy implements IFormatterStrategy {
     return result;
   }
 
-  private formatRedisObjectReply(reply: Object): object {
+  private formatRedisObjectReply(reply: Object): object | string {
     const result = {};
+
+    if (reply instanceof Error) {
+      return reply.toString();
+    }
+
     Object.keys(reply).forEach((key) => {
       result[key] = this.format(reply[key]);
     });

@@ -1039,3 +1039,63 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
     ].map(mainCheckFn);
   })
 });
+
+describe('POST /databases/:instanceId/cli/:uuid/send-command (MULTI)', () => {
+  requirements('rte.type=STANDALONE');
+
+  before(rte.data.truncate);
+  // Create Redis client for CLI
+  before(async () => await request(server).patch(`/${constants.API.DATABASES}/${constants.TEST_INSTANCE_ID}/cli/${constants.TEST_CLI_UUID_1}`))
+
+  describe('Raw output', () => {
+    [
+      {
+        name: 'Should start transaction',
+        data: {
+          command: `multi`,
+          outputFormat: 'RAW',
+        },
+        responseRawSchema,
+        checkFn: ({ body }) => {
+          expect(body.response).to.eq("OK");
+        },
+      },
+      {
+        name: 'Should create string',
+        data: {
+          command: `set ${constants.TEST_STRING_KEY_1} bar`,
+          outputFormat: 'RAW',
+        },
+        responseRawSchema,
+        checkFn: ({ body }) => {
+          expect(body.response).to.eq("QUEUED")
+        },
+      },
+      {
+        name: 'Should create string',
+        data: {
+          command: `incr ${constants.TEST_STRING_KEY_1}`,
+          outputFormat: 'RAW',
+        },
+        responseRawSchema,
+        checkFn: ({ body }) => {
+          expect(body.response).to.eq("QUEUED")
+        },
+      },
+      {
+        name: 'Should create string',
+        data: {
+          command: 'exec',
+          outputFormat: 'RAW',
+        },
+        responseRawSchema,
+        checkFn: ({ body }) => {
+          expect(body.response).to.deep.eq([
+            'OK',
+            'ReplyError: ERR value is not an integer or out of range',
+          ]);
+        },
+      },
+    ].map(mainCheckFn);
+  })
+});

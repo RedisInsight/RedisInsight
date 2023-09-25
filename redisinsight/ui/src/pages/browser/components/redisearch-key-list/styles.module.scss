@@ -1,6 +1,6 @@
 .container {
   height: 36px;
-  width: 168px;
+  width: 200px;
   min-width: 80px;
   overflow: hidden;
   position: relative;
@@ -16,7 +16,7 @@
         border: 1px solid var(--controlsBorderColor) !important;
         border-left: 0 !important;
         border-right: 0 !important;
-        padding: 0 25px 0 10px !important;
+        padding: 0 55px 0 10px !important;
 
         overflow: hidden;
         white-space: nowrap;
@@ -28,9 +28,6 @@
 
         &:focus {
           background-color: var(--euiColorEmptyShade) !important;
-        }
-        &:not(:disabled):hover {
-          background-color: var(--hoverInListColorDarken) !important;
         }
       }
     }
@@ -51,6 +48,7 @@
     }
     .euiFormControlLayoutIcons {
       z-index: 6;
+      right: 36px;
 
       .euiLoadingSpinner {
         margin-right: -22px;
@@ -142,5 +140,25 @@
   &:focus {
     transform: none !important;
     background-color: transparent !important;
+  }
+}
+
+.refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  top: 50%;
+  right: 1px;
+  transform: translateY(-50%);
+  z-index: 6;
+
+  .refreshBtn {
+    width: 30px;
+
+    &:hover {
+      transform: translateY(0) !important;
+    }
   }
 }

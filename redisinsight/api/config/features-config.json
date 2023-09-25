@@ -1,5 +1,5 @@
 {
-  "version": 2.3204,
+  "version": 2.34,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -61,6 +61,14 @@
         "hideByName": [
           {
             "expression": "^RedisGraph.",
+            "options": "i"
+          },
+          {
+            "expression": "^RedisStackCompat?.",
+            "options": "i"
+          },
+          {
+            "expression": "^rediscompat?.",
             "options": "i"
           }
         ]

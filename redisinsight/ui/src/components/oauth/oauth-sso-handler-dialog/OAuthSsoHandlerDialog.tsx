@@ -8,7 +8,10 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
 
 export interface Props {
-  children: (ssoCloudHandlerClick: (e: React.MouseEvent, source: OAuthSocialSource) => void) => React.ReactElement
+  children: (
+    ssoCloudHandlerClick: (e: React.MouseEvent, source: OAuthSocialSource) => void,
+    isSSOEnabled: boolean,
+  ) => React.ReactElement
 }
 
 const OAuthSsoHandlerDialog = ({ children }: Props) => {
@@ -32,7 +35,7 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
     })
   }
 
-  return children?.(ssoCloudHandlerClick)
+  return children?.(ssoCloudHandlerClick, !!feature?.flag)
 }
 
 export default OAuthSsoHandlerDialog

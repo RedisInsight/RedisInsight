@@ -19,8 +19,8 @@ export class CloudRequestUtm {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
-  @Default('app')
-  medium? = 'app';
+  @Default('sso')
+  medium? = 'sso';
 
   @ApiPropertyOptional({
     type: String,

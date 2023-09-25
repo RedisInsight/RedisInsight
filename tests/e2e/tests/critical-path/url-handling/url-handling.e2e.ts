@@ -34,8 +34,8 @@ test
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).find('span').getAttribute('title')).contains(host, 'Wrong host value');
-        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).find('span').getAttribute('title')).contains(port, 'Wrong port value');
+        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
+        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
         await t.click(await myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
         await t.wait(3_000);
@@ -75,8 +75,8 @@ test
 
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.wait(3_000);
         await t.click(await workbenchPage.NavigationPanel.myRedisDBButton);
+        await t.expect(browserPage.notification.exists).notOk({ timeout: 10000 });
         await t.expect(await myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');
     });
 

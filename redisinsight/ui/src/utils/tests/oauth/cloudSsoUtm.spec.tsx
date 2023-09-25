@@ -14,6 +14,7 @@ const getCloudSsoUtmCampaignTestCases = [
   [OAuthSocialSource.BrowserFiltering, CloudSsoUtmCampaign.BrowserFilter],
   [OAuthSocialSource.WelcomeScreen, CloudSsoUtmCampaign.WelcomeScreen],
   [OAuthSocialSource.TriggersAndFunctions, CloudSsoUtmCampaign.TriggersAndFunctions],
+  [OAuthSocialSource.Tutorials, CloudSsoUtmCampaign.Tutorial],
   [null, CloudSsoUtmCampaign.Unknown],
   [undefined, CloudSsoUtmCampaign.Unknown],
 ]
@@ -24,7 +25,7 @@ describe('getCloudSsoUtmCampaign', () => {
     (input, expected) => {
       expect(getCloudSsoUtmParams(input)).toEqual(new URLSearchParams([
         ['source', 'redisinsight'],
-        ['medium', 'app'],
+        ['medium', 'sso'],
         ['campaign', expected],
       ]))
     }

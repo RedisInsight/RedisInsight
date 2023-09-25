@@ -1,6 +1,9 @@
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import config from 'src/utils/config';
 import { CloudCapiProvider } from './cloud.capi.provider';
+
+const serverConfig = config.get('server');
 
 const getPrefixTests = [
   {
@@ -17,22 +20,24 @@ const getPrefixTests = [
   },
 ];
 
+const userAgent = `RedisInsight/${serverConfig.version}`;
+
 const getHeadersTests = [
   {
     input: {},
-    expected: { 'x-api-key': undefined, 'x-api-secret-key': undefined, 'User-Agent': 'RedisInsight/2.32.0' },
+    expected: { 'x-api-key': undefined, 'x-api-secret-key': undefined, 'User-Agent': userAgent },
   },
   {
     input: { capiKey: 'key' },
-    expected: { 'x-api-key': 'key', 'x-api-secret-key': undefined, 'User-Agent': 'RedisInsight/2.32.0' },
+    expected: { 'x-api-key': 'key', 'x-api-secret-key': undefined, 'User-Agent': userAgent },
   },
   {
     input: { capiSecret: 'secret' },
-    expected: { 'x-api-key': undefined, 'x-api-secret-key': 'secret', 'User-Agent': 'RedisInsight/2.32.0' },
+    expected: { 'x-api-key': undefined, 'x-api-secret-key': 'secret', 'User-Agent': userAgent },
   },
   {
     input: { capiKey: 'key', capiSecret: 'secret' },
-    expected: { 'x-api-key': 'key', 'x-api-secret-key': 'secret', 'User-Agent': 'RedisInsight/2.32.0' },
+    expected: { 'x-api-key': 'key', 'x-api-secret-key': 'secret', 'User-Agent': userAgent },
   },
 ];
 

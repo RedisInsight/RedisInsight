@@ -4,6 +4,7 @@ enum IpcInvokeEvent {
   getAppVersion = 'app:get:version',
   cloudOauth = 'cloud:oauth',
   windowOpen = 'window:open',
+  themeChange = 'theme:change',
 }
 
 enum IpcOnEvent {

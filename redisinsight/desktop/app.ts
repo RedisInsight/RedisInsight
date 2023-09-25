@@ -33,8 +33,6 @@ const init = async () => {
   initTray()
   initCloudHandlers()
 
-  nativeTheme.themeSource = config.themeSource
-
   checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
 
   app.setName(config.name)

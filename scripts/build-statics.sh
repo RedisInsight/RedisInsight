@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+pluginsOnlyInstall="${pluginsOnlyInstall:-0}"
+
 # =============== Plugins ===============
 PLUGINS_DIR="./redisinsight/api/static/plugins"
 PLUGINS_VENDOR_DIR="./redisinsight/api/static/resources/plugins"

@@ -26,7 +26,7 @@ fixture `Tree view verifications`
     });
 test('Verify that user can see that "Tree view" mode is enabled state is saved when refreshes the page', async t => {
     // Verify that when user opens the application he can see that Tree View is disabled by default(Browser is selected by default)
-    await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(41, 47, 71)', 'The Browser is not selected by default');
+    await t.expect(browserPage.browserViewButton.getStyleProperty('background-color')).eql('rgb(215, 227, 250)', 'The Browser is not selected by default');
     await t.expect(browserPage.treeViewArea.exists).notOk('The tree view is displayed', { timeout: 10000 });
 
     await t.click(browserPage.treeViewButton);

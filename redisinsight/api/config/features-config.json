@@ -1,5 +1,5 @@
 {
-  "version": 2.34,
+  "version": 2.3401,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -28,6 +28,11 @@
         }
       ],
       "data": {
+        "filterFreePlan": [{
+          "field": "name",
+          "expression": "^(No HA?.)|(Cache?.)",
+          "options": "i"
+        }],
         "selectPlan": {
           "components": {
             "triggersAndFunctions": [

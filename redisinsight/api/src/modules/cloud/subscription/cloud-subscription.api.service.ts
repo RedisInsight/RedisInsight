@@ -4,6 +4,8 @@ import { SessionMetadata } from 'src/common/models';
 import { wrapHttpError } from 'src/common/utils';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
+import { FeatureService } from 'src/modules/feature/feature.service';
+import { KnownFeatures } from 'src/modules/feature/constants';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 import { CloudSubscriptionRegion, CloudSubscriptionType } from './models';
 import { CloudSessionService } from '../session/cloud-session.service';
@@ -20,6 +22,7 @@ export class CloudSubscriptionApiService {
     private readonly sessionService: CloudSessionService,
     private readonly cloudCapiKeyService: CloudCapiKeyService,
     private readonly cloudSubscriptionCapiService: CloudSubscriptionCapiService,
+    private readonly featureService: FeatureService,
   ) {}
 
   /**
@@ -42,9 +45,22 @@ export class CloudSubscriptionApiService {
         ),
       ]);
 
+      const cloudSsoFeature = await this.featureService.getByName(KnownFeatures.CloudSso);
+
       const freePlans = filter(
         fixedPlans,
-        ({ price, name }) => price === 0 && name.startsWith('Cache'),
+        (plan) => {
+          if (plan.price !== 0) {
+            return false;
+          }
+
+          if (!cloudSsoFeature?.data?.filterFreePlan?.length) {
+            return true;
+          }
+
+          return !!((cloudSsoFeature?.data?.filterFreePlan).find((f) => f.expression
+            && (new RegExp(f.expression, f.options)).test(plan[f?.field])));
+        },
       );
 
       return freePlans.map((plan) => ({

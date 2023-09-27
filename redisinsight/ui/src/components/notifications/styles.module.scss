@@ -62,5 +62,9 @@
       margin-right: 8px;
       margin-top: 2px;
     }
+
+    .infiniteMessage__btn .euiButton__text {
+      color: var(--euiColorSecondaryText) !important;
+    }
   }
 }

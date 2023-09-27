@@ -17,9 +17,14 @@ import {
   RedisModules,
 } from './interfaces'
 import { TelemetryEvent } from './events'
+import { checkIsAnalyticsGranted } from './checkAnalytics'
 
 const sendEventTelemetry = async ({ event, eventData = {} }: ITelemetrySendEvent) => {
   try {
+    const isAnalyticsGranted = checkIsAnalyticsGranted()
+    if (!isAnalyticsGranted) {
+      return
+    }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData })
   } catch (e) {
     // continue regardless of error
@@ -28,6 +33,10 @@ const sendEventTelemetry = async ({ event, eventData = {} }: ITelemetrySendEvent
 
 const sendPageViewTelemetry = async ({ name }: ITelemetrySendPageView) => {
   try {
+    const isAnalyticsGranted = checkIsAnalyticsGranted()
+    if (!isAnalyticsGranted) {
+      return
+    }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name })
   } catch (e) {
     // continue regardless of error

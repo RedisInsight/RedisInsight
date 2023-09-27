@@ -7,7 +7,7 @@ export class CloudOauthUnknownAuthorizationRequestException extends HttpExceptio
     const response = {
       message,
       statusCode: HttpStatus.BAD_REQUEST,
-      error: 'CloudOauthGithubEmailPermission',
+      error: 'CloudOauthUnknownAuthorizationRequest',
       errorCode: CustomErrorCodes.CloudOauthUnknownAuthorizationRequest,
     };
 

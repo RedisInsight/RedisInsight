@@ -33,10 +33,14 @@ export class CloudAuthService {
 
   static getAuthorizationServerRedirectError(query: { error_description: string }) {
     if (query?.error_description?.indexOf('properties are missing') > -1) {
-      return new CloudOauthMissedRequiredDataException(query.error_description);
+      return new CloudOauthMissedRequiredDataException(query.error_description, {
+        description: query.error_description,
+      });
     }
 
-    return new CloudOauthMisconfigurationException();
+    return new CloudOauthMisconfigurationException(undefined, {
+      description: query.error_description,
+    });
   }
 
   getAuthStrategy(strategy: CloudAuthIdpType): CloudAuthStrategy {

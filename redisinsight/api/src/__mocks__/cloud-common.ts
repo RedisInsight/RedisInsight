@@ -4,3 +4,9 @@ export const mockCapiUnauthorizedError = {
     status: 401,
   },
 };
+
+export const mockUtm = {
+  source: 'redisinsight',
+  medium: 'sso',
+  campaign: 'workbench',
+};

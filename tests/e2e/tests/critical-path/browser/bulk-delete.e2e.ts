@@ -185,3 +185,19 @@ test('Verify that when user clicks on Close button when bulk delete is completed
     await t.expect(browserPage.BulkActions.bulkDeleteCompletedSummary.exists).notOk('Bulk delete completed summary still displayed');
     await t.expect(browserPage.BulkActions.bulkDeleteSummary.textContent).contains('Scanned 100% (2/2) and found 1 keys', 'Bulk delete summary is not correct');
 });
+test
+    .before(async() => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
+        await browserPage.addHashKey(keyNames[0], '100000', Common.generateWord(20), Common.generateWord(20));
+    })('Verify that user can see the list of keys when click on “Back” button from the bulk actions', async t => {
+        await t.click(browserPage.bulkActionsButton);
+        await t.expect(browserPage.backToBrowserBtn.exists).notOk('"< Browser" button displayed for normal screen resolution');
+        // Minimize the window to check icon
+        await t.resizeWindow(1200, 900);
+        await t.expect(browserPage.keyDetailsTable.visible).ok('Bulk actions not opened', { timeout: 1000 });
+        // Verify that user can see the “Back” button when work with the bulk actions on small resolutions
+        await t.expect(browserPage.backToBrowserBtn.exists).ok('"< Browser" button not displayed for small screen resolution');
+        await t.click(browserPage.backToBrowserBtn);
+        // Verify that key details closed
+        await t.expect(browserPage.keyDetailsTable.visible).notOk('Bulk actions not closed by clicking on "< Browser" button', { timeout: 1000 });
+    });

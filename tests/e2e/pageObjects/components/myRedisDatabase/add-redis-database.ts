@@ -24,7 +24,6 @@ export class AddRedisDatabase {
     databaseIndexCheckbox = Selector('[data-testid=showDb]~div', { timeout: 500 });
     connectToDatabaseButton = Selector('[data-testid=connect-to-db-btn]');
     connectToRedisStackButton = Selector('[aria-label="Connect to database"]');
-    discoverSentinelDatabaseButton = Selector('[data-testid=btn-submit]');
     cloneDatabaseButton = Selector('[data-testid=clone-db-btn]');
     sentinelNavigation = Selector('[data-testid=sentinel-nav-group]');
     cloneSentinelNavigation = Selector('[data-testid=sentinel-nav-group-clone]');
@@ -34,6 +33,7 @@ export class AddRedisDatabase {
     showPasswordBtn = Selector('[aria-label^="Show password"]');
     testConnectionBtn = Selector('[data-testid=btn-test-connection]');
     // TEXT INPUTS (also referred to as 'Text fields')
+    disabledDatabaseInfo = Selector('[class=euiListGroupItem__label]');
     hostInput = Selector('[data-testid=host]');
     portInput = Selector('[data-testid=port]');
     databaseAliasInput = Selector('[data-testid=name]');

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { get, set } from 'lodash';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { classToClass } from 'src/utils';
@@ -10,12 +11,23 @@ import { ModelEncryptor } from 'src/modules/encryption/model.encryptor';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 
 @Injectable()
 export class LocalDatabaseRepository extends DatabaseRepository {
   private readonly modelEncryptor: ModelEncryptor;
 
   private readonly sshModelEncryptor: ModelEncryptor;
+
+  private uniqFieldsForCloudDatabase: string[] = [
+    'host',
+    'port',
+    'username',
+    'password',
+    'caCert.certificate',
+    'clientCert.certificate',
+    'clientCert.key',
+  ];
 
   constructor(
     @InjectRepository(DatabaseEntity)
@@ -88,8 +100,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   /**
    * Create database with encrypted sensitive fields
    * @param database
+   * @param uniqueCheck
    */
-  public async create(database: Database): Promise<Database> {
+  public async create(database: Database, uniqueCheck: boolean): Promise<Database> {
+    if (uniqueCheck) {
+      await this.checkUniqueness(database);
+    }
     const entity = classToClass(DatabaseEntity, await this.populateCertificates(database));
     return classToClass(
       Database,
@@ -204,5 +220,40 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     }
 
     return decryptedEntity;
+  }
+
+  /**
+   * Check uniqueness of the database
+   * @param database
+   * @private
+   * @throws DatabaseAlreadyExistsException
+   */
+  private async checkUniqueness(database: Database): Promise<void> {
+    // Do not create a connection if it triggered from cloud and have the same fields
+    if (database.cloudDetails?.cloudId) {
+      const entity = await this.encryptEntity(classToClass(DatabaseEntity, { ...database }));
+
+      if (entity.caCert) {
+        entity.caCert = await (new ModelEncryptor(this.encryptionService, [
+          'certificate',
+        ])).encryptEntity(entity.caCert);
+      }
+
+      if (entity.clientCert) {
+        entity.clientCert = await (new ModelEncryptor(this.encryptionService, [
+          'certificate', 'key',
+        ])).encryptEntity(entity.clientCert);
+      }
+
+      const query: FindOptionsWhere<DatabaseEntity> = {};
+      this.uniqFieldsForCloudDatabase.forEach((field) => {
+        set(query, field, get(entity, field));
+      });
+
+      const existingDatabase = await this.repository.findOneBy(query);
+      if (existingDatabase) {
+        throw new DatabaseAlreadyExistsException(existingDatabase.id);
+      }
+    }
   }
 }

@@ -7,6 +7,8 @@ import {
   mockIOClusterNode2,
   mockIORedisClient,
   mockIORedisCluster,
+  mockRedisClientList,
+  mockRedisClientListResult,
   mockRedisClientsInfoResponse,
   mockRedisClusterFailInfoResponse,
   mockRedisClusterNodesResponse,
@@ -23,7 +25,7 @@ import {
 import { REDIS_MODULES_COMMANDS, AdditionalRedisModuleName } from 'src/constants';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { FeatureService } from 'src/modules/feature/feature.service';
@@ -216,6 +218,29 @@ describe('DatabaseInfoProvider', () => {
       const result = await service.getDatabasesCount(mockIORedisClient);
 
       expect(result).toBe(1);
+    });
+  });
+
+  describe('getClientListInfo', () => {
+    it('get client list info', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('client', ['list'])
+        .mockResolvedValue(mockRedisClientList);
+
+      const result = await service.getClientListInfo(mockIORedisClient);
+
+      expect(result).toEqual(mockRedisClientListResult);
+    });
+    it('failed to get client list', async () => {
+      when(mockIORedisClient.call)
+        .calledWith('client', ['list'])
+        .mockRejectedValue(new Error("unknown command 'client'"));
+
+      try {
+        await service.getClientListInfo(mockIORedisClient)
+      } catch (err) {
+        expect(err).toBeInstanceOf(InternalServerErrorException);
+      }
     });
   });
 

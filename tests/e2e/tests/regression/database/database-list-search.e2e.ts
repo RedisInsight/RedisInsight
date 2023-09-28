@@ -35,9 +35,7 @@ fixture `Database list search`
     })
     .afterEach(async() => {
         // Clear and delete databases
-        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
-        await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-        await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify DB list search', async t => {
     const searchedDBHostInvalid = 'invalid';

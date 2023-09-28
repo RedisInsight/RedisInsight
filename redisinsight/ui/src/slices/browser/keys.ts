@@ -546,7 +546,7 @@ export function fetchPatternKeysAction(
           }
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
-              state.browser.keys?.viewType,
+              localStorageService?.get(BrowserStorageItem.browserViewType),
               TelemetryEvent.BROWSER_KEYS_SCANNED_WITH_FILTER_ENABLED,
               TelemetryEvent.TREE_VIEW_KEYS_SCANNED_WITH_FILTER_ENABLED
             ),
@@ -559,21 +559,6 @@ export function fetchPatternKeysAction(
               scanCount: count,
               source: telemetryProperties.source ?? 'manual',
               ...telemetryProperties,
-            }
-          })
-        }
-        if (!type && !match && cursor === '0') {
-          sendEventTelemetry({
-            event: getBasedOnViewTypeEvent(
-              state.browser.keys?.viewType,
-              TelemetryEvent.BROWSER_KEYS_SCANNED,
-              TelemetryEvent.TREE_VIEW_KEYS_SCANNED
-            ),
-            eventData: {
-              databaseId: state.connections.instances?.connectedInstance?.id,
-              databaseSize: data[0].total,
-              numberOfKeysScanned: data[0].scanned,
-              scanCount: count,
             }
           })
         }
@@ -879,18 +864,6 @@ export function deleteSelectedKeyAction(
       )
 
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEYS_DELETED,
-            TelemetryEvent.TREE_VIEW_KEYS_DELETED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            numberOfDeletedKeys: 1,
-            source: 'keyValue',
-          }
-        })
         dispatch(deleteSelectedKeySuccess())
         dispatch<any>(deleteKeyFromList(key))
         onSuccessAction?.()
@@ -926,18 +899,6 @@ export function deleteKeyAction(
       )
 
       if (isStatusSuccessful(status)) {
-        sendEventTelemetry({
-          event: getBasedOnViewTypeEvent(
-            state.browser.keys?.viewType,
-            TelemetryEvent.BROWSER_KEYS_DELETED,
-            TelemetryEvent.TREE_VIEW_KEYS_DELETED
-          ),
-          eventData: {
-            databaseId: state.connections.instances?.connectedInstance?.id,
-            numberOfDeletedKeys: 1,
-            source: 'keyList',
-          }
-        })
         dispatch(deleteKeySuccess())
         dispatch<any>(deleteKeyFromList(key))
         onSuccessAction?.()

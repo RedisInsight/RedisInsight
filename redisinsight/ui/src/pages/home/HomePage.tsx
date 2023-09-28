@@ -21,9 +21,10 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { localStorageService } from 'uiSrc/services'
 import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slices/content/create-redis-buttons'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
+import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
+import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import AddDatabaseContainer, { AddDbType } from './components/AddDatabases/AddDatabasesContainer'
 import DatabasesList from './components/DatabasesListComponent/DatabasesListWrapper'
 import WelcomeComponent from './components/WelcomeComponent/WelcomeComponent'
@@ -49,6 +50,7 @@ const HomePage = () => {
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
+  const { action, dbConnection } = useSelector(appRedirectionSelector)
 
   const {
     loading,
@@ -60,8 +62,6 @@ const HomePage = () => {
   const {
     data: editedInstance,
   } = useSelector(editedInstanceSelector)
-
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   const { contextInstanceId } = useSelector(appContextSelector)
 
@@ -97,19 +97,25 @@ const HomePage = () => {
   }, [isChangedInstance])
 
   useEffect(() => {
-    if (!isPageViewSent && !isChangedInstance && instances.length && analyticsIdentified) {
+    if (!isPageViewSent && !isChangedInstance && instances.length) {
       setIsPageViewSent(true)
       sendPageViewTelemetry({
         name: TelemetryPageView.DATABASES_LIST_PAGE
       })
     }
-  }, [instances, analyticsIdentified, isPageViewSent, isChangedInstance])
+  }, [instances, isPageViewSent, isChangedInstance])
 
   useEffect(() => {
     if (clusterCredentials || cloudCredentials || sentinelInstance) {
       setAddDialogIsOpen(true)
     }
   }, [clusterCredentials, cloudCredentials, sentinelInstance])
+
+  useEffect(() => {
+    if (action === UrlHandlingActions.Connect) {
+      setAddDialogIsOpen(true)
+    }
+  }, [action, dbConnection])
 
   useEffect(() => {
     const isDialogOpen = !!instances.length && (addDialogIsOpen || editDialogIsOpen)
@@ -164,6 +170,10 @@ const HomePage = () => {
     dispatch(setEditedInstance(null))
     setEditDialogIsOpen(false)
 
+    if (action === UrlHandlingActions.Connect) {
+      dispatch(setUrlHandlingInitialState())
+    }
+
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_ADD_FORM_DISMISSED
     })
@@ -216,7 +226,6 @@ const HomePage = () => {
                 key="instance-controls"
                 onAddInstance={handleAddInstance}
                 direction="row"
-                welcomePage={!instances.length}
               />
               {dialogIsOpen ? (
                 <div key="homePage" className="homePage">
@@ -269,6 +278,8 @@ const HomePage = () => {
                               editMode={false}
                               width={width}
                               isResizablePanel
+                              urlHandlingAction={action}
+                              initialValues={dbConnection ?? null}
                               editedInstance={sentinelInstance ?? null}
                               onClose={handleClose}
                               isFullWidth={!instances.length}
@@ -297,6 +308,8 @@ const HomePage = () => {
                           editMode={false}
                           width={width}
                           isResizablePanel
+                          urlHandlingAction={action}
+                          initialValues={dbConnection ?? null}
                           editedInstance={sentinelInstance ?? null}
                           onClose={handleClose}
                           isFullWidth={!instances.length}

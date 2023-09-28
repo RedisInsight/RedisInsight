@@ -31,6 +31,7 @@ import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
 import { initialState as initialStateAppActionBarReducer } from 'uiSrc/slices/app/actionBar'
+import { initialState as initialStateAppUrlHandlingReducer } from 'uiSrc/slices/app/url-handling'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
 import { initialState as initialStateMonitor } from 'uiSrc/slices/cli/monitor'
@@ -71,6 +72,7 @@ const initialStateDefault: RootState = {
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
     features: cloneDeep(initialStateAppFeaturesReducer),
     actionBar: cloneDeep(initialStateAppActionBarReducer),
+    urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -202,6 +204,7 @@ jest.mock('react-router-dom', () => ({
   }),
   useLocation: () => ({
     pathname: 'pathname',
+    search: '',
   }),
   useParams: () => ({
     instanceId: 'instanceId',
@@ -220,15 +223,6 @@ jest.mock('react-router-dom', () => ({
 jest.mock(
   'react-virtualized-auto-sizer',
   () => ({ children }) => children({ height: 600, width: 600 })
-)
-
-jest.mock(
-  'uiSrc/telemetry/checkAnalytics',
-  () => ({
-    checkIsAnalyticsGranted: jest.fn(),
-    getAppType: jest.fn(),
-    getInfoServer: jest.fn().mockReturnValue({}),
-  })
 )
 
 export const MOCKED_HIGHLIGHTING_FEATURES = ['importDatabases', 'anotherFeature']
@@ -257,6 +251,11 @@ jest.mock('uiSrc/constants/recommendations', () => ({
   ANIMATION_INSIGHT_PANEL_MS: jest.fn().mockReturnValue(0),
 }))
 
+// mock to not import routes
+jest.mock('uiSrc/utils/routing', () => ({
+  getRedirectionPage: jest.fn(),
+}))
+
 export const localStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),
@@ -273,6 +272,17 @@ Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock })
 
 const scrollIntoViewMock = jest.fn()
 window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock
+
+const matchMediaMock = () => ({
+  matches: false,
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+})
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => matchMediaMock(query)),
+})
 
 export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)
 export const getMswURL = (path: string = '') =>

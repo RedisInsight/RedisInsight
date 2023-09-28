@@ -63,9 +63,7 @@ export class DatabaseService {
   async list(): Promise<Database[]> {
     try {
       this.logger.log('Getting databases list');
-      const result = await this.repository.list();
-      this.analytics.sendInstanceListReceivedEvent(result);
-      return result;
+      return await this.repository.list();
     } catch (e) {
       this.logger.error('Failed to get database instance list.', e);
       throw new InternalServerErrorException();
@@ -98,15 +96,16 @@ export class DatabaseService {
   /**
    * Create new database with auto-detection of database type, modules, etc.
    * @param dto
+   * @param uniqueCheck
    */
-  async create(dto: CreateDatabaseDto): Promise<Database> {
+  async create(dto: CreateDatabaseDto, uniqueCheck = false): Promise<Database> {
     try {
       this.logger.log('Creating new database.');
 
       const database = await this.repository.create({
         ...await this.databaseFactory.createDatabaseModel(classToClass(Database, dto)),
         new: true,
-      });
+      }, uniqueCheck);
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {

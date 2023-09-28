@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import {
@@ -12,14 +12,12 @@ import {
 } from '@elastic/eui'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { Theme, EAManifestFirstKey, Pages, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
+import { Theme, Pages, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { ReactComponent as TriggersAndFunctionsImageDark } from 'uiSrc/assets/img/triggers_and_functions_dark.svg'
 import { ReactComponent as TriggersAndFunctionsImageLight } from 'uiSrc/assets/img/triggers_and_functions_light.svg'
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { findMarkdownPathByPath } from 'uiSrc/utils'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
@@ -29,6 +27,8 @@ export interface IProps {
   isAddLibraryPanelOpen?: boolean
   onAddLibrary?: () => void
 }
+
+const mdPath = '/quick-guides/triggers-and-functions/introduction.md'
 
 const ListItem = ({ item }: { item: string }) => (
   <li className={styles.listItem}>
@@ -43,7 +43,6 @@ const moduleName = MODULE_TEXT_VIEW[RedisDefaultModules.RedisGears]
 
 const NoLibrariesScreen = (props: IProps) => {
   const { isAddLibraryPanelOpen, isModuleLoaded, onAddLibrary = () => {} } = props
-  const { items: guides } = useSelector(workbenchGuidesSelector)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
@@ -53,9 +52,10 @@ const NoLibrariesScreen = (props: IProps) => {
   const goToTutorial = () => {
     // triggers and functions tutorial does not upload
     dispatch(setWorkbenchEAMinimized(false))
-    const quickGuidesPath = findMarkdownPathByPath(guides, '/quick-guides/triggers-and-functions/introduction.md')
-    if (quickGuidesPath) {
-      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
+
+    if (mdPath) {
+      history.push(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
+      return
     }
 
     dispatch(resetWorkbenchEASearch())

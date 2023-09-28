@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
@@ -16,24 +16,23 @@ import {
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, findMarkdownPathByPath, Maybe } from 'uiSrc/utils'
+import { Nullable, Maybe, openNewWindowDatabase } from 'uiSrc/utils'
 import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
-import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
+import { Pages, Theme } from 'uiSrc/constants'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
-import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import { ReactComponent as SnoozeIcon } from 'uiSrc/assets/img/icons/snooze.svg'
 import { ReactComponent as StarsIcon } from 'uiSrc/assets/img/icons/stars.svg'
 
+import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -41,8 +40,6 @@ export interface IProps {
   name: string
   isRead: boolean
   vote: Nullable<Vote>
-  guides: IEnablementAreaItem[]
-  tutorials: IEnablementAreaItem[]
   hide: boolean
   tutorial?: string
   provider?: string
@@ -56,8 +53,6 @@ const Recommendation = ({
   isRead,
   vote,
   tutorial,
-  guides,
-  tutorials,
   hide,
   provider,
   params,
@@ -86,20 +81,13 @@ const Recommendation = ({
       }
     })
 
+    dispatch(setWorkbenchEAMinimized(false))
     if (tutorial) {
-      const quickGuidesPath = findMarkdownPathByPath(guides, tutorial)
-      if (quickGuidesPath) {
-        history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
-        return
-      }
-
-      const tutorialsPath = findMarkdownPathByPath(tutorials, tutorial)
-      if (tutorialsPath) {
-        history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`)
-        return
-      }
+      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
+      return
     }
 
+    dispatch(resetWorkbenchEASearch())
     history.push(Pages.workbench(instanceId))
   }
 

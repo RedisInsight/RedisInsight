@@ -9,6 +9,7 @@ import { addErrorNotification, addInfiniteNotification, removeInfiniteNotificati
 import { RootState } from 'uiSrc/slices/store'
 import { loadInstances } from 'uiSrc/slices/instances/instances'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import { CustomErrorCodes } from 'uiSrc/constants'
 import OAuthJobs from './OAuthJobs'
 
 jest.mock('react-redux', () => ({
@@ -128,8 +129,68 @@ describe('OAuthJobs', () => {
     rerender(<OAuthJobs />)
 
     const expectedActions = [
-      removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
       addErrorNotification({ response: { data: error } } as AxiosError),
+      removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+    ]
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions(expectedActions)
+    )
+  })
+
+  it('should call addInfiniteNotification and removeInfiniteNotification when errorCode is 11_108', async () => {
+    const mockDatabaseId = '123'
+    const error = {
+      errorCode: CustomErrorCodes.CloudDatabaseAlreadyExistsFree,
+      resource: {
+        databaseId: mockDatabaseId
+      }
+    };
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: ''
+    }))
+
+    const { rerender } = render(<OAuthJobs />);
+
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: CloudJobStatus.Failed,
+      error,
+    }))
+
+    rerender(<OAuthJobs />)
+
+    const expectedActions = [
+      addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+    ]
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions(expectedActions)
+    )
+  })
+
+  it('should call addInfiniteNotification and removeInfiniteNotification when errorCode is 11_114', async () => {
+    const mockDatabaseId = '123'
+    const error = {
+      errorCode: CustomErrorCodes.CloudSubscriptionAlreadyExistsFree,
+      resource: {
+        databaseId: mockDatabaseId
+      }
+    };
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: ''
+    }))
+
+    const { rerender } = render(<OAuthJobs />);
+
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: CloudJobStatus.Failed,
+      error,
+    }))
+
+    rerender(<OAuthJobs />)
+
+    const expectedActions = [
+      addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions(expectedActions)

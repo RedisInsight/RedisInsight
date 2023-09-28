@@ -1,12 +1,13 @@
 import {
   ClassSerializerInterceptor,
-  Controller, Get, Param, Put, UseInterceptors, UsePipes, ValidationPipe,
+  Controller, Get, Param, Put, Query, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CloudUser } from 'src/modules/cloud/user/models';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 
 @ApiTags('Cloud User')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -23,8 +24,11 @@ export class CloudUserController {
     statusCode: 200,
     responses: [{ type: CloudUser }],
   })
-  async me(@RequestSessionMetadata() sessionMetadata): Promise<CloudUser> {
-    return this.service.me(sessionMetadata);
+  async me(
+    @RequestSessionMetadata() sessionMetadata,
+      @Query() utm: CloudRequestUtm,
+  ): Promise<CloudUser> {
+    return this.service.me(sessionMetadata, false, utm);
   }
 
   @Put('/accounts/:id/current')

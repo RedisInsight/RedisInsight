@@ -10,7 +10,7 @@ import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/con
 import { appContextWorkbenchEA, resetWorkbenchEASearch } from 'uiSrc/slices/app/context'
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
-import { Nullable } from 'uiSrc/utils'
+import { findMarkdownPathByPath, Nullable } from 'uiSrc/utils'
 import {
   FormValues
 } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/components/UploadTutorialForm/UploadTutorialForm'
@@ -92,11 +92,34 @@ const EnablementArea = (props: Props) => {
   }, [search])
 
   useEffect(() => {
+    // handle guidePath search param
+    const guidePathParam = new URLSearchParams(search).get('guidePath')
+    if (guidePathParam) {
+      const guidesPath = findMarkdownPathByPath(guides, guidePathParam)
+      let manifestPath = ''
+
+      if (guidesPath) {
+        manifestPath = `${EAManifestFirstKey.GUIDES}/${guidesPath}`
+      }
+
+      const tutorialsPath = findMarkdownPathByPath(tutorials, guidePathParam)
+      if (tutorialsPath) {
+        manifestPath = `${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`
+      }
+
+      if (manifestPath) {
+        handleOpenInternalPage({ path: '', manifestPath })
+      }
+    }
+  }, [search, tutorials, guides])
+
+  useEffect(() => {
     const manifestPath = new URLSearchParams(search).get('path')
+    const guidePath = new URLSearchParams(search).get('guidePath')
     const contextManifestPath = new URLSearchParams(searchEAContext).get('path')
     const { manifest, prefixFolder } = getManifestByPath(manifestPath)
 
-    if (isEmpty(manifest) && !contextManifestPath) {
+    if (guidePath || (isEmpty(manifest) && !contextManifestPath)) {
       return
     }
 

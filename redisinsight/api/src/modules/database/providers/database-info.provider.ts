@@ -302,6 +302,19 @@ export class DatabaseInfoProvider {
     }
   }
 
+  public async getClientListInfo(client: any): Promise<any[]> {
+    try {
+      const clientListResponse = await client.call('client', ['list']);
+
+      return clientListResponse
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .map((r) => convertBulkStringsToObject(r, ' ', '='));
+    } catch (error) {
+      throw catchAclError(error);
+    }
+  }
+
   /**
    * Try to determine number of logical database from the `info keyspace`
    *

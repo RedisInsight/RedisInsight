@@ -26,6 +26,7 @@ export interface Props {
   onHostNamePaste: (content: string) => boolean
   instanceType: InstanceType
   connectionType?: ConnectionType
+  isFromCloud: boolean
 }
 
 const DatabaseForm = (props: Props) => {
@@ -37,7 +38,8 @@ const DatabaseForm = (props: Props) => {
     isCloneMode,
     onHostNamePaste,
     instanceType,
-    connectionType
+    connectionType,
+    isFromCloud,
   } = props
 
   const { server } = useSelector(appInfoSelector)
@@ -81,7 +83,7 @@ const DatabaseForm = (props: Props) => {
   return (
     <>
       <EuiFlexGroup className={flexGroupClassName}>
-        {(!isEditMode || isCloneMode) && (
+        {(!isEditMode || isCloneMode) && !isFromCloud && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
@@ -106,7 +108,7 @@ const DatabaseForm = (props: Props) => {
             </EuiFormRow>
           </EuiFlexItem>
         )}
-        {server?.buildType !== BuildType.RedisStack && (
+        {server?.buildType !== BuildType.RedisStack && !isFromCloud && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
               <EuiFieldNumber

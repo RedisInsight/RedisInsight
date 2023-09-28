@@ -15,7 +15,7 @@ export const millisecondsFormat = (milliseconds: number, formatMask: string = 'H
 
 export const truncateMilliseconds = (milliseconds: number): string => {
   if (milliseconds < 1000) {
-    return `${milliseconds} ms`
+    return `${milliseconds} msec`
   }
 
   return truncateNumberToFirstUnit(milliseconds / 1000)

@@ -12,6 +12,7 @@ import { themeService } from './services'
 import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
+import ThemeComponent from './components/theme/ThemeComponent'
 import GlobalDialogs from './components/global-dialogs'
 import GlobalActionBar from './components/global-action-bar'
 
@@ -38,6 +39,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
   return (
     <div className="main-container">
+      <ThemeComponent />
       { serverLoading
         ? <PagePlaceholder />
         : (

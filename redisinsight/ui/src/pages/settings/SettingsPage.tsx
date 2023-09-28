@@ -18,11 +18,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
-import { FeatureFlags, THEMES } from 'uiSrc/constants'
+import { FeatureFlags, Theme, THEMES } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { ConsentsNotifications, ConsentsPrivacy, FeatureFlagComponent } from 'uiSrc/components'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
-import { appAnalyticsInfoSelector } from 'uiSrc/slices/app/info'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
@@ -37,7 +36,6 @@ import styles from './styles.module.scss'
 const SettingsPage = () => {
   const [loading, setLoading] = useState(false)
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
-  const { identified: analyticsIdentified } = useSelector(appAnalyticsInfoSelector)
 
   const initialOpenSection = globalThis.location.hash || ''
 
@@ -45,7 +43,11 @@ const SettingsPage = () => {
 
   const options = THEMES
   const themeContext = useContext(ThemeContext)
-  const { theme, changeTheme } = themeContext
+  let { theme, changeTheme, usingSystemTheme } = themeContext
+
+  if (usingSystemTheme) {
+    theme = Theme.System
+  }
 
   useEffect(() => {
     // componentDidMount
@@ -54,12 +56,10 @@ const SettingsPage = () => {
   }, [])
 
   useEffect(() => {
-    if (analyticsIdentified) {
-      sendPageViewTelemetry({
-        name: TelemetryPageView.SETTINGS_PAGE
-      })
-    }
-  }, [analyticsIdentified])
+    sendPageViewTelemetry({
+      name: TelemetryPageView.SETTINGS_PAGE
+    })
+  }, [])
 
   useDebouncedEffect(() => setLoading(settingsLoading), 100, [settingsLoading])
   setTitle('Settings')

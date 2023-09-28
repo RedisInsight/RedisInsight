@@ -21,10 +21,11 @@ export interface Props {
   port: string
   db: Nullable<number>
   modules: AdditionalRedisModule[]
+  isFromCloud: boolean
 }
 
 const DbInfo = (props: Props) => {
-  const { connectionType, nameFromProvider, nodes = null, host, port, db, modules } = props
+  const { connectionType, nameFromProvider, nodes = null, host, port, db, modules, isFromCloud } = props
 
   const { server } = useSelector(appInfoSelector)
 
@@ -59,16 +60,18 @@ const DbInfo = (props: Props) => {
 
   return (
     <EuiListGroup className={styles.dbInfoGroup} flush>
-      <EuiListGroupItem
-        label={(
-          <EuiText color="subdued" size="s">
-            Connection Type:
-            <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="connection-type">
-              {capitalize(connectionType)}
-            </EuiTextColor>
-          </EuiText>
-        )}
-      />
+      {!isFromCloud && (
+        <EuiListGroupItem
+          label={(
+            <EuiText color="subdued" size="s">
+              Connection Type:
+              <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="connection-type">
+                {capitalize(connectionType)}
+              </EuiTextColor>
+            </EuiText>
+          )}
+        />
+      )}
 
       {nameFromProvider && (
         <EuiListGroupItem
@@ -88,19 +91,19 @@ const DbInfo = (props: Props) => {
             {!!nodes?.length && <AppendEndpoints />}
             <EuiText color="subdued" size="s">
               Host:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+              <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="db-info-host">
                 {host}
               </EuiTextColor>
             </EuiText>
           </>
         )}
       />
-      {server?.buildType === BuildType.RedisStack && (
+      {(server?.buildType === BuildType.RedisStack || isFromCloud) && (
         <EuiListGroupItem
           label={(
             <EuiText color="subdued" size="s">
               Port:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+              <EuiTextColor color="default" className={styles.dbInfoListValue} data-testid="db-info-port">
                 {port}
               </EuiTextColor>
             </EuiText>

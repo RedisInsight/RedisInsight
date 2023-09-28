@@ -34,7 +34,7 @@ import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelec
 import { streamSelector } from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { getBasedOnViewTypeEvent, getRefreshEventData, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   formatBytes,
   formatLongName,
@@ -208,25 +208,7 @@ const KeyDetailsHeader = ({
     })
   }
 
-  const handleRefreshKey = (enableAutoRefresh: boolean) => {
-    if (!enableAutoRefresh) {
-      const eventData = getRefreshEventData(
-        {
-          databaseId: instanceId,
-          keyType: type
-        },
-        type,
-        streamViewType
-      )
-      sendEventTelemetry({
-        event: getBasedOnViewTypeEvent(
-          viewType,
-          TelemetryEvent.BROWSER_KEY_DETAILS_REFRESH_CLICKED,
-          TelemetryEvent.TREE_VIEW_KEY_DETAILS_REFRESH_CLICKED
-        ),
-        eventData
-      })
-    }
+  const handleRefreshKey = () => {
     onRefresh(keyBuffer, type)
   }
 
@@ -551,18 +533,7 @@ const KeyDetailsHeader = ({
                   </EuiFlexItem>
                 )}
                 <EuiFlexItem grow={false}>
-                  {arePanelsCollapsed && !isFullScreen ? (
-                    <EuiButton
-                      fill
-                      color="secondary"
-                      onClick={() => onClose(keyProp)}
-                      size="s"
-                      iconType="arrowLeft"
-                      className={styles.backBtn}
-                    >
-                      Back
-                    </EuiButton>
-                  ) : (
+                  {(!arePanelsCollapsed || isFullScreen) && (
                     <EuiToolTip
                       content="Close"
                       position="left"

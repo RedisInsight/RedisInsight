@@ -47,14 +47,3 @@ test('Verify that user can see Redis Stack icon in Edit mode near the DB name', 
     const databaseName = myRedisDatabasePage.redisStackIcon.parent().nextSibling();
     await t.expect(databaseName.withAttribute('data-testid', 'edit-alias-btn').exists).ok('Edit button not found');
 });
-test('Verify that user can see Redis Stack icon and logo in Browser page in Overview.', async t => {
-    await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
-    await t.expect(browserPage.OverviewPanel.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
-    // Open Workbench page
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-    await t.expect(browserPage.OverviewPanel.overviewRedisStackLogo.visible).ok('Redis Stack logo not found');
-    // Check modules inside of the tooltip
-    await t.hover(browserPage.OverviewPanel.overviewRedisStackLogo);
-    await t.expect(myRedisDatabasePage.moduleTooltip.visible).ok('Tooltip with modules not found');
-    await myRedisDatabasePage.checkModulesInTooltip(moduleNameList);
-});

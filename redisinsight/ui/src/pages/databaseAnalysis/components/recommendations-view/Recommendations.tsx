@@ -15,21 +15,21 @@ import {
 } from '@elastic/eui'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
-import { connectedInstanceSelector, freeInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { EAManifestFirstKey, Pages, Theme } from 'uiSrc/constants'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { Pages, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
-import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
-import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
+
 import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
-import { findMarkdownPathByPath } from 'uiSrc/utils'
+import { openNewWindowDatabase } from 'uiSrc/utils'
+
 import {
   sortRecommendations,
   renderRecommendationBadgesLegend,
@@ -41,8 +41,6 @@ import styles from './styles.module.scss'
 
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
-  const { items: guides } = useSelector(workbenchGuidesSelector)
-  const { items: tutorials } = useSelector(workbenchTutorialsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
   const { content: recommendationsContent } = useSelector(recommendationsSelector)
   const { recommendations = [] } = data ?? {}
@@ -74,15 +72,8 @@ const Recommendations = () => {
     })
 
     dispatch(setWorkbenchEAMinimized(false))
-    const quickGuidesPath = findMarkdownPathByPath(guides, mdPath)
-    if (quickGuidesPath) {
-      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.GUIDES}/${quickGuidesPath}`)
-      return
-    }
-
-    const tutorialsPath = findMarkdownPathByPath(tutorials, mdPath)
-    if (tutorialsPath) {
-      history.push(`${Pages.workbench(instanceId)}?path=${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`)
+    if (mdPath) {
+      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
       return
     }
 

@@ -6,3 +6,7 @@ export const mockCloudTaskInit: ICloudCapiTask = {
   status: 'initialized',
   timestamp: '2023-07-01T00:00:00.000Z',
 };
+
+export const mockCloudTaskCapiProvider = jest.fn(() => ({
+  getTask: jest.fn().mockResolvedValue(mockCloudTaskInit),
+}));

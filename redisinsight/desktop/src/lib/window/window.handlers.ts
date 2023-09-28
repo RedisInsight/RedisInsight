@@ -1,13 +1,15 @@
-import { BrowserWindow, app, shell } from 'electron'
+import { BrowserWindow, app, shell, ipcMain } from 'electron'
 import {
   MenuBuilder,
   getDisplayAppInTrayValue,
   getIsQuiting,
   getTray,
   getTrayInstance,
-  electronStore
+  electronStore,
+  windowFactory,
+  WindowType,
 } from 'desktopSrc/lib'
-import { ElectronStorageItem, IpcOnEvent } from 'uiSrc/electron/constants'
+import { IpcInvokeEvent, ElectronStorageItem, IpcOnEvent } from 'uiSrc/electron/constants'
 
 export const initWindowHandlers = (
   newWindow: BrowserWindow,
@@ -90,5 +92,11 @@ export const initWindowHandlers = (
   newWindow.webContents.setWindowOpenHandler((edata: any) => {
     shell.openExternal(edata.url)
     return { action: 'deny' }
+  })
+}
+
+export const initWindowIPCHandlers = () => {
+  ipcMain.handle(IpcInvokeEvent.windowOpen, async (_event, { location }) => {
+    await windowFactory(WindowType.Main, null, { parsedDeepLink: { initialPage: location } })
   })
 }

@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CloudJob } from 'src/modules/cloud/job/jobs';
+import {
+  CloudJob,
+  CreateFreeSubscriptionAndDatabaseCloudJob,
+  ImportFreeDatabaseCloudJob
+} from 'src/modules/cloud/job/jobs';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CreateFreeDatabaseCloudJob } from 'src/modules/cloud/job/jobs/create-free-database.cloud-job';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
@@ -31,12 +35,44 @@ export class CloudJobFactory {
       sessionMetadata: SessionMetadata,
       utm?: CloudRequestUtm,
       capiCredentials?: CloudCapiAuthDto,
-      stateCallback?: (self: CloudJob) => any,
+      stateCallbacks?: ((self: CloudJob) => any)[],
     },
   ): Promise<CloudJob> {
     switch (name) {
+      case CloudJobName.CreateFreeSubscriptionAndDatabase:
+        return new CreateFreeSubscriptionAndDatabaseCloudJob(
+          {
+            abortController: new AbortController(),
+            ...options,
+          },
+          data,
+          {
+            cloudDatabaseCapiService: this.cloudDatabaseCapiService,
+            cloudSubscriptionCapiService: this.cloudSubscriptionCapiService,
+            cloudTaskCapiService: this.cloudTaskCapiService,
+            cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
+            databaseService: this.databaseService,
+            cloudCapiKeyService: this.cloudCapiKeyService,
+          },
+        );
       case CloudJobName.CreateFreeDatabase:
         return new CreateFreeDatabaseCloudJob(
+          {
+            abortController: new AbortController(),
+            ...options,
+          },
+          data,
+          {
+            cloudDatabaseCapiService: this.cloudDatabaseCapiService,
+            cloudSubscriptionCapiService: this.cloudSubscriptionCapiService,
+            cloudTaskCapiService: this.cloudTaskCapiService,
+            cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
+            databaseService: this.databaseService,
+            cloudCapiKeyService: this.cloudCapiKeyService,
+          },
+        );
+      case CloudJobName.ImportFreeDatabase:
+        return new ImportFreeDatabaseCloudJob(
           {
             abortController: new AbortController(),
             ...options,

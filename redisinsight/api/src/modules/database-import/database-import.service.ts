@@ -62,6 +62,7 @@ export class DatabaseImportService {
     ['sshPassphrase', ['sshOptions.passphrase', 'sshKeyPassphrase']],
     ['sshAgentPath', ['ssh_agent_path']],
     ['compressor', ['compressor']],
+    ['modules', ['modules']],
   ];
 
   constructor(
@@ -242,7 +243,7 @@ export class DatabaseImportService {
 
       const database = classToClass(Database, dto);
 
-      await this.databaseRepository.create(database);
+      await this.databaseRepository.create(database, false);
 
       return {
         index,

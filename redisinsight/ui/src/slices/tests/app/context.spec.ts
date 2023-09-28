@@ -571,7 +571,7 @@ describe('slices', () => {
     it('should properly set db config', () => {
       // Arrange
       const data = {
-        slowLogDurationUnit: 'ms',
+        slowLogDurationUnit: 'msec',
         treeViewDelimiter: ':-',
         showHiddenRecommendations: true,
       }
@@ -596,7 +596,7 @@ describe('slices', () => {
   describe('setSlowLogUnits', () => {
     it('should properly set slow log units', () => {
       // Arrange
-      const slowLogDurationUnit = 'ms'
+      const slowLogDurationUnit = 'msec'
 
       const state = {
         ...initialState.dbConfig,

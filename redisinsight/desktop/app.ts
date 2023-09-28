@@ -13,14 +13,19 @@ import {
   initAutoUpdaterHandlers,
   launchApiServer,
   initCloudHandlers,
+  electronStore,
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
+import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
 if (!config.isProduction) {
   const sourceMapSupport = require('source-map-support')
   sourceMapSupport.install()
 }
+
+let deepLink: undefined | string
 
 const init = async () => {
   await launchApiServer()
@@ -30,7 +35,7 @@ const init = async () => {
   initTray()
   initCloudHandlers()
 
-  nativeTheme.themeSource = config.themeSource
+  nativeTheme.themeSource = electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
 
   checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
 
@@ -45,23 +50,42 @@ const init = async () => {
   try {
     await app.whenReady()
 
-    // todo: create and move to some on app ready handler
+    deepLink = process.argv?.[1] || deepLink
+
     // deep linking
     // register our application to handle custom protocol
     if (process.defaultApp) {
-      if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(process.argv[1])])
+      if (deepLink) {
+        app.setAsDefaultProtocolClient(config.schema, process.execPath, [path.resolve(deepLink)])
       }
     } else {
       app.setAsDefaultProtocolClient(config.schema)
     }
 
     const splashWindow = await windowFactory(WindowType.Splash)
-    await windowFactory(WindowType.Main, splashWindow)
+
+    let parsedDeepLink
+
+    if (deepLink) {
+      parsedDeepLink = await deepLinkHandler(deepLink)
+    }
+
+    await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
   } catch (_err) {
     const error = _err as Error
     console.log(wrapErrorMessageSensitiveData(error))
   }
 }
+
+// deep link open (darwin)
+// if app is not ready then we store url and continue in init function
+app.on('open-url', async (event, url) => {
+  event.preventDefault()
+
+  deepLink = url
+  if (app.isReady()) {
+    await deepLinkWindowHandler(await deepLinkHandler(url))
+  }
+})
 
 export default init

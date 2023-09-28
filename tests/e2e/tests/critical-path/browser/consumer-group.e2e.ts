@@ -112,7 +112,7 @@ test('Verify that user can see the Consumer information columns (Consumer Name, 
     const consumerColumns = [
         'Consumer Name',
         'Pending',
-        'Idle Time, ms'
+        'Idle Time, msec'
     ];
     // Add New Stream Key with groups and consumers
     for(const command of cliCommands){

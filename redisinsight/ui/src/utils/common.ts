@@ -1,3 +1,5 @@
+import { IpcInvokeEvent } from 'uiSrc/electron/constants'
+
 const baseApiUrl = process.env.BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.APP_ENV === 'web'
@@ -18,4 +20,16 @@ export const removeSymbolsFromStart = (str = '', symbol = ''): string => {
     return str.slice(symbol.length)
   }
   return str
+}
+
+export const openNewWindowDatabase = (location: string) => {
+  if (isWebApp) {
+    window.open(window.location.origin + location)
+    return
+  }
+
+  window.app?.ipc?.invoke(
+    IpcInvokeEvent.windowOpen,
+    { location },
+  )
 }

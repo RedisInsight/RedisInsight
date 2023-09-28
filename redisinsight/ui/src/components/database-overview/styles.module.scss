@@ -19,37 +19,20 @@
   margin-left: 6px;
 }
 
-.overview {
-  &.noModules,
-  &.RediStack {
-    .overviewItem {
-      &:last-child {
-        border-right: 1px solid var(--separatorColor);
-      }
-    }
-  }
-}
-
 .modules {
   padding-left: 0;
   padding-right: 0;
-}
-
-.noModules {
-  //
 }
 
 .overviewItem {
   padding: 6px 20px;
   min-width: 116px;
   color: var(--euiTextSubduedColor);
+  border-right: 1px solid var(--separatorColor);
 
   @media only screen and (max-width: 1024px) {
     padding: 6px 10px;
     min-width: 96px;
-  }
-  &:not(:last-child) {
-    border-right: 1px solid var(--separatorColor);
   }
 
   @media only screen and (max-width: 1124px) {

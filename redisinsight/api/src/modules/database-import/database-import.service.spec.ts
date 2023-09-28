@@ -165,10 +165,10 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
         provider: 'RE_CLOUD',
         new: true,
-      });
+      }, false);
     });
     it('should create standalone with created name', async () => {
       await service['createDatabase']({
@@ -177,10 +177,10 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
         name: `${mockDatabase.host}:${mockDatabase.port}`,
         new: true,
-      });
+      }, false);
     });
     it('should create standalone with none compressor', async () => {
       await service['createDatabase']({
@@ -189,10 +189,10 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
         compressor: Compressor.NONE,
         new: true,
-      });
+      }, false);
     });
     it('should create standalone with compressor', async () => {
       await service['createDatabase']({
@@ -201,10 +201,10 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
         compressor: Compressor.GZIP,
         new: true,
-      });
+      }, false);
     });
     it('should create cluster database', async () => {
       await service['createDatabase']({
@@ -214,10 +214,10 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout', 'compressor']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout', 'compressor', 'modules']),
         connectionType: ConnectionType.CLUSTER,
         new: true,
-      });
+      }, false);
     });
   });
 

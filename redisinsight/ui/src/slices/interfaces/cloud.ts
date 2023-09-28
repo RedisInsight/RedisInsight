@@ -72,4 +72,17 @@ export enum OAuthSocialSource {
   ConfirmationMessage = 'confirmation message',
   TriggersAndFunctions = 'triggers_and_functions',
   'triggers and functions' = 'workbench triggers_and_functions',
+  Tutorials = 'tutorials'
+}
+
+export enum CloudSsoUtmCampaign {
+  ListOfDatabases = 'list_of_databases',
+  Workbench = 'redisinsight_workbench',
+  WelcomeScreen = 'welcome_screen',
+  BrowserSearch = 'redisinsight_browser_search',
+  BrowserOverview = 'redisinsight_browser_overview',
+  BrowserFilter = 'browser_filter',
+  Tutorial = 'tutorial',
+  TriggersAndFunctions = 'redisinsight_triggers_and_functions',
+  Unknown = 'other',
 }

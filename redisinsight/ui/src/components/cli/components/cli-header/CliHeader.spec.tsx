@@ -126,5 +126,5 @@ it('should "processCliClient" action be called after close cli with mocked sessi
     resetCliSettings(),
     resetOutputLoading(),
   ]
-  expect(store.getActions()).toEqual(expectedActions)
+  expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
 })

@@ -1,21 +1,9 @@
 {
-  "version": 2.3401,
+  "version": 2.3402,
   "features": {
     "insightsRecommendations": {
       "flag": true,
-      "perc": [[0,30]],
-      "filters": [
-        {
-          "name": "agreements.analytics",
-          "value": true,
-          "cond": "eq"
-        },
-        {
-          "name": "config.server.buildType",
-          "value": "ELECTRON",
-          "cond": "eq"
-        }
-      ]
+      "perc": [[0,100]]
     },
     "cloudSso": {
       "flag": true,

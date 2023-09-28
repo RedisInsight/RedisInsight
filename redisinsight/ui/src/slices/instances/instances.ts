@@ -436,17 +436,26 @@ function autoCreateAndConnectToInstanceActionSuccess(
   onSuccess?: (id: string) => void,
   onFail?: () => void,
 ) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(setAppContextInitialState())
-    dispatch(setConnectedInstanceId(id ?? ''))
-
-    dispatch(checkConnectToInstanceAction(id, (id) => {
-      setTimeout(() => {
-        dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
-        dispatch(addMessageNotification(message))
-        onSuccess?.(id)
-      }, HIDE_CREATING_DB_DELAY_MS)
-    }, onFail))
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const isConnectedId = state.app?.context?.contextInstanceId === id
+      if (!isConnectedId) {
+        dispatch(setAppContextInitialState())
+        dispatch(setConnectedInstanceId(id ?? ''))
+      }
+      dispatch(checkConnectToInstanceAction(id, (id) => {
+        setTimeout(() => {
+          dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
+          dispatch(addMessageNotification(message))
+          onSuccess?.(id)
+        }, HIDE_CREATING_DB_DELAY_MS)
+      },
+      onFail,
+      !isConnectedId))
+    } catch (error) {
+      // process error if needed
+    }
   }
 }
 

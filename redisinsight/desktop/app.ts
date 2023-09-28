@@ -13,10 +13,12 @@ import {
   initAutoUpdaterHandlers,
   launchApiServer,
   initCloudHandlers,
+  electronStore,
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
 import { deepLinkHandler, deepLinkWindowHandler } from 'desktopSrc/lib/app/deep-link.handlers'
+import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
 if (!config.isProduction) {
   const sourceMapSupport = require('source-map-support')
@@ -32,6 +34,8 @@ const init = async () => {
   initAutoUpdaterHandlers()
   initTray()
   initCloudHandlers()
+
+  nativeTheme.themeSource = electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
 
   checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
 

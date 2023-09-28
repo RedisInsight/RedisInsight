@@ -3,6 +3,7 @@
   "defaultPort": 5530,
   "host": "localhost",
   "debug": false,
+  "themeSource": "dark",
   "appName": "RedisInsight",
   "schema": "redisinsight",
   "mainWindow": {

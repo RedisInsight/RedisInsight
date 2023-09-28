@@ -28,4 +28,5 @@ export * from './workbench'
 export * from './featureFlags'
 export * from './serverVersions'
 export * from './customErrorCodes'
+export * from './securityField'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import { ConnectionString } from 'connection-string'
-import { isUndefined, pick, toNumber, toString } from 'lodash'
+import { isUndefined, pick, toNumber, toString, omit } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -11,14 +11,14 @@ import {
   instancesSelector,
   testInstanceStandaloneAction,
   updateInstanceAction,
+  cloneInstanceAction,
 } from 'uiSrc/slices/instances/instances'
 import { fetchMastersSentinelAction, sentinelSelector, } from 'uiSrc/slices/instances/sentinel'
-import { Nullable, removeEmpty, transformQueryParamsObject } from 'uiSrc/utils'
-import { localStorageService } from 'uiSrc/services'
+import { Nullable, removeEmpty, getDiff, transformQueryParamsObject } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
-import { BrowserStorageItem, DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
+import { DbType, Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 
@@ -192,6 +192,10 @@ const InstanceFormWrapper = (props: Props) => {
     dispatch(updateInstanceAction(payload, onDbEdited))
   }
 
+  const handleCloneDatabase = (payload: any) => {
+    dispatch(cloneInstanceAction(payload))
+  }
+
   const handleUpdateEditingName = (name: string) => {
     const requiredFields = [
       'id',
@@ -294,7 +298,14 @@ const InstanceFormWrapper = (props: Props) => {
       }
     }
 
-    dispatch(testInstanceStandaloneAction(removeEmpty(database)))
+    if (editMode && editedInstance) {
+      dispatch(testInstanceStandaloneAction({
+        ...getDiff(database, editedInstance),
+        id: editedInstance.id,
+      }))
+    } else {
+      dispatch(testInstanceStandaloneAction(removeEmpty(database)))
+    }
   }
 
   const autoFillFormDetails = (content: string): boolean => {
@@ -323,7 +334,7 @@ const InstanceFormWrapper = (props: Props) => {
           host: details.hostname || host || 'localhost',
           port: `${details.port || port || 9443}`,
           username: details.user || '',
-          password: details.password || '',
+          password: details.password,
           tls: details.protocol === 'rediss',
           ssh: false,
           sshPassType: SshPassType.Password
@@ -405,7 +416,7 @@ const InstanceFormWrapper = (props: Props) => {
     }
   }
 
-  const editDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
+  const editDatabase = (tlsSettings: any, values: DbConnectionInfo, isCloneMode: boolean) => {
     const {
       name,
       host,
@@ -441,8 +452,13 @@ const InstanceFormWrapper = (props: Props) => {
       database.sentinelMaster.username = sentinelMasterUsername
       database.sentinelMaster.password = sentinelMasterPassword
     }
-
-    handleEditDatabase(removeEmpty(database))
+    // name need for success message
+    const payload = getDiff(database, omit(editedInstance, ['id', 'name']))
+    if (isCloneMode) {
+      handleCloneDatabase(payload)
+    } else {
+      handleEditDatabase(payload)
+    }
   }
 
   const addDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
@@ -536,8 +552,8 @@ const InstanceFormWrapper = (props: Props) => {
             : undefined,
     }
 
-    if (editMode && !isCloneMode) {
-      editDatabase(tlsSettings, values)
+    if (editMode) {
+      editDatabase(tlsSettings, values, isCloneMode)
     } else {
       addDatabase(tlsSettings, values)
     }

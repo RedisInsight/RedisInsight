@@ -9,7 +9,7 @@ interface Props {
 const THEME_NAMES = THEMES.map(({ value }) => value)
 
 export const defaultState = {
-  theme: THEME_NAMES[0],
+  theme: THEME_NAMES[1], // dark theme by default
   usingSystemTheme: localStorageService.get(BrowserStorageItem.theme) === Theme.System,
   changeTheme: (themeValue: any) => {
     themeService.applyTheme(themeValue)
@@ -36,7 +36,7 @@ export class ThemeProvider extends React.Component<Props> {
     }
   }
 
-  getSystemTheme = () => window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches ? Theme.Dark : Theme.Light
+  getSystemTheme = () => (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches ? Theme.Dark : Theme.Light)
 
   changeTheme = (themeValue: any) => {
     let actualTheme = themeValue

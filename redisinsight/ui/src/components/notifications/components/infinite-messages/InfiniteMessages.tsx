@@ -105,6 +105,7 @@ export const INFINITE_MESSAGES = {
             <EuiButton
               size="s"
               color="secondary"
+              className="infiniteMessage__btn"
               onClick={() => onClose?.()}
               data-testid="cancel-import-db-sso-btn"
             >
@@ -145,6 +146,7 @@ export const INFINITE_MESSAGES = {
             <EuiButton
               size="s"
               color="secondary"
+              className="infiniteMessage__btn"
               onClick={() => onClose?.()}
               data-testid="cancel-create-subscription-sso-btn"
             >

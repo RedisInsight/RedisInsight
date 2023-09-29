@@ -92,7 +92,7 @@ export interface StateAppContext {
   workbench: {
     script: string
     enablementArea: {
-      isMinimized: boolean
+      isOpened: boolean
       search: string
       itemScrollTop: number
     },

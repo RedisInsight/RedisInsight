@@ -4,7 +4,7 @@ import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import { chunk, without } from 'lodash'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
+import { monaco } from 'react-monaco-editor'
 
 import {
   getExecuteParams,
@@ -38,7 +38,7 @@ import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slice
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { userSettingsConfigSelector, userSettingsWBSelector } from 'uiSrc/slices/user/user-settings'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, CodeButtonParams } from 'uiSrc/constants'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -118,6 +118,16 @@ const WBViewWrapper = () => {
   useEffect(() => {
     scriptRef.current = script
   }, [script])
+
+  useEffect(() => {
+    if (scriptContext) {
+      setScript(scriptContext)
+      setTimeout(() => {
+        scriptEl?.setSelection(new monaco.Selection(0, 0, 0, 0))
+      }, 0)
+      dispatch(setWorkbenchScript(''))
+    }
+  }, [scriptContext])
 
   useEffect(() => {
     if (!blockingCommands.length) {

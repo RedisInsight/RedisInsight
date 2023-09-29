@@ -13,7 +13,7 @@ import InstanceHeader from 'uiSrc/components/instance-header'
 import QueryWrapper from 'uiSrc/components/query'
 import {
   setWorkbenchVerticalPanelSizes,
-  appContextWorkbench, appContextWorkbenchEA
+  appContextWorkbench,
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode, AutoExecute } from 'uiSrc/slices/interfaces/workbench'
@@ -22,7 +22,6 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import EnablementAreaWrapper from '../../enablement-area'
 import WBResultsWrapper from '../../wb-results'
 import styles from './styles.module.scss'
 
@@ -87,7 +86,6 @@ const WBView = (props: Props) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
-  const { isMinimized } = useSelector(appContextWorkbenchEA)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
@@ -182,16 +180,7 @@ const WBView = (props: Props) => {
     <div className={cx('workbenchPage', styles.container)}>
       <InstanceHeader />
       <div className={styles.main}>
-        <div className={cx(styles.sidebar, { [styles.minimized]: isMinimized })}>
-          <EnablementAreaWrapper
-            isMinimized={isMinimized}
-            setScript={setScript}
-            onSubmit={handleSubmit}
-            scriptEl={scriptEl}
-            isCodeBtnDisabled={isCodeBtnDisabled}
-          />
-        </div>
-        <div className={cx(styles.content, { [styles.minimized]: isMinimized })}>
+        <div className={styles.content}>
           <EuiResizableContainer onPanelWidthChange={onVerticalPanelWidthChange} direction="vertical" style={{ height: '100%' }}>
             {(EuiResizablePanel, EuiResizableButton) => (
               <>

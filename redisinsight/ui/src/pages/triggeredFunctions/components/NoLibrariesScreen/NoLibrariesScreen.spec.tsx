@@ -3,7 +3,7 @@ import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, clearStoreActions, render, fireEvent, screen, mockedStore } from 'uiSrc/utils/test-utils'
-import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { resetWorkbenchEASearch, setWorkbenchEAOpened } from 'uiSrc/slices/app/context'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 
 import NoLibrariesScreen, { IProps } from './NoLibrariesScreen'
@@ -56,7 +56,7 @@ describe('NoLibrariesScreen', () => {
 
     fireEvent.click(screen.getByTestId('no-libraries-tutorial-link'))
 
-    const expectedActions = [setWorkbenchEAMinimized(false)]
+    const expectedActions = [setWorkbenchEAOpened(false)]
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     expect(pushMock).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/triggers-and-functions/introduction.md')
   })

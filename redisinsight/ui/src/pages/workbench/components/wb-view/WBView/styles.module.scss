@@ -35,20 +35,6 @@
 .content {
   display: flex;
   flex-grow: 1;
-  width: 76%;
-  max-width: calc(100% - 336px);
-  min-width: calc(100% - 452px);
-  @media only screen and (max-width: 992px) {
-    width: calc(100% - 252px);
-    min-width: auto;
-    max-width: none;
-  }
-
-  &.minimized {
-    width: calc(100% - 50px);
-    min-width: auto;
-    max-width: none;
-  }
 }
 
 .resizeButton {

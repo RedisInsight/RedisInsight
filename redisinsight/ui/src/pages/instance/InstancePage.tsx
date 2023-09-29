@@ -20,13 +20,11 @@ import {
   setDbConfig,
 } from 'uiSrc/slices/app/context'
 import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
-import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
+import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
-import { FeatureFlagComponent } from 'uiSrc/components'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
-import LiveTimeRecommendations from 'uiSrc/components/live-time-recommendations'
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
@@ -34,6 +32,7 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import DatabaseSidePanels from 'uiSrc/components/database-side-panels'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -66,7 +65,6 @@ const InstancePage = ({ routes = [] }: Props) => {
   const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
 
   const dispatch = useDispatch()
-  const history = useHistory()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { data: modulesData } = useSelector(instancesSelector)
@@ -136,9 +134,7 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   return (
     <>
-      <FeatureFlagComponent name={FeatureFlags.insightsRecommendations}>
-        <LiveTimeRecommendations />
-      </FeatureFlagComponent>
+      <DatabaseSidePanels />
       <EuiResizableContainer
         direction="vertical"
         style={{ height: '100%' }}

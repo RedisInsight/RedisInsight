@@ -54,7 +54,7 @@ export const initialState: StateAppContext = {
   workbench: {
     script: '',
     enablementArea: {
-      isMinimized: localStorageService?.get(BrowserStorageItem.isEnablementAreaMinimized) ?? false,
+      isOpened: false,
       search: '',
       itemScrollTop: 0,
     },
@@ -192,9 +192,8 @@ const appContextSlice = createSlice({
       state.workbench.enablementArea.search = ''
       state.workbench.enablementArea.itemScrollTop = 0
     },
-    setWorkbenchEAMinimized: (state, { payload }) => {
-      state.workbench.enablementArea.isMinimized = payload
-      localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, payload)
+    setWorkbenchEAOpened: (state, { payload }) => {
+      state.workbench.enablementArea.isOpened = payload
     },
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = {}
@@ -251,7 +250,7 @@ export const {
   setLastPageContext,
   setWorkbenchEASearch,
   resetWorkbenchEASearch,
-  setWorkbenchEAMinimized,
+  setWorkbenchEAOpened,
   setWorkbenchEAItemScrollTop,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,

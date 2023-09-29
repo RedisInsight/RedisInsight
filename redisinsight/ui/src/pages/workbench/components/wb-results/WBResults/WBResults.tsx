@@ -87,7 +87,6 @@ const WBResults = (props: Props) => {
           <EuiButtonEmpty
             size="s"
             iconType="trash"
-            iconSize="s"
             className={styles.clearAllBtn}
             onClick={() => onAllQueriesDelete?.()}
             disabled={clearing || processing}

@@ -24,7 +24,7 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
 
-import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
+import { resetWorkbenchEASearch, setWorkbenchEAOpened } from 'uiSrc/slices/app/context'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
@@ -71,7 +71,7 @@ const Recommendations = () => {
       }
     })
 
-    dispatch(setWorkbenchEAMinimized(false))
+    dispatch(setWorkbenchEAOpened(false))
     if (mdPath) {
       openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
       return

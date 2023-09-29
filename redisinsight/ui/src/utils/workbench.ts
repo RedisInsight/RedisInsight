@@ -1,10 +1,8 @@
-import { first, isInteger } from 'lodash'
-import { CodeButtonResults, CodeButtonRunQueryMode } from 'uiSrc/constants'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
+import { first, identity, isInteger, pickBy } from 'lodash'
+import { CodeButtonResults, CodeButtonRunQueryMode, CodeButtonParams } from 'uiSrc/constants'
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { EnablementAreaComponent, ExecuteQueryParams, IEnablementAreaItem, IPluginVisualization, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { getVisualizationsByCommand } from 'uiSrc/utils/plugins'
-import { parseParams } from 'uiSrc/pages/workbench/components/enablement-area/EnablementArea/utils'
 import { getMonacoLines, isParamsLine } from './monaco'
 import { Maybe, Nullable } from './types'
 
@@ -30,6 +28,25 @@ const getExecuteParams = (params: CodeButtonParams = {}, state: ExecuteQueryPara
     : activeRunQueryModeState
 
   return { batchSize, resultsMode, activeRunQueryMode }
+}
+
+export const parseParams = (params?: string): Maybe<CodeButtonParams> => {
+  if (params?.trim().match(/(^\[).+(]$)/g)) {
+    return pickBy(params
+      ?.trim()
+      ?.replaceAll(' ', '')
+      ?.replace(/^\[|]$/g, '')
+      ?.split(';')
+      .reduce((prev: {}, next: string) => {
+        const [key, value] = next.split('=')
+        return {
+          [key]: value,
+          ...prev,
+        }
+      }, {}),
+    identity)
+  }
+  return undefined
 }
 
 export const getParsedParamsInQuery = (query: string) => {

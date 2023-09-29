@@ -1,0 +1,91 @@
+@import "@elastic/eui/src/global_styling/variables";
+
+$animation-duration: 300ms;
+
+.trigger {
+  position: fixed;
+  right: -37px;
+  bottom: 180px;
+  z-index: 1100;
+  transform: rotate(-90deg);
+  width: 106px;
+  height: 30px;
+
+  &.exploreTrigger {
+    bottom: 280px;
+  }
+
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 106px;
+    height: 30px;
+
+    background: var(--recommendationsBgColor);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -5px 7px -2px rgba(0, 0, 0, 0.16);
+    padding: 9px 20px;
+  }
+
+  &.isOpen {
+    right: 438px;
+    will-change: right;
+
+    animation: triggerInsights $animation-duration $euiAnimSlightResistance;
+  }
+
+  .totalUnread {
+    font-weight: 500;
+    font-size: 12px;
+    background-color: var(--triggerIconActiveColor);
+    color: var(--triggerIconTextColor);
+
+    border-radius: 100%;
+
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    transform: rotate(90deg);
+  }
+
+  .triggerIcon {
+    width: 10px;
+    height: 14px;
+    fill: var(--htmlColor);
+    margin-right: 4px;
+
+    path {
+      stroke: var(-htmlColor);
+    }
+  }
+
+  .triggerText {
+    font: normal normal 400 12px/14px Graphik, sans-serif !important;
+    color: var(--htmlColor) !important;
+  }
+
+  .triggerHighlighted.triggerText {
+    color: var(--triggerIconActiveColor) !important;
+  }
+}
+
+@keyframes triggerInsights {
+  0% {
+    opacity: 0;
+    right: -37px;
+  }
+  75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+    right: 438px;
+  }
+}
+

@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 
+import { useParams } from 'react-router-dom'
 import { DATABASE_LIST_MODULES_TEXT, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getModule, truncateText } from 'uiSrc/utils'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { IMetric } from '../OverviewMetrics'
@@ -19,9 +21,20 @@ export interface IProps {
 
 const MoreInfoPopover = ({ metrics, modules }: IProps) => {
   const [isShowMoreInfoPopover, setIsShowMoreInfoPopover] = useState(false)
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const onFreeDatabaseClick = () => {
     setIsShowMoreInfoPopover(false)
+  }
+
+  const handleClickMoreInfo = () => {
+    setIsShowMoreInfoPopover((isOpenPopover) => !isOpenPopover)
+    sendEventTelemetry({
+      event: TelemetryEvent.OVERVIEW_MENU_CLICKED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
   }
 
   return (
@@ -35,7 +48,7 @@ const MoreInfoPopover = ({ metrics, modules }: IProps) => {
       button={(
         <EuiButtonIcon
           iconType="boxesVertical"
-          onClick={() => setIsShowMoreInfoPopover((isOpenPopover) => !isOpenPopover)}
+          onClick={handleClickMoreInfo}
           aria-labelledby="more info"
           data-testid="overview-more-info-button"
         />

@@ -14,7 +14,7 @@ import {
   cloneInstanceAction,
 } from 'uiSrc/slices/instances/instances'
 import { fetchMastersSentinelAction, sentinelSelector, } from 'uiSrc/slices/instances/sentinel'
-import { Nullable, removeEmpty, getDiff, transformQueryParamsObject } from 'uiSrc/utils'
+import { Nullable, removeEmpty, getFormUpdates, transformQueryParamsObject } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType, } from 'uiSrc/slices/interfaces'
@@ -300,7 +300,7 @@ const InstanceFormWrapper = (props: Props) => {
 
     if (editMode && editedInstance) {
       dispatch(testInstanceStandaloneAction({
-        ...getDiff(database, editedInstance),
+        ...getFormUpdates(database, editedInstance),
         id: editedInstance.id,
       }))
     } else {
@@ -452,11 +452,13 @@ const InstanceFormWrapper = (props: Props) => {
       database.sentinelMaster.username = sentinelMasterUsername
       database.sentinelMaster.password = sentinelMasterPassword
     }
-    // name need for success message
-    const payload = getDiff(database, omit(editedInstance, ['id', 'name']))
+
     if (isCloneMode) {
+      // name need for success message
+      const payload = getFormUpdates(database, omit(editedInstance, ['id', 'name']))
       handleCloneDatabase(payload)
     } else {
+      const payload = getFormUpdates(database, omit(editedInstance, 'id'))
       handleEditDatabase(payload)
     }
   }

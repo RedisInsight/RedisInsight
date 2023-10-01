@@ -1,7 +1,6 @@
 import replaceSpaces from './replaceSpaces'
 import removeEmpty from './removeEmpty'
 import formatToText from './cliTextFormatter'
-import getDiff from './getDiff'
 
 export * from './truncateTTL'
 export * from './truncateNumber'
@@ -14,5 +13,4 @@ export {
   replaceSpaces,
   removeEmpty,
   formatToText,
-  getDiff,
 }

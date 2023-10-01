@@ -809,7 +809,7 @@ export function uploadInstancesFile(
 
 // Asynchronous thunk action
 export function testInstanceStandaloneAction(
-  { id, ...payload }: Instance,
+  { id, ...payload }: Partial<Instance>,
   onRedirectToSentinel?: () => void
 ) {
   return async (dispatch: AppDispatch) => {

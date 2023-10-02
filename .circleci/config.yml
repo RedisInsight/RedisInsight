@@ -182,13 +182,13 @@ executors:
 parameters:
   linux:
     type: string
-#    default: &ignore "ignore"
+    default: &ignore ""
   mac:
     type: string
-#    default: *ignore
+    default: *ignore
   windows:
     type: string
-#    default: *ignore
+    default: *ignore
 
 jobs:
   test:

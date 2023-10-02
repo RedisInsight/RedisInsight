@@ -641,7 +641,6 @@ jobs:
             - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
-
   macosx:
     macos:
       xcode: 14.2.0
@@ -808,7 +807,6 @@ jobs:
       - <<: *urlScan
       - <<: *validate
       - <<: *virustotalReport
-
   virustotal-report:
     executor: linux-executor
     steps:
@@ -1199,9 +1197,9 @@ workflows:
         - << parameters.windows >>
     jobs:
       - test:
-          linux: << parameters.linux>
-          mac: << parameters.mac>
-          windows: << parameters.windows>
+          linux: << parameters.linux >>
+          mac: << parameters.mac >>
+          windows: << parameters.windows >>
   # build electron app (dev) from "build" branches
   build:
     jobs:

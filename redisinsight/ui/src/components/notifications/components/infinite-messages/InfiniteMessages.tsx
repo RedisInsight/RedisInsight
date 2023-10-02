@@ -182,7 +182,7 @@ export const INFINITE_MESSAGES = {
       </div>
     )
   }),
-  APP_UPDATE_AVAILABLE: (version: string, onSuccess: () => void) => ({
+  APP_UPDATE_AVAILABLE: (version: string, onSuccess?: () => void) => ({
     id: InfiniteMessagesIds.appUpdateAvailable,
     Inner: (
       <div
@@ -196,7 +196,7 @@ export const INFINITE_MESSAGES = {
             New version is now available
           </span>
         </EuiTitle>
-        <EuiText size="s" color="subdued">
+        <EuiText size="s">
           <>
             With RedisInsight
             {` ${version} `}

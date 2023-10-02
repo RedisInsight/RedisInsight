@@ -9,7 +9,7 @@ import {
   _, it, validateApiCall, after
 } from '../deps';
 import { Joi } from '../../helpers/test';
-import { databaseSchema } from './constants';
+import { securityDatabaseSchema } from './constants';
 
 const { request, server, localDb, constants, rte } = deps;
 
@@ -44,7 +44,7 @@ const baseDatabaseData = {
   password: constants.TEST_REDIS_PASSWORD || undefined,
 }
 
-const responseSchema = databaseSchema.required().strict(true);
+const responseSchema = securityDatabaseSchema.required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

@@ -2,7 +2,7 @@ import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
 import {
-  isEmpty, merge, omit, reject, sum, get, set, isNull, omitBy, isUndefined,
+  isEmpty, merge, omit, reject, sum, get, set, omitBy, isUndefined,
 } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -180,7 +180,7 @@ export class DatabaseService {
     let database = merge({}, oldDatabase, dto);
 
     try {
-      if (Object.keys(omitBy(dto, isUndefined)).some(f => this.connectionFields.includes(f))) {
+      if (Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field))) {
         database = await this.databaseFactory.createDatabaseModel(database);
 
         // todo: investigate manual update flag
@@ -258,15 +258,15 @@ export class DatabaseService {
     this.logger.log(`Clone database connection: ${id}`);
     const oldDatabase = omit(await this.get(id, true), 'sshOptions.id');
     const database = merge({}, omit(oldDatabase, 'id'), dto);
-    if (Object.keys(omitBy(dto, isUndefined)).some(r => this.connectionFields.includes(r))) {
+    if (Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field))) {
       return await this.create(database);
     }
 
-    const createdDatabase =  await this.repository.create({
+    const createdDatabase = await this.repository.create({
       ...classToClass(Database, database),
       new: true,
     }, false);
-  
+
     this.analytics.sendInstanceAddedEvent(createdDatabase);
     return createdDatabase;
   }

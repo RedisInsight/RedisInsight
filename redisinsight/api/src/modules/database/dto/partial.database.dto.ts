@@ -1,13 +1,13 @@
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { PartialType, OmitType, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
 import {
-  IsInt, IsString, Max, MaxLength, Min, ValidateIf, IsOptional, IsNotEmpty,
+  IsInt, IsString, Max, MaxLength, Min, ValidateIf, IsOptional, IsNotEmpty, IsNotEmptyObject,
 } from 'class-validator';
+import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 
 export class PartialDatabaseDto extends PartialType(
-  OmitType(CreateDatabaseDto, ['timeout'] as const),
-  ) {
+  OmitType(CreateDatabaseDto, ['timeout', 'sshOptions'] as const),
+) {
   @ValidateIf((object, value) => value !== undefined)
   @IsString({ always: true })
   @MaxLength(500)
@@ -26,11 +26,15 @@ export class PartialDatabaseDto extends PartialType(
     type: Number,
     default: 30_000,
   })
-  @Expose()
   @IsNotEmpty()
   @IsOptional()
   @Min(1_000)
   @Max(1_000_000_000)
   @IsInt({ always: true })
   timeout?: number;
+
+  @ValidateIf((object, value) => value !== undefined)
+  @IsOptional()
+  @IsNotEmptyObject()
+  sshOptions?: Partial<SshOptions>;
 }

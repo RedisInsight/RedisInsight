@@ -9,7 +9,7 @@ import {
   after,
   generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig, before,
 } from '../deps';
-import { databaseSchema } from './constants';
+import { securityDatabaseSchema } from './constants';
 import { ServerService } from 'src/modules/server/server.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CustomErrorCodes } from 'src/constants';
@@ -70,7 +70,7 @@ const baseSentinelData = {
   password: constants.TEST_SENTINEL_MASTER_PASS || null,
 }
 
-const responseSchema = databaseSchema.required().strict(true);
+const responseSchema = securityDatabaseSchema.required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

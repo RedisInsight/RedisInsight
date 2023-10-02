@@ -164,6 +164,11 @@ aliases:
     key: v1-ui-deps-{{ checksum "yarn.lock" }}
   api-deps-cache-key: &apiDepsCacheKey
     key: v1-ui-deps-{{ checksum "redisinsight/api/yarn.lock" }}
+  manual-build-conditions: &manual-build-conditions
+    or:
+      - << pipeline.parameters.linux >>
+      - << pipeline.parameters.mac >>
+      - << pipeline.parameters.windows >>
 
 orbs:
   win: circleci/windows@2.4.1
@@ -1064,6 +1069,8 @@ jobs:
 workflows:
   # FE Unit tests for "fe/feature" or "fe/bugfix" branches only
   frontend-tests:
+    when:
+      not: *manual-build-conditions
     jobs:
       - unit-tests-ui:
           name: UTest - UI
@@ -1130,6 +1137,8 @@ workflows:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
+    when:
+      not: *manual-build-conditions
     jobs:
       # Approve to run all (unit, integration, e2e) tests
       - approve:
@@ -1190,11 +1199,7 @@ workflows:
 
   # manual build
   manual-build:
-    when:
-      or:
-        - << pipeline.parameters.linux >>
-        - << pipeline.parameters.mac >>
-        - << pipeline.parameters.windows >>
+    when: *manual-build-conditions
     jobs:
       - test:
           linux: << pipeline.parameters.linux >>

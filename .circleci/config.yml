@@ -1192,9 +1192,9 @@ workflows:
   manual-build:
     when:
       or:
-        - << parameters.linux >>
-        - << parameters.mac >>
-        - << parameters.windows >>
+        - << pipeline.parameters.linux >>
+        - << pipeline.parameters.mac >>
+        - << pipeline.parameters.windows >>
     jobs:
       - test:
           linux: << parameters.linux >>

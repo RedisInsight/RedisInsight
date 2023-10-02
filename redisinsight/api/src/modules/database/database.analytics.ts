@@ -23,7 +23,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
 
   sendInstanceAddedEvent(
     instance: Database,
-    additionalInfo: RedisDatabaseInfoResponse,
+    additionalInfo?: RedisDatabaseInfoResponse,
   ): void {
     try {
       const modulesSummary = getRedisModulesSummary(instance.modules);

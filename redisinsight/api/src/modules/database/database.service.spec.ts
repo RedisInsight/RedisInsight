@@ -19,6 +19,8 @@ import {
   mockDatabaseWithSshPrivateKey,
   mockSentinelDatabaseWithTlsAuth,
   mockDatabaseWithCloudDetails,
+  mockCaCertificate,
+  mockClientCertificate,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -26,10 +28,28 @@ import { DatabaseRepository } from 'src/modules/database/repositories/database.r
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
-import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { RedisErrorCodes } from 'src/constants';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ExportDatabase } from './models/export-database';
+import { PartialDatabaseDto } from './dto/partial.database.dto';
+
+const updateDatabaseTests = [
+  { input: {}, expected: 0 },
+  { input: { name: 'new name' }, expected: 0 },
+  { input: { port: 6379 }, expected: 1 },
+  { input: { host: 'new host' }, expected: 1 },
+  { input: { username: 'user' }, expected: 1 },
+  { input: { password: 'pass' }, expected: 1 },
+  { input: { ssh: true }, expected: 1 },
+  { input: { sshOptions: { password: 'pass' } }, expected: 1 },
+  { input: { sentinelMaster: 'master' }, expected: 1 },
+  { input: { caCert: mockCaCertificate }, expected: 1 },
+  { input: { clientCert: mockClientCertificate }, expected: 1 },
+  { input: { compressor: 'NONE' }, expected: 0 },
+  { input: { timeout: 45_000 }, expected: 0 },
+  { input: { port: 6379, timeout: 45_000 }, expected: 1 },
+]
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
@@ -117,6 +137,23 @@ describe('DatabaseService', () => {
     });
   });
 
+  describe('getWithoutSecurityFields', () => {
+    it('should return database by id', async () => {
+      expect(await service.getWithoutSecurityFields(mockDatabase.id)).toEqual(mockDatabase);
+    });
+    it('should return database with hide password', async () => {
+      databaseRepository.get.mockResolvedValue({ ...mockDatabase, password: 'pass' })
+      expect(await service.getWithoutSecurityFields(mockDatabase.id)).toEqual({ ...mockDatabase, password: true });
+    });
+    it('should throw NotFound if no database found', async () => {
+      databaseRepository.get.mockResolvedValueOnce(null);
+      await expect(service.getWithoutSecurityFields(mockDatabase.id)).rejects.toThrow(NotFoundException);
+    });
+    it('should throw NotFound if no database id was provided', async () => {
+      await expect(service.getWithoutSecurityFields('')).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe('create', () => {
     it('should create new database and send analytics event', async () => {
       expect(await service.create(mockDatabase)).toEqual(mockDatabase);
@@ -151,9 +188,9 @@ describe('DatabaseService', () => {
         provider: 'LOCALHOST',
       });
 
-      await expect(await service.update(
+      expect(await service.update(
         mockDatabase.id,
-        { password: 'password', port: 6380 } as UpdateDatabaseDto,
+        { password: 'password', port: 6380 } as PartialDatabaseDto,
         true,
       )).toEqual({ ...mockDatabase, port: 6380, password: 'password' });
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
@@ -161,12 +198,28 @@ describe('DatabaseService', () => {
         { ...mockDatabase, port: 6380, password: 'password' },
         true,
       );
+      expect(databaseFactory.createDatabaseModel).toBeCalled()
     });
+    
+    describe('test connection', () => {
+      test.each(updateDatabaseTests)(
+        '%j',
+        async ({ input, expected }) => {
+          databaseRepository.update.mockReturnValue(null);
+          await service.update(
+            mockDatabase.id,
+            input as PartialDatabaseDto,
+            true,
+          )
+          expect(databaseFactory.createDatabaseModel).toBeCalledTimes(expected)
+        },
+      )
+    })
     it('should throw NotFound if no database?', async () => {
       databaseRepository.update.mockRejectedValueOnce(new NotFoundException());
       await expect(service.update(
         mockDatabase.id,
-        { password: 'password' } as UpdateDatabaseDto,
+        { password: 'password' } as PartialDatabaseDto,
         true,
       )).rejects.toThrow(NotFoundException);
     });
@@ -185,6 +238,14 @@ describe('DatabaseService', () => {
 
       await expect(service.testConnection(mockDatabase))
         .rejects.toThrow(ServiceUnavailableException);
+    });
+  });
+
+  describe('test exist connection', () => {
+    it('should call testConnection with merged exist database and dto', async () => {
+      const spy = jest.spyOn(service as any, 'testConnection');
+      await service.testExistConnection(mockDatabase.id, { name: 'new-database-name' } as PartialDatabaseDto);
+      expect(spy).toBeCalledWith({ ...mockDatabase, name: 'new-database-name' });
     });
   });
 
@@ -265,5 +326,47 @@ describe('DatabaseService', () => {
       databaseRepository.get.mockRejectedValueOnce(new NotFoundException());
       expect(await service.export([mockDatabase.id])).toEqual([]);
     });
+
+    it('should throw NotFoundException', async () => {
+      await expect(service.export([])).rejects.toThrow(NotFoundException);
+      try {
+        await service.export([]);
+        fail();
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotFoundException);
+        expect(err.message).toEqual(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+      }
+    });
+  });
+
+  describe('clone', () => {
+    it('should create new database and send analytics event', async () => {
+      const spy = jest.spyOn(service as any, 'create');
+      await service.clone(
+        mockDatabase.id,
+        {
+          username: 'new-name',
+          timeout: 40_000,
+        } as PartialDatabaseDto
+      );
+      expect(spy).toBeCalledWith(omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['id', 'sshOptions.id']));
+    });
+
+    describe('create database model', () => {
+      test.each(updateDatabaseTests)(
+        '%j',
+        async ({ input, expected }) => {
+          const spy = jest.spyOn(service as any, 'create');
+
+          databaseRepository.update.mockReturnValue(null);
+          await service.clone(
+            mockDatabase.id,
+            input as PartialDatabaseDto,
+          )
+          expect(spy).toBeCalledTimes(expected)
+          expect(analytics.sendInstanceAddedEvent).toBeCalled()
+        },
+      )
+    })
   });
 });

@@ -13,7 +13,7 @@ import { databaseSchema } from './constants';
 
 const { request, server, localDb, constants, rte } = deps;
 
-const endpoint = (id = constants.TEST_INSTANCE_ID) => request(server).patch(`/${constants.API.DATABASES}/${id}`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) => request(server).post(`/${constants.API.DATABASES}/clone/${id}`);
 
 // input data schema
 const dataSchema = Joi.object({
@@ -50,7 +50,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 let oldDatabase;
 let newDatabase;
-describe(`PATCH /databases/:id`, () => {
+describe(`POST /databases/clone/:id`, () => {
   beforeEach(async () => await localDb.createDatabaseInstances());
 
   describe('Validation', () => {
@@ -91,27 +91,8 @@ describe(`PATCH /databases/:id`, () => {
     ].map(mainCheckFn);
   });
   describe('Common', () => {
-    const newName = constants.getRandomString();
-
+    const dbName = constants.getRandomString();
     [
-      {
-        name: 'Should change name (only) for existing database',
-        data: {
-          name: newName,
-        },
-        responseSchema,
-        before: async () => {
-          oldDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID);
-          expect(oldDatabase.name).to.not.eq(newName);
-        },
-        responseBody: {
-          name: newName,
-        },
-        after: async () => {
-          newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID);
-          expect(newDatabase.name).to.eq(newName);
-        },
-      },
       {
         name: 'Should return 503 error if incorrect connection data provided',
         data: {
@@ -127,10 +108,7 @@ describe(`PATCH /databases/:id`, () => {
           error: 'Service Unavailable'
         },
         after: async () => {
-          // check that instance wasn't changed
-          const newDb = await localDb.getInstanceById(constants.TEST_INSTANCE_ID);
-          expect(newDb.name).to.not.eql('new name');
-          expect(newDb.port).to.eql(constants.TEST_REDIS_PORT);
+          expect(await localDb.getInstanceByName('new name')).to.eq(null);
         },
       },
       {
@@ -157,19 +135,17 @@ describe(`PATCH /databases/:id`, () => {
 
       [
         {
-          name: 'Should change host and port and recalculate data such as (provider, modules, etc...)',
+          name: 'Should create new db with host and port and recalculate data such as (provider, modules, etc...)',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
+            name: 'some name',
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
           },
           responseSchema,
           before: async () => {
-            oldDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
+            oldDatabase = await localDb.getInstanceByName(constants.TEST_INSTANCE_NAME_3);
             expect(oldDatabase.name).to.eq(constants.TEST_INSTANCE_NAME_3);
-            expect(oldDatabase.modules).to.eq('[]');
-            expect(oldDatabase.host).to.not.eq(constants.TEST_REDIS_HOST)
-            expect(oldDatabase.port).to.not.eq(constants.TEST_REDIS_PORT)
           },
           responseBody: {
             host: constants.TEST_REDIS_HOST,
@@ -184,12 +160,14 @@ describe(`PATCH /databases/:id`, () => {
             tlsServername: null,
           },
           after: async () => {
-            newDatabase = await localDb.getInstanceById(constants.TEST_INSTANCE_ID_3);
+            newDatabase = await localDb.getInstanceByName('some name');
             expect(newDatabase).to.contain({
-              ..._.omit(oldDatabase, ['modules', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version']),
+              ..._.omit(oldDatabase, ['id', 'modules', 'name', 'provider', 'lastConnection', 'new', 'timeout', 'compressor', 'version']),
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
             });
+            expect(newDatabase.name).to.not.eq(oldDatabase.name);
+            expect(newDatabase.name).to.eq('some name');
           },
         },
       ].map(mainCheckFn);
@@ -218,6 +196,7 @@ describe(`PATCH /databases/:id`, () => {
           await validateApiCall({
             endpoint,
             data: {
+              name: dbName,
               db: constants.TEST_REDIS_DB_INDEX,
             },
             responseSchema,

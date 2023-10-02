@@ -2,7 +2,7 @@ import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
 import {
-  isEmpty, merge, omit, reject, sum,
+  isEmpty, merge, omit, reject, sum, get, set, isNull, omitBy, isUndefined,
 } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -15,12 +15,11 @@ import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto'
 import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
-import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientContext, SessionMetadata } from 'src/common/models';
-import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { PartialDatabaseDto } from 'src/modules/database/dto/partial.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 
@@ -35,6 +34,28 @@ export class DatabaseService {
     'sshOptions.passphrase',
     'sshOptions.privateKey',
     'sentinelMaster.password',
+  ];
+
+  private securityFields: string[] = [
+    'password',
+    'sshOptions.passphrase',
+    'sshOptions.password',
+  ];
+
+  private connectionFields: string[] = [
+    'host',
+    'port',
+    'db',
+    'username',
+    'password',
+    'tls',
+    'tlsServername',
+    'verifyServerCert',
+    'sentinelMaster',
+    'ssh',
+    'sshOptions',
+    'caCert',
+    'clientCert',
   ];
 
   constructor(
@@ -94,6 +115,17 @@ export class DatabaseService {
   }
 
   /**
+   * Gets database without secret fields model by id
+   * @param id
+   * @param ignoreEncryptionErrors
+   */
+  async getWithoutSecurityFields(id: string, ignoreEncryptionErrors = false): Promise<Database> {
+    const model = await this.get(id, ignoreEncryptionErrors);
+
+    return this.checkSecurityFields(model);
+  }
+
+  /**
    * Create new database with auto-detection of database type, modules, etc.
    * @param dto
    * @param uniqueCheck
@@ -124,7 +156,7 @@ export class DatabaseService {
         // ignore error
       }
 
-      return database;
+      return this.checkSecurityFields(database);
     } catch (error) {
       this.logger.error('Failed to add database.', error);
 
@@ -139,7 +171,7 @@ export class DatabaseService {
   // todo: remove manualUpdate flag logic
   public async update(
     id: string,
-    dto: UpdateDatabaseDto | ModifyDatabaseDto,
+    dto: PartialDatabaseDto,
     manualUpdate: boolean = true,
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);
@@ -148,17 +180,20 @@ export class DatabaseService {
     let database = merge({}, oldDatabase, dto);
 
     try {
-      database = await this.databaseFactory.createDatabaseModel(database);
+      if (Object.keys(omitBy(dto, isUndefined)).some(r => this.connectionFields.includes(r))) {
+        database = await this.databaseFactory.createDatabaseModel(database);
 
-      // todo: investigate manual update flag
-      if (manualUpdate) {
-        database.provider = getHostingProvider(database.host);
+        // todo: investigate manual update flag
+        if (manualUpdate) {
+          database.provider = getHostingProvider(database.host);
+        }
+
+        // todo: rethink
+        this.redisService.removeClientInstances({ databaseId: id });
       }
 
       database = await this.repository.update(id, database);
 
-      // todo: rethink
-      this.redisService.removeClientInstances({ databaseId: id });
       this.analytics.sendInstanceEditedEvent(
         oldDatabase,
         database,
@@ -173,7 +208,7 @@ export class DatabaseService {
   }
 
   /**
-   * Test connection for new/modified config before creating/updating database
+   * Test connection for new config before creating/updating database
    * @param dto
    */
   public async testConnection(
@@ -195,6 +230,45 @@ export class DatabaseService {
       this.logger.error('Connection test failed', error);
       throw catchRedisConnectionError(error, database);
     }
+  }
+
+  /**
+   * Clone database
+   * @param dto
+   */
+  public async testExistConnection(
+    id: string,
+    dto: PartialDatabaseDto,
+  ): Promise<void> {
+    this.logger.log(`Test exist database connection: ${id}`);
+    const oldDatabase = await this.get(id, true);
+    const database = merge({}, oldDatabase, dto);
+
+    return await this.testConnection(database);
+  }
+
+  /**
+   * Clone database
+   * @param dto
+   */
+  public async clone(
+    id: string,
+    dto: PartialDatabaseDto,
+  ): Promise<Database> {
+    this.logger.log(`Clone database connection: ${id}`);
+    const oldDatabase = omit(await this.get(id, true), 'sshOptions.id');
+    const database = merge({}, omit(oldDatabase, 'id'), dto);
+    if (Object.keys(omitBy(dto, isUndefined)).some(r => this.connectionFields.includes(r))) {
+      return await this.create(database);
+    }
+
+    const createdDatabase =  await this.repository.create({
+      ...classToClass(Database, database),
+      new: true,
+    }, false);
+  
+    this.analytics.sendInstanceAddedEvent(createdDatabase);
+    return createdDatabase;
   }
 
   /**
@@ -272,5 +346,15 @@ export class DatabaseService {
       omit(database, paths),
       { groups: ['security'] },
     ));
+  }
+
+  private checkSecurityFields(model: Database): Database {
+    this.securityFields.forEach((field) => {
+      if (get(model, field)) {
+        set(model, field, true);
+      }
+    });
+
+    return model;
   }
 }

@@ -8,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -20,13 +19,12 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { TimeoutInterceptor } from 'src/common/interceptors/timeout.interceptor';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
-import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { BuildType } from 'src/modules/server/models/server';
 import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dto';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
-import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
+import { PartialDatabaseDto } from 'src/modules/database/dto/partial.database.dto';
 import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dto';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 
@@ -71,7 +69,7 @@ export class DatabaseController {
   async get(
     @Param('id') id: string,
   ): Promise<Database> {
-    return await this.service.get(id);
+    return await this.service.getWithoutSecurityFields(id);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -103,7 +101,7 @@ export class DatabaseController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
-  @Put(':id')
+  @Patch(':id')
   @ApiEndpoint({
     description: 'Update database instance by id',
     statusCode: 200,
@@ -124,21 +122,21 @@ export class DatabaseController {
   )
   async update(
     @Param('id') id: string,
-      @Body() database: UpdateDatabaseDto,
+      @Body() database: PartialDatabaseDto,
   ): Promise<Database> {
     return await this.service.update(id, database, true);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
-  @Patch(':id')
+  @Post('/clone/:id')
   @ApiEndpoint({
-    description: 'Update database instance by id',
+    description: 'Clone database instance by id',
     statusCode: 200,
     responses: [
       {
         status: 200,
-        description: 'Updated database instance\' response',
+        description: 'Clone database instance\' response',
         type: Database,
       },
     ],
@@ -150,11 +148,11 @@ export class DatabaseController {
       forbidNonWhitelisted: true,
     }),
   )
-  async modify(
+  async clone(
     @Param('id') id: string,
-      @Body() database: ModifyDatabaseDto,
+      @Body() database: PartialDatabaseDto,
   ): Promise<Database> {
-    return await this.service.update(id, database, true);
+    return await this.service.clone(id, database);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -178,6 +176,31 @@ export class DatabaseController {
     @Body() database: CreateDatabaseDto,
   ): Promise<void> {
     return await this.service.testConnection(database);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/test/:id')
+  @ApiEndpoint({
+    description: 'Test connection',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async testExistConnection(
+    @Param('id') id: string,
+      @Body() database: PartialDatabaseDto,
+  ): Promise<void> {
+    return await this.service.testExistConnection(id, database);
   }
 
   @Delete('/:id')

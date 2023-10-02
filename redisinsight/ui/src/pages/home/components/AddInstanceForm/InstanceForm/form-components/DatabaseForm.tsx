@@ -12,6 +12,7 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import { BuildType } from 'uiSrc/constants/env'
+import { SECURITY_FIELD } from 'uiSrc/constants'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { handlePasteHostName, MAX_PORT_NUMBER, MAX_TIMEOUT_NUMBER, selectOnFocus, validateField, validatePortNumber, validateTimeoutNumber } from 'uiSrc/utils'
 import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
@@ -178,7 +179,7 @@ const DatabaseForm = (props: Props) => {
         <EuiFlexItem className={flexItemClassName}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
-              type="dual"
+              type={instanceType !== InstanceType.Sentinel ? 'password' : 'dual'}
               name="password"
               id="password"
               data-testid="password"
@@ -186,8 +187,16 @@ const DatabaseForm = (props: Props) => {
               className="passwordField"
               maxLength={10_000}
               placeholder="Enter Password"
-              value={formik.values.password ?? ''}
+              value={formik.values.password === true ? SECURITY_FIELD : formik.values.password ?? ''}
               onChange={formik.handleChange}
+              onFocus={() => {
+                if (formik.values.password === true) {
+                  formik.setFieldValue(
+                    'password',
+                    '',
+                  )
+                }
+              }}
               dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
             />

@@ -332,7 +332,8 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
         onSuccess?.(data)
         dispatch(loadInstancesSuccess(data))
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadInstancesFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -456,14 +457,39 @@ export function updateInstanceAction({ id, ...payload }: Instance, onSuccess?: (
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status } = await apiService.put(`${ApiEndpoints.DATABASES}/${id}`, payload)
+      const { status } = await apiService.patch(`${ApiEndpoints.DATABASES}/${id}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
         onSuccess?.()
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(defaultInstanceChangingFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function cloneInstanceAction({ id, name, ...payload }: Partial<Instance>, onSuccess?: (id?: string) => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(defaultInstanceChanging())
+
+    try {
+      const { status } = await apiService.post(`${ApiEndpoints.DATABASES}/clone/${id}`, payload)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(defaultInstanceChangingSuccess())
+        dispatch<any>(fetchInstancesAction())
+
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(name ?? '')))
+        onSuccess?.(id)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(defaultInstanceChangingFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -503,7 +529,8 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
           )
         }
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -535,7 +562,8 @@ export function exportInstancesAction(
 
         onSuccess?.(data)
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -558,7 +586,8 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
         dispatch(setDefaultInstanceSuccess())
       }
       onSuccess?.()
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
@@ -598,7 +627,8 @@ export function fetchEditedInstanceAction(instance: Instance, onSuccess?: () => 
         dispatch(setDefaultInstanceSuccess())
       }
       onSuccess?.()
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setEditedInstance(null))
       dispatch(setConnectedInstanceFailure())
@@ -625,7 +655,8 @@ export function checkConnectToInstanceAction(
         dispatch(setDefaultInstanceSuccess())
         onSuccessAction?.(id)
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification({ ...error, instanceId: id }))
@@ -661,7 +692,8 @@ export function getDatabaseConfigInfoAction(
         dispatch(getDatabaseConfigInfoSuccess(data))
         onSuccessAction?.(id)
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(getDatabaseConfigInfoFailure(errorMessage))
       onFailAction?.()
@@ -766,7 +798,8 @@ export function uploadInstancesFile(
         dispatch(importInstancesFromFileSuccess(data))
         onSuccessAction?.()
       }
-    } catch (error) {
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(importInstancesFromFileFailure(errorMessage))
       onFailAction?.()
@@ -776,28 +809,31 @@ export function uploadInstancesFile(
 
 // Asynchronous thunk action
 export function testInstanceStandaloneAction(
-  payload: Instance,
+  { id, ...payload }: Partial<Instance>,
   onRedirectToSentinel?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(testConnection())
+    const url = id
+      ? `${ApiEndpoints.DATABASES_TEST_CONNECTION}/${id}`
+      : `${ApiEndpoints.DATABASES_TEST_CONNECTION}`
 
     try {
-      const { status } = await apiService.post(`${ApiEndpoints.DATABASES_TEST_CONNECTION}`, payload)
+      const { status } = await apiService.post(url, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(testConnectionSuccess())
 
         dispatch(addMessageNotification(successMessages.TEST_CONNECTION()))
       }
-    } catch (_error) {
-      const error: AxiosError = _error
+    } catch (_err) {
+      const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
 
       dispatch(testConnectionFailure(errorMessage))
 
       if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
-        checkoutToSentinelFlow(payload, dispatch, onRedirectToSentinel)
+        checkoutToSentinelFlow({ id, ...payload }, dispatch, onRedirectToSentinel)
         return
       }
 

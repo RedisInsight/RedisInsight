@@ -16,7 +16,7 @@ export interface DbConnectionInfo extends Instance {
   newCaCertName?: string
   newCaCert?: string
   username?: string
-  password?: string
+  password?: string | true
   timeout?: string
   showDb?: boolean
   showCompressor?: boolean
@@ -29,9 +29,9 @@ export interface DbConnectionInfo extends Instance {
   sshHost: string
   sshPort: string
   sshUsername?: string
-  sshPassword?: string
+  sshPassword?: string | true
   sshPrivateKey?: string
-  sshPassphrase?: string
+  sshPassphrase?: string | true
 }
 
 export interface ISubmitButton {

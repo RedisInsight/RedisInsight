@@ -1197,9 +1197,9 @@ workflows:
         - << pipeline.parameters.windows >>
     jobs:
       - test:
-          linux: << parameters.linux >>
-          mac: << parameters.mac >>
-          windows: << parameters.windows >>
+          linux: << pipeline.parameters.linux >>
+          mac: << pipeline.parameters.mac >>
+          windows: << pipeline.parameters.windows >>
   # build electron app (dev) from "build" branches
   build:
     jobs:

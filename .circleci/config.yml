@@ -179,6 +179,17 @@ executors:
       image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
 
+parameters:
+  linux:
+    type: string
+    default: &ignore "ignore"
+  mac:
+    type: string
+    default: *ignore
+  windows:
+    type: string
+    default: *ignore
+
 jobs:
   # Test jobs
   unit-tests-ui:
@@ -1161,6 +1172,16 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
+
+  # manual build
+  manual-build:
+    when:
+      or:
+        - << pipeline.parameters.linux >>
+        - << pipeline.parameters.mac >>
+        - << pipeline.parameters.windows >>
+    jobs:
+      - setup-sign-certificates
   # build electron app (dev) from "build" branches
   build:
     jobs:

@@ -27,7 +27,7 @@ const whitelist = {
   if (targets.length) {
     targets.forEach((target) => {
       if (!whitelist[os]?.[target]) {
-        throw new Error(`Target ${target} for ${os} is not allowed. Allowed targets ${Object.keys(whitelist[os] || {}).join(',')}`);
+        throw new Error(`Target ${target} for ${os} is not allowed. \nAllowed targets: ${Object.keys(whitelist[os] || {}).join(',')}`);
       }
     })
   }

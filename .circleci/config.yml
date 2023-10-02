@@ -513,7 +513,6 @@ jobs:
       - run:
           command: |
             node .circleci/build/manual-build-validate.js << parameters.os >> << parameters.target >>
-            exit "Error"
   setup-sign-certificates:
     executor: linux-executor
     steps:

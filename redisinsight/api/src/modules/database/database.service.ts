@@ -115,7 +115,7 @@ export class DatabaseService {
   }
 
   /**
-   * Gets database without secret fields model by id
+   * Gets database without secret fields by id
    * @param id
    * @param ignoreEncryptionErrors
    */
@@ -180,7 +180,7 @@ export class DatabaseService {
     let database = merge({}, oldDatabase, dto);
 
     try {
-      if (Object.keys(omitBy(dto, isUndefined)).some(r => this.connectionFields.includes(r))) {
+      if (Object.keys(omitBy(dto, isUndefined)).some(f => this.connectionFields.includes(f))) {
         database = await this.databaseFactory.createDatabaseModel(database);
 
         // todo: investigate manual update flag
@@ -208,7 +208,7 @@ export class DatabaseService {
   }
 
   /**
-   * Test connection for new config before creating/updating database
+   * Test connection for new config before creating database
    * @param dto
    */
   public async testConnection(
@@ -233,7 +233,7 @@ export class DatabaseService {
   }
 
   /**
-   * Clone database
+   * Test existing database with new fields
    * @param dto
    */
   public async testExistConnection(

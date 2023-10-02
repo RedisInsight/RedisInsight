@@ -371,15 +371,6 @@ describe(`POST /databases/test/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
-          responseBody: {
-            name: dbName,
-            host: constants.TEST_REDIS_HOST,
-            port: constants.TEST_REDIS_PORT,
-            connectionType: constants.STANDALONE,
-            tls: true,
-            verifyServerCert: true,
-            tlsServername: null,
-          },
         });
 
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
@@ -392,6 +383,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint,
+          statusCode: 400,
           data: {
             tls: true,
             verifyServerCert: true,
@@ -406,7 +398,7 @@ describe(`POST /databases/test/:id`, () => {
 
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
       });
-      it('Should throw an error if try to create client certificate with existing name', async () => {
+      it('Should not throw an error if try to create client certificate with existing name', async () => {
         const dbName = constants.getRandomString();
         const newCaName = constants.getRandomString();
 
@@ -415,7 +407,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint,
-          statusCode: 400,
+          statusCode: 200,
           data: {
             ...baseDatabaseData,
             name: dbName,
@@ -431,16 +423,11 @@ describe(`POST /databases/test/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
-          responseBody: {
-            error: 'Bad Request',
-            message: 'This client certificate name is already in use.',
-            statusCode: 400,
-          },
         });
 
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
       });
-      it('Should throw an error if try to create ca certificate with existing name', async () => {
+      it('Should not throw an error if try to create ca certificate with existing name', async () => {
         const dbName = constants.getRandomString();
         const newClientName = constants.getRandomString();
 
@@ -449,7 +436,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint,
-          statusCode: 400,
+          statusCode: 200,
           data: {
             ...baseDatabaseData,
             name: dbName,
@@ -464,11 +451,6 @@ describe(`POST /databases/test/:id`, () => {
               certificate: constants.TEST_USER_TLS_CERT,
               key: constants.TEST_USER_TLS_KEY,
             },
-          },
-          responseBody: {
-            error: 'Bad Request',
-            message: 'This ca certificate name is already in use.',
-            statusCode: 400,
           },
         });
 

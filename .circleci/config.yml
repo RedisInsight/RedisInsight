@@ -929,6 +929,15 @@ jobs:
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
+  release-aws-manual:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          command: |
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/manual-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*" --include "RedisInsight*"
 
   release-aws-private:
     executor: linux-executor
@@ -1243,7 +1252,7 @@ workflows:
           name: Store build artifacts (dev)
           requires:
             - Build app - Linux (dev)
-      - release-aws-test:
+      - release-aws-manual:
           name: Release AWS dev
           requires:
             - Build app - Linux (dev)
@@ -1266,6 +1275,7 @@ workflows:
       - macosx:
           name: Build app - MacOS (dev)
           env: dev
+          redisstack: false
           target: << pipeline.parameters.mac >>
           requires:
             - Setup build (dev)
@@ -1273,7 +1283,7 @@ workflows:
           name: Store build artifacts (dev)
           requires:
             - Build app - MacOS (dev)
-      - release-aws-test:
+      - release-aws-manual:
           name: Release AWS dev
           requires:
             - Build app - MacOS (dev)
@@ -1303,7 +1313,7 @@ workflows:
           name: Store build artifacts (dev)
           requires:
             - Build app - Windows (dev)
-      - release-aws-test:
+      - release-aws-manual:
           name: Release AWS dev
           requires:
             - Build app - Windows (dev)

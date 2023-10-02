@@ -49,7 +49,7 @@ export class CloudUserApiProvider extends CloudApiProvider {
       return get(headers, 'set-cookie', []).find(
         (header) => header.indexOf('JSESSIONID=') > -1,
       )
-        ?.match(/JSESSIONID=(\w+)/)?.[1];
+        ?.match(/JSESSIONID=([^;]+)/)?.[1];
     } catch (e) {
       throw wrapCloudApiError(e);
     }

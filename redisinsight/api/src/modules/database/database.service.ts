@@ -200,7 +200,7 @@ export class DatabaseService {
         manualUpdate,
       );
 
-      return database;
+      return this.checkSecurityFields(database);
     } catch (error) {
       this.logger.error(`Failed to update database instance ${id}`, error);
       throw catchRedisConnectionError(error, database);
@@ -268,7 +268,7 @@ export class DatabaseService {
     }, false);
 
     this.analytics.sendInstanceAddedEvent(createdDatabase);
-    return createdDatabase;
+    return this.checkSecurityFields(createdDatabase);
   }
 
   /**

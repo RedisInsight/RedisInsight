@@ -195,7 +195,7 @@ describe('DatabaseService', () => {
       )).toEqual({ ...mockDatabase, port: 6380, password: true });
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
         mockDatabase,
-        { ...mockDatabase, port: 6380, password: 'password' },
+        { ...mockDatabase, port: 6380, password: true },
         true,
       );
       expect(databaseFactory.createDatabaseModel).toBeCalled();

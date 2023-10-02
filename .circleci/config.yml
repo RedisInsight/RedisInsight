@@ -169,6 +169,9 @@ aliases:
       - << pipeline.parameters.linux >>
       - << pipeline.parameters.mac >>
       - << pipeline.parameters.windows >>
+  ignore-for-manual-build: &ignore-for-manual-build
+    when:
+      not: *manual-build-conditions
 
 orbs:
   win: circleci/windows@2.4.1
@@ -1066,11 +1069,11 @@ jobs:
 
             done
 
+
 workflows:
   # FE Unit tests for "fe/feature" or "fe/bugfix" branches only
   frontend-tests:
-    when:
-      not: *manual-build-conditions
+    <<: *ignore-for-manual-build
     jobs:
       - unit-tests-ui:
           name: UTest - UI
@@ -1081,6 +1084,7 @@ workflows:
                 - /^fe/bugfix.*/
   # BE Unit + Integration (limited RTEs) tests for "be/feature" or "be/bugfix" branches only
   backend-tests:
+    <<: *ignore-for-manual-build
     jobs:
       - unit-tests-api:
           name: UTest - API
@@ -1137,8 +1141,7 @@ workflows:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
-    when:
-      not: *manual-build-conditions
+    <<: *ignore-for-manual-build
     jobs:
       # Approve to run all (unit, integration, e2e) tests
       - approve:
@@ -1196,8 +1199,7 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
-
-  # manual build
+  # Manual build using web UI
   manual-build:
     when: *manual-build-conditions
     jobs:
@@ -1205,8 +1207,45 @@ workflows:
           linux: << pipeline.parameters.linux >>
           mac: << pipeline.parameters.mac >>
           windows: << pipeline.parameters.windows >>
+      - setup-sign-certificates:
+          name: Setup sign certificates (dev)
+      - setup-build:
+          name: Setup build (dev)
+          env: dev
+          requires:
+            - Setup sign certificates (dev)
+      - when:
+          condition: << pipeline.parameters.linux >>
+          jobs:
+            - linux:
+                name: Build app - Linux (dev)
+                env: dev
+                requires: &devBuildRequire
+                  - Setup build (dev)
+#      - macosx:
+#          name: Build app - MacOS (dev)
+#          env: dev
+#          requires: *devBuildRequire
+#      - windows:
+#          name: Build app - Windows (dev)
+#          env: dev
+#          requires: *devBuildRequire
+#      - store-build-artifacts:
+#          name: Store build artifacts (dev)
+#          requires:
+#            - Build app - Linux (dev)
+#            - Build app - MacOS (dev)
+#            - Build app - Windows (dev)
+#      - release-aws-test:
+#          name: Release AWS dev
+#          requires:
+#            - Build app - Linux (dev)
+#            - Build app - MacOS (dev)
+#            - Build app - Windows (dev)
+
   # build electron app (dev) from "build" branches
   build:
+    <<: *ignore-for-manual-build
     jobs:
       - setup-sign-certificates:
           name: Setup sign certificates (dev)
@@ -1247,6 +1286,7 @@ workflows:
 
   # Main workflow for release/* and latest branches only
   release:
+    <<: *ignore-for-manual-build
     jobs:
       # unit tests (on any commit)
       - unit-tests-ui:

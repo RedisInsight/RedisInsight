@@ -182,15 +182,32 @@ executors:
 parameters:
   linux:
     type: string
-    default: &ignore "ignore"
+#    default: &ignore "ignore"
   mac:
     type: string
-    default: *ignore
+#    default: *ignore
   windows:
     type: string
-    default: *ignore
+#    default: *ignore
 
 jobs:
+  test:
+    parameters:
+      linux:
+        type: string
+      mac:
+        type: string
+      windows:
+        type: string
+    docker:
+      - image: cimg/node:18.15.0
+    steps:
+      - run:
+          name: params check
+          command: |
+            echo linux: << parameters.linux >>
+            echo mac: << parameters.mac >>
+            echo windows: << parameters.windows >>
   # Test jobs
   unit-tests-ui:
     docker:
@@ -1177,11 +1194,14 @@ workflows:
   manual-build:
     when:
       or:
-        - << pipeline.parameters.linux >>
-        - << pipeline.parameters.mac >>
-        - << pipeline.parameters.windows >>
+        - << parameters.linux >>
+        - << parameters.mac >>
+        - << parameters.windows >>
     jobs:
-      - setup-sign-certificates
+      - test:
+          linux: << parameters.linux>
+          mac: << parameters.mac>
+          windows: << parameters.windows>
   # build electron app (dev) from "build" branches
   build:
     jobs:

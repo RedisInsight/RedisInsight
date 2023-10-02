@@ -10,10 +10,18 @@ import {
   screen,
   act,
 } from 'uiSrc/utils/test-utils'
-import { keysSelector, loadKeys, loadSearchHistory, setFilter, setPatternSearchMatch } from 'uiSrc/slices/browser/keys'
+import {
+  changeExactMatch,
+  keysSelector,
+  loadKeys,
+  loadSearchHistory,
+  setFilter,
+  setPatternSearchMatch
+} from 'uiSrc/slices/browser/keys'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import SearchKeyList from './SearchKeyList'
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
@@ -45,6 +53,11 @@ jest.mock('uiSrc/slices/browser/redisearch', () => ({
     search: '',
     selectedIndex: null,
   }),
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -136,5 +149,52 @@ describe('SearchKeyList', () => {
     expect(clearStoreActions(store.getActions())).toEqual(
       clearStoreActions([...afterRenderActions])
     )
+  })
+
+  it('should change exact match after click on button', () => {
+    keysSelector.mockImplementation(() => ({
+      searchMode: SearchMode.Pattern,
+      viewType: KeyViewType.Browser,
+      isSearch: false,
+      isFiltered: false,
+    }))
+
+    render(<SearchKeyList />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('exact-match-button'))
+
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions([...afterRenderActions, changeExactMatch(true)])
+    )
+  })
+
+  it('should call proper telemetry after click exact match button', () => {
+    keysSelector.mockImplementation(() => ({
+      searchMode: SearchMode.Pattern,
+      viewType: KeyViewType.Browser,
+      isSearch: false,
+      isFiltered: false,
+    }))
+
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<SearchKeyList />)
+
+    fireEvent.click(screen.getByTestId('exact-match-button'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.BROWSER_FILTER_PER_PATTERN_CLICKED,
+      eventData: {
+        databaseId: 'instanceId',
+        current: 'Exact',
+        previous: 'Pattern',
+        view: KeyViewType.Browser
+      }
+    });
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

@@ -107,6 +107,7 @@ export class BrowserPage extends InstancePage {
     clearFilterHistoryBtn = Selector('[data-testid=clear-history-btn]');
     guideLinksBtn = Selector('[data-testid^=guide-button-]');
     backToBrowserBtn = Selector('[data-testid=back-right-panel-btn]');
+    exactSearchBtn = Selector('[data-testid=exact-match-button]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');

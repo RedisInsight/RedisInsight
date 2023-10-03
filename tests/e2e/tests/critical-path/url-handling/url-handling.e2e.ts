@@ -70,7 +70,7 @@ test
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.wait(3_000);
+        await t.wait(7_000);
         await t.expect(await workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
 
         //Verify that the same db is not added

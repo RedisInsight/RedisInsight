@@ -32,6 +32,7 @@ export interface Props {
     onDelete: (ids: string[]) => void
     loading?: boolean
   }
+  optionalButton?: React.ReactNode
   onChange: (value: string) => void
   onChangeOptions?: (options: string[]) => void
   onClear?: () => void
@@ -52,6 +53,7 @@ const MultiSearch = (props: Props) => {
     onChange,
     onKeyDown,
     onClear = () => {},
+    optionalButton,
     className,
     compressed,
     ...rest
@@ -249,6 +251,7 @@ const MultiSearch = (props: Props) => {
               />
             </EuiToolTip>
           )}
+          {optionalButton}
           {!!suggestionOptions?.length && (
             <EuiToolTip
               content={suggestions?.buttonTooltipTitle}

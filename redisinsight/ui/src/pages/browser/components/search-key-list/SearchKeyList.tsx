@@ -1,12 +1,14 @@
-import { keys } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip, keys } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
+import { useParams } from 'react-router-dom'
 import MultiSearch from 'uiSrc/components/multi-search/MultiSearch'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { replaceSpaces } from 'uiSrc/utils'
 import {
+  changeExactMatch,
   deleteSearchHistoryAction,
   fetchKeys,
   fetchSearchHistoryAction,
@@ -15,13 +17,11 @@ import {
   setFilter,
   setSearchMatch
 } from 'uiSrc/slices/browser/keys'
-import { SearchMode, KeyViewType, SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
-import {
-  redisearchHistorySelector,
-  redisearchSelector
-} from 'uiSrc/slices/browser/redisearch'
+import { KeyViewType, SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { redisearchHistorySelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -31,7 +31,7 @@ const placeholders = {
 
 const SearchKeyList = () => {
   const { id } = useSelector(connectedInstanceSelector)
-  const { search, viewType, searchMode } = useSelector(keysSelector)
+  const { search, viewType, searchMode, exactMatch } = useSelector(keysSelector)
   const { search: redisearchQuery, selectedIndex } = useSelector(redisearchSelector)
   const { data: rediSearchHistory, loading: rediSearchHistoryLoading } = useSelector(redisearchHistorySelector)
   const { data: searchHistory, loading: searchHistoryLoading } = useSelector(keysSearchHistorySelector)
@@ -40,6 +40,7 @@ const SearchKeyList = () => {
   const [disableSubmit, setDisableSubmit] = useState(false)
 
   const dispatch = useDispatch()
+  const { instanceId } = useParams<{ instanceId: string }>()
 
   useEffect(() => {
     if (id) {
@@ -114,6 +115,23 @@ const SearchKeyList = () => {
     handleApply('')
   }
 
+  const handleChangeExactMatch = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.BROWSER_FILTER_PER_PATTERN_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        view: viewType,
+        previous: exactMatch ? 'Exact' : 'Pattern',
+        current: exactMatch ? 'Pattern' : 'Exact',
+      }
+    })
+    dispatch(changeExactMatch(!exactMatch))
+
+    if (value) {
+      handleApply()
+    }
+  }
+
   return (
     <div className={cx(styles.container, { [styles.redisearchMode]: searchMode === SearchMode.Redisearch })}>
       <MultiSearch
@@ -130,6 +148,24 @@ const SearchKeyList = () => {
           onApply: handleApplySuggestion,
           onDelete: handleDeleteSuggestions,
         }}
+        optionalButton={searchMode === SearchMode.Pattern ? (
+          <EuiToolTip
+            title="Exact Search"
+            content={exactMatch ? 'Disable to see keys matching your pattern' : 'Enable to see keys that exactly match your pattern'}
+            position="bottom"
+          >
+            <EuiButtonIcon
+              display="empty"
+              iconType="bullseye"
+              color="primary"
+              size="xs"
+              onClick={handleChangeExactMatch}
+              aria-label="exact match button"
+              className={cx(styles.exactSearchIcon, { [styles.disabled]: !exactMatch })}
+              data-testid="exact-match-button"
+            />
+          </EuiToolTip>
+        ) : null}
         disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}
         className={styles.input}

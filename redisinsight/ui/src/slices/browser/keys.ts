@@ -80,7 +80,7 @@ export const initialState: KeysStore = {
   isBrowserFullScreen: false,
   searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
-  exactMatch: localStorageService?.get(BrowserStorageItem.browserExactMatch) ?? false,
+  exactMatch: localStorageService?.get(BrowserStorageItem.browserExactMatch) ?? true,
   data: {
     total: 0,
     scanned: 0,

@@ -150,7 +150,8 @@ const SearchKeyList = () => {
         }}
         optionalButton={searchMode === SearchMode.Pattern ? (
           <EuiToolTip
-            content="Exact Search"
+            title="Exact Search"
+            content={exactMatch ? 'Disable to see keys matching your pattern' : 'Enable to see keys that exactly match your pattern'}
             position="bottom"
           >
             <EuiButtonIcon

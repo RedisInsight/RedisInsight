@@ -28,7 +28,7 @@ $sideBarWidth: 60px;
     }
 
     &.active {
-      background-color: var(--euiColorSuccessText) !important;
+      background-color: var(--navActiveBackgroundColor) !important;
       transform: none;
       cursor: default;
     }

@@ -1,96 +1,99 @@
-$euiColorPrimary: #3953c3;
-$euiColorPrimaryRGB: 57,83,195;
+$euiColorPrimary: #253dac;
+$euiColorPrimaryRGB: 31,61,172;
 $euiColorPrimaryText: #ffffff;
-$euiColorSecondary: #243dac;
+$euiColorSecondary: #7B90E0;
 $euiColorSecondaryText: #ffffff;
-$euiColorSuccess: #3953c3;
-$euiColorSuccessText: #8ba2ff;
+$euiColorSuccess: #5BC69B;
+$euiColorSuccessText: #5BC69B;
 $euiColorDanger: #b92733;
-$euiColorDangerText: #ad0017;
+$euiColorDangerText: #F74B57;
 $euiColorWarning: #9d6901;
-$euiColorWarningText: #9d6901;
-$euiTextSubduedColor: #415681;
-$euiTextSubduedColorHover: #173369;
-$euiPageBackgroundColor: #edf0f5;
+$euiColorWarningText: #FFAF2B;
+$euiTextSubduedColor: #4D6992;
+$euiTextSubduedColorHover: #01112A;
+$euiPageBackgroundColor: #F4F6F7;
 $euiTooltipBackgroundColor: #ffffff;
-$euiTooltipTextColor: #173369;
-$euiTooltipTextSecondColor: #395b88;
-$euiTooltipTitleTextColor: #395984;
-$euiColorLightShade: #cdd7e6;
-$euiColorLightestShade: #e4eaf2;
+$euiTooltipTextColor: #01112A;
+$euiTooltipTextSecondColor: #4D6992;
+$euiTooltipTitleTextColor: #4D6992;
+$euiColorLightShade: #EAEDF2;
+$euiColorLightestShade: #F4F6F7;
 $euiColorEmptyShade: #ffffff;
-$euiBreadcrumbActive: #395984;
-$euiToastBackgroundColor: #243dac;
-$euiToastSuccessBtnColor: #5165bd;
-$euiToastSuccessBorderColor: #5165bd;
-$euiToastDangerBtnColor: #c7535d;
-$euiToastDangerBorderColor: #c7535d;
-$euiToastDangerBgColor: #9e2f29;
-$euiColorMediumShade: #527298;
-$euiColorFullShade: #173369;
+$euiBreadcrumbActive: #4D6992;
+$euiToastBackgroundColor: #4D6992;
+$euiToastSuccessBtnColor: #4766C4;
+$euiToastSuccessBorderColor: #EAEDF2;
+$euiToastDangerBtnColor: #F74B57;
+$euiToastDangerBorderColor: #F74B57;
+$euiToastDangerBgColor: #AD353D;
+$euiColorMediumShade: #C1CBD9;
+$euiColorDarkShade: #8094B1;
+$euiColorFullShade: #4D6992;
+$euiColorDarkestShade: #01112A;
 $euiColorGhost: #ffffff;
 
-$htmlColor: #173369;
-$navBackgroundColor: #0f1633;
-$externalLinkColor: #3163d8;
-$externalLinkTooltipColor: #3163d8;
-$linkToastColor: #adbeff;
-$defaultGreenColor: #008000;
+$htmlColor: #4D6992;
+$navBackgroundColor: #fff;
+$navActiveBackgroundColor: #D7E3FA;
+$externalLinkColor: #253DAC;
+$externalLinkTooltipColor: #253DAC;
+$linkToastColor: #A2B8F2;
+$defaultGreenColor: #5BC69B;
 
-$tableRowHoverColor: #fafbfd;
-$tableRowSelectedColor: #ebeffa;
-$tableLightestBorderColor: #c1cbd9;
-$tableLightBorderColor: #e4eaf2;
-$tableDarkestBorderColor: #e9edf3;
+$tableRowHoverColor: #f5f8ff;
+$tableRowSelectedColor: #f5f8ff;
+$tableLightestBorderColor: #C1CBD9;
+$tableLightBorderColor: #EAEDF2;
+$tableDarkestBorderColor: #F4F6F7;
 
-$browserTableRowEven: #f6f7f9;
-$browserViewTypePassive: #f6f7f9;
-$browserComponentActive: #d7e3fa;
-$browserTreeNodeOpen: #d7e3fa;
+$browserTableRowEven: #FAFBFB;
+$browserViewTypePassive: #F4F6F7;
+$browserComponentActive: #D2DEFC;
+$browserTreeNodeOpen: #D2DEFC;
 
-$inputTextColor: #173369;
-$inputPlaceholderColor: #395984;
-$inputDisabledBackgroundColor: #f6f8fd;
-$controlsBoxShadowColor: #c1cbd9;
-$controlsBorderColor: #8992b3;
-$controlsLabelColor: #385985;
+$inputTextColor: #01112A;
+$inputPlaceholderColor: #4D6992;
+$inputDisabledBackgroundColor: #FAFBFB;
+$controlsBoxShadowColor: #C1CBD9;
+$controlsBorderColor: #8094B1;
+$controlsLabelColor: #4D6992;
 $controlsLabelHoverColor: #173369;
-$iconsDefaultColor: #728baf;
-$iconsDefaultHoverColor: #173369;
-$separatorColor: #cdd7e6;
-$separatorColorLight: #B2B9D1;
-$separatorNavigationColor: #465282;
-$separatorDropdownColor: #8b90a3;
+$iconsDefaultColor: #4D6992;
+$iconsDefaultHoverColor: #01112A;
+$separatorColor: #EAEDF2;
+$separatorColorLight: #EAEDF2;
+$separatorNavigationColor: #EAEDF2;
+$separatorDropdownColor: #EAEDF2;
 
-$buttonSecondaryHoverColor: #2848d7;
-$buttonSecondaryTextColor: #243dac;
-$buttonSecondaryDisabledTextColor: #dfe4fb;
-$buttonDangerHoverColor: #cb3844;
-$buttonIconPrimaryHover: #dfe4fb;
-$buttonWarningColor: #9e2f29;
-$buttonWarningHoverColor: #b00c03;
-$buttonDangerToastColor: #e8524a;
-$buttonDangerToastHoverColor: #bf3932;
+$buttonSecondaryHoverColor: #A2B8F2;
+$buttonSecondaryTextColor: #FFFFFF;
+$buttonSecondaryDisabledTextColor: #8094B1;
+$buttonDangerHoverColor: #F98189;
+$buttonIconPrimaryHover: #FFFFFF;
+$buttonWarningColor: #F74B57;
+$buttonWarningHoverColor: #F98189;
+$buttonDangerToastColor: #F74B57;
+$buttonDangerToastHoverColor: #F98189;
 $buttonGuideBgColor: transparent;
 
-$comboBoxBadgeBgColor: #edf0f5;
+$comboBoxBadgeBgColor: #F4F6F7;
 
-$hoverInListColor: #e9edfa;
-$hoverInListColorLight: #d7e3fa;
-$textColorShade: #415681;
-$cliOutputResponseColor: #395b88;
-$cliOutputResponseFailColor: #ad0017;
+$hoverInListColor: #F5F8FF;
+$hoverInListColorLight: #E8EFFF;
+$textColorShade: #4D6992;
+$cliOutputResponseColor: #4D6992;
+$cliOutputResponseFailColor: #F74B57;
 
-$badgeBackgroundColor: #e8efff;
-$commandGroupBadgeColor: #b8c5db;
+$badgeBackgroundColor: #E8EFFF;
+$commandGroupBadgeColor: #C1CBD9;
 $callOutBackgroundColor: #e9edfa;
 $tooltipLightBgColor: #F5F8FF;
 
-$overlayPromoNYColor: #ffffff1a;
+$overlayPromoNYColor: #FFFFFF;
 
-$monacoBgColor: #f0f2f7;
-$highlightDotColor: #2BBBB2;
-$monacoParamsColor: #B63563;
+$monacoBgColor: #F4F6F7;
+$highlightDotColor: #4FDAE0;
+$monacoParamsColor: #7547DE;
 
 $successBorderColor: #5BC69B;
 $warningBorderColor: #FFAF2B;
@@ -99,63 +102,63 @@ $errorBorderColor: #F74B57;
 $overlayMaskBgColor: rgba(255, 255, 255, 0.66);
 
 // Types colors
-$typeHashColor: #cdddf8;
-$typeListColor: #a5d4c3;
-$typeSetColor: #d4baa7;
-$typeZSetColor: #d9a0c6;
-$typeStringColor: #c7b0ea;
-$typeReJSONColor: #b8c5db;
-$typeStreamColor: #c7cea8;
-$typeGraphColor: #acccd7;
-$typeTimeSeriesColor: #c7c7c7;
-$groupSortedSetColor: #d9a0c6;
-$groupBitmapColor: #3f4b5f;
-$groupClusterColor: #6e6e6e;
-$groupConnectionColor: #ffb4d3;
-$groupGeoColor: #bbc4bc;
-$groupGenericColor: #f8f8aa;
-$groupPubSubColor: #bef0f2;
-$groupScriptingColor: #ffadad;
-$groupTransactionsColor: #14708d;
-$groupServerColor: #e8e8e8;
-$groupHyperLolLogColor: #3f4b5f;
-$defaultTypeColor: #E3AAAA;
+$typeHashColor: #E8EFFF;
+$typeListColor: #BDE8D7;
+$typeSetColor: #FCC3B7;
+$typeZSetColor: #FCB7D0;
+$typeStringColor: #C8B5F2;
+$typeReJSONColor: #EAEDF2;
+$typeStreamColor: #D5E8BD;
+$typeGraphColor: #B5E4F9;
+$typeTimeSeriesColor: #FCB7BC;
+$groupSortedSetColor: #FCB7D0;
+$groupBitmapColor: #BDE8D7;
+$groupClusterColor: #FFDFAA;
+$groupConnectionColor: #FCB7D0;
+$groupGeoColor: #D5E8BD;
+$groupGenericColor: #FFDFAA;
+$groupPubSubColor: #B9F0F3;
+$groupScriptingColor: #FCB7BC;
+$groupTransactionsColor: #37999D;
+$groupServerColor: #F4F6F7;
+$groupHyperLolLogColor: #102C2D;
+$defaultTypeColor: #FCB7BC;
 
 // JSON colors
-$jsonKeyNameColor: #a00595;
-$jsonKeyNameArrayColor: #00677e;
-$jsonStringColor: #006915;
-$jsonNumberColor: #00677e;
-$jsonBooleanColor: #9e6600;
-$jsonNullColor: #395984;
-$jsonNonStringPrimitiveColor: #6b9fff;
+$jsonKeyNameColor: #52329B;
+$jsonKeyNameArrayColor: #37999D;
+$jsonStringColor: #408B6D;
+$jsonNumberColor: #37999D;
+$jsonBooleanColor: #B37A1E;
+$jsonNullColor: #4D6992;
+$jsonNonStringPrimitiveColor: #A2B8F2;
 
 // RediSearch colors
-$rsSubmitBtn: #13a450;
+$rsSubmitBtn: #5BC69B;
 $rsInputColor: #fff;
 $rsInputWrapperColor: #fff;
 
 // Workbench
 $wbRunResultsBg: #fff;
-$wbHoverIconColor: #415681;
-$wbActiveIconColor: #3163D8;
-$wbTextColor: #415681;
+$wbHoverIconColor: #4D6992;
+$wbActiveIconColor: #253DAC;
+$wbTextColor: #4D6992;
 
 // Pub/Sub
-$pubSubClientsBadge: #b5cea8;
+$pubSubClientsBadge: #B6D78C;
 
 // Database analysis
-$badgeIconColor : #415681;
-$recommendationBorderColor: #3953c3;
+$badgeIconColor : #4D6992;
+$recommendationBorderColor: #253DAC;
 
 
 // Recommendations
-$recommendationsBgColor: #FFFFFF;
+$recommendationsBgColor: #F4F6F7;
 $recommendationBgColor: #F6F7F9;
 $recommendationLiveBorderColor: #B37A1E;
-$recommendationColor: #415681;
+$recommendationColor: #4D6992;
 $triggerIconActiveColor: #FFAF2B;
-$triggerIconTextColor: #3D3D3D;
+$triggerIconTextColor: #01112A;
 
 // cloud sso
 $cloudSsoGoogle: #A2B8F2;

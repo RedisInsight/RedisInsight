@@ -14,6 +14,7 @@
 :root {
   // Core
   --navBackgroundColor: #{$navBackgroundColor};
+  --navActiveBackgroundColor: #{$navActiveBackgroundColor};
   --tableRowHoverColor: #{$tableRowHoverColor};
   --tableRowSelectedColor: #{$tableRowSelectedColor};
   --euiColorPrimary: #{$euiColorPrimary};

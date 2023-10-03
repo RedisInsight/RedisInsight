@@ -1240,29 +1240,29 @@ workflows:
           os: linux
           target: << pipeline.parameters.linux >>
       - setup-sign-certificates:
-          name: Setup sign certificates (dev)
+          name: Setup sign certificates (stage)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (dev)
-          env: dev
+          name: Setup build (stage)
+          env: stage
           requires:
-            - Setup sign certificates (dev)
+            - Setup sign certificates (stage)
       - linux:
-          name: Build app - Linux (dev)
-          env: dev
+          name: Build app - Linux (stage)
+          env: stage
           target: << pipeline.parameters.linux >>
           redisstack: false
           requires:
-            - Setup build (dev)
+            - Setup build (stage)
       - store-build-artifacts:
-          name: Store build artifacts (dev)
+          name: Store build artifacts (stage)
           requires:
-            - Build app - Linux (dev)
+            - Build app - Linux (stage)
       - release-aws-manual:
-          name: Release AWS dev
+          name: Release AWS stage
           requires:
-            - Build app - Linux (dev)
+            - Build app - Linux (stage)
   manual-build-mac:
     when: << pipeline.parameters.mac >>
     jobs:
@@ -1271,29 +1271,29 @@ workflows:
           os: mac
           target: << pipeline.parameters.mac >>
       - setup-sign-certificates:
-          name: Setup sign certificates (dev)
+          name: Setup sign certificates (stage)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (dev)
-          env: dev
+          name: Setup build (stage)
+          env: stage
           requires:
-            - Setup sign certificates (dev)
+            - Setup sign certificates (stage)
       - macosx:
-          name: Build app - MacOS (dev)
-          env: dev
+          name: Build app - MacOS (stage)
+          env: stage
           redisstack: false
           target: << pipeline.parameters.mac >>
           requires:
-            - Setup build (dev)
+            - Setup build (stage)
       - store-build-artifacts:
-          name: Store build artifacts (dev)
+          name: Store build artifacts (stage)
           requires:
-            - Build app - MacOS (dev)
+            - Build app - MacOS (stage)
       - release-aws-manual:
-          name: Release AWS dev
+          name: Release AWS stage
           requires:
-            - Build app - MacOS (dev)
+            - Build app - MacOS (stage)
   manual-build-windows:
     when: << pipeline.parameters.windows >>
     jobs:
@@ -1302,28 +1302,28 @@ workflows:
           os: windows
           target: << pipeline.parameters.windows >>
       - setup-sign-certificates:
-          name: Setup sign certificates (dev)
+          name: Setup sign certificates (stage)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (dev)
-          env: dev
+          name: Setup build (stage)
+          env: stage
           requires:
-            - Setup sign certificates (dev)
+            - Setup sign certificates (stage)
       - windows:
-          name: Build app - Windows (dev)
-          env: dev
+          name: Build app - Windows (stage)
+          env: stage
           target: << pipeline.parameters.windows >>
           requires:
-            - Setup build (dev)
+            - Setup build (stage)
       - store-build-artifacts:
-          name: Store build artifacts (dev)
+          name: Store build artifacts (stage)
           requires:
-            - Build app - Windows (dev)
+            - Build app - Windows (stage)
       - release-aws-manual:
-          name: Release AWS dev
+          name: Release AWS stage
           requires:
-            - Build app - Windows (dev)
+            - Build app - Windows (stage)
 
   # build electron app (dev) from "build" branches
   build:

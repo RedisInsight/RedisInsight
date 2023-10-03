@@ -37,5 +37,5 @@ export const checkForUpdate = async (url: string = '') => {
 }
 
 export const quitAndInstallUpdate = () => {
-  autoUpdater.quitAndInstall()
+  autoUpdater.quitAndInstall(true, true)
 }

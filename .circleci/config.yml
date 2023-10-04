@@ -164,6 +164,14 @@ aliases:
     key: v1-ui-deps-{{ checksum "yarn.lock" }}
   api-deps-cache-key: &apiDepsCacheKey
     key: v1-ui-deps-{{ checksum "redisinsight/api/yarn.lock" }}
+  manual-build-conditions: &manual-build-conditions
+    or:
+      - << pipeline.parameters.linux >>
+      - << pipeline.parameters.mac >>
+      - << pipeline.parameters.windows >>
+  ignore-for-manual-build: &ignore-for-manual-build
+    when:
+      not: *manual-build-conditions
 
 orbs:
   win: circleci/windows@2.4.1
@@ -178,6 +186,17 @@ executors:
     machine:
       image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
+
+parameters:
+  linux:
+    type: string
+    default: &ignore ""
+  mac:
+    type: string
+    default: *ignore
+  windows:
+    type: string
+    default: *ignore
 
 jobs:
   # Test jobs
@@ -479,6 +498,21 @@ jobs:
           destination: tests/e2e/report
 
   # Build jobs
+  manual-build-validate:
+    parameters:
+      os:
+        type: string
+        default: ""
+      target:
+        type: string
+        default: ""
+    docker:
+      - image: cimg/node:18.15.0
+    steps:
+      - checkout
+      - run:
+          command: |
+            node .circleci/build/manual-build-validate.js << parameters.os >> << parameters.target >>
   setup-sign-certificates:
     executor: linux-executor
     steps:
@@ -533,6 +567,10 @@ jobs:
         description: Build RedisStack archives
         type: boolean
         default: true
+      target:
+        description: Build target
+        type: string
+        default: ""
     steps:
       - checkout
       - node/install:
@@ -580,11 +618,11 @@ jobs:
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
+              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage --linux << parameters.target >>
               exit 0;
             fi
 
-            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
+            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage --linux << parameters.target >>
       - when:
           condition:
             equal: [ true, << parameters.redisstack >> ]
@@ -613,7 +651,6 @@ jobs:
             - release/RedisInsight*.snap
             - release/*-linux.yml
             - release/redisstack
-
   macosx:
     macos:
       xcode: 14.2.0
@@ -624,6 +661,14 @@ jobs:
         type: enum
         default: stage
         enum: ['stage', 'prod', 'dev']
+      redisstack:
+        description: Build RedisStack archives
+        type: boolean
+        default: true
+      target:
+        description: Build target
+        type: string
+        default: ""
     steps:
       - checkout
       - node/install:
@@ -665,24 +710,34 @@ jobs:
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+            export UPGRADES_LINK=''
+            export SEGMENT_WRITE_KEY=''
 
             if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage && yarn package:mas
+              export UPGRADES_LINK=$UPGRADES_LINK_STAGE
+              export SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE
+            fi
+
+            # handle manual builds
+            if [ << parameters.target >> ]; then
+              yarn package:stage --mac << parameters.target >>
               rm -rf release/mac
-              mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
               exit 0;
             fi
 
-            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage && yarn package:mas
+            yarn package:stage && yarn package:mas
             rm -rf release/mac
             mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
           no_output_timeout: 60m
-
-      - run:
-          name: Repack dmg to tar
-          command: |
-            ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
-            ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
+      - when:
+          condition:
+            equal: [ true, << parameters.redisstack >> ]
+          steps:
+            - run:
+                name: Repack dmg to tar
+                command: |
+                  ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
+                  ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -701,6 +756,10 @@ jobs:
         type: enum
         default: stage
         enum: ['stage', 'prod', 'dev']
+      target:
+        description: Build target
+        type: string
+        default: ""
     steps:
       - checkout
       - attach_workspace:
@@ -733,12 +792,11 @@ jobs:
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage
-              rm -rf release/win-unpacked
-              exit 0;
+              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage --win << parameters.target >>
+            else
+              UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage --win << parameters.target >>
             fi
 
-            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage
             rm -rf release/win-unpacked
           shell: bash.exe
           no_output_timeout: 20m
@@ -780,7 +838,6 @@ jobs:
       - <<: *urlScan
       - <<: *validate
       - <<: *virustotalReport
-
   virustotal-report:
     executor: linux-executor
     steps:
@@ -879,6 +936,15 @@ jobs:
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
+  release-aws-manual:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          command: |
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/manual-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*" --include "RedisInsight*"
 
   release-aws-private:
     executor: linux-executor
@@ -1035,9 +1101,11 @@ jobs:
 
             done
 
+
 workflows:
   # FE Unit tests for "fe/feature" or "fe/bugfix" branches only
   frontend-tests:
+    <<: *ignore-for-manual-build
     jobs:
       - unit-tests-ui:
           name: UTest - UI
@@ -1048,6 +1116,7 @@ workflows:
                 - /^fe/bugfix.*/
   # BE Unit + Integration (limited RTEs) tests for "be/feature" or "be/bugfix" branches only
   backend-tests:
+    <<: *ignore-for-manual-build
     jobs:
       - unit-tests-api:
           name: UTest - API
@@ -1104,6 +1173,7 @@ workflows:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches
   feature-main-branch:
+    <<: *ignore-for-manual-build
     jobs:
       # Approve to run all (unit, integration, e2e) tests
       - approve:
@@ -1161,8 +1231,103 @@ workflows:
               only:
                 - /^e2e/feature.*/
                 - /^e2e/bugfix.*/
+  # Manual builds using web UI
+  manual-build-linux:
+    when: << pipeline.parameters.linux >>
+    jobs:
+      - manual-build-validate:
+          name: Validating build parameters
+          os: linux
+          target: << pipeline.parameters.linux >>
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - Validating build parameters
+      - setup-build:
+          name: Setup build (stage)
+          env: stage
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          env: stage
+          target: << pipeline.parameters.linux >>
+          redisstack: false
+          requires:
+            - Setup build (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
+          requires:
+            - Build app - Linux (stage)
+      - release-aws-manual:
+          name: Release AWS stage
+          requires:
+            - Build app - Linux (stage)
+  manual-build-mac:
+    when: << pipeline.parameters.mac >>
+    jobs:
+      - manual-build-validate:
+          name: Validating build parameters
+          os: mac
+          target: << pipeline.parameters.mac >>
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - Validating build parameters
+      - setup-build:
+          name: Setup build (stage)
+          env: stage
+          requires:
+            - Setup sign certificates (stage)
+      - macosx:
+          name: Build app - MacOS (stage)
+          env: stage
+          redisstack: false
+          target: << pipeline.parameters.mac >>
+          requires:
+            - Setup build (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
+          requires:
+            - Build app - MacOS (stage)
+      - release-aws-manual:
+          name: Release AWS stage
+          requires:
+            - Build app - MacOS (stage)
+  manual-build-windows:
+    when: << pipeline.parameters.windows >>
+    jobs:
+      - manual-build-validate:
+          name: Validating build parameters
+          os: windows
+          target: << pipeline.parameters.windows >>
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - Validating build parameters
+      - setup-build:
+          name: Setup build (stage)
+          env: stage
+          requires:
+            - Setup sign certificates (stage)
+      - windows:
+          name: Build app - Windows (stage)
+          env: stage
+          target: << pipeline.parameters.windows >>
+          requires:
+            - Setup build (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
+          requires:
+            - Build app - Windows (stage)
+      - release-aws-manual:
+          name: Release AWS stage
+          requires:
+            - Build app - Windows (stage)
+
   # build electron app (dev) from "build" branches
   build:
+    <<: *ignore-for-manual-build
     jobs:
       - setup-sign-certificates:
           name: Setup sign certificates (dev)
@@ -1203,6 +1368,7 @@ workflows:
 
   # Main workflow for release/* and latest branches only
   release:
+    <<: *ignore-for-manual-build
     jobs:
       # unit tests (on any commit)
       - unit-tests-ui:

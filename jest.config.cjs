@@ -1,9 +1,12 @@
-const { TextDecoder, TextEncoder } = require('util')
+// const { TextDecoder, TextEncoder } = require('util')
+// const { TextDecoder, TextEncoder } = require('text-encoding')
 
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
-  testURL: 'http://localhost/',
   runner: 'groups',
+  testEnvironmentOptions: {
+    url: 'http://localhost/'
+  },
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|ico|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/redisinsight/__mocks__/fileMock.js',
@@ -19,6 +22,7 @@ module.exports = {
     'unist-util-visit': '<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js',
     'react-children-utilities': '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
     d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
+    uuid: require.resolve('uuid'),
   },
   setupFiles: [
     '<rootDir>/redisinsight/ui/src/setup-env.ts',
@@ -37,7 +41,8 @@ module.exports = {
     'tsx',
     'json',
   ],
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom',
+  // type: 'module',
   transformIgnorePatterns: [
     'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
   ],
@@ -63,8 +68,8 @@ module.exports = {
     //   statements: 90,
     // },
   },
-  globals: {
-    TextDecoder,
-    TextEncoder,
-  },
+  // globals: {
+  //   TextDecoder,
+  //   TextEncoder,
+  // },
 }

@@ -51,7 +51,7 @@
     "redisinsight/ui/index.tsx",
     "redisinsight/ui/indexElectron.tsx",
     "redisinsight/desktop/**/*",
-    "jest.config.js"
+    "jest.config.cjs"
   ],
   "exclude": [
     "redisinsight/desktop/dll/*",

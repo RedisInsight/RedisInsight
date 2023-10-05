@@ -41,9 +41,9 @@ export const databaseSchema = Joi.object().keys({
     host: Joi.string().required(),
     port: Joi.number().required(),
     username: Joi.string().required(),
-    password: Joi.string().allow(null),
+    password: Joi.boolean().allow(null),
     privateKey: Joi.string().allow(null),
-    passphrase: Joi.string().allow(null),
+    passphrase: Joi.boolean().allow(null),
   }).allow(null),
   version: Joi.string().allow(null),
   cloudDetails: Joi.object().keys({

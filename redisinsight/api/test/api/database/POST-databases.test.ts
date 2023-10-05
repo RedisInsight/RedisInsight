@@ -312,7 +312,7 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.STANDALONE,
             new: true,
           },
@@ -829,7 +829,8 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              password: constants.TEST_SSH_PASSWORD,
+              // hide security fields (password, sshOptions.password, sshOptions.passphrase)
+              password: true,
             },
           },
           responseSchema,
@@ -1065,7 +1066,8 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              password: constants.TEST_SSH_PASSWORD,
+              // hide security fields (password, sshOptions.password, sshOptions.passphrase)
+              password: true,
             }
           },
           checkFn: async ({ body }) => {
@@ -1237,7 +1239,7 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.SENTINEL,
           },
         });
@@ -1287,7 +1289,7 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.SENTINEL,
           },
           checkFn: async ({ body }) => {

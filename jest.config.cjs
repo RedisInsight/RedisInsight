@@ -3,7 +3,6 @@
 
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
-  runner: 'groups',
   testEnvironmentOptions: {
     url: 'http://localhost/'
   },

@@ -26,7 +26,6 @@
     "package": "yarn package:dev",
     "package:prod": "ts-node ./scripts/prebuild.js dist && yarn build:prod && electron-builder build -p never",
     "package:stage": "ts-node ./scripts/prebuild.js dist && yarn build:stage && electron-builder build -p never -c.mac.bundleVersion=$CIRCLE_BUILD_NUM",
-    "package:stage:old": "ts-node ./scripts/prebuild.js dist && yarn build:stage:old && electron-builder build -p never -c.mac.bundleVersion=$CIRCLE_BUILD_NUM",
     "package:mas": "electron-builder build -p never -m mas:universal -c.mac.bundleVersion=$CIRCLE_BUILD_NUM -c ./electron-builder-mas.js",
     "package:mas:dev": "electron-builder build -p never -m mas-dev:universal -c ./electron-builder-mas.js",
     "package:dev": "yarn build && cross-env DEBUG=electron-builder electron-builder build -p never",
@@ -56,7 +55,6 @@
   "build": {
     "extends": "./electron-builder.json"
   },
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RedisInsight/RedisInsight.git"

@@ -9,7 +9,7 @@ export const databaseSchema = Joi.object().keys({
   db: Joi.number().integer().allow(null),
   connectionType: Joi.string().valid('STANDALONE', 'CLUSTER', 'SENTINEL').required(),
   username: Joi.string().allow(null),
-  password: Joi.string().allow(null),
+  password: Joi.boolean().allow(null),
   timeout: Joi.number().integer().required(),
   compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').required(),
   nameFromProvider: Joi.string().allow(null),

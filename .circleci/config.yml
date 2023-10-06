@@ -369,10 +369,11 @@ jobs:
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
+      - run: sudo apt install fluxbox
       - run:
           name: .AppImage tests
           command: |
-            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
             .circleci/e2e/test.app-image.sh
       - when:
           condition:
@@ -409,7 +410,7 @@ jobs:
       - run: choco install nodejs --version=18.15.0
       - run:
           command: |
-            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+            cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
             .circleci/e2e/test.exe.cmd
           shell: bash.exe
       - when:
@@ -460,7 +461,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
-                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
@@ -474,7 +475,7 @@ jobs:
             - run:
                 name: Run tests
                 command: |
-                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
+                  cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \

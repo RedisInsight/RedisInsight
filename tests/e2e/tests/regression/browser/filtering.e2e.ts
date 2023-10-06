@@ -7,13 +7,11 @@ import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { keyTypes } from '../../../helpers/keys';
 import { Common } from '../../../helpers/common';
 import { APIKeyRequests } from '../../../helpers/api/api-keys';
-import { BrowserActions } from '../../../common-actions/browser-actions';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
-const browserActions = new BrowserActions();
 
 let keyName = Common.generateWord(20);
 let keyName2 = Common.generateWord(20);
@@ -60,38 +58,7 @@ test('Verify that user can filter per pattern with ? (matches keys with any char
     // Filter per pattern with ?
     await browserPage.searchByKeyName(searchedValue);
     // Verify that key was found
-    // Verify that filter requests are sent as entered when Exact Search enabled
     await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was not found');
-});
-test('Verify that filter requests are sent as entered when Exact Search enabled', async t => {
-    const randomValue = Common.generateWord(10);
-    const searchedValue = 'eyForSearch*?\\[]';
-    const tooltipExactSearchEnabledText = 'Disable to see keys matching your pattern';
-    const tooltipExactSearchDisabledText = 'Enable to see keys that exactly match your pattern';
-    keyName = `KeyForSearch*?[]789${randomValue}`;
-
-    // Add new key
-    await browserPage.addStringKey(keyName);
-    // Filter by Exact Search
-    await browserPage.searchByKeyName(searchedValue);
-    // Verify that key was not found
-    // Verify that Exact Search is enabled by default
-    await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('The key was found by Exact Search with not full name');
-
-    // Verify that user can see ”Exact Search Disable to see keys matching your pattern” text when hover over the icon with enabled Exact Search
-    await t.hover(browserPage.exactSearchBtn);
-    await browserActions.verifyTooltipContainsText(tooltipExactSearchEnabledText, true);
-
-    // Disable Exact Search
-    await t.click(browserPage.exactSearchBtn);
-    // Verify that user can see ”Exact Search Enable to see keys that exactly match your pattern” text when hover over the icon with disabled Exact Search
-    await t.hover(browserPage.exactSearchBtn);
-    await browserActions.verifyTooltipContainsText(tooltipExactSearchDisabledText, true);
-
-    await browserPage.searchByKeyName(searchedValue);
-    // Verify that key was found
-    // Verify that user can see results that fit into this pattern: *{request}* when Exact Search is disabled
-    await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('The key was not found with disabled Exact Search');
 });
 test
     .after(async() => {

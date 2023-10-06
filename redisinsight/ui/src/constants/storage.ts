@@ -4,7 +4,6 @@ enum BrowserStorageItem {
   theme = 'theme',
   browserViewType = 'browserViewType',
   browserSearchMode = 'browserSearchMode',
-  browserExactMatch = 'browserExactMatch',
   cliClientUuid = 'cliClientUuid',
   cliResizableContainer = 'cliResizableContainer',
   cliInputHistory = 'cliInputHistory',

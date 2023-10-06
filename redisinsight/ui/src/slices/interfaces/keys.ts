@@ -32,7 +32,6 @@ export interface KeysStore {
   isBrowserFullScreen: boolean
   viewType: KeyViewType
   searchMode: SearchMode
-  exactMatch: boolean
   data: KeysStoreData
   selectedKey: {
     loading: boolean

@@ -4,7 +4,6 @@
   "description": "RedisInsight",
   "license": "SSPL",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "cross-env NODE_ENV=development concurrently \"yarn build:main\" \"yarn build:renderer\"",
     "build:stage": "cross-env NODE_ENV=staging TS_NODE_TRANSPILE_ONLY=true concurrently \"yarn build:api:stage && yarn build:main:stage\" \"yarn build:renderer:stage\"",

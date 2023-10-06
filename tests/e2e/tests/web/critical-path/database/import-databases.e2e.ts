@@ -22,12 +22,12 @@ const fileNames = {
     racompFullSSHJson: 'racompFullSSH.json'
 };
 const filePathes = {
-    ardmValidPath: path.join('..', '..', '..', 'test-data', 'import-databases', fileNames.ardmValidAno),
-    racompassInvalidJsonPath: path.join('..', '..', '..', 'test-data', 'import-databases', fileNames.racompassInvalidJson),
-    rdmPath: path.join('..', '..', '..', 'test-data', 'import-databases', fileNames.rdmFullJson),
-    rdmCertsPath: path.join('..', '..', '..', 'test-data', 'import-databases', fileNames.rdmCertsJson),
-    racompassValidJson: path.join('..', '..', '..', 'test-data', 'import-databases', fileNames.racompassValidJson),
-    racompassSshPath: path.join('..', '..', '..', 'test-data', 'import-databases', fileNames.racompFullSSHJson)
+    ardmValidPath: path.join('..', '..', '..', '..', 'test-data', 'import-databases', fileNames.ardmValidAno),
+    racompassInvalidJsonPath: path.join('..', '..', '..', '..', 'test-data', 'import-databases', fileNames.racompassInvalidJson),
+    rdmPath: path.join('..', '..', '..', '..', 'test-data', 'import-databases', fileNames.rdmFullJson),
+    rdmCertsPath: path.join('..', '..', '..', '..', 'test-data', 'import-databases', fileNames.rdmCertsJson),
+    racompassValidJson: path.join('..', '..', '..', '..', 'test-data', 'import-databases', fileNames.racompassValidJson),
+    racompassSshPath: path.join('..', '..', '..', '..', 'test-data', 'import-databases', fileNames.racompFullSSHJson)
 };
 
 const rdmListOfDB = databasesActions.parseDbJsonByPath(path.join('test-data', 'import-databases', fileNames.rdmFullJson));

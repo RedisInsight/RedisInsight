@@ -10,7 +10,7 @@ const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-const filePath = path.join('..', '..', '..', 'test-data', 'upload-json', 'sample.json');
+const filePath = path.join('..', '..', '..', '..', 'test-data', 'upload-json', 'sample.json');
 const jsonValues = ['Live JSON generator', '3.1', '"2014-06-25T00:00:00.000Z"', 'true'];
 const keyName = Common.generateWord(10);
 

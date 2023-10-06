@@ -369,7 +369,6 @@ jobs:
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
-      - run: sudo apt install fluxbox
       - run:
           name: .AppImage tests
           command: |

@@ -28,8 +28,8 @@ const streamKeyName = Common.generateWord(5);
 const libNameFromFile = 'lib';
 
 const filePathes = {
-    upload: path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt'),
-    invoke: path.join('..', '..', '..', 'test-data', 'triggers-and-functions', 'invoke_function.txt')
+    upload: path.join('..', '..', '..', '..', 'test-data', 'triggers-and-functions', 'library.txt'),
+    invoke: path.join('..', '..', '..', '..', 'test-data', 'triggers-and-functions', 'invoke_function.txt')
 };
 
 const LIBRARIES_LIST = [

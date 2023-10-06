@@ -14,8 +14,8 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const dbParameters = { host: ossStandaloneRedisearch.host, port: ossStandaloneRedisearch.port };
 const filesToUpload = ['bulkUplAllKeyTypes.txt', 'bigKeysData.rtf'];
 const filePathes = {
-    allKeysFile: path.join('..', '..', '..', 'test-data', 'bulk-upload', filesToUpload[0]),
-    bigDataFile: path.join('..', '..', '..', 'test-data', 'bulk-upload', filesToUpload[1])
+    allKeysFile: path.join('..', '..', '..', '..', 'test-data', 'bulk-upload', filesToUpload[0]),
+    bigDataFile: path.join('..', '..', '..', '..', 'test-data', 'bulk-upload', filesToUpload[1])
 };
 const keyNames = ['hashkey1', 'listkey1', 'setkey1', 'zsetkey1', 'stringkey1', 'jsonkey1', 'streamkey1', 'graphkey1', 'tskey1'];
 const verifyCompletedResultText = async(resultsText: string[]): Promise<void> => {

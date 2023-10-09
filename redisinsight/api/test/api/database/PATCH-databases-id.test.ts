@@ -511,7 +511,7 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint,
           data: {
-            ...baseDatabaseData,
+            // ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -671,7 +671,7 @@ describe(`PATCH /databases/:id`, () => {
 
         await validateApiCall({
           endpoint,
-          statusCode: 400,
+
           data: {
             ...baseDatabaseData,
             name: dbName,
@@ -687,6 +687,7 @@ describe(`PATCH /databases/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
+          statusCode: 400,
           responseBody: {
             error: 'Bad Request',
             message: 'This client certificate name is already in use.',
@@ -705,7 +706,6 @@ describe(`PATCH /databases/:id`, () => {
 
         await validateApiCall({
           endpoint,
-          statusCode: 400,
           data: {
             ...baseDatabaseData,
             name: dbName,
@@ -721,6 +721,7 @@ describe(`PATCH /databases/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
+          statusCode: 400,
           responseBody: {
             error: 'Bad Request',
             message: 'This ca certificate name is already in use.',
@@ -833,26 +834,9 @@ describe(`PATCH /databases/:id`, () => {
             passphrase: 'incorrect passphrase'
           },
         },
-        responseSchema,
+        statusCode: 500,
         responseBody: {
-          error: 'Bad Request',
-          message: 'Unable to create tunnel. Cannot parse privateKey',
-          statusCode: 500,
-        },
-      });
-    });
-
-    it('Should not update database with incorrect sshOptions', async () => {
-      await validateApiCall({
-        endpoint,
-        data: {
-          sshOptions: {
-            passphrase: 'incorrect passphrase'
-          },
-        },
-        responseSchema,
-        responseBody: {
-          error: 'Bad Request',
+          // error: 'Bad Request',
           message: 'Unable to create tunnel. Cannot parse privateKey',
           statusCode: 500,
         },

@@ -348,7 +348,6 @@ describe('DatabaseService', () => {
           ...mockDatabaseWithTlsAuth,
           compressor: Compressor.GZIP,
           caCert: {
-            id: jasmine.anything(),
             certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
             name: 'name',
           },
@@ -376,8 +375,6 @@ describe('DatabaseService', () => {
           compressor: Compressor.GZIP,
           caCert: {
             id: 'new id',
-            certificate: jasmine.anything(),
-            name: jasmine.anything(),
           },
         });
       });
@@ -563,7 +560,6 @@ describe('DatabaseService', () => {
         ...omit(mockDatabaseWithTlsAuth, 'id'),
         compressor: Compressor.GZIP,
         caCert: {
-          id: jasmine.anything(),
           certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
           name: 'name',
         },
@@ -591,8 +587,6 @@ describe('DatabaseService', () => {
         compressor: Compressor.GZIP,
         caCert: {
           id: 'new id',
-          certificate: jasmine.anything(),
-          name: jasmine.anything(),
         },
       });
     });

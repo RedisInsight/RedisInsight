@@ -67,6 +67,19 @@ export class DatabaseService {
     return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
   }
 
+  static removePreviousTls(dto: UpdateDatabaseDto, database: Database): Database {
+    const updatedDatabase = database;
+    if (dto?.caCert) {
+      updatedDatabase.caCert = undefined;
+    }
+
+    if (dto?.clientCert) {
+      updatedDatabase.clientCert = undefined;
+    }
+
+    return database;
+  }
+
   /**
    * Simply checks if database exists
    * @param id
@@ -167,7 +180,7 @@ export class DatabaseService {
 
     let database: Database;
     try {
-      database = deepMerge(oldDatabase, dto);
+      database = deepMerge(DatabaseService.removePreviousTls(dto, oldDatabase), dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {
         database = await this.databaseFactory.createDatabaseModel(database);
@@ -206,7 +219,9 @@ export class DatabaseService {
 
     if (id) {
       this.logger.log('Testing existing database connection');
-      database = deepMerge(await this.get(id), dto);
+      const oldDatabase = DatabaseService.removePreviousTls(dto, await this.get(id));
+
+      database = deepMerge(oldDatabase, dto);
     } else {
       this.logger.log('Testing new database connection');
       database = classToClass(Database, dto);
@@ -234,7 +249,12 @@ export class DatabaseService {
    */
   public async clone(id: string, dto: UpdateDatabaseDto): Promise<Database> {
     this.logger.log('Clone existing database');
-    const database = deepMerge(omit(await this.get(id), ['id', 'sshOptions.id']), dto);
+    const oldDatabase = DatabaseService.removePreviousTls(dto, await this.get(id));
+
+    const database = deepMerge(
+      omit(oldDatabase, ['id', 'sshOptions.id']),
+      dto,
+    );
     if (DatabaseService.isConnectionAffected(dto)) {
       return await this.create(database);
     }

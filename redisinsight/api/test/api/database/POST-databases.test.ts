@@ -830,7 +830,7 @@ describe('POST /databases', () => {
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
               // hide security fields (password, sshOptions.password, sshOptions.passphrase)
-              password: true,
+              password: constants.TEST_SSH_PASSWORD,
             },
           },
           responseSchema,
@@ -847,7 +847,7 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              password: constants.TEST_SSH_PASSWORD,
+              password: true,
             }
           },
           checkFn: async ({ body }) => {
@@ -992,7 +992,7 @@ describe('POST /databases', () => {
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
               privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
-              passphrase: constants.TEST_SSH_PASSPHRASE,
+              passphrase: true,
             }
           },
           checkFn: async ({ body }) => {

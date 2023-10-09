@@ -352,7 +352,7 @@ describe(`PATCH /databases/:id`, () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.STANDALONE,
           },
         });

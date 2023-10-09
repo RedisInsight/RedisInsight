@@ -53,6 +53,28 @@ test
         await t.hover(browserPage.keyNameInTheList);
         await t.expect(browserPage.keyNameInTheList.exists).ok('The list of keys is not displayed');
     });
+test('Verify that user can refresh Keys', async t => {
+    keyName = Common.generateWord(10);
+    const newKeyName = 'KeyNameAfterEdit!testKey';
+
+    // Add hash key
+    await browserPage.addHashKey(keyName, keyTTL);
+    const notification = browserPage.Toast.toastHeader.textContent;
+    await t.expect(notification).contains('Key has been added', 'The notification is not displayed');
+    await t.click(browserPage.closeKeyButton);
+    // Search for the added key
+    await browserPage.searchByKeyName(keyName);
+    const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
+    await t.expect(isKeyIsDisplayedInTheList).eql(true, 'The key is not in the list');
+    // Edit the key name in details
+    await t.click(browserPage.keyNameInTheList);
+    await browserPage.editKeyName(newKeyName);
+    // Refresh Keys
+    await t.click(browserPage.refreshKeysButton);
+    await browserPage.searchByKeyName(keyName);
+    const isKeyIsNotDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
+    await t.expect(isKeyIsNotDisplayedInTheList).eql(false, 'The key is still in the list');
+});
 test('Verify that user can open key details', async t => {
     keyName = Common.generateWord(10);
     const keyValue = 'StringValue!';

@@ -36,11 +36,9 @@ test
         await myRedisDatabasePage.reloadPage();
     })
     .after(async() => {
-        // Delete all databases
+        // Delete exported file
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
         await databaseAPIRequests.deleteAllDatabasesApi();
-        // await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-        // Delete exported file
     })('Exporting Standalone, OSS Cluster, and Sentinel connection types', async t => {
         const databaseNames = [
             ossStandaloneConfig.databaseName,
@@ -97,7 +95,6 @@ test
 
         await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.selectCompressor.textContent).eql(compressor, 'Compressor import incorrect');
-
     });
 test
     .before(async() => {

@@ -36,31 +36,31 @@ fixture `Memory Efficiency`
     .afterEach(async() => {
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.before(async t => {
-    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-    // Go to Analysis Tools page
-    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
-    await browserPage.Cli.sendCommandInCli('flushdb');
+test
+    .before(async t => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        // Go to Analysis Tools page
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
+        await browserPage.Cli.sendCommandInCli('flushdb');
+    })('No reports/keys message and report tooltip', async t => {
+        const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
+        const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
+        const tooltipText = 'Analyze up to 10 000 keys to get an overview of your data and recommendations';
 
-})('No reports/keys message and report tooltip', async t => {
-    const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
-    const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
-    const tooltipText = 'Analyze up to 10 000 keys to get an overview of your data and recommendations';
-
-    // Verify that user can see the “No reports found” message when report wasn't generated
-    await t.expect(memoryEfficiencyPage.noReportsText.textContent).eql(noReportsMessage, 'No reports message not displayed or text is invalid');
-    // Verify that user can see the “No keys to display” message when there are no keys in database
-    await t.click(memoryEfficiencyPage.newReportBtn);
-    await t.expect(memoryEfficiencyPage.noKeysText.textContent).eql(noKeysMessage, 'No keys message not displayed or text is invalid');
-    // Verify that user can open workbench page from No keys to display message
-    await t.click(browserPage.NavigationPanel.workbenchButton);
-    await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
-    // Turn back to Memory Efficiency page
-    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
-    // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
-    await t.hover(memoryEfficiencyPage.reportTooltipIcon);
-    await t.expect(browserPage.tooltip.textContent).contains(tooltipText, 'Report tooltip is not displayed or text is invalid');
-});
+        // Verify that user can see the “No reports found” message when report wasn't generated
+        await t.expect(memoryEfficiencyPage.noReportsText.textContent).eql(noReportsMessage, 'No reports message not displayed or text is invalid');
+        // Verify that user can see the “No keys to display” message when there are no keys in database
+        await t.click(memoryEfficiencyPage.newReportBtn);
+        await t.expect(memoryEfficiencyPage.noKeysText.textContent).eql(noKeysMessage, 'No keys message not displayed or text is invalid');
+        // Verify that user can open workbench page from No keys to display message
+        await t.click(browserPage.NavigationPanel.workbenchButton);
+        await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
+        // Turn back to Memory Efficiency page
+        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
+        // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button
+        await t.hover(memoryEfficiencyPage.reportTooltipIcon);
+        await t.expect(browserPage.tooltip.textContent).contains(tooltipText, 'Report tooltip is not displayed or text is invalid');
+    });
 test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
@@ -229,9 +229,9 @@ test
         // Create new report
         await t.click(memoryEfficiencyPage.newReportBtn);
         // Points are displayed in graph according to their TTL
-        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('y')).slice(0, 2));
+        const firstPointLocation = +((await memoryEfficiencyPage.firstPoint.getAttribute('y'))!.slice(0, 2));
         const thirdPointLocation = await memoryEfficiencyPage.thirdPoint.getAttribute('y');
-        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('y')).slice(0, 2));
+        const fourthPointLocation = +((await memoryEfficiencyPage.fourthPoint.getAttribute('y'))!.slice(0, 2));
         const noExpiryDefaultPointLocation = memoryEfficiencyPage.noExpiryPoint;
 
         await t.expect(firstPointLocation).lt(yAxis, 'Point in <1 hr breakdown doesn\'t contain key');
@@ -240,7 +240,7 @@ test
         await t.expect(noExpiryDefaultPointLocation.visible).notOk('No expiry breakdown displayed when toggle is off', { timeout: 1000 });
         // No Expiry toggle shows No expiry breakdown
         await t.click(memoryEfficiencyPage.showNoExpiryToggle);
-        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('y')).slice(0, 2));
+        const noExpiryPointLocation = +((await memoryEfficiencyPage.noExpiryPoint.getAttribute('y'))!.slice(0, 2));
         await t.expect(noExpiryPointLocation).lt(yAxis, 'Point in No expiry breakdown doesn\'t contain key');
     });
 test

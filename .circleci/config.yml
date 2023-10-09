@@ -1208,6 +1208,18 @@ workflows:
           requires:
             - itest-code
       # E2E tests
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
+          requires:
+            - Start All Tests
+      - setup-build:
+          name: Setup build (stage)
+          requires:
+            - Setup sign certificates (stage)
+      - linux:
+          name: Build app - Linux (stage)
+          requires:
+            - Setup build (stage)
       - docker:
           name: Build docker image
           requires:
@@ -1218,6 +1230,11 @@ workflows:
           parallelism: 4
           requires:
             - Build docker image
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (stage)
       # Approve to build
       - approve:
           name: Build App

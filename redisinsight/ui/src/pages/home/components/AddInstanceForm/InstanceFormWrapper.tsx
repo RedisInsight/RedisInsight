@@ -407,9 +407,12 @@ const InstanceFormWrapper = (props: Props) => {
 
       if (sshPassType === SshPassType.Password) {
         database.sshOptions.password = sshPassword
+        database.sshOptions.passphrase = null
+        database.sshOptions.privateKey = null
       }
 
       if (sshPassType === SshPassType.PrivateKey) {
+        database.sshOptions.password = null
         database.sshOptions.passphrase = sshPassphrase
         database.sshOptions.privateKey = sshPrivateKey
       }

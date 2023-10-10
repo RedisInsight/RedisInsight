@@ -42,6 +42,7 @@ export const constants = {
   generateRandomKey: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   APP_DEFAULT_SETTINGS,
   TEST_KEYTAR_PASSWORD: process.env.SECRET_STORAGE_PASSWORD || 'somepassword',
+  TEST_INCORRECT_PASSWORD: 'incorrect',
   TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
   TEST_AGREEMENTS_VERSION: '1.0.3',
   TEST_REMOTE_STATIC_PATH: './remote',
@@ -67,6 +68,10 @@ export const constants = {
   TEST_INSTANCE_HOST_3: uuidv4(),
   TEST_INSTANCE_ID_4: uuidv4(),
   TEST_INSTANCE_NAME_4: uuidv4(),
+  TEST_INSTANCE_ID_5: uuidv4(),
+  TEST_INSTANCE_NAME_5: uuidv4(),
+  TEST_INSTANCE_HOST_5: uuidv4(),
+  TEST_INSTANCE_PORT_5: 5555,
   TEST_INSTANCE_HOST_4: '127.0.0.1',
   TEST_INSTANCE_PORT_4: 3333,
 

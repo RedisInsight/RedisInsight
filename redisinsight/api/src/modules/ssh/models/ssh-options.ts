@@ -6,7 +6,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { Default } from 'src/common/decorators';
 
 export class SshOptions {
   @Expose()
@@ -20,7 +19,6 @@ export class SshOptions {
   @Expose()
   @IsNotEmpty()
   @IsString({ always: true })
-  @Default(null)
   host: string;
 
   @ApiProperty({
@@ -31,7 +29,6 @@ export class SshOptions {
   @Expose()
   @IsNotEmpty()
   @IsInt({ always: true })
-  @Default(null)
   port: number;
 
   @ApiPropertyOptional({
@@ -42,7 +39,6 @@ export class SshOptions {
   @IsString({ always: true })
   @IsNotEmpty()
   @IsOptional()
-  @Default(null)
   username?: string;
 
   @ApiPropertyOptional({
@@ -53,7 +49,6 @@ export class SshOptions {
   @IsString({ always: true })
   @IsNotEmpty()
   @IsOptional()
-  @Default(null)
   password?: string;
 
   @ApiPropertyOptional({
@@ -64,7 +59,6 @@ export class SshOptions {
   @IsString({ always: true })
   @IsNotEmpty()
   @IsOptional()
-  @Default(null)
   privateKey?: string;
 
   @ApiPropertyOptional({
@@ -75,6 +69,5 @@ export class SshOptions {
   @IsString({ always: true })
   @IsNotEmpty()
   @IsOptional()
-  @Default(null)
   passphrase?: string;
 }

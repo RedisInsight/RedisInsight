@@ -14,6 +14,8 @@ export interface StateWorkbenchResults {
   clearing: boolean
   error: string
   items: CommandExecutionUI[]
+  resultsMode: ResultsMode
+  activeRunQueryMode: RunQueryMode
 }
 
 export enum EnablementAreaComponent {

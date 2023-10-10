@@ -6,6 +6,7 @@ import { EuiPage, EuiPageBody } from '@elastic/eui'
 import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PagePlaceholder } from 'uiSrc/components'
+import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import Router from './Router'
 import { Theme } from './constants'
 import { themeService } from './services'
@@ -56,6 +57,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
       <Notifications />
       <Config />
       <ShortcutsFlyout />
+      <MonacoLanguages />
       {children}
     </div>
   )

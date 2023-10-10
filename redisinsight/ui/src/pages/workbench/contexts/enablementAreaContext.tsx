@@ -1,12 +1,12 @@
 import React from 'react'
+import { ExecuteButtonMode, CodeButtonParams } from 'uiSrc/constants/workbench'
 import { Nullable } from 'uiSrc/utils'
-import { CodeButtonParams, ExecuteButtonMode } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 interface IContext {
   setScript: (
     script: string,
     execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
-    file?: { path?: string, name?: string }
+    file?: { path?: string, name?: string, sectionTitle?: string }
   ) => void
   openPage: (page: IInternalPage, manifestPath?: string) => void
   isCodeBtnDisabled?: boolean

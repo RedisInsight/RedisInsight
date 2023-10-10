@@ -112,6 +112,9 @@ const InternalPage = (props: Props) => {
   const contentComponent = useMemo(() => (
     // @ts-ignore
     <JsxParser
+      bindings={{
+        sectionTitle: backTitle
+      }}
       components={components}
       blacklistedTags={['iframe', 'script']}
       autoCloseVoidElements

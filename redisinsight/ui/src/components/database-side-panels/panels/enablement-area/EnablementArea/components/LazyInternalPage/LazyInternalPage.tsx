@@ -84,6 +84,7 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
   }, [path, sourcePath])
 
   const handlePageScroll = (top: number) => {
+    // TODO: refactor - it leads to component rerender
     dispatch(setWorkbenchEAItemScrollTop(top))
   }
 

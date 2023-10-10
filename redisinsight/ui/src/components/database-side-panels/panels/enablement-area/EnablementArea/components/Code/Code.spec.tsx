@@ -27,7 +27,7 @@ describe('Code', () => {
       </EnablementAreaProvider>
     )
 
-    const link = queryByTestId(`preselect-${label}`)
+    const link = queryByTestId(`run-btn-${label}`)
     fireEvent.click(link as Element)
     expect(setScript).toBeCalledWith(
       MONACO_MANUAL,
@@ -46,7 +46,7 @@ describe('Code', () => {
       </EnablementAreaProvider>
     )
 
-    fireEvent.click(screen.queryByTestId(`preselect-auto-${label}`) as Element)
+    fireEvent.click(screen.queryByTestId(`run-btn-${label}`) as Element)
     expect(setScript).toBeCalledWith(
       MONACO_MANUAL,
       { mode: ExecuteButtonMode.Auto, params: { auto: 'true' } },

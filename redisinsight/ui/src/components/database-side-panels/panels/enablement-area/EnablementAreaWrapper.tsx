@@ -1,8 +1,5 @@
-import { EuiFlexGroup, EuiFlexItem, EuiFlyout, EuiFlyoutBody, EuiFlyoutHeader, EuiSpacer } from '@elastic/eui'
-import cx from 'classnames'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { EuiFlyout, EuiFlyoutBody, EuiFlyoutHeader, EuiSpacer } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
-import { monaco } from 'react-monaco-editor'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
@@ -10,14 +7,10 @@ import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { fetchCustomTutorials, workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
-import { Nullable, } from 'uiSrc/utils'
-
 import { setWorkbenchEAOpened, setWorkbenchScript } from 'uiSrc/slices/app/context'
-import { OnboardingTour } from 'uiSrc/components'
-import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
 import { Pages, CodeButtonParams, ExecuteButtonMode } from 'uiSrc/constants'
+import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
 import { getTutorialSection } from './EnablementArea/utils'
 import EnablementArea from './EnablementArea'
 
@@ -54,7 +47,7 @@ const EnablementAreaWrapper = (props: Props) => {
 
   const sendEventButtonClickedTelemetry = (data?: Record<string, any>) => {
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_COMMAND_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_COMMAND_CLICKED,
       eventData: {
         databaseId: instanceId,
         ...data,
@@ -65,23 +58,23 @@ const EnablementAreaWrapper = (props: Props) => {
   const openScript = (
     script: string,
     execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams } = { mode: ExecuteButtonMode.Manual },
-    file?: { path?: string, name?: string, source?: string }
+    file?: { path?: string, name?: string, source?: string, sectionTitle?: string }
   ) => {
     sendEventButtonClickedTelemetry(file)
-    //
-    // if (execute.mode === ExecuteButtonMode.Auto) {
-    //   onSubmit(script, null, { ...execute.params, clearEditor: false })
-    //   return
-    // }
-    //
+
+    if (execute.mode === ExecuteButtonMode.Auto) {
+      dispatch(sendWbQueryAction(script, null, execute.params))
+      return
+    }
+
+    dispatch(setWorkbenchScript(script))
+    history.push({ pathname: Pages.workbench(instanceId), search: globalThis.location.search })
+
     // setScript(script)
     // setTimeout(() => {
     //   scriptEl?.focus()
     //   scriptEl?.setSelection(new monaco.Selection(0, 0, 0, 0))
     // }, 0)
-
-    history.push({ pathname: Pages.workbench(instanceId), search: globalThis.location.search })
-    dispatch(setWorkbenchScript(script))
   }
 
   const onOpenInternalPage = ({ path, manifestPath }: IInternalPage) => {

@@ -64,6 +64,7 @@ const EnablementArea = (props: Props) => {
   const { search: searchEAContext } = useSelector(appContextWorkbenchEA)
 
   const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
+  // const [searchState, setSearchState] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
   const [manifest, setManifest] = useState<Nullable<IEnablementAreaItem[]>>(null)

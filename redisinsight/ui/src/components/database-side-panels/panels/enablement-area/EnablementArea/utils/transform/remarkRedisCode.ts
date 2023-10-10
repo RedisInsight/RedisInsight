@@ -20,7 +20,8 @@ export const remarkRedisCode = (): (tree: Node) => void => (tree: any) => {
 
       codeNode.type = 'html'
       // Replace it with our custom component
-      codeNode.value = `<Code label="${meta}" params="${params}">{${JSON.stringify(valueWithParams)}}</Code>`
+      // sectionTitle - binding for JsxParser, it will be replaces as prop value
+      codeNode.value = `<Code label="${meta}" params="${params}" sectionTitle={sectionTitle}>{${JSON.stringify(valueWithParams)}}</Code>`
     }
   })
 }

@@ -37,16 +37,6 @@
   transition: transform 0.4s ease-in-out;
   box-shadow: -5px 1px 10px rgba(0, 0, 0, 0.2);
   z-index: 2;
-
-  :global {
-    .euiButton--small {
-      white-space: break-spaces;
-      height: auto !important;
-      min-height: 32px;
-      padding-top: 6px;
-      padding-bottom: 6px;
-    }
-  }
 }
 
 .internalPageVisible {

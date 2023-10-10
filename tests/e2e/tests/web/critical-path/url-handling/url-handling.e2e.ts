@@ -14,6 +14,12 @@ const databaseHelper = new DatabaseHelper();
 
 let { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
 
+function generateLink(params: Record<string, any>): string {
+    const params1 = Common.generateUrlTParams(params);
+    const from = encodeURIComponent(`${redisConnect}?${params1}`);
+    return (new URL(`?from=${from}`, commonUrl)).toString();
+}
+
 const redisConnect = 'redisinsight://databases/connect';
 
 fixture `Add DB from SM`
@@ -38,7 +44,7 @@ test
         await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
-        await t.wait(10_000);
+        // await t.wait(10_000);
         await t.expect(await workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
     });
 
@@ -70,7 +76,7 @@ test
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.wait(15_000);
+        // await t.wait(15_000);
         await t.expect(await workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
 
         //Verify that the same db is not added
@@ -79,10 +85,3 @@ test
         await t.expect(browserPage.notification.exists).notOk({ timeout: 10000 });
         await t.expect(await myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');
     });
-
-function generateLink(params: Record<string, any>): string {
-    const params1 = Common.generateUrlTParams(params);
-    const from = encodeURIComponent(`${redisConnect}?${params1}`);
-    return (new URL(`?from=${from}`, commonUrl)).toString();
-}
-

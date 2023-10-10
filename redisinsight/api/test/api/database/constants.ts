@@ -42,7 +42,7 @@ export const databaseSchema = Joi.object().keys({
     port: Joi.number().required(),
     username: Joi.string().required(),
     password: Joi.boolean().allow(null),
-    privateKey: Joi.string().allow(null),
+    privateKey: Joi.boolean().allow(null),
     passphrase: Joi.boolean().allow(null),
   }).allow(null),
   version: Joi.string().allow(null),

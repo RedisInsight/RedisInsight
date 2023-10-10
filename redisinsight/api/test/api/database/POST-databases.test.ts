@@ -991,7 +991,7 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
+              privateKey: true,
               passphrase: true,
             }
           },

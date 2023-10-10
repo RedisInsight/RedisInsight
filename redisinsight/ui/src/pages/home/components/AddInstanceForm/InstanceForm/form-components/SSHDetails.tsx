@@ -197,16 +197,25 @@ const SSHDetails = (props: Props) => {
           >
             <EuiFlexItem className={flexItemClassName}>
               <EuiFormRow label="Private Key*">
-                <EuiTextArea
+                <EuiFieldPassword
+                  type="password"
                   name="sshPrivateKey"
                   id="sshPrivateKey"
-                  className={styles.customScroll}
-                  value={formik.values.sshPrivateKey ?? ''}
-                  onChange={formik.handleChange}
+                  data-testid="sshPrivateKey"
                   fullWidth
+                  className="passwordField"
                   maxLength={50_000}
                   placeholder="Enter SSH Private Key in PEM format"
-                  data-testid="sshPrivateKey"
+                  value={formik.values.sshPrivateKey === true ? SECURITY_FIELD : formik.values.sshPrivateKey ?? ''}
+                  onChange={formik.handleChange}
+                  onFocus={() => {
+                    if (formik.values.sshPrivateKey === true) {
+                      formik.setFieldValue(
+                        'sshPrivateKey',
+                        '',
+                      )
+                    }
+                  }}
                 />
               </EuiFormRow>
             </EuiFlexItem>

@@ -30,7 +30,7 @@ export interface DbConnectionInfo extends Instance {
   sshPort: string
   sshUsername?: string
   sshPassword?: string | true
-  sshPrivateKey?: string
+  sshPrivateKey?: string | true
   sshPassphrase?: string | true
 }
 

@@ -23,6 +23,8 @@ import { ClientContext, SessionMetadata } from 'src/common/models';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { deepMerge } from 'src/common/utils';
+import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
+import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 
 @Injectable()
 export class DatabaseService {
@@ -67,17 +69,16 @@ export class DatabaseService {
     return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
   }
 
-  static removePreviousTls(dto: UpdateDatabaseDto, database: Database): Database {
+  private async merge(database: Database, dto: UpdateDatabaseDto): Promise<Database> {
     const updatedDatabase = database;
     if (dto?.caCert) {
-      updatedDatabase.caCert = undefined;
+      updatedDatabase.caCert = dto.caCert as CaCertificate;
     }
 
     if (dto?.clientCert) {
-      updatedDatabase.clientCert = undefined;
+      updatedDatabase.clientCert = dto.clientCert as ClientCertificate;
     }
-
-    return database;
+    return deepMerge(updatedDatabase, dto);
   }
 
   /**
@@ -108,7 +109,7 @@ export class DatabaseService {
    * @param id
    * @param ignoreEncryptionErrors
    */
-  async get(id: string, ignoreEncryptionErrors = false): Promise<Database> {
+  async get(id: string, ignoreEncryptionErrors = false, omitFields?: string[]): Promise<Database> {
     this.logger.log(`Getting database ${id}`);
 
     if (!id) {
@@ -116,7 +117,7 @@ export class DatabaseService {
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 
-    const model = await this.repository.get(id, ignoreEncryptionErrors);
+    const model = await this.repository.get(id, ignoreEncryptionErrors, omitFields);
 
     if (!model) {
       this.logger.error(`Database with ${id} was not Found`);
@@ -180,7 +181,7 @@ export class DatabaseService {
 
     let database: Database;
     try {
-      database = deepMerge(DatabaseService.removePreviousTls(dto, oldDatabase), dto);
+      database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {
         database = await this.databaseFactory.createDatabaseModel(database);
@@ -219,9 +220,8 @@ export class DatabaseService {
 
     if (id) {
       this.logger.log('Testing existing database connection');
-      const oldDatabase = DatabaseService.removePreviousTls(dto, await this.get(id));
 
-      database = deepMerge(oldDatabase, dto);
+      database = await this.merge(await this.get(id, false), dto);
     } else {
       this.logger.log('Testing new database connection');
       database = classToClass(Database, dto);
@@ -249,10 +249,8 @@ export class DatabaseService {
    */
   public async clone(id: string, dto: UpdateDatabaseDto): Promise<Database> {
     this.logger.log('Clone existing database');
-    const oldDatabase = DatabaseService.removePreviousTls(dto, await this.get(id));
-
-    const database = deepMerge(
-      omit(oldDatabase, ['id', 'sshOptions.id']),
+    const database = await this.merge(
+      await this.get(id, false, ['id', 'sshOptions.id']),
       dto,
     );
     if (DatabaseService.isConnectionAffected(dto)) {

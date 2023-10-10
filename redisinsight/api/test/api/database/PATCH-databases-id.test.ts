@@ -30,7 +30,6 @@ const dataSchema = Joi.object({
   verifyServerCert: Joi.boolean().allow(null),
   ssh: Joi.boolean().allow(null),
   sshOptions: Joi.object({
-    // todo why allow null
     host: Joi.string().allow(null),
     port: Joi.number().allow(null),
     username: Joi.string().allow(null),
@@ -258,7 +257,6 @@ describe(`PATCH /databases/:id`, () => {
         requirements('!rte.re');
         it('Update standalone with particular db index', async () => {
           let addedId;
-          const dbName = constants.getRandomString();
           const cliUuid = constants.getRandomString();
           const browserKeyName = constants.getRandomString();
           const cliKeyName = constants.getRandomString();
@@ -371,7 +369,6 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -398,7 +395,6 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -511,7 +507,6 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint,
           data: {
-            // ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -570,7 +565,6 @@ describe(`PATCH /databases/:id`, () => {
         const { body } = await validateApiCall({
           endpoint,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -673,7 +667,6 @@ describe(`PATCH /databases/:id`, () => {
           endpoint,
 
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -743,7 +736,6 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
-            ...baseDatabaseData,
             name: dbName,
           },
           responseSchema,
@@ -778,7 +770,6 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -799,7 +790,6 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -819,8 +809,38 @@ describe(`PATCH /databases/:id`, () => {
           },
         });
       });
-      // todo: Should throw an error without CA cert when cert validation enabled
-      // todo: Should throw an error with invalid CA cert
+      it('Should throw an error without CA cert', async () => {
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            caCert: null,
+          },
+          statusCode: 500,
+          responseBody: {
+            error: 'Bad Request',
+            statusCode: 500,
+          },
+        });
+      });
+      it('Should throw an error without invalid cert', async () => {
+        const newClientName = constants.getRandomString();
+
+       await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            clientCert: {
+              name: newClientName,
+              certificate: '-----BEGIN CERTIFICATE REQUEST-----dasdas',
+              key: constants.TEST_USER_TLS_KEY,
+            },
+          },
+         statusCode: 500,
+         responseBody: {
+          error: 'Bad Request',
+          statusCode: 500,
+        },
+        });
+      });
     });
   });
 
@@ -836,10 +856,76 @@ describe(`PATCH /databases/:id`, () => {
         },
         statusCode: 500,
         responseBody: {
-          // error: 'Bad Request',
-          message: 'Unable to create tunnel. Cannot parse privateKey',
+          error: 'Bad Request',
           statusCode: 500,
         },
+      });
+    });
+    describe('TLS AUTH', function () {
+      requirements('rte.tls', 'rte.tlsAuth');
+      
+      it('Should update database with partial sshOptions', async () => {
+        await validateApiCall({
+          endpoint,
+          data: {
+            sshOptions: {
+              username: constants.TEST_SSH_USER,
+              password: constants.TEST_SSH_PASSWORD,
+            },
+          },
+        });
+      });
+
+      it('Should update standalone instance with existing certificates + ssh (pk)', async () => {
+        await validateApiCall({
+          endpoint,
+          data: {
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              id: constants.TEST_CA_ID,
+            },
+            clientCert: {
+              id: constants.TEST_USER_CERT_ID,
+            },
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              privateKey: constants.TEST_SSH_PRIVATE_KEY,
+            }
+          },
+        });
+      });
+
+      it('Should test standalone instance with existing certificates + ssh (pkp)', async () => {
+        const dbName = constants.getRandomString();
+        // preconditions
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+        await validateApiCall({
+          endpoint,
+          data: {
+            tls: true,
+            verifyServerCert: true,
+            caCert: {
+              id: constants.TEST_CA_ID,
+            },
+            clientCert: {
+              id: constants.TEST_USER_CERT_ID,
+            },
+            ssh: true,
+            sshOptions: {
+              host: constants.TEST_SSH_HOST,
+              port: constants.TEST_SSH_PORT,
+              username: constants.TEST_SSH_USER,
+              privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
+              passphrase: constants.TEST_SSH_PASSPHRASE,
+            }
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
       });
     });
   });

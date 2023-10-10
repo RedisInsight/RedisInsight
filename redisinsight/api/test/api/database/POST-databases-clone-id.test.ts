@@ -36,14 +36,6 @@ const validInputData = {
   port: 111,
 };
 
-const baseDatabaseData = {
-  name: 'someName',
-  host: constants.TEST_REDIS_HOST,
-  port: constants.TEST_REDIS_PORT,
-  username: constants.TEST_REDIS_USER || undefined,
-  password: constants.TEST_REDIS_PASSWORD || undefined,
-}
-
 const responseSchema = databaseSchema.required().strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
@@ -301,7 +293,6 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -328,7 +319,6 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -441,7 +431,6 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -500,7 +489,6 @@ describe(`POST /databases/clone/:id`, () => {
         const { body } = await validateApiCall({
           endpoint,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -603,7 +591,6 @@ describe(`POST /databases/clone/:id`, () => {
           endpoint,
           statusCode: 400,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -637,7 +624,6 @@ describe(`POST /databases/clone/:id`, () => {
           endpoint,
           statusCode: 400,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -672,7 +658,6 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
-            ...baseDatabaseData,
             name: dbName,
           },
           responseSchema,
@@ -707,7 +692,6 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -725,10 +709,9 @@ describe(`POST /databases/clone/:id`, () => {
       it('Should create instance tls and create new CA cert', async () => {
         const dbName = constants.getRandomString();
 
-        const { body } = await validateApiCall({
+        await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -748,8 +731,30 @@ describe(`POST /databases/clone/:id`, () => {
           },
         });
       });
-      // todo: Should throw an error without CA cert when cert validation enabled
-      // todo: Should throw an error with invalid CA cert
+      it('Should throw an error without CA cert', async () => {
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            caCert: null,
+          },
+          statusCode: 500,
+        });
+      });
+      it('Should throw an error without invalid cert', async () => {
+        const newClientName = constants.getRandomString();
+
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            clientCert: {
+              name: newClientName,
+              certificate: '-----BEGIN CERTIFICATE REQUEST-----dasdas',
+              key: constants.TEST_USER_TLS_KEY,
+            },
+          },
+          statusCode: 500,
+        });
+      });
     });
   });
 });

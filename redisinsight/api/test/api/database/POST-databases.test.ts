@@ -829,7 +829,6 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              // hide security fields (password, sshOptions.password, sshOptions.passphrase)
               password: constants.TEST_SSH_PASSWORD,
             },
           },
@@ -847,6 +846,7 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
+              // hide security fields (password, sshOptions.password, sshOptions.passphrase)
               password: true,
             }
           },

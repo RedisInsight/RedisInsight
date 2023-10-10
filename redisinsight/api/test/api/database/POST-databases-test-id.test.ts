@@ -57,14 +57,6 @@ const validInputData = {
   port: 111,
 };
 
-const baseDatabaseData = {
-  name: 'someName',
-  host: constants.TEST_REDIS_HOST,
-  port: constants.TEST_REDIS_PORT,
-  username: constants.TEST_REDIS_USER || undefined,
-  password: constants.TEST_REDIS_PASSWORD || undefined,
-}
-
 const mainCheckFn = getMainCheckFn(endpoint);
 
 let oldDatabase;
@@ -240,7 +232,6 @@ describe(`POST /databases/test/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -258,7 +249,6 @@ describe(`POST /databases/test/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -351,7 +341,6 @@ describe(`POST /databases/test/:id`, () => {
         await validateApiCall({
           endpoint,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -379,7 +368,6 @@ describe(`POST /databases/test/:id`, () => {
         await validateApiCall({
           endpoint,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -431,7 +419,6 @@ describe(`POST /databases/test/:id`, () => {
           endpoint,
           statusCode: 200,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -460,7 +447,6 @@ describe(`POST /databases/test/:id`, () => {
           endpoint,
           statusCode: 200,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -491,7 +477,6 @@ describe(`POST /databases/test/:id`, () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           statusCode: 200,
           data: {
-            ...baseDatabaseData,
             name: dbName,
           },
         });
@@ -520,7 +505,6 @@ describe(`POST /databases/test/:id`, () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           statusCode: 200,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -534,7 +518,6 @@ describe(`POST /databases/test/:id`, () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           statusCode: 200,
           data: {
-            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,
@@ -545,8 +528,30 @@ describe(`POST /databases/test/:id`, () => {
           },
         });
       });
-      // todo: Should throw an error without CA cert when cert validation enabled
-      // todo: Should throw an error with invalid CA cert
+      it('Should throw an error without CA cert', async () => {
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            caCert: null,
+          },
+          statusCode: 500,
+        });
+      });
+      it('Should throw an error without invalid cert', async () => {
+        const newClientName = constants.getRandomString();
+
+        await validateApiCall({
+          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          data: {
+            clientCert: {
+              name: newClientName,
+              certificate: '-----BEGIN CERTIFICATE REQUEST-----dasdas',
+              key: constants.TEST_USER_TLS_KEY,
+            },
+          },
+          statusCode: 500,
+        });
+      });
     });
   });
 });

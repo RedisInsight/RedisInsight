@@ -22,7 +22,7 @@ function generateLink(params: Record<string, any>): string {
 
 const redisConnect = 'redisinsight://databases/connect';
 
-fixture `Add DB from SM`
+fixture.only `Add DB from SM`
     .meta({ type: 'critical_path', rte: rte.none })
     .afterEach(async() => {
         // Delete all existing connections

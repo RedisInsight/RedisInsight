@@ -44,7 +44,7 @@ test
         await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
-        // await t.wait(10_000);
+        await t.wait(7_000);
         await t.expect(workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
     });
 
@@ -76,7 +76,7 @@ test
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
-        // await t.wait(15_000);
+        await t.wait(10_000);
         await t.expect(workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
 
         //Verify that the same db is not added

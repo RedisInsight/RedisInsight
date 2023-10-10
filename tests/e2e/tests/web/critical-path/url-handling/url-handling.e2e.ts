@@ -14,6 +14,12 @@ const databaseHelper = new DatabaseHelper();
 
 let { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
 
+function generateLink(params: Record<string, any>): string {
+    const params1 = Common.generateUrlTParams(params);
+    const from = encodeURIComponent(`${redisConnect}?${params1}`);
+    return (new URL(`?from=${from}`, commonUrl)).toString();
+}
+
 const redisConnect = 'redisinsight://databases/connect';
 
 fixture `Add DB from SM`
@@ -34,12 +40,12 @@ test
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
-        await t.expect(await myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
-        await t.click(await myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
-        await t.wait(3_000);
-        await t.expect(await workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
+        await t.wait(7_000);
+        await t.expect(workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
     });
 
 test
@@ -71,18 +77,12 @@ test
 
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(7_000);
-        await t.expect(await workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
+        await t.expect(workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
 
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.click(await workbenchPage.NavigationPanel.myRedisDBButton);
+        await t.wait(5_000);
+        await t.click(workbenchPage.NavigationPanel.myRedisDBButton);
         await t.expect(browserPage.notification.exists).notOk({ timeout: 10000 });
-        await t.expect(await myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');
+        await t.expect(myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');
     });
-
-function generateLink(params: Record<string, any>): string {
-    const params1 = Common.generateUrlTParams(params);
-    const from = encodeURIComponent(`${redisConnect}?${params1}`);
-    return (new URL(`?from=${from}`, commonUrl)).toString();
-}
-

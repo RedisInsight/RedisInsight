@@ -10,13 +10,10 @@ import testcafe from 'testcafe';
                         configPath: 'tsconfig.testcafe.json',
                         experimentalDecorators: true
                      }})
-                .src((process.env.TEST_FILES || 'tests/**/*.e2e.ts').split('\n'))
+                .src((process.env.TEST_FILES || 'tests/electron/**/*.e2e.ts').split('\n'))
                 .browsers(['electron'])
-                .filter((_testName, _fixtureName, _fixturePath, testMeta): boolean => {
-                    return testMeta.env == 'desktop'
-                })
                 .screenshots({
-                    path: 'report/screenshots/',
+                    path: './report/screenshots/',
                     takeOnFails: true,
                     pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png',
                 })

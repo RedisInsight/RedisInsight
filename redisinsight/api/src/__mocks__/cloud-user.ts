@@ -65,7 +65,7 @@ export const mockCloudApiCsrfToken: ICloudApiCsrfToken = {
 export const mockCloudApiAuthDto: ICloudApiCredentials = {
   accessToken: 'at_p6vA6A5tF36Jf6twH2cBOqtt7n',
   csrf: mockCloudApiCsrfToken.csrf_token,
-  apiSessionId: 'asid_p6vA6A5tF36Jf6twH2cBOqtt7n',
+  apiSessionId: 'asid_p6v-A6A5tF36J-f6twH2cB!@#$_^&*()Oqtt7n',
 };
 
 export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {

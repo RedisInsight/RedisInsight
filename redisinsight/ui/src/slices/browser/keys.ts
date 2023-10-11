@@ -80,7 +80,6 @@ export const initialState: KeysStore = {
   isBrowserFullScreen: false,
   searchMode: localStorageService?.get(BrowserStorageItem.browserSearchMode) ?? SearchMode.Pattern,
   viewType: localStorageService?.get(BrowserStorageItem.browserViewType) ?? KeyViewType.Browser,
-  exactMatch: localStorageService?.get(BrowserStorageItem.browserExactMatch) ?? true,
   data: {
     total: 0,
     scanned: 0,
@@ -356,11 +355,6 @@ const keysSlice = createSlice({
       state.searchMode = payload
     },
 
-    changeExactMatch: (state, { payload }: { payload: boolean }) => {
-      state.exactMatch = payload
-      localStorageService?.set(BrowserStorageItem.browserExactMatch, payload)
-    },
-
     resetAddKey: (state) => {
       state.addKey = cloneDeep(initialState.addKey)
     },
@@ -463,7 +457,6 @@ export const {
   toggleBrowserFullScreen,
   setViewFormat,
   changeSearchMode,
-  changeExactMatch,
   loadSearchHistory,
   loadSearchHistorySuccess,
   loadSearchHistoryFailure,
@@ -520,9 +513,8 @@ export function fetchPatternKeysAction(
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
-      const { search: match, filter: type, exactMatch } = state.browser.keys
+      const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
-      const withExactMatch = exactMatch ? match : `*${match}*`
 
       const { data, status } = await apiService.post<GetKeysWithDetailsResponse[]>(
         getUrl(
@@ -530,7 +522,7 @@ export function fetchPatternKeysAction(
           ApiEndpoints.KEYS
         ),
         {
-          cursor, count, type, match: withExactMatch || DEFAULT_SEARCH_MATCH, keysInfo: false,
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
         },
         {
           params: { encoding },

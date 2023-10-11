@@ -1,6 +1,5 @@
 import { join } from 'path';
 import * as os from 'os';
-import { RequestMethod } from '@nestjs/common';
 import { version } from '../package.json';
 
 const homedir = join(__dirname, '..');
@@ -216,6 +215,7 @@ export default {
   },
   cloud: {
     apiUrl: process.env.RI_CLOUD_API_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
+    apiToken: process.env.RI_CLOUD_API_TOKEN || 'token',
     capiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api-k8s-cloudapi.qa.redislabs.com/v1',
     capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
     freeSubscriptionName: process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'My free subscription',

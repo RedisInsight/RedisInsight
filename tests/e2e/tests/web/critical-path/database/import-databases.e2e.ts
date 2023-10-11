@@ -152,8 +152,8 @@ test('Connection import from JSON', async t => {
     // Verify username imported
     await t.expect(myRedisDatabasePage.AddRedisDatabase.usernameInput.value).eql(rdmListOfDB[1].username, 'Username import incorrect');
     // Verify password imported
-    await t.click(myRedisDatabasePage.AddRedisDatabase.showPasswordBtn);
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.passwordInput.value).eql(rdmListOfDB[1].auth, 'Password import incorrect');
+    // Verify that user can see 12 hidden characters regardless of the actual database password when it is set
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.passwordInput.value).eql('************', 'Password import incorrect');
 
     // Verify cluster connection type imported
     await databaseHelper.clickOnEditDatabaseByName(rdmData.dbImportedNames[2]);
@@ -256,11 +256,12 @@ test('Import SSH parameters', async t => {
     await t.expect(myRedisDatabasePage.AddRedisDatabase.sshHostInput.value).eql(racompListOfSSHDB[0].sshHost, 'SSH host import incorrect');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPortInput.value).eql((racompListOfSSHDB[0].sshPort).toString(), 'SSH port import incorrect');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.sshUsernameInput.value).eql(racompListOfSSHDB[0].sshUser, 'SSH username import incorrect');
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPasswordInput.value).eql(racompListOfSSHDB[0].sshPassword, 'SSH password import incorrect');
+    // Verify that password, passphrase and private key are hidden for SSH option
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPasswordInput.value).eql('************', 'SSH password import incorrect');
 
     await databaseHelper.clickOnEditDatabaseByName(racompListOfSSHDB[1].name);
     // Verify that user can import the SSH Private Key both by its value specified in the file and by the file path
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput.textContent).contains(sshPrivateKey, 'SSH Private key import incorrect');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput.textContent).contains('************', 'SSH Private key import incorrect');
     // Verify that user can import the SSH parameters with Passcode
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql(racompListOfSSHDB[1].sshKeyPassphrase, 'SSH Passphrase import incorrect');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql('************', 'SSH Passphrase import incorrect');
 });

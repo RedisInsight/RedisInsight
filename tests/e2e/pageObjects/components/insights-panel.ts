@@ -1,7 +1,8 @@
 import { Selector, t } from 'testcafe';
 import { RecommendationIds } from '../../helpers/constants';
+import { BaseRightSidePanel } from './base-right-side-panel';
 
-export class InsightsPanel {
+export class InsightsPanel  extends BaseRightSidePanel {
     // CSS Selectors
     cssKeyName = '[data-testid=recommendation-key-name]';
     // BUTTONS
@@ -17,17 +18,6 @@ export class InsightsPanel {
     optimizeTimeSeriesRecommendation = Selector('[data-testid=RTS-recommendation]');
     //LINKS
     analyzeDatabaseLink = Selector('[data-testid=footer-db-analysis-link]');
-    /**
-     * Open/Close Insights Panel
-     * @param state State of panel
-     */
-    async toggleInsightsPanel(state: boolean): Promise<void> {
-        const isPanelExists = await this.insightsPanel.exists;
-
-        if (state !== isPanelExists) {
-            await t.click(this.insightsBtn);
-        }
-    }
 
     /**
      * Get Insights panel recommendation selector by name

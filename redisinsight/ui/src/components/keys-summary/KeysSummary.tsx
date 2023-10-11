@@ -35,6 +35,11 @@ const KeysSummary = (props: Props) => {
 
   const resultsLength = items.length
   const scannedDisplay = resultsLength > scanned ? resultsLength : scanned
+  const notAccurateScanned = totalItemsCount
+    && scanned >= totalItemsCount
+    && nextCursor
+    && nextCursor !== '0'
+    ? '~' : ''
 
   return (
     <>
@@ -51,7 +56,7 @@ const KeysSummary = (props: Props) => {
                   </b>
                   <EuiTextColor color="subdued">
                     {'Scanned '}
-                    <span data-testid="keys-number-of-scanned">{numberWithSpaces(scannedDisplay)}</span>
+                    <span data-testid="keys-number-of-scanned">{notAccurateScanned}{numberWithSpaces(scannedDisplay)}</span>
                     {' / '}
                     <span data-testid="keys-total">{nullableNumberWithSpaces(totalItemsCount)}</span>
                     <span

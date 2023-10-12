@@ -210,32 +210,32 @@ jobs:
       - run:
           name: UI PROD dependencies audit
           command: |
-            # FILENAME=ui.prod.deps.audit.json
-            # yarn audit --groups dependencies --json > $FILENAME || true &&
-            # FILENAME=$FILENAME DEPS="UI prod" node .circleci/deps-audit-report.js &&
-            # curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+            FILENAME=ui.prod.deps.audit.json
+            yarn audit --groups dependencies --json > $FILENAME || true &&
+            FILENAME=$FILENAME DEPS="UI prod" node .circleci/deps-audit-report.js &&
+            curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
       - run:
           name: UI DEV dependencies audit
           command: |
-            # FILENAME=ui.dev.deps.audit.json
-            # yarn audit --groups devDependencies --json > $FILENAME || true &&
-            # FILENAME=$FILENAME DEPS="UI dev" node .circleci/deps-audit-report.js &&
-            # curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+            FILENAME=ui.dev.deps.audit.json
+            yarn audit --groups devDependencies --json > $FILENAME || true &&
+            FILENAME=$FILENAME DEPS="UI dev" node .circleci/deps-audit-report.js &&
+            curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
       - run:
           name: Code analysis
           command: |
             SKIP_POSTINSTALL=1 yarn install
 
-            # FILENAME=ui.lint.audit.json
-            # WORKDIR="."
-            # yarn lint:ui -f json -o $FILENAME || true &&
-            # FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .circleci/lint-report.js &&
-            # curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+            FILENAME=ui.lint.audit.json
+            WORKDIR="."
+            yarn lint:ui -f json -o $FILENAME || true &&
+            FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .circleci/lint-report.js &&
+            curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
 
-            # FILENAME=rest.lint.audit.json
-            # yarn lint -f json -o $FILENAME || true &&
-            # FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .circleci/lint-report.js &&
-            # curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
+            FILENAME=rest.lint.audit.json
+            yarn lint -f json -o $FILENAME || true &&
+            FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .circleci/lint-report.js &&
+            curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer ${SLACK_AUDIT_REPORT_KEY}" -X POST https://slack.com/api/chat.postMessage
       - run:
           name: Unit tests UI
           command: |

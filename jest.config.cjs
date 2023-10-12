@@ -21,7 +21,8 @@ module.exports = {
     'unist-util-visit': '<rootDir>/redisinsight/__mocks__/unistUtilsVisit.js',
     'react-children-utilities': '<rootDir>/redisinsight/__mocks__/react-children-utilities.js',
     d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
-    uuid: require.resolve('uuid'),
+    '^uuid$': require.resolve('uuid'),
+    msgpackr: require.resolve('msgpackr'),
   },
   setupFiles: [
     '<rootDir>/redisinsight/ui/src/setup-env.ts',

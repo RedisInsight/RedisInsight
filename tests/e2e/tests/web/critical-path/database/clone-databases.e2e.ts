@@ -100,6 +100,8 @@ test
         await myRedisDatabasePage.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
+        const hiddenPassword = '************';
+
         await databaseHelper.clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);
 
@@ -120,7 +122,7 @@ test
         await t
             .click(myRedisDatabasePage.AddRedisDatabase.cloneSentinelNavigation)
             .expect(myRedisDatabasePage.AddRedisDatabase.portInput.getAttribute('value')).eql(ossSentinelConfig.sentinelPort, 'Invalid sentinel port')
-            .expect(myRedisDatabasePage.AddRedisDatabase.passwordInput.getAttribute('value')).eql('************', 'Invalid sentinel password');
+            .expect(myRedisDatabasePage.AddRedisDatabase.passwordInput.getAttribute('value')).eql(hiddenPassword, 'Invalid sentinel password');
         // Clone Sentinel Primary Group
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossSentinelConfig.masters[1].alias).count).gt(1, 'Primary Group was not cloned');

@@ -1,6 +1,3 @@
-// const { TextDecoder, TextEncoder } = require('util')
-// const { TextDecoder, TextEncoder } = require('text-encoding')
-
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 module.exports = {
   testEnvironmentOptions: {
@@ -68,8 +65,4 @@ module.exports = {
     //   statements: 90,
     // },
   },
-  // globals: {
-  //   TextDecoder,
-  //   TextEncoder,
-  // },
 }

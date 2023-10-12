@@ -119,8 +119,7 @@ test('Verify that when user see the toggle is OFF - Profiler logs are not being 
     // Check the download files
     await t.expect(await findByFileStarts(downloadedFilePath)).eql(numberOfDownloadFiles, 'The Profiler logs are saved');
 });
-// Skipped due to testCafe issue https://github.com/DevExpress/testcafe/issues/5574
-test.skip('Verify that when user see the toggle is ON - Profiler logs are being saved', async t => {
+test('Verify that when user see the toggle is ON - Profiler logs are being saved', async t => {
     // Remember the number of files in Temp
     const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);
 

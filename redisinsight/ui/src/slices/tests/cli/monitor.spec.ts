@@ -141,8 +141,8 @@ describe('monitor slice', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        MOCK_TIMESTAMP: {
-          ...initialState.MOCK_TIMESTAMP,
+        timestamp: {
+          ...initialState.timestamp,
           start: MOCK_TIMESTAMP,
           unPaused: MOCK_TIMESTAMP
         }
@@ -169,8 +169,8 @@ describe('monitor slice', () => {
       const state: typeof intermediateState = {
         ...intermediateState,
         isPaused: true,
-        MOCK_TIMESTAMP: {
-          ...intermediateState.MOCK_TIMESTAMP,
+        timestamp: {
+          ...intermediateState.timestamp,
           paused: MOCK_TIMESTAMP,
           duration: diffTimestamp
         }

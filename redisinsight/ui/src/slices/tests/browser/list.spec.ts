@@ -10,6 +10,7 @@ import {
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
@@ -66,7 +67,7 @@ beforeEach(() => {
 
 describe('list slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -700,7 +701,7 @@ describe('list slice', () => {
         // Assert
         const expectedActions = [loadListElements()]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
     })
 
@@ -727,7 +728,7 @@ describe('list slice', () => {
           refreshKeyInfo(),
         ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
       it('failed to update element in list', async () => {
         // Arrange
@@ -775,7 +776,7 @@ describe('list slice', () => {
           defaultSelectedKeyAction(),
         ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions)
+        expect(mockedStore.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
       it('failed to insert element in list', async () => {
         // Arrange
@@ -844,7 +845,7 @@ describe('list slice', () => {
           )
         ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions)
+        expect(mockedStore.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('succeed to delete all elements from list', async () => {

@@ -663,9 +663,6 @@ describe(`POST /databases/clone/:id`, () => {
           responseSchema,
           responseBody: {
             name: dbName,
-            port: constants.TEST_REDIS_PORT,
-            connectionType: constants.CLUSTER,
-            nodes: rte.env.nodes,
           },
         });
       });

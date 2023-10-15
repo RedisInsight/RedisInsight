@@ -474,7 +474,7 @@ describe(`POST /databases/test/:id`, () => {
         const dbName = constants.getRandomString();
 
         await validateApiCall({
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          endpoint,
           statusCode: 200,
           data: {
             name: dbName,

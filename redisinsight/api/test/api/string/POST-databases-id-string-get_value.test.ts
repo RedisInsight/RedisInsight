@@ -49,17 +49,6 @@ describe('POST /databases/:instanceId/string/get-value', () => {
         },
       },
       {
-        name: 'Should return part of value in utf8 (specified length)',
-        data: {
-          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
-          stringMaxLen: constants.TEST_STRING_KEY_LENGTH
-        },
-        responseBody: {
-          keyName: constants.TEST_STRING_KEY_BIN_UTF8_1,
-          value: constants.TEST_STRING_VALUE_BIN_UTF8_1.slice(0, constants.TEST_STRING_KEY_LENGTH),
-        },
-      },
-      {
         name: 'Should return value in utf8',
         query: {
           encoding: 'utf8',
@@ -133,6 +122,17 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           },
         },
         {
+          name: 'Should get part of value (specified length)',
+          data: {
+            keyName: constants.TEST_STRING_KEY_1,
+            stringMaxLen: constants.TEST_STRING_KEY_LENGTH
+          },
+          responseBody: {
+            keyName: constants.TEST_STRING_KEY_1,
+            value: constants.TEST_STRING_VALUE_1.slice(0, constants.TEST_STRING_KEY_LENGTH),
+          },
+        },
+        {
           name: 'Should return an error when incorrect type',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
@@ -142,6 +142,18 @@ describe('POST /databases/:instanceId/string/get-value', () => {
             statusCode: 400,
             error: 'Bad Request',
             // message: 'WRONGTYPE Operation against a key holding the wrong kind of value',
+          },
+        },
+        {
+          name: 'Should return an error when incorrect string length',
+          data: {
+            keyName: constants.TEST_STRING_KEY_1,
+            stringMaxLen: 0
+          },
+          statusCode: 400,
+          responseBody: {
+            statusCode: 400,
+            error: 'Bad Request',
           },
         },
         {

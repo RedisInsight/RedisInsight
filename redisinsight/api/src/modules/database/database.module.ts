@@ -1,5 +1,7 @@
 import config from 'src/utils/config';
-import { MiddlewareConsumer, Module, RequestMethod, Type } from '@nestjs/common';
+import {
+  MiddlewareConsumer, Module, RequestMethod, Type,
+} from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseController } from 'src/modules/database/database.controller';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -12,6 +14,7 @@ import { DatabaseInfoController } from 'src/modules/database/database-info.contr
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
+import { DatabaseConnectionFactory } from 'src/modules/database/providers/database-connection.factory';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
 const SERVER_CONFIG = config.get('server');
@@ -31,6 +34,7 @@ export class DatabaseModule {
       providers: [
         DatabaseService,
         DatabaseConnectionService,
+        DatabaseConnectionFactory,
         DatabaseInfoProvider,
         DatabaseAnalytics,
         DatabaseFactory,
@@ -45,6 +49,7 @@ export class DatabaseModule {
         DatabaseRepository,
         DatabaseService,
         DatabaseConnectionService,
+        DatabaseConnectionFactory,
         // todo: rethink everything below
         DatabaseFactory,
         DatabaseInfoService,
@@ -52,6 +57,7 @@ export class DatabaseModule {
       ],
     };
   }
+
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(ConnectionMiddleware)

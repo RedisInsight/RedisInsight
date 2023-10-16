@@ -1,14 +1,14 @@
-import { Redis, Command } from 'ioredis';
 import { get } from 'lodash';
 import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { RedisClient } from 'src/modules/redis/client';
 
-const getTotalFromInfo = async (client: Redis) => {
+export const getTotalKeysFromInfo = async (client: RedisClient) => {
   try {
     const currentDbIndex = get(client, ['options', 'db'], 0);
     const info = convertRedisInfoReplyToObject(
-      await client.sendCommand(new Command('info', ['keyspace'], {
+      await client.sendCommand(['info', 'keyspace'], {
         replyEncoding: 'utf8',
-      })) as string,
+      }) as string,
     );
 
     const dbInfo = get(info, 'keyspace', {});
@@ -23,22 +23,17 @@ const getTotalFromInfo = async (client: Redis) => {
   }
 };
 
-const getTotalFromDBSize = async (client: Redis) => {
-  const dbsize = await client.sendCommand(new Command('dbsize', [], {
+export const getTotalKeysFromDBSize = async (client: RedisClient) => {
+  const total = await client.sendCommand(['dbsize'], {
     replyEncoding: 'utf8',
-  })) as string;
-  return parseInt(dbsize, 10);
+  }) as string;
+  return parseInt(total, 10);
 };
 
-/**
- * @deprecated
- */
-export const getTotal = async (
-  client: Redis,
-): Promise<number> => {
+export const getTotalKeys = async (client: RedisClient): Promise<number> => {
   try {
-    return await getTotalFromDBSize(client);
+    return await getTotalKeysFromDBSize(client);
   } catch (err) {
-    return await getTotalFromInfo(client);
+    return await getTotalKeysFromInfo(client);
   }
 };

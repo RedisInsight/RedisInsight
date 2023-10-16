@@ -1,0 +1,73 @@
+import Redis, { Cluster, Command } from 'ioredis';
+import {
+  IRedisClientCommandOptions,
+  RedisClient,
+  RedisClientCommand,
+  RedisClientCommandReply,
+  RedisClientConnectionType,
+} from 'src/modules/redis/client';
+
+export abstract class IoredisClient extends RedisClient {
+  protected readonly client: Redis | Cluster;
+
+  static prepareCommandOptions(options: IRedisClientCommandOptions): any {
+    return {
+      replyEncoding: options?.replyEncoding,
+    };
+  }
+
+  /**
+   * @inheritDoc
+   */
+  isConnected(): boolean {
+    try {
+      return this.client.status === 'ready';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async nodes(): Promise<RedisClient[]> {
+    return [this];
+  }
+
+  async sendPipeline(
+    commands: RedisClientCommand[],
+    options?: IRedisClientCommandOptions,
+  ): Promise<Array<[Error | null, RedisClientCommandReply]>> {
+    let batch = commands;
+
+    if (options?.unknownCommands) {
+      batch = commands.map((command) => ['call', ...command]);
+    }
+
+    // todo: replyEncoding
+    return await this.client.pipeline(batch).exec() as [Error | null, RedisClientCommandReply][];
+  }
+
+  async sendCommand(
+    command: RedisClientCommand,
+    options?: IRedisClientCommandOptions,
+  ): Promise<RedisClientCommandReply> {
+    const [cmd, ...args] = command;
+    return await this.client.sendCommand(
+      new Command(cmd, args, IoredisClient.prepareCommandOptions(options)),
+    ) as RedisClientCommandReply;
+  }
+
+  async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
+    if (IoredisClient.prepareCommandOptions(options).replyEncoding === null) {
+      return await this.client.callBuffer(...command) as RedisClientCommandReply;
+    }
+
+    return await this.client.call(...command) as RedisClientCommandReply;
+  }
+
+  async disconnect(): Promise<void> {
+    this.client.disconnect();
+  }
+
+  async quit(): Promise<void> {
+    await this.client.quit();
+  }
+}

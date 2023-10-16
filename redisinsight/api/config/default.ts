@@ -75,7 +75,9 @@ export default {
     migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : true,
   },
   redis_clients: {
-    idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
+    idleThreshold: parseInt(process.env.RI_REDIS_CLIENTS_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1h
+    syncInterval: parseInt(process.env.RI_REDIS_CLIENTS_SYNC_INTERVAL, 10) || 1000 * 60, // 1m
+    idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr todo: remove
     maxIdleThreshold: parseInt(process.env.CLIENTS_MAX_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1hr
     retryTimes: parseInt(process.env.CLIENTS_RETRY_TIMES, 10) || 5,
     retryDelay: parseInt(process.env.CLIENTS_RETRY_DELAY, 10) || 500,

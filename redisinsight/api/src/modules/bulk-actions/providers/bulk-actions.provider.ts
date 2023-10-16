@@ -5,10 +5,12 @@ import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { Socket } from 'socket.io';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
-import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import {
+  DeleteBulkActionSimpleRunner,
+} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 import { ClientContext } from 'src/common/models';
+import { DatabaseConnectionFactory } from 'src/modules/database/providers/database-connection.factory';
 
 @Injectable()
 export class BulkActionsProvider {
@@ -17,7 +19,7 @@ export class BulkActionsProvider {
   private logger: Logger = new Logger('BulkActionsProvider');
 
   constructor(
-    private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly databaseConnectionFactory: DatabaseConnectionFactory,
     private readonly analyticsService: BulkActionsAnalyticsService,
   ) {}
 
@@ -36,7 +38,7 @@ export class BulkActionsProvider {
     this.bulkActions.set(dto.id, bulkAction);
 
     // todo: add multi user support
-    const client = await this.databaseConnectionService.getOrCreateClient({
+    const client = await this.databaseConnectionFactory.getOrCreateClient({
       sessionMetadata: undefined,
       databaseId: dto.databaseId,
       context: ClientContext.Common,

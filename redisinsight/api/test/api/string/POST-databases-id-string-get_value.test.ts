@@ -49,6 +49,17 @@ describe('POST /databases/:instanceId/string/get-value', () => {
         },
       },
       {
+        name: 'Should return part of value in utf8 (specified length)',
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          stringMaxLen: constants.TEST_STRING_KEY_LENGTH
+        },
+        responseBody: {
+          keyName: constants.TEST_STRING_KEY_BIN_UTF8_1,
+          value: constants.TEST_STRING_VALUE_BIN_UTF8_1.slice(0, constants.TEST_STRING_KEY_LENGTH),
+        },
+      },
+      {
         name: 'Should return value in utf8',
         query: {
           encoding: 'utf8',

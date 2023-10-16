@@ -9,6 +9,7 @@ import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
 import {
+  GetStringInfoDto,
   GetStringValueResponse,
   SetStringDto,
   SetStringWithExpireDto,
@@ -22,6 +23,8 @@ import { plainToClass } from 'class-transformer';
 import { GetKeyInfoDto } from 'src/modules/browser/dto';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
+import { Readable } from 'stream';
+import { RedisString } from 'src/common/constants';
 
 @Injectable()
 export class StringBusinessService {
@@ -66,20 +69,22 @@ export class StringBusinessService {
     this.logger.log('Succeed to set string key type.');
   }
 
-  public async getStringValue(
+  private async getStringValueFromClient(
     clientMetadata: ClientMetadata,
-    dto: GetKeyInfoDto,
+    keyName: RedisString,
+    args = [],
+    toolCommand = BrowserToolStringCommands.Get,
   ): Promise<GetStringValueResponse> {
     this.logger.log('Getting string value.');
 
-    const { keyName } = dto;
+    const scanArgs = [keyName, ...args];
     let result: GetStringValueResponse;
 
     try {
       const value = await this.browserTool.execCommand(
         clientMetadata,
-        BrowserToolStringCommands.Get,
-        [keyName],
+        toolCommand,
+        scanArgs,
       );
       result = { value, keyName };
     } catch (error) {
@@ -89,20 +94,51 @@ export class StringBusinessService {
       }
       catchAclError(error);
     }
+
     if (result.value === null) {
       this.logger.error(
         `Failed to get string value. Not Found key: ${keyName}.`,
       );
       throw new NotFoundException();
-    } else {
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.STRING_TO_JSON,
-        { value: result.value, keyName: result.keyName },
-      );
-      this.logger.log('Succeed to get string value.');
-      return plainToClass(GetStringValueResponse, result);
     }
+
+    this.recommendationService.check(
+      clientMetadata,
+      RECOMMENDATION_NAMES.STRING_TO_JSON,
+      { value: result.value, keyName: result.keyName },
+    );
+    this.logger.log('Succeed to get string value.');
+
+    return result;
+  }
+
+  public async getStringValue(
+    clientMetadata: ClientMetadata,
+    dto: GetStringInfoDto,
+  ): Promise<GetStringValueResponse> {
+    const { keyName, stringMaxLen } = dto;
+    const result: GetStringValueResponse = await this.getStringValueFromClient(
+      clientMetadata,
+      keyName,
+      stringMaxLen ? ['0', `${(stringMaxLen - 1)}`] : [],
+      stringMaxLen ? BrowserToolStringCommands.Getrange : BrowserToolStringCommands.Get,
+    );
+
+    return plainToClass(GetStringValueResponse, result);
+  }
+
+  public async downloadStringValue(
+    clientMetadata: ClientMetadata,
+    dto: GetKeyInfoDto,
+  ): Promise<{ stream: Readable }> {
+    const { keyName } = dto;
+    const result = await this.getStringValueFromClient(
+      clientMetadata,
+      keyName,
+    );
+
+    const stream = Readable.from(`"${result.value}"`);
+    return { stream };
   }
 
   public async updateStringValue(

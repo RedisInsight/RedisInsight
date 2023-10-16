@@ -160,6 +160,7 @@ export const constants = {
   TEST_STRING_KEY_ASCII_UNICODE: TEST_RUN_ID + '_str_ascii_€' + CLUSTER_HASH_SLOT,
   TEST_STRING_KEY_ASCII_VALUE: TEST_RUN_ID + '_value_ascii',
   TEST_STRING_KEY_BIN_BUFFER_1: Buffer.concat([Buffer.from(TEST_RUN_ID), Buffer.from('strk'), unprintableBuf]),
+  TEST_STRING_KEY_LENGTH: 10,
   get TEST_STRING_KEY_BIN_BUF_OBJ_1() { return { type: 'Buffer', data: [...this.TEST_STRING_KEY_BIN_BUFFER_1] } },
   get TEST_STRING_KEY_BIN_ASCII_1() { return getASCIISafeStringFromBuffer(this.TEST_STRING_KEY_BIN_BUFFER_1) },
   get TEST_STRING_KEY_BIN_UTF8_1() { return this.TEST_STRING_KEY_BIN_BUFFER_1.toString('utf-8') },

@@ -102,7 +102,7 @@ export const stringDataSelector = (state: RootState) =>
 export default stringSlice.reducer
 
 // Asynchronous thunk action
-export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs) {
+export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const { resetData, maxLength } = args
     dispatch(getString(resetData))

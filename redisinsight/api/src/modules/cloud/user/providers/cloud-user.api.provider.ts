@@ -39,10 +39,11 @@ export class CloudUserApiProvider extends CloudApiProvider {
     try {
       const { headers } = await this.api.post(
         'login',
-        {},
+        {
+          ...CloudApiProvider.generateUtmBody(utm),
+        },
         {
           ...CloudApiProvider.getHeaders(credentials),
-          params: CloudApiProvider.generateUtmQuery(utm),
         },
       );
 

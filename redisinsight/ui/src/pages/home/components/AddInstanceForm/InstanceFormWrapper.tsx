@@ -456,12 +456,10 @@ const InstanceFormWrapper = (props: Props) => {
       database.sentinelMaster.password = sentinelMasterPassword
     }
 
+    const payload = getFormUpdates(database, omit(editedInstance, ['id']))
     if (isCloneMode) {
-      // name need for success message
-      const payload = getFormUpdates(database, omit(editedInstance, ['id', 'name']))
       handleCloneDatabase(payload)
     } else {
-      const payload = getFormUpdates(database, omit(editedInstance, 'id'))
       handleEditDatabase(payload)
     }
   }

@@ -483,7 +483,7 @@ export function updateInstanceAction({ id, ...payload }: Instance, onSuccess?: (
 }
 
 // Asynchronous thunk action
-export function cloneInstanceAction({ id, name, ...payload }: Partial<Instance>, onSuccess?: (id?: string) => void) {
+export function cloneInstanceAction({ id, ...payload }: Partial<Instance>, onSuccess?: (id?: string) => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
@@ -494,7 +494,7 @@ export function cloneInstanceAction({ id, name, ...payload }: Partial<Instance>,
         dispatch(defaultInstanceChangingSuccess())
         dispatch<any>(fetchInstancesAction())
 
-        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(name ?? '')))
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_INSTANCE(payload.name ?? '')))
         onSuccess?.(id)
       }
     } catch (_err) {

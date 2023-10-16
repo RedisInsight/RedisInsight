@@ -1,7 +1,7 @@
 import { EuiResizableContainer } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -66,7 +66,6 @@ const InstancePage = ({ routes = [] }: Props) => {
   const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
 
   const dispatch = useDispatch()
-  const history = useHistory()
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { data: modulesData } = useSelector(instancesSelector)

@@ -9,3 +9,8 @@ export interface IKeyPropTypes {
   size: number
   length: number
 }
+
+export interface IFetchKeyArgs {
+  resetData?: boolean
+  maxLength?: number
+}

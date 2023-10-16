@@ -5,11 +5,18 @@ import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
 import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
+import {
+  GZIP_COMPRESSED_VALUE_1,
+  GZIP_COMPRESSED_VALUE_2,
+  DECOMPRESSED_VALUE_STR_1,
+  DECOMPRESSED_VALUE_STR_2,
+} from 'uiSrc/utils/tests/decompressors'
 import StringDetails, { Props } from './StringDetails'
 
 const STRING_VALUE = 'string-value'
 const STRING_VALUE_SPACE = 'string value'
+const LOAD_ALL_BTN = 'load-all-value-btn'
+const DOWNLOAD_BTN = 'download-all-value-btn'
 
 const mockedProps = mock<Props>()
 
@@ -21,6 +28,22 @@ jest.mock('uiSrc/slices/browser/string', () => ({
       data: [49, 50, 51],
     }
   }),
+}))
+
+jest.mock('uiSrc/slices/browser/keys', () => ({
+  ...jest.requireActual('uiSrc/slices/browser/keys'),
+  selectedKeyDataSelector: jest.fn().mockReturnValue({
+    name: {
+      type: 'Buffer',
+      data: [49, 50, 51],
+    },
+    length: 3
+  }),
+}))
+
+jest.mock('uiSrc/constants', () => ({
+  ...jest.requireActual('uiSrc/constants'),
+  STRING_MAX_LENGTH: 2,
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -109,6 +132,26 @@ describe('StringDetails', () => {
     const btnApply = screen.getByTestId('apply-btn')
     fireEvent.click(btnApply)
     expect(textArea).toHaveValue(STRING_VALUE_SPACE)
+  })
+
+  it('should render "load all"/"download" btn if long string is partially loaded', () => {
+    const stringDataSelectorMock = jest.fn().mockReturnValue({
+      value: {
+        type: 'Buffer',
+        data: [49, 50],
+      }
+    })
+    stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+    render(
+      <StringDetails
+        {...instance(mockedProps)}
+      />
+    )
+    const loadAllBtn = screen.getByTestId(LOAD_ALL_BTN)
+    const downloadBtn = screen.getByTestId(DOWNLOAD_BTN)
+    expect(loadAllBtn).toBeInTheDocument()
+    expect(downloadBtn).toBeInTheDocument()
   })
 
   describe('decompressed  data', () => {

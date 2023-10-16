@@ -13,7 +13,7 @@ import {
   selectedKeyDataSelector,
   toggleBrowserFullScreen,
 } from 'uiSrc/slices/browser/keys'
-import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { KeyTypes, ModulesKeyTypes, STRING_MAX_LENGTH } from 'uiSrc/constants'
 import { refreshHashFieldsAction } from 'uiSrc/slices/browser/hash'
 import { refreshZsetMembersAction } from 'uiSrc/slices/browser/zset'
 import { fetchString, resetStringValue } from 'uiSrc/slices/browser/string'
@@ -24,6 +24,7 @@ import { refreshStream } from 'uiSrc/slices/browser/stream'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
+import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 import KeyDetails from './KeyDetails/KeyDetails'
 
 export interface Props {
@@ -95,7 +96,7 @@ const KeyDetailsWrapper = (props: Props) => {
       }))
   }
 
-  const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
+  const handleRefreshKey = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args: IFetchKeyArgs) => {
     const resetData = false
     dispatch(refreshKeyInfoAction(key))
     switch (type) {
@@ -116,7 +117,7 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.String: {
-        dispatch(fetchString(key, resetData))
+        dispatch(fetchString(key, { resetData, maxLength: args?.maxLength || STRING_MAX_LENGTH }))
         break
       }
       case KeyTypes.ReJSON: {

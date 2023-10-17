@@ -666,7 +666,7 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
       if (data.type === KeyTypes.String) {
         dispatch<any>(fetchString(key, {
           resetData,
-          maxLength: STRING_MAX_LENGTH
+          end: STRING_MAX_LENGTH
         }))
       }
       if (data.type === KeyTypes.ZSet) {

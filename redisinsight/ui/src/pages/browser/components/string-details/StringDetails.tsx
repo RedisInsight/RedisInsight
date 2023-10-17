@@ -103,7 +103,9 @@ const StringDetails = (props: Props) => {
       !isNonUnicodeFormatter(viewFormatProp, isValid)
         && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
-    setIsEditable(!isCompressed && isFormatEditable(viewFormatProp))
+
+    const isFullLength = initialValue?.data?.length === length
+    setIsEditable((!isCompressed && isFormatEditable(viewFormatProp)) && isFullLength)
     setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp))
 
     dispatch(setIsStringCompressed(isCompressed))
@@ -157,7 +159,8 @@ const StringDetails = (props: Props) => {
   const isLoading = loading || value === null
 
   const handleLoadAll = async (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
-    await onRefresh(key, type, { maxLength: length })
+    const endString = length - 1
+    await onRefresh(key, type, { end: endString })
     sendEventTelemetry({
       event: TelemetryEvent.STRING_LOAD_ALL_CLICKED,
       eventData: {

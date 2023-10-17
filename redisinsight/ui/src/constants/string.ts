@@ -1,1 +1,1 @@
-export const STRING_MAX_LENGTH = 5000
+export const STRING_MAX_LENGTH = 4999

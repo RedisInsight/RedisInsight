@@ -104,7 +104,7 @@ export default stringSlice.reducer
 // Asynchronous thunk action
 export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
-    const { resetData, maxLength } = args
+    const { resetData, end: endString } = args
     dispatch(getString(resetData))
 
     try {
@@ -117,7 +117,7 @@ export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) 
         ),
         {
           keyName: key,
-          stringMaxLen: maxLength,
+          end: endString
         },
         { params: { encoding } },
       )
@@ -152,7 +152,7 @@ export function fetchDownloadStringValue(
         {
           keyName: key,
         },
-        { params: { encoding } },
+        { params: { encoding }, responseType: 'arraybuffer' },
       )
 
       if (isStatusSuccessful(status)) {

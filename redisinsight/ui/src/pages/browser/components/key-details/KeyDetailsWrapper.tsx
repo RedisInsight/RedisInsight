@@ -117,7 +117,7 @@ const KeyDetailsWrapper = (props: Props) => {
         break
       }
       case KeyTypes.String: {
-        dispatch(fetchString(key, { resetData, maxLength: args?.maxLength || STRING_MAX_LENGTH }))
+        dispatch(fetchString(key, { resetData, end: args?.end || STRING_MAX_LENGTH }))
         break
       }
       case KeyTypes.ReJSON: {

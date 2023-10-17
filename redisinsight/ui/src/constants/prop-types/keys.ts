@@ -12,5 +12,6 @@ export interface IKeyPropTypes {
 
 export interface IFetchKeyArgs {
   resetData?: boolean
-  maxLength?: number
+  start?: number
+  end?: number
 }

@@ -32,6 +32,7 @@ interface ITestCaseInput {
   statusCode?: number;
   responseSchema?: Joi.AnySchema;
   responseBody?: any;
+  responseHeaders?: object,
   checkFn?: Function;
   preconditionFn?: Function;
   postCheckFn?: Function;
@@ -51,6 +52,7 @@ export const validateApiCall = async function ({
   statusCode = 200,
   responseSchema,
   responseBody,
+  responseHeaders,
   checkFn,
 }: ITestCaseInput): Promise<any> {
   const request = endpoint();
@@ -92,6 +94,11 @@ export const validateApiCall = async function ({
   }
 
   expect(response.res.statusCode).to.eq(statusCode)
+
+  // validate response headers if passed
+  if (responseHeaders) {
+    expect(response.res.headers).to.include(responseHeaders);
+  }
 
   // validate response schema if passed
   if (responseSchema) {

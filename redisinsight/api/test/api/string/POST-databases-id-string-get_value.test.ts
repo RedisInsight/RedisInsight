@@ -65,7 +65,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           encoding: 'ascii',
         },
         data: {
-          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
         },
         responseBody: {
           keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
@@ -78,7 +78,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           encoding: 'buffer',
         },
         data: {
-          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
         },
         responseBody: {
           keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
@@ -98,7 +98,6 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
           value: constants.TEST_STRING_PARTIAL_VALUE_BIN_BUF_OBJ_1,
         },
-        statusCode: 404,
       },
       {
         name: 'Should return part of value in buffer ("start" & "end")',
@@ -106,7 +105,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           encoding: 'buffer',
         },
         data: {
-          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
           start: constants.TEST_STRING_KEY_START_2,
           end: constants.TEST_STRING_KEY_END
         },

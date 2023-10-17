@@ -6,7 +6,7 @@ import { BuildType } from 'uiSrc/constants/env'
 import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import InstanceForm, { Props } from './InstanceForm'
-import { ADD_NEW_CA_CERT } from './constants'
+import { ADD_NEW_CA_CERT, SshPassType } from './constants'
 import { DbConnectionInfo } from './interfaces'
 
 const BTN_SUBMIT = 'btn-submit'
@@ -1136,6 +1136,55 @@ describe('InstanceForm', () => {
     )
 
     expect(screen.getByTestId('password')).toHaveAttribute('maxLength', '10000')
+  })
+
+  it('should render security fields with proper attributes', () => {
+    render(
+      <InstanceForm
+        {...instance(mockedProps)}
+        formFields={{
+          ...formFields,
+          connectionType: ConnectionType.Standalone,
+          ssh: true,
+          password: true,
+          sshOptions: { host: 'host', port: 123, passphrase: true },
+          sshPassType: SshPassType.PrivateKey,
+        }}
+      />
+    )
+
+    expect(screen.getByTestId('password')).toHaveAttribute('value', '************')
+    expect(screen.getByTestId('password')).toHaveAttribute('type', 'password')
+    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('value', '************')
+    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('type', 'password')
+
+    fireEvent.focus(screen.getByTestId('password'))
+    fireEvent.focus(screen.getByTestId('sshPassphrase'))
+
+    expect(screen.getByTestId('password')).toHaveAttribute('value', '')
+    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('value', '')
+  })
+
+  it('should render ssh password with proper attributes', () => {
+    render(
+      <InstanceForm
+        {...instance(mockedProps)}
+        formFields={{
+          ...formFields,
+          connectionType: ConnectionType.Standalone,
+          ssh: true,
+          sshOptions: { host: 'host', port: 123, password: true },
+          sshPassType: SshPassType.Password,
+        }}
+      />
+    )
+
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute('value', '************')
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute('type', 'password')
+
+    fireEvent.focus(screen.getByTestId('sshPassword'))
+
+    expect(screen.getByTestId('sshPassword')).toHaveAttribute('value', '')
   })
 
   it('should render ssh password input with 10_000 length limit', () => {

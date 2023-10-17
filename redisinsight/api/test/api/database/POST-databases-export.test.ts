@@ -174,7 +174,7 @@ describe(`POST /databases/export`, () => {
             // todo: fixed test but need to review implementation
             // sshOptions.private key field exists but value is <null>
             // expect(body[0].sshOptions).to.not.have.property('privateKey');
-            expect(body[0].sshOptions?.privateKey).to.eq(null);
+            expect(body[0].sshOptions?.privateKey).to.eq(undefined);
             expect(body[0].clientCert).to.not.have.property('key');
             expect(body[0].id).to.eq(constants.TEST_INSTANCE_ACL_ID);
             expect(body[0].name).to.eq(constants.TEST_INSTANCE_ACL_NAME);

@@ -229,6 +229,24 @@ describe('LocalDatabaseRepository', () => {
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });
+
+    it('should return standalone database model without omit fields', async () => {
+      const omitFields = ['compressor', 'connectionType'];
+      const result = await service.get(mockDatabaseId, false, omitFields);
+
+      expect(result).toEqual(omit(mockDatabase, omitFields));
+    });
+
+    it('should return standalone database model without nested fields', async () => {
+      const omitFields = ['compressor', 'sshOptions.passphrase', 'sshOptions.privateKey'];
+
+      repository.findOneBy.mockResolvedValueOnce(mockDatabaseWithSshPrivateKeyEntity);
+      const result = await service.get(mockDatabaseWithSshPrivateKey.id, false, omitFields);
+
+      expect(result).toEqual(omit(cloneClassInstance(mockDatabaseWithSshPrivateKey), omitFields));
+      expect(caCertRepository.get).not.toHaveBeenCalled();
+      expect(clientCertRepository.get).not.toHaveBeenCalled();
+    });
   });
 
   describe('list', () => {

@@ -1,14 +1,12 @@
 import {
-  expect,
   describe,
-  it,
   before,
   Joi,
   deps,
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn, JoiRedisString
+  getMainCheckFn, JoiRedisString
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -88,6 +86,36 @@ describe('POST /databases/:instanceId/string/get-value', () => {
         },
       },
       {
+        name: 'Should return part of value in buffer (only "end")',
+        query: {
+          encoding: 'buffer',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          end: constants.TEST_STRING_KEY_END
+        },
+        responseBody: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          value: constants.TEST_STRING_PARTIAL_VALUE_BIN_BUF_OBJ_1,
+        },
+        statusCode: 404,
+      },
+      {
+        name: 'Should return part of value in buffer ("start" & "end")',
+        query: {
+          encoding: 'buffer',
+        },
+        data: {
+          keyName: constants.TEST_STRING_KEY_BIN_ASCII_1,
+          start: constants.TEST_STRING_KEY_START_2,
+          end: constants.TEST_STRING_KEY_END
+        },
+        responseBody: {
+          keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          value: constants.TEST_STRING_PARTIAL_VALUE_BIN_BUF_OBJ_2,
+        },
+      },
+      {
         name: 'Should return error when send unicode with unprintable chars',
         query: {
           encoding: 'buffer',
@@ -122,14 +150,14 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           },
         },
         {
-          name: 'Should get part of value (specified length)',
+          name: 'Should get part of value',
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            stringMaxLen: constants.TEST_STRING_KEY_LENGTH
+            end: constants.TEST_STRING_KEY_END
           },
           responseBody: {
             keyName: constants.TEST_STRING_KEY_1,
-            value: constants.TEST_STRING_VALUE_1.slice(0, constants.TEST_STRING_KEY_LENGTH),
+            value: constants.TEST_STRING_VALUE_1.slice(constants.TEST_STRING_KEY_START_1, constants.TEST_STRING_KEY_END + 1),
           },
         },
         {
@@ -145,10 +173,23 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           },
         },
         {
-          name: 'Should return an error when incorrect string length',
+          name: 'Should return an error when incorrect end of string',
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            stringMaxLen: 0
+            end: 0
+          },
+          statusCode: 400,
+          responseBody: {
+            statusCode: 400,
+            error: 'Bad Request',
+          },
+        },
+        {
+          name: 'Should return an error when start of string greater than end',
+          data: {
+            keyName: constants.TEST_STRING_KEY_1,
+            start: 10,
+            end: 9
           },
           statusCode: 400,
           responseBody: {

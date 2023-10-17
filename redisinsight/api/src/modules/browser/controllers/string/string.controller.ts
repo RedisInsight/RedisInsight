@@ -76,7 +76,7 @@ export class StringController extends BaseController {
     const { stream } = await this.stringBusinessService.downloadStringValue(clientMetadata, dto);
 
     res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Content-Disposition', 'attachment;filename="string_value.txt"');
+    res.setHeader('Content-Disposition', 'attachment;filename="string_value"');
     res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
 
     stream

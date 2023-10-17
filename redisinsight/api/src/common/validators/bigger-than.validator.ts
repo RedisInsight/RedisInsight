@@ -13,6 +13,6 @@ export class BiggerThan implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} must be a greater than ${args.constraints.join(', ')}`;
+    return `${args.property} must be bigger than ${args.constraints.join(', ')}`;
   }
 }

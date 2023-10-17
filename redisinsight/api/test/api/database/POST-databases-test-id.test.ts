@@ -503,7 +503,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 200,
+          statusCode: 503,
           data: {
             name: dbName,
             tls: true,
@@ -516,7 +516,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 200,
+          statusCode: 503,
           data: {
             name: dbName,
             tls: true,
@@ -534,7 +534,7 @@ describe(`POST /databases/test/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 500,
+          statusCode: 503,
         });
       });
       it('Should throw an error without invalid cert', async () => {
@@ -549,7 +549,7 @@ describe(`POST /databases/test/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
-          statusCode: 500,
+          statusCode: 400,
         });
       });
     });

@@ -13,6 +13,14 @@ import { Joi } from '../../helpers/test';
 
 const { request, server, localDb, constants, rte } = deps;
 
+const baseDatabaseData = {
+  name: 'someName',
+  host: constants.TEST_REDIS_HOST,
+  port: constants.TEST_REDIS_PORT,
+  username: constants.TEST_REDIS_USER || undefined,
+  password: constants.TEST_REDIS_PASSWORD || undefined,
+}
+
 const endpoint = (id = constants.TEST_INSTANCE_ID) => request(server).post(`/${constants.API.DATABASES}/clone/${id}`);
 
 // input data schema
@@ -293,6 +301,7 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
+            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -319,6 +328,7 @@ describe(`POST /databases/clone/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
+            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,

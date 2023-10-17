@@ -369,6 +369,7 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
+            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: false,
@@ -395,6 +396,7 @@ describe(`PATCH /databases/:id`, () => {
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
           data: {
+            ...baseDatabaseData,
             name: dbName,
             tls: true,
             verifyServerCert: true,

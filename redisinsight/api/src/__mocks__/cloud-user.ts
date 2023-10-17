@@ -13,6 +13,7 @@ import { classToPlain } from 'class-transformer';
 import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
 
 const serverConfig = config.get('server');
+const cloudConfig = config.get('cloud');
 
 // ======================================= CAPI =======================================
 export const mockCloudCapiAccount: ICloudCapiAccount = {
@@ -81,8 +82,14 @@ export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {
 //   name: mockCloudCapiAccount2.name,
 // });
 
+export const mockDefaultCloudApiHeaders = {
+  'User-Agent': `RedisInsight/${serverConfig.version}`,
+  'x-redisinsight-token': cloudConfig.apiToken,
+};
+
 export const mockCloudApiHeaders = {
   headers: {
+    ...mockDefaultCloudApiHeaders,
     authorization: `Bearer ${mockCloudApiAuthDto.accessToken}`,
     'x-csrf-token': mockCloudApiAuthDto.csrf,
     cookie: `JSESSIONID=${mockCloudApiAuthDto.apiSessionId}`,

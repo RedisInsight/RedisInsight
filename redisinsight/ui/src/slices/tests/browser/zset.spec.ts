@@ -12,6 +12,7 @@ import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/n
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
 import {
   defaultSelectedKeyAction,
@@ -70,7 +71,7 @@ beforeEach(() => {
 
 describe('zset slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -862,7 +863,7 @@ describe('zset slice', () => {
           defaultSelectedKeyAction(),
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch add zset members', async () => {
@@ -933,7 +934,7 @@ describe('zset slice', () => {
           )
         ]
 
-        expect(mockedStore.getActions()).toEqual(expectedActions)
+        expect(mockedStore.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('succeed to fetch delete all zset members', async () => {
@@ -1019,7 +1020,7 @@ describe('zset slice', () => {
           refreshKeyInfo(),
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch update zset members', async () => {

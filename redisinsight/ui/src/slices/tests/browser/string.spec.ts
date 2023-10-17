@@ -3,7 +3,8 @@ import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { refreshKeyInfo } from '../../browser/keys'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
+import { refreshKeyInfo, refreshKeyInfoSuccess, updateSelectedKeyRefreshTime } from '../../browser/keys'
 import reducer, {
   initialState,
   getString,
@@ -21,6 +22,8 @@ import reducer, {
 } from '../../browser/string'
 
 let store: typeof mockedStore
+let dateNow: jest.SpyInstance<number>
+
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
@@ -32,6 +35,14 @@ jest.mock('uiSrc/services', () => ({
 }))
 
 describe('string slice', () => {
+  beforeAll(() => {
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
+  })
+
+  afterAll(() => {
+    dateNow.mockRestore()
+  })
+
   describe('reducer, actions and selectors', () => {
     it('should return the initial state on first run', () => {
       // Arrange
@@ -336,7 +347,9 @@ describe('string slice', () => {
         const expectedActions = [
           updateValue(),
           updateValueSuccess(data.value),
-          refreshKeyInfo()
+          refreshKeyInfo(),
+          refreshKeyInfoSuccess('test'),
+          updateSelectedKeyRefreshTime(MOCK_TIMESTAMP),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

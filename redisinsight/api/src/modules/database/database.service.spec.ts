@@ -310,7 +310,7 @@ describe('DatabaseService', () => {
 
         await service.testConnection(classToClass(UpdateDatabaseDto, {}), mockDatabase.id);
 
-        expect(spy).toBeCalledWith(mockDatabase.id);
+        expect(spy).toBeCalledWith(mockDatabase.id, false);
       });
 
       it('should test database connection with merged ssh options', async () => {
@@ -482,7 +482,7 @@ describe('DatabaseService', () => {
         }),
       );
       expect(spy).toBeCalledWith(
-        omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['id', 'sshOptions.id']),
+        omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['sshOptions.id']),
       );
     });
 
@@ -497,7 +497,7 @@ describe('DatabaseService', () => {
         ),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith({
-        ...omit(mockDatabaseWithSshPrivateKey, 'id'),
+        ...omit(mockDatabaseWithSshPrivateKey),
         password: 'pass',
         sshOptions: {
           ...mockDatabaseWithSshPrivateKey.sshOptions,
@@ -526,7 +526,7 @@ describe('DatabaseService', () => {
         }),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith({
-        ...omit(mockDatabase, 'id'),
+        ...mockDatabase,
         ssh: true,
         sshOptions: {
           host: 'ssh.host.test',
@@ -557,7 +557,7 @@ describe('DatabaseService', () => {
         ),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith({
-        ...omit(mockDatabaseWithTlsAuth, 'id'),
+        ...mockDatabaseWithTlsAuth,
         compressor: Compressor.GZIP,
         caCert: {
           certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
@@ -583,7 +583,7 @@ describe('DatabaseService', () => {
         ),
       );
       expect(databaseFactory.createDatabaseModel).toBeCalledWith({
-        ...omit(mockDatabaseWithTlsAuth, 'id'),
+        ...mockDatabaseWithTlsAuth,
         compressor: Compressor.GZIP,
         caCert: {
           id: 'new id',

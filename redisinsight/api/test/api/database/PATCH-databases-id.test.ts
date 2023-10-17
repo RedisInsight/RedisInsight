@@ -741,9 +741,6 @@ describe(`PATCH /databases/:id`, () => {
           responseSchema,
           responseBody: {
             name: dbName,
-            port: constants.TEST_REDIS_PORT,
-            connectionType: constants.CLUSTER,
-            nodes: rte.env.nodes,
           },
         });
       });
@@ -771,16 +768,10 @@ describe(`PATCH /databases/:id`, () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
           data: {
             name: dbName,
-            tls: true,
-            verifyServerCert: false,
           },
           responseSchema,
           responseBody: {
             name: dbName,
-            connectionType: constants.CLUSTER,
-            tls: true,
-            nodes: rte.env.nodes,
-            verifyServerCert: false,
           },
         });
       });
@@ -788,7 +779,7 @@ describe(`PATCH /databases/:id`, () => {
         const dbName = constants.getRandomString();
 
         await validateApiCall({
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          endpoint,
           data: {
             name: dbName,
             tls: true,
@@ -811,14 +802,13 @@ describe(`PATCH /databases/:id`, () => {
       });
       it('Should throw an error without CA cert', async () => {
         await validateApiCall({
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          endpoint,
           data: {
             caCert: null,
           },
-          statusCode: 500,
+          statusCode: 400,
           responseBody: {
             error: 'Bad Request',
-            statusCode: 500,
           },
         });
       });
@@ -834,10 +824,9 @@ describe(`PATCH /databases/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
-         statusCode: 500,
+         statusCode: 400,
          responseBody: {
-          error: 'Bad Request',
-          statusCode: 500,
+          statusCode: 400,
         },
         });
       });

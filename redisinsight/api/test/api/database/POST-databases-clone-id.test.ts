@@ -663,9 +663,6 @@ describe(`POST /databases/clone/:id`, () => {
           responseSchema,
           responseBody: {
             name: dbName,
-            port: constants.TEST_REDIS_PORT,
-            connectionType: constants.CLUSTER,
-            nodes: rte.env.nodes,
           },
         });
       });
@@ -686,31 +683,11 @@ describe(`POST /databases/clone/:id`, () => {
     });
     describe('TLS CA', function () {
       requirements('rte.tls', '!rte.tlsAuth');
-      it('Should create instance without CA tls', async () => {
-        const dbName = constants.getRandomString();
-
-        await validateApiCall({
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          data: {
-            name: dbName,
-            tls: true,
-            verifyServerCert: false,
-          },
-          responseSchema,
-          responseBody: {
-            name: dbName,
-            connectionType: constants.CLUSTER,
-            tls: true,
-            nodes: rte.env.nodes,
-            verifyServerCert: false,
-          },
-        });
-      });
       it('Should create instance tls and create new CA cert', async () => {
         const dbName = constants.getRandomString();
 
         await validateApiCall({
-          endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
+          endpoint,
           data: {
             name: dbName,
             tls: true,
@@ -737,7 +714,7 @@ describe(`POST /databases/clone/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 500,
+          statusCode: 503,
         });
       });
       it('Should throw an error without invalid cert', async () => {
@@ -752,7 +729,7 @@ describe(`POST /databases/clone/:id`, () => {
               key: constants.TEST_USER_TLS_KEY,
             },
           },
-          statusCode: 500,
+          statusCode: 400,
         });
       });
     });

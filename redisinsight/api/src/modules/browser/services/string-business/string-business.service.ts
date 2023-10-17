@@ -69,24 +69,31 @@ export class StringBusinessService {
     this.logger.log('Succeed to set string key type.');
   }
 
-  private async getStringValueFromClient(
+  public async getStringValue(
     clientMetadata: ClientMetadata,
-    keyName: RedisString,
-    args = [],
-    toolCommand = BrowserToolStringCommands.Get,
+    dto: GetStringInfoDto,
   ): Promise<GetStringValueResponse> {
     this.logger.log('Getting string value.');
 
-    const scanArgs = [keyName, ...args];
+    const { keyName, start, end } = dto;
     let result: GetStringValueResponse;
 
     try {
-      const value = await this.browserTool.execCommand(
-        clientMetadata,
-        toolCommand,
-        scanArgs,
-      );
-      result = { value, keyName };
+      if (end) {
+        const value = await this.browserTool.execCommand(
+          clientMetadata,
+          BrowserToolStringCommands.Getrange,
+          [keyName, `${start}`, `${end}`],
+        );
+        result = { value, keyName };
+      } else {
+        const value = await this.browserTool.execCommand(
+          clientMetadata,
+          BrowserToolStringCommands.Get,
+          [keyName],
+        );
+        result = { value, keyName };
+      }
     } catch (error) {
       this.logger.error('Failed to get string value.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
@@ -109,21 +116,6 @@ export class StringBusinessService {
     );
     this.logger.log('Succeed to get string value.');
 
-    return result;
-  }
-
-  public async getStringValue(
-    clientMetadata: ClientMetadata,
-    dto: GetStringInfoDto,
-  ): Promise<GetStringValueResponse> {
-    const { keyName, stringMaxLen } = dto;
-    const result: GetStringValueResponse = await this.getStringValueFromClient(
-      clientMetadata,
-      keyName,
-      stringMaxLen ? ['0', `${(stringMaxLen - 1)}`] : [],
-      stringMaxLen ? BrowserToolStringCommands.Getrange : BrowserToolStringCommands.Get,
-    );
-
     return plainToClass(GetStringValueResponse, result);
   }
 
@@ -131,13 +123,12 @@ export class StringBusinessService {
     clientMetadata: ClientMetadata,
     dto: GetKeyInfoDto,
   ): Promise<{ stream: Readable }> {
-    const { keyName } = dto;
-    const result = await this.getStringValueFromClient(
+    const result = await this.getStringValue(
       clientMetadata,
-      keyName,
+      dto,
     );
 
-    const stream = Readable.from(`"${result.value}"`);
+    const stream = Readable.from(result.value);
     return { stream };
   }
 

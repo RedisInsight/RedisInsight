@@ -20,6 +20,7 @@ import {
   isFormatEditable,
   stringToBuffer,
   stringToSerializedBufferFormat,
+  isFullStringLoaded,
 } from 'uiSrc/utils'
 import {
   fetchDownloadStringValue,
@@ -103,9 +104,11 @@ const StringDetails = (props: Props) => {
       !isNonUnicodeFormatter(viewFormatProp, isValid)
         && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
-
-    const isFullLength = initialValue?.data?.length === length
-    setIsEditable((!isCompressed && isFormatEditable(viewFormatProp)) && isFullLength)
+    setIsEditable(
+      !isCompressed
+      && isFormatEditable(viewFormatProp)
+      && isFullStringLoaded(initialValue?.data?.length, length)
+    )
     setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp))
 
     dispatch(setIsStringCompressed(isCompressed))
@@ -264,7 +267,7 @@ const StringDetails = (props: Props) => {
             responsive={false}
           >
             <EuiFlexItem grow={false}>
-              {initialValue?.data?.length !== length && (
+              {!isFullStringLoaded(initialValue?.data?.length, length) && (
                 <EuiButton
                   className={styles.stringFooterBtn}
                   size="s"

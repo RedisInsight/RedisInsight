@@ -50,11 +50,11 @@
       }
 
       .euiFilePicker__showDrop .euiFilePicker__prompt, .euiFilePicker__input:focus + .euiFilePicker__prompt {
-        background-color: var(--recommendationsBgColor);
+        background-color: var(--euiColorEmptyShade);
       }
 
       .euiFilePicker__prompt {
-        background-color: var(--recommendationsBgColor);
+        background-color: var(--euiColorEmptyShade);
         height: 120px;
         border-radius: 4px;
         box-shadow: none;

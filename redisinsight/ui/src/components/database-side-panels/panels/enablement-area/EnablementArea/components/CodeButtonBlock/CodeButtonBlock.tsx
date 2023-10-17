@@ -1,4 +1,4 @@
-import { EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -23,7 +23,7 @@ export interface Props {
 
 const CodeButtonBlock = (props: Props) => {
   const { onClick, label, isLoading, className, disabled, params, mode, content, onCopy, ...rest } = props
-  const [highlightedContent, setHighlightedContent] = useState(content)
+  const [highlightedContent, setHighlightedContent] = useState('')
 
   useEffect(() => {
     monaco.editor.colorize(content.trim(), MonacoLanguage.Redis, {})
@@ -71,7 +71,7 @@ const CodeButtonBlock = (props: Props) => {
       </EuiFlexGroup>
       <div className={styles.content} data-testid="code-button-block-content">
         <CodeBlock className={styles.code}>
-          {parse(highlightedContent)}
+          {highlightedContent ? parse(highlightedContent) : content}
         </CodeBlock>
       </div>
       <EuiSpacer size="s" />

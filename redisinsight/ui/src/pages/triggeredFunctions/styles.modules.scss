@@ -7,11 +7,9 @@ $breakpoint-to-hide-resize-panel: 1124px;
 .main {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 70px);
+  height: 100%;
   padding: 16px 16px 0;
   overflow: auto;
-
-  border-top: 1px solid var(--euiColorLightShade);
 
   :global {
     .euiTableRow {

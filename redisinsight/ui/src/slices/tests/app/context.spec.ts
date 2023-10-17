@@ -22,10 +22,8 @@ import reducer, {
   appContextSelector,
   appContextBrowser,
   appContextWorkbench,
-  setWorkbenchEASearch,
-  appContextWorkbenchEA,
-  setWorkbenchEAItemScrollTop,
-  resetWorkbenchEASearch,
+  setExplorePanelScrollTop,
+  resetExplorePanelSearchContext,
   setBrowserTreeNodesOpen,
   setBrowserTreePanelSizes,
   resetBrowserTree,
@@ -43,6 +41,8 @@ import reducer, {
   setDbIndexState,
   appContextDbIndex,
   setRecommendationsShowHidden,
+  setExplorePanelSearchContext,
+  appContextExplorePanel,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -336,7 +336,7 @@ describe('slices', () => {
     })
   })
 
-  describe('setWorkbenchEASearch', () => {
+  describe('setExplorePanelSearchContext', () => {
     it('should properly set path to opened guide page', () => {
       // Arrange
       const prevState = {
@@ -358,18 +358,18 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, setWorkbenchEASearch(itemPath))
+      const nextState = reducer(prevState, setExplorePanelSearchContext(itemPath))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         app: { context: nextState },
       })
 
-      expect(appContextWorkbenchEA(rootState)).toEqual(state)
+      expect(appContextExplorePanel(rootState)).toEqual(state)
     })
   })
 
-  describe('setWorkbenchEAItemScrollTop', () => {
+  describe('setExplorePanelScrollTop', () => {
     it('should properly set state', () => {
       // Arrange
       const state = {
@@ -378,18 +378,18 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, setWorkbenchEAItemScrollTop(200))
+      const nextState = reducer(initialState, setExplorePanelScrollTop(200))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         app: { context: nextState },
       })
 
-      expect(appContextWorkbenchEA(rootState)).toEqual(state)
+      expect(appContextExplorePanel(rootState)).toEqual(state)
     })
   })
 
-  describe('resetWorkbenchEASearch', () => {
+  describe('resetExplorePanelSearchContext', () => {
     it('should properly reset enablement-area context', () => {
       // Arrange
       const prevState = {
@@ -410,14 +410,14 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, resetWorkbenchEASearch())
+      const nextState = reducer(prevState, resetExplorePanelSearchContext())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         app: { context: nextState },
       })
 
-      expect(appContextWorkbenchEA(rootState)).toEqual(state)
+      expect(appContextExplorePanel(rootState)).toEqual(state)
     })
   })
 

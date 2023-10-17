@@ -16,6 +16,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
+import { ExplorePanelTemplate } from 'uiSrc/templates'
 import TriggeredFunctionsPageRouter from './TriggeredFunctionsPageRouter'
 import TriggeredFunctionsTabs from './components/TriggeredFunctionsTabs'
 
@@ -97,19 +98,21 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   return (
     <>
       <InstanceHeader />
-      <div className={styles.main}>
-        <TriggeredFunctionsTabs path={path} />
-        <TriggeredFunctionsPageRouter routes={routes} />
-        <div className={styles.onboardAnchor}>
-          <OnboardingTour
-            options={ONBOARDING_FEATURES.FINISH}
-            anchorPosition="downCenter"
-            panelClassName={styles.onboardPanel}
-          >
-            <span />
-          </OnboardingTour>
+      <ExplorePanelTemplate withOverview>
+        <div className={styles.main}>
+          <TriggeredFunctionsTabs path={path} />
+          <TriggeredFunctionsPageRouter routes={routes} />
+          <div className={styles.onboardAnchor}>
+            <OnboardingTour
+              options={ONBOARDING_FEATURES.FINISH}
+              anchorPosition="downCenter"
+              panelClassName={styles.onboardPanel}
+            >
+              <span />
+            </OnboardingTour>
+          </div>
         </div>
-      </div>
+      </ExplorePanelTemplate>
     </>
   )
 }

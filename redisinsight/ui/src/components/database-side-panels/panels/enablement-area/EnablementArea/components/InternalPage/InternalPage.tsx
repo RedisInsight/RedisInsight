@@ -102,9 +102,9 @@ const InternalPage = (props: Props) => {
         }
       }
       if (scrollTop) {
-        setTimeout(() => {
+        requestAnimationFrame(() => setTimeout(() => {
           containerRef.current?.scroll(0, scrollTop)
-        }, 0)
+        }, 0))
       }
     }
   }, [isLoading, location])

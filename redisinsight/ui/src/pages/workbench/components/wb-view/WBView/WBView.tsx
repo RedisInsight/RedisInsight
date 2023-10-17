@@ -6,7 +6,6 @@ import { decode } from 'html-entities'
 import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
 import { Maybe, Nullable, getMultiCommands, getParsedParamsInQuery, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
 import InstanceHeader from 'uiSrc/components/instance-header'
@@ -22,6 +21,8 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { ExplorePanelTemplate } from 'uiSrc/templates'
+import { CodeButtonParams } from 'uiSrc/constants'
 import WBResultsWrapper from '../../wb-results'
 import styles from './styles.module.scss'
 
@@ -179,67 +180,69 @@ const WBView = (props: Props) => {
   return (
     <div className={cx('workbenchPage', styles.container)}>
       <InstanceHeader />
-      <div className={styles.main}>
-        <div className={styles.content}>
-          <EuiResizableContainer onPanelWidthChange={onVerticalPanelWidthChange} direction="vertical" style={{ height: '100%' }}>
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel
-                  id={verticalPanelIds.firstPanelId}
-                  minSize="140px"
-                  paddingSize="none"
-                  scrollable={false}
-                  className={styles.queryPanel}
-                  initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
-                  style={{ minHeight: '140px', zIndex: '8' }}
-                >
-                  <QueryWrapper
-                    query={script}
-                    activeMode={activeMode}
-                    resultsMode={resultsMode}
-                    setQuery={setScript}
-                    setQueryEl={setScriptEl}
-                    setIsCodeBtnDisabled={setIsCodeBtnDisabled}
-                    onSubmit={handleSubmit}
-                    onQueryChangeMode={onQueryChangeMode}
-                    onChangeGroupMode={onChangeGroupMode}
-                  />
-                </EuiResizablePanel>
+      <ExplorePanelTemplate withOverview>
+        <div className={styles.main}>
+          <div className={styles.content}>
+            <EuiResizableContainer onPanelWidthChange={onVerticalPanelWidthChange} direction="vertical" style={{ height: '100%' }}>
+              {(EuiResizablePanel, EuiResizableButton) => (
+                <>
+                  <EuiResizablePanel
+                    id={verticalPanelIds.firstPanelId}
+                    minSize="140px"
+                    paddingSize="none"
+                    scrollable={false}
+                    className={styles.queryPanel}
+                    initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
+                    style={{ minHeight: '140px', zIndex: '8' }}
+                  >
+                    <QueryWrapper
+                      query={script}
+                      activeMode={activeMode}
+                      resultsMode={resultsMode}
+                      setQuery={setScript}
+                      setQueryEl={setScriptEl}
+                      setIsCodeBtnDisabled={setIsCodeBtnDisabled}
+                      onSubmit={handleSubmit}
+                      onQueryChangeMode={onQueryChangeMode}
+                      onChangeGroupMode={onChangeGroupMode}
+                    />
+                  </EuiResizablePanel>
 
-                <EuiResizableButton
-                  className={styles.resizeButton}
-                  data-test-subj="resize-btn-scripting-area-and-results"
-                />
-
-                <EuiResizablePanel
-                  id={verticalPanelIds.secondPanelId}
-                  minSize="60px"
-                  paddingSize="none"
-                  scrollable={false}
-                  initialSize={vertical[verticalPanelIds.secondPanelId] ?? 80}
-                  className={cx(styles.queryResults, styles.queryResultsPanel)}
-                  // Fix scroll on low height - 140px (queryPanel)
-                  style={{ maxHeight: 'calc(100% - 140px)' }}
-                >
-                  <WBResultsWrapper
-                    items={items}
-                    clearing={clearing}
-                    processing={processing}
-                    activeMode={activeMode}
-                    activeResultsMode={resultsMode}
-                    scrollDivRef={scrollDivRef}
-                    onQueryReRun={handleReRun}
-                    onQueryProfile={handleProfile}
-                    onQueryOpen={onQueryOpen}
-                    onQueryDelete={onQueryDelete}
-                    onAllQueriesDelete={onAllQueriesDelete}
+                  <EuiResizableButton
+                    className={styles.resizeButton}
+                    data-test-subj="resize-btn-scripting-area-and-results"
                   />
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
+
+                  <EuiResizablePanel
+                    id={verticalPanelIds.secondPanelId}
+                    minSize="60px"
+                    paddingSize="none"
+                    scrollable={false}
+                    initialSize={vertical[verticalPanelIds.secondPanelId] ?? 80}
+                    className={cx(styles.queryResults, styles.queryResultsPanel)}
+                    // Fix scroll on low height - 140px (queryPanel)
+                    style={{ maxHeight: 'calc(100% - 140px)' }}
+                  >
+                    <WBResultsWrapper
+                      items={items}
+                      clearing={clearing}
+                      processing={processing}
+                      activeMode={activeMode}
+                      activeResultsMode={resultsMode}
+                      scrollDivRef={scrollDivRef}
+                      onQueryReRun={handleReRun}
+                      onQueryProfile={handleProfile}
+                      onQueryOpen={onQueryOpen}
+                      onQueryDelete={onQueryDelete}
+                      onAllQueriesDelete={onAllQueriesDelete}
+                    />
+                  </EuiResizablePanel>
+                </>
+              )}
+            </EuiResizableContainer>
+          </div>
         </div>
-      </div>
+      </ExplorePanelTemplate>
     </div>
   )
 }

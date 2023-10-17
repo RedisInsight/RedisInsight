@@ -2,10 +2,9 @@ import React, { useContext } from 'react'
 import cx from 'classnames'
 import { EuiButtonEmpty, EuiIcon, EuiText } from '@elastic/eui'
 
-import { Theme } from 'uiSrc/constants'
+import { CodeButtonParams, Theme } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
 import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
@@ -98,7 +97,7 @@ const WBResults = (props: Props) => {
       )}
       <div className={cx(styles.container)}>
         <div ref={scrollDivRef} />
-        {items.map((
+        {items.length ? items.map((
           {
             command = '',
             isOpen = false,
@@ -145,7 +144,7 @@ const WBResults = (props: Props) => {
             )}
             onQueryDelete={() => onQueryDelete(id)}
           />
-        ))}
+        )) : null}
         {!items.length && NoResults}
       </div>
     </div>

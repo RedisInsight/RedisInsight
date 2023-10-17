@@ -6,11 +6,16 @@ import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
 import { isArray, isEmpty } from 'lodash'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { appContextWorkbenchEA, resetWorkbenchEASearch } from 'uiSrc/slices/app/context'
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey, CodeButtonParams, ExecuteButtonMode } from 'uiSrc/constants'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { findMarkdownPathByPath, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  explorePanelSelector,
+  resetExplorePanelSearch,
+  setExplorePanelIsPageOpen,
+  setExplorePanelManifest,
+} from 'uiSrc/slices/panels/insights'
 import {
   FormValues
 } from './components/UploadTutorialForm/UploadTutorialForm'
@@ -61,13 +66,15 @@ const EnablementArea = (props: Props) => {
   const { search } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()
-  const { search: searchEAContext } = useSelector(appContextWorkbenchEA)
+  const { manifest, search: searchEAContext, isPageOpen: isInternalPageVisible } = useSelector(explorePanelSelector)
 
-  const [isInternalPageVisible, setIsInternalPageVisible] = useState(false)
-  // const [searchState, setSearchState] = useState('')
+  const contextManifestPath = new URLSearchParams(searchEAContext).get('path')
+
+  const [internalPage, setInternalPage] = useState<IInternalPage>({
+    path: '',
+    manifestPath: contextManifestPath
+  })
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [internalPage, setInternalPage] = useState<IInternalPage>({ path: '' })
-  const [manifest, setManifest] = useState<Nullable<IEnablementAreaItem[]>>(null)
 
   const searchRef = useRef<string>('')
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -77,18 +84,9 @@ const EnablementArea = (props: Props) => {
     const pagePath = new URLSearchParams(search).get('item')
 
     if (pagePath) {
-      setIsInternalPageVisible(true)
+      dispatch(setExplorePanelIsPageOpen(true))
       setInternalPage({ path: pagePath })
-      return
     }
-
-    const contextPath = new URLSearchParams(searchEAContext).get('item')
-
-    if (contextPath) {
-      handleOpenInternalPage({ path: contextPath })
-    }
-
-    setIsInternalPageVisible(false)
   }, [search])
 
   useEffect(() => {
@@ -123,11 +121,11 @@ const EnablementArea = (props: Props) => {
       return
     }
 
-    setManifest(manifest)
+    dispatch(setExplorePanelManifest(manifest))
 
-    const path = getMarkdownPathByManifest(manifest, manifestPath, prefixFolder)
-    if (path) {
-      setIsInternalPageVisible(true)
+    if (manifestPath) {
+      const path = getMarkdownPathByManifest(manifest, manifestPath, prefixFolder)
+      dispatch(setExplorePanelIsPageOpen(true))
       setInternalPage({ path, manifestPath })
       return
     }
@@ -137,7 +135,7 @@ const EnablementArea = (props: Props) => {
       return
     }
 
-    setIsInternalPageVisible(false)
+    dispatch(setExplorePanelIsPageOpen(false))
   }, [search, customTutorials, guides, tutorials])
 
   const getManifestByPath = (path: Nullable<string> = '') => {
@@ -159,14 +157,18 @@ const EnablementArea = (props: Props) => {
     (isArray(manifest) ? manifest.map((item, index) => ({ ...item, _key: `${index}` })) : [])
 
   const handleOpenInternalPage = (page: IInternalPage) => {
-    history.push({
-      search: page.manifestPath ? `?path=${page.manifestPath}` : `?item=${page.path}`
-    })
+    setTimeout(() => {
+      history.push({
+        search: page.manifestPath ? `?path=${page.manifestPath}` : `?item=${page.path}`
+      })
+    }, 0)
     onOpenInternalPage(page)
   }
 
   const handleCloseInternalPage = () => {
-    dispatch(resetWorkbenchEASearch())
+    dispatch(resetExplorePanelSearch())
+    dispatch(setExplorePanelIsPageOpen(false))
+    setInternalPage({ path: '' })
     history.push({
       // TODO: better to use query-string parser and update only one parameter (instead of replacing all)
       search: ''
@@ -300,7 +302,7 @@ const EnablementArea = (props: Props) => {
   return (
     <EnablementAreaProvider value={{ setScript: openScript, openPage: handleOpenInternalPage, isCodeBtnDisabled }}>
       <div data-testid="enablementArea" className={cx(styles.container, 'relative', 'enablement-area')}>
-        { loading
+        {loading || (isInternalPageVisible && !internalPage?.path)
           ? (
             <div data-testid="enablementArea-loader" className={cx(styles.innerContainer, styles.innerContainerLoader)}>
               <EuiLoadingContent lines={3} />

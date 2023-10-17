@@ -12,7 +12,6 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { openCli, openCliHelper, resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { setMonitorInitialState, showMonitor } from 'uiSrc/slices/cli/monitor'
 import { Pages } from 'uiSrc/constants'
-import { resetWorkbenchEASearch, setWorkbenchEAOpened } from 'uiSrc/slices/app/context'
 import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { fetchRedisearchListAction, loadList } from 'uiSrc/slices/browser/redisearch'
@@ -477,7 +476,7 @@ describe('ONBOARDING_FEATURES', () => {
     it('should call proper actions init', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_ENABLEMENT_GUIDE}><span /></OnboardingTour>)
 
-      const expectedActions = [setWorkbenchEAOpened(false)]
+      const expectedActions = []
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
   })
@@ -509,7 +508,7 @@ describe('ONBOARDING_FEATURES', () => {
     it('should call proper actions init', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
 
-      const expectedActions = [setWorkbenchEAOpened(false), resetWorkbenchEASearch()]
+      const expectedActions = []
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
 

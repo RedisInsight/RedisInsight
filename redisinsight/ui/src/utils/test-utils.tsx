@@ -51,6 +51,7 @@ import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/red
 import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
+import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -124,6 +125,9 @@ const initialStateDefault: RootState = {
   oauth: {
     cloud: cloneDeep(initialStateOAuth),
   },
+  panels: {
+    insights: cloneDeep(initialStateInsightsPanel)
+  }
 }
 
 // mocked store
@@ -281,7 +285,7 @@ const matchMediaMock = () => ({
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => matchMediaMock(query)),
+  value: jest.fn().mockImplementation((query) => matchMediaMock(query)),
 })
 
 export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)

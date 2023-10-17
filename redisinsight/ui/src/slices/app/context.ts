@@ -52,11 +52,6 @@ export const initialState: StateAppContext = {
   },
   workbench: {
     script: '',
-    enablementArea: {
-      isOpened: false,
-      search: '',
-      itemScrollTop: 0,
-    },
     panelSizes: {
       vertical: {}
     }
@@ -177,23 +172,6 @@ const appContextSlice = createSlice({
     setLastPageContext: (state, { payload }: { payload: string }) => {
       state.lastPage = payload
     },
-    setWorkbenchEASearch: (state, { payload }: { payload: any }) => {
-      const prevValue = state.workbench.enablementArea.search
-      state.workbench.enablementArea.search = payload
-      if (prevValue !== payload) {
-        state.workbench.enablementArea.itemScrollTop = 0
-      }
-    },
-    setWorkbenchEAItemScrollTop: (state, { payload }: { payload: any }) => {
-      state.workbench.enablementArea.itemScrollTop = payload || 0
-    },
-    resetWorkbenchEASearch: (state) => {
-      state.workbench.enablementArea.search = ''
-      state.workbench.enablementArea.itemScrollTop = 0
-    },
-    setWorkbenchEAOpened: (state, { payload }) => {
-      state.workbench.enablementArea.isOpened = payload
-    },
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = {}
       state.browser.tree.openNodes = {}
@@ -247,10 +225,6 @@ export const {
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
-  setWorkbenchEASearch,
-  resetWorkbenchEASearch,
-  setWorkbenchEAOpened,
-  setWorkbenchEAItemScrollTop,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
   setLastAnalyticsPage,
@@ -276,8 +250,6 @@ export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
 export const appContextSelectedKey = (state: RootState) =>
   state.app.context.browser.keyList.selectedKey
-export const appContextWorkbenchEA = (state: RootState) =>
-  state.app.context.workbench.enablementArea
 export const appContextPubSub = (state: RootState) =>
   state.app.context.pubsub
 export const appContextAnalytics = (state: RootState) =>

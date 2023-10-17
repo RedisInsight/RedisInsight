@@ -44,6 +44,7 @@ import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
+import insightsPanelReducer from './panels/insights'
 
 export const history = createBrowserHistory()
 
@@ -109,6 +110,9 @@ export const rootReducer = combineReducers({
   oauth: combineReducers({
     cloud: appOauthReducer,
   }),
+  panels: combineReducers({
+    insights: insightsPanelReducer,
+  })
 })
 
 const store = configureStore({

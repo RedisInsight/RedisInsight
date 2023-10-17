@@ -2,16 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import {
-  EuiFlyout,
-  EuiFlyoutBody,
-  EuiFlyoutFooter,
   EuiLink,
   EuiTitle,
   EuiLoadingContent,
   EuiText,
   EuiIcon,
   EuiToolTip,
-  EuiFlyoutHeader,
   EuiCheckbox,
   EuiTextColor,
   EuiBadge,
@@ -19,7 +15,7 @@ import {
 import { remove } from 'lodash'
 
 import { Pages } from 'uiSrc/constants'
-import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE, ANIMATION_INSIGHT_PANEL_MS } from 'uiSrc/constants/recommendations'
+import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
 import {
   recommendationsSelector,
   fetchRecommendationsAction,
@@ -55,7 +51,6 @@ const LiveTimeRecommendations = () => {
     treeViewDelimiter: delimiter = '',
   } = useSelector(appContextDbConfig)
 
-  const [isOpenInProgress, setIsOpenInProgress] = useState<boolean>(false)
   const [isShowApproveRun, setIsShowApproveRun] = useState<boolean>(false)
 
   // To prevent duplication emit for FlyOut close event
@@ -70,12 +65,6 @@ const LiveTimeRecommendations = () => {
   const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
 
   useEffect(() => {
-    // this panel can be opened outside
-    if (ANIMATION_INSIGHT_PANEL_MS > 0) {
-      setIsOpenInProgress(true)
-      setTimeout(() => setIsOpenInProgress(false), ANIMATION_INSIGHT_PANEL_MS)
-    }
-
     dispatch(fetchRecommendationsAction(connectedInstanceId, onSuccessAction))
     isCloseEventSent.current = false
 
@@ -121,7 +110,6 @@ const LiveTimeRecommendations = () => {
       return
     }
 
-    dispatch(setIsContentVisible(false))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
       eventData: getTelemetryData(recommendationsState.current),
@@ -248,23 +236,18 @@ const LiveTimeRecommendations = () => {
   )
 
   return (
-    <EuiFlyout
-      paddingSize="none"
+    <div
       className={styles.content}
-      ownFocus
-      size="476px"
-      onClose={handleClose}
-      data-testid="insights-panel"
     >
-      <EuiFlyoutHeader className={styles.header}>
+      <div className={styles.header}>
         {renderHeader()}
-      </EuiFlyoutHeader>
-      <EuiFlyoutBody className={styles.body}>
-        {(loading || isOpenInProgress)
+      </div>
+      <div className={styles.body}>
+        {(loading)
           ? (<EuiLoadingContent className={styles.loading} lines={4} />)
           : renderBody()}
-      </EuiFlyoutBody>
-      <EuiFlyoutFooter className={styles.footer}>
+      </div>
+      <div className={styles.footer}>
         <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
         <EuiText className={styles.text}>
           {'Run '}
@@ -288,8 +271,8 @@ const LiveTimeRecommendations = () => {
           </PopoverRunAnalyze>
           {' to get more recommendations'}
         </EuiText>
-      </EuiFlyoutFooter>
-    </EuiFlyout>
+      </div>
+    </div>
   )
 }
 

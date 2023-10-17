@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { startCase } from 'lodash'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
-import {
-  resetWorkbenchEASearch,
-  appContextWorkbenchEA,
-  setWorkbenchEAItemScrollTop, setWorkbenchEASearch
-} from 'uiSrc/slices/app/context'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
+import {
+  explorePanelSelector,
+  resetExplorePanelSearch,
+  setExplorePanelContent,
+  setExplorePanelSearch,
+  setExplorePanelScrollTop
+} from 'uiSrc/slices/panels/insights'
 import InternalPage from '../InternalPage'
 import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
 import FormatSelector from '../../utils/formatter/FormatSelector'
@@ -25,7 +27,7 @@ interface IPageData extends IFileInfo {
   content: string
   relatedPages?: IEnablementAreaItem[]
 }
-const DEFAULT_PAGE_DATA = { content: '', name: '', parent: '', extension: '', location: '', relatedPages: [] }
+const DEFAULT_PAGE_DATA: IPageData = { label: '', content: '', name: '', parent: '', extension: '', location: '', relatedPages: [] }
 
 export interface Props {
   onClose: () => void
@@ -39,7 +41,7 @@ export interface Props {
 
 const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifestPath, search }: Props) => {
   const history = useHistory()
-  const { itemScrollTop } = useSelector(appContextWorkbenchEA)
+  const { itemScrollTop, data: contentContext, url } = useSelector(explorePanelSelector)
   const { loading: guidesLoading } = useSelector(workbenchGuidesSelector)
   const { loading: tutorialsLoading } = useSelector(workbenchTutorialsSelector)
   const { loading: customTutorialsLoading } = useSelector(workbenchCustomTutorialsSelector)
@@ -48,6 +50,19 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
   const [pageData, setPageData] = useState<IPageData>(DEFAULT_PAGE_DATA)
   const dispatch = useDispatch()
   const fetchService = IS_ABSOLUTE_PATH.test(path) ? axios : resourcesService
+
+  const scrollTopRef = useRef(0)
+
+  useEffect(() => () => {
+    dispatch(setExplorePanelScrollTop(scrollTopRef.current))
+  }, [])
+
+  useEffect(() => {
+    const startLoadContent = async () => {
+      await loadContent()
+    }
+    startLoadContent()
+  }, [path, sourcePath])
 
   const isMarkdownLoading = isLoading || guidesLoading || tutorialsLoading || customTutorialsLoading
   const getRelatedPages = () => (manifest ? getPagesInsideGroup(manifest, manifestPath) : [])
@@ -61,31 +76,32 @@ const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifest
 
     try {
       const formatter = FormatSelector.selectFor(pageInfo.extension)
-      const { data, status } = await fetchService.get<string>(path)
-      if (isStatusSuccessful(status)) {
-        dispatch(setWorkbenchEASearch(search))
-        const contentData = await formatter.format({ data, path }, { history })
-        setPageData((prevState) => ({ ...prevState, content: contentData }))
-        setLoading(false)
+      let content = contentContext
+
+      // if we have already downloaded content we take it from store
+      if (url !== path || !contentContext) {
+        const { data, status } = await fetchService.get<string>(path)
+        if (isStatusSuccessful(status)) {
+          content = data
+          dispatch(setExplorePanelContent({ data, url: path }))
+        }
       }
+
+      dispatch(setExplorePanelSearch(search))
+      const contentData = await formatter.format({ data: content, path }, { history })
+      setPageData((prevState) => ({ ...prevState, content: contentData }))
+      setLoading(false)
     } catch (error) {
       setLoading(false)
-      const errorMessage: string = getApiErrorMessage(error)
-      dispatch(resetWorkbenchEASearch())
+      const errorMessage: string = getApiErrorMessage(error as AxiosError)
+      dispatch(resetExplorePanelSearch())
+      dispatch(setExplorePanelContent({ data: null, url: null }))
       setError(errorMessage)
     }
   }
 
-  useEffect(() => {
-    const startLoadContent = async () => {
-      await loadContent()
-    }
-    startLoadContent()
-  }, [path, sourcePath])
-
   const handlePageScroll = (top: number) => {
-    // TODO: refactor - it leads to component rerender
-    dispatch(setWorkbenchEAItemScrollTop(top))
+    scrollTopRef.current = top
   }
 
   return (

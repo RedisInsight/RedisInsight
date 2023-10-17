@@ -2,6 +2,39 @@
 
 $animation-duration: 300ms;
 
+.panel {
+  height: 100%;
+  width: 460px;
+  padding-right: 16px;
+}
+
+.panelInner {
+  background-color: var(--euiColorEmptyShade);
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 60px;
+  position: relative;
+
+  padding: 15px;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.body {
+  height: calc(100% - 60px);
+}
+
 .trigger {
   position: fixed;
   right: -37px;
@@ -14,7 +47,6 @@ $animation-duration: 300ms;
   &.exploreTrigger {
     bottom: 280px;
   }
-
 
   .inner {
     display: flex;
@@ -30,10 +62,7 @@ $animation-duration: 300ms;
   }
 
   &.isOpen {
-    right: 438px;
-    will-change: right;
-
-    animation: triggerInsights $animation-duration $euiAnimSlightResistance;
+    display: none;
   }
 
   .totalUnread {

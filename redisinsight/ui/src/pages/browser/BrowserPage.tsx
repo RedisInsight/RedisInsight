@@ -41,6 +41,8 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
+import { insightsPanelSelector } from 'uiSrc/slices/panels/insights'
+import { ExplorePanelTemplate } from 'uiSrc/templates'
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -48,8 +50,13 @@ import BrowserRightPanel from './components/browser-right-panel'
 import styles from './styles.module.scss'
 
 const widthResponsiveSize = 1280
+const widthExplorePanel = 460
+
 export const firstPanelId = 'keys'
 export const secondPanelId = 'keyDetails'
+
+const isOneSideMode = (isInsightsOpen: boolean) =>
+  globalThis.innerWidth < widthResponsiveSize + (isInsightsOpen ? widthExplorePanel : 0)
 
 const BrowserPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -63,9 +70,10 @@ const BrowserPage = () => {
   const { isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
   const { viewType, searchMode } = useSelector(keysSelector)
+  const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
-  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
+  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(isInsightsOpen))
   const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
@@ -117,13 +125,17 @@ const BrowserPage = () => {
   }, [selectedKey])
 
   useEffect(() => {
+    setArePanelsCollapsed(() => isOneSideMode(isInsightsOpen))
+  }, [isInsightsOpen])
+
+  useEffect(() => {
     if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
   }, [connectedInstanceName, isPageViewSent])
 
   const updateWindowDimensions = () => {
-    setArePanelsCollapsed(globalThis.innerWidth < widthResponsiveSize)
+    setArePanelsCollapsed(isOneSideMode(isInsightsOpen))
   }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
@@ -213,105 +225,107 @@ const BrowserPage = () => {
   return (
     <div className={`browserPage ${styles.container}`}>
       <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
-      {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
-        <div>
-          <EuiButton
-            fill
-            color="secondary"
-            iconType="arrowLeft"
-            size="s"
-            onClick={closePanel}
-            className={styles.backBtn}
-            data-testid="back-right-panel-btn"
-          >
-            Browser
-          </EuiButton>
-        </div>
-      )}
-      <div className={cx({
-        [styles.hidden]: isRightPanelFullScreen })}
-      >
-        <BrowserSearchPanel
-          handleAddKeyPanel={handleAddKeyPanel}
-          handleBulkActionsPanel={handleBulkActionsPanel}
-          handleCreateIndexPanel={handleCreateIndexPanel}
-        />
-      </div>
-      <div
-        className={cx(
-          styles.main,
-          { [styles.mainWithBackBtn]: arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen },
+      <ExplorePanelTemplate withOverview>
+        {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
+          <div>
+            <EuiButton
+              fill
+              color="secondary"
+              iconType="arrowLeft"
+              size="s"
+              onClick={closePanel}
+              className={styles.backBtn}
+              data-testid="back-right-panel-btn"
+            >
+              Browser
+            </EuiButton>
+          </div>
         )}
-      >
-        <div className={styles.resizableContainer}>
-          <EuiResizableContainer
-            onPanelWidthChange={onPanelWidthChange}
-            style={{ height: '100%' }}
-          >
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel
-                  id={firstPanelId}
-                  scrollable={false}
-                  initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="600px"
-                  paddingSize="none"
-                  wrapperProps={{
-                    className: cx(styles.resizePanelLeft, {
-                      [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
-                    }),
-                  }}
-                >
-                  <BrowserLeftPanel
-                    selectedKey={selectedKey}
-                    selectKey={selectKey}
-                    removeSelectedKey={handleRemoveSelectedKey}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
-                  />
-                </EuiResizablePanel>
-
-                <EuiResizableButton
-                  className={cx(styles.resizableButton, {
-                    [styles.hidden]: arePanelsCollapsed || isBrowserFullScreen,
-                  })}
-                  data-test-subj="resize-btn-keyList-keyDetails"
-                />
-
-                <EuiResizablePanel
-                  id={secondPanelId}
-                  scrollable={false}
-                  initialSize={sizes[secondPanelId] ?? 50}
-                  minSize="600px"
-                  paddingSize="none"
-                  data-testid="key-details"
-                  wrapperProps={{
-                    className: cx(styles.resizePanelRight, {
-                      [styles.noVisible]: isBrowserFullScreen && !isRightPanelOpen,
-                      [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
-                      [styles.keyDetails]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
-                      [styles.keyDetailsOpen]: isRightPanelOpen,
-                    }),
-                  }}
-                >
-                  <BrowserRightPanel
-                    arePanelsCollapsed={arePanelsCollapsed}
-                    setSelectedKey={setSelectedKey}
-                    selectedKey={selectedKey}
-                    isAddKeyPanelOpen={isAddKeyPanelOpen}
-                    isCreateIndexPanelOpen={isCreateIndexPanelOpen}
-                    isBulkActionsPanelOpen={isBulkActionsPanelOpen}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
-                    closeRightPanels={closeRightPanels}
-                  />
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
+        <div className={cx({
+          [styles.hidden]: isRightPanelFullScreen })}
+        >
+          <BrowserSearchPanel
+            handleAddKeyPanel={handleAddKeyPanel}
+            handleBulkActionsPanel={handleBulkActionsPanel}
+            handleCreateIndexPanel={handleCreateIndexPanel}
+          />
         </div>
-        <OnboardingStartPopover />
-      </div>
+        <div
+          className={cx(
+            styles.main,
+            { [styles.mainWithBackBtn]: arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen },
+          )}
+        >
+          <div className={styles.resizableContainer}>
+            <EuiResizableContainer
+              onPanelWidthChange={onPanelWidthChange}
+              style={{ height: '100%' }}
+            >
+              {(EuiResizablePanel, EuiResizableButton) => (
+                <>
+                  <EuiResizablePanel
+                    id={firstPanelId}
+                    scrollable={false}
+                    initialSize={sizes[firstPanelId] ?? 50}
+                    minSize="600px"
+                    paddingSize="none"
+                    wrapperProps={{
+                      className: cx(styles.resizePanelLeft, {
+                        [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
+                      }),
+                    }}
+                  >
+                    <BrowserLeftPanel
+                      selectedKey={selectedKey}
+                      selectKey={selectKey}
+                      removeSelectedKey={handleRemoveSelectedKey}
+                      handleAddKeyPanel={handleAddKeyPanel}
+                      handleBulkActionsPanel={handleBulkActionsPanel}
+                    />
+                  </EuiResizablePanel>
+
+                  <EuiResizableButton
+                    className={cx(styles.resizableButton, {
+                      [styles.hidden]: arePanelsCollapsed || isBrowserFullScreen,
+                    })}
+                    data-test-subj="resize-btn-keyList-keyDetails"
+                  />
+
+                  <EuiResizablePanel
+                    id={secondPanelId}
+                    scrollable={false}
+                    initialSize={sizes[secondPanelId] ?? 50}
+                    minSize="600px"
+                    paddingSize="none"
+                    data-testid="key-details"
+                    wrapperProps={{
+                      className: cx(styles.resizePanelRight, {
+                        [styles.noVisible]: isBrowserFullScreen && !isRightPanelOpen,
+                        [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
+                        [styles.keyDetails]: arePanelsCollapsed || (isBrowserFullScreen && isRightPanelOpen),
+                        [styles.keyDetailsOpen]: isRightPanelOpen,
+                      }),
+                    }}
+                  >
+                    <BrowserRightPanel
+                      arePanelsCollapsed={arePanelsCollapsed}
+                      setSelectedKey={setSelectedKey}
+                      selectedKey={selectedKey}
+                      isAddKeyPanelOpen={isAddKeyPanelOpen}
+                      isCreateIndexPanelOpen={isCreateIndexPanelOpen}
+                      isBulkActionsPanelOpen={isBulkActionsPanelOpen}
+                      handleAddKeyPanel={handleAddKeyPanel}
+                      handleBulkActionsPanel={handleBulkActionsPanel}
+                      closeRightPanels={closeRightPanels}
+                    />
+                  </EuiResizablePanel>
+                </>
+              )}
+            </EuiResizableContainer>
+          </div>
+          <OnboardingStartPopover />
+        </div>
+      </ExplorePanelTemplate>
     </div>
   )
 }

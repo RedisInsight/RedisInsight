@@ -91,11 +91,6 @@ export interface StateAppContext {
   }
   workbench: {
     script: string
-    enablementArea: {
-      isOpened: boolean
-      search: string
-      itemScrollTop: number
-    },
     panelSizes: {
       vertical: {
         [key: string]: number

@@ -1,7 +1,7 @@
 import { EuiResizableContainer } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -12,7 +12,10 @@ import {
   getDatabaseConfigInfoAction,
   instancesSelector,
 } from 'uiSrc/slices/instances/instances'
-import { resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
+import {
+  fetchRecommendationsAction,
+  resetRecommendationsHighlighting
+} from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,
   setAppContextConnectedInstanceId,
@@ -32,7 +35,6 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
-import DatabaseSidePanels from 'uiSrc/components/database-side-panels'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -79,6 +81,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     }))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
+    dispatch(fetchRecommendationsAction(connectionInstanceId))
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
       // rerender children from scratch to clear all component states
@@ -134,7 +137,6 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   return (
     <>
-      <DatabaseSidePanels />
       <EuiResizableContainer
         direction="vertical"
         style={{ height: '100%' }}

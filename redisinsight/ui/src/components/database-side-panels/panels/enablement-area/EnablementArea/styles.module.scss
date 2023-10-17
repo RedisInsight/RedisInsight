@@ -34,7 +34,7 @@
   height: 100%;
   transform: translateX(calc(100% + 16px));
   backface-visibility: hidden;
-  transition: transform 0.4s ease-in-out;
+  //transition: transform 0.4s ease-in-out;
   box-shadow: -5px 1px 10px rgba(0, 0, 0, 0.2);
   z-index: 2;
 }

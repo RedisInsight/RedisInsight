@@ -32,7 +32,6 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import { ReactComponent as SnoozeIcon } from 'uiSrc/assets/img/icons/snooze.svg'
 import { ReactComponent as StarsIcon } from 'uiSrc/assets/img/icons/stars.svg'
 
-import { resetWorkbenchEASearch, setWorkbenchEAOpened } from 'uiSrc/slices/app/context'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -81,13 +80,13 @@ const Recommendation = ({
       }
     })
 
-    dispatch(setWorkbenchEAOpened(false))
+    // dispatch(setWorkbenchEAOpened(false))
     if (tutorial) {
       openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
       return
     }
 
-    dispatch(resetWorkbenchEASearch())
+    // dispatch(resetExplorePanelSearchContext())
     history.push(Pages.workbench(instanceId))
   }
 

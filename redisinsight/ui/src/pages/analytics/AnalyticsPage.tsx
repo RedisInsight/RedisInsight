@@ -7,6 +7,7 @@ import { appContextAnalytics, setLastAnalyticsPage } from 'uiSrc/slices/app/cont
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 
+import { ExplorePanelTemplate } from 'uiSrc/templates'
 import AnalyticsPageRouter from './AnalyticsPageRouter'
 
 import styles from './styles.module.scss'
@@ -60,9 +61,11 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   return (
     <>
       <InstanceHeader />
-      <div className={styles.main}>
-        <AnalyticsPageRouter routes={routes} />
-      </div>
+      <ExplorePanelTemplate withOverview>
+        <div className={styles.main}>
+          <AnalyticsPageRouter routes={routes} />
+        </div>
+      </ExplorePanelTemplate>
     </>
   )
 }

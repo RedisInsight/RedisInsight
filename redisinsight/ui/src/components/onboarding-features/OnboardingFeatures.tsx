@@ -12,7 +12,6 @@ import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/ana
 import { incrementOnboardStepAction, setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { resetWorkbenchEASearch, setWorkbenchEAOpened } from 'uiSrc/slices/app/context'
 import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
@@ -268,7 +267,7 @@ const ONBOARDING_FEATURES = {
 
       useEffect(() => {
         // here we can use it on mount, because enablement area always rendered on workbench
-        dispatch(setWorkbenchEAOpened(false))
+        // dispatch(setWorkbenchEAOpened(false))
       }, [])
 
       return {
@@ -290,9 +289,9 @@ const ONBOARDING_FEATURES = {
 
       useEffect(() => {
         // here we can use it on mount, because enablement area always rendered on workbench
-        dispatch(setWorkbenchEAOpened(false))
+        // dispatch(setWorkbenchEAOpened(false))
         // close opened page
-        dispatch(resetWorkbenchEASearch())
+        // dispatch(resetExplorePanelSearchContext())
         history.push(Pages.workbench(connectedInstanceId))
       }, [])
 

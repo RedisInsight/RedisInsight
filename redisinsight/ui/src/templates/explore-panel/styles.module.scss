@@ -1,0 +1,22 @@
+.mainWrapper {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+
+  &.withOverview {
+    height: calc(100% - 70px);
+  }
+}
+
+.mainPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  &.insightsOpen {
+    max-width: calc(100% - 460px);
+  }
+}

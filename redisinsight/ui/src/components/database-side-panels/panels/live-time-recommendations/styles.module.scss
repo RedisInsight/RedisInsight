@@ -1,23 +1,15 @@
 @import "@elastic/eui/src/global_styling/variables";
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
 
 $animation-duration: 300ms;
 
 .content {
-  margin-top: 70px;
-  height: calc(100% - 70px) !important;
-  background-color: var(--recommendationsBgColor) !important;
-  border-left: none !important;
-  border-radius: 4px 0 0 4px;
-  box-shadow: -5px 0px 16px rgba(0, 0, 0, 0.16) !important;
-  min-width: 476px !important;
+  height: 100%;
+  width: 100%;
 
-  :global(.euiFlyout__closeButton) {
-    background-color: transparent;
-    height: 10px;
-    width: 10px;
-    right: 20px;
-    top: 29px;
-  }
+  display: flex;
+  flex-direction: column;
 }
 
 .loading {
@@ -63,6 +55,10 @@ $animation-duration: 300ms;
 
 .body {
   padding: 8px 15px 24px !important;
+  flex-grow: 1;
+
+  @include euiScrollBar;
+  overflow-y: auto;
 }
 
 .footer {

@@ -252,9 +252,6 @@ const StringDetails = (props: Props) => {
         )}
       </div>
 
-      <div>{length}</div>
-      <div>{STRING_MAX_LENGTH}</div>
-
       {length > STRING_MAX_LENGTH && (
         <div className="key-details-footer" key="key-details-footer">
           <EuiFlexGroup

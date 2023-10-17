@@ -75,3 +75,9 @@ export enum ResourcePath {
     ClusterDetails = '/cluster-details',
     SyncFeatures = '/features/sync',
 }
+
+export enum ExploreTabs {
+    Explore  = 'Explore',
+    Insights = 'Insights',
+}
+

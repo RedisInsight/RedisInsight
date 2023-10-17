@@ -1,8 +1,7 @@
 import { Selector, t } from 'testcafe';
 import { RecommendationIds } from '../../helpers/constants';
-import { BaseRightSidePanel } from './base-right-side-panel';
 
-export class InsightsPanel  extends BaseRightSidePanel {
+export class InsightTab {
     // CSS Selectors
     cssKeyName = '[data-testid=recommendation-key-name]';
     // BUTTONS

@@ -79,21 +79,22 @@ export class StringBusinessService {
     let result: GetStringValueResponse;
 
     try {
+      let value;
       if (end) {
-        const value = await this.browserTool.execCommand(
+        value = await this.browserTool.execCommand(
           clientMetadata,
           BrowserToolStringCommands.Getrange,
           [keyName, `${start}`, `${end}`],
         );
-        result = { value, keyName };
       } else {
-        const value = await this.browserTool.execCommand(
+        value = await this.browserTool.execCommand(
           clientMetadata,
           BrowserToolStringCommands.Get,
           [keyName],
         );
-        result = { value, keyName };
       }
+
+      result = { value, keyName };
     } catch (error) {
       this.logger.error('Failed to get string value.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
@@ -123,10 +124,42 @@ export class StringBusinessService {
     clientMetadata: ClientMetadata,
     dto: GetKeyInfoDto,
   ): Promise<{ stream: Readable }> {
-    const result = await this.getStringValue(
+    // const result = await this.getStringValue(
+    //   clientMetadata,
+    //   dto,
+    // );
+
+    const { keyName } = dto;
+    let result: GetStringValueResponse;
+
+    try {
+      const value = await this.browserTool.execCommand(
+        clientMetadata,
+        BrowserToolStringCommands.Get,
+        [keyName],
+      );
+      result = { value, keyName };
+    } catch (error) {
+      this.logger.error('Failed to get string value.', error);
+      if (error.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+      catchAclError(error);
+    }
+
+    if (result.value === null) {
+      this.logger.error(
+        `Failed to get string value. Not Found key: ${keyName}.`,
+      );
+      throw new NotFoundException();
+    }
+
+    this.recommendationService.check(
       clientMetadata,
-      dto,
+      RECOMMENDATION_NAMES.STRING_TO_JSON,
+      { value: result.value, keyName: result.keyName },
     );
+    this.logger.log('Succeed to get string value.');
 
     const stream = Readable.from(result.value);
     return { stream };

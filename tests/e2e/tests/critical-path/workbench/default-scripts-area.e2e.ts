@@ -94,7 +94,7 @@ test('Verify that user can edit and run automatically added "Search" script in W
     await t.expect(key.exists).ok('The added key is not in the Search result');
     await t.expect(name.exists).ok('The added key name field is not in the Search result');
 });
-test.only('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
+test('Verify that user can edit and run automatically added "Aggregate" script in Workbench and see the results', async t => {
     indexName = chance.word({ length: 5 });
     const aggregationResultField = 'max_price';
     const commandsForSend = [

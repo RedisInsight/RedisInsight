@@ -5,7 +5,6 @@ import { DatabaseHelper } from '../../../helpers/database';
 import { commonUrl, ossClusterConfig } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Common } from '../../../helpers/common';
-import { ExplorePanel } from '../../../pageObjects/components/explore-panel';
 
 const clusterDetailsPage = new ClusterDetailsPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -77,9 +76,8 @@ test
             await t.expect(clusterDetailsPage.tableRow.nth(nodes.indexOf(node)).textContent).contains(node, `Node ${node} is not displayed in table`);
         }
         //Run Create hash index command to load network and memory
-        const panel = new ExplorePanel();
-        await panel.togglePanel(true);
-        const tutorials = await panel.setActiveTab(ExploreTabs.Explore);
+        await clusterDetailsPage.ExplorePanel.togglePanel(true);
+        const tutorials = await clusterDetailsPage.ExplorePanel.setActiveTab(ExploreTabs.Explore);
 
         await t.click(tutorials.documentButtonInQuickGuides);
         await t.click(tutorials.internalLinkWorkingWithHashes);

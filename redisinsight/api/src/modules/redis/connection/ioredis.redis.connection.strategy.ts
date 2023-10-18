@@ -5,7 +5,6 @@ import { ClientMetadata } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import Redis, { Cluster, RedisOptions } from 'ioredis';
 import { isEmpty, isNumber } from 'lodash';
-import { generateRedisConnectionName } from 'src/utils';
 import { IRedisConnectionOptions } from 'src/modules/redis/redis-connection.factory';
 import { ClusterOptions } from 'ioredis/built/cluster/ClusterOptions';
 import { ConnectionOptions } from 'tls';

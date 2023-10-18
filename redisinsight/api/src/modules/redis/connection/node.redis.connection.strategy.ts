@@ -3,12 +3,12 @@ import serverConfig from 'src/utils/config';
 import { InternalServerErrorException } from '@nestjs/common';
 import { ClientMetadata } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
-import { RedisClientOptions, createClient, createCluster, RedisClusterOptions } from 'redis';
-import { isEmpty, isNumber } from 'lodash';
-import { generateRedisConnectionName } from 'src/utils';
+import {
+  RedisClientOptions, createClient, createCluster, RedisClusterOptions,
+} from 'redis';
+import { isNumber } from 'lodash';
 import { IRedisConnectionOptions } from 'src/modules/redis/redis-connection.factory';
 import { ConnectionOptions } from 'tls';
-import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ClusterNodeRedisClient, RedisClient } from 'src/modules/redis/client';
 import { StandaloneNodeRedisClient } from 'src/modules/redis/client/node-redis/standalone.node-redis.client';
@@ -43,7 +43,12 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
       host, port, password, username, tls, db, timeout,
     } = database;
 
-    const redisOptions: RedisClientOptions = {
+    //
+    // if (tls) {
+    //   redisOptions.tls = await this.getTLSConfig(database);
+    // }
+
+    return {
       socket: {
         host,
         port,
@@ -58,12 +63,6 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
       // maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
       // retryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
     };
-    //
-    // if (tls) {
-    //   redisOptions.tls = await this.getTLSConfig(database);
-    // }
-
-    return redisOptions;
   }
 
   /**

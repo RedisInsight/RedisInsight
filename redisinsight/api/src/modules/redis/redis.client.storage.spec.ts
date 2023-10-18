@@ -6,13 +6,13 @@ import {
 } from 'src/__mocks__';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
-import { RedisClientProvider } from 'src/modules/redis/redis.client.provider';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import apiConfig from 'src/utils/config';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
 describe('RedisClientProvider', () => {
-  let service: RedisClientProvider;
+  let service: RedisClientStorage;
   const mockClientMetadata1 = {
     sessionMetadata: {
       userId: 'u1',
@@ -48,7 +48,7 @@ describe('RedisClientProvider', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        RedisClientProvider,
+        RedisClientStorage,
         {
           provide: RedisConnectionFactory,
           useFactory: mockRedisConnectionFactory,
@@ -56,7 +56,7 @@ describe('RedisClientProvider', () => {
       ],
     }).compile();
 
-    service = await module.get(RedisClientProvider);
+    service = await module.get(RedisClientStorage);
 
     service['clients'].set(mockRedisClient1.id, mockRedisClient1);
     service['clients'].set(mockRedisClient2.id, mockRedisClient2);

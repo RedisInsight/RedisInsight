@@ -7,8 +7,8 @@ import apiConfig from 'src/utils/config';
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
 @Injectable()
-export class RedisClientProvider {
-  private readonly logger = new Logger('RedisClientProvider');
+export class RedisClientStorage {
+  private readonly logger = new Logger('RedisClientStorage');
 
   private readonly clients: Map<string, RedisClient> = new Map();
 
@@ -81,7 +81,7 @@ export class RedisClientProvider {
    * @param clientMetadata
    */
   public async getClientByMetadata(clientMetadata: ClientMetadata): Promise<RedisClient> {
-    return this.getClient(RedisClient.generateId(RedisClientProvider.prepareClientMetadata(clientMetadata)));
+    return this.getClient(RedisClient.generateId(RedisClientStorage.prepareClientMetadata(clientMetadata)));
   }
 
   /**
@@ -133,7 +133,7 @@ export class RedisClientProvider {
    * @param clientMetadata
    */
   public async removeClientByMetadata(clientMetadata: ClientMetadata): Promise<number> {
-    return this.removeClient(RedisClient.generateId(RedisClientProvider.prepareClientMetadata(clientMetadata)));
+    return this.removeClient(RedisClient.generateId(RedisClientStorage.prepareClientMetadata(clientMetadata)));
   }
 
   /**

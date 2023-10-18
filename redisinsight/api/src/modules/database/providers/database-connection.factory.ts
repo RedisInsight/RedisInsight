@@ -7,7 +7,7 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
-import { RedisClientProvider } from 'src/modules/redis/redis.client.provider';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
 export class DatabaseConnectionFactory {
@@ -17,7 +17,7 @@ export class DatabaseConnectionFactory {
     private readonly databaseService: DatabaseService,
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
-    private readonly redisClientProvider: RedisClientProvider,
+    private readonly redisClientProvider: RedisClientStorage,
     private readonly redisClientFactory: RedisClientFactory,
   ) {}
 

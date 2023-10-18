@@ -5,11 +5,11 @@ import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.facto
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { NodeRedisConnectionStrategy } from 'src/modules/redis/connection/node.redis.connection.strategy';
-import { RedisClientProvider } from 'src/modules/redis/redis.client.provider';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Module({
   providers: [
-    RedisClientProvider,
+    RedisClientStorage,
     RedisClientFactory,
     IoredisRedisConnectionStrategy,
     NodeRedisConnectionStrategy,
@@ -19,7 +19,7 @@ import { RedisClientProvider } from 'src/modules/redis/redis.client.provider';
     RedisConnectionFactory,
   ],
   exports: [
-    RedisClientProvider,
+    RedisClientStorage,
     RedisClientFactory,
     // todo: remove providers below
     RedisService,

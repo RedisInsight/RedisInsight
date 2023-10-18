@@ -143,7 +143,6 @@ export function fetchDownloadStringValue(
 
     try {
       const state = stateInit()
-      const { encoding } = state.app.info
       const { data, status, headers } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -152,7 +151,7 @@ export function fetchDownloadStringValue(
         {
           keyName: key,
         },
-        { params: { encoding }, responseType: 'arraybuffer' },
+        { responseType: 'arraybuffer' },
       )
 
       if (isStatusSuccessful(status)) {

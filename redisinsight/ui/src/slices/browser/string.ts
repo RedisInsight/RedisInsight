@@ -152,7 +152,7 @@ export function fetchDownloadStringValue(
         {
           keyName: key,
         },
-        { params: { encoding }, responseType: 'arraybuffer' },
+        { params: { encoding } },
       )
 
       if (isStatusSuccessful(status)) {

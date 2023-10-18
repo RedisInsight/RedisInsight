@@ -41,6 +41,7 @@ import {
   formatLongName,
   isEqualBuffers,
   isFormatEditable,
+  isFullStringLoaded,
   MAX_TTL_NUMBER,
   replaceSpaces,
   stringToBuffer,
@@ -309,7 +310,7 @@ const KeyDetailsHeader = ({
 
   const Actions = (width: number) => {
     const isEditable = !isStringCompressed && isFormatEditable(viewFormatProp)
-    const isStringEditable = keyType === KeyTypes.String ? keyValue?.data?.length === length : true
+    const isStringEditable = keyType === KeyTypes.String ? isFullStringLoaded(keyValue?.data?.length, length) : true
     const noEditableText = isStringCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
     const editToolTip = !isEditable ? noEditableText : (!isStringEditable ? TEXT_DISABLED_STRING_EDITING : null)
 

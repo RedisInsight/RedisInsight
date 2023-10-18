@@ -161,9 +161,9 @@ const StringDetails = (props: Props) => {
 
   const isLoading = loading || value === null
 
-  const handleLoadAll = async (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
+  const handleLoadAll = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
     const endString = length - 1
-    await onRefresh(key, type, { end: endString })
+    onRefresh(key, type, { end: endString })
     sendEventTelemetry({
       event: TelemetryEvent.STRING_LOAD_ALL_CLICKED,
       eventData: {
@@ -173,7 +173,7 @@ const StringDetails = (props: Props) => {
     })
   }
 
-  const handleDownloadString = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleDownloadString = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     dispatch(fetchDownloadStringValue(key, downloadFile))
     sendEventTelemetry({

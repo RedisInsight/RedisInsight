@@ -11,6 +11,7 @@ import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiS
 import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
 import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
+import { isFullStringLoaded } from 'uiSrc/utils'
 import { getKeyValueFormatterOptions } from './constants'
 import { MIDDLE_SCREEN_RESOLUTION } from '../../KeyDetailsHeader'
 import styles from './styles.module.scss'
@@ -34,7 +35,9 @@ const KeyValueFormatter = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  const isStringFormattingEnabled = keyType === KeyTypes.String ? keyValue?.data?.length === length : true
+  const isStringFormattingEnabled = keyType === KeyTypes.String
+    ? isFullStringLoaded(keyValue?.data?.length, length)
+    : true
 
   useEffect(() => {
     const newOptions: EuiSuperSelectOption<KeyValueFormat>[] = getKeyValueFormatterOptions(keyType).map(

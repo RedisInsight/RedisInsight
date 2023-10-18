@@ -445,15 +445,23 @@ function autoCreateAndConnectToInstanceActionSuccess(
         dispatch(setAppContextInitialState())
         dispatch(setConnectedInstanceId(id ?? ''))
       }
-      dispatch(checkConnectToInstanceAction(id, (id) => {
-        setTimeout(() => {
-          dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
-          dispatch(addMessageNotification(message))
-          onSuccess?.(id)
-        }, HIDE_CREATING_DB_DELAY_MS)
-      },
-      onFail,
-      !isConnectedId))
+      dispatch(
+        checkConnectToInstanceAction(
+          id,
+          (id) => {
+            setTimeout(() => {
+              dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
+              dispatch(addMessageNotification(message))
+              onSuccess?.(id)
+            }, HIDE_CREATING_DB_DELAY_MS)
+          },
+          () => {
+            dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
+            onFail?.()
+          },
+          !isConnectedId
+        )
+      )
     } catch (error) {
       // process error if needed
     }

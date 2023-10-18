@@ -1,7 +1,7 @@
 import { Chance } from 'chance';
 import { DatabaseHelper } from '../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage } from '../../../pageObjects';
-import { rte } from '../../../helpers/constants';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../pageObjects';
+import { ExploreTabs, rte } from '../../../helpers/constants';
 import { commonUrl, ossStandaloneRedisearch } from '../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../helpers/api/api-database';
 import { Telemetry } from '../../../helpers/telemetry';
@@ -24,7 +24,7 @@ const expectedProperties = [
 ];
 
 fixture `Default scripts area at Workbench`
-    .meta({type: 'critical_path', rte: rte.standalone})
+    .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
@@ -106,9 +106,12 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     // Run automatically added FT.Aggregate script with edits
-    await t.click(workbenchPage.documentButtonInQuickGuides);
-    await t.click(workbenchPage.internalLinkWorkingWithHashes);
-    await t.click(workbenchPage.preselectGroupBy);
+    await workbenchPage.ExplorePanel.togglePanel(true);
+    const tab = await workbenchPage.ExplorePanel.setActiveTab(ExploreTabs.Explore);
+    await t.click(tab.documentButtonInQuickGuides);
+    await t.click(tab.internalLinkWorkingWithHashes);
+    await tab.runBlockCode('Group by & sort by aggregation: COUNT');
+    //await t.click(workbenchPage.preselectGroupBy);
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     // Check the FT.Aggregate result

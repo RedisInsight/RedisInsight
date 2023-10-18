@@ -38,6 +38,7 @@ enum ApiEndpoints {
 
   STRING = 'string',
   STRING_VALUE = 'string/get-value',
+  STRING_VALUE_DOWNLOAD = 'string/download-value',
 
   HASH = 'hash',
   HASH_FIELDS = 'hash/fields',

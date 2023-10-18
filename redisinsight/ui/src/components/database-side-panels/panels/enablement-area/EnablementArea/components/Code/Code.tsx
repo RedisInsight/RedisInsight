@@ -13,10 +13,10 @@ export interface Props {
   label: string
   children: string
   params?: string
-  sectionTitle?: string
+  path?: string
 }
 
-const Code = ({ children, params = '', label, sectionTitle, ...rest }: Props) => {
+const Code = ({ children, params = '', label, path, ...rest }: Props) => {
   const { search } = useLocation()
   const { setScript, isCodeBtnDisabled } = useContext(EnablementAreaContext)
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -46,7 +46,7 @@ const Code = ({ children, params = '', label, sectionTitle, ...rest }: Props) =>
 
   const loadContent = (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => {
     const file = getFile()
-    setScript(children, execute, { ...file, sectionTitle })
+    setScript(children, execute, { ...file, path })
   }
 
   const handleCopy = () => {
@@ -56,7 +56,7 @@ const Code = ({ children, params = '', label, sectionTitle, ...rest }: Props) =>
       eventData: {
         databaseId: instanceId,
         buttonName: label,
-        sectionTitle,
+        path,
         ...file
       }
     })

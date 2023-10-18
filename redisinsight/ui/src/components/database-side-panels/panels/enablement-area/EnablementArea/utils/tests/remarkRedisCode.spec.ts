@@ -4,7 +4,7 @@ import { remarkRedisCode } from '../transform/remarkRedisCode'
 jest.mock('unist-util-visit')
 
 const getValue = (meta: string, params?: string, value?: string) =>
-  `<Code label="${meta}" params="${params}" sectionTitle={sectionTitle}>{${JSON.stringify(value)}}</Code>`
+  `<Code label="${meta}" params="${params}" path={path}>{${JSON.stringify(value)}}</Code>`
 
 describe('remarkRedisCode', () => {
   it('should not modify codeNode if lang not redis', () => {

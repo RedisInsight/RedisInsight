@@ -6,7 +6,7 @@ interface IContext {
   setScript: (
     script: string,
     execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
-    file?: { path?: string, name?: string, sectionTitle?: string }
+    file?: { path?: string, name?: string }
   ) => void
   openPage: (page: IInternalPage, manifestPath?: string) => void
   isCodeBtnDisabled?: boolean

@@ -11,18 +11,33 @@ export interface IFileInfo {
   parent: string
   location: string
   _key?: Nullable<string>
+  parents: IEnablementAreaItem[]
+}
+
+const getSubstrigsPath = (input?: string): Nullable<string[]> => {
+  if (!input) return null
+
+  const parts = input.split('/')
+  const substrings = []
+  while (parts.length > 1) {
+    substrings.push(parts.join('/'))
+    parts.pop()
+  }
+
+  return substrings
 }
 
 export const getFileInfo = (
   { manifestPath, path }: { manifestPath?: Nullable<string>, path: string },
   manifest?: Nullable<IEnablementAreaItem[]>
 ): IFileInfo => {
-  const defaultResult: IFileInfo = { extension: '', name: '', parent: '', location: '', label: '' }
+  const defaultResult: IFileInfo = { extension: '', name: '', parent: '', location: '', label: '', parents: [] }
   try {
     const url = IS_ABSOLUTE_PATH.test(path) ? new URL(path) : new URL(path, API_URL)
     const pathNames = url.pathname.split('/')
     const file = pathNames.pop() || ''
     const markdownParent = manifest ? getParentByManifest(manifest, manifestPath) : null
+    const parents = manifest ? getAllParents(manifest, manifestPath) : []
     const [fileName, extension] = file.split('.')
 
     let markdownInfo: Record<string, any> = {}
@@ -35,6 +50,7 @@ export const getFileInfo = (
     }
 
     return {
+      parents,
       location: pathNames.join('/'),
       name: fileName || '',
       label: markdownInfo?.label || fileName,
@@ -140,3 +156,10 @@ export const getParentByManifest = (
 
   return parent ?? null
 }
+
+export const getAllParents = (
+  manifest: IEnablementAreaItem[],
+  manifestPath: Nullable<string> = ''
+) => (manifest && manifestPath
+  ? getSubstrigsPath(removeManifestPrefix(manifestPath))?.map((path) => getParentByManifest(manifest, path))
+  : [])

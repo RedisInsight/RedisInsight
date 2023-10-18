@@ -58,7 +58,7 @@ const InternalPage = (props: Props) => {
     activeKey,
     path,
     manifestPath,
-    sourcePath
+    sourcePath,
   } = props
   const components: any = { LazyCodeButton, Image, Code, RedisUploadButton, CloudLink }
   const containerRef = useRef<HTMLDivElement>(null)
@@ -112,9 +112,7 @@ const InternalPage = (props: Props) => {
   const contentComponent = useMemo(() => (
     // @ts-ignore
     <JsxParser
-      bindings={{
-        sectionTitle: backTitle
-      }}
+      bindings={{ path }}
       components={components}
       blacklistedTags={['iframe', 'script']}
       autoCloseVoidElements

@@ -27,7 +27,16 @@ interface IPageData extends IFileInfo {
   content: string
   relatedPages?: IEnablementAreaItem[]
 }
-const DEFAULT_PAGE_DATA: IPageData = { label: '', content: '', name: '', parent: '', extension: '', location: '', relatedPages: [] }
+const DEFAULT_PAGE_DATA: IPageData = {
+  label: '',
+  content: '',
+  name: '',
+  parent: '',
+  extension: '',
+  location: '',
+  relatedPages: [],
+  parents: []
+}
 
 export interface Props {
   onClose: () => void

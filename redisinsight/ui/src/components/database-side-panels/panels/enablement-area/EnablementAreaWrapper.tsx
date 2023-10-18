@@ -43,7 +43,7 @@ const EnablementAreaWrapper = (props: Props) => {
   const openScript = (
     script: string,
     execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams } = { mode: ExecuteButtonMode.Manual },
-    file?: { path?: string, name?: string, source?: string, sectionTitle?: string }
+    file?: { path?: string, name?: string, source?: string }
   ) => {
     sendEventButtonClickedTelemetry(file)
 

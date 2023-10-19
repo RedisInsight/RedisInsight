@@ -69,6 +69,25 @@ export class DatabasesActions {
         }
         return matchedFiles;
     }
+
+    /**
+     * Find file by name starts from directory
+     * @param dir The path directory of file
+     * @param fileStarts The file name should start from
+     */
+    async findFileByFileStarts(dir: string, fileStarts: string): Promise<number> {
+        if (fs.existsSync(dir)) {
+            const matchedFiles: string[] = [];
+            const files = fs.readdirSync(dir);
+            for (const file of files) {
+                if (file.startsWith(fileStarts)) {
+                    matchedFiles.push(file);
+                }
+            }
+            return matchedFiles.length;
+        }
+        return 0;
+    }
 }
 
 /**

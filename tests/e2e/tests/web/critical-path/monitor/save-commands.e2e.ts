@@ -1,46 +1,29 @@
 import * as fs from 'fs';
 import * as os from 'os';
-import { join as joinPath } from 'path';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import {
     commonUrl,
+    fileDownloadPath,
     ossStandaloneConfig
 } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { DatabasesActions } from '../../../../common-actions/databases-actions';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const databasesActions = new DatabasesActions();
 
 const tempDir = os.tmpdir();
-let downloadedFilePath = '';
-
-async function getFileDownloadPath(): Promise<string> {
-    return joinPath(os.homedir(), 'Downloads');
-}
-
-async function findByFileStarts(dir: string): Promise<number> {
-    if (fs.existsSync(dir)) {
-        const matchedFiles: string[] = [];
-        const files = fs.readdirSync(dir);
-        for (const file of files) {
-            if (file.startsWith('test_standalone')) {
-                matchedFiles.push(file);
-            }
-        }
-        return matchedFiles.length;
-    }
-    return 0;
-}
+const fileStarts = 'test_standalone';
 
 fixture `Save commands`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        downloadedFilePath = await getFileDownloadPath();
     })
     .afterEach(async() => {
         // Delete database
@@ -111,22 +94,22 @@ test('Verify the Profiler Button panel when toggle was switched to ON and user p
 });
 test('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
     // Remember the number of files in Temp
-    const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);
+    const numberOfDownloadFiles = await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts);
 
     // Start Monitor without Save logs
     await browserPage.Profiler.startMonitor();
     await t.wait(3000);
     // Check the download files
-    await t.expect(await findByFileStarts(downloadedFilePath)).eql(numberOfDownloadFiles, 'The Profiler logs are saved');
+    await t.expect(await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts)).eql(numberOfDownloadFiles, 'The Profiler logs are saved');
 });
 test('Verify that when user see the toggle is ON - Profiler logs are being saved', async t => {
     // Remember the number of files in Temp
-    const numberOfDownloadFiles = await findByFileStarts(downloadedFilePath);
+    const numberOfDownloadFiles = await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts);
 
     // Start Monitor with Save logs
     await browserPage.Profiler.startMonitorWithSaveLog();
     // Download logs and check result
     await browserPage.Profiler.stopMonitor();
     await t.click(browserPage.Profiler.downloadLogButton);
-    await t.expect(await findByFileStarts(downloadedFilePath)).gt(numberOfDownloadFiles, 'The Profiler logs not saved', { timeout: 5000 });
+    await t.expect(await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts)).gt(numberOfDownloadFiles, 'The Profiler logs not saved', { timeout: 5000 });
 });

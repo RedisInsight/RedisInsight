@@ -88,7 +88,7 @@ test
         await browserPage.reloadPage();
         await browserPage.openKeyDetails(keyName);
         await t.expect(browserPage.loadAllBtn.exists).notOk('Load All button displayed for 5000 length String key');
-        // await t.expect(browserPage.downloadAllValueBtn.exists).notOk('Download All button displayed for 5000 length String key');
+        await t.expect(browserPage.downloadAllValueBtn.exists).notOk('Download All button displayed for 5000 length String key');
 
         await browserPage.openKeyDetails(bigKeyName);
         await t.expect(browserPage.editKeyValueButton.hasAttribute('disabled')).ok('Edit button not disabled for String > 5000');

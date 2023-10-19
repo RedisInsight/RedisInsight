@@ -76,7 +76,7 @@ const dbData = [
     }
 ];
 const findImportedRdmDbNameInList = async(dbName: string): Promise<string> => rdmData.dbImportedNames.find(item => item === dbName)!;
-const hiddenPassword = '************';
+const hiddenPassword = '••••••••••••';
 
 fixture `Import databases`
     .meta({ type: 'critical_path', rte: rte.none })

@@ -1153,9 +1153,9 @@ describe('InstanceForm', () => {
       />
     )
 
-    expect(screen.getByTestId('password')).toHaveAttribute('value', '************')
+    expect(screen.getByTestId('password')).toHaveAttribute('value', '••••••••••••')
     expect(screen.getByTestId('password')).toHaveAttribute('type', 'password')
-    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('value', '************')
+    expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('value', '••••••••••••')
     expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('type', 'password')
 
     fireEvent.focus(screen.getByTestId('password'))

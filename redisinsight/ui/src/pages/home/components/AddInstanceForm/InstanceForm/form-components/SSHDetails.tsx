@@ -205,7 +205,7 @@ const SSHDetails = (props: Props) => {
                   className="passwordField"
                   maxLength={50_000}
                   placeholder="Enter SSH Private Key in PEM format"
-                  value={formik.values.sshPrivateKey === true ? SECURITY_FIELD : formik?.values?.sshPrivateKey?.replace(/./g, '*') ?? ''}
+                  value={formik.values.sshPrivateKey === true ? SECURITY_FIELD : formik?.values?.sshPrivateKey?.replace(/./g, '•') ?? ''}
                   onChange={formik.handleChange}
                   onFocus={() => {
                     if (formik.values.sshPrivateKey === true) {

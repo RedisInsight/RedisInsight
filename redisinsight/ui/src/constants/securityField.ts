@@ -1,1 +1,1 @@
-export const SECURITY_FIELD = '************'
+export const SECURITY_FIELD = '••••••••••••'

@@ -89,7 +89,7 @@ test
         // Delete databases
         await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
     })('Adding database with SSH', async t => {
-        const hiddenPass = '************';
+        const hiddenPass = '••••••••••••';
         // const tooltipText = [
         //     'Enter a value for required fields (3):',
         //     'SSH Host',

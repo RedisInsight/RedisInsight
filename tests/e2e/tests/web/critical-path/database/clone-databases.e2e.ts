@@ -100,7 +100,7 @@ test
         await myRedisDatabasePage.reloadPage();
     })
     .meta({ rte: rte.sentinel })('Verify that user can clone Sentinel', async t => {
-        const hiddenPassword = '************';
+        const hiddenPassword = '••••••••••••';
 
         await databaseHelper.clickOnEditDatabaseByName(ossSentinelConfig.masters[1].alias);
         await t.click(myRedisDatabasePage.AddRedisDatabase.cloneDatabaseButton);

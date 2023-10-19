@@ -43,7 +43,7 @@ fixture `Adding database with SSH`
         await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
     });
 test('Adding database with SSH', async t => {
-    const hiddenPass = '************';
+    const hiddenPass = '••••••••••••';
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'

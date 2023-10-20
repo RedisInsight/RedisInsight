@@ -31,7 +31,7 @@ const ScanMore = ({
   nextCursor,
 }: Props) => (
   <>
-    {((scanned < totalItemsCount || isNull(totalItemsCount)))
+    {((scanned || isNull(totalItemsCount)))
       && nextCursor !== '0'
       && (
         <EuiButton

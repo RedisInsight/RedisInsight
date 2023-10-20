@@ -138,7 +138,6 @@ describe('POST /databases', () => {
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
               username: null,
-              password: null,
               connectionType: constants.STANDALONE,
               new: true,
             },
@@ -194,7 +193,6 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: null,
             connectionType: constants.STANDALONE,
             new: true,
           },
@@ -242,7 +240,6 @@ describe('POST /databases', () => {
               port: constants.TEST_REDIS_PORT,
               db: constants.TEST_REDIS_DB_INDEX,
               username: null,
-              password: null,
               connectionType: constants.STANDALONE,
               new: true,
             },
@@ -312,7 +309,7 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.STANDALONE,
             new: true,
           },
@@ -846,7 +843,8 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              password: constants.TEST_SSH_PASSWORD,
+              // hide security fields (password, sshOptions.password, sshOptions.passphrase)
+              password: true,
             }
           },
           checkFn: async ({ body }) => {
@@ -990,8 +988,8 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
-              passphrase: constants.TEST_SSH_PASSPHRASE,
+              privateKey: true,
+              passphrase: true,
             }
           },
           checkFn: async ({ body }) => {
@@ -1065,7 +1063,8 @@ describe('POST /databases', () => {
               host: constants.TEST_SSH_HOST,
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
-              password: constants.TEST_SSH_PASSWORD,
+              // hide security fields (password, sshOptions.password, sshOptions.passphrase)
+              password: true,
             }
           },
           checkFn: async ({ body }) => {
@@ -1237,7 +1236,7 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.SENTINEL,
           },
         });
@@ -1287,7 +1286,7 @@ describe('POST /databases', () => {
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
             username: null,
-            password: constants.TEST_REDIS_PASSWORD,
+            password: true,
             connectionType: constants.SENTINEL,
           },
           checkFn: async ({ body }) => {

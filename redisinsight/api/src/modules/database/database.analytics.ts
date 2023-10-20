@@ -23,7 +23,7 @@ export class DatabaseAnalytics extends TelemetryBaseService {
 
   sendInstanceAddedEvent(
     instance: Database,
-    additionalInfo: RedisDatabaseInfoResponse,
+    additionalInfo?: RedisDatabaseInfoResponse,
   ): void {
     try {
       const modulesSummary = getRedisModulesSummary(instance.modules);
@@ -45,8 +45,8 @@ export class DatabaseAnalytics extends TelemetryBaseService {
           version: additionalInfo?.version,
           numberOfKeys: additionalInfo?.totalKeys,
           numberOfKeysRange: getRangeForNumber(additionalInfo?.totalKeys, TOTAL_KEYS_BREAKPOINTS),
-          totalMemory: additionalInfo.usedMemory,
-          numberedDatabases: additionalInfo.databases,
+          totalMemory: additionalInfo?.usedMemory,
+          numberedDatabases: additionalInfo?.databases,
           numberOfModules: instance.modules?.length || 0,
           timeout: instance.timeout / 1_000, // milliseconds to seconds
           databaseIndex: instance.db || 0,

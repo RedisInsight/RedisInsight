@@ -5,7 +5,7 @@ RUN apk add --no-cache --virtual .gyp \
         make \
         g++
 WORKDIR /usr/src/app
-COPY package.json yarn.lock babel.config.js tsconfig.json ./
+COPY package.json yarn.lock babel.config.cjs tsconfig.json ./
 RUN SKIP_POSTINSTALL=1 yarn install
 COPY configs ./configs
 COPY scripts ./scripts

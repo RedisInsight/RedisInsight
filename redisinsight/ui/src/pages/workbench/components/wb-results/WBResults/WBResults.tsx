@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import cx from 'classnames'
-import { EuiButtonEmpty, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiButtonEmpty, EuiText } from '@elastic/eui'
 
 import { Theme } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
@@ -49,11 +49,13 @@ const WBResults = (props: Props) => {
 
   const NoResults = (
     <div className={styles.noResults} data-testid="wb_no-results">
-      <EuiIcon className={styles.arrowToGuides} type={ArrowToGuidesIcon} size="original" />
-      <EuiIcon
+      <ArrowToGuidesIcon
+        className={styles.arrowToGuides}
+      />
+      <img
         className={styles.noResultsIcon}
-        type={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
-        size="original"
+        src={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
+        alt="no results"
         data-testid="wb_no-results__icon"
       />
       <EuiText className={styles.noResultsTitle} data-testid="wb_no-results__title">

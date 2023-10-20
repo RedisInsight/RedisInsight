@@ -41,7 +41,7 @@
     "start:web": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.web.dev.ts",
     "start:web:public": "cross-env PUBLIC_DEV=true NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.web.dev.ts",
     "test": "jest ./redisinsight/ui -w 1",
-    "test:watch": "jest ./redisinsight/ui/src/pages/browser/components/no-keys-message/NoKeysMessage.spec.tsx --watch -w 1",
+    "test:watch": "jest ./redisinsight/ui/src/slices/tests/app/context.spec.ts --watch -w 1",
     "test:cov": "jest ./redisinsight/ui --silent --coverage --no-cache --forceExit -w 3",
     "test:cov:unit": "jest ./redisinsight/ui --group=-component --coverage -w 1",
     "test:cov:component": "jest ./redisinsight/ui --group=component --coverage -w 1",

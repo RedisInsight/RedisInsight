@@ -95,6 +95,7 @@ const appContextSlice = createSlice({
     },
     setDbConfig: (state, { payload }) => {
       state.dbConfig.treeViewDelimiter = payload?.treeViewDelimiter ?? DEFAULT_DELIMITER
+      state.dbConfig.treeViewSort = payload?.treeViewSort ?? DEFAULT_TREE_SORTING
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
       state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations
         ?? DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS

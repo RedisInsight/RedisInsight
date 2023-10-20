@@ -68,8 +68,6 @@ const VirtualTree = (props: Props) => {
     onDeleteLeaf,
   } = props
 
-  // console.log({ statusOpen })
-
   const { theme } = useContext(ThemeContext)
   const [rerenderState, rerender] = useState({})
   const controller = useRef<Nullable<AbortController>>(null)

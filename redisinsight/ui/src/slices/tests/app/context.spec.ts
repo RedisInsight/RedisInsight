@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
-import { DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
-import { getTreeLeafField, stringToBuffer } from 'uiSrc/utils'
+import { KeyTypes, SortOrder } from 'uiSrc/constants'
+import { stringToBuffer } from 'uiSrc/utils'
 
 import {
   cleanup,
@@ -16,6 +16,7 @@ import reducer, {
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserPanelSizes,
+  setBrowserTreeSort,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
@@ -504,6 +505,7 @@ describe('slices', () => {
       const data = {
         slowLogDurationUnit: 'msec',
         treeViewDelimiter: ':-',
+        treeViewSort: SortOrder.DESC,
         showHiddenRecommendations: true,
       }
 
@@ -558,6 +560,28 @@ describe('slices', () => {
 
       // Act
       const nextState = reducer(initialState, setBrowserTreeDelimiter(delimiter))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setBrowserTreeSort', () => {
+    it('should properly set browser tree sorting', () => {
+      // Arrange
+      const sorting = SortOrder.DESC
+
+      const state = {
+        ...initialState.dbConfig,
+        treeViewSort: sorting,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserTreeSort(sorting))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

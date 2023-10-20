@@ -117,6 +117,7 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleRefreshKeys = () => {
+    dispatch(resetBrowserTree())
     dispatch(fetchKeys(
       {
         searchMode,

@@ -1,14 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { getTreeLeafField, Nullable } from 'uiSrc/utils'
+import { Nullable } from 'uiSrc/utils'
 import {
   BrowserStorageItem,
   DEFAULT_DELIMITER,
   DEFAULT_SLOWLOG_DURATION_UNIT,
   KeyTypes,
   DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
-  DurationUnits,
+  SortOrder,
+  DEFAULT_TREE_SORTING,
 } from 'uiSrc/constants'
 import { localStorageService, setDBConfigStorageField } from 'uiSrc/services'
 import { RootState } from '../store'
@@ -20,6 +21,7 @@ export const initialState: StateAppContext = {
   lastPage: '',
   dbConfig: {
     treeViewDelimiter: DEFAULT_DELIMITER,
+    treeViewSort: DEFAULT_TREE_SORTING,
     slowLogDurationUnit: DEFAULT_SLOWLOG_DURATION_UNIT,
     showHiddenRecommendations: DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS,
   },
@@ -38,9 +40,8 @@ export const initialState: StateAppContext = {
     panelSizes: {},
     tree: {
       delimiter: DEFAULT_DELIMITER,
-      panelSizes: {},
       openNodes: {},
-      selectedLeaf: {},
+      selectedLeaf: null,
     },
     bulkActions: {
       opened: false,
@@ -106,6 +107,10 @@ const appContextSlice = createSlice({
       state.dbConfig.treeViewDelimiter = payload
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewDelimiter, payload)
     },
+    setBrowserTreeSort: (state, { payload }: PayloadAction<SortOrder>) => {
+      state.dbConfig.treeViewSort = payload
+      setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.treeViewSort, payload)
+    },
     setRecommendationsShowHidden: (state, { payload }: { payload: boolean }) => {
       state.dbConfig.showHiddenRecommendations = payload
       setDBConfigStorageField(state.contextInstanceId, BrowserStorageItem.showHiddenRecommendations, payload)
@@ -137,37 +142,8 @@ const appContextSlice = createSlice({
     setBrowserPanelSizes: (state, { payload }: { payload: any }) => {
       state.browser.panelSizes = payload
     },
-    setBrowserTreeSelectedLeaf: (state, { payload }: { payload: any }) => {
-      state.browser.tree.selectedLeaf = payload
-    },
-    updateBrowserTreeSelectedLeaf: (state, { payload }) => {
-      const { selectedLeaf, delimiter } = state.browser.tree
-      const [[selectedLeafField = '', keys = {}]] = Object.entries(selectedLeaf)
-      const [pattern] = selectedLeafField.split(getTreeLeafField(delimiter))
-
-      if (payload.key in keys) {
-        const isFitNewKey = payload.newKey?.startsWith?.(pattern)
-          && (pattern.split(delimiter)?.length === payload.newKey.split(delimiter)?.length)
-
-        if (!isFitNewKey) {
-          delete keys[payload.key]
-          return
-        }
-
-        keys[payload.newKey] = {
-          ...keys[payload.key],
-          name: payload.newKey
-        }
-        delete keys[payload.key]
-      }
-
-      state.browser.tree.selectedLeaf[selectedLeafField] = keys
-    },
     setBrowserTreeNodesOpen: (state, { payload }: { payload: { [key: string]: boolean; } }) => {
       state.browser.tree.openNodes = payload
-    },
-    setBrowserTreePanelSizes: (state, { payload }: { payload: any }) => {
-      state.browser.tree.panelSizes = payload
     },
     setWorkbenchScript: (state, { payload }: { payload: string }) => {
       state.workbench.script = payload
@@ -197,7 +173,7 @@ const appContextSlice = createSlice({
       localStorageService.set(BrowserStorageItem.isEnablementAreaMinimized, payload)
     },
     resetBrowserTree: (state) => {
-      state.browser.tree.selectedLeaf = {}
+      state.browser.tree.selectedLeaf = null
       state.browser.tree.openNodes = {}
     },
     setPubSubFieldsContext: (state, { payload }: { payload: { channel: string, message: string } }) => {
@@ -240,12 +216,9 @@ export const {
   setBrowserRedisearchScrollPosition,
   setBrowserIsNotRendered,
   setBrowserPanelSizes,
-  setBrowserTreeSelectedLeaf,
   setBrowserTreeNodesOpen,
   setBrowserTreeDelimiter,
-  updateBrowserTreeSelectedLeaf,
   resetBrowserTree,
-  setBrowserTreePanelSizes,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
@@ -261,6 +234,7 @@ export const {
   setDbIndexState,
   setRecommendationsShowHidden,
   setLastTriggeredFunctionsPage,
+  setBrowserTreeSort,
 } = appContextSlice.actions
 
 // Selectors

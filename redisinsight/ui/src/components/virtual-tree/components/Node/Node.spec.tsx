@@ -5,7 +5,7 @@ import { render, screen } from 'uiSrc/utils/test-utils'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import Node from './Node'
 import { TreeData } from '../../interfaces'
-import { mockLeafKeys, mockVirtualTreeResult } from '../../VirtualTree.spec'
+import { mockVirtualTreeResult } from '../../VirtualTree.spec'
 
 const mockedProps = mock<NodePublicState<TreeData>>()
 const mockedPropsData = mock<TreeData>()
@@ -52,7 +52,6 @@ describe('Node', () => {
   })
 
   it('"setItems", "updateStatusSelected" should be called after click on Leaf', () => {
-    const mockSetItems = jest.fn()
     const mockUpdateStatusSelected = jest.fn()
     const mockUpdateStatusOpen = jest.fn()
     const mockSetOpen = jest.fn()
@@ -61,8 +60,6 @@ describe('Node', () => {
       ...mockedData,
       isLeaf: true,
       fullName: mockDataFullName,
-      keys: mockLeafKeys,
-      setItems: mockSetItems,
       updateStatusSelected: mockUpdateStatusSelected,
       updateStatusOpen: mockUpdateStatusOpen,
     }
@@ -76,14 +73,12 @@ describe('Node', () => {
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
-    expect(mockSetItems).toBeCalledWith(mockLeafKeys)
-    expect(mockUpdateStatusSelected).toBeCalledWith(mockDataFullName, mockLeafKeys)
+    expect(mockUpdateStatusSelected).toBeCalledWith(mockDataFullName)
     expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
     expect(mockSetOpen).not.toBeCalled()
   })
 
   it('"updateStatusOpen", "setOpen" should be called after click on Node', () => {
-    const mockSetItems = jest.fn()
     const mockUpdateStatusSelected = jest.fn()
     const mockUpdateStatusOpen = jest.fn()
     const mockSetOpen = jest.fn()
@@ -93,8 +88,6 @@ describe('Node', () => {
       ...mockedData,
       isLeaf: mockIsOpen,
       fullName: mockDataFullName,
-      keys: mockLeafKeys,
-      setItems: mockSetItems,
       updateStatusSelected: mockUpdateStatusSelected,
       updateStatusOpen: mockUpdateStatusOpen,
     }
@@ -108,7 +101,6 @@ describe('Node', () => {
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
-    expect(mockSetItems).not.toBeCalled()
     expect(mockUpdateStatusSelected).not.toBeCalled()
     expect(mockUpdateStatusOpen).toHaveBeenCalledWith(mockDataFullName, !mockIsOpen)
     expect(mockSetOpen).toBeCalledWith(!mockIsOpen)

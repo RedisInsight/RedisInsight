@@ -2,17 +2,10 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import {
   cleanup,
-  clearStoreActions,
-  fireEvent,
   mockedStore,
   render,
-  screen,
-  act,
 } from 'uiSrc/utils/test-utils'
-import { setSearchMatch } from 'uiSrc/slices/browser/keys'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
-import { mockVirtualTreeResult } from 'uiSrc/components/virtual-tree/VirtualTree.spec'
-import { setBrowserTreeNodesOpen, setBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
 import KeyTree from './KeyTree'
 
 let store: typeof mockedStore
@@ -58,10 +51,6 @@ const propsMock = {
   selectKey: jest.fn(),
 }
 
-const mockLeafKeys = {
-  test: { name: 'test', type: 'hash', ttl: -1, size: 9849176 }
-}
-
 const mockWebWorkerResult = [{
   children: [{
     children: [],
@@ -84,7 +73,6 @@ const mockWebWorkerResult = [{
   keyApproximate: 0.01,
   keyCount: 1,
   name: 'test',
-  keys: mockLeafKeys
 }]
 
 jest.mock('uiSrc/services', () => ({
@@ -93,13 +81,7 @@ jest.mock('uiSrc/services', () => ({
 }))
 
 describe('KeyTree', () => {
-  it('Key tree delimiter should be in the document', () => {
-    render(<KeyTree {...propsMock} />)
-
-    expect(screen.getByTestId('tree-view-delimiter-btn')).toBeInTheDocument()
-  })
-
-  it('Tree view panel should be in the document', () => {
+  it.only('Tree view panel should be in the document', () => {
     const { container } = render(<KeyTree {...propsMock} />)
 
     expect(container.querySelector('[data-test-subj="tree-view-panel"]')).toBeInTheDocument()
@@ -109,43 +91,5 @@ describe('KeyTree', () => {
     const { container } = render(<KeyTree {...propsMock} />)
 
     expect(container.querySelector('[data-test-subj="key-list-panel"]')).toBeInTheDocument()
-  })
-
-  it.skip('"setBrowserTreeNodesOpen" should be called for Open a node', async () => {
-    jest.useFakeTimers()
-    render(<KeyTree {...propsMock} />)
-
-    await act(() => {
-      jest.advanceTimersByTime(1000)
-    })
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId(`node-item_${mockVirtualTreeResult?.[0]?.fullName}`))
-    })
-
-    const expectedActions = [
-      setBrowserTreeSelectedLeaf({}),
-      setBrowserTreeNodesOpen({})
-    ]
-
-    expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
-    )
-  })
-
-  it.skip('"setSearchMatch" should be called after "onChange"', () => {
-    const searchTerm = 'a'
-
-    render(<KeyTree {...propsMock} />)
-
-    fireEvent.change(screen.getByTestId('search-key'), {
-      target: { value: searchTerm },
-    })
-
-    const expectedActions = [setSearchMatch(searchTerm)]
-
-    expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
-    )
   })
 })

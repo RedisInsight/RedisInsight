@@ -1,5 +1,6 @@
 .anchorTooltipNode {
   width: 100%;
+  height: 42px;
   display: inline-block;
   position: relative;
 }
@@ -12,34 +13,60 @@
   }
 }
 
+.nodeRowEven {
+  background-color: var(--browserTableRowEven);
+}
+
 .nodeContent {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
-  padding-right: 8px;
+  padding: 8px 16px;
   color: var(--euiTextSubduedColor) !important;
-  font: normal normal normal 13px/28px Graphik, sans-serif !important;
+  align-items: center;
+  font:
+    normal normal normal 13px/28px Graphik,
+    sans-serif !important;
   letter-spacing: -0.13px;
+  overflow: hidden;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  height: 100%;
 
   &Open {
     color: var(--euiColorFullShade) !important;
+  }
+
+  .moveOnHover {
+    transition: transform ease 0.3s;
+    &.hide {
+      transform: translateX(-8px);
+    }
+  }
+  .showOnHover {
+    display: none;
+    &.show {
+      display: flex !important;
+    }
+  }
+
+  &:hover {
+    .moveOnHover {
+      transform: translateX(-8px);
+    }
+    .showOnHover {
+      display: flex;
+    }
   }
 }
 
 .nodeSelected {
   border-left-color: var(--euiColorPrimary) !important;
-  background-color: var(--browserComponentActive);
+  background-color: var(--browserComponentActive) !important;
 
   .nodeContent {
     color: var(--euiColorFullShade) !important;
   }
-}
-
-.nodeName {
-  position: relative;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .nodeIcon {
@@ -60,14 +87,50 @@
   }
 }
 
-.approximate {
+.approximate,
+.keyCount {
   display: inline-block;
-  width: 36px;
-  text-align: end;
 }
 
 .options {
   padding-left: 12px;
   font-size: 12px;
   font-weight: 300;
+}
+
+.keyType {
+  padding-right: 16px;
+  padding-left: 12px;
+  width: 126px;
+  min-width: 126px;
+}
+
+.keyName {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.keyTTL,
+.approximate {
+  width: 86px;
+  min-width: 86px;
+  text-align: right;
+}
+
+.keySize,
+.keyCount {
+  width: 90px;
+  min-width: 90px;
+  text-align: right;
+}
+
+.keyInfoLoading {
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.deletePopover {
+  max-width: 400px !important;
 }

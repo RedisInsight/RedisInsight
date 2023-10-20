@@ -56,6 +56,7 @@ const BrowserLeftPanel = (props: Props) => {
     searchMode,
     isSearched: patternIsSearched,
     filter,
+    deleting,
   } = useSelector(keysSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
   const {
@@ -154,6 +155,7 @@ const BrowserLeftPanel = (props: Props) => {
           selectKey={selectKey}
           loadMoreItems={loadMoreItems}
           onDelete={onDeleteKey}
+          deleting={deleting}
           onAddKeyPanel={handleAddKeyPanel}
           onBulkActionsPanel={handleBulkActionsPanel}
         />

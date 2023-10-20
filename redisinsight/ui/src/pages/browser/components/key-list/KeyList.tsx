@@ -53,13 +53,13 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import NoKeysFound from 'uiSrc/pages/browser/components/no-keys-found'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 
+import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -155,42 +155,25 @@ const KeyList = forwardRef((props: Props, ref) => {
     controller.current?.abort()
   }
 
+  const NoItemsMessage = () => (
+    <NoKeysMessage
+      total={keysState.total}
+      scanned={keysState.scanned}
+      onAddKeyPanel={onAddKeyPanel}
+      onBulkActionsPanel={onBulkActionsPanel}
+    />
+  )
+
   const getNoItemsMessage = () => {
     if (isNotRendered.current) {
       return ''
-    }
-
-    if (searchMode === SearchMode.Redisearch) {
-      if (!selectedIndex) {
-        return NoSelectedIndexText
-      }
-
-      if (total === 0) {
-        return NoResultsFoundText
-      }
-
-      if (isSearched) {
-        return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
-      }
-    }
-
-    if (total === 0) {
-      return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} onBulkActionsPanel={onBulkActionsPanel} />)
-    }
-
-    if (isSearched) {
-      return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
-    }
-
-    if (isFiltered && keysState.scanned < total) {
-      return ScanNoResultsFoundText
     }
 
     if (itemsRef.current.length < keysState.keys.length) {
       return 'loading...'
     }
 
-    return NoResultsFoundText
+    return <NoItemsMessage />
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
@@ -223,11 +206,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   const handleDeletePopoverOpen = (index: Maybe<number>, type: KeyTypes | ModulesKeyTypes) => {
     if (index !== deletePopoverIndex) {
       sendEventTelemetry({
-        event: getBasedOnViewTypeEvent(
-          viewType,
-          TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
-          TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED
-        ),
+        event: TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
         eventData: {
           databaseId: instanceId,
           keyType: type,

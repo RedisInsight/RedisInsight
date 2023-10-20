@@ -2,10 +2,14 @@ import React from 'react'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import { EuiText, EuiTextColor } from '@elastic/eui'
+import { useSelector } from 'react-redux'
 
 import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
-import ScanMore from '../scan-more'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { keysSelector } from 'uiSrc/slices/browser/keys'
+import { KeyTreeSettings } from 'uiSrc/pages/browser/components/key-tree'
 
+import ScanMore from '../scan-more'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,6 +44,8 @@ const KeysSummary = (props: Props) => {
     && nextCursor
     && nextCursor !== '0'
     ? '~' : ''
+
+  const { viewType } = useSelector(keysSelector)
 
   return (
     <>
@@ -88,6 +94,9 @@ const KeysSummary = (props: Props) => {
               </EuiText>
             )}
           </EuiText>
+          {viewType === KeyViewType.Tree && (
+            <KeyTreeSettings loading={loading} />
+          )}
         </div>
       )}
       {loading && !totalItemsCount && !isNull(totalItemsCount) && (

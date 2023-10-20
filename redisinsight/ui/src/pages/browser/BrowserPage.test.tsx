@@ -179,7 +179,7 @@ describe('KeyDetailsWrapper', () => {
           key: unprintableStringBuffer,
           value: {
             type: 'Buffer',
-            data: [172, 237, 0]
+            data: [172, 237, 0, 5, 115, 114, 0]
           },
         }
       }

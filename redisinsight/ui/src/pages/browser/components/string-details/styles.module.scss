@@ -51,3 +51,16 @@ $outer-height-mobile: 340px;
     background-image: none !important;
   }
 }
+
+.stringFooterBtn {
+  &:global(.euiButton) {
+    color: var(--euiTextSubduedColor) !important;
+    font-size: 13px;
+    height: auto !important;
+    padding: 4px 8px;
+
+    :global(.euiButton__text) {
+      font-weight: 400 !important;
+    }
+  }
+}

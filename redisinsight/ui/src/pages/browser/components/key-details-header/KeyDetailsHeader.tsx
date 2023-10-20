@@ -25,9 +25,10 @@ import {
   LENGTH_NAMING_BY_TYPE,
   ModulesKeyTypes,
   STREAM_ADD_ACTION,
+  TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_UNPRINTABLE_CHARACTERS,
-  TEXT_DISABLED_COMPRESSED_VALUE,
+  TEXT_DISABLED_STRING_EDITING,
 } from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
@@ -40,12 +41,13 @@ import {
   formatLongName,
   isEqualBuffers,
   isFormatEditable,
+  isFullStringLoaded,
   MAX_TTL_NUMBER,
   replaceSpaces,
   stringToBuffer,
   validateTTLNumber
 } from 'uiSrc/utils'
-import { stringSelector } from 'uiSrc/slices/browser/string'
+import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import KeyValueFormatter from './components/Formatter'
 import AutoRefresh from '../auto-refresh'
 
@@ -95,6 +97,7 @@ const KeyDetailsHeader = ({
     nameString: keyProp,
     name: keyBuffer,
   } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
+  const { value: keyValue } = useSelector(stringDataSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { isCompressed: isStringCompressed } = useSelector(stringSelector)
   const { viewType } = useSelector(keysSelector)
@@ -307,7 +310,10 @@ const KeyDetailsHeader = ({
 
   const Actions = (width: number) => {
     const isEditable = !isStringCompressed && isFormatEditable(viewFormatProp)
+    const isStringEditable = keyType === KeyTypes.String ? isFullStringLoaded(keyValue?.data?.length, length) : true
     const noEditableText = isStringCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+    const editToolTip = !isEditable ? noEditableText : (!isStringEditable ? TEXT_DISABLED_STRING_EDITING : null)
+
     return (
       <>
         {KEY_TYPES_ACTIONS[keyType] && 'addItems' in KEY_TYPES_ACTIONS[keyType] && (
@@ -388,11 +394,11 @@ const KeyDetailsHeader = ({
         {KEY_TYPES_ACTIONS[keyType] && 'editItem' in KEY_TYPES_ACTIONS[keyType] && (
           <div className={styles.actionBtn}>
             <EuiToolTip
-              content={!isEditable ? noEditableText : null}
+              content={editToolTip}
               data-testid="edit-key-value-tooltip"
             >
               <EuiButtonIcon
-                disabled={!isEditable}
+                disabled={!isEditable || !isStringEditable}
                 iconType="pencil"
                 color="primary"
                 aria-label={KEY_TYPES_ACTIONS[keyType].editItem?.name}

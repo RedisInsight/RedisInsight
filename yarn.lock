@@ -11387,10 +11387,10 @@ php-serialize@^4.0.2:
   resolved "https://registry.yarnpkg.com/php-serialize/-/php-serialize-4.0.2.tgz#869bd4e01c2d26ac41c1d3e8058ab00ec072e3e5"
   integrity sha512-73K9MqCnRn07sXxOht6kVLg+fg1lf/VYpecKy4n9ABcw1PJIAWfaxuQKML27EjolGHWxlXTy3rfh59AGrcUvIA==
 
-pickleparser@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/pickleparser/-/pickleparser-0.1.0.tgz#ea637e0c077c42bf41fe98f3608d633aeeaed2c6"
-  integrity sha512-L81sYaXj6JlEOtVPwhXsEjlDQ0fjxPGf9ay4uBfQnsrR87mZ8SFQR/OD8kdqjQdeyMFcWyCMhx7WKZT1yZK7FQ==
+pickleparser@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/pickleparser/-/pickleparser-0.2.1.tgz#7a03f1e9204e91ec9b8efbd3ba2f1eb5955b994d"
+  integrity sha512-kMzY3uFYcR6OjOqr7nV2nkaXaBsUEOafu3zgPxeD6s/2ueMfVQH8lrymcDWBPGx0OkVxGMikxQit6jgByXjwBg==
 
 picocolors@^1.0.0:
   version "1.0.0"

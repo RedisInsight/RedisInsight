@@ -14,6 +14,7 @@ export enum BrowserToolKeysCommands {
 export enum BrowserToolStringCommands {
   Set = 'set',
   Get = 'get',
+  Getrange = 'getrange',
   StrLen = 'strlen',
 }
 

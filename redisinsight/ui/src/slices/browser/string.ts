@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { AxiosResponseHeaders } from 'axios'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
 import { refreshKeyInfoAction } from './keys'
 import { addErrorNotification } from '../app/notifications'
@@ -42,6 +44,18 @@ const stringSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    downloadString: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    downloadStringSuccess: (state) => {
+      state.loading = false
+      state.error = ''
+    },
+    downloadStringFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
     updateValue: (state) => {
       state.loading = true
       state.error = ''
@@ -69,6 +83,9 @@ export const {
   getString,
   getStringSuccess,
   getStringFailure,
+  downloadString,
+  downloadStringSuccess,
+  downloadStringFailure,
   updateValue,
   updateValueSuccess,
   updateValueFailure,
@@ -85,8 +102,9 @@ export const stringDataSelector = (state: RootState) =>
 export default stringSlice.reducer
 
 // Asynchronous thunk action
-export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
+export function fetchString(key: RedisResponseBuffer, args: IFetchKeyArgs = {}) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { resetData, end: endString } = args
     dispatch(getString(resetData))
 
     try {
@@ -99,6 +117,7 @@ export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
         ),
         {
           keyName: key,
+          end: endString
         },
         { params: { encoding } },
       )
@@ -110,6 +129,39 @@ export function fetchString(key: RedisResponseBuffer, resetData?: boolean) {
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(getStringFailure(errorMessage))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchDownloadStringValue(
+  key: RedisResponseBuffer,
+  onSuccessAction?: (data: string, headers: AxiosResponseHeaders) => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(downloadString())
+
+    try {
+      const state = stateInit()
+      const { data, status, headers } = await apiService.post(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          `${ApiEndpoints.STRING_VALUE_DOWNLOAD}`
+        ),
+        {
+          keyName: key,
+        },
+        { responseType: 'arraybuffer' },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(downloadStringSuccess())
+        onSuccessAction?.(data, headers)
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(downloadStringFailure(errorMessage))
     }
   }
 }

@@ -1,32 +1,25 @@
-import Redis, { Cluster, RedisOptions } from 'ioredis';
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { Database } from 'src/modules/database/models/database';
-import apiConfig from 'src/utils/config';
-import { ConnectionOptions } from 'tls';
-import { isEmpty, isNumber } from 'lodash';
-import { cloneClassInstance, generateRedisConnectionName } from 'src/utils';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
+import serverConfig from 'src/utils/config';
+import { InternalServerErrorException } from '@nestjs/common';
 import { ClientMetadata } from 'src/common/models';
+import { Database } from 'src/modules/database/models/database';
+import Redis, { Cluster, RedisOptions } from 'ioredis';
+import { isEmpty, isNumber } from 'lodash';
+import { IRedisConnectionOptions } from 'src/modules/redis/redis-connection.factory';
 import { ClusterOptions } from 'ioredis/built/cluster/ClusterOptions';
-import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
+import { ConnectionOptions } from 'tls';
 import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import {
+  RedisClient,
+  StandaloneIoredisClient,
+  SentinelIoredisClient,
+  ClusterIoredisClient,
+} from 'src/modules/redis/client';
 
-const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
+const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
 
-export interface IRedisConnectionOptions {
-  useRetry?: boolean,
-  connectionName?: string,
-}
-
-@Injectable()
-export class RedisConnectionFactory {
-  private logger = new Logger('RedisConnectionFactory');
-
-  constructor(
-    private readonly sshTunnelProvider: SshTunnelProvider,
-  ) {}
-
+export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   // common retry strategy
   private retryStrategy = (times: number): number => {
     if (times < REDIS_CLIENTS_CONFIG.retryTimes) {
@@ -61,7 +54,7 @@ export class RedisConnectionFactory {
       connectTimeout: timeout,
       db: isNumber(clientMetadata.db) ? clientMetadata.db : db,
       connectionName: options?.connectionName
-        || generateRedisConnectionName(clientMetadata.context, clientMetadata.databaseId),
+        || RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
       showFriendlyErrorStack: true,
       maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
       retryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
@@ -153,17 +146,15 @@ export class RedisConnectionFactory {
   }
 
   /**
-   * Try to create standalone redis connection
-   * @param clientMetadata
-   * @param database
-   * @param options
-   * @deprecated
+   * @inheritDoc
    */
-  public async createStandaloneConnection(
+  public async createStandaloneClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
-  ): Promise<Redis> {
+  ): Promise<RedisClient> {
+    this.logger.debug('Creating ioredis standalone client');
+
     let tnl;
 
     try {
@@ -203,7 +194,7 @@ export class RedisConnectionFactory {
           });
           connection.on('ready', (): void => {
             this.logger.log('Successfully connected to the redis database');
-            resolve(connection);
+            resolve(new StandaloneIoredisClient(clientMetadata, connection));
           });
           connection.on('reconnecting', (): void => {
             this.logger.log('Reconnecting to the redis database');
@@ -211,7 +202,7 @@ export class RedisConnectionFactory {
         } catch (e) {
           reject(e);
         }
-      }) as Redis;
+      });
     } catch (e) {
       tnl?.close?.();
       throw e;
@@ -219,17 +210,13 @@ export class RedisConnectionFactory {
   }
 
   /**
-   * Try to create redis cluster connection
-   * @param clientMetadata
-   * @param database
-   * @param options
-   * @deprecated
+   * @inheritDoc
    */
-  public async createClusterConnection(
+  public async createClusterClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
-  ): Promise<Cluster> {
+  ): Promise<RedisClient> {
     const config = await this.getRedisClusterOptions(clientMetadata, database, options);
 
     if (database.ssh) {
@@ -254,7 +241,7 @@ export class RedisConnectionFactory {
         });
         cluster.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss cluster.');
-          resolve(cluster);
+          resolve(new ClusterIoredisClient(clientMetadata, cluster));
         });
       } catch (e) {
         reject(e);
@@ -263,17 +250,13 @@ export class RedisConnectionFactory {
   }
 
   /**
-   * Try to create redis sentinel connection
-   * @param clientMetadata
-   * @param database
-   * @param options
-   * @deprecated
+   * @inheritDoc
    */
-  public async createSentinelConnection(
+  public async createSentinelClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
-  ): Promise<Redis> {
+  ): Promise<RedisClient> {
     const config = await this.getRedisSentinelOptions(clientMetadata, database, options);
 
     return new Promise((resolve, reject) => {
@@ -289,100 +272,11 @@ export class RedisConnectionFactory {
         });
         client.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss sentinel.');
-          resolve(client);
+          resolve(new SentinelIoredisClient(clientMetadata, client));
         });
       } catch (e) {
         reject(e);
       }
     });
-  }
-
-  /**
-   * Based on data fields (except connectionType) will try to cte connection of proper type
-   * @param clientMetadata
-   * @param database
-   * @param connectionName
-   * @deprecated
-   */
-  public async createClientAutomatically(
-    clientMetadata: ClientMetadata,
-    database: Database,
-    connectionName?,
-  ) {
-    // try sentinel connection
-    if (database?.sentinelMaster) {
-      try {
-        return await this.createSentinelConnection(clientMetadata, database, {
-          useRetry: true,
-          connectionName,
-        });
-      } catch (e) {
-        // ignore error
-      }
-    }
-
-    // try cluster connection
-    try {
-      return await this.createClusterConnection(clientMetadata, database, {
-        useRetry: true,
-        connectionName,
-      });
-    } catch (e) {
-      // ignore error
-    }
-
-    // Standalone in any other case
-    return this.createStandaloneConnection(clientMetadata, database, {
-      useRetry: true,
-      connectionName,
-    });
-  }
-
-  /**
-   * Create connection based on connectionType or try to determine connectionType automatically
-   * @param clientMetadata
-   * @param databaseDto
-   * @param connectionName
-   * @deprecated
-   */
-  public async createRedisConnection(
-    clientMetadata: ClientMetadata,
-    databaseDto: Database,
-    connectionName?,
-  ): Promise<Redis | Cluster> {
-    const database = cloneClassInstance(databaseDto);
-    Object.keys(database).forEach((key: string) => {
-      if (database[key] === null) {
-        delete database[key];
-      }
-    });
-
-    let client;
-
-    switch (database?.connectionType) {
-      case ConnectionType.STANDALONE:
-        client = await this.createStandaloneConnection(clientMetadata, database, {
-          useRetry: true,
-          connectionName,
-        });
-        break;
-      case ConnectionType.CLUSTER:
-        client = await this.createClusterConnection(clientMetadata, database, {
-          useRetry: true,
-          connectionName,
-        });
-        break;
-      case ConnectionType.SENTINEL:
-        client = await this.createSentinelConnection(clientMetadata, database, {
-          useRetry: true,
-          connectionName,
-        });
-        break;
-      default:
-        // AUTO
-        client = await this.createClientAutomatically(clientMetadata, database, connectionName);
-    }
-
-    return client;
   }
 }

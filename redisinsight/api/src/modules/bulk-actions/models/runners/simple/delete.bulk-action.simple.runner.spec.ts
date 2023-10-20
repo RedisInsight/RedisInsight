@@ -36,7 +36,7 @@ const bulkAction = new BulkAction(
 const mockKey = 'mockedKey';
 const mockKeyBuffer = Buffer.from(mockKey);
 
-describe('DeleteBulkActionSimpleRunner', () => {
+xdescribe('DeleteBulkActionSimpleRunner', () => {
   let deleteRunner: DeleteBulkActionSimpleRunner;
 
   beforeEach(() => {

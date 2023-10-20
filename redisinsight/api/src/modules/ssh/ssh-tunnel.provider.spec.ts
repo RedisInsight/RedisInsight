@@ -82,6 +82,17 @@ describe('SshTunnelProvider', () => {
 
       process.nextTick(() => mockClient.emit('ready'));
     });
+    it('should fail with error but not with unable to get property from "undefined"', (done) => {
+      (mockServer.listen as Mock).mockImplementationOnce(() => mockServer.emit('error', new Error('bb')));
+
+      service.createTunnel(undefined)
+        .catch((e) => {
+          expect(e).toBeInstanceOf(UnableToCreateLocalServerException);
+          done();
+        });
+
+      process.nextTick(() => mockClient.emit('ready'));
+    });
     it('should fail due to createServer failed', (done) => {
       const mockError = new Error('Cannot parse privateKey: due to some reason');
       createServerSpy.mockReset().mockImplementationOnce(() => {

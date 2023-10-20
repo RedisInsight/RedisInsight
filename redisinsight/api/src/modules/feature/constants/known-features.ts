@@ -15,4 +15,8 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.RedisModuleFilter,
     storage: FeatureStorage.Database,
   },
+  [KnownFeatures.RedisClient]: {
+    name: KnownFeatures.RedisClient,
+    storage: FeatureStorage.Database,
+  },
 };

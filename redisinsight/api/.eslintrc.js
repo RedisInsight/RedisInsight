@@ -22,7 +22,8 @@ module.exports = {
     {
       files: [ '**/*.spec.ts' ],
       rules: {
-        'no-duplicate-string': 'off',
+        'sonarjs/no-duplicate-string': 0,
+        'sonarjs/no-identical-functions': 0,
       }
     }
   ]

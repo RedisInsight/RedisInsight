@@ -1,4 +1,3 @@
-import * as IORedis from 'ioredis';
 import { debounce } from 'lodash';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
@@ -7,6 +6,7 @@ import { Logger } from '@nestjs/common';
 import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfaces';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { RedisClient, RedisClientNodeRole } from 'src/modules/redis/client';
 
 export class BulkAction implements IBulkAction {
   private logger: Logger = new Logger('BulkAction');
@@ -58,26 +58,17 @@ export class BulkAction implements IBulkAction {
    * @param redisClient
    * @param RunnerClassName
    */
-  async prepare(redisClient: IORedis.Redis | IORedis.Cluster, RunnerClassName) {
+  async prepare(redisClient: RedisClient, RunnerClassName) {
     if (this.status !== BulkActionStatus.Initialized) {
       throw new Error(`Unable to prepare bulk action with "${this.status}" status`);
     }
 
     this.status = BulkActionStatus.Preparing;
 
-    if (redisClient instanceof IORedis.Cluster) {
-      this.runners = redisClient.nodes('master').map((node) => new RunnerClassName(
-        this,
-        node,
-      ));
-    } else {
-      this.runners = [
-        new RunnerClassName(
-          this,
-          redisClient,
-        ),
-      ];
-    }
+    this.runners = (await redisClient.nodes(RedisClientNodeRole.PRIMARY)).map((node) => new RunnerClassName(
+      this,
+      node,
+    ));
 
     await Promise.all(this.runners.map((runner) => runner.prepareToStart()));
 

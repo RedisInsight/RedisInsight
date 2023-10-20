@@ -23,6 +23,7 @@ export enum KnownFeatures {
   InsightsRecommendations = 'insightsRecommendations',
   CloudSso = 'cloudSso',
   RedisModuleFilter = 'redisModuleFilter',
+  RedisClient = 'redisClient',
 }
 
 export interface IFeatureFlag {

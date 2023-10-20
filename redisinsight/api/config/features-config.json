@@ -1,5 +1,5 @@
 {
-  "version": 2.3402,
+  "version": 2.3403,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -65,6 +65,13 @@
             "options": "i"
           }
         ]
+      }
+    },
+    "redisClient": {
+      "flag": true,
+      "perc": [[0, 100]],
+      "data": {
+        "strategy": "node-redis"
       }
     }
   }

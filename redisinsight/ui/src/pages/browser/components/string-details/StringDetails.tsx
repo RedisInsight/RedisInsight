@@ -54,6 +54,7 @@ import styles from './styles.module.scss'
 const MAX_ROWS = 25
 const MIN_ROWS = 4
 const APPROXIMATE_WIDTH_OF_SIGN = 8.6
+const MAX_LENGTH = STRING_MAX_LENGTH + 1
 
 export interface Props {
   isEditItem: boolean;
@@ -258,7 +259,7 @@ const StringDetails = (props: Props) => {
         )}
       </div>
 
-      {length > STRING_MAX_LENGTH && (
+      {length > MAX_LENGTH && (
         <div className="key-details-footer" key="key-details-footer">
           <EuiFlexGroup
             gutterSize="none"

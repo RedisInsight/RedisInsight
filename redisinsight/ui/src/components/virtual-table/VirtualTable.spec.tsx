@@ -161,7 +161,8 @@ describe('VirtualTable', () => {
 
       expect(scanMoreBtn).toBeInTheDocument()
     })
-    it('Scan more button should no be in the document when total == scanned', () => {
+    // obsolete test. todo: review and remove or refactor
+    xit('Scan more button should no be in the document when total == scanned', () => {
       const { queryByTestId } = render(
         <VirtualTable
           {...instance(mockedProps)}

@@ -158,14 +158,13 @@ const KeysHeader = (props: Props) => {
   }
 
   const handleSwitchView = (type: KeyViewType) => {
-    if (type === KeyViewType.Tree) {
-      sendEventTelemetry({
-        event: TelemetryEvent.TREE_VIEW_OPENED,
-        eventData: {
-          databaseId: instanceId
-        }
-      })
-    }
+    sendEventTelemetry({
+      event: type === KeyViewType.Tree ? TelemetryEvent.TREE_VIEW_OPENED : TelemetryEvent.LIST_VIEW_OPENED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
+
     dispatch(resetBrowserTree())
     dispatch(resetKeysData(searchMode))
     localStorageService.set(BrowserStorageItem.browserViewType, type)

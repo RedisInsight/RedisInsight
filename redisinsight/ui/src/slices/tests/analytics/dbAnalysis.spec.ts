@@ -377,7 +377,14 @@ describe('db analysis slice', () => {
           getDBAnalysis(),
           getDBAnalysisSuccess(data),
           loadDBAnalysisReports(),
-          setSelectedAnalysisId(data.id)
+          setSelectedAnalysisId(data.id),
+          loadDBAnalysisReportsSuccess([
+            {
+              createdAt: mockAnalysis.createdAt,
+              id: mockAnalysis.id,
+            },
+            mockHistoryReport,
+          ])
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

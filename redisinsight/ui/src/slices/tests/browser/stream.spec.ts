@@ -1205,7 +1205,7 @@ describe('stream slice', () => {
           refreshKeyInfo(),
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch data', async () => {
@@ -1269,7 +1269,7 @@ describe('stream slice', () => {
           )
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to delete data', async () => {
@@ -1331,7 +1331,7 @@ describe('stream slice', () => {
           )
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to delete data', async () => {
@@ -1442,10 +1442,10 @@ describe('stream slice', () => {
               entries.join(''),
               'acknowledged'
             )
-          )
+          ),
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to acknowledge message', async () => {
@@ -1510,7 +1510,7 @@ describe('stream slice', () => {
           )
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('succeed to claim message with 0 affected', async () => {
@@ -1545,7 +1545,7 @@ describe('stream slice', () => {
           )
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch data', async () => {

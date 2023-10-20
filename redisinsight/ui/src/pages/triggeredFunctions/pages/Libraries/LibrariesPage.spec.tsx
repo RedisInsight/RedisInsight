@@ -6,7 +6,6 @@ import {
   getTriggeredFunctionsLibrariesList,
   triggeredFunctionsLibrariesSelector,
   triggeredFunctionsAddLibrarySelector,
-  setAddLibraryFormOpen,
 } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { TRIGGERED_FUNCTIONS_LIBRARIES_LIST_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'

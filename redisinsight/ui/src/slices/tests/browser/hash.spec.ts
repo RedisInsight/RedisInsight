@@ -10,11 +10,14 @@ import {
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import {
   defaultSelectedKeyAction,
   refreshKeyInfo,
   deleteSelectedKeySuccess,
   updateSelectedKeyRefreshTime,
+  refreshKeyInfoSuccess,
+  loadKeyInfoSuccess,
 } from '../../browser/keys'
 import reducer, {
   deleteHashFields,
@@ -58,7 +61,7 @@ beforeEach(() => {
 
 describe('hash slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -602,7 +605,9 @@ describe('hash slice', () => {
                 fields.map((field) => bufferToString(field)).join(''),
                 'Field'
               )
-            )
+            ),
+            refreshKeyInfoSuccess({ affected: 2 }),
+            updateSelectedKeyRefreshTime(MOCK_TIMESTAMP)
           ]
 
           expect(mockedStore.getActions()).toEqual(expectedActions)
@@ -670,6 +675,8 @@ describe('hash slice', () => {
           updateValue(),
           updateValueSuccess(),
           defaultSelectedKeyAction(),
+          loadKeyInfoSuccess({ affected: 2 }),
+          updateSelectedKeyRefreshTime(MOCK_TIMESTAMP),
         ]
 
         expect(mockedStore.getActions()).toEqual(expectedActions)
@@ -719,6 +726,8 @@ describe('hash slice', () => {
           updateValueSuccess(),
           updateFieldsInList(fields),
           refreshKeyInfo(),
+          refreshKeyInfoSuccess({ affected: 2 }),
+          updateSelectedKeyRefreshTime(MOCK_TIMESTAMP),
         ]
 
         expect(mockedStore.getActions()).toEqual(expectedActions)

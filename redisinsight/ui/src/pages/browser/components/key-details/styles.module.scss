@@ -48,6 +48,12 @@
   //min-height: 300px;
 }
 
+:global(.key-details-footer) {
+  margin: 0 16px;
+  padding: 16px 0 20px 0;
+  border-top: 1px solid var(--euiColorLightShade);
+}
+
 .closeRightPanel {
   position: absolute;
   top: 22px;

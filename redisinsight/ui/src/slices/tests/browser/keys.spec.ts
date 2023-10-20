@@ -8,6 +8,7 @@ import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/n
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import {
   CreateHashWithExpireDto,
   CreateListWithExpireDto,
@@ -78,7 +79,7 @@ import reducer, {
   setLastBatchPatternKeys,
   updateSelectedKeyRefreshTime,
 } from '../../browser/keys'
-import { getString } from '../../browser/string'
+import { getString, getStringSuccess } from '../../browser/string'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -94,7 +95,7 @@ beforeEach(() => {
 
 describe('keys slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -1239,6 +1240,7 @@ describe('keys slice', () => {
           updateSelectedKeyRefreshTime(Date.now()),
           // fetch keyInfo
           getString(),
+          getStringSuccess(data),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1566,6 +1568,8 @@ describe('keys slice', () => {
           editPatternKeyTTLFromList([key, ttl]),
           defaultSelectedKeyAction(),
           defaultSelectedKeyActionSuccess(),
+          loadKeyInfoSuccess({ data: '{}', keyName: 'keyName' }),
+          updateSelectedKeyRefreshTime(MOCK_TIMESTAMP)
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

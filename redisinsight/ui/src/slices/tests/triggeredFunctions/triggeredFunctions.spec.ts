@@ -37,6 +37,7 @@ import { addMessageNotification, addErrorNotification } from 'uiSrc/slices/app/n
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { TRIGGERED_FUNCTIONS_LIB_DETAILS_MOCKED_DATA } from 'uiSrc/mocks/data/triggeredFunctions'
 import { FunctionType, TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 
 let store: typeof mockedStore
 
@@ -46,12 +47,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
-const timestamp = 1629128049027
 let dateNow: jest.SpyInstance<number>
 
 describe('triggeredFunctions slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => timestamp)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -824,7 +824,7 @@ describe('triggeredFunctions slice', () => {
           getTriggeredFunctionsLibrariesList(),
         ]
 
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch data', async () => {

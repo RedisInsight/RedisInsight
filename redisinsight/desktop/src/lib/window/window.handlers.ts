@@ -8,6 +8,7 @@ import {
   electronStore,
   windowFactory,
   WindowType,
+  quitAndInstallUpdate,
 } from 'desktopSrc/lib'
 import { IpcInvokeEvent, ElectronStorageItem, IpcOnEvent } from 'uiSrc/electron/constants'
 
@@ -98,5 +99,8 @@ export const initWindowHandlers = (
 export const initWindowIPCHandlers = () => {
   ipcMain.handle(IpcInvokeEvent.windowOpen, async (_event, { location }) => {
     await windowFactory(WindowType.Main, null, { parsedDeepLink: { initialPage: location } })
+  })
+  ipcMain.handle(IpcInvokeEvent.appRestart, async () => {
+    quitAndInstallUpdate()
   })
 }

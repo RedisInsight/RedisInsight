@@ -8,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -26,9 +25,10 @@ import { DeleteDatabasesDto } from 'src/modules/database/dto/delete.databases.dt
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
-import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 import { ExportDatabasesDto } from 'src/modules/database/dto/export.databases.dto';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
+import { DatabaseResponse } from 'src/modules/database/dto/database.response';
+import { classToClass } from 'src/utils';
 
 @ApiTags('Database')
 @Controller('databases')
@@ -64,14 +64,14 @@ export class DatabaseController {
       {
         status: 200,
         description: 'Database instance',
-        type: Database,
+        type: DatabaseResponse,
       },
     ],
   })
   async get(
     @Param('id') id: string,
-  ): Promise<Database> {
-    return await this.service.get(id);
+  ): Promise<DatabaseResponse> {
+    return classToClass(DatabaseResponse, await this.service.get(id));
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -84,7 +84,7 @@ export class DatabaseController {
       {
         status: 201,
         description: 'Created database instance',
-        type: Database,
+        type: DatabaseResponse,
       },
     ],
   })
@@ -97,13 +97,13 @@ export class DatabaseController {
   )
   async create(
     @Body() dto: CreateDatabaseDto,
-  ): Promise<Database> {
-    return await this.service.create(dto, true);
+  ): Promise<DatabaseResponse> {
+    return classToClass(DatabaseResponse, await this.service.create(dto, true));
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
-  @Put(':id')
+  @Patch(':id')
   @ApiEndpoint({
     description: 'Update database instance by id',
     statusCode: 200,
@@ -111,7 +111,7 @@ export class DatabaseController {
       {
         status: 200,
         description: 'Updated database instance\' response',
-        type: Database,
+        type: DatabaseResponse,
       },
     ],
   })
@@ -125,13 +125,13 @@ export class DatabaseController {
   async update(
     @Param('id') id: string,
       @Body() database: UpdateDatabaseDto,
-  ): Promise<Database> {
-    return await this.service.update(id, database, true);
+  ): Promise<DatabaseResponse> {
+    return classToClass(DatabaseResponse, await this.service.update(id, database, true));
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
-  @Patch(':id')
+  @Post('clone/:id')
   @ApiEndpoint({
     description: 'Update database instance by id',
     statusCode: 200,
@@ -139,7 +139,7 @@ export class DatabaseController {
       {
         status: 200,
         description: 'Updated database instance\' response',
-        type: Database,
+        type: DatabaseResponse,
       },
     ],
   })
@@ -150,11 +150,11 @@ export class DatabaseController {
       forbidNonWhitelisted: true,
     }),
   )
-  async modify(
+  async clone(
     @Param('id') id: string,
-      @Body() database: ModifyDatabaseDto,
-  ): Promise<Database> {
-    return await this.service.update(id, database, true);
+      @Body() database: UpdateDatabaseDto,
+  ): Promise<DatabaseResponse> {
+    return classToClass(DatabaseResponse, await this.service.clone(id, database));
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -175,9 +175,34 @@ export class DatabaseController {
     }),
   )
   async testConnection(
-    @Body() database: CreateDatabaseDto,
+    @Body() dto: CreateDatabaseDto,
   ): Promise<void> {
-    return await this.service.testConnection(database);
+    return await this.service.testConnection(dto);
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/test/:id')
+  @ApiEndpoint({
+    description: 'Test connection',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+      },
+    ],
+  })
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
+  async testExistConnection(
+    @Param('id') id: string,
+      @Body() dto: UpdateDatabaseDto,
+  ): Promise<void> {
+    return this.service.testConnection(dto, id);
   }
 
   @Delete('/:id')

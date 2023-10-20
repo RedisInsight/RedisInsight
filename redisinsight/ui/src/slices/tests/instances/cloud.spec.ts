@@ -616,6 +616,7 @@ describe('cloud slice', () => {
             credentials,
           }),
           loadAccountRedisCloud(),
+          loadAccountRedisCloudSuccess({ data }),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

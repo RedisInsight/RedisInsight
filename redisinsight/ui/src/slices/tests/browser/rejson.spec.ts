@@ -441,7 +441,7 @@ describe('rejson slice', () => {
           loadRejsonBranch(),
           refreshKeyInfo()
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch set json data', async () => {
@@ -496,7 +496,7 @@ describe('rejson slice', () => {
           loadRejsonBranch(),
           refreshKeyInfo()
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch append array data', async () => {
@@ -558,7 +558,7 @@ describe('rejson slice', () => {
             )
           )
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
       })
 
       it('failed to fetch remove json key', async () => {

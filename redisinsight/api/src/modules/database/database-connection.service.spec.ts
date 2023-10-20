@@ -158,7 +158,7 @@ describe('DatabaseConnectionService', () => {
   });
 
   describe('createClient', () => {
-    it('should create client for standalone datbaase', async () => {
+    it('should create client for standalone database', async () => {
       expect(await service.createClient(mockCommonClientMetadata)).toEqual(mockIORedisClient);
     });
     it('should throw Unauthorized error in case of NOAUTH', async () => {

@@ -118,6 +118,6 @@ test
         // Verify that user can download String key value as txt file when it has > 5000 characters
         await t.click(browserPage.downloadAllValueBtn);
         // Verify that user can see default file name is “string_value” when downloading String key value
-        foundStringDownloadedFiles = await databasesActions.findFileByFileStarts(fileDownloadPath, downloadedFile);
+        foundStringDownloadedFiles = await databasesActions.getFileCount(fileDownloadPath, downloadedFile);
         await t.expect(foundStringDownloadedFiles).gt(0, 'String value file not saved');
     });

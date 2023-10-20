@@ -94,22 +94,22 @@ test('Verify the Profiler Button panel when toggle was switched to ON and user p
 });
 test('Verify that when user see the toggle is OFF - Profiler logs are not being saved', async t => {
     // Remember the number of files in Temp
-    const numberOfDownloadFiles = await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts);
+    const numberOfDownloadFiles = await databasesActions.getFileCount(fileDownloadPath, fileStarts);
 
     // Start Monitor without Save logs
     await browserPage.Profiler.startMonitor();
     await t.wait(3000);
     // Check the download files
-    await t.expect(await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts)).eql(numberOfDownloadFiles, 'The Profiler logs are saved');
+    await t.expect(await databasesActions.getFileCount(fileDownloadPath, fileStarts)).eql(numberOfDownloadFiles, 'The Profiler logs are saved');
 });
 test('Verify that when user see the toggle is ON - Profiler logs are being saved', async t => {
     // Remember the number of files in Temp
-    const numberOfDownloadFiles = await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts);
+    const numberOfDownloadFiles = await databasesActions.getFileCount(fileDownloadPath, fileStarts);
 
     // Start Monitor with Save logs
     await browserPage.Profiler.startMonitorWithSaveLog();
     // Download logs and check result
     await browserPage.Profiler.stopMonitor();
     await t.click(browserPage.Profiler.downloadLogButton);
-    await t.expect(await databasesActions.findFileByFileStarts(fileDownloadPath, fileStarts)).gt(numberOfDownloadFiles, 'The Profiler logs not saved', { timeout: 5000 });
+    await t.expect(await databasesActions.getFileCount(fileDownloadPath, fileStarts)).gt(numberOfDownloadFiles, 'The Profiler logs not saved', { timeout: 5000 });
 });

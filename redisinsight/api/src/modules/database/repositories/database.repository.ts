@@ -13,9 +13,10 @@ export abstract class DatabaseRepository {
    * Get single database by id with all fields
    * @param id
    * @param ignoreEncryptionErrors
+   * @param omitFields
    * @return Database
    */
-  abstract get(id: string, ignoreEncryptionErrors?: boolean): Promise<Database>;
+  abstract get(id: string, ignoreEncryptionErrors?: boolean, omitFields?: string[]): Promise<Database>;
 
   /**
    * List of databases (limited fields only)

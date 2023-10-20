@@ -43,6 +43,7 @@ fixture `Adding database with SSH`
         await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
     });
 test('Adding database with SSH', async t => {
+    const hiddenPass = '••••••••••••';
     const sshWithPass = {
         ...sshParams,
         sshPassword: 'pass'
@@ -94,9 +95,10 @@ test('Adding database with SSH', async t => {
     await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
     await t.expect(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton.exists).notOk('Edit database panel still displayed');
     await databaseHelper.clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);
+    // Verify that password, passphrase and private key are hidden for SSH option
     await t
-        .expect(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput.value).eql(sshWithPassphrase.sshPrivateKey, 'Edited Private key not saved')
-        .expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql(sshWithPassphrase.sshPassphrase, 'Edited Passphrase not saved');
+        .expect(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyInput.textContent).eql(hiddenPass, 'Edited Private key not saved')
+        .expect(myRedisDatabasePage.AddRedisDatabase.sshPassphraseInput.value).eql(hiddenPass, 'Edited Passphrase not saved');
 
     // Verify that user can clone database with SSH tunnel
     await databaseHelper.clickOnEditDatabaseByName(sshDbPrivateKey.databaseName);

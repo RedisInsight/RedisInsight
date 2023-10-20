@@ -23,8 +23,8 @@ export const mockSshOptionsBasic = Object.assign(new SshOptions(), {
   port: 22,
   username: mockSshOptionsUsernamePlain,
   password: mockSshOptionsPasswordPlain,
-  privateKey: null,
-  passphrase: null,
+  privateKey: undefined,
+  passphrase: undefined,
 });
 
 export const mockSshOptionsBasicEntity = Object.assign(new SshOptionsEntity(), {
@@ -36,7 +36,7 @@ export const mockSshOptionsBasicEntity = Object.assign(new SshOptionsEntity(), {
 
 export const mockSshOptionsPrivateKey = Object.assign(new SshOptions(), {
   ...mockSshOptionsBasic,
-  password: null,
+  password: undefined,
   privateKey: mockSshOptionsPrivateKeyPlain,
   passphrase: mockSshOptionsPassphrasePlain,
 });

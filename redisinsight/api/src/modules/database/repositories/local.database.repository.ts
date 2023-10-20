@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { get, set } from 'lodash';
+import { get, set, omit } from 'lodash';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Database } from 'src/modules/database/models/database';
 import { classToClass } from 'src/utils';
@@ -63,6 +63,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   public async get(
     id: string,
     ignoreEncryptionErrors: boolean = false,
+    omitFields: string[] = [],
   ): Promise<Database> {
     const entity = await this.repository.findOneBy({ id });
     if (!entity) {
@@ -77,8 +78,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
     if (entity.clientCert) {
       model.clientCert = await this.clientCertificateRepository.get(entity.clientCert.id);
     }
-
-    return model;
+    return classToClass(Database, omit(model, omitFields));
   }
 
   /**

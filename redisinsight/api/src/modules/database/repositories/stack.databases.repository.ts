@@ -34,8 +34,9 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
   async get(
     id: string,
     ignoreEncryptionErrors: boolean = false,
+    omitFields: string[] = [],
   ): Promise<Database> {
-    return super.get(REDIS_STACK_CONFIG.id, ignoreEncryptionErrors);
+    return super.get(REDIS_STACK_CONFIG.id, ignoreEncryptionErrors, omitFields);
   }
 
   /**

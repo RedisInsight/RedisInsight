@@ -1661,15 +1661,15 @@ workflows:
       #     requires:
       #       - Build app - Windows (stage)
 
-weekly:
-  triggers:
-    - schedule:
-        cron: '0 0 * * 1'
-        filters:
-          branches:
-            only:
-              - main
-  jobs:
-    # Process all licenses
-    - licenses-check:
-        name: Process licenses of packages
+  weekly:
+    triggers:
+      - schedule:
+          cron: '0 0 * * 1'
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      # Process all licenses
+      - licenses-check:
+          name: Process licenses of packages

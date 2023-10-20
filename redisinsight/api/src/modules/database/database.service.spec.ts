@@ -11,6 +11,8 @@ import {
   mockDatabaseInfoProvider,
   mockDatabaseRepository,
   mockRedisService,
+  mockCaCertificate,
+  mockClientCertificate,
   MockType,
   mockRedisGeneralInfo,
   mockRedisConnectionFactory,
@@ -29,7 +31,26 @@ import { DatabaseFactory } from 'src/modules/database/providers/database.factory
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { RedisErrorCodes } from 'src/constants';
+import ERROR_MESSAGES from 'src/constants/error-messages';
+import { Compressor } from 'src/modules/database/entities/database.entity';
 import { ExportDatabase } from './models/export-database';
+
+const updateDatabaseTests = [
+  { input: {}, expected: 0 },
+  { input: { name: 'new name' }, expected: 0 },
+  { input: { port: 6379 }, expected: 1 },
+  { input: { host: 'new host' }, expected: 1 },
+  { input: { username: 'user' }, expected: 1 },
+  { input: { password: 'pass' }, expected: 1 },
+  { input: { ssh: true }, expected: 1 },
+  { input: { sshOptions: { password: 'pass' } }, expected: 1 },
+  { input: { sentinelMaster: 'master' }, expected: 1 },
+  { input: { caCert: mockCaCertificate }, expected: 1 },
+  { input: { clientCert: mockClientCertificate }, expected: 1 },
+  { input: { compressor: Compressor.NONE }, expected: 0 },
+  { input: { timeout: 45_000 }, expected: 0 },
+  { input: { port: 6379, timeout: 45_000 }, expected: 1 },
+];
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
@@ -151,9 +172,9 @@ describe('DatabaseService', () => {
         provider: 'LOCALHOST',
       });
 
-      await expect(await service.update(
+      expect(await service.update(
         mockDatabase.id,
-        { password: 'password', port: 6380 } as UpdateDatabaseDto,
+        classToClass(UpdateDatabaseDto, { password: 'password', port: 6380 }),
         true,
       )).toEqual({ ...mockDatabase, port: 6380, password: 'password' });
       expect(analytics.sendInstanceEditedEvent).toHaveBeenCalledWith(
@@ -162,29 +183,201 @@ describe('DatabaseService', () => {
         true,
       );
     });
+
+    it('should update existing database with merged ssh options', async () => {
+      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
+
+      await service.update(
+        mockDatabase.id,
+        classToClass(UpdateDatabaseDto, { password: 'pass', sshOptions: { password: 'new password' } }),
+        true,
+      );
+      expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+        timeout: 30000,
+        compressor: Compressor.NONE,
+        id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id',
+        name: 'database-name',
+        host: '127.0.100.1',
+        port: 6379,
+        connectionType: 'STANDALONE',
+        new: false,
+        version: '7.0',
+        ssh: true,
+        sshOptions: {
+          id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ssh-id',
+          host: 'ssh.host.test',
+          port: 22,
+          username: 'ssh-username',
+          password: 'new password',
+          privateKey: '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key',
+          passphrase: 'ssh-passphrase',
+        },
+        password: 'pass',
+      });
+    });
+
+    it('should update existing database with new ssh options', async () => {
+      await service.update(
+        mockDatabase.id,
+        classToClass(UpdateDatabaseDto, {
+          ssh: true,
+          sshOptions: {
+            id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ssh-id',
+            host: 'ssh.host.test',
+            port: 22,
+            username: 'ssh-username',
+            password: null,
+            privateKey: '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key',
+            passphrase: 'ssh-passphrase',
+          },
+        }),
+        true,
+      );
+      expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+        timeout: 30000,
+        compressor: Compressor.NONE,
+        name: 'database-name',
+        id: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id',
+        host: '127.0.100.1',
+        port: 6380,
+        password: 'password',
+        connectionType: 'STANDALONE',
+        provider: 'LOCALHOST',
+        new: false,
+        version: '7.0',
+        ssh: true,
+        sshOptions: {
+          host: 'ssh.host.test',
+          port: 22,
+          username: 'ssh-username',
+          password: null,
+          privateKey: '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key',
+          passphrase: 'ssh-passphrase',
+        },
+      });
+    });
+
+    describe('test connection', () => {
+      test.each(updateDatabaseTests)(
+        '%j',
+        async ({ input, expected }) => {
+          databaseRepository.update.mockReturnValue(null);
+          await service.update(
+            mockDatabase.id,
+            input as UpdateDatabaseDto,
+            true,
+          );
+          expect(databaseFactory.createDatabaseModel).toBeCalledTimes(expected);
+        },
+      );
+    });
     it('should throw NotFound if no database?', async () => {
       databaseRepository.update.mockRejectedValueOnce(new NotFoundException());
       await expect(service.update(
         mockDatabase.id,
-        { password: 'password' } as UpdateDatabaseDto,
+        classToClass(UpdateDatabaseDto, { password: 'password' }),
         true,
       )).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('test', () => {
-    it('should successfully test valid connection config', async () => {
-      expect(await service.testConnection(mockDatabase)).toEqual(undefined);
-    });
-    it('should successfully test valid sentinel config (without sentinelMaster)', async () => {
-      databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.SentinelParamsRequired));
-      expect(await service.testConnection(mockDatabase)).toEqual(undefined);
-    });
-    it('should throw connection error', async () => {
-      databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.ConnectionRefused));
+    describe('new connection', () => {
+      it('should successfully test valid connection config', async () => {
+        expect(await service.testConnection(mockDatabase)).toEqual(undefined);
+      });
+      it('should successfully test valid sentinel config (without sentinelMaster)', async () => {
+        databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.SentinelParamsRequired));
+        expect(await service.testConnection(mockDatabase)).toEqual(undefined);
+      });
+      it('should throw connection error', async () => {
+        databaseFactory.createDatabaseModel.mockRejectedValueOnce(new Error(RedisErrorCodes.ConnectionRefused));
 
-      await expect(service.testConnection(mockDatabase))
-        .rejects.toThrow(ServiceUnavailableException);
+        await expect(service.testConnection(mockDatabase))
+          .rejects.toThrow(ServiceUnavailableException);
+      });
+      it('should not call get database by id', async () => {
+        const spy = jest.spyOn(service as any, 'get');
+
+        await service.testConnection(mockDatabase);
+        expect(spy).not.toBeCalled();
+      });
+    });
+
+    describe('exist connection', () => {
+      it('should get database by id', async () => {
+        const spy = jest.spyOn(service as any, 'get').mockResolvedValueOnce(mockDatabase);
+
+        await service.testConnection(classToClass(UpdateDatabaseDto, {}), mockDatabase.id);
+
+        expect(spy).toBeCalledWith(mockDatabase.id, false);
+      });
+
+      it('should test database connection with merged ssh options', async () => {
+        databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
+
+        await service.testConnection(
+          classToClass(UpdateDatabaseDto, { password: 'pass', sshOptions: { passphrase: 'new passphrase' } }),
+          mockDatabase.id,
+        );
+        expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+          ...mockDatabaseWithSshPrivateKey,
+          password: 'pass',
+          sshOptions: { ...mockDatabaseWithSshPrivateKey.sshOptions, passphrase: 'new passphrase' },
+        });
+      });
+
+      it('should test connection with new tls', async () => {
+        databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTlsAuth);
+
+        await service.testConnection(
+          classToClass(
+            UpdateDatabaseDto,
+            {
+              compressor: Compressor.GZIP,
+              tls: true,
+              caCert: {
+                name: 'name',
+                certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
+              },
+            },
+          ),
+          mockDatabase.id,
+        );
+        expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+          ...mockDatabaseWithTlsAuth,
+          compressor: Compressor.GZIP,
+          caCert: {
+            certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
+            name: 'name',
+          },
+        });
+      });
+
+      it('should test connection with exist tls', async () => {
+        databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTlsAuth);
+
+        await service.testConnection(
+          classToClass(
+            UpdateDatabaseDto,
+            {
+              compressor: Compressor.GZIP,
+              tls: true,
+              caCert: {
+                id: 'new id',
+              },
+            },
+          ),
+          mockDatabase.id,
+        );
+        expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+          ...mockDatabaseWithTlsAuth,
+          compressor: Compressor.GZIP,
+          caCert: {
+            id: 'new id',
+          },
+        });
+      });
     });
   });
 
@@ -225,7 +418,7 @@ describe('DatabaseService', () => {
       const mockDatabaseWithSshPrivateKeyTemp = { ...mockDatabaseWithSshPrivateKey };
       exportSecurityFields.forEach((field) => {
         if (get(mockDatabaseWithSshPrivateKeyTemp, field)) {
-          update(mockDatabaseWithSshPrivateKeyTemp, field, () => null);
+          update(mockDatabaseWithSshPrivateKeyTemp, field, () => undefined);
         }
       });
 
@@ -264,6 +457,155 @@ describe('DatabaseService', () => {
     it('should ignore errors', async () => {
       databaseRepository.get.mockRejectedValueOnce(new NotFoundException());
       expect(await service.export([mockDatabase.id])).toEqual([]);
+    });
+
+    it('should throw NotFoundException', async () => {
+      await expect(service.export([])).rejects.toThrow(NotFoundException);
+      try {
+        await service.export([]);
+        fail();
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotFoundException);
+        expect(err.message).toEqual(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
+      }
+    });
+  });
+
+  describe('clone', () => {
+    it('should create new database', async () => {
+      const spy = jest.spyOn(service as any, 'create');
+      await service.clone(
+        mockDatabase.id,
+        classToClass(UpdateDatabaseDto, {
+          username: 'new-name',
+          timeout: 40_000,
+        }),
+      );
+      expect(spy).toBeCalledWith(
+        omit({ ...mockDatabase, username: 'new-name', timeout: 40_000 }, ['sshOptions.id']),
+      );
+    });
+
+    it('should create new database with merged ssh options', async () => {
+      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithSshPrivateKey);
+
+      await service.clone(
+        mockDatabase.id,
+        classToClass(
+          UpdateDatabaseDto,
+          { password: 'pass', sshOptions: { password: 'new password', passphrase: null, privateKey: null } },
+        ),
+      );
+      expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+        ...omit(mockDatabaseWithSshPrivateKey),
+        password: 'pass',
+        sshOptions: {
+          ...mockDatabaseWithSshPrivateKey.sshOptions,
+          password: 'new password',
+          passphrase: null,
+          privateKey: null,
+        },
+      });
+    });
+
+    it('should update existing database with new ssh options', async () => {
+      databaseRepository.get.mockResolvedValue(mockDatabase);
+
+      await service.clone(
+        mockDatabase.id,
+        classToClass(UpdateDatabaseDto, {
+          ssh: true,
+          sshOptions: {
+            host: 'ssh.host.test',
+            port: 22,
+            username: 'ssh-username',
+            password: null,
+            privateKey: '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key',
+            passphrase: 'ssh-passphrase',
+          },
+        }),
+      );
+      expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+        ...mockDatabase,
+        ssh: true,
+        sshOptions: {
+          host: 'ssh.host.test',
+          port: 22,
+          username: 'ssh-username',
+          password: null,
+          privateKey: '-----BEGIN OPENSSH PRIVATE KEY-----\nssh-private-key',
+          passphrase: 'ssh-passphrase',
+        },
+      });
+    });
+
+    it('should create new database with new tls', async () => {
+      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTlsAuth);
+
+      await service.clone(
+        mockDatabase.id,
+        classToClass(
+          UpdateDatabaseDto,
+          {
+            compressor: Compressor.GZIP,
+            tls: true,
+            caCert: {
+              name: 'name',
+              certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
+            },
+          },
+        ),
+      );
+      expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+        ...mockDatabaseWithTlsAuth,
+        compressor: Compressor.GZIP,
+        caCert: {
+          certificate: '-----BEGIN CERTIFICATE-----\ncertificate',
+          name: 'name',
+        },
+      });
+    });
+
+    it('should create new database with exist tls', async () => {
+      databaseRepository.get.mockResolvedValueOnce(mockDatabaseWithTlsAuth);
+
+      await service.clone(
+        mockDatabase.id,
+        classToClass(
+          UpdateDatabaseDto,
+          {
+            compressor: Compressor.GZIP,
+            tls: true,
+            caCert: {
+              id: 'new id',
+            },
+          },
+        ),
+      );
+      expect(databaseFactory.createDatabaseModel).toBeCalledWith({
+        ...mockDatabaseWithTlsAuth,
+        compressor: Compressor.GZIP,
+        caCert: {
+          id: 'new id',
+        },
+      });
+    });
+
+    describe('create database model', () => {
+      test.each(updateDatabaseTests)(
+        '%j',
+        async ({ input, expected }) => {
+          const spy = jest.spyOn(service as any, 'create');
+
+          databaseRepository.update.mockReturnValue(null);
+          await service.clone(
+            mockDatabase.id,
+            input as UpdateDatabaseDto,
+          );
+          expect(spy).toBeCalledTimes(expected);
+          expect(analytics.sendInstanceAddedEvent).toBeCalled();
+        },
+      );
     });
   });
 });

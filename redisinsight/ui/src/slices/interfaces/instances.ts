@@ -34,9 +34,9 @@ export interface Instance extends DatabaseInstanceResponse {
     host: string
     port: number
     username?: string
-    password?: string
+    password?: string | true
     privateKey?: string
-    passphrase?: string
+    passphrase?: string | true
   }
   tlsClientAuthRequired?: boolean
   verifyServerCert?: boolean

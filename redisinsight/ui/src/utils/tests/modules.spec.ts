@@ -71,7 +71,7 @@ const getOutputForReJSONAvailable: any[] = [
   [['1', 'json', RedisDefaultModules.SearchLight, RedisDefaultModules.ReJSON].map(nameToModule), true],
 ]
 
-describe('isRedisearchAvailable', () => {
+describe('isContainJSONModule', () => {
   it.each(getOutputForReJSONAvailable)('for input: %s (reply), should be output: %s',
     (reply, expected) => {
       const result = isContainJSONModule(reply)

@@ -1,0 +1,1 @@
+export const REDISEARCH_GEOSHAPE_VERSION = '2.8.4'

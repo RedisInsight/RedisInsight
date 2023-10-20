@@ -29,4 +29,5 @@ export * from './featureFlags'
 export * from './serverVersions'
 export * from './customErrorCodes'
 export * from './securityField'
+export * from './redisearch'
 export { ApiEndpoints, BrowserStorageItem, ApiStatusCode, apiErrors }

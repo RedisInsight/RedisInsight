@@ -24,9 +24,9 @@ const LOAD_ALL_BTN = 'load-all-value-btn'
 const DOWNLOAD_BTN = 'download-all-value-btn'
 
 const STRING_MAX_LENGTH = 2
-const STRING_LENGTH = 3
+const STRING_LENGTH = 4
 
-const fullValue = { type: 'Buffer', data: [49, 50, 51], }
+const fullValue = { type: 'Buffer', data: [49, 50, 51, 52], }
 const partValue = { type: 'Buffer', data: [49, 50], }
 
 const mockedProps = mock<Props>()
@@ -182,7 +182,7 @@ describe('StringDetails', () => {
     fireEvent.click(screen.getByTestId(LOAD_ALL_BTN))
 
     expect(onRefresh).toBeCalled()
-    expect(onRefresh).toBeCalledWith(fullValue, 'string', { end: STRING_MAX_LENGTH })
+    expect(onRefresh).toBeCalledWith(fullValue, 'string', { end: STRING_MAX_LENGTH + 1 })
     expect(sendEventTelemetry).toBeCalled()
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.STRING_LOAD_ALL_CLICKED,

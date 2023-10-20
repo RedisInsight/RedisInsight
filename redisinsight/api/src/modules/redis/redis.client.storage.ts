@@ -1,7 +1,7 @@
 import { isMatch, sum } from 'lodash';
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { RedisClient } from 'src/modules/redis/client';
-import { ClientContext, ClientMetadata } from 'src/common/models';
+import { ClientMetadata } from 'src/common/models';
 import apiConfig from 'src/utils/config';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
@@ -23,15 +23,6 @@ export class RedisClientStorage {
   }
 
   /**
-   * TODO: remove after investigation
-   * @private
-   */
-  private logState() {
-    const ids = [...this.clients.keys()];
-    this.logger.debug(`Clients: ${ids.length}\n${ids.length > 0 ? ids.join('\n --- ') : ''}`);
-  }
-
-  /**
    * Disconnects and removes all clients with exceeded idle threshold
    * @private
    */
@@ -43,8 +34,6 @@ export class RedisClientStorage {
           this.clients.delete(client.id);
         }
       });
-
-      this.logState(); // todo: remove
     } catch (e) {
       // ignore errors;
     }
@@ -66,10 +55,15 @@ export class RedisClientStorage {
    * Will return null if client was not found
    * @param id
    */
-  public async getClient(id: string): Promise<RedisClient> {
+  public async get(id: string): Promise<RedisClient> {
     const client = this.clients.get(id);
 
     if (client) {
+      if (!client.isConnected()) {
+        await this.remove(client.id);
+        return null;
+      }
+
       client.setLastUsed();
     }
 
@@ -80,8 +74,8 @@ export class RedisClientStorage {
    * Will generate "id" based on client metadata and invoke getClient method
    * @param clientMetadata
    */
-  public async getClientByMetadata(clientMetadata: ClientMetadata): Promise<RedisClient> {
-    return this.getClient(RedisClient.generateId(RedisClientStorage.prepareClientMetadata(clientMetadata)));
+  public async getByMetadata(clientMetadata: ClientMetadata): Promise<RedisClient> {
+    return this.get(RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata)));
   }
 
   /**
@@ -91,13 +85,23 @@ export class RedisClientStorage {
    * 2. If existing client hasn't established connection - will replace old client with the new one
    * @param client
    */
-  public async setClient(client: RedisClient): Promise<RedisClient> {
+  public async set(client: RedisClient): Promise<RedisClient> {
+    // Additional validation
+    if (
+      !client.clientMetadata.databaseId
+      || !client.clientMetadata.context
+      || !client.clientMetadata.sessionMetadata?.sessionId
+      || !client.clientMetadata.sessionMetadata.userId
+    ) {
+      throw new BadRequestException('Client metadata missed required properties');
+    }
+
     const existingClient = this.clients.get(client.id);
 
     if (existingClient) {
       if (existingClient.isConnected()) {
         await client.disconnect().catch();
-        return this.getClient(client.id);
+        return this.get(client.id);
       }
 
       await existingClient.disconnect().catch();
@@ -113,7 +117,7 @@ export class RedisClientStorage {
    * and removes it from the clients pool
    * @param id
    */
-  public async removeClient(id: string): Promise<number> {
+  public async remove(id: string): Promise<number> {
     const client = this.clients.get(id);
 
     if (client) {
@@ -132,8 +136,8 @@ export class RedisClientStorage {
    * Generate id from ClientMetadata and removes client using removeClient method
    * @param clientMetadata
    */
-  public async removeClientByMetadata(clientMetadata: ClientMetadata): Promise<number> {
-    return this.removeClient(RedisClient.generateId(RedisClientStorage.prepareClientMetadata(clientMetadata)));
+  public async removeByMetadata(clientMetadata: ClientMetadata): Promise<number> {
+    return this.remove(RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata)));
   }
 
   /**
@@ -141,27 +145,11 @@ export class RedisClientStorage {
    * Useful when database was removed and there is no sense wait for "idle" before remove clients
    * @param clientMetadata
    */
-  public async removeClientsByMetadata(clientMetadata: Partial<ClientMetadata>): Promise<number> {
+  public async removeManyByMetadata(clientMetadata: Partial<ClientMetadata>): Promise<number> {
     const toRemove = this.findClients(clientMetadata);
 
     this.logger.debug(`Trying to remove ${toRemove.length} clients`);
 
-    return sum(await Promise.all(toRemove.map(this.removeClient.bind(this))));
-  }
-
-  /**
-   * Prepare clientMetadata to be used for generating id and other operations with clients
-   * like: find, remove many, etc.
-   * @param clientMetadata
-   */
-  static prepareClientMetadata(clientMetadata: ClientMetadata): ClientMetadata {
-    return {
-      ...clientMetadata,
-      // Workaround: for cli connections we must ignore db index when storing/getting client
-      // since inside CLI itself users are able to "select" database manually
-      // uniqueness will be guaranteed by ClientMetadata.uniqueId and each opened CLI terminal
-      // will have own and a single client
-      db: clientMetadata.context === ClientContext.CLI ? null : clientMetadata.db,
-    };
+    return sum(await Promise.all(toRemove.map(this.remove.bind(this))));
   }
 }

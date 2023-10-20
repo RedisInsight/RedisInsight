@@ -1,4 +1,4 @@
-import { ClientMetadata } from 'src/common/models';
+import { ClientContext, ClientMetadata } from 'src/common/models';
 import { isNumber } from 'lodash';
 import { RedisString } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
@@ -34,9 +34,10 @@ export abstract class RedisClient {
   protected lastTimeUsed: number;
 
   constructor(
-    protected readonly clientMetadata: ClientMetadata,
+    public readonly clientMetadata: ClientMetadata,
     protected readonly client: any,
   ) {
+    this.clientMetadata = RedisClient.prepareClientMetadata(clientMetadata);
     this.lastTimeUsed = Date.now();
     this.id = RedisClient.generateId(this.clientMetadata);
   }
@@ -91,6 +92,22 @@ export abstract class RedisClient {
    * Wait for pending commands will be processed and then close the connection
    */
   abstract quit(): Promise<void>;
+
+  /**
+   * Prepare clientMetadata to be used for generating id and other operations with clients
+   * like: find, remove many, etc.
+   * @param clientMetadata
+   */
+  static prepareClientMetadata(clientMetadata: ClientMetadata): ClientMetadata {
+    return {
+      ...clientMetadata,
+      // Workaround: for cli connections we must ignore db index when storing/getting client
+      // since inside CLI itself users are able to "select" database manually
+      // uniqueness will be guaranteed by ClientMetadata.uniqueId and each opened CLI terminal
+      // will have own and a single client
+      db: clientMetadata.context === ClientContext.CLI ? null : clientMetadata.db,
+    };
+  }
 
   static generateId(cm: ClientMetadata): string {
     const empty = '(nil)';

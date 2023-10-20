@@ -10,8 +10,8 @@ import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
-export class DatabaseConnectionFactory {
-  private logger = new Logger('DatabaseConnectionFactory');
+export class DatabaseClientFactory {
+  private logger = new Logger('DatabaseClientFactory');
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -31,13 +31,13 @@ export class DatabaseConnectionFactory {
   async getOrCreateClient(clientMetadata: ClientMetadata): Promise<RedisClient> {
     this.logger.log('Trying to get existing redis client.');
 
-    const client = await this.redisClientProvider.getClientByMetadata(clientMetadata);
+    const client = await this.redisClientProvider.getByMetadata(clientMetadata);
 
-    if (client && client.isConnected()) {
+    if (client) {
       return client;
     }
 
-    return this.redisClientProvider.setClient(await this.createClient(clientMetadata));
+    return this.redisClientProvider.set(await this.createClient(clientMetadata));
   }
 
   /**

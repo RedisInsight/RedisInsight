@@ -10,7 +10,7 @@ import {
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 import { ClientContext } from 'src/common/models';
-import { DatabaseConnectionFactory } from 'src/modules/database/providers/database-connection.factory';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 @Injectable()
 export class BulkActionsProvider {
@@ -19,7 +19,7 @@ export class BulkActionsProvider {
   private logger: Logger = new Logger('BulkActionsProvider');
 
   constructor(
-    private readonly databaseConnectionFactory: DatabaseConnectionFactory,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly analyticsService: BulkActionsAnalyticsService,
   ) {}
 
@@ -38,7 +38,8 @@ export class BulkActionsProvider {
     this.bulkActions.set(dto.id, bulkAction);
 
     // todo: add multi user support
-    const client = await this.databaseConnectionFactory.getOrCreateClient({
+    // todo: use own client and close it after
+    const client = await this.databaseClientFactory.getOrCreateClient({
       sessionMetadata: undefined,
       databaseId: dto.databaseId,
       context: ClientContext.Common,

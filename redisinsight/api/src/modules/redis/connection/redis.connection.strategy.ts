@@ -20,7 +20,7 @@ export abstract class RedisConnectionStrategy {
    * @param database
    * @param options
    */
-  abstract createStandaloneConnection(
+  abstract createStandaloneClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
@@ -32,7 +32,7 @@ export abstract class RedisConnectionStrategy {
    * @param database
    * @param options
    */
-  abstract createClusterConnection(
+  abstract createClusterClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
@@ -44,7 +44,7 @@ export abstract class RedisConnectionStrategy {
    * @param database
    * @param options
    */
-  abstract createSentinelConnection(
+  abstract createSentinelClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,

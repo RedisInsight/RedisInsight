@@ -5,7 +5,7 @@ import { Readable } from 'stream';
 import * as readline from 'readline';
 import { wrapHttpError } from 'src/common/utils';
 import { UploadImportFileDto } from 'src/modules/bulk-actions/dto/upload-import-file.dto';
-import { DatabaseConnectionFactory } from 'src/modules/database/providers/database-connection.factory';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { ClientMetadata } from 'src/common/models';
 import { splitCliCommandLine } from 'src/utils/cli-helper';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
@@ -26,7 +26,7 @@ export class BulkImportService {
   private logger = new Logger('BulkImportService');
 
   constructor(
-    private readonly databaseConnectionFactory: DatabaseConnectionFactory,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly analyticsService: BulkActionsAnalyticsService,
   ) {}
 
@@ -90,7 +90,7 @@ export class BulkImportService {
     let client;
 
     try {
-      client = await this.databaseConnectionFactory.createClient(clientMetadata);
+      client = await this.databaseClientFactory.createClient(clientMetadata);
 
       const stream = Readable.from(dto.file.buffer);
       let batch = [];

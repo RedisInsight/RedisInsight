@@ -23,6 +23,7 @@ module.exports = {
       files: [ '**/*.spec.ts' ],
       rules: {
         'sonarjs/no-duplicate-string': 0,
+        'sonarjs/no-identical-functions': 0,
       }
     }
   ]

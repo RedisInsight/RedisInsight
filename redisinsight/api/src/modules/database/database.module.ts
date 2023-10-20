@@ -14,7 +14,7 @@ import { DatabaseInfoController } from 'src/modules/database/database-info.contr
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
-import { DatabaseConnectionFactory } from 'src/modules/database/providers/database-connection.factory';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
 const SERVER_CONFIG = config.get('server');
@@ -34,7 +34,7 @@ export class DatabaseModule {
       providers: [
         DatabaseService,
         DatabaseConnectionService,
-        DatabaseConnectionFactory,
+        DatabaseClientFactory,
         DatabaseInfoProvider,
         DatabaseAnalytics,
         DatabaseFactory,
@@ -49,7 +49,7 @@ export class DatabaseModule {
         DatabaseRepository,
         DatabaseService,
         DatabaseConnectionService,
-        DatabaseConnectionFactory,
+        DatabaseClientFactory,
         // todo: rethink everything below
         DatabaseFactory,
         DatabaseInfoService,

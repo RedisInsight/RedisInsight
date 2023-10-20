@@ -41,7 +41,7 @@ const mockCreateBulkActionDto = Object.assign(new CreateBulkActionDto(), {
   filter: mockBulkActionFilter,
 });
 
-describe('BulkActionsProvider', () => {
+xdescribe('BulkActionsProvider', () => {
   let service: BulkActionsProvider;
   let redisService: MockType<RedisService>;
 

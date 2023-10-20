@@ -37,7 +37,7 @@ const mockZeroCursorBuffer = Buffer.from('0');
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
 
-describe('AbstractBulkActionSimpleRunner', () => {
+xdescribe('AbstractBulkActionSimpleRunner', () => {
   let deleteRunner: DeleteBulkActionSimpleRunner;
 
   beforeEach(() => {

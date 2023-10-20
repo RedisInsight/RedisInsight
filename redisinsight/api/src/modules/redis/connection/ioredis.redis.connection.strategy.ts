@@ -148,7 +148,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   /**
    * @inheritDoc
    */
-  public async createStandaloneConnection(
+  public async createStandaloneClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
@@ -212,7 +212,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   /**
    * @inheritDoc
    */
-  public async createClusterConnection(
+  public async createClusterClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,
@@ -252,7 +252,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   /**
    * @inheritDoc
    */
-  public async createSentinelConnection(
+  public async createSentinelClient(
     clientMetadata: ClientMetadata,
     database: Database,
     options: IRedisConnectionOptions,

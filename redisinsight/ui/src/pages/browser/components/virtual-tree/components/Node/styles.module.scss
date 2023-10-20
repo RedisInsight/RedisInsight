@@ -37,25 +37,25 @@
     color: var(--euiColorFullShade) !important;
   }
 
-  .moveOnHover {
+  :global(.moveOnHoverKey) {
     transition: transform ease 0.3s;
     &.hide {
       transform: translateX(-8px);
     }
   }
-  .showOnHover {
-    display: none;
+  :global(.showOnHoverKey) {
+    display: none !important;
     &.show {
       display: flex !important;
     }
   }
 
   &:hover {
-    .moveOnHover {
+    :global(.moveOnHoverKey) {
       transform: translateX(-8px);
     }
-    .showOnHover {
-      display: flex;
+    :global(.showOnHoverKey) {
+      display: flex !important;
     }
   }
 }
@@ -105,11 +105,16 @@
   min-width: 126px;
 }
 
-.keyName {
+.keyName,
+.nodeName {
   flex-grow: 1;
   position: relative;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  :global(.euiTextColor) {
+    max-width: 100%;
+  }
 }
 
 .keyTTL,

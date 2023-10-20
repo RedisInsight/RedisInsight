@@ -97,7 +97,6 @@ export const constructKeysToTree = (props: Props): any[] => {
         node.children = []
         node.nameString = name.slice(0, -keysSymbol.length)
         node.nameBuffer = tree[key]?.name
-        node.shortName = node.nameString?.slice(previousKey.length)
       }
 
       node.path = path

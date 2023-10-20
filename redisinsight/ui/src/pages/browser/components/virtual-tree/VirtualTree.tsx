@@ -68,6 +68,8 @@ const VirtualTree = (props: Props) => {
     onDeleteLeaf,
   } = props
 
+  // console.log({ statusOpen })
+
   const { theme } = useContext(ThemeContext)
   const [rerenderState, rerender] = useState({})
   const controller = useRef<Nullable<AbortController>>(null)
@@ -160,12 +162,14 @@ const VirtualTree = (props: Props) => {
     const entries = Object.entries(elements.current)
 
     getMetadata(entries)
+
+    elements.current = []
   }, 100)
 
-  const getMetadataNode = (nameBuffer: any, path: string) => {
+  const getMetadataNode = useCallback((nameBuffer: any, path: string) => {
     elements.current[path] = nameBuffer
     getMetadataDebounced()
-  }
+  }, [])
 
   // This helper function constructs the object that will be sent back at the step
   // [2] during the treeWalker function work. Except for the mandatory `data`
@@ -185,7 +189,6 @@ const VirtualTree = (props: Props) => {
       size: node.size,
       type: node.type,
       fullName: node.fullName,
-      shortName: node.shortName,
       nestingLevel,
       deleting,
       path: node.path,

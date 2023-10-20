@@ -10,7 +10,7 @@ import {
   setBrowserTreeNodesOpen,
 } from 'uiSrc/slices/app/context'
 import { constructKeysToTree } from 'uiSrc/helpers'
-import VirtualTree from 'uiSrc/components/virtual-tree'
+import VirtualTree from 'uiSrc/pages/browser/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import { Nullable, bufferToString } from 'uiSrc/utils'
@@ -94,9 +94,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
       // remove key name from parents
       parents.pop()
 
-      setTimeout(() => {
-        parents.forEach((parent) => handleStatusOpen(parent, true))
-      }, 0)
+      parents.forEach((parent) => handleStatusOpen(parent, true))
     }
   }
 

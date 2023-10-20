@@ -29,8 +29,7 @@ const NoKeysMessage = (props:Props) => {
     onBulkActionsPanel,
   } = props
 
-  const { selectedIndex } = useSelector(redisearchSelector)
-  const { isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
+  const { selectedIndex, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
   const { isSearched: patternIsSearched, isFiltered, searchMode } = useSelector(keysSelector)
 
   if (searchMode === SearchMode.Redisearch) {

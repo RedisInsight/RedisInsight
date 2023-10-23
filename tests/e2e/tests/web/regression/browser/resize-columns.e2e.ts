@@ -18,37 +18,44 @@ const longFieldName = Common.generateSentence(20);
 const keys = [
     {   type: 'Hash',
         name: `${keyName}:1`,
-        offsetX: 50,
+        offsetX: 30,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'List',
         name: `${keyName}:2`,
-        offsetX: 40,
+        offsetX: 20,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'Zset',
         name: `${keyName}:3`,
-        offsetX: 30,
+        offsetX: 10,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     }
 ];
 const keyNames: string[] = [];
 keys.forEach(key => keyNames.push(key.name));
-
-const databasesForAdding = [
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB1' },
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB2' }
+let databaseName1 = `testDB1_${Common.generateWord(10)}`;
+let databaseName2 = `testDB2_${Common.generateWord(10)}`;
+let databasesForAdding = [
+    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName1 },
+    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName2 }
 ];
 
 fixture `Resize columns in Key details`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
+        databaseName1 = `testDB1_${Common.generateWord(10)}`;
+        databaseName2 = `testDB2_${Common.generateWord(10)}`;
+        databasesForAdding = [
+            { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName1 },
+            { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName2 }
+        ];
         // Add new databases using API
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
@@ -63,7 +70,7 @@ fixture `Resize columns in Key details`
         // Clear and delete database
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeysByNames(keyNames);
-        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Resize of columns in Hash, List, Zset Key details', async t => {
     const field = browserPage.keyDetailsTable.find(browserPage.cssRowInVirtualizedTable);
@@ -74,7 +81,7 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         // Remember initial column width
         key.fieldWidthStart = await field.clientWidth;
         await t.hover(tableHeaderResizeTrigger);
-        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.4 });
+        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.2 });
         // Remember last column width
         key.fieldWidthEnd = await field.clientWidth;
         // Verify that user can resize columns for Hash, List, Zset Keys

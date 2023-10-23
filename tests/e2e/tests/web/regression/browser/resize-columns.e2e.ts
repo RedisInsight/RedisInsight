@@ -70,7 +70,7 @@ fixture `Resize columns in Key details`
         // Clear and delete database
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeysByNames(keyNames);
-        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Resize of columns in Hash, List, Zset Key details', async t => {
     const field = browserPage.keyDetailsTable.find(browserPage.cssRowInVirtualizedTable);

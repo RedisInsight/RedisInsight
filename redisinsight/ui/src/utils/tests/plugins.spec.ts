@@ -2,26 +2,28 @@ import { getVisualizationsByCommand } from 'uiSrc/utils'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 
 describe('getVisualizationsByCommand', () => {
-  it('should return proper visualizations by query', () => {
-    const visualizations = [
-      { matchCommands: ['ft.search', 'ft.get'] },
-      { matchCommands: ['ft._list'] },
-      { matchCommands: ['ft.*'] },
-      { matchCommands: ['get'] }
-    ] as IPluginVisualization[]
+  const getVisualizationsByCommandTests: [string, number][] = [
+    ['ft.search sa', 2],
+    ['ft.get zxc', 2],
+    ['command ft. zxc zxcz ft', 0],
+    ['command ft', 0],
+    ['any command', 0],
+    ['get key', 1],
+  ]
 
-    const query1 = 'ft.search sa'
-    const query2 = 'ft.get zxc'
-    const query3 = 'command ft. zxc zxcz ft'
-    const query4 = 'command ft'
-    const query5 = 'any command'
-    const query6 = 'get key'
+  const visualizations = [
+    { matchCommands: ['ft.search', 'ft.get'] },
+    { matchCommands: ['ft._list'] },
+    { matchCommands: ['ft.*'] },
+    { matchCommands: ['get'] }
+  ] as IPluginVisualization[]
 
-    expect(getVisualizationsByCommand(query1, visualizations)).toHaveLength(2)
-    expect(getVisualizationsByCommand(query2, visualizations)).toHaveLength(2)
-    expect(getVisualizationsByCommand(query3, visualizations)).toHaveLength(0)
-    expect(getVisualizationsByCommand(query4, visualizations)).toHaveLength(0)
-    expect(getVisualizationsByCommand(query5, visualizations)).toHaveLength(0)
-    expect(getVisualizationsByCommand(query6, visualizations)).toHaveLength(1)
-  })
+  test.each(getVisualizationsByCommandTests)(
+    'for %j, should be %i',
+    (input, expected) => {
+      // @ts-ignore
+      const result = getVisualizationsByCommand(input, visualizations)
+      expect(result).toHaveLength(expected)
+    }
+  )
 })

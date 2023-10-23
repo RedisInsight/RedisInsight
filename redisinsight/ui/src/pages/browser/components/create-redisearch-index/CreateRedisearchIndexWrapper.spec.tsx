@@ -1,9 +1,18 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { createIndex } from 'uiSrc/slices/browser/redisearch'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { render, screen, fireEvent, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 
 import CreateRedisearchIndexWrapper from './CreateRedisearchIndexWrapper'
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    id: '1',
+    modules: [],
+  }),
+}))
 
 const onClose = jest.fn()
 
@@ -105,5 +114,26 @@ describe('CreateRedisearchIndexWrapper', () => {
     render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
 
     expect(screen.getByTestId('identifier-info-icon')).toBeInTheDocument()
+  })
+
+  it('should not have geoshape option ', () => {
+    const { queryByText } = render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
+
+    fireEvent.click(screen.getByTestId('field-type-0'))
+
+    expect(queryByText('GEOSHAPE')).not.toBeInTheDocument()
+  })
+
+  it('should have geoshape option ', () => {
+    const connectedInstanceSelectorMock = jest.fn().mockReturnValueOnce({
+      id: '1',
+      modules: [{ name: 'search', semanticVersion: '2.8.4' }]
+    })
+    connectedInstanceSelector.mockImplementation(connectedInstanceSelectorMock)
+
+    const { queryByText } = render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
+    fireEvent.click(screen.getByTestId('field-type-0'))
+
+    expect(queryByText('GEOSHAPE')).toBeInTheDocument()
   })
 })

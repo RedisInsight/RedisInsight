@@ -24,6 +24,20 @@ const getFieldTypeOptionsTests: any[] = [
   [[['1', '2.8.3'], [RedisDefaultModules.FTL, '2.8.4']].map(nameAndVersionToModule), ALL_OPTIONS],
   [[['1', '2.8.4'], [RedisDefaultModules.FTL, '2.8.3']].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
   [[['1', '2.8.4'], [RedisDefaultModules.Gears, '2.8.4']].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.Search, undefined, 20804]].map(nameAndVersionToModule), ALL_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.Search, undefined, 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.SearchLight, undefined, 20804]].map(nameAndVersionToModule), ALL_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.SearchLight, undefined, 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.SearchLight, undefined, 20804]].map(nameAndVersionToModule), ALL_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.SearchLight, undefined, 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.FT, undefined, 20804]].map(nameAndVersionToModule), ALL_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.FT, undefined, 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.FTL, undefined, 20804]].map(nameAndVersionToModule), ALL_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.FTL, undefined, 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.Gears, undefined, 20804]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.Gears, undefined, 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.FTL, '2.8.3', 20803]].map(nameAndVersionToModule), WITHOUT_GEOSHAPE_OPTIONS],
+  [[['1', '2.8.4'], [RedisDefaultModules.FTL, '2.8.4', 20804]].map(nameAndVersionToModule), ALL_OPTIONS],
 ]
 
 describe('getFieldTypeOptions', () => {

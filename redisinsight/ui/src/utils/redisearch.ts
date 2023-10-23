@@ -2,7 +2,7 @@ import { REDISEARCH_MODULES } from 'uiSrc/slices/interfaces'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import {
   REDISEARCH_GEOSHAPE_SEMANTIC_VERSION,
-  REDISEARCH_SEMANTIC_VERSION,
+  REDISEARCH_GEOSHAPE_VERSION,
 } from 'uiSrc/constants'
 import { FIELD_TYPE_OPTIONS, FieldTypes } from 'uiSrc/pages/browser/components/create-redisearch-index/constants'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
@@ -13,7 +13,7 @@ const isGeoshapeOptionAvailable = (modules: AdditionalRedisModule[]): boolean =>
       .some((search) => (
         name === search && (
           isVersionHigherOrEquals(semanticVersion, REDISEARCH_GEOSHAPE_SEMANTIC_VERSION)
-          || (version && version >= REDISEARCH_SEMANTIC_VERSION)
+          || (version && version >= REDISEARCH_GEOSHAPE_VERSION)
         ))))
 
 export const getFieldTypeOptions = (modules: AdditionalRedisModule[] = []) => FIELD_TYPE_OPTIONS

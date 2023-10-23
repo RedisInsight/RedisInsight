@@ -18,21 +18,21 @@ const longFieldName = Common.generateSentence(20);
 const keys = [
     {   type: 'Hash',
         name: `${keyName}:1`,
-        offsetX: 50,
+        offsetX: 30,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'List',
         name: `${keyName}:2`,
-        offsetX: 40,
+        offsetX: 20,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'Zset',
         name: `${keyName}:3`,
-        offsetX: 30,
+        offsetX: 10,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     }
@@ -81,7 +81,7 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         // Remember initial column width
         key.fieldWidthStart = await field.clientWidth;
         await t.hover(tableHeaderResizeTrigger);
-        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.4 });
+        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.2 });
         // Remember last column width
         key.fieldWidthEnd = await field.clientWidth;
         // Verify that user can resize columns for Hash, List, Zset Keys

@@ -6,6 +6,7 @@ export enum FieldTypes {
   NUMERIC = 'numeric',
   GEO = 'geo',
   VECTOR = 'vector',
+  GEOSHAPE = 'geoshape',
 }
 
 export enum RedisearchIndexKeyType {
@@ -42,6 +43,10 @@ export const FIELD_TYPE_OPTIONS = [
   {
     text: 'GEO',
     value: FieldTypes.GEO,
+  },
+  {
+    text: 'GEOSHAPE',
+    value: FieldTypes.GEOSHAPE,
   },
   {
     text: 'VECTOR',

@@ -17,7 +17,7 @@ import {
   SetStringDto,
   GetStringValueResponse,
   SetStringWithExpireDto,
-  GetStringInfoDto
+  GetStringInfoDto,
 } from 'src/modules/browser/string/string.dto';
 import { GetKeyInfoDto } from 'src/modules/browser/keys/keys.dto';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';

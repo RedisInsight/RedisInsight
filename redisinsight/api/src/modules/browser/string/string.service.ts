@@ -24,7 +24,6 @@ import { GetKeyInfoDto } from 'src/modules/browser/keys/keys.dto';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Readable } from 'stream';
-import { RedisString } from 'src/common/constants';
 
 @Injectable()
 export class StringService {

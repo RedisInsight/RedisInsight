@@ -9,15 +9,14 @@ import styles from './styles.module.scss'
 export interface Props {
   children: React.ReactNode
   panelClassName?: string
-  withOverview?: boolean
 }
 
 const ExplorePanelTemplate = (props: Props) => {
-  const { children, panelClassName, withOverview } = props
+  const { children, panelClassName } = props
   const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
 
   return (
-    <div className={cx(styles.mainWrapper, { [styles.withOverview]: withOverview })}>
+    <div className={cx(styles.mainWrapper)}>
       <div className={cx(styles.mainPanel, { [styles.insightsOpen]: isInsightsOpen })}>
         {children}
       </div>
@@ -26,4 +25,4 @@ const ExplorePanelTemplate = (props: Props) => {
   )
 }
 
-export default ExplorePanelTemplate
+export default React.memo(ExplorePanelTemplate)

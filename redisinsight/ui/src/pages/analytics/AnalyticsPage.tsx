@@ -1,13 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
-import InstanceHeader from 'uiSrc/components/instance-header'
 import { Pages } from 'uiSrc/constants'
 import { appContextAnalytics, setLastAnalyticsPage } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 
-import { ExplorePanelTemplate } from 'uiSrc/templates'
 import AnalyticsPageRouter from './AnalyticsPageRouter'
 
 import styles from './styles.module.scss'
@@ -59,14 +57,9 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   }, [pathname])
 
   return (
-    <>
-      <InstanceHeader />
-      <ExplorePanelTemplate withOverview>
-        <div className={styles.main}>
-          <AnalyticsPageRouter routes={routes} />
-        </div>
-      </ExplorePanelTemplate>
-    </>
+    <div className={styles.main}>
+      <AnalyticsPageRouter routes={routes} />
+    </div>
   )
 }
 

@@ -3,12 +3,10 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import InstanceHeader from 'uiSrc/components/instance-header'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
-import { ExplorePanelTemplate } from 'uiSrc/templates'
 import { MessagesListWrapper, PublishMessage, SubscriptionPanel } from './components'
 
 import styles from './styles.module.scss'
@@ -39,27 +37,22 @@ const PubSubPage = () => {
   }
 
   return (
-    <>
-      <InstanceHeader />
-      <ExplorePanelTemplate withOverview>
-        <div className={styles.main} data-testid="pub-sub-page">
-          <div className={styles.contentPanel}>
-            <div className={styles.header}>
-              <EuiTitle size="m" className={styles.title}>
-                <h1>Pub/Sub</h1>
-              </EuiTitle>
-              <SubscriptionPanel />
-            </div>
-            <div className={styles.tableWrapper}>
-              <MessagesListWrapper />
-            </div>
-          </div>
-          <div className={styles.footerPanel}>
-            <PublishMessage />
-          </div>
+    <div className={styles.main} data-testid="pub-sub-page">
+      <div className={styles.contentPanel}>
+        <div className={styles.header}>
+          <EuiTitle size="m" className={styles.title}>
+            <h1>Pub/Sub</h1>
+          </EuiTitle>
+          <SubscriptionPanel />
         </div>
-      </ExplorePanelTemplate>
-    </>
+        <div className={styles.tableWrapper}>
+          <MessagesListWrapper />
+        </div>
+      </div>
+      <div className={styles.footerPanel}>
+        <PublishMessage />
+      </div>
+    </div>
   )
 }
 

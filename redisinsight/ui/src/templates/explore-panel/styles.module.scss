@@ -3,10 +3,6 @@
   flex: 1;
   height: 100%;
   width: 100%;
-
-  &.withOverview {
-    height: calc(100% - 70px);
-  }
 }
 
 .mainPanel {

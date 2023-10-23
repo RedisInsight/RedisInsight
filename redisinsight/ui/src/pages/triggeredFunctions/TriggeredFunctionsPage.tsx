@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useLocation, useParams, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
-import InstanceHeader from 'uiSrc/components/instance-header'
 
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -16,7 +15,6 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
-import { ExplorePanelTemplate } from 'uiSrc/templates'
 import TriggeredFunctionsPageRouter from './TriggeredFunctionsPageRouter'
 import TriggeredFunctionsTabs from './components/TriggeredFunctionsTabs'
 
@@ -96,24 +94,19 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   const path = pathname?.split('/').pop() || ''
 
   return (
-    <>
-      <InstanceHeader />
-      <ExplorePanelTemplate withOverview>
-        <div className={styles.main}>
-          <TriggeredFunctionsTabs path={path} />
-          <TriggeredFunctionsPageRouter routes={routes} />
-          <div className={styles.onboardAnchor}>
-            <OnboardingTour
-              options={ONBOARDING_FEATURES.FINISH}
-              anchorPosition="downCenter"
-              panelClassName={styles.onboardPanel}
-            >
-              <span />
-            </OnboardingTour>
-          </div>
-        </div>
-      </ExplorePanelTemplate>
-    </>
+    <div className={styles.main}>
+      <TriggeredFunctionsTabs path={path} />
+      <TriggeredFunctionsPageRouter routes={routes} />
+      <div className={styles.onboardAnchor}>
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.FINISH}
+          anchorPosition="downCenter"
+          panelClassName={styles.onboardPanel}
+        >
+          <span />
+        </OnboardingTour>
+      </div>
+    </div>
   )
 }
 

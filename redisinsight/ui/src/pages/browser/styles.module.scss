@@ -107,5 +107,7 @@ $breakpoint-to-hide-resize-panel: 1280px;
 }
 
 .backBtn {
+  flex-grow: 0;
+  align-self: self-start;
   margin: 0 0 8px 16px;
 }

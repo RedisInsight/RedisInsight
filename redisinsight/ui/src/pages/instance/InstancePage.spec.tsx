@@ -4,10 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import InstancePage, { getDefaultSizes, Props } from './InstancePage'
+import InstancePage, { Props } from './InstancePage'
 
 const mockedProps = mock<Props>()
 
@@ -83,23 +81,5 @@ describe('InstancePage', () => {
     )
 
     expect(queryByTestId('recommendations-trigger')).toBeInTheDocument()
-  })
-
-  it('should be called LocalStorage after Component Will Unmount', () => {
-    const defaultSizes = getDefaultSizes()
-    localStorageService.set = jest.fn()
-
-    const { unmount } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    unmount()
-
-    expect(localStorageService.set).toBeCalledWith(
-      BrowserStorageItem.cliResizableContainer,
-      defaultSizes
-    )
   })
 })

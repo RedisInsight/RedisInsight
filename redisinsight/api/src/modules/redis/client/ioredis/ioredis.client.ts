@@ -4,7 +4,6 @@ import {
   RedisClient,
   RedisClientCommand,
   RedisClientCommandReply,
-  RedisClientConnectionType,
 } from 'src/modules/redis/client';
 
 export abstract class IoredisClient extends RedisClient {
@@ -53,6 +52,19 @@ export abstract class IoredisClient extends RedisClient {
     return await this.client.sendCommand(
       new Command(cmd, args, IoredisClient.prepareCommandOptions(options)),
     ) as RedisClientCommandReply;
+  }
+
+  async sendMulti(
+    commands: RedisClientCommand[],
+    options?: IRedisClientCommandOptions,
+  ): Promise<Array<[Error | null, RedisClientCommandReply]>> {
+    let batch = commands;
+
+    if (options?.unknownCommands) {
+      batch = commands.map((command) => ['call', ...command]);
+    }
+
+    return await this.client.multi(batch).exec() as [Error | null, RedisClientCommandReply][];
   }
 
   async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {

@@ -76,12 +76,17 @@ export abstract class RedisClient {
     options?: IRedisClientCommandOptions,
   ): Promise<RedisClientCommandReply>;
 
-  abstract call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply>;
-
   abstract sendPipeline(
     commands: RedisClientCommand[],
     options?: IRedisClientCommandOptions,
   ): Promise<Array<[Error | null, RedisClientCommandReply]>>;
+
+  abstract sendMulti(
+    commands: RedisClientCommand[],
+    options?: IRedisClientCommandOptions,
+  ): Promise<Array<[Error | null, RedisClientCommandReply]>>;
+
+  abstract call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply>;
 
   /**
    * Close Redis connection without waiting for pending commands

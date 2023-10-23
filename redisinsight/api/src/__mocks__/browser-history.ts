@@ -1,13 +1,13 @@
-import { plainToClass } from "class-transformer";
+import { plainToClass } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
 import {
   mockDatabase,
 } from 'src/__mocks__';
-import { BrowserHistoryMode } from "src/common/constants";
-import { RedisDataType } from "src/modules/browser/dto";
-import { CreateBrowserHistoryDto } from "src/modules/browser/dto/browser-history/create.browser-history.dto";
-import { BrowserHistory, ScanFilter } from "src/modules/browser/dto/browser-history/get.browser-history.dto";
-import { BrowserHistoryEntity } from "src/modules/browser/entities/browser-history.entity";
+import { BrowserHistoryMode } from 'src/common/constants';
+import { RedisDataType } from 'src/modules/browser/keys/keys.dto';
+import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto/create.browser-history.dto';
+import { BrowserHistory, ScanFilter } from 'src/modules/browser/browser-history/dto/get.browser-history.dto';
+import { BrowserHistoryEntity } from 'src/modules/browser/browser-history/entities/browser-history.entity';
 
 export const mockBrowserHistoryService = () => ({
   create: jest.fn(),

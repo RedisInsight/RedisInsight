@@ -3,7 +3,9 @@ import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { FIELD_TYPE_OPTIONS, FieldTypes } from
   'uiSrc/pages/browser/components/create-redisearch-index/constants'
 
-const nameAndVersionToModule = ([name, semanticVersion]) => ({ name, semanticVersion })
+const nameAndVersionToModule = ([name, semanticVersion, version]: any[]) => (
+  { name, semanticVersion, version }
+)
 
 const ALL_OPTIONS = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
   value,

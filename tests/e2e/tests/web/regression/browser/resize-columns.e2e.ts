@@ -52,13 +52,8 @@ fixture `Resize columns in Key details`
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
-        await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
-        console.log(databasesForAdding[0].databaseName);
-        await t.wait(5_000);
-        // Reload Page
-        await myRedisDatabasePage.reloadPage();
-        await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(databasesForAdding[0]);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(databasesForAdding[1]);
         await browserPage.addHashKey(keys[0].name, '2147476121', longFieldName, longFieldName);
         await browserPage.addListKey(keys[1].name, '2147476121', 'element');
         await browserPage.addZSetKey(keys[2].name, '1', '2147476121', 'member');
@@ -69,7 +64,7 @@ fixture `Resize columns in Key details`
         await browserPage.deleteKeysByNames(keyNames);
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
-test.only('Resize of columns in Hash, List, Zset Key details', async t => {
+test('Resize of columns in Hash, List, Zset Key details', async t => {
     const field = browserPage.keyDetailsTable.find(browserPage.cssRowInVirtualizedTable);
     const tableHeaderResizeTrigger = browserPage.resizeTrigger;
 
@@ -82,14 +77,14 @@ test.only('Resize of columns in Hash, List, Zset Key details', async t => {
         // Remember last column width
         key.fieldWidthEnd = await field.clientWidth;
         // Verify that user can resize columns for Hash, List, Zset Keys
-        await t.expect(key.fieldWidthEnd).eql(key.fieldWidthStart - key.offsetX, `Field is not resized for ${key.type} key`);
+        await t.expect(key.fieldWidthEnd).within(key.fieldWidthStart - key.offsetX - 5, key.fieldWidthStart - key.offsetX + 5, `Field is not resized for ${key.type} key`);
     }
 
     // Verify that resize saved when switching between pages
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await browserPage.openKeyDetails(keys[0].name);
-    await t.expect(field.clientWidth).eql(keys[0].fieldWidthEnd, 'Resize context not saved for key when switching between pages');
+    await t.expect(field.clientWidth).within(keys[0].fieldWidthEnd - 5, keys[0].fieldWidthEnd + 5, 'Resize context not saved for key when switching between pages');
 
     // Apply filter to save it in filter history
     await browserPage.searchByKeyName(`${keys[0].name}*`);

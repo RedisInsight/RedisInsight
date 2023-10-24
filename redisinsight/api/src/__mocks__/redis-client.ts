@@ -34,7 +34,7 @@ export class MockRedisClient extends RedisClient {
 
   public sendPipeline = jest.fn().mockResolvedValue(undefined);
 
-  public sendMulti = jest.fn().mockResolvedValue(undefined);
+  // public sendMulti = jest.fn().mockResolvedValue(undefined);
 
   public call = jest.fn().mockResolvedValue(undefined);
 

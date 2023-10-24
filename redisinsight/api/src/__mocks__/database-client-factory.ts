@@ -1,9 +1,6 @@
-import { MockRedisClient } from 'src/__mocks__/redis-client';
-import { mockBrowserClientMetadata } from 'src/__mocks__/common';
-
-export const mockRedisClient = new MockRedisClient(mockBrowserClientMetadata);
+import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
 
 export const mockDatabaseClientFactory = jest.fn(() => ({
-  getOrCreateClient: jest.fn().mockResolvedValue(mockRedisClient),
-  createClient: jest.fn().mockResolvedValue(mockRedisClient),
+  getOrCreateClient: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
+  createClient: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
 }));

@@ -35,7 +35,8 @@ import {
   mockSetListElementDto,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { mockDatabaseClientFactory, mockRedisClient } from 'src/__mocks__/database-client-factory';
+import { mockDatabaseClientFactory } from 'src/__mocks__/database-client-factory';
+import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ListService } from './list.service';
 
@@ -54,12 +55,12 @@ describe('ListService', () => {
     }).compile();
 
     service = module.get<ListService>(ListService);
-    mockRedisClient.sendCommand = jest.fn().mockResolvedValue(undefined);
+    mockStandaloneRedisClient.sendCommand = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('createList', () => {
     beforeEach(() => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[mockPushElementDto.keyName]])
         .mockResolvedValue(false);
       service.createListWithExpiration = jest.fn();
@@ -79,7 +80,7 @@ describe('ListService', () => {
       expect(service.createListWithExpiration).toHaveBeenCalled();
     });
     it('create list without expiration', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LPush, ...[
           mockPushElementDto.keyName,
           mockPushElementDto.element,
@@ -92,34 +93,34 @@ describe('ListService', () => {
       expect(service.createListWithExpiration).not.toHaveBeenCalled();
     });
     it('key with this name exist', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[mockPushElementDto.keyName]])
         .mockResolvedValue(true);
 
       await expect(
         service.createList(mockBrowserClientMetadata, mockPushElementDto),
       ).rejects.toThrow(new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST));
-      expect(mockRedisClient.sendCommand).toHaveBeenCalledTimes(1);
-      expect(mockRedisClient.sendMulti).not.toHaveBeenCalled();
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(mockStandaloneRedisClient.sendPipeline).not.toHaveBeenCalled();
     });
     it("user don't have required permissions for createList", async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
         command: 'LPUSH',
       };
-      mockRedisClient.sendCommand.mockRejectedValue(replyError);
+      mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.createList(mockBrowserClientMetadata, mockPushElementDto),
       ).rejects.toThrow(ForbiddenException);
-      expect(mockRedisClient.sendCommand).toHaveBeenCalledTimes(1);
-      expect(mockRedisClient.sendMulti).not.toHaveBeenCalled();
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(mockStandaloneRedisClient.sendPipeline).not.toHaveBeenCalled();
     });
   });
 
   describe('pushElement', () => {
     it('succeed to insert element at the tail of the list data type', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPushX, ...[
           mockPushElementDto.keyName,
           mockPushElementDto.element,
@@ -131,7 +132,7 @@ describe('ListService', () => {
       ).resolves.not.toThrow();
     });
     it('succeed to insert element at the head of the list data type', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LPushX, ...[
           mockPushElementDto.keyName,
           mockPushElementDto.element,
@@ -146,7 +147,7 @@ describe('ListService', () => {
       expect(result.total).toEqual(12);
     });
     it('key with this name does not exist for pushElement', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPushX, ...[
           mockPushElementDto.keyName,
           mockPushElementDto.element,
@@ -162,7 +163,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'RPUSHX',
       };
-      mockRedisClient.sendCommand.mockRejectedValue(replyError);
+      mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.pushElement(mockBrowserClientMetadata, mockPushElementDto),
@@ -172,12 +173,12 @@ describe('ListService', () => {
 
   describe('getElements', () => {
     beforeEach(() => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LLen, ...[mockPushElementDto.keyName]])
         .mockResolvedValue(mockListElements.length);
     });
     it.skip('succeed to get elements of the list', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.Lrange, ...[mockPushElementDto.keyName]])
         .mockResolvedValue(mockListElements);
 
@@ -188,7 +189,7 @@ describe('ListService', () => {
       await expect(result).toEqual(mockGetListElementsResponse);
     });
     it('key with this name does not exist for getElements', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LLen, ...[mockPushElementDto.keyName]])
         .mockResolvedValue(0);
 
@@ -201,7 +202,7 @@ describe('ListService', () => {
         ...mockRedisWrongTypeError,
         command: 'LLEN',
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LLen, ...[mockPushElementDto.keyName]])
         .mockRejectedValue(replyError);
 
@@ -214,7 +215,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'LRANGE',
       };
-      mockRedisClient.sendCommand.mockRejectedValue(replyError);
+      mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.getElements(mockBrowserClientMetadata, mockGetListElementsDto),
@@ -224,7 +225,7 @@ describe('ListService', () => {
 
   describe('getElement', () => {
     beforeEach(() => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[mockKeyDto.keyName]])
         .mockResolvedValue(1);
     });
@@ -233,7 +234,7 @@ describe('ListService', () => {
         ...mockRedisWrongTypeError,
         command: 'LINDEX',
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LIndex, ...[mockKeyDto.keyName, expect.anything()]])
         .mockRejectedValue(replyError);
 
@@ -246,7 +247,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'LINDEX',
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LIndex, ...[expect.anything()]])
         .mockRejectedValue(replyError);
 
@@ -259,7 +260,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'EXISTS',
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[expect.anything()]])
         .mockRejectedValue(replyError);
 
@@ -268,7 +269,7 @@ describe('ListService', () => {
       ).rejects.toThrow(ForbiddenException);
     });
     it('key with this name does not exists', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[mockKeyDto.keyName]])
         .mockResolvedValue(0);
 
@@ -277,7 +278,7 @@ describe('ListService', () => {
       ).rejects.toThrow(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
     });
     it.skip('index is out of range', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LIndex, ...[expect.anything()]])
         .mockResolvedValue(null);
 
@@ -286,7 +287,7 @@ describe('ListService', () => {
       ).rejects.toThrow(new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()));
     });
     it.skip('succeed to get List element by index', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LIndex, ...[expect.anything()]])
         .mockResolvedValue(mockGetListElementResponse.value);
 
@@ -301,13 +302,13 @@ describe('ListService', () => {
 
   describe('setElement', () => {
     beforeEach(() => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[mockSetListElementDto.keyName]])
         .mockResolvedValue(true);
     });
     it('succeed to set the list element at index', async () => {
       const { keyName, index, element } = mockSetListElementDto;
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LSet, ...[keyName, index, element]])
         .mockResolvedValue('OK');
 
@@ -316,7 +317,7 @@ describe('ListService', () => {
       ).resolves.not.toThrow();
     });
     it('key with this name does not exist for setElement', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, ...[mockSetListElementDto.keyName]])
         .mockResolvedValue(false);
 
@@ -329,7 +330,7 @@ describe('ListService', () => {
         ...mockRedisWrongTypeError,
         command: 'LSET',
       };
-      mockRedisClient.sendCommand.mockRejectedValue(replyError);
+      mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
@@ -341,7 +342,7 @@ describe('ListService', () => {
         command: 'LSET',
         message: 'ERR index out of range',
       };
-      mockRedisClient.sendCommand.mockRejectedValue(replyError);
+      mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
@@ -352,7 +353,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'LSET',
       };
-      mockRedisClient.sendCommand.mockRejectedValue(replyError);
+      mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.setElement(mockBrowserClientMetadata, mockSetListElementDto),
@@ -362,7 +363,7 @@ describe('ListService', () => {
 
   describe('deleteElements', () => {
     it('succeed to remove element from the tail', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPop, ...[mockDeleteElementsDto.keyName]])
         .mockResolvedValue(mockListElements[0]);
 
@@ -374,7 +375,7 @@ describe('ListService', () => {
       await expect(result).toEqual({ elements: [mockListElements[0]] });
     });
     it('succeed to remove element from the head', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.LPop, ...[mockDeleteElementsDto.keyName]])
         .mockResolvedValue(mockListElements[0]);
 
@@ -387,7 +388,7 @@ describe('ListService', () => {
     });
     it('succeed to remove multiple elements from the tail', async () => {
       const mockDeletedElements = [mockListElement, mockListElement2];
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPop, ...[mockDeleteElementsDto.keyName, 2]])
         .mockResolvedValue(mockDeletedElements);
 
@@ -402,7 +403,7 @@ describe('ListService', () => {
         ...mockRedisWrongTypeError,
         command: 'RPOP',
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPop, expect.anything()])
         .mockRejectedValue(replyError);
 
@@ -418,7 +419,7 @@ describe('ListService', () => {
           args: [mockDeleteElementsDto.keyName, 2],
         },
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPop, ...[mockDeleteElementsDto.keyName, 2]])
         .mockRejectedValue(replyError);
 
@@ -434,7 +435,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'RPOP',
       };
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPop, expect.anything()])
         .mockRejectedValue(replyError);
 
@@ -443,7 +444,7 @@ describe('ListService', () => {
       ).rejects.toThrow(ForbiddenException);
     });
     it('key with this name does not exists', async () => {
-      when(mockRedisClient.sendCommand)
+      when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolListCommands.RPop, ...[mockDeleteElementsDto.keyName]])
         .mockResolvedValue(null);
 
@@ -459,7 +460,7 @@ describe('ListService', () => {
       expire: 1000,
     };
     it("shouldn't throw error", async () => {
-      when(mockRedisClient.sendMulti)
+      when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolListCommands.LPush, dto.keyName, dto.element],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
@@ -470,7 +471,7 @@ describe('ListService', () => {
         ]);
 
       await expect(
-        service.createListWithExpiration(mockRedisClient, dto),
+        service.createListWithExpiration(mockStandaloneRedisClient, dto),
       ).resolves.not.toThrow();
     });
     it.skip('should throw error', async () => {
@@ -478,7 +479,7 @@ describe('ListService', () => {
         ...mockRedisNoPermError,
         command: 'LPUSH',
       };
-      when(mockRedisClient.sendMulti)
+      when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
           [BrowserToolListCommands.LPush, dto.keyName, dto.element],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
@@ -486,7 +487,7 @@ describe('ListService', () => {
         .mockResolvedValue([replyError, []]);
 
       try {
-        await service.createListWithExpiration(mockRedisClient, dto);
+        await service.createListWithExpiration(mockStandaloneRedisClient, dto);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);

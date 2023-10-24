@@ -54,6 +54,7 @@ export abstract class IoredisClient extends RedisClient {
     ) as RedisClientCommandReply;
   }
 
+  /** TODO: It's necessary to investigate transactions
   async sendMulti(
     commands: RedisClientCommand[],
     options?: IRedisClientCommandOptions,
@@ -66,6 +67,7 @@ export abstract class IoredisClient extends RedisClient {
 
     return await this.client.multi(batch).exec() as [Error | null, RedisClientCommandReply][];
   }
+   */
 
   async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
     if (IoredisClient.prepareCommandOptions(options).replyEncoding === null) {

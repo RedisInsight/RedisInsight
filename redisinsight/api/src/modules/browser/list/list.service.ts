@@ -241,7 +241,7 @@ export class ListService {
     dto: CreateListWithExpireDto,
   ): Promise<void> {
     const { keyName, element, expire } = dto;
-    const transactionResults = await client.sendMulti([
+    const transactionResults = await client.sendPipeline([
       [BrowserToolListCommands.LPush, keyName, element],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);

@@ -70,6 +70,7 @@ export class ClusterNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
+  /** TODO: It's necessary to investigate transactions
   async sendMulti(commands: RedisClientCommand[]): Promise<Array<[Error | null, RedisClientCommandReply]>> {
     return Promise.all(
       commands.map(
@@ -79,6 +80,7 @@ export class ClusterNodeRedisClient extends NodeRedisClient {
       ),
     );
   }
+   */
 
   /**
    * @inheritDoc

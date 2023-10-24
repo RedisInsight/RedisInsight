@@ -39,9 +39,9 @@ const keys = [
 ];
 const keyNames: string[] = [];
 keys.forEach(key => keyNames.push(key.name));
-let databaseName1 = `testDB1_${Common.generateWord(10)}`;
-let databaseName2 = `testDB2_${Common.generateWord(10)}`;
-let databasesForAdding = [
+const databaseName1 = `testDB1_${Common.generateWord(10)}`;
+const databaseName2 = `testDB2_${Common.generateWord(10)}`;
+const databasesForAdding = [
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName1 },
     { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName2 }
 ];
@@ -50,12 +50,6 @@ fixture `Resize columns in Key details`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        databaseName1 = `testDB1_${Common.generateWord(10)}`;
-        databaseName2 = `testDB2_${Common.generateWord(10)}`;
-        databasesForAdding = [
-            { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName1 },
-            { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName2 }
-        ];
         // Add new databases using API
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);

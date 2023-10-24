@@ -21,8 +21,8 @@ import {
   PushListElementsResponse,
   SetListElementDto,
   SetListElementResponse,
-} from 'src/modules/browser/list/list.dto';
-import { KeyDto } from 'src/modules/browser/keys/keys.dto';
+} from 'src/modules/browser/list/dto';
+import { KeyDto } from 'src/modules/browser/keys/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
@@ -30,7 +30,7 @@ import {
 import { plainToClass } from 'class-transformer';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
-import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils/checkKeyExistsing';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 @Injectable()
 export class ListService {

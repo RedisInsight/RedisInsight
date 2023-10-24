@@ -26,7 +26,7 @@ import {
   GetSetMembersDto,
   GetSetMembersResponse,
   SetScanResponse,
-} from 'src/modules/browser/set/set.dto';
+} from 'src/modules/browser/set/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');

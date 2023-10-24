@@ -7,14 +7,16 @@ import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
-import { BrowserHistoryService } from './browser-history.service';
-import { BrowserHistory } from './dto/get.browser-history.dto';
-import { DeleteBrowserHistoryItemsDto } from './dto/delete.browser-history.dto';
-import { DeleteBrowserHistoryItemsResponse } from './dto/delete.browser-history.response.dto';
+import {
+  BrowserHistory,
+  DeleteBrowserHistoryItemsDto,
+  DeleteBrowserHistoryItemsResponse,
+} from 'src/modules/browser/browser-history/dto';
+import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 
 @UseInterceptors(BrowserSerializeInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
-@ApiTags('Browser History')
+@ApiTags('Browser: Browser History')
 @Controller('history')
 export class BrowserHistoryController {
   constructor(private readonly service: BrowserHistoryService) {}

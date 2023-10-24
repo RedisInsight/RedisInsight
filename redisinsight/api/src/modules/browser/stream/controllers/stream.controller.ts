@@ -17,14 +17,14 @@ import {
   GetStreamEntriesResponse,
   DeleteStreamEntriesDto,
   DeleteStreamEntriesResponse,
-} from 'src/modules/browser/stream/stream.dto';
-import { StreamService } from 'src/modules/browser/stream/services/stream/stream.service';
+} from 'src/modules/browser/stream/dto';
+import { StreamService } from 'src/modules/browser/stream/services/stream.service';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('Streams')
+@ApiTags('Browser: Streams')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('streams')
 @UsePipes(new ValidationPipe({ transform: true }))

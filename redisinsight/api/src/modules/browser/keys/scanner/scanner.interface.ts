@@ -1,4 +1,4 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/keys.dto';
+import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { Cluster, Redis } from 'ioredis';
 import { RedisString } from 'src/common/constants';
 import { ClientMetadata } from 'src/common/models';

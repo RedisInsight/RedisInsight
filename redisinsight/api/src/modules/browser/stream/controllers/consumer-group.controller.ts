@@ -16,15 +16,15 @@ import {
   DeleteConsumerGroupsDto,
   DeleteConsumerGroupsResponse,
   UpdateConsumerGroupDto,
-} from 'src/modules/browser/stream/stream.dto';
-import { ConsumerGroupService } from 'src/modules/browser/stream/services/consumer-group/consumer-group.service';
-import { KeyDto } from 'src/modules/browser/keys/keys.dto';
+} from 'src/modules/browser/stream/dto';
+import { ConsumerGroupService } from 'src/modules/browser/stream/services/consumer-group.service';
+import { KeyDto } from 'src/modules/browser/keys/dto';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('Streams')
+@ApiTags('Browser: Streams')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('streams/consumer-groups')
 @UsePipes(new ValidationPipe({ transform: true }))

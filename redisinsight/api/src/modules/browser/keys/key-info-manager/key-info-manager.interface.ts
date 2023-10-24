@@ -1,4 +1,4 @@
-import { GetKeyInfoResponse } from 'src/modules/browser/keys/keys.dto';
+import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { RedisString } from 'src/common/constants';
 import { ClientMetadata } from 'src/common/models';
 

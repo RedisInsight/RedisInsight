@@ -13,7 +13,7 @@ import {
 import { BrowserHistoryProvider } from 'src/modules/browser/browser-history/providers/browser-history.provider';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { BrowserHistoryMode } from 'src/common/constants';
-import { BrowserHistoryService } from './browser-history.service';
+import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 
 describe('BrowserHistoryService', () => {
   let service: BrowserHistoryService;

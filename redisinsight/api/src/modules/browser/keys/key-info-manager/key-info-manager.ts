@@ -1,4 +1,4 @@
-import { IKeyInfoStrategy } from './key-info-manager.interface';
+import { IKeyInfoStrategy } from 'src/modules/browser/keys/key-info-manager/key-info-manager.interface';
 
 export class KeyInfoManager {
   private strategies = {};

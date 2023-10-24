@@ -13,14 +13,14 @@ import {
   GetStringValueResponse,
   SetStringDto,
   SetStringWithExpireDto,
-} from 'src/modules/browser/string/string.dto';
+} from 'src/modules/browser/string/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { plainToClass } from 'class-transformer';
-import { GetKeyInfoDto } from 'src/modules/browser/keys/keys.dto';
+import { GetKeyInfoDto } from 'src/modules/browser/keys/dto';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Readable } from 'stream';

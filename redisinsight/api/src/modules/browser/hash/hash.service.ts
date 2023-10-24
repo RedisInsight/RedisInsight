@@ -30,7 +30,7 @@ import {
   GetHashFieldsResponse,
   HashFieldDto,
   HashScanResponse,
-} from './hash.dto';
+} from 'src/modules/browser/hash/dto';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 

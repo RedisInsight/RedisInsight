@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { mockRedisConsumer } from 'src/__mocks__';
 import { KeyInfoManager } from 'src/modules/browser/keys/key-info-manager/key-info-manager';
-import { RedisDataType } from 'src/modules/browser/keys/keys.dto';
-import { IKeyInfoStrategy } from './key-info-manager.interface';
-import { UnsupportedTypeInfoStrategy } from './strategies/unsupported-type-info/unsupported-type-info.strategy';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
+import { UnsupportedTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { IKeyInfoStrategy } from 'src/modules/browser/keys/key-info-manager/key-info-manager.interface';
 
 class TestKeyInfoStrategy implements IKeyInfoStrategy {
   public async getInfo() {

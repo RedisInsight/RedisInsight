@@ -6,7 +6,7 @@ import {
   convertRedisInfoReplyToObject, convertBulkStringsToObject, checkTimestamp, checkKeyspaceNotification,
 } from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
-import { RedisDataType } from 'src/modules/browser/keys/keys.dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
 import {

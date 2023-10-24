@@ -18,8 +18,8 @@ import {
   ModifyRejsonRlSetDto,
   RemoveRejsonRlDto,
   RemoveRejsonRlResponse,
-  SafeRejsonRlDataDtO,
-} from 'src/modules/browser/rejson-rl/rejson-rl.dto';
+  SafeRejsonRlDataDto,
+} from 'src/modules/browser/rejson-rl/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolRejsonRlCommands,
@@ -163,7 +163,7 @@ export class RejsonRlService {
     keyName: RedisString,
     path: string,
     type: string,
-  ): Promise<SafeRejsonRlDataDtO[]> {
+  ): Promise<SafeRejsonRlDataDto[]> {
     const result = [];
     let objectKeys: string[];
     let arrayLength: number;

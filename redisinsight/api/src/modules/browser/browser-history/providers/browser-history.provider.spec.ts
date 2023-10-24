@@ -20,7 +20,7 @@ import { BrowserHistoryProvider } from 'src/modules/browser/browser-history/prov
 import { BrowserHistoryEntity } from 'src/modules/browser/browser-history/entities/browser-history.entity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
-import { BrowserHistory } from 'src/modules/browser/browser-history/dto/get.browser-history.dto';
+import { BrowserHistory } from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryMode } from 'src/common/constants';
 
 describe('BrowserHistoryProvider', () => {

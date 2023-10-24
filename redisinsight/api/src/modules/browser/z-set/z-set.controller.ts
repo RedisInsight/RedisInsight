@@ -24,11 +24,11 @@ import {
   SearchZSetMembersDto,
   SearchZSetMembersResponse,
   UpdateMemberInZSetDto,
-} from 'src/modules/browser/z-set/z-set.dto';
+} from 'src/modules/browser/z-set/dto';
 import { ZSetService } from 'src/modules/browser/z-set/z-set.service';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('ZSet')
+@ApiTags('Browser: ZSet')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('zSet')
 @UsePipes(new ValidationPipe({ transform: true }))

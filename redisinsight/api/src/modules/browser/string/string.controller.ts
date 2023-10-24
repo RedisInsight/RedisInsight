@@ -18,8 +18,8 @@ import {
   GetStringValueResponse,
   SetStringWithExpireDto,
   GetStringInfoDto,
-} from 'src/modules/browser/string/string.dto';
-import { GetKeyInfoDto } from 'src/modules/browser/keys/keys.dto';
+} from 'src/modules/browser/string/dto';
+import { GetKeyInfoDto } from 'src/modules/browser/keys/dto';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
@@ -28,7 +28,7 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Response } from 'express';
 import { StringService } from 'src/modules/browser/string/string.service';
 
-@ApiTags('String')
+@ApiTags('Browser: String')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('string')
 @UsePipes(new ValidationPipe({ transform: true }))

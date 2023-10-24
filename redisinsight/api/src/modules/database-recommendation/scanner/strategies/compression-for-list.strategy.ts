@@ -2,7 +2,7 @@ import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
-import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/keys.dto';
+import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { COMPRESSION_FOR_LIST_RECOMMENDATION_LENGTH } from 'src/common/constants';
 
 export class CompressionForListStrategy extends AbstractRecommendationStrategy {

@@ -15,12 +15,12 @@ import {
   ListRedisearchIndexesResponse,
   SearchRedisearchDto,
 } from 'src/modules/browser/redisearch/redisearch';
-import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/keys.dto';
+import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
-import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto/create.browser-history.dto';
+import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 

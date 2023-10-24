@@ -22,12 +22,12 @@ import {
   ListRedisearchIndexesResponse,
   SearchRedisearchDto,
 } from 'src/modules/browser/redisearch/redisearch';
-import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/keys.dto';
+import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('RediSearch')
+@ApiTags('Browser: RediSearch')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('redisearch')
 @UsePipes(new ValidationPipe({ transform: true }))

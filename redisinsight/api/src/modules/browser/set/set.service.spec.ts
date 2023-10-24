@@ -24,8 +24,8 @@ import {
   mockSetMembers,
 } from 'src/modules/browser/__mocks__';
 import { SetService } from 'src/modules/browser/set/set.service';
-import { CreateSetWithExpireDto, GetSetMembersDto } from 'src/modules/browser/set/set.dto';
-import { BrowserToolService } from '../services/browser-tool/browser-tool.service';
+import { CreateSetWithExpireDto, GetSetMembersDto } from 'src/modules/browser/set/dto';
+import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 
 const nodeClient = Object.create(IORedis.prototype);
 nodeClient.isCluster = false;

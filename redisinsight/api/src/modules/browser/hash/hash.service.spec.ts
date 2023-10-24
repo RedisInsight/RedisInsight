@@ -18,7 +18,7 @@ import {
 import {
   GetHashFieldsDto,
   HashFieldDto,
-} from 'src/modules/browser/hash/hash.dto';
+} from 'src/modules/browser/hash/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolHashCommands,

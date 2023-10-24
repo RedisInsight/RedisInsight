@@ -30,9 +30,9 @@ import {
 import {
   CreateZSetWithExpireDto,
   SearchZSetMembersDto,
-} from './z-set.dto';
-import { ZSetService } from './z-set.service';
-import { BrowserToolService } from '../services/browser-tool/browser-tool.service';
+} from 'src/modules/browser/z-set/dto';
+import { ZSetService } from 'src/modules/browser/z-set/z-set.service';
+import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 
 describe('ZSetService', () => {
   let service: ZSetService;

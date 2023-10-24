@@ -16,7 +16,7 @@ import {
 import {
   CreateListWithExpireDto,
   ListElementDestination,
-} from 'src/modules/browser/list/list.dto';
+} from 'src/modules/browser/list/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,

@@ -28,10 +28,10 @@ import {
   RenameKeyResponse,
   UpdateKeyTtlDto,
   KeyTtlResponse, GetKeysInfoDto,
-} from 'src/modules/browser/keys/keys.dto';
+} from 'src/modules/browser/keys/dto';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('Keys')
+@ApiTags('Browser: Keys')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('keys')
 @UsePipes(new ValidationPipe({ transform: true }))

@@ -2,7 +2,7 @@ import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { BrowserHistoryMode } from 'src/common/constants';
-import { RedisDataType } from 'src/modules/browser/keys/keys.dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 
 export class ScanFilter {
   @ApiProperty({

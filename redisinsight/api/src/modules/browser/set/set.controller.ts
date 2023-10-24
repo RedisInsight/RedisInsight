@@ -23,11 +23,11 @@ import {
   DeleteMembersFromSetResponse,
   GetSetMembersDto,
   GetSetMembersResponse,
-} from 'src/modules/browser/set/set.dto';
+} from 'src/modules/browser/set/dto';
 import { SetService } from 'src/modules/browser/set/set.service';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('Set')
+@ApiTags('Browser: Set')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('set')
 @UsePipes(new ValidationPipe({ transform: true }))

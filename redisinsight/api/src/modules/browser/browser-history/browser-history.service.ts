@@ -6,9 +6,11 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { ClientMetadata } from 'src/common/models';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserHistoryProvider } from 'src/modules/browser/browser-history/providers/browser-history.provider';
-import { BrowserHistory } from 'src/modules/browser/browser-history/dto/get.browser-history.dto';
-import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto/create.browser-history.dto';
-import { DeleteBrowserHistoryItemsResponse } from 'src/modules/browser/browser-history/dto/delete.browser-history.response.dto';
+import {
+  BrowserHistory,
+  CreateBrowserHistoryDto,
+  DeleteBrowserHistoryItemsResponse,
+} from 'src/modules/browser/browser-history/dto';
 
 @Injectable()
 export class BrowserHistoryService {

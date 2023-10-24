@@ -20,14 +20,14 @@ import {
   GetConsumersDto,
   GetPendingEntriesDto,
   PendingEntryDto,
-} from 'src/modules/browser/stream/stream.dto';
-import { ConsumerService } from 'src/modules/browser/stream/services/consumer/consumer.service';
+} from 'src/modules/browser/stream/dto';
+import { ConsumerService } from 'src/modules/browser/stream/services/consumer.service';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
-@ApiTags('Streams')
+@ApiTags('Browser: Streams')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('streams/consumer-groups/consumers')
 @UsePipes(new ValidationPipe({ transform: true }))

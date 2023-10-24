@@ -31,15 +31,15 @@ import {
   DeleteListElementsDto,
   DeleteListElementsResponse,
   PushListElementsResponse,
-} from 'src/modules/browser/list/list.dto';
-import { KeyDto } from 'src/modules/browser/keys/keys.dto';
+} from 'src/modules/browser/list/dto';
+import { KeyDto } from 'src/modules/browser/keys/dto';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 import { ListService } from 'src/modules/browser/list/list.service';
 
-@ApiTags('List')
+@ApiTags('Browser: List')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('list')
 @UsePipes(new ValidationPipe({ transform: true }))

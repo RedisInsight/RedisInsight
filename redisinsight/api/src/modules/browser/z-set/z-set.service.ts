@@ -34,7 +34,7 @@ import {
   SearchZSetMembersResponse,
   UpdateMemberInZSetDto,
   ZSetMemberDto,
-} from './z-set.dto';
+} from 'src/modules/browser/z-set/dto';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 

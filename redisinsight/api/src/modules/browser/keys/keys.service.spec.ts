@@ -27,7 +27,7 @@ import {
   GetKeysWithDetailsResponse,
   RedisDataType,
   RenameKeyDto,
-} from 'src/modules/browser/keys/keys.dto';
+} from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import {
@@ -40,7 +40,7 @@ import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
-import { StringTypeInfoStrategy } from './key-info-manager/strategies/string-type-info/string-type-info.strategy';
+import { StringTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: Buffer.from('testString'),

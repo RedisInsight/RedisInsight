@@ -24,10 +24,10 @@ import {
   DeleteFieldsFromHashResponse,
   GetHashFieldsDto,
   GetHashFieldsResponse,
-} from './hash.dto';
-import { HashService } from './hash.service';
+} from 'src/modules/browser/hash/dto';
+import { HashService } from 'src/modules/browser/hash/hash.service';
 
-@ApiTags('Hash')
+@ApiTags('Browser: Hash')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('hash')
 @UsePipes(new ValidationPipe({ transform: true }))

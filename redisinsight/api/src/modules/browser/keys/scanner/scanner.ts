@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IScannerStrategy } from './scanner.interface';
+import { IScannerStrategy } from 'src/modules/browser/keys/scanner/scanner.interface';
 
 @Injectable()
 export class Scanner {

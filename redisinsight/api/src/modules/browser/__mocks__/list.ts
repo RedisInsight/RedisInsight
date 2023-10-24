@@ -6,7 +6,7 @@ import {
   ListElementDestination,
   PushElementToListDto,
   SetListElementDto,
-} from 'src/modules/browser/list/list.dto';
+} from 'src/modules/browser/list/dto';
 import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 
 export const mockIndex: number = 0;

@@ -17,7 +17,7 @@ import {
 import {
   SetStringDto,
   SetStringWithExpireDto,
-} from 'src/modules/browser/string/string.dto';
+} from 'src/modules/browser/string/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands,

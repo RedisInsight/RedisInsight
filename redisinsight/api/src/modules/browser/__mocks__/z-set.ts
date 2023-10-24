@@ -6,7 +6,7 @@ import {
   SearchZSetMembersResponse,
   UpdateMemberInZSetDto,
   ZSetMemberDto,
-} from 'src/modules/browser/z-set/z-set.dto';
+} from 'src/modules/browser/z-set/dto';
 import { SortOrder } from 'src/constants';
 
 export const mockZSetMemberDto: ZSetMemberDto = {

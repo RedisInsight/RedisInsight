@@ -44,7 +44,7 @@ export interface Props {
 }
 
 interface OpenedNodes {
-  [key: string]: boolean;
+  [key: string]: boolean
 }
 
 export const KEYS = 'keys'
@@ -81,7 +81,7 @@ const VirtualTree = (props: Props) => {
   useEffect(() =>
     () => {
       nodes.current = []
-      elements.current = []
+      elements.current = {}
     }, [])
 
   // receive result from the "runWebworker"
@@ -90,7 +90,7 @@ const VirtualTree = (props: Props) => {
       return
     }
 
-    elements.current = []
+    elements.current = {}
     nodes.current = result
     rerender({})
     setConstructingTree?.(false)
@@ -99,7 +99,7 @@ const VirtualTree = (props: Props) => {
   useEffect(() => {
     if (!items?.length) {
       nodes.current = []
-      elements.current = []
+      elements.current = {}
       rerender({})
       runWebworker?.({ items: [], delimiter, sorting })
       return
@@ -161,7 +161,7 @@ const VirtualTree = (props: Props) => {
 
     getMetadata(entries)
 
-    elements.current = []
+    elements.current = {}
   }, 100)
 
   const getMetadataNode = useCallback((nameBuffer: any, path: string) => {

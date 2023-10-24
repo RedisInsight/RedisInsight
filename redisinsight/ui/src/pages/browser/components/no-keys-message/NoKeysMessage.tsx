@@ -21,7 +21,7 @@ export interface Props {
   onBulkActionsPanel: (value: boolean) => void
 }
 
-const NoKeysMessage = (props:Props) => {
+const NoKeysMessage = (props: Props) => {
   const {
     total,
     scanned,

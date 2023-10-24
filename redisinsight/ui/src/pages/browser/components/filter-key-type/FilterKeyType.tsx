@@ -75,7 +75,9 @@ const FilterKeyType = () => {
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value === ALL_KEY_TYPES_VALUE ? null : value))
-    viewType === KeyViewType.Tree && dispatch(resetBrowserTree())
+    if (viewType === KeyViewType.Tree) {
+      dispatch(resetBrowserTree())
+    }
     dispatch(
       fetchKeys(
         {

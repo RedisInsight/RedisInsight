@@ -67,7 +67,9 @@ const SearchKeyList = () => {
 
     dispatch(setSearchMatch(match, searchMode))
 
-    viewType === KeyViewType.Tree && dispatch(resetBrowserTree())
+    if (viewType === KeyViewType.Tree) {
+      dispatch(resetBrowserTree())
+    }
 
     dispatch(fetchKeys(
       {

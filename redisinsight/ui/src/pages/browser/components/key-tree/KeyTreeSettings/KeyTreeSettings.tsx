@@ -38,6 +38,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    setSorting(treeViewSort)
   }, [treeViewSort])
 
   useEffect(() => {

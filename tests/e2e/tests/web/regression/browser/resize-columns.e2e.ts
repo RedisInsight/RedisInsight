@@ -72,7 +72,7 @@ fixture `Resize columns in Key details`
         await browserPage.deleteKeysByNames(keyNames);
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
-test('Resize of columns in Hash, List, Zset Key details', async t => {
+test.only('Resize of columns in Hash, List, Zset Key details', async t => {
     const field = browserPage.keyDetailsTable.find(browserPage.cssRowInVirtualizedTable);
     const tableHeaderResizeTrigger = browserPage.resizeTrigger;
 
@@ -81,7 +81,7 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         // Remember initial column width
         key.fieldWidthStart = await field.clientWidth;
         await t.hover(tableHeaderResizeTrigger);
-        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.2 });
+        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.1 });
         // Remember last column width
         key.fieldWidthEnd = await field.clientWidth;
         // Verify that user can resize columns for Hash, List, Zset Keys

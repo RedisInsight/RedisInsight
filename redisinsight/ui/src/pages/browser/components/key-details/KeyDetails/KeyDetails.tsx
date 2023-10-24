@@ -31,6 +31,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import ExploreGuides from 'uiSrc/components/explore-guides'
 import { Nullable } from 'uiSrc/utils'
+import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 import KeyDetailsHeader from '../../key-details-header/KeyDetailsHeader'
 import ZSetDetails from '../../zset-details/ZSetDetails'
 import StringDetails from '../../string-details/StringDetails'
@@ -51,7 +52,7 @@ export interface Props {
   onToggleFullScreen: () => void
   onClose: (key: RedisResponseBuffer) => void
   onClosePanel: () => void
-  onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => void
+  onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args: IFetchKeyArgs) => void
   onDelete: (key: RedisResponseBuffer, type: string) => void
   onRemoveKey: () => void
   onEditTTL: (key: RedisResponseBuffer, ttl: number) => void
@@ -61,7 +62,7 @@ export interface Props {
 }
 
 const KeyDetails = ({ ...props }: Props) => {
-  const { onClosePanel, onRemoveKey, totalKeys, keysLastRefreshTime } = props
+  const { onRefresh, onClosePanel, onRemoveKey, totalKeys, keysLastRefreshTime } = props
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const { type: selectedKeyType, name: selectedKey } = useSelector(selectedKeyDataSelector) ?? {
     type: KeyTypes.String,
@@ -133,6 +134,7 @@ const KeyDetails = ({ ...props }: Props) => {
       <StringDetails
         isEditItem={editItem}
         setIsEdit={(isEdit) => setEditItem(isEdit)}
+        onRefresh={onRefresh}
       />
     ),
     [KeyTypes.Hash]: <HashDetails isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />,

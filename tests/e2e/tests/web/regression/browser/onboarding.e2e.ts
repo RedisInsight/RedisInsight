@@ -37,7 +37,7 @@ fixture `Onboarding new user tests`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptTermsAddDatabaseOrConnectToRedisStack(ossStandaloneConfigEmpty);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
     })
     .afterEach(async() => {
         await browserPage.Cli.sendCommandInCli(`DEL ${indexName}`);

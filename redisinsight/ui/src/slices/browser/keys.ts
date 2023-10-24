@@ -10,7 +10,8 @@ import {
   EndpointBasedOnKeyType,
   ENDPOINT_BASED_ON_KEY_TYPE,
   SearchHistoryMode,
-  SortOrder
+  SortOrder,
+  STRING_MAX_LENGTH
 } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
@@ -663,7 +664,10 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
         dispatch<any>(fetchListElements(key, 0, SCAN_COUNT_DEFAULT, resetData))
       }
       if (data.type === KeyTypes.String) {
-        dispatch<any>(fetchString(key, resetData))
+        dispatch<any>(fetchString(key, {
+          resetData,
+          end: STRING_MAX_LENGTH
+        }))
       }
       if (data.type === KeyTypes.ZSet) {
         dispatch<any>(

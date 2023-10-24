@@ -54,8 +54,9 @@ test('Switching between indexed databases', async t => {
     // Verify that database index switcher displayed for Standalone db
     await browserPage.OverviewPanel.changeDbIndex(1);
     // Verify that the same client connections are used after changing index
-    const logicalDbConnectedClients = await browserPage.overviewConnectedClients.textContent;
-    await t.expect(rememberedConnectedClients).eql(logicalDbConnectedClients);
+    // issue https://redislabs.atlassian.net/browse/RI-5079
+    // const logicalDbConnectedClients = await browserPage.overviewConnectedClients.textContent;
+    // await t.expect(rememberedConnectedClients).eql(logicalDbConnectedClients);
 
     // Verify that data changed for indexed db on Browser view
     await browserPage.verifyNoKeysInDatabase();

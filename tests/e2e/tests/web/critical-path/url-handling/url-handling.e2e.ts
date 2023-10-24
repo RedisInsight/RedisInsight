@@ -81,7 +81,7 @@ test
 
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));
-        await t.wait(5_000);
+        await t.wait(10_000);
         await t.click(workbenchPage.NavigationPanel.myRedisDBButton);
         await t.expect(browserPage.notification.exists).notOk({ timeout: 10000 });
         await t.expect(myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');

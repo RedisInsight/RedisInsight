@@ -7,6 +7,7 @@ import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
+import { t } from 'testcafe';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -53,6 +54,8 @@ fixture `Resize columns in Key details`
         // Add new databases using API
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
+        console.log(databasesForAdding[0].databaseName);
+        await t.wait(5_000);
         // Reload Page
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);

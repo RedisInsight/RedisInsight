@@ -9,9 +9,9 @@ import { ConsumerController } from 'src/modules/browser/stream/controllers/consu
 import { ConsumerService } from 'src/modules/browser/stream/services/consumer/consumer.service';
 import { RedisearchController } from 'src/modules/browser/redisearch/redisearch.controller';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
-import { ListService } from 'src/modules/browser/list/list.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
+import { ListModule } from 'src/modules/browser/list/list.module';
 import { HashController } from './hash/hash.controller';
 import { KeysController } from './keys/keys.controller';
 import { KeysService } from './keys/keys.service';
@@ -29,13 +29,14 @@ import { BrowserToolClusterService } from './services/browser-tool-cluster/brows
 import { BrowserHistoryService } from './browser-history/browser-history.service';
 import { BrowserHistoryProvider } from './browser-history/providers/browser-history.provider';
 import { BrowserHistoryController } from './browser-history/browser-history.controller';
-import { ListController } from './list/list.controller';
 
 @Module({
+  imports: [
+    ListModule,
+  ],
   controllers: [
     KeysController,
     StringController,
-    ListController,
     SetController,
     ZSetController,
     RejsonRlController,
@@ -49,7 +50,6 @@ import { ListController } from './list/list.controller';
   providers: [
     KeysService,
     StringService,
-    ListService,
     SetService,
     ZSetService,
     RejsonRlService,
@@ -74,7 +74,6 @@ export class BrowserModule implements NestModule {
         RouterModule.resolvePath(KeysController),
         RouterModule.resolvePath(StringController),
         RouterModule.resolvePath(HashController),
-        RouterModule.resolvePath(ListController),
         RouterModule.resolvePath(SetController),
         RouterModule.resolvePath(ZSetController),
         RouterModule.resolvePath(RejsonRlController),

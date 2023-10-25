@@ -4,7 +4,7 @@ import { RedisClient } from 'src/modules/redis/client';
 
 export const getTotalKeysFromInfo = async (client: RedisClient) => {
   try {
-    const currentDbIndex = get(client, ['options', 'db'], 0);
+    const currentDbIndex = await client.getCurrentDbIndex();
     const info = convertRedisInfoReplyToObject(
       await client.sendCommand(['info', 'keyspace'], {
         replyEncoding: 'utf8',

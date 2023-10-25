@@ -1,23 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import * as Redis from 'ioredis';
 import {
-  mockClientMetadata, mockClusterDatabaseWithTlsAuth,
-  mockDatabase,
-  mockDatabaseWithTlsAuth, mockFeatureService,
-  mockIORedisClient, mockIORedisCluster, mockIORedisSentinel, mockRedisConnectionStrategy,
-  mockSentinelDatabaseWithTlsAuth, mockSshTunnelProvider, mockStandaloneRedisClient
+  mockClientMetadata,
+  mockClusterDatabaseWithTlsAuth,
+  mockClusterRedisClient,
+  mockDatabase, mockFeatureRedisClient,
+  mockFeatureService,
+  mockIoRedisRedisConnectionStrategy,
+  mockNodeRedisConnectionStrategy,
+  mockSentinelDatabaseWithTlsAuth,
+  mockSentinelRedisClient,
+  mockStandaloneRedisClient,
+  MockType,
 } from 'src/__mocks__';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { Database } from 'src/modules/database/models/database';
-import { EventEmitter } from 'events';
-import apiConfig from 'src/utils/config';
-import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
-import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { RedisClientFactory, RedisClientLib } from 'src/modules/redis/redis.client.factory';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { NodeRedisConnectionStrategy } from 'src/modules/redis/connection/node.redis.connection.strategy';
 import { FeatureService } from 'src/modules/feature/feature.service';
-
-const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
+import { KnownFeatures } from 'src/modules/feature/constants';
 
 jest.mock('ioredis', () => ({
   ...jest.requireActual('ioredis') as object,
@@ -26,9 +26,9 @@ jest.mock('ioredis', () => ({
 describe('RedisClientFactory', () => {
   let module: TestingModule;
   let service: RedisClientFactory;
-  let ioredisRedisConnectionStrategy: IoredisRedisConnectionStrategy;
-  let nodeRedisConnectionStrategy: NodeRedisConnectionStrategy;
-  let featureService: FeatureService;
+  let ioredisRedisConnectionStrategy: MockType<IoredisRedisConnectionStrategy>;
+  let nodeRedisConnectionStrategy: MockType<NodeRedisConnectionStrategy>;
+  let featureService: MockType<FeatureService>;
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
@@ -36,151 +36,235 @@ describe('RedisClientFactory', () => {
         RedisClientFactory,
         {
           provide: IoredisRedisConnectionStrategy,
-          useFactory: mockRedisConnectionStrategy,
+          useFactory: mockIoRedisRedisConnectionStrategy,
         },
         {
           provide: NodeRedisConnectionStrategy,
-          useFactory: mockRedisConnectionStrategy,
+          useFactory: mockNodeRedisConnectionStrategy,
         },
         {
           provide: FeatureService,
           useFactory: mockFeatureService,
         },
       ],
-    })
-      .compile();
+    }).compile();
 
     service = await module.get(RedisClientFactory);
     ioredisRedisConnectionStrategy = await module.get(IoredisRedisConnectionStrategy);
     nodeRedisConnectionStrategy = await module.get(NodeRedisConnectionStrategy);
     featureService = await module.get(FeatureService);
+
+    featureService.getByName.mockResolvedValue(mockFeatureRedisClient);
   });
 
-  // describe('createClientAutomatically', () => {
-  //   beforeEach(() => {
-  //     service.createSentinelConnection = jest.fn()
-  //       .mockRejectedValueOnce(new Error());
-  //     service.createClusterConnection = jest.fn()
-  //       .mockRejectedValueOnce(new Error());
-  //     service.createStandaloneConnection = jest.fn()
-  //       .mockRejectedValueOnce(new Error());
-  //   });
-  //   it('should create standalone client', async () => {
-  //     service.createStandaloneConnection = jest.fn()
-  //       .mockResolvedValue(mockIORedisClient);
-  //
-  //     const result = await service.createClientAutomatically(mockClientMetadata, mockDatabase);
-  //
-  //     expect(result)
-  //       .toEqual(mockIORedisClient);
-  //     expect(service.createStandaloneConnection)
-  //       .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, { useRetry: true });
-  //   });
-  //
-  //   it('should create cluster client', async () => {
-  //     service.createClusterConnection = jest.fn()
-  //       .mockResolvedValue(mockIORedisCluster);
-  //
-  //     const result = await service.createClientAutomatically(mockClientMetadata, mockClusterDatabaseWithTlsAuth);
-  //
-  //     expect(result)
-  //       .toEqual(mockIORedisCluster);
-  //     expect(service.createClusterConnection)
-  //       .toHaveBeenCalledWith(
-  //         mockClientMetadata,
-  //         mockClusterDatabaseWithTlsAuth,
-  //         { useRetry: true },
-  //       );
-  //     expect(service.createStandaloneConnection)
-  //       .not
-  //       .toHaveBeenCalled();
-  //   });
-  //
-  //   it('should create sentinel client', async () => {
-  //     service.createSentinelConnection = jest.fn()
-  //       .mockResolvedValue(mockIORedisSentinel);
-  //
-  //     const result = await service.createClientAutomatically(mockClientMetadata, mockSentinelDatabaseWithTlsAuth);
-  //
-  //     expect(result)
-  //       .toEqual(mockIORedisSentinel);
-  //     expect(service.createSentinelConnection)
-  //       .toHaveBeenCalledWith(
-  //         mockClientMetadata,
-  //         mockSentinelDatabaseWithTlsAuth,
-  //         { useRetry: true },
-  //       );
-  //     expect(service.createClusterConnection)
-  //       .not
-  //       .toHaveBeenCalled();
-  //     expect(service.createStandaloneConnection)
-  //       .not
-  //       .toHaveBeenCalled();
-  //   });
-  // });
+  describe('onModuleInit', () => {
+    it('should set ioredis as default strategy from config', async () => {
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+    });
+    it('should set default (ioredis for now) strategy if unknown strategy in the config', async () => {
+      featureService.getByName.mockResolvedValueOnce({
+        ...mockFeatureRedisClient,
+        data: {
+          strategy: 'jredis',
+        },
+      });
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+    });
+    it('should set default (ioredis for now) strategy if no feature found', async () => {
+      featureService.getByName.mockResolvedValueOnce(undefined);
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+    });
+    it('should set default (ioredis for now) strategy if no feature.data specified', async () => {
+      featureService.getByName.mockResolvedValueOnce({
+        ...mockFeatureRedisClient,
+        data: undefined,
+      });
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+    });
+    it('should set default (ioredis for now) strategy if no feature.data.strategy specified', async () => {
+      featureService.getByName.mockResolvedValueOnce({
+        ...mockFeatureRedisClient,
+        data: {},
+      });
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+    });
+    it('should set node-redis as default strategy from config', async () => {
+      featureService.getByName.mockResolvedValueOnce({
+        ...mockFeatureRedisClient,
+        data: {
+          strategy: 'node-redis',
+        },
+      });
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.NODE_REDIS);
+    });
+    it('should nor fail in case of an error', async () => {
+      featureService.getByName.mockRejectedValueOnce(new Error('Unable to get config'));
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+
+      await service.onModuleInit();
+
+      expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
+        .toEqual(RedisClientLib.IOREDIS);
+    });
+  });
+
+  describe('createClientAutomatically', () => {
+    it('should create standalone client (when unable to create cluster and sentinel)', async () => {
+      ioredisRedisConnectionStrategy.createClusterClient.mockRejectedValueOnce(new Error('not a cluster'));
+      const result = await service['createClientAutomatically'](mockClientMetadata, mockDatabase);
+
+      expect(result).toEqual(mockStandaloneRedisClient);
+      expect(ioredisRedisConnectionStrategy.createSentinelClient).not.toHaveBeenCalled();
+      expect(ioredisRedisConnectionStrategy.createClusterClient)
+        .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, RedisClientFactory.prepareConnectionOptions());
+      expect(ioredisRedisConnectionStrategy.createStandaloneClient)
+        .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, RedisClientFactory.prepareConnectionOptions());
+    });
+    it('should create cluster client', async () => {
+      const result = await service['createClientAutomatically'](mockClientMetadata, mockClusterDatabaseWithTlsAuth);
+
+      expect(result).toEqual(mockClusterRedisClient);
+      expect(ioredisRedisConnectionStrategy.createSentinelClient).not.toHaveBeenCalled();
+      expect(ioredisRedisConnectionStrategy.createClusterClient)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockClusterDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
+      expect(ioredisRedisConnectionStrategy.createStandaloneClient).not.toHaveBeenCalled();
+    });
+    it('should create sentinel client', async () => {
+      const result = await service['createClientAutomatically'](mockClientMetadata, mockSentinelDatabaseWithTlsAuth);
+
+      expect(result).toEqual(mockSentinelRedisClient);
+      expect(ioredisRedisConnectionStrategy.createSentinelClient)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockSentinelDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
+      expect(ioredisRedisConnectionStrategy.createClusterClient).not.toHaveBeenCalled();
+      expect(ioredisRedisConnectionStrategy.createStandaloneClient).not.toHaveBeenCalled();
+    });
+  });
 
   describe('createClient', () => {
-    it('should create standalone client', async () => {
+    it('should create standalone client (default ioredis strategy)', async () => {
       const result = await service.createClient(mockClientMetadata, mockDatabase);
 
       expect(result).toEqual(mockStandaloneRedisClient);
       expect(ioredisRedisConnectionStrategy.createStandaloneClient)
         .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, { useRetry: true });
     });
-    //
-    // it('should trigger auto discovery connection type (when no connectionType defined)', async () => {
-    //   service.createClientAutomatically = jest.fn()
-    //     .mockResolvedValue(mockIORedisClient);
-    //   const mockDatabaseWithoutConnectionType = Object.assign(new Database(), {
-    //     ...mockDatabase,
-    //     connectionType: null,
-    //   });
-    //
-    //   const result = await service.createRedisConnection(mockClientMetadata, mockDatabaseWithoutConnectionType);
-    //
-    //   expect(result)
-    //     .toEqual(mockIORedisClient);
-    //   expect(service.createClientAutomatically)
-    //     .toHaveBeenCalledWith(
-    //       mockClientMetadata,
-    //       {
-    //         ...mockDatabaseWithoutConnectionType,
-    //         connectionType: undefined,
-    //       },
-    //       undefined,
-    //     );
-    // });
-    //
-    // it('should create cluster client', async () => {
-    //   service.createClusterConnection = jest.fn()
-    //     .mockResolvedValue(mockIORedisCluster);
-    //
-    //   const result = await service.createRedisConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth);
-    //
-    //   expect(result)
-    //     .toEqual(mockIORedisCluster);
-    //   expect(service.createClusterConnection)
-    //     .toHaveBeenCalledWith(
-    //       mockClientMetadata,
-    //       mockClusterDatabaseWithTlsAuth,
-    //       { useRetry: true },
-    //     );
-    // });
-    //
-    // it('should create sentinel client', async () => {
-    //   service.createSentinelConnection = jest.fn()
-    //     .mockResolvedValue(mockIORedisSentinel);
-    //
-    //   const result = await service.createRedisConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth);
-    //
-    //   expect(result)
-    //     .toEqual(mockIORedisSentinel);
-    //   expect(service.createSentinelConnection)
-    //     .toHaveBeenCalledWith(
-    //       mockClientMetadata,
-    //       mockSentinelDatabaseWithTlsAuth,
-    //       { useRetry: true },
-    //     );
-    // });
+    it('should create standalone client (ioredis strategy)', async () => {
+      const result = await service.createClient(mockClientMetadata, mockDatabase, {
+        clientLib: RedisClientLib.IOREDIS,
+      });
+
+      expect(result).toEqual(mockStandaloneRedisClient);
+      expect(ioredisRedisConnectionStrategy.createStandaloneClient)
+        .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, { useRetry: true, clientLib: RedisClientLib.IOREDIS });
+    });
+    it('should create standalone client (node-redis strategy)', async () => {
+      const result = await service.createClient(mockClientMetadata, mockDatabase, {
+        clientLib: RedisClientLib.NODE_REDIS,
+      });
+
+      expect(result).toEqual(mockStandaloneRedisClient);
+      expect(nodeRedisConnectionStrategy.createStandaloneClient)
+        .toHaveBeenCalledWith(mockClientMetadata, mockDatabase, {
+          useRetry: true,
+          clientLib: RedisClientLib.NODE_REDIS,
+        });
+    });
+    it('should trigger auto discovery connection type (when no connectionType defined)', async () => {
+      const mockDatabaseWithoutConnectionType = Object.assign(new Database(), {
+        ...mockDatabase,
+        connectionType: null,
+      });
+
+      const result = await service.createClient(mockClientMetadata, mockDatabaseWithoutConnectionType);
+
+      expect(result).toEqual(mockClusterRedisClient);
+      expect(ioredisRedisConnectionStrategy.createClusterClient)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          {
+            ...mockDatabaseWithoutConnectionType,
+            connectionType: undefined,
+          },
+          RedisClientFactory.prepareConnectionOptions(),
+        );
+    });
+    it('should create cluster client', async () => {
+      const result = await service.createClient(mockClientMetadata, mockClusterDatabaseWithTlsAuth);
+
+      expect(result).toEqual(mockClusterRedisClient);
+      expect(ioredisRedisConnectionStrategy.createClusterClient)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockClusterDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
+    });
+    it('should create sentinel client', async () => {
+      const result = await service.createClient(mockClientMetadata, mockSentinelDatabaseWithTlsAuth);
+
+      expect(result).toEqual(mockSentinelRedisClient);
+      expect(ioredisRedisConnectionStrategy.createSentinelClient)
+        .toHaveBeenCalledWith(
+          mockClientMetadata,
+          mockSentinelDatabaseWithTlsAuth,
+          { useRetry: true },
+        );
+    });
   });
 });

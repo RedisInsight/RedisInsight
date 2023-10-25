@@ -93,6 +93,8 @@ export abstract class RedisClient {
    */
   abstract quit(): Promise<void>;
 
+  abstract getCurrentDbIndex(): Promise<number>;
+
   /**
    * Prepare clientMetadata to be used for generating id and other operations with clients
    * like: find, remove many, etc.

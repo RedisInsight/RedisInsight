@@ -1,5 +1,5 @@
 {
-  "version": 2.3403,
+  "version": 2.3405,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -71,7 +71,7 @@
       "flag": true,
       "perc": [[0, 100]],
       "data": {
-        "strategy": "node-redis"
+        "strategy": "ioredis"
       }
     }
   }

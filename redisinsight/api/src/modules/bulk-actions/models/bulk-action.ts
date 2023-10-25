@@ -5,15 +5,11 @@ import { Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfaces';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
-import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { RedisClient, RedisClientNodeRole } from 'src/modules/redis/client';
 
 export class BulkAction implements IBulkAction {
   private logger: Logger = new Logger('BulkAction');
-
-  private readonly id: string;
-
-  private readonly databaseId: string;
 
   private startTime: number = Date.now();
 
@@ -21,36 +17,22 @@ export class BulkAction implements IBulkAction {
 
   private error: Error;
 
-  private readonly socket: Socket;
-
-  private readonly type: BulkActionType;
-
   private status: BulkActionStatus;
-
-  private readonly filter: BulkActionFilter;
 
   private runners: IBulkActionRunner[] = [];
 
   private readonly debounce: Function;
 
-  private readonly analyticsService: BulkActionsAnalyticsService;
-
   constructor(
-    id,
-    databaseId,
-    type,
-    filter,
-    socket,
-    analyticsService: BulkActionsAnalyticsService,
+    private readonly id: string,
+    private readonly databaseId: string,
+    private readonly type: BulkActionType,
+    private readonly filter: BulkActionFilter,
+    private readonly socket: Socket,
+    private readonly analytics: BulkActionsAnalytics,
   ) {
-    this.id = id;
-    this.databaseId = databaseId;
-    this.type = type;
-    this.filter = filter;
-    this.socket = socket;
     this.debounce = debounce(this.sendOverview.bind(this), 1000, { maxWait: 1000 });
     this.status = BulkActionStatus.Initialized;
-    this.analyticsService = analyticsService;
   }
 
   /**
@@ -132,9 +114,7 @@ export class BulkAction implements IBulkAction {
         errors: [],
       });
 
-    summary.errors?.slice(0, 500);
-
-    summary.errors = summary.errors.map((error) => ({
+    summary.errors = summary.errors.slice(0, 500).map((error) => ({
       key: error.key.toString(),
       error: error.error.toString(),
     }));
@@ -200,13 +180,13 @@ export class BulkAction implements IBulkAction {
   sendOverview() {
     const overview = this.getOverview();
     if (overview.status === BulkActionStatus.Completed) {
-      this.analyticsService.sendActionSucceed(overview);
+      this.analytics.sendActionSucceed(overview);
     }
     if (overview.status === BulkActionStatus.Failed) {
-      this.analyticsService.sendActionFailed(overview, this.error);
+      this.analytics.sendActionFailed(overview, this.error);
     }
     if (overview.status === BulkActionStatus.Aborted) {
-      this.analyticsService.sendActionStopped(overview);
+      this.analytics.sendActionStopped(overview);
     }
     try {
       this.socket.emit('overview', overview);

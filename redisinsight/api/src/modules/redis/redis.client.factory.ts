@@ -35,15 +35,26 @@ export class RedisClientFactory implements OnModuleInit {
     this.defaultConnectionStrategy = ioredisConnectionStrategy;
   }
 
+  /**
+   * Set default connection strategy from feature config
+   * In case of an error or unsupported strategy default config will stay the same (ioredis for now)
+   */
   async onModuleInit() {
     try {
       const feature = await this.featureService.getByName(KnownFeatures.RedisClient);
       this.defaultConnectionStrategy = this.getConnectionStrategy(feature?.data?.strategy);
     } catch (e) {
-      this.logger.warn('Unable to setup default strategy from feature config');
+      this.logger.warn('Unable to setup default strategy from the feature config');
     }
   }
 
+  /**
+   * Get strategy to create connection with
+   * Default strategy is set during class initialization (ioredis for now) and overwritten
+   * by feature config on module init
+   * @param strategy
+   * @private
+   */
   private getConnectionStrategy(strategy?: RedisClientLib): RedisConnectionStrategy {
     switch (strategy) {
       case RedisClientLib.NODE_REDIS:
@@ -64,13 +75,15 @@ export class RedisClientFactory implements OnModuleInit {
   private async createClientAutomatically(
     clientMetadata: ClientMetadata,
     database: Database,
-    options: IRedisConnectionOptions,
+    options: IRedisConnectionOptions = {},
   ): Promise<RedisClient> {
+    const opts = RedisClientFactory.prepareConnectionOptions(options);
+
     // try sentinel connection
-    if (database?.sentinelMaster) {
+    if (database.sentinelMaster) {
       try {
         return await this.getConnectionStrategy(options.clientLib)
-          .createSentinelClient(clientMetadata, database, options);
+          .createSentinelClient(clientMetadata, database, opts);
       } catch (e) {
         // ignore error
       }
@@ -79,14 +92,14 @@ export class RedisClientFactory implements OnModuleInit {
     // try cluster connection
     try {
       return await this.getConnectionStrategy(options.clientLib)
-        .createClusterClient(clientMetadata, database, options);
+        .createClusterClient(clientMetadata, database, opts);
     } catch (e) {
       // ignore error
     }
 
     // Standalone in any other case
     return this.getConnectionStrategy(options.clientLib)
-      .createStandaloneClient(clientMetadata, database, options);
+      .createStandaloneClient(clientMetadata, database, opts);
   }
 
   /**
@@ -112,7 +125,7 @@ export class RedisClientFactory implements OnModuleInit {
 
     let client;
 
-    switch (database?.connectionType) {
+    switch (database.connectionType) {
       case ConnectionType.STANDALONE:
         client = await this.getConnectionStrategy(options.clientLib)
           .createStandaloneClient(clientMetadata, database, opts);
@@ -127,7 +140,7 @@ export class RedisClientFactory implements OnModuleInit {
         break;
       default:
         // AUTO
-        client = await this.createClientAutomatically(clientMetadata, database, options);
+        client = await this.createClientAutomatically(clientMetadata, database, opts);
     }
 
     return client;

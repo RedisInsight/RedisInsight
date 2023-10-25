@@ -8,7 +8,7 @@ import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/const
 import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
-import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { ClientContext } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
@@ -20,7 +20,7 @@ export class BulkActionsProvider {
 
   constructor(
     private readonly databaseClientFactory: DatabaseClientFactory,
-    private readonly analyticsService: BulkActionsAnalyticsService,
+    private readonly analytics: BulkActionsAnalytics,
   ) {}
 
   /**
@@ -33,14 +33,17 @@ export class BulkActionsProvider {
       throw new Error('You already have bulk action with such id');
     }
 
-    const bulkAction = new BulkAction(dto.id, dto.databaseId, dto.type, dto.filter, socket, this.analyticsService);
+    const bulkAction = new BulkAction(dto.id, dto.databaseId, dto.type, dto.filter, socket, this.analytics);
 
     this.bulkActions.set(dto.id, bulkAction);
 
     // todo: add multi user support
     // todo: use own client and close it after
     const client = await this.databaseClientFactory.getOrCreateClient({
-      sessionMetadata: undefined,
+      sessionMetadata: {
+        userId: '1',
+        sessionId: '1',
+      },
       databaseId: dto.databaseId,
       context: ClientContext.Common,
       db: dto.db,

@@ -17,7 +17,7 @@ export class DatabaseClientFactory {
     private readonly databaseService: DatabaseService,
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
-    private readonly redisClientProvider: RedisClientStorage,
+    private readonly redisClientStorage: RedisClientStorage,
     private readonly redisClientFactory: RedisClientFactory,
   ) {}
 
@@ -31,13 +31,13 @@ export class DatabaseClientFactory {
   async getOrCreateClient(clientMetadata: ClientMetadata): Promise<RedisClient> {
     this.logger.log('Trying to get existing redis client.');
 
-    const client = await this.redisClientProvider.getByMetadata(clientMetadata);
+    const client = await this.redisClientStorage.getByMetadata(clientMetadata);
 
     if (client) {
       return client;
     }
 
-    return this.redisClientProvider.set(await this.createClient(clientMetadata));
+    return this.redisClientStorage.set(await this.createClient(clientMetadata));
   }
 
   /**

@@ -1,4 +1,4 @@
-import { isNull, isNumber } from 'lodash';
+import { get, isNull, isNumber } from 'lodash';
 import { createClient, createCluster } from 'redis';
 import { IRedisClientCommandOptions, RedisClient, RedisClientCommand } from 'src/modules/redis/client';
 import { RedisString } from 'src/common/constants';
@@ -48,5 +48,12 @@ export abstract class NodeRedisClient extends RedisClient {
    */
   async quit(): Promise<void> {
     await this.client.quit();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async getCurrentDbIndex(): Promise<number> {
+    return this.clientMetadata.db || 0;
   }
 }

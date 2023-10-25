@@ -9,6 +9,7 @@ import { setAppContextInitialState } from 'uiSrc/slices/app/context'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
@@ -442,6 +443,7 @@ function autoCreateAndConnectToInstanceActionSuccess(
       const state = stateInit()
       const isConnectedId = state.app?.context?.contextInstanceId === id
       if (!isConnectedId) {
+        dispatch(resetKeys())
         dispatch(setAppContextInitialState())
         dispatch(setConnectedInstanceId(id ?? ''))
       }
@@ -532,6 +534,7 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 
         if (databasesIds.includes(state.app.context.contextInstanceId)) {
           dispatch(resetConnectedInstance())
+          dispatch(resetKeys())
           dispatch(setAppContextInitialState())
         }
         onSuccess?.()

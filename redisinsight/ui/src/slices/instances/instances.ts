@@ -6,6 +6,7 @@ import ApiErrors from 'uiSrc/constants/apiErrors'
 import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack, getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
@@ -442,6 +443,7 @@ function autoCreateAndConnectToInstanceActionSuccess(
       const state = stateInit()
       const isConnectedId = state.app?.context?.contextInstanceId === id
       if (!isConnectedId) {
+        dispatch(resetKeys())
         dispatch(setAppContextInitialState())
         dispatch(setConnectedInstanceId(id ?? ''))
       }
@@ -532,6 +534,7 @@ export function deleteInstancesAction(instances: Instance[], onSuccess?: () => v
 
         if (databasesIds.includes(state.app.context.contextInstanceId)) {
           dispatch(resetConnectedInstance())
+          dispatch(resetKeys())
           dispatch(setAppContextInitialState())
         }
         onSuccess?.()

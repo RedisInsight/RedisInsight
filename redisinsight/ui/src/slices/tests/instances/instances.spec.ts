@@ -12,6 +12,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack } from 'uiSrc/utils'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import reducer, {
   initialState,
   instancesSelector,
@@ -1032,6 +1033,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
+          resetKeys(),
           setAppContextInitialState(),
           setConnectedInstanceId(mockId),
           setDefaultInstance(),
@@ -1701,6 +1703,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()),
+          resetKeys(),
           setAppContextInitialState(),
           setConnectedInstanceId(mockId),
           setDefaultInstance(),
@@ -1742,6 +1745,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()),
+          resetKeys(),
           setAppContextInitialState(),
           setConnectedInstanceId(mockId),
           setDefaultInstance(),

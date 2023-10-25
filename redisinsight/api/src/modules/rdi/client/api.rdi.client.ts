@@ -1,5 +1,6 @@
 import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
+import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
 
 export class ApiRdiClient extends RdiClient {
@@ -13,7 +14,8 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async getSchema(): Promise<object> {
-    return {};
+    const response = await this.client.get(RdiUrl.GetSchema);
+    return response.data;
   }
 
   async getPipeline(): Promise<RdiPipeline> {

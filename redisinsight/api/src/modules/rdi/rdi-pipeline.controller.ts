@@ -16,7 +16,7 @@ export class RdiPipelineController {
     private readonly rdiPipelineService: RdiPipelineService,
   ) {}
 
-  @Get()
+  @Get('/schema')
   @ApiEndpoint({
     description: 'Get pipeline schema',
     responses: [{ status: 200, type: Rdi }],

@@ -11,8 +11,13 @@ import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
-import { setAppContextConnectedInstanceId, setAppContextInitialState, setDbConfig } from 'uiSrc/slices/app/context'
-import { clearSearchingCommand, resetCliHelperSettings, setCliEnteringCommand } from 'uiSrc/slices/cli/cli-settings'
+import {
+  appContextSelector,
+  setAppContextConnectedInstanceId,
+  setAppContextInitialState,
+  setDbConfig
+} from 'uiSrc/slices/app/context'
+import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -27,6 +32,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import InstancePage, { getDefaultSizes, Props } from './InstancePage'
 
+const INSTANCE_ID_MOCK = 'instanceId'
 const mockedProps = mock<Props>()
 
 jest.mock('uiSrc/services', () => ({
@@ -48,11 +54,9 @@ jest.mock('uiSrc/slices/app/features', () => ({
 jest.mock('uiSrc/slices/app/context', () => ({
   ...jest.requireActual('uiSrc/slices/app/context'),
   appContextSelector: jest.fn().mockReturnValue({
-    contextInstanceId: 'prevId'
+    contextInstanceId: INSTANCE_ID_MOCK
   }),
 }))
-
-const INSTANCE_ID_MOCK = 'instanceId'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -131,6 +135,10 @@ describe('InstancePage', () => {
   })
 
   it('should call proper actions with resetting context', async () => {
+    (appContextSelector as jest.Mock).mockReturnValue({
+      contextInstanceId: 'prevId'
+    })
+
     await act(() => {
       render(
         <BrowserRouter>

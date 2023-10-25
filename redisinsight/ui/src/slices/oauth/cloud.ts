@@ -236,14 +236,20 @@ export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.cap
 export default oauthCloudSlice.reducer
 
 export function createFreeDbSuccess(id: string, history: any) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const onConnect = () => {
-        dispatch(resetKeys())
-        dispatch(setAppContextInitialState())
-        dispatch(setConnectedInstanceId(id ?? ''))
+        const state = stateInit()
+        const isConnected = state.app?.context?.contextInstanceId === id
+
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
-        dispatch(checkConnectToInstanceAction(id))
+
+        if (!isConnected) {
+          dispatch(resetKeys())
+          dispatch(setAppContextInitialState())
+          dispatch(setConnectedInstanceId(id ?? ''))
+          dispatch(checkConnectToInstanceAction(id))
+        }
 
         history.push(Pages.workbench(id))
       }

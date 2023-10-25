@@ -1,6 +1,6 @@
 import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
-import { RdiUrl } from 'src/modules/rdi/constants'
+import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
 
 export class ApiRdiClient extends RdiClient {

@@ -28,7 +28,10 @@ const recommendationsSlice = createSlice({
   initialState,
   reducers: {
     resetRecommendationsHighlighting: (state) => {
-      state.isHighlighted = !localStorageService?.get(BrowserStorageItem.recommendationsViewed)
+      if (state.isHighlighted && !localStorageService?.get(BrowserStorageItem.recommendationsViewed)) {
+        localStorageService?.set(BrowserStorageItem.recommendationsViewed, true)
+        state.isHighlighted = false
+      }
     },
     getRecommendations: (state) => {
       state.loading = true

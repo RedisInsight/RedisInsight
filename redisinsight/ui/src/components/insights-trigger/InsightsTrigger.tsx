@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
@@ -8,7 +8,7 @@ import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'u
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 
-import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import styles from './styles.module.scss'
 
@@ -20,6 +20,7 @@ const InsightsTrigger = () => {
 
   const handleClickTrigger = () => {
     if (isHighlighted) {
+      dispatch(resetRecommendationsHighlighting())
       dispatch(changeSelectedTab(InsightsPanelTabs.Recommendations))
     }
     dispatch(toggleInsightsPanel())
@@ -29,25 +30,30 @@ const InsightsTrigger = () => {
     <div
       className={cx(styles.insigtsBtn, { [styles.isOpen]: isInsigtsOpen })}
     >
-      <div
-        className={styles.inner}
-        role="button"
-        tabIndex={0}
-        onKeyDown={() => {}}
-        onClick={handleClickTrigger}
-        data-testid="insights-trigger"
+      <EuiToolTip
+        title="Insights"
+        content="Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use recommendations to improve your database."
       >
-        <EuiIcon
-          type={isHighlighted ? TriggerActiveIcon : TriggerIcon}
-          className={styles.triggerIcon}
-        />
-        <EuiText className={cx(
-          styles.triggerText,
-        )}
+        <div
+          className={styles.inner}
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {}}
+          onClick={handleClickTrigger}
+          data-testid="insights-trigger"
         >
-          Insights
-        </EuiText>
-      </div>
+          <EuiIcon
+            type={isHighlighted ? TriggerActiveIcon : TriggerIcon}
+            className={styles.triggerIcon}
+          />
+          <EuiText className={cx(
+            styles.triggerText,
+          )}
+          >
+            Insights
+          </EuiText>
+        </div>
+      </EuiToolTip>
     </div>
   )
 }

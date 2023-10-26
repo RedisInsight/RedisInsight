@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import InsightsTrigger from './InsightsTrigger'
 
@@ -43,6 +43,10 @@ describe('InsightsTrigger', () => {
 
     fireEvent.click(screen.getByTestId('insights-trigger'))
 
-    expect(store.getActions()).toEqual([changeSelectedTab(InsightsPanelTabs.Recommendations), toggleInsightsPanel()])
+    expect(store.getActions()).toEqual([
+      resetRecommendationsHighlighting(),
+      changeSelectedTab(InsightsPanelTabs.Recommendations),
+      toggleInsightsPanel()
+    ])
   })
 })

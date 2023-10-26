@@ -2,9 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import {
-  getRecommendations,
   recommendationsSelector,
-  setIsContentVisible
 } from 'uiSrc/slices/recommendations/recommendations'
 import { fireEvent, screen, cleanup, mockedStore, render, act, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -40,8 +38,7 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
     data: {
       recommendations: [],
       totalUnread: 0,
-    },
-    isContentVisible: false,
+    }
   }),
 }))
 
@@ -77,8 +74,7 @@ describe('LiveTimeRecommendations', () => {
   it('should render beta label and github icon', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS' }] },
-      isContentVisible: true
+      data: { recommendations: [{ name: 'RTS' }] }
     }))
 
     render(<LiveTimeRecommendations />)
@@ -90,8 +86,7 @@ describe('LiveTimeRecommendations', () => {
   it('should render show hidden checkbox when there are some hidden', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS', hide: true }, { name: 'setPassword' }] },
-      isContentVisible: true
+      data: { recommendations: [{ name: 'RTS', hide: true }, { name: 'setPassword' }] }
     }))
 
     render(<LiveTimeRecommendations />)
@@ -102,7 +97,6 @@ describe('LiveTimeRecommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: { recommendations: [{ name: 'RTS', hide: false }, { name: 'setPassword' }] },
-      isContentVisible: true
     }))
 
     render(<LiveTimeRecommendations />)
@@ -118,7 +112,6 @@ describe('LiveTimeRecommendations', () => {
       data: {
         recommendations: [{ name: 'RTS' }, { name: 'setPassword' }],
       },
-      isContentVisible: true
     }))
 
     const { unmount } = render(<LiveTimeRecommendations />)
@@ -146,7 +139,6 @@ describe('LiveTimeRecommendations', () => {
       data: {
         recommendations: [{ name: 'RTS' }],
       },
-      isContentVisible: true,
     }))
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
@@ -173,30 +165,12 @@ describe('LiveTimeRecommendations', () => {
     sendEventTelemetry.mockRestore()
   })
 
-  it('should call "setIsContentVisible" after click close btn', () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
-      ...mockRecommendationsSelector,
-      data: {
-        recommendations: [],
-      },
-      isContentVisible: true,
-    }))
-    render(<LiveTimeRecommendations />)
-    const afterRenderActions = [...store.getActions()]
-
-    fireEvent.click(document.querySelector('.euiFlyout__closeButton')!)
-
-    const expectedActions = [setIsContentVisible(false)]
-    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
-  })
-
   it('should send INSIGHTS_RECOMMENDATION_SHOW_HIDDEN telemetry event', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      isContentVisible: true,
       data: RECOMMENDATIONS_DATA_MOCK,
     }))
 
@@ -221,7 +195,6 @@ describe('LiveTimeRecommendations', () => {
   it('should render only not hide recommendations is showHiddenRecommendations=false', async () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      isContentVisible: true,
       data: RECOMMENDATIONS_DATA_MOCK,
     }))
     const { queryByTestId } = render(<LiveTimeRecommendations />)
@@ -233,7 +206,6 @@ describe('LiveTimeRecommendations', () => {
   it('should render all recommendations is showHiddenRecommendations=true', async () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      isContentVisible: true,
       data: RECOMMENDATIONS_DATA_MOCK,
     }));
     (appContextDbConfig as jest.Mock).mockImplementation(() => ({
@@ -249,7 +221,6 @@ describe('LiveTimeRecommendations', () => {
   it('should call "setRecommendationsShowHidden" after click hide/unhide btn', async () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      isContentVisible: true,
       data: RECOMMENDATIONS_DATA_MOCK,
     }));
     (appContextDbConfig as jest.Mock).mockImplementation(() => ({
@@ -269,7 +240,6 @@ describe('LiveTimeRecommendations', () => {
   it('should render WelcomeScreen if no visible recommendations', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      isContentVisible: true,
       data: {
         ...RECOMMENDATIONS_DATA_MOCK,
         recommendations: RECOMMENDATIONS_DATA_MOCK.recommendations.map((rec) => ({ ...rec, hide: true }))

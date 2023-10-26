@@ -17,11 +17,10 @@ export interface IRecommendations {
 }
 
 export interface StateRecommendations {
-  data: IRecommendations,
-  loading: boolean,
-  error: string,
-  isContentVisible: boolean,
-  isHighlighted: boolean,
+  data: IRecommendations
+  loading: boolean
+  error: string
+  isHighlighted: boolean
   content: IRecommendationsStatic
 }
 

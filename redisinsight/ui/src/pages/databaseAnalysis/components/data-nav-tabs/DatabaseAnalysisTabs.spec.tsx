@@ -26,7 +26,6 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
       recommendations: [],
       totalUnread: 0,
     },
-    isContentVisible: false,
   }),
 }))
 

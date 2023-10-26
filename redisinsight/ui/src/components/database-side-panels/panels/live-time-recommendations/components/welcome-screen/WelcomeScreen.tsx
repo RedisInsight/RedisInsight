@@ -5,7 +5,7 @@ import cx from 'classnames'
 import { EuiText, EuiButton } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
-import { recommendationsSelector, setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
+import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ReactComponent as WelcomeIcon } from 'uiSrc/assets/img/icons/welcome.svg'
@@ -28,7 +28,6 @@ const NoRecommendationsScreen = () => {
   const history = useHistory()
 
   const handleClickDbAnalysisLink = () => {
-    dispatch(setIsContentVisible(false))
     dispatch(createNewAnalysis(instanceId, delimiter))
     history.push(Pages.databaseAnalysis(instanceId))
     sendEventTelemetry({

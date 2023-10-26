@@ -20,7 +20,6 @@ import {
   recommendationsSelector,
   fetchRecommendationsAction,
   readRecommendationsAction,
-  setIsContentVisible,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -91,7 +90,6 @@ const LiveTimeRecommendations = () => {
   }
 
   const handleClickDbAnalysisLink = () => {
-    dispatch(setIsContentVisible(false))
     dispatch(createNewAnalysis(connectedInstanceId, delimiter))
     history.push(Pages.databaseAnalysis(connectedInstanceId))
     sendEventTelemetry({

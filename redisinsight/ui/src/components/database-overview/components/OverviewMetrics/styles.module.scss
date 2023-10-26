@@ -5,11 +5,7 @@
 }
 
 .cpuWrapper {
-  min-width: 132px;
-
-  @media only screen and (max-width: 1024px) {
-    min-width: 114px;
-  }
+  min-width: 96px;
 }
 
 .calculation {

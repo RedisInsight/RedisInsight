@@ -29,7 +29,7 @@ const WelcomeMyTutorials = ({ handleOpenUpload }: Props) => {
       <EuiTitle><div style={{ marginTop: 4 }}>My Tutorials</div></EuiTitle>
       <EuiSpacer size="m" />
 
-      <EuiIcon type={UploadYourTutorialsImage} size="original" />
+      <img src={UploadYourTutorialsImage} alt="upload tutorial img" />
 
       <EuiSpacer size="s" />
       <EuiText style={{ fontSize: 16 }}>Here you can <br /> upload your own tutorials</EuiText>

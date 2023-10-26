@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiButtonIcon, EuiText } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -28,41 +28,15 @@ const DatabaseSidePanels = (props: Props) => {
     dispatch(changeSelectedTab(name))
   }
 
-  const TriggerTab = () => (
-    <>
-      <div
-        className={cx(styles.trigger, styles.exploreTrigger, { [styles.isOpen]: isOpen })}
-      >
-        <div
-          className={styles.inner}
-          role="button"
-          tabIndex={0}
-          onKeyDown={() => {}}
-          onClick={() => dispatch(toggleInsightsPanel(true))}
-          data-testid="explore-trigger"
-        >
-          <TriggerIcon className={styles.triggerIcon} />
-          <EuiText className={cx(
-            styles.triggerText,
-          )}
-          >
-            Explore
-          </EuiText>
-        </div>
-      </div>
-    </>
-  )
-
   const Tabs = () => (
     <div>
-      <EuiButton size="s" onClick={() => handleChangeTab('recommendations')}>Insights</EuiButton>
-      <EuiButton size="s" onClick={() => handleChangeTab('explore')} style={{ marginLeft: 10 }}>Explore</EuiButton>
+      <EuiButton size="s" onClick={() => handleChangeTab(InsightsPanelTabs.Recommendations)}>Insights</EuiButton>
+      <EuiButton size="s" onClick={() => handleChangeTab(InsightsPanelTabs.Explore)} style={{ marginLeft: 10 }}>Explore</EuiButton>
     </div>
   )
 
   return (
     <div className={styles.wrapper}>
-      <TriggerTab />
       {isOpen && (
         <div
           className={cx(styles.panel, panelClassName)}
@@ -82,8 +56,8 @@ const DatabaseSidePanels = (props: Props) => {
               />
             </div>
             <div className={styles.body}>
-              {tabSelected === 'explore' && (<EnablementAreaWrapper />)}
-              {tabSelected === 'recommendations' && (<LiveTimeRecommendations />)}
+              {tabSelected === InsightsPanelTabs.Explore && (<EnablementAreaWrapper />)}
+              {tabSelected === InsightsPanelTabs.Recommendations && (<LiveTimeRecommendations />)}
             </div>
           </div>
         </div>

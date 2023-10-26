@@ -19,7 +19,6 @@ export const initialState: StateRecommendations = {
   content: {},
   loading: false,
   error: '',
-  isContentVisible: false,
   isHighlighted: !localStorageService?.get(BrowserStorageItem.recommendationsViewed)
 }
 
@@ -43,13 +42,6 @@ const recommendationsSlice = createSlice({
     getRecommendationsFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
-    },
-    setIsContentVisible: (state, { payload }) => {
-      if (!localStorageService?.get(BrowserStorageItem.recommendationsViewed)) {
-        localStorageService?.set(BrowserStorageItem.recommendationsViewed, true)
-        state.isHighlighted = false
-      }
-      state.isContentVisible = payload
     },
     setIsHighlighted: (state, { payload }) => {
       state.isHighlighted = payload
@@ -99,7 +91,6 @@ export const {
   getRecommendations,
   getRecommendationsSuccess,
   getRecommendationsFailure,
-  setIsContentVisible,
   setIsHighlighted,
   readRecommendations,
   updateRecommendation,

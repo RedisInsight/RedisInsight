@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { AppDispatch, RootState } from '../store'
+import { isBoolean } from 'lodash'
+import { Maybe } from 'uiSrc/utils'
+import { RootState } from '../store'
 
 export const initialState: any = {
   isOpen: false,
@@ -20,8 +22,8 @@ const insightsPanelSlice = createSlice({
   name: 'workbenchTutorials',
   initialState,
   reducers: {
-    toggleInsightsPanel: (state, { payload }) => {
-      state.isOpen = payload
+    toggleInsightsPanel: (state, { payload }: { payload: Maybe<boolean> }) => {
+      state.isOpen = isBoolean(payload) ? payload : !state.isOpen
     },
     changeSelectedTab: (state, { payload }) => {
       state.tabSelected = payload

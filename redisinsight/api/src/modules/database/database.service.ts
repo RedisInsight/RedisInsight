@@ -2,7 +2,7 @@ import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
 import {
-  isEmpty, merge, omit, reject, sum,
+  isEmpty, omit, reject, sum, omitBy, isUndefined,
 } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -20,21 +20,39 @@ import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientContext, SessionMetadata } from 'src/common/models';
-import { ModifyDatabaseDto } from 'src/modules/database/dto/modify.database.dto';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
+import { deepMerge } from 'src/common/utils';
+import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
+import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 
 @Injectable()
 export class DatabaseService {
   private logger = new Logger('DatabaseService');
 
-  private exportSecurityFields: string[] = [
+  private readonly exportSecurityFields: string[] = [
     'password',
     'clientCert.key',
     'sshOptions.password',
     'sshOptions.passphrase',
     'sshOptions.privateKey',
     'sentinelMaster.password',
+  ];
+
+  static connectionFields: string[] = [
+    'host',
+    'port',
+    'db',
+    'username',
+    'password',
+    'tls',
+    'tlsServername',
+    'verifyServerCert',
+    'sentinelMaster',
+    'ssh',
+    'sshOptions',
+    'caCert',
+    'clientCert',
   ];
 
   constructor(
@@ -46,6 +64,22 @@ export class DatabaseService {
     private analytics: DatabaseAnalytics,
     private eventEmitter: EventEmitter2,
   ) {}
+
+  static isConnectionAffected(dto: object) {
+    return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
+  }
+
+  private async merge(database: Database, dto: UpdateDatabaseDto): Promise<Database> {
+    const updatedDatabase = database;
+    if (dto?.caCert) {
+      updatedDatabase.caCert = dto.caCert as CaCertificate;
+    }
+
+    if (dto?.clientCert) {
+      updatedDatabase.clientCert = dto.clientCert as ClientCertificate;
+    }
+    return deepMerge(updatedDatabase, dto);
+  }
 
   /**
    * Simply checks if database exists
@@ -75,7 +109,7 @@ export class DatabaseService {
    * @param id
    * @param ignoreEncryptionErrors
    */
-  async get(id: string, ignoreEncryptionErrors = false): Promise<Database> {
+  async get(id: string, ignoreEncryptionErrors = false, omitFields?: string[]): Promise<Database> {
     this.logger.log(`Getting database ${id}`);
 
     if (!id) {
@@ -83,7 +117,7 @@ export class DatabaseService {
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 
-    const model = await this.repository.get(id, ignoreEncryptionErrors);
+    const model = await this.repository.get(id, ignoreEncryptionErrors, omitFields);
 
     if (!model) {
       this.logger.error(`Database with ${id} was not Found`);
@@ -139,26 +173,30 @@ export class DatabaseService {
   // todo: remove manualUpdate flag logic
   public async update(
     id: string,
-    dto: UpdateDatabaseDto | ModifyDatabaseDto,
+    dto: UpdateDatabaseDto,
     manualUpdate: boolean = true,
   ): Promise<Database> {
     this.logger.log(`Updating database: ${id}`);
     const oldDatabase = await this.get(id, true);
 
-    let database = merge({}, oldDatabase, dto);
-
+    let database: Database;
     try {
-      database = await this.databaseFactory.createDatabaseModel(database);
+      database = await this.merge(oldDatabase, dto);
 
-      // todo: investigate manual update flag
-      if (manualUpdate) {
-        database.provider = getHostingProvider(database.host);
+      if (DatabaseService.isConnectionAffected(dto)) {
+        database = await this.databaseFactory.createDatabaseModel(database);
+
+        // todo: investigate manual update flag
+        if (manualUpdate) {
+          database.provider = getHostingProvider(database.host);
+        }
+
+        this.redisService.removeClientInstances({ databaseId: id });
       }
 
       database = await this.repository.update(id, database);
 
       // todo: rethink
-      this.redisService.removeClientInstances({ databaseId: id });
       this.analytics.sendInstanceEditedEvent(
         oldDatabase,
         database,
@@ -175,13 +213,20 @@ export class DatabaseService {
   /**
    * Test connection for new/modified config before creating/updating database
    * @param dto
+   * @param id
    */
-  public async testConnection(
-    dto: CreateDatabaseDto,
-  ): Promise<void> {
-    this.logger.log('Testing database connection');
+  public async testConnection(dto: CreateDatabaseDto | UpdateDatabaseDto, id?: string): Promise<void> {
+    let database: Database;
 
-    const database = classToClass(Database, dto);
+    if (id) {
+      this.logger.log('Testing existing database connection');
+
+      database = await this.merge(await this.get(id, false), dto);
+    } else {
+      this.logger.log('Testing new database connection');
+      database = classToClass(Database, dto);
+    }
+
     try {
       await this.databaseFactory.createDatabaseModel(database);
 
@@ -195,6 +240,30 @@ export class DatabaseService {
       this.logger.error('Connection test failed', error);
       throw catchRedisConnectionError(error, database);
     }
+  }
+
+  /**
+   * Clone database with updated fields
+   * @param id
+   * @param dto
+   */
+  public async clone(id: string, dto: UpdateDatabaseDto): Promise<Database> {
+    this.logger.log('Clone existing database');
+    const database = await this.merge(
+      await this.get(id, false, ['id', 'sshOptions.id']),
+      dto,
+    );
+    if (DatabaseService.isConnectionAffected(dto)) {
+      return await this.create(database);
+    }
+
+    const createdDatabase = await this.repository.create({
+      ...classToClass(Database, database),
+      new: true,
+    }, false);
+
+    this.analytics.sendInstanceAddedEvent(createdDatabase);
+    return createdDatabase;
   }
 
   /**

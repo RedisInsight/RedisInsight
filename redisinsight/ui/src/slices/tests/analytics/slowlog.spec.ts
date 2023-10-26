@@ -5,6 +5,7 @@ import { apiService } from 'uiSrc/services'
 import { setSlowLogUnits } from 'uiSrc/slices/app/context'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 
 import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
 
@@ -27,7 +28,6 @@ import reducer, {
   slowLogSelector
 } from '../../analytics/slowlog'
 
-const timestamp = 1629128049027
 let store: typeof mockedStore
 let dateNow: jest.SpyInstance<number>
 
@@ -39,7 +39,7 @@ beforeEach(() => {
 
 describe('slowLog slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => timestamp)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -112,7 +112,7 @@ describe('slowLog slice', () => {
         ...initialState,
         loading: false,
         data,
-        lastRefreshTime: timestamp
+        lastRefreshTime: MOCK_TIMESTAMP
       }
 
       // Act

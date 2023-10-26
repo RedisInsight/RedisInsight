@@ -37,8 +37,6 @@ const init = async () => {
 
   nativeTheme.themeSource = electronStore?.get(ElectronStorageItem.themeSource) || config.themeSource
 
-  checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
-
   app.setName(config.name)
   app.setAppUserModelId(config.name)
   if (process.platform !== 'darwin') {
@@ -71,6 +69,8 @@ const init = async () => {
     }
 
     await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
+
+    checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
   } catch (_err) {
     const error = _err as Error
     console.log(wrapErrorMessageSensitiveData(error))

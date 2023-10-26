@@ -34,6 +34,7 @@ export interface WindowApp {
   sendWindowId: any
   cloudOauthCallback: any
   deepLinkAction: any
+  updateAvailable: any
   ipc: IPCHandler
   config: {
     apiPort: string

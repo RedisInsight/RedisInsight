@@ -13,7 +13,7 @@ export const APP_INFO_DATA_MOCK = {
 
 const handlers: RestHandler[] = [
   // fetchServerInfo
-  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.INFO), async (req, res, ctx) => res(
+  rest.get<DatabaseInstanceResponse[]>(getMswURL(ApiEndpoints.INFO), async (_req, res, ctx) => res(
     ctx.status(200),
     ctx.json(APP_INFO_DATA_MOCK),
   ))

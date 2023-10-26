@@ -13,6 +13,7 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import reducer, {
   initialState,
   loadKeys,
@@ -63,7 +64,7 @@ jest.mock('uiSrc/services', () => ({
 
 describe('redisearch slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -1059,6 +1060,7 @@ describe('redisearch slice', () => {
           loadKeysFailure(errorMessage),
           setRedisearchInitialState(),
           loadList(),
+          loadListSuccess(REDISEARCH_LIST_DATA_MOCK.indexes),
         ]
         expect(newStore.getActions()).toEqual(expectedActions)
       })
@@ -1157,7 +1159,8 @@ describe('redisearch slice', () => {
           createIndex(),
           createIndexSuccess(),
           addMessageNotification(successMessages.CREATE_INDEX()),
-          loadList()
+          loadList(),
+          loadListSuccess(REDISEARCH_LIST_DATA_MOCK.indexes),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

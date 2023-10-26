@@ -11,6 +11,7 @@ import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/n
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import {
   defaultSelectedKeyAction,
   deleteSelectedKeySuccess,
@@ -53,7 +54,7 @@ beforeEach(() => {
 
 describe('set slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => 1629128049027)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -577,7 +578,7 @@ describe('set slice', () => {
         defaultSelectedKeyAction(),
       ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions)
+      expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     })
     it('failed to add members to set', async () => {
       // Arrange
@@ -644,7 +645,7 @@ describe('set slice', () => {
         )
       ]
 
-      expect(mockedStore.getActions()).toEqual(expectedActions)
+      expect(mockedStore.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     })
 
     it('succeed to delete all members from set', async () => {

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import config from 'src/utils/config';
 
+const serverConfig = config.get('server');
 const cloudConfig = config.get('cloud');
 
 export class CloudApiProvider {
@@ -13,26 +14,12 @@ export class CloudApiProvider {
    * Generates utm query parameters object
    * @param utm
    */
-  static generateUtmQuery(utm: CloudRequestUtm): URLSearchParams {
-    if (!utm) {
-      return null;
-    }
-
-    const params = new URLSearchParams();
-
-    if (utm?.source) {
-      params.append('utm_source', utm.source);
-    }
-
-    if (utm?.medium) {
-      params.append('utm_medium', utm.medium);
-    }
-
-    if (utm?.campaign) {
-      params.append('utm_campaign', utm.campaign);
-    }
-
-    return params;
+  static generateUtmBody(utm: CloudRequestUtm): Record<string, string> {
+    return {
+      utm_source: utm?.source,
+      utm_medium: utm?.medium,
+      utm_campaign: utm?.campaign,
+    };
   }
 
   /**
@@ -40,7 +27,10 @@ export class CloudApiProvider {
    * @param credentials
    */
   static getHeaders(credentials: ICloudApiCredentials): { headers: {} } {
-    const headers = {};
+    const headers = {
+      'User-Agent': `RedisInsight/${serverConfig.version}`,
+      'x-redisinsight-token': cloudConfig.apiToken,
+    };
 
     if (credentials?.accessToken) {
       headers['authorization'] = `Bearer ${credentials.accessToken}`;

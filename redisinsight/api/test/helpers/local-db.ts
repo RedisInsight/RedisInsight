@@ -409,6 +409,23 @@ export const createDatabaseInstances = async () => {
   }
 }
 
+export const createIncorrectDatabaseInstances = async () => {
+  const rep = await getRepository(repositories.DATABASE);
+
+  await rep.save({
+    tls: false,
+    verifyServerCert: false,
+    host: constants.TEST_INSTANCE_HOST_5,
+    port: constants.TEST_INSTANCE_PORT_5,
+    connectionType: 'STANDALONE',
+    id: constants.TEST_INSTANCE_ID_5,
+    name: constants.TEST_INSTANCE_ID_5,
+    password: constants.TEST_INCORRECT_PASSWORD,
+    modules: '[]',
+    version: '7.0',
+  });
+}
+
 export const createAclInstance = async (rte, server): Promise<void> => {
   const rep = await getRepository(repositories.DATABASE);
   const instance: any = {

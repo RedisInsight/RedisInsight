@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash'
 import MockedSocket from 'socket.io-mock'
 import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import reducer, {
   initialState,
   resetMonitorItems,
@@ -21,7 +22,6 @@ import reducer, {
 let store: typeof mockedStore
 let socket: typeof MockedSocket
 let dateNow: jest.SpyInstance<number>
-const timestamp = 1629128049027
 
 beforeEach(() => {
   cleanup()
@@ -32,7 +32,7 @@ beforeEach(() => {
 
 describe('monitor slice', () => {
   beforeAll(() => {
-    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => timestamp)
+    dateNow = jest.spyOn(Date, 'now').mockImplementation(() => MOCK_TIMESTAMP)
   })
 
   afterAll(() => {
@@ -143,13 +143,13 @@ describe('monitor slice', () => {
         ...initialState,
         timestamp: {
           ...initialState.timestamp,
-          start: timestamp,
-          unPaused: timestamp
+          start: MOCK_TIMESTAMP,
+          unPaused: MOCK_TIMESTAMP
         }
       }
 
       // Act
-      const nextState = reducer(initialState, setStartTimestamp(timestamp))
+      const nextState = reducer(initialState, setStartTimestamp(MOCK_TIMESTAMP))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -165,13 +165,13 @@ describe('monitor slice', () => {
     it('should properly set new state', () => {
       // Arrange
       const diffTimestamp = 5
-      const intermediateState = reducer(initialState, setStartTimestamp(timestamp - diffTimestamp))
+      const intermediateState = reducer(initialState, setStartTimestamp(MOCK_TIMESTAMP - diffTimestamp))
       const state: typeof intermediateState = {
         ...intermediateState,
         isPaused: true,
         timestamp: {
           ...intermediateState.timestamp,
-          paused: timestamp,
+          paused: MOCK_TIMESTAMP,
           duration: diffTimestamp
         }
       }

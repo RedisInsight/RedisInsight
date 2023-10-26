@@ -14,6 +14,7 @@ import {
   EuiLink,
   EuiPopover,
   EuiButtonIcon,
+  EuiSuperSelectOption,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -27,9 +28,10 @@ import { stringToBuffer } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/dto/redisearch'
 
-import { FIELD_TYPE_OPTIONS, KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
+import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
 
 import styles from './styles.module.scss'
 
@@ -50,22 +52,19 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   }
 })
 
-const fieldTypeOptions = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
-  value,
-  inputDisplay: text,
-}))
-
-const initialFieldValue = (id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
+const initialFieldValue = (fieldTypeOptions: EuiSuperSelectOption<string>[], id = 0) => ({ id, identifier: '', fieldType: fieldTypeOptions[0].value })
 
 const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(createIndexStateSelector)
-  const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
 
   const [keyTypeSelected, setKeyTypeSelected] = useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
-  const [fields, setFields] = useState<any[]>([initialFieldValue()])
+  const [fieldTypeOptions, setFieldTypeOptions] = useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions(modules))
+  const [fields, setFields] = useState<any[]>([initialFieldValue(fieldTypeOptions)])
+
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
   const lastAddedIdentifier = useRef<HTMLInputElement>(null)
@@ -80,9 +79,13 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
     prevCountFields.current = fields.length
   }, [fields.length])
 
+  useEffect(() => {
+    setFieldTypeOptions(getFieldTypeOptions(modules))
+  }, [modules])
+
   const addField = () => {
     const lastFieldId = fields[fields.length - 1].id
-    setFields([...fields, initialFieldValue(lastFieldId + 1)])
+    setFields([...fields, initialFieldValue(fieldTypeOptions, lastFieldId + 1)])
   }
 
   const removeField = (id: number) => {
@@ -90,7 +93,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   }
 
   const clearFieldsValues = (id: number) => {
-    setFields((fields) => fields.map((item) => (item.id === id ? initialFieldValue(id) : item)))
+    setFields((fields) => fields.map((item) => (item.id === id ? initialFieldValue(fieldTypeOptions, id) : item)))
   }
 
   const handleFieldChange = (formField: string, id: number, value: string) => {

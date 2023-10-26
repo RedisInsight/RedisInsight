@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -20,8 +20,10 @@ import {
   isFormatEditable,
   stringToBuffer,
   stringToSerializedBufferFormat,
+  isFullStringLoaded,
 } from 'uiSrc/utils'
 import {
+  fetchDownloadStringValue,
   resetStringValue,
   setIsStringCompressed,
   stringDataSelector,
@@ -31,29 +33,43 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import { AddStringFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
-import { TEXT_DISABLED_COMPRESSED_VALUE, TEXT_FAILED_CONVENT_FORMATTER, TEXT_INVALID_VALUE, TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
+import {
+  KeyTypes, ModulesKeyTypes,
+  TEXT_DISABLED_COMPRESSED_VALUE,
+  TEXT_FAILED_CONVENT_FORMATTER,
+  TEXT_INVALID_VALUE,
+  TEXT_UNPRINTABLE_CHARACTERS,
+  STRING_MAX_LENGTH
+} from 'uiSrc/constants'
 import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
 import styles from './styles.module.scss'
 
 const MAX_ROWS = 25
 const MIN_ROWS = 4
 const APPROXIMATE_WIDTH_OF_SIGN = 8.6
+const MAX_LENGTH = STRING_MAX_LENGTH + 1
 
 export interface Props {
   isEditItem: boolean;
   setIsEdit: (isEdit: boolean) => void;
+  onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args: IFetchKeyArgs) => void;
 }
 
 const StringDetails = (props: Props) => {
-  const { isEditItem, setIsEdit } = props
+  const { isEditItem, setIsEdit, onRefresh } = props
 
   const { compressor = null } = useSelector(connectedInstanceSelector)
   const { loading } = useSelector(stringSelector)
+  const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { value: initialValue } = useSelector(stringDataSelector)
-  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const { name: key, type: keyType, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
   const [rows, setRows] = useState<number>(5)
@@ -89,7 +105,11 @@ const StringDetails = (props: Props) => {
       !isNonUnicodeFormatter(viewFormatProp, isValid)
         && !isEqualBuffers(initialValue, stringToBuffer(initialValueString))
     )
-    setIsEditable(!isCompressed && isFormatEditable(viewFormatProp))
+    setIsEditable(
+      !isCompressed
+      && isFormatEditable(viewFormatProp)
+      && isFullStringLoaded(initialValue?.data?.length, length)
+    )
     setNoEditableText(isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp))
 
     dispatch(setIsStringCompressed(isCompressed))
@@ -97,7 +117,7 @@ const StringDetails = (props: Props) => {
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
     }
-  }, [initialValue, viewFormatProp, compressor])
+  }, [initialValue, viewFormatProp, compressor, length])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue
@@ -142,77 +162,141 @@ const StringDetails = (props: Props) => {
 
   const isLoading = loading || value === null
 
+  const handleLoadAll = (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes) => {
+    const endString = length - 1
+    onRefresh(key, type, { end: endString })
+    sendEventTelemetry({
+      event: TelemetryEvent.STRING_LOAD_ALL_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        length,
+      }
+    })
+  }
+
+  const handleDownloadString = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    dispatch(fetchDownloadStringValue(key, downloadFile))
+    sendEventTelemetry({
+      event: TelemetryEvent.STRING_DOWNLOAD_VALUE_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        length,
+      }
+    })
+  }
+
   return (
-    <div className={styles.container}>
-      {isLoading && (
-        <EuiProgress
-          color="primary"
-          size="xs"
-          position="absolute"
-          data-testid="progress-key-string"
-        />
-      )}
-      {!isEditItem && (
-        <EuiText
-          onClick={() => isEditable && setIsEdit(true)}
-          style={{ whiteSpace: 'break-spaces' }}
-          data-testid="string-value"
-        >
-          {areaValue !== ''
-            ? (isValid
-              ? value
-              : (
-                <EuiToolTip
-                  title={noEditableText}
-                  className={styles.tooltip}
-                  position="bottom"
-                  data-testid="string-value-tooltip"
-                >
-                  <>{value}</>
-                </EuiToolTip>
-              )
-            )
-            : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
-        </EuiText>
-      )}
-      {isEditItem && (
-        <InlineItemEditor
-          controlsPosition="bottom"
-          placeholder="Enter Value"
-          fieldName="value"
-          expandable
-          isLoading={false}
-          isDisabled={isDisabled}
-          disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
-          onDecline={onDeclineChanges}
-          onApply={onApplyChanges}
-          declineOnUnmount={false}
-          approveText={TEXT_INVALID_VALUE}
-          approveByValidation={() =>
-            formattingBuffer(
-              stringToSerializedBufferFormat(viewFormat, areaValue),
-              viewFormat
-            )?.isValid}
-        >
-          <EuiTextArea
-            fullWidth
-            name="value"
-            id="value"
-            rows={rows}
-            resize="vertical"
-            placeholder={config.value.placeholder}
-            value={areaValue}
-            onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-              setAreaValue(e.target.value)
-            }}
-            disabled={loading}
-            inputRef={textAreaRef}
-            className={cx(styles.stringTextArea, { [styles.areaWarning]: isDisabled })}
-            data-testid="string-value"
+    <>
+      <div className={styles.container}>
+        {isLoading && (
+          <EuiProgress
+            color="primary"
+            size="xs"
+            position="absolute"
+            data-testid="progress-key-string"
           />
-        </InlineItemEditor>
+        )}
+        {!isEditItem && (
+          <EuiText
+            onClick={() => isEditable && setIsEdit(true)}
+            style={{ whiteSpace: 'break-spaces' }}
+            data-testid="string-value"
+          >
+            {areaValue !== ''
+              ? (isValid
+                ? value
+                : (
+                  <EuiToolTip
+                    title={noEditableText}
+                    className={styles.tooltip}
+                    position="bottom"
+                    data-testid="string-value-tooltip"
+                  >
+                    <>{value}</>
+                  </EuiToolTip>
+                )
+              )
+              : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
+          </EuiText>
+        )}
+        {isEditItem && (
+          <InlineItemEditor
+            controlsPosition="bottom"
+            placeholder="Enter Value"
+            fieldName="value"
+            expandable
+            isLoading={false}
+            isDisabled={isDisabled}
+            disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
+            onDecline={onDeclineChanges}
+            onApply={onApplyChanges}
+            declineOnUnmount={false}
+            approveText={TEXT_INVALID_VALUE}
+            approveByValidation={() =>
+              formattingBuffer(
+                stringToSerializedBufferFormat(viewFormat, areaValue),
+                viewFormat
+              )?.isValid}
+          >
+            <EuiTextArea
+              fullWidth
+              name="value"
+              id="value"
+              rows={rows}
+              resize="vertical"
+              placeholder={config.value.placeholder}
+              value={areaValue}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                setAreaValue(e.target.value)
+              }}
+              disabled={loading}
+              inputRef={textAreaRef}
+              className={cx(styles.stringTextArea, { [styles.areaWarning]: isDisabled })}
+              data-testid="string-value"
+            />
+          </InlineItemEditor>
+        )}
+      </div>
+
+      {length > MAX_LENGTH && (
+        <div className="key-details-footer" key="key-details-footer">
+          <EuiFlexGroup
+            gutterSize="none"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            responsive={false}
+          >
+            <EuiFlexItem grow={false}>
+              {!isFullStringLoaded(initialValue?.data?.length, length) && (
+                <EuiButton
+                  className={styles.stringFooterBtn}
+                  size="s"
+                  color="secondary"
+                  data-testid="load-all-value-btn"
+                  onClick={() => handleLoadAll(key, keyType)}
+                >
+                  Load all
+                </EuiButton>
+              )}
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiButton
+                className={styles.stringFooterBtn}
+                size="s"
+                color="secondary"
+                iconType="download"
+                iconSide="right"
+                data-testid="download-all-value-btn"
+                onClick={handleDownloadString}
+              >
+                Download
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </div>
       )}
-    </div>
+    </>
   )
 }
 

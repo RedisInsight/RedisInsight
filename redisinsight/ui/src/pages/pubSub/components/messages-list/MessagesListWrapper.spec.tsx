@@ -1,25 +1,16 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { RootState, store } from 'uiSrc/slices/store'
 import { render } from 'uiSrc/utils/test-utils'
 
+import { pubSubSelector } from 'uiSrc/slices/pubsub/pubsub'
 import MessagesListWrapper from './MessagesListWrapper'
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+jest.mock('uiSrc/slices/pubsub/pubsub', () => ({
+  ...jest.requireActual('uiSrc/slices/pubsub/pubsub'),
+  pubSubSelector: jest.fn().mockReturnValue({
+    isSubscribed: false,
+    messages: []
+  }),
 }))
-
-beforeEach(() => {
-  const state: RootState = store.getState();
-
-  (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-    ...state,
-    pubsub: {
-      ...state.pubsub,
-    }
-  }))
-})
 
 describe('MessagesListWrapper', () => {
   it('should render', () => {
@@ -36,15 +27,9 @@ describe('MessagesListWrapper', () => {
   })
 
   it('should render MessagesList if isSubscribed === true', () => {
-    const state: RootState = store.getState();
-
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-      ...state,
-      pubsub: {
-        ...state.pubsub,
-        isSubscribed: true,
-      }
-    }))
+    (pubSubSelector as jest.Mock).mockReturnValue({
+      isSubscribed: true
+    })
 
     const { queryByTestId } = render(<MessagesListWrapper />)
 
@@ -53,15 +38,9 @@ describe('MessagesListWrapper', () => {
   })
 
   it('should render MessagesList if messages.length !== 0', () => {
-    const state: RootState = store.getState();
-
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) => callback({
-      ...state,
-      pubsub: {
-        ...state.pubsub,
-        messages: [{ time: 123, channel: 'channel', message: 'msg' }],
-      }
-    }))
+    (pubSubSelector as jest.Mock).mockReturnValue({
+      messages: [{ time: 123, channel: 'channel', message: 'msg' }]
+    })
 
     const { queryByTestId } = render(<MessagesListWrapper />)
 

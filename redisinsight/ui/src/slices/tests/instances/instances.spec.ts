@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { cloneDeep, map } from 'lodash'
+import { cloneDeep, map, omit } from 'lodash'
 
 import {
   cleanup,
@@ -12,6 +12,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { checkRediStack } from 'uiSrc/utils'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import reducer, {
   initialState,
   instancesSelector,
@@ -64,6 +65,7 @@ import reducer, {
   updateEditedInstance,
   exportInstancesAction,
   autoCreateAndConnectToInstanceAction,
+  cloneInstanceAction,
 } from '../../instances/instances'
 import { addErrorNotification, addInfiniteNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
@@ -1031,6 +1033,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
+          resetKeys(),
           setAppContextInitialState(),
           setConnectedInstanceId(mockId),
           setDefaultInstance(),
@@ -1169,7 +1172,7 @@ describe('instances slice', () => {
 
         const responsePayload = { status: 201 }
 
-        apiService.put = jest.fn().mockResolvedValue(responsePayload)
+        apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(updateInstanceAction(requestData))
@@ -1200,7 +1203,7 @@ describe('instances slice', () => {
           },
         }
 
-        apiService.put = jest.fn().mockRejectedValueOnce(responsePayload)
+        apiService.patch = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
         await store.dispatch<any>(updateInstanceAction(requestData))
@@ -1588,6 +1591,39 @@ describe('instances slice', () => {
     })
 
     describe('testInstanceStandaloneAction', () => {
+      it('call axios with proper url with id', async () => {
+        // Arrange
+        const requestData = {
+          id: '123',
+          name: 'db',
+          host: 'localhost',
+          port: 6379,
+        }
+
+        apiService.post = jest.fn()
+
+        // Act
+        await store.dispatch<any>(testInstanceStandaloneAction(requestData))
+
+        expect(apiService.post).toBeCalledWith('databases/test/123', omit(requestData, 'id'))
+      })
+
+      it('call axios with proper url with id', async () => {
+        // Arrange
+        const requestData = {
+          name: 'db',
+          host: 'localhost',
+          port: 6379,
+        }
+
+        apiService.post = jest.fn()
+
+        // Act
+        await store.dispatch<any>(testInstanceStandaloneAction(requestData))
+
+        expect(apiService.post).toBeCalledWith('databases/test', requestData)
+      })
+
       it('call proper actions on success', async () => {
         // Arrange
         const requestData = {
@@ -1667,6 +1703,7 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()),
+          resetKeys(),
           setAppContextInitialState(),
           setConnectedInstanceId(mockId),
           setDefaultInstance(),
@@ -1708,12 +1745,74 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           addInfiniteNotification(INFINITE_MESSAGES.AUTO_CREATING_DATABASE()),
+          resetKeys(),
           setAppContextInitialState(),
           setConnectedInstanceId(mockId),
           setDefaultInstance(),
           resetConnectedInstance(),
         ]
         expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+      })
+    })
+
+    describe('cloneInstanceAction', () => {
+      it('call proper actions on success', async () => {
+        // Arrange
+        const mockId = '123'
+        const mockName = 'name'
+        const requestData = {
+          id: mockId,
+          name: mockName,
+          timeout: 45_000,
+        }
+
+        const responsePayload = { status: 201 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(cloneInstanceAction(requestData))
+
+        // Assert
+        const expectedActions = [
+          defaultInstanceChanging(),
+          defaultInstanceChangingSuccess(),
+          loadInstances(),
+          addMessageNotification(successMessages.ADDED_NEW_INSTANCE(requestData.name))
+        ]
+
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+      })
+      it('call both createInstanceStandaloneAction and defaultInstanceChangingFailure when fetch is fail', async () => {
+        // Arrange
+        const requestData = {
+          name: 'db',
+          host: 'localhost',
+          port: 6379,
+        }
+
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          cloneInstanceAction(requestData, () => ({}))
+        )
+
+        // Assert
+        const expectedActions = [
+          defaultInstanceChanging(),
+          defaultInstanceChangingFailure(responsePayload.response.data.message),
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
       })
     })
   })

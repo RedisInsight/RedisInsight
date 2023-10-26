@@ -1,13 +1,17 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { UpdateInfo } from 'electron-updater'
 import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 import {
   appServerInfoSelector,
-  appElectronInfoSelector
+  appElectronInfoSelector,
 } from 'uiSrc/slices/app/info'
-import { ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
+import { ipcAppRestart, ipcCheckUpdates, ipcSendEvents } from 'uiSrc/electron/utils'
 import { ipcDeleteDownloadedVersion } from 'uiSrc/electron/utils/ipcDeleteStoreValues'
+import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
 const ConfigElectron = () => {
   let isCheckedUpdates = false
@@ -19,6 +23,7 @@ const ConfigElectron = () => {
 
   useEffect(() => {
     window.app?.deepLinkAction?.(deepLinkAction)
+    window.app?.updateAvailable?.(updateAvailableAction)
   }, [])
 
   useEffect(() => {
@@ -46,6 +51,14 @@ const ConfigElectron = () => {
         search: `from=${url.from}`
       })
     }
+  }
+
+  const updateAvailableAction = (_e: any, { version }: UpdateInfo) => {
+    sendEventTelemetry({ event: TelemetryEvent.UPDATE_NOTIFICATION_DISPLAYED })
+    dispatch(addInfiniteNotification(INFINITE_MESSAGES.APP_UPDATE_AVAILABLE(version, () => {
+      sendEventTelemetry({ event: TelemetryEvent.UPDATE_NOTIFICATION_RESTART_CLICKED })
+      ipcAppRestart()
+    })))
   }
 
   return null

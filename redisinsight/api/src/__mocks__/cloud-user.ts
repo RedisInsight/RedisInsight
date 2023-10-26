@@ -13,6 +13,7 @@ import { classToPlain } from 'class-transformer';
 import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
 
 const serverConfig = config.get('server');
+const cloudConfig = config.get('cloud');
 
 // ======================================= CAPI =======================================
 export const mockCloudCapiAccount: ICloudCapiAccount = {
@@ -65,7 +66,7 @@ export const mockCloudApiCsrfToken: ICloudApiCsrfToken = {
 export const mockCloudApiAuthDto: ICloudApiCredentials = {
   accessToken: 'at_p6vA6A5tF36Jf6twH2cBOqtt7n',
   csrf: mockCloudApiCsrfToken.csrf_token,
-  apiSessionId: 'asid_p6vA6A5tF36Jf6twH2cBOqtt7n',
+  apiSessionId: 'asid_p6v-A6A5tF36J-f6twH2cB!@#$_^&*()Oqtt7n',
 };
 
 export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {
@@ -81,8 +82,14 @@ export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {
 //   name: mockCloudCapiAccount2.name,
 // });
 
+export const mockDefaultCloudApiHeaders = {
+  'User-Agent': `RedisInsight/${serverConfig.version}`,
+  'x-redisinsight-token': cloudConfig.apiToken,
+};
+
 export const mockCloudApiHeaders = {
   headers: {
+    ...mockDefaultCloudApiHeaders,
     authorization: `Bearer ${mockCloudApiAuthDto.accessToken}`,
     'x-csrf-token': mockCloudApiAuthDto.csrf,
     cookie: `JSESSIONID=${mockCloudApiAuthDto.apiSessionId}`,

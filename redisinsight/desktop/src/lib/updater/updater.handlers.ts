@@ -2,7 +2,7 @@ import { app } from 'electron'
 import { autoUpdater, UpdateDownloadedEvent } from 'electron-updater'
 import log from 'electron-log'
 
-import { electronStore } from 'desktopSrc/lib'
+import { electronStore, updateDownloaded } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 
@@ -40,5 +40,7 @@ export const initAutoUpdaterHandlers = () => {
     electronStore?.set(ElectronStorageItem.updateDownloadedForTelemetry, true)
     electronStore?.set(ElectronStorageItem.updateDownloadedVersion, info.version)
     electronStore?.set(ElectronStorageItem.updatePreviousVersion, app.getVersion())
+
+    updateDownloaded(info)
   })
 }

@@ -267,7 +267,13 @@ const KeyList = forwardRef((props: Props, ref) => {
     rerender({})
   }
 
-  const onRowsRenderedDebounced = debounce(onRowsRendered, 100)
+  const onRowsRenderedOverscan = (startIndex: number, lastIndex: number) => {
+    const { startIndex: prevStartIndex, lastIndex: prevLastIndex } = renderedRowsIndexesRef.current
+    if (prevStartIndex === startIndex && prevLastIndex === lastIndex) return
+
+    onRowsRendered(startIndex, lastIndex)
+  }
+  const onRowsRenderedDebounced = debounce(onRowsRenderedOverscan, 100)
 
   const bufferFormatRows = (startIndex: number, lastIndex: number): IKeyPropTypes[] => {
     const newItems = bufferFormatRangeItems(

@@ -25,6 +25,9 @@ contextBridge.exposeInMainWorld('app', {
   deepLinkAction: ((parsedDeepLink: any) => {
     ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
   }),
+  updateAvailable: ((updateInfo: any) => {
+    ipcRenderer.on(IpcOnEvent.appUpdateAvailable, updateInfo)
+  }),
   ipc: ipcHandler,
   config: {
     apiPort: config.apiPort

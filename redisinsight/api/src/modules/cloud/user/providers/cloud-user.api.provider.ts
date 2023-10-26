@@ -39,17 +39,18 @@ export class CloudUserApiProvider extends CloudApiProvider {
     try {
       const { headers } = await this.api.post(
         'login',
-        {},
+        {
+          ...CloudApiProvider.generateUtmBody(utm),
+        },
         {
           ...CloudApiProvider.getHeaders(credentials),
-          params: CloudApiProvider.generateUtmQuery(utm),
         },
       );
 
       return get(headers, 'set-cookie', []).find(
         (header) => header.indexOf('JSESSIONID=') > -1,
       )
-        ?.match(/JSESSIONID=(\w+)/)?.[1];
+        ?.match(/JSESSIONID=([^;]+)/)?.[1];
     } catch (e) {
       throw wrapCloudApiError(e);
     }

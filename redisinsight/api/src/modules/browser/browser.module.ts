@@ -30,9 +30,11 @@ import { BrowserHistoryService } from './browser-history/browser-history.service
 import { BrowserHistoryProvider } from './browser-history/providers/browser-history.provider';
 import { BrowserHistoryController } from './browser-history/browser-history.controller';
 
+const route = '/databases/:dbInstance';
+
 @Module({
   imports: [
-    ListModule,
+    ListModule.register({ route }),
   ],
   controllers: [
     KeysController,

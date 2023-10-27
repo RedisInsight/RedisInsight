@@ -183,8 +183,6 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
   }
 
   availableItems.push(opsPerSecItem)
-  availableItems.push(networkInKbpsItem)
-  availableItems.push(networkOutKbpsItem)
 
   // Used memory
   const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)

@@ -10,7 +10,6 @@ import reducer, {
   getRecommendationsSuccess,
   getRecommendationsFailure,
   setIsHighlighted,
-  setIsContentVisible,
   readRecommendations,
   fetchRecommendationsAction,
   readRecommendationsAction,
@@ -113,26 +112,6 @@ describe('recommendations slice', () => {
 
         // Act
         const nextState = reducer(initialState, getRecommendationsSuccess(payload))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          recommendations: nextState,
-        })
-        expect(recommendationsSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('setIsContentVisible', () => {
-      it('should properly isContentVisible', () => {
-        // Arrange
-        const state = {
-          ...initialState,
-          isContentVisible: true,
-          isHighlighted: false,
-        }
-
-        // Act
-        const nextState = reducer(initialState, setIsContentVisible(true))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -365,7 +344,6 @@ describe('recommendations slice', () => {
 
         const state = {
           ...initialStateDefault.recommendations,
-          isContentVisible: false,
         }
 
         // Assert

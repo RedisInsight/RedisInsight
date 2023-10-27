@@ -3,7 +3,6 @@ import { cloneDeep } from 'lodash'
 import {
   getRecommendations,
   recommendationsSelector,
-  setIsContentVisible
 } from 'uiSrc/slices/recommendations/recommendations'
 import { fireEvent, screen, cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
@@ -42,7 +41,6 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
       recommendations: [],
       totalUnread: 0,
     },
-    isContentVisible: false,
   }),
 }))
 
@@ -82,7 +80,6 @@ describe('DatabaseSidePanels', () => {
         recommendations: [{ name: 'name' }],
         totalUnread: 1,
       },
-      isContentVisible: false,
     }))
 
     render(<DatabaseSidePanels />)
@@ -98,7 +95,6 @@ describe('DatabaseSidePanels', () => {
         recommendations: [{ name: 'name' }],
         totalUnread: 1,
       },
-      isContentVisible: false,
     }))
 
     await act(() => {
@@ -111,7 +107,7 @@ describe('DatabaseSidePanels', () => {
       fireEvent.click(screen.getByTestId('recommendations-trigger'))
     })
 
-    const expectedActions = [setIsContentVisible(true)]
+    const expectedActions = []
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 
@@ -122,7 +118,6 @@ describe('DatabaseSidePanels', () => {
         recommendations: [],
         totalUnread: 0,
       },
-      isContentVisible: false,
     }))
 
     render(<DatabaseSidePanels />)
@@ -137,7 +132,6 @@ describe('DatabaseSidePanels', () => {
         recommendations: [],
         totalUnread: 7,
       },
-      isContentVisible: false,
     }))
 
     render(<DatabaseSidePanels />)

@@ -23,7 +23,7 @@ import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/compone
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { deleteLiveRecommendations, setIsContentVisible, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import { deleteLiveRecommendations, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
 
@@ -69,8 +69,6 @@ const Recommendation = ({
   const recommendationTitle = liveTitle || title
 
   const handleRedirect = () => {
-    dispatch(setIsContentVisible(false))
-
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
       eventData: {

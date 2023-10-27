@@ -1,7 +1,7 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
-import { setIsContentVisible, recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fireEvent, mockedStore, screen, cleanup, render, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 import { Pages } from 'uiSrc/constants'
@@ -28,7 +28,6 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
       recommendations: [],
       totalUnread: 0,
     },
-    isContentVisible: false,
   }),
 }))
 
@@ -62,7 +61,7 @@ describe('WelcomeScreen', () => {
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
   })
 
-  it('should call "setIsContentVisible" after click link btn', () => {
+  it('should call db analysis after click link btn', () => {
     render(<WelcomeScreen />)
     const afterRenderActions = [...store.getActions()]
 
@@ -74,7 +73,7 @@ describe('WelcomeScreen', () => {
 
     fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
 
-    const expectedActions = [setIsContentVisible(false), getDBAnalysis()]
+    const expectedActions = [getDBAnalysis()]
     expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
   })
 

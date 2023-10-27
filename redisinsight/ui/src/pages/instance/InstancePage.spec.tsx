@@ -57,29 +57,4 @@ describe('InstancePage', () => {
 
     expect(queryByTestId('expand-cli')).toBeInTheDocument()
   })
-
-  it('should not render LiveTimeRecommendations Component by default', () => {
-    const { queryByTestId } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    expect(queryByTestId('recommendations-trigger')).not.toBeInTheDocument()
-  })
-
-  it('should render LiveTimeRecommendations Component with feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      insightsRecommendations: {
-        flag: true
-      }
-    })
-    const { queryByTestId } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    expect(queryByTestId('recommendations-trigger')).toBeInTheDocument()
-  })
 })

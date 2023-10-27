@@ -22,8 +22,6 @@ import reducer, {
   appContextSelector,
   appContextBrowser,
   appContextWorkbench,
-  setExplorePanelScrollTop,
-  resetExplorePanelSearchContext,
   setBrowserTreeNodesOpen,
   setBrowserTreePanelSizes,
   resetBrowserTree,
@@ -41,8 +39,6 @@ import reducer, {
   setDbIndexState,
   appContextDbIndex,
   setRecommendationsShowHidden,
-  setExplorePanelSearchContext,
-  appContextExplorePanel,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -333,91 +329,6 @@ describe('slices', () => {
       })
 
       expect(appContextWorkbench(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setExplorePanelSearchContext', () => {
-    it('should properly set path to opened guide page', () => {
-      // Arrange
-      const prevState = {
-        ...initialState,
-        workbench: {
-          ...initialState.workbench,
-          enablementArea: {
-            ...initialState.workbench.enablementArea,
-            search: 'static/enablement-area/guides/guide1.html',
-            itemScrollTop: 200,
-          }
-        },
-      }
-      const itemPath = 'static/enablement-area/guides/guide2.html'
-      const state = {
-        ...initialState.workbench.enablementArea,
-        search: itemPath,
-        itemScrollTop: 0,
-      }
-
-      // Act
-      const nextState = reducer(prevState, setExplorePanelSearchContext(itemPath))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextExplorePanel(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setExplorePanelScrollTop', () => {
-    it('should properly set state', () => {
-      // Arrange
-      const state = {
-        ...initialState.workbench.enablementArea,
-        itemScrollTop: 200,
-      }
-
-      // Act
-      const nextState = reducer(initialState, setExplorePanelScrollTop(200))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextExplorePanel(rootState)).toEqual(state)
-    })
-  })
-
-  describe('resetExplorePanelSearchContext', () => {
-    it('should properly reset enablement-area context', () => {
-      // Arrange
-      const prevState = {
-        ...initialState,
-        workbench: {
-          ...initialState.workbench,
-          enablementArea: {
-            ...initialState.workbench.enablementArea,
-            search: 'static/enablement-area/guides/guide1.html',
-            itemScrollTop: 200,
-          }
-        },
-      }
-      const state = {
-        ...initialState.workbench.enablementArea,
-        search: '',
-        itemScrollTop: 0,
-      }
-
-      // Act
-      const nextState = reducer(prevState, resetExplorePanelSearchContext())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextExplorePanel(rootState)).toEqual(state)
     })
   })
 

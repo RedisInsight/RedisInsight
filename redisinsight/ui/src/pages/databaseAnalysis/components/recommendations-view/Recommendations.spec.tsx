@@ -37,7 +37,6 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
       recommendations: [],
       totalUnread: 0,
     },
-    isContentVisible: false,
   }),
 }))
 
@@ -67,7 +66,6 @@ beforeEach(() => {
   (recommendationsSelector as jest.Mock).mockImplementation(() => ({
     ...mockRecommendationsSelector,
     data: { recommendations: [{ name: 'RTS' }] },
-    isContentVisible: true,
     content: recommendationsContent,
   }))
 })

@@ -17,7 +17,6 @@ import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { fetchRedisearchListAction, loadList } from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { setIsContentVisible } from 'uiSrc/slices/recommendations/recommendations'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
 jest.mock('uiSrc/slices/app/features', () => ({
@@ -354,7 +353,7 @@ describe('ONBOARDING_FEATURES', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_INSIGHTS}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('back-btn'))
 
-      const expectedActions = [setIsContentVisible(false), showMonitor(), setOnboardPrevStep()]
+      const expectedActions = [showMonitor(), setOnboardPrevStep()]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
 
@@ -363,7 +362,6 @@ describe('ONBOARDING_FEATURES', () => {
       fireEvent.click(screen.getByTestId('next-btn'))
 
       const expectedActions = [
-        setIsContentVisible(false),
         setOnboardNextStep(),
       ]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))

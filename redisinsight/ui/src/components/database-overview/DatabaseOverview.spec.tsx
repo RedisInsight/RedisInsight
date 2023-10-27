@@ -21,7 +21,7 @@ const overviewMetrics = getOverviewMetrics({
 describe('DatabaseOverview', () => {
   it('should render', () => {
     expect(render(
-      <DatabaseOverview metrics={overviewMetrics} modules={[]} windowDimensions={1500} />
+      <DatabaseOverview metrics={overviewMetrics} />
     )).toBeTruthy()
   })
 })

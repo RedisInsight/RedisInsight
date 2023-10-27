@@ -1,5 +1,5 @@
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { IGetNodeKeysResult } from 'src/modules/browser/services/keys-business/scanner/scanner.interface';
+import { IGetNodeKeysResult } from 'src/modules/browser/keys/scanner/scanner.interface';
 
 const NODES_SEPARATOR = '||';
 const CURSOR_SEPARATOR = '@';

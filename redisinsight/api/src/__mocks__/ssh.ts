@@ -4,7 +4,6 @@ import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { SshTunnel } from 'src/modules/ssh/models/ssh-tunnel';
 import { Server } from 'net';
 import { Client } from 'ssh2';
-import { EventEmitter } from 'events';
 
 export const mockSshOptionsId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ssh-id';
 

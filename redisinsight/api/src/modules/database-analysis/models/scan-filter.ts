@@ -1,4 +1,4 @@
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import {
   IsEnum, IsInt, IsOptional, IsString,
 } from 'class-validator';

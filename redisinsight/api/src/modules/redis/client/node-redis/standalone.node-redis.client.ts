@@ -45,6 +45,21 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
+  /** TODO: It's necessary to investigate transactions
+  async sendMulti(commands: RedisClientCommand[]): Promise<Array<[Error | null, RedisClientCommandReply]>> {
+    return Promise.all(
+      commands.map(
+        (cmd) => this.sendCommand(cmd)
+          .then((res): [null, RedisClientCommandReply] => [null, res])
+          .catch((e): [Error, null] => [e, null]),
+      ),
+    );
+  }
+   */
+
+  /**
+   * @inheritDoc
+   */
   async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
     return this.sendCommand(command, options);
   }

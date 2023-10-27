@@ -4,7 +4,7 @@ import { AbstractRecommendationStrategy }
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
+import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { SearchJSON } from 'src/modules/database-recommendation/models';
 import { isRedisearchModule } from 'src/utils';
 

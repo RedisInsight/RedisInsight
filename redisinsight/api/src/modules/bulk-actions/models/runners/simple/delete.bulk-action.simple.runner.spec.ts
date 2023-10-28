@@ -9,7 +9,7 @@ import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 
 const nodeClient = Object.create(IORedis.prototype);

@@ -3,7 +3,7 @@ import { when } from 'jest-when';
 import IORedis from 'ioredis';
 import { mockDatabaseService } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { GetKeyInfoResponse } from 'src/modules/browser/dto';
+import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { SearchJSONStrategy } from 'src/modules/database-recommendation/scanner/strategies';
 
 const nodeClient = Object.create(IORedis.prototype);

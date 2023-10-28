@@ -6,7 +6,7 @@ import {
   mockBulkActionsAnalytics,
 } from 'src/__mocks__';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { BulkActionType } from 'src/modules/bulk-actions/constants';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';

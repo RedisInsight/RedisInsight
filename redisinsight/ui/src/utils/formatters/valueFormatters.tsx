@@ -40,6 +40,8 @@ const isFormatEditable = (format: KeyValueFormat) => ![
   KeyValueFormat.Pickle,
 ].includes(format)
 
+const isFullStringLoaded = (currentLength: number, fullLength: number) => currentLength === fullLength
+
 const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
   if (format === KeyValueFormat.Msgpack) {
     return isValid
@@ -207,6 +209,7 @@ export {
   isTextViewFormatter,
   isJsonViewFormatter,
   isFormatEditable,
+  isFullStringLoaded,
   bufferToSerializedFormat,
   stringToSerializedBufferFormat,
   isNonUnicodeFormatter,

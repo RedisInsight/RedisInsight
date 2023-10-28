@@ -1,10 +1,8 @@
-import Redis, { Cluster, Command } from 'ioredis';
+import Redis from 'ioredis';
 import {
-  IoredisClient, IRedisClientCommandOptions,
+  IoredisClient,
   RedisClient,
-  RedisClientCommand,
-  RedisClientCommandReply,
-  RedisClientConnectionType
+  RedisClientConnectionType,
 } from 'src/modules/redis/client';
 
 export class StandaloneIoredisClient extends IoredisClient {

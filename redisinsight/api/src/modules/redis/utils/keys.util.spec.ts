@@ -1,56 +1,43 @@
-import IORedis from 'ioredis';
-import { when } from 'jest-when';
-import { getTotal } from 'src/modules/database/utils/database.total.util';
+import { getTotalKeys } from 'src/modules/redis/utils/keys.util';
+import {
+  mockRedisKeyspaceInfoResponse,
+  mockRedisKeyspaceInfoResponseNoKeyspaceData,
+  mockStandaloneRedisClient,
+} from 'src/__mocks__';
 
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
-
-const mockRedisKeyspaceInfoResponse: string = '# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n';
-const mockRedisKeyspaceInfoResponseNoKeyspaceData: string = '# Keyspace\r\n \r\n';
-
-describe('getTotalFromInfo', () => {
-  it('Should return total from dbsize', () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'dbsize' }))
-      .mockResolvedValue('1');
-    return getTotal(nodeClient).then((total) => {
-      expect(total).toBe(1);
-    });
+describe('getTotalKeys', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('Should return total from info when dbsize execute with error', () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'dbsize' }))
-      .mockRejectedValue('some error');
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'info' }))
-      .mockResolvedValue(mockRedisKeyspaceInfoResponse);
-    return getTotal(nodeClient).then((total) => {
-      expect(total).toBe(2);
-    });
+  it('Should return total from dbsize', async () => {
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue('1');
+    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(1);
+    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
+    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(['dbsize'], { replyEncoding: 'utf8' });
   });
 
-  it('Should return 0', () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'dbsize' }))
-      .mockRejectedValue('some error');
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'info' }))
-      .mockResolvedValue(mockRedisKeyspaceInfoResponseNoKeyspaceData);
-    return getTotal(nodeClient).then((total) => {
-      expect(total).toBe(0);
-    });
+  it('Should return total from info (when dbsize returned error)', async () => {
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
+    mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponse);
+    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(1);
+    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(2);
+    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, ['dbsize'], { replyEncoding: 'utf8' });
+    expect(mockStandaloneRedisClient.sendCommand)
+      .toHaveBeenNthCalledWith(2, ['info', 'keyspace'], { replyEncoding: 'utf8' });
   });
-
-  it('Should return -1 when dbsize and info execute with errors', () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'dbsize' }))
-      .mockRejectedValue('some error');
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'info' }))
-      .mockRejectedValue('some error');
-    return getTotal(nodeClient).then((total) => {
-      expect(total).toBe(-1);
-    });
+  it('Should return 0 since info keyspace hasn\'t keys values', async () => {
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
+    mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponseNoKeyspaceData);
+    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(0);
+  });
+  it('Should return 0 since info returned empty string', async () => {
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
+    mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce('');
+    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(0);
+  });
+  it('Should return -1 when dbsize and info returned error', async () => {
+    mockStandaloneRedisClient.sendCommand.mockRejectedValue(new Error('some error'));
+    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(-1);
   });
 });

@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import Redis, { Cluster, Command } from 'ioredis';
 import {
   IRedisClientCommandOptions,
@@ -83,5 +84,9 @@ export abstract class IoredisClient extends RedisClient {
 
   async quit(): Promise<void> {
     await this.client.quit();
+  }
+
+  async getCurrentDbIndex(): Promise<number> {
+    return get(this.client, ['options', 'db'], 0);
   }
 }

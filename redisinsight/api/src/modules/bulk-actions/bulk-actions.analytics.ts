@@ -1,30 +1,11 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { TelemetryBaseService } from 'src/modules/analytics/telemetry.base.service';
 import { getRangeForNumber, BULK_ACTIONS_BREAKPOINTS } from 'src/utils';
-import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { RedisError, ReplyError } from 'src/models';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 
-export interface IExecResult {
-  response: any;
-  status: CommandExecutionStatus;
-  error?: RedisError | ReplyError | Error,
-}
-
 @Injectable()
-export class BulkActionsAnalyticsService extends TelemetryBaseService {
-  private events: Map<TelemetryEvents, Function> = new Map();
-
-  constructor(protected eventEmitter: EventEmitter2) {
-    super(eventEmitter);
-    this.events.set(TelemetryEvents.BulkActionsStarted, this.sendActionStarted.bind(this));
-    this.events.set(TelemetryEvents.BulkActionsStopped, this.sendActionStopped.bind(this));
-    this.events.set(TelemetryEvents.BulkActionsSucceed, this.sendActionSucceed.bind(this));
-    this.events.set(TelemetryEvents.BulkActionsFailed, this.sendActionFailed.bind(this));
-  }
-
+export class BulkActionsAnalytics extends TelemetryBaseService {
   sendActionStarted(overview: IBulkActionOverview): void {
     try {
       this.sendEvent(
@@ -73,8 +54,8 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
             processedRange: getRangeForNumber(overview.summary?.processed, BULK_ACTIONS_BREAKPOINTS),
             succeed: overview.summary?.succeed,
             succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
-            failed: overview.summary.failed,
-            failedRange: getRangeForNumber(overview.summary.failed, BULK_ACTIONS_BREAKPOINTS),
+            failed: overview.summary?.failed,
+            failedRange: getRangeForNumber(overview.summary?.failed, BULK_ACTIONS_BREAKPOINTS),
           },
         },
       );
@@ -100,8 +81,8 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
             processedRange: getRangeForNumber(overview.summary?.processed, BULK_ACTIONS_BREAKPOINTS),
             succeed: overview.summary?.succeed,
             succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
-            failed: overview.summary.failed,
-            failedRange: getRangeForNumber(overview.summary.failed, BULK_ACTIONS_BREAKPOINTS),
+            failed: overview.summary?.failed,
+            failedRange: getRangeForNumber(overview.summary?.failed, BULK_ACTIONS_BREAKPOINTS),
           },
         },
       );
@@ -123,9 +104,5 @@ export class BulkActionsAnalyticsService extends TelemetryBaseService {
     } catch (e) {
       // continue regardless of error
     }
-  }
-
-  getEventsEmitters(): Map<TelemetryEvents, Function> {
-    return this.events;
   }
 }

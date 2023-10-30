@@ -16,15 +16,13 @@ import { HashModule } from 'src/modules/browser/hash/hash.module';
 import { ZSetModule } from 'src/modules/browser/z-set/z-set.module';
 import { StringModule } from 'src/modules/browser/string/string.module';
 import { SetModule } from 'src/modules/browser/set/set.module';
+import { BrowserHistoryModule } from 'src/modules/browser/browser-history/browser-history.module';
 import { KeysController } from './keys/keys.controller';
 import { KeysService } from './keys/keys.service';
 import { RejsonRlController } from './rejson-rl/rejson-rl.controller';
 import { RejsonRlService } from './rejson-rl/rejson-rl.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
-import { BrowserHistoryService } from './browser-history/browser-history.service';
-import { BrowserHistoryProvider } from './browser-history/providers/browser-history.provider';
-import { BrowserHistoryController } from './browser-history/browser-history.controller';
 
 const route = '/databases/:dbInstance';
 
@@ -35,6 +33,7 @@ const route = '/databases/:dbInstance';
     ZSetModule.register({ route }),
     StringModule.register({ route }),
     SetModule.register({ route }),
+    BrowserHistoryModule.register({ route }),
   ],
   controllers: [
     KeysController,
@@ -43,7 +42,6 @@ const route = '/databases/:dbInstance';
     StreamController,
     ConsumerGroupController,
     ConsumerController,
-    BrowserHistoryController,
   ],
   providers: [
     KeysService,
@@ -54,8 +52,6 @@ const route = '/databases/:dbInstance';
     ConsumerService,
     BrowserToolService,
     BrowserToolClusterService,
-    BrowserHistoryService,
-    BrowserHistoryProvider,
     DatabaseClientFactory,
     DatabaseAnalytics,
   ],

@@ -198,7 +198,7 @@ export class RedisearchService {
       }
 
       return plainToClass(GetKeysWithDetailsResponse, {
-        cursor: limit + offset,
+        cursor: limit + offset >= total ? 0 : limit + offset,
         total,
         scanned: keyNames.length + offset,
         keys: keyNames.map((name) => ({ name, type })),

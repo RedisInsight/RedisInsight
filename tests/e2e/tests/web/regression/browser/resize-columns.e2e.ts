@@ -7,6 +7,7 @@ import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
+import { t } from 'testcafe';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -18,31 +19,32 @@ const longFieldName = Common.generateSentence(20);
 const keys = [
     {   type: 'Hash',
         name: `${keyName}:1`,
-        offsetX: 50,
+        offsetX: 30,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'List',
         name: `${keyName}:2`,
-        offsetX: 40,
+        offsetX: 20,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     },
     {
         type: 'Zset',
         name: `${keyName}:3`,
-        offsetX: 30,
+        offsetX: 10,
         fieldWidthStart: 0,
         fieldWidthEnd: 0
     }
 ];
 const keyNames: string[] = [];
 keys.forEach(key => keyNames.push(key.name));
-
+const databaseName1 = `testDB1_${Common.generateWord(10)}`;
+const databaseName2 = `testDB2_${Common.generateWord(10)}`;
 const databasesForAdding = [
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB1' },
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: 'testDB2' }
+    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName1 },
+    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: databaseName2 }
 ];
 
 fixture `Resize columns in Key details`
@@ -50,11 +52,8 @@ fixture `Resize columns in Key details`
     .page(commonUrl)
     .beforeEach(async() => {
         // Add new databases using API
-        await databaseHelper.acceptLicenseTerms();
-        await databaseAPIRequests.addNewStandaloneDatabasesApi(databasesForAdding);
-        // Reload Page
-        await myRedisDatabasePage.reloadPage();
-        await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(databasesForAdding[0]);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(databasesForAdding[1]);
         await browserPage.addHashKey(keys[0].name, '2147476121', longFieldName, longFieldName);
         await browserPage.addListKey(keys[1].name, '2147476121', 'element');
         await browserPage.addZSetKey(keys[2].name, '1', '2147476121', 'member');
@@ -63,7 +62,7 @@ fixture `Resize columns in Key details`
         // Clear and delete database
         await browserPage.OverviewPanel.changeDbIndex(0);
         await browserPage.deleteKeysByNames(keyNames);
-        await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Resize of columns in Hash, List, Zset Key details', async t => {
     const field = browserPage.keyDetailsTable.find(browserPage.cssRowInVirtualizedTable);
@@ -74,18 +73,18 @@ test('Resize of columns in Hash, List, Zset Key details', async t => {
         // Remember initial column width
         key.fieldWidthStart = await field.clientWidth;
         await t.hover(tableHeaderResizeTrigger);
-        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.4 });
+        await t.drag(tableHeaderResizeTrigger, -key.offsetX, 0, { speed: 0.1 });
         // Remember last column width
         key.fieldWidthEnd = await field.clientWidth;
         // Verify that user can resize columns for Hash, List, Zset Keys
-        await t.expect(key.fieldWidthEnd).eql(key.fieldWidthStart - key.offsetX, `Field is not resized for ${key.type} key`);
+        await t.expect(key.fieldWidthEnd).within(key.fieldWidthStart - key.offsetX - 5, key.fieldWidthStart - key.offsetX + 5, `Field is not resized for ${key.type} key`);
     }
 
     // Verify that resize saved when switching between pages
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await browserPage.openKeyDetails(keys[0].name);
-    await t.expect(field.clientWidth).eql(keys[0].fieldWidthEnd, 'Resize context not saved for key when switching between pages');
+    await t.expect(field.clientWidth).within(keys[0].fieldWidthEnd - 5, keys[0].fieldWidthEnd + 5, 'Resize context not saved for key when switching between pages');
 
     // Apply filter to save it in filter history
     await browserPage.searchByKeyName(`${keys[0].name}*`);

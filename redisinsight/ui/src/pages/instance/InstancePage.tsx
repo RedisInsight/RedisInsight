@@ -19,12 +19,12 @@ import {
   setAppContextInitialState,
   setDbConfig,
 } from 'uiSrc/slices/app/context'
-import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
+import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
-import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
+import { cliSettingsSelector, resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
 import LiveTimeRecommendations from 'uiSrc/components/live-time-recommendations'
 import { monitorSelector, setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
@@ -39,7 +39,7 @@ import InstancePageRouter from './InstancePageRouter'
 import styles from './styles.module.scss'
 
 export interface Props {
-  routes: any[];
+  routes: any[]
 }
 
 export const firstPanelId = 'main-component'
@@ -105,11 +105,13 @@ const InstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   const resetContext = () => {
+    dispatch(resetKeys())
     dispatch(setMonitorInitialState())
     dispatch(setInitialPubSubState())
     dispatch(setBulkActionsInitialState())
     dispatch(setAppContextInitialState())
     dispatch(resetPatternKeysData())
+    dispatch(resetCliHelperSettings())
     dispatch(resetRedisearchKeysData())
     dispatch(setClusterDetailsInitialState())
     dispatch(setDatabaseAnalysisInitialState())

@@ -12,14 +12,13 @@ import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.ser
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { ListModule } from 'src/modules/browser/list/list.module';
-import { HashController } from './hash/hash.controller';
+import { HashModule } from 'src/modules/browser/hash/hash.module';
 import { KeysController } from './keys/keys.controller';
 import { KeysService } from './keys/keys.service';
 import { StringController } from './string/string.controller';
 import { SetController } from './set/set.controller';
 import { ZSetController } from './z-set/z-set.controller';
 import { RejsonRlController } from './rejson-rl/rejson-rl.controller';
-import { HashService } from './hash/hash.service';
 import { SetService } from './set/set.service';
 import { StringService } from './string/string.service';
 import { ZSetService } from './z-set/z-set.service';
@@ -35,6 +34,7 @@ const route = '/databases/:dbInstance';
 @Module({
   imports: [
     ListModule.register({ route }),
+    HashModule.register({ route }),
   ],
   controllers: [
     KeysController,
@@ -43,7 +43,6 @@ const route = '/databases/:dbInstance';
     ZSetController,
     RejsonRlController,
     RedisearchController,
-    HashController,
     StreamController,
     ConsumerGroupController,
     ConsumerController,
@@ -56,7 +55,6 @@ const route = '/databases/:dbInstance';
     ZSetService,
     RejsonRlService,
     RedisearchService,
-    HashService,
     StreamService,
     ConsumerGroupService,
     ConsumerService,
@@ -75,7 +73,6 @@ export class BrowserModule implements NestModule {
       .forRoutes(
         RouterModule.resolvePath(KeysController),
         RouterModule.resolvePath(StringController),
-        RouterModule.resolvePath(HashController),
         RouterModule.resolvePath(SetController),
         RouterModule.resolvePath(ZSetController),
         RouterModule.resolvePath(RejsonRlController),

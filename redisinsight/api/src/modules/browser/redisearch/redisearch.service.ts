@@ -14,7 +14,7 @@ import {
   CreateRedisearchIndexDto,
   ListRedisearchIndexesResponse,
   SearchRedisearchDto,
-} from 'src/modules/browser/redisearch/redisearch';
+} from 'src/modules/browser/redisearch/dto';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';

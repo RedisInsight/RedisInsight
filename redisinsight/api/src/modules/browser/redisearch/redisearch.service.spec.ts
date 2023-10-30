@@ -17,7 +17,7 @@ import IORedis from 'ioredis';
 import {
   RedisearchIndexDataType,
   RedisearchIndexKeyType,
-} from 'src/modules/browser/redisearch/redisearch';
+} from 'src/modules/browser/redisearch/dto';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 
 const nodeClient = Object.create(IORedis.prototype);

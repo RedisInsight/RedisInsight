@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  ArrayMinSize, IsDefined, IsEnum, IsInt, IsOptional, IsString, ValidateNested
+  ArrayMinSize, IsDefined, IsEnum, IsOptional, ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { RedisString } from 'src/common/constants';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { RedisString } from 'src/common/constants';
+import { Type } from 'class-transformer';
 
 export enum RedisearchIndexKeyType {
   HASH = 'hash',
@@ -18,15 +18,6 @@ export enum RedisearchIndexDataType {
   GEO = 'geo',
   GEOSHAPE = 'geoshape',
   VECTOR = 'vector',
-}
-
-export class ListRedisearchIndexesResponse {
-  @ApiProperty({
-    description: 'Indexes names',
-    type: String,
-  })
-  @RedisStringType({ each: true })
-  indexes: RedisString[];
 }
 
 export class CreateRedisearchIndexFieldDto {
@@ -93,39 +84,4 @@ export class CreateRedisearchIndexDto {
   @ValidateNested()
   @ArrayMinSize(1)
   fields: CreateRedisearchIndexFieldDto[];
-}
-
-export class SearchRedisearchDto {
-  @ApiProperty({
-    description: 'Index Name',
-    type: String,
-  })
-  @IsDefined()
-  @RedisStringType()
-  @IsRedisString()
-  index: RedisString;
-
-  @ApiProperty({
-    description: 'Query to search inside data fields',
-    type: String,
-  })
-  @IsDefined()
-  @IsString()
-  query: string;
-
-  @ApiProperty({
-    description: 'Limit number of results to be returned',
-    type: Number,
-  })
-  @IsDefined()
-  @IsInt()
-  limit: number = 500; // todo use @Default from another PR
-
-  @ApiProperty({
-    description: 'Offset position to start searching',
-    type: Number,
-  })
-  @IsDefined()
-  @IsInt()
-  offset: number = 0; // todo use @Default from another PR
 }

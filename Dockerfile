@@ -29,36 +29,7 @@ COPY --from=front /usr/src/app/redisinsight/api/static ./static
 COPY --from=front /usr/src/app/redisinsight/api/defaults ./defaults
 RUN yarn run build:prod
 
-FROM node:18.15.0-slim
-# Set up mDNS functionality, to play well with Redis Enterprise
-# clusters on the network.
-RUN set -ex \
- && DEPS="avahi-daemon libnss-mdns" \
- && apt-get update && apt-get install -y --no-install-recommends $DEPS \
- # Disable nss-mdns's two-label limit heuristic so that host names
- # with multiple labels can be resolved.
- # E.g. redis-12000.rediscluster.local, which has 3 labels.
- # (https://github.com/lathiat/nss-mdns#etcmdnsallow)
- && echo '*' > /etc/mdns.allow \
- # Configure NSSwitch to use the mdns4 plugin so mdns.allow is respected
- && sed -i "s/hosts:.*/hosts:          files mdns4 dns/g" /etc/nsswitch.conf \
- # We run a `avahi-daemon` without `dbus` so that we can start it as a
- # non-root user. `dbus` requires root permissions to start. And
- # anyway, there's a way to run `avahi-daemon` without `dbus` so why
- # shouldn't we use it.  https://linux.die.net/man/5/avahi-daemon.conf
- && printf "[server]\nenable-dbus=no\n" >> /etc/avahi/avahi-daemon.conf \
- && chmod 777 /etc/avahi/avahi-daemon.conf \
- # We create the directory because when the first time `avahi-daemon`
- # is run, the directory doesn't exist and the `avahi-daemon` must have
- # permissions to create the directory under `/var`.
- && mkdir -p /var/run/avahi-daemon \
- # Change the permissions of the directories avahi will use.
- && chown avahi:avahi /var/run/avahi-daemon \
- && chmod 777 /var/run/avahi-daemon
-
-RUN apt-get install net-tools
-RUN apt-get install -y dbus-x11 gnome-keyring libsecret-1-0
-RUN dbus-uuidgen > /var/lib/dbus/machine-id
+FROM node:18.15.0-alpine
 
 ARG NODE_ENV=production
 ARG SERVER_TLS_CERT
@@ -84,5 +55,7 @@ COPY ./docker-entry.sh ./
 RUN chmod +x docker-entry.sh
 
 EXPOSE 5000
+
+USER node
 
 ENTRYPOINT ["./docker-entry.sh", "node", "redisinsight/api/dist/src/main"]

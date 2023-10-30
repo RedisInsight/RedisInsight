@@ -79,6 +79,7 @@ export default merge(baseConfig, {
       RI_CLOUD_IDP_GH_ID: 'RI_CLOUD_IDP_GH_ID' in process.env ? process.env.RI_CLOUD_IDP_GH_ID: '',
       RI_CLOUD_API_URL: 'RI_CLOUD_API_URL' in process.env ? process.env.RI_CLOUD_API_URL: '',
       RI_CLOUD_CAPI_URL: 'RI_CLOUD_CAPI_URL' in process.env ? process.env.RI_CLOUD_CAPI_URL: '',
+      RI_CLOUD_API_TOKEN: 'RI_CLOUD_API_TOKEN' in process.env ? process.env.RI_CLOUD_API_TOKEN: '',
     }),
 
     new webpack.DefinePlugin({

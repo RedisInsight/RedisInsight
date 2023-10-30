@@ -117,7 +117,7 @@ const StringDetails = (props: Props) => {
     if (viewFormat !== viewFormatProp) {
       setViewFormat(viewFormatProp)
     }
-  }, [initialValue, viewFormatProp, compressor])
+  }, [initialValue, viewFormatProp, compressor, length])
 
   useEffect(() => {
     // Approximate calculation of textarea rows by initialValue

@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -235,13 +236,20 @@ export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.cap
 export default oauthCloudSlice.reducer
 
 export function createFreeDbSuccess(id: string, history: any) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const onConnect = () => {
-        dispatch(setAppContextInitialState())
-        dispatch(setConnectedInstanceId(id ?? ''))
+        const state = stateInit()
+        const isConnected = state.app?.context?.contextInstanceId === id
+
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
-        dispatch(checkConnectToInstanceAction(id))
+
+        if (!isConnected) {
+          dispatch(resetKeys())
+          dispatch(setAppContextInitialState())
+          dispatch(setConnectedInstanceId(id ?? ''))
+          dispatch(checkConnectToInstanceAction(id))
+        }
 
         history.push(Pages.workbench(id))
       }

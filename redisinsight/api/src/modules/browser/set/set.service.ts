@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
@@ -9,7 +8,7 @@ import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
 import {
-  catchAclError, catchTransactionError, isRedisGlob, unescapeRedisGlob,
+  catchAclError, catchMultiTransactionError, isRedisGlob, unescapeRedisGlob,
 } from 'src/utils';
 import { ReplyError } from 'src/models';
 import { ClientMetadata } from 'src/common/models';
@@ -27,7 +26,9 @@ import {
   GetSetMembersResponse,
   SetScanResponse,
 } from 'src/modules/browser/set/dto';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -35,88 +36,72 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 export class SetService {
   private logger = new Logger('SetService');
 
-  constructor(
-    private browserTool: BrowserToolService,
-  ) {}
+  constructor(private databaseClientFactory: DatabaseClientFactory) {}
 
   public async createSet(
     clientMetadata: ClientMetadata,
     dto: CreateSetWithExpireDto,
   ): Promise<void> {
-    this.logger.log('Creating Set data type.');
-    const { keyName } = dto;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (isExist) {
-        this.logger.error(
-          `Failed to create Set data type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST),
-        );
-      }
-      if (dto.expire) {
-        await this.createSetWithExpiration(clientMetadata, dto);
+      this.logger.log('Creating Set data type.');
+      const { keyName, expire } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyExists(keyName, client);
+
+      if (expire) {
+        await this.createSetWithExpiration(client, dto);
       } else {
-        await this.createSimpleSet(clientMetadata, dto);
+        await this.createSimpleSet(client, dto);
       }
+
       this.logger.log('Succeed to create Set data type.');
+      return null;
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
       this.logger.error('Failed to create Set data type.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    return null;
   }
 
   public async getMembers(
     clientMetadata: ClientMetadata,
     dto: GetSetMembersDto,
   ): Promise<GetSetMembersResponse> {
-    this.logger.log('Getting members of the Set data type stored at key.');
-    const { keyName } = dto;
-    let result: GetSetMembersResponse = {
-      keyName,
-      total: 0,
-      members: [],
-      nextCursor: dto.cursor,
-    };
-
     try {
-      result.total = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolSetCommands.SCard,
-        [keyName],
-      );
+      this.logger.log('Getting members of the Set data type stored at key.');
+      const { keyName, cursor, match } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      let result: GetSetMembersResponse = {
+        keyName,
+        total: 0,
+        members: [],
+        nextCursor: cursor,
+      };
+
+      result.total = await client.sendCommand([BrowserToolSetCommands.SCard, keyName]) as number;
       if (!result.total) {
-        this.logger.error(
-          `Failed to get members of the Set data type. Not Found key: ${keyName}.`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
+        this.logger.error(`Failed to get members of the Set data type. Not Found key: ${keyName}.`);
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
-      if (dto.match && !isRedisGlob(dto.match)) {
-        const member = unescapeRedisGlob(dto.match);
+      if (match && !isRedisGlob(match)) {
+        const member = unescapeRedisGlob(match);
         result.nextCursor = 0;
-        const memberIsExist = await this.browserTool.execCommand(
-          clientMetadata,
+        const memberIsExist = await client.sendCommand([
           BrowserToolSetCommands.SIsMember,
-          [keyName, member],
-        );
+          keyName,
+          member,
+        ]);
         if (memberIsExist) {
           result.members.push(member);
         }
       } else {
-        const scanResult = await this.scanSet(clientMetadata, dto);
+        const scanResult = await this.scanSet(client, dto);
         result = { ...result, ...scanResult };
       }
+
       this.logger.log('Succeed to get members of the Set data type.');
       return plainToClass(GetSetMembersResponse, result);
     } catch (error) {
@@ -132,102 +117,73 @@ export class SetService {
     clientMetadata: ClientMetadata,
     dto: AddMembersToSetDto,
   ): Promise<void> {
-    this.logger.log('Adding members to the Set data type.');
-    const { keyName, members } = dto;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to add members to Set data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
-      await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolSetCommands.SAdd,
-        [keyName, ...members],
-      );
+      this.logger.log('Adding members to the Set data type.');
+      const { keyName, members } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      await client.sendCommand([BrowserToolSetCommands.SAdd, keyName, ...members]);
+
       this.logger.log('Succeed to add members to Set data type.');
+      return null;
     } catch (error) {
       this.logger.error('Failed to add members to Set data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    return null;
   }
 
   public async deleteMembers(
     clientMetadata: ClientMetadata,
     dto: DeleteMembersFromSetDto,
   ): Promise<DeleteMembersFromSetResponse> {
-    this.logger.log('Deleting members from the Set data type.');
-    const { keyName, members } = dto;
-    let result;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to delete members from the Set data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
-      result = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Deleting members from the Set data type.');
+      const { keyName, members } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const result = await client.sendCommand([
         BrowserToolSetCommands.SRem,
-        [keyName, ...members],
-      );
+        keyName,
+        ...members,
+      ]) as number;
+
+      this.logger.log('Succeed to delete members from the Set data type.');
+      return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete members from the Set data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    this.logger.log('Succeed to delete members from the Set data type.');
-    return { affected: result };
   }
 
   public async createSimpleSet(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: AddMembersToSetDto,
-  ): Promise<number> {
+  ): Promise<void> {
     const { keyName, members } = dto;
-
-    return await this.browserTool.execCommand(
-      clientMetadata,
-      BrowserToolSetCommands.SAdd,
-      [keyName, ...members],
-    );
+    await client.sendCommand([BrowserToolSetCommands.SAdd, keyName, ...members]);
   }
 
   public async createSetWithExpiration(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: CreateSetWithExpireDto,
-  ): Promise<number> {
+  ): Promise<void> {
     const { keyName, members, expire } = dto;
-
-    const [
-      transactionError,
-      transactionResults,
-    ] = await this.browserTool.execMulti(clientMetadata, [
+    const transactionResults = await client.sendPipeline([
       [BrowserToolSetCommands.SAdd, keyName, ...members],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
-    catchTransactionError(transactionError, transactionResults);
+    catchMultiTransactionError(transactionResults);
+
     const execResult = transactionResults.map(
       (item: [ReplyError, any]) => item[1],
     );
@@ -236,10 +192,10 @@ export class SetService {
   }
 
   public async scanSet(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: GetSetMembersDto,
   ): Promise<SetScanResponse> {
-    const { keyName } = dto;
+    const { keyName, cursor } = dto;
     const count = dto.count || REDIS_SCAN_CONFIG.countDefault;
     const match = dto.match !== undefined ? dto.match : '*';
     let result: SetScanResponse = {
@@ -249,19 +205,17 @@ export class SetService {
     };
 
     while (result.nextCursor !== 0 && result.members.length < count) {
-      const scanResult = await this.browserTool.execCommand(
-        clientMetadata,
+      const scanResult = await client.sendCommand([
         BrowserToolSetCommands.SScan,
-        [
-          keyName,
-          `${result.nextCursor || dto.cursor}`,
-          'MATCH',
-          match,
-          'COUNT',
-          count,
-        ],
-      );
-      const [nextCursor, members] = scanResult;
+        keyName,
+        `${result.nextCursor || cursor}`,
+        'MATCH',
+        match,
+        'COUNT',
+        count,
+      ]);
+      const nextCursor = scanResult[0];
+      const members = scanResult[1];
       result = {
         ...result,
         nextCursor: parseInt(nextCursor, 10),

@@ -14,13 +14,12 @@ import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { ListModule } from 'src/modules/browser/list/list.module';
 import { HashModule } from 'src/modules/browser/hash/hash.module';
 import { ZSetModule } from 'src/modules/browser/z-set/z-set.module';
+import { StringModule } from 'src/modules/browser/string/string.module';
 import { KeysController } from './keys/keys.controller';
 import { KeysService } from './keys/keys.service';
-import { StringController } from './string/string.controller';
 import { SetController } from './set/set.controller';
 import { RejsonRlController } from './rejson-rl/rejson-rl.controller';
 import { SetService } from './set/set.service';
-import { StringService } from './string/string.service';
 import { RejsonRlService } from './rejson-rl/rejson-rl.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
@@ -35,10 +34,10 @@ const route = '/databases/:dbInstance';
     ListModule.register({ route }),
     HashModule.register({ route }),
     ZSetModule.register({ route }),
+    StringModule.register({ route }),
   ],
   controllers: [
     KeysController,
-    StringController,
     SetController,
     RejsonRlController,
     RedisearchController,
@@ -49,7 +48,6 @@ const route = '/databases/:dbInstance';
   ],
   providers: [
     KeysService,
-    StringService,
     SetService,
     RejsonRlService,
     RedisearchService,
@@ -70,7 +68,6 @@ export class BrowserModule implements NestModule {
       .apply(RedisConnectionMiddleware)
       .forRoutes(
         RouterModule.resolvePath(KeysController),
-        RouterModule.resolvePath(StringController),
         RouterModule.resolvePath(SetController),
         RouterModule.resolvePath(RejsonRlController),
         RouterModule.resolvePath(StreamController),

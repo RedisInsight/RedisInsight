@@ -1,12 +1,9 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
 import {
   GetStringInfoDto,
@@ -14,7 +11,6 @@ import {
   SetStringDto,
   SetStringWithExpireDto,
 } from 'src/modules/browser/string/dto';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolKeysCommands,
   BrowserToolStringCommands,
@@ -24,13 +20,16 @@ import { GetKeyInfoDto } from 'src/modules/browser/keys/dto';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Readable } from 'stream';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient, RedisClientCommand } from 'src/modules/redis/client';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 @Injectable()
 export class StringService {
   private logger = new Logger('StringService');
 
   constructor(
-    private browserTool: BrowserToolService,
+    private databaseClientFactory: DatabaseClientFactory,
     private recommendationService: DatabaseRecommendationService,
   ) {}
 
@@ -38,85 +37,77 @@ export class StringService {
     clientMetadata: ClientMetadata,
     dto: SetStringWithExpireDto,
   ): Promise<void> {
-    this.logger.log('Setting string key type.');
-    const { keyName, value, expire } = dto;
-    let result;
     try {
+      this.logger.log('Setting string key type.');
+      const { keyName, value, expire } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyExists(keyName, client);
+
       if (expire) {
-        result = await this.browserTool.execCommand(
-          clientMetadata,
+        await client.sendCommand([
           BrowserToolStringCommands.Set,
-          [keyName, value, 'EX', `${expire}`, 'NX'],
-        );
+          keyName,
+          value,
+          'EX',
+          `${expire}`,
+          'NX',
+        ]);
       } else {
-        result = await this.browserTool.execCommand(
-          clientMetadata,
+        await client.sendCommand([
           BrowserToolStringCommands.Set,
-          [keyName, value, 'NX'],
-        );
+          keyName,
+          value,
+          'NX',
+        ]);
       }
+
+      this.logger.log('Succeed to set string key type.');
+      return null;
     } catch (error) {
       this.logger.error('Failed to set string key type', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    if (!result) {
-      this.logger.error(
-        `Failed to set string key type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
-      );
-      throw new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST);
-    }
-    this.logger.log('Succeed to set string key type.');
   }
 
   public async getStringValue(
     clientMetadata: ClientMetadata,
     dto: GetStringInfoDto,
   ): Promise<GetStringValueResponse> {
-    this.logger.log('Getting string value.');
-
-    const { keyName, start, end } = dto;
-    let result: GetStringValueResponse;
-
     try {
+      this.logger.log('Getting string value.');
+      const { keyName, start, end } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
       let value;
       if (end) {
-        value = await this.browserTool.execCommand(
-          clientMetadata,
+        value = await client.sendCommand([
           BrowserToolStringCommands.Getrange,
-          [keyName, `${start}`, `${end}`],
-        );
+          keyName,
+          `${start}`,
+          `${end}`,
+        ]);
       } else {
-        value = await this.browserTool.execCommand(
-          clientMetadata,
-          BrowserToolStringCommands.Get,
-          [keyName],
-        );
+        value = await client.sendCommand([BrowserToolStringCommands.Get, keyName]);
       }
 
-      result = { value, keyName };
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.STRING_TO_JSON,
+        { value, keyName },
+      );
+
+      this.logger.log('Succeed to get string value.');
+      return plainToClass(GetStringValueResponse, { value, keyName });
     } catch (error) {
       this.logger.error('Failed to get string value.', error);
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-
-    if (result.value === null) {
-      this.logger.error(
-        `Failed to get string value. Not Found key: ${keyName}.`,
-      );
-      throw new NotFoundException();
-    }
-
-    this.recommendationService.check(
-      clientMetadata,
-      RECOMMENDATION_NAMES.STRING_TO_JSON,
-      { value: result.value, keyName: result.keyName },
-    );
-    this.logger.log('Succeed to get string value.');
-
-    return plainToClass(GetStringValueResponse, result);
   }
 
   public async downloadStringValue(
@@ -136,37 +127,24 @@ export class StringService {
     clientMetadata: ClientMetadata,
     dto: SetStringDto,
   ): Promise<void> {
-    this.logger.log('Updating string value.');
-    const { keyName, value } = dto;
-    let result;
     try {
-      const ttl = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Ttl,
-        [keyName],
-      );
-      result = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolStringCommands.Set,
-        [keyName, value, 'XX'],
-      );
+      this.logger.log('Updating string value.');
+      const { keyName, value } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const ttl = await client.sendCommand([BrowserToolKeysCommands.Ttl, keyName]);
+      const result = await client.sendCommand([BrowserToolStringCommands.Set, keyName, value, 'XX']);
       if (result && ttl > 0) {
-        await this.browserTool.execCommand(
-          clientMetadata,
-          BrowserToolKeysCommands.Expire,
-          [keyName, ttl],
-        );
+        await client.sendCommand(<RedisClientCommand>[BrowserToolKeysCommands.Expire, keyName, ttl]);
       }
+
+      this.logger.log('Succeed to update string value.');
+      return null;
     } catch (error) {
       this.logger.error('Failed to update string value.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    if (!result) {
-      this.logger.error(
-        `Failed to update string value. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-      );
-      throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
-    }
-    this.logger.log('Succeed to update string value.');
   }
 }

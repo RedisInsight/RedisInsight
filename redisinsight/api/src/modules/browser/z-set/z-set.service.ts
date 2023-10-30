@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
@@ -8,13 +7,12 @@ import {
 import { isNull, isNaN } from 'lodash';
 import config from 'src/utils/config';
 import {
-  catchAclError, catchTransactionError, isRedisGlob, unescapeRedisGlob,
+  catchAclError, catchMultiTransactionError, isRedisGlob, unescapeRedisGlob,
 } from 'src/utils';
 import { SortOrder } from 'src/constants/sort';
 import { RedisErrorCodes, RECOMMENDATION_NAMES } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ReplyError } from 'src/models';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
   BrowserToolKeysCommands,
@@ -35,6 +33,9 @@ import {
   UpdateMemberInZSetDto,
   ZSetMemberDto,
 } from 'src/modules/browser/z-set/dto';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { RedisClient } from 'src/modules/redis/client';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -43,7 +44,7 @@ export class ZSetService {
   private logger = new Logger('ZSetService');
 
   constructor(
-    private browserTool: BrowserToolService,
+    private databaseClientFactory: DatabaseClientFactory,
     private recommendationService: DatabaseRecommendationService,
   ) {}
 
@@ -51,321 +52,263 @@ export class ZSetService {
     clientMetadata: ClientMetadata,
     dto: CreateZSetWithExpireDto,
   ): Promise<void> {
-    this.logger.log('Creating ZSet data type.');
-    const { keyName } = dto;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (isExist) {
-        this.logger.error(
-          `Failed to create ZSet data type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST),
-        );
-      }
-      if (dto.expire) {
-        await this.createZSetWithExpiration(clientMetadata, dto);
+      this.logger.log('Creating ZSet data type.');
+      const { keyName, expire } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyExists(keyName, client);
+
+      if (expire) {
+        await this.createZSetWithExpiration(client, dto);
       } else {
-        await this.createSimpleZSet(clientMetadata, dto);
+        await this.createSimpleZSet(client, dto);
       }
+
       this.logger.log('Succeed to create ZSet data type.');
+      return null;
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
       this.logger.error('Failed to create ZSet data type.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    return null;
   }
 
   public async getMembers(
     clientMetadata: ClientMetadata,
     getZSetDto: GetZSetMembersDto,
   ): Promise<GetZSetResponse> {
-    this.logger.log('Getting members of the ZSet data type stored at key.');
-    const { keyName, sortOrder } = getZSetDto;
-    let result: GetZSetResponse;
     try {
-      const total = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolZSetCommands.ZCard,
-        [keyName],
-      );
+      this.logger.log('Getting members of the ZSet data type stored at key.');
+      const { keyName, sortOrder } = getZSetDto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      const total = await client.sendCommand([BrowserToolZSetCommands.ZCard, keyName]);
       if (!total) {
         this.logger.error(
           `Failed to get members of the ZSet data type. Not Found key: ${keyName}.`,
         );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
+
       let members: ZSetMemberDto[] = [];
-
       if (sortOrder && sortOrder === SortOrder.Asc) {
-        members = await this.getZRange(clientMetadata, getZSetDto);
+        members = await this.getZRange(client, getZSetDto);
       } else {
-        members = await this.getZRevRange(clientMetadata, getZSetDto);
+        members = await this.getZRevRange(client, getZSetDto);
       }
 
-      this.logger.log('Succeed to get members of the ZSet data type.');
-      result = {
-        keyName,
-        total,
-        members,
-      };
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.RTS,
         { members, keyName },
       );
+
+      this.logger.log('Succeed to get members of the ZSet data type.');
+      return plainToClass(GetZSetResponse, {
+        keyName,
+        total,
+        members,
+      });
     } catch (error) {
       this.logger.error('Failed to get members of the ZSet data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    return plainToClass(GetZSetResponse, result);
   }
 
   public async addMembers(
     clientMetadata: ClientMetadata,
     dto: AddMembersToZSetDto,
   ): Promise<void> {
-    this.logger.log('Adding members to the ZSet data type.');
-    const { keyName, members } = dto;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to add members to ZSet data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
+      this.logger.log('Adding members to the ZSet data type.');
+      const { keyName, members } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
       const args = this.formatMembersDtoToCommandArgs(members);
-      await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolZSetCommands.ZAdd,
-        [keyName, ...args],
-      );
+      await client.sendCommand([BrowserToolZSetCommands.ZAdd, keyName, ...args]);
+
       this.logger.log('Succeed to add members to ZSet data type.');
+      return null;
     } catch (error) {
       this.logger.error('Failed to add members to Set data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    return null;
   }
 
   public async updateMember(
     clientMetadata: ClientMetadata,
     dto: UpdateMemberInZSetDto,
   ): Promise<void> {
-    this.logger.log('Updating member in ZSet data type.');
-    const { keyName, member } = dto;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to update member in ZSet data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
-      const result = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Updating member in ZSet data type.');
+      const { keyName, member } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const result = await client.sendCommand([
         BrowserToolZSetCommands.ZAdd,
-        [keyName, 'XX', 'CH', `${member.score}`, member.name],
-      );
+        keyName,
+        'XX',
+        'CH',
+        `${member.score}`,
+        member.name,
+      ]);
       if (!result) {
         this.logger.error(
           `Failed to update member in ZSet data type. ${ERROR_MESSAGES.MEMBER_IN_SET_NOT_EXIST}`,
         );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.MEMBER_IN_SET_NOT_EXIST),
-        );
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.MEMBER_IN_SET_NOT_EXIST));
       }
+
       this.logger.log('Succeed to update member in ZSet data type.');
+      return null;
     } catch (error) {
       this.logger.error('Failed to update member in ZSet data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    return null;
   }
 
   public async deleteMembers(
     clientMetadata: ClientMetadata,
     dto: DeleteMembersFromZSetDto,
   ): Promise<DeleteMembersFromZSetResponse> {
-    this.logger.log('Deleting members from the ZSet data type.');
-    const { keyName, members } = dto;
-    let result;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to delete members from the ZSet data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
-      result = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolZSetCommands.ZRem,
-        [keyName, ...members],
-      );
+      this.logger.log('Deleting members from the ZSet data type.');
+      const { keyName, members } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const result = await client.sendCommand([BrowserToolZSetCommands.ZRem, keyName, ...members]) as number;
+
+      this.logger.log('Succeed to delete members from the ZSet data type.');
+      return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete members from the ZSet data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    this.logger.log('Succeed to delete members from the ZSet data type.');
-    return { affected: result };
   }
 
   public async searchMembers(
     clientMetadata: ClientMetadata,
     dto: SearchZSetMembersDto,
   ): Promise<SearchZSetMembersResponse> {
-    this.logger.log('Search members of the ZSet data type stored at key.');
-    const { keyName } = dto;
-    let result: SearchZSetMembersResponse = {
-      keyName,
-      total: 0,
-      members: [],
-      nextCursor: dto.cursor,
-    };
     try {
-      result.total = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolZSetCommands.ZCard,
-        [keyName],
-      );
+      this.logger.log('Search members of the ZSet data type stored at key.');
+      const { keyName, cursor, match } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      let result: SearchZSetMembersResponse = {
+        keyName,
+        total: 0,
+        members: [],
+        nextCursor: cursor,
+      };
+
+      result.total = await client.sendCommand([BrowserToolZSetCommands.ZCard, keyName]) as number;
       if (!result.total) {
-        this.logger.error(
-          `Failed to search members of the ZSet data type. Not Found key: ${keyName}.`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
+        this.logger.error(`Failed to search members of the ZSet data type. Not Found key: ${keyName}.`);
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
-      if (dto.match && !isRedisGlob(dto.match)) {
-        const member = unescapeRedisGlob(dto.match);
+      if (match && !isRedisGlob(match)) {
+        const member = unescapeRedisGlob(match);
         result.nextCursor = 0;
-        const score = await this.browserTool.execCommand(
-          clientMetadata,
-          BrowserToolZSetCommands.ZScore,
-          [keyName, member],
-        );
+        const score = await client.sendCommand([BrowserToolZSetCommands.ZScore, keyName, member]) as string;
         const formattedScore = isNaN(parseFloat(score)) ? String(score) : parseFloat(score);
 
         if (!isNull(score)) {
           result.members.push(plainToClass(ZSetMemberDto, { name: member, score: formattedScore }));
         }
       } else {
-        const scanResult = await this.scanZSet(clientMetadata, dto);
+        const scanResult = await this.scanZSet(client, dto);
         result = { ...result, ...scanResult };
       }
+
       this.logger.log('Succeed to search members of the ZSet data type.');
       return plainToClass(SearchZSetMembersResponse, result);
     } catch (error) {
       this.logger.error('Failed to search members of the ZSet data type.', error);
-
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-
       throw catchAclError(error);
     }
   }
 
   public async getZRange(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     getZSetDto: GetZSetMembersDto,
   ): Promise<ZSetMemberDto[]> {
     const { keyName, offset, count } = getZSetDto;
 
-    const execResult = await this.browserTool.execCommand(
-      clientMetadata,
+    const execResult = await client.sendCommand([
       BrowserToolZSetCommands.ZRange,
-      [keyName, offset, offset + count - 1, 'WITHSCORES'],
-    );
+      keyName,
+      offset,
+      offset + count - 1,
+      'WITHSCORES',
+    ]) as string[];
 
     return this.formatZRangeWithScoresReply(execResult);
   }
 
   public async getZRevRange(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     getZSetDto: GetZSetMembersDto,
   ): Promise<ZSetMemberDto[]> {
     const { keyName, offset, count } = getZSetDto;
 
-    const execResult = await this.browserTool.execCommand(
-      clientMetadata,
+    const execResult = await client.sendCommand([
       BrowserToolZSetCommands.ZRevRange,
-      [keyName, offset, offset + count - 1, 'WITHSCORES'],
-    );
+      keyName,
+      offset,
+      offset + count - 1,
+      'WITHSCORES',
+    ]) as string[];
 
     return this.formatZRangeWithScoresReply(execResult);
   }
 
   public async createSimpleZSet(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: CreateZSetWithExpireDto,
   ): Promise<number> {
     const { keyName, members } = dto;
     const args = this.formatMembersDtoToCommandArgs(members);
 
-    return await this.browserTool.execCommand(
-      clientMetadata,
-      BrowserToolZSetCommands.ZAdd,
-      [keyName, ...args],
-    );
+    return await client.sendCommand([BrowserToolZSetCommands.ZAdd, keyName, ...args]) as number;
   }
 
   public async createZSetWithExpiration(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: CreateZSetWithExpireDto,
   ): Promise<number> {
     const { keyName, members, expire } = dto;
 
     const args = this.formatMembersDtoToCommandArgs(members);
-    const [
-      transactionError,
-      transactionResults,
-    ] = await this.browserTool.execMulti(clientMetadata, [
+    const transactionResults = await client.sendPipeline([
       [BrowserToolZSetCommands.ZAdd, keyName, ...args],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
-    catchTransactionError(transactionError, transactionResults);
+    catchMultiTransactionError(transactionResults);
+
     const execResult = transactionResults.map(
       (item: [ReplyError, any]) => item[1],
     );
@@ -374,10 +317,10 @@ export class ZSetService {
   }
 
   public async scanZSet(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: SearchZSetMembersDto,
   ): Promise<ScanZSetResponse> {
-    const { keyName } = dto;
+    const { keyName, cursor } = dto;
     const count = dto.count || REDIS_SCAN_CONFIG.countDefault;
     const match = dto.match !== undefined ? dto.match : '*';
     let result: ScanZSetResponse = {
@@ -386,19 +329,17 @@ export class ZSetService {
       members: [],
     };
     while (result.nextCursor !== 0 && result.members.length < count) {
-      const scanResult = await this.browserTool.execCommand(
-        clientMetadata,
+      const scanResult = await client.sendCommand([
         BrowserToolZSetCommands.ZScan,
-        [
-          keyName,
-          `${result.nextCursor || dto.cursor}`,
-          'MATCH',
-          match,
-          'COUNT',
-          count,
-        ],
-      );
-      const [nextCursor, membersArray] = scanResult;
+        keyName,
+        `${result.nextCursor || cursor}`,
+        'MATCH',
+        match,
+        'COUNT',
+        count,
+      ]);
+      const nextCursor = scanResult[0];
+      const membersArray = scanResult[1];
       const members: ZSetMemberDto[] = this.formatZRangeWithScoresReply(
         membersArray,
       );

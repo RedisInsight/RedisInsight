@@ -13,15 +13,14 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { ListModule } from 'src/modules/browser/list/list.module';
 import { HashModule } from 'src/modules/browser/hash/hash.module';
+import { ZSetModule } from 'src/modules/browser/z-set/z-set.module';
 import { KeysController } from './keys/keys.controller';
 import { KeysService } from './keys/keys.service';
 import { StringController } from './string/string.controller';
 import { SetController } from './set/set.controller';
-import { ZSetController } from './z-set/z-set.controller';
 import { RejsonRlController } from './rejson-rl/rejson-rl.controller';
 import { SetService } from './set/set.service';
 import { StringService } from './string/string.service';
-import { ZSetService } from './z-set/z-set.service';
 import { RejsonRlService } from './rejson-rl/rejson-rl.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
@@ -35,12 +34,12 @@ const route = '/databases/:dbInstance';
   imports: [
     ListModule.register({ route }),
     HashModule.register({ route }),
+    ZSetModule.register({ route }),
   ],
   controllers: [
     KeysController,
     StringController,
     SetController,
-    ZSetController,
     RejsonRlController,
     RedisearchController,
     StreamController,
@@ -52,7 +51,6 @@ const route = '/databases/:dbInstance';
     KeysService,
     StringService,
     SetService,
-    ZSetService,
     RejsonRlService,
     RedisearchService,
     StreamService,
@@ -74,7 +72,6 @@ export class BrowserModule implements NestModule {
         RouterModule.resolvePath(KeysController),
         RouterModule.resolvePath(StringController),
         RouterModule.resolvePath(SetController),
-        RouterModule.resolvePath(ZSetController),
         RouterModule.resolvePath(RejsonRlController),
         RouterModule.resolvePath(StreamController),
         RouterModule.resolvePath(ConsumerGroupController),

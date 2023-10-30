@@ -1,11 +1,13 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   GatewayTimeoutException,
   HttpException,
   HttpStatus,
   InternalServerErrorException,
   MethodNotAllowedException,
+  NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -113,7 +115,11 @@ export const catchRedisConnectionError = (
 
 export const catchAclError = (error: ReplyError): HttpException => {
   // todo: Move to other place after refactoring
-  if (error instanceof EncryptionServiceErrorException) {
+  if (
+    error instanceof EncryptionServiceErrorException
+    || error instanceof NotFoundException
+    || error instanceof ConflictException
+  ) {
     throw error;
   }
 

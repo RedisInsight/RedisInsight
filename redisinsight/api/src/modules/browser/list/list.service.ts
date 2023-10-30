@@ -44,12 +44,12 @@ export class ListService {
   ): Promise<void> {
     try {
       this.logger.log('Creating list data type.');
-      const { keyName } = dto;
+      const { keyName, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyExists(keyName, client);
 
-      if (dto.expire) {
+      if (expire) {
         await this.createListWithExpiration(client, dto);
       } else {
         await this.createSimpleList(client, dto);

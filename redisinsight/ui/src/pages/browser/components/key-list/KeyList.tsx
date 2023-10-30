@@ -58,7 +58,7 @@ import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import NoKeysFound from 'uiSrc/pages/browser/components/no-keys-found'
 
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import styles from './styles.module.scss'
 

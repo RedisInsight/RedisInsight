@@ -16,6 +16,7 @@ export enum RedisearchIndexDataType {
   TAG = 'tag',
   NUMERIC = 'numeric',
   GEO = 'geo',
+  GEOSHAPE = 'geoshape',
   VECTOR = 'vector',
 }
 

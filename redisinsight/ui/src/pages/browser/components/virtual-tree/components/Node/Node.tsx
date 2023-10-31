@@ -41,6 +41,7 @@ const Node = ({
     path,
     type,
     ttl,
+    shortName,
     size,
     deleting,
     nameString,
@@ -63,12 +64,6 @@ const Node = ({
       getMetadata?.(nameBuffer, path)
     }
   }, [])
-
-  useEffect(() => {
-    if (isSelected && nameBuffer) {
-      updateStatusSelected?.(nameBuffer)
-    }
-  }, [isSelected])
 
   const handleClick = () => {
     if (isLeaf && !isSelected) {
@@ -98,35 +93,41 @@ const Node = ({
   }
 
   const Folder = () => (
-    <>
-      <div className={styles.nodeName}>
-        <EuiIcon
-          type={isOpen ? 'arrowDown' : 'arrowRight'}
-          className={cx(styles.nodeIcon, styles.nodeIconArrow)}
-          data-test-subj={`node-arrow-icon_${fullName}`}
-        />
-        <EuiIcon
-          type={isOpen ? 'folderOpen' : 'folderClosed'}
-          className={styles.nodeIcon}
-          data-test-subj={`node-folder-icon_${fullName}`}
-        />
-        <span className="truncateText" data-testid={`folder-${nameString}`}>
-          {nameString}
-        </span>
-      </div>
-      <div className={styles.options}>
-        <div className={styles.approximate} data-testid={`percentage_${fullName}`}>
-          {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }
+    <EuiToolTip
+      content={tooltipContent}
+      position="bottom"
+      anchorClassName={styles.anchorTooltipNode}
+    >
+      <>
+        <div className={styles.nodeName}>
+          <EuiIcon
+            type={isOpen ? 'arrowDown' : 'arrowRight'}
+            className={cx(styles.nodeIcon, styles.nodeIconArrow)}
+            data-test-subj={`node-arrow-icon_${fullName}`}
+          />
+          <EuiIcon
+            type={isOpen ? 'folderOpen' : 'folderClosed'}
+            className={styles.nodeIcon}
+            data-test-subj={`node-folder-icon_${fullName}`}
+          />
+          <span className="truncateText" data-testid={`folder-${nameString}`}>
+            {nameString}
+          </span>
         </div>
-        <div className={styles.keyCount} data-testid={`count_${fullName}`}>{keyCount ?? ''}</div>
-      </div>
-    </>
+        <div className={styles.options}>
+          <div className={styles.approximate} data-testid={`percentage_${fullName}`}>
+            {keyApproximate ? `${keyApproximate < 1 ? '<1' : Math.round(keyApproximate)}%` : '' }
+          </div>
+          <div className={styles.keyCount} data-testid={`count_${fullName}`}>{keyCount ?? ''}</div>
+        </div>
+      </>
+    </EuiToolTip>
   )
 
   const Leaf = () => (
     <>
       <KeyRowType type={type} nameString={nameString} />
-      <KeyRowName nameString={nameString} />
+      <KeyRowName nameString={shortName} />
       <KeyRowTTL ttl={ttl} nameString={nameString} deletePopoverId={deletePopoverId} rowId={nodeId} />
       <KeyRowSize
         size={size}
@@ -181,16 +182,7 @@ const Node = ({
         }
       )}
     >
-      {isLeaf && Node}
-      {!isLeaf && (
-        <EuiToolTip
-          content={tooltipContent}
-          position="bottom"
-          anchorClassName={styles.anchorTooltipNode}
-        >
-          {Node}
-        </EuiToolTip>
-      )}
+      {Node}
     </div>
   )
 }

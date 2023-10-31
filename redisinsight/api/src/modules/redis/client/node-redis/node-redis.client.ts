@@ -1,4 +1,4 @@
-import { get, isNull, isNumber } from 'lodash';
+import { isNull, isNumber } from 'lodash';
 import { createClient, createCluster } from 'redis';
 import { IRedisClientCommandOptions, RedisClient, RedisClientCommand } from 'src/modules/redis/client';
 import { RedisString } from 'src/common/constants';
@@ -10,8 +10,14 @@ export abstract class NodeRedisClient extends RedisClient {
   protected readonly client: NodeRedis | NodeRedisCluster;
 
   static prepareCommandOptions(options: IRedisClientCommandOptions): any {
+    let replyEncoding = null;
+
+    if (options?.replyEncoding === 'utf8') {
+      replyEncoding = 'utf8';
+    }
+
     return {
-      returnBuffers: isNull(options?.replyEncoding),
+      returnBuffers: isNull(replyEncoding),
     };
   }
 

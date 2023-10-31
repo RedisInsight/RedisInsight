@@ -111,7 +111,7 @@ export class RedisConnectionFactory {
       ...baseOptions,
       host: undefined,
       port: undefined,
-      sentinels: database.nodes?.length ? database.nodes : [{ host: database.host, port: database.port }],
+      sentinels: [{ host: database.host, port: database.port, ...(database.nodes || []) }],
       name: sentinelMaster?.name,
       sentinelUsername: database.username,
       sentinelPassword: database.password,

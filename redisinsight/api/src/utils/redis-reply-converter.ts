@@ -1,5 +1,8 @@
 import { IRedisClusterNode } from 'src/models';
 
+/**
+ * @deprecated todo: remove
+ */
 export const convertBulkStringsToObject = (
   info: string,
   entitiesSeparator = '\r\n',
@@ -40,6 +43,9 @@ export const convertRedisInfoReplyToObject = (info: string): any => {
   }
 };
 
+/**
+ * @deprecated
+ */
 export const parseClusterNodes = (info: string): IRedisClusterNode[] => {
   const lines = info.split('\n');
   try {

@@ -42,6 +42,7 @@ export interface TreeData extends FixedSizeNodeData {
   keyCount: number
   keyApproximate: number
   fullName: string
+  shortName?: string
   leafIcon: string
   type: KeyTypes | ModulesKeyTypes
   ttl: number

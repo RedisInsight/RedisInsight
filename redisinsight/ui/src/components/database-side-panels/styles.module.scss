@@ -6,6 +6,15 @@ $animation-duration: 300ms;
   height: 100%;
   width: 460px;
   padding-right: 16px;
+
+  &.fullScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-left: 16px;
+    z-index: 15;
+  }
 }
 
 .panelInner {
@@ -18,10 +27,17 @@ $animation-duration: 300ms;
 }
 
 .header {
-  height: 60px;
+  height: 100px;
   position: relative;
 
   padding: 15px;
+}
+
+.fullScreenBtn {
+  position: absolute;
+  top: 10px;
+  right: 42px;
+  z-index: 1;
 }
 
 .closeBtn {
@@ -32,7 +48,7 @@ $animation-duration: 300ms;
 }
 
 .body {
-  height: calc(100% - 60px);
+  height: calc(100% - 100px);
 }
 
 .trigger {
@@ -104,17 +120,61 @@ $animation-duration: 300ms;
   }
 }
 
-@keyframes triggerInsights {
-  0% {
-    opacity: 0;
-    right: -37px;
-  }
-  75% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-    right: 438px;
+.tabs {
+  display: flex;
+  max-width: 440px !important;
+  margin-top: 28px;
+
+  .tab {
+    flex-basis: 50%;
+
+    background-color: var(--euiColorLightestShade);
+    margin: 0 !important;
+    border-radius: 4px 0 0 4px;
+
+    &:global {
+      &.euiTab + .euiTab {
+        border-radius: 0 4px 4px 0;
+        &:after {
+          display: none !important;
+        }
+      }
+    }
+
+    &:global(.euiTab-isSelected) {
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:global:not(.euiTab-isSelected) {
+      &:hover {
+        .tabName {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    :global {
+      .euiTab__content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .tabTotalUnred {
+      display: inline-block;
+      background-color: #8ba2ff;
+      color: var(--euiColorLightestShade);
+      height: 18px;
+      width: 18px;
+      font-size: 10px;
+      line-height: 16px;
+      font-weight: 500;
+      margin-left: 4px;
+      border-radius: 100%;
+    }
   }
 }
 

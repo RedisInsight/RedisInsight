@@ -26,6 +26,10 @@ $breakpoint-to-hide-resize-panel: 1280px;
   }
 }
 
+.resizableButton {
+  z-index: 10 !important;
+}
+
 .resizableContainer {
   width: 100%;
   position: relative;

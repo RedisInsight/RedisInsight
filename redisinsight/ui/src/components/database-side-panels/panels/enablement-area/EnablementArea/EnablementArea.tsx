@@ -106,7 +106,7 @@ const EnablementArea = (props: Props) => {
       }
 
       if (manifestPath) {
-        handleOpenInternalPage({ path: '', manifestPath })
+        handleOpenInternalPage({ path: '', manifestPath }, false)
       }
     }
   }, [search, tutorials, guides])
@@ -131,7 +131,7 @@ const EnablementArea = (props: Props) => {
     }
 
     if (contextManifestPath) {
-      handleOpenInternalPage({ path: '', manifestPath: contextManifestPath })
+      handleOpenInternalPage({ path: '', manifestPath: contextManifestPath }, false)
       return
     }
 
@@ -156,13 +156,16 @@ const EnablementArea = (props: Props) => {
   const getManifestItems = (manifest: IEnablementAreaItem[]) =>
     (isArray(manifest) ? manifest.map((item, index) => ({ ...item, _key: `${index}` })) : [])
 
-  const handleOpenInternalPage = (page: IInternalPage) => {
+  const handleOpenInternalPage = (page: IInternalPage, fromUser = true) => {
     setTimeout(() => {
       history.push({
         search: page.manifestPath ? `?path=${page.manifestPath}` : `?item=${page.path}`
       })
     }, 0)
-    onOpenInternalPage(page)
+
+    if (fromUser) {
+      onOpenInternalPage(page)
+    }
   }
 
   const handleCloseInternalPage = () => {

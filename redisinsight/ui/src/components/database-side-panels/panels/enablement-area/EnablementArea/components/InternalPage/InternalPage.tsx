@@ -101,7 +101,8 @@ const InternalPage = (props: Props) => {
           return
         }
       }
-      if (scrollTop) {
+
+      if (scrollTop && containerRef.current?.scrollTop === 0) {
         requestAnimationFrame(() => setTimeout(() => {
           containerRef.current?.scroll(0, scrollTop)
         }, 0))

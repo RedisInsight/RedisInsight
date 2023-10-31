@@ -5,7 +5,7 @@ import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
-import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../../helpers/keys';
+import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
@@ -27,12 +27,11 @@ test
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
     })
     .after(async() => {
-        await t.click(browserPage.patternModeBtn);
-        await browserPage.deleteKeysByNames(keyNames);
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Tree view preselected folder', async t => {
-        keyName1 = Common.generateWord(10); // used to create index name
-        keyName2 = Common.generateWord(10); // used to create index name
+        keyName1 = Common.generateWord(10);
+        keyName2 = Common.generateWord(10);
         keyNameSingle = Common.generateWord(10);
         keyNames = [`${keyName1}:1`, `${keyName1}:2`, `${keyName2}:1`, `${keyName2}:2`, keyNameSingle];
 
@@ -41,7 +40,7 @@ test
             `HSET ${keyNames[0]} field value`,
             `HSET ${keyNames[1]} field value`,
             `HSET ${keyNames[2]} field value`,
-            `HSET ${keyNames[3]} field value`,
+            `SADD ${keyNames[3]} value`,
             `SADD ${keyNames[4]} value`
         ];
 
@@ -49,17 +48,17 @@ test
         await browserPage.Cli.sendCommandsInCli(commands);
         await t.click(browserPage.treeViewButton);
         // The folder without any patterns selected and the list of keys is displayed when there is a folder without any patterns
-        await verifyKeysDisplayedInTheList([keyNameSingle]);
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
 
-        await browserPage.openTreeFolders([await browserPage.getTextFromNthTreeElement(1)]);
+        await browserPage.TreeView.openTreeFolders([await browserPage.TreeView.getTextFromNthTreeElement(1)]);
         await browserPage.selectFilterGroupType(KeyTypesTexts.Set);
         // The folder without any namespaces is selected (if exists) when folder does not exist after search/filter
-        await verifyKeysDisplayedInTheList([keyNameSingle]);
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
 
         await browserPage.setAllKeyType();
         // The folder without any patterns selected and the list of keys is displayed when there is a folder without any patterns
-        await verifyKeysDisplayedInTheList([keyNameSingle]);
-        await verifyKeysNotDisplayedInTheList([`${keyNames[0]}:1`, `${keyNames[2]}:2`]);
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
+        await verifyKeysDisplayingInTheList([`${keyNames[0]}:1`, `${keyNames[2]}:2`], false);
 
         // switch between browser view and tree view
         await t.click(browserPage.browserViewButton)
@@ -67,51 +66,51 @@ test
         await browserPage.deleteKeyByName(keyNames[4]);
         await t.click(browserPage.clearFilterButton);
         // get first folder name
-        const firstTreeItemText = await browserPage.getTextFromNthTreeElement(0);
-        const firstTreeItemKeys = Selector(`[data-testid="node-item_${firstTreeItemText}:keys:keys:"]`); // keys after node item opened
-        // The first folder with namespaces is expanded and selected when there is no folder without any patterns
-        await t.expect(firstTreeItemKeys.visible)
-            .ok('First folder is not expanded');
-        await verifyKeysDisplayedInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`]);
+        const firstTreeItemText = await browserPage.TreeView.getTextFromNthTreeElement(0);
+        // All folders with namespaces are collapsed when there is no folder without any patterns
+        await verifyKeysDisplayingInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`], false);
 
         const commands1 = [
-            `HSET ${keyNames[4]} field value`
+            `SADD ${keyNames[4]} value`
         ];
 
         await browserPage.Cli.sendCommandsInCli(commands1);
         await t.click(browserPage.refreshKeysButton);
-        // Refreshed Tree view preselected folder
-        await t.expect(firstTreeItemKeys.visible)
-            .ok('Folder is not selected');
-        await verifyKeysDisplayedInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`]);
+        // Folders are collapsed after refresh
+        await verifyKeysDisplayingInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`], false);
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
 
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
-        await t.expect(firstTreeItemKeys.visible).ok('Folder is not selected after searching with HASH');
-        // Filtered Tree view preselected folder
-        await verifyKeysDisplayedInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`]);
+        // Only folders according to key type filter are displayed
+        await verifyKeysDisplayingInTheList([keyNameSingle], false);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(firstTreeItemText, true);
 
-        await browserPage.searchByKeyName('*');
-        // Search capability Filtered Tree view preselected folder
-        await t.expect(firstTreeItemKeys.visible).ok('Folder is not selected');
-        await verifyKeysDisplayedInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`]);
+        await browserPage.searchByKeyName(`${keyName1}*`);
+        // Only folders according to filter by key names are displayed
+        await verifyKeysDisplayingInTheList([keyNameSingle], false);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName2, false);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
 
         await t.click(browserPage.clearFilterButton);
-        // Filtered Tree view preselected folder
-        await t.expect(firstTreeItemKeys.visible).ok('Folder is not selected');
-        await verifyKeysDisplayedInTheList([`${firstTreeItemText}:1`, `${firstTreeItemText}:2`]);
+        // All folders are displayed and collapsed after cleared filter
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
+        await verifyKeysDisplayingInTheList([keyName1], false);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName2, true);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
 
         await browserPage.selectFilterGroupType(KeyTypesTexts.Stream);
-        // Filtered Tree view preselected folder
-        await t.expect(browserPage.keyListTable.textContent).contains('No results found.', 'Key is not found message not displayed');
+        // Verify that No results found message is displayed in case of invalid filtering
+        await t.expect(browserPage.noResultsFound.textContent).contains('No results found.', 'Key is not found message not displayed');
 
         await browserPage.setAllKeyType(); // clear stream from filter
-        // Filtered Tree view preselected folder
-        await t.expect(browserPage.keyListTable.textContent).notContains('No results found.', 'Key is not found message still displayed');
-        await t.expect(
-            firstTreeItemKeys.exists)
-            .notOk('First folder is expanded');
+        // Verify that no results found message not displayed after clearing filter
+        await t.expect(browserPage.noResultsFound.exists).notOk('Key is not found message still displayed');
+        // All folders are displayed and collapsed after cleared filter
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
+        await verifyKeysDisplayingInTheList([keyName1], false);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName2, true);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
     });
-
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
@@ -140,7 +139,7 @@ test
         await browserPage.selectIndexByName(index);
         await t.click(browserPage.treeViewButton);
         await t.click(Selector(`[data-testid="${`node-item_${folders[0]}:`}"]`)); // close folder
-        await browserPage.openTreeFolders(folders);
+        await browserPage.TreeView.openTreeFolders(folders);
         await t.click(browserPage.refreshKeysButton);
         // Refreshed Tree view preselected folder for index based search
         await t.expect(
@@ -174,24 +173,24 @@ test
         await browserPage.Cli.sendCommandsInCli(commands);
         await t.click(browserPage.treeViewButton);
         // The folder without any patterns selected and the list of keys is displayed when there is a folder without any patterns
-        await verifyKeysDisplayedInTheList([keyNameSingle]);
+        await verifyKeysDisplayingInTheList([keyNameSingle], true);
 
-        await browserPage.openTreeFolders([keyName1]); // Type: hash
-        await browserPage.openTreeFolders([keyName2]); // Type: list
+        await browserPage.TreeView.openTreeFolders([keyName1]); // Type: hash
+        await browserPage.TreeView.openTreeFolders([keyName2]); // Type: list
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
         // The first folder with namespaces is expanded and selected when folder and folder without any namespaces does not exist after search/filter
-        await verifyKeysDisplayedInTheList([keyNames[0], keyNames[1]]);
+        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[1]], true);
 
         await browserPage.setAllKeyType();
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames[0]}`]);
         await t.click(browserPage.refreshKeysButton); // refresh keys
         // The previously selected folder is preselected when key does not exist after keys refresh
-        await verifyKeysDisplayedInTheList([keyNames[1]]);
-        await verifyKeysNotDisplayedInTheList([keyNames[0], keyNames[2], keyNames[3], keyNames[4]]);
+        await verifyKeysDisplayingInTheList([keyNames[1]], true);
+        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[2], keyNames[3], keyNames[4]], false);
 
         await browserPage.searchByKeyName('*');
         await t.click(browserPage.refreshKeysButton);
         // Search capability Refreshed Tree view preselected folder
-        await verifyKeysDisplayedInTheList([keyNames[1]]);
-        await verifyKeysNotDisplayedInTheList([keyNames[0], keyNames[2], keyNames[3], keyNames[4]]);
+        await verifyKeysDisplayingInTheList([keyNames[1]], true);
+        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[2], keyNames[3], keyNames[4]], false);
     });

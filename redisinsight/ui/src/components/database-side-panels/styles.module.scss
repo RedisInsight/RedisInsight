@@ -128,7 +128,8 @@ $animation-duration: 300ms;
   .tab {
     flex-basis: 50%;
 
-    background-color: var(--euiColorLightestShade);
+    background-color: var(--buttonGuideBgColor);
+    color: var(--euiColorMediumShade);
     margin: 0 !important;
     border-radius: 4px 0 0 4px;
 

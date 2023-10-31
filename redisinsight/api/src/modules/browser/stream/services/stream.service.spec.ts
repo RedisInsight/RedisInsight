@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { mockRedisConsumer, MockType, mockBrowserClientMetadata } from 'src/__mocks__';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
+import {
+  mockBrowserClientMetadata, mockDatabaseClientFactory, mockStandaloneRedisClient,
+} from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
   BrowserToolStreamCommands,
@@ -27,32 +28,33 @@ import {
   mockStreamInfo,
   mockStreamInfoReply,
 } from 'src/modules/browser/__mocks__';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 describe('StreamService', () => {
+  const client = mockStandaloneRedisClient;
   let service: StreamService;
-  let browserTool: MockType<BrowserToolService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         StreamService,
         {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();
 
     service = module.get(StreamService);
-    browserTool = module.get(BrowserToolService);
+    client.sendCommand = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('createStream', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValue(false);
-      browserTool.execMulti.mockResolvedValue([null, [[null, '123-1']]]);
+      client.sendPipeline.mockResolvedValue([[null, '123-1']]);
     });
     it('create stream with expiration', async () => {
       await expect(
@@ -61,9 +63,14 @@ describe('StreamService', () => {
           expire: 1000,
         }),
       ).resolves.not.toThrow();
-      expect(browserTool.execMulti).toHaveBeenCalledWith(mockBrowserClientMetadata, [
-        [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          mockStreamEntry.fields[0].name, mockStreamEntry.fields[0].value],
+      expect(client.sendPipeline).toHaveBeenCalledWith([
+        [
+          BrowserToolStreamCommands.XAdd,
+          mockAddStreamEntriesDto.keyName,
+          mockStreamEntry.id,
+          mockStreamEntry.fields[0].name,
+          mockStreamEntry.fields[0].value,
+        ],
         [BrowserToolKeysCommands.Expire, mockAddStreamEntriesDto.keyName, 1000],
       ]);
     });
@@ -73,14 +80,18 @@ describe('StreamService', () => {
           ...mockAddStreamEntriesDto,
         }),
       ).resolves.not.toThrow();
-      expect(browserTool.execMulti).toHaveBeenCalledWith(mockBrowserClientMetadata, [
-        [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          mockStreamEntry.fields[0].name, mockStreamEntry.fields[0].value],
+      expect(client.sendPipeline).toHaveBeenCalledWith([[
+        BrowserToolStreamCommands.XAdd,
+        mockAddStreamEntriesDto.keyName,
+        mockStreamEntry.id,
+        mockStreamEntry.fields[0].name,
+        mockStreamEntry.fields[0].value,
+      ],
       ]);
     });
     it('should throw error key exists', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValueOnce(true);
 
       try {
@@ -94,8 +105,8 @@ describe('StreamService', () => {
       }
     });
     it('should throw Not Found error', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
@@ -109,7 +120,7 @@ describe('StreamService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      browserTool.execMulti.mockResolvedValue([new Error(RedisErrorCodes.WrongType), [[null, '123-1']]]);
+      client.sendPipeline.mockResolvedValue([[new Error(RedisErrorCodes.WrongType), '123-1']]);
 
       try {
         await service.createStream(mockBrowserClientMetadata, {
@@ -122,10 +133,9 @@ describe('StreamService', () => {
       }
     });
     it('should throw Bad Request when incorrect ID', async () => {
-      browserTool.execMulti.mockResolvedValue([
-        new Error('ID specified in XADD is equal or smaller'),
-        [[null, '123-1']],
-      ]);
+      client.sendPipeline.mockResolvedValue(
+        [[new Error('ID specified in XADD is equal or smaller'), '123-1']],
+      );
 
       try {
         await service.createStream(mockBrowserClientMetadata, {
@@ -138,10 +148,7 @@ describe('StreamService', () => {
       }
     });
     it('should throw Internal Server error', async () => {
-      browserTool.execMulti.mockResolvedValue([
-        new Error('oO'),
-        [[null, '123-1']],
-      ]);
+      client.sendPipeline.mockResolvedValue([[new Error('oO'), '123-1']]);
 
       try {
         await service.createStream(mockBrowserClientMetadata, {
@@ -156,10 +163,10 @@ describe('StreamService', () => {
   });
   describe('addEntries', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValue(true);
-      browserTool.execMulti.mockResolvedValue([null, [[null, '123-1']]]);
+      client.sendPipeline.mockResolvedValue([[null, '123-1']]);
     });
     it('add entries', async () => {
       await expect(
@@ -167,14 +174,17 @@ describe('StreamService', () => {
           ...mockAddStreamEntriesDto,
         }),
       ).resolves.not.toThrow();
-      expect(browserTool.execMulti).toHaveBeenCalledWith(mockBrowserClientMetadata, [
-        [BrowserToolStreamCommands.XAdd, mockAddStreamEntriesDto.keyName, mockStreamEntry.id,
-          mockStreamEntry.fields[0].name, mockStreamEntry.fields[0].value],
-      ]);
+      expect(client.sendPipeline).toHaveBeenCalledWith([[
+        BrowserToolStreamCommands.XAdd,
+        mockAddStreamEntriesDto.keyName,
+        mockStreamEntry.id,
+        mockStreamEntry.fields[0].name,
+        mockStreamEntry.fields[0].value,
+      ]]);
     });
     it('should throw Not Found when key does not exists', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValueOnce(false);
 
       try {
@@ -188,8 +198,8 @@ describe('StreamService', () => {
       }
     });
     it('should throw Not Found error', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
@@ -203,7 +213,7 @@ describe('StreamService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      browserTool.execMulti.mockResolvedValue([new Error(RedisErrorCodes.WrongType), [[null, '123-1']]]);
+      client.sendPipeline.mockResolvedValue([[new Error(RedisErrorCodes.WrongType), '123-1']]);
 
       try {
         await service.addEntries(mockBrowserClientMetadata, {
@@ -216,10 +226,9 @@ describe('StreamService', () => {
       }
     });
     it('should throw Bad Request when incorrect ID', async () => {
-      browserTool.execMulti.mockResolvedValue([
-        new Error('ID specified in XADD is equal or smaller'),
-        [[null, '123-1']],
-      ]);
+      client.sendPipeline.mockResolvedValue([[
+        new Error('ID specified in XADD is equal or smaller'), '123-1',
+      ]]);
 
       try {
         await service.addEntries(mockBrowserClientMetadata, {
@@ -232,10 +241,7 @@ describe('StreamService', () => {
       }
     });
     it('should throw Internal Server error', async () => {
-      browserTool.execMulti.mockResolvedValue([
-        new Error('oO'),
-        [[null, '123-1']],
-      ]);
+      client.sendPipeline.mockResolvedValue([[new Error('oO'), '123-1']]);
 
       try {
         await service.addEntries(mockBrowserClientMetadata, {
@@ -250,14 +256,14 @@ describe('StreamService', () => {
   });
   describe('get entries from empty stream', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValue(true);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XInfoStream]))
         .mockResolvedValue(mockEmptyStreamInfoReply);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRevRange, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XRevRange]))
         .mockResolvedValue(mockEmptyStreamEntriesReply);
     });
     it('Should return stream with 0 entries', async () => {
@@ -272,17 +278,17 @@ describe('StreamService', () => {
   });
   describe('getEntries', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Exists]))
         .mockResolvedValue(true);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XInfoStream]))
         .mockResolvedValue(mockStreamInfoReply);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRevRange, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XRevRange]))
         .mockResolvedValue(mockStreamEntriesReply);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRange, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XRange]))
         .mockResolvedValue(mockStreamEntriesReply);
     });
     it('get entries DESC', async () => {
@@ -305,8 +311,8 @@ describe('StreamService', () => {
       });
     });
     it('should throw Not Found when key does not exists', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValueOnce(false);
 
       try {
@@ -320,8 +326,8 @@ describe('StreamService', () => {
       }
     });
     it('should throw Not Found error', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockRejectedValueOnce(new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID));
 
       try {
@@ -335,8 +341,8 @@ describe('StreamService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolStreamCommands.XInfoStream, mockAddStreamEntriesDto.keyName])
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {
@@ -350,8 +356,8 @@ describe('StreamService', () => {
       }
     });
     it('should throw Internal Server error', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolStreamCommands.XInfoStream, mockAddStreamEntriesDto.keyName])
         .mockRejectedValueOnce(new Error('oO'));
 
       try {
@@ -368,20 +374,20 @@ describe('StreamService', () => {
   describe('deleteEntries', () => {
     const mockEntriesIds = mockStreamEntries.map(({ id }) => (id));
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, expect.anything())
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValue(true);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XInfoStream]))
         .mockResolvedValue(mockStreamInfoReply);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRevRange, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XRevRange]))
         .mockResolvedValue(mockStreamEntriesReply);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XRange, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XRange]))
         .mockResolvedValue(mockStreamEntriesReply);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XDel, expect.anything())
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolStreamCommands.XDel]))
         .mockResolvedValue(mockStreamEntries.length);
     });
     it('delete entries', async () => {
@@ -392,8 +398,8 @@ describe('StreamService', () => {
       expect(result).toEqual({ affected: mockStreamEntries.length });
     });
     it('should throw Not Found when key does not exists', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddStreamEntriesDto.keyName])
         .mockResolvedValueOnce(false);
 
       try {
@@ -408,8 +414,8 @@ describe('StreamService', () => {
       }
     });
     it('should throw Wrong Type error', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolStreamCommands.XInfoStream, [mockAddStreamEntriesDto.keyName])
+      when(client.sendCommand)
+        .calledWith([BrowserToolStreamCommands.XInfoStream, mockAddStreamEntriesDto.keyName])
         .mockRejectedValueOnce(new Error(RedisErrorCodes.WrongType));
 
       try {

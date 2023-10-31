@@ -6,13 +6,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, catchTransactionError } from 'src/utils';
+import { catchAclError, catchMultiTransactionError } from 'src/utils';
 import {
   BrowserToolCommands,
-  BrowserToolKeysCommands,
   BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { KeyDto } from 'src/modules/browser/keys/dto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
@@ -25,12 +23,15 @@ import {
 import { plainToClass } from 'class-transformer';
 import { RedisString } from 'src/common/constants';
 import { ClientMetadata } from 'src/common/models';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
+import { checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 @Injectable()
 export class ConsumerGroupService {
   private logger = new Logger('ConsumerGroupService');
 
-  constructor(private browserTool: BrowserToolService) {}
+  constructor(private databaseClientFactory: DatabaseClientFactory) {}
 
   /**
    * Get consumer groups list for particular stream
@@ -45,25 +46,18 @@ export class ConsumerGroupService {
   ): Promise<ConsumerGroupDto[]> {
     try {
       this.logger.log('Getting consumer groups list.');
+      const { keyName } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
-
-      const groups = ConsumerGroupService.formatReplyToDto(await this.browserTool.execCommand(
-        clientMetadata,
+      const groups = ConsumerGroupService.formatReplyToDto(await client.sendCommand([
         BrowserToolStreamCommands.XInfoGroups,
-        [dto.keyName],
-      ));
+        keyName,
+      ]) as string[][]);
 
       return await Promise.all(groups.map((group) => this.getGroupInfo(
-        clientMetadata,
+        client,
         dto,
         group,
       )));
@@ -82,20 +76,20 @@ export class ConsumerGroupService {
 
   /**
    * Get consumer group pending info using 'XPENDING' command
-   * @param clientMetadata
+   * @param client
    * @param dto
    * @param group
    */
   async getGroupInfo(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: KeyDto,
     group: ConsumerGroupDto,
   ): Promise<ConsumerGroupDto> {
-    const info = await this.browserTool.execCommand(
-      clientMetadata,
+    const info = await client.sendCommand([
       BrowserToolStreamCommands.XPending,
-      [dto.keyName, group.name],
-    );
+      dto.keyName,
+      group.name,
+    ]);
 
     return plainToClass(ConsumerGroupDto, {
       ...group,
@@ -116,16 +110,9 @@ export class ConsumerGroupService {
     try {
       this.logger.log('Creating consumer groups.');
       const { keyName, consumerGroups } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
+      await checkIfKeyNotExists(keyName, client);
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
@@ -139,14 +126,10 @@ export class ConsumerGroupService {
         ]
       ));
 
-      const [
-        transactionError,
-        transactionResults,
-      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
-      catchTransactionError(transactionError, transactionResults);
+      const transactionResults = await client.sendPipeline(toolCommands);
+      catchMultiTransactionError(transactionResults);
 
       this.logger.log('Stream consumer group(s) created.');
-
       return undefined;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -176,25 +159,19 @@ export class ConsumerGroupService {
   ): Promise<void> {
     try {
       this.logger.log('Updating consumer group.');
+      const { keyName, name, lastDeliveredId } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
-
-      await this.browserTool.execCommand(
-        clientMetadata,
+      await client.sendCommand([
         BrowserToolStreamCommands.XGroupSetId,
-        [dto.keyName, dto.name, dto.lastDeliveredId],
-      );
+        keyName,
+        name,
+        lastDeliveredId,
+      ]);
 
       this.logger.log('Consumer group was updated.');
-
       return undefined;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -224,39 +201,27 @@ export class ConsumerGroupService {
   ): Promise<DeleteConsumerGroupsResponse> {
     try {
       this.logger.log('Deleting consumer group.');
+      const { keyName, consumerGroups } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
-
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
+      await checkIfKeyNotExists(keyName, client);
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
         ...args: Array<string | number | Buffer>,
-      ]> = dto.consumerGroups.map((group) => (
+      ]> = consumerGroups.map((group) => (
         [
           BrowserToolStreamCommands.XGroupDestroy,
-          dto.keyName,
+          keyName,
           group,
         ]
       ));
 
-      const [
-        transactionError,
-        transactionResults,
-      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
-      catchTransactionError(transactionError, transactionResults);
+      const transactionResults = await client.sendPipeline(toolCommands);
+      catchMultiTransactionError(transactionResults);
 
       this.logger.log('Consumer group(s) successfully deleted.');
-
-      return {
-        affected: toolCommands.length,
-      };
+      return { affected: toolCommands.length };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

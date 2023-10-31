@@ -5,13 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
-import { catchAclError, catchTransactionError } from 'src/utils';
+import { catchAclError, catchMultiTransactionError } from 'src/utils';
 import {
   BrowserToolCommands,
-  BrowserToolKeysCommands,
   BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   AckPendingEntriesDto,
@@ -26,12 +24,15 @@ import {
 } from 'src/modules/browser/stream/dto';
 import { plainToClass } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
+import { RedisClient } from 'src/modules/redis/client';
+import { checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 @Injectable()
 export class ConsumerService {
   private logger = new Logger('ConsumerService');
 
-  constructor(private browserTool: BrowserToolService) {}
+  constructor(private databaseClientFactory: DatabaseClientFactory) {}
 
   /**
    * Get consumers list inside particular group
@@ -44,22 +45,16 @@ export class ConsumerService {
   ): Promise<ConsumerDto[]> {
     try {
       this.logger.log('Getting consumers list.');
+      const { keyName, groupName } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
-
-      return ConsumerService.formatReplyToDto(await this.browserTool.execCommand(
-        clientMetadata,
+      return ConsumerService.formatReplyToDto(await client.sendCommand([
         BrowserToolStreamCommands.XInfoConsumers,
-        [dto.keyName, dto.groupName],
-      ));
+        keyName,
+        groupName,
+      ]) as string[][]);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -88,34 +83,25 @@ export class ConsumerService {
   ): Promise<void> {
     try {
       this.logger.log('Deleting consumers from the group.');
+      const { keyName, groupName, consumerNames } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
-
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
+      await checkIfKeyNotExists(keyName, client);
 
       const toolCommands: Array<[
         toolCommand: BrowserToolCommands,
         ...args: Array<string | number | Buffer>,
-      ]> = dto.consumerNames.map((consumerName) => (
+      ]> = consumerNames.map((consumerName) => (
         [
           BrowserToolStreamCommands.XGroupDelConsumer,
-          dto.keyName,
-          dto.groupName,
+          keyName,
+          groupName,
           consumerName,
         ]
       ));
 
-      const [
-        transactionError,
-        transactionResults,
-      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
-      catchTransactionError(transactionError, transactionResults);
+      const transactionResults = await client.sendPipeline(toolCommands);
+      catchMultiTransactionError(transactionResults);
 
       return undefined;
     } catch (error) {
@@ -146,22 +132,22 @@ export class ConsumerService {
   ): Promise<PendingEntryDto[]> {
     try {
       this.logger.log('Getting pending entries list.');
+      const {
+        keyName, groupName, start, end, count, consumerName,
+      } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
-
-      return ConsumerService.formatReplyToPendingEntriesDto(await this.browserTool.execCommand(
-        clientMetadata,
+      return ConsumerService.formatReplyToPendingEntriesDto(await client.sendCommand([
         BrowserToolStreamCommands.XPending,
-        [dto.keyName, dto.groupName, dto.start, dto.end, dto.count, dto.consumerName],
-      ));
+        keyName,
+        groupName,
+        start,
+        end,
+        count,
+        consumerName,
+      ]) as string[][]);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -190,28 +176,20 @@ export class ConsumerService {
   ): Promise<AckPendingEntriesResponse> {
     try {
       this.logger.log('Acknowledging pending entries.');
+      const { keyName, groupName, entries } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
-      }
-
-      const affected = await this.browserTool.execCommand(
-        clientMetadata,
+      const affected = await client.sendCommand([
         BrowserToolStreamCommands.XAck,
-        [dto.keyName, dto.groupName, ...dto.entries],
-      );
+        keyName,
+        groupName,
+        ...entries,
+      ]) as number;
 
       this.logger.log('Successfully acknowledged pending entries.');
-
-      return {
-        affected,
-      };
+      return { affected };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -236,48 +214,39 @@ export class ConsumerService {
   ): Promise<ClaimPendingEntriesResponse> {
     try {
       this.logger.log('Claiming pending entries.');
+      const {
+        keyName, groupName, consumerName, minIdleTime, entries, idle, time, retryCount, force,
+      } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [dto.keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      const args = [keyName, groupName, consumerName, minIdleTime, ...entries];
+
+      if (idle !== undefined) {
+        args.push('idle', idle);
+      } else if (time !== undefined) {
+        args.push('time', time);
       }
 
-      const args = [dto.keyName, dto.groupName, dto.consumerName, dto.minIdleTime, ...dto.entries];
-
-      if (dto.idle !== undefined) {
-        args.push('idle', dto.idle);
-      } else if (dto.time !== undefined) {
-        args.push('time', dto.time);
+      if (retryCount !== undefined) {
+        args.push('retrycount', retryCount);
       }
 
-      if (dto.retryCount !== undefined) {
-        args.push('retrycount', dto.retryCount);
-      }
-
-      if (dto.force) {
+      if (force) {
         args.push('force');
       }
 
       // Return just an array of IDs of messages successfully claimed, without returning the actual message.
       args.push('justid');
 
-      const affected = await this.browserTool.execCommand(
-        clientMetadata,
+      const affected = await client.sendCommand([
         BrowserToolStreamCommands.XClaim,
-        args,
-        'utf8',
-      );
+        ...args,
+      ], { replyEncoding: 'utf8' }) as string[];
 
       this.logger.log('Successfully claimed pending entries.');
-
-      return {
-        affected,
-      };
+      return { affected };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;

@@ -1,4 +1,3 @@
-import IORedis from 'ioredis';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   BadRequestException,
@@ -8,10 +7,11 @@ import {
 } from '@nestjs/common';
 import { when } from 'jest-when';
 import {
-  mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockBrowserClientMetadata,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import {
@@ -19,20 +19,19 @@ import {
   BrowserToolSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import {
-  mockAddMembersToSetDto, mockDeleteMembersDto,
-  mockGetSetMembersDto, mockGetSetMembersResponse,
+  mockAddMembersToSetDto,
+  mockDeleteMembersDto,
+  mockGetSetMembersDto,
+  mockGetSetMembersResponse,
   mockSetMembers,
 } from 'src/modules/browser/__mocks__';
 import { SetService } from 'src/modules/browser/set/set.service';
 import { CreateSetWithExpireDto, GetSetMembersDto } from 'src/modules/browser/set/dto';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.isCluster = false;
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 describe('SetService', () => {
+  const client = mockStandaloneRedisClient;
   let service: SetService;
-  let browserTool;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -41,22 +40,20 @@ describe('SetService', () => {
       providers: [
         SetService,
         {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();
 
     service = module.get<SetService>(SetService);
-    browserTool = module.get<BrowserToolService>(BrowserToolService);
+    client.sendCommand = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('createSet', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersToSetDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
         .mockResolvedValue(false);
       service.createSetWithExpiration = jest.fn();
     });
@@ -72,8 +69,9 @@ describe('SetService', () => {
       expect(service.createSetWithExpiration).toHaveBeenCalled();
     });
     it('create set without expiration', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SAdd, [
+      when(client.sendCommand)
+        .calledWith([
+          BrowserToolSetCommands.SAdd,
           mockAddMembersToSetDto.keyName,
           ...mockAddMembersToSetDto.members,
         ])
@@ -85,29 +83,26 @@ describe('SetService', () => {
       expect(service.createSetWithExpiration).not.toHaveBeenCalled();
     });
     it('key with this name exist', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersToSetDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
         .mockResolvedValue(true);
 
       await expect(
         service.createSet(mockBrowserClientMetadata, mockAddMembersToSetDto),
       ).rejects.toThrow(ConflictException);
-      expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
-      expect(browserTool.execMulti).not.toHaveBeenCalled();
+      expect(client.sendCommand).toHaveBeenCalledTimes(1);
+      expect(client.sendPipeline).not.toHaveBeenCalled();
     });
     it("try to use 'SADD' command not for set data type", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'SADD',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolSetCommands.SAdd,
           expect.anything(),
-        )
+        ]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -119,7 +114,7 @@ describe('SetService', () => {
         ...mockRedisNoPermError,
         command: 'SADD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.createSet(mockBrowserClientMetadata, mockAddMembersToSetDto),
@@ -133,23 +128,17 @@ describe('SetService', () => {
       expire: 1000,
     };
     it('succeed to create Set data type with expiration', async () => {
-      when(browserTool.execMulti)
-        .calledWith(mockBrowserClientMetadata, [
+      when(client.sendPipeline)
+        .calledWith([
           [BrowserToolSetCommands.SAdd, dto.keyName, ...dto.members],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
         .mockResolvedValue([
-          null,
-          [
-            [null, mockAddMembersToSetDto.members.length],
-            [null, 1],
-          ],
+          [null, mockAddMembersToSetDto.members.length],
+          [null, 1],
         ]);
 
-      const result = await service.createSetWithExpiration(
-        mockBrowserClientMetadata,
-        dto,
-      );
+      const result = await service.createSetWithExpiration(client, dto);
       expect(result).toBe(mockAddMembersToSetDto.members.length);
     });
     it('throw transaction error', async () => {
@@ -157,33 +146,26 @@ describe('SetService', () => {
         ...mockRedisWrongTypeError,
         command: 'SADD',
       };
-      browserTool.execMulti.mockResolvedValue([transactionError, null]);
+      client.sendPipeline.mockResolvedValue([[transactionError, null]]);
 
       await expect(
-        service.createSetWithExpiration(mockBrowserClientMetadata, dto),
+        service.createSetWithExpiration(client, dto),
       ).rejects.toEqual(transactionError);
     });
   });
 
   describe('getMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SCard, [
-          mockGetSetMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolSetCommands.SCard, mockGetSetMembersDto.keyName])
         .mockResolvedValue(mockSetMembers.length);
-
-      when(browserTool.getRedisClient)
-        .calledWith(mockBrowserClientMetadata)
-        .mockResolvedValue(nodeClient);
     });
     it('succeed to get members of the set', async () => {
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolSetCommands.SScan,
           expect.anything(),
-        )
+        ]))
         .mockResolvedValue([Buffer.from('0'), mockSetMembers]);
 
       const result = await service.getMembers(
@@ -192,10 +174,11 @@ describe('SetService', () => {
       );
 
       expect(result).toEqual(mockGetSetMembersResponse);
-      expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
-        BrowserToolSetCommands.SScan,
-        expect.anything(),
+      expect(client.sendCommand).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          BrowserToolSetCommands.SScan,
+          expect.anything(),
+        ]),
       );
     });
     it('succeed to find exact member in the set', async () => {
@@ -203,8 +186,9 @@ describe('SetService', () => {
         ...mockGetSetMembersDto,
         match: mockSetMembers[0].toString(),
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SIsMember, [
+      when(client.sendCommand)
+        .calledWith([
+          BrowserToolSetCommands.SIsMember,
           dto.keyName,
           dto.match,
         ])
@@ -213,19 +197,19 @@ describe('SetService', () => {
       const result = await service.getMembers(mockBrowserClientMetadata, dto);
 
       expect(result).toEqual(mockGetSetMembersResponse);
-      expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolSetCommands.SScan,
         expect.anything(),
-      );
+      ]);
     });
     it('failed to find exact member in the set', async () => {
       const dto: GetSetMembersDto = {
         ...mockGetSetMembersDto,
         match: mockSetMembers[0].toString(),
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SIsMember, [
+      when(client.sendCommand)
+        .calledWith([
+          BrowserToolSetCommands.SIsMember,
           dto.keyName,
           dto.match,
         ])
@@ -240,11 +224,8 @@ describe('SetService', () => {
         ...mockGetSetMembersDto,
         match: 'm\\[a-e\\]mber',
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SIsMember, [
-          dto.keyName,
-          'm[a-e]mber',
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolSetCommands.SIsMember, dto.keyName, 'm[a-e]mber'])
         .mockResolvedValue(1);
 
       const result = await service.getMembers(mockBrowserClientMetadata, dto);
@@ -253,11 +234,10 @@ describe('SetService', () => {
         ...mockGetSetMembersResponse,
         members: [Buffer.from('m[a-e]mber')],
       });
-      expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolSetCommands.SScan,
         expect.anything(),
-      );
+      ]);
     });
     // TODO: uncomment after enabling threshold for set scan
     // it('should stop set full scan', async () => {
@@ -282,10 +262,8 @@ describe('SetService', () => {
     //   expect(browserTool.execCommand).toHaveBeenCalledTimes(maxScanCalls + 1);
     // });
     it('key with this name does not exist for getMembers', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SCard, [
-          mockGetSetMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolSetCommands.SCard, mockGetSetMembersDto.keyName])
         .mockResolvedValue(0);
 
       await expect(
@@ -297,7 +275,7 @@ describe('SetService', () => {
         ...mockRedisWrongTypeError,
         command: 'SCARD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.getMembers(mockBrowserClientMetadata, mockGetSetMembersDto),
@@ -308,7 +286,7 @@ describe('SetService', () => {
         ...mockRedisNoPermError,
         command: 'SCARD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.getMembers(mockBrowserClientMetadata, mockGetSetMembersDto),
@@ -318,19 +296,14 @@ describe('SetService', () => {
 
   describe('addMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersToSetDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
         .mockResolvedValue(true);
     });
     it('succeed to add members to the Set data type', async () => {
       const { keyName, members } = mockAddMembersToSetDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SAdd, [
-          keyName,
-          ...members,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolSetCommands.SAdd, keyName, ...members])
         .mockResolvedValue(1);
 
       await expect(
@@ -339,34 +312,29 @@ describe('SetService', () => {
     });
     it('key with this name does not exist for addMembers', async () => {
       const { keyName, members } = mockAddMembersToSetDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersToSetDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersToSetDto.keyName])
         .mockResolvedValue(false);
 
       await expect(
         service.addMembers(mockBrowserClientMetadata, mockAddMembersToSetDto),
       ).rejects.toThrow(NotFoundException);
-      expect(
-        browserTool.execCommand,
-      ).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolSetCommands.SAdd,
-        [keyName, ...members],
-      );
+        keyName,
+        ...members,
+      ]);
     });
     it("try to use 'SADD' command not for set data type", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'SADD',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolSetCommands.SAdd,
           expect.anything(),
-        )
+        ]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -378,7 +346,7 @@ describe('SetService', () => {
         ...mockRedisNoPermError,
         command: 'SADD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.addMembers(mockBrowserClientMetadata, mockAddMembersToSetDto),
@@ -388,19 +356,14 @@ describe('SetService', () => {
 
   describe('deleteMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockDeleteMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockDeleteMembersDto.keyName])
         .mockResolvedValue(true);
     });
     it('succeeded to delete members from Set data type', async () => {
       const { members, keyName } = mockDeleteMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolSetCommands.SRem, [
-          keyName,
-          ...members,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolSetCommands.SRem, keyName, ...members])
         .mockResolvedValue(members.length);
 
       const result = await service.deleteMembers(
@@ -412,34 +375,29 @@ describe('SetService', () => {
     });
     it('key with this name does not exist for deleteMembers', async () => {
       const { members, keyName } = mockDeleteMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, keyName])
         .mockResolvedValue(false);
 
       await expect(
         service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),
       ).rejects.toThrow(NotFoundException);
-      expect(
-        browserTool.execCommand,
-      ).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolSetCommands.SRem,
-        [keyName, ...members],
-      );
+        keyName,
+        ...members,
+      ]);
     });
     it("try to use 'SREM' command not for set data type", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'SREM',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolSetCommands.SRem,
           expect.anything(),
-        )
+        ]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -451,7 +409,7 @@ describe('SetService', () => {
         ...mockRedisNoPermError,
         command: 'SREM',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),

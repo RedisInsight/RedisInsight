@@ -1,23 +1,27 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
+import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
+import { RedisearchController } from 'src/modules/browser/redisearch/redisearch.controller';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
-import { BrowserHistoryController } from 'src/modules/browser/browser-history/browser-history.controller';
 import { BrowserHistoryProvider } from 'src/modules/browser/browser-history/providers/browser-history.provider';
 
 @Module({})
-export class BrowserHistoryModule {
+export class RedisearchModule {
   static register({ route }): DynamicModule {
     return {
-      module: BrowserHistoryModule,
+      module: RedisearchModule,
       imports: [
         RouterModule.forRoutes([{
           path: route,
-          module: BrowserHistoryModule,
+          module: RedisearchModule,
         }]),
       ],
-      controllers: [BrowserHistoryController],
-      providers: [BrowserHistoryService, BrowserHistoryProvider],
-      exports: [BrowserHistoryService, BrowserHistoryProvider],
+      controllers: [RedisearchController],
+      providers: [
+        RedisearchService,
+        BrowserHistoryService,
+        BrowserHistoryProvider,
+      ],
     };
   }
 }

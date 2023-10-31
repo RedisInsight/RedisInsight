@@ -7,25 +7,18 @@ import { when } from 'jest-when';
 import {
   mockBrowserClientMetadata,
   mockBrowserHistoryService,
-  mockRedisConsumer,
+  mockClusterRedisClient,
+  mockDatabaseClientFactory,
   mockRedisNoPermError,
-  mockRedisUnknownIndexName,
+  mockRedisUnknownIndexName, mockStandaloneRedisClient,
 } from 'src/__mocks__';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
-import IORedis from 'ioredis';
 import {
   RedisearchIndexDataType,
   RedisearchIndexKeyType,
 } from 'src/modules/browser/redisearch/dto';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
-
-const clusterClient = Object.create(IORedis.Cluster.prototype);
-clusterClient.sendCommand = jest.fn();
-clusterClient.nodes = jest.fn();
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 const keyName1 = Buffer.from('keyName1');
 const keyName2 = Buffer.from('keyName2');
@@ -53,19 +46,19 @@ const mockSearchRedisearchDto = {
 };
 
 describe('RedisearchService', () => {
+  const standaloneClient = mockStandaloneRedisClient;
+  const clusterClient = mockClusterRedisClient;
   let service: RedisearchService;
-  let browserTool;
+  let databaseClientFactory: DatabaseClientFactory;
   let browserHistory;
 
   beforeEach(async () => {
-    jest.resetAllMocks();
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisearchService,
         {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
         {
           provide: BrowserHistoryService,
@@ -75,16 +68,19 @@ describe('RedisearchService', () => {
     }).compile();
 
     service = module.get<RedisearchService>(RedisearchService);
-    browserTool = module.get<BrowserToolService>(BrowserToolService);
     browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
-    browserTool.getRedisClient.mockResolvedValue(nodeClient);
-    clusterClient.nodes.mockReturnValue([nodeClient, nodeClient]);
+    databaseClientFactory = module.get<DatabaseClientFactory>(DatabaseClientFactory);
+    standaloneClient.sendCommand = jest.fn().mockResolvedValue(undefined);
+    clusterClient.sendCommand = jest.fn().mockResolvedValue(undefined);
     browserHistory.create.mockResolvedValue({});
+
+    standaloneClient.nodes.mockReturnValue([mockStandaloneRedisClient, mockStandaloneRedisClient]);
+    clusterClient.nodes.mockReturnValue([mockClusterRedisClient, mockClusterRedisClient]);
   });
 
   describe('list', () => {
     it('should get list of indexes for standalone', async () => {
-      nodeClient.sendCommand.mockResolvedValue([
+      standaloneClient.sendCommand.mockResolvedValue([
         keyName1.toString('hex'),
         keyName2.toString('hex'),
       ]);
@@ -99,8 +95,8 @@ describe('RedisearchService', () => {
       });
     });
     it('should get list of indexes for cluster (handle unique index name)', async () => {
-      browserTool.getRedisClient.mockResolvedValue(clusterClient);
-      nodeClient.sendCommand.mockResolvedValue([
+      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(mockClusterRedisClient);
+      clusterClient.sendCommand.mockResolvedValue([
         keyName1.toString('hex'),
         keyName2.toString('hex'),
       ]);
@@ -115,11 +111,10 @@ describe('RedisearchService', () => {
       });
     });
     it('should handle ACL error', async () => {
-      nodeClient.sendCommand.mockRejectedValueOnce(mockRedisNoPermError);
+      standaloneClient.sendCommand.mockRejectedValueOnce(mockRedisNoPermError);
 
       try {
         await service.list(mockBrowserClientMetadata);
-        fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
@@ -128,86 +123,90 @@ describe('RedisearchService', () => {
 
   describe('createIndex', () => {
     it('should create index for standalone', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.INFO' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.INFO']))
         .mockRejectedValue(mockRedisUnknownIndexName);
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.CREATE' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.CREATE']))
         .mockResolvedValue('OK');
 
       await service.createIndex(mockBrowserClientMetadata, mockCreateRedisearchIndexDto);
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(2);
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.CREATE',
-        args: [
-          mockCreateRedisearchIndexDto.index,
-          'ON', mockCreateRedisearchIndexDto.type,
-          'PREFIX', '2', ...mockCreateRedisearchIndexDto.prefixes,
-          'SCHEMA', mockCreateRedisearchIndexDto.fields[0].name, mockCreateRedisearchIndexDto.fields[0].type,
-          mockCreateRedisearchIndexDto.fields[1].name, mockCreateRedisearchIndexDto.fields[1].type,
-        ],
-      }));
+      expect(standaloneClient.sendCommand).toHaveBeenCalledTimes(2);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.CREATE',
+        mockCreateRedisearchIndexDto.index,
+        'ON',
+        mockCreateRedisearchIndexDto.type,
+        'PREFIX',
+        2,
+        ...mockCreateRedisearchIndexDto.prefixes,
+        'SCHEMA',
+        mockCreateRedisearchIndexDto.fields[0].name,
+        mockCreateRedisearchIndexDto.fields[0].type,
+        mockCreateRedisearchIndexDto.fields[1].name,
+        mockCreateRedisearchIndexDto.fields[1].type,
+      ], { replyEncoding: 'utf8' });
     });
     it('should create index for cluster', async () => {
-      browserTool.getRedisClient.mockResolvedValue(clusterClient);
+      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(mockClusterRedisClient);
       when(clusterClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.INFO' }))
+        .calledWith(expect.arrayContaining(['FT.INFO']))
         .mockRejectedValue(mockRedisUnknownIndexName);
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.CREATE' }))
+      when(clusterClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.CREATE']))
         .mockResolvedValueOnce('OK').mockRejectedValue(new Error('ReplyError: MOVED to somenode'));
 
       await service.createIndex(mockBrowserClientMetadata, mockCreateRedisearchIndexDto);
 
-      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(1);
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(2);
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.CREATE',
-        args: [
-          mockCreateRedisearchIndexDto.index,
-          'ON', mockCreateRedisearchIndexDto.type,
-          'PREFIX', '2', ...mockCreateRedisearchIndexDto.prefixes,
-          'SCHEMA', mockCreateRedisearchIndexDto.fields[0].name, mockCreateRedisearchIndexDto.fields[0].type,
-          mockCreateRedisearchIndexDto.fields[1].name, mockCreateRedisearchIndexDto.fields[1].type,
-        ],
-      }));
+      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(3);
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith([
+        'FT.CREATE',
+        mockCreateRedisearchIndexDto.index,
+        'ON',
+        mockCreateRedisearchIndexDto.type,
+        'PREFIX',
+        2,
+        ...mockCreateRedisearchIndexDto.prefixes,
+        'SCHEMA',
+        mockCreateRedisearchIndexDto.fields[0].name,
+        mockCreateRedisearchIndexDto.fields[0].type,
+        mockCreateRedisearchIndexDto.fields[1].name,
+        mockCreateRedisearchIndexDto.fields[1].type,
+      ], { replyEncoding: 'utf8' });
     });
     it('should handle already existing index error', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.INFO' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.INFO']))
         .mockReturnValue({ any: 'data' });
 
       try {
         await service.createIndex(mockBrowserClientMetadata, mockCreateRedisearchIndexDto);
-        fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ConflictException);
       }
     });
     it('should handle ACL error (ft.info command)', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.INFO' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.INFO']))
         .mockRejectedValue(mockRedisNoPermError);
 
       try {
         await service.createIndex(mockBrowserClientMetadata, mockCreateRedisearchIndexDto);
-        fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
     });
     it('should handle ACL error (ft.create command)', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.INFO' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.INFO']))
         .mockRejectedValue(mockRedisUnknownIndexName);
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.CREATE' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.CREATE']))
         .mockRejectedValue(mockRedisNoPermError);
 
       try {
         await service.createIndex(mockBrowserClientMetadata, mockCreateRedisearchIndexDto);
-        fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
@@ -216,8 +215,8 @@ describe('RedisearchService', () => {
 
   describe('search', () => {
     it('should search in standalone', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.SEARCH']))
         .mockResolvedValue([100, keyName1, keyName2]);
 
       const res = await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
@@ -234,35 +233,28 @@ describe('RedisearchService', () => {
         }],
       });
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(3);
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.SEARCH',
-        args: [
-          mockSearchRedisearchDto.index,
-          mockSearchRedisearchDto.query,
-          'NOCONTENT',
-          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.CONFIG',
-        args: [
-          'GET',
-          'MAXSEARCHRESULTS',
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'TYPE',
-        args: [
-          keyName1,
-        ],
-      }));
+      expect(standaloneClient.sendCommand).toHaveBeenCalledTimes(3);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.CONFIG', 'GET', 'MAXSEARCHRESULTS',
+      ], { replyEncoding: 'utf8' });
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.SEARCH',
+        mockSearchRedisearchDto.index,
+        mockSearchRedisearchDto.query,
+        'NOCONTENT',
+        'LIMIT',
+        mockSearchRedisearchDto.offset,
+        mockSearchRedisearchDto.limit,
+      ]);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'TYPE', keyName1,
+      ], { replyEncoding: 'utf8' });
       expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should search in cluster', async () => {
-      browserTool.getRedisClient.mockResolvedValue(clusterClient);
+      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(mockClusterRedisClient);
       when(clusterClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+        .calledWith(expect.arrayContaining(['FT.SEARCH']))
         .mockResolvedValue([100, keyName1, keyName2]);
 
       const res = await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
@@ -279,48 +271,40 @@ describe('RedisearchService', () => {
       });
 
       expect(clusterClient.sendCommand).toHaveBeenCalledTimes(3);
-      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.SEARCH',
-        args: [
-          mockSearchRedisearchDto.index,
-          mockSearchRedisearchDto.query,
-          'NOCONTENT',
-          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
-        ],
-      }));
-      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.CONFIG',
-        args: [
-          'GET',
-          'MAXSEARCHRESULTS',
-        ],
-      }));
-      expect(clusterClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'TYPE',
-        args: [
-          keyName1,
-        ],
-      }));
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith([
+        'FT.CONFIG', 'GET', 'MAXSEARCHRESULTS',
+      ], { replyEncoding: 'utf8' });
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith([
+        'FT.SEARCH',
+        mockSearchRedisearchDto.index,
+        mockSearchRedisearchDto.query,
+        'NOCONTENT',
+        'LIMIT',
+        mockSearchRedisearchDto.offset,
+        mockSearchRedisearchDto.limit,
+      ]);
+      expect(clusterClient.sendCommand).toHaveBeenCalledWith([
+        'TYPE', keyName1,
+      ], { replyEncoding: 'utf8' });
       expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should handle ACL error (ft.info command)', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.SEARCH']))
         .mockRejectedValue(mockRedisNoPermError);
 
       try {
         await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
-        fail();
       } catch (e) {
         expect(e).toBeInstanceOf(ForbiddenException);
       }
     });
     it('should call "TYPE" and once "FT.CONFIG GET MAXSEARCHRESULTS" for all requests', async () => {
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.SEARCH' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(expect.arrayContaining(['FT.SEARCH']))
         .mockResolvedValue([100, keyName1, keyName2]);
-      when(nodeClient.sendCommand)
-        .calledWith(jasmine.objectContaining({ name: 'FT.CONFIG' }))
+      when(standaloneClient.sendCommand)
+        .calledWith(['FT.CONFIG', 'GET', 'MAXSEARCHRESULTS'], { replyEncoding: 'utf8' })
         .mockResolvedValue([['MAXSEARCHRESULTS', '10000']]);
 
       const res = await service.search(mockBrowserClientMetadata, mockSearchRedisearchDto);
@@ -339,59 +323,46 @@ describe('RedisearchService', () => {
         }],
       });
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(7);
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.SEARCH',
-        args: [
-          mockSearchRedisearchDto.index,
-          mockSearchRedisearchDto.query,
-          'NOCONTENT',
-          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'TYPE',
-        args: [
-          keyName1,
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.CONFIG',
-        args: [
-          'GET',
-          'MAXSEARCHRESULTS',
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.SEARCH',
-        args: [
-          mockSearchRedisearchDto.index,
-          mockSearchRedisearchDto.query,
-          'NOCONTENT',
-          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'TYPE',
-        args: [
-          keyName1,
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'FT.SEARCH',
-        args: [
-          mockSearchRedisearchDto.index,
-          mockSearchRedisearchDto.query,
-          'NOCONTENT',
-          'LIMIT', `${mockSearchRedisearchDto.offset}`, `${mockSearchRedisearchDto.limit}`,
-        ],
-      }));
-      expect(nodeClient.sendCommand).toHaveBeenCalledWith(jasmine.objectContaining({
-        name: 'TYPE',
-        args: [
-          keyName1,
-        ],
-      }));
+      expect(standaloneClient.sendCommand).toHaveBeenCalledTimes(7);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.CONFIG', 'GET', 'MAXSEARCHRESULTS',
+      ], { replyEncoding: 'utf8' });
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.SEARCH',
+        mockSearchRedisearchDto.index,
+        mockSearchRedisearchDto.query,
+        'NOCONTENT',
+        'LIMIT',
+        mockSearchRedisearchDto.offset,
+        mockSearchRedisearchDto.limit,
+      ]);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'TYPE', keyName1,
+      ], { replyEncoding: 'utf8' });
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.SEARCH',
+        mockSearchRedisearchDto.index,
+        mockSearchRedisearchDto.query,
+        'NOCONTENT',
+        'LIMIT',
+        mockSearchRedisearchDto.offset,
+        mockSearchRedisearchDto.limit,
+      ]);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'TYPE', keyName1,
+      ], { replyEncoding: 'utf8' });
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'FT.SEARCH',
+        mockSearchRedisearchDto.index,
+        mockSearchRedisearchDto.query,
+        'NOCONTENT',
+        'LIMIT',
+        mockSearchRedisearchDto.offset,
+        mockSearchRedisearchDto.limit,
+      ]);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
+        'TYPE', keyName1,
+      ], { replyEncoding: 'utf8' });
       expect(browserHistory.create).toHaveBeenCalled();
     });
   });

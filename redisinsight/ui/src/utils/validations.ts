@@ -111,7 +111,7 @@ export const errorValidateNegativeInteger = (value: string) => {
 }
 
 export const validateCertName = (initValue: string) =>
-  initValue.replace(/[^ a-zA-Z0-9!@#$%^&*-_()[\]]+/gi, '').toString()
+  initValue.replace(/[^ a-zA-Z0-9!@#$%^&*\-_()[\]]+/gi, '').toString()
 
 export const isRequiredStringsValid = (...params: string[]) => params.every((p = '') => p.length > 0)
 

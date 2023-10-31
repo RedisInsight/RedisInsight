@@ -1,4 +1,4 @@
-import { Selector, t } from 'testcafe';
+import { t } from 'testcafe';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';

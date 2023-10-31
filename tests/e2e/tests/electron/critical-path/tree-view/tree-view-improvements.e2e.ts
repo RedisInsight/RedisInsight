@@ -1,4 +1,4 @@
-import { Selector, t } from 'testcafe';
+import { t } from 'testcafe';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
@@ -6,12 +6,10 @@ import { KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
-import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
-const apiKeyRequests = new APIKeyRequests();
 
 let keyNames: string[];
 let keyName1: string;
@@ -151,9 +149,7 @@ test
     })
     .after(async() => {
         await t.click(browserPage.patternModeBtn);
-        for (const element of keyNames.slice(1)) {
-            await apiKeyRequests.deleteKeyByNameApi(element, ossStandaloneConfig.databaseName);
-        }
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Search capability Refreshed Tree view preselected folder', async t => {
         keyName1 = Common.generateWord(10);
@@ -176,19 +172,25 @@ test
         await browserPage.TreeView.openTreeFolders([keyName1]); // Type: hash
         await browserPage.TreeView.openTreeFolders([keyName2]); // Type: list
         await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
-        // The first folder with namespaces is expanded and selected when folder and folder without any namespaces does not exist after search/filter
-        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[1]], true);
+        // Only related to key types filter folders are displayed
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName2, false);
+        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[1]], false);
 
         await browserPage.setAllKeyType();
         await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames[0]}`]);
         await t.click(browserPage.refreshKeysButton); // refresh keys
-        // The previously selected folder is preselected when key does not exist after keys refresh
-        await verifyKeysDisplayingInTheList([keyNames[1]], true);
-        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[2], keyNames[3], keyNames[4]], false);
+        // Only related to filter folders are displayed when key does not exist after keys refresh
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName2, true);
+        await verifyKeysDisplayingInTheList([keyNames[4]], true);
+        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[2], keyNames[3]], false);
 
         await browserPage.searchByKeyName('*');
         await t.click(browserPage.refreshKeysButton);
         // Search capability Refreshed Tree view preselected folder
-        await verifyKeysDisplayingInTheList([keyNames[1]], true);
-        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[2], keyNames[3], keyNames[4]], false);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName2, true);
+        await verifyKeysDisplayingInTheList([keyNames[4]], true);
+        await verifyKeysDisplayingInTheList([keyNames[0], keyNames[2], keyNames[3]], false);
     });

@@ -117,6 +117,7 @@ test
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${index}`);
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify tree view navigation for index based search', async t => {
         keyName1 = Common.generateWord(10); // used to create index name
@@ -138,13 +139,10 @@ test
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
         await browserPage.selectIndexByName(index);
         await t.click(browserPage.treeViewButton);
-        await t.click(Selector(`[data-testid="${`node-item_${folders[0]}:`}"]`)); // close folder
         await browserPage.TreeView.openTreeFolders(folders);
         await t.click(browserPage.refreshKeysButton);
         // Refreshed Tree view preselected folder for index based search
-        await t.expect(
-            Selector(`[data-testid="node-item_${folders[0]}:${folders[1]}:keys:keys:"]`).visible)
-            .ok('Folder is not selected');
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
     });
 
 test

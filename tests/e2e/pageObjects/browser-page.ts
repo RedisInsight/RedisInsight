@@ -207,7 +207,7 @@ export class BrowserPage extends InstancePage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]');
-    noResultsFound = Selector('[data-testid=no-result-found-only]');
+    noResultsFound = Selector('[data-test-subj=no-result-found]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     keysTotalNumber = Selector('[data-testid=keys-total]');

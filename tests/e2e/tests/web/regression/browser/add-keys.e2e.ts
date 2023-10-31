@@ -5,6 +5,7 @@ import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../..
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();
@@ -96,7 +97,8 @@ test
         await t.click(browserPage.treeViewButton);
         await browserPage.addHashKey(keyName3);
         // Verify that user can see Tree view recalculated when new key is added in Tree view
-        await browserActions.verifyKeyDisplayedTopAndOpened(keyName3);
+        await browserActions.verifyKeyIsNotDisplayedTop(keyName3);
+        await verifyKeysDisplayingInTheList([keyName3], true);
 
         await t.click(browserPage.redisearchModeBtn);
         await browserPage.selectIndexByName(indexName);

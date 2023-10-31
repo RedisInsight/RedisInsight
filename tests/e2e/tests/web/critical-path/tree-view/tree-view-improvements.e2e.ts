@@ -140,9 +140,7 @@ test
         await browserPage.TreeView.openTreeFolders(folders);
         await t.click(browserPage.refreshKeysButton);
         // Refreshed Tree view preselected folder for index based search
-        await t.expect(
-            Selector(`[data-testid="node-item_${folders[0]}:${folders[1]}:keys:keys:"]`).visible)
-            .ok('Folder is not selected');
+        await browserPage.TreeView.verifyFolderDisplayingInTheList(keyName1, true);
     });
 test
     .before(async() => {

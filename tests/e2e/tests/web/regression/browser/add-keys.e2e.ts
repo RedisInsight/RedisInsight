@@ -98,7 +98,7 @@ test
         await browserPage.addHashKey(keyName3);
         // Verify that user can see Tree view recalculated when new key is added in Tree view
         await browserActions.verifyKeyIsNotDisplayedTop(keyName3);
-        await verifyKeysDisplayingInTheList([keyName3], true);
+        await t.expect(browserPage.keyNameFormDetails.withExactText(keyName3).exists).ok(`Key ${keyName3} details not opened`);
 
         await t.click(browserPage.redisearchModeBtn);
         await browserPage.selectIndexByName(indexName);

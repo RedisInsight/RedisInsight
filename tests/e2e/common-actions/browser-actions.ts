@@ -94,7 +94,7 @@ export class BrowserActions {
             // Verify that the last folder level contains required keys
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t
-                .expect(Selector(`[data-testid*="key-${foundKeyName}"]`).exists).ok('Specific key not found')
+                .expect(Selector(`[data-testid*="node-item_${foundKeyName}"]`).find('[data-testid^="key-"]').exists).ok('Specific key not found')
                 .click(array[0]);
         }
     }

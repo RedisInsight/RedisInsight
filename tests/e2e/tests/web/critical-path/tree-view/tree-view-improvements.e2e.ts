@@ -98,11 +98,11 @@ test
 
         await browserPage.selectFilterGroupType(KeyTypesTexts.Stream);
         // Verify that No results found message is displayed in case of invalid filtering
-        await t.expect(browserPage.noResultsFound.textContent).contains('No results found.', 'Key is not found message not displayed');
+        await t.expect(browserPage.noResultsFoundOnly.textContent).contains('No results found.', 'Key is not found message not displayed');
 
         await browserPage.setAllKeyType(); // clear stream from filter
         // Verify that no results found message not displayed after clearing filter
-        await t.expect(browserPage.noResultsFound.exists).notOk('Key is not found message still displayed');
+        await t.expect(browserPage.noResultsFoundOnly.exists).notOk('Key is not found message still displayed');
         // All folders are displayed and collapsed after cleared filter
         await verifyKeysDisplayingInTheList([keyNameSingle], true);
         await verifyKeysDisplayingInTheList([keyName1], false);

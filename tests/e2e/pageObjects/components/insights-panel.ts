@@ -7,6 +7,8 @@ export class InsightsPanel {
     // CONTAINERS
     sidePanel = Selector('[data-testid=insights-panel]');
     explorePanelButton = Selector('[data-testid=insights-trigger]');
+    recommendationsTab = Selector('[data-testid=recommendations-tab]');
+    exploreTab = Selector('[data-testid=explore-tab]');
 
     /**
      * Open/Close  Panel
@@ -27,15 +29,12 @@ export class InsightsPanel {
     async setActiveTab(type: ExploreTabs.Explore): Promise<ExploreTab>
     async setActiveTab(type: ExploreTabs.Recommendations): Promise<RecommendationsTab>
     async setActiveTab(type: ExploreTabs): Promise<ExploreTab | RecommendationsTab> {
-        const tabSelector = Selector('[class^=euiTab]').withExactText(type);
-        const tabClass = await tabSelector.getAttribute('class');
-        if(! tabClass?.includes('isSelected')){
-            await t.click(tabSelector);
-        }
-        if(type === ExploreTabs.Explore){
+        if(type === ExploreTabs.Explore) {
+            await t.click(this.exploreTab);
             return new ExploreTab();
         }
 
+        await t.click(this.recommendationsTab);
         return new RecommendationsTab();
     }
 

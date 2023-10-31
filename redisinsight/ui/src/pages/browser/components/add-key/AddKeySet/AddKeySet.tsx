@@ -16,7 +16,7 @@ import {
   addSetKey, addKeyStateSelector,
 } from 'uiSrc/slices/browser/keys'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
-import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/dto/set.dto'
+import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import {
   AddSetFormConfig as config

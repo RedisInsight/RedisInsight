@@ -28,7 +28,7 @@ import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys
 import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
-import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
+import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import { AddListFormConfig as config } from '../../add-key/constants/fields-config'
 import {

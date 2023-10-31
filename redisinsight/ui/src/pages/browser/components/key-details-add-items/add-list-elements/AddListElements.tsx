@@ -19,7 +19,7 @@ import { insertListElementsAction } from 'uiSrc/slices/browser/list'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
-import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
+import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
 import { AddListFormConfig as config } from '../../add-key/constants/fields-config'
 

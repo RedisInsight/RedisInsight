@@ -56,7 +56,7 @@ import {
 } from 'uiSrc/utils'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/dto/hash.dto'
+import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/hash/dto'
 
 import PopoverDelete from '../popover-delete/PopoverDelete'
 import styles from './styles.module.scss'

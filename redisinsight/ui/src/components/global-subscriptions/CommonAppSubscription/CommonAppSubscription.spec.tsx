@@ -11,7 +11,7 @@ import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { SocketEvent } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
-import { setTotalUnread } from 'uiSrc/slices/recommendations/recommendations'
+import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 
 import CommonAppSubscription from './CommonAppSubscription'
@@ -101,8 +101,8 @@ describe('CommonAppSubscription', () => {
     socket.socketClient.emit(`${RecommendationsSocketEvents.Recommendation}:123`, mockData2)
 
     const afterRenderActions = [
-      setTotalUnread(10),
-      setTotalUnread(20),
+      addUnreadRecommendations({ totalUnread: 10 }),
+      addUnreadRecommendations({ totalUnread: 20 }),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

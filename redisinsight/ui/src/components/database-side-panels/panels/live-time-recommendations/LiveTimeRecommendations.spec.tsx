@@ -71,14 +71,13 @@ describe('LiveTimeRecommendations', () => {
     expect(render(<LiveTimeRecommendations />)).toBeTruthy()
   })
 
-  it('should render beta label and github icon', () => {
+  it('should render github icon', () => {
     (recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: { recommendations: [{ name: 'RTS' }] }
     }))
 
     render(<LiveTimeRecommendations />)
-    expect(screen.getByTestId('beta-label')).toBeInTheDocument()
     expect(screen.getByTestId('github-repo-btn')).toHaveAttribute('href', EXTERNAL_LINKS.githubRepo)
     expect(screen.getByTestId('github-repo-icon')).toBeInTheDocument()
   })
@@ -101,33 +100,6 @@ describe('LiveTimeRecommendations', () => {
 
     render(<LiveTimeRecommendations />)
     expect(screen.queryByTestId('checkbox-show-hidden')).not.toBeInTheDocument()
-  })
-
-  it('should send INSIGHTS_PANEL_CLOSED telemetry event', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
-      ...mockRecommendationsSelector,
-      data: {
-        recommendations: [{ name: 'RTS' }, { name: 'setPassword' }],
-      },
-    }))
-
-    const { unmount } = render(<LiveTimeRecommendations />)
-
-    unmount()
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
-      eventData: {
-        databaseId: 'instanceId',
-        list: ['optimizeTimeSeries', 'setPassword'],
-        total: 2,
-        provider: 'RE_CLOUD'
-      }
-    })
-    sendEventTelemetry.mockRestore()
   })
 
   it('should properly push history on databaseAnalysis page', () => {

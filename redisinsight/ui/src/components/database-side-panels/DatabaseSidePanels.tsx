@@ -84,7 +84,17 @@ const DatabaseSidePanels = (props: Props) => {
   }
 
   const handleFullScreen = () => {
-    setIsFullScreen((value) => !value)
+    setIsFullScreen((value) => {
+      sendEventTelemetry({
+        event: TelemetryEvent.INSIGHTS_PANEL_FULL_SCREEN_CLICKED,
+        eventData: {
+          databaseId: instanceId,
+          state: value ? 'exit' : 'open'
+        },
+      })
+
+      return !value
+    })
   }
 
   const Tabs = useCallback(() => (
@@ -93,6 +103,7 @@ const DatabaseSidePanels = (props: Props) => {
         isSelected={tabSelected === InsightsPanelTabs.Explore}
         onClick={() => handleChangeTab(InsightsPanelTabs.Explore)}
         className={styles.tab}
+        data-testid="explore-tab"
       >
         <span className={styles.tabName}>Explore Redis</span>
       </EuiTab>
@@ -100,10 +111,18 @@ const DatabaseSidePanels = (props: Props) => {
         isSelected={tabSelected === InsightsPanelTabs.Recommendations}
         onClick={() => handleChangeTab(InsightsPanelTabs.Recommendations)}
         className={styles.tab}
+        data-testid="recommendations-tab"
       >
         <>
           <span className={styles.tabName}>Recommedations</span>
-          {!!totalUnread && (<div className={styles.tabTotalUnred}>{totalUnread}</div>)}
+          {!!totalUnread && (
+            <div
+              className={styles.tabTotalUnred}
+              data-testid="recommendations-unread-count"
+            >
+              {totalUnread}
+            </div>
+          )}
         </>
       </EuiTab>
     </EuiTabs>

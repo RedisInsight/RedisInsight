@@ -24,7 +24,7 @@ import reducer, {
   getContentRecommendations,
   getContentRecommendationsSuccess,
   getContentRecommendationsFailure,
-  fetchContentRecommendations,
+  fetchContentRecommendations, addUnreadRecommendations,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -145,6 +145,39 @@ describe('recommendations slice', () => {
       })
     })
 
+    describe('addUnreadRecommendations', () => {
+      it('should properly set total unread', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          data: {
+            ...initialState.data,
+            recommendations: [{ id: '1' }, { id: '2' }],
+            totalUnread: 1
+          }
+        }
+
+        const state = {
+          ...currentState,
+          isHighlighted: true,
+          data: {
+            ...initialState.data,
+            recommendations: [{ id: '3' }, { id: '1' }, { id: '2' }],
+            totalUnread: 2
+          }
+        }
+
+        // Act
+        const nextState = reducer(currentState, addUnreadRecommendations({ recommendations: [{ id: '3' }], totalUnread: 2 }))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
+
     describe('readRecommendations', () => {
       it('should properly set totalUnread', () => {
         // Arrange
@@ -220,7 +253,7 @@ describe('recommendations slice', () => {
         data: {
           ...initialState.data,
           recommendations: [{ id: '1' }, { id: '2' }, { id: '3' }],
-          totalUnread: 0
+          totalUnread: 1
         },
         loading: false,
         error: '',
@@ -238,7 +271,7 @@ describe('recommendations slice', () => {
       }
 
       // Act
-      const nextState = reducer(currentState, deleteRecommendations(['2']))
+      const nextState = reducer(currentState, deleteRecommendations([{ id: '2', isRead: false }]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

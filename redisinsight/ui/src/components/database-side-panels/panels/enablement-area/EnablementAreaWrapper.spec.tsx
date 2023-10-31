@@ -36,12 +36,7 @@ jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
 })
 
 describe('EnablementAreaWrapper', () => {
-  it('should render and call proper actions on mount', () => {
-    const expectedActions = [getWBCustomTutorials()]
-
+  it('should render', () => {
     expect(render(<EnablementAreaWrapper {...instance(mockedProps)} />)).toBeTruthy()
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
   })
 })

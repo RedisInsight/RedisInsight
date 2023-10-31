@@ -75,38 +75,38 @@ test
     })
     .after(async() => {
         // Clear and delete database
-        await browserPage.ExplorePanel.togglePanel(false);
+        await browserPage.InsightsPanel.togglePanel(false);
         await refreshFeaturesTestData();
         await browserPage.OverviewPanel.changeDbIndex(0);
         await apiKeyRequests.deleteKeyByNameApi(keyName, databasesForAdding[1].databaseName);
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify Insights panel Recommendations displaying', async t => {
-        await browserPage.ExplorePanel.togglePanel(true);
+        await browserPage.InsightsPanel.togglePanel(true);
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
-        let tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         await t
             .expect(tab.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
             .expect(tab.noRecommendationsScreen.textContent).contains('Welcome toInsights', 'Welcome to recommendations text not displayed');
 
-        await browserPage.ExplorePanel.togglePanel(false);
+        await browserPage.InsightsPanel.togglePanel(false);
         // Go to 2nd database
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
-        await browserPage.ExplorePanel.togglePanel(true);
+        await browserPage.InsightsPanel.togglePanel(true);
         // Verify that live recommendations displayed for each database separately
         // Verify that user can see the live recommendation "Update Redis database" when Redis database is less than 6.0 highlighted as RedisStack
-        tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         await t
             .expect(await tab.getRecommendationByName(redisVersionRecom).visible).ok('Redis Version recommendation not displayed')
             .expect(await tab.getRecommendationByName(redisTimeSeriesRecom).visible).notOk('Optimize Time Series recommendation displayed');
-        await browserPage.ExplorePanel.togglePanel(false);
+        await browserPage.InsightsPanel.togglePanel(false);
 
         // Create Sorted Set with TimeSeries value
         await browserPage.addZSetKey(keyName, '151153320500121', '231231251', '1511533205001:21');
         // Verify that the list of recommendations updated every 10 seconds
         await t.wait(tenSecondsTimeout);
-        await browserPage.ExplorePanel.togglePanel(true);
-        tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        await browserPage.InsightsPanel.togglePanel(true);
+        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         // Verify that user can see the live recommendation "Optimize the use of time series"
         await t.expect(await tab.getRecommendationByName(redisTimeSeriesRecom).visible).ok('Optimize Time Series recommendation not displayed');
     });
@@ -126,7 +126,7 @@ test
     })('Verify that user can upvote recommendations', async() => {
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
-        await browserPage.ExplorePanel.togglePanel(true);
+        await browserPage.InsightsPanel.togglePanel(true);
         await recommendationsActions.voteForRecommendation(redisVersionRecom, notUsefulVoteOption);
         // Verify that user can rate recommendations with one of 2 existing types at the same time
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
@@ -141,8 +141,8 @@ test
 
         // Verify that user can see previous votes when reload the page
         await browserPage.reloadPage();
-        await browserPage.ExplorePanel.togglePanel(true);
-        const tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        await browserPage.InsightsPanel.togglePanel(true);
+        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         await tab.toggleRecommendation(redisVersionRecom, true);
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
 
@@ -155,8 +155,8 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
-    await browserPage.ExplorePanel.togglePanel(true);
-    let tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await tab.toggleShowHiddenRecommendations(false);
     await tab.hideRecommendation(searchVisualizationRecom);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).exists)
@@ -164,8 +164,8 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
 
     // check recommendation state is saved after reload
     await browserPage.reloadPage();
-    await browserPage.ExplorePanel.togglePanel(true);
-    tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).exists)
         .notOk('recommendation is displayed when show hide recommendation is unchecked');
 
@@ -174,8 +174,8 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible)
         .ok('recommendation is not displayed when show hide recommendation is checked');
     await browserPage.reloadPage();
-    await browserPage.ExplorePanel.togglePanel(true);
-    tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible)
         .ok('recommendation is not displayed when show hide recommendation is checked');
 });
@@ -183,19 +183,19 @@ test('Verify that user can snooze recommendation', async t => {
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
-    await browserPage.ExplorePanel.togglePanel(true);
-    let tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await tab.snoozeRecommendation(searchVisualizationRecom);
 
     await browserPage.reloadPage();
-    await browserPage.ExplorePanel.togglePanel(true);
-    tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible)
         .notOk('recommendation is displayed when after snoozing');
-    await browserPage.ExplorePanel.togglePanel(false);
+    await browserPage.InsightsPanel.togglePanel(false);
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
-    await browserPage.ExplorePanel.togglePanel(true);
-    tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible).ok('recommendation is not displayed again');
 });
 test
@@ -212,19 +212,19 @@ test
         await refreshFeaturesTestData();
     })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
 
-        await browserPage.ExplorePanel.togglePanel(true);
-        let tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        await browserPage.InsightsPanel.togglePanel(true);
+        let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         const redisVersionRecommendationSelector = tab.getRecommendationByName(redisVersionRecom);
         // Verify that live recommendation displayed in Insights panel
         await t.expect(await tab.getRecommendationByName(redisVersionRecom).visible).ok(`${redisVersionRecom} recommendation not displayed`);
         // Verify that recommendation from db analysis not displayed in Insights panel
         await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).notOk(`${setPasswordRecom} recommendation displayed`);
-        await browserPage.ExplorePanel.togglePanel(false);
+        await browserPage.InsightsPanel.togglePanel(false);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
-        await browserPage.ExplorePanel.togglePanel(true);
-        tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        await browserPage.InsightsPanel.togglePanel(true);
+        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         // Verify that recommendations are synchronized
         await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).ok('Recommendations are not synchronized');
         // Verify that duplicates are not displayed
@@ -232,16 +232,16 @@ test
     });
 //https://redislabs.atlassian.net/browse/RI-4413
 test('Verify that if user clicks on the Analyze button and link, the pop up with analyze button is displayed and new report is generated', async t => {
-    await browserPage.ExplorePanel.togglePanel(true);
-    let tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await browserPage.InsightsPanel.togglePanel(true);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await t.click(tab.analyzeDatabaseButton);
     await t.click(tab.analyzeTooltipButton);
     //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
     await t.click(memoryEfficiencyPage.selectedReport);
     await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
     await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
-    await workbenchPage.ExplorePanel.togglePanel(true);
-    tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
     await t.click(tab.analyzeDatabaseLink);
     await t.click(tab.analyzeTooltipButton);
     //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
@@ -258,8 +258,8 @@ test
         const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
         await browserPage.Cli.sendCommandInCli(cliCommand);
         await t.click(browserPage.refreshKeysButton);
-        await browserPage.ExplorePanel.togglePanel(true);
-        const tab = await browserPage.ExplorePanel.setActiveTab(ExploreTabs.Insights);
+        await browserPage.InsightsPanel.togglePanel(true);
+        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         let keyNameFromRecommendation = await tab.getRecommendationByName(RecommendationIds.searchJson)
             .find(tab.cssKeyName)
             .innerText;

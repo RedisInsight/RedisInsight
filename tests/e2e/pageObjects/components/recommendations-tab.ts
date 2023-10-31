@@ -1,7 +1,7 @@
 import { Selector, t } from 'testcafe';
 import { RecommendationIds } from '../../helpers/constants';
 
-export class InsightTab {
+export class RecommendationsTab {
     // CSS Selectors
     cssKeyName = '[data-testid=recommendation-key-name]';
     // BUTTONS

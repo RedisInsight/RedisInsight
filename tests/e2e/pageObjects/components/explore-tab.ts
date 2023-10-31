@@ -1,6 +1,6 @@
 import { Selector, t } from 'testcafe';
 
-export class TutorialsTab {
+export class ExploreTab {
 
     documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');

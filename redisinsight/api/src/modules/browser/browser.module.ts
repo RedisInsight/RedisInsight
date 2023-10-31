@@ -11,10 +11,10 @@ import { ZSetModule } from 'src/modules/browser/z-set/z-set.module';
 import { StringModule } from 'src/modules/browser/string/string.module';
 import { SetModule } from 'src/modules/browser/set/set.module';
 import { BrowserHistoryModule } from 'src/modules/browser/browser-history/browser-history.module';
+import { RejsonRlModule } from 'src/modules/browser/rejson-rl/rejson-rl.module';
+import { StreamModule } from 'src/modules/browser/stream/stream.module';
 import { KeysController } from './keys/keys.controller';
 import { KeysService } from './keys/keys.service';
-import { RejsonRlController } from './rejson-rl/rejson-rl.controller';
-import { RejsonRlService } from './rejson-rl/rejson-rl.service';
 import { BrowserToolService } from './services/browser-tool/browser-tool.service';
 import { BrowserToolClusterService } from './services/browser-tool-cluster/browser-tool-cluster.service';
 
@@ -28,15 +28,15 @@ const route = '/databases/:dbInstance';
     StringModule.register({ route }),
     SetModule.register({ route }),
     BrowserHistoryModule.register({ route }),
+    StreamModule.register({ route }),
+    RejsonRlModule.register({ route }),
   ],
   controllers: [
     KeysController,
-    RejsonRlController,
     RedisearchController,
   ],
   providers: [
     KeysService,
-    RejsonRlService,
     RedisearchService,
     BrowserToolService,
     BrowserToolClusterService,
@@ -50,7 +50,6 @@ export class BrowserModule implements NestModule {
       .apply(RedisConnectionMiddleware)
       .forRoutes(
         RouterModule.resolvePath(KeysController),
-        RouterModule.resolvePath(RejsonRlController),
       );
   }
 }

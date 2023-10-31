@@ -1,14 +1,12 @@
 import { chunk, flatMap, map } from 'lodash';
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { catchAclError, catchTransactionError } from 'src/utils';
+import { catchAclError, catchMultiTransactionError } from 'src/utils';
 import { SortOrder } from 'src/constants/sort';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   BrowserToolCommands,
   BrowserToolKeysCommands,
@@ -25,16 +23,18 @@ import {
   StreamEntryDto,
   StreamEntryFieldDto,
 } from 'src/modules/browser/stream/dto';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RedisErrorCodes } from 'src/constants';
 import { plainToClass } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 @Injectable()
 export class StreamService {
   private logger = new Logger('StreamService');
 
-  constructor(private browserTool: BrowserToolService) {}
+  constructor(private databaseClientFactory: DatabaseClientFactory) {}
 
   /**
    * Get stream entries
@@ -50,30 +50,21 @@ export class StreamService {
   ): Promise<GetStreamEntriesResponse> {
     try {
       this.logger.log('Getting entries of the Stream data type stored at key.');
-
       const { keyName, sortOrder } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
+      await checkIfKeyNotExists(keyName, client);
 
-      if (!exists) {
-        throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
-      }
-
-      const info = await this.browserTool.execCommand(
-        clientMetadata,
+      const info = await client.sendCommand([
         BrowserToolStreamCommands.XInfoStream,
-        [keyName],
-      );
+        keyName,
+      ]);
 
       let entries = [];
       if (sortOrder && sortOrder === SortOrder.Asc) {
-        entries = await this.getRange(clientMetadata, dto);
+        entries = await this.getRange(client, dto);
       } else {
-        entries = await this.getRevRange(clientMetadata, dto);
+        entries = await this.getRevRange(client, dto);
       }
 
       this.logger.log('Succeed to get entries from the stream.');
@@ -104,22 +95,25 @@ export class StreamService {
   /**
    * Return specified number of entries in the time range in ASC order
    *
-   * @param clientMetadata
+   * @param client
    * @param dto
    */
   public async getRange(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: GetStreamEntriesDto,
   ): Promise<StreamEntryDto[]> {
     const {
       keyName, start, end, count,
     } = dto;
 
-    const execResult = await this.browserTool.execCommand(
-      clientMetadata,
+    const execResult = await client.sendCommand([
       BrowserToolStreamCommands.XRange,
-      [keyName, start, end, 'COUNT', count],
-    );
+      keyName,
+      start,
+      end,
+      'COUNT',
+      count,
+    ]) as string[];
 
     return StreamService.formatReplyToDto(execResult);
   }
@@ -127,22 +121,25 @@ export class StreamService {
   /**
    * Return specified number of entries in the time range in DESC order
    *
-   * @param clientMetadata
+   * @param client
    * @param dto
    */
   public async getRevRange(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: GetStreamEntriesDto,
   ): Promise<StreamEntryDto[]> {
     const {
       keyName, start, end, count,
     } = dto;
 
-    const execResult = await this.browserTool.execCommand(
-      clientMetadata,
+    const execResult = await client.sendCommand([
       BrowserToolStreamCommands.XRevRange,
-      [keyName, end, start, 'COUNT', count],
-    );
+      keyName,
+      end,
+      start,
+      'COUNT',
+      count,
+    ]) as string[];
 
     return StreamService.formatReplyToDto(execResult);
   }
@@ -156,24 +153,12 @@ export class StreamService {
     clientMetadata: ClientMetadata,
     dto: CreateStreamDto,
   ): Promise<void> {
-    this.logger.log('Creating stream data type.');
-
     try {
+      this.logger.log('Creating stream data type.');
       const { keyName, entries } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (isExist) {
-        this.logger.error(
-          `Failed to create stream data type. ${ERROR_MESSAGES.KEY_NAME_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new ConflictException(ERROR_MESSAGES.KEY_NAME_EXIST),
-        );
-      }
+      await checkIfKeyExists(keyName, client);
 
       const entriesArray = entries.map((entry) => [
         entry.id,
@@ -195,14 +180,10 @@ export class StreamService {
         toolCommands.push([BrowserToolKeysCommands.Expire, keyName, dto.expire]);
       }
 
-      const [
-        transactionError,
-        transactionResults,
-      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
-      catchTransactionError(transactionError, transactionResults);
+      const transactionResults = await client.sendPipeline(toolCommands);
+      catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to create stream.');
-
       return undefined;
     } catch (error) {
       this.logger.error('Failed to create stream.', error);
@@ -231,20 +212,12 @@ export class StreamService {
     clientMetadata: ClientMetadata,
     dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
-    this.logger.log('Adding entries to stream.');
-
     try {
+      this.logger.log('Adding entries to stream.');
       const { keyName, entries } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const exists = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-
-      if (!exists) {
-        throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
-      }
+      await checkIfKeyNotExists(keyName, client);
 
       const entriesArray = entries.map((entry) => [
         entry.id,
@@ -262,14 +235,10 @@ export class StreamService {
         ]
       ));
 
-      const [
-        transactionError,
-        transactionResults,
-      ] = await this.browserTool.execMulti(clientMetadata, toolCommands);
-      catchTransactionError(transactionError, transactionResults);
+      const transactionResults = await client.sendPipeline(toolCommands);
+      catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to add entries to the stream.');
-
       return plainToClass(AddStreamEntriesResponse, {
         keyName,
         entries: transactionResults.map((entryResult) => entryResult[1]),
@@ -301,37 +270,28 @@ export class StreamService {
     clientMetadata: ClientMetadata,
     dto: DeleteStreamEntriesDto,
   ): Promise<DeleteStreamEntriesResponse> {
-    this.logger.log('Deleting entries from the Stream data type.');
-    const { keyName, entries } = dto;
-    let result;
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to delete entries from the Stream data type. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
-      result = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Deleting entries from the Stream data type.');
+      const { keyName, entries } = dto;
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const result = await client.sendCommand([
         BrowserToolStreamCommands.XDel,
-        [keyName, ...entries],
-      );
+        keyName,
+        ...entries,
+      ]) as number;
+
+      this.logger.log('Succeed to delete entries from the Stream data type.');
+      return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete entries from the Stream data type.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    this.logger.log('Succeed to delete entries from the Stream data type.');
-    return { affected: result };
   }
 
   /**

@@ -1,12 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
-import { StreamController } from 'src/modules/browser/stream/controllers/stream.controller';
-import { StreamService } from 'src/modules/browser/stream/services/stream.service';
-import { ConsumerGroupController } from 'src/modules/browser/stream/controllers/consumer-group.controller';
-import { ConsumerGroupService } from 'src/modules/browser/stream/services/consumer-group.service';
-import { ConsumerController } from 'src/modules/browser/stream/controllers/consumer.controller';
-import { ConsumerService } from 'src/modules/browser/stream/services/consumer.service';
 import { RedisearchController } from 'src/modules/browser/redisearch/redisearch.controller';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
@@ -39,17 +33,11 @@ const route = '/databases/:dbInstance';
     KeysController,
     RejsonRlController,
     RedisearchController,
-    StreamController,
-    ConsumerGroupController,
-    ConsumerController,
   ],
   providers: [
     KeysService,
     RejsonRlService,
     RedisearchService,
-    StreamService,
-    ConsumerGroupService,
-    ConsumerService,
     BrowserToolService,
     BrowserToolClusterService,
     DatabaseClientFactory,
@@ -63,9 +51,6 @@ export class BrowserModule implements NestModule {
       .forRoutes(
         RouterModule.resolvePath(KeysController),
         RouterModule.resolvePath(RejsonRlController),
-        RouterModule.resolvePath(StreamController),
-        RouterModule.resolvePath(ConsumerGroupController),
-        RouterModule.resolvePath(ConsumerController),
       );
   }
 }

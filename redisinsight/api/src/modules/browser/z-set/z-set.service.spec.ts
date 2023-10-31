@@ -12,31 +12,37 @@ import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
   mockBrowserClientMetadata,
-  mockRedisConsumer,
   mockRedisNoPermError,
   mockRedisWrongTypeError,
   mockDatabaseRecommendationService,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
   BrowserToolZSetCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import {
-  getZSetMembersInAscResponse, getZSetMembersInDescResponse,
-  mockAddMembersDto, mockDeleteMembersDto,
+  getZSetMembersInAscResponse,
+  getZSetMembersInDescResponse,
+  mockAddMembersDto,
+  mockDeleteMembersDto,
   mockGetMembersDto,
-  mockMembersForZAddCommand, mockSearchMembersDto, mockSearchZSetMembersResponse, mockUpdateMemberDto,
+  mockMembersForZAddCommand,
+  mockSearchMembersDto,
+  mockSearchZSetMembersResponse,
+  mockUpdateMemberDto,
 } from 'src/modules/browser/__mocks__';
 import {
   CreateZSetWithExpireDto,
   SearchZSetMembersDto,
 } from 'src/modules/browser/z-set/dto';
 import { ZSetService } from 'src/modules/browser/z-set/z-set.service';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 describe('ZSetService', () => {
+  const client = mockStandaloneRedisClient;
   let service: ZSetService;
-  let browserTool;
   let recommendationService;
 
   beforeEach(async () => {
@@ -44,8 +50,8 @@ describe('ZSetService', () => {
       providers: [
         ZSetService,
         {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
         {
           provide: DatabaseRecommendationService,
@@ -55,16 +61,14 @@ describe('ZSetService', () => {
     }).compile();
 
     service = module.get<ZSetService>(ZSetService);
-    browserTool = module.get<BrowserToolService>(BrowserToolService);
     recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
+    client.sendCommand = jest.fn().mockResolvedValue(undefined);
   });
 
   describe('createZSet', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersDto.keyName])
         .mockResolvedValue(0);
       service.createZSetWithExpiration = jest.fn();
     });
@@ -83,8 +87,9 @@ describe('ZSetService', () => {
     });
     it('create zset without expiration', async () => {
       const { keyName } = mockAddMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
+      when(client.sendCommand)
+        .calledWith([
+          BrowserToolZSetCommands.ZAdd,
           keyName,
           ...mockMembersForZAddCommand,
         ])
@@ -96,29 +101,23 @@ describe('ZSetService', () => {
       expect(service.createZSetWithExpiration).not.toHaveBeenCalled();
     });
     it('key with this name exist', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersDto.keyName])
         .mockResolvedValue(1);
 
       await expect(
         service.createZSet(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(ConflictException);
-      expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
-      expect(browserTool.execMulti).not.toHaveBeenCalled();
+      expect(client.sendCommand).toHaveBeenCalledTimes(1);
+      expect(client.sendPipeline).not.toHaveBeenCalled();
     });
     it("try to use 'ZADD' command not for zset data type for createZSet", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'ZADD',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
-          BrowserToolZSetCommands.ZAdd,
-          expect.anything(),
-        )
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolZSetCommands.ZAdd, expect.anything()]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -130,7 +129,7 @@ describe('ZSetService', () => {
         ...mockRedisNoPermError,
         command: 'ZADD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.createZSet(mockBrowserClientMetadata, mockAddMembersDto),
@@ -144,20 +143,14 @@ describe('ZSetService', () => {
       expire: 1000,
     };
     it('succeed to create ZSet data type with expiration', async () => {
-      when(browserTool.execMulti)
-        .calledWith(mockBrowserClientMetadata, expect.anything())
+      when(client.sendPipeline)
+        .calledWith(expect.arrayContaining([expect.anything()]))
         .mockResolvedValue([
-          null,
-          [
-            [null, mockAddMembersDto.members.length],
-            [null, 1],
-          ],
+          [null, mockAddMembersDto.members.length],
+          [null, 1],
         ]);
 
-      const result = await service.createZSetWithExpiration(
-        mockBrowserClientMetadata,
-        dto,
-      );
+      const result = await service.createZSetWithExpiration(client, dto);
       expect(result).toBe(mockAddMembersDto.members.length);
     });
     it('throw transaction error', async () => {
@@ -165,29 +158,26 @@ describe('ZSetService', () => {
         ...mockRedisWrongTypeError,
         command: 'ZADD',
       };
-      browserTool.execMulti.mockResolvedValue([transactionError, null]);
+      client.sendPipeline.mockResolvedValue([[transactionError, null]]);
 
       await expect(
-        service.createZSetWithExpiration(mockBrowserClientMetadata, dto),
+        service.createZSetWithExpiration(client, dto),
       ).rejects.toEqual(transactionError);
     });
   });
 
   describe('getMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
-          mockGetMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZCard, mockGetMembersDto.keyName])
         .mockResolvedValue(mockAddMembersDto.members.length);
     });
     it('get members sorted in asc', async () => {
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZRange,
           expect.anything(),
-        )
+        ]))
         .mockResolvedValue(['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']);
 
       const result = await service.getMembers(
@@ -197,12 +187,11 @@ describe('ZSetService', () => {
       await expect(result).toEqual(getZSetMembersInAscResponse);
     });
     it('get members sorted in desc', async () => {
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZRevRange,
           expect.anything(),
-        )
+        ]))
         .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
 
       const result = await service.getMembers(mockBrowserClientMetadata, {
@@ -212,12 +201,11 @@ describe('ZSetService', () => {
       await expect(result).toEqual(getZSetMembersInDescResponse);
     });
     it('should call recommendationService', async () => {
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZRevRange,
           expect.anything(),
-        )
+        ]))
         .mockResolvedValue(['member4', 'inf', 'member3', '2', 'member2', '0', 'member1', '-inf']);
 
       const result = await service.getMembers(mockBrowserClientMetadata, {
@@ -232,23 +220,21 @@ describe('ZSetService', () => {
       );
     });
     it('key with this name does not exist for getMembers', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
-          mockGetMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZCard, mockGetMembersDto.keyName])
         .mockResolvedValue(0);
 
       await expect(
         service.getMembers(mockBrowserClientMetadata, mockGetMembersDto),
       ).rejects.toThrow(NotFoundException);
-      expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
+      expect(client.sendCommand).toHaveBeenCalledTimes(1);
     });
     it("try to use 'ZCARD' command not for zset data type", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'ZCARD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.getMembers(mockBrowserClientMetadata, mockGetMembersDto),
@@ -259,7 +245,7 @@ describe('ZSetService', () => {
         ...mockRedisNoPermError,
         command: 'ZCARD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.getMembers(mockBrowserClientMetadata, mockGetMembersDto),
@@ -269,19 +255,14 @@ describe('ZSetService', () => {
 
   describe('addMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockAddMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersDto.keyName])
         .mockResolvedValue(1);
     });
     it('succeed to add members to the ZSet data type', async () => {
       const { keyName } = mockAddMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
-          keyName,
-          ...mockMembersForZAddCommand,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZAdd, keyName, ...mockMembersForZAddCommand])
         .mockResolvedValue(mockAddMembersDto.members.length);
 
       await expect(
@@ -290,32 +271,28 @@ describe('ZSetService', () => {
     });
     it('key with this name does not exist for addMembers', async () => {
       const { keyName } = mockAddMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, keyName])
         .mockResolvedValue(0);
 
       await expect(
         service.addMembers(mockBrowserClientMetadata, mockAddMembersDto),
       ).rejects.toThrow(NotFoundException);
-      expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolZSetCommands.ZAdd,
         expect.anything(),
-      );
+      ]);
     });
     it("try to use 'ZADD' command not for zset data type for addMembers", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'ZADD',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZAdd,
           expect.anything(),
-        )
+        ]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -327,7 +304,7 @@ describe('ZSetService', () => {
         ...mockRedisNoPermError,
         command: 'ZADD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.addMembers(mockBrowserClientMetadata, mockAddMembersDto),
@@ -336,16 +313,15 @@ describe('ZSetService', () => {
   });
 
   describe('updateMember', () => {
-    beforeEach(() => when(browserTool.execCommand)
-      .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-        mockAddMembersDto.keyName,
-      ])
+    beforeEach(() => when(client.sendCommand)
+      .calledWith([BrowserToolKeysCommands.Exists, mockAddMembersDto.keyName])
       .mockResolvedValue(1));
 
     it('succeed to update member in key', async () => {
       const { keyName, member } = mockUpdateMemberDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
+      when(client.sendCommand)
+        .calledWith([
+          BrowserToolZSetCommands.ZAdd,
           keyName,
           'XX',
           'CH',
@@ -360,25 +336,23 @@ describe('ZSetService', () => {
     });
     it('key with this name does not exist for updateMember', async () => {
       const { keyName } = mockUpdateMemberDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, keyName])
         .mockResolvedValue(0);
 
       await expect(
         service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
       ).rejects.toThrow(NotFoundException);
-      expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolZSetCommands.ZAdd,
         expect.anything(),
-      );
+      ]);
     });
     it('member does not exist in key', async () => {
       const { keyName, member } = mockUpdateMemberDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZAdd, [
+      when(client.sendCommand)
+        .calledWith([
+          BrowserToolZSetCommands.ZAdd,
           keyName,
           'XX',
           'CH',
@@ -396,12 +370,11 @@ describe('ZSetService', () => {
         ...mockRedisWrongTypeError,
         command: 'ZADD',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZAdd,
           expect.anything(),
-        )
+        ]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -413,7 +386,7 @@ describe('ZSetService', () => {
         ...mockRedisNoPermError,
         command: 'ZADD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.updateMember(mockBrowserClientMetadata, mockUpdateMemberDto),
@@ -423,19 +396,14 @@ describe('ZSetService', () => {
 
   describe('deleteMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          mockDeleteMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, mockDeleteMembersDto.keyName])
         .mockResolvedValue(1);
     });
     it('succeeded to delete members from ZSet data type', async () => {
       const { members, keyName } = mockDeleteMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZRem, [
-          keyName,
-          ...members,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZRem, keyName, ...members])
         .mockResolvedValue(members.length);
 
       const result = await service.deleteMembers(
@@ -447,34 +415,29 @@ describe('ZSetService', () => {
     });
     it('key with this name does not exist for deleteMembers', async () => {
       const { members, keyName } = mockDeleteMembersDto;
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolKeysCommands.Exists, [
-          keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolKeysCommands.Exists, keyName])
         .mockResolvedValue(0);
 
       await expect(
         service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),
       ).rejects.toThrow(NotFoundException);
-      expect(
-        browserTool.execCommand,
-      ).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolZSetCommands.ZRem,
-        [keyName, ...members],
-      );
+        keyName,
+        ...members,
+      ]);
     });
     it("try to use 'ZREM' command not for set data type", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'ZREM',
       };
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZRem,
           expect.anything(),
-        )
+        ]))
         .mockRejectedValue(replyError);
 
       await expect(
@@ -486,7 +449,7 @@ describe('ZSetService', () => {
         ...mockRedisNoPermError,
         command: 'ZREM',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.deleteMembers(mockBrowserClientMetadata, mockDeleteMembersDto),
@@ -496,19 +459,16 @@ describe('ZSetService', () => {
 
   describe('searchMembers', () => {
     beforeEach(() => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
-          mockSearchMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZCard, mockSearchMembersDto.keyName])
         .mockResolvedValue(mockAddMembersDto.members.length);
     });
     it('succeeded to search members in ZSet data type', async () => {
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
+      when(client.sendCommand)
+        .calledWith(expect.arrayContaining([
           BrowserToolZSetCommands.ZScan,
           expect.anything(),
-        )
+        ]))
         .mockResolvedValue([0, ['member1', '-inf', 'member2', '0', 'member3', '2', 'member4', 'inf']]);
 
       const result = await service.searchMembers(
@@ -516,11 +476,10 @@ describe('ZSetService', () => {
         mockSearchMembersDto,
       );
       await expect(result).toEqual(mockSearchZSetMembersResponse);
-      expect(browserTool.execCommand).toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).toHaveBeenCalledWith(expect.arrayContaining([
         BrowserToolZSetCommands.ZScan,
         expect.anything(),
-      );
+      ]));
     });
     it('succeed to find exact member in the z-set', async () => {
       const item = { name: Buffer.from('member'), score: 2 };
@@ -528,11 +487,8 @@ describe('ZSetService', () => {
         ...mockSearchMembersDto,
         match: item.name.toString(),
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZScore, [
-          dto.keyName,
-          dto.match,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZScore, dto.keyName, dto.match])
         .mockResolvedValue(item.score);
 
       const result = await service.searchMembers(mockBrowserClientMetadata, dto);
@@ -541,22 +497,18 @@ describe('ZSetService', () => {
         ...mockSearchZSetMembersResponse,
         members: [item],
       });
-      expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolZSetCommands.ZScan,
         expect.anything(),
-      );
+      ]);
     });
     it('failed to find exact member in the set', async () => {
       const dto: SearchZSetMembersDto = {
         ...mockSearchMembersDto,
         match: 'member',
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZScore, [
-          dto.keyName,
-          dto.match,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZScore, dto.keyName, dto.match])
         .mockResolvedValue(null);
 
       const result = await service.searchMembers(mockBrowserClientMetadata, dto);
@@ -570,11 +522,8 @@ describe('ZSetService', () => {
         ...mockSearchMembersDto,
         match: mockMatch,
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZScore, [
-          dto.keyName,
-          mockSpecialMember.toString(),
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZScore, dto.keyName, mockSpecialMember.toString()])
         .mockResolvedValue(1);
 
       const result = await service.searchMembers(mockBrowserClientMetadata, dto);
@@ -583,11 +532,10 @@ describe('ZSetService', () => {
         ...mockSearchZSetMembersResponse,
         members: [{ name: mockSpecialMember, score: 1 }],
       });
-      expect(browserTool.execCommand).not.toHaveBeenCalledWith(
-        mockBrowserClientMetadata,
+      expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolZSetCommands.ZScan,
         expect.anything(),
-      );
+      ]);
     });
     // TODO: uncomment after enabling threshold for z-set scan
     // it('should stop z-set full scan', async () => {
@@ -612,23 +560,21 @@ describe('ZSetService', () => {
     //   expect(browserTool.execCommand).toHaveBeenCalledTimes(maxScanCalls + 1);
     // });
     it('key with this name does not exist for searchMembers', async () => {
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolZSetCommands.ZCard, [
-          mockSearchMembersDto.keyName,
-        ])
+      when(client.sendCommand)
+        .calledWith([BrowserToolZSetCommands.ZCard, mockSearchMembersDto.keyName])
         .mockResolvedValue(0);
 
       await expect(
         service.searchMembers(mockBrowserClientMetadata, mockSearchMembersDto),
       ).rejects.toThrow(NotFoundException);
-      expect(browserTool.execCommand).toHaveBeenCalledTimes(1);
+      expect(client.sendCommand).toHaveBeenCalledTimes(1);
     });
     it("try to use 'ZCARD' command not for zset data type", async () => {
       const replyError: ReplyError = {
         ...mockRedisWrongTypeError,
         command: 'ZCARD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.searchMembers(mockBrowserClientMetadata, mockSearchMembersDto),
@@ -639,7 +585,7 @@ describe('ZSetService', () => {
         ...mockRedisNoPermError,
         command: 'ZCARD',
       };
-      browserTool.execCommand.mockRejectedValue(replyError);
+      client.sendCommand.mockRejectedValue(replyError);
 
       await expect(
         service.searchMembers(mockBrowserClientMetadata, mockSearchMembersDto),

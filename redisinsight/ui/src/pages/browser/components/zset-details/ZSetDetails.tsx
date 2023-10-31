@@ -41,7 +41,7 @@ import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/comp
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
+import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
 import PopoverDelete from '../popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'

@@ -12,7 +12,7 @@ import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-k
 import { StreamEntryFields } from 'uiSrc/pages/browser/components/key-details-add-items'
 import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { AddStreamEntriesDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
 

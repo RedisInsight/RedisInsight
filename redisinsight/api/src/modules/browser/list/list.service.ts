@@ -44,12 +44,12 @@ export class ListService {
   ): Promise<void> {
     try {
       this.logger.log('Creating list data type.');
-      const { keyName } = dto;
+      const { keyName, expire } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyExists(keyName, client);
 
-      if (dto.expire) {
+      if (expire) {
         await this.createListWithExpiration(client, dto);
       } else {
         await this.createSimpleList(client, dto);
@@ -72,10 +72,11 @@ export class ListService {
       const { keyName, element, destination } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const total: RedisClientCommandReply = await client.sendCommand(
-        [BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPushX' : 'LPushX'],
-          ...[keyName, element]],
-      );
+      const total: RedisClientCommandReply = await client.sendCommand([
+        BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPushX' : 'LPushX'],
+        keyName,
+        element,
+      ]);
       if (!total) {
         this.logger.error(
           `Failed to inserts element at the ${destination} of the list data type. Key not found. key: ${keyName}`,
@@ -103,17 +104,18 @@ export class ListService {
       const { keyName, offset, count } = dto;
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const total = (await client.sendCommand(
-        [BrowserToolListCommands.LLen, ...[keyName]],
-      ));
+      const total = (await client.sendCommand([BrowserToolListCommands.LLen, keyName]));
       if (!total) {
         this.logger.error(`Failed to get elements of the list. Key not found. key: ${keyName}`);
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
       }
 
-      const elements = await client.sendCommand(
-        [BrowserToolListCommands.Lrange, ...[keyName, offset, offset + count - 1]],
-      );
+      const elements = await client.sendCommand([
+        BrowserToolListCommands.Lrange,
+        keyName,
+        offset,
+        offset + count - 1,
+      ]);
 
       this.logger.log('Succeed to get elements of the list.');
       return plainToClass(GetListElementsResponse, { keyName, total, elements });
@@ -145,7 +147,7 @@ export class ListService {
 
       await checkIfKeyNotExists(keyName, client);
 
-      const value = await client.sendCommand([BrowserToolListCommands.LIndex, ...[keyName, index]]);
+      const value = await client.sendCommand([BrowserToolListCommands.LIndex, keyName, index]);
       if (value === null) {
         return Promise.reject(new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()));
       }
@@ -171,7 +173,7 @@ export class ListService {
       const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
-      await client.sendCommand([BrowserToolListCommands.LSet, ...[keyName, index, element]]);
+      await client.sendCommand([BrowserToolListCommands.LSet, keyName, index, element]);
 
       this.logger.log('Succeed to set the list element at index.');
       return plainToClass(SetListElementResponse, { index, element });
@@ -233,7 +235,7 @@ export class ListService {
     dto: PushElementToListDto,
   ): Promise<void> {
     const { keyName, element } = dto;
-    await client.sendCommand([BrowserToolListCommands.LPush, ...[keyName, element]]);
+    await client.sendCommand([BrowserToolListCommands.LPush, keyName, element]);
   }
 
   public async createListWithExpiration(

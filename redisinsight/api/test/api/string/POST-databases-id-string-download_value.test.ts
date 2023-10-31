@@ -98,7 +98,7 @@ describe('POST /databases/:instanceId/string/download-value', () => {
           name: 'Should throw error if no permissions for "set" command',
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
-            keyName: constants.getRandomString(),
+            keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
             value: constants.getRandomString(),
           },
           statusCode: 403,

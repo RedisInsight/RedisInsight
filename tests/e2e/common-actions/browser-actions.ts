@@ -59,38 +59,54 @@ export class BrowserActions {
     }
 
     /**
-     * Check tree view structure
-     * @folders name of folders for tree view build
-     * @delimiter string with delimiter value
-     * @commonKeyFolder flag if not patterned keys will be displayed
+     * Verify that not patterned keys not visible with delimiter
+     * @param delimiter string with delimiter value
      */
-    async checkTreeViewFoldersStructure(folders: string[][], delimiter: string, commonKeyFolder: boolean): Promise<void> {
-        // Verify that all keys that are not inside of tree view doesn't contain delimiter
-        if (commonKeyFolder) {
-            const notPatternedKeys = Selector('[data-testid^="badge"]').parent('[data-testid^="node-item_"]');
-            const notPatternedKeysNumber = await notPatternedKeys.count;
-            for (let i = 0; i < notPatternedKeysNumber; i++) {
-                await t.expect(notPatternedKeys.nth(i).withText(delimiter).exists).notOk('Not contained delimiter keys');
-            }
+    async verifyNotPatternedKeys(delimiter: string): Promise<void> {
+        const notPatternedKeys = Selector('[data-testid^="badge"]').parent('[data-testid^="node-item_"]');
+        const notPatternedKeysNumber = await notPatternedKeys.count;
+
+        for (let i = 0; i < notPatternedKeysNumber; i++) {
+            await t.expect(notPatternedKeys.nth(i).withText(delimiter).exists).notOk('Not contained delimiter keys');
         }
-        // Verify that every level of tree view is clickable
+    }
+
+    /**
+     * Get not added in array folder selector
+     * @param array folders selectors
+     * @param folderName name of folder
+     * @param delimiter string with delimiter value
+     */
+    getFolderSelector(array: string[], folderName: string, delimiter: string): string {
+        if (array.length === 0) {
+            return `[data-testid="node-item_${folderName}${delimiter}"]`;
+        }
+
+        const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
+        return `${lastSelector}${folderName}${delimiter}"]`;
+    }
+
+    /**
+     * Check tree view structure
+     * @param folders name of folders for tree view build
+     * @param delimiter string with delimiter value
+     */
+    async checkTreeViewFoldersStructure(folders: string[][], delimiter: string): Promise<void> {
+        // Verify not patterned keys
+        await this.verifyNotPatternedKeys(delimiter);
+
         const foldersNumber = folders.length;
+
         for (let i = 0; i < foldersNumber; i++) {
             const innerFoldersNumber = folders[i].length;
             const array: string[] = [];
+
             for (let j = 0; j < innerFoldersNumber; j++) {
-                if (j === 0) {
-                    const folderSelector = `[data-testid="node-item_${folders[i][j]}${delimiter}"]`;
-                    array.push(folderSelector);
-                    await t.click(Selector(folderSelector));
-                }
-                else {
-                    const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-                    const folderSelector = `${lastSelector}${folders[i][j]}${delimiter}"]`;
-                    array.push(folderSelector);
-                    await t.click(Selector(folderSelector));
-                }
+                const folderSelector = this.getFolderSelector(array, folders[i][j], delimiter);
+                array.push(folderSelector);
+                await t.click(Selector(folderSelector));
             }
+
             // Verify that the last folder level contains required keys
             const foundKeyName = `${folders[i].join(delimiter)}`;
             await t

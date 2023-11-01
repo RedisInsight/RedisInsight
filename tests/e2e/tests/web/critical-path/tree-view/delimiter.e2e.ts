@@ -37,5 +37,5 @@ test('Verify that user can see that input is not saved when the Cancel button is
     // Change delimiter
     await browserPage.TreeView.changeDelimiterInTreeView('-');
     // Verify that when user changes the delimiter and clicks on Save button delimiter is applied
-    await browserActions.checkTreeViewFoldersStructure([['device_us', 'west'], ['mobile_eu', 'central'], ['mobile_us', 'east'], ['user_us', 'west'], ['device_eu', 'central'], ['user_eu', 'central']], '-', true);
+    await browserActions.checkTreeViewFoldersStructure([['device_us', 'west'], ['mobile_eu', 'central'], ['mobile_us', 'east'], ['user_us', 'west'], ['device_eu', 'central'], ['user_eu', 'central']], '-');
 });

@@ -4,8 +4,43 @@ import React from 'react'
 import { FormikErrors } from 'formik'
 import { REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
-import {ADD_NEW, ADD_NEW_CA_CERT, fieldDisplayNames, NO_CA_CERT, SshPassType} from 'uiSrc/pages/home/constants'
+import { ADD_NEW, ADD_NEW_CA_CERT, fieldDisplayNames, NO_CA_CERT, SshPassType } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+
+export const getTlsSettings = (values: DbConnectionInfo) => ({
+  useTls: values.tls,
+  servername: (values.sni && values.servername) || undefined,
+  verifyServerCert: values.verifyServerTlsCert,
+  caCert:
+    !values.tls || values.selectedCaCertName === NO_CA_CERT
+      ? undefined
+      : values.selectedCaCertName === ADD_NEW_CA_CERT
+        ? {
+          new: {
+            name: values.newCaCertName,
+            certificate: values.newCaCert,
+          },
+        }
+        : {
+          name: values.selectedCaCertName,
+        },
+  clientAuth: values.tls && values.tlsClientAuthRequired,
+  clientCert: !values.tls
+    ? undefined
+    : typeof values.selectedTlsClientCertId === 'string'
+    && values.tlsClientAuthRequired
+    && values.selectedTlsClientCertId !== ADD_NEW
+      ? { id: values.selectedTlsClientCertId }
+      : values.selectedTlsClientCertId === ADD_NEW && values.tlsClientAuthRequired
+        ? {
+          new: {
+            name: values.newTlsCertPairName,
+            certificate: values.newTlsClientCert,
+            key: values.newTlsClientKey,
+          },
+        }
+        : undefined,
+})
 
 export const applyTlSDatabase = (database: any, tlsSettings: any) => {
   const { useTls, verifyServerCert, servername, caCert, clientAuth, clientCert } = tlsSettings

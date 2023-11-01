@@ -10,8 +10,8 @@ import { Pages } from 'uiSrc/constants'
 import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { applyTlSDatabase, autoFillFormDetails } from 'uiSrc/pages/home/utils'
-import { ADD_NEW, ADD_NEW_CA_CERT, NO_CA_CERT, SubmitBtnText } from 'uiSrc/pages/home/constants'
+import { applyTlSDatabase, autoFillFormDetails, getTlsSettings } from 'uiSrc/pages/home/utils'
+import { ADD_NEW, NO_CA_CERT, SubmitBtnText } from 'uiSrc/pages/home/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
 import SentinelConnectionForm from './SentinelConnectionForm'
 
@@ -19,12 +19,12 @@ export interface Props {
   width: number
   onClose?: () => void
 }
-const getDefaultHost = () => '127.0.0.1'
-const getDefaultPort = () => '26379'
+const DEFAULT_SENTINEL_HOST = '127.0.0.1'
+const DEFAULT_SENTINEL_PORT = '26379'
 
 const INITIAL_VALUES = {
-  host: getDefaultHost(),
-  port: getDefaultPort(),
+  host: DEFAULT_SENTINEL_HOST,
+  port: DEFAULT_SENTINEL_PORT,
   username: '',
   password: '',
   tls: false,
@@ -86,55 +86,7 @@ const SentinelConnectionWrapper = (props: Props) => {
   }
 
   const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
-    const {
-      newCaCert,
-      tls,
-      sni,
-      servername,
-      newCaCertName,
-      selectedCaCertName,
-      tlsClientAuthRequired,
-      verifyServerTlsCert,
-      newTlsCertPairName,
-      selectedTlsClientCertId,
-      newTlsClientCert,
-      newTlsClientKey,
-    } = values
-
-    const tlsSettings = {
-      useTls: tls,
-      servername: (sni && servername) || undefined,
-      verifyServerCert: verifyServerTlsCert,
-      caCert:
-        !tls || selectedCaCertName === NO_CA_CERT
-          ? undefined
-          : selectedCaCertName === ADD_NEW_CA_CERT
-            ? {
-              new: {
-                name: newCaCertName,
-                certificate: newCaCert,
-              },
-            }
-            : {
-              name: selectedCaCertName,
-            },
-      clientAuth: tls && tlsClientAuthRequired,
-      clientCert: !tls
-        ? undefined
-        : typeof selectedTlsClientCertId === 'string'
-          && tlsClientAuthRequired
-          && selectedTlsClientCertId !== ADD_NEW
-          ? { id: selectedTlsClientCertId }
-          : selectedTlsClientCertId === ADD_NEW && tlsClientAuthRequired
-            ? {
-              new: {
-                name: newTlsCertPairName,
-                certificate: newTlsClientCert,
-                key: newTlsClientKey,
-              },
-            }
-            : undefined,
-    }
+    const tlsSettings = getTlsSettings(values)
 
     addDatabase(tlsSettings, values)
   }

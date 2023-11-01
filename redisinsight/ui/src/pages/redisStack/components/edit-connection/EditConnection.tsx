@@ -18,10 +18,10 @@ import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
+import RightPanel from 'uiSrc/pages/home/components/RightPanel/RightPanel'
 
 import './styles.scss'
 import styles from './styles.module.scss'
-import RightPanel from 'uiSrc/pages/home/components/RightPanel/RightPanel'
 
 interface IState {
   loading: boolean;

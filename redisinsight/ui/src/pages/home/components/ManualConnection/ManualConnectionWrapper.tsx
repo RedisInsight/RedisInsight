@@ -23,8 +23,8 @@ import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails } from 'uiSrc/pages/home/utils'
-import { ADD_NEW, ADD_NEW_CA_CERT, DEFAULT_TIMEOUT, NO_CA_CERT, SshPassType, SubmitBtnText } from 'uiSrc/pages/home/constants'
+import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails, getTlsSettings } from 'uiSrc/pages/home/utils'
+import { ADD_NEW, DEFAULT_TIMEOUT, NO_CA_CERT, SshPassType, SubmitBtnText } from 'uiSrc/pages/home/constants'
 import ManualConnectionForm from './ManualConnectionForm'
 
 export interface Props {
@@ -36,11 +36,6 @@ export interface Props {
   onClose?: () => void
   onDbEdited?: () => void
   onAliasEdited?: (value: string) => void
-}
-
-export enum TitleDatabaseText {
-  AddDatabase = 'Add Redis Database',
-  EditDatabase = 'Edit Redis Database',
 }
 
 const getInitialValues = (editedInstance?: Nullable<Record<string, any>>) => ({
@@ -165,20 +160,6 @@ const ManualConnectionWrapper = (props: Props) => {
     dispatch(cloneInstanceAction(payload))
   }
 
-  const handleUpdateEditingName = (name: string) => {
-    const requiredFields = [
-      'id',
-      'host',
-      'port',
-      'username',
-      'password',
-      'tls',
-      'sentinelMaster',
-    ]
-    const database = pick(editedInstance, ...requiredFields)
-    dispatch(updateInstanceAction({ ...database, name }))
-  }
-
   const handleTestConnectionDatabase = (values: DbConnectionInfo) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED
@@ -195,54 +176,9 @@ const ManualConnectionWrapper = (props: Props) => {
       sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
-      newCaCert,
-      tls,
-      sni,
-      servername,
-      newCaCertName,
-      selectedCaCertName,
-      tlsClientAuthRequired,
-      verifyServerTlsCert,
-      newTlsCertPairName,
-      selectedTlsClientCertId,
-      newTlsClientCert,
-      newTlsClientKey,
     } = values
 
-    const tlsSettings = {
-      useTls: tls,
-      servername: (sni && servername) || undefined,
-      verifyServerCert: verifyServerTlsCert,
-      caCert:
-        !tls || selectedCaCertName === NO_CA_CERT
-          ? undefined
-          : selectedCaCertName === ADD_NEW_CA_CERT
-            ? {
-              new: {
-                name: newCaCertName,
-                certificate: newCaCert,
-              },
-            }
-            : {
-              name: selectedCaCertName,
-            },
-      clientAuth: tls && tlsClientAuthRequired,
-      clientCert: !tls
-        ? undefined
-        : typeof selectedTlsClientCertId === 'string'
-        && tlsClientAuthRequired
-        && selectedTlsClientCertId !== ADD_NEW
-          ? { id: selectedTlsClientCertId }
-          : selectedTlsClientCertId === ADD_NEW && tlsClientAuthRequired
-            ? {
-              new: {
-                name: newTlsCertPairName,
-                certificate: newTlsClientCert,
-                key: newTlsClientKey,
-              },
-            }
-            : undefined,
-    }
+    const tlsSettings = getTlsSettings(values)
 
     const database: any = {
       name,
@@ -363,55 +299,7 @@ const ManualConnectionWrapper = (props: Props) => {
   }
 
   const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
-    const {
-      newCaCert,
-      tls,
-      sni,
-      servername,
-      newCaCertName,
-      selectedCaCertName,
-      tlsClientAuthRequired,
-      verifyServerTlsCert,
-      newTlsCertPairName,
-      selectedTlsClientCertId,
-      newTlsClientCert,
-      newTlsClientKey,
-    } = values
-
-    const tlsSettings = {
-      useTls: tls,
-      servername: (sni && servername) || undefined,
-      verifyServerCert: verifyServerTlsCert,
-      caCert:
-        !tls || selectedCaCertName === NO_CA_CERT
-          ? undefined
-          : selectedCaCertName === ADD_NEW_CA_CERT
-            ? {
-              new: {
-                name: newCaCertName,
-                certificate: newCaCert,
-              },
-            }
-            : {
-              name: selectedCaCertName,
-            },
-      clientAuth: tls && tlsClientAuthRequired,
-      clientCert: !tls
-        ? undefined
-        : typeof selectedTlsClientCertId === 'string'
-        && tlsClientAuthRequired
-        && selectedTlsClientCertId !== ADD_NEW
-          ? { id: selectedTlsClientCertId }
-          : selectedTlsClientCertId === ADD_NEW && tlsClientAuthRequired
-            ? {
-              new: {
-                name: newTlsCertPairName,
-                certificate: newTlsClientCert,
-                key: newTlsClientKey,
-              },
-            }
-            : undefined,
-    }
+    const tlsSettings = getTlsSettings(values)
 
     if (editMode) {
       editDatabase(tlsSettings, values, isCloneMode)
@@ -480,11 +368,6 @@ const ManualConnectionWrapper = (props: Props) => {
         loading={loadingStandalone}
         buildType={server?.buildType as BuildType}
         submitButtonText={getSubmitButtonText()}
-        titleText={
-          editMode
-            ? TitleDatabaseText.EditDatabase
-            : TitleDatabaseText.AddDatabase
-        }
         onSubmit={handleConnectionFormSubmit}
         onTestConnection={handleTestConnectionDatabase}
         onClose={handleOnClose}
@@ -492,7 +375,6 @@ const ManualConnectionWrapper = (props: Props) => {
         isEditMode={editMode}
         isCloneMode={isCloneMode}
         setIsCloneMode={setIsCloneMode}
-        updateEditingName={handleUpdateEditingName}
         onAliasEdited={onAliasEdited}
       />
     </div>

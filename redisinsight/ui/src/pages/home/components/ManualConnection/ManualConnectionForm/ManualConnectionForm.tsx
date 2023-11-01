@@ -39,6 +39,7 @@ import {
   SshPassType,
   DEFAULT_TIMEOUT,
   NONE,
+  SubmitBtnText,
 } from 'uiSrc/pages/home/constants'
 import { getFormErrors, getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
@@ -57,7 +58,6 @@ import {
   SentinelHostPort,
   SentinelMasterDatabase,
 } from 'uiSrc/pages/home/components/Form/sentinel'
-import { SubmitBtnText } from 'uiSrc/pages/home/components/ManualConnection/ManualConnectionWrapper'
 
 export interface Props {
   width: number
@@ -418,68 +418,12 @@ const ManualConnectionForm = (props: Props) => {
       )}
       <div className="getStartedForm" ref={formRef}>
         {!isEditMode && !isFromCloud && (
-        <>
-          <MessageStandalone />
-          <br />
-        </>
+          <>
+            <MessageStandalone />
+            <br />
+          </>
         )}
         {!isEditMode && !isFromCloud && (
-        <EuiForm
-          component="form"
-          onSubmit={formik.handleSubmit}
-          data-testid="form"
-          onKeyDown={onKeyDown}
-        >
-          <DatabaseForm
-            formik={formik}
-            flexItemClassName={flexItemClassName}
-            flexGroupClassName={flexGroupClassName}
-            isCloneMode={isCloneMode}
-            isEditMode={isEditMode}
-            connectionType={connectionType}
-            instanceType={InstanceType.Standalone}
-            onHostNamePaste={onHostNamePaste}
-          />
-          <DbIndex
-            formik={formik}
-            flexItemClassName={flexItemClassName}
-            flexGroupClassName={flexGroupClassName}
-          />
-          <DbCompressor
-            formik={formik}
-            flexItemClassName={flexItemClassName}
-            flexGroupClassName={flexGroupClassName}
-          />
-          <TlsDetails
-            formik={formik}
-            flexItemClassName={flexItemClassName}
-            flexGroupClassName={flexGroupClassName}
-            certificates={certificates}
-            caCertificates={caCertificates}
-          />
-          {buildType !== BuildType.RedisStack && (
-            <SSHDetails
-              formik={formik}
-              flexItemClassName={flexItemClassName}
-              flexGroupClassName={flexGroupClassName}
-            />
-          )}
-        </EuiForm>
-        )}
-        {(isEditMode || isCloneMode || isFromCloud) && connectionType !== ConnectionType.Sentinel && (
-        <>
-          {!isCloneMode && (
-            <DbInfo
-              host={host}
-              port={port}
-              connectionType={connectionType}
-              db={db}
-              modules={modules}
-              nameFromProvider={nameFromProvider}
-              nodes={nodes}
-              isFromCloud={isFromCloud}
-            />
-          )}
           <EuiForm
             component="form"
             onSubmit={formik.handleSubmit}
@@ -488,22 +432,19 @@ const ManualConnectionForm = (props: Props) => {
           >
             <DatabaseForm
               formik={formik}
-              instanceType={InstanceType.Standalone}
               flexItemClassName={flexItemClassName}
               flexGroupClassName={flexGroupClassName}
               isCloneMode={isCloneMode}
               isEditMode={isEditMode}
-              isFromCloud={isFromCloud}
               connectionType={connectionType}
+              instanceType={InstanceType.Standalone}
               onHostNamePaste={onHostNamePaste}
             />
-            {isCloneMode && (
             <DbIndex
               formik={formik}
               flexItemClassName={flexItemClassName}
               flexGroupClassName={flexGroupClassName}
             />
-            )}
             <DbCompressor
               formik={formik}
               flexItemClassName={flexItemClassName}
@@ -517,125 +458,52 @@ const ManualConnectionForm = (props: Props) => {
               caCertificates={caCertificates}
             />
             {buildType !== BuildType.RedisStack && (
-            <SSHDetails
-              formik={formik}
-              flexItemClassName={flexItemClassName}
-              flexGroupClassName={flexGroupClassName}
-            />
+              <SSHDetails
+                formik={formik}
+                flexItemClassName={flexItemClassName}
+                flexGroupClassName={flexGroupClassName}
+              />
             )}
           </EuiForm>
-        </>
         )}
-        {(isEditMode || isCloneMode) && connectionType === ConnectionType.Sentinel && (
-        <>
-          <EuiForm
-            component="form"
-            onSubmit={formik.handleSubmit}
-            data-testid="form"
-            onKeyDown={onKeyDown}
-          >
+        {(isEditMode || isCloneMode || isFromCloud) && connectionType !== ConnectionType.Sentinel && (
+          <>
             {!isCloneMode && (
-            <>
-              <DbInfoSentinel
-                nameFromProvider={nameFromProvider}
+              <DbInfo
+                host={host}
+                port={port}
                 connectionType={connectionType}
-                sentinelMaster={sentinelMaster}
+                db={db}
+                modules={modules}
+                nameFromProvider={nameFromProvider}
+                nodes={nodes}
+                isFromCloud={isFromCloud}
               />
-              <EuiCollapsibleNavGroup
-                title="Database"
-                isCollapsible
-                initialIsOpen={false}
-                data-testid="database-nav-group"
-              >
-                <SentinelMasterDatabase
-                  formik={formik}
-                  flexItemClassName={flexItemClassName}
-                  flexGroupClassName={flexGroupClassName}
-                  db={db}
-                  isCloneMode={isCloneMode}
-                />
-              </EuiCollapsibleNavGroup>
-              <EuiCollapsibleNavGroup
-                title="Sentinel"
-                isCollapsible
-                initialIsOpen={false}
-                data-testid="sentinel-nav-group"
-              >
-                <SentinelHostPort
-                  host={host}
-                  port={port}
-                />
-                <DatabaseForm
-                  formik={formik}
-                  flexItemClassName={flexItemClassName}
-                  flexGroupClassName={flexGroupClassName}
-                  isCloneMode={isCloneMode}
-                  isEditMode={isEditMode}
-                  connectionType={connectionType}
-                  instanceType={InstanceType.Standalone}
-                  onHostNamePaste={onHostNamePaste}
-                />
-              </EuiCollapsibleNavGroup>
-
-              <EuiCollapsibleNavGroup
-                title="TLS Details"
-                isCollapsible
-                initialIsOpen={false}
-              >
-                <TlsDetails
-                  formik={formik}
-                  flexItemClassName={flexItemClassName}
-                  flexGroupClassName={flexGroupClassName}
-                  certificates={certificates}
-                  caCertificates={caCertificates}
-                />
-              </EuiCollapsibleNavGroup>
-            </>
             )}
-            {isCloneMode && (
-            <>
-              <PrimaryGroupSentinel
+            <EuiForm
+              component="form"
+              onSubmit={formik.handleSubmit}
+              data-testid="form"
+              onKeyDown={onKeyDown}
+            >
+              <DatabaseForm
                 formik={formik}
+                instanceType={InstanceType.Standalone}
                 flexItemClassName={flexItemClassName}
                 flexGroupClassName={flexGroupClassName}
+                isCloneMode={isCloneMode}
+                isEditMode={isEditMode}
+                isFromCloud={isFromCloud}
+                connectionType={connectionType}
+                onHostNamePaste={onHostNamePaste}
               />
-              <EuiCollapsibleNavGroup
-                title="Database"
-                isCollapsible
-                initialIsOpen={false}
-                data-testid="database-nav-group-clone"
-              >
-                <SentinelMasterDatabase
+              {isCloneMode && (
+                <DbIndex
                   formik={formik}
                   flexItemClassName={flexItemClassName}
                   flexGroupClassName={flexGroupClassName}
-                  db={db}
-                  isCloneMode={isCloneMode}
                 />
-              </EuiCollapsibleNavGroup>
-              <EuiCollapsibleNavGroup
-                title="Sentinel"
-                isCollapsible
-                initialIsOpen={false}
-                data-testid="sentinel-nav-group-clone"
-              >
-                <DatabaseForm
-                  formik={formik}
-                  flexItemClassName={flexItemClassName}
-                  flexGroupClassName={flexGroupClassName}
-                  isCloneMode={isCloneMode}
-                  isEditMode={isEditMode}
-                  connectionType={connectionType}
-                  instanceType={InstanceType.Standalone}
-                  onHostNamePaste={onHostNamePaste}
-                />
-              </EuiCollapsibleNavGroup>
-              <EuiSpacer size="m" />
-              <DbIndex
-                formik={formik}
-                flexItemClassName={flexItemClassName}
-                flexGroupClassName={flexGroupClassName}
-              />
+              )}
               <DbCompressor
                 formik={formik}
                 flexItemClassName={flexItemClassName}
@@ -648,10 +516,141 @@ const ManualConnectionForm = (props: Props) => {
                 certificates={certificates}
                 caCertificates={caCertificates}
               />
-            </>
-            )}
-          </EuiForm>
-        </>
+              {buildType !== BuildType.RedisStack && (
+                <SSHDetails
+                  formik={formik}
+                  flexItemClassName={flexItemClassName}
+                  flexGroupClassName={flexGroupClassName}
+                />
+              )}
+            </EuiForm>
+          </>
+        )}
+        {(isEditMode || isCloneMode) && connectionType === ConnectionType.Sentinel && (
+          <>
+            <EuiForm
+              component="form"
+              onSubmit={formik.handleSubmit}
+              data-testid="form"
+              onKeyDown={onKeyDown}
+            >
+              {!isCloneMode && (
+                <>
+                  <DbInfoSentinel
+                    nameFromProvider={nameFromProvider}
+                    connectionType={connectionType}
+                    sentinelMaster={sentinelMaster}
+                  />
+                  <EuiCollapsibleNavGroup
+                    title="Database"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="database-nav-group"
+                  >
+                    <SentinelMasterDatabase
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      db={db}
+                      isCloneMode={isCloneMode}
+                    />
+                  </EuiCollapsibleNavGroup>
+                  <EuiCollapsibleNavGroup
+                    title="Sentinel"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="sentinel-nav-group"
+                  >
+                    <SentinelHostPort
+                      host={host}
+                      port={port}
+                    />
+                    <DatabaseForm
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      isCloneMode={isCloneMode}
+                      isEditMode={isEditMode}
+                      connectionType={connectionType}
+                      instanceType={InstanceType.Standalone}
+                      onHostNamePaste={onHostNamePaste}
+                    />
+                  </EuiCollapsibleNavGroup>
+                  <EuiCollapsibleNavGroup
+                    title="TLS Details"
+                    isCollapsible
+                    initialIsOpen={false}
+                  >
+                    <TlsDetails
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      certificates={certificates}
+                      caCertificates={caCertificates}
+                    />
+                  </EuiCollapsibleNavGroup>
+                </>
+              )}
+              {isCloneMode && (
+                <>
+                  <PrimaryGroupSentinel
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                  />
+                  <EuiCollapsibleNavGroup
+                    title="Database"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="database-nav-group-clone"
+                  >
+                    <SentinelMasterDatabase
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      db={db}
+                      isCloneMode={isCloneMode}
+                    />
+                  </EuiCollapsibleNavGroup>
+                  <EuiCollapsibleNavGroup
+                    title="Sentinel"
+                    isCollapsible
+                    initialIsOpen={false}
+                    data-testid="sentinel-nav-group-clone"
+                  >
+                    <DatabaseForm
+                      formik={formik}
+                      flexItemClassName={flexItemClassName}
+                      flexGroupClassName={flexGroupClassName}
+                      isCloneMode={isCloneMode}
+                      isEditMode={isEditMode}
+                      connectionType={connectionType}
+                      instanceType={InstanceType.Standalone}
+                      onHostNamePaste={onHostNamePaste}
+                    />
+                  </EuiCollapsibleNavGroup>
+                  <EuiSpacer size="m" />
+                  <DbIndex
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                  />
+                  <DbCompressor
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                  />
+                  <TlsDetails
+                    formik={formik}
+                    flexItemClassName={flexItemClassName}
+                    flexGroupClassName={flexGroupClassName}
+                    certificates={certificates}
+                    caCertificates={caCertificates}
+                  />
+                </>
+              )}
+            </EuiForm>
+          </>
         )}
       </div>
       <Footer />

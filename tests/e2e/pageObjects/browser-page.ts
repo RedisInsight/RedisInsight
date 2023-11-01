@@ -570,6 +570,7 @@ export class BrowserPage extends InstancePage {
      */
     async deleteKeyByName(keyName: string): Promise<void> {
         await this.searchByKeyName(keyName);
+        await t.hover(this.keyNameInTheList);
         await t.click(this.keyNameInTheList);
         await t.click(this.deleteKeyButton);
         await t.click(this.confirmDeleteKeyButton);

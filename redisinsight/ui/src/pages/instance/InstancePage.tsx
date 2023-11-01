@@ -20,10 +20,11 @@ import {
   setAppContextInitialState,
   setDbConfig,
 } from 'uiSrc/slices/app/context'
-import { resetPatternKeysData } from 'uiSrc/slices/browser/keys'
+import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
+import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
@@ -67,18 +68,20 @@ const InstancePage = ({ routes = [] }: Props) => {
   }, [connectionInstanceId])
 
   const resetContext = () => {
+    dispatch(resetKeys())
     dispatch(setMonitorInitialState())
     dispatch(setInitialPubSubState())
     dispatch(setBulkActionsInitialState())
     dispatch(setAppContextInitialState())
     dispatch(resetPatternKeysData())
+    dispatch(resetCliHelperSettings())
     dispatch(resetRedisearchKeysData())
     dispatch(setClusterDetailsInitialState())
     dispatch(setDatabaseAnalysisInitialState())
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
-    dispatch(setTriggeredFunctionsInitialState())
     dispatch(resetRecommendationsHighlighting())
+    dispatch(setTriggeredFunctionsInitialState())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

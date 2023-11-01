@@ -107,7 +107,7 @@ describe('Node', () => {
     expect(mockSetOpen).not.toBeCalled()
   })
 
-  it.only('name, ttl and size should be rendered', () => {
+  it('name, ttl and size should be rendered', () => {
     const { getByTestId } = render(<Node
       {...instance(mockedProps)}
       data={mockedDataWithMetadata}

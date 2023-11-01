@@ -50,8 +50,8 @@ test
         let firstDatabaseModules: string[] = [];
         let secondDatabaseModules: string[] = [];
         //Remember modules
-        await t.click(browserPage.OverviewPanel.overviewMoreInfo);
-        const moduleIcons = Selector('div').find('[data-testid^=Redi]');
+        await t.click(browserPage.OverviewPanel.databaseInfoIcon);
+        const moduleIcons = Selector('div').find('[data-testid^=module_]');
         let countOfModules = await moduleIcons.count;
         for(let i = 0; i < countOfModules; i++) {
             firstDatabaseModules.push(await moduleIcons.nth(i).textContent);

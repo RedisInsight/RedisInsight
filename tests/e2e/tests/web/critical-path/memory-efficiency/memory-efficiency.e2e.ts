@@ -53,8 +53,8 @@ test
         await t.click(memoryEfficiencyPage.newReportBtn);
         await t.expect(memoryEfficiencyPage.noKeysText.textContent).eql(noKeysMessage, 'No keys message not displayed or text is invalid');
         // Verify that user can open workbench page from No keys to display message
-        await t.click(browserPage.NavigationPanel.workbenchButton);
-        await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
+        await t.click(memoryEfficiencyPage.workbenchLink);
+        await t.expect(workbenchPage.queryInput.visible).ok('Workbench page is not opened');
         // Turn back to Memory Efficiency page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that user can see a tooltip when hovering over the icon on the right of the “New analysis” button

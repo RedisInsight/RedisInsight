@@ -12,6 +12,7 @@ export class OverviewPanel {
     overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     changeIndexBtn = Selector('[data-testid=change-index-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
+    databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     // PANEL
     overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
     // INPUTS

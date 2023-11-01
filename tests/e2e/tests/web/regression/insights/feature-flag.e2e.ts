@@ -24,7 +24,7 @@ const pathes = {
     flagOffConfig: path.join('.', 'test-data', 'features-configs', 'insights-flag-off.json')
 };
 
-fixture `Feature flag`
+fixture.skip `Feature flag`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

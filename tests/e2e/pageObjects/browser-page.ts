@@ -67,8 +67,6 @@ export class BrowserPage extends InstancePage {
     applyEditButton = Selector('[data-testid=apply-edit-btn]');
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
-    modulesButton = Selector('[data-testid$=_module]');
-    databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
     treeViewSeparator = Selector('[data-testid=tree-view-delimiter-btn]');

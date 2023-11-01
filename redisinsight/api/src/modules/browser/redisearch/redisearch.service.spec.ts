@@ -70,11 +70,10 @@ describe('RedisearchService', () => {
     service = module.get<RedisearchService>(RedisearchService);
     browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
     databaseClientFactory = module.get<DatabaseClientFactory>(DatabaseClientFactory);
-    standaloneClient.sendCommand = jest.fn().mockResolvedValue(undefined);
-    clusterClient.sendCommand = jest.fn().mockResolvedValue(undefined);
     browserHistory.create.mockResolvedValue({});
 
-    standaloneClient.nodes.mockReturnValue([mockStandaloneRedisClient, mockStandaloneRedisClient]);
+    standaloneClient.sendCommand = jest.fn().mockResolvedValue(undefined);
+    clusterClient.sendCommand = jest.fn().mockResolvedValue(undefined);
     clusterClient.nodes.mockReturnValue([mockClusterRedisClient, mockClusterRedisClient]);
   });
 

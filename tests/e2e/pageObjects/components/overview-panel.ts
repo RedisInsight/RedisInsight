@@ -6,6 +6,10 @@ export class OverviewPanel {
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
     databaseModules = Selector('[data-testid$=module]');
     overviewTooltipStatTitle = Selector('[data-testid=overview-db-stat-title]');
+    overviewCpu = Selector('[data-test-subj=overview-cpu]');
+    overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
+    overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
+    overviewSpinner = Selector('[class^= euiLoadingSpinner--medium]');
     // BUTTONS
     myRedisDBLink = Selector('[data-testid=my-redis-db-btn]', { timeout: 1000 });
     overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');
@@ -15,6 +19,7 @@ export class OverviewPanel {
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     // PANEL
     overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
+    databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]', { timeout: 2000 });
     // INPUTS
     changeIndexInput = Selector('[data-testid=change-index-input]');
 
@@ -35,5 +40,12 @@ export class OverviewPanel {
      */
     async verifyDbIndexSelected(dbIndex: number): Promise<void> {
         await t.expect(this.changeIndexBtn.textContent).contains(dbIndex.toString());
+    }
+
+    /**
+     * wait for cpu is displayed
+     */
+    async waitForCpuIsCalculated(): Promise<void> {
+        await t.expect(this.overviewSpinner.visible).notOk();
     }
 }

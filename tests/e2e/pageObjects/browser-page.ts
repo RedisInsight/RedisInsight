@@ -213,16 +213,12 @@ export class BrowserPage extends InstancePage {
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
-    overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
-    overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
-    overviewCpu = Selector('[data-test-subj=overview-cpu]');
     treeViewArea = Selector('[data-test-subj=tree-view-panel]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
     treeViewKeysNumber = Selector('[data-testid^=count_]');
     treeViewPercentage = Selector('[data-testid^=percentage_]');
     treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
     totalKeysNumber = Selector('[data-testid=keys-total]');
-    databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
     treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
     treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
     ttlValueInKeysTable = Selector('[data-testid^=ttl-]');

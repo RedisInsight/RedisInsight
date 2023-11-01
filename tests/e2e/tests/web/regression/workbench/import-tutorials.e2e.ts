@@ -6,7 +6,7 @@ import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pag
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
-import { deleteAllKeysFromDB, verifyKeysDisplayedInTheList } from '../../../../helpers/keys';
+import { deleteAllKeysFromDB, verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -205,5 +205,5 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Verify that keys of all types can be uploaded
         await browserPage.searchByKeyName('*key1*');
-        await verifyKeysDisplayedInTheList(keyNames);
+        await verifyKeysDisplayingInTheList(keyNames, true);
     });

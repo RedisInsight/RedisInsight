@@ -1,8 +1,7 @@
 import { AxiosError } from 'axios'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
 import { Nullable } from 'uiSrc/utils'
-import { DurationUnits, FeatureFlags, ICommands } from 'uiSrc/constants'
-import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { DurationUnits, FeatureFlags, ICommands, SortOrder } from 'uiSrc/constants'
 import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
@@ -50,6 +49,7 @@ export interface StateAppContext {
   lastPage: string
   dbConfig: {
     treeViewDelimiter: string
+    treeViewSort: SortOrder
     slowLogDurationUnit: DurationUnits
     showHiddenRecommendations: boolean
   }
@@ -70,17 +70,10 @@ export interface StateAppContext {
     }
     tree: {
       delimiter: string
-      panelSizes: {
-        [key: string]: number
-      }
       openNodes: {
         [key: string]: boolean
       }
-      selectedLeaf: {
-        [key: string]: {
-          [key: string]: IKeyPropTypes
-        }
-      }
+      selectedLeaf: Nullable<string>
     }
     bulkActions: {
       opened: boolean

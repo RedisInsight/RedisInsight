@@ -10,7 +10,7 @@ import {
 import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
-import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList } from '../../../../helpers/keys';
+import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
 const browserPage = new BrowserPage();
@@ -81,7 +81,7 @@ test
 
         // Verify that user can search by index in Browser view
         await browserPage.selectIndexByName(indexName);
-        await verifyKeysDisplayedInTheList(keyNames);
+        await verifyKeysDisplayingInTheList(keyNames, true);
         await t.expect(browserPage.getKeySelectorByName(keyName).exists).notOk('Key without index displayed after search');
         // Verify that user can search by index plus key value
         await browserPage.searchByKeyName('Hall School');
@@ -107,15 +107,15 @@ test
         // Verify that user can search by index in Tree view
         await t.click(browserPage.treeViewButton);
         // Change delimiter
-        await browserPage.changeDelimiterInTreeView('-');
+        await browserPage.TreeView.changeDelimiterInTreeView('-');
         await browserPage.selectIndexByName(indexName);
-        await verifyKeysDisplayedInTheList(keyNames);
+        await verifyKeysDisplayingInTheList(keyNames, true);
         await t.expect(browserPage.getKeySelectorByName(keyName).exists).notOk('Key without index displayed after search');
 
         // Verify that user see the database scanned when he switch to Pattern search mode
         await t.click(browserPage.patternModeBtn);
         await t.click(browserPage.browserViewButton);
-        await verifyKeysDisplayedInTheList(keyNames);
+        await verifyKeysDisplayingInTheList(keyNames, true);
         await t.expect(browserPage.getKeySelectorByName(keyName).exists).ok('Database not scanned after returning to Pattern search mode');
     });
 test
@@ -273,9 +273,7 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that indexed keys from previous DB are NOT displayed when user connects to another DB', async t => {
-        /*
-            Link to ticket: https://redislabs.atlassian.net/browse/RI-3863
-        */
+        // Link to ticket: https://redislabs.atlassian.net/browse/RI-3863
 
         // key names to validate in the standalone database
         keyNames = [`${keyNameSimpleDb}:1`, `${keyNameSimpleDb}:2`, `${keyNameSimpleDb}:3`, `${keyNameSimpleDb}:4`, `${keyNameSimpleDb}:5`];
@@ -308,14 +306,14 @@ test
         await t.click(browserPage.treeViewButton); // switch to tree view
         await t.click(browserPage.redisearchModeBtn); // click redisearch button
         await browserPage.selectIndexByName(indexNameSimpleDb); // select pre-created index in the standalone database
-        await browserPage.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
+        await browserPage.TreeView.changeDelimiterInTreeView('-'); // change delimiter in tree view to be able to verify keys easily
 
-        await verifyKeysDisplayedInTheList(keyNames); // verify created keys are visible
+        await verifyKeysDisplayingInTheList(keyNames, true); // verify created keys are visible
 
         await t.click(browserPage.OverviewPanel.myRedisDBLink); // go back to database selection page
         await myRedisDatabasePage.clickOnDBByName(bigDbName); // click database name from ossStandaloneBigConfig.databaseName
 
-        await verifyKeysNotDisplayedInTheList(keyNames); // Verify that standandalone database keys are NOT visible
+        await verifyKeysDisplayingInTheList(keyNames, false); // Verify that standandalone database keys are NOT visible
 
         await t.expect(Selector('span').withText('Select Index').exists).ok('Index is still selected');
     });

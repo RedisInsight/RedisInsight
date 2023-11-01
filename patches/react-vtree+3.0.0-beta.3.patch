@@ -1,0 +1,49 @@
+diff --git a/node_modules/react-vtree/dist/cjs/Tree.js b/node_modules/react-vtree/dist/cjs/Tree.js
+index c46ce3e..879f0a6 100644
+--- a/node_modules/react-vtree/dist/cjs/Tree.js
++++ b/node_modules/react-vtree/dist/cjs/Tree.js
+@@ -33,6 +33,7 @@ var Row = function Row(_ref) {
+   return /*#__PURE__*/_react.default.createElement(Node, Object.assign({
+     isScrolling: isScrolling,
+     style: style,
++    index: index,
+     treeData: treeData
+   }, data));
+ };
+diff --git a/node_modules/react-vtree/dist/es/Tree.d.ts b/node_modules/react-vtree/dist/es/Tree.d.ts
+index 5e7f57e..b216b36 100644
+--- a/node_modules/react-vtree/dist/es/Tree.d.ts
++++ b/node_modules/react-vtree/dist/es/Tree.d.ts
+@@ -24,6 +24,8 @@ export declare type NodePublicState<TData extends NodeData> = Readonly<{
+     data: TData;
+     setOpen: (state: boolean) => Promise<void>;
+ }> & {
++    index: number;
++    style: object;
+     isOpen: boolean;
+ };
+ export declare type NodeRecord<TNodePublicState extends NodePublicState<any>> = Readonly<{
+diff --git a/node_modules/react-vtree/dist/es/Tree.js b/node_modules/react-vtree/dist/es/Tree.js
+index 2b1c7c0..b22e873 100644
+--- a/node_modules/react-vtree/dist/es/Tree.js
++++ b/node_modules/react-vtree/dist/es/Tree.js
+@@ -19,6 +19,7 @@ export var Row = function Row(_ref) {
+   return /*#__PURE__*/React.createElement(Node, Object.assign({
+     isScrolling: isScrolling,
+     style: style,
++    index: index,
+     treeData: treeData
+   }, data));
+ };
+diff --git a/node_modules/react-vtree/dist/lib/Tree.js b/node_modules/react-vtree/dist/lib/Tree.js
+index fb824bd..6feba4e 100644
+--- a/node_modules/react-vtree/dist/lib/Tree.js
++++ b/node_modules/react-vtree/dist/lib/Tree.js
+@@ -17,6 +17,7 @@ export const Row = ({
+   return /*#__PURE__*/React.createElement(Node, Object.assign({
+     isScrolling: isScrolling,
+     style: style,
++    index: index,
+     treeData: treeData
+   }, data));
+ };

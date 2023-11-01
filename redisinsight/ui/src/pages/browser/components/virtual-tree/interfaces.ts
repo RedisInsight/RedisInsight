@@ -1,5 +1,6 @@
 import { FixedSizeNodeData } from 'react-vtree'
-import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 
 export interface TreeNode {
   children: TreeNode[]
@@ -24,12 +25,10 @@ export interface NodeMetaData {
   keyCount: number,
   name: string,
   fullName: string,
-  setItems: (keys: any[]) => void,
   updateStatusSelected: (fullName: string, keys: any) => void,
   updateStatusOpen: (name: string, value: boolean) => void,
   leafIcon: string,
   keyApproximate: number,
-  keys: any,
   isSelected: boolean,
   isOpenByDefault: boolean,
 }
@@ -37,14 +36,24 @@ export interface NodeMetaData {
 export interface TreeData extends FixedSizeNodeData {
   isLeaf: boolean
   name: string
+  nameString: string
+  nameBuffer: RedisResponseBuffer
+  path: string
   keyCount: number
   keyApproximate: number
   fullName: string
+  shortName?: string
   leafIcon: string
-  keys: IKeyPropTypes[]
+  type: KeyTypes | ModulesKeyTypes
+  ttl: number
+  size: number
   nestingLevel: number
+  deleting: boolean
   isSelected: boolean
-  setItems: (keys: any[]) => void
+  children?: TreeData[]
   updateStatusOpen: (fullName: string, value: boolean) => void
-  updateStatusSelected: (fullName: string, keys: IKeyPropTypes[]) => void
+  updateStatusSelected: (key: RedisString) => void
+  getMetadata: (key: RedisString, path: string) => void
+  onDelete: (key: RedisResponseBuffer) => void
+  onDeleteClicked: (type: KeyTypes | ModulesKeyTypes) => void
 }

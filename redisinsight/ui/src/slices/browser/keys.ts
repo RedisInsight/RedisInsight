@@ -1027,6 +1027,39 @@ export function fetchKeysMetadata(
   }
 }
 
+// Asynchronous thunk action
+export function fetchKeysMetadataTree(
+  keys: RedisString[],
+  filter: Nullable<KeyTypes>,
+  signal?: AbortSignal,
+  onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
+  onFailAction?: () => void
+) {
+  return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { data } = await apiService.post<GetKeyInfoResponse[]>(
+        getUrl(
+          state.connections.instances?.connectedInstance?.id,
+          ApiEndpoints.KEYS_METADATA
+        ),
+        { keys: keys.map(([,nameBuffer]) => nameBuffer), type: filter || undefined },
+        { params: { encoding: state.app.info.encoding }, signal }
+      )
+
+      const newData = data.map((key, i) => ({ ...key, path: keys[i][0] }))
+
+      onSuccessAction?.(newData)
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        onFailAction?.()
+        console.error(error)
+      }
+    }
+  }
+}
+
 export function fetchPatternHistoryAction(
   onSuccess?: () => void,
   onFailed?: () => void,

@@ -1,33 +1,33 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useState, useTransition } from 'react'
-import cx from 'classnames'
-import { EuiResizableContainer } from '@elastic/eui'
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { isEmpty } from 'lodash'
+import cx from 'classnames'
 
+import { useParams } from 'react-router-dom'
 import {
   appContextBrowserTree,
   resetBrowserTree,
   appContextDbConfig,
   setBrowserTreeNodesOpen,
-  setBrowserTreeSelectedLeaf
 } from 'uiSrc/slices/app/context'
 import { constructKeysToTree } from 'uiSrc/helpers'
-import VirtualTree from 'uiSrc/components/virtual-tree'
+import VirtualTree from 'uiSrc/pages/browser/components/virtual-tree'
 import TreeViewSVG from 'uiSrc/assets/img/icons/treeview.svg'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import { Nullable, bufferToString } from 'uiSrc/utils'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { KeyTypes } from 'uiSrc/constants'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
+import { deleteKeyAction, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
-import KeyTreeDelimiter from './KeyTreeDelimiter'
 
-import KeyList from '../key-list'
+import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
 
 export interface Props {
   keysState: KeysStoreData
   loading: boolean
+  deleting: boolean
   commonFilterType: Nullable<KeyTypes>
   selectKey: ({ rowData }: { rowData: any }) => void
   loadMoreItems: (
@@ -54,24 +54,19 @@ const KeyTree = forwardRef((props: Props, ref) => {
     keysState,
     onDelete,
     commonFilterType,
+    deleting,
     onAddKeyPanel,
-    onBulkActionsPanel
+    onBulkActionsPanel,
   } = props
 
-  const firstPanelId = 'tree'
-  const secondPanelId = 'keys'
+  const { instanceId } = useParams<{ instanceId: string }>()
+  const { openNodes } = useSelector(appContextBrowserTree)
+  const { treeViewDelimiter: delimiter = '', treeViewSort: sorting } = useSelector(appContextDbConfig)
+  const { nameString: selectedKeyName = null } = useSelector(selectedKeyDataSelector) ?? {}
 
-  const { panelSizes, openNodes, selectedLeaf } = useSelector(appContextBrowserTree)
-  const { treeViewDelimiter: delimiter = '' } = useSelector(appContextDbConfig)
-
-  const [,startTransition] = useTransition()
-
-  const [statusSelected, setStatusSelected] = useState(selectedLeaf)
   const [statusOpen, setStatusOpen] = useState(openNodes)
-  const [sizes, setSizes] = useState(panelSizes)
-  const [keyListState, setKeyListState] = useState<KeysStoreData>(keysState)
   const [constructingTree, setConstructingTree] = useState(false)
-  const [selectDefaultLeaf, setSelectDefaultLeaf] = useState(isEmpty(selectedLeaf))
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
   const [items, setItems] = useState<IKeyPropTypes[]>(parseKeyNames(keysState.keys ?? []))
 
   const dispatch = useDispatch()
@@ -83,19 +78,25 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }))
 
   useEffect(() => {
-    updateKeysList()
+    openSelectedKey(selectedKeyName)
   }, [])
 
   useEffect(() => {
     setStatusOpen(openNodes)
   }, [openNodes])
 
-  useEffect(() => {
-    setStatusSelected(selectedLeaf)
-    updateKeysList(Object.values(selectedLeaf)?.[0])
+  // open all parents for selected key
+  const openSelectedKey = (selectedKeyName: Nullable<string> = '') => {
+    if (selectedKeyName) {
+      const parts = selectedKeyName.split(delimiter)
+      const parents = parts.map((_, index) => parts.slice(0, index + 1).join(delimiter) + delimiter)
 
-    setSelectDefaultLeaf(isEmpty(selectedLeaf))
-  }, [selectedLeaf])
+      // remove key name from parents
+      parents.pop()
+
+      parents.forEach((parent) => handleStatusOpen(parent, true))
+    }
+  }
 
   useEffect(() => {
     setItems(parseKeyNames(keysState.keys))
@@ -106,8 +107,13 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }, [keysState.keys])
 
   useEffect(() => {
+    setFirstDataLoaded(true)
     setItems(parseKeyNames(keysState.keys))
-  }, [delimiter, keysState.lastRefreshTime])
+  }, [sorting, delimiter, keysState.lastRefreshTime])
+
+  useEffect(() => {
+    openSelectedKey(selectedKeyName)
+  }, [selectedKeyName])
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
     const formattedAllKeys = parseKeyNames(keysState.keys)
@@ -117,38 +123,14 @@ const KeyTree = forwardRef((props: Props, ref) => {
   // select default leaf "Keys" after each change delimiter, filter or search
   const updateSelectedKeys = () => {
     dispatch(resetBrowserTree())
-
-    setTimeout(() => {
-      startTransition(() => {
-        setStatusSelected({})
-        setSelectDefaultLeaf(true)
-      })
-    }, 0)
+    openSelectedKey(selectedKeyName)
   }
-
-  const updateKeysList = (items:any = {}) => {
-    startTransition(() => {
-      const newState:KeysStoreData = {
-        ...keyListState,
-        keys: Object.values(items)
-      }
-
-      setKeyListState(newState)
-    })
-  }
-
-  const onPanelWidthChange = useCallback((newSizes: any) => {
-    setSizes((prevSizes: any) => ({
-      ...prevSizes,
-      ...newSizes,
-    }))
-  }, [])
 
   const handleStatusOpen = (name: string, value:boolean) => {
     setStatusOpen((prevState) => {
       const newState = { ...prevState }
       // add or remove opened node
-      if (newState[name]) {
+      if (!value) {
         delete newState[name]
       } else {
         newState[name] = value
@@ -159,85 +141,72 @@ const KeyTree = forwardRef((props: Props, ref) => {
     })
   }
 
-  const handleStatusSelected = (fullName: string, keys: any) => {
-    dispatch(setBrowserTreeSelectedLeaf({ [fullName]: keys }))
+  const handleStatusSelected = (name: RedisString) => {
+    selectKey({ rowData: { name } })
+  }
+
+  const handleDeleteLeaf = (key: RedisResponseBuffer) => {
+    dispatch(deleteKeyAction(key, () => {
+      onDelete(key)
+    }))
+  }
+
+  const handleDeleteClicked = (type: KeyTypes | ModulesKeyTypes) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        keyType: type,
+        source: 'keyList'
+      }
+    })
+  }
+
+  if (keysState.keys.length === 0) {
+    const NoItemsMessage = () => {
+      if (loading || !firstDataLoaded) {
+        return <span>loading...</span>
+      }
+
+      return (
+        <NoKeysMessage
+          total={keysState.total}
+          scanned={keysState.scanned}
+          onAddKeyPanel={onAddKeyPanel}
+          onBulkActionsPanel={onBulkActionsPanel}
+        />
+      )
+    }
+
+    return (
+      <div className={cx(styles.content)}>
+        <div className={cx(styles.noKeys)}>
+          <NoItemsMessage />
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className={styles.page}>
+    <div className={styles.container}>
       <div className={styles.content}>
-        <div className={styles.body}>
-          <EuiResizableContainer onPanelWidthChange={onPanelWidthChange} style={{ height: '100%' }}>
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel
-                  id={firstPanelId}
-                  scrollable={false}
-                  initialSize={sizes[firstPanelId] ?? 30}
-                  minSize="100px"
-                  paddingSize="none"
-                  data-test-subj="tree-view-panel"
-                  wrapperProps={{
-                    className: cx(styles.resizablePanelLeft),
-                  }}
-                >
-                  <div className={styles.tree}>
-                    <div className={styles.treeHeader}>
-                      <KeyTreeDelimiter loading={loading} />
-                    </div>
-                    <div className={styles.treeContent}>
-                      <VirtualTree
-                        items={items}
-                        loadingIcon={TreeViewSVG}
-                        delimiter={delimiter}
-                        statusSelected={statusSelected}
-                        statusOpen={statusOpen}
-                        loading={loading || constructingTree}
-                        setConstructingTree={setConstructingTree}
-                        webworkerFn={constructKeysToTree}
-                        onSelectLeaf={updateKeysList}
-                        onStatusSelected={handleStatusSelected}
-                        onStatusOpen={handleStatusOpen}
-                        selectDefaultLeaf={selectDefaultLeaf}
-                        disableSelectDefaultLeaf={() => setSelectDefaultLeaf(false)}
-                      />
-                    </div>
-                  </div>
-                </EuiResizablePanel>
-
-                <EuiResizableButton
-                  className={cx(styles.resizableButton)}
-                  data-test-subj="resize-btn-keyList-keyDetails"
-                />
-
-                <EuiResizablePanel
-                  id={secondPanelId}
-                  scrollable={false}
-                  initialSize={sizes[secondPanelId] ?? 70}
-                  minSize="400px"
-                  paddingSize="none"
-                  data-test-subj="key-list-panel"
-                  wrapperProps={{
-                    className: cx(styles.resizablePanelRight),
-                  }}
-                >
-                  <div className={styles.list}>
-                    <KeyList
-                      hideFooter
-                      keysState={keyListState}
-                      loading={loading || constructingTree}
-                      commonFilterType={commonFilterType}
-                      selectKey={selectKey}
-                      onDelete={onDelete}
-                      onAddKeyPanel={onAddKeyPanel}
-                      onBulkActionsPanel={onBulkActionsPanel}
-                    />
-                  </div>
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
-        </div>
+        <VirtualTree
+          items={items}
+          loadingIcon={TreeViewSVG}
+          delimiter={delimiter}
+          sorting={sorting}
+          deleting={deleting}
+          statusSelected={selectedKeyName}
+          statusOpen={statusOpen}
+          loading={loading || constructingTree}
+          commonFilterType={commonFilterType}
+          setConstructingTree={setConstructingTree}
+          webworkerFn={constructKeysToTree}
+          onStatusSelected={handleStatusSelected}
+          onStatusOpen={handleStatusOpen}
+          onDeleteClicked={handleDeleteClicked}
+          onDeleteLeaf={handleDeleteLeaf}
+        />
       </div>
     </div>
   )

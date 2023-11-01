@@ -2,7 +2,7 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
-.page {
+.container {
   height: 100%;
   overflow: hidden;
 }
@@ -11,65 +11,25 @@
   max-width: 372px !important;
 }
 
+.noKeys {
+  @include euiScrollBar;
+  overflow: auto;
+
+  text-align: center;
+  margin: auto;
+}
+
 .content {
   width: 100%;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   background-color: var(--euiColorEmptyShade);
   border-top: 1px solid var(--euiColorLightShade);
-}
-
-.body {
-  display: flex;
-  height: 100%;
 
   :global(.ReactVirtualized__Table__headerRow) {
     border: none !important;
   }
-}
-
-.resizablePanelLeft {
-  border-right: 1px solid var(--euiColorLightShade);
-}
-.resizablePanelLeft,
-.resizablePanelRight {
-  :global(.euiResizablePanel__content) {
-    padding-right: 0px !important;
-  }
-}
-
-.resizableButton {
-  z-index: 1 !important;
-}
-.resizableButton:not(:hover) {
-  &::before, &::after {
-    width: 0 !important;
-  }
-}
-
-.tree {
-  @include euiScrollBar;
-
-  border-bottom: none;
-  position: relative;
-  padding-top: 6px;
-
-  height: 100%;
-
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.treeContent {
-  height: 100%;
-  position: relative;
-  width: 100%;
-}
-
-.list {
-  height: 100%;
-  flex: 3;
-  min-width: 400px;
 }
 
 .filter {

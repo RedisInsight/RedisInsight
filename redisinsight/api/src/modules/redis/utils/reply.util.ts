@@ -56,8 +56,8 @@ export const convertMultilineReplyToObject = (
   lineSeparator = '\r\n',
   valueSeparator = ':',
 ): Record<string, string> => {
-  const lines = info.split(lineSeparator);
   try {
+    const lines = info.split(lineSeparator);
     const obj = {};
 
     lines.forEach((line: string) => {
@@ -99,8 +99,8 @@ export const convertMultilineReplyToObject = (
  * @param info
  */
 export const parseNodesFromClusterInfoReply = (info: string): IRedisClusterNode[] => {
-  const lines = info.split('\n');
   try {
+    const lines = info.split('\n');
     const nodes = [];
     lines.forEach((line: string) => {
       if (line && line.split) {

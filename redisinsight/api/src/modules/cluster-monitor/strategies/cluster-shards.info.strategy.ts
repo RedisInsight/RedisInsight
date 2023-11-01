@@ -1,8 +1,8 @@
 import { Cluster, Command } from 'ioredis';
 import { chunk } from 'lodash';
 import { AbstractInfoStrategy } from 'src/modules/cluster-monitor/strategies/abstract.info.strategy';
-import { convertStringsArrayToObject } from 'src/utils';
 import { ClusterNodeDetails, NodeRole } from 'src/modules/cluster-monitor/models';
+import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 
 export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
   async getClusterNodesFromRedis(client: Cluster) {
@@ -11,7 +11,7 @@ export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
     })) as any[];
 
     return [].concat(...resp.map((shardArray) => {
-      const shard = convertStringsArrayToObject(shardArray);
+      const shard = convertArrayReplyToObject(shardArray);
       const slots = ClusterShardsInfoStrategy.calculateSlots(shard.slots);
       return ClusterShardsInfoStrategy.processShardNodes(shard.nodes, slots);
     }));
@@ -30,7 +30,7 @@ export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
   static processShardNodes(shardNodes: any[], slots: string[]): Partial<ClusterNodeDetails>[] {
     let primary;
     const nodes = shardNodes.map((nodeArray) => {
-      const nodeObj = convertStringsArrayToObject(nodeArray);
+      const nodeObj = convertArrayReplyToObject(nodeArray);
       const node = {
         id: nodeObj.id,
         host: nodeObj.ip,

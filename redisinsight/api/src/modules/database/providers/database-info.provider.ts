@@ -3,10 +3,8 @@ import * as IORedis from 'ioredis';
 import {
   calculateRedisHitRatio,
   catchAclError,
-  convertBulkStringsToObject,
   convertIntToSemanticVersion,
   convertRedisInfoReplyToObject,
-  convertStringsArrayToObject,
 } from 'src/utils';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
@@ -14,6 +12,7 @@ import { get, isNil } from 'lodash';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { convertArrayReplyToObject, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -51,7 +50,7 @@ export class DatabaseInfoProvider {
     try {
       const reply = await client.call('module', ['list']);
       const modules = await this.filterRawModules(
-        reply.map((module: any[]) => convertStringsArrayToObject(module)),
+        reply.map((module: any[]) => convertArrayReplyToObject(module)),
       );
 
       return modules.map(({ name, ver }) => ({
@@ -176,7 +175,7 @@ export class DatabaseInfoProvider {
       return clientListResponse
         .split(/\r?\n/)
         .filter(Boolean)
-        .map((r) => convertBulkStringsToObject(r, ' ', '='));
+        .map((r) => convertMultilineReplyToObject(r, ' ', '='));
     } catch (error) {
       throw catchAclError(error);
     }
@@ -206,7 +205,7 @@ export class DatabaseInfoProvider {
     try {
       return Object.values(keyspaceInfo).reduce<number>(
         (prev: number, cur: string) => {
-          const { keys } = convertBulkStringsToObject(cur, ',', '=');
+          const { keys } = convertMultilineReplyToObject(cur, ',', '=');
           return prev + parseInt(keys, 10);
         },
         0,

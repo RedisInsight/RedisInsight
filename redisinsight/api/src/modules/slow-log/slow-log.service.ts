@@ -6,11 +6,12 @@ import {
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { SlowLog, SlowLogConfig } from 'src/modules/slow-log/models';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
-import { catchAclError, convertStringsArrayToObject } from 'src/utils';
+import { catchAclError } from 'src/utils';
 import { UpdateSlowLogConfigDto } from 'src/modules/slow-log/dto/update-slow-log-config.dto';
 import { GetSlowLogsDto } from 'src/modules/slow-log/dto/get-slow-logs.dto';
 import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
 import { ClientMetadata } from 'src/common/models';
+import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 
 @Injectable()
 export class SlowLogService {
@@ -94,7 +95,7 @@ export class SlowLogService {
   async getConfig(clientMetadata: ClientMetadata): Promise<SlowLogConfig> {
     try {
       const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
-      const resp = convertStringsArrayToObject(
+      const resp = convertArrayReplyToObject(
         await client.call(SlowLogCommands.Config, [SlowLogArguments.Get, 'slowlog*']),
       );
 

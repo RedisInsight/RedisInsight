@@ -1,43 +1,61 @@
-import { isCluster } from 'src/modules/redis/utils/cluster.util';
 import {
-  mockRedisKeyspaceInfoResponse,
-  mockRedisKeyspaceInfoResponseNoKeyspaceData,
+  mockRedisClusterFailInfoResponse,
+  mockRedisClusterNodesResponse,
+  mockRedisClusterOkInfoResponse,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
+import { IRedisClusterNodeAddress, ReplyError } from 'src/models';
+import { isCluster, discoverClusterNodes } from './cluster.util';
 
 describe('isCluster', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  it('cluster connection ok', async () => {
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue(mockRedisClusterOkInfoResponse);
+    expect(await isCluster(mockStandaloneRedisClient)).toEqual(true);
   });
 
-  it('Should return total from dbsize', async () => {
-    mockStandaloneRedisClient.sendCommand.mockResolvedValue('1');
-    expect(await isCluster(mockStandaloneRedisClient)).toEqual(1);
-    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
-    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(['dbsize'], { replyEncoding: 'utf8' });
+  it('cluster connection false', async () => {
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue(mockRedisClusterFailInfoResponse);
+    expect(await isCluster(mockStandaloneRedisClient)).toEqual(false);
   });
+  it('cluster not supported', async () => {
+    mockStandaloneRedisClient.sendCommand.mockRejectedValue({
+      name: 'ReplyError',
+      message: 'ERR This instance has cluster support disabled',
+      command: 'CLUSTER',
+    });
+    expect(await isCluster(mockStandaloneRedisClient)).toEqual(false);
+  });
+});
 
-  it('Should return total from info (when dbsize returned error)', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponse);
-    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(1);
-    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(2);
-    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, ['dbsize'], { replyEncoding: 'utf8' });
-    expect(mockStandaloneRedisClient.sendCommand)
-      .toHaveBeenNthCalledWith(2, ['info', 'keyspace'], { replyEncoding: 'utf8' });
+describe('discoverClusterNodes', () => {
+  const mockClusterNodeAddresses: IRedisClusterNodeAddress[] = [
+    {
+      host: '127.0.0.1',
+      port: 30004,
+    },
+    {
+      host: '127.0.0.1',
+      port: 30001,
+    },
+  ];
+
+  it('should return nodes in a defined format', async () => {
+    mockStandaloneRedisClient.sendCommand.mockResolvedValue(mockRedisClusterNodesResponse);
+    expect(await discoverClusterNodes(mockStandaloneRedisClient)).toEqual(mockClusterNodeAddresses);
   });
-  it('Should return 0 since info keyspace hasn\'t keys values', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(mockRedisKeyspaceInfoResponseNoKeyspaceData);
-    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(0);
-  });
-  it('Should return 0 since info returned empty string', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce('');
-    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(0);
-  });
-  it('Should return -1 when dbsize and info returned error', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValue(new Error('some error'));
-    expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(-1);
+  it('cluster not supported', async () => {
+    const replyError: ReplyError = {
+      name: 'ReplyError',
+      message: 'ERR This instance has cluster support disabled',
+      command: 'CLUSTER',
+    };
+    mockStandaloneRedisClient.sendCommand.mockRejectedValue(replyError);
+
+    try {
+      await discoverClusterNodes(mockStandaloneRedisClient);
+      fail('Should throw an error');
+    } catch (err) {
+      expect(err).toEqual(replyError);
+    }
   });
 });

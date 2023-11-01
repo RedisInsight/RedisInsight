@@ -21,7 +21,7 @@ export const isCluster = async (client: RedisClient): Promise<boolean> => {
     ) as string;
 
     const clusterInfo = convertMultilineReplyToObject(reply);
-    return clusterInfo?.cluster_state === 'ok';
+    return clusterInfo.cluster_state === 'ok';
   } catch (e) {
     return false;
   }

@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
-import { convertStringsArrayToObject } from 'src/utils';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
@@ -10,6 +9,7 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
 import { IKeyInfoStrategy } from 'src/modules/browser/keys/key-info-manager/key-info-manager.interface';
+import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 
 export class TSTypeInfoStrategy implements IKeyInfoStrategy {
   private logger = new Logger('TSTypeInfoStrategy');
@@ -62,7 +62,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
         [key],
         'utf8',
       );
-      const { totalsamples } = convertStringsArrayToObject(info);
+      const { totalsamples } = convertArrayReplyToObject(info);
       return totalsamples;
     } catch (error) {
       return undefined;

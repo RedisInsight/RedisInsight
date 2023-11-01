@@ -79,7 +79,7 @@ export const discoverSentinelMasterGroups = async (client: RedisClient): Promise
         host: ip,
         port: parseInt(port, 10),
         name,
-        status: flags?.includes('down') ? SentinelMasterStatus.Down : SentinelMasterStatus.Active,
+        status: flags.includes('down') ? SentinelMasterStatus.Down : SentinelMasterStatus.Active,
         numberOfSlaves: parseInt(numberOfSlaves, 10),
       };
     });

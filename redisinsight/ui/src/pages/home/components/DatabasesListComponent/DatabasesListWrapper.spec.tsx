@@ -11,7 +11,7 @@ import { RootState, store } from 'uiSrc/slices/store'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
-import DatabasesList, { Props as DatabasesListProps } from './DatabasesList/DatabasesList'
+import DatabasesList, { Props as DatabasesListProps } from './DatabasesList'
 
 const mockedProps = mock<Props>()
 

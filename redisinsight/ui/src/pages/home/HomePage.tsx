@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
-import { setTitle } from 'uiSrc/utils'
+import { Nullable, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
@@ -25,19 +25,23 @@ import { fetchContentAction as fetchCreateRedisButtonsAction } from 'uiSrc/slice
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
-import AddDatabaseContainer, { AddDbType } from './components/AddDatabases/AddDatabasesContainer'
-import DatabasesList from './components/DatabasesListComponent/DatabasesListWrapper'
-import WelcomeComponent from './components/WelcomeComponent/WelcomeComponent'
+import { AddDbType } from 'uiSrc/pages/home/constants'
+import RightPanel from 'uiSrc/pages/home/components/RightPanel'
+import DatabasesList from './components/DatabasesListComponent'
+import WelcomeComponent from './components/WelcomeComponent'
 import HomeHeader from './components/HomeHeader'
 
 import './styles.scss'
 import styles from './styles.module.scss'
 
+enum RightPanelName {
+  AddDatabase = 'add',
+  EditDatabase = 'edit'
+}
+
 const HomePage = () => {
   const [width, setWidth] = useState(0)
-  const [addDialogIsOpen, setAddDialogIsOpen] = useState(false)
-  const [editDialogIsOpen, setEditDialogIsOpen] = useState(false)
-  const [dialogIsOpen, setDialogIsOpen] = useState(false)
+  const [openRightPanel, setOpenRightPanel] = useState<Nullable<RightPanelName>>(null)
   const [welcomeIsShow, setWelcomeIsShow] = useState(
     !localStorageService.get(BrowserStorageItem.instancesCount)
   )
@@ -86,8 +90,7 @@ const HomePage = () => {
 
   useEffect(() => {
     if (isChangedInstance) {
-      setAddDialogIsOpen(!isChangedInstance)
-      setEditDialogIsOpen(!isChangedInstance)
+      setOpenRightPanel(null)
       dispatch(setEditedInstance(null))
       // send page view after adding database from welcome page
       sendPageViewTelemetry({
@@ -107,29 +110,25 @@ const HomePage = () => {
 
   useEffect(() => {
     if (clusterCredentials || cloudCredentials || sentinelInstance) {
-      setAddDialogIsOpen(true)
+      setOpenRightPanel(RightPanelName.AddDatabase)
     }
   }, [clusterCredentials, cloudCredentials, sentinelInstance])
 
   useEffect(() => {
     if (action === UrlHandlingActions.Connect) {
-      setAddDialogIsOpen(true)
+      setOpenRightPanel(RightPanelName.AddDatabase)
     }
   }, [action, dbConnection])
 
   useEffect(() => {
-    const isDialogOpen = !!instances.length && (addDialogIsOpen || editDialogIsOpen)
-
     const instancesCashCount = JSON.parse(
       localStorageService.get(BrowserStorageItem.instancesCount) ?? '0'
     )
 
-    const isShowWelcome = !instances.length && !addDialogIsOpen && !editDialogIsOpen && !instancesCashCount
-
-    setDialogIsOpen(isDialogOpen)
+    const isShowWelcome = !instances.length && !openRightPanel && !instancesCashCount
 
     setWelcomeIsShow(isShowWelcome)
-  }, [addDialogIsOpen, editDialogIsOpen, instances, loading])
+  }, [openRightPanel, instances, loading])
 
   useEffect(() => {
     if (editedInstance) {
@@ -152,7 +151,7 @@ const HomePage = () => {
 
   const closeEditDialog = () => {
     dispatch(setEditedInstance(null))
-    setEditDialogIsOpen(false)
+    setOpenRightPanel(null)
 
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CANCELLED_CLICKED,
@@ -166,9 +165,8 @@ const HomePage = () => {
     dispatch(resetDataRedisCluster())
     dispatch(resetDataSentinel())
 
-    setAddDialogIsOpen(false)
+    setOpenRightPanel(null)
     dispatch(setEditedInstance(null))
-    setEditDialogIsOpen(false)
 
     if (action === UrlHandlingActions.Connect) {
       dispatch(setUrlHandlingInitialState())
@@ -181,22 +179,23 @@ const HomePage = () => {
 
   const handleAddInstance = (addDbType = AddDbType.manual) => {
     initialDbTypeRef.current = addDbType
-    setAddDialogIsOpen(true)
+    setOpenRightPanel(RightPanelName.AddDatabase)
     dispatch(setEditedInstance(null))
-    setEditDialogIsOpen(false)
   }
 
   const handleEditInstance = (editedInstance: Instance) => {
     if (editedInstance) {
       dispatch(fetchEditedInstanceAction(editedInstance))
-      setEditDialogIsOpen(true)
-      setAddDialogIsOpen(false)
+      setOpenRightPanel(RightPanelName.EditDatabase)
     }
   }
   const handleDeleteInstances = (instances: Instance[]) => {
-    if (instances.find((instance) => instance.id === editedInstance?.id)) {
+    if (
+      instances.find((instance) => instance.id === editedInstance?.id)
+      && openRightPanel === RightPanelName.EditDatabase
+    ) {
       dispatch(setEditedInstance(null))
-      setEditDialogIsOpen(false)
+      setOpenRightPanel(null)
     }
 
     instances.forEach((instance) => {
@@ -227,7 +226,7 @@ const HomePage = () => {
                 onAddInstance={handleAddInstance}
                 direction="row"
               />
-              {dialogIsOpen ? (
+              {openRightPanel && instances.length ? (
                 <div key="homePage" className="homePage">
                   <EuiResizableContainer style={{ height: '100%' }}>
                     {(EuiResizablePanel, EuiResizableButton) => (
@@ -242,7 +241,7 @@ const HomePage = () => {
                           <div ref={resizeRef}>
                             <DatabasesList
                               width={width}
-                              dialogIsOpen={dialogIsOpen}
+                              dialogIsOpen={!!openRightPanel}
                               editedInstance={editedInstance}
                               onEditInstance={handleEditInstance}
                               onDeleteInstances={handleDeleteInstances}
@@ -256,32 +255,30 @@ const HomePage = () => {
                           scrollable={false}
                           initialSize={38}
                           className={cx({
-                            [styles.contentActive]: editDialogIsOpen,
+                            [styles.contentActive]: openRightPanel === RightPanelName.EditDatabase,
                           })}
                           id="form"
                           paddingSize="none"
                           style={{ minWidth: '494px' }}
                         >
-                          {editDialogIsOpen && (
-                            <AddDatabaseContainer
-                              editMode
-                              width={width}
-                              isResizablePanel
-                              editedInstance={editedInstance}
-                              onClose={closeEditDialog}
-                              onDbEdited={onDbEdited}
-                            />
-                          )}
-
-                          {addDialogIsOpen && (
-                            <AddDatabaseContainer
-                              editMode={false}
+                          {!!openRightPanel && (
+                            <RightPanel
+                              editMode={openRightPanel === RightPanelName.EditDatabase}
                               width={width}
                               isResizablePanel
                               urlHandlingAction={action}
                               initialValues={dbConnection ?? null}
-                              editedInstance={sentinelInstance ?? null}
-                              onClose={handleClose}
+                              editedInstance={
+                                openRightPanel === RightPanelName.EditDatabase
+                                  ? editedInstance
+                                  : sentinelInstance ?? null
+                              }
+                              onClose={
+                              openRightPanel === RightPanelName.EditDatabase
+                                ? closeEditDialog
+                                : handleClose
+                              }
+                              onDbEdited={onDbEdited}
                               isFullWidth={!instances.length}
                             />
                           )}
@@ -297,14 +294,14 @@ const HomePage = () => {
                     <DatabasesList
                       width={width}
                       editedInstance={editedInstance}
-                      dialogIsOpen={dialogIsOpen}
+                      dialogIsOpen={!!openRightPanel}
                       onEditInstance={handleEditInstance}
                       onDeleteInstances={handleDeleteInstances}
                     />
                   ) : (
                     <>
-                      {addDialogIsOpen && (
-                        <AddDatabaseContainer
+                      {openRightPanel === RightPanelName.AddDatabase && (
+                        <RightPanel
                           editMode={false}
                           width={width}
                           isResizablePanel

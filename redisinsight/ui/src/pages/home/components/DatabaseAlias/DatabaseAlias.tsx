@@ -28,7 +28,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   alias: string
-  database?: Nullable<string>
+  database?: Nullable<number>
   onOpen: () => void
   onClone: () => void
   onCloneBack: () => void

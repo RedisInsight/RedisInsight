@@ -10,14 +10,14 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
-import { AddDbType } from 'uiSrc/pages/home/components/AddDatabases/AddDatabasesContainer'
 import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
 import { ReactComponent as CloudIcon } from 'uiSrc/assets/img/oauth/cloud.svg'
 
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { getContentByFeature } from 'uiSrc/utils/content'
-import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
+import { AddDbType, HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants'
+
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import {
   FeatureFlagComponent,
@@ -34,7 +34,7 @@ export interface Props {
   onAddInstance: (addDbType?: AddDbType) => void
 }
 
-const Welcome = ({ onAddInstance }: Props) => {
+const WelcomeComponent = ({ onAddInstance }: Props) => {
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
 
@@ -293,4 +293,4 @@ const Welcome = ({ onAddInstance }: Props) => {
   )
 }
 
-export default Welcome
+export default WelcomeComponent

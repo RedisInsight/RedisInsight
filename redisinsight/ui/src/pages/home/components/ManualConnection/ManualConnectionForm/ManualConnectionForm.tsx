@@ -197,6 +197,15 @@ const ManualConnectionForm = (props: Props) => {
 
   const validate = (values: DbConnectionInfo) => {
     const errs = getFormErrors(values)
+
+    if (isCloneMode && connectionType === ConnectionType.Sentinel && !values.sentinelMasterName) {
+      errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
+    }
+
+    if (!values.name) {
+      errs.name = fieldDisplayNames.name
+    }
+
     setErrors(errs)
     return errs
   }

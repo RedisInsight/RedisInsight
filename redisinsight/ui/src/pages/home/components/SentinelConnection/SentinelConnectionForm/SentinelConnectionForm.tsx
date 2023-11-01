@@ -48,7 +48,7 @@ const getInitFieldsDisplayNames = ({ host, port }: any) => {
 
 const SentinelConnectionForm = (props: Props) => {
   const {
-    initialValues,
+    initialValues = {},
     width,
     onClose,
     onSubmit,

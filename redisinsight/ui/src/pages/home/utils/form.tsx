@@ -168,6 +168,21 @@ export const getFormErrors = (values: DbConnectionInfo) => {
     }
   }
 
+  if (values.ssh) {
+    if (!values.sshHost) {
+      errs.sshHost = fieldDisplayNames.sshHost
+    }
+    if (!values.sshPort) {
+      errs.sshPort = fieldDisplayNames.sshPort
+    }
+    if (!values.sshUsername) {
+      errs.sshUsername = fieldDisplayNames.sshUsername
+    }
+    if (values.sshPassType === SshPassType.PrivateKey && !values.sshPrivateKey) {
+      errs.sshPrivateKey = fieldDisplayNames.sshPrivateKey
+    }
+  }
+
   return errs
 }
 

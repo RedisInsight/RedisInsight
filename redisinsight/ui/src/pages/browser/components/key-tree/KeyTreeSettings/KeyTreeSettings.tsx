@@ -151,6 +151,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
               <EuiButton
                 size="s"
                 color="secondary"
+                data-testid="tree-view-cancel-btn"
                 onClick={closePopover}
               >
                 Cancel

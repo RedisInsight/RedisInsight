@@ -249,21 +249,13 @@ export async function deleteAllKeysFromDB(host: string, port: string): Promise<v
 /**
 * Verifying if the Keys are in the List of keys
 * @param keyNames The names of the keys
+* @param isDisplayed True if keys should be displayed
 */
-export async function verifyKeysDisplayedInTheList(keyNames: string[]): Promise<void> {
+export async function verifyKeysDisplayingInTheList(keyNames: string[], isDisplayed: boolean): Promise<void> {
     for (const keyName of keyNames) {
-        await t.expect(browserPage.getKeySelectorByName(keyName).exists).ok(`The key ${keyName} not found`);
-    }
-}
-
-/**
-* Verifying if the Keys are not in the List of keys
-* @param keyNames The names of the keys
-*/
-
-export async function verifyKeysNotDisplayedInTheList(keyNames: string[]): Promise<void> {
-    for (const keyName of keyNames) {
-        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk(`The key ${keyName} found`);
+        isDisplayed
+            ? await t.expect(browserPage.getKeySelectorByName(keyName).exists).ok(`The key ${keyName} not found`)
+            : await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk(`The key ${keyName} found`);
     }
 }
 
@@ -271,7 +263,6 @@ export async function verifyKeysNotDisplayedInTheList(keyNames: string[]): Promi
 * Verify search/filter value
 * @param value The value in search/filter input
 */
-
 export async function verifySearchFilterValue(value: string): Promise<void> {
     await t.expect(browserPage.filterByPatterSearchInput.withAttribute('value', value).exists).ok(`Filter per key name ${value} is not applied/correct`);
 }

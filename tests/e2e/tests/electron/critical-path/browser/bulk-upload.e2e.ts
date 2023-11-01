@@ -5,7 +5,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { deleteAllKeysFromDB, verifyKeysDisplayedInTheList } from '../../../../helpers/keys';
+import { deleteAllKeysFromDB, verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -53,7 +53,7 @@ test('Verify bulk upload of different text docs formats', async t => {
     await browserPage.BulkActions.uploadFileInBulk(filePathes.allKeysFile);
     await verifyCompletedResultText(allKeysResults);
     await browserPage.searchByKeyName('*key1');
-    await verifyKeysDisplayedInTheList(keyNames);
+    await verifyKeysDisplayingInTheList(keyNames, true);
 
     // Verify that Upload button disabled after starting new upload
     await t.click(browserPage.BulkActions.bulkActionStartNewButton);

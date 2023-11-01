@@ -72,18 +72,22 @@ export class BrowserActions {
     }
 
     /**
-     * Get not added in array folder selector
-     * @param array folders selectors
+     * Get node name by folders
+     * @param startFolder start folder
      * @param folderName name of folder
      * @param delimiter string with delimiter value
      */
-    getFolderSelector(array: string[], folderName: string, delimiter: string): string {
-        if (array.length === 0) {
-            return `[data-testid="node-item_${folderName}${delimiter}"]`;
-        }
+    getNodeName(startFolder: string, folderName: string, delimiter: string): string {
+        return startFolder + folderName + delimiter;
 
-        const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-        return `${lastSelector}${folderName}${delimiter}"]`;
+    }
+
+    /**
+     * Get node selector by name
+     * @param name node name
+     */
+    getNodeSelector(name: string): Selector {
+        return Selector(`[data-testid="node-item_${name}"]`);
     }
 
     /**
@@ -99,19 +103,22 @@ export class BrowserActions {
 
         for (let i = 0; i < foldersNumber; i++) {
             const innerFoldersNumber = folders[i].length;
-            const array: string[] = [];
+            let prevNodeSelector = '';
 
             for (let j = 0; j < innerFoldersNumber; j++) {
-                const folderSelector = this.getFolderSelector(array, folders[i][j], delimiter);
-                array.push(folderSelector);
-                await t.click(Selector(folderSelector));
+                const nodeName = this.getNodeName(prevNodeSelector, folders[i][j], delimiter);
+                const node = this.getNodeSelector(nodeName);
+                await t.click(node);
+                prevNodeSelector = nodeName;
             }
 
             // Verify that the last folder level contains required keys
             const foundKeyName = `${folders[i].join(delimiter)}`;
+            const firstFolderName = this.getNodeName('', folders[i][0], delimiter);
+            const firstFolder = this.getNodeSelector(firstFolderName);
             await t
                 .expect(Selector(`[data-testid*="node-item_${foundKeyName}"]`).find('[data-testid^="key-"]').exists).ok('Specific key not found')
-                .click(array[0]);
+                .click(firstFolder);
         }
     }
 }

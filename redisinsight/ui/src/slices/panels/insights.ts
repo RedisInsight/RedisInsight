@@ -58,7 +58,6 @@ const insightsPanelSlice = createSlice({
 // A selector
 export const insightsPanelSelector = (state: RootState) => state.panels.insights
 export const explorePanelSelector = (state: RootState) => state.panels.insights.explore
-export const explorePanelPageSelector = (state: RootState) => state.panels.insights.explore.page
 
 // Actions generated from the slice
 export const {

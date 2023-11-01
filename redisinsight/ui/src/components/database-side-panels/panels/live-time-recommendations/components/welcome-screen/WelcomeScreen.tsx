@@ -44,7 +44,7 @@ const NoRecommendationsScreen = () => {
   return (
     <div className={styles.container} data-testid="no-recommendations-screen">
       <EuiText className={styles.bigText}>Welcome to</EuiText>
-      <EuiText className={styles.hugeText}>Insights!</EuiText>
+      <EuiText className={styles.hugeText}>Recommendations!</EuiText>
       <EuiText className={styles.mediumText}>Where we help improve your database.</EuiText>
       <EuiText className={cx(styles.text, styles.bigMargin)}>
         New recommendations appear while you work with your database,

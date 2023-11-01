@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
@@ -57,7 +57,6 @@ const Recommendation = ({
   params,
   recommendationsContent,
 }: IProps) => {
-  const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
@@ -111,12 +110,10 @@ const Recommendation = ({
   const handleDelete = (event: React.MouseEvent) => {
     event.stopPropagation()
     event.preventDefault()
-    setIsLoading(true)
     dispatch(
       deleteLiveRecommendations(
-        [id],
-        onSuccessActionDelete,
-        () => setIsLoading(false)
+        [{ id, isRead }],
+        onSuccessActionDelete
       )
     )
   }
@@ -130,7 +127,6 @@ const Recommendation = ({
         provider
       }
     })
-    setIsLoading(false)
   }
 
   const onRecommendationLinkClick = () => {
@@ -142,7 +138,6 @@ const Recommendation = ({
         provider
       }
     })
-    setIsLoading(false)
   }
 
   const recommendationContent = () => (

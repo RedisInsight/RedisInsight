@@ -8,7 +8,7 @@ interface IContext {
     execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
     file?: { path?: string, name?: string }
   ) => void
-  openPage: (page: IInternalPage, manifestPath?: string) => void
+  openPage: (page: IInternalPage, fromUser?: boolean) => void
   isCodeBtnDisabled?: boolean
 }
 export interface IInternalPage {

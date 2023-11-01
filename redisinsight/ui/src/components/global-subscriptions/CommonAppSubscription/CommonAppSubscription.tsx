@@ -9,7 +9,7 @@ import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { setTotalUnread } from 'uiSrc/slices/recommendations/recommendations'
+import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { CustomHeaders } from 'uiSrc/constants/api'
@@ -81,7 +81,7 @@ const CommonAppSubscription = () => {
     setRecommendationsSubscriptions((ids) => [...ids, instanceId])
 
     socketRef.current?.on(`${RecommendationsSocketEvents.Recommendation}:${instanceId}`, (data) => {
-      dispatch(setTotalUnread(data.totalUnread))
+      dispatch(addUnreadRecommendations(data))
     })
   }, [instanceId])
 

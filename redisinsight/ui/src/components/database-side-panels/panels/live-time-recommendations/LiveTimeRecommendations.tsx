@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import {
   EuiLink,
-  EuiTitle,
   EuiLoadingContent,
   EuiText,
   EuiIcon,
   EuiToolTip,
   EuiCheckbox,
   EuiTextColor,
-  EuiBadge,
 } from '@elastic/eui'
 import { remove } from 'lodash'
 
@@ -42,7 +40,7 @@ const LiveTimeRecommendations = () => {
   const { id: connectedInstanceId = '', provider, connectionType } = useSelector(connectedInstanceSelector)
   const {
     loading,
-    data: { recommendations, totalUnread },
+    data: { recommendations },
     content: recommendationsContent,
   } = useSelector(recommendationsSelector)
   const {
@@ -52,42 +50,18 @@ const LiveTimeRecommendations = () => {
 
   const [isShowApproveRun, setIsShowApproveRun] = useState<boolean>(false)
 
-  // To prevent duplication emit for FlyOut close event
-  // https://github.com/elastic/eui/issues/3437
-  const isCloseEventSent = useRef<boolean>(false)
-  // Flyout onClose did not updated between rerenders
-  const recommendationsState = useRef<IRecommendation[]>([])
-
   const dispatch = useDispatch()
   const history = useHistory()
 
   const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
 
   useEffect(() => {
-    dispatch(fetchRecommendationsAction(connectedInstanceId, onSuccessAction))
-    isCloseEventSent.current = false
+    dispatch(fetchRecommendationsAction(connectedInstanceId))
 
     return () => {
-      sendEventTelemetry({
-        event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
-        eventData: getTelemetryData(recommendationsState.current),
-      })
-    }
-  }, [])
-
-  useEffect(() => {
-    recommendationsState.current = recommendations
-  }, [recommendations])
-
-  const onSuccessAction = (recommendationsData: IRecommendation[]) => {
-    if (totalUnread) {
       dispatch(readRecommendationsAction(connectedInstanceId))
     }
-    sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
-      eventData: getTelemetryData(recommendationsData),
-    })
-  }
+  }, [])
 
   const handleClickDbAnalysisLink = () => {
     dispatch(createNewAnalysis(connectedInstanceId, delimiter))
@@ -101,18 +75,6 @@ const LiveTimeRecommendations = () => {
       },
     })
     setIsShowApproveRun(false)
-  }
-
-  const handleClose = () => {
-    if (isCloseEventSent.current) {
-      return
-    }
-
-    sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
-      eventData: getTelemetryData(recommendationsState.current),
-    })
-    isCloseEventSent.current = true
   }
 
   const onChangeShowHidden = (value: boolean) => {
@@ -162,17 +124,6 @@ const LiveTimeRecommendations = () => {
 
   const renderHeader = () => (
     <>
-      <div className={styles.headerTop}>
-        <EuiTitle className={styles.title}>
-          <span>Insights</span>
-        </EuiTitle>
-        <EuiToolTip
-          position="bottom"
-          content="This is the BETA version of recommendations that has limited availability. Let us know what you think about them in our GitHub repository."
-        >
-          <EuiBadge className={styles.betaBadge} title={undefined} data-testid="beta-label">BETA</EuiBadge>
-        </EuiToolTip>
-      </div>
       {!!recommendations.length && (
         <div className={styles.actions}>
           <div>

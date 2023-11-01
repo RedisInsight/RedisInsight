@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
-import { remove } from 'lodash'
+import { remove, some } from 'lodash'
 import { apiService, localStorageService, resourcesService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -40,6 +40,7 @@ const recommendationsSlice = createSlice({
     getRecommendationsSuccess: (state, { payload }: { payload: IRecommendations }) => {
       state.loading = false
       state.data = payload
+      state.isHighlighted = !!payload?.totalUnread
       state.error = ''
     },
     getRecommendationsFailure: (state, { payload }) => {
@@ -52,6 +53,16 @@ const recommendationsSlice = createSlice({
     setTotalUnread: (state, { payload }) => {
       state.data.totalUnread = payload
       state.isHighlighted = !!payload
+    },
+    addUnreadRecommendations: (state, { payload }) => {
+      payload.recommendations?.forEach((r: IRecommendation) => {
+        const isRecommnedationExists = some(state.data.recommendations, (stateR) => r.id === stateR.id)
+        if (!isRecommnedationExists) {
+          state.data.recommendations?.unshift(r)
+        }
+      })
+      state.data.totalUnread = payload.totalUnread
+      state.isHighlighted = !!payload.totalUnread
     },
     readRecommendations: (state, { payload }) => {
       state.data = {
@@ -71,8 +82,10 @@ const recommendationsSlice = createSlice({
     updateRecommendationError: (state, { payload }) => {
       state.error = payload
     },
-    deleteRecommendations: (state, { payload }: PayloadAction<string[]>) => {
-      remove(state.data.recommendations, (r) => payload.includes(r.id))
+    deleteRecommendations: (state, { payload }: PayloadAction<Array<{ id: string, isRead: boolean }>>) => {
+      remove(state.data.recommendations, (r) => some(payload, (pR) => pR.id === r.id))
+      const countUnread = payload.filter((r) => !r.isRead).length
+      state.data.totalUnread -= countUnread
     },
 
     getContentRecommendations: (state) => {
@@ -100,6 +113,7 @@ export const {
   updateRecommendationSuccess,
   updateRecommendationError,
   setTotalUnread,
+  addUnreadRecommendations,
   deleteRecommendations,
   getContentRecommendations,
   getContentRecommendationsSuccess,
@@ -204,7 +218,7 @@ export function updateLiveRecommendation(
 
 // Asynchronous thunk action
 export function deleteLiveRecommendations(
-  ids: string[],
+  recommendations: Array<{ id: string, isRead: boolean }>,
   onSuccessAction?: (instanceId: string) => void,
   onFailAction?: () => void,
 ) {
@@ -219,11 +233,11 @@ export function deleteLiveRecommendations(
           instanceId,
           ApiEndpoints.RECOMMENDATIONS,
         ),
-        { data: { ids } },
+        { data: { ids: recommendations.map(({ id }) => id) } },
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(deleteRecommendations(ids))
+        dispatch(deleteRecommendations(recommendations))
         onSuccessAction?.(instanceId)
       }
     } catch (_err) {

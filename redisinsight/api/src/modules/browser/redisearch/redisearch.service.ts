@@ -52,11 +52,11 @@ export class RedisearchService {
       const nodes = this.getShards(client) as RedisClient[];
 
       const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
-        ['FT._LIST'], { replyEncoding: 'hex' },
+        ['FT._LIST'],
       )));
 
       return plainToClass(ListRedisearchIndexesResponse, {
-        indexes: (uniq([].concat(...res))).map((idx) => Buffer.from(idx, 'hex')),
+        indexes: (uniq([].concat(...res))).map((idx) => Buffer.from(idx)),
       });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e);

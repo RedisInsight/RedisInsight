@@ -22,7 +22,8 @@ export abstract class NodeRedisClient extends RedisClient {
   }
 
   static prepareCommandArgs(args: RedisClientCommand): RedisString[] {
-    return args.map((arg) => (isNumber(arg) ? arg.toString() : arg));
+    const strArgs = args.map((arg) => (isNumber(arg) ? arg.toString() : arg)) as string[];
+    return [...strArgs.shift().split(' '), ...strArgs];
   }
 
   async nodes(): Promise<RedisClient[]> {

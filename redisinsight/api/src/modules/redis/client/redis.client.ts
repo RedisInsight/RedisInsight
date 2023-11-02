@@ -19,7 +19,7 @@ export enum RedisClientNodeRole {
 export interface IRedisClientCommandOptions {
   firstKey?: RedisString,
   readOnly?: boolean,
-  replyEncoding?: 'utf8' | 'hex' | null,
+  replyEncoding?: 'utf8' | null,
   unknownCommands?: boolean,
 }
 

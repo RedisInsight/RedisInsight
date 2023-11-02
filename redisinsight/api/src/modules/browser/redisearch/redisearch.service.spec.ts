@@ -10,7 +10,8 @@ import {
   mockClusterRedisClient,
   mockDatabaseClientFactory,
   mockRedisNoPermError,
-  mockRedisUnknownIndexName, mockStandaloneRedisClient,
+  mockRedisUnknownIndexName,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
 import {
@@ -74,14 +75,14 @@ describe('RedisearchService', () => {
 
     standaloneClient.sendCommand = jest.fn().mockResolvedValue(undefined);
     clusterClient.sendCommand = jest.fn().mockResolvedValue(undefined);
-    clusterClient.nodes.mockReturnValue([mockClusterRedisClient, mockClusterRedisClient]);
+    clusterClient.nodes.mockReturnValue([mockStandaloneRedisClient, mockStandaloneRedisClient]);
   });
 
   describe('list', () => {
     it('should get list of indexes for standalone', async () => {
       standaloneClient.sendCommand.mockResolvedValue([
-        keyName1.toString('hex'),
-        keyName2.toString('hex'),
+        keyName1.toString(),
+        keyName2.toString(),
       ]);
 
       const list = await service.list(mockBrowserClientMetadata);
@@ -94,10 +95,10 @@ describe('RedisearchService', () => {
       });
     });
     it('should get list of indexes for cluster (handle unique index name)', async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(mockClusterRedisClient);
-      clusterClient.sendCommand.mockResolvedValue([
-        keyName1.toString('hex'),
-        keyName2.toString('hex'),
+      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(clusterClient);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValue([
+        keyName1.toString(),
+        keyName2.toString(),
       ]);
 
       const list = await service.list(mockBrowserClientMetadata);
@@ -148,18 +149,20 @@ describe('RedisearchService', () => {
       ], { replyEncoding: 'utf8' });
     });
     it('should create index for cluster', async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(mockClusterRedisClient);
+      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(clusterClient);
       when(clusterClient.sendCommand)
         .calledWith(expect.arrayContaining(['FT.INFO']))
         .mockRejectedValue(mockRedisUnknownIndexName);
-      when(clusterClient.sendCommand)
+      when(standaloneClient.sendCommand)
         .calledWith(expect.arrayContaining(['FT.CREATE']))
-        .mockResolvedValueOnce('OK').mockRejectedValue(new Error('ReplyError: MOVED to somenode'));
+        .mockResolvedValueOnce('OK')
+        .mockRejectedValue(new Error('ReplyError: MOVED to somenode'));
 
       await service.createIndex(mockBrowserClientMetadata, mockCreateRedisearchIndexDto);
 
-      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(3);
-      expect(clusterClient.sendCommand).toHaveBeenCalledWith([
+      expect(clusterClient.sendCommand).toHaveBeenCalledTimes(1);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledTimes(2);
+      expect(standaloneClient.sendCommand).toHaveBeenCalledWith([
         'FT.CREATE',
         mockCreateRedisearchIndexDto.index,
         'ON',
@@ -251,7 +254,7 @@ describe('RedisearchService', () => {
       expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should search in cluster', async () => {
-      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(mockClusterRedisClient);
+      databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(clusterClient);
       when(clusterClient.sendCommand)
         .calledWith(expect.arrayContaining(['FT.SEARCH']))
         .mockResolvedValue([100, keyName1, keyName2]);

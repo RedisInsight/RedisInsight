@@ -1,4 +1,4 @@
-import { pick, toNumber, toString, omit } from 'lodash'
+import { pick, toNumber, omit } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -14,17 +14,20 @@ import {
 import { Nullable, removeEmpty, getFormUpdates, transformQueryParamsObject } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
+import { fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { ConnectionType, Instance, InstanceType } from 'uiSrc/slices/interfaces'
 import { DbType, Pages } from 'uiSrc/constants'
-import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
+import { fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails, getTlsSettings } from 'uiSrc/pages/home/utils'
-import { ADD_NEW, DEFAULT_TIMEOUT, NO_CA_CERT, SshPassType, SubmitBtnText } from 'uiSrc/pages/home/constants'
+import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails, getTlsSettings, getFormValues } from 'uiSrc/pages/home/utils'
+import {
+  DEFAULT_TIMEOUT,
+  SubmitBtnText,
+} from 'uiSrc/pages/home/constants'
 import ManualConnectionForm from './ManualConnectionForm'
 
 export interface Props {
@@ -38,24 +41,6 @@ export interface Props {
   onAliasEdited?: (value: string) => void
 }
 
-const getInitialValues = (editedInstance?: Nullable<Record<string, any>>) => ({
-  // undefined - to show default value, empty string - for existing db
-  host: editedInstance?.host ?? (editedInstance ? '' : undefined),
-  port: editedInstance?.port?.toString() ?? (editedInstance ? '' : undefined),
-  name: editedInstance?.name ?? (editedInstance ? '' : undefined),
-  username: editedInstance?.username ?? '',
-  password: editedInstance?.password ?? '',
-  timeout: editedInstance?.timeout
-    ? toString(editedInstance?.timeout / 1_000)
-    : (editedInstance ? '' : undefined),
-  tls: !!editedInstance?.tls ?? false,
-  ssh: !!editedInstance?.ssh ?? false,
-  servername: editedInstance?.tlsServername,
-  sshPassType: editedInstance?.sshOptions
-    ? (editedInstance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
-    : SshPassType.Password
-})
-
 const ManualConnectionWrapper = (props: Props) => {
   const {
     editMode,
@@ -67,23 +52,13 @@ const ManualConnectionWrapper = (props: Props) => {
     urlHandlingAction,
     initialValues: initialValuesProp
   } = props
-  const [initialValues, setInitialValues] = useState(getInitialValues(editedInstance || initialValuesProp))
+  const [formFields, setFormFields] = useState(getFormValues(editedInstance || initialValuesProp))
+
   const [isCloneMode, setIsCloneMode] = useState<boolean>(false)
 
-  const { host, port, name, username, password, timeout, tls, ssh, sshPassType, servername } = initialValues
-
   const { loadingChanging: loadingStandalone } = useSelector(instancesSelector)
-  const { data: caCertificates } = useSelector(caCertsSelector)
-  const { data: certificates } = useSelector(clientCertsSelector)
   const { server } = useSelector(appInfoSelector)
   const { properties: urlHandlingProperties } = useSelector(appRedirectionSelector)
-
-  const tlsClientAuthRequired = !!editedInstance?.clientCert?.id ?? false
-  const selectedTlsClientCertId = editedInstance?.clientCert?.id ?? ADD_NEW
-  const verifyServerTlsCert = editedInstance?.verifyServerCert ?? false
-  const selectedCaCertName = editedInstance?.caCert?.id ?? NO_CA_CERT
-  const sentinelMasterUsername = editedInstance?.sentinelMaster?.username ?? ''
-  const sentinelMasterPassword = editedInstance?.sentinelMaster?.password ?? ''
 
   const connectionType = editedInstance?.connectionType ?? DbType.STANDALONE
   const masterName = editedInstance?.sentinelMaster?.name
@@ -97,10 +72,7 @@ const ManualConnectionWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    (editedInstance || initialValuesProp) && setInitialValues({
-      ...initialValues,
-      ...getInitialValues(editedInstance || initialValuesProp)
-    })
+    setFormFields(getFormValues(editedInstance || initialValuesProp || null))
     setIsCloneMode(false)
   }, [editedInstance, initialValuesProp])
 
@@ -322,29 +294,6 @@ const ManualConnectionWrapper = (props: Props) => {
     onClose?.()
   }
 
-  const connectionFormData = {
-    ...editedInstance,
-    name,
-    host,
-    port,
-    tls,
-    username,
-    password,
-    timeout,
-    connectionType,
-    tlsClientAuthRequired,
-    certificates,
-    selectedTlsClientCertId,
-    caCertificates,
-    verifyServerTlsCert,
-    selectedCaCertName,
-    sentinelMasterUsername,
-    sentinelMasterPassword,
-    ssh,
-    sshPassType,
-    servername,
-  }
-
   const getSubmitButtonText = () => {
     if (isCloneMode) {
       return SubmitBtnText.CloneDatabase
@@ -356,15 +305,15 @@ const ManualConnectionWrapper = (props: Props) => {
   }
 
   const handlePostHostName = (content: string): boolean => (
-    autoFillFormDetails(content, initialValues, setInitialValues, InstanceType.Standalone)
+    autoFillFormDetails(content, formFields, setFormFields, InstanceType.Standalone)
   )
 
   return (
     <div>
       <ManualConnectionForm
         width={width}
-        formFields={connectionFormData}
-        initialValues={initialValues}
+        formFields={formFields}
+        connectionType={connectionType}
         loading={loadingStandalone}
         buildType={server?.buildType as BuildType}
         submitButtonText={getSubmitButtonText()}

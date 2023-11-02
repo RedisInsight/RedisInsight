@@ -14,20 +14,32 @@ import {
 import { BuildType } from 'uiSrc/constants/env'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { handlePasteHostName, MAX_PORT_NUMBER, MAX_TIMEOUT_NUMBER, selectOnFocus, validateField, validatePortNumber, validateTimeoutNumber } from 'uiSrc/utils'
-import { ConnectionType, InstanceType } from 'uiSrc/slices/interfaces'
-import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import {
+  handlePasteHostName,
+  MAX_PORT_NUMBER,
+  MAX_TIMEOUT_NUMBER,
+  selectOnFocus,
+  validateField,
+  validatePortNumber,
+  validateTimeoutNumber,
+} from 'uiSrc/utils'
+import { DbConnectionInfo, IPasswordType } from 'uiSrc/pages/home/interfaces'
+
+interface IShowFields {
+  alias: boolean
+  host: boolean
+  port: boolean
+  timeout: boolean
+}
 
 export interface Props {
   flexGroupClassName?: string
   flexItemClassName?: string
   formik: FormikProps<DbConnectionInfo>
-  isEditMode?: boolean
-  isCloneMode?: boolean
   onHostNamePaste: (content: string) => boolean
-  instanceType: InstanceType
-  connectionType?: ConnectionType
-  isFromCloud?: boolean
+  showFields: IShowFields
+  autoFocus?: boolean
+  passwordType?: IPasswordType
 }
 
 const DatabaseForm = (props: Props) => {
@@ -35,12 +47,10 @@ const DatabaseForm = (props: Props) => {
     flexGroupClassName = '',
     flexItemClassName = '',
     formik,
-    isEditMode = false,
-    isCloneMode = false,
     onHostNamePaste,
-    instanceType,
-    connectionType,
-    isFromCloud,
+    autoFocus = false,
+    showFields,
+    passwordType = IPasswordType.Password,
   } = props
 
   const { server } = useSelector(appInfoSelector)
@@ -84,11 +94,11 @@ const DatabaseForm = (props: Props) => {
   return (
     <>
       <EuiFlexGroup className={flexGroupClassName}>
-        {(!isEditMode || isCloneMode) && !isFromCloud && (
+        {showFields.host && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Host*">
               <EuiFieldText
-                autoFocus={!isCloneMode && isEditMode}
+                autoFocus={autoFocus}
                 name="host"
                 id="host"
                 data-testid="host"
@@ -109,7 +119,7 @@ const DatabaseForm = (props: Props) => {
             </EuiFormRow>
           </EuiFlexItem>
         )}
-        {server?.buildType !== BuildType.RedisStack && !isFromCloud && (
+        {server?.buildType !== BuildType.RedisStack && showFields.port && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
               <EuiFieldNumber
@@ -136,11 +146,7 @@ const DatabaseForm = (props: Props) => {
         )}
       </EuiFlexGroup>
 
-      {(
-        (!isEditMode || isCloneMode)
-        && instanceType !== InstanceType.Sentinel
-        && connectionType !== ConnectionType.Sentinel
-      ) && (
+      {showFields.alias && (
         <EuiFlexGroup className={flexGroupClassName}>
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Database Alias*">
@@ -179,7 +185,7 @@ const DatabaseForm = (props: Props) => {
         <EuiFlexItem className={flexItemClassName}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
-              type={instanceType !== InstanceType.Sentinel ? 'password' : 'dual'}
+              type={passwordType}
               name="password"
               id="password"
               data-testid="password"
@@ -203,7 +209,7 @@ const DatabaseForm = (props: Props) => {
           </EuiFormRow>
         </EuiFlexItem>
 
-        {connectionType !== ConnectionType.Sentinel && instanceType !== InstanceType.Sentinel && (
+        {showFields.timeout && (
           <EuiFlexItem className={flexItemClassName}>
             <EuiFormRow label="Timeout (s)">
               <EuiFieldNumber

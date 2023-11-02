@@ -18,7 +18,7 @@ import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
-import RightPanel from 'uiSrc/pages/home/components/RightPanel/RightPanel'
+import DatabasePanel from 'uiSrc/pages/home/components/DatabasePanel/DatabasePanel'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -119,7 +119,7 @@ const EditConnection = () => {
               )}
               <div className={styles.formContainer}>
                 <div className={styles.form}>
-                  <RightPanel
+                  <DatabasePanel
                     editMode
                     width={600}
                     editedInstance={state.data}

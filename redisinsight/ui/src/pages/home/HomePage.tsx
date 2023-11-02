@@ -2,6 +2,7 @@ import { EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
+import DatabasePanel from 'redisinsight/ui/src/pages/home/components/DatabasePanel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
@@ -26,7 +27,6 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import RightPanel from 'uiSrc/pages/home/components/RightPanel'
 import DatabasesList from './components/DatabasesListComponent'
 import WelcomeComponent from './components/WelcomeComponent'
 import HomeHeader from './components/HomeHeader'
@@ -262,7 +262,7 @@ const HomePage = () => {
                           style={{ minWidth: '494px' }}
                         >
                           {!!openRightPanel && (
-                            <RightPanel
+                            <DatabasePanel
                               editMode={openRightPanel === RightPanelName.EditDatabase}
                               width={width}
                               isResizablePanel
@@ -301,7 +301,7 @@ const HomePage = () => {
                   ) : (
                     <>
                       {openRightPanel === RightPanelName.AddDatabase && (
-                        <RightPanel
+                        <DatabasePanel
                           editMode={false}
                           width={width}
                           isResizablePanel

@@ -1,11 +1,19 @@
 import { ConnectionString } from 'connection-string'
-import { isUndefined } from 'lodash'
+import { isUndefined, toString } from 'lodash'
 import React from 'react'
 import { FormikErrors } from 'formik'
 import { REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
-import { ADD_NEW, ADD_NEW_CA_CERT, fieldDisplayNames, NO_CA_CERT, SshPassType } from 'uiSrc/pages/home/constants'
+import {
+  ADD_NEW,
+  ADD_NEW_CA_CERT, DEFAULT_ALIAS,
+  DEFAULT_HOST, DEFAULT_PORT, DEFAULT_TIMEOUT,
+  fieldDisplayNames,
+  NO_CA_CERT, NONE,
+  SshPassType
+} from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { Nullable } from 'uiSrc/utils'
 
 export const getTlsSettings = (values: DbConnectionInfo) => ({
   useTls: values.tls,
@@ -277,3 +285,44 @@ export const getSubmitButtonContent = (errors: FormikErrors<DbConnectionInfo>, s
     <span className="euiToolTip__content">{errorsArr}</span>
   ) : null
 }
+
+export const getFormValues = (instance: Nullable<Record<string, any>>) => ({
+  host: instance?.host ?? (instance ? '' : DEFAULT_HOST),
+  port: instance?.port?.toString() ?? (instance ? '' : DEFAULT_PORT),
+  timeout: instance?.timeout
+    ? toString(instance?.timeout / 1_000)
+    : toString(DEFAULT_TIMEOUT / 1_000),
+  name: instance?.name ?? (instance ? '' : DEFAULT_ALIAS),
+  username: instance?.username ?? '',
+  password: instance?.password ?? '',
+  tls: instance?.tls ?? false,
+  db: instance?.db,
+  compressor: instance?.compressor ?? NONE,
+  modules: instance?.modules,
+  showDb: !!instance?.db,
+  showCompressor: instance && instance.compressor !== NONE,
+  sni: !!instance?.servername,
+  servername: instance?.servername,
+  newCaCert: '',
+  newCaCertName: '',
+  selectedCaCertName: instance?.caCert?.id ?? NO_CA_CERT,
+  tlsClientAuthRequired: instance?.clientCert?.id ?? false,
+  verifyServerTlsCert: instance?.verifyServerCert ?? false,
+  newTlsCertPairName: '',
+  selectedTlsClientCertId: instance?.clientCert?.id ?? ADD_NEW,
+  newTlsClientCert: '',
+  newTlsClientKey: '',
+  sentinelMasterName: instance?.sentinelMaster?.name || '',
+  sentinelMasterUsername: instance?.sentinelMasterUsername,
+  sentinelMasterPassword: instance?.sentinelMasterPassword,
+  ssh: instance?.ssh ?? false,
+  sshPassType: instance?.sshOptions
+    ? (instance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
+    : SshPassType.Password,
+  sshHost: instance?.sshOptions?.host ?? '',
+  sshPort: instance?.sshOptions?.port ?? 22,
+  sshUsername: instance?.sshOptions?.username ?? '',
+  sshPassword: instance?.sshOptions?.password ?? '',
+  sshPrivateKey: instance?.sshOptions?.privateKey ?? '',
+  sshPassphrase: instance?.sshOptions?.passphrase ?? ''
+})

@@ -43,7 +43,7 @@ export interface Props {
   initConnectionType?: AddDbType
 }
 
-const RightPanel = React.memo((props: Props) => {
+const DatabasePanel = React.memo((props: Props) => {
   const {
     editMode,
     isResizablePanel,
@@ -233,4 +233,4 @@ const RightPanel = React.memo((props: Props) => {
   )
 })
 
-export default RightPanel
+export default DatabasePanel

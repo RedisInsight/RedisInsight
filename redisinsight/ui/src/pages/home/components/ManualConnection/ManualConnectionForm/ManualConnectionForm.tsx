@@ -9,7 +9,7 @@ import {
   keys,
 } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
-import { isEmpty, pick, toString } from 'lodash'
+import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,7 +27,7 @@ import {
   resetInstanceUpdateAction,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
-import { ConnectionType, InstanceType, } from 'uiSrc/slices/interfaces'
+import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getDiffKeysOfObjectValues, isRediStack } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
@@ -36,9 +36,6 @@ import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 
 import {
   fieldDisplayNames,
-  SshPassType,
-  DEFAULT_TIMEOUT,
-  NONE,
   SubmitBtnText,
 } from 'uiSrc/pages/home/constants'
 import { getFormErrors, getSubmitButtonContent } from 'uiSrc/pages/home/utils'
@@ -58,6 +55,8 @@ import {
   SentinelHostPort,
   SentinelMasterDatabase,
 } from 'uiSrc/pages/home/components/Form/sentinel'
+import { caCertsSelector } from 'uiSrc/slices/instances/caCerts'
+import { clientCertsSelector } from 'uiSrc/slices/instances/clientCerts'
 
 export interface Props {
   width: number
@@ -68,7 +67,6 @@ export interface Props {
   isEditMode: boolean
   isCloneMode: boolean
   setIsCloneMode: (value: boolean) => void
-  initialValues: DbConnectionInfo
   onSubmit: (values: DbConnectionInfo) => void
   onTestConnection: (values: DbConnectionInfo) => void
   onHostNamePaste: (content: string) => boolean
@@ -77,49 +75,15 @@ export interface Props {
 }
 
 const getInitFieldsDisplayNames = ({ host, port, name }: any) => {
-  if ((!host || !port) && !name) {
+  if (!host || !port || !name) {
     return pick(fieldDisplayNames, ['host', 'port', 'name'])
   }
   return {}
 }
 
-const getDefaultHost = () => '127.0.0.1'
-const getDefaultPort = () => '6379'
-
 const ManualConnectionForm = (props: Props) => {
   const {
-    formFields: {
-      id,
-      host,
-      name,
-      port,
-      tls,
-      db = null,
-      compressor = NONE,
-      nameFromProvider,
-      sentinelMaster,
-      connectionType,
-      nodes = null,
-      tlsClientAuthRequired,
-      certificates,
-      selectedTlsClientCertId = '',
-      verifyServerTlsCert,
-      caCertificates,
-      selectedCaCertName,
-      username,
-      password,
-      timeout,
-      modules,
-      sentinelMasterPassword,
-      sentinelMasterUsername,
-      servername,
-      provider,
-      ssh,
-      sshPassType = SshPassType.Password,
-      sshOptions,
-      version,
-    },
-    initialValues: initialValuesProp,
+    formFields,
     width,
     onClose,
     onSubmit,
@@ -134,58 +98,29 @@ const ManualConnectionForm = (props: Props) => {
     onAliasEdited,
   } = props
 
+  const {
+    id,
+    host,
+    name,
+    port,
+    db = null,
+    nameFromProvider,
+    sentinelMaster,
+    connectionType,
+    nodes = null,
+    modules,
+    provider,
+    version,
+  } = formFields
+
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
   const { action } = useSelector(appRedirectionSelector)
-
-  const prepareInitialValues = () => ({
-    host: host ?? getDefaultHost(),
-    port: port ? port.toString() : getDefaultPort(),
-    timeout: timeout ? timeout.toString() : toString(DEFAULT_TIMEOUT / 1_000),
-    name: name ?? `${getDefaultHost()}:${getDefaultPort()}`,
-    username,
-    password,
-    tls,
-    db,
-    compressor,
-    modules,
-    showDb: !!db,
-    showCompressor: compressor !== NONE,
-    sni: !!servername,
-    servername,
-    newCaCert: '',
-    newCaCertName: '',
-    selectedCaCertName,
-    tlsClientAuthRequired,
-    verifyServerTlsCert,
-    newTlsCertPairName: '',
-    selectedTlsClientCertId,
-    newTlsClientCert: '',
-    newTlsClientKey: '',
-    sentinelMasterName: sentinelMaster?.name || '',
-    sentinelMasterUsername,
-    sentinelMasterPassword,
-    ssh,
-    sshPassType,
-    sshHost: sshOptions?.host ?? '',
-    sshPort: sshOptions?.port ?? 22,
-    sshUsername: sshOptions?.username ?? '',
-    sshPassword: sshOptions?.password ?? '',
-    sshPrivateKey: sshOptions?.privateKey ?? '',
-    sshPassphrase: sshOptions?.passphrase ?? ''
-  })
-
-  const [initialValues, setInitialValues] = useState(prepareInitialValues())
+  const { data: caCertificates } = useSelector(caCertsSelector)
+  const { data: certificates } = useSelector(clientCertsSelector)
 
   const [errors, setErrors] = useState<FormikErrors<DbConnectionInfo>>(
     getInitFieldsDisplayNames({ host, port, name })
   )
-
-  useEffect(() => {
-    const values = prepareInitialValues()
-
-    setInitialValues(values)
-    formik.setValues(values)
-  }, [initialValuesProp, isCloneMode])
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -211,7 +146,7 @@ const ManualConnectionForm = (props: Props) => {
   }
 
   const formik = useFormik({
-    initialValues,
+    initialValues: formFields,
     validate,
     enableReinitialize: true,
     onSubmit: (values: any) => {
@@ -313,7 +248,7 @@ const ManualConnectionForm = (props: Props) => {
       history.push(Pages.workbench(id))
       return
     }
-    history.push(Pages.browser(id))
+    history.push(Pages.browser(id ?? ''))
   }
 
   const SubmitButton = ({
@@ -385,14 +320,14 @@ const ManualConnectionForm = (props: Props) => {
           <EuiFlexItem grow={false}>
             <EuiFlexGroup responsive={false}>
               {onClose && (
-              <EuiButton
-                onClick={onClose}
-                color="secondary"
-                className="btn-cancel"
-                data-testid="btn-cancel"
-              >
-                Cancel
-              </EuiButton>
+                <EuiButton
+                  onClick={onClose}
+                  color="secondary"
+                  className="btn-cancel"
+                  data-testid="btn-cancel"
+                >
+                  Cancel
+                </EuiButton>
               )}
               <SubmitButton
                 onClick={formik.submitForm}
@@ -443,11 +378,8 @@ const ManualConnectionForm = (props: Props) => {
               formik={formik}
               flexItemClassName={flexItemClassName}
               flexGroupClassName={flexGroupClassName}
-              isCloneMode={isCloneMode}
-              isEditMode={isEditMode}
-              connectionType={connectionType}
-              instanceType={InstanceType.Standalone}
               onHostNamePaste={onHostNamePaste}
+              showFields={{ host: true, alias: true, port: true, timeout: true }}
             />
             <DbIndex
               formik={formik}
@@ -497,13 +429,15 @@ const ManualConnectionForm = (props: Props) => {
             >
               <DatabaseForm
                 formik={formik}
-                instanceType={InstanceType.Standalone}
                 flexItemClassName={flexItemClassName}
                 flexGroupClassName={flexGroupClassName}
-                isCloneMode={isCloneMode}
-                isEditMode={isEditMode}
-                isFromCloud={isFromCloud}
-                connectionType={connectionType}
+                showFields={{
+                  alias: !isEditMode || isCloneMode,
+                  host: (!isEditMode || isCloneMode) && !isFromCloud,
+                  port: !isFromCloud,
+                  timeout: true,
+                }}
+                autoFocus={!isCloneMode && isEditMode}
                 onHostNamePaste={onHostNamePaste}
               />
               {isCloneMode && (
@@ -578,10 +512,7 @@ const ManualConnectionForm = (props: Props) => {
                       formik={formik}
                       flexItemClassName={flexItemClassName}
                       flexGroupClassName={flexGroupClassName}
-                      isCloneMode={isCloneMode}
-                      isEditMode={isEditMode}
-                      connectionType={connectionType}
-                      instanceType={InstanceType.Standalone}
+                      showFields={{ host: false, port: true, alias: false, timeout: false }}
                       onHostNamePaste={onHostNamePaste}
                     />
                   </EuiCollapsibleNavGroup>
@@ -631,10 +562,7 @@ const ManualConnectionForm = (props: Props) => {
                       formik={formik}
                       flexItemClassName={flexItemClassName}
                       flexGroupClassName={flexGroupClassName}
-                      isCloneMode={isCloneMode}
-                      isEditMode={isEditMode}
-                      connectionType={connectionType}
-                      instanceType={InstanceType.Standalone}
+                      showFields={{ host: true, port: true, alias: false, timeout: false }}
                       onHostNamePaste={onHostNamePaste}
                     />
                   </EuiCollapsibleNavGroup>

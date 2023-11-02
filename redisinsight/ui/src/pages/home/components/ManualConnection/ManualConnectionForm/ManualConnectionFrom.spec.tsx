@@ -804,18 +804,6 @@ describe('InstanceForm', () => {
       expect(screen.getByTestId('port')).toHaveValue('6379')
       expect(screen.getByTestId('name')).toHaveValue('127.0.0.1:6379')
     })
-
-    // it('should render proper default values for sentinel', () => {
-    //   render(
-    //     <ManualConnectionForm
-    //       {...instance(mockedProps)}
-    //       instanceType={InstanceType.Sentinel}
-    //       formFields={{}}
-    //     />
-    //   )
-    //   expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
-    //   expect(screen.getByTestId('port')).toHaveValue('26379')
-    // })
   })
 
   it('should change Use SSH checkbox', async () => {

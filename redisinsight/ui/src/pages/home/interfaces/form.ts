@@ -40,3 +40,8 @@ export interface ISubmitButton {
   text?: string
   submitIsDisabled?: boolean
 }
+
+export enum IPasswordType {
+  Password = 'password',
+  Dual = 'dual',
+}

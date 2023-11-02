@@ -37,7 +37,7 @@ fixture `Database overview`
         //Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.only
+test
     .meta({ rte: rte.standalone })
     .after(async() => {
         //Delete databases
@@ -51,7 +51,6 @@ test.only
         await t.expect(browserPage.OverviewPanel.databaseInfoToolTip.visible).ok('Tooltip is not opened');
         const moduleIcons = await browserPage.OverviewPanel.databaseInfoToolTip.find('[data-testid^=module_]');
         let countOfModules = await moduleIcons.count;
-        console.log(countOfModules);
         for(let i = 0; i < countOfModules; i++) {
             firstDatabaseModules.push(await moduleIcons.nth(i).textContent);
         }
@@ -68,8 +67,6 @@ test.only
         for(let i = 0; i < countOfModules; i++) {
             secondDatabaseModules.push(await moduleIcons.nth(i).textContent);
         }
-        console.log(firstDatabaseModules);
-        console.log(secondDatabaseModules);
         //Verify the list of modules
         await t.expect(firstDatabaseModules).notEql(secondDatabaseModules, 'The list of Modules updated');
     });

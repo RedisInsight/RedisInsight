@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get, isNumber } from 'lodash';
 import Redis, { Cluster, Command } from 'ioredis';
 import {
   IRedisClientCommandOptions,
@@ -6,6 +6,7 @@ import {
   RedisClientCommand,
   RedisClientCommandReply,
 } from 'src/modules/redis/client';
+import { RedisString } from 'src/common/constants';
 
 export abstract class IoredisClient extends RedisClient {
   protected readonly client: Redis | Cluster;
@@ -20,6 +21,11 @@ export abstract class IoredisClient extends RedisClient {
     return {
       replyEncoding,
     };
+  }
+
+  static prepareCommandArgs(args: RedisClientCommand): RedisString[] {
+    const strArgs = args.map((arg) => (isNumber(arg) ? arg.toString() : arg)) as string[];
+    return [...strArgs.shift().split(' '), ...strArgs];
   }
 
   /**
@@ -41,10 +47,10 @@ export abstract class IoredisClient extends RedisClient {
     commands: RedisClientCommand[],
     options?: IRedisClientCommandOptions,
   ): Promise<Array<[Error | null, RedisClientCommandReply]>> {
-    let batch = commands;
+    let batch = commands.map((command) => IoredisClient.prepareCommandArgs(command));
 
     if (options?.unknownCommands) {
-      batch = commands.map((command) => ['call', ...command]);
+      batch = commands.map((command) => ['call', ...command]) as string[][];
     }
 
     // todo: replyEncoding
@@ -55,7 +61,7 @@ export abstract class IoredisClient extends RedisClient {
     command: RedisClientCommand,
     options?: IRedisClientCommandOptions,
   ): Promise<RedisClientCommandReply> {
-    const [cmd, ...args] = command;
+    const [cmd, ...args] = IoredisClient.prepareCommandArgs(command) as string[];
     return await this.client.sendCommand(
       new Command(cmd, args, IoredisClient.prepareCommandOptions(options)),
     ) as RedisClientCommandReply;

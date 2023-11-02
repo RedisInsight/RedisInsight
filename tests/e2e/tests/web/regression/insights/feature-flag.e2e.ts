@@ -23,7 +23,7 @@ const pathes = {
     buildTypeConfig: path.join('.', 'test-data', 'features-configs', 'insights-build-type-filter.json'),
     flagOffConfig: path.join('.', 'test-data', 'features-configs', 'insights-flag-off.json')
 };
-
+// the tests are skipped due to story https://redislabs.atlassian.net/browse/RI-5089
 fixture.skip `Feature flag`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)

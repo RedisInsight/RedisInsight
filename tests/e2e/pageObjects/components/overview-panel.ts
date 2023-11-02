@@ -46,6 +46,6 @@ export class OverviewPanel {
      * wait for cpu is displayed
      */
     async waitForCpuIsCalculated(): Promise<void> {
-        await t.expect(this.overviewSpinner.exists).notOk();
+        await t.expect(this.overviewSpinner.visible).notOk();
     }
 }

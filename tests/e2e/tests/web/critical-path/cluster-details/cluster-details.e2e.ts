@@ -76,8 +76,8 @@ test
             await t.expect(clusterDetailsPage.tableRow.nth(nodes.indexOf(node)).textContent).contains(node, `Node ${node} is not displayed in table`);
         }
         //Run Create hash index command to load network and memory
-        await clusterDetailsPage.ExplorePanel.togglePanel(true);
-        const tutorials = await clusterDetailsPage.ExplorePanel.setActiveTab(ExploreTabs.Explore);
+        await clusterDetailsPage.InsightsPanel.togglePanel(true);
+        const tutorials = await clusterDetailsPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
 
         await t.click(tutorials.documentButtonInQuickGuides);
         await t.click(tutorials.internalLinkWorkingWithHashes);

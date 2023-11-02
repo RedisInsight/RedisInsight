@@ -106,8 +106,8 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     // Run automatically added FT.Aggregate script with edits
-    await workbenchPage.ExplorePanel.togglePanel(true);
-    const tab = await workbenchPage.ExplorePanel.setActiveTab(ExploreTabs.Explore);
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
     await t.click(tab.documentButtonInQuickGuides);
     await t.click(tab.internalLinkWorkingWithHashes);
     await tab.runBlockCode('Group by & sort by aggregation: COUNT');

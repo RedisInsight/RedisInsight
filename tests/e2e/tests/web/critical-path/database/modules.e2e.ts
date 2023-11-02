@@ -1,5 +1,4 @@
 import { Chance } from 'chance';
-import { Selector } from 'testcafe';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
@@ -70,20 +69,4 @@ test('Verify that user can see full module list in the Edit mode', async t => {
     await t.expect(myRedisDatabasePage.moduleColumn.exists).notOk('Module column not found');
     // Verify modules in Edit mode
     await myRedisDatabasePage.checkModulesOnPage(moduleList);
-});
-test('Verify that user can see icons in DB header for RediSearch, RedisGraph, RedisJSON, RedisBloom, RedisTimeSeries, RedisGears, RedisAI default modules', async t => {
-    // Connect to DB
-    await myRedisDatabasePage.clickOnDBByName(database.databaseName);
-    // Check all available modules in overview
-    const moduleIcons = Selector('div').find('[data-testid^=Redi]');
-    const numberOfIcons = await moduleIcons.count;
-    for (let i = 0; i < numberOfIcons; i++) {
-        const moduleName = await moduleIcons.nth(i).getAttribute('data-testid');
-        await t.expect(moduleName).eql(await moduleList[i].getAttribute('data-testid'), 'Correct icon not found');
-    }
-    // Verify that if DB has more than 6 modules loaded, user can click on three dots and see other modules in the tooltip
-    await t.click(browserPage.OverviewPanel.overviewMoreInfo);
-    for (let j = numberOfIcons; j < moduleNameList.length; j++) {
-        await t.expect(browserPage.OverviewPanel.overviewTooltip.withText(moduleNameList[j]).visible).ok('Tooltip module not found');
-    }
 });

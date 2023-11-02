@@ -1,7 +1,6 @@
 import { Chance } from 'chance';
-import { Selector } from 'testcafe';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { Common } from '../../../../helpers/common';
 import {
     MyRedisDatabasePage,
@@ -15,8 +14,6 @@ import {
     ossStandaloneBigConfig
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-
-
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -47,11 +44,12 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
-        let firstDatabaseModules: string[] = [];
-        let secondDatabaseModules: string[] = [];
+        const firstDatabaseModules: string[] = [];
+        const secondDatabaseModules: string[] = [];
         //Remember modules
-        await t.click(browserPage.OverviewPanel.overviewMoreInfo);
-        const moduleIcons = Selector('div').find('[data-testid^=Redi]');
+        await t.hover(browserPage.OverviewPanel.databaseInfoIcon);
+        await t.expect(browserPage.OverviewPanel.databaseInfoToolTip.visible).ok('Tooltip is not opened');
+        const moduleIcons = await browserPage.OverviewPanel.databaseInfoToolTip.find('[data-testid^=module_]');
         let countOfModules = await moduleIcons.count;
         for(let i = 0; i < countOfModules; i++) {
             firstDatabaseModules.push(await moduleIcons.nth(i).textContent);
@@ -63,7 +61,8 @@ test
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneRedisearch);
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
-        await t.click(browserPage.OverviewPanel.overviewMoreInfo);
+        await t.hover(browserPage.OverviewPanel.databaseInfoIcon);
+        await t.expect(browserPage.OverviewPanel.databaseInfoToolTip.visible).ok('Tooltip is not opened');
         countOfModules = await moduleIcons.count;
         for(let i = 0; i < countOfModules; i++) {
             secondDatabaseModules.push(await moduleIcons.nth(i).textContent);
@@ -141,34 +140,32 @@ test
     });
 test
     .meta({ rte: rte.standalone })
-    .before(async t => {
+    .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
-        //Go to Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     })
     .after(async() => {
         //Delete database and index
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX idx:schools DD');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
-        const commandsSecBeforeEdit = await browserPage.overviewCommandsSec.textContent;
-        //Wait 5 second
-        await t.wait(fiveSecondsTimeout);
-        const cpuBeforeEdit = (await browserPage.overviewCpu.textContent).split(' ')[0];
+        const commandsSecBeforeEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;
+        await browserPage.OverviewPanel.waitForCpuIsCalculated();
+        const cpuBeforeEdit = (await browserPage.OverviewPanel.overviewCpu.textContent).split(' ')[0];
         //Verify that additional information in Overview: Connected Clients, Commands/Sec, CPU (%) is displayed
-        await t.expect(browserPage.overviewConnectedClients.exists).ok('Connected Clients is dispalyed in the Overview');
-        await t.expect(browserPage.overviewCommandsSec.exists).ok('Commands/Sec is dispalyed in the Overview');
-        await t.expect(browserPage.overviewCpu.exists).ok('CPU (%) is dispalyed in the Overview');
+        await t.expect(browserPage.OverviewPanel.overviewConnectedClients.exists).ok('Connected Clients is dispalyed in the Overview');
+        await t.expect(browserPage.OverviewPanel.overviewCommandsSec.exists).ok('Commands/Sec is dispalyed in the Overview');
+        await t.expect(browserPage.OverviewPanel.overviewCpu.exists).ok('CPU (%) is dispalyed in the Overview');
         //Run Create hash index command
-        await t.click(workbenchPage.documentButtonInQuickGuides);
-        await t.click(workbenchPage.internalLinkWorkingWithHashes);
-        await t.click(workbenchPage.preselectCreateHashIndex);
+        await browserPage.InsightsPanel.togglePanel(true);
+        const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.internalLinkWorkingWithHashes);
+        await tutorials.runBlockCode('Create');
         await t.click(workbenchPage.submitCommandButton);
         //Verify that CPU and commands per second parameters are changed
-        const commandsSecAfterEdit = await browserPage.overviewCommandsSec.textContent;
-        //Wait 5 seconds
-        await t.wait(fiveSecondsTimeout);
-        const cpuAfterEdit = (await browserPage.overviewCpu.textContent).split(' ')[0];
+        const commandsSecAfterEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;
+        await browserPage.OverviewPanel.waitForCpuIsCalculated();
+        const cpuAfterEdit = (await browserPage.OverviewPanel.overviewCpu.textContent).split(' ')[0];
         await t.expect(Number(cpuAfterEdit)).gt(Number(cpuBeforeEdit), 'CPU parameter is changed');
         await t.expect(commandsSecAfterEdit).notEql(commandsSecBeforeEdit, 'Commands per second parameter is changed');
     });

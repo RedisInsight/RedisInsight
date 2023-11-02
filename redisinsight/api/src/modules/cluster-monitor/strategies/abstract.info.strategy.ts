@@ -1,9 +1,10 @@
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { Cluster, Redis, Command } from 'ioredis';
-import { convertBulkStringsToObject, convertRedisInfoReplyToObject, convertStringToNumber } from 'src/utils';
+import { convertRedisInfoReplyToObject, convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
 import { plainToClass } from 'class-transformer';
+import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 
 export abstract class AbstractInfoStrategy implements IClusterInfo {
   /**
@@ -61,7 +62,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     return {
       ...node,
       totalKeys: sum(map(get(info, 'keyspace', {}), (dbKeys): number => {
-        const { keys } = convertBulkStringsToObject(dbKeys, ',', '=');
+        const { keys } = convertMultilineReplyToObject(dbKeys, ',', '=');
         return parseInt(keys, 10);
       })),
       usedMemory: convertStringToNumber(get(info, 'memory.used_memory')),
@@ -88,7 +89,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    */
   static async getClusterInfo(client: Cluster): Promise<Partial<ClusterDetails>> {
     // @ts-ignore
-    const info = convertBulkStringsToObject(await client.sendCommand(new Command('cluster', ['info'], {
+    const info = convertMultilineReplyToObject(await client.sendCommand(new Command('cluster', ['info'], {
       replyEncoding: 'utf8',
     })));
 

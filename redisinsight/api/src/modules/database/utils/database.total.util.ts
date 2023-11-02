@@ -1,6 +1,7 @@
 import { Redis, Command } from 'ioredis';
 import { get } from 'lodash';
-import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { convertRedisInfoReplyToObject } from 'src/utils';
+import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 
 const getTotalFromInfo = async (client: Redis) => {
   try {
@@ -16,7 +17,7 @@ const getTotalFromInfo = async (client: Redis) => {
       return 0;
     }
 
-    const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+    const { keys } = convertMultilineReplyToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
     return parseInt(keys, 10);
   } catch (err) {
     return -1;

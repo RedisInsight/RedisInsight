@@ -58,7 +58,7 @@ export class RedisClientFactory implements OnModuleInit {
    * @param strategy
    * @private
    */
-  private getConnectionStrategy(strategy?: RedisClientLib): RedisConnectionStrategy {
+  public getConnectionStrategy(strategy?: RedisClientLib): RedisConnectionStrategy {
     switch (REDIS_CLIENTS_CONFIG.forceStrategy || strategy) {
       case RedisClientLib.NODE_REDIS:
         return this.nodeRedisConnectionStrategy;

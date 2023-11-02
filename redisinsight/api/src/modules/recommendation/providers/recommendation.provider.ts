@@ -3,7 +3,7 @@ import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
 import {
-  convertRedisInfoReplyToObject, convertBulkStringsToObject, checkTimestamp, checkKeyspaceNotification,
+  convertRedisInfoReplyToObject, checkTimestamp, checkKeyspaceNotification,
 } from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
@@ -28,6 +28,7 @@ import {
   RTS_KEYS_FOR_CHECK,
   LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT,
 } from 'src/common/constants';
+import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 
 @Injectable()
 export class RecommendationProvider {
@@ -104,8 +105,8 @@ export class RecommendationProvider {
       );
       const keyspace = get(info, 'keyspace', {});
       const databasesWithKeys = Object.values(keyspace).filter((db) => {
-        const { keys } = convertBulkStringsToObject(db as string, ',', '=');
-        return keys > 0;
+        const { keys } = convertMultilineReplyToObject(db as string, ',', '=');
+        return parseInt(keys, 10) > 0;
       });
       return databasesWithKeys.length > 1 ? { name: RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES } : null;
     } catch (err) {

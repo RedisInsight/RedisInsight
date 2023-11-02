@@ -11,8 +11,14 @@ export abstract class IoredisClient extends RedisClient {
   protected readonly client: Redis | Cluster;
 
   static prepareCommandOptions(options: IRedisClientCommandOptions): any {
+    let replyEncoding = null;
+
+    if (options?.replyEncoding === 'utf8') {
+      replyEncoding = 'utf8';
+    }
+
     return {
-      replyEncoding: options?.replyEncoding,
+      replyEncoding,
     };
   }
 

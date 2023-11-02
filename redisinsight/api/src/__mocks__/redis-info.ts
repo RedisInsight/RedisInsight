@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 export const mockRedisServerInfoResponse: string = ' # Server\r\n'
   + 'redis_version:6.0.5\r\n'
   + 'redis_mode:standalone\r\n'

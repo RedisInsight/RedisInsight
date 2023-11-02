@@ -1,15 +1,14 @@
-/* eslint-disable import/first */
+import { mockRedisKeysUtilModule } from 'src/__mocks__/redis-utils';
+
+jest.doMock('src/modules/redis/utils/keys.util', mockRedisKeysUtilModule);
+
 import {
   mockSocket,
   mockBulkActionsAnalytics,
   mockRedisKeysUtil,
-  mockRedisKeysUtilModule,
   mockBulkActionFilter,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
-
-jest.doMock('src/modules/redis/utils/keys.util', mockRedisKeysUtilModule);
-
 import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';

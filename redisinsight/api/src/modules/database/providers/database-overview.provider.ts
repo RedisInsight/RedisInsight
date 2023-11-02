@@ -10,12 +10,12 @@ import {
   isNumber,
 } from 'lodash';
 import {
-  convertBulkStringsToObject,
   convertRedisInfoReplyToObject,
 } from 'src/utils';
 import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { ClientMetadata } from 'src/common/models';
+import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 
 @Injectable()
 export class DatabaseOverviewProvider {
@@ -220,7 +220,7 @@ export class DatabaseOverviewProvider {
         map(
           get(node, 'keyspace', {}),
           (dbKeys, dbNumber): void => {
-            const { keys } = convertBulkStringsToObject(dbKeys, ',', '=');
+            const { keys } = convertMultilineReplyToObject(dbKeys, ',', '=');
 
             if (!totalKeysPerDb[dbNumber]) {
               totalKeysPerDb[dbNumber] = 0;

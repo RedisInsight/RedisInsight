@@ -49,7 +49,6 @@ test.skip('Verify that user can see "No data to visualize" message for Graph com
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
     await t.click(tutorials.redisStackTutorialsButton);
     await tutorials.runBlockCode('Show all sales per region');
-    await t.click(workbenchPage.preselectModelBikeSalesButton);
     await t.click(workbenchPage.submitCommandButton);
     // Check result
     await t.switchToIframe(workbenchPage.iframe);

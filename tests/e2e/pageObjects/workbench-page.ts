@@ -18,7 +18,6 @@ export class WorkbenchPage extends InstancePage {
     cssQueryCardCommand = '[data-testid=query-card-command]';
     cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
     cssRowInVirtualizedTable = '[data-testid^=row-]';
-    cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
     //*Declare all elements/components of the relevant page.
@@ -39,14 +38,9 @@ export class WorkbenchPage extends InstancePage {
     preselectButtons = Selector('[data-testid^=preselect-]');
     reRunCommandButton = Selector('[data-testid=re-run-command]');
     preselectManual = Selector('[data-testid=preselect-Manual]');
-    enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
-    paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
     fullScreenButton = Selector('[data-testid=toggle-full-screen]');
     cancelButton = Selector('[data-testid=cancel-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
-    guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
-    preselectModelBikeSalesButton = Selector('[data-testid="preselect-Model bike sales"]');
-    showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
     rawModeBtn = Selector('[data-testid="btn-change-mode"]');
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
@@ -77,20 +71,15 @@ export class WorkbenchPage extends InstancePage {
     queryColumns = Selector('[data-testid*=query-column-]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
     noCommandHistorySection = Selector('[data-testid=wb_no-results]');
-    preselectArea = Selector('[data-testid=enablementArea]');
-    expandArea = Selector('[data-testid=enablement-area-container]');
     noCommandHistoryTitle = Selector('[data-testid=wb_no-results__title]');
     noCommandHistoryText = Selector('[data-testid=wb_no-results__summary]');
     scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
-    enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
-    enablementAreaTreeView = Selector('[data-testid=enablementArea-treeView]');
     commandExecutionResult = Selector('[data-testid=query-common-result]');
     commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
     chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
     runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
     loadedCommand = Selector('[class=euiLoadingContent__singleLine]');
     runButtonSpinner = Selector('[data-testid=loading-spinner]');
-    enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
     commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
     executionCommandTime = Selector('[data-testid=command-execution-time-value]');
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');

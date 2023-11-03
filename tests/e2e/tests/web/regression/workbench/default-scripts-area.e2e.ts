@@ -21,18 +21,6 @@ fixture `Default scripts area at Workbench`
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Verify that user can expand/collapse the enablement area', async t => {
-    // Hover over Enablement area
-    await t.hover(workbenchPage.preselectArea);
-    // Collapse the area with default scripts
-    await t.click(workbenchPage.collapsePreselectAreaButton);
-    // Validate that Enablement area is not displayed
-    await t.expect(workbenchPage.preselectArea.visible).notOk('Enablement area is not collapsed');
-    // Expand Enablement area
-    await t.click(workbenchPage.expandPreselectAreaButton);
-    // Validate that Enablement area is displayed
-    await t.expect(workbenchPage.preselectArea.visible).ok('Enablement area is not expanded');
-});
 test('Verify that user can see the [Manual] option in the Enablement area', async t => {
     const optionsForCheck = [
         'Manual',

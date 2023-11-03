@@ -25,15 +25,7 @@ export class WorkbenchPage extends InstancePage {
     //*Target any element/component via data-id, if possible!
     //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
     //-------------------------------------------------------------------------------------------
-    //BUTTONS
-    customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
-    tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
-    tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
-    tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
-    tutorialDeleteButton = Selector('button[data-testid^=delete-tutorial-]');
-    tutorialSubmitButton = Selector('[data-testid=submit-upload-tutorial-btn]');
-    tutorialImport = Selector('[data-testid=import-tutorial]');
-    tutorialAccordionButton = Selector('[data-testid^=accordion-button-]');
+    //BUTTON
     submitCommandButton = Selector('[data-testid=btn-submit]');
     resizeButtonForScriptingAndResults = Selector('[data-test-subj=resize-btn-scripting-area-and-results]');
     collapsePreselectAreaButton = Selector('[data-testid=collapse-enablement-area]');
@@ -53,7 +45,6 @@ export class WorkbenchPage extends InstancePage {
     fullScreenButton = Selector('[data-testid=toggle-full-screen]');
     cancelButton = Selector('[data-testid=cancel-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
-    documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
     guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
     nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
@@ -247,49 +238,5 @@ export class WorkbenchPage extends InstancePage {
      */
     getInternalLinkWithoutManifest(internalLink: string): Selector {
         return Selector(`[data-testid="internal-link-${internalLink}"]`);
-    }
-
-    /**
-     * Find tutorial selector by name
-     * @param name A tutorial name
-     */
-    getTutorialByName(name: string): Selector {
-        return Selector('div').withText(name);
-    }
-
-    /**
-     * Delete tutorial by name
-     * @param name A tutorial name
-     */
-    async deleteTutorialByName(name: string): Promise<void> {
-        const deleteTutorialBtn = this.tutorialAccordionButton.withText(name).find(this.cssTutorialDeleteIcon);
-        if (await this.closeEnablementPage.exists) {
-            await t.click(this.closeEnablementPage);
-        }
-        await t.click(deleteTutorialBtn);
-        await t.click(this.tutorialDeleteButton);
-    }
-
-    /**
-     * Find image in tutorial by alt text
-     * @param alt Image alt text
-     */
-    getTutorialImageByAlt(alt: string): Selector {
-        return Selector('img').withAttribute('alt', alt);
-    }
-
-    /**
-     * Wait until image rendered
-     * @param selector Image selector
-     */
-    async waitUntilImageRendered(selector: Selector): Promise<void> {
-        const searchTimeout = 5 * 1000; // 5 sec maximum wait
-        const startTime = Date.now();
-        let imageHeight = await selector.getStyleProperty('height');
-
-        do {
-            imageHeight = await selector.getStyleProperty('height');
-        }
-        while ((imageHeight == '0px') && Date.now() - startTime < searchTimeout);
     }
 }

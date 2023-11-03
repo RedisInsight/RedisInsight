@@ -49,14 +49,16 @@ test
         // Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
-        await t.click(workbenchPage.documentButtonInQuickGuides);
-        await t.click(workbenchPage.internalLinkWorkingWithHashes);
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.internalLinkWorkingWithHashes);
 
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
 
-        await t.click(workbenchPage.preselectIndexInformation);
+        await tutorials.runBlockCode('Additional index information');
         // Replace the {index} with indexName value in script and send
         let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
         addedScript = addedScript.replace('"idx:schools"', indexName);
@@ -82,9 +84,12 @@ test('Verify that user can edit and run automatically added "Search" script in W
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
     // Run automatically added FT.SEARCH script with edits
-    await t.click(workbenchPage.documentButtonInQuickGuides);
-    await t.click(workbenchPage.internalLinkWorkingWithHashes);
-    await t.click(workbenchPage.preselectExactSearch);
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    await t.click(tutorials.documentButtonInQuickGuides);
+    await t.click(tutorials.internalLinkWorkingWithHashes);
+    await tutorials.runBlockCode('Exact text search');
+
     await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     // Check the FT.SEARCH result

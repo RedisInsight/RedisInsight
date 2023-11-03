@@ -7,6 +7,9 @@ export class InsightsPanel {
     // CONTAINERS
     sidePanel = Selector('[data-testid=insights-panel]');
     explorePanelButton = Selector('[data-testid=insights-trigger]');
+    closeButton = Selector('[data-testid=close-insights-btn]');
+    activeTab = Selector('[class^=euiTab-isSelected]');
+
     recommendationsTab = Selector('[data-testid=recommendations-tab]');
     exploreTab = Selector('[data-testid=explore-tab]');
 
@@ -22,6 +25,12 @@ export class InsightsPanel {
         }
     }
 
+    /**
+     * get acrive tab
+     */
+    async getActiveTab(): Promise<string> {
+        return this.activeTab.textContent;
+    }
     /**
      * Click on Panel tab
      * @param type of the tab

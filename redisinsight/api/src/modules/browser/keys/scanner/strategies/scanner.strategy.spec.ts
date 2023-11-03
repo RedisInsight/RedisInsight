@@ -12,7 +12,7 @@ import { BrowserToolService } from 'src/modules/browser/services/browser-tool/br
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
-import { AbstractScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/abstract.scanner.strategy';
+import { ScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/scanner.strategy';
 import { StandaloneScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/standalone.scanner.strategy';
 
 const nodeClient = Object.create(IORedis.prototype);
@@ -28,8 +28,8 @@ const mockKeyInfo: GetKeyInfoResponse = {
   size: 50,
 };
 
-describe('AbstractScannerStrategy', () => {
-  let scannerInstance: AbstractScannerStrategy;
+describe('ScannerStrategy', () => {
+  let scannerInstance: ScannerStrategy;
   let browserTool: BrowserToolService;
   let settingsService: SettingsService;
 

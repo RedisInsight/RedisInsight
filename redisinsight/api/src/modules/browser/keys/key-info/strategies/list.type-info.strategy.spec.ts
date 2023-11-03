@@ -12,7 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { ListTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { ListTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/list.type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testList',
@@ -29,6 +29,7 @@ describe('ListTypeInfoStrategy', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ListTypeInfoStrategy,
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -37,7 +38,7 @@ describe('ListTypeInfoStrategy', () => {
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = new ListTypeInfoStrategy(browserTool);
+    strategy = module.get(ListTypeInfoStrategy);
   });
 
   describe('getInfo', () => {

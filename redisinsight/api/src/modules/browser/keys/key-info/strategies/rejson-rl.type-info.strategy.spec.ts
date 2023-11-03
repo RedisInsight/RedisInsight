@@ -13,7 +13,7 @@ import {
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { mockKeyDto } from 'src/modules/browser/__mocks__';
-import { RejsonRlTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { RejsonRlTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/rejson-rl.type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: mockKeyDto.keyName,
@@ -39,7 +39,7 @@ describe('RejsonRlTypeInfoStrategy', () => {
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = new RejsonRlTypeInfoStrategy(browserTool);
+    strategy = module.get(RejsonRlTypeInfoStrategy);
   });
 
   describe('getInfo', () => {

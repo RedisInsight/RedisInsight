@@ -8,27 +8,28 @@ import {
 import { ReplyError } from 'src/models';
 import {
   BrowserToolKeysCommands,
-  BrowserToolZSetCommands,
+  BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { ZSetTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { StreamTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/stream.type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
-  name: 'testZSet',
-  type: 'zset',
+  name: 'testStream',
+  type: 'stream',
   ttl: -1,
   size: 50,
   length: 10,
 };
 
-describe('ZSetTypeInfoStrategy', () => {
-  let strategy: ZSetTypeInfoStrategy;
+describe('StreamTypeInfoStrategy', () => {
+  let strategy: StreamTypeInfoStrategy;
   let browserTool;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        StreamTypeInfoStrategy,
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -37,7 +38,7 @@ describe('ZSetTypeInfoStrategy', () => {
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = new ZSetTypeInfoStrategy(browserTool);
+    strategy = module.get(StreamTypeInfoStrategy);
   });
 
   describe('getInfo', () => {
@@ -47,7 +48,7 @@ describe('ZSetTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          [BrowserToolZSetCommands.ZCard, key],
+          [BrowserToolStreamCommands.XLen, key],
         ])
         .mockResolvedValue([
           null,
@@ -61,7 +62,7 @@ describe('ZSetTypeInfoStrategy', () => {
       const result = await strategy.getInfo(
         mockBrowserClientMetadata,
         key,
-        RedisDataType.ZSet,
+        RedisDataType.Stream,
       );
 
       expect(result).toEqual(getKeyInfoResponse);
@@ -69,18 +70,18 @@ describe('ZSetTypeInfoStrategy', () => {
     it('should throw error', async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
-        command: BrowserToolKeysCommands.Type,
+        command: BrowserToolKeysCommands.Ttl,
       };
       when(browserTool.execPipeline)
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          [BrowserToolZSetCommands.ZCard, key],
+          [BrowserToolStreamCommands.XLen, key],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.ZSet);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.Stream);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -96,7 +97,7 @@ describe('ZSetTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          [BrowserToolZSetCommands.ZCard, key],
+          [BrowserToolStreamCommands.XLen, key],
         ])
         .mockResolvedValue([
           null,
@@ -110,7 +111,7 @@ describe('ZSetTypeInfoStrategy', () => {
       const result = await strategy.getInfo(
         mockBrowserClientMetadata,
         key,
-        RedisDataType.ZSet,
+        RedisDataType.Stream,
       );
 
       expect(result).toEqual({ ...getKeyInfoResponse, size: null });

@@ -1,31 +1,20 @@
-import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import {
   BrowserToolKeysCommands,
-  BrowserToolTSCommands,
+  BrowserToolRejsonRlCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
-import { IKeyInfoStrategy } from 'src/modules/browser/keys/key-info-manager/key-info-manager.interface';
-import { convertArrayReplyToObject } from 'src/modules/redis/utils';
+import { TypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/type-info.strategy';
 
-export class TSTypeInfoStrategy implements IKeyInfoStrategy {
-  private logger = new Logger('TSTypeInfoStrategy');
-
-  private readonly redisManager: BrowserToolService;
-
-  constructor(redisManager: BrowserToolService) {
-    this.redisManager = redisManager;
-  }
-
+export class RejsonRlTypeInfoStrategy extends TypeInfoStrategy {
   public async getInfo(
     clientMetadata: ClientMetadata,
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.TS} type info.`);
+    this.logger.log(`Getting ${RedisDataType.JSON} type info.`);
     const [
       transactionError,
       transactionResults,
@@ -40,7 +29,7 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
         (item: [ReplyError, any]) => item[1],
       );
       const [ttl, size] = result;
-      const length = await this.getTotalSamples(clientMetadata, key);
+      const length = await this.getLength(clientMetadata, key);
       return {
         name: key,
         type,
@@ -51,19 +40,43 @@ export class TSTypeInfoStrategy implements IKeyInfoStrategy {
     }
   }
 
-  private async getTotalSamples(
+  private async getLength(
     clientMetadata: ClientMetadata,
     key: RedisString,
   ): Promise<number> {
     try {
-      const info = await this.redisManager.execCommand(
+      const objectKeyType = await this.redisManager.execCommand(
         clientMetadata,
-        BrowserToolTSCommands.TSInfo,
-        [key],
+        BrowserToolRejsonRlCommands.JsonType,
+        [key, '.'],
         'utf8',
       );
-      const { totalsamples } = convertArrayReplyToObject(info);
-      return totalsamples;
+
+      switch (objectKeyType) {
+        case 'object':
+          return await this.redisManager.execCommand(
+            clientMetadata,
+            BrowserToolRejsonRlCommands.JsonObjLen,
+            [key, '.'],
+            'utf8',
+          );
+        case 'array':
+          return await this.redisManager.execCommand(
+            clientMetadata,
+            BrowserToolRejsonRlCommands.JsonArrLen,
+            [key, '.'],
+            'utf8',
+          );
+        case 'string':
+          return await this.redisManager.execCommand(
+            clientMetadata,
+            BrowserToolRejsonRlCommands.JsonStrLen,
+            [key, '.'],
+            'utf8',
+          );
+        default:
+          return undefined;
+      }
     } catch (error) {
       return undefined;
     }

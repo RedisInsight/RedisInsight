@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { IScannerStrategy } from 'src/modules/browser/keys/scanner/scanner.interface';
 import { ClusterScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/cluster.scanner.strategy';
 import { StandaloneScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/standalone.scanner.strategy';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { ScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/scanner.strategy';
 
 @Injectable()
 export class Scanner {
@@ -11,7 +11,7 @@ export class Scanner {
     private readonly clusterStrategy: ClusterScannerStrategy,
   ) {}
 
-  getStrategy(connectionType: ConnectionType): IScannerStrategy {
+  getStrategy(connectionType: ConnectionType): ScannerStrategy {
     switch (connectionType) {
       case ConnectionType.STANDALONE:
       case ConnectionType.SENTINEL:

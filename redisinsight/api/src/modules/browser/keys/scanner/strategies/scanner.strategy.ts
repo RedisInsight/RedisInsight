@@ -3,9 +3,10 @@ import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto'
 import { IRedisConsumer, ReplyError } from 'src/models';
 import IORedis, { Redis, Cluster, Command } from 'ioredis';
 import { RedisString } from 'src/common/constants';
-import { IScannerStrategy } from 'src/modules/browser/keys/scanner/scanner.interface';
+import { Injectable } from '@nestjs/common';
 
-export abstract class AbstractScannerStrategy implements IScannerStrategy {
+@Injectable()
+export abstract class ScannerStrategy {
   protected redisConsumer: IRedisConsumer;
 
   protected constructor(redisConsumer: IRedisConsumer) {

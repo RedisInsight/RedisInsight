@@ -6,29 +6,30 @@ import {
   mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import {
-  BrowserToolHashCommands,
   BrowserToolKeysCommands,
+  BrowserToolStringCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { HashTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { StringTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
-  name: 'testHash',
-  type: 'hash',
+  name: 'testString',
+  type: 'string',
   ttl: -1,
   size: 50,
   length: 10,
 };
 
-describe('HashTypeInfoStrategy', () => {
-  let strategy: HashTypeInfoStrategy;
+describe('StringTypeInfoStrategy', () => {
+  let strategy: StringTypeInfoStrategy;
   let browserTool;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        StringTypeInfoStrategy,
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -37,7 +38,7 @@ describe('HashTypeInfoStrategy', () => {
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = new HashTypeInfoStrategy(browserTool);
+    strategy = module.get(StringTypeInfoStrategy);
   });
 
   describe('getInfo', () => {
@@ -47,7 +48,7 @@ describe('HashTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          [BrowserToolHashCommands.HLen, key],
+          [BrowserToolStringCommands.StrLen, key],
         ])
         .mockResolvedValue([
           null,
@@ -61,7 +62,7 @@ describe('HashTypeInfoStrategy', () => {
       const result = await strategy.getInfo(
         mockBrowserClientMetadata,
         key,
-        RedisDataType.Hash,
+        RedisDataType.String,
       );
 
       expect(result).toEqual(getKeyInfoResponse);
@@ -75,12 +76,12 @@ describe('HashTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          [BrowserToolHashCommands.HLen, key],
+          [BrowserToolStringCommands.StrLen, key],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.Hash);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.String);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -96,7 +97,7 @@ describe('HashTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-          [BrowserToolHashCommands.HLen, key],
+          [BrowserToolStringCommands.StrLen, key],
         ])
         .mockResolvedValue([
           null,
@@ -110,7 +111,7 @@ describe('HashTypeInfoStrategy', () => {
       const result = await strategy.getInfo(
         mockBrowserClientMetadata,
         key,
-        RedisDataType.Hash,
+        RedisDataType.String,
       );
 
       expect(result).toEqual({ ...getKeyInfoResponse, size: null });

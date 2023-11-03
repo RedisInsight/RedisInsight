@@ -11,6 +11,10 @@ export const mockScannerStrategy = {
   getKeysSize: jest.fn().mockResolvedValue([]),
 };
 
+export const mockTypeInfoStrategy = {
+  getInfo: jest.fn().mockResolvedValue([]),
+};
+
 export const mockScanner = jest.fn(() => ({
   getStrategy: jest.fn().mockReturnValue(mockScannerStrategy),
 }));

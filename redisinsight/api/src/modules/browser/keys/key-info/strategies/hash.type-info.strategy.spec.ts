@@ -6,46 +6,30 @@ import {
   mockBrowserClientMetadata,
 } from 'src/__mocks__';
 import {
+  BrowserToolHashCommands,
   BrowserToolKeysCommands,
-  BrowserToolTSCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { TSTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { HashTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/hash.type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
-  name: 'testTS',
-  type: 'TSDB-TYPE',
+  name: 'testHash',
+  type: 'hash',
   ttl: -1,
   size: 50,
   length: 10,
 };
 
-const mockTSInfoReply = [
-  'totalSamples',
-  10,
-  'memoryUsage',
-  4239,
-  'firstTimestamp',
-  0,
-  'lastTimestamp',
-  0,
-  'retentionTime',
-  6000,
-  'chunkCount',
-  1,
-  'chunkSize',
-  4096,
-];
-
-describe('TSTypeInfoStrategy', () => {
-  let strategy: TSTypeInfoStrategy;
+describe('HashTypeInfoStrategy', () => {
+  let strategy: HashTypeInfoStrategy;
   let browserTool;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        HashTypeInfoStrategy,
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -54,33 +38,31 @@ describe('TSTypeInfoStrategy', () => {
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = new TSTypeInfoStrategy(browserTool);
+    strategy = module.get(HashTypeInfoStrategy);
   });
 
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
-    beforeEach(() => {
+    it('should return appropriate value', async () => {
       when(browserTool.execPipeline)
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+          [BrowserToolHashCommands.HLen, key],
         ])
         .mockResolvedValue([
           null,
           [
             [null, -1],
             [null, 50],
+            [null, 10],
           ],
         ]);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolTSCommands.TSInfo, [key], 'utf8')
-        .mockResolvedValue(mockTSInfoReply);
-    });
-    it('should return appropriate value', async () => {
+
       const result = await strategy.getInfo(
         mockBrowserClientMetadata,
         key,
-        RedisDataType.TS,
+        RedisDataType.Hash,
       );
 
       expect(result).toEqual(getKeyInfoResponse);
@@ -94,11 +76,12 @@ describe('TSTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+          [BrowserToolHashCommands.HLen, key],
         ])
         .mockResolvedValue([replyError, []]);
 
       try {
-        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.TS);
+        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.Hash);
         fail('Should throw an error');
       } catch (err) {
         expect(err.message).toEqual(replyError.message);
@@ -114,40 +97,24 @@ describe('TSTypeInfoStrategy', () => {
         .calledWith(mockBrowserClientMetadata, [
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+          [BrowserToolHashCommands.HLen, key],
         ])
         .mockResolvedValue([
           null,
           [
             [null, -1],
             [replyError, null],
+            [null, 10],
           ],
         ]);
 
       const result = await strategy.getInfo(
         mockBrowserClientMetadata,
         key,
-        RedisDataType.TS,
+        RedisDataType.Hash,
       );
 
       expect(result).toEqual({ ...getKeyInfoResponse, size: null });
-    });
-    it('should return result without length', async () => {
-      const replyError: ReplyError = {
-        name: 'ReplyError',
-        command: BrowserToolTSCommands.TSInfo,
-        message: "ERR unknown command 'ts.info'",
-      };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolTSCommands.TSInfo, [key], 'utf8')
-        .mockResolvedValue(replyError);
-
-      const result = await strategy.getInfo(
-        mockBrowserClientMetadata,
-        key,
-        RedisDataType.TS,
-      );
-
-      expect(result).toEqual({ ...getKeyInfoResponse, length: undefined });
     });
   });
 });

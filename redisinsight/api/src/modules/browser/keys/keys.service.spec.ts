@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { when } from 'jest-when';
-import { get } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
   mockRedisClusterConsumer,
@@ -36,13 +35,13 @@ import {
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import IORedis from 'ioredis';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
-import { StringTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { StringTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.type-info.strategy';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
-import { mockScanner, mockScannerStrategy } from 'src/modules/browser/__mocks__';
+import { mockScanner, mockScannerStrategy, mockTypeInfoStrategy } from 'src/modules/browser/__mocks__';
+import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: Buffer.from('testString'),
@@ -108,6 +107,12 @@ describe('KeysService', () => {
           provide: Scanner,
           useFactory: mockScanner,
         },
+        {
+          provide: KeyInfoProvider,
+          useFactory: () => ({
+            getStrategy: jest.fn().mockReturnValue(mockTypeInfoStrategy),
+          }),
+        },
       ],
     }).compile();
 
@@ -117,7 +122,7 @@ describe('KeysService', () => {
     browserTool = module.get<BrowserToolService>(BrowserToolService);
     browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
     scanner = module.get(Scanner);
-    const keyInfoManager: any = get(service, 'keyInfoManager');
+    const keyInfoManager: any = module.get(KeyInfoProvider);
     stringTypeInfoManager = keyInfoManager.getStrategy(RedisDataType.String);
   });
 

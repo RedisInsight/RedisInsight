@@ -14,7 +14,6 @@ import {
   GetKeysInfoDto,
   GetKeysWithDetailsResponse,
   KeyTtlResponse,
-  RedisDataType,
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
@@ -35,25 +34,11 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { pick } from 'lodash';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
-import {
-  UnsupportedTypeInfoStrategy,
-  StringTypeInfoStrategy,
-  HashTypeInfoStrategy,
-  ListTypeInfoStrategy,
-  SetTypeInfoStrategy,
-  ZSetTypeInfoStrategy,
-  StreamTypeInfoStrategy,
-  RejsonRlTypeInfoStrategy,
-  TSTypeInfoStrategy,
-  GraphTypeInfoStrategy,
-} from 'src/modules/browser/keys/strategies';
-import { KeyInfoManager } from 'src/modules/browser/keys/key-info-manager/key-info-manager';
+import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 
 @Injectable()
 export class KeysService {
   private logger = new Logger('KeysService');
-
-  private keyInfoManager;
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -63,47 +48,8 @@ export class KeysService {
     private settingsService: SettingsService,
     private recommendationService: DatabaseRecommendationService,
     private readonly scanner: Scanner,
-  ) {
-    this.keyInfoManager = new KeyInfoManager(
-      new UnsupportedTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.String,
-      new StringTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Hash,
-      new HashTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.List,
-      new ListTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Set,
-      new SetTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.ZSet,
-      new ZSetTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Stream,
-      new StreamTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.JSON,
-      new RejsonRlTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.TS,
-      new TSTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Graph,
-      new GraphTypeInfoStrategy(browserTool),
-    );
-  }
+    private readonly keyInfoProvider: KeyInfoProvider,
+  ) {}
 
   public async getKeys(
     clientMetadata: ClientMetadata,
@@ -203,7 +149,7 @@ export class KeysService {
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      const infoManager = this.keyInfoManager.getStrategy(type);
+      const infoManager = this.keyInfoProvider.getStrategy(type);
       const result = await infoManager.getInfo(clientMetadata, key, type);
       this.logger.log('Succeed to get key info');
       this.recommendationService.check(

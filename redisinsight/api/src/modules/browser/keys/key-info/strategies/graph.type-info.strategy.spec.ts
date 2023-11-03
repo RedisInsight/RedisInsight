@@ -12,7 +12,7 @@ import {
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { GraphTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { GraphTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/graph.type-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testGraph',
@@ -38,6 +38,7 @@ describe('GraphTypeInfoStrategy', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        GraphTypeInfoStrategy,
         {
           provide: BrowserToolService,
           useFactory: mockRedisConsumer,
@@ -46,7 +47,7 @@ describe('GraphTypeInfoStrategy', () => {
     }).compile();
 
     browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = new GraphTypeInfoStrategy(browserTool);
+    strategy = module.get(GraphTypeInfoStrategy);
   });
 
   describe('getInfo', () => {

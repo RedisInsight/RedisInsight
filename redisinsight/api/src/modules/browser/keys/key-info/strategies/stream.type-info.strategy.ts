@@ -1,37 +1,27 @@
-import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import {
   BrowserToolKeysCommands,
-  BrowserToolZSetCommands,
+  BrowserToolStreamCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
-import { IKeyInfoStrategy } from 'src/modules/browser/keys/key-info-manager/key-info-manager.interface';
+import { TypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/type-info.strategy';
 
-export class ZSetTypeInfoStrategy implements IKeyInfoStrategy {
-  private logger = new Logger('ZSetTypeInfoStrategy');
-
-  private readonly redisManager: BrowserToolService;
-
-  constructor(redisManager: BrowserToolService) {
-    this.redisManager = redisManager;
-  }
-
+export class StreamTypeInfoStrategy extends TypeInfoStrategy {
   public async getInfo(
     clientMetadata: ClientMetadata,
     key: RedisString,
     type: string,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log(`Getting ${RedisDataType.ZSet} type info.`);
+    this.logger.log(`Getting ${RedisDataType.Stream} type info.`);
     const [
       transactionError,
       transactionResults,
     ] = await this.redisManager.execPipeline(clientMetadata, [
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      [BrowserToolZSetCommands.ZCard, key],
+      [BrowserToolStreamCommands.XLen, key],
     ]);
     if (transactionError) {
       throw transactionError;

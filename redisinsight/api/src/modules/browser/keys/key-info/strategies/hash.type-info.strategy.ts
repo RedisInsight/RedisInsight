@@ -1,6 +1,4 @@
-import { Logger } from '@nestjs/common';
 import { ReplyError } from 'src/models';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { ClientMetadata } from 'src/common/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import {
@@ -8,17 +6,9 @@ import {
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { RedisString } from 'src/common/constants';
-import { IKeyInfoStrategy } from 'src/modules/browser/keys/key-info-manager/key-info-manager.interface';
+import { TypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/type-info.strategy';
 
-export class HashTypeInfoStrategy implements IKeyInfoStrategy {
-  private logger = new Logger('HashTypeInfoStrategy');
-
-  private readonly redisManager: BrowserToolService;
-
-  constructor(redisManager: BrowserToolService) {
-    this.redisManager = redisManager;
-  }
-
+export class HashTypeInfoStrategy extends TypeInfoStrategy {
   public async getInfo(
     clientMetadata: ClientMetadata,
     key: RedisString,

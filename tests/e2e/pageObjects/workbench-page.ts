@@ -45,7 +45,6 @@ export class WorkbenchPage extends InstancePage {
     cancelButton = Selector('[data-testid=cancel-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
-    createGraphBikeButton = Selector('[data-testid="preselect-Create a bike node"]');
     preselectModelBikeSalesButton = Selector('[data-testid="preselect-Model bike sales"]');
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');

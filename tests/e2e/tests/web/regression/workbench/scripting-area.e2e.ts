@@ -91,6 +91,7 @@ test
         await t.click(tutorials.internalLinkWorkingWithHashes);
         // Put Create Hash commands into Editing area
         await tutorials.runBlockCode('Exact text search');
+        await t.click(workbenchPage.submitCommandButton);
         // Maximize Scripting area to see all the commands
         await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, 300, { speed: 0.4 });
         //Get number of commands in scripting area

@@ -22,6 +22,7 @@ export class ExploreTab {
     guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
     guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
     enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
+    tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
     //Custom tutorials
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
@@ -112,5 +113,13 @@ export class ExploreTab {
         }
         await t.click(deleteTutorialBtn);
         await t.click(this.tutorialDeleteButton);
+    }
+
+    /**
+     * Find tutorial selector by name
+     * @param name A tutorial name
+     */
+    getTutorialByName(name: string): Selector {
+        return Selector('div').withText(name);
     }
 }

@@ -32,6 +32,7 @@ test('Verify that user can switches between Chart and Text for TimeSeries comman
     await t.click(tutorials.redisStackTutorialsButton);
     await t.click(tutorials.timeSeriesLink);
     await tutorials.runBlockCode('Show all sales per region');
+    await t.click(workbenchPage.submitCommandButton);
     // Check result is in chart view
     await t.expect(workbenchPage.chartViewTypeOptionSelected.exists).ok('The chart view option is not selected by default');
     // Switch to Text view and check result

@@ -71,7 +71,7 @@ const Welcome = ({ onAddInstance }: Props) => {
       buttons: [
         {
           title: 'Import Redis Cloud database connections',
-          description: 'Sign in to your Redis Enterprise Cloud account to discover and add databases',
+          description: 'Sign in to your Redis Cloud account to discover and add databases',
           iconType: CloudIcon,
           iconClassName: styles.cloudIcon,
           feature: FeatureFlags.cloudSso,

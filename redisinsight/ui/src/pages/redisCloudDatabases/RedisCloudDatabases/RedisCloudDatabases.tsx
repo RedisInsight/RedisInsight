@@ -186,7 +186,7 @@ const RedisCloudDatabasesPage = ({
             <div className="databaseContainer">
               <EuiTitle size="s" className={styles.title} data-testid="title">
                 <h1>
-                  Redis Enterprise Cloud Databases
+                  Redis Cloud Databases
                 </h1>
               </EuiTitle>
 
@@ -195,7 +195,7 @@ const RedisCloudDatabasesPage = ({
                   These are
                   {' '}
                   {items.length > 1 ? 'databases ' : 'database '}
-                  in your Redis Enterprise cloud. Select the
+                  in your Redis Cloud. Select the
                   {items.length > 1 ? ' databases ' : ' database '}
                   {' '}
                   that you

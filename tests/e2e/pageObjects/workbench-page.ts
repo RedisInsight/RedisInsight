@@ -33,7 +33,6 @@ export class WorkbenchPage extends InstancePage {
     paginationButtonPrevious = Selector(this.cssSelectorPaginationButtonPrevious);
     paginationButtonNext = Selector(this.cssSelectorPaginationButtonNext);
     preselectIndexInformation = Selector('[data-testid="preselect-Additional index information"]');
-    preselectHashCreate = Selector('[data-testid=preselect-Create]');
     preselectExactSearch = Selector('[data-testid="preselect-Exact text search"]');
     preselectCreateHashIndex = Selector('[data-testid="preselect-Create a hash index"]');
     preselectGroupBy = Selector('[data-testid*=preselect-Group]');
@@ -46,10 +45,6 @@ export class WorkbenchPage extends InstancePage {
     cancelButton = Selector('[data-testid=cancel-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
-    redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
-    nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
-    prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
-    hashWithVectorButton = Selector('[data-testid="preselect-A hash with vector embeddings"]');
     createGraphBikeButton = Selector('[data-testid="preselect-Create a bike node"]');
     preselectModelBikeSalesButton = Selector('[data-testid="preselect-Model bike sales"]');
     showSalesPerRegiomButton = Selector('[data-testid="preselect-Show all sales per region"]');
@@ -58,9 +53,6 @@ export class WorkbenchPage extends InstancePage {
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     groupMode = Selector('[data-testid=btn-change-group-mode]');
     copyCommand = Selector('[data-testid=copy-command]');
-    redisStackTimeSeriesLoadMorePoints = Selector('[data-testid=preselect-Load more data points]');
-    uploadDataBulkBtn = Selector('[data-testid=upload-data-bulk-btn]');
-    uploadDataBulkApplyBtn = Selector('[data-testid=upload-data-bulk-apply-btn]');
     clearResultsBtn = Selector('[data-testid=clear-history-btn]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
@@ -69,12 +61,6 @@ export class WorkbenchPage extends InstancePage {
     rawModeIcon = Selector('[data-testid=raw-mode-tooltip]');
     silentModeIcon = Selector('[data-testid=silent-mode-tooltip]');
     //LINKS
-    timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
-    redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
-    tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
-    guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
-    internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
-    vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
     //TEXT INPUTS (also referred to as 'Text fields')
     queryInput = Selector('[data-testid=query-input-container]');
     iframe = Selector('[data-testid=pluginIframe]');

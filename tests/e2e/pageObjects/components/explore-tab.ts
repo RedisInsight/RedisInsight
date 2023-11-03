@@ -12,6 +12,16 @@ export class ExploreTab {
     tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);
     tutorialDeleteButton = Selector('button[data-testid^=delete-tutorial-]');
     preselectArea = Selector('[data-testid=enablementArea]');
+    enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
+    paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
+    enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
+    redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
+    vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
+    nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
+    prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
+    guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');
+    guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
+    enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
     //Custom tutorials
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
@@ -34,6 +44,14 @@ export class ExploreTab {
         const runButton = Selector(this.runMask.replace(/\$name/g, block));
         await t.scrollIntoView(runButton);
         await t.click(runButton);
+    }
+
+    /**
+     * get run selector
+     * @param block Name of the block
+     */
+    async getRunSelector(block: string): Promise<Selector> {
+        return  Selector(this.runMask.replace(/\$name/g, block));
     }
 
     /**

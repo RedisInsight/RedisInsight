@@ -11,11 +11,13 @@ import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-t
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { getTotal } from 'src/modules/database/utils/database.total.util';
 import { IGetNodeKeysResult } from 'src/modules/browser/keys/scanner/scanner.interface';
-import { AbstractStrategy } from 'src/modules/browser/keys/strategies';
+import { AbstractScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/abstract.scanner.strategy';
+import { Injectable } from '@nestjs/common';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
-export class StandaloneStrategy extends AbstractStrategy {
+@Injectable()
+export class StandaloneScannerStrategy extends AbstractScannerStrategy {
   private readonly redisManager: BrowserToolService;
 
   private settingsService: SettingsService;

@@ -18,7 +18,7 @@ import { IGetNodeKeysResult } from 'src/modules/browser/keys/scanner/scanner.int
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import * as Utils from 'src/modules/database/utils/database.total.util';
-import { ClusterStrategy } from 'src/modules/browser/keys/strategies';
+import { ClusterScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/cluster.scanner.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -100,7 +100,7 @@ describe('Cluster Scanner Strategy', () => {
     );
     settingsService = module.get(SettingsService);
     settingsService.getAppSettings.mockResolvedValue(mockAppSettingsInitial);
-    strategy = new ClusterStrategy(browserTool, settingsService);
+    strategy = new ClusterScannerStrategy(browserTool, settingsService);
     browserTool.getRedisClient.mockResolvedValue(clusterClient);
     mockGetKeysInfoFn.mockClear();
   });

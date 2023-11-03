@@ -36,7 +36,6 @@ import { pick } from 'lodash';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
 import {
-  StandaloneStrategy,
   UnsupportedTypeInfoStrategy,
   StringTypeInfoStrategy,
   HashTypeInfoStrategy,
@@ -46,7 +45,6 @@ import {
   StreamTypeInfoStrategy,
   RejsonRlTypeInfoStrategy,
   TSTypeInfoStrategy,
-  ClusterStrategy,
   GraphTypeInfoStrategy,
 } from 'src/modules/browser/keys/strategies';
 import { KeyInfoManager } from 'src/modules/browser/keys/key-info-manager/key-info-manager';
@@ -54,8 +52,6 @@ import { KeyInfoManager } from 'src/modules/browser/keys/key-info-manager/key-in
 @Injectable()
 export class KeysService {
   private logger = new Logger('KeysService');
-
-  private scanner: Scanner;
 
   private keyInfoManager;
 
@@ -66,22 +62,10 @@ export class KeysService {
     private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
     private recommendationService: DatabaseRecommendationService,
+    private readonly scanner: Scanner,
   ) {
-    this.scanner = new Scanner();
     this.keyInfoManager = new KeyInfoManager(
       new UnsupportedTypeInfoStrategy(browserTool),
-    );
-    this.scanner.addStrategy(
-      ConnectionType.STANDALONE,
-      new StandaloneStrategy(browserTool, settingsService),
-    );
-    this.scanner.addStrategy(
-      ConnectionType.CLUSTER,
-      new ClusterStrategy(browserToolCluster, settingsService),
-    );
-    this.scanner.addStrategy(
-      ConnectionType.SENTINEL,
-      new StandaloneStrategy(browserTool, settingsService),
     );
     this.keyInfoManager.addStrategy(
       RedisDataType.String,

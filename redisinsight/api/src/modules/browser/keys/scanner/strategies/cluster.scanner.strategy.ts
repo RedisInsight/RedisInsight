@@ -14,12 +14,14 @@ import {
 import { parseClusterCursor } from 'src/modules/browser/utils';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { getTotal } from 'src/modules/database/utils/database.total.util';
-import { AbstractStrategy } from 'src/modules/browser/keys/strategies';
+import { AbstractScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/abstract.scanner.strategy';
 import { IGetNodeKeysResult } from 'src/modules/browser/keys/scanner/scanner.interface';
+import { Injectable } from '@nestjs/common';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
-export class ClusterStrategy extends AbstractStrategy {
+@Injectable()
+export class ClusterScannerStrategy extends AbstractScannerStrategy {
   private readonly redisManager: BrowserToolClusterService;
 
   private settingsService: SettingsService;

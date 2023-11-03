@@ -5,7 +5,7 @@ import IORedis, { Redis, Cluster, Command } from 'ioredis';
 import { RedisString } from 'src/common/constants';
 import { IScannerStrategy } from 'src/modules/browser/keys/scanner/scanner.interface';
 
-export abstract class AbstractStrategy implements IScannerStrategy {
+export abstract class AbstractScannerStrategy implements IScannerStrategy {
   protected redisConsumer: IRedisConsumer;
 
   protected constructor(redisConsumer: IRedisConsumer) {

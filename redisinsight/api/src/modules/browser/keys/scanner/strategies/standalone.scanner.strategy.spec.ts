@@ -15,7 +15,7 @@ import { IGetNodeKeysResult } from 'src/modules/browser/keys/scanner/scanner.int
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import * as Utils from 'src/modules/database/utils/database.total.util';
-import { StandaloneStrategy } from 'src/modules/browser/keys/strategies';
+import { StandaloneScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/standalone.scanner.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
@@ -62,7 +62,7 @@ describe('Standalone Scanner Strategy', () => {
     browserTool = module.get<BrowserToolService>(BrowserToolService);
     settingsService = module.get(SettingsService);
     settingsService.getAppSettings.mockResolvedValue(mockAppSettingsInitial);
-    strategy = new StandaloneStrategy(browserTool, settingsService);
+    strategy = new StandaloneScannerStrategy(browserTool, settingsService);
     browserTool.getRedisClient.mockResolvedValue(nodeClient);
   });
   describe('getKeys', () => {

@@ -10,9 +10,10 @@ import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
-import { StandaloneStrategy, AbstractStrategy } from 'src/modules/browser/keys/strategies';
 import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { AbstractScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/abstract.scanner.strategy';
+import { StandaloneScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/standalone.scanner.strategy';
 
 const nodeClient = Object.create(IORedis.prototype);
 
@@ -27,8 +28,8 @@ const mockKeyInfo: GetKeyInfoResponse = {
   size: 50,
 };
 
-describe('RedisScannerAbstract', () => {
-  let scannerInstance: AbstractStrategy;
+describe('AbstractScannerStrategy', () => {
+  let scannerInstance: AbstractScannerStrategy;
   let browserTool: BrowserToolService;
   let settingsService: SettingsService;
 
@@ -48,7 +49,7 @@ describe('RedisScannerAbstract', () => {
 
     browserTool = await module.get<BrowserToolService>(BrowserToolService);
     settingsService = module.get(SettingsService);
-    scannerInstance = new StandaloneStrategy(browserTool, settingsService);
+    scannerInstance = new StandaloneScannerStrategy(browserTool, settingsService);
   });
 
   describe('getKeysInfo', () => {

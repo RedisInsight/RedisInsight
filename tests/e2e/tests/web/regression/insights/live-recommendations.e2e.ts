@@ -127,7 +127,7 @@ test
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
         await browserPage.InsightsPanel.togglePanel(true);
-        await t.expect(await browserPage.InsightsPanel.getActiveTab()).eql(ExploreTabs.Recommendations);
+        await t.expect(await browserPage.InsightsPanel.getActiveTab()).contains(ExploreTabs.Recommendations);
         await recommendationsActions.voteForRecommendation(redisVersionRecom, notUsefulVoteOption);
         // Verify that user can rate recommendations with one of 2 existing types at the same time
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);

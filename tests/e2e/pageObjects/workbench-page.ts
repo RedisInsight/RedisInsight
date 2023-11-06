@@ -74,7 +74,7 @@ export class WorkbenchPage extends InstancePage {
     noCommandHistoryTitle = Selector('[data-testid=wb_no-results__title]');
     noCommandHistoryText = Selector('[data-testid=wb_no-results__summary]');
     scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
-    commandExecutionResult = Selector('[data-testid=query-common-result]');
+    commandExecutionResult = Selector('[data-testid=welcome-page-title]');
     commandExecutionResultFailed = Selector('[data-testid=cli-output-response-fail]');
     chartViewTypeOptionSelected = Selector('[data-testid=view-type-selected-Plugin-redistimeseries__redistimeseries-chart]');
     runButtonToolTip = Selector('[data-testid=run-query-tooltip]');
@@ -83,6 +83,7 @@ export class WorkbenchPage extends InstancePage {
     commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
     executionCommandTime = Selector('[data-testid=command-execution-time-value]');
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
+    executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoSuggestion = Selector('span.monaco-icon-name-container');

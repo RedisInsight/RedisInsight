@@ -23,6 +23,8 @@ export class ExploreTab {
     guidesIntroductionGraphLink = Selector('[data-testid=internal-link-introduction]');
     enablementAreaEmptyContent = Selector('[data-testid=enablement-area__empty-prompt]');
     tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
+    codeBlock = Selector('[data-testid=code-button-block-content]');
+    codeBlockLabel = Selector('[data-testid=code-button-block-label]');
     //Custom tutorials
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
@@ -45,6 +47,14 @@ export class ExploreTab {
         const runButton = Selector(this.runMask.replace(/\$name/g, block));
         await t.scrollIntoView(runButton);
         await t.click(runButton);
+    }
+
+    /**
+     * get code
+     * @param block Name of the block
+     */
+    async getBlockCode(block: string): Promise<string> {
+        return await this.codeBlockLabel.withExactText(block).parent().parent().nextSibling().innerText;
     }
 
     /**

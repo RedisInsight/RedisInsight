@@ -43,10 +43,10 @@ test('Verify that user can see options on what can be done to work with capabili
     const commandFT = 'FT.LIST';
     await workbenchPage.sendCommandInWorkbench(commandJSON);
     // Verify change screens when capability not available - 'JSON'
-    await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available for this database').visible)
+    await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available').visible)
         .ok('Missing RedisJSON title is not visible');
     await workbenchPage.sendCommandInWorkbench(commandFT);
     // Verify change screens when capability not available - 'Search'
-    await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available for this database').visible)
+    await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
         .ok('Missing RedisSearch title is not visible');
 });

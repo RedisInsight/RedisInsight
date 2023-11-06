@@ -20,6 +20,7 @@ export default {
     tmpDir: os.tmpdir(),
     homedir,
     prevHomedir: homedir,
+    v2Homedir: homedir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),

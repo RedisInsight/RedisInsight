@@ -2,4 +2,5 @@ plugins
 report
 results
 remote
+.redisinsight
 .redisinsight-v2

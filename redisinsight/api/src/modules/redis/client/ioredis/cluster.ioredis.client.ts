@@ -18,6 +18,13 @@ export class ClusterIoredisClient extends IoredisClient {
 
   async nodes(role?: RedisClientNodeRole): Promise<RedisClient[]> {
     return this.client.nodes(role ? IoredisNodeRole[role] : IoredisNodeRole.ALL)
-      .map((node) => new StandaloneIoredisClient(this.clientMetadata, node));
+      .map((node) => new StandaloneIoredisClient(
+        this.clientMetadata,
+        node,
+        {
+          host: node.options.host,
+          port: node.options.port,
+        },
+      ));
   }
 }

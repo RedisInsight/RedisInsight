@@ -1,34 +1,34 @@
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
-import { Cluster, Redis } from 'ioredis';
 import { RedisString } from 'src/common/constants';
-import { ClientMetadata } from 'src/common/models';
+import { RedisClient } from 'src/modules/redis/client';
 
-interface IGetKeysArgs {
+export interface IScannerGetKeysArgs {
   cursor: string;
   count?: number;
   match?: string;
   type?: RedisDataType;
+  keysInfo?: boolean;
 }
 
-export interface IGetNodeKeysResult {
+export interface IScannerNodeKeys {
   total: number;
   scanned: number;
   cursor: number;
   keys: any[];
-  node?: Redis,
+  node?: RedisClient,
   host?: string;
   port?: number;
 }
 
 export interface IScannerStrategy {
-  getKeys(
-    clientMetadata: ClientMetadata,
-    args: IGetKeysArgs,
-  ): Promise<IGetNodeKeysResult[]>;
+  /**
+   * Scan database starting from provided cursor.
+   * For Cluster databases will scan each node
+   * For cluster database used custom cursor composed of each cursor per node (172.17.0.1:7001@-1||172.17.0.1:7002@33)
+   * @param client
+   * @param args
+   */
+  getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<IScannerNodeKeys[]>;
 
-  getKeysInfo(
-    client: Redis | Cluster,
-    keys: RedisString[],
-    type?: RedisDataType,
-  ): Promise<GetKeyInfoResponse[]>;
+  getKeysInfo(client: RedisClient, keys: RedisString[], type?: RedisDataType): Promise<GetKeyInfoResponse[]>;
 }

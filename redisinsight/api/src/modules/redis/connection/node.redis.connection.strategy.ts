@@ -201,7 +201,14 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
             });
 
           connection.connect()
-            .then(() => resolve(new StandaloneNodeRedisClient(clientMetadata, connection)));
+            .then(() => resolve(new StandaloneNodeRedisClient(
+              clientMetadata,
+              connection,
+              {
+                host: database.host,
+                port: database.port,
+              },
+            )));
 
           //
           // connection.on('end', (): void => {
@@ -248,7 +255,14 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
           reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
         });
         connection.connect()
-          .then(() => resolve(new ClusterNodeRedisClient(clientMetadata, connection)));
+          .then(() => resolve(new ClusterNodeRedisClient(
+            clientMetadata,
+            connection,
+            {
+              host: database.host,
+              port: database.port,
+            },
+          )));
       } catch (e) {
         reject(e);
       }

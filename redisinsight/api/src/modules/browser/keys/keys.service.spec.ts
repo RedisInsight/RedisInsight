@@ -38,7 +38,7 @@ import IORedis from 'ioredis';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
-import { StringTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.type-info.strategy';
+import { StringKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.key-info.strategy';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
 import { mockScanner, mockScannerStrategy, mockTypeInfoStrategy } from 'src/modules/browser/__mocks__';
 import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
@@ -86,7 +86,7 @@ describe('KeysService', () => {
           useFactory: mockRedisClusterConsumer,
         },
         {
-          provide: StringTypeInfoStrategy,
+          provide: StringKeyInfoStrategy,
           useFactory: () => ({
             getInfo: jest.fn(),
           }),

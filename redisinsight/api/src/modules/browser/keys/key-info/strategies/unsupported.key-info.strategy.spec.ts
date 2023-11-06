@@ -3,15 +3,15 @@ import { when } from 'jest-when';
 import {
   mockRedisConsumer,
   mockRedisNoPermError,
-  mockBrowserClientMetadata,
+  mockBrowserClientMetadata, mockStandaloneRedisClient
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
-  UnsupportedTypeInfoStrategy,
-} from 'src/modules/browser/keys/key-info/strategies/unsupported.type-info.strategy';
+  UnsupportedKeyInfoStrategy,
+} from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testKey',
@@ -20,67 +20,39 @@ const getKeyInfoResponse: GetKeyInfoResponse = {
   size: 50,
 };
 
-describe('UnsupportedTypeInfoStrategy', () => {
-  let strategy: UnsupportedTypeInfoStrategy;
-  let browserTool;
+describe('UnsupportedKeyInfoStrategy', () => {
+  let strategy: UnsupportedKeyInfoStrategy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UnsupportedTypeInfoStrategy,
-        {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
-        },
+        UnsupportedKeyInfoStrategy,
       ],
     }).compile();
 
-    browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = module.get(UnsupportedTypeInfoStrategy);
+    strategy = module.get(UnsupportedKeyInfoStrategy);
   });
 
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
     it('should return appropriate value', async () => {
-      when(browserTool.execPipeline)
-        .calledWith(mockBrowserClientMetadata, [
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([
-          null,
-          [
-            [null, -1],
-            [null, 50],
-          ],
+          [null, -1],
+          [null, 50],
         ]);
 
       const result = await strategy.getInfo(
-        mockBrowserClientMetadata,
+        mockStandaloneRedisClient,
         key,
         'custom-type',
       );
 
       expect(result).toEqual(getKeyInfoResponse);
-    });
-    it('should throw error', async () => {
-      const replyError: ReplyError = {
-        ...mockRedisNoPermError,
-        command: BrowserToolKeysCommands.Ttl,
-      };
-      when(browserTool.execPipeline)
-        .calledWith(mockBrowserClientMetadata, [
-          [BrowserToolKeysCommands.Ttl, key],
-          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-        ])
-        .mockResolvedValue([replyError, []]);
-
-      try {
-        await strategy.getInfo(mockBrowserClientMetadata, key, 'custom-type');
-        fail('Should throw an error');
-      } catch (err) {
-        expect(err.message).toEqual(replyError.message);
-      }
     });
     it('should return size with null value', async () => {
       const replyError: ReplyError = {
@@ -88,21 +60,18 @@ describe('UnsupportedTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.MemoryUsage,
         message: "ERR unknown command 'memory'",
       };
-      when(browserTool.execPipeline)
-        .calledWith(mockBrowserClientMetadata, [
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([
-          null,
-          [
-            [null, -1],
-            [replyError, null],
-          ],
+          [null, -1],
+          [replyError, null],
         ]);
 
       const result = await strategy.getInfo(
-        mockBrowserClientMetadata,
+        mockStandaloneRedisClient,
         key,
         'custom-type',
       );

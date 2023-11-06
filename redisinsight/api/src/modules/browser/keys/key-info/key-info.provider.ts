@@ -1,56 +1,56 @@
-import { GraphTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/graph.type-info.strategy';
-import { HashTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/hash.type-info.strategy';
-import { ListTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/list.type-info.strategy';
-import { RejsonRlTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/rejson-rl.type-info.strategy';
-import { SetTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/set.type-info.strategy';
-import { StreamTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/stream.type-info.strategy';
-import { StringTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.type-info.strategy';
-import { TsTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.type-info.strategy';
+import { GraphKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/graph.key-info.strategy';
+import { HashKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/hash.key-info.strategy';
+import { ListKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/list.key-info.strategy';
+import { RejsonRlKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/rejson-rl.key-info.strategy';
+import { SetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/set.key-info.strategy';
+import { StreamKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/stream.key-info.strategy';
+import { StringKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.key-info.strategy';
+import { TsKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.key-info.strategy';
 import {
-  UnsupportedTypeInfoStrategy,
-} from 'src/modules/browser/keys/key-info/strategies/unsupported.type-info.strategy';
-import { ZSetTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.type-info.strategy';
-import { TypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/type-info.strategy';
+  UnsupportedKeyInfoStrategy,
+} from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';
+import { ZSetKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/z-set.key-info.strategy';
+import { KeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/key-info.strategy';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class KeyInfoProvider {
   constructor(
-    private readonly graphTypeInfoStrategy: GraphTypeInfoStrategy,
-    private readonly hashTypeInfoStrategy: HashTypeInfoStrategy,
-    private readonly listTypeInfoStrategy: ListTypeInfoStrategy,
-    private readonly rejsonRlTypeInfoStrategy: RejsonRlTypeInfoStrategy,
-    private readonly setTypeInfoStrategy: SetTypeInfoStrategy,
-    private readonly streamTypeInfoStrategy: StreamTypeInfoStrategy,
-    private readonly stringTypeInfoStrategy: StringTypeInfoStrategy,
-    private readonly tsTypeInfoStrategy: TsTypeInfoStrategy,
-    private readonly unsupportedTypeInfoStrategy: UnsupportedTypeInfoStrategy,
-    private readonly zSetTypeInfoStrategy: ZSetTypeInfoStrategy,
+    private readonly graphKeyInfoStrategy: GraphKeyInfoStrategy,
+    private readonly hashKeyInfoStrategy: HashKeyInfoStrategy,
+    private readonly listKeyInfoStrategy: ListKeyInfoStrategy,
+    private readonly rejsonRlKeyInfoStrategy: RejsonRlKeyInfoStrategy,
+    private readonly setKeyInfoStrategy: SetKeyInfoStrategy,
+    private readonly streamKeyInfoStrategy: StreamKeyInfoStrategy,
+    private readonly stringKeyInfoStrategy: StringKeyInfoStrategy,
+    private readonly tsKeyInfoStrategy: TsKeyInfoStrategy,
+    private readonly unsupportedKeyInfoStrategy: UnsupportedKeyInfoStrategy,
+    private readonly zSetKeyInfoStrategy: ZSetKeyInfoStrategy,
   ) {}
 
-  getStrategy(type?: RedisDataType): TypeInfoStrategy {
+  getStrategy(type?: string): KeyInfoStrategy {
     switch (type) {
       case RedisDataType.Graph:
-        return this.graphTypeInfoStrategy;
+        return this.graphKeyInfoStrategy;
       case RedisDataType.Hash:
-        return this.hashTypeInfoStrategy;
+        return this.hashKeyInfoStrategy;
       case RedisDataType.List:
-        return this.listTypeInfoStrategy;
+        return this.listKeyInfoStrategy;
       case RedisDataType.JSON:
-        return this.rejsonRlTypeInfoStrategy;
+        return this.rejsonRlKeyInfoStrategy;
       case RedisDataType.Set:
-        return this.setTypeInfoStrategy;
+        return this.setKeyInfoStrategy;
       case RedisDataType.Stream:
-        return this.streamTypeInfoStrategy;
+        return this.streamKeyInfoStrategy;
       case RedisDataType.String:
-        return this.stringTypeInfoStrategy;
+        return this.stringKeyInfoStrategy;
       case RedisDataType.TS:
-        return this.tsTypeInfoStrategy;
+        return this.tsKeyInfoStrategy;
       case RedisDataType.ZSet:
-        return this.zSetTypeInfoStrategy;
+        return this.zSetKeyInfoStrategy;
       default:
-        return this.unsupportedTypeInfoStrategy;
+        return this.unsupportedKeyInfoStrategy;
     }
   }
 }

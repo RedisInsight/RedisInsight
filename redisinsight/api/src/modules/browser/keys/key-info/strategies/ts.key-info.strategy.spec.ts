@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
-  mockRedisConsumer,
-  mockRedisNoPermError,
-  mockBrowserClientMetadata,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
@@ -11,8 +9,7 @@ import {
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { ReplyError } from 'src/models';
 import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { TsTypeInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.type-info.strategy';
+import { TsKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ts.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: 'testTS',
@@ -39,71 +36,46 @@ const mockTSInfoReply = [
   4096,
 ];
 
-describe('TsTypeInfoStrategy', () => {
-  let strategy: TsTypeInfoStrategy;
-  let browserTool;
+describe('TsKeyInfoStrategy', () => {
+  let strategy: TsKeyInfoStrategy;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        TsTypeInfoStrategy,
-        {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
-        },
+        TsKeyInfoStrategy,
       ],
     }).compile();
 
-    browserTool = module.get<BrowserToolService>(BrowserToolService);
-    strategy = module.get(TsTypeInfoStrategy);
+    strategy = module.get(TsKeyInfoStrategy);
   });
 
   describe('getInfo', () => {
     const key = getKeyInfoResponse.name;
     beforeEach(() => {
-      when(browserTool.execPipeline)
-        .calledWith(mockBrowserClientMetadata, [
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([
-          null,
-          [
-            [null, -1],
-            [null, 50],
-          ],
+          [null, -1],
+          [null, 50],
         ]);
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolTSCommands.TSInfo, [key], 'utf8')
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolTSCommands.TSInfo, key],
+          { replyEncoding: 'utf8' },
+        )
         .mockResolvedValue(mockTSInfoReply);
     });
     it('should return appropriate value', async () => {
       const result = await strategy.getInfo(
-        mockBrowserClientMetadata,
+        mockStandaloneRedisClient,
         key,
         RedisDataType.TS,
       );
 
       expect(result).toEqual(getKeyInfoResponse);
-    });
-    it('should throw error', async () => {
-      const replyError: ReplyError = {
-        ...mockRedisNoPermError,
-        command: BrowserToolKeysCommands.Ttl,
-      };
-      when(browserTool.execPipeline)
-        .calledWith(mockBrowserClientMetadata, [
-          [BrowserToolKeysCommands.Ttl, key],
-          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-        ])
-        .mockResolvedValue([replyError, []]);
-
-      try {
-        await strategy.getInfo(mockBrowserClientMetadata, key, RedisDataType.TS);
-        fail('Should throw an error');
-      } catch (err) {
-        expect(err.message).toEqual(replyError.message);
-      }
     });
     it('should return size with null value', async () => {
       const replyError: ReplyError = {
@@ -111,21 +83,18 @@ describe('TsTypeInfoStrategy', () => {
         command: BrowserToolKeysCommands.MemoryUsage,
         message: "ERR unknown command 'memory'",
       };
-      when(browserTool.execPipeline)
-        .calledWith(mockBrowserClientMetadata, [
+      when(mockStandaloneRedisClient.sendPipeline)
+        .calledWith([
           [BrowserToolKeysCommands.Ttl, key],
           [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
         ])
         .mockResolvedValue([
-          null,
-          [
-            [null, -1],
-            [replyError, null],
-          ],
+          [null, -1],
+          [replyError, null],
         ]);
 
       const result = await strategy.getInfo(
-        mockBrowserClientMetadata,
+        mockStandaloneRedisClient,
         key,
         RedisDataType.TS,
       );
@@ -138,12 +107,15 @@ describe('TsTypeInfoStrategy', () => {
         command: BrowserToolTSCommands.TSInfo,
         message: "ERR unknown command 'ts.info'",
       };
-      when(browserTool.execCommand)
-        .calledWith(mockBrowserClientMetadata, BrowserToolTSCommands.TSInfo, [key], 'utf8')
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(
+          [BrowserToolTSCommands.TSInfo, key],
+          { replyEncoding: 'utf8' },
+        )
         .mockResolvedValue(replyError);
 
       const result = await strategy.getInfo(
-        mockBrowserClientMetadata,
+        mockStandaloneRedisClient,
         key,
         RedisDataType.TS,
       );

@@ -23,6 +23,11 @@ export interface IRedisClientCommandOptions {
   unknownCommands?: boolean,
 }
 
+export interface IRedisClientOptions {
+  host?: string,
+  port?: number,
+}
+
 export type RedisClientCommandArgument = RedisString | number;
 export type RedisClientCommandArguments = RedisClientCommandArgument[];
 export type RedisClientCommand = [cmd: string, ...args: RedisClientCommandArguments];
@@ -35,7 +40,8 @@ export abstract class RedisClient {
 
   constructor(
     public readonly clientMetadata: ClientMetadata,
-    protected readonly client: any,
+    protected readonly client: unknown,
+    public readonly options: IRedisClientOptions,
   ) {
     this.clientMetadata = RedisClient.prepareClientMetadata(clientMetadata);
     this.lastTimeUsed = Date.now();

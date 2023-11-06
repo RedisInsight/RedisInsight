@@ -14,112 +14,36 @@ import {
   GetKeysInfoDto,
   GetKeysWithDetailsResponse,
   KeyTtlResponse,
-  RedisDataType,
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
 } from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { ClientMetadata } from 'src/common/models';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import {
-  BrowserToolClusterService,
-} from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { SettingsService } from 'src/modules/settings/settings.service';
-import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { pick } from 'lodash';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
-import {
-  StandaloneStrategy,
-  UnsupportedTypeInfoStrategy,
-  StringTypeInfoStrategy,
-  HashTypeInfoStrategy,
-  ListTypeInfoStrategy,
-  SetTypeInfoStrategy,
-  ZSetTypeInfoStrategy,
-  StreamTypeInfoStrategy,
-  RejsonRlTypeInfoStrategy,
-  TSTypeInfoStrategy,
-  ClusterStrategy,
-  GraphTypeInfoStrategy,
-} from 'src/modules/browser/keys/strategies';
-import { KeyInfoManager } from 'src/modules/browser/keys/key-info-manager/key-info-manager';
+import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 @Injectable()
 export class KeysService {
   private logger = new Logger('KeysService');
 
-  private scanner: Scanner;
-
-  private keyInfoManager;
-
   constructor(
-    private readonly databaseService: DatabaseService,
-    private browserTool: BrowserToolService,
     private browserHistory: BrowserHistoryService,
-    private browserToolCluster: BrowserToolClusterService,
     private settingsService: SettingsService,
     private recommendationService: DatabaseRecommendationService,
-  ) {
-    this.scanner = new Scanner();
-    this.keyInfoManager = new KeyInfoManager(
-      new UnsupportedTypeInfoStrategy(browserTool),
-    );
-    this.scanner.addStrategy(
-      ConnectionType.STANDALONE,
-      new StandaloneStrategy(browserTool, settingsService),
-    );
-    this.scanner.addStrategy(
-      ConnectionType.CLUSTER,
-      new ClusterStrategy(browserToolCluster, settingsService),
-    );
-    this.scanner.addStrategy(
-      ConnectionType.SENTINEL,
-      new StandaloneStrategy(browserTool, settingsService),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.String,
-      new StringTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Hash,
-      new HashTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.List,
-      new ListTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Set,
-      new SetTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.ZSet,
-      new ZSetTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Stream,
-      new StreamTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.JSON,
-      new RejsonRlTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.TS,
-      new TSTypeInfoStrategy(browserTool),
-    );
-    this.keyInfoManager.addStrategy(
-      RedisDataType.Graph,
-      new GraphTypeInfoStrategy(browserTool),
-    );
-  }
+    private readonly scanner: Scanner,
+    private readonly keyInfoProvider: KeyInfoProvider,
+    private readonly databaseClientFactory: DatabaseClientFactory,
+  ) {}
 
   public async getKeys(
     clientMetadata: ClientMetadata,
@@ -127,12 +51,10 @@ export class KeysService {
   ): Promise<GetKeysWithDetailsResponse[]> {
     try {
       this.logger.log('Getting keys with details.');
-      // todo: refactor. no need entire entity here
-      const databaseInstance = await this.databaseService.get(
-        clientMetadata.databaseId,
-      );
-      const scanner = this.scanner.getStrategy(databaseInstance.connectionType);
-      const result = await scanner.getKeys(clientMetadata, dto);
+
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const scanner = this.scanner.getStrategy(client.getConnectionType());
+      const result = await scanner.getKeys(client, dto);
 
       // Do not save default match "*"
       if (dto.match !== DEFAULT_MATCH) {
@@ -144,6 +66,7 @@ export class KeysService {
           ),
         );
       }
+
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.USE_SMALLER_KEYS,
@@ -179,8 +102,8 @@ export class KeysService {
     dto: GetKeysInfoDto,
   ): Promise<GetKeyInfoResponse[]> {
     try {
-      const client = await this.browserTool.getRedisClient(clientMetadata);
-      const scanner = this.scanner.getStrategy(client.isCluster ? ConnectionType.CLUSTER : ConnectionType.STANDALONE);
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const scanner = this.scanner.getStrategy(client.getConnectionType());
       const result = await scanner.getKeysInfo(client, dto.keys, dto.type);
 
       this.recommendationService.check(
@@ -205,22 +128,28 @@ export class KeysService {
     clientMetadata: ClientMetadata,
     key: RedisString,
   ): Promise<GetKeyInfoResponse> {
-    this.logger.log('Getting key info.');
     try {
-      const type = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Type,
-        [key],
-        'utf8',
-      );
+      this.logger.log('Getting key info.');
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      const type = await client.sendCommand(
+        [
+          BrowserToolKeysCommands.Type,
+          key,
+        ],
+        {
+          replyEncoding: 'utf8',
+        },
+      ) as string;
+
       if (type === 'none') {
         this.logger.error(`Failed to get key info. Not found key: ${key}`);
         return Promise.reject(
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
-      const infoManager = this.keyInfoManager.getStrategy(type);
-      const result = await infoManager.getInfo(clientMetadata, key, type);
+
+      const result = await this.keyInfoProvider.getStrategy(type).getInfo(client, key, type);
       this.logger.log('Succeed to get key info');
       this.recommendationService.check(
         clientMetadata,
@@ -244,68 +173,67 @@ export class KeysService {
     }
   }
 
-  public async deleteKeys(
-    clientMetadata: ClientMetadata,
-    keys: RedisString[],
-  ): Promise<DeleteKeysResponse> {
-    this.logger.log('Deleting keys');
-    let result;
+  /**
+   * Delete multiple keys
+   * @param clientMetadata
+   * @param keys
+   */
+  public async deleteKeys(clientMetadata: ClientMetadata, keys: RedisString[]): Promise<DeleteKeysResponse> {
     try {
-      result = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Deleting keys');
+
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      const result = await client.sendCommand([
         BrowserToolKeysCommands.Del,
-        keys,
-      );
+        ...keys,
+      ]) as number;
+
+      if (!result) {
+        this.logger.error('Failed to delete keys. Not Found keys');
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      this.logger.log('Succeed to delete keys');
+
+      return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete keys.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    if (!result) {
-      this.logger.error('Failed to delete keys. Not Found keys');
-      throw new NotFoundException();
-    }
-    this.logger.log('Succeed to delete keys');
-    return { affected: result };
   }
 
-  public async renameKey(
-    clientMetadata: ClientMetadata,
-    dto: RenameKeyDto,
-  ): Promise<RenameKeyResponse> {
-    this.logger.log('Renaming key');
-    const { keyName, newKeyName } = dto;
-    let result;
+  /**
+   * Rename particular key
+   * @param clientMetadata
+   * @param dto
+   */
+  public async renameKey(clientMetadata: ClientMetadata, dto: RenameKeyDto): Promise<RenameKeyResponse> {
     try {
-      const isExist = await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Exists,
-        [keyName],
-      );
-      if (!isExist) {
-        this.logger.error(
-          `Failed to rename key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-        );
-        return Promise.reject(
-          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
-        );
-      }
-      result = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Renaming key');
+      const { keyName, newKeyName } = dto;
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const result = await client.sendCommand([
         BrowserToolKeysCommands.RenameNX,
-        [keyName, newKeyName],
-      );
+        keyName,
+        newKeyName,
+      ]);
+
+      if (!result) {
+        this.logger.error(
+          `Failed to rename key. ${ERROR_MESSAGES.NEW_KEY_NAME_EXIST} key: ${newKeyName}`,
+        );
+        return Promise.reject(new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST));
+      }
+      this.logger.log('Succeed to rename key');
+      return plainToClass(RenameKeyResponse, { keyName: newKeyName });
     } catch (error) {
       this.logger.error('Failed to rename key.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    if (!result) {
-      this.logger.error(
-        `Failed to rename key. ${ERROR_MESSAGES.NEW_KEY_NAME_EXIST} key: ${newKeyName}`,
-      );
-      throw new BadRequestException(ERROR_MESSAGES.NEW_KEY_NAME_EXIST);
-    }
-    this.logger.log('Succeed to rename key');
-    return plainToClass(RenameKeyResponse, { keyName: newKeyName });
   }
 
   public async updateTtl(
@@ -318,70 +246,78 @@ export class KeysService {
     return await this.setKeyExpiration(clientMetadata, dto);
   }
 
-  public async setKeyExpiration(
-    clientMetadata: ClientMetadata,
-    dto: UpdateKeyTtlDto,
-  ): Promise<KeyTtlResponse> {
-    this.logger.log('Setting a timeout on key.');
-    const { keyName, ttl } = dto;
-    let result;
+  /**
+   * Set ttl for particular key
+   * @param clientMetadata
+   * @param dto
+   */
+  public async setKeyExpiration(clientMetadata: ClientMetadata, dto: UpdateKeyTtlDto): Promise<KeyTtlResponse> {
     try {
-      await this.browserTool.execCommand(
-        clientMetadata,
-        BrowserToolKeysCommands.Ttl,
-        [keyName],
-      );
-      result = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Setting a timeout on key.');
+      const { keyName, ttl } = dto;
+
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      const result = await client.sendCommand([
         BrowserToolKeysCommands.Expire,
-        [keyName, ttl],
-      );
+        keyName,
+        ttl,
+      ]);
+
+      if (!result) {
+        this.logger.error(
+          `Failed to set a timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
+        );
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+      }
+
+      this.logger.log('Succeed to set a timeout on key.');
+      return {
+        ttl: ttl >= 0 ? ttl : -2,
+      };
     } catch (error) {
       this.logger.error('Failed to set a timeout on key.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    if (!result) {
-      this.logger.error(
-        `Failed to set a timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
-      );
-      throw new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST);
-    }
-    this.logger.log('Succeed to set a timeout on key.');
-    return { ttl: ttl >= 0 ? ttl : -2 };
   }
 
-  public async removeKeyExpiration(
-    clientMetadata: ClientMetadata,
-    dto: UpdateKeyTtlDto,
-  ): Promise<KeyTtlResponse> {
-    this.logger.log('Removing the existing timeout on key.');
-    const { keyName } = dto;
+  /**
+   * Remove existing ttl for particular key
+   * @param clientMetadata
+   * @param dto
+   */
+  public async removeKeyExpiration(clientMetadata: ClientMetadata, dto: UpdateKeyTtlDto): Promise<KeyTtlResponse> {
     try {
-      const currentTtl = await this.browserTool.execCommand(
-        clientMetadata,
+      this.logger.log('Removing the existing timeout on key.');
+
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      const currentTtl = await client.sendCommand([
         BrowserToolKeysCommands.Ttl,
-        [keyName],
-      );
+        dto.keyName,
+      ]);
+
       if (currentTtl === -2) {
         this.logger.error(
-          `Failed to remove the existing timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${keyName}`,
+          `Failed to remove the existing timeout on key. ${ERROR_MESSAGES.KEY_NOT_EXIST} key: ${dto.keyName}`,
         );
         return Promise.reject(
           new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
         );
       }
+
       if (currentTtl > 0) {
-        await this.browserTool.execCommand(
-          clientMetadata,
+        await client.sendCommand([
           BrowserToolKeysCommands.Persist,
-          [keyName],
-        );
+          dto.keyName,
+        ]);
       }
+
+      this.logger.log('Succeed to remove the existing timeout on key.');
+      return { ttl: -1 };
     } catch (error) {
       this.logger.error('Failed to remove the existing timeout on key.', error);
-      catchAclError(error);
+      throw catchAclError(error);
     }
-    this.logger.log('Succeed to remove the existing timeout on key.');
-    return { ttl: -1 };
   }
 }

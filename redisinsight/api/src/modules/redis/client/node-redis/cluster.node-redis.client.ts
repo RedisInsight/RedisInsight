@@ -36,7 +36,14 @@ export class ClusterNodeRedisClient extends NodeRedisClient {
         nodes = this.client.masters.concat(this.client.replicas);
     }
 
-    return nodes.map((node) => new StandaloneNodeRedisClient(this.clientMetadata, node.client));
+    return nodes.map((node) => new StandaloneNodeRedisClient(
+      this.clientMetadata,
+      node.client,
+      {
+        host: node.host,
+        port: node.port,
+      },
+    ));
   }
 
   /**

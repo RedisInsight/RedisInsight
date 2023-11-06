@@ -194,7 +194,14 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           });
           connection.on('ready', (): void => {
             this.logger.log('Successfully connected to the redis database');
-            resolve(new StandaloneIoredisClient(clientMetadata, connection));
+            resolve(new StandaloneIoredisClient(
+              clientMetadata,
+              connection,
+              {
+                host: database.host,
+                port: database.port,
+              },
+            ));
           });
           connection.on('reconnecting', (): void => {
             this.logger.log('Reconnecting to the redis database');
@@ -241,7 +248,14 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         });
         cluster.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss cluster.');
-          resolve(new ClusterIoredisClient(clientMetadata, cluster));
+          resolve(new ClusterIoredisClient(
+            clientMetadata,
+            cluster,
+            {
+              host: database.host,
+              port: database.port,
+            },
+          ));
         });
       } catch (e) {
         reject(e);
@@ -272,7 +286,14 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         });
         client.on('ready', (): void => {
           this.logger.log('Successfully connected to the redis oss sentinel.');
-          resolve(new SentinelIoredisClient(clientMetadata, client));
+          resolve(new SentinelIoredisClient(
+            clientMetadata,
+            client,
+            {
+              host: database.host,
+              port: database.port,
+            },
+          ));
         });
       } catch (e) {
         reject(e);

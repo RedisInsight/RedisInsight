@@ -5,7 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { when } from 'jest-when';
-import { get } from 'lodash';
 import { ReplyError } from 'src/models/redis-client';
 import {
   mockRedisClusterConsumer,
@@ -36,11 +35,13 @@ import {
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import IORedis from 'ioredis';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
-import { StringTypeInfoStrategy } from 'src/modules/browser/keys/strategies';
+import { StringKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/string.key-info.strategy';
+import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
+import { mockScanner, mockScannerStrategy, mockTypeInfoStrategy } from 'src/modules/browser/__mocks__';
+import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
   name: Buffer.from('testString'),
@@ -63,11 +64,10 @@ describe('KeysService', () => {
   let service: KeysService;
   let databaseService: MockType<DatabaseService>;
   let browserTool;
-  let standaloneScanner;
-  let clusterScanner;
   let stringTypeInfoManager;
   let browserHistory;
   let recommendationService;
+  let scanner: MockType<Scanner>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -86,7 +86,7 @@ describe('KeysService', () => {
           useFactory: mockRedisClusterConsumer,
         },
         {
-          provide: StringTypeInfoStrategy,
+          provide: StringKeyInfoStrategy,
           useFactory: () => ({
             getInfo: jest.fn(),
           }),
@@ -103,6 +103,16 @@ describe('KeysService', () => {
           provide: DatabaseRecommendationService,
           useFactory: mockDatabaseRecommendationService,
         },
+        {
+          provide: Scanner,
+          useFactory: mockScanner,
+        },
+        {
+          provide: KeyInfoProvider,
+          useFactory: () => ({
+            getStrategy: jest.fn().mockReturnValue(mockTypeInfoStrategy),
+          }),
+        },
       ],
     }).compile();
 
@@ -111,10 +121,8 @@ describe('KeysService', () => {
     recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
     browserTool = module.get<BrowserToolService>(BrowserToolService);
     browserHistory = module.get<BrowserHistoryService>(BrowserHistoryService);
-    const scannerManager: any = get(service, 'scanner');
-    const keyInfoManager: any = get(service, 'keyInfoManager');
-    standaloneScanner = scannerManager.getStrategy(ConnectionType.STANDALONE);
-    clusterScanner = scannerManager.getStrategy(ConnectionType.CLUSTER);
+    scanner = module.get(Scanner);
+    const keyInfoManager: any = module.get(KeyInfoProvider);
     stringTypeInfoManager = keyInfoManager.getStrategy(RedisDataType.String);
   });
 
@@ -203,7 +211,7 @@ describe('KeysService', () => {
       when(browserTool.getRedisClient)
         .calledWith(mockBrowserClientMetadata)
         .mockResolvedValue(nodeClient);
-      standaloneScanner['getKeysInfo'] = jest.fn().mockResolvedValue([getKeyInfoResponse]);
+      mockScannerStrategy.getKeysInfo.mockResolvedValue([getKeyInfoResponse]);
     });
 
     it('should return keys with info', async () => {
@@ -240,7 +248,7 @@ describe('KeysService', () => {
         command: 'TYPE',
       };
 
-      standaloneScanner['getKeysInfo'] = jest.fn().mockRejectedValueOnce(replyError);
+      mockScannerStrategy.getKeysInfo.mockRejectedValueOnce(replyError);
 
       await expect(
         service.getKeysInfo(mockBrowserClientMetadata, { keys: [getKeyInfoResponse.name] }),
@@ -251,24 +259,20 @@ describe('KeysService', () => {
   describe('getKeys', () => {
     const getKeysDto: GetKeysDto = { cursor: '0', count: 15 };
     it('should return appropriate value for standalone database', async () => {
-      standaloneScanner.getKeys = jest
-        .fn()
-        .mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
       const result = await service.getKeys(mockBrowserClientMetadata, getKeysDto);
 
-      expect(standaloneScanner.getKeys).toHaveBeenCalled();
+      expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(result).toEqual([mockGetKeysWithDetailsResponse]);
     });
     it('should return appropriate value for cluster', async () => {
       databaseService.get.mockResolvedValueOnce(mockClusterDatabaseWithTlsAuth);
-      clusterScanner.getKeys = jest
-        .fn()
-        .mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
       const result = await service.getKeys(mockBrowserClientMetadata, getKeysDto);
 
-      expect(clusterScanner.getKeys).toHaveBeenCalled();
+      expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(result).toEqual([mockGetKeysWithDetailsResponse]);
     });
     it("user don't have required permissions for getKeys", async () => {
@@ -276,7 +280,7 @@ describe('KeysService', () => {
         ...mockRedisNoPermError,
         command: 'SCAN',
       };
-      standaloneScanner.getKeys = jest.fn().mockRejectedValue(replyError);
+      mockScannerStrategy.getKeys.mockRejectedValue(replyError);
 
       await expect(
         service.getKeys(mockBrowserClientMetadata, getKeysDto),
@@ -292,7 +296,7 @@ describe('KeysService', () => {
         message: 'ERR syntax error',
         command: 'SCAN',
       };
-      standaloneScanner.getKeys = jest.fn().mockRejectedValue(replyError);
+      mockScannerStrategy.getKeys.mockRejectedValue(replyError);
 
       try {
         await service.getKeys(mockBrowserClientMetadata, dto);
@@ -305,30 +309,24 @@ describe('KeysService', () => {
       }
     });
     it('should call create browser history item if match !== "*"', async () => {
-      standaloneScanner.getKeys = jest
-        .fn()
-        .mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
       await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '1' });
 
-      expect(standaloneScanner.getKeys).toHaveBeenCalled();
+      expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(browserHistory.create).toHaveBeenCalled();
     });
     it('should do not call create browser history item if match === "*"', async () => {
-      standaloneScanner.getKeys = jest
-        .fn()
-        .mockResolvedValue([mockGetKeysWithDetailsResponse]);
+      mockScannerStrategy.getKeys.mockResolvedValue([mockGetKeysWithDetailsResponse]);
 
       await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
 
-      expect(standaloneScanner.getKeys).toHaveBeenCalled();
+      expect(mockScannerStrategy.getKeys).toHaveBeenCalled();
       expect(browserHistory.create).not.toHaveBeenCalled();
     });
     it('should call recommendationService', async () => {
       const response = [mockGetKeysWithDetailsResponse];
-      standaloneScanner.getKeys = jest
-        .fn()
-        .mockResolvedValue(response);
+      mockScannerStrategy.getKeys.mockResolvedValue(response);
 
       await service.getKeys(mockBrowserClientMetadata, { ...getKeysDto, match: '*' });
 

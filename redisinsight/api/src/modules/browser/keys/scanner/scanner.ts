@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { IScannerStrategy } from 'src/modules/browser/keys/scanner/scanner.interface';
+import { ClusterScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/cluster.scanner.strategy';
+import { StandaloneScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/standalone.scanner.strategy';
+import { ScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/scanner.strategy';
+import { RedisClientConnectionType } from 'src/modules/redis/client';
 
 @Injectable()
 export class Scanner {
-  private strategies = {};
+  constructor(
+    private readonly standaloneStrategy: StandaloneScannerStrategy,
+    private readonly clusterStrategy: ClusterScannerStrategy,
+  ) {}
 
-  addStrategy(name: string, strategy: IScannerStrategy): void {
-    this.strategies[name] = strategy;
-  }
-
-  getStrategy(name: string): IScannerStrategy {
-    if (!this.strategies[name]) {
-      throw new Error(`Unsupported scan strategy: ${name}`);
+  getStrategy(connectionType: RedisClientConnectionType): ScannerStrategy {
+    switch (connectionType) {
+      case RedisClientConnectionType.STANDALONE:
+      case RedisClientConnectionType.SENTINEL:
+        return this.standaloneStrategy;
+      case RedisClientConnectionType.CLUSTER:
+        return this.clusterStrategy;
+      default:
+        throw new Error(`Unsupported scan strategy: ${connectionType}`);
     }
-
-    return this.strategies[name];
   }
 }

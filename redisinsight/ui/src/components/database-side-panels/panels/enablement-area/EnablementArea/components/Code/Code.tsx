@@ -1,10 +1,12 @@
 import { startCase } from 'lodash'
 import React, { useContext } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { CodeButtonAutoExecute, CodeButtonParams, ExecuteButtonMode } from 'uiSrc/constants'
+import { CodeButtonParams } from 'uiSrc/constants'
 import { parseParams } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getFileInfo, getTutorialSection, } from '../../utils'
 
 import CodeButtonBlock from '../CodeButtonBlock'
@@ -17,14 +19,12 @@ export interface Props {
 }
 
 const Code = ({ children, params = '', label, path, ...rest }: Props) => {
-  const { search } = useLocation()
-  const { setScript, isCodeBtnDisabled } = useContext(EnablementAreaContext)
-  const { instanceId } = useParams<{ instanceId: string }>()
+  const { provider } = useSelector(connectedInstanceSelector)
 
+  const { search } = useLocation()
+  const { setScript } = useContext(EnablementAreaContext)
+  const { instanceId } = useParams<{ instanceId: string }>()
   const parsedParams = parseParams(params)
-  const mode = parsedParams?.auto === CodeButtonAutoExecute.true
-    ? ExecuteButtonMode.Auto
-    : ExecuteButtonMode.Manual
 
   const getFile = () => {
     const pagePath = new URLSearchParams(search).get('item')
@@ -44,12 +44,22 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
     return file
   }
 
-  const loadContent = (execute: { mode?: ExecuteButtonMode, params?: CodeButtonParams }) => {
+  const loadContent = (params?: CodeButtonParams, onFinish?: () => void) => {
+    setScript(children, params, onFinish)
+
     const file = getFile()
-    setScript(children, execute, { ...file, path })
+    sendEventTelemetry({
+      event: TelemetryEvent.EXPLORE_PANEL_COMMAND_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        path,
+        provider,
+        ...file
+      }
+    })
   }
 
-  const handleCopy = () => {
+  const onCopyClicked = () => {
     const file = getFile()
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_COMMAND_COPIED,
@@ -57,6 +67,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
         databaseId: instanceId,
         buttonName: label,
         path,
+        provider,
         ...file
       }
     })
@@ -65,13 +76,11 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
   return (
     <CodeButtonBlock
       className="mb-s mt-s"
-      onClick={loadContent}
-      onCopy={handleCopy}
+      onApply={loadContent}
+      onCopy={onCopyClicked}
       content={children}
       label={label}
       params={parsedParams}
-      mode={mode}
-      disabled={isCodeBtnDisabled}
       {...rest}
     />
   )

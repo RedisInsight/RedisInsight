@@ -1,14 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { chunk, reverse, without } from 'lodash'
-import { decode } from 'html-entities'
+import { chunk, reverse } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, CodeButtonParams, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
-  getApiErrorMessage,
+  getApiErrorMessage, getCommandsForExecution,
   getExecuteParams,
   getMultiCommands,
   getUrl,
@@ -16,8 +15,6 @@ import {
   isSilentMode,
   isStatusSuccessful,
   Nullable,
-  removeMonacoComments,
-  splitMonacoValuePerLines,
 } from 'uiSrc/utils'
 import { WORKBENCH_HISTORY_MAX_LENGTH } from 'uiSrc/pages/workbench/constants'
 import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
@@ -501,6 +498,7 @@ export function sendWbQueryAction(
     afterEach?: () => void,
     afterAll?: () => void
   },
+  onFail?: () => void
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
@@ -532,6 +530,7 @@ export function sendWbQueryAction(
           multiCommands,
           mode: activeRunQueryMode,
           onSuccessAction: onSuccess,
+          onFailAction: onFail
         }))
         return
       }
@@ -553,6 +552,7 @@ export function sendWbQueryAction(
           resultsMode,
           multiCommands,
           onSuccessAction: onSuccess,
+          onFailAction: onFail
         })
       )
     }
@@ -570,10 +570,7 @@ export function sendWbQueryAction(
       }
 
       const { batchSize, activeRunQueryMode, resultsMode } = getExecuteParams(executeParams, currentExecuteParams)
-      const commandsForExecuting = without(
-        splitMonacoValuePerLines(commandInit).map((command) => removeMonacoComments(decode(command).trim())),
-        ''
-      )
+      const commandsForExecuting = getCommandsForExecution(commandInit)
       const chunkSize = isGroupResults(resultsMode) ? commandsForExecuting.length : (batchSize > 1 ? batchSize : 1)
       const [commands, ...rest] = chunk(commandsForExecuting, chunkSize)
       const multiCommands = rest.map((command) => getMultiCommands(command))

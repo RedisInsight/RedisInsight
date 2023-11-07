@@ -1,20 +1,25 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isEmpty, without } from 'lodash'
-import { decode } from 'html-entities'
+import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 
-import { Maybe, Nullable, getMultiCommands, getParsedParamsInQuery, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
+import {
+  Maybe,
+  Nullable,
+  getMultiCommands,
+  getParsedParamsInQuery,
+  getCommandsForExecution
+} from 'uiSrc/utils'
 import QueryWrapper from 'uiSrc/components/query'
 import {
   setWorkbenchVerticalPanelSizes,
   appContextWorkbench,
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode, AutoExecute } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
@@ -126,12 +131,7 @@ const WBView = (props: Props) => {
       const parsedParams: Maybe<CodeButtonParams> = isEmpty(executeParams)
         ? getParsedParamsInQuery(commandInit)
         : executeParams
-      const commands = without(
-        splitMonacoValuePerLines(commandInit)
-          .map((command) => removeMonacoComments(decode(command).trim())),
-        ''
-      )
-
+      const commands = getCommandsForExecution(commandInit)
       const [commandLine, ...rest] = commands.map((command = '') => {
         const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
           command.toUpperCase().startsWith(commandName))
@@ -141,17 +141,12 @@ const WBView = (props: Props) => {
       const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
       const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
 
-      const auto = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
-        ? parsedParams?.auto === AutoExecute.True
-        : undefined
-
       const pipeline = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
         ? (parsedParams?.pipeline || batchSize) > 1
         : undefined
 
       return {
         command: command?.toUpperCase(),
-        auto,
         pipeline,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',

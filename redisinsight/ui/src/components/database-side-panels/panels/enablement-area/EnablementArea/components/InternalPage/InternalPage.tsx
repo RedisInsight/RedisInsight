@@ -18,7 +18,6 @@ import { Nullable } from 'uiSrc/utils'
 import './styles/main.scss'
 import { getTutorialSection } from '../../utils'
 import {
-  LazyCodeButton,
   Image,
   Code,
   EmptyPrompt,
@@ -60,7 +59,7 @@ const InternalPage = (props: Props) => {
     manifestPath,
     sourcePath,
   } = props
-  const components: any = { LazyCodeButton, Image, Code, RedisUploadButton, CloudLink }
+  const components: any = { Image, Code, RedisUploadButton, CloudLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {

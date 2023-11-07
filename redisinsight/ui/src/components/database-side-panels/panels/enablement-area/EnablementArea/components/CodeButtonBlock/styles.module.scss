@@ -72,11 +72,51 @@
 
 .runBtn {
   &:global(.euiButton) {
-    color: var(--successBorderColor) !important;
+    color: var(--buttonSuccessColor) !important;
 
     :global(.euiButtonEmpty__text) {
-      color: var(--successBorderColor) !important;
+      color: var(--buttonSuccessColor) !important;
       margin-inline-end: 4px;
+    }
+  }
+
+  :global {
+    .euiLoadingSpinner {
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
+      border-top-color: transparent !important;
+    }
+  }
+}
+
+.popover {
+  min-width: 372px !important;
+}
+
+.popoverAnchor {
+  display: inline-flex !important;
+}
+
+.popoverFooter {
+  margin-top: 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .showAgainCheckBox {
+    :global(.euiCheckbox__label) {
+      font-size: 12px !important;
+    }
+  }
+
+  .popoverBtn {
+    margin-left: 8px;
+    min-width: auto !important;
+
+    :global(.euiButton__text) {
+      font-size: 12px !important;
     }
   }
 }

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { t } from 'testcafe';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../../helpers/conf';
@@ -60,35 +60,37 @@ test
         // Verify that user can upload custom tutorials on docker version
         internalLinkName1 = 'probably-1';
         const imageExternalPath = 'RedisInsight screen external';
-        // const imageRelativePath = 'RedisInsight screen relative';
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
-        await t.expect(workbenchPage.customTutorials.visible).ok('custom tutorials sections is not visible');
-        await t.click(workbenchPage.tutorialOpenUploadButton);
-        await t.expect(workbenchPage.tutorialSubmitButton.hasAttribute('disabled')).ok('submit button is not disabled');
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+
+        await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
+        await t.click(tutorials.tutorialOpenUploadButton);
+        await t.expect(tutorials.tutorialSubmitButton.hasAttribute('disabled')).ok('submit button is not disabled');
 
         // Verify that User can request to add a new custom Tutorial by uploading a .zip archive from a local folder
-        await t.setFilesToUpload(workbenchPage.tutorialImport, [zipFilePath]);
-        await t.click(workbenchPage.tutorialSubmitButton);
-        await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).visible).ok(`${tutorialName} tutorial is not uploaded`);
+        await t.setFilesToUpload(tutorials.tutorialImport, [zipFilePath]);
+        await t.click(tutorials.tutorialSubmitButton);
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).visible).ok(`${tutorialName} tutorial is not uploaded`);
 
         // Verify that when user upload a .zip archive without a .json manifest, all markdown files are inserted at the same hierarchy level
-        await t.click(workbenchPage.tutorialAccordionButton.withText(tutorialName));
-        await t.expect(workbenchPage.getAccordionButtonWithName(folder1).visible).ok(`${folder1} is not visible`);
-        await t.expect(workbenchPage.getAccordionButtonWithName(folder2).visible).ok(`${folder2} is not visible`);
-        await t.click(workbenchPage.getAccordionButtonWithName(folder1));
-        await t.expect(workbenchPage.getInternalLinkWithManifest(internalLinkName1).visible)
+        await t.click(tutorials.tutorialAccordionButton.withText(tutorialName));
+        await t.expect(tutorials.getAccordionButtonWithName(folder1).visible).ok(`${folder1} is not visible`);
+        await t.expect(tutorials.getAccordionButtonWithName(folder2).visible).ok(`${folder2} is not visible`);
+        await t.click(tutorials.getAccordionButtonWithName(folder1));
+        await t.expect(tutorials.getInternalLinkWithManifest(internalLinkName1).visible)
             .ok(`${internalLinkName1} is not visible`);
-        await t.click(workbenchPage.getAccordionButtonWithName(folder2));
-        await t.expect(workbenchPage.getInternalLinkWithManifest(internalLinkName2).visible)
+        await t.click(tutorials.getAccordionButtonWithName(folder2));
+        await t.expect(tutorials.getInternalLinkWithManifest(internalLinkName2).visible)
             .ok(`${internalLinkName2} is not visible`);
-        await t.expect(workbenchPage.scrolledEnablementArea.exists).notOk('enablement area is visible before clicked');
-        await t.click(workbenchPage.getInternalLinkWithManifest(internalLinkName1));
-        await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
+        await t.expect(tutorials.scrolledEnablementArea.exists).notOk('enablement area is visible before clicked');
+        await t.click(tutorials.getInternalLinkWithManifest(internalLinkName1));
+        await t.expect(tutorials.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
 
         // Verify that user can see image in custom tutorials by providing absolute external path in md file
-        const imageExternal = workbenchPage.getTutorialImageByAlt(imageExternalPath);
-        await workbenchPage.waitUntilImageRendered(imageExternal);
+        const imageExternal = tutorials.getTutorialImageByAlt(imageExternalPath);
+        await tutorials.waitUntilImageRendered(imageExternal);
         const imageExternalHeight = await imageExternal.getStyleProperty('height');
         await t.expect(parseInt(imageExternalHeight.replace(/[^\d]/g, ''))).gte(150);
 
@@ -103,12 +105,12 @@ test
         // await t.expect(parseInt(imageRelativeHeight.replace(/[^\d]/g, ''))).gte(150);
 
         // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
-        await t.click(workbenchPage.closeEnablementPage);
-        await t.click(workbenchPage.tutorialLatestDeleteIcon);
-        await t.expect(workbenchPage.tutorialDeleteButton.visible).ok('Delete popup is not visible');
-        await t.click(workbenchPage.tutorialDeleteButton);
-        await t.expect(workbenchPage.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
-        await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).exists)
+        await t.click(tutorials.closeEnablementPage);
+        await t.click(tutorials.tutorialLatestDeleteIcon);
+        await t.expect(tutorials.tutorialDeleteButton.visible).ok('Delete popup is not visible');
+        await t.click(tutorials.tutorialDeleteButton);
+        await t.expect(tutorials.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4213, https://redislabs.atlassian.net/browse/RI-4302
@@ -118,27 +120,29 @@ test('Verify that user can upload tutorial with URL with manifest.json', async t
     internalLinkName1 = 'manifest-id';
     tutorialName = 'tutorialTestByLink';
 
-    await t.click(workbenchPage.tutorialOpenUploadButton);
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    await t.click(tutorials.tutorialOpenUploadButton);
     // Verify that user can upload tutorials using a URL
-    await t.typeText(workbenchPage.tutorialLinkField, link);
-    await t.click(workbenchPage.tutorialSubmitButton);
-    await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).with({ timeout: 20000 }).visible)
+    await t.typeText(tutorials.tutorialLinkField, link);
+    await t.click(tutorials.tutorialSubmitButton);
+    await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).with({ timeout: 20000 }).visible)
         .ok(`${tutorialName} tutorial is not uploaded`);
-    await t.click(workbenchPage.tutorialAccordionButton.withText(tutorialName));
+    await t.click(tutorials.tutorialAccordionButton.withText(tutorialName));
     // Verify that User can see the same structure in the tutorial uploaded as described in the .json manifest
-    await t.expect(workbenchPage.getInternalLinkWithoutManifest(internalLinkName1).visible)
+    await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).visible)
         .ok(`${internalLinkName1} folder specified in manifest is not visible`);
-    await t.expect(workbenchPage.getInternalLinkWithoutManifest(internalLinkName1).textContent)
+    await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
         .eql(labelFromManifest, `${labelFromManifest} tutorial specified in manifest is not visible`);
-    await t.click(workbenchPage.getInternalLinkWithoutManifest(internalLinkName1));
-    await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
-    await t.click(workbenchPage.closeEnablementPage);
-    await t.click(workbenchPage.tutorialLatestDeleteIcon);
-    await t.expect(workbenchPage.tutorialDeleteButton.visible).ok('Delete popup is not visible');
-    await t.click(workbenchPage.tutorialDeleteButton);
-    await t.expect(workbenchPage.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
+    await t.click(tutorials.getInternalLinkWithoutManifest(internalLinkName1));
+    await t.expect(tutorials.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
+    await t.click(tutorials.closeEnablementPage);
+    await t.click(tutorials.tutorialLatestDeleteIcon);
+    await t.expect(tutorials.tutorialDeleteButton.visible).ok('Delete popup is not visible');
+    await t.click(tutorials.tutorialDeleteButton);
+    await t.expect(tutorials.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
     // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
-    await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).exists)
+    await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
         .notOk(`${tutorialName} tutorial is not uploaded`);
 });
 // https://redislabs.atlassian.net/browse/RI-4352
@@ -156,9 +160,11 @@ test
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-        await workbenchPage.deleteTutorialByName(tutorialName);
-        await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).exists)
-        .notOk(`${tutorialName} tutorial is not deleted`);
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await tutorials.deleteTutorialByName(tutorialName);
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
+            .notOk(`${tutorialName} tutorial is not deleted`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can bulk upload data from custom tutorial', async t => {
         const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];
@@ -168,34 +174,36 @@ test
         internalLinkName1 = 'probably-1';
 
         // Upload custom tutorial
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t
-            .click(workbenchPage.tutorialOpenUploadButton)
-            .setFilesToUpload(workbenchPage.tutorialImport, [zipFilePath])
-            .click(workbenchPage.tutorialSubmitButton);
-        await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).visible).ok(`${tutorialName} tutorial is not uploaded`);
+            .click(tutorials.tutorialOpenUploadButton)
+            .setFilesToUpload(tutorials.tutorialImport, [zipFilePath])
+            .click(tutorials.tutorialSubmitButton);
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).visible).ok(`${tutorialName} tutorial is not uploaded`);
         // Open tutorial
         await t
-            .click(workbenchPage.tutorialAccordionButton.withText(tutorialName))
-            .click(workbenchPage.getAccordionButtonWithName(folder1))
-            .click(workbenchPage.getInternalLinkWithManifest(internalLinkName1));
-        await t.expect(workbenchPage.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
+            .click(tutorials.tutorialAccordionButton.withText(tutorialName))
+            .click(tutorials.getAccordionButtonWithName(folder1))
+            .click(tutorials.getInternalLinkWithManifest(internalLinkName1));
+        await t.expect(tutorials.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
 
         // Verify that user can bulk upload data by relative path
-        await t.click(workbenchPage.uploadDataBulkBtn.withText('Upload relative'));
-        await t.click(workbenchPage.uploadDataBulkApplyBtn);
+        await t.click(tutorials.uploadDataBulkBtn.withText('Upload relative'));
+        await t.click(tutorials.uploadDataBulkApplyBtn);
         // Verify that user can see the summary when the command execution is completed
         await verifyCompletedResultText(allKeysResults);
 
         // Verify that user can bulk upload data by absolute path
-        await t.click(workbenchPage.uploadDataBulkBtn.withText('Upload absolute'));
-        await t.click(workbenchPage.uploadDataBulkApplyBtn);
+        await t.click(tutorials.uploadDataBulkBtn.withText('Upload absolute'));
+        await t.click(tutorials.uploadDataBulkApplyBtn);
         await verifyCompletedResultText(absolutePathResults);
 
         // Verify that user can't upload file by invalid relative path
         // Verify that user can't upload file by invalid absolute path
         for (const path of invalidPathes) {
-            await t.click(workbenchPage.uploadDataBulkBtn.withText(path));
-            await t.click(workbenchPage.uploadDataBulkApplyBtn);
+            await t.click(tutorials.uploadDataBulkBtn.withText(path));
+            await t.click(tutorials.uploadDataBulkApplyBtn);
             // Verify that user can see standard error messages when any error occurs while finding the file or parsing it
             await t.expect(workbenchPage.Toast.toastError.textContent).contains('Data file was not found', 'Bulk upload not failed');
             await t.click(workbenchPage.Toast.toastCancelBtn);

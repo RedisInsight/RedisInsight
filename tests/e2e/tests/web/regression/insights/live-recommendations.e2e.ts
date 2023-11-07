@@ -86,7 +86,7 @@ test
         let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
         await t
             .expect(tab.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
-            .expect(tab.noRecommendationsScreen.textContent).contains('Welcome toInsights', 'Welcome to recommendations text not displayed');
+            .expect(tab.noRecommendationsScreen.textContent).contains('Welcome toRecommendations', 'Welcome to recommendations text not displayed');
 
         await browserPage.InsightsPanel.togglePanel(false);
         // Go to 2nd database
@@ -123,10 +123,11 @@ test
     }).after(async() => {
         await refreshFeaturesTestData();
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-    })('Verify that user can upvote recommendations', async() => {
+    })('Verify that user can upvote recommendations', async t => {
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
         await browserPage.InsightsPanel.togglePanel(true);
+        await t.expect(await browserPage.InsightsPanel.getActiveTabName()).contains(ExploreTabs.Recommendations);
         await recommendationsActions.voteForRecommendation(redisVersionRecom, notUsefulVoteOption);
         // Verify that user can rate recommendations with one of 2 existing types at the same time
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
@@ -157,6 +158,9 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
 
     await browserPage.InsightsPanel.togglePanel(true);
     let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    await t.click(browserPage.InsightsPanel.closeButton);
+    await browserPage.InsightsPanel.togglePanel(true);
+    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Recommendations);
     await tab.toggleShowHiddenRecommendations(false);
     await tab.hideRecommendation(searchVisualizationRecom);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).exists)

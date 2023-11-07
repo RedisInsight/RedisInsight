@@ -77,7 +77,7 @@ test
             await t.expect(resultCommand).contains(commandsForSend[commandsForSend.length - i], `The command ${commandsForSend[commandsForSend.length - i]} is not in the result`);
         }
     });
-test.only
+test
     .after(async() => {
         // Clear and delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);

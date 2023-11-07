@@ -1,6 +1,6 @@
 import { join } from 'path';
 import * as os from 'os';
-import { getHomedir } from 'src/config-helper';
+import { getHomedir } from '../src/config-helper';
 
 const homedirInit = process.env.APP_FOLDER_ABSOLUTE_PATH
   || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight'));

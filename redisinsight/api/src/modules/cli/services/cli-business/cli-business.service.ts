@@ -157,18 +157,7 @@ export class CliBusinessService {
         command,
       );
 
-      let reply = await client.sendCommand([command, ...args], { replyEncoding });
-      try {
-        reply = await client.sendCommand([command, ...args], { replyEncoding });
-      } catch (e) {
-        if (e?.name === 'ReplyError') {
-          throw e;
-        }
-        return {
-          response: e.message,
-          status: CommandExecutionStatus.Fail,
-        };
-      }
+      const reply = await client.sendCommand([command, ...args], { replyEncoding });
 
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientMetadata.databaseId,
@@ -199,6 +188,7 @@ export class CliBusinessService {
 
         return { response: error.message, status: CommandExecutionStatus.Fail };
       }
+
       this.cliAnalyticsService.sendConnectionErrorEvent(clientMetadata.databaseId, error, {
         command,
         outputFormat,
@@ -208,7 +198,7 @@ export class CliBusinessService {
         throw error;
       }
 
-      throw new InternalServerErrorException(error.message);
+      return { response: error.message, status: CommandExecutionStatus.Fail };
     }
   }
 

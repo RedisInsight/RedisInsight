@@ -357,24 +357,26 @@ describe('CliBusinessService', () => {
       );
     });
 
-    it('should throw internal exception for sendCommand', async () => {
+    it('should return response with internal exception for sendCommand', async () => {
+      const error = new Error(mockENotFoundMessage);
       const dto: SendCommandDto = { command: 'get key' };
-      standaloneClient.sendCommand.mockRejectedValue(new Error(mockENotFoundMessage));
+      standaloneClient.sendCommand.mockRejectedValue(error);
+      const mockResult: SendCommandResponse = {
+        response: error.message,
+        status: CommandExecutionStatus.Fail,
+      };
 
-      try {
-        await service.sendCommand(mockCliClientMetadata, dto);
-        fail();
-      } catch (err) {
-        expect(err).toBeInstanceOf(InternalServerErrorException);
-        expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockCliClientMetadata.databaseId,
-          new Error(mockENotFoundMessage),
-          {
-            command: 'get',
-            outputFormat: CliOutputFormatterTypes.Raw,
-          },
-        );
-      }
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
+
+      expect(result).toEqual(mockResult);
+      expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
+        mockCliClientMetadata.databaseId,
+        new Error(mockENotFoundMessage),
+        {
+          command: 'get',
+          outputFormat: CliOutputFormatterTypes.Raw,
+        },
+      );
     });
 
     it('Should proxy EncryptionService errors for sendCommand', async () => {
@@ -564,24 +566,26 @@ describe('CliBusinessService', () => {
       );
     });
 
-    it('should throw internal exception for sendCommand', async () => {
+    it('should return response with internal exception for sendCommand', async () => {
+      const error = new Error(mockENotFoundMessage);
       const dto: SendCommandDto = { command: 'get key' };
-      clusterClient.sendCommand.mockRejectedValue(new Error(mockENotFoundMessage));
+      clusterClient.sendCommand.mockRejectedValue(error);
+      const mockResult: SendCommandResponse = {
+        response: error.message,
+        status: CommandExecutionStatus.Fail,
+      };
 
-      try {
-        await service.sendCommand(mockCliClientMetadata, dto);
-        fail();
-      } catch (err) {
-        expect(err).toBeInstanceOf(InternalServerErrorException);
-        expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
-          mockCliClientMetadata.databaseId,
-          new Error(mockENotFoundMessage),
-          {
-            command: 'get',
-            outputFormat: CliOutputFormatterTypes.Raw,
-          },
-        );
-      }
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
+
+      expect(result).toEqual(mockResult);
+      expect(analyticsService.sendConnectionErrorEvent).toHaveBeenCalledWith(
+        mockCliClientMetadata.databaseId,
+        new Error(mockENotFoundMessage),
+        {
+          command: 'get',
+          outputFormat: CliOutputFormatterTypes.Raw,
+        },
+      );
     });
 
     it('Should proxy EncryptionService errors for sendCommand', async () => {

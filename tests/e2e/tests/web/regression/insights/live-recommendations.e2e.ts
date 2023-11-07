@@ -158,6 +158,9 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
 
     await browserPage.InsightsPanel.togglePanel(true);
     let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    await t.click(browserPage.InsightsPanel.closeButton);
+    await browserPage.InsightsPanel.togglePanel(true);
+    await t.expect(await browserPage.InsightsPanel.getActiveTab()).eql(ExploreTabs.Recommendations);
     await tab.toggleShowHiddenRecommendations(false);
     await tab.hideRecommendation(searchVisualizationRecom);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).exists)

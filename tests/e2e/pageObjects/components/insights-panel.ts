@@ -26,9 +26,9 @@ export class InsightsPanel {
     }
 
     /**
-     * get acrive tab
+     * get active tab
      */
-    async getActiveTab(): Promise<string> {
+    async getActiveTabName(): Promise<string> {
         return this.activeTab.textContent;
     }
     /**

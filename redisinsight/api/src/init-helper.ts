@@ -28,6 +28,7 @@ const migrateData = async (homedir: string, prevHomedir: string) => {
     await Promise.all([
       'redisinsight.db',
       'plugins',
+      'custom-tutorials',
     ].map((target) => copySource(
       join(prevHomedir, target),
       join(homedir, target),

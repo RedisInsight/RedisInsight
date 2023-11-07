@@ -7,8 +7,7 @@
 # `docker run`
 set -e
 
-echo "Running docker-entry.sh as:"
-whoami
+echo "Running docker-entry.sh"
 
 # Run the application's entry script with the exec command so it catches SIGTERM properly
 exec "$@"

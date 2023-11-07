@@ -32,6 +32,9 @@ const migrateData = async (homedir: string, prevHomedir: string) => {
       join(prevHomedir, target),
       join(homedir, target),
     )));
+
+    // remove previous folder
+    await fs.rm(prevHomedir, { recursive: true, force: true });
   }
 };
 

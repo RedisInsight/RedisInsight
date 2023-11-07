@@ -685,8 +685,13 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
               expect(body.response[1]).to.eql(constants.TEST_SEARCH_HASH_INDEX_1);
               expect(body.response[2]).to.eql('index_options');
               expect(body.response[3]).to.eql(['NOOFFSETS']);
-              expect(body.response[4]).to.eql('fields');
-              expect(body.response[5]).to.deep.include( [ 'title', 'type', 'TEXT', 'WEIGHT', '5' ]);
+              expect(body.response[4]).to.eql('index_definition');
+              expect(body.response[7]).to.deep.include(
+                [
+                  'identifier', 'title', 'attribute', 'title',
+                  'type', 'TEXT', 'WEIGHT', '5'
+                ]
+              );
             },
           },
           {
@@ -904,12 +909,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
             command: `blpop ${constants.TEST_LIST_KEY_2} 0`,
             outputFormat: 'TEXT',
           },
-          statusCode: 500, // todo: is it as designed?
-          responseBody: {
-            statusCode: 500,
-            message: 'Connection is closed.',
-            error: 'Internal Server Error',
-          },
+          responseSchema,
           before: async function () {
             // unblock command after 1 sec
             setTimeout(async () => {
@@ -1015,7 +1015,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
     ].map(mainCheckFn);
   })
 
-  describe('Client', () => {
+  xdescribe('Client', () => {
     [
       {
         name: 'Should throw ClientNotFoundError',

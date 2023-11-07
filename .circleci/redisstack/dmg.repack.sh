@@ -13,9 +13,9 @@ mkdir -p "$WORKING_DIRECTORY/release/redisstack"
 mkdir -p "$TMP_FOLDER"
 
 hdiutil attach "./release/RedisInsight-mac-$ARCH.dmg"
-cp -a /Volumes/RedisInsight/RedisInsight.app "/tmp"
+cp -a /Volumes/RedisInsight*/RedisInsight.app "/tmp"
 cd "/tmp" || exit 1
 tar -czvf "$TAR_NAME" "$APP_FOLDER_NAME"
 cp "$TAR_NAME" "$WORKING_DIRECTORY/release/redisstack/"
 cd "$WORKING_DIRECTORY" || exit 1
-hdiutil unmount /Volumes/RedisInsight/
+hdiutil unmount /Volumes/RedisInsight*/

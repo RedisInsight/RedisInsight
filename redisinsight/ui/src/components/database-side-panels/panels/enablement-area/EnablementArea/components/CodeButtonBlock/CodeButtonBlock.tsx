@@ -153,17 +153,18 @@ const CodeButtonBlock = (props: Props) => {
             <EuiText size="s">
               This tutorial will change data in your database, are you sure you want to run commands in this database?
             </EuiText>
+            <EuiSpacer size="s" />
+            <EuiCheckbox
+              id="showAgain"
+              name="showAgain"
+              label="Don't show again for this database"
+              checked={notShowAgain}
+              className={styles.showAgainCheckBox}
+              onChange={(e) => setNotShowAgain(e.target.checked)}
+              data-testid="checkbox-show-again"
+              aria-label="checkbox do not show agan"
+            />
             <div className={styles.popoverFooter}>
-              <EuiCheckbox
-                id="showAgain"
-                name="showAgain"
-                label="Don't show again"
-                checked={notShowAgain}
-                className={styles.showAgainCheckBox}
-                onChange={(e) => setNotShowAgain(e.target.checked)}
-                data-testid="checkbox-show-again"
-                aria-label="checkbox do not show agan"
-              />
               <div>
                 <EuiButton
                   color="secondary"

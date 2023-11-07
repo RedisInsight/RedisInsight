@@ -163,7 +163,7 @@ describe('AnalyticsService', () => {
         event: TelemetryEvents.ApplicationStarted,
         context: {
           traits: {
-            telemetry: Telemetry.Disabled,
+            telemetry: Telemetry.Enabled,
           },
         },
         properties: {

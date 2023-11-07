@@ -97,7 +97,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           <div className={styles.nameField}>
             {!valid && (
               <EuiToolTip
-                content="This API key is invalid. Remove it from RedisInsight and Redis Enterprise Cloud and create a new one instead."
+                content="This API key is invalid. Remove it from RedisInsight and Redis Cloud and create a new one instead."
                 anchorClassName={styles.invalidIconAnchor}
               >
                 <EuiIcon className={styles.invalidIcon} type="alert" color="danger" />
@@ -165,7 +165,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             header={(<>{formatLongName(name)} <br /> will be removed from RedisInsight.</>)}
             text={(
               <>
-                {'To delete this API key from Redis Enterprise Cloud, '}
+                {'To delete this API key from Redis Cloud, '}
                 <EuiLink
                   target="_blank"
                   color="text"
@@ -173,7 +173,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                   tabIndex={-1}
                   href="https://redis.com/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
                 >
-                  sign in to Redis Enterprise Cloud
+                  sign in to Redis Cloud
                 </EuiLink>
                 {' and delete it manually.'}
               </>
@@ -207,7 +207,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           </EuiTitle>
           <EuiSpacer size="s" />
           <EuiText size="s" className={styles.smallText} color="subdued">
-            Cloud API keys will be created and stored when you connect to Redis Enterprise Cloud to create
+            Cloud API keys will be created and stored when you connect to Redis Cloud to create
             a free Cloud database or autodiscover your Cloud database.
           </EuiText>
           <EuiSpacer />

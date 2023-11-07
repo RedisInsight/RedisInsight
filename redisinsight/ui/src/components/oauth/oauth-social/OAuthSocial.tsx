@@ -104,7 +104,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
       <EuiText className={styles.text} color="subdued">
         Auto-discover subscriptions and add your databases.
         <br />
-        A new Redis Enterprise Cloud account will be created for you if you don’t have one.
+        A new Redis Cloud account will be created for you if you don’t have one.
       </EuiText>
       <div className={styles.buttonsAuto}>
         {buttons}

@@ -44,7 +44,7 @@ const OAuthSignInDialog = () => {
           <EuiFlexItem grow={false} className={styles.advantages}>
             <div className={styles.advantagesContent}>
               <EuiTitle size="s">
-                <h3 className={styles.title}>Get started with Redis Enterprise Cloud</h3>
+                <h3 className={styles.title}>Get started with Redis Cloud</h3>
               </EuiTitle>
               {OAuthAdvantages.map(({ icon, text, title }) => (
                 <EuiText className={styles.advantage} key={text?.toString()}>

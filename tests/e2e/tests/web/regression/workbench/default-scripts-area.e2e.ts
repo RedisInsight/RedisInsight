@@ -134,7 +134,7 @@ test('Verify that the same type of content is supported in the “Tutorials” a
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
     await t.click(tutorials.redisStackTutorialsButton);
     const linksCount = await tutorials.redisStackLinks.count;
-    for(let i = 0; i < linksCount; i++) {
+    for (let i = 0; i < linksCount; i++) {
         await t.expect(tutorials.redisStackLinks.nth(i).textContent).eql(tutorialsContent[i], `The link ${tutorialsContent[i]} is in the Enablement area`);
     }
     // Verify the load script to Editor
@@ -145,7 +145,4 @@ test('Verify that the same type of content is supported in the “Tutorials” a
     await t.expect(tutorials.prevPageButton.visible).ok('The user can not see the prev page for redis stack pages');
 
     await t.expect(workbenchPage.queryInputScriptArea.textContent).eql('', 'The editor is not empty');
-    await tutorials.runBlockCode('A hash with vector embeddings');
-    const editorContent = (await workbenchPage.queryInputScriptArea.textContent).replace(/\s/g, ' ');
-    await t.expect(editorContent).eql(command, 'The selected command is not in the Editor');
 });

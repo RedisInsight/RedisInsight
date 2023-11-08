@@ -161,7 +161,6 @@ test
         await t.click(tutorials.documentButtonInQuickGuides);
         await t.click(tutorials.internalLinkWorkingWithHashes);
         await tutorials.runBlockCode('Create');
-        await t.click(workbenchPage.submitCommandButton);
         //Verify that CPU and commands per second parameters are changed
         const commandsSecAfterEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;
         await browserPage.OverviewPanel.waitForCpuIsCalculated();

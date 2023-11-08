@@ -58,15 +58,13 @@ test
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
 
-        await tutorials.runBlockCode('Additional index information');
+        let addedScript = await tutorials.getBlockCode('Additional index information');
         // Replace the {index} with indexName value in script and send
-        let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
         addedScript = addedScript.replace('"idx:schools"', indexName);
         addedScript = addedScript.replace(/\s/g, ' ');
-        await t.click(workbenchPage.submitCommandButton);
-        await t.pressKey('ctrl+a delete');
         await workbenchPage.sendCommandInWorkbench(addedScript);
         // Check the FT._LIST result
+        await t.debug();
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
         // Check the FT.INFO result
         await t.switchToIframe(workbenchPage.iframe);

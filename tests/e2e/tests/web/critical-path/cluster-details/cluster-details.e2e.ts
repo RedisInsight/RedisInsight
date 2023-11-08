@@ -9,7 +9,6 @@ import { Common } from '../../../../helpers/common';
 const clusterDetailsPage = new ClusterDetailsPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -82,7 +81,6 @@ test
         await t.click(tutorials.documentButtonInQuickGuides);
         await t.click(tutorials.internalLinkWorkingWithHashes);
         await tutorials.runBlockCode('Create');
-        await t.click(workbenchPage.submitCommandButton);
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that values in table are dynamic

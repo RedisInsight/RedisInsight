@@ -1,17 +1,30 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { AutoExecute } from 'uiSrc/slices/interfaces'
-import { ExecuteButtonMode } from 'uiSrc/constants'
+import reactRouterDom from 'react-router-dom'
+import { fireEvent, render, screen, act } from 'uiSrc/utils/test-utils'
+import { Pages } from 'uiSrc/constants'
+import { setDBConfigStorageField } from 'uiSrc/services'
+import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import CodeButtonBlock, { Props } from './CodeButtonBlock'
 
 const mockedProps = mock<Props>()
 
 const simpleContent = 'ft.info'
+const label = 'btn'
+
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+  setDBConfigStorageField: jest.fn()
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 describe('CodeButtonBlock', () => {
   it('should render', () => {
-    const label = 'Manual'
     const component = render(<CodeButtonBlock {...instance(mockedProps)} label={label} content={simpleContent} />)
     const { container } = component
 
@@ -21,24 +34,21 @@ describe('CodeButtonBlock', () => {
   })
 
   it('should call onClick function', () => {
-    const onClick = jest.fn()
-    const label = 'Manual'
-
-    render(<CodeButtonBlock {...instance(mockedProps)} label={label} onClick={onClick} content={simpleContent} />)
+    const onApply = jest.fn()
+    render(<CodeButtonBlock {...instance(mockedProps)} label={label} onApply={onApply} content={simpleContent} />)
     fireEvent.click(screen.getByTestId(`run-btn-${label}`))
 
-    expect(onClick).toBeCalled()
+    expect(onApply).toBeCalled()
   })
 
   it('should call onCopy function', () => {
     const onCopy = jest.fn()
-    const label = 'Manual'
 
     render(<CodeButtonBlock
       {...instance(mockedProps)}
       label={label}
       onCopy={onCopy}
-      onClick={jest.fn()}
+      onApply={jest.fn()}
       content={simpleContent}
     />)
     fireEvent.click(screen.getByTestId(`copy-btn-${label}`))
@@ -46,22 +56,103 @@ describe('CodeButtonBlock', () => {
     expect(onCopy).toBeCalled()
   })
 
-  it('should call onClick with auto execute param', () => {
-    const onClick = jest.fn()
-    const label = 'Auto'
+  it('should call onApply with provided params', () => {
+    const onApply = jest.fn()
 
     render(
       <CodeButtonBlock
         {...instance(mockedProps)}
         label={label}
-        onClick={onClick}
-        mode={ExecuteButtonMode.Auto}
-        params={{ auto: AutoExecute.True }}
+        onApply={onApply}
+        params={{ pipeline: '10' }}
         content={simpleContent}
       />
     )
     fireEvent.click(screen.getByTestId(`run-btn-${label}`))
 
-    expect(onClick).toBeCalledWith({ mode: ExecuteButtonMode.Auto, params: { auto: AutoExecute.True } })
+    expect(onApply).toBeCalledWith({ pipeline: '10' }, expect.any(Function))
+  })
+
+  it('should go to home page after click on change db', async () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+
+    const onApply = jest.fn()
+
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        params={{ run_confirmation: 'true' }}
+        content={simpleContent}
+      />
+    )
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`run-btn-${label}`))
+    })
+
+    fireEvent.click(screen.getByTestId('tutorial-popover-change-db'))
+
+    expect(pushMock).toBeCalledWith(Pages.home)
+  })
+
+  it('should set show confirmation to LS', async () => {
+    const onApply = jest.fn()
+
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        params={{ run_confirmation: 'true' }}
+        content={simpleContent}
+      />
+    )
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`run-btn-${label}`))
+    })
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('checkbox-show-again'))
+    })
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('tutorial-popover-apply-run'))
+    })
+
+    expect(setDBConfigStorageField).toBeCalledWith('instanceId', ConfigDBStorageItem.notShowConfirmationRunTutorial, true)
+  })
+
+  it('should call proper telemetry on click change db', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const onApply = jest.fn()
+
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        params={{ run_confirmation: 'true' }}
+        content={simpleContent}
+      />
+    )
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`run-btn-${label}`))
+    })
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('tutorial-popover-change-db'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.EXPLORE_PANEL_DATABASE_CHANGE_CLICKED,
+      eventData:
+        {
+          databaseId: 'instanceId'
+        }
+    })
   })
 })

@@ -45,9 +45,9 @@ describe('remarkRedisCode', () => {
 
   describe('should properly modify codeNode with lang redis', () => {
     it('with auto execute param redis:[auto=true;results=group]', () => {
-      const paramsWithAuto = '[auto=true;results=group]'
+      const params = '[results=group]'
       const codeNode = {
-        lang: `redis:${paramsWithAuto}`,
+        lang: `redis:${params}`,
         value: '1',
         meta: '2'
       };
@@ -60,13 +60,13 @@ describe('remarkRedisCode', () => {
       expect(codeNode).toEqual({
         ...codeNode,
         type: 'html',
-        value: getValue(codeNode.meta, paramsWithAuto, `${paramsWithAuto}\n1`)
+        value: getValue(codeNode.meta, params, '1')
       })
     })
     it('without auto execute param redis:[results=group;pipeline=2]', () => {
-      const paramsWithoutAuto = '[results=group;pipeline=2]'
+      const params = '[results=group;pipeline=2]'
       const codeNode = {
-        lang: `redis:${paramsWithoutAuto}`,
+        lang: `redis:${params}`,
         value: '1',
         meta: '2'
       };
@@ -79,7 +79,7 @@ describe('remarkRedisCode', () => {
       expect(codeNode).toEqual({
         ...codeNode,
         type: 'html',
-        value: getValue(codeNode.meta, paramsWithoutAuto, `${paramsWithoutAuto}\n1`)
+        value: getValue(codeNode.meta, params, '1')
       })
     })
   })

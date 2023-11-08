@@ -80,25 +80,6 @@ describe('EnablementArea', () => {
       queryByTestId('accordion-quick-guides')
     ).toBeInTheDocument()
   })
-  it('should render CodeButton component', () => {
-    const item = {
-      type: EnablementAreaComponent.CodeButton,
-      id: 'manual',
-      label: 'Manual',
-      args: {
-        path: 'static/workbench/_scripts/manual.txt'
-      },
-    }
-    const { queryByTestId } = render(
-      <EnablementArea
-        {...instance(mockedProps)}
-        tutorials={[item]}
-      />
-    )
-    const codeButtonEl = queryByTestId(`preselect-${item.label}`)
-
-    expect(codeButtonEl).toBeInTheDocument()
-  })
   it('should render InternalLink component', () => {
     const item = {
       type: EnablementAreaComponent.InternalLink,

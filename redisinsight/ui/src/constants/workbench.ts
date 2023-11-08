@@ -1,4 +1,4 @@
-import { AutoExecute, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
+import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 
 export const CodeButtonResults = {
   group: ResultsMode.GroupMode,
@@ -16,9 +16,9 @@ export const CodeButtonRunQueryMode = {
   [RunQueryMode.ASCII]: RunQueryMode.ASCII,
 }
 
-export const CodeButtonAutoExecute = {
-  true: AutoExecute.True,
-  false: AutoExecute.False,
+export const BooleanParams = {
+  true: 'true',
+  false: 'false',
 }
 
 export enum EAItemActions {
@@ -35,9 +35,9 @@ export enum EAManifestFirstKey {
 export interface CodeButtonParams {
   clearEditor?: boolean
   pipeline?: string
-  auto?: keyof typeof CodeButtonAutoExecute
   results?: keyof typeof CodeButtonResults
   mode?: keyof typeof CodeButtonRunQueryMode
+  run_confirmation?: keyof typeof BooleanParams
 }
 
 export enum ExecuteButtonMode {

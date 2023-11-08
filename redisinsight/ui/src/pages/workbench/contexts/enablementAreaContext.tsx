@@ -1,12 +1,12 @@
 import React from 'react'
-import { ExecuteButtonMode, CodeButtonParams } from 'uiSrc/constants/workbench'
+import { CodeButtonParams } from 'uiSrc/constants/workbench'
 import { Nullable } from 'uiSrc/utils'
 
 interface IContext {
   setScript: (
     script: string,
-    execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
-    file?: { path?: string, name?: string }
+    params?: CodeButtonParams,
+    onFinish?: () => void
   ) => void
   openPage: (page: IInternalPage, fromUser?: boolean) => void
   isCodeBtnDisabled?: boolean

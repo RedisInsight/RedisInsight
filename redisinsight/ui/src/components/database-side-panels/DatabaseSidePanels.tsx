@@ -114,7 +114,7 @@ const DatabaseSidePanels = (props: Props) => {
         data-testid="recommendations-tab"
       >
         <>
-          <span className={styles.tabName}>Recommedations</span>
+          <span className={styles.tabName}>Recommendations</span>
           {!!totalUnread && (
             <div
               className={styles.tabTotalUnred}

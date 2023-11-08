@@ -40,7 +40,6 @@ const recommendationsSlice = createSlice({
     getRecommendationsSuccess: (state, { payload }: { payload: IRecommendations }) => {
       state.loading = false
       state.data = payload
-      state.isHighlighted = !!payload?.totalUnread
       state.error = ''
     },
     getRecommendationsFailure: (state, { payload }) => {

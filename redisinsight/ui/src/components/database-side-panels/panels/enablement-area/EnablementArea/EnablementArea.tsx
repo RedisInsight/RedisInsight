@@ -6,7 +6,7 @@ import { EuiListGroup, EuiLoadingContent } from '@elastic/eui'
 import { isArray, isEmpty } from 'lodash'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
-import { ApiEndpoints, EAItemActions, EAManifestFirstKey, CodeButtonParams, ExecuteButtonMode } from 'uiSrc/constants'
+import { ApiEndpoints, EAItemActions, EAManifestFirstKey, CodeButtonParams } from 'uiSrc/constants'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { findMarkdownPathByPath, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -25,10 +25,8 @@ import {
   getWBSourcePath
 } from './utils/getFileInfo'
 import {
-  CodeButton,
   Group,
   InternalLink,
-  LazyCodeButton,
   LazyInternalPage,
   PlainText,
   UploadTutorialForm,
@@ -46,8 +44,8 @@ export interface Props {
   loading: boolean
   openScript: (
     script: string,
-    execute?: { mode?: ExecuteButtonMode, params?: CodeButtonParams },
-    file?: { path?: string, name?: string, section?: string }
+    params?: CodeButtonParams,
+    onFinish?: () => void
   ) => void
   onOpenInternalPage: (page: IInternalPage) => void
   isCodeBtnDisabled?: boolean
@@ -258,20 +256,6 @@ const EnablementArea = (props: Props) => {
               )}
             </>
           </Group>
-        )
-      case EnablementAreaComponent.CodeButton:
-        return (
-          <>
-            <div style={paddingsStyle} className="divider">
-              <hr style={{ border: 'none', borderTop: '1px solid var(--separatorColor)' }} />
-            </div>
-            <div style={{ marginTop: '10px', marginBottom: '10px', ...paddingsStyle }}>
-              {args?.path
-                ? <LazyCodeButton label={label} sourcePath={sourcePath} {...args} />
-                : <CodeButton onClick={() => openScript(args?.content || '')} label={label} {...args} />}
-            </div>
-          </>
-
         )
       case EnablementAreaComponent.InternalLink:
         return (

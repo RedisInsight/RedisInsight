@@ -58,9 +58,9 @@ test
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
         await tutorials.copyBlockCode('Additional index information');
-        t.click(workbenchPage.queryInput);
+        await t.click(workbenchPage.queryInput);
         await t.pressKey('ctrl+v');
-        t.click(workbenchPage.submitCommandButton);
+        await t.click(workbenchPage.submitCommandButton);
         // Check the FT._LIST result
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
         // Check the FT.INFO result

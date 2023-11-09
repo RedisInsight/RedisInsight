@@ -145,7 +145,7 @@ test
     })
     .after(async t => {
         //Delete database and index
-        await t.expect(browserPage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX idx:schools DD');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {

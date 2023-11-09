@@ -11,11 +11,11 @@ import { RootState, store } from 'uiSrc/slices/store'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
-import DatabasesList, { Props as DatabasesListProps } from './databases-list'
+import DatabasesList, { Props as DatabasesListProps } from './databases-list/DatabasesList'
 
 const mockedProps = mock<Props>()
 
-jest.mock('./databases-list/databases-list', () => ({
+jest.mock('./databases-list/DatabasesList', () => ({
   __esModule: true,
   namedExport: jest.fn(),
   default: jest.fn(),

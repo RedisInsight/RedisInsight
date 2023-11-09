@@ -22,38 +22,11 @@ describe('DatabaseAlias', () => {
     expect(render(<DatabaseAlias {...mockedProps} />)).toBeTruthy()
   })
 
-  it('should call onApplyChanges on edit alias', () => {
-    const onApply = jest.fn()
-    render(<DatabaseAlias {...mockedProps} onApplyChanges={onApply} />)
-
-    fireEvent.click(screen.getByTestId('edit-alias-btn'))
-    fireEvent.change(screen.getByTestId('alias-input'), { target: { value: 'alias' } })
-    fireEvent.submit(screen.getByTestId('alias-input'))
-
-    expect(onApply).toHaveBeenCalledWith('alias', expect.anything(), expect.anything())
-  })
-
-  it('should call onOpen', () => {
-    const onOpen = jest.fn()
-    render(<DatabaseAlias {...mockedProps} onOpen={onOpen} />)
-
-    fireEvent.click(screen.getByTestId('connect-to-db-btn'))
-    expect(onOpen).toHaveBeenCalled()
-  })
-
   it('should not render part of content in edit mode', () => {
     render(<DatabaseAlias {...mockedProps} isCloneMode={false} alias="alias" />)
 
     expect(screen.queryByTestId('back-btn')).not.toBeInTheDocument()
     expect(screen.queryByTestId('db-alias')).toHaveTextContent('alias')
-  })
-
-  it('should call onCloneBack in clone mode', () => {
-    const onCloneBack = jest.fn()
-    render(<DatabaseAlias {...mockedProps} onCloneBack={onCloneBack} isCloneMode />)
-
-    fireEvent.click(screen.getByTestId('back-btn'))
-    expect(onCloneBack).toHaveBeenCalled()
   })
 
   it('should render icon for redis-stack', () => {

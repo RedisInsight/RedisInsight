@@ -494,7 +494,7 @@ export interface ICredentialsRedisCloud {
 
 export enum InstanceType {
   Standalone = 'Redis Database',
-  RedisCloudPro = 'Redis Enterprise Cloud',
+  RedisCloudPro = 'Redis Cloud',
   RedisEnterpriseCluster = 'Redis Enterprise Cluster',
   AWSElasticache = 'AWS Elasticache',
   Sentinel = 'Redis Sentinel',

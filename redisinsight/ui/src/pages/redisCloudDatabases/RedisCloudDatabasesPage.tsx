@@ -44,7 +44,7 @@ const RedisCloudDatabasesPage = () => {
     dataAdded: instancesAdded,
   } = useSelector(cloudSelector)
 
-  setTitle('Redis Enterprise Cloud Databases')
+  setTitle('Redis Cloud Databases')
 
   useEffect(() => {
     if (instances === null) {

@@ -261,8 +261,8 @@ const KeyDetailsHeader = ({
     setTTLIsEditing(false)
     setTTLIsHovering(false)
 
-    if (`${ttlProp}` !== ttlValue) {
-      onEditTTL(keyProp, +ttlValue)
+    if (`${ttlProp}` !== ttlValue && keyBuffer) {
+      onEditTTL(keyBuffer, +ttlValue)
     }
   }
 

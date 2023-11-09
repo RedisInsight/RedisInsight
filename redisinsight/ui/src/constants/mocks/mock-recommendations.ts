@@ -414,7 +414,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -558,7 +558,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -719,7 +719,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -997,7 +997,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -1089,7 +1089,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -1218,7 +1218,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -1399,7 +1399,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -1479,7 +1479,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -1548,7 +1548,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {
@@ -1625,7 +1625,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
         type: 'link',
         value: {
           href: 'https://redis.com/redis-enterprise-cloud/overview/',
-          name: 'Redis Enterprise Cloud'
+          name: 'Redis Cloud'
         }
       },
       {

@@ -52,6 +52,7 @@ import reducer, {
   fetchKeyInfo,
   fetchKeys,
   fetchKeysMetadata,
+  fetchKeysMetadataTree,
   fetchMoreKeys,
   fetchPatternHistoryAction,
   fetchSearchHistoryAction,
@@ -1643,6 +1644,63 @@ describe('keys slice', () => {
         expect(apiServiceMock).toBeCalledWith(
           '/databases//keys/get-metadata',
           { keys: data.map(({ name }) => ({ name })) },
+          { params: { encoding: 'buffer' }, signal: controller.signal },
+        )
+
+        expect(onSuccessMock).toBeCalledWith(data)
+      })
+    })
+
+    describe('fetchKeysMetadataTree', () => {
+      it('success to fetch keys metadata', async () => {
+      // Arrange
+        const data = [
+          {
+            name: stringToBuffer('key1'),
+            type: 'hash',
+            ttl: -1,
+            size: 100,
+            path: 0,
+            length: 100,
+          },
+          {
+            name: stringToBuffer('key2'),
+            type: 'hash',
+            ttl: -1,
+            size: 150,
+            path: 1,
+            length: 100,
+          },
+          {
+            name: stringToBuffer('key3'),
+            type: 'hash',
+            ttl: -1,
+            size: 110,
+            path: 2,
+            length: 100,
+          },
+        ]
+        const responsePayload = { data, status: 200 }
+
+        const apiServiceMock = jest.fn().mockResolvedValue(responsePayload)
+        const onSuccessMock = jest.fn()
+        apiService.post = apiServiceMock
+        const controller = new AbortController()
+
+        // Act
+        await store.dispatch<any>(
+          fetchKeysMetadataTree(
+            data.map(({ name }, i) => ([i, name])),
+            null,
+            controller.signal,
+            onSuccessMock,
+          )
+        )
+
+        // Assert
+        expect(apiServiceMock).toBeCalledWith(
+          '/databases//keys/get-metadata',
+          { keys: data.map(({ name }, i) => (name)), type: undefined },
           { params: { encoding: 'buffer' }, signal: controller.signal },
         )
 

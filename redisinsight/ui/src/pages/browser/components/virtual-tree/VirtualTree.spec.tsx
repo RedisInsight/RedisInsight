@@ -15,10 +15,6 @@ const mockedItems = [
   },
 ]
 
-export const mockLeafKeys = {
-  test: { name: 'test', type: 'hash', ttl: -1, size: 9849176 }
-}
-
 export const mockVirtualTreeResult = [{
   children: [{
     children: [],
@@ -41,7 +37,6 @@ export const mockVirtualTreeResult = [{
   keyApproximate: 0.01,
   keyCount: 1,
   name: 'test',
-  keys: mockLeafKeys
 }]
 
 jest.mock('uiSrc/services', () => ({
@@ -78,25 +73,5 @@ describe('VirtualTree', () => {
     )
 
     expect(queryByTestId('node-item_test')).toBeInTheDocument()
-  })
-
-  it('should select first leaf "Keys" by default', async () => {
-    const mockConstructingTreeFn = jest.fn()
-    const mockOnStatusSelected = jest.fn()
-    const mockOnSelectLeaf = jest.fn()
-
-    render(
-      <VirtualTree
-        {...instance(mockedProps)}
-        selectDefaultLeaf
-        items={mockedItems}
-        setConstructingTree={mockConstructingTreeFn}
-        onStatusSelected={mockOnStatusSelected}
-        onSelectLeaf={mockOnSelectLeaf}
-      />
-    )
-
-    expect(mockOnSelectLeaf).toHaveBeenCalledWith(mockLeafKeys)
-    expect(mockOnStatusSelected).toHaveBeenCalledWith('test', mockLeafKeys)
   })
 })

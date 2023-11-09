@@ -1,12 +1,14 @@
+import { SortOrder } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 
 interface Props {
   items: IKeyPropTypes[]
   delimiter?: string
+  sorting?: SortOrder
 }
 
 export const constructKeysToTree = (props: Props): any[] => {
-  const { items: keys, delimiter = ':' } = props
+  const { items: keys, delimiter = ':', sorting = 'ASC' } = props
   const keysSymbol = `keys${delimiter}keys`
   const tree: any = {}
 
@@ -20,11 +22,8 @@ export const constructKeysToTree = (props: Props): any[] => {
     nameSplitted.forEach((value:any, index: number) => {
       // create a key leaf
       if (index === lastIndex) {
-        if (currentNode[keysSymbol] === undefined) {
-          currentNode[keysSymbol] = {}
-        }
-
-        currentNode[keysSymbol][name] = key
+        // eslint-disable-next-line prefer-object-spread
+        currentNode[name + keysSymbol] = Object.assign({}, key, { isLeaf: true })
       } else if (currentNode[value] === undefined) {
         currentNode[value] = {}
       }
@@ -47,39 +46,61 @@ export const constructKeysToTree = (props: Props): any[] => {
     return candidateId
   }
 
-  // FormatTreeData
-  const formatTreeData = (tree: any, previousKey = '', delimiter = ':') => {
-    const treeNodes = Reflect.ownKeys(tree)
-
-    // sort Ungrouped Keys group to top
-    treeNodes.some((key, index) => {
-      if (key === keysSymbol) {
-        const temp = treeNodes[0]
-        treeNodes[0] = key
-        treeNodes[index] = temp
-        return true
+  // Folders should be always before leaves
+  const sortKeysAndFolder = (nodes: string[]) => {
+    nodes.sort((a, b) => {
+      // Custom sorting for items ending with "keys:keys"
+      if (a.endsWith(keysSymbol) && !b.endsWith(keysSymbol)) {
+        return 1
       }
-      return false
-    })
+      if (!a.endsWith(keysSymbol) && b.endsWith(keysSymbol)) {
+        return -1
+      }
 
-    return treeNodes.map((key) => {
+      // Regular sorting
+      if (sorting === 'ASC') {
+        return a.localeCompare(b, 'en', { numeric: true })
+      }
+      if (sorting === 'DESC') {
+        return b.localeCompare(a, 'en', { numeric: true })
+      }
+
+      return 0
+    })
+  }
+
+  // FormatTreeData
+  const formatTreeData = (tree: any, previousKey = '', delimiter = ':', prevIndex = '') => {
+    const treeNodes: string[] = Object.keys(tree)
+
+    sortKeysAndFolder(treeNodes)
+
+    return treeNodes.map((key, index) => {
       const name = key?.toString()
-      const node: any = { name }
+      const node: any = { nameString: name }
       const tillNowKeyName = previousKey + name + delimiter
+      const path = prevIndex ? `${prevIndex}.${index}` : `${index}`
 
       // populate node with children nodes
-      if (key !== keysSymbol && Reflect.ownKeys(tree[key]).length > 0) {
-        node.children = formatTreeData(tree[key], tillNowKeyName, delimiter)
-        node.keyCount = node.children.reduce((a: any, b:any) => a + (b.keyCount || 0), 0)
+      if (!tree[key].isLeaf && Object.keys(tree[key]).length > 0) {
+        node.children = formatTreeData(
+          tree[key],
+          tillNowKeyName,
+          delimiter,
+          path,
+        )
+        node.keyCount = node.children.reduce((a: any, b:any) => a + (b.keyCount || 1), 0)
+        node.keyApproximate = (node.keyCount / keys.length) * 100
       } else {
-        // populate leaf with keys
+        // populate leaf
+        node.isLeaf = true
         node.children = []
-        node.keys = tree[keysSymbol] ?? []
-        node.keyCount = Object.keys(node.keys ?? [])?.length ?? 1
+        node.nameString = name.slice(0, -keysSymbol.length)
+        node.nameBuffer = tree[key]?.name
       }
 
+      node.path = path
       node.fullName = tillNowKeyName
-      node.keyApproximate = (node.keyCount / keys.length) * 100
       node.id = getUniqueId()
       return node
     })

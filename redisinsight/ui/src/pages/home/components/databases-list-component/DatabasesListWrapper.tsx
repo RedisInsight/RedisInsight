@@ -363,7 +363,7 @@ const DatabasesListWrapper = ({
           <>
             {instance.cloudDetails && (
               <EuiToolTip
-                content="Go to Redis Enterprise Cloud"
+                content="Go to Redis Cloud"
               >
                 <EuiLink
                   target="_blank"

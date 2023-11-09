@@ -1,21 +1,21 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import ClusterConnectionForm, { Props as ClusterConnectionFormProps } from
-  'uiSrc/pages/home/components/cluster-connection/cluster-connection-form/ClusterConnectionForm'
-import ClusterConnectionFormWrapper, {
+import SentinelConnectionForm, { Props as SentinelConnectionFormProps } from
+  'uiSrc/pages/home/components/sentinel-connection/sentinel-connection-form/SentinelConnectionForm'
+import SentinelConnectionWrapper, {
   Props,
-} from './ClusterConnectionFormWrapper'
+} from './SentinelConnectionWrapper'
 
 const mockedProps = mock<Props>()
 
-jest.mock('./cluster-connection-form/ClusterConnectionForm', () => ({
+jest.mock('./sentinel-connection-form/SentinelConnectionForm', () => ({
   __esModule: true,
   namedExport: jest.fn(),
   default: jest.fn(),
 }))
 
-const mockClusterConnectionForm = (props: ClusterConnectionFormProps) => (
+const mockSentinelConnectionForm = (props: SentinelConnectionFormProps) => (
   <div>
     <button
       type="button"
@@ -41,31 +41,25 @@ const mockClusterConnectionForm = (props: ClusterConnectionFormProps) => (
   </div>
 )
 
-describe('ClusterConnectionFormWrapper', () => {
+describe('SentinelConnectionWrapper', () => {
   beforeAll(() => {
-    ClusterConnectionForm.mockImplementation(mockClusterConnectionForm)
+    SentinelConnectionForm.mockImplementation(mockSentinelConnectionForm)
   })
   it('should render', () => {
     expect(
-      render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />)
+      render(<SentinelConnectionWrapper {...instance(mockedProps)} />)
     ).toBeTruthy()
   })
 
   it('should call onHostNamePaste', () => {
-    const component = render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />)
+    const component = render(<SentinelConnectionWrapper {...instance(mockedProps)} />)
     fireEvent.click(screen.getByTestId('onHostNamePaste-btn'))
-    expect(component).toBeTruthy()
-  })
-
-  it('should call onSubmit', () => {
-    const component = render(<ClusterConnectionFormWrapper {...instance(mockedProps)} />)
-    fireEvent.click(screen.getByTestId('onSubmit-btn'))
     expect(component).toBeTruthy()
   })
 
   it('should call onClose', () => {
     const onClose = jest.fn()
-    render(<ClusterConnectionFormWrapper {...instance(mockedProps)} onClose={onClose} />)
+    render(<SentinelConnectionWrapper {...instance(mockedProps)} onClose={onClose} />)
     fireEvent.click(screen.getByTestId('onClose-btn'))
     expect(onClose).toBeCalled()
   })

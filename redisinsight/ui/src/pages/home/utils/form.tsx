@@ -287,7 +287,7 @@ export const getSubmitButtonContent = (errors: FormikErrors<DbConnectionInfo>, s
 }
 
 export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
-  id: instance?.id,
+  ...instance,
   host: instance?.host ?? (instance ? '' : DEFAULT_HOST),
   port: instance?.port?.toString() ?? (instance ? '' : DEFAULT_PORT),
   timeout: instance?.timeout
@@ -314,8 +314,8 @@ export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
   newTlsClientCert: '',
   newTlsClientKey: '',
   sentinelMasterName: instance?.sentinelMaster?.name || '',
-  sentinelMasterUsername: instance?.sentinelMasterUsername,
-  sentinelMasterPassword: instance?.sentinelMasterPassword,
+  sentinelMasterUsername: instance?.sentinelMaster?.username,
+  sentinelMasterPassword: instance?.sentinelMaster?.password,
   ssh: instance?.ssh ?? false,
   sshPassType: instance?.sshOptions
     ? (instance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)

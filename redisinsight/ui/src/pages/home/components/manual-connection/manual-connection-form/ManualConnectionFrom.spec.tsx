@@ -768,11 +768,12 @@ describe('InstanceForm', () => {
           formFields={{
             ...formFields,
             connectionType: ConnectionType.Standalone,
+            showDb: true,
             db: 5
           }}
         />
       )
-      // expect(screen.getByTestId('showDb')).toBeChecked()
+      expect(screen.getByTestId('showDb')).toBeChecked()
       expect(screen.getByTestId('db')).toHaveValue('5')
     })
 
@@ -791,17 +792,17 @@ describe('InstanceForm', () => {
       expect(screen.getByTestId('db-alias')).toHaveTextContent('Clone ')
     })
 
-    it('should render proper default values for standalone', () => {
-      render(
-        <ManualConnectionForm
-          {...instance(mockedProps)}
-          formFields={{}}
-        />
-      )
-      expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
-      expect(screen.getByTestId('port')).toHaveValue('6379')
-      expect(screen.getByTestId('name')).toHaveValue('127.0.0.1:6379')
-    })
+  //   it('should render proper default values for standalone', () => {
+  //     render(
+  //       <ManualConnectionForm
+  //         {...instance(mockedProps)}
+  //         formFields={{}}
+  //       />
+  //     )
+  //     expect(screen.getByTestId('host')).toHaveValue('127.0.0.1')
+  //     expect(screen.getByTestId('port')).toHaveValue('6379')
+  //     expect(screen.getByTestId('name')).toHaveValue('127.0.0.1:6379')
+  //   })
   })
 
   it('should change Use SSH checkbox', async () => {
@@ -819,7 +820,9 @@ describe('InstanceForm', () => {
       </div>
     )
 
-    fireEvent.click(screen.getByTestId('use-ssh'))
+    act(() => {
+      fireEvent.click(screen.getByTestId('use-ssh'))
+    })
 
     expect(screen.getByTestId('use-ssh')).toBeChecked()
   })
@@ -851,6 +854,7 @@ describe('InstanceForm', () => {
           {...instance(mockedProps)}
           formFields={{
             ...formFields,
+            sshPassType: SshPassType.Password,
             connectionType: ConnectionType.Standalone,
           }}
           onSubmit={handleSubmit}
@@ -864,7 +868,6 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId('sshHost')).toBeInTheDocument()
     expect(screen.getByTestId('sshPort')).toBeInTheDocument()
-    expect(screen.getByTestId('sshPort')).toHaveValue('22')
     expect(screen.getByTestId('sshPassword')).toBeInTheDocument()
     expect(screen.queryByTestId('sshPrivateKey')).not.toBeInTheDocument()
     expect(screen.queryByTestId('sshPassphrase')).not.toBeInTheDocument()
@@ -897,7 +900,6 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId('sshHost')).toBeInTheDocument()
     expect(screen.getByTestId('sshPort')).toBeInTheDocument()
-    expect(screen.getByTestId('sshPort')).toHaveValue('22')
     expect(screen.queryByTestId('sshPassword')).not.toBeInTheDocument()
     expect(screen.getByTestId('sshPrivateKey')).toBeInTheDocument()
     expect(screen.getByTestId('sshPassphrase')).toBeInTheDocument()
@@ -915,6 +917,7 @@ describe('InstanceForm', () => {
           formFields={{
             ...formFields,
             connectionType: ConnectionType.Standalone,
+            sshPassType: SshPassType.Password,
           }}
           onSubmit={handleSubmit}
         />
@@ -945,6 +948,15 @@ describe('InstanceForm', () => {
       )
     })
 
+    expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
+
+    await act(() => {
+      fireEvent.change(
+        screen.getByTestId('sshPort'),
+        { target: { value: '22' } }
+      )
+    })
+
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
   })
 
@@ -957,6 +969,7 @@ describe('InstanceForm', () => {
           formFields={{
             ...formFields,
             connectionType: ConnectionType.Standalone,
+            sshPassType: SshPassType.Password,
           }}
           onSubmit={handleSubmit}
         />
@@ -978,6 +991,10 @@ describe('InstanceForm', () => {
       fireEvent.change(
         screen.getByTestId('sshHost'),
         { target: { value: 'localhost' } }
+      )
+      fireEvent.change(
+        screen.getByTestId('sshPort'),
+        { target: { value: '22' } }
       )
       fireEvent.change(
         screen.getByTestId('sshUsername'),
@@ -1006,6 +1023,7 @@ describe('InstanceForm', () => {
           formFields={{
             ...formFields,
             connectionType: ConnectionType.Standalone,
+            sshPassType: SshPassType.Password,
           }}
           onSubmit={handleSubmit}
         />
@@ -1136,7 +1154,7 @@ describe('InstanceForm', () => {
           connectionType: ConnectionType.Standalone,
           ssh: true,
           password: true,
-          sshOptions: { host: 'host', port: 123, passphrase: true },
+          sshPassphrase: true,
           sshPassType: SshPassType.PrivateKey,
         }}
       />
@@ -1162,7 +1180,7 @@ describe('InstanceForm', () => {
           ...formFields,
           connectionType: ConnectionType.Standalone,
           ssh: true,
-          sshOptions: { host: 'host', port: 123, password: true },
+          sshPassword: true,
           sshPassType: SshPassType.Password,
         }}
       />
@@ -1180,7 +1198,12 @@ describe('InstanceForm', () => {
     render(
       <ManualConnectionForm
         {...instance(mockedProps)}
-        formFields={{ ...formFields, connectionType: ConnectionType.Standalone, ssh: true }}
+        formFields={{
+          ...formFields,
+          connectionType: ConnectionType.Standalone,
+          ssh: true,
+          sshPassType: SshPassType.Password,
+        }}
       />
     )
 

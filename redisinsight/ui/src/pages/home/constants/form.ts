@@ -35,7 +35,6 @@ export const DEFAULT_TIMEOUT = parseInt(DEFAULT_TIMEOUT_ENV, 10)
 
 export enum SubmitBtnText {
   AddDatabase = 'Add Redis Database',
-  EditDatabase = 'Apply changes',
-  ConnectToSentinel = 'Discover database',
+  EditDatabase = 'Apply Changes',
   CloneDatabase = 'Clone Database'
 }

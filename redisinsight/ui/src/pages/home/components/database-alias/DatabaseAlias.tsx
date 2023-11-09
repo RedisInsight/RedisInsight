@@ -11,12 +11,15 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
+import { useHistory } from 'react-router'
+
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Nullable, getDbIndex } from 'uiSrc/utils'
-import { Theme } from 'uiSrc/constants'
+import { PageNames, Pages, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -24,29 +27,52 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 
+import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  changeInstanceAliasAction,
+  checkConnectToInstanceAction,
+  setConnectedInstanceId
+} from 'uiSrc/slices/instances/instances'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import styles from './styles.module.scss'
 
 export interface Props {
   alias: string
   database?: Nullable<number>
-  onOpen: () => void
-  onClone: () => void
-  onCloneBack: () => void
   isLoading: boolean
-  onApplyChanges: (value: string, onSuccess?: () => void, onFail?: () => void) => void
+  onAliasEdited?: (value: string) => void
   isRediStack?: boolean
   isCloneMode: boolean
+  id?: string
+  provider?: string
+  setIsCloneMode: (value: boolean) => void
+  modules: AdditionalRedisModule[]
 }
 
 const DatabaseAlias = (props: Props) => {
-  const { alias, database, onOpen, onClone, onCloneBack, onApplyChanges, isLoading, isRediStack, isCloneMode } = props
+  const {
+    alias,
+    database,
+    id,
+    provider,
+    onAliasEdited,
+    isLoading,
+    isRediStack,
+    isCloneMode,
+    setIsCloneMode,
+    modules,
+  } = props
 
   const { server } = useSelector(appInfoSelector)
+  const { contextInstanceId, lastPage } = useSelector(appContextSelector)
 
   const [isEditing, setIsEditing] = useState(false)
   const [value, setValue] = useState(alias)
 
   const { theme } = useContext(ThemeContext)
+  const history = useHistory()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     setValue(alias)
@@ -60,21 +86,68 @@ const DatabaseAlias = (props: Props) => {
     isEditing && setValue(value)
   }
 
+  const connectToInstance = () => {
+    if (contextInstanceId && contextInstanceId !== id) {
+      dispatch(resetKeys())
+      dispatch(setAppContextInitialState())
+    }
+    dispatch(setConnectedInstanceId(id ?? ''))
+
+    if (lastPage === PageNames.workbench && contextInstanceId === id) {
+      history.push(Pages.workbench(id))
+      return
+    }
+    history.push(Pages.browser(id ?? ''))
+  }
+
   const handleOpen = (event: any) => {
     event.stopPropagation()
     event.preventDefault()
-    onOpen()
+    const modulesSummary = getRedisModulesSummary(modules)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
+      eventData: {
+        databaseId: id,
+        provider,
+        ...modulesSummary,
+      }
+    })
+    dispatch(checkConnectToInstanceAction(id, connectToInstance))
+    // onOpen()
   }
 
   const handleClone = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    onClone()
+    setIsCloneMode(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_REQUESTED,
+      eventData: {
+        databaseId: id
+      }
+    })
   }
 
   const handleApplyChanges = () => {
     setIsEditing(false)
-    onApplyChanges(value, () => {}, () => setValue(alias))
+    dispatch(changeInstanceAliasAction(
+      id,
+      value,
+      () => {
+        onAliasEdited?.(value)
+      },
+      () => setValue(alias)
+    ))
+  }
+
+  const handleCloneBack = () => {
+    setIsCloneMode(false)
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
+      eventData: {
+        databaseId: id
+      }
+    })
   }
 
   const handleDeclineChanges = (event?: React.MouseEvent<HTMLElement>) => {
@@ -89,7 +162,7 @@ const DatabaseAlias = (props: Props) => {
         {isCloneMode && (
           <EuiFlexItem grow={false}>
             <EuiButtonIcon
-              onClick={onCloneBack}
+              onClick={handleCloneBack}
               iconSize="m"
               iconType="sortLeft"
               className={styles.iconLeftArrow}

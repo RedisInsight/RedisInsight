@@ -21,11 +21,11 @@ import { sentinelSelector, resetDataSentinel } from 'uiSrc/slices/instances/sent
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/ClusterConnection'
-import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/CloudConnection'
-import SentinelConnectionWrapper from 'uiSrc/pages/home/components/SentinelConnection'
-import ManualConnectionWrapper from 'uiSrc/pages/home/components/ManualConnection'
-import InstanceConnections from './InstanceConnections/InstanceConnections'
+import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
+import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/cloud-connection'
+import SentinelConnectionWrapper from 'uiSrc/pages/home/components/sentinel-connection'
+import ManualConnectionWrapper from 'uiSrc/pages/home/components/manual-connection'
+import InstanceConnections from 'uiSrc/pages/home/components/database-panel/instance-connections'
 
 import styles from './styles.module.scss'
 
@@ -88,6 +88,12 @@ const DatabasePanel = React.memo((props: Props) => {
       setConnectionType(AddDbType.manual)
     }
   }, [action, dbConnection])
+
+  useEffect(() => {
+    if (editMode) {
+      setConnectionType(AddDbType.manual)
+    }
+  }, [editMode])
 
   useEffect(() =>
     // ComponentWillUnmount

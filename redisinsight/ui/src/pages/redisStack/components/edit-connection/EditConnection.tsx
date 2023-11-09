@@ -18,7 +18,7 @@ import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
-import DatabasePanel from 'uiSrc/pages/home/components/DatabasePanel/DatabasePanel'
+import DatabasePanel from 'uiSrc/pages/home/components/database-panel/DatabasePanel'
 
 import './styles.scss'
 import styles from './styles.module.scss'

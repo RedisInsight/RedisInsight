@@ -1,14 +1,15 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import ClusterConnectionForm, { Props as ClusterConnectionFormProps } from
+  'uiSrc/pages/home/components/cluster-connection/cluster-connection-form/ClusterConnectionForm'
 import ClusterConnectionFormWrapper, {
   Props,
 } from './ClusterConnectionFormWrapper'
-import ClusterConnectionForm, { Props as ClusterConnectionFormProps } from './ClusterConnectionForm/ClusterConnectionForm'
 
 const mockedProps = mock<Props>()
 
-jest.mock('./ClusterConnectionForm/ClusterConnectionForm', () => ({
+jest.mock('./cluster-connection-form/cluster-connection-form', () => ({
   __esModule: true,
   namedExport: jest.fn(),
   default: jest.fn(),

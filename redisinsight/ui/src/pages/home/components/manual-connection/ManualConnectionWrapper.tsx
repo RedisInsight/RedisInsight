@@ -28,7 +28,7 @@ import {
   DEFAULT_TIMEOUT,
   SubmitBtnText,
 } from 'uiSrc/pages/home/constants'
-import ManualConnectionForm from './ManualConnectionForm'
+import ManualConnectionForm from './manual-connection-form'
 
 export interface Props {
   width: number
@@ -61,7 +61,6 @@ const ManualConnectionWrapper = (props: Props) => {
   const { properties: urlHandlingProperties } = useSelector(appRedirectionSelector)
 
   const connectionType = editedInstance?.connectionType ?? DbType.STANDALONE
-  const masterName = editedInstance?.sentinelMaster?.name
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -72,7 +71,7 @@ const ManualConnectionWrapper = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    setFormFields(getFormValues(editedInstance || initialValuesProp || null))
+    setFormFields(getFormValues(editedInstance || initialValuesProp))
     setIsCloneMode(false)
   }, [editedInstance, initialValuesProp])
 
@@ -95,12 +94,7 @@ const ManualConnectionWrapper = (props: Props) => {
     }))
   }
 
-  const handleSubmitDatabase = (payload: any) => {
-    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
-      dispatch(createInstanceStandaloneAction(payload))
-      return
-    }
-
+  const handleAddDatabase = (payload: any) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_MANUALLY_SUBMITTED
     })
@@ -136,56 +130,29 @@ const ManualConnectionWrapper = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_TEST_CONNECTION_CLICKED
     })
-    const {
-      name,
-      host,
-      port,
-      username,
-      password,
-      db,
-      compressor,
-      timeout,
-      sentinelMasterName,
-      sentinelMasterUsername,
-      sentinelMasterPassword,
-    } = values
+    const payload = preparePayload(values)
 
-    const tlsSettings = getTlsSettings(values)
-
-    const database: any = {
-      name,
-      host,
-      port: +port,
-      db: +(db || 0),
-      username,
-      password,
-      compressor,
-      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
-    }
-
-    // add tls & ssh for database (modifies database object)
-    applyTlSDatabase(database, tlsSettings)
-    applySSHDatabase(database, values)
-
-    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
-      database.sentinelMaster = {
-        name: sentinelMasterName,
-        username: sentinelMasterUsername,
-        password: sentinelMasterPassword,
-      }
-    }
-
-    if (editMode && editedInstance) {
-      dispatch(testInstanceStandaloneAction({
-        ...getFormUpdates(database, editedInstance),
-        id: editedInstance.id,
-      }))
-    } else {
-      dispatch(testInstanceStandaloneAction(removeEmpty(database)))
-    }
+    dispatch(testInstanceStandaloneAction(payload))
   }
 
-  const editDatabase = (tlsSettings: any, values: DbConnectionInfo, isCloneMode: boolean) => {
+  const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
+    const payload = preparePayload(values)
+
+    if (isCloneMode) {
+      handleCloneDatabase(payload)
+      return
+    }
+    if (editMode) {
+      handleEditDatabase(payload)
+      return
+    }
+
+    handleAddDatabase(payload)
+  }
+
+  const preparePayload = (values: any) => {
+    const tlsSettings = getTlsSettings(values)
+
     const {
       name,
       host,
@@ -195,6 +162,7 @@ const ManualConnectionWrapper = (props: Props) => {
       password,
       timeout,
       compressor,
+      sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
     } = values
@@ -216,50 +184,6 @@ const ManualConnectionWrapper = (props: Props) => {
     applySSHDatabase(database, values)
 
     if (connectionType === ConnectionType.Sentinel) {
-      database.sentinelMaster = {}
-      database.sentinelMaster.name = masterName
-      database.sentinelMaster.username = sentinelMasterUsername
-      database.sentinelMaster.password = sentinelMasterPassword
-    }
-
-    const payload = getFormUpdates(database, omit(editedInstance, ['id']))
-    if (isCloneMode) {
-      handleCloneDatabase(payload)
-    } else {
-      handleEditDatabase(payload)
-    }
-  }
-
-  const addDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
-    const {
-      name,
-      host,
-      port,
-      username,
-      password,
-      timeout,
-      db,
-      compressor,
-      sentinelMasterName,
-      sentinelMasterUsername,
-      sentinelMasterPassword,
-    } = values
-    const database: any = {
-      name,
-      host,
-      port: +port,
-      db: +(db || 0),
-      compressor,
-      username,
-      password,
-      timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
-    }
-
-    // add tls & ssh for database (modifies database object)
-    applyTlSDatabase(database, tlsSettings)
-    applySSHDatabase(database, values)
-
-    if (isCloneMode && connectionType === ConnectionType.Sentinel) {
       database.sentinelMaster = {
         name: sentinelMasterName,
         username: sentinelMasterUsername,
@@ -267,17 +191,13 @@ const ManualConnectionWrapper = (props: Props) => {
       }
     }
 
-    handleSubmitDatabase(removeEmpty(database))
-  }
-
-  const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
-    const tlsSettings = getTlsSettings(values)
-
     if (editMode) {
-      editDatabase(tlsSettings, values, isCloneMode)
-    } else {
-      addDatabase(tlsSettings, values)
+      database.id = editedInstance?.id
+
+      return getFormUpdates(database, omit(editedInstance, ['id']))
     }
+
+    return removeEmpty(database)
   }
 
   const handleOnClose = () => {

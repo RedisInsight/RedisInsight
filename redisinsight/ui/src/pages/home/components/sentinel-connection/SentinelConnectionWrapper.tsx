@@ -11,9 +11,9 @@ import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/c
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { applyTlSDatabase, autoFillFormDetails, getTlsSettings } from 'uiSrc/pages/home/utils'
-import { ADD_NEW, NO_CA_CERT, SubmitBtnText } from 'uiSrc/pages/home/constants'
+import { ADD_NEW, NO_CA_CERT } from 'uiSrc/pages/home/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
-import SentinelConnectionForm from './SentinelConnectionForm'
+import SentinelConnectionForm from './sentinel-connection-form'
 
 export interface Props {
   width: number
@@ -101,7 +101,6 @@ const SentinelConnectionWrapper = (props: Props) => {
         width={width}
         initialValues={initialValues}
         loading={loading}
-        submitButtonText={SubmitBtnText.AddDatabase}
         onSubmit={handleConnectionFormSubmit}
         onClose={onClose}
         onHostNamePaste={handlePostHostName}

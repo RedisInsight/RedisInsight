@@ -286,7 +286,8 @@ export const getSubmitButtonContent = (errors: FormikErrors<DbConnectionInfo>, s
   ) : null
 }
 
-export const getFormValues = (instance: Nullable<Record<string, any>>) => ({
+export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
+  id: instance?.id,
   host: instance?.host ?? (instance ? '' : DEFAULT_HOST),
   port: instance?.port?.toString() ?? (instance ? '' : DEFAULT_PORT),
   timeout: instance?.timeout

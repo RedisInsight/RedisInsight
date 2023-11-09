@@ -8,7 +8,7 @@ import { useResizableFormField } from 'uiSrc/services'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import CloudConnectionForm from './CloudConnectionForm'
+import CloudConnectionForm from './cloud-connection-form'
 
 export interface Props {
   width: number

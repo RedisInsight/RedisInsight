@@ -40,7 +40,7 @@ import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLog
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import DatabasesList from './DatabasesList'
+import DatabasesList from './databases-list'
 
 import styles from './styles.module.scss'
 

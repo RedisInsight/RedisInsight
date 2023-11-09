@@ -52,7 +52,6 @@ const SentinelConnectionForm = (props: Props) => {
     onClose,
     onSubmit,
     onHostNamePaste,
-    submitButtonText,
     loading,
     certificates,
     caCertificates,
@@ -94,7 +93,6 @@ const SentinelConnectionForm = (props: Props) => {
   }
 
   const SubmitButton = ({
-    text = '',
     onClick,
     submitIsDisabled,
   }: ISubmitButton) => (
@@ -118,7 +116,7 @@ const SentinelConnectionForm = (props: Props) => {
         iconType={submitIsDisabled ? 'iInCircle' : undefined}
         data-testid="btn-submit"
       >
-        {text}
+        Discover Database
       </EuiButton>
     </EuiToolTip>
   )
@@ -150,7 +148,6 @@ const SentinelConnectionForm = (props: Props) => {
               )}
               <SubmitButton
                 onClick={formik.submitForm}
-                text={submitButtonText}
                 submitIsDisabled={submitIsDisable()}
               />
             </EuiFlexGroup>

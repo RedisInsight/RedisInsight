@@ -13,22 +13,13 @@ import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router'
 
-import { PageNames, Pages } from 'uiSrc/constants'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import DatabaseAlias from 'uiSrc/pages/home/components/DatabaseAlias'
+import DatabaseAlias from 'uiSrc/pages/home/components/database-alias'
 import { useResizableFormField } from 'uiSrc/services'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
-import {
-  changeInstanceAliasAction,
-  checkConnectToInstanceAction,
-  resetInstanceUpdateAction,
-  setConnectedInstanceId,
-} from 'uiSrc/slices/instances/instances'
+import { resetInstanceUpdateAction } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getDiffKeysOfObjectValues, isRediStack } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
 import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
@@ -113,7 +104,6 @@ const ManualConnectionForm = (props: Props) => {
     version,
   } = formFields
 
-  const { contextInstanceId, lastPage } = useSelector(appContextSelector)
   const { action } = useSelector(appRedirectionSelector)
   const { data: caCertificates } = useSelector(caCertsSelector)
   const { data: certificates } = useSelector(clientCertsSelector)
@@ -122,7 +112,6 @@ const ManualConnectionForm = (props: Props) => {
     getInitFieldsDisplayNames({ host, port, name })
   )
 
-  const history = useHistory()
   const dispatch = useDispatch()
 
   const formRef = useRef<HTMLDivElement>(null)
@@ -184,71 +173,12 @@ const ManualConnectionForm = (props: Props) => {
     },
   [])
 
-  const handleCheckConnectToInstance = () => {
-    const modulesSummary = getRedisModulesSummary(modules)
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE_BUTTON_CLICKED,
-      eventData: {
-        databaseId: id,
-        provider,
-        ...modulesSummary,
-      }
-    })
-    dispatch(checkConnectToInstanceAction(id, connectToInstance))
-  }
-
-  const handleCloneDatabase = () => {
-    setIsCloneMode(true)
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_REQUESTED,
-      eventData: {
-        databaseId: id
-      }
-    })
-  }
-
-  const handleBackCloneDatabase = () => {
-    setIsCloneMode(false)
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
-      eventData: {
-        databaseId: id
-      }
-    })
-  }
+  useEffect(() => {
+    formik.resetForm()
+  }, [isCloneMode])
 
   const handleTestConnectionDatabase = () => {
     onTestConnection(formik.values)
-  }
-
-  const handleChangeDatabaseAlias = (
-    value: string,
-    onSuccess?: () => void,
-    onFail?: () => void
-  ) => {
-    dispatch(changeInstanceAliasAction(
-      id,
-      value,
-      () => {
-        onAliasEdited?.(value)
-        onSuccess?.()
-      },
-      onFail
-    ))
-  }
-
-  const connectToInstance = () => {
-    if (contextInstanceId && contextInstanceId !== id) {
-      dispatch(resetKeys())
-      dispatch(setAppContextInitialState())
-    }
-    dispatch(setConnectedInstanceId(id ?? ''))
-
-    if (lastPage === PageNames.workbench && contextInstanceId === id) {
-      history.push(Pages.workbench(id))
-      return
-    }
-    history.push(Pages.browser(id ?? ''))
   }
 
   const SubmitButton = ({
@@ -353,10 +283,11 @@ const ManualConnectionForm = (props: Props) => {
             alias={name}
             database={db}
             isLoading={loading}
-            onOpen={handleCheckConnectToInstance}
-            onClone={handleCloneDatabase}
-            onCloneBack={handleBackCloneDatabase}
-            onApplyChanges={handleChangeDatabaseAlias}
+            id={id}
+            provider={provider}
+            modules={modules}
+            setIsCloneMode={setIsCloneMode}
+            onAliasEdited={onAliasEdited}
           />
         </div>
       )}

@@ -37,7 +37,7 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
+test.only
     .requestHooks(logger)('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = 'idx:schools';
         keyName = chance.word({ length: 5 });
@@ -57,9 +57,13 @@ test
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
+        await t.click(workbenchPage.queryInput);
+        await t.pressKey('ctrl+a delete');
         await tutorials.copyBlockCode('Additional index information');
         await t.click(workbenchPage.queryInput);
         await t.pressKey('ctrl+v');
+        const script = await workbenchPage.queryInputScriptArea.textContent;
+        await t.expect(script).contains('FT._LIST', `The TEXT: ${script} is inserted`);
         await t.click(workbenchPage.submitCommandButton);
         // Check the FT._LIST result
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');

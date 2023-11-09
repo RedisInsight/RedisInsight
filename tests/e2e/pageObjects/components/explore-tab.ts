@@ -55,9 +55,9 @@ export class ExploreTab {
      * @param block Name of the block
      */
     async copyBlockCode(block: string): Promise<void> {
-        const runButton = Selector(this.copyMask.replace(/\$name/g, block));
-        await t.scrollIntoView(runButton);
-        await t.click(runButton);
+        const copyButton = Selector(this.copyMask.replace(/\$name/g, block));
+        await t.scrollIntoView(copyButton);
+        await t.click(copyButton);
     }
 
     /**

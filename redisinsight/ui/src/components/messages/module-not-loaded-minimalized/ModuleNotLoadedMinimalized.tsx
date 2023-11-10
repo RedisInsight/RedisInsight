@@ -8,8 +8,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 
-import { MODULE_CAPABILITY_TEXT } from 'uiSrc/constants/modules'
-import { MODULE_TEXT_VIEW, Theme } from 'uiSrc/constants'
+import { Theme } from 'uiSrc/constants'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
@@ -22,19 +21,26 @@ export interface Props {
   onClose?: () => void
 }
 
+const MODULE_CAPABILITY_TEXT_NOT_AVAILABLE: { [key in RedisDefaultModules]?: string } = {
+  [RedisDefaultModules.Bloom]: 'Probabilistic data structures are not available',
+  [RedisDefaultModules.ReJSON]: 'JSON capability is not available',
+  [RedisDefaultModules.Search]: 'Search and query capability is not available',
+  [RedisDefaultModules.TimeSeries]: 'Time series data structure is not available',
+  [RedisDefaultModules.RedisGears]: 'Triggers and functions capability is not available',
+}
+
 const ModuleNotLoadedMinimalized = (props: Props) => {
   const { moduleName, source, telemetrySource, onClose } = props
   const freeInstance = useSelector(freeInstanceSelector)
 
   const { theme } = useContext(ThemeContext)
-  const moduleText = MODULE_CAPABILITY_TEXT[moduleName]
-  const module = MODULE_TEXT_VIEW[moduleName]
+  const moduleText = MODULE_CAPABILITY_TEXT_NOT_AVAILABLE[moduleName]
 
   return (
     <div className={styles.wrapper}>
       <div>
         <EuiTitle size="xxs" className={styles.title}>
-          <h5>{moduleText} is not available</h5>
+          <h5>{moduleText}</h5>
         </EuiTitle>
         <EuiSpacer size="s" />
         {!freeInstance && (
@@ -80,7 +86,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             </EuiText>
             <EuiSpacer size="s" />
             <OAuthConnectFreeDb
-              source={`${module}_tutorial`}
+              source={`${moduleName}_tutorial`}
             />
           </>
         )}

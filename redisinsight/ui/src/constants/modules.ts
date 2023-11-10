@@ -79,11 +79,3 @@ export const DEFAULT_MODULES_INFO = {
     text: DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.TimeSeries],
   },
 }
-
-export const MODULE_CAPABILITY_TEXT: { [key in RedisDefaultModules]?: string } = {
-  [RedisDefaultModules.Bloom]: 'Probabilistic data structures',
-  [RedisDefaultModules.ReJSON]: 'JSON capability',
-  [RedisDefaultModules.Search]: 'Search and query capability',
-  [RedisDefaultModules.TimeSeries]: 'Time series data structure',
-  [RedisDefaultModules.RedisGears]: 'Triggers and functions capability',
-}

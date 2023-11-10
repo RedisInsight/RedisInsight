@@ -22,7 +22,7 @@ import {
   MessageSentinel,
   TlsDetails,
   DatabaseForm,
-} from 'redisinsight/ui/src/pages/home/components/form'
+} from 'uiSrc/pages/home/components/form'
 
 export interface Props {
   width: number

@@ -38,7 +38,7 @@ import {
   DatabaseForm,
   DbCompressor,
   SSHDetails,
-} from 'redisinsight/ui/src/pages/home/components/form'
+} from 'uiSrc/pages/home/components/form'
 import {
   DbInfoSentinel,
   PrimaryGroupSentinel,

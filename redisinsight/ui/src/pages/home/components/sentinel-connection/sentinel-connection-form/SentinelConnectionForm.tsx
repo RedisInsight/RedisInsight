@@ -13,10 +13,8 @@ import ReactDOM from 'react-dom'
 
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { useResizableFormField } from 'uiSrc/services'
-
 import {
   fieldDisplayNames,
-  SubmitBtnText,
 } from 'uiSrc/pages/home/constants'
 import { getFormErrors, getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton, IPasswordType } from 'uiSrc/pages/home/interfaces'
@@ -28,7 +26,6 @@ import {
 
 export interface Props {
   width: number
-  submitButtonText?: SubmitBtnText
   loading: boolean
   initialValues: DbConnectionInfo
   certificates: { id: string; name: string }[],

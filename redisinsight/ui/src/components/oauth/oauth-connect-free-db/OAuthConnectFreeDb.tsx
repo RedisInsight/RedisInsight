@@ -16,7 +16,7 @@ import { Pages } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 interface Props {
-  source?: OAuthSocialSource
+  source?: OAuthSocialSource | string
   onSuccessClick?: () => void
 }
 
@@ -50,7 +50,7 @@ const OAuthConnectFreeDb = ({
   const connectToInstanceSuccess = () => {
     onSuccessClick?.()
 
-    openNewWindowDatabase(Pages.browser(id))
+    openNewWindowDatabase(Pages.browser(id) + globalThis.location.search)
   }
 
   const handleCheckConnectToInstance = (

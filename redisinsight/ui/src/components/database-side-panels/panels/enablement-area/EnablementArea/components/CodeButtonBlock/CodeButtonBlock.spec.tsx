@@ -10,7 +10,7 @@ import CodeButtonBlock, { Props } from './CodeButtonBlock'
 
 const mockedProps = mock<Props>()
 
-const simpleContent = 'ft.info'
+const simpleContent = 'info'
 const label = 'btn'
 
 jest.mock('uiSrc/services', () => ({
@@ -154,5 +154,27 @@ describe('CodeButtonBlock', () => {
           databaseId: 'instanceId'
         }
     })
+  })
+
+  it('should call popover with no module loaded', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const onApply = jest.fn()
+
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        params={{ run_confirmation: 'true' }}
+        content="ft.info"
+      />
+    )
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`run-btn-${label}`))
+    })
+
+    expect(screen.getByTestId('tutorials-docker-link')).toBeInTheDocument()
+    expect(screen.getByTestId('tutorials-get-started-link')).toBeInTheDocument()
   })
 })

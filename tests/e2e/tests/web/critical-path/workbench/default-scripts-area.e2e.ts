@@ -38,8 +38,8 @@ fixture `Default scripts area at Workbench`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
-    .requestHooks(logger)('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
-        indexName = chance.word({ length: 5 });
+    .requestHooks(logger)('Verify that user can run automatically  "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+        indexName = 'idx:schools';
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
@@ -57,15 +57,7 @@ test
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
-
         await tutorials.runBlockCode('Additional index information');
-        // Replace the {index} with indexName value in script and send
-        let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
-        addedScript = addedScript.replace('"idx:schools"', indexName);
-        addedScript = addedScript.replace(/\s/g, ' ');
-        await t.click(workbenchPage.submitCommandButton);
-        await t.pressKey('ctrl+a delete');
-        await workbenchPage.sendCommandInWorkbench(addedScript);
         // Check the FT._LIST result
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
         // Check the FT.INFO result

@@ -31,7 +31,8 @@ fixture `Feature flag`
         // Clear features config table
         await deleteRowsFromTableInDB(featuresConfigTable);
     });
-test('Verify that Insights panel can be displayed for Electron app according to filters', async t => {
+// the test is skipped due to story https://redislabs.atlassian.net/browse/RI-5089
+test.skip('Verify that Insights panel can be displayed for Electron app according to filters', async t => {
     // Update remote config .json to config with buildType filter excluding current app build
     await modifyFeaturesConfigJson(pathes.dockerConfig);
     await updateControlNumber(48.2);

@@ -89,11 +89,10 @@ test
         await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
         await t.click(tutorials.internalLinkWorkingWithHashes);
         // Put Create Hash commands into Editing area
-        await tutorials.runBlockCode('Create');
         const codeText  = await tutorials.getBlockCode('Create');
         const regex = new RegExp('HSET', 'g');
         const monacoCommandIndicatorCount = codeText.match(regex).length;
-        await t.click(workbenchPage.submitCommandButton);
+        await tutorials.runBlockCode('Create');
         //Get number of commands in scripting area
         const numberOfCommands = await workbenchPage.executedCommandTitle.withText('HSET').count;
         //Compare number of indicator displayed and expected value

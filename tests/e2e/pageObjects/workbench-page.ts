@@ -84,6 +84,7 @@ export class WorkbenchPage extends InstancePage {
     executionCommandTime = Selector('[data-testid=command-execution-time-value]');
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
     executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
+    queryResult = Selector('[data-testid=query-common-result]');
     //MONACO ELEMENTS
     monacoCommandDetails = Selector('div.suggest-details-container');
     monacoSuggestion = Selector('span.monaco-icon-name-container');

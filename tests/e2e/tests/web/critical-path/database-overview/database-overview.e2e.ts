@@ -143,8 +143,9 @@ test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
-    .after(async() => {
+    .after(async t => {
         //Delete database and index
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandInWorkbench('FT.DROPINDEX idx:schools DD');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
@@ -161,7 +162,6 @@ test
         await t.click(tutorials.documentButtonInQuickGuides);
         await t.click(tutorials.internalLinkWorkingWithHashes);
         await tutorials.runBlockCode('Create');
-        await t.click(workbenchPage.submitCommandButton);
         //Verify that CPU and commands per second parameters are changed
         const commandsSecAfterEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;
         await browserPage.OverviewPanel.waitForCpuIsCalculated();

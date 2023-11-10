@@ -99,7 +99,7 @@ const StringDetails = (props: Props) => {
     const { value: formattedValue, isValid } = formattingBuffer(decompressedValue, viewFormatProp, { expanded: true })
     setAreaValue(initialValueString)
 
-    setValue(formattedValue)
+    setValue(!isFullStringLoaded(initialValue?.data?.length, length) ? `${formattedValue}...` : formattedValue)
     setIsValid(isValid)
     setIsDisabled(
       !isNonUnicodeFormatter(viewFormatProp, isValid)

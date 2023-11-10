@@ -12,6 +12,7 @@ import { Theme } from 'uiSrc/constants'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { MODULE_CAPABILITY_TEXT_NOT_AVAILABLE } from './constants'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -19,14 +20,6 @@ export interface Props {
   source: OAuthSocialSource
   telemetrySource?: string
   onClose?: () => void
-}
-
-const MODULE_CAPABILITY_TEXT_NOT_AVAILABLE: { [key in RedisDefaultModules]?: string } = {
-  [RedisDefaultModules.Bloom]: 'Probabilistic data structures are not available',
-  [RedisDefaultModules.ReJSON]: 'JSON capability is not available',
-  [RedisDefaultModules.Search]: 'Search and query capability is not available',
-  [RedisDefaultModules.TimeSeries]: 'Time series data structure is not available',
-  [RedisDefaultModules.RedisGears]: 'Triggers and functions capability is not available',
 }
 
 const ModuleNotLoadedMinimalized = (props: Props) => {
@@ -40,14 +33,13 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
     <div className={styles.wrapper}>
       <div>
         <EuiTitle size="xxs" className={styles.title}>
-          <h5>{moduleText}</h5>
+          <h5>{moduleText?.title}</h5>
         </EuiTitle>
         <EuiSpacer size="s" />
         {!freeInstance && (
           <>
             <EuiText color="subdued" size="s">
-              Create a free Redis Stack database with search and query
-              features that extend the core capabilities of your Redis.
+              {moduleText?.text}
             </EuiText>
             <EuiSpacer size="s" />
             <OAuthSsoHandlerDialog>
@@ -62,7 +54,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                   }}
                   data-testid="tutorials-get-started-link"
                 >
-                  Get Started For Free
+                  Start with Cloud for free
                   <EuiIcon type="sortUp" size="s" className={styles.externalLinkIcon} />
                 </EuiLink>
               )}

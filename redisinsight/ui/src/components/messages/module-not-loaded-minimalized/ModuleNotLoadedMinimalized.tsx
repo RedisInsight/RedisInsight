@@ -18,12 +18,11 @@ import styles from './styles.module.scss'
 export interface Props {
   moduleName: RedisDefaultModules
   source: OAuthSocialSource
-  telemetrySource?: string
   onClose?: () => void
 }
 
 const ModuleNotLoadedMinimalized = (props: Props) => {
-  const { moduleName, source, telemetrySource, onClose } = props
+  const { moduleName, source, onClose } = props
   const freeInstance = useSelector(freeInstanceSelector)
 
   const { theme } = useContext(ThemeContext)
@@ -49,7 +48,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                   target="_blank"
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
                   onClick={(e) => {
-                    ssoCloudHandlerClick(e, source, telemetrySource)
+                    ssoCloudHandlerClick(e, source, `${moduleName}_${source}`)
                     onClose?.()
                   }}
                   data-testid="tutorials-get-started-link"

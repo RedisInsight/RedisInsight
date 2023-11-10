@@ -73,7 +73,8 @@ export const mockSentinelRedisClient = new MockSentinelRedisClient(mockCommonCli
 export const generateMockRedisClient = (
   clientMetadata: Partial<ClientMetadata>,
   client = jest.fn(),
-): MockRedisClient => new MockRedisClient(clientMetadata as ClientMetadata, client);
+  options = {},
+): MockRedisClient => new MockRedisClient(clientMetadata as ClientMetadata, client, options);
 
 export const mockRedisClientStorage = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockStandaloneRedisClient),

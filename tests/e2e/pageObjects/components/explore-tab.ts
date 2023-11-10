@@ -38,6 +38,17 @@ export class ExploreTab {
     cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';
 
     runMask = '[data-testid="run-btn-$name"]';
+    copyMask = '[data-testid="copy-btn-$name"]';
+
+    /**
+     * Run code
+     * @param block Name of the block
+     */
+    async copyBlockCode(block: string): Promise<void> {
+        const copyButton = Selector(this.copyMask.replace(/\$name/g, block));
+        await t.scrollIntoView(copyButton);
+        await t.click(copyButton);
+    }
 
     /**
      * Run code

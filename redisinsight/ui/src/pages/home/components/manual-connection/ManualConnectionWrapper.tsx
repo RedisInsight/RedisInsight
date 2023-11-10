@@ -11,7 +11,7 @@ import {
   updateInstanceAction,
   cloneInstanceAction,
 } from 'uiSrc/slices/instances/instances'
-import { Nullable, removeEmpty, getFormUpdates, transformQueryParamsObject } from 'uiSrc/utils'
+import { Nullable, removeEmpty, getFormUpdates, transformQueryParamsObject, getDiffKeysOfObjectValues } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
@@ -136,6 +136,15 @@ const ManualConnectionWrapper = (props: Props) => {
   }
 
   const handleConnectionFormSubmit = (values: DbConnectionInfo) => {
+    if (isCloneMode) {
+      const diffKeys = getDiffKeysOfObjectValues(formFields, values)
+      sendEventTelemetry({
+        event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CONFIRMED,
+        eventData: {
+          fieldsModified: diffKeys
+        }
+      })
+    }
     const payload = preparePayload(values)
 
     if (isCloneMode) {

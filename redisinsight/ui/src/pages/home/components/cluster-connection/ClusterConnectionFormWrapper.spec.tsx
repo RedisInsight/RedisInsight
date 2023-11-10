@@ -2,7 +2,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import ClusterConnectionForm, { Props as ClusterConnectionFormProps } from
-  'uiSrc/pages/home/components/cluster-connection/cluster-connection-form/ClusterConnectionForm'
+  './cluster-connection-form/ClusterConnectionForm'
 import ClusterConnectionFormWrapper, {
   Props,
 } from './ClusterConnectionFormWrapper'

@@ -274,9 +274,9 @@ const HomePage = () => {
                                   : sentinelInstance ?? null
                               }
                               onClose={
-                              openRightPanel === RightPanelName.EditDatabase
-                                ? closeEditDialog
-                                : handleClose
+                                openRightPanel === RightPanelName.EditDatabase
+                                  ? closeEditDialog
+                                  : handleClose
                               }
                               onDbEdited={onDbEdited}
                               isFullWidth={!instances.length}

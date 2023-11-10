@@ -13,7 +13,7 @@ import { ICredentialsRedisCluster, InstanceType } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { autoFillFormDetails } from 'uiSrc/pages/home/utils'
 
-import ClusterConnectionForm from 'uiSrc/pages/home/components/cluster-connection/cluster-connection-form/ClusterConnectionForm'
+import ClusterConnectionForm from './cluster-connection-form/ClusterConnectionForm'
 
 export interface Props {
   width: number;

@@ -1267,4 +1267,22 @@ describe('InstanceForm', () => {
       expect(queryByTestId('db-info-host')).toBeInTheDocument()
     })
   })
+
+  it('should call submit on press Enter', async () => {
+    const handleSubmit = jest.fn()
+    render(
+      <div id="footerDatabaseForm">
+        <ManualConnectionForm
+          {...instance(mockedProps)}
+          formFields={formFields}
+          onSubmit={handleSubmit}
+        />
+      </div>
+    )
+
+    await act(() => {
+      fireEvent.keyDown(screen.getByTestId('form'), { key: 'Enter', code: 13, charCode: 13 })
+    })
+    expect(handleSubmit).toBeCalled()
+  })
 })

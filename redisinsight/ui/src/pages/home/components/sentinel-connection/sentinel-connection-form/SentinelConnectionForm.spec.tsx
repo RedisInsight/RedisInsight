@@ -27,4 +27,14 @@ describe('SentinelConnectionForm', () => {
 
     expect(mockSubmit).toBeCalled()
   })
+
+  it('should render Footer', async () => {
+    render(
+      <div id="footerDatabaseForm">
+        <SentinelConnectionForm {...instance(mockedProps)} />
+      </div>
+    )
+
+    expect(screen.getByTestId('btn-submit')).toBeInTheDocument()
+  })
 })

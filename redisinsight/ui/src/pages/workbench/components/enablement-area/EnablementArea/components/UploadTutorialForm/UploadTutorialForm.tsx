@@ -52,7 +52,7 @@ const UploadTutorialForm = (props: Props) => {
     const maxErrorsCount = 5
     const errorsArr = Object.values(errors).map((err) => [
       err,
-      <br key={err as string} />,
+      <br key={err} />,
     ])
 
     if (errorsArr.length > maxErrorsCount) {

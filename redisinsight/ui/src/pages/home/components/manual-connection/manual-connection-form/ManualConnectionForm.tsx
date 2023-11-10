@@ -19,8 +19,7 @@ import DatabaseAlias from 'uiSrc/pages/home/components/database-alias'
 import { useResizableFormField } from 'uiSrc/services'
 import { resetInstanceUpdateAction } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { getDiffKeysOfObjectValues, isRediStack } from 'uiSrc/utils'
+import { isRediStack } from 'uiSrc/utils'
 import { BuildType } from 'uiSrc/constants/env'
 import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
@@ -39,13 +38,13 @@ import {
   DatabaseForm,
   DbCompressor,
   SSHDetails,
-} from 'uiSrc/pages/home/components/Form'
+} from 'redisinsight/ui/src/pages/home/components/form'
 import {
   DbInfoSentinel,
   PrimaryGroupSentinel,
   SentinelHostPort,
   SentinelMasterDatabase,
-} from 'uiSrc/pages/home/components/Form/sentinel'
+} from 'uiSrc/pages/home/components/form/sentinel'
 import { caCertsSelector } from 'uiSrc/slices/instances/caCerts'
 import { clientCertsSelector } from 'uiSrc/slices/instances/clientCerts'
 
@@ -139,15 +138,6 @@ const ManualConnectionForm = (props: Props) => {
     validate,
     enableReinitialize: true,
     onSubmit: (values: any) => {
-      if (isCloneMode) {
-        const diffKeys = getDiffKeysOfObjectValues(formik.initialValues, values)
-        sendEventTelemetry({
-          event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CONFIRMED,
-          eventData: {
-            fieldsModified: diffKeys
-          }
-        })
-      }
       onSubmit(values)
     },
   })

@@ -61,7 +61,7 @@ test.only
         await t.pressKey('ctrl+a delete');
         await tutorials.copyBlockCode('Additional index information');
         await t.click(workbenchPage.queryInput);
-        await t.pressKey('ctrl+v');
+        await t.pressKey('shift+ctrl+v');
         const script = await workbenchPage.queryInputScriptArea.textContent;
         await t.expect(script).contains('FT._LIST', `The TEXT: ${script} is inserted`);
         await t.click(workbenchPage.submitCommandButton);

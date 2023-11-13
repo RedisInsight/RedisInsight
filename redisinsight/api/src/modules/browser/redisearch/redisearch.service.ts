@@ -1,4 +1,3 @@
-import { Cluster, Command, Redis } from 'ioredis';
 import { isUndefined, toNumber, uniq } from 'lodash';
 import {
   BadRequestException,
@@ -21,8 +20,14 @@ import { plainToClass } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import {
+  RedisClient,
+  RedisClientCommandArgument,
+  RedisClientConnectionType,
+  RedisClientNodeRole,
+} from 'src/modules/redis/client';
 
 @Injectable()
 export class RedisearchService {
@@ -31,7 +36,7 @@ export class RedisearchService {
   private logger = new Logger('RedisearchService');
 
   constructor(
-    private browserTool: BrowserToolService,
+    private databaseClientFactory: DatabaseClientFactory,
     private browserHistory: BrowserHistoryService,
   ) {}
 
@@ -43,20 +48,18 @@ export class RedisearchService {
     this.logger.log('Getting all redisearch indexes.');
 
     try {
-      const client = await this.browserTool.getRedisClient(clientMetadata);
-
-      const nodes = this.getShards(client);
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const nodes = this.getShards(client) as RedisClient[];
 
       const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
-        new Command('FT._LIST', [], { replyEncoding: 'hex' }),
+        ['FT._LIST'],
       )));
 
       return plainToClass(ListRedisearchIndexesResponse, {
-        indexes: (uniq([].concat(...res))).map((idx) => Buffer.from(idx, 'hex')),
+        indexes: (uniq([].concat(...res))).map((idx) => Buffer.from(idx)),
       });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e);
-
       throw catchAclError(e);
     }
   }
@@ -77,20 +80,19 @@ export class RedisearchService {
         index, type, prefixes, fields,
       } = dto;
 
-      const client = await this.browserTool.getRedisClient(clientMetadata);
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       try {
-        const indexInfo = await client.sendCommand(new Command('FT.INFO', [dto.index], {
-          replyEncoding: 'utf8',
-        }));
+        const indexInfo = await client.sendCommand([
+          'FT.INFO',
+          index,
+        ], { replyEncoding: 'utf8' });
 
         if (indexInfo) {
           this.logger.error(
             `Failed to create redisearch index. ${ERROR_MESSAGES.REDISEARCH_INDEX_EXIST}`,
           );
-          return Promise.reject(
-            new ConflictException(ERROR_MESSAGES.REDISEARCH_INDEX_EXIST),
-          );
+          return Promise.reject(new ConflictException(ERROR_MESSAGES.REDISEARCH_INDEX_EXIST));
         }
       } catch (error) {
         if (!error.message?.toLowerCase()?.includes('unknown index name')) {
@@ -98,7 +100,7 @@ export class RedisearchService {
         }
       }
 
-      const nodes = this.getShards(client);
+      const nodes = this.getShards(client) as RedisClient[];
 
       const commandArgs: any[] = [
         index, 'ON', type,
@@ -112,13 +114,12 @@ export class RedisearchService {
         'SCHEMA', ...[].concat(...fields.map((field) => ([field.name, field.type]))),
       );
 
-      const command = new Command('FT.CREATE', commandArgs, {
-        replyEncoding: 'utf8',
-      });
-
       await Promise.all(nodes.map(async (node) => {
         try {
-          await node.sendCommand(command);
+          await node.sendCommand([
+            'FT.CREATE',
+            ...commandArgs,
+          ], { replyEncoding: 'utf8' });
         } catch (e) {
           if (!e.message.includes('MOVED')) {
             throw e;
@@ -129,7 +130,6 @@ export class RedisearchService {
       return undefined;
     } catch (e) {
       this.logger.error('Failed to create redisearch index', e);
-
       throw catchAclError(e);
     }
   }
@@ -151,16 +151,15 @@ export class RedisearchService {
         index, query, offset, limit,
       } = dto;
 
-      const client = await this.browserTool.getRedisClient(clientMetadata);
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       if (isUndefined(this.maxSearchResults.get(clientMetadata.databaseId))) {
         try {
-          // response: [ [ 'MAXSEARCHRESULTS', '10000' ] ]
-          const [[, maxSearchResults]] = await client.sendCommand(
-            new Command('FT.CONFIG', ['GET', 'MAXSEARCHRESULTS'], {
-              replyEncoding: 'utf8',
-            }),
-          ) as [[string, string]];
+          const [[, maxSearchResults]] = await client.sendCommand([
+            'FT.CONFIG',
+            'GET',
+            'MAXSEARCHRESULTS',
+          ], { replyEncoding: 'utf8' }) as [[string, string]];
 
           this.maxSearchResults.set(clientMetadata.databaseId, toNumber(maxSearchResults));
         } catch (error) {
@@ -175,15 +174,22 @@ export class RedisearchService {
         safeLimit = offset <= maxSearchResult ? maxSearchResult - offset : limit;
       }
 
-      const [total, ...keyNames]: [number, RedisString[]] = await client.sendCommand(
-        new Command('FT.SEARCH', [index, query, 'NOCONTENT', 'LIMIT', offset, safeLimit]),
-      );
+      const [total, ...keyNames] = await client.sendCommand([
+        'FT.SEARCH',
+        index,
+        query,
+        'NOCONTENT',
+        'LIMIT',
+        offset,
+        safeLimit,
+      ]) as [number, RedisString[]];
 
       let type;
       if (keyNames.length) {
-        type = await client.sendCommand(
-          new Command('TYPE', [keyNames[0]], { replyEncoding: 'utf8' }),
-        );
+        type = await client.sendCommand([
+          'TYPE',
+          keyNames[0] as unknown as RedisClientCommandArgument,
+        ], { replyEncoding: 'utf8' });
       }
 
       // Do not save default match "*"
@@ -206,11 +212,9 @@ export class RedisearchService {
       });
     } catch (e) {
       this.logger.error('Failed to search keys using redisearch index', e);
-
       if (e instanceof HttpException) {
         throw e;
       }
-
       if (e.message?.includes(RedisErrorCodes.RedisearchLimit)) {
         throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)));
       }
@@ -224,9 +228,9 @@ export class RedisearchService {
    * @param client
    * @private
    */
-  private getShards(client: Redis | Cluster): Redis[] {
-    if (client instanceof Cluster) {
-      return client.nodes('master');
+  private getShards(client: RedisClient): Promise<RedisClient[]> | RedisClient[] {
+    if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+      return client.nodes(RedisClientNodeRole.PRIMARY);
     }
 
     return [client];

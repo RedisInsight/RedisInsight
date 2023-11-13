@@ -21,8 +21,8 @@ export const generateMockRedisClientInstance = (clientMetadata: Partial<ClientMe
 
 // todo: NEW. remove everything above
 export class MockRedisClient extends RedisClient {
-  constructor(clientMetadata: ClientMetadata, client: any = jest.fn()) {
-    super(clientMetadata, client);
+  constructor(clientMetadata: ClientMetadata, client: any = jest.fn(), options = {}) {
+    super(clientMetadata, client, options);
   }
 
   public isConnected = jest.fn().mockReturnValue(true);
@@ -73,7 +73,8 @@ export const mockSentinelRedisClient = new MockSentinelRedisClient(mockCommonCli
 export const generateMockRedisClient = (
   clientMetadata: Partial<ClientMetadata>,
   client = jest.fn(),
-): MockRedisClient => new MockRedisClient(clientMetadata as ClientMetadata, client);
+  options = {},
+): MockRedisClient => new MockRedisClient(clientMetadata as ClientMetadata, client, options);
 
 export const mockRedisClientStorage = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockStandaloneRedisClient),

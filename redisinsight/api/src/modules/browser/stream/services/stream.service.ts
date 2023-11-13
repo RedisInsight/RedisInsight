@@ -241,7 +241,7 @@ export class StreamService {
       this.logger.log('Succeed to add entries to the stream.');
       return plainToClass(AddStreamEntriesResponse, {
         keyName,
-        entries: transactionResults.map((entryResult) => entryResult[1]),
+        entries: transactionResults.map((entryResult) => entryResult[1].toString()),
       });
     } catch (error) {
       this.logger.error('Failed to add entries to the stream.', error);

@@ -47,11 +47,11 @@ test
         );
         await t.click(
             myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
-        await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Cloud Subscriptions').exists)
+        await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Cloud Subscriptions').exists)
             .ok('Subscriptions list not displayed', { timeout: 120000 });
         // Select subscriptions
         await t.click(myRedisDatabasePage.AddRedisDatabase.selectAllCheckbox);
         await t.click(myRedisDatabasePage.AddRedisDatabase.showDatabasesButton);
-        await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Enterprise Cloud Databases').exists)
+        await t.expect(autoDiscoverREDatabases.title.withExactText('Redis Cloud Databases').exists)
             .ok('database page is not displayed', { timeout: 120000 });
     });

@@ -132,7 +132,7 @@ export class DatabaseHelper {
     }
 
     /**
-     * Add a new database from Redis Enterprise Cloud via auto-discover flow
+     * Add a new database from Redis Cloud via auto-discover flow
      * @param cloudAPIAccessKey The Cloud API Access Key
      * @param cloudAPISecretKey The Cloud API Secret Key
      */
@@ -151,7 +151,7 @@ export class DatabaseHelper {
         await t
             .expect(
                 autoDiscoverREDatabases.title.withExactText(
-                    'Redis Enterprise Cloud Subscriptions'
+                    'Redis Cloud Subscriptions'
                 ).exists
             )
             .ok('Subscriptions list not displayed', { timeout: 120000 });

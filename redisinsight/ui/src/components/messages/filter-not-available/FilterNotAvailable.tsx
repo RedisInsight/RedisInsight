@@ -28,7 +28,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
       {!!freeInstance && (
         <>
           <EuiText color="subdued">
-            Use your free all-in-one Redis Enterprise Cloud database to start exploring these capabilities.
+            Use your free all-in-one Redis Cloud database to start exploring these capabilities.
           </EuiText>
           <EuiSpacer size="l" />
           <OAuthConnectFreeDb source={OAuthSocialSource.BrowserFiltering} onSuccessClick={onClose} />

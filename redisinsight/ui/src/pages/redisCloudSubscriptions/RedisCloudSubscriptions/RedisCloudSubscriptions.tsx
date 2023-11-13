@@ -47,7 +47,7 @@ interface IPopoverProps {
 
 const loadingMsg = 'loading...'
 const notFoundMsg = 'Not found'
-const noResultsMessage = 'Your Redis Enterprise Cloud has no subscriptions available.'
+const noResultsMessage = 'Your Redis Cloud has no subscriptions available.'
 
 const RedisCloudSubscriptions = ({
   subscriptions,
@@ -244,7 +244,7 @@ const RedisCloudSubscriptions = ({
           <div className="homePage">
             <div className="databaseContainer">
               <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>Redis Enterprise Cloud Subscriptions</h1>
+                <h1>Redis Cloud Subscriptions</h1>
               </EuiTitle>
 
               <MessageBar opened={countStatusActive + countStatusFailed > 0}>

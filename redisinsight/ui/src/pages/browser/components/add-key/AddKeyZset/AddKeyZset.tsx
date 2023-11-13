@@ -18,7 +18,7 @@ import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
+import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'
 

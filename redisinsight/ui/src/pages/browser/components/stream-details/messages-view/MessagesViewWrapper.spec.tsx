@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { loadConsumerGroups, setSelectedGroup } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { PendingEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import MessagesView, { Props as MessagesViewProps } from './MessagesView'
 import MessagesViewWrapper, { Props } from './MessagesViewWrapper'
 

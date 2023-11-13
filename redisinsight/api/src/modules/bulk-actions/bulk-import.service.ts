@@ -5,16 +5,17 @@ import { Readable } from 'stream';
 import * as readline from 'readline';
 import { wrapHttpError } from 'src/common/utils';
 import { UploadImportFileDto } from 'src/modules/bulk-actions/dto/upload-import-file.dto';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { ClientMetadata } from 'src/common/models';
 import { splitCliCommandLine } from 'src/utils/cli-helper';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
-import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-import-file-by-path.dto';
 import config from 'src/utils/config';
 import { MemoryStoredFile } from 'nestjs-form-data';
+import { RedisClient, RedisClientCommand, RedisClientConnectionType } from 'src/modules/redis/client';
 
 const BATCH_LIMIT = 10_000;
 const PATH_CONFIG = config.get('dir_path');
@@ -25,27 +26,26 @@ export class BulkImportService {
   private logger = new Logger('BulkImportService');
 
   constructor(
-    private readonly databaseConnectionService: DatabaseConnectionService,
-    private readonly analyticsService: BulkActionsAnalyticsService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
+    private readonly analytics: BulkActionsAnalytics,
   ) {}
 
-  private async executeBatch(client, batch: any[]): Promise<BulkActionSummary> {
+  private async executeBatch(client: RedisClient, batch: RedisClientCommand[]): Promise<BulkActionSummary> {
     const result = new BulkActionSummary();
     result.addProcessed(batch.length);
 
     try {
-      if (client?.isCluster) {
-        await Promise.all(batch.map(async ([command, args]) => {
+      if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+        await Promise.all(batch.map(async (command) => {
           try {
-            await client.call(command, args);
+            await client.call(command);
             result.addSuccess(1);
           } catch (e) {
             result.addFailed(1);
           }
         }));
       } else {
-        const commands = batch.map(([cmd, args]) => ['call', cmd, ...args]);
-        (await client.pipeline(commands).exec()).forEach(([err]) => {
+        (await client.sendPipeline(batch, { unknownCommands: true })).forEach(([err]) => {
           if (err) {
             result.addFailed(1);
           } else {
@@ -83,14 +83,14 @@ export class BulkImportService {
       duration: 0,
     };
 
-    this.analyticsService.sendActionStarted(result);
+    this.analytics.sendActionStarted(result);
 
     let parseErrors = 0;
 
     let client;
 
     try {
-      client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseClientFactory.createClient(clientMetadata);
 
       const stream = Readable.from(dto.file.buffer);
       let batch = [];
@@ -101,13 +101,13 @@ export class BulkImportService {
         const rl = readline.createInterface(stream);
         rl.on('line', (line) => {
           try {
-            const [command, ...args] = splitCliCommandLine((line.trim()));
+            const command = splitCliCommandLine((line.trim()));
             if (batch.length >= BATCH_LIMIT) {
               batchResults.push(this.executeBatch(client, batch));
               batch = [];
             }
-            if (command) {
-              batch.push([command.toLowerCase(), args]);
+            if (command?.[0]) {
+              batch.push(command);
             }
           } catch (e) {
             parseErrors += 1;
@@ -116,7 +116,7 @@ export class BulkImportService {
         rl.on('error', (error) => {
           result.summary.errors.push(error);
           result.status = BulkActionStatus.Failed;
-          this.analyticsService.sendActionFailed(result, error);
+          this.analytics.sendActionFailed(result, error);
           res(null);
         });
         rl.on('close', () => {
@@ -136,7 +136,7 @@ export class BulkImportService {
       result.summary.failed += parseErrors;
 
       if (result.status === BulkActionStatus.Completed) {
-        this.analyticsService.sendActionSucceed(result);
+        this.analytics.sendActionSucceed(result);
       }
 
       client.disconnect();
@@ -145,7 +145,7 @@ export class BulkImportService {
     } catch (e) {
       this.logger.error('Unable to process an import file', e);
       const exception = wrapHttpError(e);
-      this.analyticsService.sendActionFailed(result, exception);
+      this.analytics.sendActionFailed(result, exception);
       client?.disconnect();
       throw exception;
     }

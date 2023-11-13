@@ -125,12 +125,7 @@ describe('POST /redis-sentinel/get-databases', () => {
         checkFn: async ({body}) => {
           expect(body.length).to.gte(1);
           const sentinelMaster = _.find(body, ({ name }) => name === constants.TEST_SENTINEL_MASTER_GROUP);
-          expect(sentinelMaster.nodes).to.eql([
-            {
-              host: constants.TEST_REDIS_HOST,
-              port: constants.TEST_REDIS_PORT,
-            },
-          ]);
+          expect(sentinelMaster.nodes).to.eql([]); // no other sentinels for this master group
         },
       },
 

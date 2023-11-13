@@ -12,8 +12,8 @@ import ApiErrors from 'uiSrc/constants/apiErrors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
-import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/dto'
-import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/dto/redisearch'
+import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/keys/dto'
+import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { AppDispatch, RootState } from '../store'
 import { RedisResponseBuffer, StateRedisearch } from '../interfaces'

@@ -2,6 +2,9 @@ import * as IORedis from 'ioredis';
 import { get } from 'lodash';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 
+/**
+ * @deprecated
+ */
 export const generateRedisConnectionName = (namespace: string, id: string, separator = '-') => {
   try {
     return [CONNECTION_NAME_GLOBAL_PREFIX, namespace, id.substr(0, 8)].join(separator).toLowerCase();

@@ -1,4 +1,4 @@
-import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
 import { getDefaultConsumer } from '../streamUtils'
 
 const consumers1: ConsumerDto[] = [

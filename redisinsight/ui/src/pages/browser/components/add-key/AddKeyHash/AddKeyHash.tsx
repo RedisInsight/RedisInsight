@@ -22,7 +22,7 @@ import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/Ad
 
 import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
-import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/dto/hash.dto'
+import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
 import {
   AddHashFormConfig as config
 } from '../constants/fields-config'

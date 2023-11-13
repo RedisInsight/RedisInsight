@@ -111,7 +111,7 @@ export class RedisConnectionFactory {
       ...baseOptions,
       host: undefined,
       port: undefined,
-      sentinels: database.nodes?.length ? database.nodes : [{ host: database.host, port: database.port }],
+      sentinels: [{ host: database.host, port: database.port, ...(database.nodes || []) }],
       name: sentinelMaster?.name,
       sentinelUsername: database.username,
       sentinelPassword: database.password,
@@ -157,6 +157,7 @@ export class RedisConnectionFactory {
    * @param clientMetadata
    * @param database
    * @param options
+   * @deprecated
    */
   public async createStandaloneConnection(
     clientMetadata: ClientMetadata,
@@ -222,6 +223,7 @@ export class RedisConnectionFactory {
    * @param clientMetadata
    * @param database
    * @param options
+   * @deprecated
    */
   public async createClusterConnection(
     clientMetadata: ClientMetadata,
@@ -265,6 +267,7 @@ export class RedisConnectionFactory {
    * @param clientMetadata
    * @param database
    * @param options
+   * @deprecated
    */
   public async createSentinelConnection(
     clientMetadata: ClientMetadata,
@@ -299,6 +302,7 @@ export class RedisConnectionFactory {
    * @param clientMetadata
    * @param database
    * @param connectionName
+   * @deprecated
    */
   public async createClientAutomatically(
     clientMetadata: ClientMetadata,
@@ -339,6 +343,7 @@ export class RedisConnectionFactory {
    * @param clientMetadata
    * @param databaseDto
    * @param connectionName
+   * @deprecated
    */
   public async createRedisConnection(
     clientMetadata: ClientMetadata,

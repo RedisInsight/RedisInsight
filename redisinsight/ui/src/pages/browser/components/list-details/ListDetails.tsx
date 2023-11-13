@@ -59,7 +59,7 @@ import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import {
   SetListElementDto,
   SetListElementResponse,
-} from 'apiSrc/modules/browser/dto'
+} from 'apiSrc/modules/browser/list/dto'
 
 import styles from './styles.module.scss'
 

@@ -107,18 +107,7 @@ export const generateNCommandExecutions = async (
       result: encryptData(JSON.stringify([{
         status: 'success',
         response: `"OK_${i}"`,
-        node: {
-          host: 'localhost',
-          port: 6479,
-          slot: 12499
-        }
       }])),
-      nodeOptions: JSON.stringify({
-        host: 'localhost',
-        port: 6479,
-        enableRedirection: true,
-      }),
-      role: 'ALL',
       mode: 'ASCII',
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       executionTime: Math.round(Math.random() * 10000),

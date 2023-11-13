@@ -1,21 +1,29 @@
-import { EuiButton, EuiCheckbox, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
 import parse from 'html-react-parser'
-import { useHistory, useParams } from 'react-router-dom'
-import { getCommandsForExecution, truncateText } from 'uiSrc/utils'
-import { BooleanParams, CodeButtonParams, MonacoLanguage, Pages } from 'uiSrc/constants'
+import { useParams } from 'react-router-dom'
+import { getCommandsForExecution, getUnsupportedModulesFromQuery, truncateText } from 'uiSrc/utils'
+import { BooleanParams, CodeButtonParams, MonacoLanguage } from 'uiSrc/constants'
 
 import { CodeBlock } from 'uiSrc/components'
-import { getDBConfigStorageField, setDBConfigStorageField } from 'uiSrc/services'
+import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import ModuleNotLoadedMinimalized
+  from 'uiSrc/components/messages/module-not-loaded-minimalized/ModuleNotLoadedMinimalized'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+
+import {
+  RunConfirmationPopover
+} from './components'
 import styles from './styles.module.scss'
 
 export interface Props {
   content: string
   onApply: (params?: CodeButtonParams, onFinish?: () => void) => void
+  modules?: AdditionalRedisModule[]
   onCopy?: () => void
   label: string
   isLoading?: boolean
@@ -33,23 +41,23 @@ const CodeButtonBlock = (props: Props) => {
     params,
     content,
     onCopy,
+    modules = [],
     ...rest
   } = props
 
   const [highlightedContent, setHighlightedContent] = useState('')
-  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
-  const [notShowAgain, setNotShowAgain] = useState(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isRunned, setIsRunned] = useState(false)
 
   const { instanceId } = useParams<{ instanceId: string }>()
-  const history = useHistory()
 
   const isNotShowConfirmation = getDBConfigStorageField(
     instanceId,
     ConfigDBStorageItem.notShowConfirmationRunTutorial
   )
   const isButtonHasConfirmation = params?.run_confirmation === BooleanParams.true
+  const [notLoadedModule] = getUnsupportedModulesFromQuery(modules, content)
 
   useEffect(() => {
     monaco.editor.colorize(content.trim(), MonacoLanguage.Redis, {})
@@ -64,16 +72,6 @@ const CodeButtonBlock = (props: Props) => {
     onCopy?.()
   }
 
-  const handleChangeDatabase = () => {
-    history.push(Pages.home)
-    sendEventTelemetry({
-      event: TelemetryEvent.EXPLORE_PANEL_DATABASE_CHANGE_CLICKED,
-      eventData: {
-        databaseId: instanceId,
-      }
-    })
-  }
-
   const runQuery = () => {
     setIsLoading(true)
     onApply(params, () => {
@@ -84,19 +82,26 @@ const CodeButtonBlock = (props: Props) => {
   }
 
   const handleRunClicked = () => {
-    if (!isNotShowConfirmation && isButtonHasConfirmation) {
-      setIsConfirmationOpen(true)
+    if (notLoadedModule) {
+      setIsPopoverOpen(true)
       return
     }
+
+    if (!isNotShowConfirmation && isButtonHasConfirmation) {
+      setIsPopoverOpen(true)
+      return
+    }
+
     runQuery()
   }
 
   const handleApplyRun = () => {
-    if (notShowAgain) {
-      setDBConfigStorageField(instanceId, ConfigDBStorageItem.notShowConfirmationRunTutorial, true)
-    }
-    setIsConfirmationOpen(false)
+    handleClosePopover()
     runQuery()
+  }
+
+  const handleClosePopover = () => {
+    setIsPopoverOpen(false)
   }
 
   return (
@@ -119,13 +124,14 @@ const CodeButtonBlock = (props: Props) => {
           </EuiButton>
           <EuiPopover
             ownFocus
+            initialFocus={false}
             className={styles.popoverAnchor}
             panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="upLeft"
-            isOpen={isConfirmationOpen}
+            isOpen={isPopoverOpen}
             panelPaddingSize="m"
-            closePopover={() => setIsConfirmationOpen(false)}
+            closePopover={handleClosePopover}
             focusTrapProps={{
               scrollLock: true
             }}
@@ -146,47 +152,14 @@ const CodeButtonBlock = (props: Props) => {
               </EuiButton>
             )}
           >
-            <EuiTitle size="xxs">
-              <span>Run commands</span>
-            </EuiTitle>
-            <EuiSpacer size="s" />
-            <EuiText size="s">
-              This tutorial will change data in your database, are you sure you want to run commands in this database?
-            </EuiText>
-            <EuiSpacer size="s" />
-            <EuiCheckbox
-              id="showAgain"
-              name="showAgain"
-              label="Don't show again for this database"
-              checked={notShowAgain}
-              className={styles.showAgainCheckBox}
-              onChange={(e) => setNotShowAgain(e.target.checked)}
-              data-testid="checkbox-show-again"
-              aria-label="checkbox do not show agan"
-            />
-            <div className={styles.popoverFooter}>
-              <div>
-                <EuiButton
-                  color="secondary"
-                  size="s"
-                  className={styles.popoverBtn}
-                  onClick={handleChangeDatabase}
-                  data-testid="tutorial-popover-change-db"
-                >
-                  Change Database
-                </EuiButton>
-                <EuiButton
-                  color="secondary"
-                  fill
-                  size="s"
-                  className={styles.popoverBtn}
-                  onClick={handleApplyRun}
-                  data-testid="tutorial-popover-apply-run"
-                >
-                  Run
-                </EuiButton>
-              </div>
-            </div>
+            {!!notLoadedModule && (
+              <ModuleNotLoadedMinimalized
+                moduleName={notLoadedModule}
+                source={OAuthSocialSource.Tutorials}
+                onClose={() => setIsPopoverOpen(false)}
+              />
+            )}
+            {!notLoadedModule && <RunConfirmationPopover onApply={handleApplyRun} />}
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>

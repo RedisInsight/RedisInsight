@@ -19,7 +19,7 @@ export interface Props {
 }
 
 const Code = ({ children, params = '', label, path, ...rest }: Props) => {
-  const { provider } = useSelector(connectedInstanceSelector)
+  const { provider, modules = [] } = useSelector(connectedInstanceSelector)
 
   const { search } = useLocation()
   const { setScript } = useContext(EnablementAreaContext)
@@ -79,6 +79,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
       onApply={loadContent}
       onCopy={onCopyClicked}
       content={children}
+      modules={modules}
       label={label}
       params={parsedParams}
       {...rest}

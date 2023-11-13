@@ -2,6 +2,7 @@ import React from 'react'
 import { EuiButton } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { useLocation } from 'react-router-dom'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import {
@@ -16,7 +17,7 @@ import { Pages } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 interface Props {
-  source?: OAuthSocialSource
+  source?: OAuthSocialSource | string
   onSuccessClick?: () => void
 }
 
@@ -29,6 +30,7 @@ const OAuthConnectFreeDb = ({
   const { id = '' } = useSelector(freeInstanceSelector) ?? {}
 
   const dispatch = useDispatch()
+  const { search } = useLocation()
 
   if (!id) {
     return null
@@ -50,7 +52,7 @@ const OAuthConnectFreeDb = ({
   const connectToInstanceSuccess = () => {
     onSuccessClick?.()
 
-    openNewWindowDatabase(Pages.browser(id))
+    openNewWindowDatabase(Pages.browser(id) + search)
   }
 
   const handleCheckConnectToInstance = (

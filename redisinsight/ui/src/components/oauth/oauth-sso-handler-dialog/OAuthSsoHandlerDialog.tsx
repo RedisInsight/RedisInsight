@@ -9,7 +9,7 @@ import { setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
 
 export interface Props {
   children: (
-    ssoCloudHandlerClick: (e: React.MouseEvent, source: OAuthSocialSource) => void,
+    ssoCloudHandlerClick: (e: React.MouseEvent, source: OAuthSocialSource, telemetrySource?: string) => void,
     isSSOEnabled: boolean,
   ) => React.ReactElement
 }
@@ -19,7 +19,7 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
 
   const dispatch = useDispatch()
 
-  const ssoCloudHandlerClick = (e: React.MouseEvent, source: OAuthSocialSource) => {
+  const ssoCloudHandlerClick = (e: React.MouseEvent, source: OAuthSocialSource, telemetrySource?: string) => {
     const isCloudSsoEnabled = !!feature?.flag
 
     if (!isCloudSsoEnabled) {
@@ -31,7 +31,7 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_FREE_DATABASE_CLICKED,
-      eventData: { source },
+      eventData: { source: telemetrySource || source },
     })
   }
 

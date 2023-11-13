@@ -17,12 +17,10 @@ ENV SERVER_TLS_KEY=${SERVER_TLS_KEY}
 ENV SEGMENT_WRITE_KEY=${SEGMENT_WRITE_KEY}
 
 # update apk repository and install build dependencies
-RUN apk update
-RUN apk add --no-cache --virtual .gyp \
+RUN apk update && apk add --no-cache --virtual .gyp \
         python3 \
         make \
-        g++ \
-        net-tools
+        g++
 
 # set workdir
 WORKDIR /usr/src/app
@@ -41,7 +39,7 @@ RUN yarn --cwd redisinsight/api install
 # build the frontend, static assets, and backend api
 RUN yarn build:web
 RUN yarn build:statics
-RUN yarn build:prod
+RUN yarn build:api
 
 # install backend _again_ to build native modules and remove dev dependencies,
 # then run autoclean to remove additional unnecessary files
@@ -62,17 +60,21 @@ ENV SEGMENT_WRITE_KEY=${SEGMENT_WRITE_KEY}
 ENV NODE_ENV=${NODE_ENV}
 ENV SERVER_STATIC_CONTENT=true
 ENV BUILD_TYPE='DOCKER_ON_PREMISE'
+ENV APP_FOLDER_ABSOLUTE_PATH='/data'
 
 # set workdir
 WORKDIR /usr/src/app
 
 # copy artifacts built in previous stage to this one
-COPY --from=build /usr/src/app/redisinsight/api/dist ./redisinsight/api/dist
-COPY --from=build /usr/src/app/redisinsight/api/node_modules ./redisinsight/api/node_modules
-COPY --from=build /usr/src/app/redisinsight/ui/dist ./redisinsight/ui/dist
+COPY --from=build --chown=node:node /usr/src/app/redisinsight/api/dist ./redisinsight/api/dist
+COPY --from=build --chown=node:node /usr/src/app/redisinsight/api/node_modules ./redisinsight/api/node_modules
+COPY --from=build --chown=node:node /usr/src/app/redisinsight/ui/dist ./redisinsight/ui/dist
+
+# folder to store local database, plugins, logs and all other files
+RUN mkdir -p /data && chown -R node:node /data
 
 # copy the docker entry point script and make it executable
-COPY ./docker-entry.sh ./
+COPY --chown=node:node ./docker-entry.sh ./
 RUN chmod +x docker-entry.sh
 
 # since RI is hard-code to port 5000, expose it from the container

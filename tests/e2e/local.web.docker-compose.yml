@@ -9,7 +9,7 @@ services:
     volumes:
       - ./results:/usr/src/app/results
       - ./plugins:/usr/src/app/plugins
-      - .redisinsight:/root/.redisinsight
+      - .redisinsight-app:/root/.redisinsight-app
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
       - ./remote:/root/remote
@@ -46,7 +46,7 @@ services:
       context: ./../../
       dockerfile: Dockerfile
     volumes:
-      - .redisinsight:/root/.redisinsight
+      - .redisinsight-app:/root/.redisinsight-app
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
     ports:

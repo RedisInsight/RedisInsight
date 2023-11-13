@@ -6,8 +6,8 @@ curl --request GET -sL \
 
 echo "Custom plugins archive was downloaded"
 
-mkdir -p .redisinsight
-unzip -o plugins.zip -d ./.redisinsight/plugins
+mkdir -p .redisinsight-app
+unzip -o plugins.zip -d ./.redisinsight-app/plugins
 
 echo "Custom plugins were unarchived"
 

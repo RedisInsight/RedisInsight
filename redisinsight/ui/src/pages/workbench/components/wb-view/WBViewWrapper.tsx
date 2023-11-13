@@ -32,7 +32,6 @@ import {
 } from 'uiSrc/slices/workbench/wb-results'
 import { ConnectionType, ExecuteQueryParams, Instance, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector, initialState as instanceInitState } from 'uiSrc/slices/instances/instances'
-import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { cliSettingsSelector, fetchBlockingCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { appContextWorkbench, setWorkbenchScript } from 'uiSrc/slices/app/context'
@@ -212,7 +211,7 @@ const WBViewWrapper = () => {
     onSuccess: () => void
   ) => {
     const { activeRunQueryMode, resultsMode } = executeParams
-    const { connectionType, host, port } = state.instance
+    const { connectionType } = state.instance
     if (connectionType !== ConnectionType.Cluster) {
       dispatch(sendWBCommandAction({
         resultsMode,
@@ -224,15 +223,7 @@ const WBViewWrapper = () => {
       return
     }
 
-    const options: CreateCommandExecutionsDto = {
-      commands,
-      nodeOptions: {
-        host,
-        port,
-        enableRedirection: true,
-      },
-      role: ClusterNodeRole.All,
-    }
+    const options: CreateCommandExecutionsDto = { commands }
     dispatch(
       sendWBCommandClusterAction({
         commands,

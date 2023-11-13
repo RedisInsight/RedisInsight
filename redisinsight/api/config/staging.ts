@@ -1,19 +1,15 @@
 import { join } from 'path';
 import * as os from 'os';
-import { getHomedir } from '../src/config-helper';
 
-const homedirInit = process.env.APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-stage'));
+const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-app-stage'));
 
-const prevHomedir = join(os.homedir(), '.redisinsight-v2.0-stage');
-const v2Homedir = join(os.homedir(), '.redisinsight-v2-stage');
-const homedir = getHomedir(homedirInit, v2Homedir);
+const prevHomedir = join(os.homedir(), '.redisinsight-v2-stage');
 
 export default {
   dir_path: {
     homedir,
     prevHomedir,
-    v2Homedir,
     logs: join(homedir, 'logs'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),

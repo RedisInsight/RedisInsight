@@ -174,6 +174,7 @@ describe('WorkbenchService', () => {
       expect(result.db).toBe(db);
     });
     it('should save result as unsupported command message', async () => {
+      client.getCurrentDbIndex = jest.fn().mockResolvedValueOnce(0);
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
 
       const dto = {

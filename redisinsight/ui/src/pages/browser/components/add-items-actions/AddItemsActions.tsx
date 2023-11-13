@@ -8,7 +8,7 @@ interface Props {
   loading: boolean
   removeItem: (id: number) => void
   addItem: () => void
-  anchorClassName: string
+  anchorClassName?: string
   clearItemValues?: (id: number) => void
   clearIsDisabled?: boolean
   addItemIsDisabled?: boolean

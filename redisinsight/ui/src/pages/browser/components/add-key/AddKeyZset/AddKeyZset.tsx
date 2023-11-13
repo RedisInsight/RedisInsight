@@ -17,15 +17,13 @@ import { isNaNConvertedString } from 'uiSrc/utils/numbers'
 import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
-import styles from 'uiSrc/pages/browser/components/key-details-add-items/styles.module.scss'
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
-import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import { AddZsetFormConfig as config } from '../constants/fields-config'
-
 import {
   INITIAL_ZSET_MEMBER_STATE,
   IZsetMemberState
-} from '../../key-details-add-items/add-zset-members/AddZsetMembers'
+} from 'uiSrc/pages/browser/modules/key-details/components/key-details-add-items'
+import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
+import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
+import { AddZsetFormConfig as config } from '../constants/fields-config'
 
 export interface Props {
   keyName: string
@@ -233,7 +231,6 @@ const AddKeyZset = (props: Props) => {
                 addItemIsDisabled={(members.some((item) => !item.score.length))}
                 clearItemValues={clearMemberValues}
                 loading={loading}
-                anchorClassName={styles.refreshKeyTooltip}
               />
             </EuiFlexGroup>
           </EuiFlexItem>

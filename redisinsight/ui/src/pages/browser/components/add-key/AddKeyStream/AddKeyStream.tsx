@@ -10,7 +10,7 @@ import {
 } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import { entryIdRegex, isRequiredStringsValid, Maybe, stringToBuffer } from 'uiSrc/utils'
-import { StreamEntryFields } from 'uiSrc/pages/browser/components/key-details-add-items'
+import { StreamEntryFields } from 'uiSrc/pages/browser/modules/key-details/components/key-details-add-items'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'

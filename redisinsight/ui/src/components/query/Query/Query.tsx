@@ -93,6 +93,7 @@ const Query = (props: Props) => {
   const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+  const runTooltipRef = useRef<EuiToolTip>(null)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -492,6 +493,7 @@ const Query = (props: Props) => {
             </EuiButton>
           </EuiToolTip>
           <EuiToolTip
+            ref={runTooltipRef}
             position="left"
             content={
               isLoading
@@ -514,7 +516,10 @@ const Query = (props: Props) => {
                 <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
               )}
               <EuiButtonIcon
-                onClick={() => handleSubmit()}
+                onClick={() => {
+                  handleSubmit()
+                  setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
+                }}
                 disabled={isLoading}
                 iconType="playFilled"
                 className={cx(styles.submitButton, { [styles.submitButtonLoading]: isLoading })}

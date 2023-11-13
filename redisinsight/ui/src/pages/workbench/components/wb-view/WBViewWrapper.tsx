@@ -37,6 +37,8 @@ import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import WBView from './WBView'
 
 interface IState {
@@ -141,17 +143,23 @@ const WBViewWrapper = () => {
     dispatch(changeResultsMode(isGroupMode(resultsMode) ? ResultsMode.Default : ResultsMode.GroupMode))
   }
 
-  const updateOnboardingOnSubmit = () => dispatch(incrementOnboardStepAction(
-    OnboardingSteps.WorkbenchPage,
-    undefined,
-    () => sendEventTelemetry({
-      event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
-      eventData: {
-        databaseId: instanceId,
-        step: OnboardingStepName.WorkbenchIntro,
+  const updateOnboardingOnSubmit = () => dispatch(
+    incrementOnboardStepAction(
+      OnboardingSteps.WorkbenchPage,
+      undefined,
+      () => {
+        dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+        dispatch(toggleInsightsPanel(true))
+        sendEventTelemetry({
+          event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
+          eventData: {
+            databaseId: instanceId,
+            step: OnboardingStepName.WorkbenchIntro,
+          }
+        })
       }
-    })
-  ))
+    )
+  )
 
   const handleSubmit = (
     commandInit: string = script,
@@ -164,7 +172,8 @@ const WBViewWrapper = () => {
       afterEach: () => {
         const isNewCommand = !commandId
         isNewCommand && scrollResults('start')
-      }
+      },
+      afterAll: updateOnboardingOnSubmit
     }))
   }
 

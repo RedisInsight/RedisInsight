@@ -383,10 +383,9 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
           checkFn: ({ body }) => {
             expect(body[0].result).to.eql([
               {
-                response: [
-                  constants.TEST_HASH_FIELD_1_NAME,
-                  constants.TEST_HASH_FIELD_1_VALUE
-                ],
+                response: {
+                  [constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE
+                },
                 status: 'success',
               },
             ]);

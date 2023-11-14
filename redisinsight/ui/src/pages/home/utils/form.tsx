@@ -258,7 +258,7 @@ export const autoFillFormDetails = (
           }
         }
       }
-      setInitialValues(getUpdatedInitialValues())
+      setInitialValues(getFormValues(getUpdatedInitialValues()))
       /*
        * autofill was successfull so return true
        */
@@ -301,7 +301,7 @@ export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
   compressor: instance?.compressor ?? NONE,
   modules: instance?.modules,
   showDb: !!instance?.db,
-  showCompressor: instance && instance.compressor !== NONE,
+  showCompressor: instance && instance.compressor && instance.compressor !== NONE,
   sni: !!instance?.servername,
   servername: instance?.servername,
   newCaCert: '',

@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneV5Config } from '../../../../helpers/conf';
@@ -41,6 +41,8 @@ test.skip('Verify that user can see the "Create your free Redis database with Re
 test('Verify that user can see options on what can be done to work with capabilities in Workbench for docker', async t => {
     const commandJSON = 'JSON.ARRAPPEND key value';
     const commandFT = 'FT.LIST';
+
+    await workbenchPage.InsightsPanel.togglePanel(true);
     await workbenchPage.sendCommandInWorkbench(commandJSON);
     // Verify change screens when capability not available - 'JSON'
     await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available').visible)
@@ -49,4 +51,9 @@ test('Verify that user can see options on what can be done to work with capabili
     // Verify change screens when capability not available - 'Search'
     await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
         .ok('Missing RedisSearch title is not visible');
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    await t.click(tutorials.redisStackTutorialsButton);
+    await t.click(tutorials.vectorSimilitaritySearchButton);
+    await tutorials.runBlockCode('Create index for VSS');
+    await t.expect(tutorials.cloudFreeLinkTooltip.visible).ok('the tooltip, that module is unavailable is not opened');
 });

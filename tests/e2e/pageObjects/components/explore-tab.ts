@@ -25,6 +25,7 @@ export class ExploreTab {
     tutorialsWorkingWithGraphLink = Selector('[data-testid=internal-link-working_with_graphs]');
     codeBlock = Selector('[data-testid=code-button-block-content]');
     codeBlockLabel = Selector('[data-testid=code-button-block-label]');
+    cloudFreeLinkTooltip = Selector('[data-testid=tutorials-get-started-link]');
     //Custom tutorials
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');

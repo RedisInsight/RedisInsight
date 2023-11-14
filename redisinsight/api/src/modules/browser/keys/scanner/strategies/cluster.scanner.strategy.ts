@@ -65,7 +65,6 @@ export class ClusterScannerStrategy extends ScannerStrategy {
    * Scan keys for each node and mutates input data
    */
   private async scanNodes(
-    client: RedisClient,
     nodes: IScannerNodeKeys[],
     match: string,
     count: number,
@@ -83,7 +82,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
           commandArgs.push('TYPE', type);
         }
 
-        const result = await client.sendCommand([
+        const result = await node.node.sendCommand([
           BrowserToolKeysCommands.Scan,
           ...commandArgs,
         ]);
@@ -116,7 +115,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
         // eslint-disable-next-line no-param-reassign
         node.scanned = isNull(node.total) ? 1 : node.total;
       });
-      nodes[0].keys = [await this.getKeyInfo(client, keyName)];
+      nodes[0].keys = await this.getKeysInfo(client, [keyName], args.type);
       nodes[0].keys = nodes[0].keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;
@@ -142,7 +141,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
         < settings.scanThreshold
       )
     ) {
-      await this.scanNodes(client, nodes, match, count, args.type);
+      await this.scanNodes(nodes, match, count, args.type);
       allNodesScanned = !nodes.some((node) => node.cursor !== 0);
     }
 
@@ -188,7 +187,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
 
       const result = await client.sendPipeline(commands) as any[];
 
-      if (!filterType) {
+      if (filterType) {
         result.push([null, filterType]);
       }
 

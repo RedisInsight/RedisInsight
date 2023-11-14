@@ -55,14 +55,12 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
    */
   private async getKeysSize(client: RedisClient, keys: RedisString[]): Promise<number[]> {
     const result = await client.sendPipeline(
-      keys.map<[toolCommand: any, ...args: Array<string | number | Buffer>]>(
-        (key: string) => [
-          BrowserToolKeysCommands.MemoryUsage,
-          key,
-          'samples',
-          '0',
-        ],
-      ),
+      keys.map((key) => [
+        BrowserToolKeysCommands.MemoryUsage,
+        key,
+        'samples',
+        '0',
+      ]),
     ) as [any, number][];
 
     return result.map((item: [ReplyError, any]) => (item[0] ? null : item[1]));
@@ -90,12 +88,10 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       if (type) {
         commandArgs = [...commandArgs, 'TYPE', type];
       }
-      const execResult = await client.sendCommand(
-        [
-          BrowserToolKeysCommands.Scan,
-          ...commandArgs,
-        ],
-      ) as [string, RedisClientCommandReply[]];
+      const execResult = await client.sendCommand([
+        BrowserToolKeysCommands.Scan,
+        ...commandArgs,
+      ]) as [string, RedisClientCommandReply[]];
 
       const [nextCursor, keys] = execResult;
       // eslint-disable-next-line no-param-reassign

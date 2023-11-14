@@ -23,7 +23,6 @@ import { ClientMetadata } from 'src/common/models';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
-import { SettingsService } from 'src/modules/settings/settings.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { pick } from 'lodash';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
@@ -37,12 +36,11 @@ export class KeysService {
   private logger = new Logger('KeysService');
 
   constructor(
-    private browserHistory: BrowserHistoryService,
-    private settingsService: SettingsService,
-    private recommendationService: DatabaseRecommendationService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly scanner: Scanner,
     private readonly keyInfoProvider: KeyInfoProvider,
-    private readonly databaseClientFactory: DatabaseClientFactory,
+    private readonly browserHistory: BrowserHistoryService,
+    private readonly recommendationService: DatabaseRecommendationService,
   ) {}
 
   public async getKeys(
@@ -191,7 +189,7 @@ export class KeysService {
 
       if (!result) {
         this.logger.error('Failed to delete keys. Not Found keys');
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+        return Promise.reject(new NotFoundException());
       }
 
       this.logger.log('Succeed to delete keys');

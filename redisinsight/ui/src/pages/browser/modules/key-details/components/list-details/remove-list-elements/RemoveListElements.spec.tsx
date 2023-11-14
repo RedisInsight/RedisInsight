@@ -5,7 +5,7 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 
 import { Props, RemoveListElements } from './RemoveListElements'
-import { HEAD_DESTINATION } from '../../key-details-add-items/add-list-elements/AddListElements'
+import { HEAD_DESTINATION } from '../add-list-elements/AddListElements'
 
 const COUNT_INPUT = 'count-input'
 

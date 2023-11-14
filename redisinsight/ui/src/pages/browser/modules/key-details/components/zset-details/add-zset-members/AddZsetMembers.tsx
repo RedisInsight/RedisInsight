@@ -21,10 +21,8 @@ import {
   updateZsetScoreStateSelector,
 } from 'uiSrc/slices/browser/zset'
 
-import AddItemsActions from '../../../../../components/add-items-actions/AddItemsActions'
-import { AddZsetFormConfig as config } from '../../../../../components/add-key/constants/fields-config'
-
-import styles from '../styles.module.scss'
+import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 export interface Props {
   onCancel: (isCancelled?: boolean) => void;
@@ -174,7 +172,7 @@ const AddZsetMembers = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-zset-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx('eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         {members.map((item, index) => (
           <EuiFlexItem style={{ marginBottom: '8px' }} grow key={item.id}>

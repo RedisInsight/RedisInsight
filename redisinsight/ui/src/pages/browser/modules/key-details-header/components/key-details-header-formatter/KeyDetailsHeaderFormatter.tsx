@@ -4,7 +4,7 @@ import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption, EuiText, EuiTextColor, E
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { KeyTypes, KeyValueFormat, TEXT_DISABLED_STRING_FORMATTING, Theme } from 'uiSrc/constants'
+import { KeyTypes, KeyValueFormat, MIDDLE_SCREEN_RESOLUTION, TEXT_DISABLED_STRING_FORMATTING, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { keysSelector, selectedKeyDataSelector, selectedKeySelector, setViewFormat } from 'uiSrc/slices/browser/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -13,7 +13,6 @@ import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
 import { getKeyValueFormatterOptions } from './constants'
-import { MIDDLE_SCREEN_RESOLUTION } from '../../constants'
 import styles from './styles.module.scss'
 
 export interface Props {

@@ -16,10 +16,8 @@ import {
   addSetKey, addKeyStateSelector,
 } from 'uiSrc/slices/browser/keys'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
-import {
-  INITIAL_SET_MEMBER_STATE,
-  ISetMemberState
-} from 'uiSrc/pages/browser/modules/key-details/components/key-details-add-items'
+
+import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from 'uiSrc/pages/browser/modules/key-details/components/set-details/add-set-members/AddSetMembers'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/dto/set.dto'
 
 import {

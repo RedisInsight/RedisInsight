@@ -2,22 +2,42 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
+  initialKeyInfo,
   refreshKey,
+  selectedKeyDataSelector,
   selectedKeySelector,
 } from 'uiSrc/slices/browser/keys'
-import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  ModulesKeyTypes,
+  TEXT_DISABLED_COMPRESSED_VALUE,
+  TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_DISABLED_STRING_EDITING,
+} from 'uiSrc/constants'
 
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
+import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
+import { isFormatEditable, isFullStringLoaded } from 'uiSrc/utils'
 import { StringDetailsTable } from './string-details-table'
+import { EditItemAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {}
 
 const StringDetails = (props: Props) => {
   const keyType = KeyTypes.String
 
-  const { loading } = useSelector(selectedKeySelector)
+  const { loading, viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { length } = useSelector(selectedKeyDataSelector) ?? initialKeyInfo
+  const { value: keyValue } = useSelector(stringDataSelector)
+  const { isCompressed: isStringCompressed } = useSelector(stringSelector)
+
+  const isEditable = !isStringCompressed && isFormatEditable(viewFormatProp)
+  const isStringEditable = isFullStringLoaded(keyValue?.data?.length, length)
+  const noEditableText = isStringCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+  const editToolTip = !isEditable ? noEditableText : (!isStringEditable ? TEXT_DISABLED_STRING_EDITING : null)
+
   const [editItem, setEditItem] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -26,13 +46,22 @@ const StringDetails = (props: Props) => {
     dispatch(refreshKey(key, type, args))
   }
 
+  const Actions = () => (
+    <EditItemAction
+      title="Edit Value"
+      tooltipContent={editToolTip}
+      isEditable={isStringEditable}
+      onEditItem={() => setEditItem(!editItem)}
+    />
+  )
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
         keyType={keyType}
-        onEditItem={() => setEditItem(!editItem)}
+        Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (

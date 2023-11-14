@@ -10,9 +10,10 @@ import { KeyTypes } from 'uiSrc/constants'
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { ListDetailsTable } from './list-details-table'
 
-import { AddItemsPanel } from '../add-items-panel'
-import { RemoveListElements } from '../key-details-remove-items'
+import { RemoveListElements } from './remove-list-elements'
 
+import AddListElements from './add-list-elements/AddListElements'
+import { AddItemsAction, RemoveItemsAction } from '../key-details-actions'
 import styles from './styles.module.scss'
 
 export interface Props extends KeyDetailsHeaderProps {
@@ -49,14 +50,20 @@ const ListDetails = (props: Props) => {
     setIsRemoveItemPanelOpen(true)
   }
 
+  const Actions = ({ width }: { width: number }) => (
+    <>
+      <AddItemsAction title="Add Elements" width={width} openAddItemPanel={openAddItemPanel} />
+      <RemoveItemsAction title="Remove Elements" openRemoveItemPanel={openRemoveItemPanel} />
+    </>
+  )
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
         keyType={keyType}
-        onAddItem={openAddItemPanel}
-        onRemoveItem={openRemoveItemPanel}
+        Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
@@ -65,16 +72,13 @@ const ListDetails = (props: Props) => {
           </div>
         )}
         {isAddItemPanelOpen && (
-          <AddItemsPanel
-            selectedKeyType={keyType}
-            closeAddItemPanel={closeAddItemPanel}
-          />
+          <div className={cx('formFooterBar', 'contentActive')}>
+            <AddListElements onCancel={closeAddItemPanel} />
+          </div>
         )}
         {isRemoveItemPanelOpen && (
           <div className={cx('formFooterBar', styles.contentActive)}>
-            {keyType === KeyTypes.List && (
-              <RemoveListElements onCancel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
-            )}
+            <RemoveListElements onCancel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
           </div>
         )}
       </div>

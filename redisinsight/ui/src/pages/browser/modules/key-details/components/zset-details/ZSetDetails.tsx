@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import cx from 'classnames'
 
 import {
   selectedKeySelector,
@@ -8,8 +9,8 @@ import { KeyTypes } from 'uiSrc/constants'
 
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { ZSetDetailsTable } from './zset-details-table'
-
-import { AddItemsPanel } from '../add-items-panel'
+import AddZsetMembers from './add-zset-members/AddZsetMembers'
+import { AddItemsAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -35,13 +36,17 @@ const ZSetDetails = (props: Props) => {
     onCloseAddItemPanel()
   }
 
+  const Actions = ({ width }: { width: number }) => (
+    <AddItemsAction title="Add Members" width={width} openAddItemPanel={openAddItemPanel} />
+  )
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
         keyType={keyType}
-        onAddItem={openAddItemPanel}
+        Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
@@ -50,10 +55,9 @@ const ZSetDetails = (props: Props) => {
           </div>
         )}
         {isAddItemPanelOpen && (
-          <AddItemsPanel
-            selectedKeyType={keyType}
-            closeAddItemPanel={closeAddItemPanel}
-          />
+          <div className={cx('formFooterBar', 'contentActive')}>
+            <AddZsetMembers onCancel={closeAddItemPanel} />
+          </div>
         )}
       </div>
     </div>

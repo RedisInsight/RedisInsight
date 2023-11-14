@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import cx from 'classnames'
 
 import {
   selectedKeySelector,
@@ -8,8 +9,8 @@ import { KeyTypes } from 'uiSrc/constants'
 
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { HashDetailsTable } from './hash-details-table'
-
-import { AddItemsPanel } from '../add-items-panel'
+import AddHashFields from './add-hash-fields/AddHashFields'
+import { AddItemsAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -35,13 +36,17 @@ const HashDetails = (props: Props) => {
     onCloseAddItemPanel()
   }
 
+  const Actions = ({ width }: { width: number }) => (
+    <AddItemsAction title="Add Fields" width={width} openAddItemPanel={openAddItemPanel} />
+  )
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
         keyType={keyType}
-        onAddItem={openAddItemPanel}
+        Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
@@ -50,10 +55,9 @@ const HashDetails = (props: Props) => {
           </div>
         )}
         {isAddItemPanelOpen && (
-          <AddItemsPanel
-            selectedKeyType={keyType}
-            closeAddItemPanel={closeAddItemPanel}
-          />
+          <div className={cx('formFooterBar', 'contentActive')}>
+            <AddHashFields onCancel={closeAddItemPanel} />
+          </div>
         )}
       </div>
     </div>

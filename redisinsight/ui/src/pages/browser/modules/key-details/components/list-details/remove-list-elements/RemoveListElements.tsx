@@ -28,16 +28,16 @@ import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys
 import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
+import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
 
-import { AddListFormConfig as config } from '../../../../../components/add-key/constants/fields-config'
 import {
   TAIL_DESTINATION,
   HEAD_DESTINATION,
   ListElementDestination,
-} from '../../key-details-add-items/add-list-elements/AddListElements'
+} from '../add-list-elements/AddListElements'
 
-import styles from '../styles.module.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   onCancel: () => void

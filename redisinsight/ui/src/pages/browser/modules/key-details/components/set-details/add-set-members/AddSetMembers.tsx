@@ -18,10 +18,8 @@ import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { stringToBuffer } from 'uiSrc/utils'
-import AddItemsActions from '../../../../../components/add-items-actions/AddItemsActions'
-import { AddZsetFormConfig as config } from '../../../../../components/add-key/constants/fields-config'
-
-import styles from '../styles.module.scss'
+import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
+import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 
 export interface Props {
   onCancel: (isCancelled?: boolean) => void;
@@ -125,7 +123,7 @@ const AddSetMembers = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-set-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth')}
+        className={cx('eui-yScroll', 'flexItemNoFullWidth')}
       >
         {members.map((item, index) => (
           <EuiFlexItem style={{ marginBottom: '8px' }} grow key={item.id}>
@@ -196,4 +194,4 @@ const AddSetMembers = (props: Props) => {
   )
 }
 
-export default AddSetMembers
+export { AddSetMembers }

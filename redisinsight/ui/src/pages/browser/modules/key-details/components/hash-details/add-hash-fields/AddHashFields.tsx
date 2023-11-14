@@ -140,7 +140,7 @@ const AddHashFields = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-hash-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx('eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         {fields.map((item, index) => (
           <EuiFlexItem style={{ marginBottom: '8px' }} grow key={item.id}>

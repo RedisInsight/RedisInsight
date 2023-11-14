@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import cx from 'classnames'
 
 import {
   selectedKeySelector,
 } from 'uiSrc/slices/browser/keys'
-import { KeyTypes, STREAM_ADD_GROUP_VIEW_TYPES } from 'uiSrc/constants'
+import { KeyTypes, STREAM_ADD_ACTION, STREAM_ADD_GROUP_VIEW_TYPES } from 'uiSrc/constants'
 
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { streamSelector } from 'uiSrc/slices/browser/stream'
+import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { StreamDetailsBody } from './stream-details-body'
-
-import { AddItemsPanel } from '../add-items-panel'
+import AddStreamEntries from './add-stream-entity'
+import AddStreamGroup from './add-stream-group'
+import { StreamItemsAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -42,13 +45,21 @@ const StreamDetails = (props: Props) => {
     }
   }
 
+  const Actions = ({ width }: { width: number }) => (
+    <StreamItemsAction
+      width={width}
+      title={STREAM_ADD_ACTION[streamViewType].name}
+      openAddItemPanel={openAddItemPanel}
+    />
+  )
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
         keyType={keyType}
-        onAddItem={openAddItemPanel}
+        Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
@@ -57,11 +68,14 @@ const StreamDetails = (props: Props) => {
           </div>
         )}
         {isAddItemPanelOpen && (
-          <AddItemsPanel
-            selectedKeyType={keyType}
-            streamViewType={streamViewType}
-            closeAddItemPanel={closeAddItemPanel}
-          />
+          <div className={cx('formFooterBar', 'contentActive')}>
+            {streamViewType === StreamViewType.Data && (
+              <AddStreamEntries onCancel={closeAddItemPanel} />
+            )}
+            {STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType!) && (
+              <AddStreamGroup onCancel={closeAddItemPanel} />
+            )}
+          </div>
         )}
       </div>
     </div>

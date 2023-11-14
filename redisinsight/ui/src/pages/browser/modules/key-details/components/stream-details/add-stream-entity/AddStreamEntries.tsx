@@ -9,11 +9,11 @@ import { addNewEntriesAction, streamDataSelector } from 'uiSrc/slices/browser/st
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
-import { StreamEntryFields } from 'uiSrc/pages/browser/modules/key-details/components/key-details-add-items'
 import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AddStreamEntriesDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
+import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
 import styles from './styles.module.scss'
 
 export interface Props {

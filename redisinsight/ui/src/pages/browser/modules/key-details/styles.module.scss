@@ -45,3 +45,15 @@
   border-top: 1px solid var(--euiColorLightShade);
 }
 
+.actionBtn {
+  margin-right: 12px;
+  position: relative;
+  z-index: 2;
+
+  &.withText {
+    color: var(--euiTextSubduedColor) !important;
+    :global(.euiButton__text) {
+      font: normal normal normal 12px/18px Graphik !important;
+    }
+  }
+}

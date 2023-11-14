@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import AddSetMembers, { Props } from './AddSetMembers'
+import { AddSetMembers, Props } from './AddSetMembers'
 
 const MEMBER_NAME = 'member-name'
 const ADD_NEW_ITEM = 'add-new-item'

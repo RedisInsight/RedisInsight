@@ -14,13 +14,11 @@ import {
 import {
   addHashKey, addKeyStateSelector,
 } from 'uiSrc/slices/browser/keys'
-import {
-  IHashFieldState,
-  INITIAL_HASH_FIELD_STATE
-} from 'uiSrc/pages/browser/modules/key-details/components/key-details-add-items'
+
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
+import { IHashFieldState, INITIAL_HASH_FIELD_STATE } from 'uiSrc/pages/browser/modules/key-details/components/hash-details/add-hash-fields/AddHashFields'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/dto/hash.dto'
 import {
   AddHashFormConfig as config

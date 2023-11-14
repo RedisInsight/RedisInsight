@@ -6,11 +6,10 @@ import {
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import { LENGTH_NAMING_BY_TYPE } from 'uiSrc/constants'
+import { LENGTH_NAMING_BY_TYPE, MIDDLE_SCREEN_RESOLUTION } from 'uiSrc/constants'
 import { initialKeyInfo, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { formatBytes } from 'uiSrc/utils'
 
-import { MIDDLE_SCREEN_RESOLUTION } from '../../constants'
 import styles from './styles.module.scss'
 
 export interface Props {

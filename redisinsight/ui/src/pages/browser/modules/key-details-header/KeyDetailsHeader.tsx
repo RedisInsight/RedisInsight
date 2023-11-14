@@ -5,12 +5,13 @@ import {
   EuiLoadingContent,
   EuiToolTip,
 } from '@elastic/eui'
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { GroupBadge, AutoRefresh, FullScreen } from 'uiSrc/components'
 import {
+  HIDE_LAST_REFRESH,
   KeyTypes,
   ModulesKeyTypes,
 } from 'uiSrc/constants'
@@ -29,13 +30,12 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { resetStringValue } from 'uiSrc/slices/browser/string'
+import { Nullable } from 'uiSrc/utils'
 import { KeyDetailsHeaderFormatter } from './components/key-details-header-formatter'
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
-import { KeyDetailsHeaderActions } from './components/key-details-header-actions'
 import { KeyDetailsHeaderDelete } from './components/key-details-header-delete'
 import { KeyDetailsHeaderSizeLength } from './components/key-details-header-size-length'
-import { HIDE_LAST_REFRESH } from './constants'
 
 import styles from './styles.module.scss'
 
@@ -44,12 +44,10 @@ export interface KeyDetailsHeaderProps {
   onCloseKey: (key: RedisResponseBuffer) => void
   onRemoveKey: () => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
-  onAddItem?: () => void
-  onEditItem?: () => void
-  onRemoveItem?: () => void
   isFullScreen: boolean
   arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
+  Actions: (props: { width: number }) => Nullable<ReactElement>
 }
 
 const KeyDetailsHeader = ({
@@ -60,9 +58,7 @@ const KeyDetailsHeader = ({
   onRemoveKey,
   onEditKey,
   keyType,
-  onAddItem = () => {},
-  onEditItem = () => {},
-  onRemoveItem = () => {},
+  Actions = () => null,
 }: KeyDetailsHeaderProps) => {
   const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
   const {
@@ -190,15 +186,7 @@ const KeyDetailsHeader = ({
                     {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
                       <KeyDetailsHeaderFormatter width={width} />
                     )}
-                    {keyType && (
-                      <KeyDetailsHeaderActions
-                        width={width}
-                        keyType={keyType}
-                        onAddItem={onAddItem}
-                        onEditItem={onEditItem}
-                        onRemoveItem={onRemoveItem}
-                      />
-                    )}
+                    {keyType && <Actions width={width} /> }
                     <KeyDetailsHeaderDelete onDelete={handleDeleteKey} />
                   </div>
                 </EuiFlexItem>

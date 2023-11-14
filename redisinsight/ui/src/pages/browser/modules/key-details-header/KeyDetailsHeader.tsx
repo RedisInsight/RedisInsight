@@ -6,6 +6,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import React, { ReactElement } from 'react'
+import { isUndefined } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
@@ -47,7 +48,7 @@ export interface KeyDetailsHeaderProps {
   isFullScreen: boolean
   arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
-  Actions: (props: { width: number }) => Nullable<ReactElement>
+  Actions?: (props: { width: number }) => ReactElement
 }
 
 const KeyDetailsHeader = ({
@@ -58,7 +59,7 @@ const KeyDetailsHeader = ({
   onRemoveKey,
   onEditKey,
   keyType,
-  Actions = () => null,
+  Actions,
 }: KeyDetailsHeaderProps) => {
   const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
   const {
@@ -186,7 +187,7 @@ const KeyDetailsHeader = ({
                     {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
                       <KeyDetailsHeaderFormatter width={width} />
                     )}
-                    {keyType && <Actions width={width} /> }
+                    {!isUndefined(Actions) && <Actions width={width} />}
                     <KeyDetailsHeaderDelete onDelete={handleDeleteKey} />
                   </div>
                 </EuiFlexItem>

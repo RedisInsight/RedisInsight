@@ -84,14 +84,8 @@ const KeyDetailsHeader = ({
     dispatch(editKey(oldKey, newKey, () => onEditKey(oldKey, newKey), onFailure))
   }
 
-  const handleDeleteKey = (key: RedisResponseBuffer, type: string) => {
-    dispatch(deleteSelectedKeyAction(key,
-      () => {
-        if (type === KeyTypes.String) {
-          dispatch(resetStringValue())
-        }
-        onRemoveKey()
-      }))
+  const handleDeleteKey = (key: RedisResponseBuffer) => {
+    dispatch(deleteSelectedKeyAction(key, onRemoveKey))
   }
 
   const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {

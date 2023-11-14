@@ -18,7 +18,7 @@ import {
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
-import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
+import { resetStringValue, stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import { isFormatEditable, isFullStringLoaded } from 'uiSrc/utils'
 import { StringDetailsTable } from './string-details-table'
 import { EditItemAction } from '../key-details-actions'
@@ -26,6 +26,7 @@ import { EditItemAction } from '../key-details-actions'
 export interface Props extends KeyDetailsHeaderProps {}
 
 const StringDetails = (props: Props) => {
+  const { onRemoveKey } = props
   const keyType = KeyTypes.String
 
   const { loading, viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
@@ -46,6 +47,11 @@ const StringDetails = (props: Props) => {
     dispatch(refreshKey(key, type, args))
   }
 
+  const handleRemoveKey = () => {
+    dispatch(resetStringValue())
+    onRemoveKey()
+  }
+
   const Actions = () => (
     <EditItemAction
       title="Edit Value"
@@ -61,6 +67,7 @@ const StringDetails = (props: Props) => {
         {...props}
         key="key-details-header"
         keyType={keyType}
+        onRemoveKey={handleRemoveKey}
         Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">

@@ -18,7 +18,7 @@ import {
 import styles from './styles.module.scss'
 
 export interface Props {
-  onDelete: (key: RedisResponseBuffer, type: string) => void
+  onDelete: (key: RedisResponseBuffer) => void
 }
 
 const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
@@ -88,7 +88,7 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
             size="s"
             color="warning"
             iconType="trash"
-            onClick={() => onDelete(keyBuffer, type)}
+            onClick={() => onDelete(keyBuffer)}
             className={styles.popoverDeleteBtn}
             data-testid="delete-key-confirm-btn"
           >

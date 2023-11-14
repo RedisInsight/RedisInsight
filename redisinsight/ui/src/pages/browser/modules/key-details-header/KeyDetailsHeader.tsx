@@ -39,9 +39,9 @@ import { HIDE_LAST_REFRESH } from './constants'
 
 import styles from './styles.module.scss'
 
-export interface Props {
+export interface KeyDetailsHeaderProps {
   keyType: KeyTypes | ModulesKeyTypes
-  onClose: (key: RedisResponseBuffer) => void
+  onCloseKey: (key: RedisResponseBuffer) => void
   onRemoveKey: () => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
   onAddItem?: () => void
@@ -56,14 +56,14 @@ const KeyDetailsHeader = ({
   isFullScreen,
   arePanelsCollapsed,
   onToggleFullScreen = () => {},
-  onClose,
+  onCloseKey,
   onRemoveKey,
   onEditKey,
   keyType,
   onAddItem = () => {},
   onEditItem = () => {},
   onRemoveItem = () => {},
-}: Props) => {
+}: KeyDetailsHeaderProps) => {
   const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
   const {
     type,
@@ -158,7 +158,7 @@ const KeyDetailsHeader = ({
                         color="primary"
                         aria-label="Close key"
                         className={styles.closeBtn}
-                        onClick={() => onClose(keyProp)}
+                        onClick={() => onCloseKey(keyProp)}
                         data-testid="close-key-btn"
                       />
                     </EuiToolTip>

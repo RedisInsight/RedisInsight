@@ -4,10 +4,11 @@ import { useSelector } from 'react-redux'
 import {
   selectedKeySelector,
 } from 'uiSrc/slices/browser/keys'
-import { KeyTypes } from 'uiSrc/constants'
+import { KeyTypes, STREAM_ADD_GROUP_VIEW_TYPES } from 'uiSrc/constants'
 
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
-import { SetDetailsTable } from './set-details-table'
+import { streamSelector } from 'uiSrc/slices/browser/stream'
+import { StreamDetailsBody } from './stream-details-body'
 
 import { AddItemsPanel } from '../add-items-panel'
 
@@ -17,22 +18,28 @@ export interface Props extends KeyDetailsHeaderProps {
   onCloseAddItemPanel: () => void
 }
 
-const SetDetails = (props: Props) => {
-  const keyType = KeyTypes.Set
-  const { onRemoveKey, onOpenAddItemPanel, onCloseAddItemPanel } = props
+const StreamDetails = (props: Props) => {
+  const keyType = KeyTypes.Stream
+  const { onOpenAddItemPanel, onCloseAddItemPanel } = props
 
   const { loading } = useSelector(selectedKeySelector)
+  const { viewType: streamViewType } = useSelector(streamSelector)
 
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
 
   const openAddItemPanel = () => {
     setIsAddItemPanelOpen(true)
-    onOpenAddItemPanel()
+
+    if (!STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
+      onOpenAddItemPanel()
+    }
   }
 
-  const closeAddItemPanel = () => {
+  const closeAddItemPanel = (isCancelled?: boolean) => {
     setIsAddItemPanelOpen(false)
-    onCloseAddItemPanel()
+    if (isCancelled && isAddItemPanelOpen && !STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType)) {
+      onCloseAddItemPanel()
+    }
   }
 
   return (
@@ -46,19 +53,19 @@ const SetDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <SetDetailsTable isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />
+            <StreamDetailsBody isFooterOpen={isAddItemPanelOpen} />
           </div>
         )}
         {isAddItemPanelOpen && (
           <AddItemsPanel
             selectedKeyType={keyType}
+            streamViewType={streamViewType}
             closeAddItemPanel={closeAddItemPanel}
           />
         )}
       </div>
     </div>
-
   )
 }
 
-export { SetDetails }
+export { StreamDetails }

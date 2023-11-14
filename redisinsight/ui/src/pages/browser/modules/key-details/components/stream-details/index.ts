@@ -1,3 +1,1 @@
-import StreamDetailsWrapper from './StreamDetailsWrapper'
-
-export default StreamDetailsWrapper
+export { StreamDetails } from './StreamDetails'

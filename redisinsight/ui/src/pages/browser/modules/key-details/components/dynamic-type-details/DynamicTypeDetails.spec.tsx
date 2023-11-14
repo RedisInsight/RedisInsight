@@ -27,7 +27,7 @@ describe('DynamicTypeDetails', () => {
     (type: KeyTypes, testId: string) => {
       const { queryByTestId } = render(<DynamicTypeDetails
         {...instance(mockedProps)}
-        selectedKeyType={type}
+        keyType={type}
       />)
       expect(queryByTestId(testId)).toBeInTheDocument()
     })

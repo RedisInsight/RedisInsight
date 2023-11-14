@@ -1,9 +1,12 @@
 import React from 'react'
+import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
-import RejsonDetailsWrapper from './RejsonDetailsWrapper'
+import { RejsonDetailsWrapper, Props } from './RejsonDetailsWrapper'
+
+const mockedProps = mock<Props>()
 
 describe('ReJSONDetailsWrapper', () => {
   it('should render', () => {
-    expect(render(<RejsonDetailsWrapper />)).toBeTruthy()
+    expect(render(<RejsonDetailsWrapper {...instance(mockedProps)} />)).toBeTruthy()
   })
 })

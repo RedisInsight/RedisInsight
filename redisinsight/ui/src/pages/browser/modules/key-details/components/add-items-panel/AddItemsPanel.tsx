@@ -15,7 +15,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   selectedKeyType: KeyTypes | ModulesKeyTypes
-  streamViewType: StreamViewType
+  streamViewType?: StreamViewType
   closeAddItemPanel: (isCancelled?: boolean) => void
 }
 
@@ -45,7 +45,7 @@ const AddItemsPanel = (props: Props) => {
         {streamViewType === StreamViewType.Data && (
           <AddStreamEntries onCancel={closeAddItemPanel} />
         )}
-        {STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType) && (
+        {STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType!) && (
           <AddStreamGroup onCancel={closeAddItemPanel} />
         )}
       </>

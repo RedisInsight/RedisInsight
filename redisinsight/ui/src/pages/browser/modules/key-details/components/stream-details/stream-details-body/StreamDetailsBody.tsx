@@ -25,12 +25,12 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RangeFilter from 'uiSrc/components/range-filter'
 import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
 
-import ConsumersViewWrapper from './consumers-view'
-import GroupsViewWrapper from './groups-view'
-import MessagesViewWrapper from './messages-view'
-import StreamDataViewWrapper from './stream-data-view'
-import StreamTabs from './stream-tabs'
-import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from './constants'
+import ConsumersViewWrapper from '../consumers-view'
+import GroupsViewWrapper from '../groups-view'
+import MessagesViewWrapper from '../messages-view'
+import StreamDataViewWrapper from '../stream-data-view'
+import StreamTabs from '../stream-tabs'
+import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from '../constants'
 
 import styles from './styles.module.scss'
 
@@ -38,7 +38,7 @@ export interface Props {
   isFooterOpen: boolean
 }
 
-const StreamDetailsWrapper = (props: Props) => {
+const StreamDetailsBody = (props: Props) => {
   const { viewType, loading, sortOrder: entryColumnSortOrder } = useSelector(streamSelector)
   const { loading: loadingGroups } = useSelector(streamGroupsSelector)
   const { start, end } = useSelector(streamRangeSelector)
@@ -231,4 +231,4 @@ const StreamDetailsWrapper = (props: Props) => {
   )
 }
 
-export default StreamDetailsWrapper
+export { StreamDetailsBody }

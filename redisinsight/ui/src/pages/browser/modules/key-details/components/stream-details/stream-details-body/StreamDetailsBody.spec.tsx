@@ -4,8 +4,8 @@ import { streamDataSelector, streamRangeSelector } from 'uiSrc/slices/browser/st
 import { anyToBuffer, bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { render, screen } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
-import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from './constants'
-import StreamDetailsWrapper, { Props } from './StreamDetailsWrapper'
+import { StreamDetailsBody, Props } from './StreamDetailsBody'
+import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from '../constants'
 
 jest.mock('uiSrc/slices/browser/stream', () => ({
   ...jest.requireActual('uiSrc/slices/browser/stream'),
@@ -59,13 +59,13 @@ const mockedRangeData = {
   end: '1675751507406',
 }
 
-describe('StreamDetailsWrapper', () => {
+describe('StreamDetailsBody', () => {
   it('should render', () => {
-    expect(render(<StreamDetailsWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<StreamDetailsBody {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should render Stream Data container', () => {
-    render(<StreamDetailsWrapper {...instance(mockedProps)} />)
+    render(<StreamDetailsBody {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('stream-entries-container')).toBeInTheDocument()
   })
@@ -79,7 +79,7 @@ describe('StreamDetailsWrapper', () => {
       ...mockedRangeData,
     }))
 
-    render(<StreamDetailsWrapper {...instance(mockedProps)} />)
+    render(<StreamDetailsBody {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('range-bar')).toBeInTheDocument()
   })
@@ -105,7 +105,7 @@ describe('StreamDetailsWrapper', () => {
       ...mockedRangeData,
     }))
 
-    const { queryByTestId } = render(<StreamDetailsWrapper {...instance(mockedProps)} />)
+    const { queryByTestId } = render(<StreamDetailsBody {...instance(mockedProps)} />)
 
     expect(queryByTestId('range-bar')).not.toBeInTheDocument()
   })
@@ -130,7 +130,7 @@ describe('StreamDetailsWrapper', () => {
         ],
       }))
 
-      const { queryAllByTestId } = render(<StreamDetailsWrapper {...instance(mockedProps)} />)
+      const { queryAllByTestId } = render(<StreamDetailsBody {...instance(mockedProps)} />)
 
       const fieldNameEl = queryAllByTestId(/stream-field-name-/)?.[0]
       const entryFieldEl = queryAllByTestId(/stream-entry-field-/)?.[0]

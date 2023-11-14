@@ -1,12 +1,12 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
-import { Props, ZSetDetails } from './ZSetDetails'
+import { Props, StreamDetails } from './StreamDetails'
 
 const mockedProps = mock<Props>()
 
-describe('ZSetDetails', () => {
+describe('StreamDetails', () => {
   it('should render', () => {
-    expect(render(<ZSetDetails {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<StreamDetails {...instance(mockedProps)} />)).toBeTruthy()
   })
 })

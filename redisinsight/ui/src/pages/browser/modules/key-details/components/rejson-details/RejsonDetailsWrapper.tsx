@@ -6,12 +6,17 @@ import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 
+import { KeyTypes } from 'uiSrc/constants'
 import RejsonDetails from './RejsonDetails/RejsonDetails'
 
 import styles from './styles.module.scss'
 
-const RejsonDetailsWrapper = () => {
+export interface Props extends KeyDetailsHeaderProps {}
+
+const RejsonDetailsWrapper = (props: Props) => {
+  const keyType = KeyTypes.ReJSON
   const { loading } = useSelector(rejsonSelector)
   const { data, downloaded, type } = useSelector(rejsonDataSelector)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) || {}
@@ -67,41 +72,54 @@ const RejsonDetailsWrapper = () => {
   const reportJSONPropertyAdded = () => {}
 
   return (
-    <div
-      data-testid="json-details"
-      className={`${[styles.container].join(' ')}`}
-    >
-      {loading && (
-        <EuiProgress
-          color="primary"
-          size="xs"
-          position="absolute"
-          data-testid="progress-key-json"
-        />
-      )}
-      {!(loading && data === undefined) && (
-        <RejsonDetails
-          selectedKey={selectedKey}
-          dbNumber={0}
-          dataType={type || ''}
-          deleteMsg=""
-          instanceId={123}
-          resultTableKeyMap={{}}
-          handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-          onJSONPropertyDeleted={reportJSONPropertyDeleted}
-          data={data}
-          onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
-          onJSONPropertyAdded={reportJSONPropertyAdded}
-          onJSONPropertyEdited={reportJSONPropertyEdited}
-          shouldRejsonDataBeDownloaded={!downloaded}
-          handleSubmitUpdateValue={handleEditValueUpdate}
-          handleDeleteKeyDialogOpen={() => {}}
-          handleOpenExpiryDialog={() => {}}
-          keyProperty={{}}
-        />
-      )}
+    <div className="fluid flex-column relative">
+      <KeyDetailsHeader
+        {...props}
+        key="key-details-header"
+        keyType={keyType}
+      />
+      <div className="key-details-body" key="key-details-body">
+        {!loading && (
+        <div className="flex-column" style={{ flex: '1', height: '100%' }}>
+          <div
+            data-testid="json-details"
+            className={`${[styles.container].join(' ')}`}
+          >
+            {loading && (
+              <EuiProgress
+                color="primary"
+                size="xs"
+                position="absolute"
+                data-testid="progress-key-json"
+              />
+            )}
+            {!(loading && data === undefined) && (
+              <RejsonDetails
+                selectedKey={selectedKey}
+                dbNumber={0}
+                dataType={type || ''}
+                deleteMsg=""
+                instanceId={123}
+                resultTableKeyMap={{}}
+                handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+                onJSONPropertyDeleted={reportJSONPropertyDeleted}
+                data={data}
+                onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
+                onJSONPropertyAdded={reportJSONPropertyAdded}
+                onJSONPropertyEdited={reportJSONPropertyEdited}
+                shouldRejsonDataBeDownloaded={!downloaded}
+                handleSubmitUpdateValue={handleEditValueUpdate}
+                handleDeleteKeyDialogOpen={() => {}}
+                handleOpenExpiryDialog={() => {}}
+                keyProperty={{}}
+              />
+            )}
+          </div>
+        </div>
+        )}
+      </div>
     </div>
   )
 }
 
-export default RejsonDetailsWrapper
+export { RejsonDetailsWrapper }

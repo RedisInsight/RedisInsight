@@ -5,9 +5,9 @@ import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/tes
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { KeyTypes } from 'uiSrc/constants'
 import { deleteSelectedKey } from 'uiSrc/slices/browser/keys'
-import { Props, KeyDetailsHeader } from './KeyDetailsHeader'
+import { KeyDetailsHeaderProps, KeyDetailsHeader } from './KeyDetailsHeader'
 
-const mockedProps = mock<Props>()
+const mockedProps = mock<KeyDetailsHeaderProps>()
 
 const KEY_INPUT_TEST_ID = 'edit-key-input'
 const KEY_BTN_TEST_ID = 'edit-key-btn'

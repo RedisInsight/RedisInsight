@@ -262,6 +262,7 @@ const SetDetails = (props: Props) => {
 
   return (
     <div
+      data-testid="set-details"
       className={
         cx(
           'key-details-table',

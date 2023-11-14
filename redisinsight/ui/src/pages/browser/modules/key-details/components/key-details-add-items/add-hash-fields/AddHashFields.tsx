@@ -139,6 +139,7 @@ const AddHashFields = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
+        data-test-subj="add-hash-field-panel"
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         {fields.map((item, index) => (

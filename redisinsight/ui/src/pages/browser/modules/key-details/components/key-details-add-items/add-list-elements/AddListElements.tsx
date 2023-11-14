@@ -97,6 +97,7 @@ const AddListElements = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
+        data-test-subj="add-list-field-panel"
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         <EuiFlexItem grow>

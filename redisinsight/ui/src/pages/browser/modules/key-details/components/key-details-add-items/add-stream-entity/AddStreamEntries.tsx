@@ -109,6 +109,7 @@ const AddStreamEntries = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
+        data-test-subj="add-stream-field-panel"
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         <StreamEntryFields

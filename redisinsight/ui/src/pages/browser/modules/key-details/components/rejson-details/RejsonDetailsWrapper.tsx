@@ -67,7 +67,10 @@ const RejsonDetailsWrapper = () => {
   const reportJSONPropertyAdded = () => {}
 
   return (
-    <div className={`${[styles.container].join(' ')}`}>
+    <div
+      data-testid="json-details"
+      className={`${[styles.container].join(' ')}`}
+    >
       {loading && (
         <EuiProgress
           color="primary"

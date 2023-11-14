@@ -29,16 +29,16 @@ const AddItemsPanel = (props: Props) => {
   return (
     <div className={cx('formFooterBar', styles.contentActive)}>
       {selectedKeyType === KeyTypes.Hash && (
-      <AddHashFields onCancel={closeAddItemPanel} />
+        <AddHashFields onCancel={closeAddItemPanel} />
       )}
       {selectedKeyType === KeyTypes.ZSet && (
-      <AddZsetMembers onCancel={closeAddItemPanel} />
+        <AddZsetMembers onCancel={closeAddItemPanel} />
       )}
       {selectedKeyType === KeyTypes.Set && (
-      <AddSetMembers onCancel={closeAddItemPanel} />
+        <AddSetMembers onCancel={closeAddItemPanel} />
       )}
       {selectedKeyType === KeyTypes.List && (
-      <AddListElements onCancel={closeAddItemPanel} />
+        <AddListElements onCancel={closeAddItemPanel} />
       )}
       {selectedKeyType === KeyTypes.Stream && (
       <>

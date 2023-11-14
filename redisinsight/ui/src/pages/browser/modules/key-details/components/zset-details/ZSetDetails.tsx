@@ -419,6 +419,7 @@ const ZSetDetails = (props: Props) => {
   return (
     <>
       <div
+        data-testid="zset-details"
         className={cx(
           'key-details-table',
           'hash-fields-container',

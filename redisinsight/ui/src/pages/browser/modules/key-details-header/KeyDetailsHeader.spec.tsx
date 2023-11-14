@@ -1,8 +1,10 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { KeyTypes } from 'uiSrc/constants'
+import { deleteSelectedKey } from 'uiSrc/slices/browser/keys'
 import { Props, KeyDetailsHeader } from './KeyDetailsHeader'
 
 const mockedProps = mock<Props>()
@@ -11,6 +13,15 @@ const KEY_INPUT_TEST_ID = 'edit-key-input'
 const KEY_BTN_TEST_ID = 'edit-key-btn'
 const TTL_INPUT_TEST_ID = 'edit-ttl-input'
 const EDIT_VALUE_BTN_TEST_ID = 'edit-key-value-btn'
+const DELETE_KEY_BTN_TEST_ID = 'delete-key-btn'
+const DELETE_KEY_CONFIRM_BTN_TEST_ID = 'delete-key-confirm-btn'
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 jest.mock('uiSrc/slices/browser/string', () => ({
   ...jest.requireActual('uiSrc/slices/browser/string'),
@@ -117,10 +128,23 @@ describe('KeyDetailsHeader', () => {
   })
 
   describe('should call onRefresh', () => {
-    test.each(Object.values(KeyTypes))('should call onRefresh', (keyType) => {
+    test.each(Object.values(KeyTypes))('should call onRefresh for keyType: %s', (keyType) => {
       const component = render(<KeyDetailsHeader {...mockedProps} keyType={keyType} />)
       fireEvent.click(screen.getByTestId('refresh-key-btn'))
       expect(component).toBeTruthy()
+    })
+  })
+
+  describe('should call onDelete', () => {
+    test.each(Object.values(KeyTypes))('should call onDelete for keyType: %s', (keyType) => {
+      const onRemoveKeyMock = jest.fn()
+      const component = render(<KeyDetailsHeader {...mockedProps} keyType={keyType} onRemoveKey={onRemoveKeyMock} />)
+      fireEvent.click(screen.getByTestId(DELETE_KEY_BTN_TEST_ID))
+      fireEvent.click(screen.getByTestId(DELETE_KEY_CONFIRM_BTN_TEST_ID))
+      expect(component).toBeTruthy()
+
+      const expectedActions = [deleteSelectedKey()]
+      expect(store.getActions()).toEqual(expect.arrayContaining(expectedActions))
     })
   })
 })

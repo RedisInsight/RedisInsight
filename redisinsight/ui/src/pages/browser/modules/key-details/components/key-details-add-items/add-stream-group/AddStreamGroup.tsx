@@ -85,6 +85,7 @@ const AddStreamGroup = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
+        data-test-subj="add-stream-groups-field-panel"
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         <EuiFlexItem

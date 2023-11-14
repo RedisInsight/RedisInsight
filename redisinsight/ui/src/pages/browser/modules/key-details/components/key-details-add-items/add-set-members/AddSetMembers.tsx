@@ -124,6 +124,7 @@ const AddSetMembers = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
+        data-test-subj="add-set-field-panel"
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth')}
       >
         {members.map((item, index) => (

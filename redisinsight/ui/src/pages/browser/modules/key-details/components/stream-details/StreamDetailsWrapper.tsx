@@ -183,7 +183,10 @@ const StreamDetailsWrapper = (props: Props) => {
   )
 
   return (
-    <div className={styles.container}>
+    <div
+      data-testid="stream-details"
+      className={styles.container}
+    >
       {(loading || loadingGroups) && (
         <EuiProgress
           color="primary"

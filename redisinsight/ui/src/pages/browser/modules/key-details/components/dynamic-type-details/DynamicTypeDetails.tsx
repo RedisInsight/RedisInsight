@@ -66,7 +66,8 @@ const DynamicTypeDetails = (props: Props) => {
   }
 
   // Unsupported key type
-  if (Object.values(KeyTypes).includes(selectedKeyType as KeyTypes)) {
+  if (!(Object.values(KeyTypes).includes(selectedKeyType as KeyTypes))
+    && !(Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes))) {
     return <UnsupportedTypeDetails />
   }
 

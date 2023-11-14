@@ -188,7 +188,7 @@ const StringDetails = (props: Props) => {
 
   return (
     <>
-      <div className={styles.container}>
+      <div className={styles.container} data-testid="string-details">
         {isLoading && (
           <EuiProgress
             color="primary"

@@ -173,6 +173,7 @@ const AddZsetMembers = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
+        data-test-subj="add-zset-field-panel"
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         {members.map((item, index) => (

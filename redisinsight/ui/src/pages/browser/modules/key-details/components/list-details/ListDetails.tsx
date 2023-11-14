@@ -413,6 +413,7 @@ const ListDetails = (props: Props) => {
 
   return (
     <div
+      data-testid="list-details"
       className={cx(
         'key-details-table',
         'list-elements-container',

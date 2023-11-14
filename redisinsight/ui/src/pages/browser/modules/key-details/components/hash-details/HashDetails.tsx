@@ -477,6 +477,7 @@ const HashDetails = (props: Props) => {
   return (
     <>
       <div
+        data-testid="hash-details"
         className={cx(
           'key-details-table',
           'hash-fields-container',

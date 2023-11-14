@@ -11,8 +11,8 @@ import styles from './styles.module.scss'
 export interface Props {
   keyProp: Nullable<RedisResponseBuffer>
   totalKeys: number
-  onClosePanel: () => void
   keysLastRefreshTime: Nullable<number>
+  onClosePanel: () => void
   error?: string
 }
 

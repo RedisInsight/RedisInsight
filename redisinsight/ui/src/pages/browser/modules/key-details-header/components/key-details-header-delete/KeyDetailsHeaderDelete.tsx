@@ -21,9 +21,7 @@ export interface Props {
   onDelete: (key: RedisResponseBuffer, type: string) => void
 }
 
-const KeyDetailsHeaderDelete = ({
-  onDelete,
-}: Props) => {
+const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
   const {
     type,
     nameString: keyProp,

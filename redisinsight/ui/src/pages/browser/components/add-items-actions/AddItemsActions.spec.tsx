@@ -1,8 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import AddItemsActions from './AddItemsActions'
-import { Props } from '../../modules/key-details/components/key-details-add-items/add-zset-members/AddZsetMembers'
+import AddItemsActions, { Props } from './AddItemsActions'
 
 const mockedProps = mock<Props>()
 

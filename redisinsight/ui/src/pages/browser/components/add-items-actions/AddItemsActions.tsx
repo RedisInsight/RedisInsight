@@ -1,7 +1,7 @@
 import React from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
 
-interface Props {
+export interface Props {
   id: number
   length: number
   index: number

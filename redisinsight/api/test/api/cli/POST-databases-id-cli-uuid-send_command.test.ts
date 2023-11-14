@@ -1015,6 +1015,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
     ].map(mainCheckFn);
   })
 
+  // Skip 'Cluster' tests because tested functionalities were removed
   xdescribe('Client', () => {
     [
       {

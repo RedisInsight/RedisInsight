@@ -201,6 +201,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
     })
   });
 
+  // Skip 'Commands redirection' and 'Client' tests because tested functionalities were removed
   xdescribe('Commands redirection', () => {
     const nodes = rte.env.nodes;
     _.map(nodes, (node) => ({
@@ -223,7 +224,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
       }
     })).map(mainCheckFn);
   })
-
   xdescribe('Client', () => {
     [
       {

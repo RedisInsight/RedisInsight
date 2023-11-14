@@ -3,13 +3,11 @@ import { instance, mock } from 'ts-mockito'
 import { act } from '@testing-library/react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import {
-  DEFAULT_TIMEOUT,
   SubmitBtnText,
 } from 'uiSrc/pages/home/constants'
 import ManualConnectionFrom, { Props as ManualConnectionFromProps } from
   'uiSrc/pages/home/components/manual-connection/manual-connection-form/ManualConnectionForm'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import SentinelConnectionWrapper from 'uiSrc/pages/home/components/sentinel-connection'
 import ManualConnectionWrapper, {
   Props,
 } from './ManualConnectionWrapper'

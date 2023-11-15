@@ -48,6 +48,10 @@ export class CommandExecutionEntity {
 
   @Column({ nullable: true })
   @Expose()
+  role?: string = null;
+
+  @Column({ nullable: true })
+  @Expose()
   resultsMode?: string = ResultsMode.Default;
 
   @Column({ nullable: true })
@@ -61,6 +65,18 @@ export class CommandExecutionEntity {
   }, { toPlainOnly: true })
   @Expose()
   summary?: string;
+
+  @Column({ nullable: true })
+  @Transform((object) => JSON.stringify(object), { toClassOnly: true })
+  @Transform((string) => {
+    try {
+      return JSON.parse(string);
+    } catch (e) {
+      return undefined;
+    }
+  }, { toPlainOnly: true })
+  @Expose()
+  nodeOptions?: string = null;
 
   @Column({ nullable: true })
   encryption: string;

@@ -142,10 +142,8 @@ test
         await browserPage.searchByKeyName(keyName);
         // Verify that required key is displayed
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Key not found');
-        // Switch to tree view
-        await t.click(browserPage.treeViewButton);
         // Check searched key in tree view
-        await t.click(browserPage.treeViewNotPatternedKeys);
+        await t.click(browserPage.treeViewButton);
         await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok('Key not found');
     });
 test

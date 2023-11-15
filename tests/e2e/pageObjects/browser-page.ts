@@ -1,10 +1,11 @@
 import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
 import { InstancePage } from './instance-page';
-import { BulkActions } from './components/browser';
+import { BulkActions, TreeView } from './components/browser';
 
 export class BrowserPage extends InstancePage {
     BulkActions = new BulkActions();
+    TreeView = new TreeView();
 
     //CSS Selectors
     cssSelectorGrid = '[aria-label="grid"]';
@@ -69,13 +70,9 @@ export class BrowserPage extends InstancePage {
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
-    treeViewSeparator = Selector('[data-testid=tree-view-delimiter-btn]');
     searchButton = Selector('[data-testid=search-btn]');
     clearFilterButton = Selector('[data-testid=reset-filter-btn]');
     clearSelectionButton = Selector('[data-testid=clear-selection-btn]');
-    treeViewDelimiterButton = Selector('[data-testid=tree-view-delimiter-btn]');
-    treeViewDelimiterValueSave = Selector('[data-testid=apply-btn]');
-    treeViewDelimiterValueCancel = Selector('[data-testid=cancel-btn]');
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
@@ -175,7 +172,6 @@ export class BrowserPage extends InstancePage {
     jsonKeyInput = Selector('[data-testid=json-key]');
     jsonValueInput = Selector('[data-testid=json-value]');
     countInput = Selector('[data-testid=count-input]');
-    treeViewDelimiterInput = Selector('[data-testid=tree-view-delimiter-input]');
     streamEntryId = Selector('[data-testid=entryId]');
     streamField = Selector('[data-testid=field-name]');
     streamValue = Selector('[data-testid=field-value]');
@@ -210,23 +206,16 @@ export class BrowserPage extends InstancePage {
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]');
     noResultsFound = Selector('[data-test-subj=no-result-found]');
+    noResultsFoundOnly = Selector('[data-testid=no-result-found-only]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
-    treeViewArea = Selector('[data-test-subj=tree-view-panel]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
-    treeViewKeysNumber = Selector('[data-testid^=count_]');
-    treeViewPercentage = Selector('[data-testid^=percentage_]');
-    treeViewFolders = Selector('[data-test-subj^=node-arrow-icon_]');
     totalKeysNumber = Selector('[data-testid=keys-total]');
-    treeViewDeviceFolder = Selector('[data-testid^=node-item_device] div');
-    treeViewDeviceKyesCount = Selector('[data-testid^=count_device] span');
+    databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
     ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
     stringKeyValue = Selector('.key-details-body pre');
     keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
-    treeViewKeysItem = Selector('[data-testid*="keys:keys:"]');
-    treeViewNotPatternedKeys = Selector('[data-testid*="node-item_keys"]');
-    treeViewNodeArrowIcon = Selector('[data-test-subj^=node-arrow-icon_]');
     modulesTypeDetails = Selector('[data-testid=modules-type-details]');
     filteringLabel = Selector('[data-testid^=badge-]');
     keysSummary = Selector('[data-testid=keys-summary]');
@@ -584,6 +573,7 @@ export class BrowserPage extends InstancePage {
 
     /**
      * Delete Key By name after Hovering
+     * @param keyName The name of the key
      */
     async deleteKeyByNameFromList(keyName: string): Promise<void> {
         await this.searchByKeyName(keyName);
@@ -760,7 +750,10 @@ export class BrowserPage extends InstancePage {
             .click(this.saveMemberButton);
     }
 
-    //Open key details
+    /**
+     * Open key details with search
+     * @param keyName The name of the key
+     */
     async openKeyDetails(keyName: string): Promise<void> {
         await this.searchByKeyName(keyName);
         await t.click(this.keyNameInTheList);
@@ -872,66 +865,6 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
         await t.click(this.applyEditButton);
     }
-    /**
-     * Check tree view structure
-     * @folders name of folders for tree view build
-     * @delimiter string with delimiter value
-     * @commonKeyFolder flag if not patterned keys will be displayed
-     */
-    async checkTreeViewFoldersStructure(folders: string[][], delimiter: string, commonKeyFolder: boolean): Promise<void> {
-        // Verify that all keys that are not inside of tree view doesn't contain delimiter
-        if (commonKeyFolder) {
-            await t
-                .expect(this.treeViewNotPatternedKeys.exists).ok('Folder with not patterned keys')
-                .click(this.treeViewNotPatternedKeys);
-            const notPatternedKeys = Selector('[data-test-subj=key-list-panel]').find(this.cssSelectorKey);
-            const notPatternedKeysNumber = await notPatternedKeys.count;
-            for (let i = 0; i < notPatternedKeysNumber; i++) {
-                await t.expect(notPatternedKeys.nth(i).withText(delimiter).exists).notOk('Not contained delimiter keys');
-            }
-        }
-        // Verify that every level of tree view is clickable
-        const foldersNumber = folders.length;
-        for (let i = 0; i < foldersNumber; i++) {
-            const innerFoldersNumber = folders[i].length;
-            const array: string[] = [];
-            for (let j = 0; j < innerFoldersNumber; j++) {
-                if (j === 0) {
-                    const folderSelector = `[data-testid="node-item_${folders[i][j]}${delimiter}"]`;
-                    array.push(folderSelector);
-                    await t.click(Selector(folderSelector));
-                }
-                else {
-                    const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-                    const folderSelector = `${lastSelector}${folders[i][j]}${delimiter}"]`;
-                    array.push(folderSelector);
-                    await t.click(Selector(folderSelector));
-                }
-            }
-            // Verify that the last folder level contains required keys
-            const lastSelector = array[array.length - 1].substring(0, array[array.length - 1].length - 2);
-            const folderSelector = `${lastSelector}keys${delimiter}keys${delimiter}"]`;
-            await t.click(Selector(folderSelector));
-            const foundKeyName = `${folders[i].join(delimiter)}`;
-            await t
-                .expect(Selector(`[data-testid*="key-${foundKeyName}"]`).exists).ok('Specific key not found')
-                .click(array[0]);
-        }
-    }
-
-    /**
-     * Change delimiter value
-     * @delimiter string with delimiter value
-     */
-    async changeDelimiterInTreeView(delimiter: string): Promise<void> {
-        // Open delimiter popup
-        await t.click(this.treeViewDelimiterButton);
-        // Apply new value to the field
-        await t.typeText(this.treeViewDelimiterInput, delimiter, { replace: true, paste: true });
-        // Click on save button
-        await t.click(this.treeViewDelimiterValueSave);
-        await t.expect(this.treeViewDelimiterButton.withExactText(delimiter).exists).ok('Delimiter is not changed');
-    }
 
     //Delete entry from Stream key
     async deleteStreamEntry(): Promise<void> {
@@ -1014,33 +947,6 @@ export class BrowserPage extends InstancePage {
     }
 
     /**
-    * Get text from first tree element
-    */
-    async getTextFromNthTreeElement(number: number): Promise<string> {
-        return (await Selector('[role="treeitem"]').nth(number).find('div').textContent).replace(/\s/g, '');
-    }
-
-    /**
-    * Open tree folder with multiple level
-    * @param names folder names with sequence of subfolder
-    */
-    async openTreeFolders(names: string[]): Promise<void> {
-        let base = `node-item_${names[0]}:`;
-        await t.click(Selector(`[data-testid="${base}"]`));
-        if (names.length > 1) {
-            for (let i = 1; i < names.length; i++) {
-                base = `${base  }${names[i]}:`;
-                await t.click(Selector(`[data-testid="${base}"]`));
-            }
-        }
-        await t.click(Selector(`[data-testid="${base}keys:keys:"]`));
-
-        await t.expect(
-            Selector(`[data-testid="${base}keys:keys:"]`).visible)
-            .ok('Folder is not selected');
-    }
-
-    /**
     * Verify that database has no keys
     */
     async verifyNoKeysInDatabase(): Promise<void> {
@@ -1055,6 +961,10 @@ export class BrowserPage extends InstancePage {
         await t.click(this.clearFilterButton);
     }
 
+    /**
+    * Open Guide link by name
+    * @param guide The guide name
+    */
     async clickGuideLinksByName(guide: string): Promise<void> {
         const linkGuide = Selector(`[data-testid="guide-button-${guide}"]`);
         await t.click(linkGuide);

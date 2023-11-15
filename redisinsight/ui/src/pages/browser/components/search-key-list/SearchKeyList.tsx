@@ -22,6 +22,7 @@ import {
 } from 'uiSrc/slices/browser/redisearch'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -65,6 +66,10 @@ const SearchKeyList = () => {
     if (disableSubmit) return
 
     dispatch(setSearchMatch(match, searchMode))
+
+    if (viewType === KeyViewType.Tree) {
+      dispatch(resetBrowserTree())
+    }
 
     dispatch(fetchKeys(
       {

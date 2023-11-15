@@ -55,7 +55,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiTitle className="infiniteMessage__title"><span>Congratulations!</span></EuiTitle>
         <EuiText size="xs">
-          You can now use your Redis Stack database in Redis Enterprise Cloud
+          You can now use your Redis Stack database in Redis Cloud
           to start exploring all its developer capabilities via RedisInsight tutorials.
         </EuiText>
         <EuiSpacer size="m" />
@@ -84,7 +84,7 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="database-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Enterprise Cloud subscription.</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Cloud subscription.</span></EuiTitle>
         <EuiText size="xs">
           Do you want to import your existing database into RedisInsight?
         </EuiText>
@@ -125,7 +125,7 @@ export const INFINITE_MESSAGES = {
         onMouseUp={(e) => { e.preventDefault() }}
         data-testid="subscription-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free Redis Enterprise Cloud database.</span></EuiTitle>
+        <EuiTitle className="infiniteMessage__title"><span>Your subscription does not have a free Redis Cloud database.</span></EuiTitle>
         <EuiText size="xs">
           Do you want to create a free database in your existing subscription?
         </EuiText>

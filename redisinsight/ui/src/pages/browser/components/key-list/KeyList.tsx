@@ -4,34 +4,13 @@ import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { debounce, findIndex, isUndefined, reject } from 'lodash'
 
-import {
-  EuiText,
-  EuiToolTip,
-  EuiTextColor,
-  EuiLoadingContent,
-  EuiPopover,
-  EuiButton,
-  EuiButtonIcon, EuiSpacer,
-} from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 import {
-  formatBytes,
-  truncateNumberToDuration,
-  truncateNumberToFirstUnit,
-  truncateTTLToSeconds,
-  replaceSpaces,
-  formatLongName,
   bufferToString,
   bufferFormatRangeItems,
   Nullable,
   Maybe,
 } from 'uiSrc/utils'
-import {
-  NoResultsFoundText,
-  FullScanNoResultsFoundText,
-  ScanNoResultsFoundText,
-  NoSelectedIndexText,
-} from 'uiSrc/constants/texts'
 import {
   deleteKeyAction,
   fetchKeysMetadata,
@@ -46,20 +25,22 @@ import {
   setBrowserIsNotRendered,
   setBrowserRedisearchScrollPosition,
 } from 'uiSrc/slices/app/context'
-import { GroupBadge } from 'uiSrc/components'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeysStoreData, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { KeyTypes, ModulesKeyTypes, TableCellAlignment, TableCellTextAlignment } from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import NoKeysFound from 'uiSrc/pages/browser/components/no-keys-found'
+import KeyRowTTL from 'uiSrc/pages/browser/components/key-row-ttl'
+import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
+import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
+import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
 
+import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -101,9 +82,8 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const selectedKey = useSelector(selectedKeySelector)
-  const { total, nextCursor, previousResultCount } = useSelector(keysDataSelector)
-  const { isSearched, isFiltered, viewType, searchMode, deleting } = useSelector(keysSelector)
-  const { selectedIndex } = useSelector(redisearchSelector)
+  const { nextCursor, previousResultCount } = useSelector(keysDataSelector)
+  const { isSearched, isFiltered, searchMode, deleting } = useSelector(keysSelector)
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
@@ -155,42 +135,25 @@ const KeyList = forwardRef((props: Props, ref) => {
     controller.current?.abort()
   }
 
+  const NoItemsMessage = () => (
+    <NoKeysMessage
+      total={keysState.total}
+      scanned={keysState.scanned}
+      onAddKeyPanel={onAddKeyPanel}
+      onBulkActionsPanel={onBulkActionsPanel}
+    />
+  )
+
   const getNoItemsMessage = () => {
     if (isNotRendered.current) {
       return ''
-    }
-
-    if (searchMode === SearchMode.Redisearch) {
-      if (!selectedIndex) {
-        return NoSelectedIndexText
-      }
-
-      if (total === 0) {
-        return NoResultsFoundText
-      }
-
-      if (isSearched) {
-        return keysState.scanned < total ? NoResultsFoundText : FullScanNoResultsFoundText
-      }
-    }
-
-    if (total === 0) {
-      return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} onBulkActionsPanel={onBulkActionsPanel} />)
-    }
-
-    if (isSearched) {
-      return keysState.scanned < total ? ScanNoResultsFoundText : FullScanNoResultsFoundText
-    }
-
-    if (isFiltered && keysState.scanned < total) {
-      return ScanNoResultsFoundText
     }
 
     if (itemsRef.current.length < keysState.keys.length) {
       return 'loading...'
     }
 
-    return NoResultsFoundText
+    return <NoItemsMessage />
   }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
@@ -223,11 +186,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   const handleDeletePopoverOpen = (index: Maybe<number>, type: KeyTypes | ModulesKeyTypes) => {
     if (index !== deletePopoverIndex) {
       sendEventTelemetry({
-        event: getBasedOnViewTypeEvent(
-          viewType,
-          TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
-          TelemetryEvent.TREE_VIEW_KEY_DELETE_CLICKED
-        ),
+        event: TelemetryEvent.BROWSER_KEY_DELETE_CLICKED,
         eventData: {
           databaseId: instanceId,
           keyType: type,
@@ -322,10 +281,8 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Type',
       absoluteWidth: 'auto',
       minWidth: 126,
-      render: (cellData: any, { nameString: name }: any) => (
-        isUndefined(cellData)
-          ? <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="type-loading" />
-          : <GroupBadge type={cellData} name={name} />
+      render: (cellData: any, { nameString }: any) => (
+        <KeyRowType type={cellData} nameString={nameString} />
       )
     },
     {
@@ -333,36 +290,9 @@ const KeyList = forwardRef((props: Props, ref) => {
       label: 'Key',
       minWidth: 94,
       truncateText: true,
-      render: (cellData: string) => {
-        if (isUndefined(cellData)) {
-          return (
-            <EuiLoadingContent
-              lines={1}
-              className={cx(styles.keyInfoLoading, styles.keyNameLoading)}
-              data-testid="name-loading"
-            />
-          )
-        }
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const name = cellData || ''
-        const cellContent = replaceSpaces(name?.substring(0, 200))
-        const tooltipContent = formatLongName(name)
-        return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`key-${name}`}>
-              <EuiToolTip
-                title="Key Name"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
-            </div>
-          </EuiText>
-        )
-      }
+      render: (cellData: string) => (
+        <KeyRowName nameString={cellData} />
+      )
     },
     {
       id: 'ttl',
@@ -371,48 +301,9 @@ const KeyList = forwardRef((props: Props, ref) => {
       minWidth: 86,
       truncateText: true,
       alignment: TableCellAlignment.Right,
-      render: (cellData: number, { nameString: name }: IKeyPropTypes, _expanded, rowIndex) => {
-        if (isUndefined(cellData)) {
-          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="ttl-loading" />
-        }
-        if (cellData === -1) {
-          return (
-            <EuiTextColor
-              className={cx('moveOnHover', { hide: deletePopoverIndex === rowIndex })}
-              color="subdued"
-              data-testid={`ttl-${name}`}
-            >
-              No limit
-            </EuiTextColor>
-          )
-        }
-        return (
-          <EuiText
-            className={cx('moveOnHover', { hide: deletePopoverIndex === rowIndex })}
-            color="subdued"
-            size="s"
-            style={{ maxWidth: '100%' }}
-          >
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`ttl-${name}`}>
-              <EuiToolTip
-                title="Time to Live"
-                className={styles.tooltip}
-                anchorClassName="truncateText"
-                position="right"
-                content={(
-                  <>
-                    {`${truncateTTLToSeconds(cellData)} s`}
-                    <br />
-                    {`(${truncateNumberToDuration(cellData)})`}
-                  </>
-                )}
-              >
-                <>{truncateNumberToFirstUnit(cellData)}</>
-              </EuiToolTip>
-            </div>
-          </EuiText>
-        )
-      },
+      render: (cellData: number, { nameString }: IKeyPropTypes, _expanded, rowIndex) => (
+        <KeyRowTTL ttl={cellData} nameString={nameString} deletePopoverId={deletePopoverIndex} rowId={rowIndex || 0} />
+      )
     },
     {
       id: 'size',
@@ -423,84 +314,23 @@ const KeyList = forwardRef((props: Props, ref) => {
       textAlignment: TableCellTextAlignment.Right,
       render: (
         cellData: number,
-        { nameString: name, type, name: bufferName }: IKeyPropTypes,
+        { nameString, type, name: bufferName }: IKeyPropTypes,
         _expanded,
         rowIndex
-      ) => {
-        if (isUndefined(cellData)) {
-          return <EuiLoadingContent lines={1} className={styles.keyInfoLoading} data-testid="size-loading" />
-        }
-
-        if (!cellData) {
-          return (
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }} data-testid={`size-${name}`}>
-              -
-            </EuiText>
-          )
-        }
-        return (
-          <>
-            <EuiText
-              color="subdued"
-              size="s"
-              className={cx('moveOnHover', { hide: deletePopoverIndex === rowIndex })}
-              style={{ maxWidth: '100%' }}
-            >
-              <div style={{ display: 'flex' }} className="truncateText" data-testid={`size-${name}`}>
-                <EuiToolTip
-                  title="Key Size"
-                  className={styles.tooltip}
-                  anchorClassName="truncateText"
-                  position="right"
-                  content={(
-                    <>
-                      {formatBytes(cellData, 3)}
-                    </>
-                  )}
-                >
-                  <>{formatBytes(cellData, 0)}</>
-                </EuiToolTip>
-              </div>
-            </EuiText>
-            <EuiPopover
-              anchorClassName={cx(styles.deleteAnchor, 'showOnHover', { show: deletePopoverIndex === rowIndex })}
-              anchorPosition="rightUp"
-              isOpen={deletePopoverIndex === rowIndex}
-              closePopover={() => setDeletePopoverIndex(undefined)}
-              panelPaddingSize="l"
-              panelClassName={styles.deletePopover}
-              button={(
-                <EuiButtonIcon
-                  iconType="trash"
-                  onClick={() => handleDeletePopoverOpen(rowIndex, type)}
-                  aria-label="Delete Key"
-                  data-testid={`delete-key-btn-${name}`}
-                />
-              )}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <>
-                <EuiText size="m">
-                  <h4 style={{ wordBreak: 'break-all' }}><b>{formatLongName(name)}</b></h4>
-                  <EuiText size="s">will be deleted.</EuiText>
-                </EuiText>
-                <EuiSpacer size="m" />
-                <EuiButton
-                  fill
-                  size="s"
-                  color="warning"
-                  iconType="trash"
-                  isDisabled={deleting}
-                  onClick={() => handleRemoveKey(bufferName)}
-                  data-testid="submit-delete-key"
-                >
-                  Delete
-                </EuiButton>
-              </>
-            </EuiPopover>
-          </>
-        )
-      }
+      ) => (
+        <KeyRowSize
+          size={cellData}
+          nameString={nameString}
+          nameBuffer={bufferName}
+          deletePopoverId={deletePopoverIndex}
+          rowId={rowIndex || 0}
+          type={type}
+          deleting={deleting}
+          setDeletePopoverId={setDeletePopoverIndex}
+          handleDeletePopoverOpen={handleDeletePopoverOpen}
+          handleDelete={handleRemoveKey}
+        />
+      )
     },
   ]
 

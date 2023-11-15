@@ -1,8 +1,19 @@
 import React from 'react'
 import { EuiText, EuiSpacer } from '@elastic/eui'
 
-export const NoResultsFoundText = (<EuiText size="m">No results found.</EuiText>)
-export const NoSelectedIndexText = (<EuiText size="m">Select an index and enter a query to search per values of keys.</EuiText>)
+export const NoResultsFoundText = (
+  <EuiText
+    size="m"
+    data-testid="no-result-found-only"
+  >
+    No results found.
+  </EuiText>
+)
+export const NoSelectedIndexText = (
+  <EuiText size="m" data-testid="no-result-select-index">
+    Select an index and enter a query to search per values of keys.
+  </EuiText>
+)
 
 export const FullScanNoResultsFoundText = (
   <>
@@ -19,7 +30,7 @@ export const FullScanNoResultsFoundText = (
 )
 export const ScanNoResultsFoundText = (
   <>
-    <EuiText size="m">No results found.</EuiText>
+    <EuiText size="m" data-testid="scan-no-results-found">No results found.</EuiText>
     <br />
     <EuiText size="s">
       Use &quot;Scan more&quot; button to proceed or filter per exact Key Name to scan more efficiently.

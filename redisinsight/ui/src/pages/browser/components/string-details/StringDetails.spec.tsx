@@ -190,6 +190,34 @@ describe('StringDetails', () => {
     })
   })
 
+  it('Should add "..." in the end of the part value', async () => {
+    const stringDataSelectorMock = jest.fn().mockReturnValue({
+      value: partValue
+    })
+    stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+    render(
+      <StringDetails
+        {...instance(mockedProps)}
+      />
+    )
+    expect(screen.getByTestId(STRING_VALUE)).toHaveTextContent(`${bufferToString(partValue)}...`)
+  })
+
+  it('Should not add "..." in the end of the full value', async () => {
+    const stringDataSelectorMock = jest.fn().mockReturnValue({
+      value: fullValue
+    })
+    stringDataSelector.mockImplementation(stringDataSelectorMock)
+
+    render(
+      <StringDetails
+        {...instance(mockedProps)}
+      />
+    )
+    expect(screen.getByTestId(STRING_VALUE)).toHaveTextContent(bufferToString(fullValue))
+  })
+
   it('should call fetchDownloadStringValue and sendEventTelemetry after clicking on load button and download button', async () => {
     const stringDataSelectorMock = jest.fn().mockReturnValue({
       value: partValue

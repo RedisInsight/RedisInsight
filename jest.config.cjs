@@ -39,7 +39,6 @@ module.exports = {
     'json',
   ],
   testEnvironment: 'jest-environment-jsdom',
-  // type: 'module',
   transformIgnorePatterns: [
     'node_modules/(?!(monaco-editor|react-monaco-editor)/)',
   ],
@@ -61,8 +60,5 @@ module.exports = {
       functions: 72,
       lines: 80,
     },
-    // './redisinsight/ui/src/slices/**/*.ts': {
-    //   statements: 90,
-    // },
   },
 }

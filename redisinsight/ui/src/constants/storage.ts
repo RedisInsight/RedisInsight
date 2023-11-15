@@ -13,6 +13,7 @@ enum BrowserStorageItem {
   wbInputHistory = 'wbInputHistory',
   isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
+  treeViewSort = 'treeViewSort',
   autoRefreshRate = 'autoRefreshRate',
   bulkActionDeleteId = 'bulkActionDeleteId',
   dbConfig = 'dbConfig_',

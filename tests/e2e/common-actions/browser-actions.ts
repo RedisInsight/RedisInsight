@@ -1,4 +1,4 @@
-import {Selector, t} from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { BrowserPage } from '../pageObjects';
 
 const browserPage = new BrowserPage();
@@ -29,6 +29,7 @@ export class BrowserActions {
             }
         }
     }
+
     /**
      * Verify tooltip contains text
      * @param expectedText Expected link that is compared with actual
@@ -39,17 +40,85 @@ export class BrowserActions {
             ? await t.expect(browserPage.tooltip.textContent).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`)
             : await t.expect(browserPage.tooltip.textContent).notContains(expectedText, `Tooltip still contains text "${expectedText}"`);
     }
+
     /**
      * Verify that the new key is displayed at the top of the list of keys and opened and pre-selected in List view
-     * */
+     * @param keyName Key name
+     */
     async verifyKeyDisplayedTopAndOpened(keyName: string): Promise<void> {
         await t.expect(Selector('[aria-rowindex="1"]').withText(keyName).visible).ok(`element with ${keyName} is not visible in the top of list`);
         await t.expect(browserPage.keyNameFormDetails.withText(keyName).visible).ok(`element with ${keyName} is not opened`);
     }
+
     /**
      * Verify that the new key is not displayed at the top of the list of keys and opened and pre-selected in List view
-     * */
+     * @param keyName Key name
+     */
     async verifyKeyIsNotDisplayedTop(keyName: string): Promise<void> {
         await t.expect(Selector('[aria-rowindex="1"]').withText(keyName).exists).notOk(`element with ${keyName} is not visible in the top of list`);
+    }
+
+    /**
+     * Verify that not patterned keys not visible with delimiter
+     * @param delimiter string with delimiter value
+     */
+    async verifyNotPatternedKeys(delimiter: string): Promise<void> {
+        const notPatternedKeys = Selector('[data-testid^="badge"]').parent('[data-testid^="node-item_"]');
+        const notPatternedKeysNumber = await notPatternedKeys.count;
+
+        for (let i = 0; i < notPatternedKeysNumber; i++) {
+            await t.expect(notPatternedKeys.nth(i).withText(delimiter).exists).notOk('Not contained delimiter keys');
+        }
+    }
+
+    /**
+     * Get node name by folders
+     * @param startFolder start folder
+     * @param folderName name of folder
+     * @param delimiter string with delimiter value
+     */
+    getNodeName(startFolder: string, folderName: string, delimiter: string): string {
+        return startFolder + folderName + delimiter;
+
+    }
+
+    /**
+     * Get node selector by name
+     * @param name node name
+     */
+    getNodeSelector(name: string): Selector {
+        return Selector(`[data-testid="node-item_${name}"]`);
+    }
+
+    /**
+     * Check tree view structure
+     * @param folders name of folders for tree view build
+     * @param delimiter string with delimiter value
+     */
+    async checkTreeViewFoldersStructure(folders: string[][], delimiter: string): Promise<void> {
+        // Verify not patterned keys
+        await this.verifyNotPatternedKeys(delimiter);
+
+        const foldersNumber = folders.length;
+
+        for (let i = 0; i < foldersNumber; i++) {
+            const innerFoldersNumber = folders[i].length;
+            let prevNodeSelector = '';
+
+            for (let j = 0; j < innerFoldersNumber; j++) {
+                const nodeName = this.getNodeName(prevNodeSelector, folders[i][j], delimiter);
+                const node = this.getNodeSelector(nodeName);
+                await t.click(node);
+                prevNodeSelector = nodeName;
+            }
+
+            // Verify that the last folder level contains required keys
+            const foundKeyName = `${folders[i].join(delimiter)}`;
+            const firstFolderName = this.getNodeName('', folders[i][0], delimiter);
+            const firstFolder = this.getNodeSelector(firstFolderName);
+            await t
+                .expect(Selector(`[data-testid*="node-item_${foundKeyName}"]`).find('[data-testid^="key-"]').exists).ok('Specific key not found')
+                .click(firstFolder);
+        }
     }
 }

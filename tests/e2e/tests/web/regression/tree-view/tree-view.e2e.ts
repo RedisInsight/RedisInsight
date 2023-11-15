@@ -3,15 +3,21 @@ import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
+    ossStandaloneConfigEmpty,
     ossStandaloneRedisearch
 } from '../../../../helpers/conf';
 import { KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { APIKeyRequests } from '../../../../helpers/api/api-keys';
+import { Common } from '../../../../helpers/common';
 
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const apiKeyRequests = new APIKeyRequests();
+
+let keyNames: string[] = [];
 
 fixture `Tree view verifications`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -53,24 +59,89 @@ test('Verify that user can see the total number of keys, the number of keys scan
     await t.expect(browserPage.scanMoreButton.visible).ok('The scan more button is not displayed on the Tree view');
 });
 test('Verify that when user deletes the key he can see the key is removed from the folder, the number of keys is reduced, the percentage is recalculated', async t => {
+    const mainFolder = browserPage.TreeView.getFolderSelectorByName('device');
     // Open the first key in the tree view and remove
     await t.click(browserPage.treeViewButton);
-
     // Verify the default separator
-    await t.expect(browserPage.treeViewSeparator.textContent).eql(':', 'The “:” (colon) not used as a default separator for namespaces');
+    await t.click(browserPage.TreeView.treeViewSettingsBtn);
+    await t.expect(browserPage.TreeView.treeViewDelimiterInput.value).eql(':', 'The “:” (colon) not used as a default separator for namespaces');
     // Verify that user can see that “:” (colon) used as a default separator for namespaces and see the number of keys found per each namespace
-    await t.expect(browserPage.treeViewKeysNumber.visible).ok('The user can not see the number of keys');
+    await t.expect(browserPage.TreeView.treeViewKeysNumber.visible).ok('The user can not see the number of keys');
 
-    await t.expect(browserPage.treeViewDeviceFolder.visible).ok('The key folder is not displayed', { timeout: 30000 });
-    await t.click(browserPage.treeViewDeviceFolder);
-    const numberOfKeys = await browserPage.treeViewDeviceKyesCount.textContent;
-    const keyFolder = await browserPage.treeViewDeviceFolder.nth(2).textContent;
-    await t.click(browserPage.treeViewDeviceFolder.nth(2));
-    await t.click(browserPage.treeViewDeviceFolder.nth(5));
+    await t.expect(mainFolder.visible).ok('The key folder is not displayed');
+    await t.click(mainFolder);
+    const numberOfKeys = await browserPage.TreeView.getFolderCountSelectorByName('device').textContent;
+    const targetFolderName = await mainFolder.nth(1).find('[data-testid^=folder-]').textContent;
+    const targetFolderSelector = browserPage.TreeView.getFolderSelectorByName(`device:${targetFolderName}`);
+    await t.click(targetFolderSelector);
     await browserPage.deleteKey();
     // Verify the results
-    await t.expect(browserPage.treeViewDeviceFolder.nth(2).exists).notOk('The previous folder is not closed after removing key folder');
-    await t.click(browserPage.treeViewDeviceFolder);
-    await t.expect(browserPage.treeViewDeviceFolder.nth(2).textContent).notEql(keyFolder, 'The key folder is not removed from the tree view');
-    await t.expect(browserPage.treeViewDeviceKyesCount.textContent).notEql(numberOfKeys, 'The number of keys is not recalculated');
+    await t.expect(targetFolderSelector.exists).notOk('The previous folder is not closed after removing key folder');
+    await t.click(browserPage.TreeView.treeViewDeviceFolder);
+    await t.expect(mainFolder.nth(1).textContent).notEql(targetFolderName, 'The key folder is not removed from the tree view');
+    const actualCount = await browserPage.TreeView.getFolderCountSelectorByName('device').textContent;
+    await t.expect(+actualCount).lt(+numberOfKeys, 'The number of keys is not recalculated');
 });
+test
+    .before(async() => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
+    })
+    .after(async() => {
+        // Clear and delete database
+        for(const name of keyNames) {
+            await apiKeyRequests.deleteKeyByNameApi(name, ossStandaloneConfigEmpty.databaseName);
+        }
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
+    })('Verify that if there are keys without namespaces, they are displayed in the root directory after all folders by default in the Tree view', async t => {
+        keyNames = [
+            `atest:a-${Common.generateWord(10)}`,
+            `atest:z-${Common.generateWord(10)}`,
+            `ztest:a-${Common.generateWord(10)}`,
+            `ztest:z-${Common.generateWord(10)}`,
+            `atest-${Common.generateWord(10)}`,
+            `ztest-${Common.generateWord(10)}`
+        ];
+        const commands = [
+            'flushdb',
+            `HSET ${keyNames[0]} field value`,
+            `HSET ${keyNames[1]} field value`,
+            `HSET ${keyNames[2]} field value`,
+            `SADD ${keyNames[3]} value`,
+            `SADD ${keyNames[4]} value`,
+            `HSET ${keyNames[5]} field value`
+        ];
+        const expectedSortedByASC = [
+            keyNames[0].split(':')[1],
+            keyNames[1].split(':')[1],
+            keyNames[2].split(':')[1],
+            keyNames[3].split(':')[1],
+            keyNames[4],
+            keyNames[5]
+        ];
+        const expectedSortedByDESC = [
+            keyNames[3].split(':')[1],
+            keyNames[2].split(':')[1],
+            keyNames[1].split(':')[1],
+            keyNames[0].split(':')[1],
+            keyNames[5],
+            keyNames[4]
+        ];
+
+        // Create 5 keys
+        await browserPage.Cli.sendCommandsInCli(commands);
+        await t.click(browserPage.treeViewButton);
+
+        // Verify that if there are keys without namespaces, they are displayed in the root directory after all folders by default in the Tree view
+        await browserPage.TreeView.openTreeFolders([`${keyNames[0]}`.split(':')[0]]);
+        await browserPage.TreeView.openTreeFolders([`${keyNames[2]}`.split(':')[0]]);
+        let actualItemsArray = await browserPage.TreeView.getAllItemsArray();
+        // Verify that user can see all folders and keys sorted by name ASC by default
+        await t.expect(actualItemsArray).eql(expectedSortedByASC);
+
+        // Verify that user can change the sorting ASC-DESC
+        await browserPage.TreeView.changeOrderingInTreeView('DESC');
+        await browserPage.TreeView.openTreeFolders([`${keyNames[2]}`.split(':')[0]]);
+        await browserPage.TreeView.openTreeFolders([`${keyNames[0]}`.split(':')[0]]);
+        actualItemsArray = await browserPage.TreeView.getAllItemsArray();
+        await t.expect(actualItemsArray).eql(expectedSortedByDESC);
+    });

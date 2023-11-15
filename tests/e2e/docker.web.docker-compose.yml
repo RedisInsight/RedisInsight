@@ -10,7 +10,7 @@ services:
       - ./results:/usr/src/app/results
       - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
-      - .redisinsight-v2:/root/.redisinsight-v2
+      - .redisinsight-app:/root/.redisinsight-app
       - .ritmp:/tmp
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
@@ -44,7 +44,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      - .redisinsight-v2:/root/.redisinsight-v2
+      - .redisinsight-app:/root/.redisinsight-app
       - .ritmp:/tmp
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh

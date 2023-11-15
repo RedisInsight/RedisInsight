@@ -11,7 +11,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const PATH_CONFIG = config.get('dir_path');
 
-const TMP_FOLDER = `${PATH_CONFIG.tmpDir}/RedisInsight-v2/custom-tutorials`;
+const TMP_FOLDER = `${PATH_CONFIG.tmpDir}/RedisInsight/custom-tutorials`;
 
 @Injectable()
 export class CustomTutorialFsProvider {

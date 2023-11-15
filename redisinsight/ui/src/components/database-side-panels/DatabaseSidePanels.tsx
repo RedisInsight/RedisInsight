@@ -9,6 +9,8 @@ import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { OnboardingTour } from 'uiSrc/components'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -71,6 +73,8 @@ const DatabaseSidePanels = (props: Props) => {
   }
 
   const handleChangeTab = (name: string) => {
+    if (tabSelected === name) return
+
     dispatch(changeSelectedTab(name))
 
     sendEventTelemetry({
@@ -105,7 +109,14 @@ const DatabaseSidePanels = (props: Props) => {
         className={styles.tab}
         data-testid="explore-tab"
       >
-        <span className={styles.tabName}>Explore Redis</span>
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.EXPLORE_REDIS}
+          anchorPosition={isFullScreen ? 'rightUp' : 'leftUp'}
+          anchorWrapperClassName={styles.onboardingAnchorWrapper}
+          fullSize
+        >
+          <span className={styles.tabName}>Explore Redis</span>
+        </OnboardingTour>
       </EuiTab>
       <EuiTab
         isSelected={tabSelected === InsightsPanelTabs.Recommendations}
@@ -126,7 +137,7 @@ const DatabaseSidePanels = (props: Props) => {
         </>
       </EuiTab>
     </EuiTabs>
-  ), [tabSelected, totalUnread])
+  ), [tabSelected, totalUnread, isFullScreen])
 
   return (
     <div className={styles.wrapper}>

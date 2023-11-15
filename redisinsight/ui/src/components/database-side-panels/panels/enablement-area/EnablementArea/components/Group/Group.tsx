@@ -72,7 +72,7 @@ const Group = (props: Props) => {
     <>
       {actions?.includes(EAItemActions.Create) && (
         <OnboardingTour
-          options={ONBOARDING_FEATURES.WORKBENCH_CUSTOM_TUTORIALS}
+          options={ONBOARDING_FEATURES.EXPLORE_CUSTOM_TUTORIALS}
           anchorPosition="downLeft"
           anchorWrapperClassName="onboardingPopoverAnchor"
           panelClassName={cx({ hide: isPageOpened })}

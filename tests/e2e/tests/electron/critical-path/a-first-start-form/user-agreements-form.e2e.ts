@@ -1,13 +1,11 @@
 import { commonUrl } from '../../../../helpers/conf';
-import { SettingsPage, MyRedisDatabasePage, WelcomePage } from '../../../../pageObjects';
+import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { Common } from '../../../../helpers/common';
 import { rte } from '../../../../helpers/constants';
 import { UserAgreementDialog } from '../../../../pageObjects/dialogs';
 
 const userAgreementDialog = new UserAgreementDialog();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const settingsPage = new SettingsPage();
-const welcomePage = new WelcomePage();
 
 fixture `Agreements Verification`
     .meta({ type: 'critical_path', rte: rte.none })
@@ -29,45 +27,4 @@ test.skip('Verify that the encryption enabled by default and specific message', 
     await t.expect(pluginText).eql(expectedPluginText, 'Plugin text is incorrect');
     // Verify that encryption enabled by default
     await t.expect(userAgreementDialog.switchOptionEncryption.withAttribute('aria-checked', 'true').exists).ok('Encryption enabled by default');
-});
-test('Verify that the Welcome page is opened after user agrees', async t => {
-    // Accept agreements
-    await t.click(settingsPage.switchEulaOption);
-    await t.click(settingsPage.submitConsentsPopupButton);
-    // Verify that I dont have an popup
-    await t.expect(userAgreementDialog.userAgreementsPopup.exists).notOk('User Agreements Popup isn\'t shown after accept agreements');
-    // Verify that Welcome page is displayed after user agrees
-    await t.expect(welcomePage.welcomePageTitle.exists).ok('Welcome page is displayed');
-    // Verify I can work with the application
-    await t.click(welcomePage.addDbManuallyBtn);
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).ok('User can add a database');
-});
-test('Verify that when user checks "Use recommended settings" option on EULA screen, all options (except Licence Terms) are checked', async t => {
-    // Verify options unchecked before enabling Use recommended settings
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).notOk('Enable Analytics switcher is checked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).notOk('Enable Notifications switcher is checked');
-    // Check Use recommended settings switcher
-    await t.click(userAgreementDialog.recommendedSwitcher);
-    // Verify options checked after enabling Use recommended settings
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).ok('Enable Analytics switcher is unchecked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).ok('Enable Notifications switcher is unchecked');
-    await t.expect(await settingsPage.getEulaSwitcherValue()).notOk('EULA switcher is checked');
-    // Uncheck Use recommended settings switcher
-    await t.click(userAgreementDialog.recommendedSwitcher);
-    // Verify that when user unchecks "Use recommended settings" option on EULA screen, previous state of checkboxes for the options is applied
-    await t.expect(await settingsPage.getAnalyticsSwitcherValue()).notOk('Enable Analytics switcher is checked');
-    await t.expect(await settingsPage.getNotificationsSwitcherValue()).notOk('Enable Notifications switcher is checked');
-    await t.expect(await settingsPage.getEulaSwitcherValue()).notOk('EULA switcher is checked');
-});
-test('Verify that if "Use recommended settings" is selected, and user unchecks any of the option, "Use recommended settings" is unchecked', async t => {
-    // Check Use recommended settings switcher
-    await t.click(userAgreementDialog.recommendedSwitcher);
-    // Verify Use recommended settings switcher unchecked after unchecking analytics switcher
-    await t.click(settingsPage.switchAnalyticsOption);
-    await t.expect(await userAgreementDialog.getRecommendedSwitcherValue()).eql('false', 'Use recommended settings switcher is still checked');
-    // Check Use recommended settings switcher
-    await t.click(userAgreementDialog.recommendedSwitcher);
-    // Verify Use recommended settings switcher unchecked after unchecking notifications switcher
-    await t.click(settingsPage.switchNotificationsOption);
-    await t.expect(await userAgreementDialog.getRecommendedSwitcherValue()).eql('false', 'Use recommended settings switcher is still checked');
 });

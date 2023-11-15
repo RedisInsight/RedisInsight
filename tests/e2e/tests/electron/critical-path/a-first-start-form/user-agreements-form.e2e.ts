@@ -19,7 +19,8 @@ test('Verify that user should accept User Agreements to continue working with th
     await t.expect(userAgreementDialog.submitButton.hasAttribute('disabled')).ok('Submit button not disabled by default');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).notOk('User can\'t add a database');
 });
-test('Verify that the encryption enabled by default and specific message', async t => {
+// Skipped due to docker currently doesn't support encryption https://redislabs.atlassian.net/browse/RI-5036
+test.skip('Verify that the encryption enabled by default and specific message', async t => {
     const expectedPluginText = 'To avoid automatic execution of malicious code, when adding new Workbench plugins, use files from trusted authors only.';
     // Verify that section with plugin warning is displayed
     await t.expect(userAgreementDialog.pluginSectionWithText.exists).ok('Plugin text is not displayed');

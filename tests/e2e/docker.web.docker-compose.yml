@@ -10,10 +10,8 @@ services:
       - ./results:/usr/src/app/results
       - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
-      - .redisinsight-app:/root/.redisinsight-app
-      - .ritmp:/tmp
-      - ./test-data/certs:/root/certs
-      - ./test-data/ssh:/root/ssh
+      - rihomedir:/root/.redisinsight-app
+      - tmp:/tmp
       - ./remote:/root/remote
     env_file:
       - ./.env
@@ -38,13 +36,16 @@ services:
 
   # Built image
   app:
-    cap_add:
-      - ipc_lock
+    logging:
+      driver: none
     image: riv2:latest
     env_file:
       - ./.env
     volumes:
-      - .redisinsight-app:/root/.redisinsight-app
-      - .ritmp:/tmp
-      - ./test-data/certs:/root/certs
-      - ./test-data/ssh:/root/ssh
+      - rihomedir:/data
+      - tmp:/tmp
+      - ./test-data:/test-data
+
+volumes:
+  tmp:
+  rihomedir:

@@ -49,7 +49,7 @@
         "host": "localhost",
         "port": 8102,
 		"name": "rdmHost+Port+Name+CaCert",
-		"ssl_ca_cert_path": "/root/certs/ca.crt",
+		"ssl_ca_cert_path": "/test-data/certs/ca.crt",
         "result": "success"
     },
 	{
@@ -57,26 +57,26 @@
         "port": 8102,
 		"name": "rdmHost+Port+Name+clientCert+privateKey",
 		"ssl": true,
-		"ssl_local_cert_path": "/root/certs/client.crt",
-		"ssl_private_key_path": "/root/certs/client.key",
+		"ssl_local_cert_path": "/test-data/certs/client.crt",
+		"ssl_private_key_path": "/test-data/certs/client.key",
         "result": "success"
     },
 	{
         "host": "localhost",
         "port": 8102,
 		"name": "rdmHost+Port+Name+CaCert+clientCert+privateKey",
-		"ssl_ca_cert_path": "/root/certs/ca.crt",
-		"ssl_local_cert_path": "/root/certs/client.crt",
-		"ssl_private_key_path": "/root/certs/client.key",
+		"ssl_ca_cert_path": "/test-data/certs/ca.crt",
+		"ssl_local_cert_path": "/test-data/certs/client.crt",
+		"ssl_private_key_path": "/test-data/certs/client.key",
         "result": "success"
     },
 	{
         "host": "localhost",
         "port": 8102,
 		"name": "rdmHost+Port+Name+CaCert+clientCert+privateKey(notbypath)",
-		"ssl_ca_cert_path": "/root/certs/ca.crt",
-		"ssl_local_cert_path": "/root/certs/client.crt",
-		"ssl_private_key_path": "/root/certs/client.key",
+		"ssl_ca_cert_path": "/test-data/certs/ca.crt",
+		"ssl_local_cert_path": "/test-data/certs/client.crt",
+		"ssl_private_key_path": "/test-data/certs/client.key",
         "result": "success"
     },
 	{
@@ -84,9 +84,9 @@
         "port": 6379,
 		"name": "rdmHost+Port+Name+username+pass+CaCert+clientCert+privateKey",
 		"ssl": true,
-		"ssl_ca_cert_path": "/root/certs/ca.crt",
-		"ssl_local_cert_path": "/root/certs/client.crt",
-		"ssl_private_key_path": "/root/certs/client.key",
+		"ssl_ca_cert_path": "/test-data/certs/ca.crt",
+		"ssl_local_cert_path": "/test-data/certs/client.crt",
+		"ssl_private_key_path": "/test-data/certs/client.key",
 		"username": "admin",
         "auth": "pass",
         "result": "success"
@@ -207,14 +207,14 @@
         "host": "localhost",
         "port": 8103,
 		"name": "rdmOnlyClientCert",
-		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_local_cert_path": "/test-data/certs/client.crt",
         "result": "partial"
     },
 	{
         "host": "localhost",
         "port": 8103,
 		"name": "rdmOnlyPrivateKey",
-		"ssl_private_key_path": "/root/certs/client.key",
+		"ssl_private_key_path": "/test-data/certs/client.key",
         "result": "partial"
     },
 	{
@@ -222,14 +222,14 @@
         "port": 8103,
 		"name": "rdmInvalidClientCert",
 		"ssl_local_cert_path": "invalid client cert",
-		"ssl_private_key_path": "/root/certs/client.key",
+		"ssl_private_key_path": "/test-data/certs/client.key",
         "result": "partial"
     },
 	{
         "host": "localhost",
         "port": 8103,
 		"name": "rdmInvalidPrivateKey",
-		"ssl_local_cert_path": "/root/certs/client.crt",
+		"ssl_local_cert_path": "/test-data/certs/client.crt",
 		"ssl_private_key_path": "invalid private key",
         "result": "partial"
     },
@@ -255,15 +255,15 @@
         "host": "localhost",
         "port": 8103,
 		"name": "rdmCaCertInvalidPath",
-		"ssl_ca_cert_path": "/root/certs/caInvalid.crt",
+		"ssl_ca_cert_path": "/test-data/certs/caInvalid.crt",
         "result": "partial"
     },
 	{
         "host": "localhost",
         "port": 8103,
 		"name": "rdmClientCert+PrivateKeyInvalidPathes",
-		"ssl_local_cert_path": "/root/certs/clientInvalid.crt",
-		"ssl_private_key_path": "/root/certs/clientInvalid.key",
+		"ssl_local_cert_path": "/test-data/certs/clientInvalid.crt",
+		"ssl_private_key_path": "/test-data/certs/clientInvalid.key",
         "result": "partial"
     }
 ]

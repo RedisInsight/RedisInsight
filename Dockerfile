@@ -6,15 +6,7 @@
 # the best way to minimize the number of node_module restores and build steps
 # while still keeping the final image small.
 
-FROM node:18.17.0-alpine as build
-
-# build time args and environment variables
-ARG SERVER_TLS_CERT
-ARG SERVER_TLS_KEY
-ARG SEGMENT_WRITE_KEY
-ENV SERVER_TLS_CERT=${SERVER_TLS_CERT}
-ENV SERVER_TLS_KEY=${SERVER_TLS_KEY}
-ENV SEGMENT_WRITE_KEY=${SEGMENT_WRITE_KEY}
+FROM node:18.18-alpine as build
 
 # update apk repository and install build dependencies
 RUN apk update && apk add --no-cache --virtual .gyp \

@@ -24,6 +24,11 @@ export interface ITelemetryInitEvent {
   appVersion: string;
 }
 
+export enum Telemetry {
+  Enabled = 'enabled',
+  Disabled = 'disabled',
+}
+
 @Injectable()
 export class AnalyticsService {
   private anonymousId: string = NON_TRACKING_ANONYMOUS_ID;
@@ -83,6 +88,11 @@ export class AnalyticsService {
           anonymousId: !isAnalyticsGranted && nonTracking ? NON_TRACKING_ANONYMOUS_ID : this.anonymousId,
           integrations: { Amplitude: { session_id: this.sessionId } },
           event,
+          context: {
+            traits: {
+              telemetry: isAnalyticsGranted ? Telemetry.Enabled : Telemetry.Disabled,
+            }
+          },
           properties: {
             ...eventData,
             anonymousId: this.anonymousId,
@@ -116,6 +126,11 @@ export class AnalyticsService {
           name: event,
           anonymousId: !isAnalyticsGranted && nonTracking ? NON_TRACKING_ANONYMOUS_ID : this.anonymousId,
           integrations: { Amplitude: { session_id: this.sessionId } },
+          context: {
+            traits: {
+              telemetry: isAnalyticsGranted ? Telemetry.Enabled : Telemetry.Disabled,
+            }
+          },
           properties: {
             ...eventData,
             anonymousId: this.anonymousId,

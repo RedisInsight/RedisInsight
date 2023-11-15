@@ -5,7 +5,7 @@ PLATFORM=${PLATFORM:-'linux'}
 ELECTRON_VERSION=$(cat electron/version)
 ARCH=${ARCH:-'x64'}
 #FILENAME="RedisInsight-$PLATFORM.$VERSION.$ARCH.zip"
-FILENAME="RedisInsight-v2-web-$PLATFORM.$ARCH.tar.gz"
+FILENAME="RedisInsight-web-$PLATFORM.$ARCH.tar.gz"
 
 # reinstall backend prod dependencies only (optimise space)
 rm -rf redisinsight/api/node_modules

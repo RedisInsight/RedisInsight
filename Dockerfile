@@ -6,7 +6,7 @@
 # the best way to minimize the number of node_module restores and build steps
 # while still keeping the final image small.
 
-FROM node:18.15.0-alpine as build
+FROM node:18.17.0-alpine as build
 
 # build time args and environment variables
 ARG SERVER_TLS_CERT
@@ -47,7 +47,7 @@ RUN yarn --cwd ./redisinsight/api install --production
 COPY ./redisinsight/api/.yarnclean.prod ./redisinsight/api/.yarnclean
 RUN yarn --cwd ./redisinsight/api autoclean --force
 
-FROM node:18.15.0-alpine
+FROM node:18.18-alpine
 
 # runtime args and environment variables
 ARG NODE_ENV=production
@@ -61,6 +61,10 @@ ENV NODE_ENV=${NODE_ENV}
 ENV SERVER_STATIC_CONTENT=true
 ENV BUILD_TYPE='DOCKER_ON_PREMISE'
 ENV APP_FOLDER_ABSOLUTE_PATH='/data'
+
+# this resolves CVE-2023-5363
+# TODO: remove this line once we update to base image that doesn't have this vulnerability
+RUN apk update && apk upgrade --no-cache libcrypto3 libssl3
 
 # set workdir
 WORKDIR /usr/src/app

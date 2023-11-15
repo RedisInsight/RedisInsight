@@ -33,7 +33,19 @@ export const checkForUpdate = async (url: string = '') => {
   autoUpdater.autoDownload = true
   autoUpdater.autoInstallOnAppQuit = true
 
-  await autoUpdater.checkForUpdates()
+  const res = await autoUpdater.checkForUpdates()
+
+  if (res?.downloadPromise) {
+    await res.downloadPromise
+  }
+}
+
+export const initAutoUpdateChecks = (url = '', interval = 84 * 3600 * 1000) => {
+  checkForUpdate(url)
+    .catch((e) => log.error(wrapErrorMessageSensitiveData(e)))
+    .finally(() => {
+      setTimeout(() => initAutoUpdateChecks(url, interval), interval)
+    })
 }
 
 export const quitAndInstallUpdate = () => {

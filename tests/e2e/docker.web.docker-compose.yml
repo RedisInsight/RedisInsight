@@ -10,7 +10,7 @@ services:
       - ./results:/usr/src/app/results
       - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
-      - rihomedir:/root/.redisinsight-v2
+      - rihomedir:/root/.redisinsight-app
       - tmp:/tmp
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh

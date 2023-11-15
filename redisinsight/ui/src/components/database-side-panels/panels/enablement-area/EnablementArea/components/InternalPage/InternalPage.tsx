@@ -23,7 +23,8 @@ import {
   EmptyPrompt,
   RedisUploadButton,
   CloudLink,
-  Pagination
+  Pagination,
+  RedisInsightLink,
 } from '..'
 import styles from './styles.module.scss'
 
@@ -59,7 +60,7 @@ const InternalPage = (props: Props) => {
     manifestPath,
     sourcePath,
   } = props
-  const components: any = { Image, Code, RedisUploadButton, CloudLink }
+  const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {

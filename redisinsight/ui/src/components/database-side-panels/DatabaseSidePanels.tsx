@@ -111,7 +111,7 @@ const DatabaseSidePanels = (props: Props) => {
       >
         <OnboardingTour
           options={ONBOARDING_FEATURES.EXPLORE_REDIS}
-          anchorPosition="leftUp"
+          anchorPosition={isFullScreen ? 'rightUp' : 'leftUp'}
           anchorWrapperClassName={styles.onboardingAnchorWrapper}
           fullSize
         >
@@ -137,7 +137,7 @@ const DatabaseSidePanels = (props: Props) => {
         </>
       </EuiTab>
     </EuiTabs>
-  ), [tabSelected, totalUnread])
+  ), [tabSelected, totalUnread, isFullScreen])
 
   return (
     <div className={styles.wrapper}>

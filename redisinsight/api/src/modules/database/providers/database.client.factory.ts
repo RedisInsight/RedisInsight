@@ -73,4 +73,15 @@ export class DatabaseClientFactory {
       throw exception;
     }
   }
+
+  /**
+   * Delete existing database client by client metadata.
+   * @param clientMetadata
+   */
+  async deleteClient(clientMetadata: ClientMetadata): Promise<number> {
+    this.logger.log('Trying to delete existing redis client.');
+
+    const client = await this.redisClientStorage.getByMetadata(clientMetadata);
+    return this.redisClientStorage.remove(client?.id);
+  }
 }

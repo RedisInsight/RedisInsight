@@ -108,6 +108,8 @@ export const generateNCommandExecutions = async (
         status: 'success',
         response: `"OK_${i}"`,
       }])),
+      nodeOptions: null,
+      role: null,
       mode: 'ASCII',
       encryption: constants.TEST_ENCRYPTION_STRATEGY,
       executionTime: Math.round(Math.random() * 10000),

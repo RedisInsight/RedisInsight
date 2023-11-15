@@ -13,17 +13,13 @@ fixture `Agreements Verification`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
     .requestHooks(Common.mockSettingsResponse())
-    .beforeEach(async t => {
-        await t.maximizeWindow();
-    });
 test('Verify that user should accept User Agreements to continue working with the application', async t => {
     await t.expect(userAgreementDialog.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
     // Verify that I still has agreements popup & cannot add a database
     await t.expect(userAgreementDialog.submitButton.hasAttribute('disabled')).ok('Submit button not disabled by default');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).notOk('User can\'t add a database');
 });
-// Skipped due to docker currently doesn't support encryption https://redislabs.atlassian.net/browse/RI-5036
-test.skip('Verify that the encryption enabled by default and specific message', async t => {
+test('Verify that the encryption enabled by default and specific message', async t => {
     const expectedPluginText = 'To avoid automatic execution of malicious code, when adding new Workbench plugins, use files from trusted authors only.';
     // Verify that section with plugin warning is displayed
     await t.expect(userAgreementDialog.pluginSectionWithText.exists).ok('Plugin text is not displayed');

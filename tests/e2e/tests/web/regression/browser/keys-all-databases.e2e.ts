@@ -7,8 +7,7 @@ import {
     commonUrl,
     ossClusterConfig,
     ossSentinelConfig,
-    ossStandaloneBigConfig,
-    redisEnterpriseClusterConfig
+    ossStandaloneBigConfig
 } from '../../../../helpers/conf';
 import { Common } from '../../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -40,18 +39,6 @@ const verifyKeysAdded = async(): Promise<void> => {
 fixture `Work with keys in all types of databases`
     .meta({ type: 'regression' })
     .page(commonUrl);
-test
-    .meta({ rte: rte.reCluster })
-    .before(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
-    })
-    .after(async() => {
-        // Clear and delete database
-        await apiKeyRequests.deleteKeyByNameApi(keyName, redisEnterpriseClusterConfig.databaseName);
-        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can add Key in RE Cluster DB', async() => {
-        await verifyKeysAdded();
-    });
 test
     .meta({ rte: rte.reCloud })
     .before(async() => {

@@ -11,7 +11,6 @@ import {
 } from 'src/__mocks__';
 import { omit } from 'lodash';
 import {
-  ClusterNodeRole,
   CreateCommandExecutionDto,
   RunQueryMode,
 } from 'src/modules/workbench/dto/create-command-execution.dto';
@@ -44,11 +43,6 @@ const mockCliNodeResponse: ICliExecResultFromNode = {
 
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   command: 'set foo bar',
-  nodeOptions: {
-    ...mockNodeEndpoint,
-    enableRedirection: true,
-  },
-  role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
 };
 
@@ -57,9 +51,7 @@ const mockCommandExecutionEntity = new CommandExecutionEntity({
   databaseId: mockDatabase.id,
   command: mockEncryptResult.data,
   result: mockEncryptResult.data,
-  role: mockCreateCommandExecutionDto.role,
   mode: mockCreateCommandExecutionDto.mode,
-  nodeOptions: JSON.stringify(mockCreateCommandExecutionDto.nodeOptions),
   encryption: 'KEYTAR',
   createdAt: new Date(),
 });
@@ -67,9 +59,6 @@ const mockCommandExecutionEntity = new CommandExecutionEntity({
 const mockCommandExecutionResult: CommandExecutionResult = {
   status: mockCliNodeResponse.status,
   response: mockCliNodeResponse.response,
-  node: {
-    ...mockNodeEndpoint,
-  },
 };
 
 const mockCommandExecutionPartial: Partial<CommandExecution> = new CommandExecution({

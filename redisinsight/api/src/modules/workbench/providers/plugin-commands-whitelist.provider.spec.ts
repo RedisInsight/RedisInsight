@@ -2,11 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import Redis from 'ioredis';
 import {
   mockRedisCommandReply,
-  mockDatabase,
-  mockWhitelistCommandsResponse,
+  mockWhitelistCommandsResponse, mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
-import { RedisToolService } from 'src/modules/redis/redis-tool.service';
 
 const mockClient = Object.create(Redis.prototype);
 
@@ -15,16 +13,13 @@ const mockRedisTool = {
 };
 
 describe('PluginCommandsWhitelistProvider', () => {
+  const client = mockStandaloneRedisClient;
   let service;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PluginCommandsWhitelistProvider,
-        {
-          provide: RedisToolService,
-          useFactory: () => mockRedisTool,
-        },
       ],
     }).compile();
 
@@ -44,14 +39,14 @@ describe('PluginCommandsWhitelistProvider', () => {
       calculateCommandsSpy.mockResolvedValueOnce(mockWhitelistCommandsResponse);
 
       expect(
-        await service.getWhitelistCommands(mockDatabase.id),
+        await service.getWhitelistCommands(client),
       ).toEqual(mockWhitelistCommandsResponse);
       expect(calculateCommandsSpy).toHaveBeenCalled();
 
       calculateCommandsSpy.mockClear();
 
       expect(
-        await service.getWhitelistCommands(mockDatabase.id),
+        await service.getWhitelistCommands(client),
       ).toEqual(mockWhitelistCommandsResponse);
       expect(calculateCommandsSpy).not.toHaveBeenCalled();
     });

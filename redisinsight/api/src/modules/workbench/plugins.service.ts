@@ -13,6 +13,7 @@ import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
 import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 const PLUGINS_CONFIG = config.get('plugins');
 
@@ -22,6 +23,7 @@ export class PluginsService {
     private commandsExecutor: WorkbenchCommandsExecutor,
     private pluginStateRepository: PluginStateRepository,
     private whitelistProvider: PluginCommandsWhitelistProvider,
+    private databaseClientFactory: DatabaseClientFactory,
   ) {}
 
   /**
@@ -35,9 +37,10 @@ export class PluginsService {
     dto: CreateCommandExecutionDto,
   ): Promise<PluginCommandExecution> {
     try {
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       await this.checkWhitelistedCommands(clientMetadata, dto.command);
 
-      const result = await this.commandsExecutor.sendCommand(clientMetadata, dto);
+      const result = await this.commandsExecutor.sendCommand(client, dto);
 
       return plainToClass(PluginCommandExecution, {
         ...dto,
@@ -65,7 +68,8 @@ export class PluginsService {
    * @param clientMetadata
    */
   async getWhitelistCommands(clientMetadata: ClientMetadata): Promise<string[]> {
-    return await this.whitelistProvider.getWhitelistCommands(clientMetadata);
+    const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+    return await this.whitelistProvider.getWhitelistCommands(client);
   }
 
   /**

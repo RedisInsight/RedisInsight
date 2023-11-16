@@ -295,7 +295,7 @@
   "devEngines": {
     "node": ">=16.x",
     "npm": ">=6.x",
-    "yarn": ">=1.21.3"
+    "yarn": ">=1.22.21"
   },
   "husky": {
     "hooks": {}

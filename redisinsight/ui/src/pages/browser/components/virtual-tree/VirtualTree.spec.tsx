@@ -16,7 +16,7 @@ const mockedItems = [
   },
 ]
 
-export const mockVirtualTreeResult = [{
+const mockTreeItem = {
   children: [{
     children: [],
     fullName: 'car:110:',
@@ -30,34 +30,22 @@ export const mockVirtualTreeResult = [{
   keyApproximate: 47.18,
   keyCount: 4718,
   name: 'car',
-},
-{
+}
+
+const mockTreeItem2 = {
   children: [],
   fullName: 'test',
   id: '0.snc1rc3zwg1o',
   keyApproximate: 0.01,
   keyCount: 1,
   name: 'test',
-}]
+}
 
-export const mockVirtualTreeResult1 = [{
-  children: [{
-    children: [],
-    fullName: 'car:110:',
-    id: '0.snc1rc3zwgo',
-    keyApproximate: 0.01,
-    keyCount: 1,
-    name: '110',
-  }],
-  fullName: 'car:',
-  id: '0.sz1ie1koqi8',
-  keyApproximate: 47.18,
-  keyCount: 4718,
-  name: 'car',
-}]
+export const mockVirtualTreeResult = [mockTreeItem, mockTreeItem2]
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
+  __esModule: true,
   useDisposableWebworker: jest.fn(() => ({ result: mockVirtualTreeResult, run: jest.fn() }))
 }))
 
@@ -94,7 +82,7 @@ describe('VirtualTree', () => {
 
   it('should call onStatusOpen if only one folder is exist', () => {
     (useDisposableWebworker as jest.Mock).mockReturnValueOnce({
-      result: mockVirtualTreeResult1,
+      result: [mockTreeItem],
       run: jest.fn()
     })
     const mockFn = jest.fn()

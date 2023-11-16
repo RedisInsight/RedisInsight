@@ -1,14 +1,14 @@
 import React from 'react'
 import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
 
-interface Props {
+export interface Props {
   id: number
   length: number
   index: number
   loading: boolean
   removeItem: (id: number) => void
   addItem: () => void
-  anchorClassName: string
+  anchorClassName?: string
   clearItemValues?: (id: number) => void
   clearIsDisabled?: boolean
   addItemIsDisabled?: boolean

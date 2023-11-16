@@ -20,6 +20,7 @@ import {
   hexToBuffer,
   stringToBuffer,
   binaryToBuffer,
+  Maybe,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -40,7 +41,7 @@ const isFormatEditable = (format: KeyValueFormat) => ![
   KeyValueFormat.Pickle,
 ].includes(format)
 
-const isFullStringLoaded = (currentLength: number, fullLength: number) => currentLength === fullLength
+const isFullStringLoaded = (currentLength: Maybe<number>, fullLength: Maybe<number>) => currentLength === fullLength
 
 const isNonUnicodeFormatter = (format: KeyValueFormat, isValid: boolean) => {
   if (format === KeyValueFormat.Msgpack) {

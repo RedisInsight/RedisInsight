@@ -5,7 +5,8 @@ import {
   mockControlGroup,
   mockControlNumber,
   mockEncryptionService,
-  mockFeaturesConfigService, mockGetServerInfoResponse,
+  mockFeaturesConfigService,
+  mockGetServerInfoResponse,
   mockServer,
   mockServerRepository,
   MockType,
@@ -24,7 +25,7 @@ import { ServerService } from 'src/modules/server/server.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 const mockEventPayload: ITelemetryEvent = {
   event: TelemetryEvents.ApplicationStarted,

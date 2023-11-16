@@ -24,7 +24,7 @@ describe('Config util', () => {
       // eslint-disable-next-line global-require
       const { get } = require('./config');
 
-      const result = get('server');
+      const result = get('server') as Config['server'];
 
       expect(result).toEqual({
         ...defaultConfig.server,
@@ -37,7 +37,7 @@ describe('Config util', () => {
       // eslint-disable-next-line global-require
       const { get } = require('./config');
 
-      const result = get('server');
+      const result = get('server') as Config['server'];
 
       expect(result).toEqual({
         ...defaultConfig.server,
@@ -50,7 +50,7 @@ describe('Config util', () => {
       // eslint-disable-next-line global-require
       const { get } = require('./config');
 
-      const result = get('server');
+      const result = get('server') as Config['server'];
 
       expect(result).toEqual({
         ...defaultConfig.server,

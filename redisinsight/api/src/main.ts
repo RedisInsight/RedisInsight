@@ -7,7 +7,7 @@ import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
-import { get } from 'src/utils';
+import { get, Config } from 'src/utils';
 import { migrateHomeFolder } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
@@ -15,17 +15,17 @@ import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
 
-const serverConfig = get('server');
+const serverConfig = get('server') as Config['server'];
 
 interface IApp {
-  app: INestApplication
-  gracefulShutdown: Function
+  app: INestApplication;
+  gracefulShutdown: Function;
 }
 
 export default async function bootstrap(): Promise<IApp> {
   await migrateHomeFolder();
 
-  const port = process.env.API_PORT || serverConfig.port;
+  const port = serverConfig.port;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
@@ -39,7 +39,10 @@ export default async function bootstrap(): Promise<IApp> {
     };
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
+  const app = await NestFactory.create<NestExpressApplication>(
+    AppModule,
+    options,
+  );
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));

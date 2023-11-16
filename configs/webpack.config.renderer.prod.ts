@@ -11,10 +11,11 @@ import { version } from '../redisinsight/package.json';
 
 DeleteSourceMaps();
 
-const htmlPagesNames = ['splash.ejs', 'index.ejs']
-const apiUrl = process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY
-  ? 'https://localhost'
-  : 'http://localhost'
+const htmlPagesNames = ['splash.ejs', 'index.ejs'];
+const apiUrl =
+  process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
+    ? 'https://localhost'
+    : 'http://localhost';
 
 const devtoolsConfig =
   process.env.DEBUG_PROD === 'true'
@@ -180,7 +181,10 @@ const configuration: webpack.Configuration = {
   },
 
   plugins: [
-    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({
+      languages: ['json', 'javascript', 'typescript'],
+      features: ['!rename'],
+    }),
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
@@ -190,14 +194,15 @@ const configuration: webpack.Configuration = {
       filename: 'style.css',
     }),
 
-    ...htmlPagesNames.map((htmlPageName) => (
-      new HtmlWebpackPlugin({
-        filename: path.join(`${htmlPageName.split('.')?.[0]}.html`),
-        template: path.join(webpackPaths.desktopPath, htmlPageName),
-        isBrowser: false,
-        isDevelopment: false,
-      })
-    )),
+    ...htmlPagesNames.map(
+      (htmlPageName) =>
+        new HtmlWebpackPlugin({
+          filename: path.join(`${htmlPageName.split('.')?.[0]}.html`),
+          template: path.join(webpackPaths.desktopPath, htmlPageName),
+          isBrowser: false,
+          isDevelopment: false,
+        })
+    ),
 
     new webpack.DefinePlugin({
       'process.type': '"renderer"',
@@ -211,12 +216,14 @@ const configuration: webpack.Configuration = {
       'process.env.PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),
       'process.env.BUILD_TYPE': JSON.stringify('ELECTRON'),
       'process.env.APP_VERSION': JSON.stringify(version),
-      'process.env.CONNECTIONS_TIMEOUT_DEFAULT': 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
-        : JSON.stringify(30 * 1000),
-      'process.env.SEGMENT_WRITE_KEY': 'SEGMENT_WRITE_KEY' in process.env
-        ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
-        : JSON.stringify('SOURCE_WRITE_KEY'),
+      'process.env.CONNECTIONS_TIMEOUT_DEFAULT':
+        'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+          ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
+          : JSON.stringify(30 * 1000),
+      'process.env.SEGMENT_WRITE_KEY':
+        'SEGMENT_WRITE_KEY' in process.env
+          ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
+          : JSON.stringify('SOURCE_WRITE_KEY'),
     }),
   ],
 };

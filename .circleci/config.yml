@@ -871,8 +871,8 @@ jobs:
             fi
 
             docker build --build-arg NODE_ENV=<< parameters.env >> \
-            --build-arg SERVER_TLS_CERT="$SERVER_TLS_CERT" \
-            --build-arg SERVER_TLS_KEY="$SERVER_TLS_KEY" \
+            --build-arg RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
+            --build-arg RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
             --build-arg SEGMENT_WRITE_KEY="$TELEMETRY" \
             -t riv2:latest .
 

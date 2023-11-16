@@ -13,7 +13,10 @@ import { dependencies as externalsApi } from '../redisinsight/api/package.json';
 export default {
   target: 'web',
 
-  externals: [...Object.keys(externals || {}), ...Object.keys(externalsApi || {})],
+  externals: [
+    ...Object.keys(externals || {}),
+    ...Object.keys(externalsApi || {}),
+  ],
 
   module: {
     rules: [
@@ -70,7 +73,10 @@ export default {
 
     new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
 
-    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({
+      languages: ['json', 'javascript', 'typescript'],
+      features: ['!rename'],
+    }),
 
     new webpack.IgnorePlugin({
       checkResource(resource) {

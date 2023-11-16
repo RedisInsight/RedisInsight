@@ -1,14 +1,14 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
 import { convertRedisInfoReplyToObject } from 'src/utils';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class AutodiscoveryService implements OnModuleInit {
@@ -68,19 +68,18 @@ export class AutodiscoveryService implements OnModuleInit {
    * @param endpoint
    * @private
    */
-  private async addRedisDatabase(endpoint: { host: string, port: number }) {
+  private async addRedisDatabase(endpoint: { host: string; port: number }) {
     try {
-      const client = await this.redisConnectionFactory.createStandaloneConnection(
-        {
-          context: ClientContext.Common,
-        } as ClientMetadata,
-        endpoint as Database,
-        { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
-      );
+      const client =
+        await this.redisConnectionFactory.createStandaloneConnection(
+          {
+            context: ClientContext.Common,
+          } as ClientMetadata,
+          endpoint as Database,
+          { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
+        );
 
-      const info = convertRedisInfoReplyToObject(
-        await client.info(),
-      );
+      const info = convertRedisInfoReplyToObject(await client.info());
 
       if (info?.server?.redis_mode === 'standalone') {
         await this.databaseService.create({

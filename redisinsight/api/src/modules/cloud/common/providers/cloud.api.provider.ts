@@ -1,8 +1,11 @@
 import axios from 'axios';
-import { CloudRequestUtm, ICloudApiCredentials } from 'src/modules/cloud/common/models';
-import config from 'src/utils/config';
+import {
+  CloudRequestUtm,
+  ICloudApiCredentials,
+} from 'src/modules/cloud/common/models';
+import config, { Config } from 'src/utils/config';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 const cloudConfig = config.get('cloud');
 
 export class CloudApiProvider {

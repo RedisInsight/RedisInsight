@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 
 const cloudConfig = config.get('cloud');
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 
 export class CloudCapiProvider {
   protected api = axios.create({
@@ -25,7 +25,9 @@ export class CloudCapiProvider {
    * @param credentials
    * @private
    */
-  static getHeaders(credentials: ICloudCapiCredentials): { headers: Record<string, string> } {
+  static getHeaders(credentials: ICloudCapiCredentials): {
+    headers: Record<string, string>;
+  } {
     return {
       headers: {
         'x-api-key': credentials?.capiKey,

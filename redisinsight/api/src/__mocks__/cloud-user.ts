@@ -10,9 +10,13 @@ import {
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import config from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
-import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
+import {
+  mockCloudApiCapiAccessKey,
+  mockCloudCapiAuthDto,
+  mockCloudCapiKey,
+} from 'src/__mocks__/cloud-capi-key';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 const cloudConfig = config.get('cloud');
 
 // ======================================= CAPI =======================================

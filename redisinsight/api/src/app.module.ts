@@ -1,11 +1,14 @@
 import * as fs from 'fs';
 import {
-  MiddlewareConsumer, Module, NestModule, OnModuleInit,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  OnModuleInit,
 } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from 'nest-router';
 import { join } from 'path';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
@@ -32,8 +35,8 @@ import { StaticsManagementModule } from './modules/statics-management/statics-ma
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import { routes } from './app.routes';
 
-const SERVER_CONFIG = config.get('server');
-const PATH_CONFIG = config.get('dir_path');
+const SERVER_CONFIG = config.get('server') as Config['server'];
+const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
 
 @Module({
   imports: [
@@ -62,11 +65,15 @@ const PATH_CONFIG = config.get('dir_path');
     CloudModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [
-        ServeStaticModule.forRoot({
-          rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
-          exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
-        }),
-      ]
+          ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
+            exclude: [
+              '/api/**',
+              `${SERVER_CONFIG.customPluginsUri}/**`,
+              `${SERVER_CONFIG.staticUri}/**`,
+            ],
+          }),
+        ]
       : []),
     ServeStaticModule.forRoot({
       serveRoot: SERVER_CONFIG.customPluginsUri,
@@ -112,8 +119,6 @@ export class AppModule implements OnModuleInit, NestModule {
 
     consumer
       .apply(ExcludeRouteMiddleware)
-      .forRoutes(
-        ...SERVER_CONFIG.excludeRoutes,
-      );
+      .forRoutes(...SERVER_CONFIG.excludeRoutes);
   }
 }

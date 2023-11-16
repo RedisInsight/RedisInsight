@@ -1,8 +1,11 @@
 import {
-  Injectable, InternalServerErrorException, Logger, OnApplicationBootstrap,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { AppAnalyticsEvents } from 'src/constants/app-events';
 import { TelemetryEvents } from 'src/constants/telemetry-events';
 import { ServerInfoNotFoundException } from 'src/constants/exceptions';
@@ -12,7 +15,7 @@ import { AppType, BuildType } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
 @Injectable()
@@ -64,7 +67,7 @@ export class ServerService implements OnApplicationBootstrap {
           appVersion: SERVER_CONFIG.appVersion,
           osPlatform: process.platform,
           buildType: SERVER_CONFIG.buildType,
-          port: process.env.API_PORT || SERVER_CONFIG.port,
+          port: process.env.RI_APP_PORT || SERVER_CONFIG.port,
         },
         nonTracking: true,
       });
@@ -88,7 +91,8 @@ export class ServerService implements OnApplicationBootstrap {
         osPlatform: process.platform,
         buildType: SERVER_CONFIG.buildType,
         appType: ServerService.getAppType(SERVER_CONFIG.buildType),
-        encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
+        encryptionStrategies:
+          await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
         ...(await this.featuresConfigService.getControlInfo()),
       };

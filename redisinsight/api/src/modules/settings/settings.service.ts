@@ -4,14 +4,9 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import {
-  difference,
-  isEmpty,
-  map,
-  cloneDeep,
-} from 'lodash';
+import { difference, isEmpty, map, cloneDeep } from 'lodash';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { AgreementIsNotDefinedException } from 'src/constants';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
@@ -20,9 +15,13 @@ import { classToClass } from 'src/utils';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
+import {
+  GetAgreementsSpecResponse,
+  GetAppSettingsResponse,
+  UpdateSettingsDto,
+} from './dto/settings.dto';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class SettingsService {
@@ -47,10 +46,12 @@ export class SettingsService {
       this.logger.log('Succeed to get application settings.');
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
-        agreements: agreements?.version ? {
-          ...agreements?.data,
-          version: agreements?.version,
-        } : null,
+        agreements: agreements?.version
+          ? {
+              ...agreements?.data,
+              version: agreements?.version,
+            }
+          : null,
       });
     } catch (error) {
       this.logger.error('Failed to get application settings.', error);
@@ -96,8 +97,8 @@ export class SettingsService {
     } catch (error) {
       this.logger.error('Failed to update application settings.', error);
       if (
-        error instanceof AgreementIsNotDefinedException
-        || error instanceof BadRequestException
+        error instanceof AgreementIsNotDefinedException ||
+        error instanceof BadRequestException
       ) {
         throw error;
       }
@@ -111,12 +112,19 @@ export class SettingsService {
    * @param defaultOption
    * @private
    */
-  private async getAgreementsOption(checker: string, defaultOption: string): Promise<string> {
+  private async getAgreementsOption(
+    checker: string,
+    defaultOption: string,
+  ): Promise<string> {
     try {
       if (checker === 'KEYTAR') {
-        const isEncryptionAvailable = await this.keytarEncryptionStrategy.isAvailable();
+        const isEncryptionAvailable =
+          await this.keytarEncryptionStrategy.isAvailable();
 
-        if (!isEncryptionAvailable && SERVER_CONFIG.buildType === 'REDIS_STACK') {
+        if (
+          !isEncryptionAvailable &&
+          SERVER_CONFIG.buildType === 'REDIS_STACK'
+        ) {
           return 'stack_false';
         }
 
@@ -135,12 +143,17 @@ export class SettingsService {
   public async getAgreementsSpec(): Promise<GetAgreementsSpecResponse> {
     const agreementsSpec = cloneDeep<any>(AGREEMENTS_SPEC);
 
-    await Promise.all(map(agreementsSpec.agreements, async (agreement: any, name) => {
-      if (agreement.conditional) {
-        const option = await this.getAgreementsOption(agreement.checker, agreement.defaultOption);
-        agreementsSpec.agreements[name] = agreement.options[option];
-      }
-    }));
+    await Promise.all(
+      map(agreementsSpec.agreements, async (agreement: any, name) => {
+        if (agreement.conditional) {
+          const option = await this.getAgreementsOption(
+            agreement.checker,
+            agreement.defaultOption,
+          );
+          agreementsSpec.agreements[name] = agreement.options[option];
+        }
+      }),
+    );
 
     return agreementsSpec;
   }

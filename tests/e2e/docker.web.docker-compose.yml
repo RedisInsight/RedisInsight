@@ -33,7 +33,7 @@ services:
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',
-        'npx', 'yarn', 'test:chrome:ci'
+        'npx', 'run', 'test:chrome:ci'
     ]
 
   # Built image

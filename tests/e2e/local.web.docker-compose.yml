@@ -33,7 +33,7 @@ services:
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',
-        'npx', 'run', 'test:chrome:ci'
+        'npm', 'run', 'test:chrome:ci'
     ]
 
   # Redisinsight API + UI build

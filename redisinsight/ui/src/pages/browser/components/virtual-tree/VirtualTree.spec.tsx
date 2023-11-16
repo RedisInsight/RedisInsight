@@ -59,7 +59,6 @@ export const mockVirtualTreeResult1 = [{
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
   useDisposableWebworker: jest.fn(() => ({ result: mockVirtualTreeResult, run: jest.fn() }))
-  // useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
 }))
 
 describe('VirtualTree', () => {

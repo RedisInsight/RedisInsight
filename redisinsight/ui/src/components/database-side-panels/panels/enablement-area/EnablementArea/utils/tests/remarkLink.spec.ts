@@ -50,4 +50,28 @@ describe('remarkLink', () => {
       value: '<CloudLink url="https://mysite.com" text="Setup Redis Cloud" />',
     })
   })
+
+  it('should properly modify codeNode with internal app link', () => {
+    const codeNode = {
+      type: 'link',
+      url: 'redisinsight:workbench',
+      children: [
+        {
+          type: 'text',
+          value: 'Workbench'
+        }
+      ]
+    };
+    // mock implementation
+    (visit as jest.Mock)
+      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+
+    const remark = remarkLink()
+    remark({} as Node)
+    expect(codeNode).toEqual({
+      ...codeNode,
+      type: 'html',
+      value: '<RedisInsightLink url="workbench" text="Workbench" />',
+    })
+  })
 })

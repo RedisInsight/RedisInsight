@@ -2,11 +2,12 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { isBoolean } from 'lodash'
 import { Maybe } from 'uiSrc/utils'
+import { InsightsPanelState, InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { RootState } from '../store'
 
-export const initialState: any = {
+export const initialState: InsightsPanelState = {
   isOpen: false,
-  tabSelected: 'explore',
+  tabSelected: InsightsPanelTabs.Explore,
   explore: {
     search: '',
     itemScrollTop: 0,
@@ -28,14 +29,14 @@ const insightsPanelSlice = createSlice({
     changeSelectedTab: (state, { payload }) => {
       state.tabSelected = payload
     },
-    setExplorePanelSearch: (state, { payload }: { payload: any }) => {
+    setExplorePanelSearch: (state, { payload }: { payload: string }) => {
       const prevValue = state.explore.search
       state.explore.search = payload
       if (prevValue !== payload) {
         state.explore.itemScrollTop = 0
       }
     },
-    setExplorePanelScrollTop: (state, { payload }: { payload: any }) => {
+    setExplorePanelScrollTop: (state, { payload }: { payload: number }) => {
       state.explore.itemScrollTop = payload || 0
     },
     resetExplorePanelSearch: (state) => {

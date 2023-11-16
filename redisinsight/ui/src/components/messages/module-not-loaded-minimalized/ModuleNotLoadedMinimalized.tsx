@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiLink, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
@@ -51,10 +51,10 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                     ssoCloudHandlerClick(e, source, `${moduleName}_${source}`)
                     onClose?.()
                   }}
+                  className="externalLink externalLink-sm"
                   data-testid="tutorials-get-started-link"
                 >
                   Start with Cloud for free
-                  <EuiIcon type="sortUp" size="s" className={styles.externalLinkIcon} />
                 </EuiLink>
               )}
             </OAuthSsoHandlerDialog>
@@ -63,10 +63,10 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
               external={false}
               target="_blank"
               href={getUtmExternalLink(EXTERNAL_LINKS.docker, { campaign: UTM_CAMPAINGS[source] ?? source })}
+              className="externalLink externalLink-sm"
               data-testid="tutorials-docker-link"
             >
               Start with Docker
-              <EuiIcon type="sortUp" size="s" className={styles.externalLinkIcon} />
             </EuiLink>
           </>
         )}

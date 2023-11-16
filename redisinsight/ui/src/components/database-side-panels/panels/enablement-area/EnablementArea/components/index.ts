@@ -11,6 +11,7 @@ import UploadTutorialForm from './UploadTutorialForm'
 import WelcomeMyTutorials from './WelcomeMyTutorials'
 import RedisUploadButton from './RedisUploadButton'
 import CloudLink from './CloudLink'
+import RedisInsightLink from './RedisInsightLink'
 
 export {
   Code,
@@ -26,4 +27,5 @@ export {
   WelcomeMyTutorials,
   RedisUploadButton,
   CloudLink,
+  RedisInsightLink,
 }

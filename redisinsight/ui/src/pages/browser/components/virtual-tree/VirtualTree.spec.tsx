@@ -45,8 +45,7 @@ export const mockVirtualTreeResult = [mockTreeItem, mockTreeItem2]
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
-  __esModule: true,
-  useDisposableWebworker: jest.fn(() => ({ result: mockVirtualTreeResult, run: jest.fn() }))
+  useDisposableWebworker: jest.fn().mockReturnValue({ result: mockVirtualTreeResult, run: jest.fn() })
 }))
 
 describe('VirtualTree', () => {
@@ -68,6 +67,10 @@ describe('VirtualTree', () => {
   })
 
   it('should render items', async () => {
+    (useDisposableWebworker as jest.Mock).mockReturnValueOnce({
+      result: mockVirtualTreeResult,
+      run: jest.fn()
+    })
     const mockFn = jest.fn()
     const { queryByTestId } = render(
       <VirtualTree
@@ -99,7 +102,7 @@ describe('VirtualTree', () => {
     expect(mockOnStatusOpen).toBeCalledWith('car:', true)
   })
 
-  it('should not call onStatusOpen if more then one folder is exist', () => {
+  it('should not call onStatusOpen if more than one folder is exist', () => {
     const mockFn = jest.fn()
     const mockOnStatusOpen = jest.fn()
 

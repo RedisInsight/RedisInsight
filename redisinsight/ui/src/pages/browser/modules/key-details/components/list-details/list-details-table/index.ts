@@ -1,0 +1,1 @@
+export { ListDetailsTable } from './ListDetailsTable'

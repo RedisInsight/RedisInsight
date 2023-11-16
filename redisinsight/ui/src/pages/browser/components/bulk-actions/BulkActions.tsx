@@ -19,6 +19,7 @@ import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import { FullScreen } from 'uiSrc/components'
 
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
@@ -97,19 +98,11 @@ const BulkActions = (props: Props) => {
             <h4>Bulk Actions</h4>
           </EuiTitle>
           {!arePanelsCollapsed && (
-            <EuiToolTip
-              content={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-              position="left"
+            <FullScreen
+              isFullScreen={isFullScreen}
+              onToggleFullScreen={onToggleFullScreen}
               anchorClassName={cx(styles.anchorTooltip, styles.anchorTooltipFullScreen)}
-            >
-              <EuiButtonIcon
-                iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-                color="primary"
-                aria-label="Full screen btn"
-                onClick={onToggleFullScreen}
-                data-testid="toggle-full-screen"
-              />
-            </EuiToolTip>
+            />
           )}
           {(!arePanelsCollapsed || isFullScreen) && (
             <EuiToolTip

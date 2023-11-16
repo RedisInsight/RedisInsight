@@ -66,7 +66,7 @@ const Node = ({
   }, [])
 
   const handleClick = () => {
-    if (isLeaf && !isSelected) {
+    if (isLeaf) {
       updateStatusSelected?.(nameBuffer)
     }
 

@@ -190,7 +190,7 @@ const BrowserPage = () => {
   }
 
   const selectKey = ({ rowData }: { rowData: any }) => {
-    if (!isEqualBuffers(rowData.name, selectedKey)) {
+    if (!isEqualBuffers(rowData.name, selectedKeyRef.current)) {
       dispatch(toggleBrowserFullScreen(false))
 
       dispatch(setInitialStateByType(prevSelectedType.current))

@@ -94,6 +94,10 @@ const VirtualTree = (props: Props) => {
     nodes.current = result
     rerender({})
     setConstructingTree?.(false)
+
+    if (nodes?.current?.length === 1) {
+      onStatusOpen?.(nodes.current[0].fullName, true)
+    }
   }, [result])
 
   useEffect(() => {

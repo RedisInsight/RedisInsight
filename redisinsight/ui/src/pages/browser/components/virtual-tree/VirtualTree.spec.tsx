@@ -2,6 +2,7 @@ import React from 'react'
 import { mock, instance } from 'ts-mockito'
 
 import { render } from 'uiSrc/utils/test-utils'
+import { useDisposableWebworker } from 'uiSrc/services'
 import VirtualTree, { Props } from './VirtualTree'
 
 const mockedProps = mock<Props>()
@@ -39,9 +40,26 @@ export const mockVirtualTreeResult = [{
   name: 'test',
 }]
 
+export const mockVirtualTreeResult1 = [{
+  children: [{
+    children: [],
+    fullName: 'car:110:',
+    id: '0.snc1rc3zwgo',
+    keyApproximate: 0.01,
+    keyCount: 1,
+    name: '110',
+  }],
+  fullName: 'car:',
+  id: '0.sz1ie1koqi8',
+  keyApproximate: 47.18,
+  keyCount: 4718,
+  name: 'car',
+}]
+
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
+  useDisposableWebworker: jest.fn(() => ({ result: mockVirtualTreeResult, run: jest.fn() }))
+  // useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
 }))
 
 describe('VirtualTree', () => {
@@ -73,5 +91,39 @@ describe('VirtualTree', () => {
     )
 
     expect(queryByTestId('node-item_test')).toBeInTheDocument()
+  })
+
+  it('should call onStatusOpen if only one folder is exist', () => {
+    (useDisposableWebworker as jest.Mock).mockReturnValueOnce({
+      result: mockVirtualTreeResult1,
+      run: jest.fn()
+    })
+    const mockFn = jest.fn()
+    const mockOnStatusOpen = jest.fn()
+
+    render(
+      <VirtualTree
+        {...instance(mockedProps)}
+        onStatusOpen={mockOnStatusOpen}
+        setConstructingTree={mockFn}
+      />
+    )
+
+    expect(mockOnStatusOpen).toBeCalledWith('car:', true)
+  })
+
+  it('should not call onStatusOpen if more then one folder is exist', () => {
+    const mockFn = jest.fn()
+    const mockOnStatusOpen = jest.fn()
+
+    render(
+      <VirtualTree
+        {...instance(mockedProps)}
+        onStatusOpen={mockOnStatusOpen}
+        setConstructingTree={mockFn}
+      />
+    )
+
+    expect(mockOnStatusOpen).not.toHaveBeenCalled()
   })
 })

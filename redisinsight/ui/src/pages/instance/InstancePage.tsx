@@ -1,7 +1,7 @@
 import { EuiResizableContainer } from '@elastic/eui'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import cx from 'classnames'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
@@ -34,6 +34,7 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { getPageName } from 'uiSrc/utils/routing'
 import InstancePageRouter from './InstancePageRouter'
 
 import styles from './styles.module.scss'
@@ -66,11 +67,15 @@ const InstancePage = ({ routes = [] }: Props) => {
   const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
 
   const dispatch = useDispatch()
+  const { pathname } = useLocation()
+
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { isShowCli, isShowHelper } = useSelector(cliSettingsSelector)
   const { data: modulesData } = useSelector(instancesSelector)
   const { isShowMonitor } = useSelector(monitorSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
+
+  const lastPageRef = useRef<string>()
 
   const isShowBottomGroup = isShowCli || isShowHelper || isShowMonitor
 
@@ -82,9 +87,10 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
-      // rerender children from scratch to clear all component states
-      setIsShouldChildrenRerender(true)
-      requestAnimationFrame(() => setIsShouldChildrenRerender(false))
+      // rerender children only if the same page from scratch to clear all component states
+      if (lastPageRef.current === getPageName(connectionInstanceId, pathname)) {
+        setIsShouldChildrenRerender(true)
+      }
 
       resetContext()
     }
@@ -92,6 +98,14 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
     dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
   }, [connectionInstanceId])
+
+  useEffect(() => {
+    lastPageRef.current = getPageName(connectionInstanceId, pathname)
+  }, [pathname])
+
+  useEffect(() => {
+    if (isShouldChildrenRerender) setIsShouldChildrenRerender(false)
+  }, [isShouldChildrenRerender])
 
   useEffect(() => () => {
     setSizes((prevSizes: ResizablePanelSize) => {

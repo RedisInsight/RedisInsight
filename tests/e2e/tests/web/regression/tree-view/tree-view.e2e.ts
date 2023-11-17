@@ -2,7 +2,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneBigConfig,
+    ossStandaloneBigConfig, ossStandaloneConfig,
     ossStandaloneConfigEmpty,
     ossStandaloneRedisearch
 } from '../../../../helpers/conf';
@@ -10,6 +10,7 @@ import { KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 import { Common } from '../../../../helpers/common';
+import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
@@ -145,3 +146,38 @@ test
         actualItemsArray = await browserPage.TreeView.getAllItemsArray();
         await t.expect(actualItemsArray).eql(expectedSortedByDESC);
     });
+
+test
+    .before(async() => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+    })
+    .after(async() => {
+        await browserPage.Cli.sendCommandInCli('flushdb');
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that if filtering results has only 1 folder, the folder will be expanded', async t => {
+        const name = Common.generateWord(10);
+        const additionalCharacter = Common.generateWord(1);
+        const keyName1 = Common.generateWord(3);
+        const keyName2 = Common.generateWord(3);
+        keyNames = [`${name}${additionalCharacter}:${keyName1}`, `${name}${additionalCharacter}:${keyName2}`, name];
+
+        const commands = [
+            'flushdb',
+            `HSET ${keyNames[0]} field value`,
+            `HSET ${keyNames[1]} field value`,
+            `HSET ${keyNames[2]} field value`
+        ];
+
+        // Create 5 keys
+        await browserPage.Cli.sendCommandsInCli(commands);
+        await t.click(browserPage.treeViewButton);
+        await browserPage.searchByKeyName(`${name}${additionalCharacter}*`);
+
+        await verifyKeysDisplayingInTheList([keyName1, keyName2], true);
+
+        await browserPage.searchByKeyName(`${name}${additionalCharacter}`);
+
+        await verifyKeysDisplayingInTheList([keyName1, keyName2], false);
+
+    });
+

@@ -15,6 +15,7 @@ const getCloudSsoUtmCampaignTestCases = [
   [OAuthSocialSource.WelcomeScreen, CloudSsoUtmCampaign.WelcomeScreen],
   [OAuthSocialSource.TriggersAndFunctions, CloudSsoUtmCampaign.TriggersAndFunctions],
   [OAuthSocialSource.Tutorials, CloudSsoUtmCampaign.Tutorial],
+  [OAuthSocialSource.Autodiscovery, CloudSsoUtmCampaign.AutoDiscovery],
   [null, CloudSsoUtmCampaign.Unknown],
   [undefined, CloudSsoUtmCampaign.Unknown],
 ]

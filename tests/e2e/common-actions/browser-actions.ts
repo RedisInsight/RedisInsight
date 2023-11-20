@@ -87,7 +87,7 @@ export class BrowserActions {
      * @param name node name
      */
     getNodeSelector(name: string): Selector {
-        return Selector(`[data-testid="node-item_${name}"]`);
+        return Selector(`[data-testid^="node-item_${name}"]`);
     }
 
     /**

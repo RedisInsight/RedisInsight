@@ -1,8 +1,6 @@
 import { IRoute, Pages } from 'uiSrc/constants'
 import { SettingsPage } from 'uiSrc/pages'
-import SentinelPage from 'uiSrc/pages/sentinel'
-import SentinelDatabasesPage from 'uiSrc/pages/sentinelDatabases'
-import SentinelDatabasesResultPage from 'uiSrc/pages/sentinelDatabasesResult'
+import { SentinelDatabasesPage, SentinelDatabasesResultPage, SentinelPage } from 'uiSrc/pages/autodiscover-sentinel'
 
 const ROUTES: IRoute[] = [
   {

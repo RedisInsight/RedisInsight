@@ -1,7 +1,7 @@
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
-import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
-import SlowLogPage from 'uiSrc/pages/slowLog'
-import DatabaseAnalysisPage from 'uiSrc/pages/databaseAnalysis'
+import ClusterDetailsPage from 'uiSrc/pages/cluster-details'
+import SlowLogPage from 'uiSrc/pages/slow-log'
+import DatabaseAnalysisPage from 'uiSrc/pages/database-analysis'
 
 export const ANALYTICS_ROUTES: IRoute[] = [
   {

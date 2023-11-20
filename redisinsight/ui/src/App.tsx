@@ -15,7 +15,6 @@ import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 import ThemeComponent from './components/theme/ThemeComponent'
 import GlobalDialogs from './components/global-dialogs'
-import GlobalActionBar from './components/global-action-bar'
 
 import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
 import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
@@ -45,7 +44,6 @@ const App = ({ children }: { children?: ReactElement[] }) => {
         ? <PagePlaceholder />
         : (
           <EuiPage className="main">
-            <GlobalActionBar />
             <GlobalDialogs />
             <GlobalSubscriptions />
             <NavigationMenu />

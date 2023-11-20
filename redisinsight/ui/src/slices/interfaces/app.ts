@@ -208,17 +208,6 @@ export interface StateAppNotifications {
   }
 }
 
-export interface StateAppActionBar {
-  status: ActionBarStatus
-  text?: string
-  actions?: ActionBarActions[]
-}
-
-export interface ActionBarActions {
-  onClick: () => void
-  label: string
-}
-
 export enum ActionBarStatus {
   Progress = 'progress',
   Success = 'success',

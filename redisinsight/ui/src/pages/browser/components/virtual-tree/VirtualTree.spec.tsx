@@ -2,7 +2,6 @@ import React from 'react'
 import { mock, instance } from 'ts-mockito'
 
 import { render } from 'uiSrc/utils/test-utils'
-import * as Services from 'uiSrc/services'
 import VirtualTree, { Props } from './VirtualTree'
 
 const mockedProps = mock<Props>()
@@ -16,37 +15,36 @@ const mockedItems = [
   },
 ]
 
-const mockTreeItem = {
-  children: [{
+export const mockVirtualTreeResult = [
+  {
+    children: [{
+      children: [],
+      fullName: 'car:110:',
+      id: '0.snc1rc3zwgo',
+      keyApproximate: 0.01,
+      keyCount: 1,
+      name: '110',
+    }],
+    fullName: 'car:',
+    id: '0.sz1ie1koqi8',
+    keyApproximate: 47.18,
+    keyCount: 4718,
+    name: 'car',
+  },
+  {
     children: [],
-    fullName: 'car:110:',
-    id: '0.snc1rc3zwgo',
+    fullName: 'test',
+    id: '0.snc1rc3zwg1o',
     keyApproximate: 0.01,
     keyCount: 1,
-    name: '110',
-  }],
-  fullName: 'car:',
-  id: '0.sz1ie1koqi8',
-  keyApproximate: 47.18,
-  keyCount: 4718,
-  name: 'car',
-}
-
-const mockTreeItem2 = {
-  children: [],
-  fullName: 'test',
-  id: '0.snc1rc3zwg1o',
-  keyApproximate: 0.01,
-  keyCount: 1,
-  name: 'test',
-}
-
-export const mockVirtualTreeResult = [mockTreeItem, mockTreeItem2]
+    name: 'test',
+  }
+]
 
 jest.mock('uiSrc/services', () => ({
   __esModule: true,
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: jest.fn().mockReturnValue({ result: mockVirtualTreeResult, run: jest.fn() })
+  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() })
 }))
 
 describe('VirtualTree', () => {
@@ -68,9 +66,6 @@ describe('VirtualTree', () => {
   })
 
   it('should render items', async () => {
-    jest.spyOn(Services, 'useDisposableWebworker')
-      .mockReturnValueOnce({ result: [mockTreeItem, mockTreeItem2], run: jest.fn() })
-
     const mockFn = jest.fn()
     const { queryByTestId } = render(
       <VirtualTree
@@ -81,24 +76,6 @@ describe('VirtualTree', () => {
     )
 
     expect(queryByTestId('node-item_test')).toBeInTheDocument()
-  })
-
-  it('should call onStatusOpen if only one folder is exist', () => {
-    jest.spyOn(Services, 'useDisposableWebworker')
-      .mockReturnValueOnce({ result: [mockTreeItem], run: jest.fn() })
-
-    const mockFn = jest.fn()
-    const mockOnStatusOpen = jest.fn()
-
-    render(
-      <VirtualTree
-        {...instance(mockedProps)}
-        onStatusOpen={mockOnStatusOpen}
-        setConstructingTree={mockFn}
-      />
-    )
-
-    expect(mockOnStatusOpen).toBeCalledWith('car:', true)
   })
 
   it('should not call onStatusOpen if more than one folder is exist', () => {

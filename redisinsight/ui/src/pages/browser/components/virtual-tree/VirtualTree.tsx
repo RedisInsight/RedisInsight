@@ -63,7 +63,7 @@ const VirtualTree = (props: Props) => {
     onStatusOpen,
     onStatusSelected,
     setConstructingTree,
-    webworkerFn = () => {},
+    webworkerFn = () => { },
     onDeleteClicked,
     onDeleteLeaf,
   } = props
@@ -95,9 +95,7 @@ const VirtualTree = (props: Props) => {
     rerender({})
     setConstructingTree?.(false)
 
-    if (nodes?.current?.length === 1) {
-      onStatusOpen?.(nodes.current[0].fullName, true)
-    }
+    openSingleFolderNode(nodes.current)
   }, [result])
 
   useEffect(() => {
@@ -208,6 +206,15 @@ const VirtualTree = (props: Props) => {
     nestingLevel,
     node,
   })
+
+  const openSingleFolderNode = useCallback((treeNodes?: TreeNode[]) => {
+    let nodes = treeNodes
+    while (nodes?.length === 1) {
+      const singleNode = nodes[0]
+      onStatusOpen?.(singleNode.fullName, true)
+      nodes = singleNode.children
+    }
+  }, [onStatusOpen])
 
   // The `treeWalker` function runs only on tree re-build which is performed
   // whenever the `treeWalker` prop is changed.

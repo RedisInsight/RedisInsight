@@ -27,7 +27,6 @@ import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
 import appFeaturesReducer from './app/features'
-import appActionBarReducer from './app/actionBar'
 import appUrlHandlingReducer from './app/url-handling'
 import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
@@ -45,6 +44,7 @@ import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 import insightsPanelReducer from './panels/insights'
+import appRDIReducer from './rdi/rdi'
 
 export const history = createBrowserHistory()
 
@@ -57,7 +57,6 @@ export const rootReducer = combineReducers({
     plugins: appPluginsReducer,
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
-    actionBar: appActionBarReducer,
     urlHandling: appUrlHandlingReducer,
   }),
   connections: combineReducers({
@@ -112,6 +111,9 @@ export const rootReducer = combineReducers({
   }),
   panels: combineReducers({
     insights: insightsPanelReducer,
+  }),
+  rdi: combineReducers({
+    rdi: appRDIReducer
   })
 })
 

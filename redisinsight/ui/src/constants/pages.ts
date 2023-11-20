@@ -1,6 +1,6 @@
 export interface IRoute {
   path: any
-  component: (routes: any) => JSX.Element | Element
+  component: (routes: any) => JSX.Element | Element | null
   pageName?: PageNames
   exact?: boolean
   routes?: any
@@ -49,4 +49,6 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsLibraries}`,
   triggeredFunctionsFunctions: (instanceId: string) =>
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
+  // rdi pages
+  rdi: '/integrate',
 }

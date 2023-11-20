@@ -1,4 +1,4 @@
-import { LIST_OF_FUNCTION_TYPES } from 'uiSrc/pages/triggeredFunctions/constants'
+import { LIST_OF_FUNCTION_TYPES } from 'uiSrc/pages/triggered-functions/constants'
 import { FunctionType } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
 export const getFunctionsLengthByType = (functions: Array<{

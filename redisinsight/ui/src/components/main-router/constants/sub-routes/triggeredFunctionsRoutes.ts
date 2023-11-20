@@ -1,5 +1,5 @@
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
-import { LibrariesPage, FunctionsPage } from 'uiSrc/pages/triggeredFunctions/pages'
+import { LibrariesPage, FunctionsPage } from 'uiSrc/pages/triggered-functions/pages'
 
 export const TRIGGERED_FUNCTIONS_ROUTES: IRoute[] = [
   {

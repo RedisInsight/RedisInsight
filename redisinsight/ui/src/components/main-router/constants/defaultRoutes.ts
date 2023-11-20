@@ -10,10 +10,11 @@ import {
   RedisClusterDatabasesPage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
-import PubSubPage from 'uiSrc/pages/pubSub'
+import PubSubPage from 'uiSrc/pages/pub-sub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
-import TriggeredFunctionsPage from 'uiSrc/pages/triggeredFunctions'
-import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
+import TriggeredFunctionsPage from 'uiSrc/pages/triggered-functions'
+import RdiList from 'uiSrc/pages/rdi/home'
+import { ANALYTICS_ROUTES, RDI_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -74,6 +75,12 @@ const ROUTES: IRoute[] = [
         component: RedisCloudDatabasesResultPage,
       },
     ],
+  },
+  {
+    path: Pages.rdi,
+    // todo: add home rdi component - list of instances
+    component: RdiList,
+    routes: RDI_ROUTES,
   },
   {
     path: '/:instanceId',

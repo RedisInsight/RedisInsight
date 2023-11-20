@@ -30,8 +30,8 @@ describe('RedisClientProvider', () => {
 
   describe('createClient', () => {
     it('should create redis client', async () => {
-      const redisClient = service.createClient(mockCommonClientMetadata);
-      expect(redisClient).toBeInstanceOf(RedisClientSubscriber);
+      const redisClientSubscriber = service.createClient(mockCommonClientMetadata);
+      expect(redisClientSubscriber).toBeInstanceOf(RedisClientSubscriber);
     });
   });
 });

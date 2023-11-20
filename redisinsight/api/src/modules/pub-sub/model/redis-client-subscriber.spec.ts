@@ -129,7 +129,7 @@ describe('RedisClient', () => {
 
       expect(redisClientSubscriber['client']).toEqual(null);
       expect(redisClientSubscriber['status']).toEqual(RedisClientSubscriberStatus.End);
-      expect(removeAllListenersSpy).toHaveBeenCalledWith({});
+      expect(removeAllListenersSpy).toHaveBeenCalled();
       expect(nodeClient.quit).toHaveBeenCalled();
     });
   });

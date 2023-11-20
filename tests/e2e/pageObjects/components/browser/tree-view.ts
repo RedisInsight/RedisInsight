@@ -93,11 +93,11 @@ export class TreeView {
     */
     async openTreeFolders(names: string[]): Promise<void> {
         let base = `node-item_${names[0]}:`;
-        await this.clickElementIfNotExpanded(base, names[0]);
+        await this.clickElementIfNotExpanded(base);
         if (names.length > 1) {
             for (let i = 1; i < names.length; i++) {
                 base = `${base  }${names[i]}:`;
-                await this.clickElementIfNotExpanded(base, names[i]);
+                await this.clickElementIfNotExpanded(base);
             }
         }
     }
@@ -124,13 +124,12 @@ export class TreeView {
     /**
      * click on the folder element if it is not expanded
      * @param base the base element
-     * @param name of the folder
      */
-    private async clickElementIfNotExpanded(base: string, name: string): Promise<void> {
-        const folderArrow = Selector(`[data-test-subj="node-arrow-icon_"${name[0]}"]`);
-        const baseSelector = Selector(`[data-testid="${base}"]`);
-        if (await baseSelector.find('div').count === 0 && await folderArrow.exists) {
-            await t.click(Selector(`[data-testid="${base}"]`));
+    private async clickElementIfNotExpanded(base: string): Promise<void> {
+        const baseSelector = Selector(`[data-testid^="${base}"]`);
+        const  elementSelector = await baseSelector.getAttribute('data-testid');
+        if (!elementSelector?.includes('expanded')) {
+            await t.click(Selector(`[data-testid^="${base}"]`));
         }
     }
 }

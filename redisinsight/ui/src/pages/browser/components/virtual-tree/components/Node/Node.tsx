@@ -154,7 +154,7 @@ const Node = ({
       onKeyDown={handleKeyDown}
       tabIndex={0}
       onFocus={() => {}}
-      data-testid={`node-item_${fullName}`}
+      data-testid={`node-item_${fullName}${isOpen && !isLeaf ? '--expanded' : ''}`}
     >
       {!isLeaf && <Folder />}
       {isLeaf && <Leaf />}

@@ -24,7 +24,7 @@ fixture `Github functionality`
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.only('Verify that user can work with Github link in the application', async t => {
+test('Verify that user can work with Github link in the application', async t => {
     // Verify that user can see the icon for GitHub reference at the bottom of the left side bar in the List of DBs
     await t.expect(myRedisDatabasePage.NavigationPanel.githubButton.visible).ok('Github button not found');
     //Verify that user can see the icon for GitHub reference at the bottom of the left side bar on the Browser page
@@ -33,7 +33,6 @@ test.only('Verify that user can work with Github link in the application', async
     // Verify that user can see the icon for GitHub reference at the bottom of the left side bar on the Workbench page
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await t.expect(myRedisDatabasePage.NavigationPanel.githubButton.visible).ok('Github button');
-    // update after resolving testcafe Native Automation mode limitations
     // Verify that when user clicks on Github icon he redirects to the URL: https://github.com/RedisInsight/RedisInsight
     await t.click(myRedisDatabasePage.NavigationPanel.githubButton);
     await Common.checkURLContainsText('https://github.com/RedisInsight/RedisInsight');

@@ -207,10 +207,12 @@ const VirtualTree = (props: Props) => {
     node,
   })
 
-  const openSingleFolderNode = useCallback((nodes?: TreeNode[]) => {
-    if (nodes?.length === 1) {
-      onStatusOpen?.(nodes[0].fullName, true)
-      openSingleFolderNode(nodes[0].children)
+  const openSingleFolderNode = useCallback((treeNodes?: TreeNode[]) => {
+    let nodes = treeNodes
+    while (nodes?.length === 1) {
+      const singleNode = nodes[0]
+      onStatusOpen?.(singleNode.fullName, true)
+      nodes = singleNode.children
     }
   }, [onStatusOpen])
 

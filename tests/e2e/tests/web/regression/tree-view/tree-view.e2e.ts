@@ -2,7 +2,8 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneBigConfig, ossStandaloneConfig,
+    ossStandaloneBigConfig,
+    ossStandaloneConfig,
     ossStandaloneConfigEmpty,
     ossStandaloneRedisearch
 } from '../../../../helpers/conf';
@@ -147,6 +148,7 @@ test
         await t.expect(actualItemsArray).eql(expectedSortedByDESC);
     });
 
+https://redislabs.atlassian.net/browse/RI-5131
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
@@ -167,17 +169,15 @@ test
             `HSET ${keyNames[1]} field value`,
             `HSET ${keyNames[2]} field value`
         ];
-
-        // Create 5 keys
         await browserPage.Cli.sendCommandsInCli(commands);
         await t.click(browserPage.treeViewButton);
-        await browserPage.searchByKeyName(`${name}${additionalCharacter}*`);
 
+        // Verify if there is only folder, a user can see keys inside
+        await browserPage.searchByKeyName(`${name}${additionalCharacter}*`);
         await verifyKeysDisplayingInTheList([keyName1, keyName2], true);
 
-        await browserPage.searchByKeyName(`${name}${additionalCharacter}`);
-
+        // Verify if there are folder and key, a user can't see keys inside the folder
+        await browserPage.searchByKeyName(`${name}*`);
         await verifyKeysDisplayingInTheList([keyName1, keyName2], false);
-
     });
 

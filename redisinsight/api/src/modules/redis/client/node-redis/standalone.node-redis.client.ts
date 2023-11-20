@@ -63,4 +63,45 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
     return this.sendCommand(command, options);
   }
+
+  /**
+   * @inheritDoc
+   */
+  async publish(channel: string, message: string): Promise<any> {
+    return this.client.publish(channel, message);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async subscribe(channel: string): Promise<any> {
+    const listener = (message: string, messageChannel : string) => {
+      this.emit('message', messageChannel, message);
+    };
+    return this.client.subscribe(channel, listener);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async pSubscribe(channel: string): Promise<any> {
+    const listener = (message: string, messageChannel : string) => {
+      this.emit('pmessage', channel, messageChannel, message);
+    };
+    return this.client.pSubscribe(channel, listener);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async unsubscribe(channel: string): Promise<any> {
+    return this.client.unsubscribe(channel);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async pUnsubscribe(channel: string): Promise<any> {
+    return this.client.pUnsubscribe(channel);
+  }
 }

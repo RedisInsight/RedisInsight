@@ -1,27 +1,26 @@
-import Redis from 'ioredis';
-import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
-import { RedisClientEvents, RedisClientStatus } from 'src/modules/pub-sub/constants';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
+import { RedisClientSubscriberEvents, RedisClientSubscriberStatus } from 'src/modules/pub-sub/constants';
+import { RedisClient } from 'src/modules/redis/client';
 
 const getRedisClientFn = jest.fn();
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(RedisClient.prototype);
 nodeClient.subscribe = jest.fn();
-nodeClient.psubscribe = jest.fn();
+nodeClient.pSubscribe = jest.fn();
 nodeClient.unsubscribe = jest.fn();
-nodeClient.punsubscribe = jest.fn();
-nodeClient.status = 'ready';
+nodeClient.pUnsubscribe = jest.fn();
 nodeClient.disconnect = jest.fn();
 nodeClient.quit = jest.fn();
 
 describe('RedisClient', () => {
-  let redisClient: RedisClient;
+  let redisClient: RedisClientSubscriber;
 
   beforeEach(() => {
     jest.resetAllMocks();
-    redisClient = new RedisClient('databaseId', getRedisClientFn);
+    redisClient = new RedisClientSubscriber('databaseId', getRedisClientFn);
     getRedisClientFn.mockResolvedValue(nodeClient);
     nodeClient.subscribe.mockResolvedValue('OK');
-    nodeClient.psubscribe.mockResolvedValue('OK');
+    nodeClient.pSubscribe.mockResolvedValue('OK');
   });
 
   describe('getClient', () => {
@@ -34,46 +33,46 @@ describe('RedisClient', () => {
     it('should connect and return client by default', async () => {
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(1);
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connected);
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connected);
     });
     it('should wait until first attempt of connection finish with success', async () => {
       redisClient.getClient().then().catch();
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connecting);
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connecting);
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(1);
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connected);
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connected);
     });
     it('should wait until first attempt of connection finish with error', async () => {
       try {
         getRedisClientFn.mockRejectedValueOnce(new Error('Connection error'));
         redisClient.getClient().then().catch(() => {});
-        expect(redisClient['status']).toEqual(RedisClientStatus.Connecting);
+        expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connecting);
         expect(await redisClient.getClient()).toEqual(nodeClient);
         fail();
       } catch (e) {
         expect(connectSpy).toHaveBeenCalledTimes(1);
-        expect(redisClient['status']).toEqual(RedisClientStatus.Error);
+        expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Error);
       }
     });
     it('should return existing connection when status connected', async () => {
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(1);
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connected);
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connected);
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(1);
     });
     it('should return create new connection when status end or error', async () => {
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(1);
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connected);
-      redisClient['status'] = RedisClientStatus.Error;
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connected);
+      redisClient['status'] = RedisClientSubscriberStatus.Error;
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(2);
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connected);
-      redisClient['status'] = RedisClientStatus.End;
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connected);
+      redisClient['status'] = RedisClientSubscriberStatus.End;
       expect(await redisClient.getClient()).toEqual(nodeClient);
       expect(connectSpy).toHaveBeenCalledTimes(3);
-      expect(redisClient['status']).toEqual(RedisClientStatus.Connected);
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.Connected);
     });
   });
 
@@ -81,7 +80,7 @@ describe('RedisClient', () => {
     it('should connect and emit connected event', async () => {
       expect(await new Promise((res) => {
         redisClient['connect']();
-        redisClient.on(RedisClientEvents.Connected, res);
+        redisClient.on(RedisClientSubscriberEvents.Connected, res);
       })).toEqual(nodeClient);
     });
     it('should emit message event (message source)', async () => {
@@ -125,7 +124,7 @@ describe('RedisClient', () => {
       redisClient.destroy();
 
       expect(redisClient['client']).toEqual(null);
-      expect(redisClient['status']).toEqual(RedisClientStatus.End);
+      expect(redisClient['status']).toEqual(RedisClientSubscriberStatus.End);
       expect(removeAllListenersSpy).toHaveBeenCalled();
       expect(nodeClient.quit).toHaveBeenCalled();
     });

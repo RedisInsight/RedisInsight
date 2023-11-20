@@ -39,7 +39,8 @@ import testcafe from 'testcafe';
                     assertionTimeout: 5000,
                     speed: 1,
                     quarantineMode: { successThreshold: 1, attemptLimit: 3 },
-                    pageRequestTimeout: 8000
+                    pageRequestTimeout: 8000,
+                    disableMultipleWindows: true
                 });
         })
         .then((failedCount) => {

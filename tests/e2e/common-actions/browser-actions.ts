@@ -108,7 +108,10 @@ export class BrowserActions {
             for (let j = 0; j < innerFoldersNumber; j++) {
                 const nodeName = this.getNodeName(prevNodeSelector, folders[i][j], delimiter);
                 const node = this.getNodeSelector(nodeName);
-                await t.click(node);
+                const fullTestIdSelector = await node.getAttribute('data-testid');
+                if (!fullTestIdSelector?.includes('expanded')) {
+                    await t.click(node);
+                }
                 prevNodeSelector = nodeName;
             }
 

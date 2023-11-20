@@ -14,6 +14,7 @@ import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
+import { createHttpOptions } from './utils/createHttpOptions';
 
 const serverConfig = get('server') as Config['server'];
 
@@ -33,10 +34,7 @@ export default async function bootstrap(): Promise<IApp> {
   };
 
   if (serverConfig.tls && serverConfig.tlsCert && serverConfig.tlsKey) {
-    options.httpsOptions = {
-      key: JSON.parse(`"${serverConfig.tlsKey}"`),
-      cert: JSON.parse(`"${serverConfig.tlsCert}"`),
-    };
+    options.httpsOptions = await createHttpOptions(serverConfig);
   }
 
   const app = await NestFactory.create<NestExpressApplication>(
@@ -70,7 +68,9 @@ export default async function bootstrap(): Promise<IApp> {
 
   await app.listen(port, serverConfig.listenInterface);
   logger.log({
-    message: `Server is running on http(s)://localhost:${port}`,
+    message: `Server is running on http(s)://${
+      serverConfig.listenInterface ?? 'localhost'
+    }:${port}`,
     context: 'bootstrap',
   });
 

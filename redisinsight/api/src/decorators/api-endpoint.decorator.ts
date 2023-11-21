@@ -16,12 +16,12 @@ export interface IApiEndpointOptions {
 export function ApiEndpoint(
   options: IApiEndpointOptions,
 ): MethodDecorator & ClassDecorator {
-  const { description, statusCode, responses = [], excludeFor = [] } = options;
+  const {
+    description, statusCode, responses = [], excludeFor = [],
+  } = options;
   return applyDecorators(
     ApiOperation({ description }),
-    ApiExcludeEndpoint(
-      excludeFor.includes(SERVER_CONFIG.buildType as BuildType),
-    ),
+    ApiExcludeEndpoint(excludeFor.includes(SERVER_CONFIG.buildType as BuildType)),
     HttpCode(statusCode),
     ...responses?.map((response) => ApiResponse(response)),
   );

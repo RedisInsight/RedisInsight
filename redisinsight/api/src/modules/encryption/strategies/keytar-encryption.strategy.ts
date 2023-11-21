@@ -1,14 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  createDecipheriv,
-  createCipheriv,
-  randomBytes,
-  createHash,
+  createDecipheriv, createCipheriv, randomBytes, createHash,
 } from 'crypto';
-import {
-  EncryptionResult,
-  EncryptionStrategy,
-} from 'src/modules/encryption/models';
+import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/models';
 import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 import {
   KeytarDecryptionErrorException,
@@ -47,9 +41,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
    * Generates random password
    */
   private generatePassword(): string {
-    return (
-      SERVER_CONFIG.secretStoragePassword || randomBytes(20).toString('base64')
-    );
+    return SERVER_CONFIG.secretStoragePassword || randomBytes(20).toString('base64');
   }
 
   /**
@@ -136,11 +128,7 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
 
     const cipherKey = await this.getCipherKey();
     try {
-      const decipher = createDecipheriv(
-        ALGORITHM,
-        cipherKey,
-        Buffer.alloc(16, 0),
-      );
+      const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.alloc(16, 0));
       let decrypted = decipher.update(data, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;

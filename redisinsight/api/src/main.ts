@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import { join } from 'path';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -33,14 +32,11 @@ export default async function bootstrap(): Promise<IApp> {
     logger,
   };
 
-  if (serverConfig.tls && serverConfig.tlsCert && serverConfig.tlsKey) {
+  if (serverConfig.tlsCert && serverConfig.tlsKey) {
     options.httpsOptions = await createHttpOptions(serverConfig);
   }
 
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    options,
-  );
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));

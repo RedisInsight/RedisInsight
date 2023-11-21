@@ -10,23 +10,19 @@ const serverConfig = config.get('server') as Config['server'];
 
 @Injectable()
 export class RedisClientProvider {
-  constructor(private databaseConnectionService: DatabaseConnectionService) {}
+  constructor(
+    private databaseConnectionService: DatabaseConnectionService,
+  ) {}
 
   createClient(clientMetadata: ClientMetadata): RedisClient {
-    return new RedisClient(
-      clientMetadata.databaseId,
-      this.getConnectFn(clientMetadata),
-    );
+    return new RedisClient(clientMetadata.databaseId, this.getConnectFn(clientMetadata));
   }
 
   private getConnectFn(clientMetadata: ClientMetadata) {
-    return () =>
-      withTimeout(
-        this.databaseConnectionService.createClient(clientMetadata),
-        serverConfig.requestTimeout,
-        new ServiceUnavailableException(
-          ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB,
-        ),
-      );
+    return () => withTimeout(
+      this.databaseConnectionService.createClient(clientMetadata),
+      serverConfig.requestTimeout,
+      new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+    );
   }
 }

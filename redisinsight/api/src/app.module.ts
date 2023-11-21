@@ -1,9 +1,6 @@
 import * as fs from 'fs';
 import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  OnModuleInit,
+  MiddlewareConsumer, Module, NestModule, OnModuleInit
 } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from 'nest-router';
@@ -65,15 +62,11 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     CloudModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [
-          ServeStaticModule.forRoot({
-            rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
-            exclude: [
-              '/api/**',
-              `${SERVER_CONFIG.customPluginsUri}/**`,
-              `${SERVER_CONFIG.staticUri}/**`,
-            ],
-          }),
-        ]
+        ServeStaticModule.forRoot({
+          rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
+          exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
+        }),
+      ]
       : []),
     ServeStaticModule.forRoot({
       serveRoot: SERVER_CONFIG.customPluginsUri,
@@ -119,6 +112,8 @@ export class AppModule implements OnModuleInit, NestModule {
 
     consumer
       .apply(ExcludeRouteMiddleware)
-      .forRoutes(...SERVER_CONFIG.excludeRoutes);
+      .forRoutes(
+        ...SERVER_CONFIG.excludeRoutes,
+      );
   }
 }

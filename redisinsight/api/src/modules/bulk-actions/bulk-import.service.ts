@@ -10,17 +10,14 @@ import { ClientMetadata } from 'src/common/models';
 import { splitCliCommandLine } from 'src/utils/cli-helper';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
-import {
-  BulkActionStatus,
-  BulkActionType,
-} from 'src/modules/bulk-actions/constants';
+import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-import-file-by-path.dto';
 import config, { Config } from 'src/utils/config';
 import { MemoryStoredFile } from 'nestjs-form-data';
 
 const BATCH_LIMIT = 10_000;
-const PATH_CONFIG = config.get('dir_path');
+const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
@@ -38,16 +35,14 @@ export class BulkImportService {
 
     try {
       if (client?.isCluster) {
-        await Promise.all(
-          batch.map(async ([command, args]) => {
-            try {
-              await client.call(command, args);
-              result.addSuccess(1);
-            } catch (e) {
-              result.addFailed(1);
-            }
-          }),
-        );
+        await Promise.all(batch.map(async ([command, args]) => {
+          try {
+            await client.call(command, args);
+            result.addSuccess(1);
+          } catch (e) {
+            result.addFailed(1);
+          }
+        }));
       } else {
         const commands = batch.map(([cmd, args]) => ['call', cmd, ...args]);
         (await client.pipeline(commands).exec()).forEach(([err]) => {
@@ -70,10 +65,7 @@ export class BulkImportService {
    * @param clientMetadata
    * @param dto
    */
-  public async import(
-    clientMetadata: ClientMetadata,
-    dto: UploadImportFileDto,
-  ): Promise<IBulkActionOverview> {
+  public async import(clientMetadata: ClientMetadata, dto: UploadImportFileDto): Promise<IBulkActionOverview> {
     const startTime = Date.now();
     const result: IBulkActionOverview = {
       id: 'empty',
@@ -98,9 +90,7 @@ export class BulkImportService {
     let client;
 
     try {
-      client = await this.databaseConnectionService.createClient(
-        clientMetadata,
-      );
+      client = await this.databaseConnectionService.createClient(clientMetadata);
 
       const stream = Readable.from(dto.file.buffer);
       let batch = [];
@@ -111,7 +101,7 @@ export class BulkImportService {
         const rl = readline.createInterface(stream);
         rl.on('line', (line) => {
           try {
-            const [command, ...args] = splitCliCommandLine(line.trim());
+            const [command, ...args] = splitCliCommandLine((line.trim()));
             if (batch.length >= BATCH_LIMIT) {
               batchResults.push(this.executeBatch(client, batch));
               batch = [];
@@ -182,10 +172,7 @@ export class BulkImportService {
 
       const path = join(PATH_CONFIG.homedir, trimmedPath);
 
-      if (
-        !path.startsWith(PATH_CONFIG.homedir) ||
-        !(await fs.pathExists(path))
-      ) {
+      if (!path.startsWith(PATH_CONFIG.homedir) || !await fs.pathExists(path)) {
         throw new BadRequestException('Data file was not found');
       }
 
@@ -199,10 +186,7 @@ export class BulkImportService {
         file: { buffer } as MemoryStoredFile,
       });
     } catch (e) {
-      this.logger.error(
-        'Unable to process an import file path from tutorial',
-        e,
-      );
+      this.logger.error('Unable to process an import file path from tutorial', e);
       throw wrapHttpError(e);
     }
   }

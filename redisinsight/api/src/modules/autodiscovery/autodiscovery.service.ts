@@ -68,18 +68,19 @@ export class AutodiscoveryService implements OnModuleInit {
    * @param endpoint
    * @private
    */
-  private async addRedisDatabase(endpoint: { host: string; port: number }) {
+  private async addRedisDatabase(endpoint: { host: string, port: number }) {
     try {
-      const client =
-        await this.redisConnectionFactory.createStandaloneConnection(
-          {
-            context: ClientContext.Common,
-          } as ClientMetadata,
-          endpoint as Database,
-          { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
-        );
+      const client = await this.redisConnectionFactory.createStandaloneConnection(
+        {
+          context: ClientContext.Common,
+        } as ClientMetadata,
+        endpoint as Database,
+        { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
+      );
 
-      const info = convertRedisInfoReplyToObject(await client.info());
+      const info = convertRedisInfoReplyToObject(
+        await client.info(),
+      );
 
       if (info?.server?.redis_mode === 'standalone') {
         await this.databaseService.create({

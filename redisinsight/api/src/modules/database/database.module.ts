@@ -1,10 +1,5 @@
 import config, { Config } from 'src/utils/config';
-import {
-  MiddlewareConsumer,
-  Module,
-  RequestMethod,
-  Type,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod, Type } from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseController } from 'src/modules/database/database.controller';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
@@ -24,14 +19,15 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 @Module({})
 export class DatabaseModule {
   static register(
-    databaseRepository: Type<DatabaseRepository> = SERVER_CONFIG.buildType ===
-    'REDIS_STACK'
-      ? StackDatabasesRepository
-      : LocalDatabaseRepository,
+    databaseRepository: Type<DatabaseRepository> =
+    SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesRepository : LocalDatabaseRepository,
   ) {
     return {
       module: DatabaseModule,
-      controllers: [DatabaseController, DatabaseInfoController],
+      controllers: [
+        DatabaseController,
+        DatabaseInfoController,
+      ],
       providers: [
         DatabaseService,
         DatabaseConnectionService,

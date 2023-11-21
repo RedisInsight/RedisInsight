@@ -7,10 +7,9 @@ import { version } from '../redisinsight/package.json';
 
 DeleteSourceMaps();
 
-const apiUrl =
-  process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
-    ? 'https://localhost'
-    : 'http://localhost';
+const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
+  ? 'https://localhost'
+  : 'http://localhost'
 
 export default merge(baseConfig, {
   ...rendererProdConfig,
@@ -32,14 +31,12 @@ export default merge(baseConfig, {
       'process.env.PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),
       'process.env.BUILD_TYPE': JSON.stringify('ELECTRON'),
       'process.env.APP_VERSION': JSON.stringify(version),
-      'process.env.CONNECTIONS_TIMEOUT_DEFAULT':
-        'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-          ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
-          : JSON.stringify(30 * 1000),
-      'process.env.SEGMENT_WRITE_KEY':
-        'SEGMENT_WRITE_KEY' in process.env
-          ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
-          : JSON.stringify('SOURCE_WRITE_KEY'),
+      'process.env.CONNECTIONS_TIMEOUT_DEFAULT': 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
+        : JSON.stringify(30 * 1000),
+      'process.env.SEGMENT_WRITE_KEY': 'SEGMENT_WRITE_KEY' in process.env
+        ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
+        : JSON.stringify('SOURCE_WRITE_KEY'),
     }),
   ],
 });

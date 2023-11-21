@@ -2,7 +2,7 @@ import { Server } from 'src/modules/server/models/server';
 import { ServerEntity } from 'src/modules/server/entities/server.entity';
 import { mockControlGroup, mockControlNumber } from 'src/__mocks__/feature';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -19,19 +19,19 @@ export const mockServerEntity = Object.assign(new ServerEntity(), {
   createDateTime: mockServer.createDateTime,
 });
 
-export const mockGetServerInfoResponse = Object.assign(
-  new GetServerInfoResponse(),
-  {
-    ...mockServer,
-    appVersion: SERVER_CONFIG.appVersion,
-    osPlatform: process.platform,
-    buildType: SERVER_CONFIG.buildType,
-    appType: SERVER_CONFIG.buildType,
-    controlGroup: mockControlGroup,
-    controlNumber: mockControlNumber,
-    encryptionStrategies: [EncryptionStrategy.PLAIN, EncryptionStrategy.KEYTAR],
-  },
-);
+export const mockGetServerInfoResponse = Object.assign(new GetServerInfoResponse(), {
+  ...mockServer,
+  appVersion: SERVER_CONFIG.appVersion,
+  osPlatform: process.platform,
+  buildType: SERVER_CONFIG.buildType,
+  appType: SERVER_CONFIG.buildType,
+  controlGroup: mockControlGroup,
+  controlNumber: mockControlNumber,
+  encryptionStrategies: [
+    EncryptionStrategy.PLAIN,
+    EncryptionStrategy.KEYTAR,
+  ],
+});
 
 export const mockServerRepository = jest.fn(() => ({
   exists: jest.fn().mockResolvedValue(true),

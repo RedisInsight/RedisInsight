@@ -28,7 +28,7 @@ const configuration: webpack.Configuration = {
     filename: 'js/bundle.[name].min.js',
     path: resolve(__dirname, '../redisinsight/ui/dist'),
     publicPath: '/',
-    chunkFilename: '[id].[chunkhash].js',
+    chunkFilename: '[id].[chunkhash].js'
   },
   optimization: {
     minimize: true,
@@ -46,23 +46,23 @@ const configuration: webpack.Configuration = {
       cacheGroups: {
         reactVendor: {
           test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: 'reactVendor',
+          name: "reactVendor"
         },
         elasticVendor: {
           test: /[\\/]node_modules[\\/](@elastic)[\\/]/,
-          name: 'elasticVendor',
+          name: "elasticVendor"
         },
         monacoVendor: {
           test: /[\\/]node_modules[\\/](monaco-editor)[\\/]/,
-          name: 'monacoVendor',
+          name: "monacoVendor"
         },
         utilityVendor: {
           test: /[\\/]node_modules[\\/](lodash)[\\/]/,
-          name: 'utilityVendor',
+          name: "utilityVendor"
         },
         vendor: {
           test: /[\\/]node_modules[\\/](!@elastic)(!monaco-editor)(!lodash)[\\/]/,
-          name: 'vendor',
+          name: "vendor"
         },
       },
     },
@@ -80,25 +80,19 @@ const configuration: webpack.Configuration = {
       API_PREFIX: '',
       BASE_API_URL: 'api/',
       RESOURCES_BASE_URL:
-        process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
-          ? 'https://localhost'
-          : 'http://localhost',
+        process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
       PIPELINE_COUNT_DEFAULT: '5',
       SEGMENT_WRITE_KEY:
-        'SEGMENT_WRITE_KEY' in process.env
-          ? process.env.SEGMENT_WRITE_KEY
-          : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT:
-        'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-          ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
-          : toString(30 * 1000), // 30 sec
+        'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+        : toString(30 * 1000), // 30 sec
     }),
 
     new BundleAnalyzerPlugin({
-      analyzerMode:
-        process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
+      analyzerMode: process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true',
     }),
   ],

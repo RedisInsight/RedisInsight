@@ -12,6 +12,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
+import { goBackHistory } from '../../../../helpers/utils';
 
 const browserPage = new BrowserPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -154,16 +155,14 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
         const noRedisearchMessage = 'RediSearch is not available for this database';
-        // const externalPageLink = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search';
+        const externalPageLink = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search';
 
         await t.click(browserPage.redisearchModeBtn);
         // Verify that user can see message in the dialog when he doesn't have RediSearch module
         await t.expect(browserPage.noReadySearchDialogTitle.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
-        // update after resolving testcafe Native Automation mode limitations
-        // // Verify that user can navigate by link to create a Redis db
-        // await t.click(browserPage.redisearchFreeLink);
-        // await Common.checkURL(externalPageLink);
-        // await t.switchToParentWindow();
+        // Verify that user can navigate by link to create a Redis db
+        await t.click(browserPage.redisearchFreeLink);
+        await Common.checkURL(externalPageLink);
     });
 test
     .before(async() => {
@@ -173,7 +172,7 @@ test
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Index creation', async t => {
-        // const createIndexLink = 'https://redis.io/commands/ft.create/';
+        const createIndexLink = 'https://redis.io/commands/ft.create/';
 
         // Verify that user can cancel index creation
         await t.click(browserPage.redisearchModeBtn);
@@ -188,11 +187,10 @@ test
         await t.click(browserPage.selectIndexDdn);
         await t.click(browserPage.createIndexBtn);
         await t.expect(browserPage.newIndexPanel.exists).ok('New Index panel is not displayed');
-        // update after resolving testcafe Native Automation mode limitations
-        // // Verify that user can see a link to create a profound index and navigate
-        // await t.click(browserPage.newIndexPanel.find('a'));
-        // await Common.checkURL(createIndexLink);
-        // await t.switchToParentWindow();
+        // Verify that user can see a link to create a profound index and navigate
+        await t.click(browserPage.newIndexPanel.find('a'));
+        await Common.checkURL(createIndexLink);
+        await goBackHistory();
 
         // Verify that user can create an index with multiple prefixes
         await t.click(browserPage.indexNameInput);

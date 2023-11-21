@@ -22,47 +22,47 @@ export class StandaloneIoredisClient extends IoredisClient {
   /**
    * @inheritDoc
    */
-  async publish(channel: string, message: string): Promise<any> {
+  async publish(channel: string, message: string): Promise<number> {
     return this.client.publish(channel, message);
   }
 
   /**
    * @inheritDoc
    */
-  async subscribe(channel: string): Promise<any> {
+  async subscribe(channel: string): Promise<void> {
     const listenerCount = this.client.listenerCount('message');
     if (listenerCount === 0) {
       this.client.on('message', (messageChannel: string, message: string) => {
         this.emit('message', messageChannel, message);
       });
     }
-    return this.client.subscribe(channel);
+    await this.client.subscribe(channel);
   }
 
   /**
    * @inheritDoc
    */
-  async pSubscribe(channel: string): Promise<any> {
+  async pSubscribe(channel: string): Promise<void> {
     const listenerCount = this.client.listenerCount('pmessage');
     if (listenerCount === 0) {
       this.client.on('pmessage', (pattern: string, messageChannel: string, message: string) => {
         this.emit('pmessage', pattern, messageChannel, message);
       });
     }
-    return this.client.psubscribe(channel);
+    await this.client.psubscribe(channel);
   }
 
   /**
    * @inheritDoc
    */
-  async unsubscribe(channel: string): Promise<any> {
-    return this.client.unsubscribe(channel);
+  async unsubscribe(channel: string): Promise<void> {
+    await this.client.unsubscribe(channel);
   }
 
   /**
    * @inheritDoc
    */
-  async pUnsubscribe(channel: string): Promise<any> {
-    return this.client.punsubscribe(channel);
+  async pUnsubscribe(channel: string): Promise<void> {
+    await this.client.punsubscribe(channel);
   }
 }

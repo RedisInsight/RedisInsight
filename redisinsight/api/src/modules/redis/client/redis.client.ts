@@ -108,15 +108,15 @@ export abstract class RedisClient extends EventEmitter2 {
    */
   abstract quit(): Promise<void>;
 
-  abstract publish(channel: string, message: string): Promise<any>;
+  abstract publish(channel: string, message: string): Promise<number>;
 
-  abstract subscribe(channel: string): Promise<any>;
+  abstract subscribe(channel: string): Promise<void>;
 
-  abstract pSubscribe(channel: string): Promise<any>;
+  abstract pSubscribe(channel: string): Promise<void>;
 
-  abstract unsubscribe(channel: string): Promise<any>;
+  abstract unsubscribe(channel: string): Promise<void>;
 
-  abstract pUnsubscribe(channel: string): Promise<any>;
+  abstract pUnsubscribe(channel: string): Promise<void>;
 
   abstract getCurrentDbIndex(): Promise<number>;
 

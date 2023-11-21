@@ -67,14 +67,14 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
-  async publish(channel: string, message: string): Promise<any> {
+  async publish(channel: string, message: string): Promise<number> {
     return this.client.publish(channel, message);
   }
 
   /**
    * @inheritDoc
    */
-  async subscribe(channel: string): Promise<any> {
+  async subscribe(channel: string): Promise<void> {
     const listener = (message: string, messageChannel : string) => {
       this.emit('message', messageChannel, message);
     };
@@ -84,7 +84,7 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
-  async pSubscribe(channel: string): Promise<any> {
+  async pSubscribe(channel: string): Promise<void> {
     const listener = (message: string, messageChannel : string) => {
       this.emit('pmessage', channel, messageChannel, message);
     };
@@ -94,14 +94,14 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   /**
    * @inheritDoc
    */
-  async unsubscribe(channel: string): Promise<any> {
+  async unsubscribe(channel: string): Promise<void> {
     return this.client.unsubscribe(channel);
   }
 
   /**
    * @inheritDoc
    */
-  async pUnsubscribe(channel: string): Promise<any> {
+  async pUnsubscribe(channel: string): Promise<void> {
     return this.client.pUnsubscribe(channel);
   }
 }

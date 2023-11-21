@@ -76,7 +76,7 @@ test
         await t.hover(browserPage.redisearchModeBtn);
         await t.expect(browserPage.tooltip.textContent).contains(redisearchModeTooltipText, 'Invalid text in redisearch mode tooltip');
 
-        // Verify that user see the "Select an index" message when he switch to Search
+        // Verify that user see the "Select an index" message when he switches to Search
         await t.click(browserPage.redisearchModeBtn);
         await t.expect(browserPage.keyListTable.textContent).contains(notSelectedIndexText, 'Select an index message not displayed');
 
@@ -113,7 +113,7 @@ test
         await verifyKeysDisplayingInTheList(keyNames, true);
         await t.expect(browserPage.getKeySelectorByName(keyName).exists).notOk('Key without index displayed after search');
 
-        // Verify that user see the database scanned when he switch to Pattern search mode
+        // Verify that user see the database scanned when he switches to Pattern search mode
         await t.click(browserPage.patternModeBtn);
         await t.click(browserPage.browserViewButton);
         await verifyKeysDisplayingInTheList(keyNames, true);
@@ -193,6 +193,8 @@ test
         await goBackHistory();
 
         // Verify that user can create an index with multiple prefixes
+        await t.click(browserPage.selectIndexDdn);
+        await t.click(browserPage.createIndexBtn);
         await t.click(browserPage.indexNameInput);
         await t.typeText(browserPage.indexNameInput, indexName);
         await t.click(browserPage.prefixFieldInput);

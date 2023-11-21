@@ -168,6 +168,7 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         await Common.checkURL(externalPageLinks[i]);
         // Close the window with external link to switch to the application window
         await goBackHistory();
+        await t.click(browserPage.CommandHelper.expandCommandHelperButton);
         i++;
     }
 });
@@ -230,6 +231,7 @@ test('Verify that user can work with Bloom groups in Command Helper (RedisBloom 
         await Common.checkURL(externalPageLinks[i]);
         // Close the window with external link to switch to the application window
         await goBackHistory();
+        await t.click(browserPage.CommandHelper.expandCommandHelperButton);
         i++;
     }
 });

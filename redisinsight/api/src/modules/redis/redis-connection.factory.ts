@@ -174,6 +174,8 @@ export class RedisConnectionFactory {
 
       return await new Promise((resolve, reject) => {
         try {
+          let lastError: Error;
+
           if (tnl) {
             tnl.on('error', (error) => {
               reject(error);
@@ -194,18 +196,20 @@ export class RedisConnectionFactory {
           });
           connection.on('error', (e): void => {
             this.logger.error('Failed connection to the redis database.', e);
-            reject(e);
+            lastError = e;
           });
           connection.on('end', (): void => {
-            this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-            reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+            this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
+            reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
+            lastError = null;
             this.logger.log('Successfully connected to the redis database');
             resolve(connection);
           });
           connection.on('reconnecting', (): void => {
-            this.logger.log('Reconnecting to the redis database');
+            lastError = null;
+            this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
           });
         } catch (e) {
           reject(e);
@@ -236,6 +240,8 @@ export class RedisConnectionFactory {
 
     return new Promise((resolve, reject) => {
       try {
+        let lastError: Error;
+
         const cluster = new Cluster([{
           host: database.host,
           port: database.port,
@@ -244,15 +250,20 @@ export class RedisConnectionFactory {
         });
         cluster.on('error', (e): void => {
           this.logger.error('Failed connection to the redis oss cluster', e);
-          reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
+          lastError = !isEmpty(e.lastNodeError) ? e.lastNodeError : e;
         });
         cluster.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
+          reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
         });
         cluster.on('ready', (): void => {
+          lastError = null;
           this.logger.log('Successfully connected to the redis oss cluster.');
           resolve(cluster);
+        });
+        cluster.on('reconnecting', (): void => {
+          lastError = null;
+          this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
         });
       } catch (e) {
         reject(e);
@@ -275,18 +286,25 @@ export class RedisConnectionFactory {
 
     return new Promise((resolve, reject) => {
       try {
+        let lastError: Error;
+
         const client = new Redis(config);
         client.on('error', (e): void => {
           this.logger.error('Failed connection to the redis oss sentinel', e);
-          reject(e);
+          lastError = e;
         });
         client.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
+          reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
         });
         client.on('ready', (): void => {
+          lastError = null;
           this.logger.log('Successfully connected to the redis oss sentinel.');
           resolve(client);
+        });
+        client.on('reconnecting', (): void => {
+          lastError = null;
+          this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
         });
       } catch (e) {
         reject(e);

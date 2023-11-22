@@ -381,14 +381,22 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
           },
           responseSchema,
           checkFn: ({ body }) => {
-            expect(body[0].result).to.eql([
-              {
-                response: {
-                  [constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE
+            expect([
+              // result from ioredis
+              [
+                {
+                  response: {[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE},
+                  status: 'success',
                 },
-                status: 'success',
-              },
-            ]);
+              ],
+              // result from node-redis
+              [
+                {
+                  response: [constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE],
+                  status: 'success',
+                },
+              ]
+            ]).to.deep.contain(body[0].result)
           }
         },
         {

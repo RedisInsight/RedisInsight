@@ -185,7 +185,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
         commands.push([BrowserToolKeysCommands.Type, key]);
       }
 
-      const result = await client.sendPipeline(commands) as any[];
+      const result = await client.sendPipeline(commands, { replyEncoding: 'utf8' }) as any[];
 
       if (filterType) {
         result.push([null, filterType]);

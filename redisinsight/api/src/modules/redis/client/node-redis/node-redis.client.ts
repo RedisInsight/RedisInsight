@@ -46,6 +46,47 @@ export abstract class NodeRedisClient extends RedisClient {
   /**
    * @inheritDoc
    */
+  async publish(channel: string, message: string): Promise<number> {
+    return this.client.publish(channel, message);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async subscribe(channel: string): Promise<void> {
+    const listener = (message: string, messageChannel : string) => {
+      this.emit('message', messageChannel, message);
+    };
+    return this.client.subscribe(channel, listener);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async pSubscribe(channel: string): Promise<void> {
+    const listener = (message: string, messageChannel : string) => {
+      this.emit('pmessage', channel, messageChannel, message);
+    };
+    return this.client.pSubscribe(channel, listener);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async unsubscribe(channel: string): Promise<void> {
+    return this.client.unsubscribe(channel);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async pUnsubscribe(channel: string): Promise<void> {
+    return this.client.pUnsubscribe(channel);
+  }
+
+  /**
+   * @inheritDoc
+   */
   async disconnect(): Promise<void> {
     this.client.disconnect();
   }

@@ -806,13 +806,15 @@ describe('Cluster Scanner Strategy', () => {
           jasmine.arrayContaining([BrowserToolKeysCommands.Ttl]),
           jasmine.arrayContaining(['memory', 'usage']),
           jasmine.arrayContaining([BrowserToolKeysCommands.Type]),
-        ])
+        ],
+        { replyEncoding: 'utf8' })
         .mockResolvedValue([[null, -1], [null, 50], [null, 'string']]);
       when(mockClusterRedisClient.sendPipeline)
         .calledWith([
           jasmine.arrayContaining([BrowserToolKeysCommands.Ttl]),
           jasmine.arrayContaining(['memory', 'usage']),
-        ])
+        ],
+        { replyEncoding: 'utf8' })
         .mockResolvedValue([[null, 999], [null, 555]]);
     });
     it('should return correct keys info (cluster)', async () => {

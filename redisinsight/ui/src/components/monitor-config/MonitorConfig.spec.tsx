@@ -9,7 +9,7 @@ import {
   pauseMonitor,
   setSocket,
   stopMonitor,
-  lockResume
+  lockResume, setLogFileId, setStartTimestamp
 } from 'uiSrc/slices/cli/monitor'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MonitorEvent, SocketEvent } from 'uiSrc/constants'
@@ -69,22 +69,43 @@ describe('MonitorConfig', () => {
   it(`should emit ${MonitorEvent.Monitor} event`, () => {
     const monitorSelectorMock = jest.fn().mockReturnValue({
       isRunning: true,
+      isSaveToFile: true
     })
     monitorSelector.mockImplementation(monitorSelectorMock)
 
     const { unmount } = render(<MonitorConfig />)
 
-    socket.on(MonitorEvent.MonitorData, (data: []) => {
-      expect(data).toEqual(['message1', 'message2'])
+    socket.socketClient.on(MonitorEvent.Monitor, (data: any) => {
+      expect(data).toEqual({ logFileId: expect.any(String) })
     })
 
-    socket.socketClient.emit(MonitorEvent.MonitorData, ['message1', 'message2'])
+    socket.socketClient.emit(SocketEvent.Connect)
 
     const afterRenderActions = [
       setSocket(socket),
-      setMonitorLoadingPause(true)
+      setMonitorLoadingPause(true),
+      setLogFileId(expect.any(String)),
+      setStartTimestamp(expect.any(Number))
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
+
+    unmount()
+  })
+
+  it(`should not emit ${MonitorEvent.Monitor} event when paused`, () => {
+    const monitorSelectorMock = jest.fn().mockReturnValue({
+      isRunning: true,
+      isPaused: true
+    })
+    monitorSelector.mockImplementation(monitorSelectorMock)
+
+    const { unmount } = render(<MonitorConfig />)
+    const mockedMonitorEvent = jest.fn()
+
+    socket.socketClient.on(MonitorEvent.Monitor, mockedMonitorEvent)
+    socket.socketClient.emit(SocketEvent.Connect)
+
+    expect(mockedMonitorEvent).not.toBeCalled()
 
     unmount()
   })

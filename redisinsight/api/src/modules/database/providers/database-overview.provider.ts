@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as IORedis from 'ioredis';
 import {
   get,
   filter,
@@ -12,10 +11,10 @@ import {
 import {
   convertRedisInfoReplyToObject,
 } from 'src/utils';
-import { getTotal } from 'src/modules/database/utils/database.total.util';
+import { getTotal, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { ClientMetadata } from 'src/common/models';
-import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
+import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
 
 @Injectable()
 export class DatabaseOverviewProvider {
@@ -28,7 +27,7 @@ export class DatabaseOverviewProvider {
    */
   async getOverview(
     clientMetadata: ClientMetadata,
-    client: IORedis.Redis | IORedis.Cluster,
+    client: RedisClient,
   ): Promise<DatabaseOverview> {
     let nodesInfo = [];
     let totalKeys;
@@ -38,11 +37,11 @@ export class DatabaseOverviewProvider {
       ? clientMetadata.db
       : get(client, ['options', 'db'], 0);
 
-    if (client.isCluster) {
-      nodesInfo = await this.getNodesInfo(client as IORedis.Cluster);
-      totalKeys = await this.calculateNodesTotalKeys(client as IORedis.Cluster);
+    if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+      nodesInfo = await this.getNodesInfo(client);
+      totalKeys = await this.calculateNodesTotalKeys(client);
     } else {
-      nodesInfo = [await this.getNodeInfo(client as IORedis.Redis)];
+      nodesInfo = [await this.getNodeInfo(client)];
       const [calculatedTotalKeys, calculatedTotalKeysPerDb] = this.calculateTotalKeys(nodesInfo, currentDbIndex);
       totalKeys = calculatedTotalKeys;
       totalKeysPerDb = calculatedTotalKeysPerDb;
@@ -66,7 +65,7 @@ export class DatabaseOverviewProvider {
    * @param client
    * @private
    */
-  private async getNodeInfo(client: IORedis.Redis) {
+  private async getNodeInfo(client: RedisClient) {
     const { host, port } = client.options;
     return {
       ...convertRedisInfoReplyToObject(
@@ -82,8 +81,8 @@ export class DatabaseOverviewProvider {
    * @param client
    * @private
    */
-  private async getNodesInfo(client: IORedis.Cluster) {
-    return Promise.all(client.nodes('all').map(this.getNodeInfo));
+  private async getNodesInfo(client: RedisClient) {
+    return Promise.all((await client.nodes()).map(this.getNodeInfo));
   }
 
   /**
@@ -129,7 +128,7 @@ export class DatabaseOverviewProvider {
     }
 
     return sumBy(nodes, (node) => parseInt(
-      get(node, 'stats.instantaneous_ops_per_sec', 0),
+      get(node, 'stats.instantaneous_ops_per_sec', '0'),
       10,
     ));
   }
@@ -145,7 +144,7 @@ export class DatabaseOverviewProvider {
     }
 
     return sumBy(nodes, (node) => parseInt(
-      get(node, 'stats.instantaneous_input_kbps', 0),
+      get(node, 'stats.instantaneous_input_kbps', '0'),
       10,
     ));
   }
@@ -161,8 +160,7 @@ export class DatabaseOverviewProvider {
     }
 
     return sumBy(nodes, (node) => parseInt(
-      get(node, 'stats.instantaneous_output_kbps', 0),
-      10,
+      get(node, 'stats.instantaneous_output_kbps', '0'), 10,
     ));
   }
 
@@ -176,7 +174,9 @@ export class DatabaseOverviewProvider {
       return undefined;
     }
 
-    const clientsPerNode = map(nodes, (node) => parseInt(get(node, 'clients.connected_clients', 0), 10));
+    const clientsPerNode = map(nodes, (node) => parseInt(
+      get(node, 'clients.connected_clients', '0'), 10,
+    ));
     return this.getMedianValue(clientsPerNode);
   }
 
@@ -193,7 +193,9 @@ export class DatabaseOverviewProvider {
         return undefined;
       }
 
-      return sumBy(masterNodes, (node) => parseInt(get(node, 'memory.used_memory', 0), 10));
+      return sumBy(masterNodes, (node) => parseInt(
+        get(node, 'memory.used_memory', '0'), 10,
+      ));
     } catch (e) {
       return null;
     }
@@ -240,11 +242,11 @@ export class DatabaseOverviewProvider {
   }
 
   private async calculateNodesTotalKeys(
-    client: IORedis.Cluster,
+    client: RedisClient,
   ): Promise<number> {
     const nodesTotal: number[] = await Promise.all(
-      client
-        .nodes('master')
+      (await client
+        .nodes(RedisClientNodeRole.PRIMARY))
         .map(async (node) => getTotal(node)),
     );
     return nodesTotal.reduce((prev, cur) => (

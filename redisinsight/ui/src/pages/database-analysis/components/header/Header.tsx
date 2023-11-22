@@ -90,10 +90,10 @@ const Header = (props: Props) => {
       >
         {!!items.length && (
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+            <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false} wrap>
               <EuiHideFor sizes={['xs', 's']}>
                 <EuiFlexItem grow={false}>
-                  <EuiText className={styles.text}>Report generated on:</EuiText>
+                  <EuiText className={styles.text} size="s">Report generated on:</EuiText>
                 </EuiFlexItem>
               </EuiHideFor>
               <EuiFlexItem>
@@ -109,10 +109,15 @@ const Header = (props: Props) => {
               </EuiFlexItem>
               {!!progress && (
                 <EuiFlexItem grow={false}>
-                  <EuiText className={cx(styles.progress, styles.text, styles.progressContainer)} data-testid="bulk-delete-summary">
+                  <EuiText
+                    className={cx(styles.progress, styles.text, styles.progressContainer)}
+                    size="s"
+                    data-testid="bulk-delete-summary"
+                  >
                     <EuiText
                       color={progress.total === progress.processed ? undefined : 'warning'}
                       className={cx(styles.progress, styles.text)}
+                      size="s"
                       data-testid="analysis-progress"
                     >
                       {'Scanned '}
@@ -145,7 +150,7 @@ const Header = (props: Props) => {
                 New Report
               </EuiButton>
             </EuiFlexItem>
-            <EuiFlexItem style={{ paddingLeft: 12 }} grow={false}>
+            <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
               <EuiToolTip
                 position="bottom"
                 anchorClassName={styles.tooltipAnchor}

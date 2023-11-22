@@ -13,7 +13,22 @@
   height: 100%;
   width: 100%;
 
-  &.insightsOpen {
+  &:global(.insightsOpen) {
     max-width: calc(100% - 460px);
+
+    @media only screen and (max-width: 1440px) {
+      max-width: calc(100% - 380px);
+    }
+  }
+}
+
+.insigtsWrapper {
+  width: 0;
+
+  &.insightsOpen {
+    width: 460px;
+    @media only screen and (max-width: 1440px) {
+      width: 380px;
+    }
   }
 }

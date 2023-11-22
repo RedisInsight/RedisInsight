@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .subtitleText {
   padding: 6px 2px 6px 0;
 }
@@ -5,8 +7,6 @@
 .controlsKey {
   right: 25px;
 }
-
-
 
 .cancelEditBtn:hover {
   color: var(--euiColorColorDanger) !important;
@@ -40,4 +40,26 @@
 
 .ttlTextValue {
   padding-left: 11px;
+}
+
+@include insights-open {
+  .flexItemTTL {
+    width: 134px;
+    min-width: 134px;
+  }
+
+  .ttlInput {
+    min-width: 90px;
+    font-size: 12px !important;
+    &.editing {
+      width: 92px;
+    }
+  }
+
+  :global(.euiFormControlLayout--compressed > .euiFormControlLayout__append) {
+    &.iconPencil {
+      width: 24px !important;
+      padding: 0 6px !important;
+    }
+  }
 }

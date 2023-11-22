@@ -140,7 +140,7 @@ const DatabaseSidePanels = (props: Props) => {
   ), [tabSelected, totalUnread, isFullScreen])
 
   return (
-    <div className={styles.wrapper}>
+    <>
       {isOpen && (
         <div
           className={cx(styles.panel, panelClassName, { [styles.fullScreen]: isFullScreen })}
@@ -175,7 +175,7 @@ const DatabaseSidePanels = (props: Props) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

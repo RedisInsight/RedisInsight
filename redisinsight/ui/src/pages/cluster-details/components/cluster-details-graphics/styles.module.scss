@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .wrapper {
   background-color: var(--euiColorLightestShade);
   border-radius: 16px;
@@ -58,5 +60,11 @@
     .tooltipTitle {
       margin-bottom: 6px;
     }
+  }
+}
+
+@include insights-open(1260px) {
+  .wrapper {
+    flex-direction: column;
   }
 }

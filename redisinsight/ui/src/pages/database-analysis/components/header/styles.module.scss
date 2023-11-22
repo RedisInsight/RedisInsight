@@ -1,6 +1,5 @@
 .container {
-  height: 60px;
-
+  padding: 12px 0;
   .text {
     color: var(--euiColorMediumShade) !important;
   }
@@ -10,8 +9,8 @@
   display: inline-block;
 }
 
-.progressContainer {
-  margin-left: 12px;
+.changeReport {
+  max-width: 180px !important;
 }
 
 .changeReport :global(.euiSuperSelectControl) {

@@ -67,6 +67,7 @@ export class SshOptions {
   })
   @Expose()
   @IsString({ always: true })
+  @IsNotEmpty()
   @IsOptional()
   passphrase?: string;
 }

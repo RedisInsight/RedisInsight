@@ -164,9 +164,12 @@ export class RedisConnectionFactory {
     options: IRedisConnectionOptions,
   ): Promise<Redis> {
     let tnl;
+    let connection: Redis;
 
     try {
       const config = await this.getRedisOptions(clientMetadata, database, options);
+      // cover cases when we are connecting to sentinel using standalone client to discover master groups
+      const dbIndex = config.db > 0 && !database.sentinelMaster ? config.db : 0;
 
       if (database.ssh) {
         tnl = await this.sshTunnelProvider.createTunnel(database);
@@ -189,10 +192,9 @@ export class RedisConnectionFactory {
             config.port = tnl.serverAddress.port;
           }
 
-          const connection = new Redis({
+          connection = new Redis({
             ...config,
-            // cover cases when we are connecting to sentinel as to standalone to discover master groups
-            db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
+            db: 0,
           });
           connection.on('error', (e): void => {
             this.logger.error('Failed connection to the redis database.', e);
@@ -205,7 +207,16 @@ export class RedisConnectionFactory {
           connection.on('ready', (): void => {
             lastError = null;
             this.logger.log('Successfully connected to the redis database');
-            resolve(connection);
+
+            // manual switch to particular logical db
+            // since ioredis doesn't handle "select" command error during connection
+            if (dbIndex > 0) {
+              connection.select(dbIndex)
+                .then(() => resolve(connection))
+                .catch(reject);
+            } else {
+              resolve(connection);
+            }
           });
           connection.on('reconnecting', (): void => {
             lastError = null;
@@ -216,6 +227,7 @@ export class RedisConnectionFactory {
         }
       }) as Redis;
     } catch (e) {
+      connection?.disconnect?.();
       tnl?.close?.();
       throw e;
     }
@@ -232,43 +244,63 @@ export class RedisConnectionFactory {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<Cluster> {
-    const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+    let connection: Cluster;
 
-    if (database.ssh) {
-      throw new Error('SSH is unsupported for cluster databases.');
-    }
+    try {
+      const config = await this.getRedisClusterOptions(clientMetadata, database, options);
 
-    return new Promise((resolve, reject) => {
-      try {
-        let lastError: Error;
-
-        const cluster = new Cluster([{
-          host: database.host,
-          port: database.port,
-        }].concat(database.nodes), {
-          ...config,
-        });
-        cluster.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis oss cluster', e);
-          lastError = !isEmpty(e.lastNodeError) ? e.lastNodeError : e;
-        });
-        cluster.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
-          reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
-        });
-        cluster.on('ready', (): void => {
-          lastError = null;
-          this.logger.log('Successfully connected to the redis oss cluster.');
-          resolve(cluster);
-        });
-        cluster.on('reconnecting', (): void => {
-          lastError = null;
-          this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
-        });
-      } catch (e) {
-        reject(e);
+      if (database.ssh) {
+        throw new Error('SSH is unsupported for cluster databases.');
       }
-    });
+
+      return await (new Promise((resolve, reject) => {
+        try {
+          let lastError: Error;
+
+          connection = new Cluster([{
+            host: database.host,
+            port: database.port,
+          }].concat(database.nodes), {
+            ...config,
+            redisOptions: {
+              ...config.redisOptions,
+              db: 0,
+            },
+          });
+          connection.on('error', (e): void => {
+            this.logger.error('Failed connection to the redis oss cluster', e);
+            lastError = !isEmpty(e.lastNodeError) ? e.lastNodeError : e;
+          });
+          connection.on('end', (): void => {
+            this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
+            reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          });
+          connection.on('ready', (): void => {
+            lastError = null;
+            this.logger.log('Successfully connected to the redis oss cluster.');
+
+            // manual switch to particular logical db
+            // since ioredis doesn't handle "select" command error during connection
+            if (config.redisOptions.db > 0) {
+              connection.select(config.redisOptions.db)
+                .then(() => resolve(connection))
+                .catch(reject);
+            } else {
+              resolve(connection);
+            }
+          });
+          connection.on('reconnecting', (): void => {
+            lastError = null;
+            this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
+          });
+        } catch (e) {
+          reject(e);
+        }
+      }));
+    } catch (e) {
+      connection?.disconnect?.();
+      throw e;
+    }
   }
 
   /**
@@ -282,34 +314,53 @@ export class RedisConnectionFactory {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<Redis> {
-    const config = await this.getRedisSentinelOptions(clientMetadata, database, options);
+    let connection: Redis;
 
-    return new Promise((resolve, reject) => {
-      try {
-        let lastError: Error;
+    try {
+      const config = await this.getRedisSentinelOptions(clientMetadata, database, options);
 
-        const client = new Redis(config);
-        client.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis oss sentinel', e);
-          lastError = e;
-        });
-        client.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
-          reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
-        });
-        client.on('ready', (): void => {
-          lastError = null;
-          this.logger.log('Successfully connected to the redis oss sentinel.');
-          resolve(client);
-        });
-        client.on('reconnecting', (): void => {
-          lastError = null;
-          this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
-        });
-      } catch (e) {
-        reject(e);
-      }
-    });
+      return await (new Promise((resolve, reject) => {
+        try {
+          let lastError: Error;
+
+          connection = new Redis({
+            ...config,
+            db: 0,
+          });
+          connection.on('error', (e): void => {
+            this.logger.error('Failed connection to the redis oss sentinel', e);
+            lastError = e;
+          });
+          connection.on('end', (): void => {
+            this.logger.error(ERROR_MESSAGES.UNABLE_TO_ESTABLISH_CONNECTION, lastError);
+            reject(lastError || new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          });
+          connection.on('ready', (): void => {
+            lastError = null;
+            this.logger.log('Successfully connected to the redis oss sentinel.');
+
+            // manual switch to particular logical db
+            // since ioredis doesn't handle "select" command error during connection
+            if (config.db > 0) {
+              connection.select(config.db)
+                .then(() => resolve(connection))
+                .catch(reject);
+            } else {
+              resolve(connection);
+            }
+          });
+          connection.on('reconnecting', (): void => {
+            lastError = null;
+            this.logger.log(ERROR_MESSAGES.RECONNECTING_TO_DATABASE);
+          });
+        } catch (e) {
+          reject(e);
+        }
+      }));
+    } catch (e) {
+      connection?.disconnect?.();
+      throw e;
+    }
   }
 
   /**

@@ -3,7 +3,7 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { Database } from 'src/modules/database/models/database';
 import apiConfig from 'src/utils/config';
 import { ConnectionOptions } from 'tls';
-import { isEmpty, isNumber } from 'lodash';
+import { isEmpty, isNumber, set } from 'lodash';
 import { cloneClassInstance, generateRedisConnectionName } from 'src/utils';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
@@ -212,7 +212,10 @@ export class RedisConnectionFactory {
             // since ioredis doesn't handle "select" command error during connection
             if (dbIndex > 0) {
               connection.select(dbIndex)
-                .then(() => resolve(connection))
+                .then(() => {
+                  set(connection, ['options', 'db'], dbIndex);
+                  resolve(connection);
+                })
                 .catch(reject);
             } else {
               resolve(connection);
@@ -283,7 +286,10 @@ export class RedisConnectionFactory {
             // since ioredis doesn't handle "select" command error during connection
             if (config.redisOptions.db > 0) {
               connection.select(config.redisOptions.db)
-                .then(() => resolve(connection))
+                .then(() => {
+                  set(connection, ['options', 'db'], config.redisOptions.db);
+                  resolve(connection);
+                })
                 .catch(reject);
             } else {
               resolve(connection);
@@ -343,7 +349,10 @@ export class RedisConnectionFactory {
             // since ioredis doesn't handle "select" command error during connection
             if (config.db > 0) {
               connection.select(config.db)
-                .then(() => resolve(connection))
+                .then(() => {
+                  set(connection, ['options', 'db'], config.db);
+                  resolve(connection);
+                })
                 .catch(reject);
             } else {
               resolve(connection);

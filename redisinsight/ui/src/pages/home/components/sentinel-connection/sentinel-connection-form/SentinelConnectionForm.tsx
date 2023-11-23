@@ -17,7 +17,7 @@ import {
   fieldDisplayNames,
 } from 'uiSrc/pages/home/constants'
 import { getFormErrors, getSubmitButtonContent } from 'uiSrc/pages/home/utils'
-import { DbConnectionInfo, ISubmitButton, IPasswordType } from 'uiSrc/pages/home/interfaces'
+import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
 import {
   MessageSentinel,
   TlsDetails,
@@ -171,7 +171,6 @@ const SentinelConnectionForm = (props: Props) => {
             formik={formik}
             flexItemClassName={flexItemClassName}
             flexGroupClassName={flexGroupClassName}
-            passwordType={IPasswordType.dual}
             showFields={{ host: true, port: true, alias: false, timeout: false }}
             onHostNamePaste={onHostNamePaste}
           />

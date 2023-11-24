@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import {
-  MiddlewareConsumer, Module, NestModule, OnModuleInit
+  MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from 'nest-router';

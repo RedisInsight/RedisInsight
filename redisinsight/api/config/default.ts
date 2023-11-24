@@ -40,9 +40,9 @@ export default {
   },
   server: {
     version,
-    env: 'development',
+    env: process.env.NODE_ENV || 'development',
     host: process.env.RI_APP_HOST ?? '0.0.0.0',
-    port: parseInt(process.env.RI_APP_PORT, 10) ?? 5000,
+    port: parseInt(process.env.RI_APP_PORT, 10) || 5000,
     docPrefix: 'api/docs',
     globalPrefix: 'api',
     customPluginsUri: '/plugins',

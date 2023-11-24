@@ -11,7 +11,7 @@ import {
   mockServerRepository,
   MockType,
 } from 'src/__mocks__';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import {
   ServerInfoNotFoundException,
   AppAnalyticsEvents,

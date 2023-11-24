@@ -1,4 +1,7 @@
 export default {
+  server: {
+    env: 'development',
+  },
   sockets: {
     cors: true,
   },

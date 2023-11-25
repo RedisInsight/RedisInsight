@@ -1008,8 +1008,12 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           await rte.client.del(constants.TEST_HASH_KEY_1)
         },
         checkFn: ({ body }) => {
-          expect(body.response).to.be.an('object');
-          expect(body.response).to.deep.eql({[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE});
+          expect([
+            // result from ioredis
+            {[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE},
+            // result from node-redis
+            [constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]
+          ]).to.deep.contain(body.response)
         }
       },
     ].map(mainCheckFn);
@@ -1091,10 +1095,12 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command (MULTI)', () => {
         },
         responseRawSchema,
         checkFn: ({ body }) => {
-          expect(body.response).to.deep.eq([
-            'OK',
-            'ReplyError: ERR value is not an integer or out of range',
-          ]);
+          expect([
+            // result from ioredis
+            ['OK', 'ReplyError: ERR value is not an integer or out of range'],
+            // result from node-redis
+            ['OK', 'Error: ERR value is not an integer or out of range'],
+          ]).to.deep.contain(body.response)
         },
       },
     ].map(mainCheckFn);

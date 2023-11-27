@@ -169,12 +169,7 @@ export function sendCliClusterCommandAction(
 
       dispatch(sendCliCommand())
 
-      const {
-        data: [
-          { response, status: dataStatus }
-        ] = [],
-        status
-      } = await apiService.post<SendCommandResponse[]>(
+      const { data: { response, status: dataStatus }, status } = await apiService.post<SendCommandResponse>(
         getUrl(
           id,
           ApiEndpoints.CLI,

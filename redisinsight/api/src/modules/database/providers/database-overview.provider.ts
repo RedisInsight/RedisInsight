@@ -11,7 +11,7 @@ import {
 import {
   convertRedisInfoReplyToObject,
 } from 'src/utils';
-import { getTotal, convertMultilineReplyToObject } from 'src/modules/redis/utils';
+import { getTotalKeys, convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
@@ -250,7 +250,7 @@ export class DatabaseOverviewProvider {
     const nodesTotal: number[] = await Promise.all(
       (await client
         .nodes(RedisClientNodeRole.PRIMARY))
-        .map(async (node) => getTotal(node)),
+        .map(async (node) => getTotalKeys(node)),
     );
     return nodesTotal.reduce((prev, cur) => (
       prev + cur

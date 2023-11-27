@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import { IRedisClusterNodeAddress, ReplyError } from 'src/models';
 import {
   mockFeatureService,
   mockIOClusterNode1,
@@ -10,36 +9,14 @@ import {
   mockRedisClientList,
   mockRedisClientListResult,
   mockRedisClientsInfoResponse,
-  mockRedisClusterFailInfoResponse,
-  mockRedisClusterNodesResponse,
-  mockRedisClusterOkInfoResponse,
-  mockRedisNoPermError,
-  mockRedisSentinelMasterResponse,
   mockRedisServerInfoResponse,
-  mockSentinelMasterDto,
-  mockSentinelMasterEndpoint,
-  mockSentinelMasterInDownState,
-  mockSentinelMasterInOkState,
   mockStandaloneRedisInfoReply, MockType,
 } from 'src/__mocks__';
 import { REDIS_MODULES_COMMANDS, AdditionalRedisModuleName } from 'src/constants';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
-import { BadRequestException, ForbiddenException, InternalServerErrorException } from '@nestjs/common';
-import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
-import ERROR_MESSAGES from 'src/constants/error-messages';
+import { ForbiddenException, InternalServerErrorException } from '@nestjs/common';
 import { FeatureService } from 'src/modules/feature/feature.service';
-
-const mockClusterNodeAddresses: IRedisClusterNodeAddress[] = [
-  {
-    host: '127.0.0.1',
-    port: 30004,
-  },
-  {
-    host: '127.0.0.1',
-    port: 30001,
-  },
-];
 
 const mockRedisServerInfoDto = {
   redis_version: '6.0.5',
@@ -141,7 +118,7 @@ describe('DatabaseInfoProvider', () => {
         .mockRejectedValue(new Error("unknown command 'client'"));
 
       try {
-        await service.getClientListInfo(mockIORedisClient)
+        await service.getClientListInfo(mockIORedisClient);
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
       }

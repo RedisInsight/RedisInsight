@@ -8,7 +8,7 @@ import {
 } from 'src/__mocks__';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
-import * as Utils from 'src/modules/redis/utils/totals.util';
+import * as Utils from 'src/modules/redis/utils/keys.util';
 
 const mockServerInfo = {
   redis_version: '6.2.4',
@@ -228,7 +228,7 @@ describe('OverviewService', () => {
     });
     describe('Cluster', () => {
       it('Should calculate overview and ignore replica where needed', async () => {
-        const getTotal = jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse1);
+        const getTotal = jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
         clusterClient.nodes = jest.fn()
           .mockReturnValue(new Array(6).fill(Promise.resolve()));
 

@@ -479,6 +479,7 @@ describe('StandaloneScannerStrategy', () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith(
           keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
+          { replyEncoding: 'utf8' },
         )
         .mockResolvedValue(Array(keys.length).fill([null, 'string']));
     });

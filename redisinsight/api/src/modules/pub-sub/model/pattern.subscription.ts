@@ -1,12 +1,12 @@
 import { AbstractSubscription } from 'src/modules/pub-sub/model/abstract.subscription';
-import * as IORedis from 'ioredis';
+import { RedisClient } from 'src/modules/redis/client';
 
 export class PatternSubscription extends AbstractSubscription {
-  async subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
-    await client.psubscribe(this.channel);
+  async subscribe(client: RedisClient): Promise<void> {
+    await client.pSubscribe(this.channel);
   }
 
-  async unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void> {
-    await client.punsubscribe(this.channel);
+  async unsubscribe(client: RedisClient): Promise<void> {
+    await client.pUnsubscribe(this.channel);
   }
 }

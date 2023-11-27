@@ -15,6 +15,7 @@ import { DatabaseInfoService } from 'src/modules/database/database-info.service'
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { DatabaseClientInfoProvider } from './providers/database-client-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
 const SERVER_CONFIG = config.get('server');
@@ -35,6 +36,7 @@ export class DatabaseModule {
         DatabaseService,
         DatabaseConnectionService,
         DatabaseClientFactory,
+        DatabaseClientInfoProvider,
         DatabaseInfoProvider,
         DatabaseAnalytics,
         DatabaseFactory,

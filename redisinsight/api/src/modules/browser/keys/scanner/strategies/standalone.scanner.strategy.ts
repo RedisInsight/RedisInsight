@@ -42,6 +42,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
   private async getKeysType(client: RedisClient, keys: RedisString[]): Promise<string[]> {
     const result = await client.sendPipeline(
       keys.map((key: string) => [BrowserToolKeysCommands.Type, key]),
+      { replyEncoding: 'utf8' },
     ) as [any, string][];
 
     return result.map((item: [ReplyError, any]) => (item[0] ? null : item[1]));

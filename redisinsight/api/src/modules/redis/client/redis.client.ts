@@ -2,6 +2,7 @@ import { ClientContext, ClientMetadata } from 'src/common/models';
 import { isNumber } from 'lodash';
 import { RedisString } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -33,7 +34,7 @@ export type RedisClientCommandArguments = RedisClientCommandArgument[];
 export type RedisClientCommand = [cmd: string, ...args: RedisClientCommandArguments];
 export type RedisClientCommandReply = string | number | Buffer | null | undefined | Array<RedisClientCommandReply>;
 
-export abstract class RedisClient {
+export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
 
   protected lastTimeUsed: number;
@@ -43,6 +44,7 @@ export abstract class RedisClient {
     protected readonly client: unknown,
     public readonly options: IRedisClientOptions,
   ) {
+    super();
     this.clientMetadata = RedisClient.prepareClientMetadata(clientMetadata);
     this.lastTimeUsed = Date.now();
     this.id = RedisClient.generateId(this.clientMetadata);
@@ -105,6 +107,16 @@ export abstract class RedisClient {
    * Wait for pending commands will be processed and then close the connection
    */
   abstract quit(): Promise<void>;
+
+  abstract publish(channel: string, message: string): Promise<number>;
+
+  abstract subscribe(channel: string): Promise<void>;
+
+  abstract pSubscribe(channel: string): Promise<void>;
+
+  abstract unsubscribe(channel: string): Promise<void>;
+
+  abstract pUnsubscribe(channel: string): Promise<void>;
 
   abstract getCurrentDbIndex(): Promise<number>;
 

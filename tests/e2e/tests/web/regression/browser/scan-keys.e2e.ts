@@ -16,7 +16,7 @@ const explicitErrorHandler = (): void => {
 };
 
 fixture `Browser - Specify Keys to Scan`
-    .meta({type: 'regression', rte: rte.none})
+    .meta({ type: 'regression', rte: rte.none })
     .page(commonUrl)
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {

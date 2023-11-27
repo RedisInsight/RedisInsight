@@ -5,7 +5,6 @@ import { commonUrl, ossStandaloneBigConfig, ossStandaloneConfig } from '../../..
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
-import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const browserActions = new BrowserActions();

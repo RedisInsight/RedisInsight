@@ -290,6 +290,6 @@ export class WorkbenchPage extends InstancePage {
         do {
             imageHeight = await selector.getStyleProperty('height');
         }
-        while ((imageHeight == '0px') && Date.now() - startTime < searchTimeout);
+        while ((imageHeight === '0px') && Date.now() - startTime < searchTimeout);
     }
 }

@@ -36,7 +36,7 @@ fixture `Bulk Upload`
         await deleteAllKeysFromDB(dbParameters.host, dbParameters.port);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test('Verify bulk upload of different text docs formats', async t => {
+test.only('Verify bulk upload of different text docs formats', async t => {
     // Verify bulk upload for docker app version
     const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];
     const bigKeysResults = ['10 000Commands Processed', '10 000Success', '0Errors'];

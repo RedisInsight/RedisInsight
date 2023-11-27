@@ -38,7 +38,7 @@ fixture `Consumer group`
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Verify that user can create a new Consumer Group in the current Stream', async t => {
+test.only('Verify that user can create a new Consumer Group in the current Stream', async t => {
     const toolTip = [
         'Enter Valid ID, 0 or $',
         '\nSpecify the ID of the last delivered entry in the stream from the new group\'s perspective.',

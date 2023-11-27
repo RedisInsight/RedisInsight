@@ -18,11 +18,4 @@ export class StandaloneIoredisClient extends IoredisClient {
   async nodes(): Promise<RedisClient[]> {
     return [this];
   }
-
-  /**
-   * @inheritDoc
-   */
-  public async info(): Promise<any> {
-    return this.client.info();
-  }
 }

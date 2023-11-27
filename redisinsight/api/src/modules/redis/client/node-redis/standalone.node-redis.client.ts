@@ -63,11 +63,4 @@ export class StandaloneNodeRedisClient extends NodeRedisClient {
   async call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply> {
     return this.sendCommand(command, options);
   }
-
-  /**
-   * @inheritDoc
-   */
-  public async info(): Promise<any> {
-    return this.client.info();
-  }
 }

@@ -310,8 +310,8 @@ describe('DatabaseClientInfoProvider', () => {
       service.getDatabasesCount = jest.fn().mockResolvedValue(16);
     });
     it('get general info for redis standalone', async () => {
-      when(standaloneClient.info)
-        .calledWith()
+      when(standaloneClient.sendCommand)
+        .calledWith(['info'], { replyEncoding: 'utf8' })
         .mockResolvedValue(mockStandaloneRedisInfoReply);
 
       const result = await service.getRedisGeneralInfo(standaloneClient);
@@ -323,7 +323,9 @@ describe('DatabaseClientInfoProvider', () => {
       }\r\n${
         mockRedisClientsInfoResponse
       }\r\n`;
-      when(standaloneClient.info).calledWith().mockResolvedValue(reply);
+      when(standaloneClient.sendCommand)
+        .calledWith(['info'], { replyEncoding: 'utf8' })
+        .mockResolvedValue(reply);
 
       const result = await service.getRedisGeneralInfo(standaloneClient);
 
@@ -337,8 +339,8 @@ describe('DatabaseClientInfoProvider', () => {
     });
     it('get general info for redis cluster', async () => {
       clusterClient.nodes.mockResolvedValueOnce([standaloneClient, standaloneClient]);
-      when(standaloneClient.info)
-        .calledWith()
+      when(standaloneClient.sendCommand)
+        .calledWith(['info'], { replyEncoding: 'utf8' })
         .mockResolvedValueOnce(mockStandaloneRedisInfoReply)
         .mockResolvedValueOnce(mockStandaloneRedisInfoReply);
 
@@ -352,9 +354,11 @@ describe('DatabaseClientInfoProvider', () => {
       });
     });
     it('should throw an error if no permission to run \'info\' command', async () => {
-      standaloneClient.info.mockRejectedValue({
-        message: 'NOPERM this user has no permissions to run the \'info\' command',
-      });
+      when(standaloneClient.sendCommand)
+        .calledWith(['info'], { replyEncoding: 'utf8' })
+        .mockRejectedValue({
+          message: 'NOPERM this user has no permissions to run the \'info\' command',
+        });
 
       try {
         await service.getRedisGeneralInfo(standaloneClient);

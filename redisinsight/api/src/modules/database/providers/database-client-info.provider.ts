@@ -111,7 +111,10 @@ export class DatabaseClientInfoProvider {
   private async getRedisNodeGeneralInfo(client: RedisClient): Promise<RedisDatabaseInfoResponse> {
     try {
       const info = convertRedisInfoReplyToObject(
-        await client.info(),
+        await client.sendCommand(
+          ['info'],
+          { replyEncoding: 'utf8' },
+        ) as string,
       );
       const serverInfo = info['server'];
       const memoryInfo = info['memory'];

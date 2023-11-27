@@ -69,7 +69,10 @@ export class DatabaseOverviewProvider {
     const { host, port } = client.options;
     return {
       ...convertRedisInfoReplyToObject(
-        await client.info(),
+        await client.sendCommand(
+          ['info'],
+          { replyEncoding: 'utf8' },
+        ) as string,
       ),
       host,
       port,

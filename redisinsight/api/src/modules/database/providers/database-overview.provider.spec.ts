@@ -83,16 +83,14 @@ describe('OverviewService', () => {
     spyCalculateTotalKeys = jest.spyOn<any, any>(service, 'calculateTotalKeys');
     spyCalculateNodesTotalKeys = jest.spyOn<any, any>(service, 'calculateNodesTotalKeys');
     standaloneClient.call = jest.fn();
-    standaloneClient.info = jest.fn();
-
-    // standaloneClient.options = { host: '111' };
+    standaloneClient.sendCommand = jest.fn();
   });
 
   describe('getOverview', () => {
     describe('Standalone', () => {
       it('should return proper overview', async () => {
-        when(standaloneClient.info)
-          .calledWith()
+        when(standaloneClient.sendCommand)
+          .calledWith(['info'], { replyEncoding: 'utf8' })
           .mockResolvedValue(mockStandaloneRedisInfoReply);
 
         const result = await service.getOverview(mockClientMetadata, standaloneClient);

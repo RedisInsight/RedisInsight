@@ -367,12 +367,10 @@ describe('cliOutput slice', () => {
       it('call both sendCliClusterCommandAction and sendCliCommandSuccess when response status is successed', async () => {
         // Arrange
         const command = 'keys *'
-        const data: SendCommandResponse[] = [
-          {
-            response: '(nil)',
-            status: CommandExecutionStatus.Success,
-          },
-        ]
+        const data: SendCommandResponse = {
+          response: '(nil)',
+          status: CommandExecutionStatus.Success,
+        }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -384,11 +382,7 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(
-            cliParseTextResponseWithOffset(
-              first(data)?.response, command, first(data)?.status
-            )
-          ),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -396,12 +390,10 @@ describe('cliOutput slice', () => {
       it('call both sendCliClusterCommandAction and sendCliCommandSuccess when response status is fail', async () => {
         // Arrange
         const command = 'keys *'
-        const data: SendCommandResponse[] = [
-          {
-            response: null,
-            status: CommandExecutionStatus.Success,
-          },
-        ]
+        const data: SendCommandResponse = {
+          response: null,
+          status: CommandExecutionStatus.Success,
+        }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -413,11 +405,7 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(
-            cliParseTextResponseWithOffset(
-              first(data)?.response, command, first(data)?.status
-            )
-          ),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })

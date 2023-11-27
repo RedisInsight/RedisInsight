@@ -1009,6 +1009,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
         },
         checkFn: ({ body }) => {
           expect([
+            // TODO: investigate the difference between getting a hash
             // result from ioredis
             {[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE},
             // result from node-redis
@@ -1096,6 +1097,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command (MULTI)', () => {
         responseRawSchema,
         checkFn: ({ body }) => {
           expect([
+            // TODO: investigate the difference between errors
             // result from ioredis
             ['OK', 'ReplyError: ERR value is not an integer or out of range'],
             // result from node-redis

@@ -382,6 +382,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect([
+              // TODO: investigate the difference between getting a hash
               // result from ioredis
               [{
                 response: {[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE},

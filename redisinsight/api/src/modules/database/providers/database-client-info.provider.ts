@@ -113,8 +113,6 @@ export class DatabaseClientInfoProvider {
       const info = convertRedisInfoReplyToObject(
         await client.info(),
       );
-      console.log(client);
-      console.log(info);
       const serverInfo = info['server'];
       const memoryInfo = info['memory'];
       const keyspaceInfo = info['keyspace'];
@@ -122,7 +120,6 @@ export class DatabaseClientInfoProvider {
       const statsInfo = info['stats'];
       const replicationInfo = info['replication'];
       const databases = await this.getDatabasesCount(client, keyspaceInfo);
-      console.log(replicationInfo);
       return {
         version: serverInfo?.redis_version,
         databases,

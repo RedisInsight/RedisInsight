@@ -6,14 +6,10 @@ $outer-height: 220px;
 $outer-height-mobile: 340px;
 
 .container {
-  @include euiScrollBar;
   padding: 20px 16px 20px;
-
   max-height: calc(100vh - #{$outer-height});
-  overflow-y: auto;
-  overflow-x: hidden;
-  word-break: break-word;
 
+  overflow: hidden;
   color: var(--euiTextSubduedColor);
   flex: 1;
   position: relative;
@@ -29,6 +25,11 @@ $outer-height-mobile: 340px;
 }
 
 .stringValue {
+  @include euiScrollBar;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+
   font: inherit !important;
   color: inherit !important;
   padding: 0 !important;
@@ -41,11 +42,6 @@ $outer-height-mobile: 340px;
 }
 
 .stringTextArea {
-  max-height: calc(100vh - #{$outer-height} - 55px);
-  @media only screen and (max-width: 767px) {
-    max-height: calc(100vh - #{$outer-height-mobile} - 55px);
-  }
-
   &.areaWarning {
     border-color: var(--euiColorWarningLight) !important;
     background-image: none !important;

@@ -51,8 +51,7 @@ import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
 import styles from './styles.module.scss'
 
-const MAX_ROWS = 25
-const MIN_ROWS = 4
+const MIN_ROWS = 8
 const APPROXIMATE_WIDTH_OF_SIGN = 8.6
 const MAX_LENGTH = STRING_MAX_LENGTH + 1
 
@@ -72,7 +71,7 @@ const StringDetailsTable = (props: Props) => {
   const { name: key, type: keyType, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
 
-  const [rows, setRows] = useState<number>(5)
+  const [rows, setRows] = useState<number>(MIN_ROWS)
   const [value, setValue] = useState<JSX.Element | string>('')
   const [areaValue, setAreaValue] = useState<string>('')
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
@@ -83,6 +82,7 @@ const StringDetailsTable = (props: Props) => {
 
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
   const viewValueRef: Ref<HTMLPreElement> = useRef(null)
+  const containerRef: Ref<HTMLDivElement> = useRef(null)
 
   const dispatch = useDispatch()
 
@@ -125,16 +125,9 @@ const StringDetailsTable = (props: Props) => {
       return
     }
     const calculatedRows = calculateTextareaLines(areaValue, textAreaRef.current.clientWidth, APPROXIMATE_WIDTH_OF_SIGN)
-
-    if (calculatedRows > MAX_ROWS) {
-      setRows(MAX_ROWS)
-      return
+    if (calculatedRows > MIN_ROWS) {
+      setRows(calculatedRows)
     }
-    if (calculatedRows < MIN_ROWS) {
-      setRows(MIN_ROWS)
-      return
-    }
-    setRows(calculatedRows)
   }, [viewValueRef, isEditItem])
 
   useMemo(() => {
@@ -188,7 +181,7 @@ const StringDetailsTable = (props: Props) => {
 
   return (
     <>
-      <div className={styles.container} data-testid="string-details">
+      <div className={styles.container} ref={containerRef} data-testid="string-details">
         {isLoading && (
           <EuiProgress
             color="primary"
@@ -199,6 +192,7 @@ const StringDetailsTable = (props: Props) => {
         )}
         {!isEditItem && (
           <EuiText
+            className={styles.stringValue}
             onClick={() => isEditable && setIsEdit(true)}
             style={{ whiteSpace: 'break-spaces' }}
             data-testid="string-value"
@@ -253,6 +247,7 @@ const StringDetailsTable = (props: Props) => {
               disabled={loading}
               inputRef={textAreaRef}
               className={cx(styles.stringTextArea, { [styles.areaWarning]: isDisabled })}
+              style={{ maxHeight: containerRef.current ? containerRef.current?.clientHeight - 80 : '100%' }}
               data-testid="string-value"
             />
           </InlineItemEditor>

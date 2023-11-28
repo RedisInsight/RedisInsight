@@ -15,6 +15,7 @@ import { RedisResponseBuffer } from '../interfaces'
 export const initialState: StringState = {
   loading: false,
   error: '',
+  isCompressed: false,
   data: {
     key: '',
     value: null,

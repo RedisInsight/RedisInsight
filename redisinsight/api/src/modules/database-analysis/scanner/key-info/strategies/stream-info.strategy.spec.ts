@@ -1,25 +1,23 @@
 import { when } from 'jest-when';
-import IORedis from 'ioredis';
 import { StreamInfoStrategy } from 'src/modules/database-analysis/scanner/key-info/strategies/stream-info.strategy';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 
 const mockKey = Buffer.from('key');
 const mockRedisResponse = 1;
 
 describe('StreamInfoStrategy', () => {
+  const client = mockStandaloneRedisClient;
   const strategy = new StreamInfoStrategy();
 
   beforeEach(async () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'xlen' }))
+    when(client.sendCommand)
+      .calledWith(jasmine.arrayContaining(['xlen']))
       .mockResolvedValue(mockRedisResponse);
   });
 
   describe('getLength', () => {
     it('should get length', async () => {
-      expect(await strategy.getLength(nodeClient, mockKey)).toEqual(mockRedisResponse);
+      expect(await strategy.getLength(client, mockKey)).toEqual(mockRedisResponse);
     });
   });
 });

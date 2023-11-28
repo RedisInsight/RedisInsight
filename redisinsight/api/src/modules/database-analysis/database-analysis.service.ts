@@ -9,16 +9,17 @@ import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-an
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { ClientMetadata } from 'src/common/models';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
 
 @Injectable()
 export class DatabaseAnalysisService {
   private logger = new Logger('DatabaseAnalysisService');
 
   constructor(
-    private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly recommendationService: RecommendationService,
     private readonly analyzer: DatabaseAnalyzer,
     private readonly databaseAnalysisProvider: DatabaseAnalysisProvider,
@@ -35,10 +36,10 @@ export class DatabaseAnalysisService {
     clientMetadata: ClientMetadata,
     dto: CreateDatabaseAnalysisDto,
   ): Promise<DatabaseAnalysis> {
-    let client;
+    let client: RedisClient;
 
     try {
-      client = await this.databaseConnectionService.createClient(clientMetadata);
+      client = await this.databaseClientFactory.createClient(clientMetadata);
 
       const scanResults = await this.scanner.scan(client, {
         filter: dto.filter,
@@ -81,7 +82,7 @@ export class DatabaseAnalysisService {
       }, Promise.resolve([]));
       const analysis = plainToClass(DatabaseAnalysis, await this.analyzer.analyze({
         databaseId: clientMetadata.databaseId,
-        db: client?.options?.db || 0,
+        db: await client?.getCurrentDbIndex(),
         ...dto,
         progress,
         recommendations,

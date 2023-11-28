@@ -29,10 +29,7 @@ const route = '/databases/:dbInstance';
     RedisearchModule.register({ route }),
     KeysModule.register({ route }),
   ],
-  providers: [
-    DatabaseClientFactory,
-    DatabaseAnalytics,
-  ],
+  providers: [],
   exports: [BrowserHistoryModule],
 })
 export class BrowserModule {}

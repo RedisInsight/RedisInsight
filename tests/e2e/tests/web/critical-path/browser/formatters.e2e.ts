@@ -205,6 +205,8 @@ notEditableFormattersSet.forEach(formatter => {
                 await t.hover(editBtn);
                 // Verify tooltip content
                 await t.expect(browserPage.tooltip.textContent).contains('Cannot edit the value in this format', 'Tooltip has wrong text');
+                await t.click(editBtn);
+                await t.expect(browserPage.applyButton.exists).notOk('Edit field is displayed even if disabled');
             }
         }
     });

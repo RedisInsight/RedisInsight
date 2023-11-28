@@ -46,7 +46,7 @@ describe('KeyEncryptionStrategy', () => {
       expect(await service.encrypt(mockDataToEncrypt)).toEqual(mockKeyEncryptResult);
       expect(service['cipherKey']).not.toEqual(undefined);
     });
-    it('Should throw KeytarEncryptionError when unable to encrypt', async () => {
+    it('Should throw KeyEncryptionError when unable to encrypt', async () => {
       await expect(service.encrypt(null)).rejects.toThrowError(KeyEncryptionErrorException);
     });
     it('Should throw KeyUnavailable when there is no key but we are trying to encrypt', async () => {

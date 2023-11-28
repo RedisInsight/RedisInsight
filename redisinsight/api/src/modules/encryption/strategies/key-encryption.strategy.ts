@@ -6,19 +6,20 @@ import { EncryptionResult, EncryptionStrategy } from 'src/modules/encryption/mod
 import { IEncryptionStrategy } from 'src/modules/encryption/strategies/encryption-strategy.interface';
 import {
   KeyDecryptionErrorException,
-  KeyEncryptionErrorException, KeyUnavailableException
+  KeyEncryptionErrorException,
+  KeyUnavailableException,
 } from 'src/modules/encryption/exceptions';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 
 const ALGORITHM = 'aes-256-cbc';
 const HASH_ALGORITHM = 'sha256';
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class KeyEncryptionStrategy implements IEncryptionStrategy {
   private logger = new Logger('KeyEncryptionStrategy');
 
-  private cipherKey;
+  private cipherKey: Buffer;
 
   private readonly key: string;
 
@@ -27,8 +28,8 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
   }
 
   /**
-   * Get password from storage and create cipher key
-   * Note: Will generate new password if it doesn't exists yet
+   * Will return existing cipher stored in-memory or
+   * create new one using specified key and store it in-memory
    */
   private async getCipherKey(): Promise<Buffer> {
     if (!this.cipherKey) {
@@ -45,8 +46,7 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
   }
 
   /**
-   * Checks if Keytar functionality is available
-   * Basically just try to get a password and checks if this call fails
+   * Checks if secret key was specified
    */
   async isAvailable(): Promise<boolean> {
     return !!this.key;

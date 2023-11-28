@@ -18,9 +18,10 @@ import { CustomTutorialEntity } from 'src/modules/custom-tutorial/entities/custo
 import { FeatureEntity } from 'src/modules/feature/entities/feature.entity';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
+import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
+import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
-import { CloudCapiKeyEntity } from 'src/modules/cloud/capi-key/entity/cloud-capi-key.entity';
 
 const dbConfig = config.get('db');
 
@@ -48,6 +49,7 @@ const ormConfig = {
     FeaturesConfigEntity,
     CloudDatabaseDetailsEntity,
     CloudCapiKeyEntity,
+    RdiEntity,
   ],
   migrations,
 };

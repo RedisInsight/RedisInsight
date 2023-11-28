@@ -39,7 +39,7 @@ export class BrowserPage extends InstancePage {
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
     refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
-    editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
+    editKeyValueButton = Selector('[data-testid=edit-key-value-btn]', { timeout: 500 });
     closeKeyButton = Selector('[data-testid=close-key-btn]');
     plusAddKeyButton = Selector('[data-testid=btn-add-key]');
     addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');

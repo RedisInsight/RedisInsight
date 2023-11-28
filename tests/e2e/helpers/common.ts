@@ -1,6 +1,6 @@
 import * as path from 'path';
-import * as archiver from 'archiver';
 import * as fs from 'fs';
+import * as archiver from 'archiver';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl, commonUrl } from './conf';
@@ -12,7 +12,6 @@ declare global {
       windowId?: string
     }
   }
-
 
 const settingsApiUrl = `${commonUrl}/api/settings`;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]

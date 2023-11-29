@@ -191,28 +191,24 @@ const StringDetailsTable = (props: Props) => {
           />
         )}
         {!isEditItem && (
-          <EuiText
-            className={styles.stringValue}
-            onClick={() => isEditable && setIsEdit(true)}
-            style={{ whiteSpace: 'break-spaces' }}
-            data-testid="string-value"
+          <EuiToolTip
+            title={!isValid ? noEditableText : undefined}
+            anchorClassName={styles.tooltipAnchor}
+            className={styles.tooltip}
+            position="top"
+            data-testid="string-value-tooltip"
           >
-            {areaValue !== ''
-              ? (isValid
+            <EuiText
+              className={styles.stringValue}
+              onClick={() => isEditable && setIsEdit(true)}
+              style={{ whiteSpace: 'break-spaces' }}
+              data-testid="string-value"
+            >
+              {areaValue !== ''
                 ? value
-                : (
-                  <EuiToolTip
-                    title={noEditableText}
-                    className={styles.tooltip}
-                    position="bottom"
-                    data-testid="string-value-tooltip"
-                  >
-                    <>{value}</>
-                  </EuiToolTip>
-                )
-              )
-              : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
-          </EuiText>
+                : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
+            </EuiText>
+          </EuiToolTip>
         )}
         {isEditItem && (
           <InlineItemEditor

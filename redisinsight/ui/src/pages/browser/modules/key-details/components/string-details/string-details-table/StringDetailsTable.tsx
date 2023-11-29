@@ -195,7 +195,7 @@ const StringDetailsTable = (props: Props) => {
             title={!isValid ? noEditableText : undefined}
             anchorClassName={styles.tooltipAnchor}
             className={styles.tooltip}
-            position="top"
+            position="left"
             data-testid="string-value-tooltip"
           >
             <EuiText

@@ -30,6 +30,7 @@ $outer-height-mobile: 340px;
   overflow-x: hidden;
   word-break: break-word;
   line-height: 1.2;
+  width: 100%;
 
   pre {
     background-color: transparent !important;
@@ -46,7 +47,9 @@ $outer-height-mobile: 340px;
 
 .tooltipAnchor {
   display: inline-flex !important;
-  height: 100%;
+  height: auto;
+  max-height: 100%;
+  width: 100%;
 }
 
 .stringFooterBtn {

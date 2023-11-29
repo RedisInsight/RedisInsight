@@ -53,9 +53,8 @@ export class SlowLogService {
     const resp = await node.call(
       [SlowLogCommands.SlowLog, SlowLogArguments.Get, dto.count],
       { replyEncoding: 'utf8' },
-    );
+    ) as string[][] | number[][];
 
-    // @ts-ignore
     return resp.map((log) => {
       const [id, time, durationUs, args, source, client] = log;
       return {

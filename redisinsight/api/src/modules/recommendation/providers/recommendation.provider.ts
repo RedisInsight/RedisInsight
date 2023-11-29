@@ -427,7 +427,7 @@ export class RecommendationProvider {
     client: RedisClient,
   ): Promise<Recommendation> {
     try {
-      if (redisClient.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+      if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
         const res = await this.determineSearchIndexesForCluster(keys, client);
         return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES, params: { keys: [res] } } : null;
       }

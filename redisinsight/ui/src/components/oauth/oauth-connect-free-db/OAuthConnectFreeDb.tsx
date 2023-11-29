@@ -8,7 +8,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import {
   checkConnectToInstanceAction,
   connectedInstanceSelector,
-  freeInstanceSelector,
+  freeInstancesSelector,
   instancesSelector,
 } from 'uiSrc/slices/instances/instances'
 import { openNewWindowDatabase } from 'uiSrc/utils'
@@ -17,22 +17,26 @@ import { Pages } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 interface Props {
+  id?: string
   source?: OAuthSocialSource | string
   onSuccessClick?: () => void
 }
 
 const OAuthConnectFreeDb = ({
+  id = '',
   source = OAuthSocialSource.ListOfDatabases,
   onSuccessClick,
 }: Props) => {
   const { loading } = useSelector(instancesSelector) ?? {}
   const { modules, provider } = useSelector(connectedInstanceSelector) ?? {}
-  const { id = '' } = useSelector(freeInstanceSelector) ?? {}
+  const [firstFreeInstance] = useSelector(freeInstancesSelector) ?? []
+
+  const targetDatabaseId = id || firstFreeInstance?.id
 
   const dispatch = useDispatch()
   const { search } = useLocation()
 
-  if (!id) {
+  if (!targetDatabaseId) {
     return null
   }
 
@@ -41,7 +45,7 @@ const OAuthConnectFreeDb = ({
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
-        databaseId: id,
+        databaseId: targetDatabaseId,
         provider,
         source,
         ...modulesSummary,
@@ -52,14 +56,14 @@ const OAuthConnectFreeDb = ({
   const connectToInstanceSuccess = () => {
     onSuccessClick?.()
 
-    openNewWindowDatabase(Pages.browser(id) + search)
+    openNewWindowDatabase(Pages.browser(targetDatabaseId) + search)
   }
 
   const handleCheckConnectToInstance = (
   ) => {
     sendTelemetry()
     dispatch(checkConnectToInstanceAction(
-      id,
+      targetDatabaseId,
       connectToInstanceSuccess,
       () => {},
       false,

@@ -193,7 +193,7 @@ notEditableFormattersSet.forEach(formatter => {
         // Verify for Protobuf, Java serialized, Pickle
         // Verify for Hash, List, ZSet, String keys
         for (const key of keysData) {
-            if (key.textType === 'Hash' || key.textType === 'List' || key.textType === 'Sorted Set' || key.textType === 'String') {
+            if (key.textType === 'Hash' || key.textType === 'List' || key.textType === 'String') {
                 const editBtn = (key.textType === 'String')
                     ? browserPage.editKeyValueButton
                     : Selector(`[data-testid*=edit-][data-testid*=${key.keyName.split('-')[0]}]`, { timeout: 500 });
@@ -205,6 +205,13 @@ notEditableFormattersSet.forEach(formatter => {
                 await t.hover(editBtn);
                 // Verify tooltip content
                 await t.expect(browserPage.tooltip.textContent).contains('Cannot edit the value in this format', 'Tooltip has wrong text');
+            }
+            if (key.textType === 'Sorted Set') {
+                const editBtn = Selector(`[data-testid*=edit-][data-testid*=${key.keyName.split('-')[0]}]`, { timeout: 500 });
+                await browserPage.openKeyDetailsByKeyName(key.keyName);
+                await browserPage.selectFormatter(formatter.format);
+                // Verify that edit button enabled for ZSet
+                await t.expect(editBtn.hasAttribute('disabled')).notOk(`Key ${key.textType} is disabled for ${formatter.format} formatter`);
             }
         }
     });

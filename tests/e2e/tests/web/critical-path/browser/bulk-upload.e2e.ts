@@ -5,7 +5,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { deleteAllKeysFromDB, verifyKeysDisplayedInTheList } from '../../../../helpers/keys';
+import { deleteAllKeysFromDB, verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -53,7 +53,7 @@ test('Verify bulk upload of different text docs formats', async t => {
     await browserPage.BulkActions.uploadFileInBulk(filePathes.allKeysFile);
     await verifyCompletedResultText(allKeysResults);
     await browserPage.searchByKeyName('*key1');
-    await verifyKeysDisplayedInTheList(keyNames);
+    await verifyKeysDisplayingInTheList(keyNames, true);
 
     // Verify that Upload button disabled after starting new upload
     await t.click(browserPage.BulkActions.bulkActionStartNewButton);
@@ -61,8 +61,7 @@ test('Verify bulk upload of different text docs formats', async t => {
 
     // Verify that user can remove uploaded file
     await t.setFilesToUpload(browserPage.BulkActions.bulkUploadInput, [filePathes.bigDataFile]);
-    // update after resolving testcafe Native Automation mode limitations
-    // await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
+    await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
     await t.click(browserPage.BulkActions.removeFileBtn);
     await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(defaultText, 'File not removed from upload input');
 

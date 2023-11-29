@@ -100,12 +100,15 @@ test
         const scrollY = 1000;
         await t.scroll(browserPage.cssSelectorGrid, 0, scrollY);
 
-        const keysCount = await browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow).count;
-        const targetKey = browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow).nth(Math.floor(keysCount / 2));
+        const virtualizedTableKeyIndex = browserPage.virtualTableContainer.find(browserPage.cssVirtualTableRow).nth(10);
+        const targetKeyIndex = await virtualizedTableKeyIndex.getAttribute('aria-rowindex');
+        const targetKey = browserPage.virtualTableContainer.find(`[aria-rowindex="${targetKeyIndex}"`);
         const targetKeyName = await targetKey.find(browserPage.cssSelectorKey).innerText;
+
         // Open key details
         await t.click(targetKey);
-        await t.expect(await targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
+        // Verify that key selected
+        await t.expect(targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
 
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         // Return back to Browser and check key details selected
@@ -113,7 +116,7 @@ test
         // Check Keys details saved
         await t.expect(browserPage.keyNameFormDetails.innerText).eql(targetKeyName, 'Key details is not saved as context');
         // Check Key selected in Key List
-        await t.expect(await targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
+        await t.expect(targetKey.getAttribute('class')).contains('table-row-selected', 'Not correct key selected in key list');
     });
 test
     .after(async() => {
@@ -132,13 +135,13 @@ test
         await t.click(browserPage.Cli.cliCollapseButton);
         await t.click(browserPage.refreshKeysButton);
 
-        const keyList = await browserPage.keyListTable;
-        const keyListSGrid = await keyList.find(browserPage.cssSelectorGrid);
+        const keyList = browserPage.keyListTable;
+        const keyListSGrid = keyList.find(browserPage.cssSelectorGrid);
 
         // Scroll key list
         await t.scroll(keyListSGrid, 0, scrollY);
         // Find any key from list that is visible
-        const renderedRows = await keyList.find(browserPage.cssSelectorRows);
+        const renderedRows = keyList.find(browserPage.cssSelectorRows);
         const renderedRowsCount = await renderedRows.count;
         const randomKey = renderedRows.nth(Math.floor((Math.random() * renderedRowsCount)));
         const randomKeyName = await randomKey.find(browserPage.cssSelectorKey).textContent;

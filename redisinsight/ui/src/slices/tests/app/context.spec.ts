@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
-import { DEFAULT_DELIMITER, KeyTypes } from 'uiSrc/constants'
-import { getTreeLeafField, stringToBuffer } from 'uiSrc/utils'
+import { KeyTypes, SortOrder } from 'uiSrc/constants'
+import { stringToBuffer } from 'uiSrc/utils'
 
 import {
   cleanup,
@@ -16,6 +16,7 @@ import reducer, {
   setBrowserSelectedKey,
   setBrowserPatternScrollPosition,
   setBrowserPanelSizes,
+  setBrowserTreeSort,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setLastPageContext,
@@ -27,11 +28,8 @@ import reducer, {
   setWorkbenchEAItemScrollTop,
   resetWorkbenchEASearch,
   setBrowserTreeNodesOpen,
-  setBrowserTreePanelSizes,
   resetBrowserTree,
   appContextBrowserTree,
-  setBrowserTreeSelectedLeaf,
-  updateBrowserTreeSelectedLeaf,
   setBrowserTreeDelimiter,
   setBrowserIsNotRendered,
   setBrowserRedisearchScrollPosition,
@@ -477,72 +475,6 @@ describe('slices', () => {
     })
   })
 
-  describe('setBrowserTreeSelectedLeaf', () => {
-    it('should properly set selected keys in the tree', () => {
-      // Arrange
-      const selectedLeaf = {
-        [getTreeLeafField(DEFAULT_DELIMITER)]: {
-          test: {
-            name: 'test',
-            type: KeyTypes.Hash,
-            ttl: 123,
-            size: 123,
-            length: 321
-          }
-        }
-      }
-      const prevState = {
-        ...initialState,
-        browser: {
-          ...initialState.browser,
-          tree: {
-            ...initialState.browser.tree,
-            selectedLeaf
-          }
-        },
-      }
-
-      const state = {
-        ...initialState.browser.tree,
-        selectedLeaf
-      }
-
-      // Act
-      const nextState = reducer(prevState, setBrowserTreeSelectedLeaf(selectedLeaf))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextBrowserTree(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setBrowserTreePanelSizes', () => {
-    it('should properly set browser tree panel widths', () => {
-      // Arrange
-      const panelSizes = {
-        first: 50,
-        second: 400
-      }
-      const state = {
-        ...initialState.browser.tree,
-        panelSizes
-      }
-
-      // Act
-      const nextState = reducer(initialState, setBrowserTreePanelSizes(panelSizes))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextBrowserTree(rootState)).toEqual(state)
-    })
-  })
-
   describe('setBrowserIsNotRendered', () => {
     it('should properly set browser is not rendered value', () => {
       // Arrange
@@ -573,6 +505,7 @@ describe('slices', () => {
       const data = {
         slowLogDurationUnit: 'msec',
         treeViewDelimiter: ':-',
+        treeViewSort: SortOrder.DESC,
         showHiddenRecommendations: true,
       }
 
@@ -637,6 +570,28 @@ describe('slices', () => {
     })
   })
 
+  describe('setBrowserTreeSort', () => {
+    it('should properly set browser tree sorting', () => {
+      // Arrange
+      const sorting = SortOrder.DESC
+
+      const state = {
+        ...initialState.dbConfig,
+        treeViewSort: sorting,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setBrowserTreeSort(sorting))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextDbConfig(rootState)).toEqual(state)
+    })
+  })
+
   describe('setRecommendationsShowHidden', () => {
     it('should properly set is show hidden live recommendations', () => {
       // Arrange
@@ -671,141 +626,18 @@ describe('slices', () => {
             openNodes: {
               test: true
             },
-            selectedLeaf: {
-              [getTreeLeafField(DEFAULT_DELIMITER)]: {
-                test: {
-                  name: 'test',
-                  type: KeyTypes.Hash,
-                  ttl: 123,
-                  size: 123,
-                  length: 321
-                }
-              }
-            }
+            selectedLeaf: 'test',
           }
         },
       }
       const state = {
         ...initialState.browser.tree,
         openNodes: {},
-        selectedLeaf: {}
+        selectedLeaf: null
       }
 
       // Act
       const nextState = reducer(prevState, resetBrowserTree())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextBrowserTree(rootState)).toEqual(state)
-    })
-  })
-
-  describe('updateBrowserTreeSelectedLeaf', () => {
-    it('should properly update selected leaf and add a new fitted key', () => {
-      const payload = {
-        key: 'test',
-        newKey: 'test2'
-      }
-      // Arrange
-      const prevState = {
-        ...initialState,
-        browser: {
-          ...initialState.browser,
-          tree: {
-            ...initialState.browser.tree,
-            selectedLeaf: {
-              [getTreeLeafField(DEFAULT_DELIMITER)]: {
-                [payload.key]: {
-                  name: payload.key,
-                  type: KeyTypes.Hash,
-                  ttl: 123,
-                  size: 123,
-                  length: 321
-                }
-              }
-            }
-          }
-        },
-      }
-      const state = {
-        ...initialState.browser.tree,
-        openNodes: {},
-        selectedLeaf: {
-          [getTreeLeafField(DEFAULT_DELIMITER)]: {
-            [payload.newKey]: {
-              name: payload.newKey,
-              type: KeyTypes.Hash,
-              ttl: 123,
-              size: 123,
-              length: 321
-            } }
-        }
-      }
-
-      // Act
-      const nextState = reducer(prevState, updateBrowserTreeSelectedLeaf(payload))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextBrowserTree(rootState)).toEqual(state)
-    })
-    it("should properly update selected leaf and remove old key (new key does't fit)", () => {
-      const payload = {
-        key: 'test',
-        newKey: 'test:2'
-      }
-      // Arrange
-      const prevState = {
-        ...initialState,
-        browser: {
-          ...initialState.browser,
-          tree: {
-            ...initialState.browser.tree,
-            selectedLeaf: {
-              [getTreeLeafField(DEFAULT_DELIMITER)]: {
-                [payload.key]: {
-                  name: payload.key,
-                  type: KeyTypes.Hash,
-                  ttl: 123,
-                  size: 123,
-                  length: 321
-                },
-                test2: {
-                  name: 'test2',
-                  type: KeyTypes.Hash,
-                  ttl: 123,
-                  size: 123,
-                  length: 321
-                }
-              }
-            }
-          }
-        },
-      }
-      const state = {
-        ...initialState.browser.tree,
-        openNodes: {},
-        selectedLeaf: {
-          [getTreeLeafField(DEFAULT_DELIMITER)]: {
-            test2: {
-              name: 'test2',
-              type: KeyTypes.Hash,
-              ttl: 123,
-              size: 123,
-              length: 321
-            },
-          }
-        }
-      }
-
-      // Act
-      const nextState = reducer(prevState, updateBrowserTreeSelectedLeaf(payload))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

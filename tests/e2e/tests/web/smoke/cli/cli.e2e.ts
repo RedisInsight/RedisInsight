@@ -5,6 +5,7 @@ import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { Common } from '../../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
+import { goBackHistory, openRedisHomePage } from '../../../../helpers/utils';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -74,15 +75,13 @@ test.skip('Verify that user can use unblocking command', async t => {
     // Verify that user input is blocked
     await t.expect(browserPage.Cli.cliCommandInput.exists).notOk('Cli input is still shown');
     // Create new window to unblock the client
-    await t
-        .openWindow(commonUrl)
-        .maximizeWindow();
+    await openRedisHomePage();
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     // Open CLI
     await t.click(browserPage.Cli.cliExpandButton);
     // Unblock client
     await t.typeText(browserPage.Cli.cliCommandInput, `client unblock ${clientId}`, { replace: true, paste: true });
     await t.pressKey('enter');
-    await t.closeWindow();
+    await goBackHistory();
     await t.expect(browserPage.Cli.cliCommandInput.exists).ok('Cli input is not shown, the client still blocked', { timeout: 10000 });
 });

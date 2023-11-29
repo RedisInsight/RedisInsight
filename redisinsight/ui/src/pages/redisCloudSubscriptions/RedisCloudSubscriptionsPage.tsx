@@ -44,7 +44,7 @@ const RedisCloudSubscriptionsPage = () => {
     account: { error: accountError, data: account },
   } = useSelector(cloudSelector)
 
-  setTitle('Redis Enterprise Cloud Subscriptions')
+  setTitle('Redis Cloud Subscriptions')
 
   useEffect(() => {
     if (subscriptions === null) {

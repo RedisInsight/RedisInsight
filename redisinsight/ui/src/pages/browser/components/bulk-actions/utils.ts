@@ -9,3 +9,4 @@ export const isProcessedBulkAction = (status?: BulkActionsStatus) =>
   status === BulkActionsStatus.Completed
     || status === BulkActionsStatus.Aborted
     || status === BulkActionsStatus.Failed
+    || status === BulkActionsStatus.Disconnected

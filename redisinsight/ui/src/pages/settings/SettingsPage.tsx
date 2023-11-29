@@ -187,7 +187,7 @@ const SettingsPage = () => {
             <EuiCollapsibleNavGroup
               isCollapsible
               className={cx(styles.accordion, styles.accordionWithSubTitle)}
-              title="Redis Enterprise Cloud"
+              title="Redis Cloud"
               initialIsOpen={initialOpenSection === '#cloud'}
               data-test-subj="accordion-cloud-settings"
             >

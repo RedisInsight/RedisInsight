@@ -16,6 +16,8 @@ export default {
   CONNECTION_TIMEOUT:
     'The connection has timed out, please check the connection details.',
   SERVER_CLOSED_CONNECTION: 'Server closed the connection.',
+  UNABLE_TO_ESTABLISH_CONNECTION: 'Unable to establish connection.',
+  RECONNECTING_TO_DATABASE: 'Reconnecting to the redis database.',
   AUTHENTICATION_FAILED: () => 'Failed to authenticate, please check the username or password.',
   INCORRECT_DATABASE_URL: (url) => `Could not connect to ${url}, please check the connection details.`,
   INCORRECT_CERTIFICATES: (url) => `Could not connect to ${url}, please check the CA or Client certificate.`,

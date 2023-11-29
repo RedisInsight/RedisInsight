@@ -10,6 +10,7 @@ import { AppType } from 'src/modules/server/models/server';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import {
   AnalyticsService,
+  Telemetry,
   NON_TRACKING_ANONYMOUS_ID,
 } from './analytics.service';
 
@@ -95,6 +96,11 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
+        context: {
+          traits: {
+            telemetry: Telemetry.Enabled,
+          },
+        },
         properties: {
           anonymousId: mockAnonymousId,
           buildType: AppType.Electron,
@@ -128,6 +134,11 @@ describe('AnalyticsService', () => {
         anonymousId: NON_TRACKING_ANONYMOUS_ID,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
+        context: {
+          traits: {
+            telemetry: Telemetry.Disabled,
+          },
+        },
         properties: {
           anonymousId: mockAnonymousId,
           buildType: AppType.Electron,
@@ -150,6 +161,11 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         event: TelemetryEvents.ApplicationStarted,
+        context: {
+          traits: {
+            telemetry: Telemetry.Enabled,
+          },
+        },
         properties: {
           anonymousId: mockAnonymousId,
           buildType: AppType.Electron,
@@ -186,6 +202,11 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         name: TelemetryEvents.ApplicationStarted,
+        context: {
+          traits: {
+            telemetry: Telemetry.Enabled,
+          },
+        },
         properties: {
           anonymousId: mockAnonymousId,
           buildType: AppType.Electron,
@@ -219,6 +240,11 @@ describe('AnalyticsService', () => {
         anonymousId: NON_TRACKING_ANONYMOUS_ID,
         integrations: { Amplitude: { session_id: sessionId } },
         name: TelemetryEvents.ApplicationStarted,
+        context: {
+          traits: {
+            telemetry: Telemetry.Disabled,
+          },
+        },
         properties: {
           anonymousId: mockAnonymousId,
           buildType: AppType.Electron,
@@ -241,6 +267,11 @@ describe('AnalyticsService', () => {
         anonymousId: mockAnonymousId,
         integrations: { Amplitude: { session_id: sessionId } },
         name: TelemetryEvents.ApplicationStarted,
+        context: {
+          traits: {
+            telemetry: Telemetry.Enabled,
+          },
+        },
         properties: {
           anonymousId: mockAnonymousId,
           buildType: AppType.Electron,

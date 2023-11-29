@@ -39,7 +39,7 @@ export class DatabaseFactory {
         context: ClientContext.Common,
       },
       database,
-      { useRetry: false },
+      { useRetry: true },
     );
 
     if (await isSentinel(client)) {
@@ -110,7 +110,7 @@ export class DatabaseFactory {
           context: ClientContext.Common,
         },
         model,
-        { useRetry: false },
+        { useRetry: true },
       );
 
       model.connectionType = ConnectionType.CLUSTER;
@@ -153,7 +153,7 @@ export class DatabaseFactory {
           context: ClientContext.Common,
         },
         model,
-        { useRetry: false },
+        { useRetry: true },
       );
 
       model.connectionType = ConnectionType.SENTINEL;

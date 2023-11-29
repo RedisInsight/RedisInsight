@@ -1635,28 +1635,28 @@ workflows:
 
       - virustotal-url:
           name: Virus check - AppImage (nightly)
-          fileName: RedisInsight-v2-linux-x86_64.AppImage
+          fileName: RedisInsight-linux-x86_64.AppImage
       - virustotal-url:
           name: Virus check - deb (nightly)
-          fileName: RedisInsight-v2-linux-amd64.deb
+          fileName: RedisInsight-linux-amd64.deb
       - virustotal-url:
           name: Virus check - rpm (nightly)
-          fileName: RedisInsight-v2-linux-x86_64.rpm
+          fileName: RedisInsight-linux-x86_64.rpm
       - virustotal-url:
           name: Virus check - snap (nightly)
-          fileName: RedisInsight-v2-linux-amd64.snap
+          fileName: RedisInsight-linux-amd64.snap
       - virustotal-url:
           name: Virus check x64 - dmg (nightly)
-          fileName: RedisInsight-v2-mac-x64.dmg
+          fileName: RedisInsight-mac-x64.dmg
       - virustotal-url:
           name: Virus check arm64 - dmg (nightly)
-          fileName: RedisInsight-v2-mac-arm64.dmg
+          fileName: RedisInsight-mac-arm64.dmg
       - virustotal-url:
           name: Virus check MAS - pkg (nightly)
           fileName: RedisInsight-mac-universal-mas.pkg
       - virustotal-url:
           name: Virus check - exe (nightly)
-          fileName: RedisInsight-v2-win-installer.exe
+          fileName: RedisInsight-win-installer.exe
       - virustotal-report:
           name: Virus check report (prod)
           requires:

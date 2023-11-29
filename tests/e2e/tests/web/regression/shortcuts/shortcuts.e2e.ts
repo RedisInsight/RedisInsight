@@ -3,10 +3,10 @@ import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl } from '../../../../helpers/conf';
+import { Common } from '../../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
-// const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Shortcuts`
     .meta({ type: 'regression', rte: rte.none })
@@ -31,12 +31,11 @@ test('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shor
     // Verify that user can close the Shortcuts
     await t.click(myRedisDatabasePage.ShortcutsPanel.shortcutsCloseButton);
     await t.expect(myRedisDatabasePage.ShortcutsPanel.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
-    // update after resolving testcafe Native Automation mode limitations
-    // // Click on the Release Notes in Help Center
-    // await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    // await t.click(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterReleaseNotesButton);
-    // // Verify redirected link opening Release Notes in Help Center
-    // await t.expect(getPageUrl()).eql(link, 'The Release Notes link not correct');
+    // Click on the Release Notes in Help Center
+    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
+    await t.click(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterReleaseNotesButton);
+    // Verify redirected link opening Release Notes in Help Center
+    await Common.checkURL('https://github.com/RedisInsight/RedisInsight/releases');
 });
 test('Verify that user can see description of the “up” shortcut in the Help Center > Keyboard Shortcuts > Workbench table', async t => {
     const description = [

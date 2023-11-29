@@ -86,6 +86,12 @@ const bulkActionsSlice = createSlice({
       }
     },
 
+    setDeleteOverviewStatus: (state, { payload }) => {
+      if (state.bulkDelete.overview) {
+        state.bulkDelete.overview.status = payload
+      }
+    },
+
     disconnectBulkDeleteAction: (state) => {
       state.bulkDelete.loading = false
       state.bulkDelete.isActionTriggered = false
@@ -127,6 +133,7 @@ export const {
   disconnectBulkDeleteAction,
   toggleBulkDeleteActionTriggered,
   setDeleteOverview,
+  setDeleteOverviewStatus,
   setBulkActionsInitialState,
   bulkDeleteSuccess,
   bulkUpload,

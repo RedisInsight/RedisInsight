@@ -253,6 +253,7 @@ jest.mock('uiSrc/constants/recommendations', () => ({
 
 // mock to not import routes
 jest.mock('uiSrc/utils/routing', () => ({
+  ...jest.requireActual('uiSrc/utils/routing'),
   getRedirectionPage: jest.fn(),
 }))
 
@@ -281,7 +282,7 @@ const matchMediaMock = () => ({
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => matchMediaMock(query)),
+  value: jest.fn().mockImplementation((query) => matchMediaMock(query)),
 })
 
 export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)

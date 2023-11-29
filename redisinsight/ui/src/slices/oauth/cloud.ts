@@ -32,7 +32,6 @@ import {
   removeInfiniteNotification
 } from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
-import { setAppContextInitialState } from '../app/context'
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -235,13 +234,18 @@ export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.cap
 export default oauthCloudSlice.reducer
 
 export function createFreeDbSuccess(id: string, history: any) {
-  return async (dispatch: AppDispatch) => {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const onConnect = () => {
-        dispatch(setAppContextInitialState())
-        dispatch(setConnectedInstanceId(id ?? ''))
+        const state = stateInit()
+        const isConnected = state.app?.context?.contextInstanceId === id
+
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
-        dispatch(checkConnectToInstanceAction(id))
+
+        if (!isConnected) {
+          dispatch(setConnectedInstanceId(id ?? ''))
+          dispatch(checkConnectToInstanceAction(id))
+        }
 
         history.push(Pages.workbench(id))
       }

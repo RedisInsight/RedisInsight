@@ -57,7 +57,7 @@ test
         // Open CLI
         await t.click(browserPage.Cli.cliExpandButton);
         // Create new key
-        await t.typeText(browserPage.Cli.cliCommandInput, `LPUSH ${keyName} 1 2 3 4 5`);
+        await t.typeText(browserPage.Cli.cliCommandInput, `LPUSH ${keyName} 1 2 3 4 5`, { paste: true });
         await t.pressKey('enter');
         await t.click(browserPage.Cli.cliCollapseButton);
         // Remove element from the key

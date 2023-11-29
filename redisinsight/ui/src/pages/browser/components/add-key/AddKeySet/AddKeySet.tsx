@@ -16,19 +16,14 @@ import {
   addSetKey, addKeyStateSelector,
 } from 'uiSrc/slices/browser/keys'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
+
+import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from 'uiSrc/pages/browser/modules/key-details/components/set-details/add-set-members/AddSetMembers'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import {
   AddSetFormConfig as config
 } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-
-import {
-  INITIAL_SET_MEMBER_STATE,
-  ISetMemberState
-} from '../../key-details-add-items/add-set-members/AddSetMembers'
-
-import styles from '../../key-details-add-items/styles.module.scss'
 
 export interface Props {
   keyName: string
@@ -166,7 +161,6 @@ const AddKeySet = (props: Props) => {
                     clearIsDisabled={isClearDisabled(item)}
                     clearItemValues={clearMemberValues}
                     loading={loading}
-                    anchorClassName={styles.refreshKeyTooltip}
                   />
                 </EuiFlexGroup>
               </EuiFlexItem>

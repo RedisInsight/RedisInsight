@@ -38,7 +38,7 @@ export class DatabaseFactory {
         context: ClientContext.Common,
       },
       database,
-      { useRetry: false },
+      { useRetry: true },
     );
 
     if (await this.databaseInfoProvider.isSentinel(client)) {
@@ -109,7 +109,7 @@ export class DatabaseFactory {
           context: ClientContext.Common,
         },
         model,
-        { useRetry: false },
+        { useRetry: true },
       );
 
       // todo: rethink
@@ -157,7 +157,7 @@ export class DatabaseFactory {
           context: ClientContext.Common,
         },
         model,
-        { useRetry: false },
+        { useRetry: true },
       );
 
       model.connectionType = ConnectionType.SENTINEL;

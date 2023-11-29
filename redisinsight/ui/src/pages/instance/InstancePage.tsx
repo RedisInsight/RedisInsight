@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
@@ -33,6 +33,7 @@ import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalys
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { InstancePageTemplate } from 'uiSrc/templates'
+import { getPageName } from 'uiSrc/utils/routing'
 import InstancePageRouter from './InstancePageRouter'
 
 export interface Props {
@@ -43,9 +44,13 @@ const InstancePage = ({ routes = [] }: Props) => {
   const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
 
   const dispatch = useDispatch()
+  const { pathname } = useLocation()
+
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
   const { data: modulesData } = useSelector(instancesSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
+
+  const lastPageRef = useRef<string>()
 
   useEffect(() => {
     dispatch(fetchConnectedInstanceAction(connectionInstanceId, () => {
@@ -56,9 +61,10 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(fetchRecommendationsAction(connectionInstanceId))
 
     if (contextInstanceId && contextInstanceId !== connectionInstanceId) {
-      // rerender children from scratch to clear all component states
-      setIsShouldChildrenRerender(true)
-      requestAnimationFrame(() => setIsShouldChildrenRerender(false))
+      // rerender children only if the same page from scratch to clear all component states
+      if (lastPageRef.current === getPageName(connectionInstanceId, pathname)) {
+        setIsShouldChildrenRerender(true)
+      }
 
       resetContext()
     }
@@ -66,6 +72,14 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
     dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
   }, [connectionInstanceId])
+
+  useEffect(() => {
+    lastPageRef.current = getPageName(connectionInstanceId, pathname)
+  }, [pathname])
+
+  useEffect(() => {
+    if (isShouldChildrenRerender) setIsShouldChildrenRerender(false)
+  }, [isShouldChildrenRerender])
 
   const resetContext = () => {
     dispatch(resetKeys())

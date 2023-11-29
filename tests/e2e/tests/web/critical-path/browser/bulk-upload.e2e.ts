@@ -61,8 +61,7 @@ test('Verify bulk upload of different text docs formats', async t => {
 
     // Verify that user can remove uploaded file
     await t.setFilesToUpload(browserPage.BulkActions.bulkUploadInput, [filePathes.bigDataFile]);
-    // update after resolving testcafe Native Automation mode limitations
-    // await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
+    await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
     await t.click(browserPage.BulkActions.removeFileBtn);
     await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(defaultText, 'File not removed from upload input');
 

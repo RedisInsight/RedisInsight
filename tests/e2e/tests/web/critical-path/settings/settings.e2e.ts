@@ -22,9 +22,7 @@ fixture `Settings`
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
     })
-    .afterEach(async t => {
-        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
-        await t.click(settingsPage.accordionAdvancedSettings);
+    .afterEach(async() => {
         await settingsPage.changeKeysToScanValue('10000');
     });
 test('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {

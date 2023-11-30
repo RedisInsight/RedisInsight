@@ -1,6 +1,7 @@
 enum BrowserStorageItem {
   instancesCount = 'instancesCount',
   instancesSorting = 'instancesSorting',
+  rdiInstancesSorting = 'rdiInstancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
   browserSearchMode = 'browserSearchMode',
@@ -28,7 +29,7 @@ enum BrowserStorageItem {
   recommendationsViewed = 'recommendationsViewed',
   showHiddenRecommendations = 'showHiddenRecommendations',
   OAuthJobId = 'OAuthJobId',
-  OAuthAgreement = 'OAuthAgreement',
+  OAuthAgreement = 'OAuthAgreement'
 }
 
 export default BrowserStorageItem

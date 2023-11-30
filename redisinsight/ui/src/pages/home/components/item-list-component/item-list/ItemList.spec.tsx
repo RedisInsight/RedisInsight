@@ -4,7 +4,7 @@ import { instance, mock } from 'ts-mockito'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import DatabasesList, { Props } from './DatabasesList'
+import DatabasesList, { Props } from './ItemList'
 
 const mockedProps = mock<Props>()
 

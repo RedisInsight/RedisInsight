@@ -19,11 +19,12 @@ export enum PageNames {
   settings = 'settings',
   triggeredFunctions = 'triggered-functions',
   triggeredFunctionsLibraries = 'libraries',
-  triggeredFunctionsFunctions = 'functions',
+  triggeredFunctionsFunctions = 'functions'
 }
 
 const redisCloud = '/redis-cloud'
 const sentinel = '/sentinel'
+const rdi = '/rdi'
 
 export const Pages = {
   home: '/',
@@ -49,6 +50,6 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsLibraries}`,
   triggeredFunctionsFunctions: (instanceId: string) =>
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
-  // rdi pages
-  rdi: '/integrate',
+  rdi,
+  rdiEditInstance: (instanceId: string) => `${rdi}?editInstance=${instanceId}`
 }

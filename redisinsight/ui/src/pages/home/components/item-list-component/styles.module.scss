@@ -56,7 +56,7 @@ $breakpoint-l: 1400px;
   height: 18px !important;
 }
 
-.noSearchResults {
+.noResults {
   display: flex;
 
   height: calc(100vh - 315px);
@@ -76,6 +76,13 @@ $breakpoint-l: 1400px;
 .tableMsgTitle {
   font-size: 18px;
   margin-bottom: 12px;
+  height: 24px;
+  color: var(--htmlColor) !important;
+}
+
+.tableMsgSubTitle {
+  font-size: 18px;
+  margin-top: 6px;
   height: 24px;
   color: var(--htmlColor) !important;
 }

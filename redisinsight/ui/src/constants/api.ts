@@ -4,6 +4,9 @@ enum ApiEndpoints {
   DATABASES_TEST_CONNECTION = 'databases/test',
   DATABASES_EXPORT = 'databases/export',
 
+  RDI_INSTANCES = 'rdi/instances',
+  RDI_INSTANCES_EXPORT = 'rdi/instances/export',
+
   BULK_ACTIONS_IMPORT = 'bulk-actions/import',
   BULK_ACTIONS_IMPORT_TUTORIAL_DATA = 'bulk-actions/import/tutorial-data',
 
@@ -135,12 +138,12 @@ enum ApiEndpoints {
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
-  ANALYTICS_SEND_PAGE = 'analytics/send-page',
+  ANALYTICS_SEND_PAGE = 'analytics/send-page'
 }
 
 export enum CustomHeaders {
   DbIndex = 'ri-db-index',
-  WindowId = 'x-window-id',
+  WindowId = 'x-window-id'
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

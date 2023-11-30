@@ -45,6 +45,7 @@ import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 import insightsPanelReducer from './panels/insights'
 import appRDIReducer from './rdi/rdi'
+import rdiInstancesReducer from './rdi/instances'
 
 export const history = createBrowserHistory()
 
@@ -57,7 +58,7 @@ export const rootReducer = combineReducers({
     plugins: appPluginsReducer,
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
-    urlHandling: appUrlHandlingReducer,
+    urlHandling: appUrlHandlingReducer
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -65,7 +66,7 @@ export const rootReducer = combineReducers({
     clientCerts: clientCertsReducer,
     cluster: clusterReducer,
     cloud: cloudReducer,
-    sentinel: sentinelReducer,
+    sentinel: sentinelReducer
   }),
   browser: combineReducers({
     keys: keysReducer,
@@ -77,50 +78,51 @@ export const rootReducer = combineReducers({
     rejson: rejsonReducer,
     stream: streamReducer,
     bulkActions: bulkActionsReducer,
-    redisearch: redisearchReducer,
+    redisearch: redisearchReducer
   }),
   cli: combineReducers({
     settings: cliSettingsReducer,
     output: outputReducer,
-    monitor: monitorReducer,
+    monitor: monitorReducer
   }),
   user: combineReducers({
-    settings: userSettingsReducer,
+    settings: userSettingsReducer
   }),
   workbench: combineReducers({
     results: workbenchResultsReducer,
     guides: workbenchGuidesReducer,
     tutorials: workbenchTutorialsReducer,
-    customTutorials: workbenchCustomTutorialsReducer,
+    customTutorials: workbenchCustomTutorialsReducer
   }),
   content: combineReducers({
     createRedisButtons: contentCreateRedisButtonReducer,
-    guideLinks: contentGuideLinksReducer,
+    guideLinks: contentGuideLinksReducer
   }),
   analytics: combineReducers({
     settings: analyticsSettingsReducer,
     slowlog: slowLogReducer,
     clusterDetails: clusterDetailsReducer,
-    databaseAnalysis: databaseAnalysisReducer,
+    databaseAnalysis: databaseAnalysisReducer
   }),
   pubsub: pubSubReducer,
   recommendations: recommendationsReducer,
   triggeredFunctions: triggeredFunctionsReducer,
   oauth: combineReducers({
-    cloud: appOauthReducer,
+    cloud: appOauthReducer
   }),
   panels: combineReducers({
-    insights: insightsPanelReducer,
+    insights: insightsPanelReducer
   }),
   rdi: combineReducers({
+    instances: rdiInstancesReducer,
     rdi: appRDIReducer
   })
 })
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
-  devTools: process.env.NODE_ENV !== 'production',
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
+  devTools: process.env.NODE_ENV !== 'production'
 })
 
 export { store }

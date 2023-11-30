@@ -3,10 +3,11 @@
 @import "@elastic/eui/src/global_styling/index";
 
 .homePage {
-  .databaseList {
+  .itemList {
     @include euiScrollBar;
 
-    height: calc(100vh - 207px);
+    height: calc(100vh - 207px); // TODO: allow different heights depending on databases vs rdi instances
+    // height: auto;
     overflow: auto;
     position: relative;
 
@@ -15,10 +16,12 @@
 
     @media (min-width: 768px) and (max-width: 1100px) {
       height: calc(100vh - 150px);
+      // height: auto;
     }
 
     @media (min-width: 1101px) {
       height: calc(100vh - 175px);
+      // height: auto;
     }
 
     .euiBasicTable {
@@ -85,6 +88,7 @@
       }
 
       .copyHostPortText,
+      .copyUrlText,
       .copyPublicEndpointText,
       .column_name,
       .column_name .euiToolTipAnchor {
@@ -113,6 +117,7 @@
       }
 
       .host_port,
+      .url,
       .public_endpoint {
         height: 24px;
         line-height: 24px;
@@ -126,6 +131,7 @@
         }
 
         &:hover .copyHostPortBtn,
+        &:hover .copyUrlBtn,
         &:hover .copyPublicEndpointBtn {
           opacity: 1;
           height: auto;
@@ -133,6 +139,7 @@
       }
 
       .copyHostPortBtn,
+      .copyUrlBtn,
       .copyPublicEndpointBtn {
         margin-left: 25px;
         opacity: 0;
@@ -141,6 +148,7 @@
       }
 
       .copyHostPortText,
+      .copyUrlText,
       .copyPublicEndpointText {
         display: inline-block;
         width: auto;
@@ -152,6 +160,7 @@
       }
 
       .copyHostPortTooltip,
+      .copyUrlTooltip,
       .copyPublicEndpointTooltip {
         position: absolute;
         right: 0;

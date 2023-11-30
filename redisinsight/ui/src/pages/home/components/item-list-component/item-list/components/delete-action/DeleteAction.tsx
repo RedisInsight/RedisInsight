@@ -1,27 +1,22 @@
 import React, { useState } from 'react'
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
-import { Instance } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import styles from '../styles.module.scss'
 
-export interface Props {
-  selection: Instance[]
-  onDelete: (instances: Instance[]) => void
+export interface Props<T> {
+  selection: T[]
+  onDelete: () => void
+  onDeleteClick: () => void
+  subTitle: string
 }
 
-const DeleteAction = (props: Props) => {
-  const { selection, onDelete } = props
+const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
+  const { selection, onDelete, onDeleteClick, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const onButtonClick = () => {
-    sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
-      eventData: {
-        databasesIds: selection.map((selected: Instance) => selected.id)
-      }
-    })
+    onDeleteClick()
     setIsPopoverOpen((prevState) => !prevState)
   }
 
@@ -54,25 +49,11 @@ const DeleteAction = (props: Props) => {
       data-testid="delete-popover"
     >
       <EuiText size="m">
-        <p className={styles.popoverSubTitle}>
-          Selected
-          {' '}
-          {selection.length}
-          {' '}
-          databases will be deleted from
-          RedisInsight Databases:
-        </p>
+        <p className={styles.popoverSubTitle}>{subTitle}</p>
       </EuiText>
-      <div
-        className={styles.boxSection}
-      >
-        {selection.map((select: Instance) => (
-          <EuiFlexGroup
-            key={select.id}
-            gutterSize="s"
-            responsive={false}
-            className={styles.nameList}
-          >
+      <div className={styles.boxSection}>
+        {selection.map((select) => (
+          <EuiFlexGroup key={select.id} gutterSize="s" responsive={false} className={styles.nameList}>
             <EuiFlexItem grow={false}>
               <EuiIcon type="check" />
             </EuiFlexItem>
@@ -90,7 +71,7 @@ const DeleteAction = (props: Props) => {
           iconType="trash"
           onClick={() => {
             closePopover()
-            onDelete(selection)
+            onDelete()
           }}
           className={styles.popoverDeleteBtn}
           data-testid="delete-selected-dbs"

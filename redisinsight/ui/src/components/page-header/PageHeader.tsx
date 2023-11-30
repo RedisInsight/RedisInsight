@@ -16,12 +16,13 @@ import lightLogo from 'uiSrc/assets/img/light_logo.svg'
 import styles from './PageHeader.module.scss'
 
 interface Props {
-  title: string;
-  subtitle?: string;
-  children?: React.ReactNode;
+  title?: string
+  subtitle?: string
+  content?: React.ReactNode
+  children?: React.ReactNode
 }
 
-const PageHeader = ({ title, subtitle, children }: Props) => {
+const PageHeader = ({ title, subtitle, content, children }: Props) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
@@ -41,12 +42,17 @@ const PageHeader = ({ title, subtitle, children }: Props) => {
     <div className={styles.pageHeader}>
       <div className={styles.pageHeaderTop}>
         <div>
-          <EuiTitle size="s" className={styles.title}>
-            <h1>
-              <b>{title}</b>
-            </h1>
-          </EuiTitle>
+          {title ? (
+            <EuiTitle size="s" className={styles.title}>
+              <h1>
+                <b>{title}</b>
+              </h1>
+            </EuiTitle>
+          ) : (
+            ''
+          )}
           {subtitle ? <span>{subtitle}</span> : ''}
+          {content}
         </div>
         <div className={styles.pageHeaderLogo}>
           <EuiButtonEmpty
@@ -66,7 +72,7 @@ const PageHeader = ({ title, subtitle, children }: Props) => {
 
 PageHeader.defaultProps = {
   subtitle: null,
-  children: null,
+  children: null
 }
 
 export default PageHeader

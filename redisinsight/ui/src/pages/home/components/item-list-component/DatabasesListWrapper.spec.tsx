@@ -11,7 +11,7 @@ import { RootState, store } from 'uiSrc/slices/store'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
-import DatabasesList, { Props as DatabasesListProps } from './databases-list/DatabasesList'
+import DatabasesList, { Props as DatabasesListProps } from './item-list/ItemList'
 
 const mockedProps = mock<Props>()
 
@@ -71,7 +71,7 @@ const mockDatabasesList = (props: DatabasesListProps) => (
   <div>
     <button type="button" onClick={() => props.onDelete(['1'])} data-testid="onDelete-btn">onDelete</button>
     <button type="button" onClick={() => props.onExport(['e37cc441-a4f2-402c-8bdb-fc2413cbbaff'], true)} data-testid="onExport-btn">onExport</button>
-    <div className="databaseList">
+    <div className="itemList">
       <EuiInMemoryTable
         isSelectable
         items={mockInstances}

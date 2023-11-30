@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import {
-  addUtmToLink,
   sortRecommendations,
   replaceVariables,
   renderRecommendationBadgesLegend,
@@ -11,16 +10,6 @@ import {
 } from '../../recommendation/utils'
 
 const mockTelemetryName = 'name'
-
-const addUtmToLinkTests = [
-  { input: 'http://www.google.com', expected: 'http://www.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
-  { input: 'http://google.com', expected: 'http://google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
-  { input: 'https://docs.google.com/', expected: 'https://docs.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
-  { input: 'http://google.com/?param=3', expected: 'http://google.com/?param=3&utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name' },
-  { input: 'https://www.google.com/#anchor', expected: 'https://www.google.com/?utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name#anchor' },
-  { input: 'https://www.google.com/?param=foo#anchor', expected: 'https://www.google.com/?param=foo&utm_source=redisinsight&utm_medium=recommendation&utm_campaign=name#anchor' },
-  { input: 'wrong_url', expected: 'wrong_url' },
-]
 
 const sortRecommendationsTests = [
   {
@@ -130,16 +119,6 @@ describe('sortRecommendations', () => {
     '%j',
     ({ input, expected }) => {
       const result = sortRecommendations(input, MOCK_RECOMMENDATIONS)
-      expect(result).toEqual(expected)
-    }
-  )
-})
-
-describe('addUtmToLink', () => {
-  test.each(addUtmToLinkTests)(
-    '%j',
-    ({ input, expected }) => {
-      const result = addUtmToLink(input, mockTelemetryName)
       expect(result).toEqual(expected)
     }
   )

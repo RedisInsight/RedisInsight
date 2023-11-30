@@ -1,3 +1,5 @@
+import { CloudSsoUtmCampaign, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+
 export const EXTERNAL_LINKS = {
   githubRepo: 'https://github.com/RedisInsight/RedisInsight',
   githubIssues: 'https://github.com/RedisInsight/RedisInsight/issues',
@@ -6,5 +8,14 @@ export const EXTERNAL_LINKS = {
   recommendationFeedback: 'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
   guidesRepo: 'https://github.com/RedisInsight/Tutorials',
   redisStack: 'https://redis.io/docs/about/about-stack/',
-  cloudConsole: 'https://app.redislabs.com/#/databases'
+  cloudConsole: 'https://app.redislabs.com/#/databases',
+  tryFree: 'https://redis.com/try-free',
+  docker: 'https://redis.io/docs/getting-started/install-stack/docker',
+}
+
+export const UTM_CAMPAINGS: Record<any, string> = {
+  [OAuthSocialSource.Tutorials]: 'redisinsight_tutorials',
+  [OAuthSocialSource.BrowserSearch]: 'redisinsight_browser_search',
+  [OAuthSocialSource.Workbench]: 'redisinsight_workbench',
+  [CloudSsoUtmCampaign.BrowserFilter]: 'browser_filter',
 }

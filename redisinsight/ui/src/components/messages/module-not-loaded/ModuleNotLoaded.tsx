@@ -20,7 +20,9 @@ import { RedisDefaultModules, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 
+import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -66,18 +68,6 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     }
   })
 
-  const getStartedLink = (baseUrl: string) => {
-    try {
-      const url = new URL(baseUrl)
-      url.searchParams.append('utm_source', 'redisinsight')
-      url.searchParams.append('utm_medium', 'app')
-      url.searchParams.append('utm_campaign', type === 'browser' ? 'redisinsight_browser_search' : 'redisinsight_workbench')
-      return url.toString()
-    } catch (e) {
-      return baseUrl
-    }
-  }
-
   const renderText = useCallback((moduleName?: string) => (!freeInstance ? (
     <EuiText className={cx(styles.text, styles.marginBottom)}>
       {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of open-source Redis`}
@@ -91,6 +81,10 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   const onFreeDatabaseClick = () => {
     onClose?.()
   }
+
+  const utmCampaign = type === 'browser'
+    ? UTM_CAMPAINGS[OAuthSocialSource.BrowserSearch]
+    : UTM_CAMPAINGS[OAuthSocialSource.Workbench]
 
   return (
     <div className={cx(styles.container, {
@@ -147,7 +141,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
               className={cx(styles.text, styles.link)}
               external={false}
               target="_blank"
-              href={getStartedLink(CONTENT[moduleName]?.link)}
+              href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
               data-testid="learn-more-link"
             >
               Learn More
@@ -158,7 +152,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
                   className={styles.link}
                   external={false}
                   target="_blank"
-                  href={getStartedLink('https://redis.com/try-free')}
+                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
                   onClick={(e) => {
                     ssoCloudHandlerClick(
                       e,

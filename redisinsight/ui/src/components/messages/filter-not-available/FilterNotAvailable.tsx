@@ -4,13 +4,18 @@ import { EuiIcon, EuiText, EuiTitle, EuiSpacer, EuiLink, EuiButton } from '@elas
 import { useSelector } from 'react-redux'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { CloudSsoUtmCampaign, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+
 import styles from './styles.module.scss'
 
-const GET_STARTED_LINK = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
-const LEARN_MORE_LINK = 'https://redis.io/docs/about/about-stack/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
+const utm = {
+  medium: 'main',
+  campaign: UTM_CAMPAINGS[CloudSsoUtmCampaign.BrowserFilter],
+}
 
 const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
   const { freeInstance } = useSelector(instancesSelector)
@@ -48,7 +53,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
                   fill
                   color="secondary"
                   target="_blank"
-                  href={GET_STARTED_LINK}
+                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, utm)}
                   onClick={(e) => {
                     ssoCloudHandlerClick(e, OAuthSocialSource.BrowserFiltering)
                     onFreeDatabaseClick()
@@ -66,7 +71,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
               external={false}
               target="_blank"
               color="text"
-              href={LEARN_MORE_LINK}
+              href={getUtmExternalLink(EXTERNAL_LINKS.redisStack, utm)}
               data-testid="learn-more-link"
             >
               Learn More

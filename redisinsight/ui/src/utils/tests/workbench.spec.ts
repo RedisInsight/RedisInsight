@@ -1,7 +1,6 @@
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { ExecuteQueryParams, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
-import { getExecuteParams, getParsedParamsInQuery, findMarkdownPathByPath } from 'uiSrc/utils'
-import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
+import { getExecuteParams, getParsedParamsInQuery, findMarkdownPathByPath, parseParams } from 'uiSrc/utils'
+import { CodeButtonParams, MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 
 const paramsState: ExecuteQueryParams = {
   activeRunQueryMode: RunQueryMode.ASCII,
@@ -70,4 +69,24 @@ describe('findMarkdownPathByPath', () => {
       expect(result).toEqual(expected)
     }
   )
+})
+
+const parseParamsTests: any[] = [
+  ['[]', undefined],
+  ['[execute=auto]', { execute: 'auto' }],
+  ['[execute=auto;]', { execute: 'auto' }],
+  ['[execute=auto;mode=group]', { execute: 'auto', mode: 'group' }],
+  ['[execute=auto;mode=group;]', { execute: 'auto', mode: 'group' }],
+  ['[execute=auto;  mode=group;   ]', { execute: 'auto', mode: 'group' }],
+  ['[mode=raw;mode=ascii;mode=group;]', { mode: 'raw' }], // first parameters should be applied
+  ['[mode=raw]\n', { mode: 'raw' }],
+  ['[mode=raw]\r', { mode: 'raw' }],
+]
+
+describe('parseParams', () => {
+  it.each(parseParamsTests)('for input: %s (params), should be output: %s',
+    (params, expected) => {
+      const result = parseParams(params)
+      expect(result).toEqual(expected)
+    })
 })

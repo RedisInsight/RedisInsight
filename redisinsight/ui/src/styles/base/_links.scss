@@ -25,3 +25,50 @@ a[target="_blank"], a.euiLink[target="_blank"] {
     color: var(--linkToastColor) !important;
   }
 }
+
+a.externalLink {
+  display: inline;
+  position: relative;
+
+  &:before {
+    display: block;
+    content: '';
+    width: 10px;
+    height: 1px;
+    transform: rotate(-45deg);
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+    background-color: currentColor;
+  }
+
+  &:after {
+    display: inline-flex;
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+
+    position: relative;
+    top: -3px;
+    right: 1px;
+    transform: rotate(-90deg);
+    margin-left: 6px;
+  }
+
+  &.externalLink {
+    &-sm {
+      &:before {
+        width: 8px;
+        bottom: 5px;
+      }
+      &:after {
+        width: 5px;
+        height: 5px;
+        top: -2px;
+        right: 1px;
+      }
+    }
+  }
+}

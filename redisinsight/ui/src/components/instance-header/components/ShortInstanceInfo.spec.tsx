@@ -1,7 +1,9 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { getModule, truncateText } from 'uiSrc/utils'
+import { DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
 import ShortInstanceInfo, { Props } from './ShortInstanceInfo'
 
 const mockedProps = mock<Props>()
@@ -23,6 +25,18 @@ jest.mock('uiSrc/services', () => ({
 
 describe('ShortInstanceInfo', () => {
   it('should render', () => {
-    expect(render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} databases={2} />)).toBeTruthy()
+    expect(render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} modules={[]} databases={2} />)).toBeTruthy()
+  })
+
+  it('should render database modules', () => {
+    const modules = [{ name: 'redisgears' }, { name: 'redisearch', version: '123.23' }]
+    render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} modules={modules} databases={2} />)
+
+    modules.forEach(({ name, version }) => {
+      expect(screen.getByTestId(`module_${name}`)).toBeInTheDocument()
+      expect(screen.getByTestId(`module_${name}`)).toHaveTextContent(
+        `${truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}${version ? `v.${version}` : ''}`
+      )
+    })
   })
 })

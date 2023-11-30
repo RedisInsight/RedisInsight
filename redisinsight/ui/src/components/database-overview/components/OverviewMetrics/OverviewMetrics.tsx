@@ -73,35 +73,37 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
   const availableItems: Array<IMetric> = []
 
   // CPU
-  availableItems.push({
-    id: 'overview-cpu',
-    title: 'CPU',
-    value: cpuUsagePercentage,
-    loading: cpuUsagePercentage === null,
-    unavailableText: 'CPU is not available',
-    tooltip: {
+  if (!isUndefined(cpuUsagePercentage)) {
+    availableItems.push({
+      id: 'overview-cpu',
       title: 'CPU',
-      icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
-      content: cpuUsagePercentage === null
-        ? 'Calculating in progress'
-        : (
-          <>
-            <b>{truncatePercentage(cpuUsagePercentage, 4)}</b>
-            &nbsp;%
-          </>
-        ),
-    },
-    className: styles.cpuWrapper,
-    icon: cpuUsagePercentage !== null ? theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon : null,
-    content: cpuUsagePercentage === null ? (
-      <>
-        <div className={styles.calculationWrapper}>
-          <EuiLoadingSpinner className={styles.spinner} size="m" />
-          <span className={styles.calculation}>Calculating...</span>
-        </div>
-      </>
-    ) : `${truncatePercentage(cpuUsagePercentage, 2)} %`,
-  })
+      value: cpuUsagePercentage,
+      loading: cpuUsagePercentage === null,
+      unavailableText: 'CPU is not available',
+      tooltip: {
+        title: 'CPU',
+        icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
+        content: cpuUsagePercentage === null
+          ? 'Calculating in progress'
+          : (
+            <>
+              <b>{truncatePercentage(cpuUsagePercentage, 4)}</b>
+              &nbsp;%
+            </>
+          ),
+      },
+      className: styles.cpuWrapper,
+      icon: cpuUsagePercentage !== null ? theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon : null,
+      content: cpuUsagePercentage === null ? (
+        <>
+          <div className={styles.calculationWrapper}>
+            <EuiLoadingSpinner className={styles.spinner} size="m" />
+            <span className={styles.calculation}>Calculating...</span>
+          </div>
+        </>
+      ) : `${truncatePercentage(cpuUsagePercentage, 2)} %`,
+    })
+  }
 
   // Ops per second with tooltip
   const opsPerSecItem: any = {
@@ -183,8 +185,6 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
   }
 
   availableItems.push(opsPerSecItem)
-  availableItems.push(networkInKbpsItem)
-  availableItems.push(networkOutKbpsItem)
 
   // Used memory
   const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)

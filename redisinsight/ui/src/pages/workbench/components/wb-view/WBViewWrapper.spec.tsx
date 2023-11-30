@@ -113,7 +113,7 @@ describe('WBViewWrapper', () => {
   it('should render with SessionStorage', () => {
     render(<WBViewWrapper />)
 
-    const expectedActions = [getWBCustomTutorials(), loadWBHistory()]
+    const expectedActions = [loadWBHistory()]
     expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
       clearStoreActions(expectedActions)
     )

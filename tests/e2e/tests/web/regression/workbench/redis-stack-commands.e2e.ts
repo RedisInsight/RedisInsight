@@ -2,7 +2,7 @@ import { t } from 'testcafe';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -27,9 +27,11 @@ fixture `Redis Stack command in Workbench`
     });
 test('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
     // Send TimeSeries command
-    await t.click(workbenchPage.redisStackTutorialsButton);
-    await t.click(workbenchPage.timeSeriesLink);
-    await t.click(workbenchPage.showSalesPerRegiomButton);
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    await t.click(tutorials.redisStackTutorialsButton);
+    await t.click(tutorials.timeSeriesLink);
+    await tutorials.runBlockCode('Show all sales per region');
     await t.click(workbenchPage.submitCommandButton);
     // Check result is in chart view
     await t.expect(workbenchPage.chartViewTypeOptionSelected.exists).ok('The chart view option is not selected by default');

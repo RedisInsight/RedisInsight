@@ -34,5 +34,6 @@ enum BrowserStorageItem {
 export default BrowserStorageItem
 
 export enum ConfigDBStorageItem {
-  slowLogDurationUnit = 'slowLogDurationUnit'
+  slowLogDurationUnit = 'slowLogDurationUnit',
+  notShowConfirmationRunTutorial = 'notShowConfirmationRunTutorial'
 }

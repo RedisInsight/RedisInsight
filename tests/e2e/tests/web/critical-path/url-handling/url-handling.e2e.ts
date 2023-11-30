@@ -36,7 +36,7 @@ test
         const connectUrlParams = {
             redisUrl: `redis://${databaseUsername}:${databasePassword}@${host}:${port}`,
             databaseAlias: databaseName,
-            redirect: 'workbench?guidePath=/quick-guides/document/introduction.md'
+            redirect: 'workbench'
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
@@ -46,7 +46,7 @@ test
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
         await t.wait(10_000);
-        await t.expect(workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
+        await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
     });
 
 test
@@ -78,7 +78,7 @@ test
 
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(10_000);
-        await t.expect(workbenchPage.closeEnablementPage.exists).ok('Redirection to Workbench tutorial is not correct');
+        await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
 
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));

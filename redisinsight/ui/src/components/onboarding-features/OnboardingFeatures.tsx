@@ -12,7 +12,6 @@ import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/ana
 import { incrementOnboardStepAction, setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { resetWorkbenchEASearch, setWorkbenchEAMinimized } from 'uiSrc/slices/app/context'
 import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
@@ -21,6 +20,8 @@ import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import { bufferToString, Nullable } from 'uiSrc/utils'
 import { CodeBlock } from 'uiSrc/components'
 
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -200,7 +201,7 @@ const ONBOARDING_FEATURES = {
           (indexes) => {
             setFirstIndex(indexes?.length ? bufferToString(indexes[0]) : '')
           },
-          undefined,
+          () => setFirstIndex(''),
           false
         ))
       }, [])
@@ -254,47 +255,44 @@ const ONBOARDING_FEATURES = {
           dispatch(showMonitor())
           sendBackTelemetryEvent(...telemetryArgs)
         },
-        onNext: () => sendNextTelemetryEvent(...telemetryArgs),
+        onNext: () => {
+          dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+          dispatch(toggleInsightsPanel(true))
+          sendNextTelemetryEvent(...telemetryArgs)
+        },
       }
     }
   },
-  WORKBENCH_ENABLEMENT_GUIDE: {
-    step: OnboardingSteps.WorkbenchEnablementGuide,
+  EXPLORE_REDIS: {
+    step: OnboardingSteps.Tutorials,
     title: 'Explore and learn more',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
-      const dispatch = useDispatch()
-      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchGuides]
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.ExploreTutorials]
 
-      useEffect(() => {
-        // here we can use it on mount, because enablement area always rendered on workbench
-        dispatch(setWorkbenchEAMinimized(false))
-      }, [])
+      const history = useHistory()
+      const dispatch = useDispatch()
 
       return {
-        content: 'Learn more about how Redis can solve your use cases using Guides and Tutorials.',
+        content: 'Learn more about how Redis can solve your use cases using interactive Tutorials.',
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
-        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
+        onBack: () => {
+          history.push(Pages.workbench(connectedInstanceId))
+          dispatch(toggleInsightsPanel(false))
+          sendBackTelemetryEvent(...telemetryArgs)
+        },
         onNext: () => sendNextTelemetryEvent(...telemetryArgs)
       }
     }
   },
-  WORKBENCH_CUSTOM_TUTORIALS: {
-    step: OnboardingSteps.WorkbenchCustomTutorials,
+  EXPLORE_CUSTOM_TUTORIALS: {
+    step: OnboardingSteps.CustomTutorials,
     title: 'Upload your tutorials',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const history = useHistory()
       const dispatch = useDispatch()
-      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.WorkbenchCustomTutorials]
-
-      useEffect(() => {
-        // here we can use it on mount, because enablement area always rendered on workbench
-        dispatch(setWorkbenchEAMinimized(false))
-        // close opened page
-        dispatch(resetWorkbenchEASearch())
-        history.push(Pages.workbench(connectedInstanceId))
-      }, [])
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.ExploreCustomTutorials]
 
       return {
         content: (
@@ -309,6 +307,7 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {
+          dispatch(toggleInsightsPanel(false))
           history.push(Pages.clusterDetails(connectedInstanceId))
           sendNextTelemetryEvent(...telemetryArgs)
         }
@@ -321,6 +320,7 @@ const ONBOARDING_FEATURES = {
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const history = useHistory()
+      const dispatch = useDispatch()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.ClusterOverview]
 
       return {
@@ -332,6 +332,8 @@ const ONBOARDING_FEATURES = {
         ),
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
+          dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+          dispatch(toggleInsightsPanel(true))
           history.push(Pages.workbench(connectedInstanceId))
           sendBackTelemetryEvent(...telemetryArgs)
         },
@@ -365,6 +367,8 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
           if (connectionType !== ConnectionType.Cluster) {
+            dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+            dispatch(toggleInsightsPanel(true))
             dispatch(setOnboardPrevStep())
             history.push(Pages.workbench(connectedInstanceId))
           }

@@ -31,14 +31,15 @@ fixture `Feature flag`
         // Clear features config table
         await deleteRowsFromTableInDB(featuresConfigTable);
     });
-test('Verify that Insights panel can be displayed for Electron app according to filters', async t => {
+// the test is skipped due to story https://redislabs.atlassian.net/browse/RI-5089
+test.skip('Verify that Insights panel can be displayed for Electron app according to filters', async t => {
     // Update remote config .json to config with buildType filter excluding current app build
     await modifyFeaturesConfigJson(pathes.dockerConfig);
     await updateControlNumber(48.2);
-    await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when filter excludes this buildType');
+    await t.expect(browserPage.InsightsPanel.explorePanelButton.exists).notOk('Insights panel displayed when filter excludes this buildType');
 
     // Update remote config .json to config with buildType filter including current app build
     await modifyFeaturesConfigJson(pathes.electronConfig);
     await updateControlNumber(48.2);
-    await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel not displayed when filter includes this buildType');
+    await t.expect(browserPage.InsightsPanel.explorePanelButton.exists).ok('Insights panel not displayed when filter includes this buildType');
 });

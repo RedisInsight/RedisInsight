@@ -2,7 +2,7 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
-import { freeInstanceSelector, resetConnectedInstance, setDefaultInstance } from 'uiSrc/slices/instances/instances'
+import { freeInstanceSelector, setDefaultInstance } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import OAuthConnectFreeDb from './OAuthConnectFreeDb'
 

@@ -1,0 +1,40 @@
+.insigtsBtn {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 98px;
+  user-select: none;
+
+  &.isOpen {
+    .inner {
+      background-color: var(--insightsTriggerBgColor);
+      color: #fff;
+
+      > div {
+        color: #fff !important;
+      }
+    }
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    color: var(--recommendationColor);
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color ease .3s, transform ease .3s;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    > div {
+      color: var(--recommendationColor) !important;
+    }
+  }
+
+  .triggerIcon {
+    margin-right: 2px;
+  }
+}

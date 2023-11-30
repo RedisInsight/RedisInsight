@@ -14,6 +14,8 @@ export interface StateWorkbenchResults {
   clearing: boolean
   error: string
   items: CommandExecutionUI[]
+  resultsMode: ResultsMode
+  activeRunQueryMode: RunQueryMode
 }
 
 export enum EnablementAreaComponent {
@@ -57,11 +59,6 @@ export interface CommandExecutionUI extends Partial<CommandExecution> {
 export enum RunQueryMode {
   Raw = 'RAW',
   ASCII = 'ASCII',
-}
-
-export enum AutoExecute {
-  True = 'true',
-  False = 'false',
 }
 
 export enum ResultsMode {

@@ -1,0 +1,48 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.container {
+  overflow: hidden;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.tutorialWrapper {
+  margin-bottom: 6px;
+}
+
+.innerContainer {
+  @include euiScrollBar;
+  padding: 8px 0 !important;
+  overflow: auto;
+  height: 100%;
+  text-align: left;
+  letter-spacing: 0;
+  color: var(--euiTextSubduedColor) !important;
+}
+
+.innerContainerLoader {
+  padding: 12px 16px !important;
+}
+
+.internalPage {
+  width: 100%;
+  max-width: 100%;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transform: translateX(calc(100% + 16px));
+  backface-visibility: hidden;
+  //transition: transform 0.4s ease-in-out;
+  box-shadow: -5px 1px 10px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.internalPageVisible {
+  transform: translateX(0);
+}
+
+:export {
+  paddingHorizontal: 16
+}

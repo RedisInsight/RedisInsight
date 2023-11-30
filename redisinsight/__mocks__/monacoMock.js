@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'
 
 export default function MonacoEditor(props) {
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function MonacoEditor(props) {
       },
       // monaco
       {
-        Range: jest.fn().mockImplementation(() => { return {} }),
+        Range: jest.fn().mockImplementation(() => ({})),
         languages: {
           getLanguages: jest.fn(),
           register: jest.fn(),
@@ -35,20 +35,23 @@ export default function MonacoEditor(props) {
           setLanguageConfiguration: jest.fn(),
           setMonarchTokensProvider: jest.fn(),
           json: {
-            jsonDefaults:{
+            jsonDefaults: {
               setDiagnosticsOptions: jest.fn()
             }
           }
         },
         KeyMod: {},
         KeyCode: {}
-      })
+      }
+    )
   }, [])
-  return <textarea
-    {...props}
-    onChange={(e) => props.onChange && props.onChange(e.target.value)}
-    data-testid={props['data-testid'] ? props['data-testid'] : 'monaco'}
-  />;
+  return (
+    <textarea
+      {...props}
+      onChange={(e) => props.onChange && props.onChange(e.target.value)}
+      data-testid={props['data-testid'] ? props['data-testid'] : 'monaco'}
+    />
+  )
 }
 
 export const languages = {
@@ -61,5 +64,10 @@ export const languages = {
 }
 
 export const monaco = {
-  Selection: jest.fn().mockImplementation(() => { return {} })
+  Selection: jest.fn().mockImplementation(() => ({})),
+  editor: {
+    colorize: jest.fn().mockImplementation((data) => Promise.resolve(data)),
+    defineTheme: jest.fn(),
+    setTheme: jest.fn()
+  }
 }

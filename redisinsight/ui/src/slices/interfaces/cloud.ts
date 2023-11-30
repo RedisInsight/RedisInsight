@@ -72,6 +72,7 @@ export enum OAuthSocialSource {
   ConfirmationMessage = 'confirmation message',
   TriggersAndFunctions = 'triggers_and_functions',
   'triggers and functions' = 'workbench triggers_and_functions',
+  Workbench = 'workbench',
   Tutorials = 'tutorials'
 }
 

@@ -30,7 +30,6 @@ import { initialState as initialStateAppRedisCommands } from 'uiSrc/slices/app/r
 import { initialState as initialStateAppPluginsReducer } from 'uiSrc/slices/app/plugins'
 import { initialState as initialStateAppSocketConnectionReducer } from 'uiSrc/slices/app/socket-connection'
 import { initialState as initialStateAppFeaturesReducer } from 'uiSrc/slices/app/features'
-import { initialState as initialStateAppActionBarReducer } from 'uiSrc/slices/app/actionBar'
 import { initialState as initialStateAppUrlHandlingReducer } from 'uiSrc/slices/app/url-handling'
 import { initialState as initialStateCliSettings } from 'uiSrc/slices/cli/cli-settings'
 import { initialState as initialStateCliOutput } from 'uiSrc/slices/cli/cli-output'
@@ -51,6 +50,8 @@ import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/red
 import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
+import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/rdi'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -71,7 +72,6 @@ const initialStateDefault: RootState = {
     plugins: cloneDeep(initialStateAppPluginsReducer),
     socketConnection: cloneDeep(initialStateAppSocketConnectionReducer),
     features: cloneDeep(initialStateAppFeaturesReducer),
-    actionBar: cloneDeep(initialStateAppActionBarReducer),
     urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
   },
   connections: {
@@ -124,6 +124,12 @@ const initialStateDefault: RootState = {
   oauth: {
     cloud: cloneDeep(initialStateOAuth),
   },
+  panels: {
+    insights: cloneDeep(initialStateInsightsPanel)
+  },
+  rdi: {
+    rdi: cloneDeep(initialStateRdi),
+  }
 }
 
 // mocked store

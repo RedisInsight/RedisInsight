@@ -1,7 +1,8 @@
 import * as monacoEditor from 'monaco-editor'
-import { first, isEmpty, isUndefined, reject } from 'lodash'
+import { first, isEmpty, isUndefined, reject, without } from 'lodash'
+import { decode } from 'html-entities'
 import { ICommands } from 'uiSrc/constants'
-import { IMonacoCommand, IMonacoQuery } from './monacoInterfaces'
+import { IMonacoCommand, IMonacoQuery } from 'uiSrc/utils'
 import { Nullable } from '../types'
 import { getCommandRepeat, isRepeatCountCorrect } from '../commands'
 
@@ -51,6 +52,11 @@ export const removeMonacoComments = (text: string = '') => text
   .map((line: string) => removeCommentsFromLine(line))
   .join('\n')
   .trim()
+
+export const getCommandsForExecution = (query = '') => without(
+  splitMonacoValuePerLines(query).map((command) => removeMonacoComments(decode(command).trim())),
+  ''
+)
 
 export const multilineCommandToOneLine = (text: string = '') => text
   .split(/(\r\n|\n|\r)+\s+/gm)

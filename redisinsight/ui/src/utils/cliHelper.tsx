@@ -15,6 +15,7 @@ import {
   COMMAND_MODULES,
 } from 'uiSrc/slices/interfaces'
 
+import { getCommandsForExecution } from 'uiSrc/utils/monaco/monacoUtils'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import formatToText from './transformers/cliTextFormatter'
 import { getDbIndex } from './longNames'
@@ -178,6 +179,17 @@ const checkCommandModule = (command: string) => {
   }
 }
 
+const getUnsupportedModulesFromQuery = (loadedModules: AdditionalRedisModule[], query: string = ''): Set<RedisDefaultModules> => {
+  const result = new Set<RedisDefaultModules>()
+  getCommandsForExecution(query).forEach((command) => {
+    const module = checkUnsupportedModuleCommand(loadedModules, command)
+    if (module) {
+      result.add(module)
+    }
+  })
+  return result
+}
+
 const checkUnsupportedModuleCommand = (loadedModules: AdditionalRedisModule[], commandLine: string) => {
   const command = commandLine?.trim().toUpperCase()
 
@@ -259,4 +271,5 @@ export {
   removeDeprecatedModuleCommands,
   checkDeprecatedModuleCommand,
   checkDeprecatedCommandGroup,
+  getUnsupportedModulesFromQuery,
 }

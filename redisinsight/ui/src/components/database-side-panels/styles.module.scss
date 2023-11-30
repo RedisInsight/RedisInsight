@@ -1,0 +1,185 @@
+@import "@elastic/eui/src/global_styling/variables";
+
+$animation-duration: 300ms;
+
+.panel {
+  height: 100%;
+  width: 460px;
+  padding-right: 16px;
+
+  &.fullScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-left: 16px;
+    z-index: 15;
+  }
+}
+
+.panelInner {
+  background-color: var(--euiColorEmptyShade);
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 100px;
+  position: relative;
+
+  padding: 15px;
+}
+
+.fullScreenBtn {
+  position: absolute;
+  top: 10px;
+  right: 42px;
+  z-index: 1;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+}
+
+.body {
+  height: calc(100% - 100px);
+}
+
+.trigger {
+  position: fixed;
+  right: -37px;
+  bottom: 180px;
+  z-index: 1100;
+  transform: rotate(-90deg);
+  width: 106px;
+  height: 30px;
+
+  &.exploreTrigger {
+    bottom: 280px;
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 106px;
+    height: 30px;
+
+    background: var(--recommendationsBgColor);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -5px 7px -2px rgba(0, 0, 0, 0.16);
+    padding: 9px 20px;
+  }
+
+  &.isOpen {
+    display: none;
+  }
+
+  .totalUnread {
+    font-weight: 500;
+    font-size: 12px;
+    background-color: var(--triggerIconActiveColor);
+    color: var(--triggerIconTextColor);
+
+    border-radius: 100%;
+
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    transform: rotate(90deg);
+  }
+
+  .triggerIcon {
+    width: 10px;
+    height: 14px;
+    fill: var(--htmlColor);
+    margin-right: 4px;
+
+    path {
+      stroke: var(-htmlColor);
+    }
+  }
+
+  .triggerText {
+    font: normal normal 400 12px/14px Graphik, sans-serif !important;
+    color: var(--htmlColor) !important;
+  }
+
+  .triggerHighlighted.triggerText {
+    color: var(--triggerIconActiveColor) !important;
+  }
+}
+
+.tabs {
+  display: flex;
+  max-width: 440px !important;
+  margin-top: 28px;
+
+  .tab {
+    flex-basis: 50%;
+
+    background-color: var(--buttonGuideBgColor);
+    color: var(--euiColorMediumShade);
+    margin: 0 !important;
+    border-radius: 4px 0 0 4px;
+
+    &:global {
+      &.euiTab + .euiTab {
+        border-radius: 0 4px 4px 0;
+        &:after {
+          display: none !important;
+        }
+      }
+    }
+
+    &:global(.euiTab-isSelected) {
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:global:not(.euiTab-isSelected) {
+      &:hover {
+        .tabName {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    :global {
+      .euiTab__content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .tabTotalUnred {
+      display: inline-block;
+      background-color: #8ba2ff;
+      color: var(--euiColorLightestShade);
+      height: 18px;
+      width: 18px;
+      font-size: 10px;
+      line-height: 16px;
+      font-weight: 500;
+      margin-left: 4px;
+      border-radius: 100%;
+    }
+  }
+}
+
+.onboardingAnchorWrapper {
+  display: flex;
+}
+

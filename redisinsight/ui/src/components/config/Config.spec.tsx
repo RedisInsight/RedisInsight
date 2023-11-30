@@ -19,6 +19,7 @@ import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
+import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -67,6 +68,7 @@ describe('Config', () => {
       getGuideLinks(),
       getWBGuides(),
       getWBTutorials(),
+      getWBCustomTutorials(),
       getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(false)
@@ -103,6 +105,7 @@ describe('Config', () => {
       getGuideLinks(),
       getWBGuides(),
       getWBTutorials(),
+      getWBCustomTutorials(),
       getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(true),

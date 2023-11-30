@@ -1,6 +1,6 @@
 import { Selector } from 'testcafe';
 import { BrowserPage, MyRedisDatabasePage, ClusterDetailsPage, WorkbenchPage } from '../../../../pageObjects';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, ossClusterConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -9,7 +9,6 @@ import { Common } from '../../../../helpers/common';
 const clusterDetailsPage = new ClusterDetailsPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
-const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -75,13 +74,13 @@ test
         for (const node of nodes) {
             await t.expect(clusterDetailsPage.tableRow.nth(nodes.indexOf(node)).textContent).contains(node, `Node ${node} is not displayed in table`);
         }
-        // Go to Workbench page
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         //Run Create hash index command to load network and memory
-        await t.click(workbenchPage.documentButtonInQuickGuides);
-        await t.click(workbenchPage.internalLinkWorkingWithHashes);
-        await t.click(workbenchPage.preselectCreateHashIndex);
-        await t.click(workbenchPage.submitCommandButton);
+        await clusterDetailsPage.InsightsPanel.togglePanel(true);
+        const tutorials = await clusterDetailsPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+
+        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.internalLinkWorkingWithHashes);
+        await tutorials.runBlockCode('Create');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that values in table are dynamic

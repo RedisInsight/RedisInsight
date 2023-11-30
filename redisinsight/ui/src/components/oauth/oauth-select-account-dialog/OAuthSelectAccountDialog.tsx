@@ -125,7 +125,7 @@ const OAuthSelectAccountDialog = () => {
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
           <EuiTitle size="s">
-            <h3 className={styles.title}>Connect to Redis Enterprise Cloud</h3>
+            <h3 className={styles.title}>Connect to Redis Cloud</h3>
           </EuiTitle>
           <EuiText className={styles.subTitle}>
             Select an account to connect to:

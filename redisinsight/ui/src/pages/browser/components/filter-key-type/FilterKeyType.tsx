@@ -18,6 +18,7 @@ import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FilterNotAvailable } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -74,6 +75,9 @@ const FilterKeyType = () => {
     setTypeSelected(value)
     setIsSelectOpen(false)
     dispatch(setFilter(value === ALL_KEY_TYPES_VALUE ? null : value))
+    if (viewType === KeyViewType.Tree) {
+      dispatch(resetBrowserTree())
+    }
     dispatch(
       fetchKeys(
         {

@@ -9,7 +9,7 @@ import {
 } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { verifyKeysDisplayedInTheList, verifyKeysNotDisplayedInTheList, verifySearchFilterValue } from '../../../../helpers/keys';
+import { verifyKeysDisplayingInTheList, verifySearchFilterValue } from '../../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -48,7 +48,7 @@ fixture `Allow to change database index`
     });
 test('Switching between indexed databases', async t => {
     const command = `HSET ${logicalDbKey} "name" "Gillford School" "description" "Gillford School is a centre" "class" "private" "type" "democratic; waldorf" "address_city" "Goudhurst" "address_street" "Goudhurst" "students" 721 "location" "51.112685, 0.451076"`;
-    const rememberedConnectedClients = await browserPage.overviewConnectedClients.textContent;
+    // const rememberedConnectedClients = await browserPage.overviewConnectedClients.textContent;
 
     // Change index to logical db
     // Verify that database index switcher displayed for Standalone db
@@ -70,8 +70,8 @@ test('Switching between indexed databases', async t => {
     await browserPage.addHashKey(keyNameForSearchInLogicalDb);
     // Verify that data changed for indexed db on Tree view
     await t.click(browserPage.treeViewButton);
-    await verifyKeysDisplayedInTheList([keyNameForSearchInLogicalDb]);
-    await verifyKeysNotDisplayedInTheList(keyNames);
+    await verifyKeysDisplayingInTheList([keyNameForSearchInLogicalDb], true);
+    await verifyKeysDisplayingInTheList(keyNames, false);
 
     // Filter by Hash keys and search by key name
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
@@ -81,25 +81,25 @@ test('Switching between indexed databases', async t => {
 
     // Verify that search/filter saved after switching index in Browser
     await verifySearchFilterValue(keyNameForSearchInLogicalDb);
-    await verifyKeysNotDisplayedInTheList([keyNameForSearchInLogicalDb]);
+    await verifyKeysDisplayingInTheList([keyNameForSearchInLogicalDb], false);
     await t.click(browserPage.browserViewButton);
     // Change index to logical db
     await browserPage.OverviewPanel.changeDbIndex(1);
     await verifySearchFilterValue(keyNameForSearchInLogicalDb);
-    await verifyKeysDisplayedInTheList([keyNameForSearchInLogicalDb]);
+    await verifyKeysDisplayingInTheList([keyNameForSearchInLogicalDb], true);
 
     // Return to default database and open search capability
     await browserPage.OverviewPanel.changeDbIndex(0);
     await t.click(browserPage.redisearchModeBtn);
     await browserPage.selectIndexByName(indexName);
-    await verifyKeysDisplayedInTheList(keyNames);
+    await verifyKeysDisplayingInTheList(keyNames, true);
     // Change index to logical db
     await browserPage.OverviewPanel.changeDbIndex(1);
     // Search by value and return to default database
     await browserPage.searchByKeyName('Hall School');
     await browserPage.OverviewPanel.changeDbIndex(0);
     // Verify that data changed for indexed db on Search capability page
-    await verifyKeysDisplayedInTheList([keyNames[0]]);
+    await verifyKeysDisplayingInTheList([keyNames[0]], true);
     // Change index to logical db
     await browserPage.OverviewPanel.changeDbIndex(1);
     // Verify that search/filter saved after switching index in Search capability
@@ -116,14 +116,14 @@ test('Switching between indexed databases', async t => {
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page (on Search capability page)
-    await verifyKeysDisplayedInTheList([logicalDbKey]);
+    await verifyKeysDisplayingInTheList([logicalDbKey], true);
     await t.click(browserPage.patternModeBtn);
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page
-    await verifyKeysDisplayedInTheList([keyNameForSearchInLogicalDb, logicalDbKey]);
+    await verifyKeysDisplayingInTheList([keyNameForSearchInLogicalDb, logicalDbKey], true);
     await browserPage.OverviewPanel.changeDbIndex(0);
-    await verifyKeysNotDisplayedInTheList([logicalDbKey]);
+    await verifyKeysDisplayingInTheList([logicalDbKey], false);
 
     // Go to Analysis Tools page and create new report
     await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);

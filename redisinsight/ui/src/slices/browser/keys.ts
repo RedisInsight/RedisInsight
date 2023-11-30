@@ -11,7 +11,8 @@ import {
   ENDPOINT_BASED_ON_KEY_TYPE,
   SearchHistoryMode,
   SortOrder,
-  STRING_MAX_LENGTH
+  STRING_MAX_LENGTH,
+  ModulesKeyTypes
 } from 'uiSrc/constants'
 import {
   getApiErrorMessage,
@@ -28,7 +29,7 @@ import {
 import { DEFAULT_SEARCH_MATCH, SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getAdditionalAddedEventData, getMatchType } from 'uiSrc/telemetry'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
+import { IFetchKeyArgs, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 
 import {
@@ -44,12 +45,12 @@ import {
 import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
 
 import { fetchString } from './string'
-import { setZsetInitialState, fetchZSetMembers } from './zset'
-import { fetchSetMembers } from './set'
+import { setZsetInitialState, fetchZSetMembers, refreshZsetMembersAction } from './zset'
+import { fetchSetMembers, refreshSetMembersAction } from './set'
 import { fetchReJSON } from './rejson'
-import { setHashInitialState, fetchHashFields } from './hash'
-import { setListInitialState, fetchListElements } from './list'
-import { fetchStreamEntries, setStreamInitialState } from './stream'
+import { setHashInitialState, fetchHashFields, refreshHashFieldsAction } from './hash'
+import { setListInitialState, fetchListElements, refreshListElementsAction } from './list'
+import { fetchStreamEntries, refreshStream, setStreamInitialState } from './stream'
 import {
   deleteRedisearchHistoryAction,
   deleteRedisearchKeyFromList,
@@ -1027,6 +1028,39 @@ export function fetchKeysMetadata(
   }
 }
 
+// Asynchronous thunk action
+export function fetchKeysMetadataTree(
+  keys: RedisString[],
+  filter: Nullable<KeyTypes>,
+  signal?: AbortSignal,
+  onSuccessAction?: (data: GetKeyInfoResponse[]) => void,
+  onFailAction?: () => void
+) {
+  return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
+    try {
+      const state = stateInit()
+      const { data } = await apiService.post<GetKeyInfoResponse[]>(
+        getUrl(
+          state.connections.instances?.connectedInstance?.id,
+          ApiEndpoints.KEYS_METADATA
+        ),
+        { keys: keys.map(([,nameBuffer]) => nameBuffer), type: filter || undefined },
+        { params: { encoding: state.app.info.encoding }, signal }
+      )
+
+      const newData = data.map((key, i) => ({ ...key, path: keys[i][0] }))
+
+      onSuccessAction?.(newData)
+    } catch (_err) {
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        onFailAction?.()
+        console.error(error)
+      }
+    }
+  }
+}
+
 export function fetchPatternHistoryAction(
   onSuccess?: () => void,
   onFailed?: () => void,
@@ -1214,5 +1248,44 @@ export function editKeyTTLFromList(data: [RedisResponseBuffer, number]) {
     return state.browser.keys?.searchMode === SearchMode.Pattern
       ? dispatch(editPatternKeyTTLFromList(data))
       : dispatch(editRedisearchKeyTTLFromList(data))
+  }
+}
+
+export function refreshKey(key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args?: IFetchKeyArgs) {
+  return async (dispatch: AppDispatch) => {
+    const resetData = false
+    dispatch(refreshKeyInfoAction(key))
+    switch (type) {
+      case KeyTypes.Hash: {
+        dispatch(refreshHashFieldsAction(key, resetData))
+        break
+      }
+      case KeyTypes.ZSet: {
+        dispatch(refreshZsetMembersAction(key, resetData))
+        break
+      }
+      case KeyTypes.Set: {
+        dispatch(refreshSetMembersAction(key, resetData))
+        break
+      }
+      case KeyTypes.List: {
+        dispatch(refreshListElementsAction(key, resetData))
+        break
+      }
+      case KeyTypes.String: {
+        dispatch(fetchString(key, { resetData, end: args?.end || STRING_MAX_LENGTH }))
+        break
+      }
+      case KeyTypes.ReJSON: {
+        dispatch(fetchReJSON(key, '.', true))
+        break
+      }
+      case KeyTypes.Stream: {
+        dispatch(refreshStream(key, resetData))
+        break
+      }
+      default:
+        dispatch(fetchKeyInfo(key, resetData))
+    }
   }
 }

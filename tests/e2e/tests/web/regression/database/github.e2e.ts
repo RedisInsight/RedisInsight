@@ -4,6 +4,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
+import { Common } from '../../../../helpers/common';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
@@ -32,9 +33,7 @@ test('Verify that user can work with Github link in the application', async t =>
     // Verify that user can see the icon for GitHub reference at the bottom of the left side bar on the Workbench page
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     await t.expect(myRedisDatabasePage.NavigationPanel.githubButton.visible).ok('Github button');
-    // update after resolving testcafe Native Automation mode limitations
-    // // Verify that when user clicks on Github icon he redirects to the URL: https://github.com/RedisInsight/RedisInsight
-    // await t.click(myRedisDatabasePage.NavigationPanel.githubButton);
-    // await t.expect(getPageUrl()).contains('https://github.com/RedisInsight/RedisInsight', 'Link is not correct');
-    // await t.switchToParentWindow();
+    // Verify that when user clicks on Github icon he redirects to the URL: https://github.com/RedisInsight/RedisInsight
+    await t.click(myRedisDatabasePage.NavigationPanel.githubButton);
+    await Common.checkURLContainsText('https://github.com/RedisInsight/RedisInsight');
 });

@@ -36,6 +36,7 @@ import { getViewTypeOptions, WBQueryType, getProfileViewTypeOptions, ProfileQuer
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { FullScreen } from 'uiSrc/components'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
@@ -391,18 +392,7 @@ const QueryCardHeader = (props: Props) => {
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.buttonIcon} onClick={onDropDownViewClick}>
           {(isOpen || isFullScreen) && (
-            <EuiToolTip
-              content={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
-              position="left"
-            >
-              <EuiButtonIcon
-                iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-                color="primary"
-                aria-label="Open full screen"
-                onClick={toggleFullScreen}
-                data-testid="toggle-full-screen"
-              />
-            </EuiToolTip>
+            <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={toggleFullScreen} />
           )}
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.buttonIcon}>

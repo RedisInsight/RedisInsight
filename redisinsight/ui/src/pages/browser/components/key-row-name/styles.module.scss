@@ -1,0 +1,15 @@
+.keyInfoLoading {
+  width: 70%;
+  margin-top: 7px;
+}
+
+.keyName {
+  flex-grow: 1;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  :global(.euiTextColor) {
+    max-width: 100%;
+  }
+}

@@ -113,7 +113,7 @@ test
             .click(browserPage.treeViewButton)
             .click(browserPage.clearFilterButton);
         // Change delimiter
-        await browserPage.changeDelimiterInTreeView('-');
+        await browserPage.TreeView.changeDelimiterInTreeView('-');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Create new report
@@ -125,7 +125,7 @@ test
         // No namespaces message with link
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Change delimiter to delimiter with no keys
-        await browserPage.changeDelimiterInTreeView('+');
+        await browserPage.TreeView.changeDelimiterInTreeView('+');
         // Go to Analysis Tools page and create report
         await t
             .click(myRedisDatabasePage.NavigationPanel.analysisPageButton)
@@ -135,7 +135,7 @@ test
         await t.expect(memoryEfficiencyPage.topNamespacesEmptyMessage.textContent).contains(noNamespacesMessage, 'No namespaces message not displayed/correct');
         // Verify that user can redirect to Tree view by clicking on button
         await t.click(memoryEfficiencyPage.treeViewLink);
-        await t.expect(browserPage.treeViewArea.exists).ok('Tree view not opened');
+        await t.expect(browserPage.TreeView.treeViewSettingsBtn.exists).ok('Tree view not opened');
     });
 test
     .before(async t => {

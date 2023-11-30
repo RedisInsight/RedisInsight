@@ -15,7 +15,7 @@ import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/cre
 import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
 
-export interface Instance extends DatabaseInstanceResponse {
+export interface Instance extends Partial<DatabaseInstanceResponse> {
   host: string
   port: number
   nameFromProvider?: Nullable<string>
@@ -494,7 +494,7 @@ export interface ICredentialsRedisCloud {
 
 export enum InstanceType {
   Standalone = 'Redis Database',
-  RedisCloudPro = 'Redis Enterprise Cloud',
+  RedisCloudPro = 'Redis Cloud',
   RedisEnterpriseCluster = 'Redis Enterprise Cluster',
   AWSElasticache = 'AWS Elasticache',
   Sentinel = 'Redis Sentinel',

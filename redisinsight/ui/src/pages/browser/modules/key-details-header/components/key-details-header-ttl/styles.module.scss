@@ -1,0 +1,43 @@
+.subtitleText {
+  padding: 6px 2px 6px 0;
+}
+
+.controlsKey {
+  right: 25px;
+}
+
+
+
+.cancelEditBtn:hover {
+  color: var(--euiColorColorDanger) !important;
+}
+
+.applyEditBtn:hover {
+  color: var(--euiColorSecondary) !important;
+}
+
+.flexItemTTL {
+  width: 152px;
+  min-width: 152px;
+}
+
+.ttlInput {
+  min-width: 106px;
+  font-size: 13px !important;
+  &.editing {
+    width: 124px;
+  }
+}
+
+.ttlGridComponent,
+.classNameGridComponent {
+  position: relative;
+}
+
+.hidden {
+  display: none;
+}
+
+.ttlTextValue {
+  padding-left: 11px;
+}

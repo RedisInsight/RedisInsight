@@ -2,9 +2,9 @@ import { join } from 'path';
 import * as os from 'os';
 
 const homedir = process.env.APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-v2'));
+  || (join(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-app'));
 
-const prevHomedir = join(os.homedir(), '.redisinsight-preview');
+const prevHomedir = join(os.homedir(), '.redisinsight-v2');
 
 export default {
   dir_path: {

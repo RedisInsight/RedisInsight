@@ -6,7 +6,7 @@ import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pag
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
-import { deleteAllKeysFromDB, verifyKeysDisplayedInTheList } from '../../../../helpers/keys';
+import { deleteAllKeysFromDB, verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -158,7 +158,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         await workbenchPage.deleteTutorialByName(tutorialName);
         await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).exists)
-        .notOk(`${tutorialName} tutorial is not deleted`);
+            .notOk(`${tutorialName} tutorial is not deleted`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can bulk upload data from custom tutorial', async t => {
         const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];
@@ -205,5 +205,5 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         // Verify that keys of all types can be uploaded
         await browserPage.searchByKeyName('*key1*');
-        await verifyKeysDisplayedInTheList(keyNames);
+        await verifyKeysDisplayingInTheList(keyNames, true);
     });

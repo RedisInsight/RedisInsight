@@ -6,9 +6,8 @@ import { useParams } from 'react-router-dom'
 import AddKey from 'uiSrc/pages/browser/components/add-key/AddKey'
 import BulkActions from 'uiSrc/pages/browser/components/bulk-actions'
 import CreateRedisearchIndex from 'uiSrc/pages/browser/components/create-redisearch-index/'
-import KeyDetailsWrapper from 'uiSrc/pages/browser/components/key-details/KeyDetailsWrapper'
+import { KeyDetails } from 'uiSrc/pages/browser/modules'
 
-import { updateBrowserTreeSelectedLeaf } from 'uiSrc/slices/app/context'
 import {
   keysDataSelector,
   keysSelector,
@@ -16,9 +15,8 @@ import {
   toggleBrowserFullScreen
 } from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { bufferToString, Nullable } from 'uiSrc/utils'
+import { Nullable } from 'uiSrc/utils'
 
 export interface Props {
   selectedKey: Nullable<RedisResponseBuffer>
@@ -91,10 +89,6 @@ const BrowserRightPanel = (props: Props) => {
 
   const handleEditKey = (key: RedisResponseBuffer, newKey: RedisResponseBuffer) => {
     setSelectedKey(newKey)
-
-    if (viewType === KeyViewType.Tree) {
-      dispatch(updateBrowserTreeSelectedLeaf({ key: bufferToString(key), newKey: bufferToString(newKey) }))
-    }
   }
 
   const onEditKey = useCallback(
@@ -110,7 +104,7 @@ const BrowserRightPanel = (props: Props) => {
   return (
     <>
       {every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
-        <KeyDetailsWrapper
+        <KeyDetails
           isFullScreen={isBrowserFullScreen}
           arePanelsCollapsed={arePanelsCollapsed}
           onToggleFullScreen={handleToggleFullScreen}

@@ -81,7 +81,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
       title = 'Access denied'
       message = (
         <>
-          You do not have permission to access Redis Enterprise Cloud.
+          You do not have permission to access Redis Cloud.
         </>
       )
       break
@@ -115,7 +115,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
       title = 'Unauthorized'
       message = (
         <>
-          Your Redis Enterprise Cloud authorization failed.
+          Your Redis Cloud authorization failed.
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
@@ -128,11 +128,11 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
       title = 'Invalid API key'
       message = (
         <>
-          Your Redis Enterprise Cloud authorization failed.
+          Your Redis Cloud authorization failed.
           <EuiSpacer size="xs" />
           Remove the invalid API key from RedisInsight and try again.
           <EuiSpacer size="s" />
-          Open the Settings page to manage Redis Enterprise Cloud API keys.
+          Open the Settings page to manage Redis Cloud API keys.
         </>
       )
       additionalInfo.resourceId = err.resourceId
@@ -143,7 +143,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
       title = 'Database already exists'
       message = (
         <>
-          You already have a free Redis Enterprise Cloud database running.
+          You already have a free Redis Cloud database running.
           <EuiSpacer size="s" />
           Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
         </>

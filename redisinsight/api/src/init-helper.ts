@@ -28,6 +28,7 @@ export const migrateHomeFolder = async () => {
       await Promise.all([
         'redisinsight.db',
         'plugins',
+        'custom-tutorials',
       ].map((target) => copySource(
         join(PATH_CONFIG.prevHomedir, target),
         join(PATH_CONFIG.homedir, target),

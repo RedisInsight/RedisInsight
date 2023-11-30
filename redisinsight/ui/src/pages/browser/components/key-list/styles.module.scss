@@ -27,19 +27,19 @@
   :global {
     .ReactVirtualized__Table__row {
       .ReactVirtualized__Table__rowColumn {
-        .moveOnHover {
+        .moveOnHoverKey {
           transition: transform ease 0.3s;
           &.hide { transform: translateX(-8px) }
         }
-        .showOnHover {
+        .showOnHoverKey {
           display: none;
           &.show { display: block !important; }}
       }
 
       &:hover {
         .ReactVirtualized__Table__rowColumn {
-          .moveOnHover { transform: translateX(-8px) }
-          .showOnHover { display: block; }
+          .moveOnHoverKey { transform: translateX(-8px) }
+          .showOnHoverKey { display: block !important; }
         }
       }
     }

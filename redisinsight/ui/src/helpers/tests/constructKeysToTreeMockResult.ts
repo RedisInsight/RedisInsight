@@ -1,133 +1,108 @@
-import { DEFAULT_DELIMITER } from 'uiSrc/constants'
-import { getTreeLeafField } from 'uiSrc/utils'
-
 export const constructKeysToTreeMockResult = [
   {
-    name: getTreeLeafField(DEFAULT_DELIMITER),
-    children: [],
-    keys: {
-      keys2: {
-        nameString: 'keys2',
-        type: 'hash',
-        ttl: -1,
-        size: 71
-      },
-      test1: {
-        nameString: 'test1',
-        type: 'hash',
-        ttl: -1,
-        size: 71
-      },
-      test2: {
-        nameString: 'test2',
-        type: 'hash',
-        ttl: -1,
-        size: 71
-      },
-      keys1: {
-        nameString: 'keys1',
-        type: 'hash',
-        ttl: -1,
-        size: 71
-      }
-    },
-    keyCount: 4,
-    fullName: `${getTreeLeafField(DEFAULT_DELIMITER)}:`,
-    keyApproximate: 40,
-  },
-  {
-    name: 'keys',
+    nameString: 'empty',
     children: [
       {
-        name: getTreeLeafField(DEFAULT_DELIMITER),
-        children: [],
-        keys: {
-          'keys:1': {
-            nameString: 'keys:1',
-            type: 'hash',
-            ttl: -1,
-            size: 71
-          },
-          'keys:3': {
-            nameString: 'keys:3',
-            type: 'hash',
-            ttl: -1,
-            size: 71
-          },
-          'keys:2': {
-            nameString: 'keys:2',
-            type: 'hash',
-            ttl: -1,
-            size: 71
-          }
-        },
-        keyCount: 3,
-        fullName: `keys:${getTreeLeafField(DEFAULT_DELIMITER)}:`,
-        keyApproximate: 30,
-      },
-      {
-        name: '1',
+        nameString: '',
         children: [
           {
-            name: getTreeLeafField(DEFAULT_DELIMITER),
+            nameString: 'empty::test',
+            isLeaf: true,
             children: [],
-            keys: {
-              'keys:1:2': {
-                nameString: 'keys:1:2',
-                type: 'hash',
-                ttl: -1,
-                size: 71
-              },
-              'keys:1:1': {
-                nameString: 'keys:1:1',
-                type: 'hash',
-                ttl: -1,
-                size: 71
-              }
-            },
-            keyCount: 2,
-            fullName: `keys:1:${getTreeLeafField(DEFAULT_DELIMITER)}:`,
-            keyApproximate: 20,
-          }
-        ],
-        keyCount: 2,
-        fullName: 'keys:1:',
-        keyApproximate: 20,
-      }
-    ],
-    keyCount: 5,
-    fullName: 'keys:',
-    keyApproximate: 50,
-  },
-  {
-    name: 'empty',
-    children: [
-      {
-        name: '',
-        children: [
-          {
-            name: getTreeLeafField(DEFAULT_DELIMITER),
-            children: [],
-            keys: {
-              'empty::test': {
-                nameString: 'empty::test',
-                type: 'hash',
-                ttl: -1,
-                size: 71
-              }
-            },
-            keyCount: 1,
-            fullName: `empty::${getTreeLeafField(DEFAULT_DELIMITER)}:`,
-            keyApproximate: 10,
+            path: '0.0.0',
+            fullName: 'empty::empty::testkeys:keys:',
           }
         ],
         keyCount: 1,
-        fullName: 'empty::',
         keyApproximate: 10,
+        path: '0.0',
+        fullName: 'empty::',
       }
     ],
     keyCount: 1,
-    fullName: 'empty:',
     keyApproximate: 10,
+    path: '0',
+    fullName: 'empty:',
+  },
+  {
+    nameString: 'keys',
+    children: [
+      {
+        nameString: '1',
+        children: [
+          {
+            nameString: 'keys:1:1',
+            isLeaf: true,
+            children: [],
+            path: '1.0.0',
+            fullName: 'keys:1:keys:1:1keys:keys:',
+          },
+          {
+            nameString: 'keys:1:2',
+            isLeaf: true,
+            children: [],
+            path: '1.0.1',
+            fullName: 'keys:1:keys:1:2keys:keys:',
+          }
+        ],
+        keyCount: 2,
+        keyApproximate: 20,
+        path: '1.0',
+        fullName: 'keys:1:',
+      },
+      {
+        nameString: 'keys:1',
+        isLeaf: true,
+        children: [],
+        path: '1.1',
+        fullName: 'keys:keys:1keys:keys:',
+      },
+      {
+        nameString: 'keys:2',
+        isLeaf: true,
+        children: [],
+        path: '1.2',
+        fullName: 'keys:keys:2keys:keys:',
+      },
+      {
+        nameString: 'keys:3',
+        isLeaf: true,
+        children: [],
+        path: '1.3',
+        fullName: 'keys:keys:3keys:keys:',
+      }
+    ],
+    keyCount: 5,
+    keyApproximate: 50,
+    path: '1',
+    fullName: 'keys:',
+  },
+  {
+    nameString: 'keys1',
+    isLeaf: true,
+    children: [],
+    path: '2',
+    fullName: 'keys1keys:keys:',
+  },
+  {
+    nameString: 'keys2',
+    isLeaf: true,
+    children: [],
+    path: '3',
+    fullName: 'keys2keys:keys:',
+  },
+  {
+    nameString: 'test1',
+    isLeaf: true,
+    children: [],
+    path: '4',
+    fullName: 'test1keys:keys:',
+  },
+  {
+    nameString: 'test2',
+    isLeaf: true,
+    children: [],
+    path: '5',
+    fullName: 'test2keys:keys:',
   }
 ]

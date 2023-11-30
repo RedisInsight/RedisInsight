@@ -5,14 +5,14 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../../test-data/sshPrivateKeys';
 import { Common } from '../../../../helpers/common';
-// import { BrowserActions } from '../../../common-actions/browser-actions';
+import { BrowserActions } from '../../../../common-actions/browser-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const welcomePage = new WelcomePage();
-// const browserActions = new BrowserActions();
+const browserActions = new BrowserActions();
 
 const sshParams = {
     sshHost: '172.31.100.245',
@@ -90,12 +90,12 @@ test
         await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias]);
     })('Adding database with SSH', async t => {
         const hiddenPass = '••••••••••••';
-        // const tooltipText = [
-        //     'Enter a value for required fields (3):',
-        //     'SSH Host',
-        //     'SSH Username',
-        //     'SSH Private Key'
-        // ];
+        const tooltipText = [
+            'Enter a value for required fields (3):',
+            'SSH Host',
+            'SSH Username',
+            'SSH Private Key'
+        ];
         const sshWithPass = {
             ...sshParams,
             sshPassword: 'pass'
@@ -109,25 +109,24 @@ test
             sshPrivateKey: sshPrivateKeyWithPasscode,
             sshPassphrase: 'test'
         };
-        // update after resolving testcafe Native Automation mode limitations
-        // // Verify that if user have not entered any required value he can see that this field should be specified when hover over the button to add a database
-        // await t
-        //     .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
-        //     .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually)
-        //     .click(myRedisDatabasePage.AddRedisDatabase.useSSHCheckbox)
-        //     .click(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyRadioBtn)
-        //     .hover(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
-        // for (const text of tooltipText) {
-        //     await browserActions.verifyTooltipContainsText(text, true);
-        // }
-        // // Verify that user can see the Test Connection button enabled/disabled with the same rules as the button to add/apply the changes
-        // await t.hover(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
-        // for (const text of tooltipText) {
-        //     await browserActions.verifyTooltipContainsText(text, true);
-        // }
+        // Verify that if user have not entered any required value he can see that this field should be specified when hover over the button to add a database
+        await t
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually)
+            .click(myRedisDatabasePage.AddRedisDatabase.useSSHCheckbox)
+            .click(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyRadioBtn)
+            .hover(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        for (const text of tooltipText) {
+            await browserActions.verifyTooltipContainsText(text, true);
+        }
+        // Verify that user can see the Test Connection button enabled/disabled with the same rules as the button to add/apply the changes
+        await t.hover(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn);
+        for (const text of tooltipText) {
+            await browserActions.verifyTooltipContainsText(text, true);
+        }
 
         // Verify that user can add SSH tunnel with Password for Standalone database
-        // await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
         await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbPass, sshWithPass);
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
         await Common.checkURLContainsText('browser');

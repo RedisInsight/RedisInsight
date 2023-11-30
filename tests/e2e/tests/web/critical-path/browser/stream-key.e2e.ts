@@ -49,7 +49,7 @@ test('Verify that user can add several fields and values during Stream key creat
     const streamData = { 'string': Common.generateWord(20), 'array': `[${Common.generateWord(20)}, ${chance.integer()}]`, 'integer': `${chance.integer()}`, 'json': '{\'test\': \'test\'}', 'null': 'null', 'boolean': 'true' };
     const scrollSelector = Selector('.eui-yScroll').nth(-1);
 
-    // Open Add New Stream Key Form
+    // Open Add New Stream Key form
     await browserPage.commonAddNewKey(keyName);
     await t.click(browserPage.streamOption);
     // Verify that user can see Entity ID filled by * by default on add Stream key form

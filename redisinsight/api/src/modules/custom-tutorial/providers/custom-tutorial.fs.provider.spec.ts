@@ -74,7 +74,7 @@ describe('CustomTutorialFsProvider', () => {
 
         prepareTmpFolderSpy.mockRestore();
         const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
-        expect(result).toContain(`${PATH_CONFIG.tmpDir}/RedisInsight-v2/custom-tutorials`);
+        expect(result).toContain(`${PATH_CONFIG.tmpDir}/RedisInsight/custom-tutorials`);
         expect(mFs.copy).toHaveBeenCalled();
       });
     });

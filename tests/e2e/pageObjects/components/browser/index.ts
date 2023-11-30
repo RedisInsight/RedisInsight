@@ -3,5 +3,5 @@ import { TreeView } from './tree-view';
 
 export {
     BulkActions,
-    TreeView,
+    TreeView
 };

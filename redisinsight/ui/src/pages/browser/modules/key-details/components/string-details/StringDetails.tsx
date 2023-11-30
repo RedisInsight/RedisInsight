@@ -56,7 +56,7 @@ const StringDetails = (props: Props) => {
     <EditItemAction
       title="Edit Value"
       tooltipContent={editToolTip}
-      isEditable={isStringEditable}
+      isEditable={isStringEditable && isEditable}
       onEditItem={() => setEditItem(!editItem)}
     />
   )

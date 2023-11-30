@@ -207,7 +207,7 @@ const KeysHeader = (props: Props) => {
         {({ width }) => (
           <div style={{ width }}>
             <div className={styles.bottom}>
-              <div>
+              <div className={styles.keysSummary}>
                 <KeysSummary
                   items={keysState.keys}
                   totalItemsCount={keysState.total}

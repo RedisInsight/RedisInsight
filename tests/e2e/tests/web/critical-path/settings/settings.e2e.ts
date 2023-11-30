@@ -21,22 +21,22 @@ fixture `Settings`
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
-    })
-    .afterEach(async() => {
-        await settingsPage.changeKeysToScanValue('10000');
     });
-test('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {
+test
+    .after(async() => {
+        await settingsPage.changeKeysToScanValue('10000');
+    })('Verify that user can customize a number of keys to scan in filters per key name or key type', async t => {
     // Go to Settings page
-    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
-    // Change keys to Scan
-    await t.click(settingsPage.accordionAdvancedSettings);
-    await settingsPage.changeKeysToScanValue('1500');
-    // Reload Page
-    await myRedisDatabasePage.reloadPage();
-    // Check that value was set
-    await t.click(settingsPage.accordionAdvancedSettings);
-    await t.expect(settingsPage.keysToScanValue.textContent).eql('1500', 'Keys to Scan has proper value');
-});
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
+        // Change keys to Scan
+        await t.click(settingsPage.accordionAdvancedSettings);
+        await settingsPage.changeKeysToScanValue('1500');
+        // Reload Page
+        await myRedisDatabasePage.reloadPage();
+        // Check that value was set
+        await t.click(settingsPage.accordionAdvancedSettings);
+        await t.expect(settingsPage.keysToScanValue.textContent).eql('1500', 'Keys to Scan has proper value');
+    });
 test('Verify that user can turn on/off Analytics in Settings in the application', async t => {
     // Go to Settings page
     await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);

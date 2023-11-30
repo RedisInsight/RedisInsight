@@ -86,6 +86,8 @@ export class StandaloneStrategy extends AbstractStrategy {
     count: number,
     type?: RedisDataType,
   ): Promise<void> {
+    const COUNT = Math.min(2000, count);
+
     let fullScanned = false;
     // todo: remove settings from here. threshold should be part of query?
     const settings = await this.settingsService.getAppSettings('1');
@@ -97,7 +99,7 @@ export class StandaloneStrategy extends AbstractStrategy {
         node.scanned < settings.scanThreshold
       )
     ) {
-      let commandArgs = [`${node.cursor}`, 'MATCH', match, 'COUNT', count];
+      let commandArgs = [`${node.cursor}`, 'MATCH', match, 'COUNT', COUNT];
       if (type) {
         commandArgs = [...commandArgs, 'TYPE', type];
       }
@@ -112,7 +114,7 @@ export class StandaloneStrategy extends AbstractStrategy {
       // eslint-disable-next-line no-param-reassign
       node.cursor = parseInt(nextCursor, 10);
       // eslint-disable-next-line no-param-reassign
-      node.scanned += count;
+      node.scanned += COUNT;
       node.keys.push(...keys);
       fullScanned = node.cursor === 0;
     }

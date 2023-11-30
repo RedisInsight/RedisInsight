@@ -19,7 +19,7 @@ export const initialState: InitialStateRdiInstances = {
   data: [],
   connectedInstance: {
     id: '',
-    alias: '',
+    name: '',
     url: '',
     version: '',
     lastConnection: new Date(),
@@ -148,6 +148,7 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
     dispatch(loadInstances())
 
     try {
+      // mock response
       const data: RdiInstanceResponse[] = []
 
       const status = 200
@@ -171,17 +172,18 @@ export function createInstancesAction(onSuccess?: (data?: RdiInstanceResponse[])
     dispatch(loadInstances())
 
     try {
+      // mock response
       const data: RdiInstanceResponse[] = [
         {
           id: '1',
-          alias: 'My first integration',
+          name: 'My first integration',
           url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
           lastConnection: new Date(),
           version: '1.2'
         },
         {
           id: '2',
-          alias: 'My second integration',
+          name: 'My second integration',
           url: 'redis-67890.c253.us-central1-1.gce.cloud.redislabs.com:67890',
           lastConnection: new Date(),
           version: '1.2'
@@ -251,7 +253,7 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
         onSuccess?.()
 
         if (instances.length === 1) {
-          dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCE(first(instances)?.alias ?? '')))
+          dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCE(first(instances)?.name ?? '')))
         } else {
           dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCES(map(instances, 'alias'))))
         }

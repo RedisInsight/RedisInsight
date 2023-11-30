@@ -20,11 +20,10 @@ export class Rdi {
     enum: RdiType,
   })
   @Expose()
-  @IsNotEmpty()
   @IsEnum(RdiType, {
     message: `Type must be a valid enum value from: ${Object.values(RdiType)}.`,
   })
-  type: RdiType;
+  type?: RdiType;
 
   @ApiPropertyOptional({
     description: 'Base url of API to connect to (for API type only)',

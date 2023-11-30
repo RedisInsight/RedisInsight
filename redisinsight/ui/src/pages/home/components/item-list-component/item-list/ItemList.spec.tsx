@@ -4,7 +4,7 @@ import { instance, mock } from 'ts-mockito'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import DatabasesList, { Props } from './ItemList'
+import ItemList, { Props } from './ItemList'
 
 const mockedProps = mock<Props>()
 
@@ -69,11 +69,11 @@ const columnVariationsMock: EuiBasicTableColumn<Instance>[][] = [
   columnsMock,
 ]
 
-describe('DatabasesList', () => {
+describe('ItemList', () => {
   it('should render', () => {
     expect(
       render(
-        <DatabasesList
+        <ItemList
           {...instance(mockedProps)}
           columnVariations={columnVariationsMock}
         />
@@ -88,7 +88,7 @@ describe('DatabasesList', () => {
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
     const { container } = render(
-      <DatabasesList
+      <ItemList
         {...instance(mockedProps)}
         onExport={onExport}
         columnVariations={columnVariationsMock}

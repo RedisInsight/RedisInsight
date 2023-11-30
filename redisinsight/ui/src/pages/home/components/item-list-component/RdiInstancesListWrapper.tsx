@@ -138,13 +138,13 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
 
   const columnsFull: EuiTableFieldDataColumnType<RdiInstance>[] = [
     {
-      field: 'alias',
+      field: 'name',
       className: 'column_name',
       name: 'RDI Alias',
       dataType: 'string',
       truncateText: true,
       'data-test-subj': 'rdi-alias-column',
-      sortable: ({ alias }) => alias?.toLowerCase(),
+      sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
       render: (name: string = '', instance: RdiInstance) => {
         const { id, new: newStatus = false } = instance
@@ -235,7 +235,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
             onClick={() => handleClickEditInstance(instance)}
           />
           <PopoverDelete
-            header={formatLongName(instance.alias, 50, 10, '...')}
+            header={formatLongName(instance.name, 50, 10, '...')}
             text="will be deleted from RedisInsight."
             item={instance.id}
             suffix={suffix}
@@ -280,7 +280,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
         onExport={handleExportInstances}
         onWheel={closePopover}
         loading={instances.loading}
-        data={instances.data.map((instance) => ({ ...instance, name: instance.alias }))}
+        data={instances.data}
         browserStorageItems={browserStorageItems}
         telemetryEvents={telemetryEvents}
         emptyMessage={(

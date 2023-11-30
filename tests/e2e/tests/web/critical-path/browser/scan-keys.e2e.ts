@@ -36,6 +36,8 @@ fixture `Browser - Specify Keys to Scan`
         await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
         await t.click(settingsPage.accordionAdvancedSettings);
         await settingsPage.changeKeysToScanValue('10000');
+        // Open Browser page
+        await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         //Clear and delete database
         await browserPage.Cli.sendCommandInCli(`DEL ${keys.join(' ')}`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);

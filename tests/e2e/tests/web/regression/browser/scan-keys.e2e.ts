@@ -21,6 +21,11 @@ fixture `Browser - Specify Keys to Scan`
     .clientScripts({ content: `(${explicitErrorHandler.toString()})()` })
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
+    })
+    .afterEach(async t => {
+        await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
+        await t.click(settingsPage.accordionAdvancedSettings);
+        await settingsPage.changeKeysToScanValue('10000');
     });
 test('Verify that the user not enter the value less than 500 - the system automatically applies min value if user enters less than min', async t => {
     // Go to Settings page

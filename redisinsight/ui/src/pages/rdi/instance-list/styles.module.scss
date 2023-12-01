@@ -1,6 +1,7 @@
 $breakpoint-m: 1150px;
 $breakpoint-l: 1400px;
 
+// duplicated
 .tooltipColumnName {
   max-width: 370px !important;
   * {
@@ -12,6 +13,7 @@ $breakpoint-l: 1400px;
   }
 }
 
+// duplicated
 .tooltipAnchorColumnName {
   text-decoration: underline;
 
@@ -20,6 +22,7 @@ $breakpoint-l: 1400px;
   }
 }
 
+// duplicated
 .tooltipColumnNameText {
   display: inline-block;
   max-width: 100%;
@@ -42,20 +45,7 @@ $breakpoint-l: 1400px;
   }
 }
 
-.icon {
-  margin-right: 5px;
-}
-
-.columnModules {
-  height: 40px;
-  padding-right: 0 !important;
-}
-
-.tooltipLogo {
-  width: 88px !important;
-  height: 18px !important;
-}
-
+// duplicated
 .noResults {
   display: flex;
 
@@ -73,13 +63,7 @@ $breakpoint-l: 1400px;
   }
 }
 
-.tableMsgTitle {
-  font-size: 18px;
-  margin-bottom: 12px;
-  height: 24px;
-  color: var(--htmlColor) !important;
-}
-
+// keep
 .tableMsgSubTitle {
   font-size: 18px;
   margin-top: 6px;
@@ -87,14 +71,7 @@ $breakpoint-l: 1400px;
   color: var(--htmlColor) !important;
 }
 
-.columnNew {
-  padding: 0 !important;
-
-  .euiFlexItem {
-    margin: 0 !important;
-  }
-}
-
+// duplicated
 .newStatus {
   background-color: var(--euiColorPrimary) !important;
   cursor: pointer;
@@ -104,24 +81,18 @@ $breakpoint-l: 1400px;
   border-radius: 6px;
 }
 
+// duplicated
 .newStatusAnchor {
   margin-top: 20px;
   margin-left: -19px;
   position: absolute;
 }
 
+// duplicated
 .container {
   // Database alias column
   tr > th:nth-child(2),
   tr > td:nth-child(2) {
     padding-left: 5px !important;
-  }
-}
-
-.cloudIcon {
-  :global {
-    path {
-      fill: var(--euiTextSubduedColor);
-    }
   }
 }

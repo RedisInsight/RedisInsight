@@ -1,17 +1,17 @@
-import React from 'react'
-import { instance, mock } from 'ts-mockito'
 import { EuiInMemoryTable } from '@elastic/eui'
+import React from 'react'
 import { useSelector } from 'react-redux'
+import { instance, mock } from 'ts-mockito'
 
 import { first } from 'lodash'
-import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import DatabasesList, { Props as DatabasesListProps } from 'uiSrc/components/item-list/ItemList'
+import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import { mswServer } from 'uiSrc/mocks/server'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { RootState, store } from 'uiSrc/slices/store'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
-import DatabasesList, { Props as DatabasesListProps } from './item-list/ItemList'
 
 const mockedProps = mock<Props>()
 

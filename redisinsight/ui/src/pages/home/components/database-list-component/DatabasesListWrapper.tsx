@@ -22,6 +22,7 @@ import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLog
 import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
 import { ShowChildByCondition } from 'uiSrc/components'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, PageNames, Pages, Theme } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -40,7 +41,6 @@ import {
 import { CONNECTION_TYPE_DISPLAY, ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, getDbIndex, lastConnectionFormat, replaceSpaces } from 'uiSrc/utils'
-import ItemList from './item-list'
 
 import styles from './styles.module.scss'
 

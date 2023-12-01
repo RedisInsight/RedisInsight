@@ -27,7 +27,7 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import ItemList from './components/item-list-component'
+import ItemList from './components/database-list-component'
 import WelcomeComponent from './components/welcome-component'
 import HomeHeader from './components/home-header'
 

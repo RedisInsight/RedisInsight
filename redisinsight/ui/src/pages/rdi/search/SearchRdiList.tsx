@@ -19,7 +19,7 @@ const SearchRdiList = () => {
     const visibleItems = instances.map(
       (item: RdiInstance) => ({
         ...item,
-        visible: item.alias?.toLowerCase().indexOf(value) !== -1
+        visible: item.name?.toLowerCase().indexOf(value) !== -1
         || item.url?.toString()?.indexOf(value) !== -1
         || item.version?.toString()?.indexOf(value) !== -1
         || lastConnectionFormat(item.lastConnection)?.indexOf(value) !== -1
@@ -32,7 +32,7 @@ const SearchRdiList = () => {
   return (
     <EuiFieldSearch
       isClearable
-      placeholder="search instances"
+      placeholder="Instance search"
       className={styles.search}
       onChange={onQueryChange}
       aria-label="Search rdi instance list"

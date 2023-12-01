@@ -3,14 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { createInstancesAction, fetchInstancesAction, setEditedInstance } from 'uiSrc/slices/rdi/instances'
-import RdiInstancesListWrapper from '../../home/components/item-list-component/RdiInstancesListWrapper'
-import RdiHeader from '../../home/components/rdi-header/RdiHeader'
+import RdiInstancesListWrapper from '../instance-list/RdiInstancesListWrapper'
+import RdiHeader from '../header/RdiHeader'
 
-import styles from '../../home/styles.module.scss'
+import styles from './styles.module.scss'
 
-export interface Props {
-
-}
+export interface Props {}
 
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
@@ -40,7 +38,9 @@ const RdiPage = () => {
         <EuiPage className={styles.page}>
           <EuiPageBody component="div">
             <div ref={resizeRef}>
-              <RdiHeader onAddInstance={handleAddInstance} />
+              <div className={styles.header}>
+                <RdiHeader onAddInstance={handleAddInstance} />
+              </div>
               <div key="homePage" className="homePage" ref={resizeRef}>
                 <RdiInstancesListWrapper
                   width={width}

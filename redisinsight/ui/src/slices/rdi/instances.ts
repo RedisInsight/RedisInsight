@@ -255,7 +255,7 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
         if (instances.length === 1) {
           dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCE(first(instances)?.name ?? '')))
         } else {
-          dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCES(map(instances, 'alias'))))
+          dispatch(addMessageNotification(successMessages.DELETE_RDI_INSTANCES(map(instances, 'name'))))
         }
       }
     } catch (_err) {

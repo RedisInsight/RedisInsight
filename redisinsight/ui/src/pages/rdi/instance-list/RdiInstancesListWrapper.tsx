@@ -16,6 +16,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 
 import EmptyListIcon from 'uiSrc/assets/img/empty_list.svg'
 import { ShowChildByCondition } from 'uiSrc/components'
+import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
@@ -30,7 +31,6 @@ import {
 } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat, replaceSpaces } from 'uiSrc/utils'
-import ItemList from './item-list'
 
 import styles from './styles.module.scss'
 
@@ -44,7 +44,13 @@ export interface Props {
 
 const suffix = '_rdi_instance'
 
-const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
+const RdiInstancesListWrapper = ({
+  width,
+  dialogIsOpen,
+  onEditInstance,
+  editedInstance,
+  onDeleteInstances
+}: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()

@@ -16,7 +16,8 @@ import { Maybe, Nullable } from 'uiSrc/utils'
 
 import { ActionBar, DeleteAction, ExportAction } from './components'
 
-import styles from '../styles.module.scss'
+import './styles.scss'
+import styles from './styles.module.scss'
 
 export type TelemetryEventKeys = 'exportClicked' | 'listSorted' | 'multipleDeleteClicked'
 export type BrowserStorageItemKeys = 'sort'
@@ -162,6 +163,7 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
   `
 
   return (
+    // <div className={styles.itemList} ref={containerTableRef}> // why does this not work?
     <div className="itemList" ref={containerTableRef}>
       <EuiInMemoryTable
         ref={tableRef}

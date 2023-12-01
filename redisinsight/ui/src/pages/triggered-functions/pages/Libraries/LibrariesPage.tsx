@@ -231,7 +231,7 @@ const LibrariesPage = () => {
                 wrapperProps={{
                   className: cx('triggeredFunctions__resizePanelLeft', {
                     fullWidth: !isRightPanelOpen,
-                    openedRightPanel: isRightPanelOpen,
+                    openedRightPanel: isRightPanelOpen
                   }),
                 }}
               >

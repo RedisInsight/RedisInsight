@@ -1,5 +1,6 @@
 .container {
-  height: calc(100% - 126px);
+  flex-grow: 1;
+  overflow: hidden;
 }
 
 .emptyMessageWrapper {

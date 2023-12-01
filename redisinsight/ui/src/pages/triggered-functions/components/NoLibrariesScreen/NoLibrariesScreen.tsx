@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import { useDispatch } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import {
@@ -44,7 +43,6 @@ const NoLibrariesScreen = (props: IProps) => {
   const { isAddLibraryPanelOpen, isModuleLoaded, onAddLibrary = () => {} } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const dispatch = useDispatch()
   const history = useHistory()
   const { theme } = useContext(ThemeContext)
 

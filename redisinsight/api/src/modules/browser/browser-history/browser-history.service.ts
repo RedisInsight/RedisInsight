@@ -2,7 +2,6 @@ import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { catchAclError } from 'src/utils';
 import { sum } from 'lodash';
 import { plainToClass } from 'class-transformer';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserHistoryProvider } from 'src/modules/browser/browser-history/providers/browser-history.provider';
@@ -17,7 +16,6 @@ export class BrowserHistoryService {
   private logger = new Logger('BrowserHistoryService');
 
   constructor(
-    private readonly databaseConnectionService: DatabaseConnectionService,
     private readonly browserHistoryProvider: BrowserHistoryProvider,
   ) {}
 
@@ -30,17 +28,10 @@ export class BrowserHistoryService {
     clientMetadata: ClientMetadata,
     dto: CreateBrowserHistoryDto,
   ): Promise<BrowserHistory> {
-    let client;
-
     try {
-      client = await this.databaseConnectionService.createClient(clientMetadata);
-
       const history = plainToClass(BrowserHistory, { ...dto, databaseId: clientMetadata.databaseId });
-
-      client.disconnect();
       return this.browserHistoryProvider.create(history);
     } catch (e) {
-      client?.disconnect();
       this.logger.error('Unable to create browser history item', e);
 
       if (e instanceof HttpException) {

@@ -1,7 +1,7 @@
 import {
   ClassSerializerInterceptor, Controller, Get, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
-import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
+import { Rdi, RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
@@ -25,5 +25,16 @@ export class RdiPipelineController {
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
   ): Promise<object> {
     return this.rdiPipelineService.getSchema(rdiClientMetadata);
+  }
+
+  @Get('/')
+  @ApiEndpoint({
+    description: 'Get pipeline',
+    responses: [{ status: 200, type: RdiPipeline }],
+  })
+  async getPipeline(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<object> {
+    return this.rdiPipelineService.getPipeline(rdiClientMetadata);
   }
 }

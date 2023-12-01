@@ -19,7 +19,8 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async getPipeline(): Promise<RdiPipeline> {
-    return null;
+    const response = await this.client.get(RdiUrl.GetPipeline);
+    return response.data;
   }
 
   async deploy(pipeline: RdiPipeline): Promise<RdiPipeline> {

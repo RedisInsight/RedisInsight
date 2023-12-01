@@ -11,10 +11,12 @@ export class RdiPipelineService {
   async getSchema(rdiClientMetadata: RdiClientMetadata): Promise<object> {
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-    const schema = await client.getSchema();
+    return await client.getSchema();
+  }
 
-    // todo: process somehow
+  async getPipeline(rdiClientMetadata: RdiClientMetadata): Promise<object> {
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-    return schema;
+    return await client.getPipeline();
   }
 }

@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .container {
   height: 36px;
   width: 200px;
@@ -59,6 +61,12 @@
         height: 12px;
       }
     }
+  }
+}
+
+@include insights-open {
+  .container {
+    width: 154px;
   }
 }
 

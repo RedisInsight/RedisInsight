@@ -168,7 +168,7 @@ const AutoRefresh = ({
         {displayText && (
           <span data-testid="refresh-message-label">{`${enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}`}</span>
         )}
-        <span className={styles.time} data-testid="refresh-message">
+        <span className={cx('refresh-message-time', styles.time)} data-testid="refresh-message">
           {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
         </span>
       </EuiTextColor>
@@ -185,7 +185,7 @@ const AutoRefresh = ({
           disabled={loading || disabled}
           onClick={handleRefreshClick}
           onMouseEnter={updateLastRefresh}
-          className={cx(styles.btn, { [styles.rolling]: enableAutoRefresh })}
+          className={cx('auto-refresh-btn', styles.btn, { [styles.rolling]: enableAutoRefresh })}
           aria-labelledby={testid?.replaceAll?.('-', ' ') || 'Refresh button'}
           data-testid={testid || 'refresh-btn'}
         />

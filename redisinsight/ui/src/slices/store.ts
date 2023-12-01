@@ -45,6 +45,7 @@ import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 import insightsPanelReducer from './panels/insights'
 import appRDIReducer from './rdi/rdi'
+import rdiPipelineSlice from './rdi/pipeline'
 
 export const history = createBrowserHistory()
 
@@ -113,7 +114,8 @@ export const rootReducer = combineReducers({
     insights: insightsPanelReducer,
   }),
   rdi: combineReducers({
-    rdi: appRDIReducer
+    rdi: appRDIReducer,
+    pipeline: rdiPipelineSlice,
   })
 })
 

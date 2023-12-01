@@ -1,14 +1,14 @@
-import { IRoute } from 'uiSrc/constants'
-import RdiList from 'uiSrc/pages/rdi/home'
+import { IRoute, Pages } from 'uiSrc/constants'
+import PreparePage from 'uiSrc/pages/rdi/pipeline/pages/prepare'
+import ConfigPage from 'uiSrc/pages/rdi/pipeline/pages/config'
 
 export const RDI_ROUTES: IRoute[] = [
   {
-    // todo: rename path
-    path: '/:rdiId',
-    // todo add component like Instance page
-    component: RdiList,
-    routes: [
-      // todo: add page routes here
-    ],
+    path: Pages.rdiPipelinePrepare(':rdiInstanceId'),
+    component: PreparePage,
+  },
+  {
+    path: Pages.rdiPipelineConfig(':rdiInstanceId'),
+    component: ConfigPage,
   },
 ]

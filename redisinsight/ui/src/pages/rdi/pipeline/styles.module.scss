@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+
+  :global(.content) {
+    border-radius: 8px; 
+    padding: 32px 24px 16px 24px; 
+    margin-left: 16px;
+    background-color: var(--euiColorEmptyShade);
+    width: 100%;
+    height: 100%;
+  }
+
+  :global {
+    .monaco-editor, .monaco-editor .margin, .monaco-editor .minimap-decorations-layer, .monaco-editor-background {
+      background-color: var(--browserViewTypePassive) !important;
+    }
+  }
+}

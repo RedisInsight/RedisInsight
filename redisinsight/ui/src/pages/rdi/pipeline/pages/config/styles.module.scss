@@ -1,0 +1,33 @@
+.wrapper {
+  .title {
+    font: normal normal normal 16px/19px Graphik, sans-serif;
+  }
+
+  .title,
+  .text {
+    margin-bottom: 8px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: end;
+    padding-top: 16px;
+  }
+
+  .editorWrapper {
+    height: calc(100% - 105px);
+      border: 1px solid var(--separatorColorLight) !important;
+
+    :global(.inlineMonacoEditor) {
+      height: 100%;
+    }
+  }
+
+  .loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--browserViewTypePassive) !important;
+  }
+}

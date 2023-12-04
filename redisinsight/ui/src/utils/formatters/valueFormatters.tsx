@@ -38,6 +38,8 @@ const isFormatEditable = (format: KeyValueFormat) => ![
   KeyValueFormat.Protobuf,
   KeyValueFormat.JAVA,
   KeyValueFormat.Pickle,
+  KeyValueFormat.Vector32Bit,
+  KeyValueFormat.Vector64Bit,
 ].includes(format)
 
 const isFullStringLoaded = (currentLength: number, fullLength: number) => currentLength === fullLength
@@ -94,6 +96,36 @@ const formattingBuffer = (
       try {
         const decoded = bufferToJava(reply)
         const value = JSONBigInt.stringify(decoded)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.Vector32Bit: {
+      try {
+        let buffer = new Uint8Array(reply.data).buffer;
+        let dataView = new DataView(buffer);
+        let np_vector = [];
+
+        for(let i = 0; i < dataView.byteLength; i+=4) {
+          np_vector.push(dataView.getFloat32(i, true));
+        }
+        const value = JSONBigInt.stringify(np_vector)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.Vector64Bit: {
+      try {
+        let buffer = new Uint8Array(reply.data).buffer;
+        let dataView = new DataView(buffer);
+        let np_vector = [];
+
+        for(let i = 0; i < dataView.byteLength; i+=8) {
+          np_vector.push(dataView.getFloat64(i, true));
+        }
+        const value = JSONBigInt.stringify(np_vector)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }

@@ -1,0 +1,78 @@
+.wrapper {
+  border-radius: 8px; 
+  width: 269px;
+  background-color: var(--euiColorLightestShade);
+  height: 100%;
+
+  .title {
+    padding: 16px;
+    font: normal normal 500 14px/17px Graphik, sans-serif;
+    border-bottom: 1px solid var(--separatorColor);
+  }
+
+  .tabs {
+    flex-direction: column;
+    
+    .tab {
+      cursor: default;
+      border-bottom: 1px solid var(--separatorColor) !important;
+
+      &:global(.euiTab-isSelected) {
+        background-color: var(--tableRowSelectedColor) !important;
+        border-left: 2px solid var(--euiColorPrimary);
+
+        .tabTitle {
+          font-weight: 500;
+        }
+  
+        .text {
+          color: var(--iconsDefaultHoverColor) !important;
+        }
+  
+        .fileIcon path {
+          fill: var(--iconsDefaultHoverColor);
+        }
+      }
+
+      &:global(.euiTab:hover:not(.euiTab-isSelected)) {
+        text-decoration: none;
+
+        .text:hover {
+          text-decoration: underline;
+        }
+      }
+
+      :global(.euiTab__content) {
+        padding: 16px 12px 16px 16px;
+      }
+  
+      .tabTitle {
+        font: normal normal normal 14px/17px Graphik, sans-serif;
+        color: var(--externalLinkColor) !important;
+        text-align: left;
+        padding: 3px 0;
+      }
+  
+      .file {
+        display: flex;
+        padding: 3px 0;
+      }
+  
+      .text {
+        font: normal normal normal 14px/17px Graphik, sans-serif;
+        color: var(--euiTextSubduedColor) !important;
+      }
+  
+      .fileIcon {
+        width: 14px;
+        height: 15px;
+        margin-right: 6px;
+  
+        path {
+          fill: var(--euiTextSubduedColor);
+        }
+      }
+    }
+  }
+}
+

@@ -146,8 +146,8 @@ export enum KeyValueFormat {
   JAVA = 'Java serialized',
   Protobuf = 'Protobuf',
   Pickle = 'Pickle',
-  Vector32Bit = 'Vector32Bit',
-  Vector64Bit = 'Vector64Bit',
+  Vector32Bit = 'Vector 32Bit',
+  Vector64Bit = 'Vector 64Bit',
 }
 
 export enum KeyValueCompressor {

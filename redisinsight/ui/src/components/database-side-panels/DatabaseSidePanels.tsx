@@ -149,7 +149,7 @@ const DatabaseSidePanels = (props: Props) => {
           <div className={styles.panelInner}>
             <div className={styles.header}>
               <Tabs />
-              <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={handleFullScreen} />
+              <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={handleFullScreen} btnTestId="fullScreen-insights-btn" />
               <EuiButtonIcon
                 iconSize="m"
                 iconType="cross"

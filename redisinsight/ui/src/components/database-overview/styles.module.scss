@@ -28,9 +28,8 @@
   min-width: 78px;
   padding: 4px 14px;
   color: var(--euiTextSubduedColor);
-  border-right: 1px solid var(--separatorColor);
 
-  @media only screen and (max-width: 1124px) {
+  &:not(:last-child) {
     border-right: 1px solid var(--separatorColor);
   }
 }

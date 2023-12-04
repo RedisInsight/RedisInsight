@@ -1,40 +1,42 @@
-.insigtsBtn {
+.container {
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: flex-end;
-  min-width: 98px;
   user-select: none;
 
   &.isOpen {
-    .inner {
-      background-color: var(--insightsTriggerBgColor);
-      color: #fff;
-
-      > div {
-        color: #fff !important;
-      }
+    .btn {
+      outline: 0 !important;
+      border-color: var(--euiColorPrimary) !important;
     }
   }
 
-  .inner {
+  .btn {
     display: flex;
     align-items: center;
     color: var(--recommendationColor);
-    padding: 4px 8px;
+    background-color: var(--insightsTriggerBgColor) !important;
     border-radius: 4px;
-    transition: background-color ease .3s, transform ease .3s;
-
-    &:hover {
-      transform: translateY(-1px);
-    }
+    border-color: var(--insightsTriggerBgColor) !important;
+    position: relative;
 
     > div {
-      color: var(--recommendationColor) !important;
+      color: var(--buttonSecondaryTextColor) !important;
+    }
+
+    svg {
+      color: var(--buttonSecondaryTextColor) !important;
     }
   }
 
-  .triggerIcon {
-    margin-right: 2px;
+  .highlighting {
+    position: absolute;
+    right: -4px;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--triggerIconActiveColor);
   }
 }

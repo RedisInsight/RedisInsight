@@ -55,8 +55,8 @@ const recommendationsSlice = createSlice({
     },
     addUnreadRecommendations: (state, { payload }) => {
       payload.recommendations?.forEach((r: IRecommendation) => {
-        const isRecommnedationExists = some(state.data.recommendations, (stateR) => r.id === stateR.id)
-        if (!isRecommnedationExists) {
+        const isRecommendationExists = some(state.data.recommendations, (stateR) => r.id === stateR.id)
+        if (!isRecommendationExists) {
           state.data.recommendations?.unshift(r)
         }
       })

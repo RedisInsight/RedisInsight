@@ -1,13 +1,12 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiText, EuiToolTip } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 
 import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
-import { ReactComponent as TriggerActiveIcon } from 'uiSrc/assets/img/bulb-active.svg'
 
 import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
@@ -48,31 +47,32 @@ const InsightsTrigger = () => {
 
   return (
     <div
-      className={cx(styles.insigtsBtn, { [styles.isOpen]: isInsigtsOpen })}
+      className={cx(styles.container, { [styles.isOpen]: isInsigtsOpen })}
     >
       <EuiToolTip
-        title="Insights"
-        content="Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use recommendations to improve your database."
+        title={isHighlighted ? undefined : 'Insights'}
+        content={isHighlighted
+          ? 'New recommendations are available'
+          : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use recommendations to improve your database.'}
       >
-        <div
-          className={styles.inner}
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          className={styles.btn}
           role="button"
-          tabIndex={0}
-          onKeyDown={() => {}}
+          iconType={TriggerIcon}
           onClick={handleClickTrigger}
           data-testid="insights-trigger"
         >
-          <EuiIcon
-            type={isHighlighted ? TriggerActiveIcon : TriggerIcon}
-            className={styles.triggerIcon}
-          />
           <EuiText className={cx(
             styles.triggerText,
           )}
           >
             Insights
           </EuiText>
-        </div>
+          {isHighlighted && (<span className={styles.highlighting} />)}
+        </EuiButton>
       </EuiToolTip>
     </div>
   )

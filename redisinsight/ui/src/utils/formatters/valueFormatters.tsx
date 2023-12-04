@@ -106,12 +106,12 @@ const formattingBuffer = (
       try {
         let buffer = new Uint8Array(reply.data).buffer;
         let dataView = new DataView(buffer);
-        let np_vector = [];
+        let npVector = [];
 
         for(let i = 0; i < dataView.byteLength; i+=4) {
-          np_vector.push(dataView.getFloat32(i, true));
+          npVector.push(dataView.getFloat32(i, true));
         }
-        const value = JSONBigInt.stringify(np_vector)
+        const value = JSONBigInt.stringify(npVector)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -121,12 +121,12 @@ const formattingBuffer = (
       try {
         let buffer = new Uint8Array(reply.data).buffer;
         let dataView = new DataView(buffer);
-        let np_vector = [];
+        let npVector = [];
 
         for(let i = 0; i < dataView.byteLength; i+=8) {
-          np_vector.push(dataView.getFloat64(i, true));
+          npVector.push(dataView.getFloat64(i, true));
         }
-        const value = JSONBigInt.stringify(np_vector)
+        const value = JSONBigInt.stringify(npVector)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }

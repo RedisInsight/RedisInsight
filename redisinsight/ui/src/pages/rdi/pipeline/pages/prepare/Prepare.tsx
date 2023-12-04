@@ -5,10 +5,11 @@ export interface IProps {
 
 }
 
-const Content = () => (
+// TODO rename and update this component
+const Prepare = () => (
   <div className="content">
     <EuiTextColor>prepare</EuiTextColor>
   </div>
 )
 
-export default Content
+export default Prepare

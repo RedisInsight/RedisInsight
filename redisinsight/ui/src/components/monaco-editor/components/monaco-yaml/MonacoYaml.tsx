@@ -23,7 +23,7 @@ const MonacoYaml = (props: CommonProps) => {
     <MonacoEditor
       {...props}
       language="yaml"
-      className="json-monaco-editor"
+      className="yaml-monaco-editor"
       onEditorDidMount={editorDidMount}
     />
   )

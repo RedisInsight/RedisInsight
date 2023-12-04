@@ -10,7 +10,7 @@ import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 
 import styles from './styles.module.scss'
 
-const Content = () => {
+const Config = () => {
   const { loading, data } = useSelector(rdiPipelineSelector)
 
   const [value, setValue] = useState<string>(data?.config ?? '')
@@ -70,4 +70,4 @@ const Content = () => {
   )
 }
 
-export default Content
+export default Config

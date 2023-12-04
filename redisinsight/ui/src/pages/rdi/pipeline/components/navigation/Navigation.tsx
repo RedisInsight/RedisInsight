@@ -58,7 +58,7 @@ const Navigation = (props: IProps) => {
       isSelected={path === id}
       key={id}
       className={styles.tab}
-      data-testid={`triggered-functions-tab-${id}`}
+      data-testid={`rdi-pipeline-tab-${id}`}
     >
       <>
         <EuiText className={styles.tabTitle} size="m">{title}</EuiText>

@@ -5,10 +5,10 @@ import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { isEqual, pick } from 'lodash'
 import { Maybe, Nullable } from 'uiSrc/utils'
-import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FunctionType, TriggeredFunctionsFunction } from 'uiSrc/slices/interfaces/triggeredFunctions'
 import { LIST_OF_FUNCTION_NAMES } from 'uiSrc/pages/triggeredFunctions/constants'
+import { AutoRefresh } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {

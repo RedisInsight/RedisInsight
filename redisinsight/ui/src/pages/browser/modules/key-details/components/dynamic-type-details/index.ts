@@ -1,0 +1,1 @@
+export { DynamicTypeDetails } from './DynamicTypeDetails'

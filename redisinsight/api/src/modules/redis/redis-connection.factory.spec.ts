@@ -87,11 +87,21 @@ describe('RedisConnectionFactory', () => {
       process.nextTick(() => mockClient.emit('ready'));
     });
 
-    it('should fail to create standalone connection', (done) => {
+    it('should successfully create standalone client even with error event emited', (done) => {
+      service.createStandaloneConnection(mockClientMetadata, mockDatabaseWithTlsAuth, { useRetry: true })
+        .then(checkClient(done, mockClient));
+      process.nextTick(() => mockClient.emit('error', mockError));
+      process.nextTick(() => mockClient.emit('ready'));
+    });
+
+    it('should fail to create standalone with last error', (done) => {
       service.createStandaloneConnection(mockClientMetadata, mockDatabaseWithTlsAuth, {})
         .catch(checkError(done));
 
+      process.nextTick(() => mockClient.emit('error', new Error('1')));
+      process.nextTick(() => mockClient.emit('error', new Error('2')));
       process.nextTick(() => mockClient.emit('error', mockError));
+      process.nextTick(() => mockClient.emit('end'));
     });
 
     it('should handle sync error during standalone client creation', (done) => {
@@ -113,11 +123,22 @@ describe('RedisConnectionFactory', () => {
       process.nextTick(() => mockCluster.emit('ready'));
     });
 
-    it('should fail to create cluster connection', (done) => {
+    it('should successfully create cluster client and not fail even when error emited', (done) => {
+      service.createClusterConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})
+        .then(checkClient(done, mockCluster));
+
+      process.nextTick(() => mockCluster.emit('error', mockError));
+      process.nextTick(() => mockCluster.emit('ready'));
+    });
+
+    it('should fail to create cluster connection with last error', (done) => {
       service.createClusterConnection(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})
         .catch(checkError(done));
 
+      process.nextTick(() => mockCluster.emit('error', new Error('1')));
+      process.nextTick(() => mockCluster.emit('error', new Error('2')));
       process.nextTick(() => mockCluster.emit('error', mockError));
+      process.nextTick(() => mockCluster.emit('end'));
     });
 
     it('should handle sync error during cluster client creation', (done) => {
@@ -138,11 +159,22 @@ describe('RedisConnectionFactory', () => {
       process.nextTick(() => mockClient.emit('ready'));
     });
 
-    it('should fail to create sentinel connection', (done) => {
+    it('should successfully create sentinel client and not fail even when error emited', (done) => {
+      service.createSentinelConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth, { useRetry: true })
+        .then(checkClient(done, mockClient));
+
+      process.nextTick(() => mockClient.emit('error', mockError));
+      process.nextTick(() => mockClient.emit('ready'));
+    });
+
+    it('should fail to create sentinel connection with last error', (done) => {
       service.createSentinelConnection(mockClientMetadata, mockSentinelDatabaseWithTlsAuth, {})
         .catch(checkError(done));
 
+      process.nextTick(() => mockClient.emit('error', new Error('1')));
+      process.nextTick(() => mockClient.emit('error', new Error('2')));
       process.nextTick(() => mockClient.emit('error', mockError));
+      process.nextTick(() => mockClient.emit('end'));
     });
 
     it('should handle sync error during sentinel client creation', (done) => {

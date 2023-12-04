@@ -10,10 +10,10 @@ import cx from 'classnames'
 
 import { useParams } from 'react-router-dom'
 import { Maybe, Nullable, formatLongName } from 'uiSrc/utils'
-import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import DeleteLibraryButton from 'uiSrc/pages/triggeredFunctions/pages/Libraries/components/DeleteLibrary'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { TriggeredFunctionsLibrary } from 'uiSrc/slices/interfaces/triggeredFunctions'
+import { AutoRefresh } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {

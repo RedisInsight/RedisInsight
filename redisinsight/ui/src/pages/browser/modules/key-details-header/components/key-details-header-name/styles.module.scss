@@ -1,0 +1,69 @@
+.classNameGridComponent {
+  position: relative;
+}
+
+.flexItemKeyInput {
+  flex-direction: row !important;
+  width: 100% !important;
+}
+
+.toolTipAnchorKey {
+  max-width: calc(100% - 25px);
+  height: 31px !important;
+}
+
+.keyInput {
+  height: 31px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+:global(.browserPage .key-details-header .euiFormControlLayout) {
+  .keyInputEditing {
+    height: 31px !important;
+  }
+}
+
+.keyHiddenText {
+  display: inline-block;
+  visibility: hidden;
+  height: 1px;
+  overflow: hidden;
+  max-width: 100%;
+  margin-right: 80px;
+  word-break: break-all;
+}
+
+.copyKey {
+  position: absolute;
+  padding-left: 7px;
+  padding-top: 4px;
+  right: 0;
+  height: 31px;
+  width: 25px;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.key {
+  display: flex;
+  width: 100%;
+  min-width: 100%;
+
+  padding-left: 9px;
+  line-height: 31px !important;
+}
+
+.hidden {
+  display: none;
+}
+
+.keyFlexItem {
+  overflow: hidden;
+}
+
+.keyFlexItemEditing {
+  overflow: inherit;
+}

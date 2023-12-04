@@ -90,38 +90,6 @@ export type KeyTypesActions = {
   }
 }
 
-export const KEY_TYPES_ACTIONS: KeyTypesActions = Object.freeze({
-  [KeyTypes.Hash]: {
-    addItems: {
-      name: 'Add Fields',
-    },
-  },
-  [KeyTypes.List]: {
-    addItems: {
-      name: 'Add Element',
-    },
-    removeItems: {
-      name: 'Remove Elements',
-    },
-  },
-  [KeyTypes.Set]: {
-    addItems: {
-      name: 'Add Members',
-    },
-  },
-  [KeyTypes.ZSet]: {
-    addItems: {
-      name: 'Add Members',
-    },
-  },
-  [KeyTypes.String]: {
-    editItem: {
-      name: 'Edit Value',
-    },
-  },
-  [KeyTypes.ReJSON]: {}
-})
-
 export const STREAM_ADD_GROUP_VIEW_TYPES = [
   StreamViewType.Groups,
   StreamViewType.Consumers,

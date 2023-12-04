@@ -43,3 +43,5 @@ export const getRedirectionPage = (pageInput: string, databaseId?: string): Null
     return `/${page}`
   }
 }
+
+export const getPageName = (databaseId: string, path: string) => path?.replace(`/${databaseId}`, '')

@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import AddKey from 'uiSrc/pages/browser/components/add-key/AddKey'
 import BulkActions from 'uiSrc/pages/browser/components/bulk-actions'
 import CreateRedisearchIndex from 'uiSrc/pages/browser/components/create-redisearch-index/'
-import KeyDetailsWrapper from 'uiSrc/pages/browser/components/key-details/KeyDetailsWrapper'
+import { KeyDetails } from 'uiSrc/pages/browser/modules'
 
 import {
   keysDataSelector,
@@ -104,7 +104,7 @@ const BrowserRightPanel = (props: Props) => {
   return (
     <>
       {every([!isAddKeyPanelOpen, !isBulkActionsPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
-        <KeyDetailsWrapper
+        <KeyDetails
           isFullScreen={isBrowserFullScreen}
           arePanelsCollapsed={arePanelsCollapsed}
           onToggleFullScreen={handleToggleFullScreen}

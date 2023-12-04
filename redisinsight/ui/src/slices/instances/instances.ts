@@ -471,7 +471,7 @@ function autoCreateAndConnectToInstanceActionSuccess(
 }
 
 // Asynchronous thunk action
-export function updateInstanceAction({ id, ...payload }: Instance, onSuccess?: () => void) {
+export function updateInstanceAction({ id, ...payload }: Partial<Instance>, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 

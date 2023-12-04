@@ -84,5 +84,6 @@ export enum CloudSsoUtmCampaign {
   BrowserFilter = 'browser_filter',
   Tutorial = 'tutorial',
   TriggersAndFunctions = 'redisinsight_triggers_and_functions',
+  AutoDiscovery = 'auto_discovery',
   Unknown = 'other',
 }

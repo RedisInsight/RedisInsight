@@ -12,7 +12,6 @@ import {
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -33,7 +32,6 @@ import {
   removeInfiniteNotification
 } from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
-import { setAppContextInitialState } from '../app/context'
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -245,8 +243,6 @@ export function createFreeDbSuccess(id: string, history: any) {
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
 
         if (!isConnected) {
-          dispatch(resetKeys())
-          dispatch(setAppContextInitialState())
           dispatch(setConnectedInstanceId(id ?? ''))
           dispatch(checkConnectToInstanceAction(id))
         }

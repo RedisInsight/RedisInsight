@@ -103,11 +103,15 @@
     }
   }
 
-  .btn :global(.euiButton__text) {
-    color: var(--euiColorPrimaryText) !important;
+  .btn {
+    :global {
+      .euiButton__text, .euiButton__content {
+        color: var(--euiColorPrimaryText) !important;
+      }
+    }
   }
 
-  .marginBottom {
+  .row {
     margin-bottom: 16px;
   }
 }

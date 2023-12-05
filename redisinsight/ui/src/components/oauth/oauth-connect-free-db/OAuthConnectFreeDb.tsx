@@ -3,6 +3,7 @@ import { EuiButton } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useLocation } from 'react-router-dom'
+import cx from 'classnames'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import {
@@ -20,12 +21,14 @@ interface Props {
   id?: string
   source?: OAuthSocialSource | string
   onSuccessClick?: () => void
+  className?: string
 }
 
 const OAuthConnectFreeDb = ({
   id = '',
   source = OAuthSocialSource.ListOfDatabases,
   onSuccessClick,
+  className,
 }: Props) => {
   const { loading } = useSelector(instancesSelector) ?? {}
   const { modules, provider } = useSelector(connectedInstanceSelector) ?? {}
@@ -79,7 +82,7 @@ const OAuthConnectFreeDb = ({
       isLoading={loading}
       color="secondary"
       onClick={handleCheckConnectToInstance}
-      className={styles.btn}
+      className={cx(styles.btn, className)}
       data-testid="connect-free-db-btn"
     >
       Launch database

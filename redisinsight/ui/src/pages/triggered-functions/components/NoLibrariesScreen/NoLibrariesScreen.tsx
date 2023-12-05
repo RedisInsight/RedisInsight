@@ -50,7 +50,7 @@ const NoLibrariesScreen = (props: IProps) => {
   const history = useHistory()
   const { theme } = useContext(ThemeContext)
 
-  const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName as string)
+  const freeDbWithModule = getDbWithModuleLoaded(freeInstances, RedisDefaultModules.RedisGears)
 
   const goToTutorial = () => {
     if (mdPath) {
@@ -82,13 +82,13 @@ const NoLibrariesScreen = (props: IProps) => {
           {CONTENT[RedisDefaultModules.RedisGears]?.additionalText.map((item: string, idx: number) => (
             <EuiText
               key={item}
-              className={cx(styles.additionalText, styles.marginBottom)}
+              className={cx(styles.additionalText, styles.row)}
               data-testid={`no-libraries-additional-text-${idx}`}
             >
               {item}
             </EuiText>
           ))}
-          <EuiText className={cx(styles.additionalText, styles.marginBottom)} data-testid="no-libraries-action-text">
+          <EuiText className={cx(styles.additionalText, styles.row)} data-testid="no-libraries-action-text">
             {isModuleLoaded
               ? 'Upload a new library to start working with triggers and functions or try the interactive tutorial to learn more.'
               : 'Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.'}
@@ -122,6 +122,7 @@ const NoLibrariesScreen = (props: IProps) => {
                   <OAuthConnectFreeDb
                     source={OAuthSocialSource.TriggersAndFunctions}
                     id={freeDbWithModule.id}
+                    className={styles.btn}
                   />
                 )}
                 {!freeDbWithModule && (

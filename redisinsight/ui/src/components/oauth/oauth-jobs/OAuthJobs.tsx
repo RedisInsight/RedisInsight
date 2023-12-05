@@ -10,7 +10,8 @@ import { addErrorNotification, addInfiniteNotification, removeInfiniteNotificati
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { CustomErrorCodes } from 'uiSrc/constants'
+import { BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 
 const OAuthJobs = () => {
   const {
@@ -35,6 +36,7 @@ const OAuthJobs = () => {
       case CloudJobStatus.Finished:
         dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(result, history))))
         dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
+        localStorageService.remove(BrowserStorageItem.OAuthJobId)
         break
 
       case CloudJobStatus.Failed:

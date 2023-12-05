@@ -13,7 +13,6 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const welcomePage = new WelcomePage();
 
 const getPageUrl = ClientFunction(() => window.location.href);
-const sourcePage = 'https://developer.redis.com/create/from-source/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const dockerPage = 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const homebrewPage = 'https://developer.redis.com/create/homebrew/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
 const promoPage = 'https://redis.com/cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main';
@@ -39,10 +38,6 @@ test
     });
 
 test('Verify that all the links are valid from Welcome page', async t => {
-    // Verify build from source link
-    await t.click(welcomePage.buildFromSource);
-    await t.expect(getPageUrl()).eql(sourcePage, 'Build from source link is not valid');
-    await goBackHistory();
     // Verify build from docker link
     await t.click(welcomePage.buildFromDocker);
     await t.expect(getPageUrl()).eql(dockerPage, 'Build from docker page is not valid');

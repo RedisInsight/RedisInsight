@@ -1,4 +1,5 @@
 import {
+  Criteria,
   EuiButtonIcon,
   EuiIcon,
   EuiLink,
@@ -6,6 +7,7 @@ import {
   EuiText,
   EuiTextColor,
   EuiToolTip,
+  PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { saveAs } from 'file-saver'
@@ -27,6 +29,7 @@ import { BrowserStorageItem, PageNames, Pages, Theme } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { localStorageService } from 'uiSrc/services'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
@@ -160,15 +163,29 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
   }
 
   const handleDeleteInstance = (instance: Instance) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
+      eventData: {
+        ids: instance.id
+      }
+    })
     dispatch(deleteInstancesAction([instance], () => onDeleteInstances([instance])))
   }
 
   const handleDeleteInstances = (instances: Instance[]) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
+      eventData: {
+        ids: instances.map((instance) => instance.id)
+      }
+    })
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
   const handleExportInstances = (instances: Instance[], withSecrets: boolean) => {
     const ids = map(instances, 'id')
+
+    sendEventTelemetry({ event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_CLICKED })
 
     dispatch(
       exportInstancesAction(
@@ -393,14 +410,20 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
 
   const columnVariations = [columnsFull, columnsEditing, columnsTablet]
 
-  const telemetryEvents = {
-    exportClicked: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_CLICKED,
-    listSorted: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
-    multipleDeleteClicked: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED
+  const onTableChange = ({ sort, page }: Criteria<Instance>) => {
+    // calls also with page changing
+    if (sort && !page) {
+      localStorageService.set(BrowserStorageItem.instancesSorting, sort)
+      sendEventTelemetry({
+        event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
+        eventData: sort
+      })
+    }
   }
 
-  const browserStorageItems = {
-    sort: BrowserStorageItem.instancesSorting
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
+    field: 'lastConnection',
+    direction: 'asc'
   }
 
   return (
@@ -415,8 +438,8 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
         onWheel={closePopover}
         loading={instances.loading}
         data={instances.data}
-        browserStorageItems={browserStorageItems}
-        telemetryEvents={telemetryEvents}
+        onTableChange={onTableChange}
+        sort={sort}
       />
     </div>
   )

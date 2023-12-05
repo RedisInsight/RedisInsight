@@ -7,16 +7,14 @@ import styles from '../styles.module.scss'
 export interface Props<T> {
   selection: T[]
   onDelete: () => void
-  onDeleteClick: () => void
   subTitle: string
 }
 
 const DeleteAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
-  const { selection, onDelete, onDeleteClick, subTitle } = props
+  const { selection, onDelete, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const onButtonClick = () => {
-    onDeleteClick()
     setIsPopoverOpen((prevState) => !prevState)
   }
 

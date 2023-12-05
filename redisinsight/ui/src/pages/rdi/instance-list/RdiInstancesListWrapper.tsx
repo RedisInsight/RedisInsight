@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiImage, EuiSpacer, EuiTableFieldDataColumnType, EuiText, EuiToolTip } from '@elastic/eui'
+import { Criteria, EuiButtonIcon, EuiImage, EuiSpacer, EuiTableFieldDataColumnType, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
 import { saveAs } from 'file-saver'
 import { map } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -9,9 +9,10 @@ import EmptyListIcon from 'uiSrc/assets/img/empty_list.svg'
 import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { localStorageService } from 'uiSrc/services'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { deleteInstancesAction, exportInstancesAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
-import { TelemetryEvent } from 'uiSrc/telemetry'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
@@ -79,15 +80,29 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
   }
 
   const handleDeleteInstance = (instance: RdiInstance) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED,
+      eventData: {
+        ids: instance.id
+      }
+    })
     dispatch(deleteInstancesAction([instance], () => onDeleteInstances([instance])))
   }
 
   const handleDeleteInstances = (instances: RdiInstance[]) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED,
+      eventData: {
+        ids: instances.map((instance) => instance.id)
+      }
+    })
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
   const handleExportInstances = (instances: RdiInstance[], withSecrets: boolean) => {
     const ids = map(instances, 'id')
+
+    sendEventTelemetry({ event: TelemetryEvent.CONFIG_RDI_INSTANCES_EXPORT_CLICKED })
 
     dispatch(
       exportInstancesAction(
@@ -192,14 +207,20 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
 
   const columnVariations = [columnsFull, columnsEditing, columnsTablet]
 
-  const telemetryEvents = {
-    exportClicked: TelemetryEvent.CONFIG_RDI_INSTANCES_EXPORT_CLICKED,
-    listSorted: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SORTED,
-    multipleDeleteClicked: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED,
+  const onTableChange = ({ sort, page }: Criteria<RdiInstance>) => {
+    // calls also with page changing
+    if (sort && !page) {
+      localStorageService.set(BrowserStorageItem.rdiInstancesSorting, sort)
+      sendEventTelemetry({
+        event: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SORTED,
+        eventData: sort
+      })
+    }
   }
 
-  const browserStorageItems = {
-    sort: BrowserStorageItem.rdiInstancesSorting,
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.rdiInstancesSorting) ?? {
+    field: 'lastConnection',
+    direction: 'asc'
   }
 
   return (
@@ -214,8 +235,8 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
         onWheel={closePopover}
         loading={instances.loading}
         data={instances.data}
-        browserStorageItems={browserStorageItems}
-        telemetryEvents={telemetryEvents}
+        onTableChange={onTableChange}
+        sort={sort}
         emptyMessage={(
           <div className={styles.noResults}>
             <EuiImage src={EmptyListIcon} alt="empty" size="m" />

@@ -1,26 +1,19 @@
 import {
   Criteria,
-  Direction,
   EuiBasicTableColumn,
   EuiInMemoryTable,
   EuiTableSelectionType,
-  PropertySort
+  PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { first, last } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Maybe, Nullable } from 'uiSrc/utils'
 
 import { ActionBar, DeleteAction, ExportAction } from './components'
 
 import './styles.scss'
 import styles from './styles.module.scss'
-
-export type TelemetryEventKeys = 'exportClicked' | 'listSorted' | 'multipleDeleteClicked'
-export type BrowserStorageItemKeys = 'sort'
 
 export interface Props<T> {
   width: number
@@ -32,8 +25,8 @@ export interface Props<T> {
   onWheel: () => void
   loading: boolean
   data: T[]
-  browserStorageItems: { [key in BrowserStorageItemKeys]: BrowserStorageItem }
-  telemetryEvents: { [key in TelemetryEventKeys]: TelemetryEvent }
+  onTableChange: ({ sort, page }: Criteria<T>) => void
+  sort: PropertySort
   emptyMessage?: string | JSX.Element
 }
 
@@ -49,8 +42,8 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
   editedInstance,
   loading,
   data: instances,
-  browserStorageItems,
-  telemetryEvents,
+  onTableChange,
+  sort,
   emptyMessage
 }: Props<T>) {
   const [columns, setColumns] = useState(first(columnVariations))
@@ -101,11 +94,6 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
     }
   }, [instances, loading])
 
-  const sort: PropertySort = localStorageService.get(browserStorageItems.sort) ?? {
-    field: 'lastConnection',
-    direction: 'asc'
-  }
-
   const selectionValue: EuiTableSelectionType<T> = {
     onSelectionChange: (selected: T[]) => setSelection(selected)
   }
@@ -119,7 +107,6 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
   }
 
   const handleExport = (instances: T[], withSecrets: boolean) => {
-    sendEventTelemetry({ event: telemetryEvents.exportClicked })
     onExport(instances, withSecrets)
     tableRef.current?.setSelection([])
   }
@@ -129,29 +116,6 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
       'euiTableRow-isSelected': instance?.id === editedInstance?.id
     })
   })
-
-  const onTableChange = ({ sort, page }: Criteria<T>) => {
-    // calls also with page changing
-    if (sort && !page) {
-      localStorageService.set(browserStorageItems.sort, sort)
-      sendEventSortedTelemetry(sort)
-    }
-  }
-
-  const sendEventSortedTelemetry = (sort: { field: keyof T; direction: Direction }) =>
-    sendEventTelemetry({
-      event: telemetryEvents.listSorted,
-      eventData: sort
-    })
-
-  const sendEventDeleteClickedTelemetry = () => {
-    sendEventTelemetry({
-      event: telemetryEvents.multipleDeleteClicked,
-      eventData: {
-        ids: selection.map((selected) => selected.id)
-      }
-    })
-  }
 
   const actionMsg = (action: string) => `
     Selected
@@ -163,7 +127,6 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
   `
 
   return (
-    // <div className={styles.itemList} ref={containerTableRef}> // why does this not work?
     <div className="itemList" ref={containerTableRef}>
       <EuiInMemoryTable
         ref={tableRef}
@@ -189,7 +152,6 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
             <DeleteAction<T>
               selection={selection}
               onDelete={handleDelete}
-              onDeleteClick={sendEventDeleteClickedTelemetry}
               subTitle={actionMsg('deleted')}
             />
           ]}

@@ -11,14 +11,14 @@ export interface InitialStateRdiInstances {
   error: string
   data: RdiInstance[]
   connectedInstance: RdiInstance
-  editedInstance: InitialStateEditedInstances
+  editedInstance: InitialStateEditedRdiInstances
   loadingChanging: boolean
   errorChanging: string
   changedSuccessfully: boolean
   deletedSuccessfully: boolean
 }
 
-export interface InitialStateEditedInstances {
+export interface InitialStateEditedRdiInstances {
   loading: boolean
   error: string
   data: Nullable<RdiInstance>

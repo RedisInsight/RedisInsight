@@ -20,6 +20,7 @@ import { AppDispatch, RootState } from '../store'
 import {
   CloudCapiKey,
   CloudJobInfoState,
+  CloudSuccessResult,
   EnhancedAxiosError,
   Instance,
   OAuthSocialSource,
@@ -233,8 +234,9 @@ export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.cap
 // The reducer
 export default oauthCloudSlice.reducer
 
-export function createFreeDbSuccess(id: string, history: any) {
+export function createFreeDbSuccess(result: CloudSuccessResult, history: any) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { resourceId: id, ...details } = result
     try {
       const onConnect = () => {
         const state = stateInit()
@@ -252,7 +254,7 @@ export function createFreeDbSuccess(id: string, history: any) {
 
       dispatch(showOAuthProgress(true))
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(details, onConnect)))
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {
       const error = _err as AxiosError

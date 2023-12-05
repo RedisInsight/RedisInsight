@@ -17,7 +17,7 @@ const OAuthJobs = () => {
     status,
     error,
     step,
-    result: { resourceId = '' } = {},
+    result,
   } = useSelector(oauthCloudJobSelector) ?? {}
   const { showProgress } = useSelector(oauthCloudSelector)
 
@@ -33,7 +33,7 @@ const OAuthJobs = () => {
         break
 
       case CloudJobStatus.Finished:
-        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(resourceId, history))))
+        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(result, history))))
         dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
         break
 
@@ -73,7 +73,7 @@ const OAuthJobs = () => {
       default:
         break
     }
-  }, [status, error, step, resourceId, showProgress])
+  }, [status, error, step, result, showProgress])
 
   const importDatabase = (subscriptionId: number, databaseId: number) => {
     sendEventTelemetry({

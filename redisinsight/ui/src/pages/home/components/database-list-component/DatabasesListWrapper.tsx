@@ -5,7 +5,7 @@ import {
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { saveAs } from 'file-saver'
@@ -36,7 +36,7 @@ import {
   deleteInstancesAction,
   exportInstancesAction,
   instancesSelector,
-  setConnectedInstanceId
+  setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
 import { CONNECTION_TYPE_DISPLAY, ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -133,7 +133,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
       eventData: {
         databaseId: id,
         provider,
-        ...modulesSummary
+        ...modulesSummary,
       }
     })
     dispatch(checkConnectToInstanceAction(id, connectToInstance))
@@ -199,7 +199,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
 
   const handleClickGoToCloud = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.CLOUD_LINK_CLICKED
+      event: TelemetryEvent.CLOUD_LINK_CLICKED,
     })
   }
 
@@ -248,7 +248,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
             </ShowChildByCondition>
           </div>
         )
-      }
+      },
     },
     {
       field: 'host',
@@ -273,7 +273,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
             </EuiToolTip>
           </div>
         )
-      }
+      },
     },
     {
       field: 'connectionType',
@@ -327,7 +327,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
             )}
           </AutoSizer>
         </div>
-      )
+      ),
     },
     {
       field: 'lastConnection',
@@ -337,7 +337,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
       align: 'right',
       width: '170px',
       sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) => lastConnectionFormat(date)
+      render: (date: Date) => lastConnectionFormat(date),
     },
     {
       field: 'controls',
@@ -382,8 +382,8 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
             />
           </>
         )
-      }
-    }
+      },
+    },
   ]
 
   const columnsHideForTablet = ['connectionType']

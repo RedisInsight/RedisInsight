@@ -29,7 +29,7 @@ enum BrowserStorageItem {
   recommendationsViewed = 'recommendationsViewed',
   showHiddenRecommendations = 'showHiddenRecommendations',
   OAuthJobId = 'OAuthJobId',
-  OAuthAgreement = 'OAuthAgreement'
+  OAuthAgreement = 'OAuthAgreement',
 }
 
 export default BrowserStorageItem

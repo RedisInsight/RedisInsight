@@ -19,7 +19,7 @@ export enum PageNames {
   settings = 'settings',
   triggeredFunctions = 'triggered-functions',
   triggeredFunctionsLibraries = 'libraries',
-  triggeredFunctionsFunctions = 'functions'
+  triggeredFunctionsFunctions = 'functions',
 }
 
 const redisCloud = '/redis-cloud'

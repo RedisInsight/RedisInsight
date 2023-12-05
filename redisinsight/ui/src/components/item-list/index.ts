@@ -1,3 +1,3 @@
-import DatabasesList from './ItemList'
+import ItemList from './ItemList'
 
-export default DatabasesList
+export default ItemList

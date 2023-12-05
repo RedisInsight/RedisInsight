@@ -138,12 +138,12 @@ enum ApiEndpoints {
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
-  ANALYTICS_SEND_PAGE = 'analytics/send-page'
+  ANALYTICS_SEND_PAGE = 'analytics/send-page',
 }
 
 export enum CustomHeaders {
   DbIndex = 'ri-db-index',
-  WindowId = 'x-window-id'
+  WindowId = 'x-window-id',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

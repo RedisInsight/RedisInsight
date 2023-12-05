@@ -6,7 +6,7 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ItemList, { Props } from './ItemList'
 
-const mockedProps = mock<Props>()
+const mockedProps = mock<Props<Instance>>()
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),

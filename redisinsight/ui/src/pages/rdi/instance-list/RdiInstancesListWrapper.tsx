@@ -1,13 +1,4 @@
-import {
-  EuiButtonIcon,
-  EuiImage,
-  EuiSpacer,
-  EuiTableFieldDataColumnType,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip
-} from '@elastic/eui'
-import cx from 'classnames'
+import { EuiButtonIcon, EuiImage, EuiSpacer, EuiTableFieldDataColumnType, EuiText, EuiToolTip } from '@elastic/eui'
 import { saveAs } from 'file-saver'
 import { map } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -15,22 +6,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import EmptyListIcon from 'uiSrc/assets/img/empty_list.svg'
-import { ShowChildByCondition } from 'uiSrc/components'
 import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import {
-  checkConnectToInstanceAction,
-  deleteInstancesAction,
-  exportInstancesAction,
-  instancesSelector,
-  setConnectedInstanceId
-} from 'uiSrc/slices/rdi/instances'
+import { deleteInstancesAction, exportInstancesAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent } from 'uiSrc/telemetry'
-import { Nullable, formatLongName, lastConnectionFormat, replaceSpaces } from 'uiSrc/utils'
+import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -44,18 +26,11 @@ export interface Props {
 
 const suffix = '_rdi_instance'
 
-const RdiInstancesListWrapper = ({
-  width,
-  dialogIsOpen,
-  onEditInstance,
-  editedInstance,
-  onDeleteInstances
-}: Props) => {
+const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
 
-  const { contextInstanceId } = useSelector(appContextSelector)
   const instances = useSelector(instancesSelector)
   const [, forceRerender] = useState({})
   const deleting = { id: '' }
@@ -95,21 +70,6 @@ const RdiInstancesListWrapper = ({
     navigator.clipboard?.writeText(text)
   }
 
-  const connectToInstance = (id = '') => {
-    if (contextInstanceId && contextInstanceId !== id) {
-      dispatch(resetKeys())
-      dispatch(setAppContextInitialState())
-    }
-    dispatch(setConnectedInstanceId(id))
-
-    history.push(Pages.browser(id))
-  }
-
-  const handleCheckConnectToInstance = (event: React.MouseEvent | React.KeyboardEvent, { id }: RdiInstance) => {
-    event.preventDefault()
-    dispatch(checkConnectToInstanceAction(id, connectToInstance))
-  }
-
   const handleClickDeleteInstance = (id: string) => {
     showPopover(id)
   }
@@ -137,8 +97,8 @@ const RdiInstancesListWrapper = ({
           const file = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain;charset=utf-8' })
           saveAs(file, `RedisInsight_rdi_instances_${Date.now()}.json`)
         },
-        () => {}
-      )
+        () => {},
+      ),
     )
   }
 
@@ -152,39 +112,6 @@ const RdiInstancesListWrapper = ({
       'data-test-subj': 'rdi-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
-      render: (name: string = '', instance: RdiInstance) => {
-        const { id, new: newStatus = false } = instance
-        const cellContent = replaceSpaces(name.substring(0, 200))
-
-        return (
-          <div role="presentation">
-            {newStatus && (
-              <ShowChildByCondition isShow={!isLoadingRef.current} innerClassName={styles.newStatusAnchor}>
-                <EuiToolTip content="New" position="top" anchorClassName={styles.newStatusAnchor}>
-                  <div className={styles.newStatus} data-testid={`rdi-instance-status-new-${id}`} />
-                </EuiToolTip>
-              </ShowChildByCondition>
-            )}
-            <ShowChildByCondition isShow={!isLoadingRef.current}>
-              <EuiToolTip
-                position="bottom"
-                title="RDI Alias"
-                className={styles.tooltipColumnName}
-                content={`${formatLongName(name)}`}
-              >
-                <EuiText
-                  className={styles.tooltipAnchorColumnName}
-                  data-testid={`instance-name-${id}`}
-                  onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
-                  onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
-                >
-                  <EuiTextColor className={cx(styles.tooltipColumnNameText)}>{cellContent}</EuiTextColor>
-                </EuiText>
-              </EuiToolTip>
-            </ShowChildByCondition>
-          </div>
-        )
-      }
     },
     {
       field: 'url',
@@ -206,7 +133,7 @@ const RdiInstancesListWrapper = ({
             />
           </EuiToolTip>
         </div>
-      )
+      ),
     },
     {
       field: 'version',
@@ -214,7 +141,7 @@ const RdiInstancesListWrapper = ({
       name: 'RDI Version',
       dataType: 'string',
       sortable: true,
-      width: '170px'
+      width: '170px',
     },
     {
       field: 'lastConnection',
@@ -224,7 +151,7 @@ const RdiInstancesListWrapper = ({
       align: 'right',
       width: '170px',
       sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) => lastConnectionFormat(date)
+      render: (date: Date) => lastConnectionFormat(date),
     },
     {
       field: 'controls',
@@ -254,8 +181,8 @@ const RdiInstancesListWrapper = ({
             testid={`delete-instance-${instance.id}`}
           />
         </>
-      )
-    }
+      ),
+    },
   ]
 
   const columnsHideForTablet = ['']
@@ -268,11 +195,11 @@ const RdiInstancesListWrapper = ({
   const telemetryEvents = {
     exportClicked: TelemetryEvent.CONFIG_RDI_INSTANCES_EXPORT_CLICKED,
     listSorted: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SORTED,
-    multipleDeleteClicked: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED
+    multipleDeleteClicked: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED,
   }
 
   const browserStorageItems = {
-    sort: BrowserStorageItem.rdiInstancesSorting
+    sort: BrowserStorageItem.rdiInstancesSorting,
   }
 
   return (

@@ -7,7 +7,7 @@ import {
   RedisCloudDatabasesResultPage,
   RedisCloudPage,
   RedisCloudSubscriptionsPage,
-  RedisClusterDatabasesPage
+  RedisClusterDatabasesPage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import PubSubPage from 'uiSrc/pages/pub-sub'
@@ -22,22 +22,22 @@ const INSTANCE_ROUTES: IRoute[] = [
   {
     pageName: PageNames.browser,
     path: Pages.browser(':instanceId'),
-    component: BrowserPage
+    component: BrowserPage,
   },
   {
     pageName: PageNames.workbench,
     path: Pages.workbench(':instanceId'),
-    component: WorkbenchPage
+    component: WorkbenchPage,
   },
   {
     pageName: PageNames.pubSub,
     path: Pages.pubSub(':instanceId'),
-    component: PubSubPage
+    component: PubSubPage,
   },
   {
     path: Pages.analytics(':instanceId'),
     component: AnalyticsPage,
-    routes: ANALYTICS_ROUTES
+    routes: ANALYTICS_ROUTES,
   },
   {
     path: Pages.triggeredFunctions(':instanceId'),
@@ -51,12 +51,12 @@ const ROUTES: IRoute[] = [
     path: Pages.home,
     exact: true,
     component: HomePage,
-    isAvailableWithoutAgreements: true
+    isAvailableWithoutAgreements: true,
   },
   ...COMMON_ROUTES,
   {
     path: Pages.redisEnterpriseAutodiscovery,
-    component: RedisClusterDatabasesPage
+    component: RedisClusterDatabasesPage,
   },
   {
     path: Pages.redisCloud,
@@ -64,17 +64,17 @@ const ROUTES: IRoute[] = [
     routes: [
       {
         path: Pages.redisCloudSubscriptions,
-        component: RedisCloudSubscriptionsPage
+        component: RedisCloudSubscriptionsPage,
       },
       {
         path: Pages.redisCloudDatabases,
-        component: RedisCloudDatabasesPage
+        component: RedisCloudDatabasesPage,
       },
       {
         path: Pages.redisCloudDatabasesResult,
-        component: RedisCloudDatabasesResultPage
-      }
-    ]
+        component: RedisCloudDatabasesResultPage,
+      },
+    ],
   },
   {
     path: Pages.rdi,
@@ -85,7 +85,7 @@ const ROUTES: IRoute[] = [
     path: '/:instanceId',
     component: InstancePage,
     routes: INSTANCE_ROUTES
-  }
+  },
 ]
 
 export default ROUTES

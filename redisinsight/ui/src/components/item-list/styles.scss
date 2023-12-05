@@ -3,23 +3,10 @@
 .itemList {
   @include euiScrollBar;
 
-  height: calc(100vh - 207px); // TODO: allow different heights depending on databases vs rdi instances
-  // height: auto;
   overflow: auto;
   position: relative;
 
   background-color: var(--euiColorEmptyShade);
-
-
-  @media (min-width: 768px) and (max-width: 1100px) {
-    height: calc(100vh - 150px);
-    // height: auto;
-  }
-
-  @media (min-width: 1101px) {
-    height: calc(100vh - 175px);
-    // height: auto;
-  }
 
   .euiBasicTable {
     border-top: none;

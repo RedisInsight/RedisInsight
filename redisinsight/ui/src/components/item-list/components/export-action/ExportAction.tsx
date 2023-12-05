@@ -7,7 +7,7 @@ import {
   EuiFormRow,
   EuiIcon,
   EuiPopover,
-  EuiText
+  EuiText,
 } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 

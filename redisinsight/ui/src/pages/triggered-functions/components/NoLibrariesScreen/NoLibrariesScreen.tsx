@@ -63,7 +63,7 @@ const NoLibrariesScreen = (props: IProps) => {
   return (
     <div className={styles.wrapper} data-testid="no-libraries-component">
       <div className={cx(styles.content, { [styles.fullWidth]: isAddLibraryPanelOpen })}>
-        <div className={styles.contentWrapper}>
+        <div className={cx('emptyTableTextContent', styles.contentWrapper)}>
           <EuiTitle size="m" className={styles.title}>
             <h4 data-testid="no-libraries-title">
               {isModuleLoaded

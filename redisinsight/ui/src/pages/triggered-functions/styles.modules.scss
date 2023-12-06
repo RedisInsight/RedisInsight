@@ -162,9 +162,8 @@ $breakpoint-to-hide-resize-panel: 1124px;
           pointer-events: auto !important;
         }
 
-        tbody .euiTableCellContent span {
+        tbody .euiTableCellContent .emptyTableTextContent span {
           white-space: break-spaces;
-          width: 100%;
         }
 
         .euiTableRow:hover,

@@ -67,4 +67,8 @@
       color: var(--euiColorSecondaryText) !important;
     }
   }
+
+  &:global(.euiToast.wide) {
+    width: 368px !important;
+  }
 }

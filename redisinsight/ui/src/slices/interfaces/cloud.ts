@@ -1,6 +1,7 @@
 import { Nullable } from 'uiSrc/utils'
 import { Instance } from 'uiSrc/slices/interfaces/instances'
 
+import { OAuthProvider } from 'uiSrc/components/oauth/oauth-select-plan/constants'
 import { CloudJobInfo, CloudJobStatus } from 'apiSrc/modules/cloud/job/models'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -54,6 +55,12 @@ export interface CloudUserFreeDbState {
   loading: boolean
   error: string
   data: Nullable<Instance>
+}
+
+export interface CloudSuccessResult {
+  resourceId: string
+  provider?: OAuthProvider
+  region?: string
 }
 
 export enum OAuthSocialSource {

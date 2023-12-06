@@ -6,12 +6,13 @@ import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { Theme } from 'uiSrc/constants'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { MODULE_CAPABILITY_TEXT_NOT_AVAILABLE } from './constants'
 import styles from './styles.module.scss'
 
@@ -23,10 +24,12 @@ export interface Props {
 
 const ModuleNotLoadedMinimalized = (props: Props) => {
   const { moduleName, source, onClose } = props
-  const freeInstance = useSelector(freeInstanceSelector)
+  const freeInstances = useSelector(freeInstancesSelector) || []
 
   const { theme } = useContext(ThemeContext)
+
   const moduleText = MODULE_CAPABILITY_TEXT_NOT_AVAILABLE[moduleName]
+  const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
 
   return (
     <div className={styles.wrapper}>
@@ -35,7 +38,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
           <h5>{moduleText?.title}</h5>
         </EuiTitle>
         <EuiSpacer size="s" />
-        {!freeInstance && (
+        {!freeDbWithModule && (
           <>
             <EuiText color="subdued" size="s">
               {moduleText?.text}
@@ -70,13 +73,14 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             </EuiLink>
           </>
         )}
-        {!!freeInstance && (
+        {!!freeDbWithModule && (
           <>
             <EuiText color="subdued" size="s">
               Use your free all-in-one Redis Cloud database to start exploring these capabilities.
             </EuiText>
             <EuiSpacer size="s" />
             <OAuthConnectFreeDb
+              id={freeDbWithModule.id}
               source={`${moduleName}_tutorial`}
             />
           </>

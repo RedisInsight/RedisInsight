@@ -9,7 +9,7 @@ export class WelcomePage extends BasePage {
     importCloudDbBtn = Selector('[data-testid=import-cloud-db-btn]');
     importDbFromFileBtn = Selector('[data-testid=import-from-file-btn]');
     // Links
-    buildFromSource = Selector('a').withExactText('Build from source');
+    buildFromLinux = Selector('a').withExactText('Linux');
     buildFromDocker = Selector('a').withExactText('Docker');
     buildFromHomebrew = Selector('a').withExactText('Homebrew');
     // Text

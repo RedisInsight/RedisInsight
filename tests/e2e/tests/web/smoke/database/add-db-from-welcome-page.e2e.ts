@@ -13,9 +13,10 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const welcomePage = new WelcomePage();
 
 const getPageUrl = ClientFunction(() => window.location.href);
-const dockerPage = 'https://developer.redis.com/create/docker/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
-const homebrewPage = 'https://developer.redis.com/create/homebrew/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight';
-const promoPage = 'https://redis.com/cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main';
+const linuxPage = 'https://redis.io/docs/install/install-stack/linux/?utm_source=redisinsight&utm_medium=main&utm_campaign=linux';
+const dockerPage = 'https://redis.io/docs/install/install-stack/docker/?utm_source=redisinsight&utm_medium=main&utm_campaign=docker';
+const homebrewPage = 'https://redis.io/docs/install/install-stack/mac-os/?utm_source=redisinsight&utm_medium=main&utm_campaign=homebrew';
+const promoPage = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main';
 
 fixture `Add database from welcome page`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -37,7 +38,11 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not added', { timeout: 10000 });
     });
 
-test('Verify that all the links are valid from Welcome page', async t => {
+test.only('Verify that all the links are valid from Welcome page', async t => {
+    // Verify linux link
+    await t.click(welcomePage.buildFromLinux);
+    await t.expect(getPageUrl()).eql(linuxPage, 'Build for linux link is not valid');
+    await goBackHistory();
     // Verify build from docker link
     await t.click(welcomePage.buildFromDocker);
     await t.expect(getPageUrl()).eql(dockerPage, 'Build from docker page is not valid');

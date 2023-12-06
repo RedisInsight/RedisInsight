@@ -38,7 +38,7 @@ test
         await t.expect(myRedisDatabasePage.dbNameList.withExactText(ossStandaloneConfig.databaseName).exists).ok('The database not added', { timeout: 10000 });
     });
 
-test.only('Verify that all the links are valid from Welcome page', async t => {
+test('Verify that all the links are valid from Welcome page', async t => {
     // Verify linux link
     await t.click(welcomePage.buildFromLinux);
     await t.expect(getPageUrl()).eql(linuxPage, 'Build for linux link is not valid');

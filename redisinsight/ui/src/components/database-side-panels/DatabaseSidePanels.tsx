@@ -128,7 +128,7 @@ const DatabaseSidePanels = (props: Props) => {
           <span className={styles.tabName}>Redis Tips</span>
           {!!totalUnread && (
             <div
-              className={styles.tabTotalUnred}
+              className={styles.tabTotalUnread}
               data-testid="recommendations-unread-count"
             >
               {totalUnread}

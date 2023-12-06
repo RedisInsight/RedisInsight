@@ -10,7 +10,7 @@ import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommenda
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { OnboardingTour } from 'uiSrc/components'
+import { FullScreen, OnboardingTour } from 'uiSrc/components'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -125,10 +125,10 @@ const DatabaseSidePanels = (props: Props) => {
         data-testid="recommendations-tab"
       >
         <>
-          <span className={styles.tabName}>Recommendations</span>
+          <span className={styles.tabName}>Redis Tips</span>
           {!!totalUnread && (
             <div
-              className={styles.tabTotalUnred}
+              className={styles.tabTotalUnread}
               data-testid="recommendations-unread-count"
             >
               {totalUnread}
@@ -149,15 +149,7 @@ const DatabaseSidePanels = (props: Props) => {
           <div className={styles.panelInner}>
             <div className={styles.header}>
               <Tabs />
-              <EuiButtonIcon
-                iconSize="m"
-                iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-                color="primary"
-                aria-label="toggle fullscrenn insights"
-                className={styles.fullScreenBtn}
-                onClick={handleFullScreen}
-                data-testid="fullScreen-insights-btn"
-              />
+              <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={handleFullScreen} btnTestId="fullScreen-insights-btn" />
               <EuiButtonIcon
                 iconSize="m"
                 iconType="cross"

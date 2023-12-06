@@ -78,6 +78,6 @@ export enum ResourcePath {
 
 export enum ExploreTabs {
     Explore  = 'Explore Redis',
-    Recommendations = 'Recommendations',
+    Recommendations = 'Redis Tips',
 }
 

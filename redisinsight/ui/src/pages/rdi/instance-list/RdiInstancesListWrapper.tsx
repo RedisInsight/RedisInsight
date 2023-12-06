@@ -1,11 +1,10 @@
-import { Criteria, EuiButtonIcon, EuiImage, EuiSpacer, EuiTableFieldDataColumnType, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
+import { Criteria, EuiButtonIcon, EuiTableFieldDataColumnType, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
 import { saveAs } from 'file-saver'
 import { map } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 
-import EmptyListIcon from 'uiSrc/assets/img/empty_list.svg'
 import ItemList from 'uiSrc/components/item-list'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -112,8 +111,8 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
           const file = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain;charset=utf-8' })
           saveAs(file, `RedisInsight_rdi_instances_${Date.now()}.json`)
         },
-        () => {},
-      ),
+        () => {}
+      )
     )
   }
 
@@ -126,7 +125,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       truncateText: true,
       'data-test-subj': 'rdi-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
-      width: '30%',
+      width: '30%'
     },
     {
       field: 'url',
@@ -148,7 +147,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
             />
           </EuiToolTip>
         </div>
-      ),
+      )
     },
     {
       field: 'version',
@@ -156,7 +155,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       name: 'RDI Version',
       dataType: 'string',
       sortable: true,
-      width: '170px',
+      width: '170px'
     },
     {
       field: 'lastConnection',
@@ -166,7 +165,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       align: 'right',
       width: '170px',
       sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
-      render: (date: Date) => lastConnectionFormat(date),
+      render: (date: Date) => lastConnectionFormat(date)
     },
     {
       field: 'controls',
@@ -196,8 +195,8 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
             testid={`delete-instance-${instance.id}`}
           />
         </>
-      ),
-    },
+      )
+    }
   ]
 
   const columnsHideForTablet = ['']
@@ -237,14 +236,6 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
         data={instances.data}
         onTableChange={onTableChange}
         sort={sort}
-        emptyMessage={(
-          <div className={styles.noResults}>
-            <EuiImage src={EmptyListIcon} alt="empty" size="m" />
-            <EuiSpacer size="xl" />
-            <div>No deployments found</div>
-            <div className={styles.tableMsgSubTitle}>Add your first deployment to get started!</div>
-          </div>
-        )}
       />
     </div>
   )

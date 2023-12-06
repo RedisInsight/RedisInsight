@@ -1,5 +1,6 @@
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
 import React from 'react'
+
 import SearchRdiList from '../search/SearchRdiList'
 
 export interface Props {
@@ -8,7 +9,7 @@ export interface Props {
 
 const RdiHeader = ({ onAddInstance }: Props) => (
   <EuiPanel>
-    <EuiFlexGroup alignItems="center" responsive={false}>
+    <EuiFlexGroup responsive={false}>
       <EuiFlexItem>
         <SearchRdiList />
       </EuiFlexItem>

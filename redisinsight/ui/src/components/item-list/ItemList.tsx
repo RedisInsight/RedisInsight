@@ -27,7 +27,6 @@ export interface Props<T> {
   data: T[]
   onTableChange: ({ sort, page }: Criteria<T>) => void
   sort: PropertySort
-  emptyMessage?: string | JSX.Element
 }
 
 const columnsHideWidth = 950
@@ -43,8 +42,7 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
   loading,
   data: instances,
   onTableChange,
-  sort,
-  emptyMessage
+  sort
 }: Props<T>) {
   const [columns, setColumns] = useState(first(columnVariations))
   const [selection, setSelection] = useState<T[]>([])
@@ -76,11 +74,6 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
   useEffect(() => {
     if (loading) {
       setMessage('loading...')
-      return
-    }
-
-    if (!instances.length) {
-      setMessage(emptyMessage)
       return
     }
 

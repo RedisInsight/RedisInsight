@@ -1,0 +1,43 @@
+.basePanel {
+  height: calc(100vh - 160px);
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 123px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.noResultsContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.subTitle {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  margin-top: 6px;
+  margin-bottom: 50px;
+  color: var(--htmlColor) !important;
+}
+
+.moreInfoContainer {
+  max-height: 100px;
+}
+
+.moreInfoPanel {
+  background-color: #2B2B2B !important;
+  border: none !important;
+}
+
+.moreInfoTitle {
+  font-weight: 500 !important;
+}
+
+.moreInfoDescription {
+  font-size: 10px !important;
+  line-height: 12px !important;
+}

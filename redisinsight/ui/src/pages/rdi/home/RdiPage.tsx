@@ -1,10 +1,16 @@
 import { EuiPage, EuiPageBody, EuiResizeObserver } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { createInstancesAction, fetchInstancesAction, setEditedInstance } from 'uiSrc/slices/rdi/instances'
-import RdiInstancesListWrapper from '../instance-list/RdiInstancesListWrapper'
+import {
+  createInstancesAction,
+  fetchInstancesAction,
+  instancesSelector,
+  setEditedInstance
+} from 'uiSrc/slices/rdi/instances'
+import EmptyMessage from './components/EmptyMessage'
 import RdiHeader from '../header/RdiHeader'
+import RdiInstancesListWrapper from '../instance-list/RdiInstancesListWrapper'
 
 import styles from './styles.module.scss'
 
@@ -12,6 +18,8 @@ export interface Props {}
 
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
+
+  const { data } = useSelector(instancesSelector)
 
   const dispatch = useDispatch()
 
@@ -41,15 +49,19 @@ const RdiPage = () => {
               <div className={styles.header}>
                 <RdiHeader onAddInstance={handleAddInstance} />
               </div>
-              <div key="homePage" className="homePage" ref={resizeRef}>
-                <RdiInstancesListWrapper
-                  width={width}
-                  dialogIsOpen={false}
-                  editedInstance={null}
-                  onEditInstance={() => {}}
-                  onDeleteInstances={() => {}}
-                />
-              </div>
+              {!data.length ? (
+                <EmptyMessage />
+              ) : (
+                <div key="homePage" className="homePage" ref={resizeRef}>
+                  <RdiInstancesListWrapper
+                    width={width}
+                    dialogIsOpen={false}
+                    editedInstance={null}
+                    onEditInstance={() => {}}
+                    onDeleteInstances={() => {}}
+                  />
+                </div>
+              )}
             </div>
           </EuiPageBody>
         </EuiPage>

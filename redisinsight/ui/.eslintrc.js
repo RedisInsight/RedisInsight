@@ -18,7 +18,11 @@ module.exports = {
 
   overrides: [
     {
-      files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.ts'],
+      files: [
+        '**/*.spec.ts',
+        '**/*.spec.tsx',
+        '**/*.spec.ts',
+      ],
       env: {
         jest: true,
       },
@@ -66,27 +70,34 @@ module.exports = {
     'import/order': [
       1,
       {
-        groups: ['external', 'builtin', 'internal', 'sibling', 'parent', 'index'],
+        groups: [
+          'external',
+          'builtin',
+          'internal',
+          'sibling',
+          'parent',
+          'index',
+        ],
         pathGroups: [
           {
             pattern: 'uiSrc/**',
             group: 'internal',
-            position: 'after',
+            position: 'after'
           },
           {
             pattern: 'apiSrc/**',
             group: 'internal',
-            position: 'after',
+            position: 'after'
           },
           {
             pattern: '{.,..}/*.scss', // same directory only
             // pattern: '{.,..}/**/*\.scss' // same & outside directories (e.g. import '../foo/foo.scss')
             group: 'object',
-            position: 'after',
-          },
+            position: 'after'
+          }
         ],
         warnOnUnassignedImports: true,
-        pathGroupsExcludedImportTypes: ['builtin'],
+        pathGroupsExcludedImportTypes: ['builtin']
       },
     ],
   },

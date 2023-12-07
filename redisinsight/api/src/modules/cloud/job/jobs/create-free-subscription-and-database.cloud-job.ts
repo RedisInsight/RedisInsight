@@ -10,6 +10,7 @@ import { Database } from 'src/modules/database/models/database';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
+import { CloudSubscriptionApiService } from '../../subscription/cloud-subscription.api.service';
 
 export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeDatabase;
@@ -17,8 +18,9 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
 
-    private readonly data: {
-      planId: number,
+    private data: {
+      planId?: number,
+      isAutoCreate?: boolean,
     },
 
     protected readonly dependencies: {
@@ -28,12 +30,15 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
       cloudDatabaseAnalytics: CloudDatabaseAnalytics,
       databaseService: DatabaseService,
       cloudCapiKeyService: CloudCapiKeyService,
+      cloudSubscriptionApiService: CloudSubscriptionApiService,
     },
   ) {
     super(options);
   }
 
   async iteration(): Promise<Database> {
+    let planId = this.data?.planId;
+
     this.logger.log('Create free subscription and database');
 
     this.checkSignal();
@@ -42,9 +47,17 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
 
     this.logger.debug('Get or create free subscription');
 
+    if (this.data?.isAutoCreate) {
+      const plans = await this.dependencies.cloudSubscriptionApiService.getSubscriptionPlans(this.options.sessionMetadata);
+
+      planId = plans[0].id
+    }
+    
+
     const freeSubscription: CloudSubscription = await this.runChildJob(
       CreateFreeSubscriptionCloudJob,
-      this.data,
+      // this.data,
+      { planId },
       this.options,
     );
 

@@ -1,11 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateSubscriptionAndDatabaseCloudJobDataDto {
   @ApiPropertyOptional({
     description: 'Plan id for create a subscription.',
     type: Number,
   })
+  @IsOptional()
   @IsNumber()
   @IsNotEmpty()
   planId: number;
@@ -15,6 +16,6 @@ export class CreateSubscriptionAndDatabaseCloudJobDataDto {
     type: Boolean,
   })
   @IsBoolean()
-  @IsNotEmpty()
+  @IsOptional()
   isAutoCreate: boolean;
 }

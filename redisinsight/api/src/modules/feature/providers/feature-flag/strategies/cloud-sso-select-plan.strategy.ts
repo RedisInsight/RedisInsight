@@ -2,7 +2,7 @@ import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/
 import { Feature } from 'src/modules/feature/model/feature';
 import { IFeatureFlag } from 'src/modules/feature/constants';
 
-export class CloudSsoFlagStrategy extends FeatureFlagStrategy {
+export class CloudSsoSelectPlanFlagStrategy extends FeatureFlagStrategy {
   async calculate(knownFeature: IFeatureFlag, featureConfig: any): Promise<Feature> {
     const isInRange = await this.isInTargetRange(featureConfig?.perc);
 

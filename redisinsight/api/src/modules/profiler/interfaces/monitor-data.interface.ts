@@ -1,9 +1,9 @@
-import * as IORedis from 'ioredis';
+import { IRedisClientOptions } from 'src/modules/redis/client';
 
 export interface IMonitorData {
   time: string;
   args: string[];
   source: string;
   database: number;
-  shardOptions: IORedis.RedisOptions
+  shardOptions: IRedisClientOptions
 }

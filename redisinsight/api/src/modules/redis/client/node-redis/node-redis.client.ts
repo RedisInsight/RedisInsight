@@ -1,5 +1,5 @@
 import { isNull, isNumber } from 'lodash';
-import { createClient, createCluster } from 'redis';
+import { createClient, createCluster } from 'redis/packages/client';
 import { IRedisClientCommandOptions, RedisClient, RedisClientCommand } from 'src/modules/redis/client';
 import { RedisString } from 'src/common/constants';
 
@@ -46,7 +46,7 @@ export abstract class NodeRedisClient extends RedisClient {
   /**
    * @inheritDoc
    */
-  async publish(channel: string, message: string): Promise<number> {
+  async publish(channel: string, message: string): Promise<any> {
     return this.client.publish(channel, message);
   }
 
@@ -87,9 +87,14 @@ export abstract class NodeRedisClient extends RedisClient {
   /**
    * @inheritDoc
    */
-  async monitor(): Promise<any> {
-    // TODO: Implement this method after the monitor in the node-redis is available.
-    return undefined;
+  async monitor(): Promise<void> {
+    const listener = (message) => {
+      if (message !== 'OK') {
+        const [time, database, source, ...args] = message.replace(/[[\]"]/g, '').split(' ');
+        this.emit('monitor', time, args, source, database);
+      }
+    };
+    await this.client.monitor(listener);
   }
 
   /**

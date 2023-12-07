@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
-import * as IORedis from 'ioredis';
+import { IRedisClientOptions } from 'src/modules/redis/client';
 
 export interface IShardObserver extends EventEmitter {
   disconnect(): void;
-  options?: IORedis.RedisOptions,
+  options?: IRedisClientOptions,
 }

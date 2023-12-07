@@ -2,7 +2,6 @@ import { ForbiddenException, Logger, ServiceUnavailableException } from '@nestjs
 import { RedisErrorCodes } from 'src/constants';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
-import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisClient } from 'src/modules/redis/client';
@@ -16,7 +15,7 @@ export class RedisObserver extends EventEmitter2 {
 
   private profilerClientsListeners: Map<string, any[]> = new Map();
 
-  private shardsObservers: IShardObserver[] = [];
+  private shardsObservers: RedisClient[] = [];
 
   public status: RedisObserverStatus;
 
@@ -192,7 +191,8 @@ export class RedisObserver extends EventEmitter2 {
    * Create and return shard observer using IORedis common client
    * @param redis
    */
-  static async createShardObserver(redis: RedisClient): Promise<IShardObserver> {
-    return await redis.monitor() as IShardObserver;
+  static async createShardObserver(redis: RedisClient): Promise<RedisClient> {
+    await redis.monitor();
+    return redis;
   }
 }

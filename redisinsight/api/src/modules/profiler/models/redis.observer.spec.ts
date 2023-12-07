@@ -12,7 +12,6 @@ import {
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
 import { ReplyError } from 'src/models';
 import { ForbiddenException, ServiceUnavailableException } from '@nestjs/common';
-import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 
 const getRedisClientFn = jest.fn();
 
@@ -68,7 +67,7 @@ describe('RedisObserver', () => {
   describe('subscribe', () => {
     beforeEach(() => {
       redisObserver['connect'] = jest.fn();
-      redisObserver['shardsObservers'] = [standaloneClient as unknown as IShardObserver];
+      redisObserver['shardsObservers'] = [standaloneClient];
     });
 
     it('should subscribe to a standalone', async () => {
@@ -95,10 +94,7 @@ describe('RedisObserver', () => {
     });
 
     it('should subscribe to a cluster', async () => {
-      redisObserver['shardsObservers'] = [
-        mockClusterNode1 as unknown as IShardObserver,
-        mockClusterNode2 as unknown as IShardObserver,
-      ];
+      redisObserver['shardsObservers'] = [mockClusterNode1, mockClusterNode2];
       getRedisClientFn.mockResolvedValueOnce(clusterClient);
       await redisObserver.init(getRedisClientFn);
       await redisObserver.subscribe(mockProfilerClient);
@@ -135,7 +131,7 @@ describe('RedisObserver', () => {
     beforeEach(async () => {
       clearSpy = jest.spyOn(redisObserver, 'clear');
       redisObserver['connect'] = jest.fn();
-      redisObserver['shardsObservers'] = [mockRedisShardObserver];
+      redisObserver['shardsObservers'] = [standaloneClient];
       profilerClient1 = new ProfilerClient('1', mockSocket);
       profilerClient2 = new ProfilerClient('2', mockSocket);
       destroySpy1 = jest.spyOn(profilerClient1, 'destroy');

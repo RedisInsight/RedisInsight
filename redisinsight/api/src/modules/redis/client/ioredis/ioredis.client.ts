@@ -140,12 +140,17 @@ export abstract class IoredisClient extends RedisClient {
   /**
    * @inheritDoc
    */
-  async monitor(): Promise<any> {
+  async monitor(): Promise<void> {
     if (this.client instanceof Redis) {
-      return this.client.monitor();
-    }
+      const observer = await this.client.monitor();
 
-    return undefined;
+      const listenerCount = observer.listenerCount('monitor');
+      if (listenerCount === 0) {
+        observer.on('monitor', (time, args, source, database) => {
+          this.emit('monitor', time, args, source, database);
+        });
+      }
+    }
   }
 
   async disconnect(): Promise<void> {

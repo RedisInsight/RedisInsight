@@ -98,7 +98,7 @@ export abstract class RedisClient extends EventEmitter2 {
 
   abstract call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply>;
 
-  abstract monitor(): Promise<any>;
+  abstract monitor(): Promise<void>;
 
   /**
    * Close Redis connection without waiting for pending commands

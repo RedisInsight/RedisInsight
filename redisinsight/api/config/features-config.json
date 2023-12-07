@@ -47,7 +47,7 @@
         }
       }
     },
-    "cloudSsoSelectPlan": {
+    "cloudSsoRecommendedSettings": {
       "flag": true,
       "perc": [[0, 50]],
       "filters": [

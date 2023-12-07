@@ -8,7 +8,7 @@ import { FeaturesConfigService } from 'src/modules/feature/features-config.servi
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants';
 import { CloudSsoFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso.flag.strategy';
-import { CloudSsoSelectPlanFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso-select-plan.strategy';
+import { CloudSsoRecommendedSettingsFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso-use-recommended-settings.strategy';
 import { Feature } from 'src/modules/feature/model/feature';
 import { SimpleFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/simple.flag.strategy';
 
@@ -32,7 +32,7 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
-    this.strategies.set(KnownFeatures.CloudSsoSelectPlan, new CloudSsoSelectPlanFlagStrategy(
+    this.strategies.set(KnownFeatures.CloudSsoRecommendedSettings, new CloudSsoRecommendedSettingsFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

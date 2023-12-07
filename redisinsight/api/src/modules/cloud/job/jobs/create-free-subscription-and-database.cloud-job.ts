@@ -20,7 +20,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
 
     private data: {
       planId?: number,
-      isAutoCreate?: boolean,
+      isRecommendedSettings?: boolean,
     },
 
     protected readonly dependencies: {
@@ -47,7 +47,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
 
     this.logger.debug('Get or create free subscription');
 
-    if (this.data?.isAutoCreate) {
+    if (this.data?.isRecommendedSettings) {
       const plans = await this.dependencies.cloudSubscriptionApiService.getSubscriptionPlans(this.options.sessionMetadata);
 
       planId = plans[0].id

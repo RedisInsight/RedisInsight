@@ -25,8 +25,8 @@ describe('KeyValueFormatter', () => {
       'Protobuf',
       'PHP serialized',
       'Java serialized',
-      'Vector 32Bit',
-      'Vector 64Bit',
+      'Vector 32-bit',
+      'Vector 64-bit',
     ]
     render(<KeyDetailsHeaderFormatter {...mockedProps} />)
 

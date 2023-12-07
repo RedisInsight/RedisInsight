@@ -42,11 +42,11 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     value: KeyValueFormat.JAVA,
   },
   {
-    text: 'Vector 32Bit',
+    text: 'Vector 32-bit',
     value: KeyValueFormat.Vector32Bit,
   },
   {
-    text: 'Vector 64Bit',
+    text: 'Vector 64-bit',
     value: KeyValueFormat.Vector64Bit,
   },
 ]

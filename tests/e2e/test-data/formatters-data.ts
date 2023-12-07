@@ -20,12 +20,12 @@ export const formatters = [{
     formattedText: '[ { "1": 2009 }, { "2": 344 } ]'
 },
 {
-    format: 'Vector 32Bit',
+    format: 'Vector 32-bit',
     fromHexText: '0000803f0000004000004040',
     formattedText: '[ 1.0, 2.0, 3.0 ]',
 },
 {
-    format: 'Vector 64Bit',
+    format: 'Vector 64-bit',
     fromHexText: '000000000000f03f00000000000000400000000000000840',
     formattedText: '[ 1.0, 2.0, 3.0 ]',
 },

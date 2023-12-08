@@ -95,7 +95,7 @@ describe('OAuthSocial', () => {
     expect(store.getActions()).toEqual(expectedActions)
 
     invokeMock.mockRestore();
-    (sendEventTelemetry as jest.Mock).mockRegstore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   describe('Recommended Settings Enabled', () => {

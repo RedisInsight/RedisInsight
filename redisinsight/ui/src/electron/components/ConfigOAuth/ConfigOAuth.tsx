@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import {
+  createFreeDbJob,
   fetchPlans,
   fetchUserInfo,
   setJob,
@@ -20,9 +21,10 @@ import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 
 const ConfigOAuth = () => {
-  const { isAutodiscoverySSO } = useSelector(cloudSelector)
+  const { isAutodiscoverySSO, isRecommendedSettings } = useSelector(cloudSelector)
 
   const isAutodiscoverySSORef = useRef(isAutodiscoverySSO)
+  const isRecommendedSettingsRef = useRef(isRecommendedSettings)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -38,6 +40,10 @@ const ConfigOAuth = () => {
     isAutodiscoverySSORef.current = isAutodiscoverySSO
   }, [isAutodiscoverySSO])
 
+  useEffect(() => {
+    isRecommendedSettingsRef.current = isRecommendedSettings
+  }, [isRecommendedSettings])
+
   const fetchUserInfoSuccess = (isMultiAccount: boolean) => {
     if (isMultiAccount) return
 
@@ -50,9 +56,25 @@ const ConfigOAuth = () => {
         },
         closeInfinityNotification,
       ))
-    } else {
-      dispatch(fetchPlans())
+      return
     }
+
+    if (isRecommendedSettingsRef.current) {
+      dispatch(createFreeDbJob({
+        name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+        resources: {
+          isRecommendedSettings: isRecommendedSettingsRef.current
+        },
+        onSuccessAction: () => {
+          dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
+        },
+        onFailAction: closeInfinityNotification
+      }))
+
+      return
+    }
+
+    dispatch(fetchPlans())
   }
 
   const closeInfinityNotification = () => {
@@ -72,7 +94,7 @@ const ConfigOAuth = () => {
     if (status === CloudAuthStatus.Failed) {
       const err = parseCloudOAuthError(error || message || '')
       dispatch(setOAuthCloudSource(null))
-      dispatch(signInFailure(err?.message))
+      dispatch(signInFailure(err?.response?.data?.message || message))
       dispatch(addErrorNotification(err))
       dispatch(setIsAutodiscoverySSO(false))
     }

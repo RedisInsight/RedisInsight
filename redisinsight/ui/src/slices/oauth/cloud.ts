@@ -313,6 +313,7 @@ export function createFreeDbJob({
     planId?: number,
     databaseId?: number,
     subscriptionId?: number,
+    isRecommendedSettings?: boolean
   }
   onSuccessAction?: () => void,
   onFailAction?: () => void

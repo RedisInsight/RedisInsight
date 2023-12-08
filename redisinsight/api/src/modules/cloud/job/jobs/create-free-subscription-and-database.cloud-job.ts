@@ -1,3 +1,4 @@
+import { sortBy } from 'lodash';
 import { CloudJob, CloudJobOptions, CreateFreeDatabaseCloudJob } from 'src/modules/cloud/job/jobs';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
@@ -11,6 +12,7 @@ import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-databas
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 import { CloudSubscriptionApiService } from '../../subscription/cloud-subscription.api.service';
+import { CloudSubscriptionPlanResponse } from '../../subscription/dto';
 
 export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
   protected name = CloudJobName.CreateFreeDatabase;
@@ -50,7 +52,7 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
     if (this.data?.isRecommendedSettings) {
       const plans = await this.dependencies.cloudSubscriptionApiService.getSubscriptionPlans(this.options.sessionMetadata);
 
-      planId = plans[0].id;
+      planId = this.getRecommendedPlanId(plans);
     }
 
     const freeSubscription: CloudSubscription = await this.runChildJob(
@@ -78,5 +80,10 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
     this.changeState({ status: CloudJobStatus.Finished });
 
     return database;
+  }
+
+  private getRecommendedPlanId(plans: CloudSubscriptionPlanResponse[]) {
+    const defaultPlan = sortBy(plans, ['details.displayOrder']);
+    return defaultPlan[0].id;
   }
 }

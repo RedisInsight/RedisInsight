@@ -58,6 +58,7 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'Google',
         action: 'create',
+        recommendedSettings: null
       }
     })
 
@@ -84,6 +85,7 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'GitHub',
         action: 'create',
+        recommendedSettings: null
       }
     })
 

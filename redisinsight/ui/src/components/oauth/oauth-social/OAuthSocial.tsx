@@ -45,9 +45,11 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
     eventData: {
       accountOption,
       action: getAction(),
-      recommendedSettings: isAutodiscovery || !isRecommendedFeatureEnabled?.flag
+      recommendedSettings: isAutodiscovery
         ? undefined
-        : (isRecommended ? 'enabled' : 'disabled')
+        : (!isRecommendedFeatureEnabled?.flag
+          ? null
+          : (isRecommended ? 'enabled' : 'disabled'))
     }
   })
 
@@ -115,7 +117,13 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
           data-testid="oauth-recommended-settings-checkbox"
         />
         <EuiToolTip
-          content="The database will be automatically created using a pre-selected provider and region. You can change it by signing in to Redis Cloud."
+          content={(
+            <>
+              The database will be automatically created using a pre-selected provider and region.
+              <br />
+              You can change it by signing in to Redis Cloud.
+            </>
+          )}
           position="top"
           anchorClassName={styles.recommendedSettingsToolTip}
         >

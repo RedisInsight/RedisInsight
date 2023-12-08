@@ -1,30 +1,47 @@
 import React, { useContext } from 'react'
 import { EuiIcon, EuiTitle, EuiText, EuiSpacer, EuiButton } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
-import { BulkActionsType, Theme } from 'uiSrc/constants'
+import { useParams } from 'react-router-dom'
+import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import TelescopeDark from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLight from 'uiSrc/assets/img/telescope-light.svg'
 
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 export interface Props {
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 const NoKeysFound = (props: Props) => {
-  const { onAddKeyPanel, onBulkActionsPanel } = props
+  const { onAddKeyPanel } = props
+
+  const { provider } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
+
+  const { instanceId } = useParams<{ instanceId: string }>()
   const { theme } = useContext(ThemeContext)
 
-  const handleOpenBulkUpload = () => {
-    onBulkActionsPanel(true)
-    dispatch(setBulkActionType(BulkActionsType.Upload))
+  const handleOpenInsights = () => {
+    dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    dispatch(toggleInsightsPanel(true))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
+      eventData: {
+        databaseId: instanceId,
+        provider,
+        source: 'browser',
+      },
+    })
   }
 
   return (
@@ -58,11 +75,12 @@ const NoKeysFound = (props: Props) => {
         <span>or</span>
         <EuiButton
           color="secondary"
-          onClick={() => handleOpenBulkUpload()}
-          className={styles.uploadBtn}
-          data-testid="upload-data-msg-btn"
+          iconType={TriggerIcon}
+          onClick={() => handleOpenInsights()}
+          className={styles.exploreBtn}
+          data-testid="explore-msg-btn"
         >
-          Upload your data
+          Open Tutorials
         </EuiButton>
       </div>
     </div>

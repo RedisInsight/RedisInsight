@@ -59,7 +59,6 @@ const propsMock = {
   loadMoreItems: jest.fn(),
   onDelete: jest.fn(),
   onAddKeyPanel: jest.fn(),
-  onBulkActionsPanel: jest.fn(),
 }
 
 const leafRootFullName = 'test'

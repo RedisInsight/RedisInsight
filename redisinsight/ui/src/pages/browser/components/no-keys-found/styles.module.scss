@@ -31,9 +31,11 @@
   }
 }
 
-.uploadBtn {
+.exploreBtn {
   margin-left: 12px;
   height: 36px !important;
+  background-color: var(--insightsTriggerBgColor);
+  border-color: var(--insightsTriggerBgColor) !important;
 
 
   :global(.euiButton__text) {

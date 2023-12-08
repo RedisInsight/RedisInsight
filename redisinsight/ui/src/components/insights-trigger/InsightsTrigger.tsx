@@ -40,7 +40,8 @@ const InsightsTrigger = () => {
         databaseId: instanceId,
         provider,
         page,
-        tab: isHighlighted ? InsightsPanelTabs.Recommendations : tabSelected
+        tab: isHighlighted ? InsightsPanelTabs.Recommendations : tabSelected,
+        source: 'overview'
       },
     })
   }

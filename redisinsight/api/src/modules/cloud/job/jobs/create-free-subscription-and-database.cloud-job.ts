@@ -50,13 +50,11 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
     if (this.data?.isRecommendedSettings) {
       const plans = await this.dependencies.cloudSubscriptionApiService.getSubscriptionPlans(this.options.sessionMetadata);
 
-      planId = plans[0].id
+      planId = plans[0].id;
     }
-    
 
     const freeSubscription: CloudSubscription = await this.runChildJob(
       CreateFreeSubscriptionCloudJob,
-      // this.data,
       { planId },
       this.options,
     );

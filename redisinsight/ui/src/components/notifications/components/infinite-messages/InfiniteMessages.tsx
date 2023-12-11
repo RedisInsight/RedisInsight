@@ -84,7 +84,7 @@ export const INFINITE_MESSAGES = {
               <EuiText size="xs">
                 You can now use your Redis Stack database in Redis Cloud.
                 <EuiSpacer size="s" />
-                <b>Notice:</b> the database will be deleted after 30 days of inactivity.
+                <b>Notice:</b> the database will be deleted after 15 days of inactivity.
               </EuiText>
               {!!details && (
                 <>

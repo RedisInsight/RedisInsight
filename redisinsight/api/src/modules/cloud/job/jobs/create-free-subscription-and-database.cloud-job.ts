@@ -84,6 +84,6 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
 
   private getRecommendedPlanId(plans: CloudSubscriptionPlanResponse[]) {
     const defaultPlan = sortBy(plans, ['details.displayOrder']);
-    return defaultPlan[0].id;
+    return defaultPlan[0]?.id;
   }
 }

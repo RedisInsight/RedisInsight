@@ -1,20 +1,22 @@
-import React from 'react'
-import { EuiButtonIcon, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
+import React, { useState } from 'react'
+import { EuiButtonIcon, EuiCheckbox, EuiIcon, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
-import { OAuthAgreement } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthAgreement } from 'uiSrc/components'
+import { setIsRecommendedSettingsSSO, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { FeatureFlags } from 'uiSrc/constants'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google.svg'
 import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'
 import { ReactComponent as GoogleSmallIcon } from 'uiSrc/assets/img/oauth/google_small.svg'
 import { ReactComponent as GithubSmallIcon } from 'uiSrc/assets/img/oauth/github_small.svg'
 
-import { setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export enum OAuthSocialType {
@@ -29,6 +31,10 @@ interface Props {
 
 const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props) => {
   const agreement = useSelector(oauthCloudPAgreementSelector)
+  const {
+    [FeatureFlags.cloudSsoRecommendedSettings]: isRecommendedFeatureEnabled
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const [isRecommended, setIsRecommended] = useState(isRecommendedFeatureEnabled?.flag ? true : undefined)
 
   const dispatch = useDispatch()
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
@@ -39,8 +45,22 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
     eventData: {
       accountOption,
       action: getAction(),
+      recommendedSettings: isAutodiscovery
+        ? undefined
+        : (!isRecommendedFeatureEnabled?.flag
+          ? null
+          : (isRecommended ? 'enabled' : 'disabled'))
     }
   })
+
+  const handleClickSso = () => {
+    dispatch(signIn())
+    dispatch(setIsAutodiscoverySSO(isAutodiscovery))
+    isAutodiscovery && dispatch(setOAuthCloudSource(OAuthSocialSource.Autodiscovery))
+    if (!isAutodiscovery) {
+      dispatch(setIsRecommendedSettingsSSO(isRecommended))
+    }
+  }
 
   const socialLinks = [
     {
@@ -76,9 +96,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
         disabled={!agreement}
         className={cx(styles.button, className)}
         onClick={() => {
-          dispatch(signIn())
-          dispatch(setIsAutodiscoverySSO(isAutodiscovery))
-          isAutodiscovery && dispatch(setOAuthCloudSource(OAuthSocialSource.Autodiscovery))
+          handleClickSso()
           onButtonClick()
         }}
         data-testid={label}
@@ -87,11 +105,40 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
     </EuiToolTip>
   ))
 
+  const RecommendedSettingsCheckBox = () => (
+    <FeatureFlagComponent name={FeatureFlags.cloudSsoRecommendedSettings}>
+      <div className={styles.recommendedSettings}>
+        <EuiCheckbox
+          id="ouath-recommended-settings"
+          name="recommended-settings"
+          label="Use recommended settings"
+          checked={isRecommended}
+          onChange={(e) => setIsRecommended(e.target.checked)}
+          data-testid="oauth-recommended-settings-checkbox"
+        />
+        <EuiToolTip
+          content={(
+            <>
+              The database will be automatically created using a pre-selected provider and region.
+              <br />
+              You can change it by signing in to Redis Cloud.
+            </>
+          )}
+          position="top"
+          anchorClassName={styles.recommendedSettingsToolTip}
+        >
+          <EuiIcon type="iInCircle" size="s" />
+        </EuiToolTip>
+      </div>
+    </FeatureFlagComponent>
+  )
+
   if (!isAutodiscovery) {
     return (
       <div className={cx(styles.container)}>
         {buttons}
         <div className={styles.containerAgreement}>
+          <RecommendedSettingsCheckBox />
           <OAuthAgreement />
         </div>
       </div>

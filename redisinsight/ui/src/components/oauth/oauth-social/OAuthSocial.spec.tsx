@@ -4,8 +4,10 @@ import { cleanup, fireEvent, mockedStore, render, waitForEuiToolTipVisible, act 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
-import { setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { setIsAutodiscoverySSO, setIsRecommendedSettingsSSO } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { FeatureFlags } from 'uiSrc/constants'
 import OAuthSocial, { OAuthSocialType } from './OAuthSocial'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -19,6 +21,12 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
     source: 'source',
   }),
   oauthCloudPAgreementSelector: jest.fn().mockReturnValue(true),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+  }),
 }))
 
 let store: typeof mockedStore
@@ -50,13 +58,14 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'Google',
         action: 'create',
+        recommendedSettings: null
       }
     })
 
     expect(invokeMock).toBeCalledTimes(1)
     expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Google })
 
-    const expectedActions = [signIn(), setIsAutodiscoverySSO(false)]
+    const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(undefined)]
     expect(store.getActions()).toEqual(expectedActions)
 
     invokeMock.mockRestore();
@@ -76,6 +85,7 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'GitHub',
         action: 'create',
+        recommendedSettings: null
       }
     })
 
@@ -83,11 +93,75 @@ describe('OAuthSocial', () => {
     expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Github })
     invokeMock.mockRestore()
 
-    const expectedActions = [signIn(), setIsAutodiscoverySSO(false)]
+    const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(undefined)]
     expect(store.getActions()).toEqual(expectedActions)
 
     invokeMock.mockRestore();
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  describe('Recommended Settings Enabled', () => {
+    beforeEach(() => {
+      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+        [FeatureFlags.cloudSsoRecommendedSettings]: {
+          flag: true
+        }
+      })
+    })
+    it('should send telemetry after click on google btn', async () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      const { queryByTestId } = render(<OAuthSocial />)
+
+      fireEvent.click(queryByTestId('google-oauth') as HTMLButtonElement)
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+        eventData: {
+          accountOption: 'Google',
+          action: 'create',
+          recommendedSettings: 'enabled'
+        }
+      })
+
+      expect(invokeMock).toBeCalledTimes(1)
+      expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Google })
+
+      const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(true)]
+      expect(store.getActions()).toEqual(expectedActions)
+
+      invokeMock.mockRestore();
+      (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+
+    it('should send telemetry after click on github btn', async () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      const { queryByTestId } = render(<OAuthSocial />)
+
+      fireEvent.click(queryByTestId('github-oauth') as HTMLButtonElement)
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+        eventData: {
+          accountOption: 'GitHub',
+          action: 'create',
+          recommendedSettings: 'enabled'
+        }
+      })
+
+      expect(invokeMock).toBeCalledTimes(1)
+      expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Github })
+      invokeMock.mockRestore()
+
+      const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(true)]
+      expect(store.getActions()).toEqual(expectedActions)
+
+      invokeMock.mockRestore();
+      (sendEventTelemetry as jest.Mock).mockRestore()
+    })
   })
 
   describe('Autodiscovery', () => {

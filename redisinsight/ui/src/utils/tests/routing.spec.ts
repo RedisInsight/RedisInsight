@@ -1,4 +1,4 @@
-import { getRedirectionPage } from 'uiSrc/utils/routing'
+import { getPageName, getRedirectionPage } from 'uiSrc/utils/routing'
 
 jest.mock('uiSrc/utils/routing', () => ({
   ...jest.requireActual('uiSrc/utils/routing')
@@ -21,6 +21,23 @@ describe('getRedirectionPage', () => {
     ({ input, expected }) => {
       // @ts-ignore
       const result = getRedirectionPage(...input)
+      expect(result).toEqual(expected)
+    }
+  )
+})
+
+const getPageNameTests = [
+  { input: ['instanceId', '/instanceId/page1'], expected: '/page1' },
+  { input: ['instanceId', '/instanceId/page1/page2'], expected: '/page1/page2' },
+  { input: ['instanceId', '/page1'], expected: '/page1' },
+]
+
+describe('getPageName', () => {
+  test.each(getPageNameTests)(
+    '%j',
+    ({ input, expected }) => {
+      // @ts-ignore
+      const result = getPageName(...input)
       expect(result).toEqual(expected)
     }
   )

@@ -77,7 +77,7 @@ export default {
   redis_clients: {
     idleSyncInterval: parseInt(process.env.CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
     maxIdleThreshold: parseInt(process.env.CLIENTS_MAX_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1hr
-    retryTimes: parseInt(process.env.CLIENTS_RETRY_TIMES, 10) || 5,
+    retryTimes: parseInt(process.env.CLIENTS_RETRY_TIMES, 10) || 3,
     retryDelay: parseInt(process.env.CLIENTS_RETRY_DELAY, 10) || 500,
     maxRetriesPerRequest: parseInt(process.env.CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
   },

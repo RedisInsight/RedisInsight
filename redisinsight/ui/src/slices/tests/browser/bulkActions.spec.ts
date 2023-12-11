@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { BulkActionsType } from 'uiSrc/constants'
+import { BulkActionsStatus, BulkActionsType } from 'uiSrc/constants'
 import reducer, {
   bulkActionsSelector,
   initialState,
@@ -19,7 +19,7 @@ import reducer, {
   bulkUpload,
   bulkUploadSuccess,
   bulkUploadFailed,
-  bulkUploadDataAction,
+  bulkUploadDataAction, setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
@@ -268,6 +268,40 @@ describe('bulkActions slice', () => {
           browser: { bulkActions: nextState },
         })
         expect(bulkActionsDeleteOverviewSelector(rootState)).toEqual(overview)
+      })
+    })
+
+    describe('setDeleteOverviewStatus', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          bulkDelete: {
+            ...initialState.bulkDelete,
+            overview: {
+              id: 1,
+              databaseId: '1',
+              duration: 300,
+              status: 'inprogress',
+              type: BulkActionsType.Delete,
+              summary: { processed: 1, succeed: 1, failed: 0, errors: [] },
+            }
+          }
+        }
+
+        const overviewState = {
+          ...currentState.bulkDelete.overview,
+          status: BulkActionsStatus.Disconnected
+        }
+
+        // Act
+        const nextState = reducer(currentState, setDeleteOverviewStatus(BulkActionsStatus.Disconnected))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          browser: { bulkActions: nextState },
+        })
+        expect(bulkActionsDeleteOverviewSelector(rootState)).toEqual(overviewState)
       })
     })
 

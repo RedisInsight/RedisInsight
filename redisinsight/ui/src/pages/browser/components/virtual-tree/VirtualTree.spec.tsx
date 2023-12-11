@@ -15,33 +15,36 @@ const mockedItems = [
   },
 ]
 
-export const mockVirtualTreeResult = [{
-  children: [{
+export const mockVirtualTreeResult = [
+  {
+    children: [{
+      children: [],
+      fullName: 'car:110:',
+      id: '0.snc1rc3zwgo',
+      keyApproximate: 0.01,
+      keyCount: 1,
+      name: '110',
+    }],
+    fullName: 'car:',
+    id: '0.sz1ie1koqi8',
+    keyApproximate: 47.18,
+    keyCount: 4718,
+    name: 'car',
+  },
+  {
     children: [],
-    fullName: 'car:110:',
-    id: '0.snc1rc3zwgo',
+    fullName: 'test',
+    id: '0.snc1rc3zwg1o',
     keyApproximate: 0.01,
     keyCount: 1,
-    name: '110',
-  }],
-  fullName: 'car:',
-  id: '0.sz1ie1koqi8',
-  keyApproximate: 47.18,
-  keyCount: 4718,
-  name: 'car',
-},
-{
-  children: [],
-  fullName: 'test',
-  id: '0.snc1rc3zwg1o',
-  keyApproximate: 0.01,
-  keyCount: 1,
-  name: 'test',
-}]
+    name: 'test',
+  }
+]
 
 jest.mock('uiSrc/services', () => ({
+  __esModule: true,
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
+  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() })
 }))
 
 describe('VirtualTree', () => {
@@ -73,5 +76,20 @@ describe('VirtualTree', () => {
     )
 
     expect(queryByTestId('node-item_test')).toBeInTheDocument()
+  })
+
+  it('should not call onStatusOpen if more than one folder is exist', () => {
+    const mockFn = jest.fn()
+    const mockOnStatusOpen = jest.fn()
+
+    render(
+      <VirtualTree
+        {...instance(mockedProps)}
+        onStatusOpen={mockOnStatusOpen}
+        setConstructingTree={mockFn}
+      />
+    )
+
+    expect(mockOnStatusOpen).not.toHaveBeenCalled()
   })
 })

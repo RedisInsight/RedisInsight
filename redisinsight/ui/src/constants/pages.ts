@@ -51,4 +51,7 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
   rdi: '/integrate',
+  rdiPipeline: (rdiInstance: string) => `integrate/${rdiInstance}/pipeline}`,
+  rdiPipelineConfig: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/config`,
+  rdiPipelinePrepare: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/prepare`,
 }

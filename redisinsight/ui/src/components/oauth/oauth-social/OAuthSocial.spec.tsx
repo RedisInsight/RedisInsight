@@ -58,6 +58,7 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'Google',
         action: 'create',
+        recommendedSettings: null
       }
     })
 
@@ -84,6 +85,7 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'GitHub',
         action: 'create',
+        recommendedSettings: null
       }
     })
 
@@ -95,7 +97,7 @@ describe('OAuthSocial', () => {
     expect(store.getActions()).toEqual(expectedActions)
 
     invokeMock.mockRestore();
-    (sendEventTelemetry as jest.Mock).mockRegstore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   describe('Recommended Settings Enabled', () => {

@@ -1,8 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import {
-  IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateIf
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export enum RdiType {
   API = 'api',
@@ -22,11 +20,10 @@ export class Rdi {
     enum: RdiType,
   })
   @Expose()
-  @IsNotEmpty()
   @IsEnum(RdiType, {
     message: `Type must be a valid enum value from: ${Object.values(RdiType)}.`,
   })
-  type: RdiType;
+  type?: RdiType;
 
   @ApiPropertyOptional({
     description: 'Base url of API to connect to (for API type only)',
@@ -97,5 +94,25 @@ export class Rdi {
     example: '2021-01-06T12:44:39.000Z',
   })
   @Expose()
-  lastConnection: Date;
+  lastConnection?: Date;
+
+  @ApiPropertyOptional({
+    description: 'The version of RDI being used',
+    type: String,
+  })
+  @IsOptional()
+  @Expose()
+  @IsNotEmpty()
+  @IsString()
+  version?: string;
+
+  @ApiPropertyOptional({
+    description: 'A newly created connection',
+    type: Boolean,
+    default: false,
+  })
+  @Expose()
+  @IsOptional()
+  @IsBoolean({ always: true })
+  new?: boolean;
 }

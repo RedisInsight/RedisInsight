@@ -1,0 +1,21 @@
+.container {
+  // RDI alias column
+  tr > th:nth-child(2),
+  tr > td:nth-child(2) {
+    padding-left: 5px !important;
+  }
+
+  :global {
+    .itemList {
+      height: calc(100vh - 261px);
+    
+      @media (min-width: 768px) and (max-width: 1100px) {
+        height: calc(100vh - 122px);
+      }
+    
+      @media (min-width: 1101px) {
+        height: calc(100vh - 122px);
+      }
+    }
+  }
+}

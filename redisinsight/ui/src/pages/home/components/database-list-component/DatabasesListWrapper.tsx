@@ -1,4 +1,5 @@
 import {
+  Criteria,
   EuiButtonIcon,
   EuiIcon,
   EuiLink,
@@ -6,15 +7,33 @@ import {
   EuiText,
   EuiTextColor,
   EuiToolTip,
+  PropertySort,
 } from '@elastic/eui'
+import cx from 'classnames'
+import { saveAs } from 'file-saver'
 import { capitalize, map } from 'lodash'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
-import cx from 'classnames'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { saveAs } from 'file-saver'
+import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
+import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
+import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
+import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
+import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
+import { ShowChildByCondition } from 'uiSrc/components'
+import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
+import ItemList from 'uiSrc/components/item-list'
+import { BrowserStorageItem, PageNames, Pages, Theme } from 'uiSrc/constants'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { localStorageService } from 'uiSrc/services'
+import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { resetKeys } from 'uiSrc/slices/browser/keys'
+import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
+import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import {
   checkConnectToInstanceAction,
   deleteInstancesAction,
@@ -22,45 +41,23 @@ import {
   instancesSelector,
   setConnectedInstanceId,
 } from 'uiSrc/slices/instances/instances'
-import { CONNECTION_TYPE_DISPLAY, ConnectionType, Instance, } from 'uiSrc/slices/interfaces'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
-import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
-import { PageNames, Pages, Theme } from 'uiSrc/constants'
-import { getRedisModulesSummary, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { ShowChildByCondition } from 'uiSrc/components'
-import { formatLongName, getDbIndex, lastConnectionFormat, Nullable, replaceSpaces } from 'uiSrc/utils'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
-import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
-import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
-import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
-import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
-import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import DatabasesList from './databases-list'
+import { CONNECTION_TYPE_DISPLAY, ConnectionType, Instance } from 'uiSrc/slices/interfaces'
+import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
+import { Nullable, formatLongName, getDbIndex, lastConnectionFormat, replaceSpaces } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  width: number;
-  dialogIsOpen: boolean;
-  editedInstance: Nullable<Instance>;
-  onEditInstance: (instance: Instance) => void;
-  onDeleteInstances: (instances: Instance[]) => void;
+  width: number
+  dialogIsOpen: boolean
+  editedInstance: Nullable<Instance>
+  onEditInstance: (instance: Instance) => void
+  onDeleteInstances: (instances: Instance[]) => void
 }
 
 const suffix = '_db_instance'
 
-const DatabasesListWrapper = ({
-  width,
-  dialogIsOpen,
-  onEditInstance,
-  editedInstance,
-  onDeleteInstances
-}: Props) => {
+const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
@@ -170,35 +167,45 @@ const DatabasesListWrapper = ({
   }
 
   const handleDeleteInstances = (instances: Instance[]) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CONFIG_DATABASES_MULTIPLE_DATABASES_DELETE_CLICKED,
+      eventData: {
+        ids: instances.map((instance) => instance.id)
+      }
+    })
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
   const handleExportInstances = (instances: Instance[], withSecrets: boolean) => {
     const ids = map(instances, 'id')
 
-    dispatch(exportInstancesAction(
-      ids,
-      withSecrets,
-      (data) => {
-        const file = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain;charset=utf-8' })
-        saveAs(file, `RedisInsight_connections_${Date.now()}.json`)
+    sendEventTelemetry({ event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_CLICKED })
 
-        sendEventTelemetry({
-          event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_SUCCEEDED,
-          eventData: {
-            numberOfDatabases: ids.length
-          }
-        })
-      },
-      () => {
-        sendEventTelemetry({
-          event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_FAILED,
-          eventData: {
-            numberOfDatabases: ids.length
-          }
-        })
-      }
-    ))
+    dispatch(
+      exportInstancesAction(
+        ids,
+        withSecrets,
+        (data) => {
+          const file = new Blob([JSON.stringify(data, null, 2)], { type: 'text/plain;charset=utf-8' })
+          saveAs(file, `RedisInsight_connections_${Date.now()}.json`)
+
+          sendEventTelemetry({
+            event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_SUCCEEDED,
+            eventData: {
+              numberOfDatabases: ids.length
+            }
+          })
+        },
+        () => {
+          sendEventTelemetry({
+            event: TelemetryEvent.CONFIG_DATABASES_REDIS_EXPORT_FAILED,
+            eventData: {
+              numberOfDatabases: ids.length
+            }
+          })
+        }
+      )
+    )
   }
 
   const handleClickGoToCloud = () => {
@@ -222,16 +229,10 @@ const DatabasesListWrapper = ({
         const cellContent = replaceSpaces(name.substring(0, 200))
 
         return (
-          <div
-            role="presentation"
-          >
+          <div role="presentation">
             {newStatus && (
               <ShowChildByCondition isShow={!isLoadingRef.current} innerClassName={styles.newStatusAnchor}>
-                <EuiToolTip
-                  content="New"
-                  position="top"
-                  anchorClassName={styles.newStatusAnchor}
-                >
+                <EuiToolTip content="New" position="top" anchorClassName={styles.newStatusAnchor}>
                   <div className={styles.newStatus} data-testid={`database-status-new-${id}`} />
                 </EuiToolTip>
               </ShowChildByCondition>
@@ -249,14 +250,10 @@ const DatabasesListWrapper = ({
                   onClick={(e: React.MouseEvent) => handleCheckConnectToInstance(e, instance)}
                   onKeyDown={(e: React.KeyboardEvent) => handleCheckConnectToInstance(e, instance)}
                 >
-                  <EuiTextColor
-                    className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}
-                  >
+                  <EuiTextColor className={cx(styles.tooltipColumnNameText, { [styles.withDb]: db })}>
                     {cellContent}
                   </EuiTextColor>
-                  <EuiTextColor>
-                    {` ${getDbIndex(db)}`}
-                  </EuiTextColor>
+                  <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
                 </EuiText>
               </EuiToolTip>
             </ShowChildByCondition>
@@ -277,11 +274,7 @@ const DatabasesListWrapper = ({
         return (
           <div className="host_port" data-testid="host-port">
             <EuiText className="copyHostPortText">{text}</EuiText>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyHostPortTooltip"
-            >
+            <EuiToolTip position="right" content="Copy" anchorClassName="copyHostPortTooltip">
               <EuiButtonIcon
                 iconType="copy"
                 aria-label="Copy host:port"
@@ -302,8 +295,7 @@ const DatabasesListWrapper = ({
       width: '180px',
       truncateText: true,
       hideForMobile: true,
-      render: (cellData: ConnectionType) =>
-        CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
+      render: (cellData: ConnectionType) => CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData)
     },
     {
       field: 'modules',
@@ -317,24 +309,30 @@ const DatabasesListWrapper = ({
             {({ width: columnWidth }) => (
               <div style={{ width: columnWidth, height: 40, marginLeft: -6 }}>
                 <DatabaseListModules
-                  content={isRediStack ? (
-                    <EuiIcon
-                      type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
-                      data-testid="redis-stack-icon"
-                    />
-                  ) : undefined}
-                  tooltipTitle={isRediStack ? (
-                    <>
+                  content={
+                    isRediStack ? (
                       <EuiIcon
-                        type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
-                        className={styles.tooltipLogo}
-                        data-testid="tooltip-redis-stack-icon"
+                        type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                        data-testid="redis-stack-icon"
                       />
-                      <EuiText color="subdued" style={{ marginTop: 4, marginBottom: -4 }}>Includes</EuiText>
-                    </>
-                  ) : undefined}
+                    ) : undefined
+                  }
+                  tooltipTitle={
+                    isRediStack ? (
+                      <>
+                        <EuiIcon
+                          type={theme === Theme.Dark ? RediStackDarkLogo : RediStackLightLogo}
+                          className={styles.tooltipLogo}
+                          data-testid="tooltip-redis-stack-icon"
+                        />
+                        <EuiText color="subdued" style={{ marginTop: 4, marginBottom: -4 }}>
+                          Includes
+                        </EuiText>
+                      </>
+                    ) : undefined
+                  }
                   modules={modules}
-                  maxViewModules={columnWidth > 40 ? (Math.floor((columnWidth - 12) / 28) - 1) : 0}
+                  maxViewModules={columnWidth && columnWidth > 40 ? Math.floor((columnWidth - 12) / 28) - 1 : 0}
                 />
               </div>
             )}
@@ -349,8 +347,7 @@ const DatabasesListWrapper = ({
       dataType: 'date',
       align: 'right',
       width: '170px',
-      sortable: ({ lastConnection }) =>
-        (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
+      sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
       render: (date: Date) => lastConnectionFormat(date),
     },
     {
@@ -362,9 +359,7 @@ const DatabasesListWrapper = ({
         return (
           <>
             {instance.cloudDetails && (
-              <EuiToolTip
-                content="Go to Redis Cloud"
-              >
+              <EuiToolTip content="Go to Redis Cloud">
                 <EuiLink
                   target="_blank"
                   external={false}
@@ -404,18 +399,30 @@ const DatabasesListWrapper = ({
 
   const columnsHideForTablet = ['connectionType']
   const columnsHideForEditing = ['connectionType', 'modules']
-  const columnsTablet = columnsFull.filter(
-    ({ field = '' }) => columnsHideForTablet.indexOf(field) === -1
-  )
-  const columnsEditing = columnsFull.filter(
-    ({ field }) => columnsHideForEditing.indexOf(field) === -1
-  )
+  const columnsTablet = columnsFull.filter(({ field = '' }) => columnsHideForTablet.indexOf(field) === -1)
+  const columnsEditing = columnsFull.filter(({ field }) => columnsHideForEditing.indexOf(field) === -1)
 
   const columnVariations = [columnsFull, columnsEditing, columnsTablet]
 
+  const onTableChange = ({ sort, page }: Criteria<Instance>) => {
+    // calls also with page changing
+    if (sort && !page) {
+      localStorageService.set(BrowserStorageItem.instancesSorting, sort)
+      sendEventTelemetry({
+        event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
+        eventData: sort
+      })
+    }
+  }
+
+  const sort: PropertySort = localStorageService.get(BrowserStorageItem.instancesSorting) ?? {
+    field: 'lastConnection',
+    direction: 'asc'
+  }
+
   return (
     <div className={styles.container}>
-      <DatabasesList
+      <ItemList<Instance>
         width={width}
         editedInstance={editedInstance}
         dialogIsOpen={dialogIsOpen}
@@ -423,6 +430,10 @@ const DatabasesListWrapper = ({
         onDelete={handleDeleteInstances}
         onExport={handleExportInstances}
         onWheel={closePopover}
+        loading={instances.loading}
+        data={instances.data}
+        onTableChange={onTableChange}
+        sort={sort}
       />
     </div>
   )

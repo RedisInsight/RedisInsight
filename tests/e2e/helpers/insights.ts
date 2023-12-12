@@ -1,10 +1,16 @@
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import { BasePage } from '../pageObjects';
-import { deleteRowsFromTableInDB, updateColumnValueInDBTable } from './database-scripts';
 import { syncFeaturesApi } from './api/api-info';
+import { DatabaseScripts, DbTableParameters } from './database-scripts';
 
 const basePage = new BasePage();
+const dbTableParams: DbTableParameters = {
+    tableName: 'features_config',
+    columnName: 'controlNumber',
+    conditionColumnName: 'id',
+    conditionColumnValue: '1'
+};
 
 /**
  * Update features-config file for static server
@@ -21,7 +27,7 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
             fs.writeFileSync(targetFilePath, fs.readFileSync(filePath));
             resolve();
         }
-        catch (err) {
+        catch (err: any) {
             reject(new Error(`Error updating remote config file: ${err.message}`));
         }
     });
@@ -32,10 +38,8 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
  * @param controlNumber Control number to update
  */
 export async function updateControlNumber(controlNumber: number): Promise<void> {
-    const featuresConfigTable = 'features_config';
-
     await syncFeaturesApi();
-    await updateColumnValueInDBTable(featuresConfigTable, 'controlNumber', controlNumber);
+    await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber });
     await syncFeaturesApi();
     await basePage.reloadPage();
 }
@@ -44,10 +48,9 @@ export async function updateControlNumber(controlNumber: number): Promise<void> 
  * Refresh test data for features sync
  */
 export async function refreshFeaturesTestData(): Promise<void> {
-    const featuresConfigTable = 'features_config';
     const defaultConfigPath = path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json');
 
     await modifyFeaturesConfigJson(defaultConfigPath);
-    await deleteRowsFromTableInDB(featuresConfigTable);
+    await DatabaseScripts.deleteRowsFromTableInDB(dbTableParams);
     await syncFeaturesApi();
 }

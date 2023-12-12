@@ -47,6 +47,7 @@ export class WorkbenchPage extends InstancePage {
     groupMode = Selector('[data-testid=btn-change-group-mode]');
     copyCommand = Selector('[data-testid=copy-command]');
     clearResultsBtn = Selector('[data-testid=clear-history-btn]');
+    exploreRedisBtn = Selector('[data-testid=no-results-explore-btn]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');

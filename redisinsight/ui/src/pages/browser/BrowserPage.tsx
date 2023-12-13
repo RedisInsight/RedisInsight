@@ -285,7 +285,6 @@ const BrowserPage = () => {
                     selectKey={selectKey}
                     removeSelectedKey={handleRemoveSelectedKey}
                     handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
                   />
                 </EuiResizablePanel>
 

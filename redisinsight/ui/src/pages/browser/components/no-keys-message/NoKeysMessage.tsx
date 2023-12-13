@@ -18,7 +18,6 @@ export interface Props {
   total: number
   scanned: number
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 const NoKeysMessage = (props: Props) => {
@@ -26,7 +25,6 @@ const NoKeysMessage = (props: Props) => {
     total,
     scanned,
     onAddKeyPanel,
-    onBulkActionsPanel,
   } = props
 
   const { selectedIndex, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
@@ -47,7 +45,7 @@ const NoKeysMessage = (props: Props) => {
   }
 
   if (total === 0) {
-    return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} onBulkActionsPanel={onBulkActionsPanel} />)
+    return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} />)
   }
 
   if (patternIsSearched) {

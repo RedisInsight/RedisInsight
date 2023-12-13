@@ -85,6 +85,7 @@ describe('InsightsTrigger', () => {
       eventData: {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
+        source: 'overview',
         page: '/browser',
         tab: 'recommendations'
       },

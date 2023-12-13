@@ -56,7 +56,6 @@ export interface Props {
   onDelete: (key: RedisResponseBuffer) => void
   commonFilterType: Nullable<KeyTypes>
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 const cellCache = new CellMeasurerCache({
@@ -76,7 +75,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     onDelete,
     commonFilterType,
     onAddKeyPanel,
-    onBulkActionsPanel,
   } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -140,7 +138,6 @@ const KeyList = forwardRef((props: Props, ref) => {
       total={keysState.total}
       scanned={keysState.scanned}
       onAddKeyPanel={onAddKeyPanel}
-      onBulkActionsPanel={onBulkActionsPanel}
     />
   )
 

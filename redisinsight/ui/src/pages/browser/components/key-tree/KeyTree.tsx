@@ -36,7 +36,6 @@ export interface Props {
   ) => void
   onDelete: (key: RedisResponseBuffer) => void
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 export const firstPanelId = 'tree'
@@ -56,7 +55,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
     commonFilterType,
     deleting,
     onAddKeyPanel,
-    onBulkActionsPanel,
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -173,7 +171,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
           total={keysState.total}
           scanned={keysState.scanned}
           onAddKeyPanel={onAddKeyPanel}
-          onBulkActionsPanel={onBulkActionsPanel}
         />
       )
     }

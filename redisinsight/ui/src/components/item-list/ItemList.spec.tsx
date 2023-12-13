@@ -72,7 +72,7 @@ describe('ItemList', () => {
     expect(render(<ItemList {...mockedProps} />)).toBeTruthy()
   })
 
-  it('should call onDelete', async () => {
+  it('should call onDelete when Delete buttons are clicked', async () => {
     const onDelete = jest.fn()
     render(<ItemList {...mockedProps} onDelete={onDelete} />)
 
@@ -90,7 +90,20 @@ describe('ItemList', () => {
     expect(onDelete).toBeCalledTimes(1)
   })
 
-  it('should call onExport', async () => {
+  it('should display delete messaging when delete button is clicked', async () => {
+    render(<ItemList {...mockedProps} />)
+
+    // select items to be deleted
+    fireEvent.click(screen.getAllByLabelText(/Select all rows/i)[0])
+
+    // click delete button
+    const deleteButton = await screen.findByText('Delete')
+    fireEvent.click(deleteButton)
+
+    expect(screen.getByText(/deleted/i)).toBeInTheDocument()
+  })
+
+  it('should call onExport when Export buttons are clicked', async () => {
     const onExport = jest.fn()
     render(<ItemList {...mockedProps} onExport={onExport} />)
 
@@ -106,5 +119,18 @@ describe('ItemList', () => {
     fireEvent.click(exportButtons[1])
 
     expect(onExport).toBeCalledTimes(1)
+  })
+
+  it('should display export messaging when export button is clicked', async () => {
+    render(<ItemList {...mockedProps} />)
+
+    // select items to be exported
+    fireEvent.click(screen.getAllByLabelText(/Select all rows/i)[0])
+
+    // click export button
+    const exportButton = await screen.findByText('Export')
+    fireEvent.click(exportButton)
+
+    expect(screen.getByText(/exported/i)).toBeInTheDocument()
   })
 })

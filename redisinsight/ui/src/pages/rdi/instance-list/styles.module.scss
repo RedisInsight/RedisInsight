@@ -9,11 +9,7 @@
     .itemList {
       height: calc(100vh - 261px);
     
-      @media (min-width: 768px) and (max-width: 1100px) {
-        height: calc(100vh - 122px);
-      }
-    
-      @media (min-width: 1101px) {
+      @media (min-width: 768px) {
         height: calc(100vh - 122px);
       }
     }

@@ -48,7 +48,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
       recommendedSettings: isAutodiscovery
         ? undefined
         : (!isRecommendedFeatureEnabled?.flag
-          ? null
+          ? 'not displayed'
           : (isRecommended ? 'enabled' : 'disabled'))
     }
   })

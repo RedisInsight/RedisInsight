@@ -54,4 +54,5 @@ export const Pages = {
   rdiPipeline: (rdiInstance: string) => `integrate/${rdiInstance}/pipeline}`,
   rdiPipelineConfig: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/config`,
   rdiPipelinePrepare: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/prepare`,
+  rdiPipelineJobs: (rdiInstance: string, jobName: string) => `/integrate/${rdiInstance}/pipeline/jobs/${jobName}`,
 }

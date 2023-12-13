@@ -52,6 +52,7 @@ import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/tri
 import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
 import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/rdi'
+import { initialState as initialStateRdiPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -129,6 +130,7 @@ const initialStateDefault: RootState = {
   },
   rdi: {
     rdi: cloneDeep(initialStateRdi),
+    pipeline: cloneDeep(initialStateRdiPipeline)
   }
 }
 
@@ -214,6 +216,8 @@ jest.mock('react-router-dom', () => ({
   }),
   useParams: () => ({
     instanceId: 'instanceId',
+    rdiInstanceId: 'rdiInstanceId',
+    jobName: 'jobName',
   }),
 }))
 

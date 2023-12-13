@@ -1,45 +1,58 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 
+import { Pages } from 'uiSrc/constants'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 
-const Config = () => {
+const Jobs = () => {
+  const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
+  const history = useHistory()
+
   const { loading, data } = useSelector(rdiPipelineSelector)
 
-  const [value, setValue] = useState<string>(data?.config ?? '')
+  const [value, setValue] = useState<string>('')
 
   useEffect(() => {
-    setValue(data?.config ?? '')
-  }, [data])
+    const job = data?.jobs.find(({ name }) => name === jobName)
+
+    if (job) {
+      setValue(job?.value ?? '')
+    }
+
+    if (data?.jobs && !job) {
+      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+    }
+  }, [data, rdiInstanceId, jobName])
 
   useEffect(() => {
     sendPageViewTelemetry({
-      name: TelemetryPageView.RDI_CONFIG,
+      name: TelemetryPageView.RDI_JOBS,
     })
   }, [])
 
   return (
-    <div className={cx('content', 'rdi__wrapper')}>
-      <EuiText className="rdi__title">Target database configuration</EuiText>
+    <div className="content">
+      <EuiText className={cx('rdi__title', 'truncateText')}>{jobName}</EuiText>
       <EuiText className="rdi__text" color="subdued">
-        {'Configure target instance '}
+        {'Describe the '}
         <EuiLink
           external={false}
-          data-testid="rdi-pipeline-config-link"
+          data-testid="rdi-pipeline-transformation-link"
           target="_blank"
-          href={EXTERNAL_LINKS.rdiQuickStart}
+          href={EXTERNAL_LINKS.rdiTransformation}
         >
-          connection details
+          transformation logic
         </EuiLink>
-        {' and applier settings.'}
+        {' to perform on data from a single source'}
       </EuiText>
       {loading ? (
-        <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-config-loading">
+        <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-jobs-loading">
           <EuiText color="subdued" style={{ marginBottom: 12 }}>Loading data...</EuiText>
           <EuiLoadingSpinner color="secondary" size="l" />
         </div>
@@ -59,13 +72,13 @@ const Config = () => {
           color="secondary"
           size="s"
           onClick={() => {}}
-          data-testid="rdi-test-connection"
+          data-testid="rdi-jobs-dry-run"
         >
-          Test Connection
+          Dry Run
         </EuiButton>
       </div>
     </div>
   )
 }
 
-export default Config
+export default Jobs

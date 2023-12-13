@@ -3,14 +3,12 @@ import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiTextColor,
   EuiText,
-  EuiTab,
-  EuiTabs,
   EuiIcon,
 } from '@elastic/eui'
-import cx from 'classnames'
 
 import { Pages } from 'uiSrc/constants'
-import { ReactComponent as FileIcon } from 'uiSrc/assets/img/icons/file.svg'
+import JobsStructure from 'uiSrc/pages/rdi/pipeline/components/jobs-structure'
+import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
 
 import styles from './styles.module.scss'
 
@@ -43,44 +41,58 @@ const Navigation = (props: IProps) => {
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
-  // TODO resolve job id
   const onSelectedTabChanged = (id: string) => {
-    if (id === RdiPipelineNav.Prepare) {
-      history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
-    }
-    if (id === RdiPipelineNav.Config) {
-      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+    switch (id) {
+      case RdiPipelineNav.Prepare: {
+        history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
+        break
+      }
+      case RdiPipelineNav.Config: {
+        history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+        break
+      }
+      default: {
+        history.push(Pages.rdiPipelineJobs(rdiInstanceId, id))
+        break
+      }
     }
   }
 
-  const renderTabs = () => defaultNavList.map(({ id, title, fileName }) => (
-    <EuiTab
-      isSelected={path === id}
-      key={id}
-      className={styles.tab}
-      data-testid={`rdi-pipeline-tab-${id}`}
-    >
-      <>
-        <EuiText className={styles.tabTitle} size="m">{title}</EuiText>
-        <div
-          className={styles.file}
-          role="button"
-          tabIndex={0}
-          onKeyDown={() => {}}
-          onClick={() => onSelectedTabChanged(id)}
-          data-testid={`rdi-nav-btn-${id}`}
+  const renderTabs = () => (
+    <>
+      {defaultNavList.map(({ id, title, fileName }) => (
+        <Tab
+          isSelected={path === id}
+          key={id}
+          data-testid={`rdi-pipeline-tab-${id}`}
         >
-          <EuiIcon type={FileIcon} className={styles.fileIcon} />
-          <EuiText className={styles.text}>{fileName}</EuiText>
-        </div>
-      </>
-    </EuiTab>
-  ))
+          <>
+            <EuiText className="rdi-pipeline-nav__title" size="m">{title}</EuiText>
+            <div
+              className="rdi-pipeline-nav__file"
+              role="button"
+              tabIndex={0}
+              onKeyDown={() => {}}
+              onClick={() => onSelectedTabChanged(id)}
+              data-testid={`rdi-nav-btn-${id}`}
+            >
+              <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
+              <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
+            </div>
+          </>
+        </Tab>
+      ))}
+      <JobsStructure
+        onSelectedTab={onSelectedTabChanged}
+        path={path}
+      />
+    </>
+  )
 
   return (
     <div className={styles.wrapper}>
       <EuiTextColor className={styles.title} component="div">Pipeline Management</EuiTextColor>
-      <EuiTabs className={cx('tabs-active-borders', styles.tabs)} data-testid="rdi-pipeline-tabs">{renderTabs()}</EuiTabs>
+      <div className={styles.tabs} data-testid="rdi-pipeline-tabs">{renderTabs()}</div>
     </div>
   )
 }

@@ -52,14 +52,16 @@ const NoKeysFound = (props: Props) => {
         size="original"
       />
       <EuiSpacer size="l" />
-      <EuiText>No Keys Found</EuiText>
+      <EuiText>No Keys to Display</EuiText>
       <EuiSpacer size="m" />
       <EuiTitle className={styles.title} size="s">
         <span>Create your first key to get started</span>
       </EuiTitle>
       <EuiSpacer size="m" />
       <EuiText>
-        Keys are the foundation of Redis. Create your first key to start exploring Redis and Redis Stack capabilities
+        Keys are the foundation of Redis.
+        <br />
+        Create your first key or try our interactive Tutorials to learn how Redis can solve your use cases.
       </EuiText>
       <EuiSpacer size="l" />
       <div className={styles.actions}>
@@ -80,7 +82,7 @@ const NoKeysFound = (props: Props) => {
           className={styles.exploreBtn}
           data-testid="explore-msg-btn"
         >
-          Open Tutorials
+          Explore Redis
         </EuiButton>
       </div>
     </div>

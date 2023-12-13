@@ -51,6 +51,34 @@ describe('RdiPage', () => {
     expect(render(<RdiPage {...instance(mockedProps)} />)).toBeTruthy()
   })
 
+  it('should render instance list when instances are found', () => {
+    render(<RdiPage {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('rdi-instance-list')).toBeInTheDocument()
+    expect(screen.queryByTestId('empty-rdi-instance-list')).not.toBeInTheDocument()
+  })
+
+  it('should render empty panel when initially loading', () => {
+    const state: RootState = store.getState();
+    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
+      callback({
+        ...state,
+        rdi: {
+          ...state.rdi,
+          instances: {
+            ...state.rdi.instances,
+            data: [],
+            loading: true
+          }
+        }
+      }))
+
+    render(<RdiPage {...instance(mockedProps)} />)
+
+    expect(screen.queryByTestId('rdi-instance-list')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('empty-rdi-instance-list')).not.toBeInTheDocument()
+  })
+
   it('should render empty message when no instances are found', () => {
     const state: RootState = store.getState();
     (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
@@ -60,7 +88,8 @@ describe('RdiPage', () => {
           ...state.rdi,
           instances: {
             ...state.rdi.instances,
-            data: []
+            data: [],
+            loading: false
           }
         }
       }))
@@ -69,12 +98,5 @@ describe('RdiPage', () => {
 
     expect(screen.queryByTestId('rdi-instance-list')).not.toBeInTheDocument()
     expect(screen.getByTestId('empty-rdi-instance-list')).toBeInTheDocument()
-  })
-
-  it('should render instance list when instances are found', () => {
-    render(<RdiPage {...instance(mockedProps)} />)
-
-    expect(screen.getByTestId('rdi-instance-list')).toBeInTheDocument()
-    expect(screen.queryByTestId('empty-rdi-instance-list')).not.toBeInTheDocument()
   })
 })

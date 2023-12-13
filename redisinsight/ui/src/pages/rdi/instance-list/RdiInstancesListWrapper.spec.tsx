@@ -72,9 +72,6 @@ const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
       <button type="button" onClick={() => props.onDelete([mockInstances[1]])} data-testid="onDelete-btn">
         onDelete
       </button>
-      <button type="button" onClick={() => props.onExport([mockInstances[0]], true)} data-testid="onExport-btn">
-        onExport
-      </button>
       <button
         type="button"
         onClick={() =>
@@ -127,21 +124,6 @@ describe('RdiInstancesListWrapper', () => {
 
   it('should render', () => {
     expect(render(<RdiInstancesListWrapper {...instance(mockedProps)} />)).toBeTruthy()
-  })
-
-  it('should call proper telemetry on export', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId('onExport-btn'))
-    })
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_EXPORT_CLICKED,
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on delete multiple instances', async () => {

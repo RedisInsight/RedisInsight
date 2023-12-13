@@ -7,14 +7,13 @@ import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { Nullable, getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
-import { ExportInstance } from 'apiSrc/modules/rdi/models/export-instance'
 
 import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { InitialStateRdiInstances, RdiInstance } from '../interfaces/rdi'
 
 export const initialState: InitialStateRdiInstances = {
-  loading: false,
+  loading: true,
   error: '',
   data: [],
   connectedInstance: {
@@ -148,10 +147,7 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
     dispatch(loadInstances())
 
     try {
-      // mock response
-      const data: RdiInstanceResponse[] = []
-
-      const status = 200
+      const { data, status } = await apiService.get<RdiInstanceResponse[]>(ApiEndpoints.RDI_INSTANCES)
 
       if (isStatusSuccessful(status)) {
         onSuccess?.(data)
@@ -167,67 +163,28 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
 }
 
 // Asynchronous thunk action
-export function createInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) => void) {
+export function createInstanceAction(
+  payload: Partial<RdiInstance>,
+  onSuccess?: (data: RdiInstanceResponse[]) => void
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadInstances())
 
     try {
-      // mock response
-      const data: RdiInstanceResponse[] = [
-        {
-          id: '1',
-          name: 'My first integration',
-          url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
-          lastConnection: new Date(),
-          version: '1.2'
-        },
-        {
-          id: '2',
-          name: 'My second integration',
-          url: 'redis-67890.c253.us-central1-1.gce.cloud.redislabs.com:67890',
-          lastConnection: new Date(),
-          version: '1.2'
-        }
-      ]
-
-      const status = 200
+      const { status, data } = await apiService.post(`${ApiEndpoints.RDI_INSTANCES}`, payload)
 
       if (isStatusSuccessful(status)) {
+        dispatch(loadInstances(data))
+        dispatch(fetchInstancesAction())
+
+        dispatch(addMessageNotification(successMessages.ADDED_NEW_RDI_INSTANCE(payload.name ?? '')))
         onSuccess?.(data)
-        dispatch(loadInstancesSuccess(data))
       }
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadInstancesFailure(errorMessage))
       dispatch(addErrorNotification(error))
-    }
-  }
-}
-
-// Asynchronous thunk action
-export function checkConnectToInstanceAction(
-  id: string = '',
-  onSuccessAction?: (id: string) => void,
-  onFailAction?: () => void,
-  resetInstance: boolean = true
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(setDefaultInstance())
-    resetInstance && dispatch(resetConnectedInstance())
-    try {
-      const { status } = await apiService.get(`${ApiEndpoints.DATABASES}/${id}/connect`)
-
-      if (isStatusSuccessful(status)) {
-        dispatch(setDefaultInstanceSuccess())
-        onSuccessAction?.(id)
-      }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification({ ...error, instanceId: id }))
-      onFailAction?.()
     }
   }
 }
@@ -241,7 +198,9 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
       const state = stateInit()
       const instancesIds = map(instances, 'id')
 
-      const status = 200
+      const { status } = await apiService.delete(ApiEndpoints.RDI_INSTANCES, {
+        data: { ids: instancesIds }
+      })
 
       if (isStatusSuccessful(status)) {
         dispatch(setDefaultInstanceSuccess())
@@ -263,37 +222,6 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
-    }
-  }
-}
-
-// Asynchronous thunk action
-export function exportInstancesAction(
-  ids: string[],
-  withSecrets: boolean,
-  onSuccess?: (data: ExportInstance) => void,
-  onFail?: () => void
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(setDefaultInstance())
-
-    try {
-      const { data, status } = await apiService.post<ExportInstance>(ApiEndpoints.RDI_INSTANCES_EXPORT, {
-        ids,
-        withSecrets
-      })
-
-      if (isStatusSuccessful(status)) {
-        dispatch(setDefaultInstanceSuccess())
-
-        onSuccess?.(data)
-      }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
-      onFail?.()
     }
   }
 }

@@ -1,9 +1,9 @@
-import { EuiPage, EuiPageBody, EuiResizeObserver } from '@elastic/eui'
+import { EuiPage, EuiPageBody, EuiPanel, EuiResizeObserver } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  createInstancesAction,
+  createInstanceAction,
   fetchInstancesAction,
   instancesSelector,
   setEditedInstance
@@ -19,7 +19,7 @@ export interface Props {}
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
 
-  const { data } = useSelector(instancesSelector)
+  const { data, loading } = useSelector(instancesSelector)
 
   const dispatch = useDispatch()
 
@@ -36,7 +36,15 @@ const RdiPage = () => {
   }
 
   const handleAddInstance = () => {
-    dispatch(createInstancesAction())
+    dispatch(createInstanceAction({
+      name: 'My third integration',
+      url: 'redis-11121.c253.us-central1-1.gce.cloud.redislabs.com:11121',
+      lastConnection: new Date(),
+      version: '1.2',
+      username: 'username',
+      password: 'password',
+    }))
+    dispatch(fetchInstancesAction())
     dispatch(setEditedInstance(null))
   }
 
@@ -50,7 +58,9 @@ const RdiPage = () => {
                 <RdiHeader onAddInstance={handleAddInstance} />
               </div>
               {!data.length ? (
-                <EmptyMessage />
+                <EuiPanel className={styles.emptyPanel} borderRadius="none">
+                  {!loading && <EmptyMessage />}
+                </EuiPanel>
               ) : (
                 <div key="homePage" className="homePage" data-testid="rdi-instance-list" ref={resizeRef}>
                   <RdiInstancesListWrapper

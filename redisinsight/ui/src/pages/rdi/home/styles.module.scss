@@ -11,3 +11,15 @@
 .header {
   padding-bottom: 16px;
 }
+
+.emptyPanel {
+  height: calc(100vh - 160px);
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 123px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

@@ -1,6 +1,4 @@
 import { Criteria, EuiButtonIcon, EuiTableFieldDataColumnType, EuiText, EuiToolTip, PropertySort } from '@elastic/eui'
-import { saveAs } from 'file-saver'
-import { map } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
@@ -10,7 +8,7 @@ import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import { deleteInstancesAction, exportInstancesAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
+import { deleteInstancesAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
@@ -104,9 +102,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
-  const handleExportInstances = () => {
-    sendEventTelemetry({ event: TelemetryEvent.CONFIG_RDI_INSTANCES_EXPORT_CLICKED })
-  }
+  const handleExportInstances = () => {}
 
   const columnsFull: EuiTableFieldDataColumnType<RdiInstance>[] = [
     {

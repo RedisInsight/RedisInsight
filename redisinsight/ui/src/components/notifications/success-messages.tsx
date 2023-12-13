@@ -18,6 +18,16 @@ export default {
       </>
     ),
   }),
+  ADDED_NEW_RDI_INSTANCE: (instanceName: string) => ({
+    title: 'Instance has been added',
+    message: (
+      <>
+        <b>{formatNameShort(instanceName)}</b>
+        {' '}
+        has been added to RedisInsight.
+      </>
+    ),
+  }),
   DELETE_INSTANCE: (instanceName: string) => ({
     title: 'Database has been deleted',
     message: (

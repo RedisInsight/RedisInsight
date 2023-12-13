@@ -23,6 +23,7 @@ export class Rdi {
   @IsEnum(RdiType, {
     message: `Type must be a valid enum value from: ${Object.values(RdiType)}.`,
   })
+  @IsOptional()
   type?: RdiType;
 
   @ApiPropertyOptional({

@@ -25,36 +25,34 @@ const EmptyMessage = () => {
   ]
 
   return (
-    <EuiPanel className={styles.basePanel} borderRadius="none" data-testid="empty-rdi-instance-list">
-      <div className={styles.noResultsContainer}>
-        <EuiImage src={EmptyListIcon} alt="empty" size="m" />
-        <EuiSpacer size="xl" />
-        <EuiText>No deployments found</EuiText>
-        <EuiText className={styles.subTitle}>Add your first deployment to get started!</EuiText>
-        <EuiText>More info</EuiText>
-        <EuiSpacer size="s" />
-        <EuiFlexGroup className={styles.moreInfoContainer} gutterSize="m">
-          {moreInfoPanels.map((panel) => (
-            <EuiFlexItem>
-              <EuiPanel className={styles.moreInfoPanel} paddingSize="m" hasShadow={false} onClick={() => {}}>
-                <EuiFlexGroup gutterSize="m" alignItems="center">
-                  <EuiFlexItem grow={false}>
-                    <EuiIcon size="xxl" type={panel.icon} />
-                  </EuiFlexItem>
-                  <EuiFlexItem>
-                    <EuiText className={styles.moreInfoTitle}>{panel.title}</EuiText>
-                    <EuiText className={styles.moreInfoDescription}>{panel.description}</EuiText>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiIcon type={NewTabIcon} />
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiPanel>
-            </EuiFlexItem>
-          ))}
-        </EuiFlexGroup>
-      </div>
-    </EuiPanel>
+    <div className={styles.noResultsContainer} data-testid="empty-rdi-instance-list">
+      <EuiImage src={EmptyListIcon} alt="empty" size="m" />
+      <EuiSpacer size="xl" />
+      <EuiText>No deployments found</EuiText>
+      <EuiText className={styles.subTitle}>Add your first deployment to get started!</EuiText>
+      <EuiText>More info</EuiText>
+      <EuiSpacer size="s" />
+      <EuiFlexGroup className={styles.moreInfoContainer} gutterSize="m">
+        {moreInfoPanels.map((panel) => (
+          <EuiFlexItem key={panel.title}>
+            <EuiPanel className={styles.moreInfoPanel} paddingSize="m" hasShadow={false} onClick={() => {}}>
+              <EuiFlexGroup gutterSize="m" alignItems="center">
+                <EuiFlexItem grow={false}>
+                  <EuiIcon size="xxl" type={panel.icon} />
+                </EuiFlexItem>
+                <EuiFlexItem>
+                  <EuiText className={styles.moreInfoTitle}>{panel.title}</EuiText>
+                  <EuiText className={styles.moreInfoDescription}>{panel.description}</EuiText>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiIcon type={NewTabIcon} />
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiPanel>
+          </EuiFlexItem>
+        ))}
+      </EuiFlexGroup>
+    </div>
   )
 }
 

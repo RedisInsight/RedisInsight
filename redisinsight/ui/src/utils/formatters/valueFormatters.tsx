@@ -21,6 +21,8 @@ import {
   stringToBuffer,
   binaryToBuffer,
   Maybe,
+  bufferToFloat64Array,
+  bufferToFloat32Array,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -104,14 +106,8 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Vector32Bit: {
       try {
-        let buffer = new Uint8Array(reply.data).buffer;
-        let dataView = new DataView(buffer);
-        let npVector = [];
-
-        for(let i = 0; i < dataView.byteLength; i+=4) {
-          npVector.push(dataView.getFloat32(i, true));
-        }
-        const value = JSONBigInt.stringify(npVector)
+        const vector = Array.from(bufferToFloat32Array(reply.data))
+        const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -119,14 +115,9 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Vector64Bit: {
       try {
-        let buffer = new Uint8Array(reply.data).buffer;
-        let dataView = new DataView(buffer);
-        let npVector = [];
+        const vector = Array.from(bufferToFloat64Array(reply.data))
+        const value = JSONBigInt.stringify(vector)
 
-        for(let i = 0; i < dataView.byteLength; i+=8) {
-          npVector.push(dataView.getFloat64(i, true));
-        }
-        const value = JSONBigInt.stringify(npVector)
         return JSONViewer({ value, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
@@ -173,6 +164,8 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.HEX: return bufferToHex(value)
     case KeyValueFormat.Binary: return bufferToBinary(value)
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
+    case KeyValueFormat.Vector32Bit: return bufferToFloat32Array(value.data)
+    case KeyValueFormat.Vector64Bit: return bufferToFloat64Array(value.data)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(Uint8Array.from(value.data))

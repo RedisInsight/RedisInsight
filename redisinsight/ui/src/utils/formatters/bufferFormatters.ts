@@ -107,6 +107,53 @@ const ASCIIToBuffer = (strInit: string) => {
   return anyToBuffer(Array.from(Buffer.from(result, 'hex')))
 }
 
+const float32ArrayToBuffer = (vector: Float32Array) => {
+  const buffer = new ArrayBuffer(npVector.length * 4)
+  const dataView = new DataView(buffer)
+
+  for(let i = 0; i < npVector.length; i++) {
+    dataView.setFloat32(i * 4, npVector[i], true)
+  }
+
+  return new Uint8Array(buffer)
+}
+
+
+const float64ArrayToBuffer = (vector: Float64Array) => {
+  const buffer = new ArrayBuffer(npVector.length * 8)
+  const dataView = new DataView(buffer)
+
+  for(let i = 0; i < npVector.length; i++) {
+    dataView.setFloat64(i * 8, npVector[i], true)
+  }
+
+  return new Uint8Array(buffer)
+}
+
+
+const bufferToFloat32Array = (data: Uint8Array) => {
+  const buffer = new Uint8Array(data).buffer
+  const dataView = new DataView(buffer)
+  let vector = []
+
+  for(let i = 0; i < dataView.byteLength; i += 4) {
+    vector.push(dataView.getFloat32(i, true))
+  }
+  return new Float32Array(vector)
+}
+
+const bufferToFloat64Array = (data: Uint8Array) => {
+  const buffer = new Uint8Array(data).buffer
+  const dataView = new DataView(buffer)
+  const vector = []
+
+  for (let i = 0; i < dataView.byteLength; i += 8) {
+    vector.push(dataView.getFloat64(i, true))
+  }
+  return new Float64Array(vector)
+}
+
+
 const bufferToUint8Array = (reply: RedisResponseBuffer): Uint8Array => new Uint8Array(reply.data)
 const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(bufferToUint8Array(reply))
 
@@ -186,7 +233,11 @@ export {
   anyToBuffer,
   bufferToBinary,
   binaryToBuffer,
-  bufferToJava
+  bufferToJava,
+  bufferToFloat32Array,
+  bufferToFloat64Array,
+  float32ArrayToBuffer,
+  float64ArrayToBuffer,
 }
 
 window.ri = {

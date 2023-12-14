@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
-  EuiText,
   EuiTextColor,
   EuiIcon,
   EuiLoadingSpinner,
@@ -15,7 +14,6 @@ import cx from 'classnames'
 import { sortBy } from 'lodash'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
 
 import styles from './styles.module.scss'
 
@@ -24,7 +22,7 @@ export interface IProps {
   path: string
 }
 
-const JobsStructure = (props: IProps) => {
+const JobsTree = (props: IProps) => {
   const { onSelectedTab, path } = props
 
   const [isExpanded, setIsExpanded] = useState(true)
@@ -32,10 +30,9 @@ const JobsStructure = (props: IProps) => {
   const { loading, data } = useSelector(rdiPipelineSelector)
 
   const renderJobsList = (jobs: any[]) => (
-    // TODO confirm with RDI team and put sort in separate component
-    sortBy(jobs, ['name']).map(({ name }) => (
+    jobs.map(({ name }) => (
       <EuiFlexGroup
-        className={cx(styles.fullWidth, styles.job, 'rdi-pipeline-nav__file', { [styles.active]: path === name })}
+        className={cx(styles.fullWidth, styles.job, { [styles.active]: path === name })}
         responsive={false}
         alignItems="center"
         justifyContent="spaceBetween"
@@ -77,9 +74,9 @@ const JobsStructure = (props: IProps) => {
     ))
   )
 
-  const buttonContent = (
+  const folder = (
     <EuiFlexGroup
-      className={cx(styles.fullWidth)}
+      className={styles.fullWidth}
       responsive={false}
       alignItems="center"
       justifyContent="spaceBetween"
@@ -104,7 +101,7 @@ const JobsStructure = (props: IProps) => {
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
-            title="Add job file"
+            title="Add a job file"
             position="top"
             display="inlineBlock"
             anchorClassName="flex-row"
@@ -122,24 +119,17 @@ const JobsStructure = (props: IProps) => {
   )
 
   return (
-    <Tab
-      isSelected={!!data?.jobs.some(({ name }) => name === path)}
+    <EuiAccordion
+      id="rdi-pipeline-jobs-nav"
+      buttonContent={folder}
+      initialIsOpen={isExpanded}
+      onToggle={(isOpen: boolean) => setIsExpanded(isOpen)}
       className={styles.wrapper}
-      data-testid="rdi-pipeline-tab-jobs"
     >
-      <>
-        <EuiText className="rdi-pipeline-nav__title" size="m">Data Transformation</EuiText>
-        <EuiAccordion
-          id="rdi-pipeline-jobs-nav"
-          buttonContent={buttonContent}
-          initialIsOpen={isExpanded}
-          onToggle={(isOpen: boolean) => setIsExpanded(isOpen)}
-        >
-          {renderJobsList(data?.jobs ?? [])}
-        </EuiAccordion>
-      </>
-    </Tab>
+      {/* // TODO confirm with RDI team and put sort in separate component */}
+      {renderJobsList(sortBy(data?.jobs ?? [], ['name']))}
+    </EuiAccordion>
   )
 }
 
-export default JobsStructure
+export default JobsTree

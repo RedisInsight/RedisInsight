@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import JobsStructure, { IProps } from './JobsStructure'
+import JobsTree, { IProps } from './JobsTree'
 
 const mockedProps = mock<IProps>()
 
@@ -16,9 +16,9 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   }),
 }))
 
-describe('JobsStructure', () => {
+describe('JobsTree', () => {
   it('should render', () => {
-    expect(render(<JobsStructure {...instance(mockedProps)} />)).toBeTruthy()
+    expect(render(<JobsTree {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should render loader', () => {
@@ -29,7 +29,7 @@ describe('JobsStructure', () => {
     })
     rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
 
-    render(<JobsStructure {...instance(mockedProps)} />)
+    render(<JobsTree {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-nav-jobs-loader')).toBeInTheDocument()
   })
@@ -42,7 +42,7 @@ describe('JobsStructure', () => {
     })
     rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
 
-    render(<JobsStructure {...instance(mockedProps)} />)
+    render(<JobsTree {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('2')
   })
@@ -55,7 +55,7 @@ describe('JobsStructure', () => {
     })
     rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
 
-    render(<JobsStructure {...instance(mockedProps)} />)
+    render(<JobsTree {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('')
   })
@@ -70,7 +70,7 @@ describe('JobsStructure', () => {
 
     const mockOnSelectedTab = jest.fn()
 
-    render(<JobsStructure {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} />)
+    render(<JobsTree {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} />)
 
     fireEvent.click(screen.getByTestId('rdi-nav-job-job1'))
     expect(mockOnSelectedTab).toBeCalledWith('job1')

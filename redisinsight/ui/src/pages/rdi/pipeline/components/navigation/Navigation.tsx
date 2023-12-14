@@ -1,13 +1,11 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-  EuiTextColor,
-  EuiText,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiTextColor } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
-import JobsStructure from 'uiSrc/pages/rdi/pipeline/components/jobs-structure'
+import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import JobsTree from 'uiSrc/pages/rdi/pipeline/components/jobs-tree'
 import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
 
 import styles from './styles.module.scss'
@@ -36,6 +34,8 @@ const defaultNavList = [
 
 const Navigation = (props: IProps) => {
   const { path } = props
+
+  const { data } = useSelector(rdiPipelineSelector)
 
   const history = useHistory()
 
@@ -71,26 +71,20 @@ const Navigation = (props: IProps) => {
           data-testid={`rdi-nav-btn-${id}`}
         >
           <Tab
+            title={title}
+            fileName={fileName}
             isSelected={path === id}
             data-testid={`rdi-pipeline-tab-${id}`}
-          >
-            <>
-              <EuiText className="rdi-pipeline-nav__title" size="m">{title}</EuiText>
-              <div
-                className="rdi-pipeline-nav__file"
-              >
-                <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
-                <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
-              </div>
-            </>
-          </Tab>
+          />
         </div>
-
       ))}
-      <JobsStructure
-        onSelectedTab={onSelectedTabChanged}
-        path={decodeURIComponent(path)}
-      />
+      <Tab
+        title="Data Transformation"
+        isSelected={!!data?.jobs.some(({ name }) => name === decodeURIComponent(path))}
+        data-testid="rdi-pipeline-tab-jobs"
+      >
+        <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} />
+      </Tab>
     </>
   )
 

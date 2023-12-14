@@ -143,7 +143,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       name: 'RDI Version',
       dataType: 'string',
       sortable: true,
-      width: '170px'
+      width: '100px'
     },
     {
       field: 'lastConnection',

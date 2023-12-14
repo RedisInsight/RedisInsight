@@ -12,6 +12,11 @@ import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { InitialStateRdiInstances, RdiInstance } from '../interfaces/rdi'
 
+export enum RdiType {
+  API = 'api',
+  GEARS = 'gears',
+}
+
 export const initialState: InitialStateRdiInstances = {
   loading: true,
   error: '',
@@ -31,8 +36,7 @@ export const initialState: InitialStateRdiInstances = {
   },
   loadingChanging: false,
   errorChanging: '',
-  changedSuccessfully: false,
-  deletedSuccessfully: false
+  changedSuccessfully: false
 }
 
 // A slice for recipes
@@ -168,13 +172,13 @@ export function createInstanceAction(
   onSuccess?: (data: RdiInstanceResponse[]) => void
 ) {
   return async (dispatch: AppDispatch) => {
-    dispatch(loadInstances())
+    dispatch(defaultInstanceChanging())
 
     try {
       const { status, data } = await apiService.post(`${ApiEndpoints.RDI_INSTANCES}`, payload)
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadInstances(data))
+        dispatch(defaultInstanceChangingSuccess())
         dispatch(fetchInstancesAction())
 
         dispatch(addMessageNotification(successMessages.ADDED_NEW_RDI_INSTANCE(payload.name ?? '')))
@@ -183,7 +187,7 @@ export function createInstanceAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(loadInstancesFailure(errorMessage))
+      dispatch(defaultInstanceChangingFailure(errorMessage))
       dispatch(addErrorNotification(error))
     }
   }

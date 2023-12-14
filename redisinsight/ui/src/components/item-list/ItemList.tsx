@@ -77,7 +77,7 @@ function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
       return
     }
 
-    if (instances.every(({ visible }) => !visible)) {
+    if (instances.length && instances.every(({ visible }) => !visible)) {
       setMessage(
         <div className={styles.noResults}>
           <div className={styles.tableMsgTitle}>No results found</div>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
+  RdiType,
   createInstanceAction,
   fetchInstancesAction,
   instancesSelector,
@@ -19,7 +20,11 @@ export interface Props {}
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
 
-  const { data, loading } = useSelector(instancesSelector)
+  const {
+    data,
+    loading,
+    loadingChanging
+  } = useSelector(instancesSelector)
 
   const dispatch = useDispatch()
 
@@ -36,14 +41,17 @@ const RdiPage = () => {
   }
 
   const handleAddInstance = () => {
-    dispatch(createInstanceAction({
-      name: 'My third integration',
-      url: 'redis-11121.c253.us-central1-1.gce.cloud.redislabs.com:11121',
-      lastConnection: new Date(),
-      version: '1.2',
-      username: 'username',
-      password: 'password',
-    }))
+    dispatch(
+      createInstanceAction({
+        name: 'My first integration',
+        type: RdiType.API,
+        url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
+        lastConnection: new Date(),
+        version: '1.2',
+        username: 'username',
+        password: 'password'
+      })
+    )
     dispatch(fetchInstancesAction())
     dispatch(setEditedInstance(null))
   }
@@ -59,7 +67,7 @@ const RdiPage = () => {
               </div>
               {!data.length ? (
                 <EuiPanel className={styles.emptyPanel} borderRadius="none">
-                  {!loading && <EmptyMessage />}
+                  {!loading && !loadingChanging && <EmptyMessage />}
                 </EuiPanel>
               ) : (
                 <div key="homePage" className="homePage" data-testid="rdi-instance-list" ref={resizeRef}>

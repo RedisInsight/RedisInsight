@@ -25,7 +25,6 @@ export interface InitialStateRdiInstances {
   loadingChanging: boolean
   errorChanging: string
   changedSuccessfully: boolean
-  deletedSuccessfully: boolean
 }
 
 export interface InitialStateEditedRdiInstances {

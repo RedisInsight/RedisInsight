@@ -1,10 +1,9 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { useHistory, useParams } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { EuiTextColor } from '@elastic/eui'
 
-import { Pages } from 'uiSrc/constants'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { PageNames, Pages } from 'uiSrc/constants'
+import { Nullable } from 'uiSrc/utils'
 import JobsTree from 'uiSrc/pages/rdi/pipeline/components/jobs-tree'
 import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
 
@@ -14,40 +13,51 @@ export interface IProps {
   path: string
 }
 
-enum RdiPipelineNav {
-  Prepare = 'prepare',
-  Config = 'config',
+enum RdiPipelineTabs {
+  Prepare = PageNames.rdiPipelinePrepare,
+  Config = PageNames.rdiPipelineConfig,
+  Jobs = PageNames.rdiPipelineJobs,
 }
 
 const defaultNavList = [
   {
-    id: RdiPipelineNav.Prepare,
+    id: RdiPipelineTabs.Prepare,
     title: 'Prepare',
     fileName: 'Select pipeline type',
   },
   {
-    id: RdiPipelineNav.Config,
+    id: RdiPipelineTabs.Config,
     title: 'Configuration',
     fileName: 'Target connection details'
   }
 ]
 
+const getSelectedTab = (path: string, rdiInstanceId: string) => {
+  const tabsPath = path?.replace(`/${Pages.rdiPipeline(rdiInstanceId)}/`, '')
+
+  if (tabsPath.startsWith(PageNames.rdiPipelinePrepare)) return RdiPipelineTabs.Prepare
+  if (tabsPath.startsWith(PageNames.rdiPipelineConfig)) return RdiPipelineTabs.Config
+  if (tabsPath.startsWith(PageNames.rdiPipelineJobs)) return RdiPipelineTabs.Jobs
+
+  return null
+}
+
 const Navigation = (props: IProps) => {
   const { path } = props
 
-  const { data } = useSelector(rdiPipelineSelector)
+  const [selectedTab, setSelectedTab] = useState<Nullable<RdiPipelineTabs>>(null)
 
   const history = useHistory()
-
+  const { pathname } = useLocation()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
-  const onSelectedTabChanged = (id: string) => {
+  const onSelectedTabChanged = (id: string | RdiPipelineTabs) => {
     switch (id) {
-      case RdiPipelineNav.Prepare: {
+      case RdiPipelineTabs.Prepare: {
         history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
         break
       }
-      case RdiPipelineNav.Config: {
+      case RdiPipelineTabs.Config: {
         history.push(Pages.rdiPipelineConfig(rdiInstanceId))
         break
       }
@@ -57,6 +67,11 @@ const Navigation = (props: IProps) => {
       }
     }
   }
+
+  useEffect(() => {
+    const activeTab = getSelectedTab(pathname, rdiInstanceId)
+    setSelectedTab(activeTab)
+  }, [pathname, rdiInstanceId])
 
   const renderTabs = () => (
     <>
@@ -73,14 +88,14 @@ const Navigation = (props: IProps) => {
           <Tab
             title={title}
             fileName={fileName}
-            isSelected={path === id}
+            isSelected={selectedTab === id}
             data-testid={`rdi-pipeline-tab-${id}`}
           />
         </div>
       ))}
       <Tab
         title="Data Transformation"
-        isSelected={!!data?.jobs.some(({ name }) => name === decodeURIComponent(path))}
+        isSelected={selectedTab === RdiPipelineTabs.Jobs}
         data-testid="rdi-pipeline-tab-jobs"
       >
         <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} />

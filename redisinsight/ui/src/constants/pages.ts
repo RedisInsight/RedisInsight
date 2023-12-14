@@ -20,6 +20,10 @@ export enum PageNames {
   triggeredFunctions = 'triggered-functions',
   triggeredFunctionsLibraries = 'libraries',
   triggeredFunctionsFunctions = 'functions',
+  // rdi pages
+  rdiPipelinePrepare = 'prepare',
+  rdiPipelineConfig = 'config',
+  rdiPipelineJobs = 'jobs',
 }
 
 const redisCloud = '/redis-cloud'
@@ -51,8 +55,9 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
   rdi: '/integrate',
-  rdiPipeline: (rdiInstance: string) => `integrate/${rdiInstance}/pipeline}`,
-  rdiPipelineConfig: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/config`,
-  rdiPipelinePrepare: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/prepare`,
-  rdiPipelineJobs: (rdiInstance: string, jobName: string) => `/integrate/${rdiInstance}/pipeline/jobs/${jobName}`,
+  rdiPipeline: (rdiInstance: string) => `integrate/${rdiInstance}/pipeline`,
+  rdiPipelineConfig: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
+  rdiPipelinePrepare: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
+  rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
+    `/integrate/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

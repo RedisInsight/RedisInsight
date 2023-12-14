@@ -32,6 +32,7 @@ const JobsTree = (props: IProps) => {
   const renderJobsList = (jobs: any[]) => (
     jobs.map(({ name }) => (
       <EuiFlexGroup
+        key={name}
         className={cx(styles.fullWidth, styles.job, { [styles.active]: path === name })}
         responsive={false}
         alignItems="center"

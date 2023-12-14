@@ -12,6 +12,7 @@ import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
+  const [decodedJobName, setDecodedJobName] = useState(decodeURIComponent(jobName))
   const history = useHistory()
 
   const { loading, data } = useSelector(rdiPipelineSelector)
@@ -19,7 +20,7 @@ const Jobs = () => {
   const [value, setValue] = useState<string>('')
 
   useEffect(() => {
-    const job = data?.jobs.find(({ name }) => name === jobName)
+    const job = data?.jobs.find(({ name }) => name === decodedJobName)
 
     if (job) {
       setValue(job?.value ?? '')
@@ -28,7 +29,11 @@ const Jobs = () => {
     if (data?.jobs && !job) {
       history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
-  }, [data, rdiInstanceId, jobName])
+  }, [data, rdiInstanceId, decodedJobName])
+
+  useEffect(() => {
+    setDecodedJobName(decodeURIComponent(jobName))
+  }, [jobName])
 
   useEffect(() => {
     sendPageViewTelemetry({
@@ -38,7 +43,7 @@ const Jobs = () => {
 
   return (
     <div className="content">
-      <EuiText className={cx('rdi__title', 'truncateText')}>{jobName}</EuiText>
+      <EuiText className={cx('rdi__title', 'line-clamp-2')}>{decodedJobName}</EuiText>
       <EuiText className="rdi__text" color="subdued">
         {'Describe the '}
         <EuiLink

@@ -15,5 +15,10 @@
     flex-direction: column;
     width: 100%;
   }
-}
 
+  .tab:hover {
+    :global(.rdi-pipeline-nav__text) {
+      text-decoration: underline;
+    }
+  }
+}

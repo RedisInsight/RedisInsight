@@ -52,7 +52,7 @@ const Navigation = (props: IProps) => {
         break
       }
       default: {
-        history.push(Pages.rdiPipelineJobs(rdiInstanceId, id))
+        history.push(Pages.rdiPipelineJobs(rdiInstanceId, encodeURIComponent(id)))
         break
       }
     }
@@ -61,30 +61,35 @@ const Navigation = (props: IProps) => {
   const renderTabs = () => (
     <>
       {defaultNavList.map(({ id, title, fileName }) => (
-        <Tab
-          isSelected={path === id}
+        <div
           key={id}
-          data-testid={`rdi-pipeline-tab-${id}`}
+          role="button"
+          tabIndex={0}
+          onKeyDown={() => {}}
+          onClick={() => onSelectedTabChanged(id)}
+          className={styles.tab}
+          data-testid={`rdi-nav-btn-${id}`}
         >
-          <>
-            <EuiText className="rdi-pipeline-nav__title" size="m">{title}</EuiText>
-            <div
-              className="rdi-pipeline-nav__file"
-              role="button"
-              tabIndex={0}
-              onKeyDown={() => {}}
-              onClick={() => onSelectedTabChanged(id)}
-              data-testid={`rdi-nav-btn-${id}`}
-            >
-              <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
-              <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
-            </div>
-          </>
-        </Tab>
+          <Tab
+            isSelected={path === id}
+            data-testid={`rdi-pipeline-tab-${id}`}
+          >
+            <>
+              <EuiText className="rdi-pipeline-nav__title" size="m">{title}</EuiText>
+              <div
+                className="rdi-pipeline-nav__file"
+              >
+                <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
+                <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
+              </div>
+            </>
+          </Tab>
+        </div>
+
       ))}
       <JobsStructure
         onSelectedTab={onSelectedTabChanged}
-        path={path}
+        path={decodeURIComponent(path)}
       />
     </>
   )

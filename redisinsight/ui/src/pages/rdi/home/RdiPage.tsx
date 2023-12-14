@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  RdiType,
   createInstanceAction,
   fetchInstancesAction,
   instancesSelector,
@@ -44,9 +43,7 @@ const RdiPage = () => {
     dispatch(
       createInstanceAction({
         name: 'My first integration',
-        type: RdiType.API,
         url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
-        lastConnection: new Date(),
         version: '1.2',
         username: 'username',
         password: 'password'

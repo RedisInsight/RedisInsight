@@ -39,8 +39,6 @@ export class LocalRdiRepository extends RdiRepository {
    * @inheritDoc
    */
   public async list(): Promise<Rdi[]> {
-    // const entities = mockRdiInstances;
-
     const entities = await this.repository
       .createQueryBuilder('r')
       .select(['r.id', 'r.name', 'r.host', 'r.port', 'r.url', 'r.type', 'r.version', 'r.lastConnection'])
@@ -54,8 +52,6 @@ export class LocalRdiRepository extends RdiRepository {
   public async create(rdi: Rdi): Promise<Rdi> {
     const entity = classToClass(RdiEntity, rdi);
 
-    console.log(entity);
-
     return classToClass(
       Rdi,
       await this.modelEncryptor.decryptEntity(
@@ -64,8 +60,6 @@ export class LocalRdiRepository extends RdiRepository {
         ),
       ),
     );
-    // mockRdiInstances.push(rdi);
-    // return rdi;
   }
 
   /**

@@ -12,11 +12,6 @@ import { AppDispatch, RootState } from '../store'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { InitialStateRdiInstances, RdiInstance } from '../interfaces/rdi'
 
-export enum RdiType {
-  API = 'api',
-  GEARS = 'gears',
-}
-
 export const initialState: InitialStateRdiInstances = {
   loading: true,
   error: '',

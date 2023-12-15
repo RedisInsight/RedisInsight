@@ -1,7 +1,10 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { fireEvent } from '@testing-library/react'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
+import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { Props, StringDetails } from './StringDetails'
 
 const mockedProps = mock<Props>()
@@ -32,6 +35,13 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   }),
 }))
 
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
+
 describe('StringDetails', () => {
   it('should render', () => {
     expect(render(<StringDetails {...instance(mockedProps)} />)).toBeTruthy()
@@ -54,8 +64,8 @@ describe('StringDetails', () => {
         type: 'Buffer',
         data: [49, 50, 51],
       }
-    })
-    stringDataSelector.mockImplementation(stringDataSelectorMock)
+    });
+    (stringDataSelector as jest.Mock).mockImplementation(stringDataSelectorMock)
 
     render(
       <StringDetails
@@ -70,8 +80,8 @@ describe('StringDetails', () => {
   it('should not be able to change value (compressed)', () => {
     const stringSelectorMock = jest.fn().mockReturnValue({
       isCompressed: true
-    })
-    stringSelector.mockImplementation(stringSelectorMock)
+    });
+    (stringSelector as jest.Mock).mockImplementation(stringSelectorMock)
 
     render(
       <StringDetails
@@ -86,5 +96,16 @@ describe('StringDetails', () => {
   it('"edit-key-value-btn" should render', () => {
     const { queryByTestId } = render(<StringDetails {...instance(mockedProps)} />)
     expect(queryByTestId('edit-key-value-btn')).toBeInTheDocument()
+  })
+
+  it('should disable refresh when editing', () => {
+    render(<StringDetails {...mockedProps} />)
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId(`${EDIT_VALUE_BTN_TEST_ID}`))
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 })

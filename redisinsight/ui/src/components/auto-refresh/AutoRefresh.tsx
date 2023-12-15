@@ -102,7 +102,7 @@ const AutoRefresh = ({
   useEffect(() => {
     updateLastRefresh()
 
-    if (enableAutoRefresh && !loading) {
+    if (enableAutoRefresh && !loading && !disabled) {
       intervalRefresh = setInterval(() => {
         if (document.hidden) return
 
@@ -117,7 +117,7 @@ const AutoRefresh = ({
     }
 
     return () => clearInterval(intervalRefresh)
-  }, [enableAutoRefresh, refreshRate, loading, lastRefreshTime])
+  }, [enableAutoRefresh, refreshRate, loading, disabled, lastRefreshTime])
 
   const getLastRefreshDelta = (time:Nullable<number>) => (Date.now() - (time || 0)) / 1_000
 
@@ -163,12 +163,12 @@ const AutoRefresh = ({
   }
 
   return (
-    <div className={cx(styles.container, containerClassName, { [styles.enable]: enableAutoRefresh })}>
+    <div className={cx(styles.container, containerClassName, { [styles.enable]: !disabled && enableAutoRefresh })}>
       <EuiTextColor className={styles.summary}>
         {displayText && (
           <span data-testid="refresh-message-label">{`${enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}`}</span>
         )}
-        <span className={styles.time} data-testid="refresh-message">
+        <span className={cx(styles.time, { [styles.disabled]: disabled })} data-testid="refresh-message">
           {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
         </span>
       </EuiTextColor>
@@ -185,7 +185,7 @@ const AutoRefresh = ({
           disabled={loading || disabled}
           onClick={handleRefreshClick}
           onMouseEnter={updateLastRefresh}
-          className={cx(styles.btn, { [styles.rolling]: enableAutoRefresh })}
+          className={cx(styles.btn, { [styles.rolling]: !disabled && enableAutoRefresh })}
           aria-labelledby={testid?.replaceAll?.('-', ' ') || 'Refresh button'}
           data-testid={testid || 'refresh-btn'}
         />

@@ -94,6 +94,7 @@ export const initialState: KeysStore = {
   selectedKey: {
     loading: false,
     refreshing: false,
+    isRefreshDisabled: false,
     lastRefreshTime: null,
     error: '',
     data: null,
@@ -180,6 +181,7 @@ const keysSlice = createSlice({
         loading: false,
         data: {
           ...payload,
+          isRefreshDisabled: false,
           nameString: bufferToString(payload.name),
         },
       }
@@ -416,6 +418,9 @@ const keysSlice = createSlice({
     deleteSearchHistoryFailure: (state) => {
       state.searchHistory.loading = false
     },
+    setSelectedKeyRefreshDisabled: (state, { payload }: PayloadAction<boolean>) => {
+      state.selectedKey.isRefreshDisabled = payload
+    }
   },
 })
 
@@ -465,6 +470,7 @@ export const {
   deleteSearchHistory,
   deleteSearchHistorySuccess,
   deleteSearchHistoryFailure,
+  setSelectedKeyRefreshDisabled,
 } = keysSlice.actions
 
 // A selector

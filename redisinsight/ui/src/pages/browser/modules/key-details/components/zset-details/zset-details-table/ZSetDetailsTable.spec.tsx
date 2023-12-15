@@ -113,7 +113,7 @@ describe('ZSetDetailsTable', () => {
     const afterRenderActions = [...store.getActions()]
 
     await act(() => {
-      fireEvent.click(screen.getByTestId(/zset-edit-button-3/))
+      fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
     })
 
     expect(store.getActions()).toEqual([

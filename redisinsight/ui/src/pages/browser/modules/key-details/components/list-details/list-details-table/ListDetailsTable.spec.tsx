@@ -145,7 +145,7 @@ describe('ListDetailsTable', () => {
     const afterRenderActions = [...store.getActions()]
 
     await act(() => {
-      fireEvent.click(screen.getAllByTestId(/edit-list-button/)[0])
+      fireEvent.click(screen.getByTestId('edit-list-button-0'))
     })
 
     expect(store.getActions()).toEqual([

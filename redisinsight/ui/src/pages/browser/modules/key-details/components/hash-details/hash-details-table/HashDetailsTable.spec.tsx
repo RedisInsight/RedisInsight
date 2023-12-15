@@ -143,12 +143,14 @@ describe('HashDetailsTable', () => {
     })
   })
 
-  it('should disable refresh after click on edit', () => {
+  it('should disable refresh after click on edit', async () => {
     render(<HashDetailsTable {...instance(mockedProps)} />)
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getAllByTestId(/edit-hash-button/)[0])
+    await act(() => {
+      fireEvent.click(screen.getByTestId('edit-hash-button-2'))
+    })
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,

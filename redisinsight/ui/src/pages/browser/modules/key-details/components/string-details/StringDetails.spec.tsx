@@ -1,8 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { fireEvent } from '@testing-library/react'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { Props, StringDetails } from './StringDetails'
@@ -98,11 +97,14 @@ describe('StringDetails', () => {
     expect(queryByTestId('edit-key-value-btn')).toBeInTheDocument()
   })
 
-  it('should disable refresh when editing', () => {
+  it('should disable refresh when editing', async () => {
     render(<StringDetails {...mockedProps} />)
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId(`${EDIT_VALUE_BTN_TEST_ID}`))
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`${EDIT_VALUE_BTN_TEST_ID}`))
+    })
+
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
       setSelectedKeyRefreshDisabled(true)

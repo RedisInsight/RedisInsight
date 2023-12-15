@@ -179,9 +179,9 @@ const keysSlice = createSlice({
       state.selectedKey = {
         ...state.selectedKey,
         loading: false,
+        isRefreshDisabled: false,
         data: {
           ...payload,
-          isRefreshDisabled: false,
           nameString: bufferToString(payload.name),
         },
       }

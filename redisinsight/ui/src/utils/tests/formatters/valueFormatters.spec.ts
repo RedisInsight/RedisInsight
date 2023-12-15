@@ -24,10 +24,10 @@ describe('bufferToSerializedFormat', () => {
 
   describe(KeyValueFormat.Vector32Bit, () => {
     describe('should properly serialize', () => {
-      const testValues = [new Float32Array([1.0, 2.0]), new Float32Array([12.12, 13.41])].map((v) => {
-        input: anyToBuffer(v.buffer)
-        expected: JSON.stringify(v)
-      })
+      const testValues = [new Float32Array([1.0, 2.0]), new Float32Array([12.12, 13.41])].map((v) => ({
+        input: anyToBuffer(v.buffer),
+        expected: JSON.stringify(v),
+      }))
 
       test.each(testValues)('test %j', ({input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector32Bit, input))).toEqual(expected)
@@ -35,10 +35,10 @@ describe('bufferToSerializedFormat', () => {
     })
 
     describe('should properly return value with invalid values', () => {
-      const testValues = [new Float32Array(['test'])].map((v) => {
-        input: anyToBuffer(v.buffer)
-        expected: JSON.stringify(v)
-      })
+      const testValues = [new Float32Array(['test'])].map((v) => ({
+        input: anyToBuffer(v.buffer),
+        expected: JSON.stringify(v),
+      }))
 
       test.each(testValues)('test %j', ({input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector32Bit, input))).toEqual(expected)
@@ -48,10 +48,10 @@ describe('bufferToSerializedFormat', () => {
 
   describe(KeyValueFormat.Vector64Bit, () => {
     describe('should properly serialize', () => {
-      const testValues = [new Float64Array([1.0, 2.0]), new Float64Array([12.12, 13.41])].map((v) => {
-        input: anyToBuffer(v.buffer)
-        expected: JSON.stringify(v)
-      })
+      const testValues = [new Float64Array([1.0, 2.0]), new Float64Array([12.12, 13.41])].map((v) => ({
+        input: anyToBuffer(v.buffer),
+        expected: JSON.stringify(v),
+      }))
 
       test.each(testValues)('test %j', ({input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector64Bit, input))).toEqual(expected)
@@ -59,10 +59,10 @@ describe('bufferToSerializedFormat', () => {
     })
 
     describe('should properly return value with invalid values', () => {
-      const testValues = [new Float64Array(['test'])].map((v) => {
-        input: anyToBuffer(v.buffer)
-        expected: JSON.stringify(v)
-      })
+      const testValues = [new Float64Array(['test'])].map((v) => ({
+        input: anyToBuffer(v.buffer),
+        expected: JSON.stringify(v),
+      }))
 
       test.each(testValues)('test %j', ({input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector64Bit, input))).toEqual(expected)

@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Rdi } from 'src/modules/rdi/models';
+import { v4 as uuidv4 } from 'uuid';
+
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
+import { Rdi, RdiType } from 'src/modules/rdi/models';
 import { RdiRepository } from 'src/modules/rdi/repository/rdi.repository';
-import { classToClass } from "src/utils";
+import { classToClass } from 'src/utils';
 
 @Injectable()
 export class RdiService {
@@ -31,11 +33,12 @@ export class RdiService {
   async create(dto: CreateRdiDto): Promise<Rdi> {
     const model = classToClass(Rdi, dto);
     model.lastConnection = new Date();
+    model.type = RdiType.API;
 
     return await this.repository.create(model);
   }
 
-  async delete(id: string): Promise<void> {
-
+  async delete(ids: string[]): Promise<void> {
+    return await this.repository.delete(ids);
   }
 }

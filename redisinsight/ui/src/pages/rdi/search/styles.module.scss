@@ -1,0 +1,6 @@
+.search {
+  &:global(.euiFieldSearch) {
+    border: none !important;
+    background-color: var(--rdiSearchInstanceListBgColor) !important;
+  }
+}

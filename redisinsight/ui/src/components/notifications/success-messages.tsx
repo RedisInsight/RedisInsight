@@ -18,8 +18,28 @@ export default {
       </>
     ),
   }),
+  ADDED_NEW_RDI_INSTANCE: (instanceName: string) => ({
+    title: 'Instance has been added',
+    message: (
+      <>
+        <b>{formatNameShort(instanceName)}</b>
+        {' '}
+        has been added to RedisInsight.
+      </>
+    ),
+  }),
   DELETE_INSTANCE: (instanceName: string) => ({
     title: 'Database has been deleted',
+    message: (
+      <>
+        <b>{formatNameShort(instanceName)}</b>
+        {' '}
+        has been deleted from RedisInsight.
+      </>
+    ),
+  }),
+  DELETE_RDI_INSTANCE: (instanceName: string) => ({
+    title: 'Instance has been deleted',
     message: (
       <>
         <b>{formatNameShort(instanceName)}</b>
@@ -38,6 +58,30 @@ export default {
             <b>{instanceNames.length}</b>
             {' '}
             databases have been deleted from RedisInsight:
+          </span>
+          <ul style={{ marginBottom: 0 }}>
+            {instanceNames.slice(0, limitShowRemovedInstances).map((el, i) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <li className={styles.list} key={i}>
+                {formatNameShort(el)}
+              </li>
+            ))}
+            {instanceNames.length >= limitShowRemovedInstances && <li>...</li>}
+          </ul>
+        </>
+      ),
+    }
+  },
+  DELETE_RDI_INSTANCES: (instanceNames: Maybe<string>[]) => {
+    const limitShowRemovedInstances = 10
+    return {
+      title: 'Instances have been deleted',
+      message: (
+        <>
+          <span>
+            <b>{instanceNames.length}</b>
+            {' '}
+            instances have been deleted from RedisInsight:
           </span>
           <ul style={{ marginBottom: 0 }}>
             {instanceNames.slice(0, limitShowRemovedInstances).map((el, i) => (

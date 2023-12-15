@@ -57,12 +57,12 @@ export class RdiController {
     return this.rdiService.update(id, dto);
   }
 
-  @Delete('/:id')
+  @Delete()
   @ApiEndpoint({
     description: 'Delete RDI',
     responses: [{ status: 200 }],
   })
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.rdiService.delete(id);
+  async delete(@Body() body: { ids: string[] }): Promise<void> {
+    return this.rdiService.delete(body.ids);
   }
 }

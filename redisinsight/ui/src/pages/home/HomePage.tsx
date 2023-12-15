@@ -27,7 +27,7 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import DatabasesList from './components/databases-list-component'
+import DatabaseList from './components/database-list-component'
 import WelcomeComponent from './components/welcome-component'
 import HomeHeader from './components/home-header'
 
@@ -239,7 +239,7 @@ const HomePage = () => {
                           paddingSize="none"
                         >
                           <div ref={resizeRef}>
-                            <DatabasesList
+                            <DatabaseList
                               width={width}
                               dialogIsOpen={!!openRightPanel}
                               editedInstance={editedInstance}
@@ -291,7 +291,7 @@ const HomePage = () => {
               ) : (
                 <div key="homePage" className="homePage" ref={resizeRef}>
                   {!!instances.length || loading ? (
-                    <DatabasesList
+                    <DatabaseList
                       width={width}
                       editedInstance={editedInstance}
                       dialogIsOpen={!!openRightPanel}

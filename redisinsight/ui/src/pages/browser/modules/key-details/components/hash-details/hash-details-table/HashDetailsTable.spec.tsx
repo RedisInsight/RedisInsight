@@ -113,7 +113,7 @@ describe('HashDetailsTable', () => {
 
     it('edit button should be disabled if data was compressed', async () => {
       const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
-      const hashDataSelectorMock = jest.fn().mockReturnValue({
+      const hashDataSelectorMock = jest.fn().mockReturnValueOnce({
         ...defaultState,
         total: 1,
         key: '123zxczxczxc',
@@ -121,9 +121,9 @@ describe('HashDetailsTable', () => {
           { field: anyToBuffer(GZIP_COMPRESSED_VALUE_1), value: anyToBuffer(GZIP_COMPRESSED_VALUE_2) },
         ]
       });
-      (hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock);
+      (hashDataSelector as jest.Mock).mockImplementationOnce(hashDataSelectorMock);
 
-      (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+      (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))
 
@@ -149,7 +149,7 @@ describe('HashDetailsTable', () => {
     const afterRenderActions = [...store.getActions()]
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('edit-hash-button-2'))
+      fireEvent.click(screen.queryAllByTestId(/edit-hash-button/)[0])
     })
 
     expect(store.getActions()).toEqual([

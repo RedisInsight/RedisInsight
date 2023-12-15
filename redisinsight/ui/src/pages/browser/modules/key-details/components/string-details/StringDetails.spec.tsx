@@ -58,13 +58,13 @@ describe('StringDetails', () => {
   })
 
   it('should not be able to change value (long string not fully load)', () => {
-    const stringDataSelectorMock = jest.fn().mockReturnValue({
+    const stringDataSelectorMock = jest.fn().mockReturnValueOnce({
       value: {
         type: 'Buffer',
         data: [49, 50, 51],
       }
     });
-    (stringDataSelector as jest.Mock).mockImplementation(stringDataSelectorMock)
+    (stringDataSelector as jest.Mock).mockImplementationOnce(stringDataSelectorMock)
 
     render(
       <StringDetails
@@ -77,10 +77,10 @@ describe('StringDetails', () => {
   })
 
   it('should not be able to change value (compressed)', () => {
-    const stringSelectorMock = jest.fn().mockReturnValue({
+    const stringSelectorMock = jest.fn().mockReturnValueOnce({
       isCompressed: true
     });
-    (stringSelector as jest.Mock).mockImplementation(stringSelectorMock)
+    (stringSelector as jest.Mock).mockImplementationOnce(stringSelectorMock)
 
     render(
       <StringDetails

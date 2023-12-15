@@ -110,16 +110,16 @@ describe('ListDetailsTable', () => {
 
     it('edit button should be disabled if data was compressed', async () => {
       const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
-      const listDataSelectorMock = jest.fn().mockReturnValue({
+      const listDataSelectorMock = jest.fn().mockReturnValueOnce({
         ...defaultState,
         key: '123zxczxczxc',
         elements: [
           { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
         ]
       });
-      (listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock);
+      (listDataSelector as jest.Mock).mockImplementationOnce(listDataSelectorMock);
 
-      (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+      (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))
 

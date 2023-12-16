@@ -20,16 +20,6 @@ export const formatters = [{
     formattedText: '[ { "1": 2009 }, { "2": 344 } ]'
 },
 {
-    format: 'Vector 32-bit',
-    fromHexText: '0000803f0000004000004040',
-    formattedText: '[ 1, 2, 3 ]',
-},
-{
-    format: 'Vector 64-bit',
-    fromHexText: '000000000000f03f00000000000000400000000000000840',
-    formattedText: '[ 1, 2, 3 ]',
-},
-{
     format: 'PHP serialized',
     fromText: 'a:2:{i:0;s:12:"Sample array";i:1;a:2:{i:0;s:5:"Apple";i:1;s:6:"Orange";}}',
     fromTextEdit: '[ "Sample array", [ "Apple", "Orange15" ] ]',
@@ -65,6 +55,16 @@ export const formatters = [{
     format: 'Pickle',
     fromHexText: '286470300a5327617272270a70310a286c70320a49310a6149320a617353276f626a270a70330a286470340a532761270a70350a532762270a70360a7373532748656c6c6f270a70370a5327776f726c64270a70380a732e',
     formattedText: '{ "arr": [ 1, 2 ], "obj": { "a": "b" }, "Hello": "world" }'
+},
+{
+    format: 'Vector 32-bit',
+    fromHexText: '0000803f0000004000004040',
+    formattedText: '[ 1, 2, 3 ]',
+},
+{
+    format: 'Vector 64-bit',
+    fromHexText: '000000000000f03f00000000000000400000000000000840',
+    formattedText: '[ 1, 2, 3 ]',
 }];
 
 /**

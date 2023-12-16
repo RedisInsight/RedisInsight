@@ -16,10 +16,10 @@ const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
 const binaryFormattersSet = [formatters[5], formatters[6], formatters[7]];
 const formattersHighlightedSet = [formatters[0], formatters[3]];
-const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8]];
+const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8], formatters[9], formatters[10]];
 const formattersForEditSet = [formatters[0], formatters[1], formatters[3]];
 const formattersWithTooltipSet = [formatters[0], formatters[1], formatters[2], formatters[3], formatters[4], formatters[8]];
-const notEditableFormattersSet = [formatters[2], formatters[4], formatters[8]];
+const notEditableFormattersSet = [formatters[2], formatters[4], formatters[8], formatters[9], formatters[10]];
 const defaultFormatter = 'Unicode';
 
 fixture `Formatters`

@@ -106,7 +106,7 @@ test('Verify that user can edit List Key element', async t => {
     keyValue = await browserPage.getListKeyValue();
     await t.expect(keyValue).contains(keyValueAfter, 'Edited List value is incorrect');
 });
-test.only('Verify that user can edit JSON Key value', async t => {
+test('Verify that user can edit JSON Key value', async t => {
     const jsonValueBefore = '{"name":"xyz"}';
     const jsonEditedValue = '"xyz test"';
     const jsonValueAfter = '{name:"xyz test"}';

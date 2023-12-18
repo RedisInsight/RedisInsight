@@ -137,6 +137,7 @@ const ManualConnectionForm = (props: Props) => {
     initialValues: formFields,
     validate,
     enableReinitialize: true,
+    validateOnMount: true,
     onSubmit: (values: any) => {
       onSubmit(values)
     },

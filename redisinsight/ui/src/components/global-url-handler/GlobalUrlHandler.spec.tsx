@@ -135,7 +135,6 @@ describe('GlobalUrlHandler', () => {
           username: undefined,
           caCert: undefined,
           clientCert: undefined,
-          verifyServerCert: false,
         }
       }),
     ]
@@ -181,7 +180,6 @@ describe('GlobalUrlHandler', () => {
           password: 'password',
           port: 6379,
           tls: true,
-          verifyServerCert: true,
           caCert: { id: ADD_NEW_CA_CERT },
           username: 'default',
         }
@@ -230,7 +228,6 @@ describe('GlobalUrlHandler', () => {
           tls: true,
           caCert: undefined,
           clientCert: { id: ADD_NEW },
-          verifyServerCert: false,
           username: 'default',
         }
       })
@@ -278,7 +275,6 @@ describe('GlobalUrlHandler', () => {
           tls: true,
           caCert: { id: ADD_NEW_CA_CERT },
           clientCert: { id: ADD_NEW },
-          verifyServerCert: true,
           username: 'default',
         }
       })
@@ -326,7 +322,6 @@ describe('GlobalUrlHandler', () => {
           tls: true,
           caCert: undefined,
           clientCert: undefined,
-          verifyServerCert: false,
           username: 'default',
         }
       })

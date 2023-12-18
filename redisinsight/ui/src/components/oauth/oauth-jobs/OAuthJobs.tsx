@@ -44,7 +44,7 @@ const OAuthJobs = () => {
 
         const errorCode = get(error, 'errorCode', 0) as CustomErrorCodes
         const subscriptionId = get(error, 'resource.subscriptionId', 0)
-        const resources = get(error, 'resources', {})
+        const resources = get(error, 'resource', {}) as CloudImportDatabaseResources
         // eslint-disable-next-line sonarjs/no-nested-switch
         switch (errorCode) {
           case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:

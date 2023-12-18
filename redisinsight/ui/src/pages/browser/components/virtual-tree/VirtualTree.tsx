@@ -136,17 +136,18 @@ const VirtualTree = (props: Props) => {
   }), [])
 
   const getMetadata = useCallback((
-    itemsInit: any[] = []
+    itemsInit: any[] = [],
+    filter: Nullable<KeyTypes>
   ): void => {
     dispatch(fetchKeysMetadataTree(
       itemsInit,
-      commonFilterType,
+      filter,
       controller.current?.signal,
       (loadedItems) =>
         onSuccessFetchedMetadata(loadedItems),
       () => { rerender({}) }
     ))
-  }, [commonFilterType])
+  }, [])
 
   const onSuccessFetchedMetadata = (
     loadedItems: any[],
@@ -158,18 +159,18 @@ const VirtualTree = (props: Props) => {
     rerender({})
   }
 
-  const getMetadataDebounced = debounce(() => {
+  const getMetadataDebounced = debounce((filter: Nullable<KeyTypes>) => {
     const entries = Object.entries(elements.current)
 
-    getMetadata(entries)
+    getMetadata(entries, filter)
 
     elements.current = {}
   }, 100)
 
   const getMetadataNode = useCallback((nameBuffer: any, path: string) => {
     elements.current[path] = nameBuffer
-    getMetadataDebounced()
-  }, [])
+    getMetadataDebounced(commonFilterType)
+  }, [commonFilterType])
 
   // This helper function constructs the object that will be sent back at the step
   // [2] during the treeWalker function work. Except for the mandatory `data`

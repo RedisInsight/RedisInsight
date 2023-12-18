@@ -143,7 +143,6 @@ const GlobalUrlHandler = () => {
           ...db,
           // set tls with new cert option
           tls: isTlsProvided,
-          verifyServerCert: requiredCaCert === 'true',
           caCert: requiredCaCert === 'true' ? { id: ADD_NEW_CA_CERT } : undefined,
           clientCert: requiredClientCert === 'true' ? { id: ADD_NEW } : undefined,
         }

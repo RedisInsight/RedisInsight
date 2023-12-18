@@ -287,4 +287,52 @@ describe('GlobalUrlHandler', () => {
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     expect(pushMock).toBeCalledWith(Pages.home)
   })
+
+  it('should call proper actions only after consents popup is accepted and open form to add db with tls', async () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
+    (userSettingsSelector as jest.Mock).mockReturnValueOnce({
+      config: {},
+      isShowConsents: false
+    })
+
+    const url = `${fromUrl}&requiredTls=true`;
+
+    (appRedirectionSelector as jest.Mock).mockReturnValueOnce({
+      fromUrl: url
+    })
+
+    await act(() => {
+      render(<GlobalUrlHandler />)
+    })
+
+    const actionUrl = new URL(url)
+    const fromParams = new URLSearchParams(actionUrl.search)
+    // @ts-ignore
+    const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
+
+    const expectedActions = [
+      setUrlProperties(urlProperties),
+      setFromUrl(null),
+      setUrlDbConnection({
+        action: UrlHandlingActions.Connect,
+        dbConnection: {
+          host: 'localhost',
+          name: 'My Name',
+          password: 'password',
+          port: 6379,
+          tls: true,
+          caCert: undefined,
+          clientCert: undefined,
+          verifyServerCert: false,
+          username: 'default',
+        }
+      })
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(pushMock).toBeCalledWith(Pages.home)
+  })
 })

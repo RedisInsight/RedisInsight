@@ -1,18 +1,19 @@
 import React from 'react'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
+import { OAuthProvider } from 'uiSrc/components/oauth/oauth-select-plan/constants'
 import { INFINITE_MESSAGES } from './InfiniteMessages'
 
 describe('INFINITE_MESSAGES', () => {
   describe('SUCCESS_CREATE_DB', () => {
     it('should render message', () => {
-      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB(jest.fn())
+      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, jest.fn())
       expect(render(<>{Inner}</>)).toBeTruthy()
     })
 
     it('should call onSuccess', () => {
       const onSuccess = jest.fn()
-      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB(onSuccess)
+      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onSuccess)
       render(<>{Inner}</>)
 
       fireEvent.click(screen.getByTestId('notification-connect-db'))
@@ -20,6 +21,15 @@ describe('INFINITE_MESSAGES', () => {
       fireEvent.mouseDown(screen.getByTestId('success-create-db-notification'))
 
       expect(onSuccess).toBeCalled()
+    })
+
+    it('should render plan details', () => {
+      const { Inner } = INFINITE_MESSAGES.SUCCESS_CREATE_DB({ region: 'us-us', provider: OAuthProvider.AWS }, jest.fn())
+      render(<>{Inner}</>)
+
+      expect(screen.getByTestId('notification-details-plan')).toHaveTextContent('Free')
+      expect(screen.getByTestId('notification-details-vendor')).toHaveTextContent('Amazon Web Services')
+      expect(screen.getByTestId('notification-details-region')).toHaveTextContent('us-us')
     })
   })
   describe('PENDING_CREATE_DB', () => {
@@ -93,7 +103,7 @@ describe('INFINITE_MESSAGES', () => {
 
   describe('AUTO_CREATING_DATABASE', () => {
     it('should render message', () => {
-      const { Inner } = INFINITE_MESSAGES.AUTO_CREATING_DATABASE
+      const { Inner } = INFINITE_MESSAGES.AUTO_CREATING_DATABASE()
       expect(render(<>{Inner}</>)).toBeTruthy()
     })
   })

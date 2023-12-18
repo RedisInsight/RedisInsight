@@ -38,6 +38,13 @@ export interface StateAppOAuth {
   agreement: boolean
 }
 
+export interface CloudImportDatabaseResources {
+  subscriptionId: number,
+  databaseId?: number
+  region: string
+  provider?: string
+}
+
 export interface Region {
   provider: string
   regions: string[]

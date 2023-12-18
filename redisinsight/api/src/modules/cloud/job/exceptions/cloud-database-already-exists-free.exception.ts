@@ -5,7 +5,7 @@ import { CustomErrorCodes } from 'src/constants';
 export class CloudDatabaseAlreadyExistsFreeException extends HttpException {
   constructor(
     message = ERROR_MESSAGES.CLOUD_DATABASE_ALREADY_EXISTS_FREE,
-    options?: HttpExceptionOptions & { subscriptionId?: number, databaseId?: number, region: string, provider: string },
+    options?: HttpExceptionOptions & { subscriptionId?: number, databaseId?: number, region?: string, provider?: string },
   ) {
     const response = {
       message,

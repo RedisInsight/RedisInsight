@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ImportDatabaseCloudJobDataDto {
   @ApiProperty({
@@ -17,4 +17,20 @@ export class ImportDatabaseCloudJobDataDto {
   @IsNumber()
   @IsNotEmpty()
   databaseId: number;
+
+  @ApiProperty({
+    description: 'Subscription region',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  region: string;
+
+  @ApiProperty({
+    description: 'Subscription provider',
+    type: String,
+  })
+  @IsString()
+  @IsNotEmpty()
+  provider: string;
 }

@@ -6,6 +6,7 @@ import { get } from 'lodash'
 import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
 import { createFreeDbJob, createFreeDbSuccess, oauthCloudJobSelector, oauthCloudSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { CloudImportDatabaseResources } from 'uiSrc/slices/interfaces/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
@@ -43,15 +44,13 @@ const OAuthJobs = () => {
 
         const errorCode = get(error, 'errorCode', 0) as CustomErrorCodes
         const subscriptionId = get(error, 'resource.subscriptionId', 0)
-        const databaseId = get(error, 'resource.databaseId', 0)
-        const region = get(error, 'resource.region', '')
-        const provider = get(error, 'resource.provider', '')
+        const resources = get(error, 'resources', {})
         // eslint-disable-next-line sonarjs/no-nested-switch
         switch (errorCode) {
           case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:
             dispatch(addInfiniteNotification(
               INFINITE_MESSAGES.DATABASE_EXISTS(
-                () => importDatabase(subscriptionId, databaseId, region, provider),
+                () => importDatabase(resources),
                 closeImportDatabase,
               )
             ))
@@ -79,13 +78,13 @@ const OAuthJobs = () => {
     }
   }, [status, error, step, result, showProgress])
 
-  const importDatabase = (subscriptionId: number, databaseId: number, region: string, provider: string) => {
+  const importDatabase = (resources: CloudImportDatabaseResources) => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE,
     })
     dispatch(createFreeDbJob({
       name: CloudJobName.ImportFreeDatabase,
-      resources: { subscriptionId, databaseId, region, provider },
+      resources,
       onSuccessAction: () => {
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.databaseExists))
         dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))

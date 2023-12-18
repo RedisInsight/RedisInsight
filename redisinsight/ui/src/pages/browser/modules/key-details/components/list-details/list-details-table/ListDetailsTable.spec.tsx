@@ -1,11 +1,13 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 import { KeyValueCompressor, TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
 import { listDataSelector } from 'uiSrc/slices/browser/list'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer } from 'uiSrc/utils'
-import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
+import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { ListDetailsTable, Props } from './ListDetailsTable'
 
 const mockedProps = mock<Props>()
@@ -42,6 +44,13 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     compressor: null,
   }),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('ListDetailsTable', () => {
   it('should render', () => {
@@ -90,8 +99,8 @@ describe('ListDetailsTable', () => {
         elements: [
           { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
         ]
-      })
-      listDataSelector.mockImplementation(listDataSelectorMock)
+      });
+      (listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
 
       const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
       const elementEl = queryByTestId(/list-element-value-/)
@@ -101,21 +110,21 @@ describe('ListDetailsTable', () => {
 
     it('edit button should be disabled if data was compressed', async () => {
       const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
-      const listDataSelectorMock = jest.fn().mockReturnValue({
+      const listDataSelectorMock = jest.fn().mockReturnValueOnce({
         ...defaultState,
         key: '123zxczxczxc',
         elements: [
           { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
         ]
-      })
-      listDataSelector.mockImplementation(listDataSelectorMock)
+      });
+      (listDataSelector as jest.Mock).mockImplementationOnce(listDataSelectorMock);
 
-      connectedInstanceSelector.mockImplementation(() => ({
+      (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))
 
       const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
-      const editBtn = queryByTestId(/edit-list-button-/)
+      const editBtn = queryByTestId(/edit-list-button-/)!
 
       fireEvent.click(editBtn)
 
@@ -128,5 +137,20 @@ describe('ListDetailsTable', () => {
       expect(screen.getByTestId('list-edit-tooltip')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
       expect(queryByTestId('list-value-editor')).not.toBeInTheDocument()
     })
+  })
+
+  it('should disable refresh when editing', async () => {
+    render(<ListDetailsTable {...mockedProps} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('edit-list-button-0'))
+    })
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 })

@@ -1,9 +1,11 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 import { zsetDataSelector } from 'uiSrc/slices/browser/zset'
 import { anyToBuffer } from 'uiSrc/utils'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, act, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
+import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { ZSetDetailsTable, Props } from './ZSetDetailsTable'
 
 const mockedProps = mock<Props>()
@@ -28,6 +30,13 @@ jest.mock('uiSrc/slices/browser/zset', () => {
     updateZsetScoreStateSelector: jest.fn().mockReturnValue(defaultState.updateScore),
     fetchSearchZSetMembers: () => jest.fn()
   })
+})
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
 })
 
 describe('ZSetDetailsTable', () => {
@@ -88,13 +97,28 @@ describe('ZSetDetailsTable', () => {
         members: [
           { name: anyToBuffer(GZIP_COMPRESSED_VALUE_1), score: 1 },
         ]
-      })
-      zsetDataSelector.mockImplementation(zsetDataSelectorMock)
+      });
+      (zsetDataSelector as jest.Mock).mockImplementation(zsetDataSelectorMock)
 
       const { queryByTestId } = render(<ZSetDetailsTable {...instance(mockedProps)} />)
       const memberEl = queryByTestId(/zset-member-value-/)
 
       expect(memberEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
+  })
+
+  it('should disable refresh when editing', async () => {
+    render(<ZSetDetailsTable {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    await act(() => {
+      fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
+    })
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 })

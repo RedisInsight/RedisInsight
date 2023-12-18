@@ -6,7 +6,7 @@ import {
   TreeWalkerValue,
   FixedSizeTree as Tree,
 } from 'react-vtree'
-import { EuiIcon, EuiLoadingSpinner, EuiProgress } from '@elastic/eui'
+import { EuiIcon, EuiImage, EuiLoadingSpinner, EuiProgress } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
@@ -276,7 +276,15 @@ const VirtualTree = (props: Props) => {
             <div className={styles.loadingContainer} style={{ width, height }} data-testid="virtual-tree-spinner">
               <div className={styles.loadingBody}>
                 <EuiLoadingSpinner size="xl" className={styles.loadingSpinner} />
-                <EuiIcon type={loadingIcon || 'empty'} className={styles.loadingIcon} />
+                {loadingIcon ? (
+                  <EuiImage
+                    className={styles.loadingIcon}
+                    src={loadingIcon}
+                    alt="loading"
+                  />
+                ) : (
+                  <EuiIcon type="empty" className={styles.loadingIcon} />
+                )}
               </div>
             </div>
           )}

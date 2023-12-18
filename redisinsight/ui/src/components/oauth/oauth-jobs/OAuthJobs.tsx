@@ -44,12 +44,14 @@ const OAuthJobs = () => {
         const errorCode = get(error, 'errorCode', 0) as CustomErrorCodes
         const subscriptionId = get(error, 'resource.subscriptionId', 0)
         const databaseId = get(error, 'resource.databaseId', 0)
+        const region = get(error, 'resource.region', '')
+        const provider = get(error, 'resource.provider', '')
         // eslint-disable-next-line sonarjs/no-nested-switch
         switch (errorCode) {
           case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:
             dispatch(addInfiniteNotification(
               INFINITE_MESSAGES.DATABASE_EXISTS(
-                () => importDatabase(subscriptionId, databaseId),
+                () => importDatabase(subscriptionId, databaseId, region, provider),
                 closeImportDatabase,
               )
             ))
@@ -77,13 +79,13 @@ const OAuthJobs = () => {
     }
   }, [status, error, step, result, showProgress])
 
-  const importDatabase = (subscriptionId: number, databaseId: number) => {
+  const importDatabase = (subscriptionId: number, databaseId: number, region: string, provider: string) => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE,
     })
     dispatch(createFreeDbJob({
       name: CloudJobName.ImportFreeDatabase,
-      resources: { subscriptionId, databaseId },
+      resources: { subscriptionId, databaseId, region, provider },
       onSuccessAction: () => {
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.databaseExists))
         dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))

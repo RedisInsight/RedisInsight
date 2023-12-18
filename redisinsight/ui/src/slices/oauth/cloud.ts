@@ -315,6 +315,8 @@ export function createFreeDbJob({
     planId?: number,
     databaseId?: number,
     subscriptionId?: number,
+    region?: string,
+    provider?: string,
   }
   onSuccessAction?: () => void,
   onFailAction?: () => void

@@ -31,7 +31,7 @@ fixture `Add DB from SM`
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
     });
-test.only
+test
     .page(commonUrl)('Tls dropdown', async t => {
         const connectUrlParams = {
             redisUrl: `redis://${databaseUsername}:${databasePassword}@${host}:${port}`,

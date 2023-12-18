@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { ConnectionString } from 'connection-string'
 import { isNull, isNumber, every, values, pick } from 'lodash'
 import { Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
+import { ADD_NEW_CA_CERT, ADD_NEW } from 'uiSrc/pages/home/constants'
 import {
   appRedirectionSelector,
   setFromUrl,
@@ -87,8 +88,9 @@ const GlobalUrlHandler = () => {
       const {
         redisUrl,
         databaseAlias,
-        requiredTls,
         redirect,
+        requiredCaCert,
+        requiredClientCert,
       } = properties
 
       const cloudDetails = transformQueryParamsObject(
@@ -107,7 +109,7 @@ const GlobalUrlHandler = () => {
         host: url.hostname,
         port: url.port,
         username: url.user,
-        password: url.password
+        password: url.password,
       }
 
       const isAllObligatoryProvided = every(values(obligatoryForAutoConnectFields), (value) => value || isNumber(value))
@@ -117,7 +119,7 @@ const GlobalUrlHandler = () => {
         name: databaseAlias || url.host,
       } as any
 
-      if (isAllObligatoryProvided && requiredTls !== 'true') {
+      if (isAllObligatoryProvided && (requiredCaCert !== 'true' && requiredClientCert !== 'true')) {
         if (cloudDetails?.cloudId) {
           db.cloudDetails = cloudDetails
         }
@@ -131,7 +133,11 @@ const GlobalUrlHandler = () => {
         action: UrlHandlingActions.Connect,
         dbConnection: {
           ...db,
-          tls: requiredTls === 'true',
+          // set tls with new cert option
+          tls: requiredCaCert === 'true' || requiredClientCert === 'true',
+          verifyServerCert: requiredCaCert === 'true',
+          caCert: requiredCaCert === 'true' ? { id: ADD_NEW_CA_CERT } : undefined,
+          clientCert: requiredClientCert === 'true' ? { id: ADD_NEW } : undefined,
         }
       }))
 

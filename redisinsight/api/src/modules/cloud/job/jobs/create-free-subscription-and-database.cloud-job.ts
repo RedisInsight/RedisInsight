@@ -12,7 +12,7 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 
 export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
-  protected name = CloudJobName.CreateFreeDatabase;
+  protected name = CloudJobName.CreateFreeSubscriptionAndDatabase;
 
   constructor(
     readonly options: CloudJobOptions,

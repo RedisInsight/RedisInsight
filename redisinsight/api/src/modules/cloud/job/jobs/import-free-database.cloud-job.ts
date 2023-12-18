@@ -17,7 +17,7 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 const cloudConfig = config.get('cloud');
 
 export class ImportFreeDatabaseCloudJob extends CloudJob {
-  protected name = CloudJobName.CreateFreeDatabase;
+  protected name = CloudJobName.ImportFreeDatabase;
 
   constructor(
     readonly options: CloudJobOptions,

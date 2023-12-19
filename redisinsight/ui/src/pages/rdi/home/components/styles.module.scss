@@ -1,0 +1,31 @@
+.noResultsContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.subTitle {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  margin-top: 6px;
+  margin-bottom: 50px;
+  color: var(--htmlColor) !important;
+}
+
+.moreInfoContainer {
+  max-height: 100px;
+}
+
+.moreInfoPanel {
+  background-color: var(--rdiMoreInfoPanelBgColor) !important;
+  border: none !important;
+}
+
+.moreInfoTitle {
+  font-weight: 500 !important;
+}
+
+.moreInfoDescription {
+  font-size: 10px !important;
+  line-height: 12px !important;
+}

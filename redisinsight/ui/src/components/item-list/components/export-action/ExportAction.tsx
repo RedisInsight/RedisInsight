@@ -3,23 +3,24 @@ import {
   EuiButton,
   EuiCheckbox,
   EuiFlexGroup,
-  EuiFlexItem, EuiFormRow,
+  EuiFlexItem,
+  EuiFormRow,
   EuiIcon,
   EuiPopover,
   EuiText,
 } from '@elastic/eui'
-import { Instance } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
 
 import styles from '../styles.module.scss'
 
-export interface Props {
-  selection: Instance[]
-  onExport: (instances: Instance[], withSecrets: boolean) => void
+export interface Props<T> {
+  selection: T[]
+  onExport: (instances: T[], withSecrets: boolean) => void
+  subTitle: string
 }
 
-const ExportAction = (props: Props) => {
-  const { selection, onExport } = props
+const ExportAction = <T extends { id: string; name?: string }>(props: Props<T>) => {
+  const { selection, onExport, subTitle } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [withSecrets, setWithSecrets] = useState(true)
 
@@ -48,25 +49,11 @@ const ExportAction = (props: Props) => {
       data-testid="export-popover"
     >
       <EuiText size="m">
-        <p className={styles.popoverSubTitle}>
-          Selected
-          {' '}
-          {selection.length}
-          {' '}
-          databases will be exported from
-          RedisInsight Databases:
-        </p>
+        <p className={styles.popoverSubTitle}>{subTitle}</p>
       </EuiText>
-      <div
-        className={styles.boxSection}
-      >
-        {selection.map((select: Instance) => (
-          <EuiFlexGroup
-            key={select.id}
-            gutterSize="s"
-            responsive={false}
-            className={styles.nameList}
-          >
+      <div className={styles.boxSection}>
+        {selection.map((select) => (
+          <EuiFlexGroup key={select.id} gutterSize="s" responsive={false} className={styles.nameList}>
             <EuiFlexItem grow={false}>
               <EuiIcon type="check" />
             </EuiFlexItem>

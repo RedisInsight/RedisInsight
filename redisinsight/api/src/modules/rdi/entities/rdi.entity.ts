@@ -18,11 +18,11 @@ export class RdiEntity {
 
   @Expose()
   @Column({ nullable: true })
-  host: string;
+  host?: string;
 
   @Expose()
   @Column({ nullable: true })
-  port: number;
+  port?: number;
 
   @Expose()
   @Column({ nullable: false })
@@ -39,4 +39,8 @@ export class RdiEntity {
   @Expose()
   @Column({ type: 'datetime', nullable: true })
   lastConnection: Date;
+
+  @Expose()
+  @Column({ nullable: false })
+  version: string;
 }

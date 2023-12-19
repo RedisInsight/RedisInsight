@@ -6,12 +6,13 @@ import ExportAction from './ExportAction'
 
 describe('ExportAction', () => {
   it('should render', () => {
-    expect(render(<ExportAction selection={[]} onExport={jest.fn()} />)).toBeTruthy()
+    expect(render(<ExportAction subTitle="" selection={[]} onExport={jest.fn()} />)).toBeTruthy()
   })
 
   it('should call onExport with proper data', () => {
     const onExport = jest.fn()
     render(<ExportAction
+      subTitle=""
       selection={INSTANCES_MOCK}
       onExport={onExport}
     />)
@@ -25,6 +26,7 @@ describe('ExportAction', () => {
   it('should call onExport with proper data', () => {
     const onExport = jest.fn()
     render(<ExportAction
+      subTitle=""
       selection={INSTANCES_MOCK}
       onExport={onExport}
     />)

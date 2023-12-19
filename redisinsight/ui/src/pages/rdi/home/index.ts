@@ -1,3 +1,3 @@
-import RdiList from './RDIList'
+import RdiPage from './RdiPage'
 
-export default RdiList
+export default RdiPage

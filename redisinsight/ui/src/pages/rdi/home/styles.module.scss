@@ -1,0 +1,25 @@
+@import "@elastic/eui/src/global_styling/index";
+
+.page {
+  padding: 16px 0 0 !important;
+
+  @include euiBreakpoint("m", "l", "xl") {
+    padding: 16px 12px 10px !important;
+  }
+}
+
+.header {
+  padding-bottom: 16px;
+}
+
+.emptyPanel {
+  height: calc(100vh - 160px);
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 123px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

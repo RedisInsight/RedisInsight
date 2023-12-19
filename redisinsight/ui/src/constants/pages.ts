@@ -28,6 +28,7 @@ export enum PageNames {
 
 const redisCloud = '/redis-cloud'
 const sentinel = '/sentinel'
+const rdi = '/integrate'
 
 export const Pages = {
   home: '/',
@@ -55,9 +56,9 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
   rdi: '/integrate',
-  rdiPipeline: (rdiInstance: string) => `integrate/${rdiInstance}/pipeline`,
-  rdiPipelineConfig: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
-  rdiPipelinePrepare: (rdiInstance: string) => `/integrate/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
+  rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline`,
+  rdiPipelineConfig: (rdiInstance: string) => `/${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
+  rdiPipelinePrepare: (rdiInstance: string) => `/${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
-    `/integrate/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
+    `/${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

@@ -1,6 +1,7 @@
 enum BrowserStorageItem {
   instancesCount = 'instancesCount',
   instancesSorting = 'instancesSorting',
+  rdiInstancesSorting = 'rdiInstancesSorting',
   theme = 'theme',
   browserViewType = 'browserViewType',
   browserSearchMode = 'browserSearchMode',

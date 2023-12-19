@@ -31,7 +31,7 @@ fixture `Encryption`
     .afterEach(async() => {
         await databaseHelper.deleteDatabase(ossStandaloneTlsConfig.databaseName);
     });
-test('Verify that data encrypted using KEY', async t => {
+test.only('Verify that data encrypted using KEY', async t => {
     const decryptionError = 'Unable to decrypt data';
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneTlsConfig.databaseName);

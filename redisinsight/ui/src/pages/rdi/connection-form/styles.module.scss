@@ -1,0 +1,22 @@
+@import '@elastic/eui/src/global_styling/index';
+
+.connectionFormPanel {
+  @include euiScrollBar;
+
+  overflow: auto;
+  position: relative;
+
+  height: calc(100vh - 261px);
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 123px);
+  }
+}
+
+.passwordField {
+  padding-left: 12px !important;
+}
+
+.testConnectionBtn {
+  border-color: transparent !important;
+}

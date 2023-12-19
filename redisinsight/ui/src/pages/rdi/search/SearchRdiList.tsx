@@ -28,7 +28,7 @@ const SearchRdiList = () => {
     )
 
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SEARCHED,
+      event: TelemetryEvent.RDI_INSTANCE_LIST_SEARCHED,
       eventData: {
         instancesFullCount: instances.length,
         instancesSearchedCount: visibleItems.filter(({ visible }) => (visible))?.length,

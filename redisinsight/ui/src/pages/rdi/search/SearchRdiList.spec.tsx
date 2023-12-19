@@ -74,7 +74,7 @@ describe('SearchRdiList', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SEARCHED,
+      event: TelemetryEvent.RDI_INSTANCE_LIST_SEARCHED,
       eventData: {
         instancesFullCount: 2,
         instancesSearchedCount: 1,

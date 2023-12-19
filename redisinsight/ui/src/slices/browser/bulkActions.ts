@@ -37,7 +37,11 @@ const bulkActionsSlice = createSlice({
   name: 'bulkActions',
   initialState,
   reducers: {
-    setBulkActionsInitialState: () => initialState,
+    setBulkActionsInitialState: (state) => {
+      state.bulkUpload?.abortController?.abort()
+
+      return initialState
+    },
 
     setBulkDeleteStartAgain: (state) => {
       state.bulkDelete = initialState.bulkDelete
@@ -103,9 +107,10 @@ const bulkActionsSlice = createSlice({
       state.bulkDelete.loading = false
     },
 
-    bulkUpload: (state) => {
+    bulkUpload: (state, { payload }: PayloadAction<{ abortController: AbortController }>) => {
       state.bulkUpload.loading = true
       state.bulkUpload.error = ''
+      state.bulkUpload.abortController = payload.abortController
     },
 
     bulkUploadSuccess: (state, { payload }: PayloadAction<{ data: IBulkActionOverview, fileName?: string }>) => {
@@ -166,7 +171,9 @@ export function bulkUploadDataAction(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
-    dispatch(bulkUpload())
+    const abortController = new AbortController()
+
+    dispatch(bulkUpload({ abortController }))
 
     try {
       const { status, data } = await apiService.post(
@@ -179,7 +186,8 @@ export function bulkUploadDataAction(
           headers: {
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data'
-          }
+          },
+          signal: abortController.signal
         }
       )
 
@@ -188,10 +196,13 @@ export function bulkUploadDataAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error as AxiosError)
-      dispatch(addErrorNotification(error as AxiosError))
-      dispatch(bulkUploadFailed(errorMessage))
-      onFailAction?.()
+      // show error when request wasn't aborted only
+      if (!abortController.signal.aborted) {
+        const errorMessage = getApiErrorMessage(error as AxiosError)
+        dispatch(addErrorNotification(error as AxiosError))
+        dispatch(bulkUploadFailed(errorMessage))
+        onFailAction?.()
+      }
     }
   }
 }

@@ -34,7 +34,7 @@ export interface Props {
   onCancel: () => void
 }
 
-const MAX_MB_FILE = 100
+const MAX_MB_FILE = 3_000
 const MAX_FILE_SIZE = MAX_MB_FILE * 1024 * 1024
 
 const BulkUpload = (props: Props) => {

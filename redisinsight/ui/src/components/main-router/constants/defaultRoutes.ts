@@ -78,8 +78,8 @@ const ROUTES: IRoute[] = [
     ],
   },
   {
-    path: Pages.rdi,
-    component: RdiPage,
+    path: '/integrate/:rdiInstanceId',
+    component: RdiPipeline,
     routes: RDI_ROUTES
   },
   {

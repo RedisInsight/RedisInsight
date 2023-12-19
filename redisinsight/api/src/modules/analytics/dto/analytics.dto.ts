@@ -36,4 +36,13 @@ export class SendEventDto {
   @IsOptional()
   @IsBoolean()
   nonTracking: boolean = false;
+
+  @ApiPropertyOptional({
+    description: 'User data.',
+    type: Object,
+    example: { telemetry: true },
+  })
+  @IsOptional()
+  @ValidateNested()
+  traits: Object = {};
 }

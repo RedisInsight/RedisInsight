@@ -28,6 +28,10 @@
 .time {
   padding-right: 6px;
   color: var(--euiTextSubduedColor) !important;
+
+  &.disabled {
+    opacity: 0.5;
+  }
 }
 
 .summary {

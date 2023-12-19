@@ -210,7 +210,7 @@ const BrowserPage = () => {
     }))
   }
 
-  const selectKey = ({ rowData }: { rowData: any }) => {
+  const selectKey = useCallback(({ rowData }: { rowData: any }) => {
     if (!isEqualBuffers(rowData.name, selectedKeyRef.current)) {
       dispatch(toggleBrowserFullScreen(false))
 
@@ -219,7 +219,7 @@ const BrowserPage = () => {
       closeRightPanels()
       prevSelectedType.current = rowData.type
     }
-  }
+  }, [])
 
   const closePanel = () => {
     dispatch(toggleBrowserFullScreen(true))

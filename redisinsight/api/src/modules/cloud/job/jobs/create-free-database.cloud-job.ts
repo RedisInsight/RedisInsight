@@ -128,7 +128,11 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
         timeout: cloudConfig.cloudDatabaseConnectionTimeout,
       });
 
-      this.result = { resourceId: database.id };
+      this.result = {
+        resourceId: database.id,
+        region: freeSubscription?.region,
+        provider: freeSubscription?.provider,
+      };
 
       this.changeState({ status: CloudJobStatus.Finished });
 

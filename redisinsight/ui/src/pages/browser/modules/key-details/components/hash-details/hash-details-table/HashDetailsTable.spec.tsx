@@ -1,16 +1,17 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 import { KeyValueCompressor, TEXT_DISABLED_COMPRESSED_VALUE } from 'uiSrc/constants'
 import { hashDataSelector } from 'uiSrc/slices/browser/hash'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
-import { act, fireEvent, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
+import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { HashDetailsTable, Props } from './HashDetailsTable'
 
 const mockedProps = mock<Props>()
-const fields: Array<{ field: RedisResponseBufferType, value: RedisResponseBufferType }> = [
+const fields: Array<{ field: any, value: any }> = [
   { field: { type: 'Buffer', data: [49] }, value: { type: 'Buffer', data: [49, 65] } },
   { field: { type: 'Buffer', data: [49, 50, 51] }, value: { type: 'Buffer', data: [49, 11] } },
   { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] } },
@@ -38,6 +39,13 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     compressor: null,
   }),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('HashDetailsTable', () => {
   it('should render', () => {
@@ -92,8 +100,8 @@ describe('HashDetailsTable', () => {
         fields: [
           { field: anyToBuffer(GZIP_COMPRESSED_VALUE_1), value: anyToBuffer(GZIP_COMPRESSED_VALUE_2) },
         ]
-      })
-      hashDataSelector.mockImplementation(hashDataSelectorMock)
+      });
+      (hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock)
 
       const { queryByTestId, queryAllByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
       const fieldEl = queryAllByTestId(/hash-field-/)?.[0]
@@ -105,22 +113,22 @@ describe('HashDetailsTable', () => {
 
     it('edit button should be disabled if data was compressed', async () => {
       const defaultState = jest.requireActual('uiSrc/slices/browser/hash').initialState
-      const hashDataSelectorMock = jest.fn().mockReturnValue({
+      const hashDataSelectorMock = jest.fn().mockReturnValueOnce({
         ...defaultState,
         total: 1,
         key: '123zxczxczxc',
         fields: [
           { field: anyToBuffer(GZIP_COMPRESSED_VALUE_1), value: anyToBuffer(GZIP_COMPRESSED_VALUE_2) },
         ]
-      })
-      hashDataSelector.mockImplementation(hashDataSelectorMock)
+      });
+      (hashDataSelector as jest.Mock).mockImplementationOnce(hashDataSelectorMock);
 
-      connectedInstanceSelector.mockImplementation(() => ({
+      (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))
 
       const { queryByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
-      const editBtn = queryByTestId(/edit-hash-button/)
+      const editBtn = queryByTestId(/edit-hash-button/)!
 
       fireEvent.click(editBtn)
 
@@ -133,5 +141,20 @@ describe('HashDetailsTable', () => {
       expect(screen.getByTestId('hash-edit-tooltip')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
       expect(queryByTestId('hash-value-editor')).not.toBeInTheDocument()
     })
+  })
+
+  it('should disable refresh after click on edit', async () => {
+    render(<HashDetailsTable {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    await act(() => {
+      fireEvent.click(screen.queryAllByTestId(/edit-hash-button/)[0])
+    })
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 })

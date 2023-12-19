@@ -209,4 +209,4 @@ const KeyTree = forwardRef((props: Props, ref) => {
   )
 })
 
-export default KeyTree
+export default React.memo(KeyTree)

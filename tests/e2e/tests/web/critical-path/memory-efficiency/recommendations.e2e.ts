@@ -39,7 +39,7 @@ fixture `Memory Efficiency Recommendations`
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
-    .afterEach(async t => {
+    .afterEach(async() => {
         // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -174,7 +174,7 @@ test.skip
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
     })
-    .after(async t => {
+    .after(async() => {
         // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);

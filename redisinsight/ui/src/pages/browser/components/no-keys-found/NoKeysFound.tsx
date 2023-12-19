@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { EuiIcon, EuiTitle, EuiText, EuiSpacer, EuiButton } from '@elastic/eui'
+import { EuiTitle, EuiText, EuiSpacer, EuiButton, EuiImage } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useParams } from 'react-router-dom'
@@ -46,10 +46,10 @@ const NoKeysFound = (props: Props) => {
 
   return (
     <div className={styles.container} data-testid="no-result-found-msg">
-      <EuiIcon
+      <EuiImage
         className={styles.img}
-        type={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
-        size="original"
+        src={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
+        alt="no results image"
       />
       <EuiSpacer size="l" />
       <EuiText>No Keys to Display</EuiText>

@@ -29,46 +29,33 @@ a[target="_blank"], a.euiLink[target="_blank"] {
 a.externalLink {
   display: inline;
   position: relative;
+  padding-right: 1em;
+  line-height: 1;
+
+  &:before, &:after {
+    display: inline-flex;
+    content: '';
+    position: absolute;
+  }
 
   &:before {
-    display: block;
-    content: '';
-    width: 10px;
+    width: 0.8em;
     height: 1px;
-    transform: rotate(-45deg);
-    position: absolute;
-    right: 0;
-    bottom: 6px;
+    transform: rotate(135deg) translate(0, 50%);
+    transform-origin: 50%;
+    right: -0.1em;
+    top: 50%;
     background-color: currentColor;
+    border-radius: 100% 0 0 100%;
   }
 
   &:after {
-    display: inline-flex;
-    content: '';
-    width: 6px;
-    height: 6px;
+    width: 0.5em;
+    height: 0.5em;
     border-right: 1px solid currentColor;
     border-bottom: 1px solid currentColor;
-
-    position: relative;
-    top: -3px;
-    right: 1px;
+    top: 0.2em;
+    right: 0;
     transform: rotate(-90deg);
-    margin-left: 6px;
-  }
-
-  &.externalLink {
-    &-sm {
-      &:before {
-        width: 8px;
-        bottom: 5px;
-      }
-      &:after {
-        width: 5px;
-        height: 5px;
-        top: -2px;
-        right: 1px;
-      }
-    }
   }
 }

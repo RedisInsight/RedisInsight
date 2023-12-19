@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.36.0",
+  "version": "2.38.0",
   "description": "RedisInsight API",
   "private": true,
   "author": {
@@ -42,7 +42,8 @@
     "word-wrap": "1.2.4",
     "mocha/minimatch": "^3.0.5",
     "@nestjs/platform-socket.io/socket.io": "^4.7.1",
-    "**/semver": "^7.5.2"
+    "**/semver": "^7.5.2",
+    "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.11",

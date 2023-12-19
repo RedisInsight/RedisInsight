@@ -4,7 +4,7 @@ import {
   describe,
   deps,
   fsExtra,
-  getMainCheckFn,
+  getMainCheckFn, sleep
 } from '../deps';
 import { constants } from '../../helpers/constants';
 import * as defaultConfig from '../../../config/features-config.json';
@@ -88,6 +88,9 @@ describe('POST /features/sync', () => {
         const [config] = await featureConfigRepository.find();
 
         expect(config).to.eq(undefined);
+
+        // flaky test. wait for a while
+        await sleep(1000);
       },
       statusCode: 200,
       checkFn: async () => {

@@ -233,7 +233,7 @@ test('Certificates import with/without path', async t => {
 });
 test('Import SSH parameters', async t => {
     const sshAgentsResult = 'SSH Agents are not supported';
-    const sshPrivateKey = '-----BEGIN OPENSSH PRIVATE KEY-----';
+    // const sshPrivateKey = '-----BEGIN OPENSSH PRIVATE KEY-----';
 
     await databasesActions.importDatabase(racompSSHData);
     // Fully imported table with SSH

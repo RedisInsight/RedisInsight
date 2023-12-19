@@ -266,9 +266,8 @@ export class AddRedisDatabase {
     /**
      * set copressor value in dropdown
      * @param compressor - compressor value
-     * @param value - checkbox value
      */
-    async setCompressorValue(compressor: string){
+    async setCompressorValue(compressor: string): Promise<void> {
 
         if(!await this.selectCompressor.exists) {
             await t.click(this.dataCompressorLabel);

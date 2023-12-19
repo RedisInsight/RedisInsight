@@ -117,7 +117,7 @@ test
         // Validate Databases section
         await t
             .click(myRedisDatabasePage.AddRedisDatabase.cloneSentinelDatabaseNavigation)
-            .expect(myRedisDatabasePage.AddRedisDatabase.masterGroupPassword.getAttribute('value')).eql(ossSentinelConfig.masters[1].password, 'Invalid sentinel database password');
+            .expect(myRedisDatabasePage.AddRedisDatabase.masterGroupPassword.getAttribute('value')).eql(hiddenPassword, 'Invalid sentinel database password');
         // Validate Sentinel section
         await t
             .click(myRedisDatabasePage.AddRedisDatabase.cloneSentinelNavigation)

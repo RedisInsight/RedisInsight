@@ -19,13 +19,13 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-const sendEventTelemetry = async ({ event, eventData = {} }: ITelemetrySendEvent) => {
+const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData })
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData, traits })
   } catch (e) {
     // continue regardless of error
   }

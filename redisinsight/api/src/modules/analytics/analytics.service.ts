@@ -13,6 +13,7 @@ export interface ITelemetryEvent {
   event: string;
   eventData: Object;
   nonTracking: boolean;
+  traits?: Object;
 }
 
 export interface ITelemetryInitEvent {
@@ -43,7 +44,7 @@ export class AnalyticsService {
 
   private appVersion: string = '2.0.0';
 
-  private analytics;
+  private analytics: Analytics;
 
   constructor(
     private settingsService: SettingsService,
@@ -80,7 +81,9 @@ export class AnalyticsService {
       // for analytics is granted or not.
       // If permissions not granted
       // anonymousId will includes "00000000-0000-0000-0000-000000000001" value without any user identifiers.
-      const { event, eventData, nonTracking } = payload;
+      const {
+        event, eventData, nonTracking, traits = {},
+      } = payload;
       const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
 
       if (isAnalyticsGranted || nonTracking) {
@@ -90,8 +93,9 @@ export class AnalyticsService {
           event,
           context: {
             traits: {
+              ...traits,
               telemetry: isAnalyticsGranted ? Telemetry.Enabled : Telemetry.Disabled,
-            }
+            },
           },
           properties: {
             ...eventData,
@@ -118,7 +122,9 @@ export class AnalyticsService {
       // user in any way. When `nonTracking` is True, the event is sent regardless of whether the user's permission
       // for analytics is granted or not.
       // If permissions not granted anonymousId includes "UNSET" value without any user identifiers.
-      const { event, eventData, nonTracking } = payload;
+      const {
+        event, eventData, nonTracking, traits = {},
+      } = payload;
       const isAnalyticsGranted = await this.checkIsAnalyticsGranted();
 
       if (isAnalyticsGranted || nonTracking) {
@@ -128,8 +134,9 @@ export class AnalyticsService {
           integrations: { Amplitude: { session_id: this.sessionId } },
           context: {
             traits: {
+              ...traits,
               telemetry: isAnalyticsGranted ? Telemetry.Enabled : Telemetry.Disabled,
-            }
+            },
           },
           properties: {
             ...eventData,

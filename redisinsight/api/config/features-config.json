@@ -1,5 +1,5 @@
 {
-  "version": 2.3402,
+  "version": 2.3403,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -46,6 +46,22 @@
           }
         }
       }
+    },
+    "cloudSsoRecommendedSettings": {
+      "flag": true,
+      "perc": [[0, 50]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        },
+        {
+          "name": "agreements.analytics",
+          "value": true,
+          "cond": "eq"
+        }
+      ]
     },
     "redisModuleFilter": {
       "flag": true,

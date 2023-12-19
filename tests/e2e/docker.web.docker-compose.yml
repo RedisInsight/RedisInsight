@@ -39,6 +39,8 @@ services:
     logging:
       driver: none
     image: riv2:latest
+    environment:
+      RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
     env_file:
       - ./.env
     volumes:

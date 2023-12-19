@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-import { AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios'
 import { ApiEndpoints, BulkActionsType, MAX_BULK_ACTION_ERRORS_LENGTH } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { AppDispatch, RootState } from '../store'
@@ -37,11 +37,7 @@ const bulkActionsSlice = createSlice({
   name: 'bulkActions',
   initialState,
   reducers: {
-    setBulkActionsInitialState: (state) => {
-      state.bulkUpload?.abortController?.abort()
-
-      return initialState
-    },
+    setBulkActionsInitialState: () => initialState,
 
     setBulkDeleteStartAgain: (state) => {
       state.bulkDelete = initialState.bulkDelete
@@ -107,10 +103,9 @@ const bulkActionsSlice = createSlice({
       state.bulkDelete.loading = false
     },
 
-    bulkUpload: (state, { payload }: PayloadAction<{ abortController: AbortController }>) => {
+    bulkUpload: (state) => {
       state.bulkUpload.loading = true
       state.bulkUpload.error = ''
-      state.bulkUpload.abortController = payload.abortController
     },
 
     bulkUploadSuccess: (state, { payload }: PayloadAction<{ data: IBulkActionOverview, fileName?: string }>) => {
@@ -119,9 +114,12 @@ const bulkActionsSlice = createSlice({
       state.bulkUpload.fileName = payload.fileName
     },
 
-    bulkUploadFailed: (state, { payload }) => {
+    bulkUploadFailed: (state, { payload }: PayloadAction<Maybe<string>>) => {
       state.bulkUpload.loading = false
-      state.bulkUpload.error = payload
+
+      if (payload) {
+        state.bulkUpload.error = payload
+      }
     },
   },
 })
@@ -162,6 +160,9 @@ export const bulkActionsUploadSummarySelector = (state: RootState) =>
 // The reducer
 export default bulkActionsSlice.reducer
 
+// eslint-disable-next-line import/no-mutable-exports
+export let uploadController: Nullable<AbortController> = null
+
 // Thunk actions
 // Asynchronous thunk action
 export function bulkUploadDataAction(
@@ -171,11 +172,12 @@ export function bulkUploadDataAction(
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
-    const abortController = new AbortController()
-
-    dispatch(bulkUpload({ abortController }))
+    dispatch(bulkUpload())
 
     try {
+      uploadController?.abort()
+      uploadController = new AbortController()
+
       const { status, data } = await apiService.post(
         getUrl(
           id,
@@ -187,22 +189,33 @@ export function bulkUploadDataAction(
             Accept: 'application/json',
             'Content-Type': 'multipart/form-data'
           },
-          signal: abortController.signal
+          signal: uploadController.signal
         }
       )
+
+      uploadController = null
 
       if (isStatusSuccessful(status)) {
         dispatch(bulkUploadSuccess({ data, fileName: uploadFile.fileName }))
         onSuccessAction?.()
       }
     } catch (error) {
-      // show error when request wasn't aborted only
-      if (!abortController.signal.aborted) {
+      // show error when request wasn't aborted
+      if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error as AxiosError)
         dispatch(addErrorNotification(error as AxiosError))
         dispatch(bulkUploadFailed(errorMessage))
         onFailAction?.()
+      } else {
+        dispatch(bulkUploadFailed())
       }
     }
+  }
+}
+
+export function resetBulkActions() {
+  return async (dispatch: AppDispatch) => {
+    uploadController?.abort()
+    dispatch(setBulkActionsInitialState())
   }
 }

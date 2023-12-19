@@ -20,7 +20,8 @@ import {
   bulkActionsUploadSelector,
   bulkActionsUploadSummarySelector,
   bulkUploadDataAction,
-  setBulkUploadStartAgain
+  setBulkUploadStartAgain,
+  uploadController
 } from 'uiSrc/slices/browser/bulkActions'
 
 import BulkActionsInfo from 'uiSrc/pages/browser/components/bulk-actions/BulkActionsInfo'
@@ -88,6 +89,11 @@ const BulkUpload = (props: Props) => {
     }
   }
 
+  const handleClickCancel = () => {
+    uploadController?.abort()
+    onCancel?.()
+  }
+
   return (
     <div className={styles.container} data-testid="bulk-upload-container">
       {!isCompleted ? (
@@ -147,7 +153,7 @@ const BulkUpload = (props: Props) => {
       <div className={styles.footer}>
         <EuiButton
           color="secondary"
-          onClick={onCancel}
+          onClick={handleClickCancel}
           className={styles.cancelBtn}
           data-testid="bulk-action-cancel-btn"
         >

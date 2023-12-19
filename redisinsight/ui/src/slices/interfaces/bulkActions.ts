@@ -23,7 +23,6 @@ export interface StateBulkActions {
     error: string
     overview: Nullable<IBulkActionOverview>
     fileName?: string
-    abortController?: AbortController
   }
 }
 

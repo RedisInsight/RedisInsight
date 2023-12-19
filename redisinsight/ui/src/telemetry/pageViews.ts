@@ -9,5 +9,6 @@ export enum TelemetryPageView {
   PUBSUB_PAGE = 'Pub/Sub',
   DATABASE_ANALYSIS = 'Database Analysis',
   TRIGGERED_FUNCTIONS = 'Triggers and Functions',
-  RDI_CONFIG = 'RDI Configuration'
+  RDI_CONFIG = 'RDI Configuration',
+  RDI_JOBS = 'RDI Jobs',
 }

@@ -137,6 +137,17 @@ export abstract class IoredisClient extends RedisClient {
     await this.client.punsubscribe(channel);
   }
 
+  /**
+   * @inheritDoc
+   */
+  async monitor(): Promise<any> {
+    if (this.client instanceof Redis) {
+      return this.client.monitor();
+    }
+
+    return undefined;
+  }
+
   async disconnect(): Promise<void> {
     this.client.disconnect();
   }

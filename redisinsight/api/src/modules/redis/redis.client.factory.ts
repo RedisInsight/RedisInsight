@@ -81,12 +81,12 @@ export class RedisClientFactory implements OnModuleInit {
     options: IRedisConnectionOptions = {},
   ): Promise<RedisClient> {
     const opts = RedisClientFactory.prepareConnectionOptions(options);
+    const connectionStrategy = this.getConnectionStrategy(opts.clientLib);
 
     // try sentinel connection
     if (database.sentinelMaster) {
       try {
-        return await this.getConnectionStrategy(opts.clientLib)
-          .createSentinelClient(clientMetadata, database, opts);
+        return connectionStrategy.createSentinelClient(clientMetadata, database, opts);
       } catch (e) {
         // ignore error
       }
@@ -94,15 +94,13 @@ export class RedisClientFactory implements OnModuleInit {
 
     // try cluster connection
     try {
-      return await this.getConnectionStrategy(opts.clientLib)
-        .createClusterClient(clientMetadata, database, opts);
+      return await connectionStrategy.createClusterClient(clientMetadata, database, opts);
     } catch (e) {
       // ignore error
     }
 
     // Standalone in any other case
-    return this.getConnectionStrategy(opts.clientLib)
-      .createStandaloneClient(clientMetadata, database, opts);
+    return connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
   }
 
   /**
@@ -125,21 +123,19 @@ export class RedisClientFactory implements OnModuleInit {
     });
 
     const opts = RedisClientFactory.prepareConnectionOptions(options);
+    const connectionStrategy = this.getConnectionStrategy(opts.clientLib);
 
-    let client;
+    let client: RedisClient;
 
     switch (database.connectionType) {
       case ConnectionType.STANDALONE:
-        client = await this.getConnectionStrategy(opts.clientLib)
-          .createStandaloneClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
         break;
       case ConnectionType.CLUSTER:
-        client = await this.getConnectionStrategy(opts.clientLib)
-          .createClusterClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createClusterClient(clientMetadata, database, opts);
         break;
       case ConnectionType.SENTINEL:
-        client = await this.getConnectionStrategy(opts.clientLib)
-          .createSentinelClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createSentinelClient(clientMetadata, database, opts);
         break;
       default:
         // AUTO

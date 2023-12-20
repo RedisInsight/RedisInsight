@@ -87,6 +87,14 @@ export abstract class NodeRedisClient extends RedisClient {
   /**
    * @inheritDoc
    */
+  async monitor(): Promise<any> {
+    // TODO: Implement this method after the monitor in the node-redis is available.
+    return undefined;
+  }
+
+  /**
+   * @inheritDoc
+   */
   async disconnect(): Promise<void> {
     this.client.disconnect();
   }

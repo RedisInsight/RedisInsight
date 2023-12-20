@@ -21,14 +21,7 @@ export interface InitialStateRdiInstances {
   error: string
   data: RdiInstance[]
   connectedInstance: RdiInstance
-  editedInstance: InitialStateEditedRdiInstances
   loadingChanging: boolean
   errorChanging: string
   changedSuccessfully: boolean
-}
-
-export interface InitialStateEditedRdiInstances {
-  loading: boolean
-  error: string
-  data: Nullable<RdiInstance>
 }

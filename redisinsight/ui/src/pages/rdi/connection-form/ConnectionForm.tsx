@@ -10,8 +10,10 @@ import {
   EuiSplitPanel,
   EuiTitle
 } from '@elastic/eui'
-import { Formik } from 'formik'
-import React from 'react'
+import { Field, FieldInputProps, Form, Formik, FormikErrors } from 'formik'
+import React, { useEffect, useState } from 'react'
+
+import { RdiInstance } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -23,74 +25,116 @@ interface ConnectionFormValues {
 }
 
 export interface Props {
-  onAddInstance: () => void
+  onAddInstance: (instance: Partial<RdiInstance>) => void
   onCancel: () => void
+  editInstance: RdiInstance | null
 }
 
-const ConnectionForm = ({ onAddInstance, onCancel }: Props) => {
-  const initialValues: ConnectionFormValues = {
-    name: '',
-    url: '',
-    username: '',
-    password: ''
-  }
+const buildInitialValues = (values: RdiInstance | null): ConnectionFormValues => ({
+  name: values?.name || '',
+  url: values?.url || '',
+  username: values?.username || '',
+  password: values?.password || ''
+})
+
+const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
+  const [initialFormValues, setInitialFormValues] = useState(buildInitialValues(editInstance))
+
+  useEffect(() => {
+    setInitialFormValues(buildInitialValues(editInstance))
+  }, [editInstance])
 
   const onSubmit = (formValues: ConnectionFormValues) => {
-    console.log(formValues)
+    onAddInstance(formValues)
+  }
+
+  const validate = (values: ConnectionFormValues) => {
+    const errors: FormikErrors<ConnectionFormValues> = {}
+
+    if (!values.url) {
+      errors.url = 'Required'
+    } else if (!values.username) {
+      errors.username = 'Required'
+    } else if (!values.password) {
+      errors.password = 'Required'
+    }
+
+    return errors
   }
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      <EuiForm component="form">
-        <EuiSplitPanel.Outer className={styles.connectionFormPanel} borderRadius="none">
-          <EuiSplitPanel.Inner>
-            <EuiTitle size="s">
-              <h3>Connect to RDI</h3>
-            </EuiTitle>
-            <EuiSpacer />
-            <EuiFormRow label="RDI Alias" fullWidth>
-              <EuiFieldText name="name" fullWidth placeholder="Enter RDI Alias" />
-            </EuiFormRow>
-            <EuiFormRow label="URL*" fullWidth>
-              <EuiFieldText name="url" fullWidth placeholder="Enter URL" />
-            </EuiFormRow>
-            <EuiFormRow label="Username*" fullWidth>
-              <EuiFieldText name="username" fullWidth placeholder="Enter Username" />
-            </EuiFormRow>
-            <EuiFormRow label="Password*" fullWidth>
-              <EuiFieldPassword
-                name="password"
-                className={styles.passwordField}
-                fullWidth
-                placeholder="Enter Password"
-              />
-            </EuiFormRow>
-          </EuiSplitPanel.Inner>
-          <EuiSplitPanel.Inner grow={false}>
-            <EuiFlexGroup justifyContent="spaceBetween">
-              <EuiFlexItem grow={false}>
-                <EuiButton size="s" className={styles.testConnectionBtn}>
-                  Test Connection
-                </EuiButton>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiFlexGroup gutterSize="s">
+    <Formik enableReinitialize initialValues={initialFormValues} validate={validate} onSubmit={onSubmit}>
+      {({ isSubmitting, isValid }) => (
+        <Form>
+          <EuiForm component="div">
+            <EuiSplitPanel.Outer className={styles.connectionFormPanel} borderRadius="none">
+              <EuiSplitPanel.Inner>
+                <EuiTitle size="s">
+                  <h3>Connect to RDI</h3>
+                </EuiTitle>
+                <EuiSpacer />
+                <EuiFormRow label="RDI Alias" fullWidth>
+                  <Field name="name">
+                    {({ field }: { field: FieldInputProps<string> }) => (
+                      <EuiFieldText fullWidth placeholder="Enter RDI Alias" maxLength={500} {...field} />
+                    )}
+                  </Field>
+                </EuiFormRow>
+                <EuiFormRow label="URL*" fullWidth>
+                  <Field name="url">
+                    {({ field }: { field: FieldInputProps<string> }) => (
+                      <EuiFieldText fullWidth placeholder="Enter URL" {...field} />
+                    )}
+                  </Field>
+                </EuiFormRow>
+                <EuiFormRow label="Username*" fullWidth>
+                  <Field name="username">
+                    {({ field }: { field: FieldInputProps<string> }) => (
+                      <EuiFieldText fullWidth placeholder="Enter Username" maxLength={500} {...field} />
+                    )}
+                  </Field>
+                </EuiFormRow>
+                <EuiFormRow label="Password*" fullWidth>
+                  <Field name="password">
+                    {({ field }: { field: FieldInputProps<string> }) => (
+                      <EuiFieldPassword
+                        className={styles.passwordField}
+                        fullWidth
+                        placeholder="Enter Password"
+                        maxLength={500}
+                        {...field}
+                      />
+                    )}
+                  </Field>
+                </EuiFormRow>
+              </EuiSplitPanel.Inner>
+              <EuiSplitPanel.Inner grow={false}>
+                <EuiFlexGroup justifyContent="spaceBetween">
                   <EuiFlexItem grow={false}>
-                    <EuiButton size="s" onClick={onCancel}>
-                      Cancel
+                    <EuiButton size="s" className={styles.testConnectionBtn}>
+                      Test Connection
                     </EuiButton>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
-                    <EuiButton size="s" fill color="secondary" onClick={onAddInstance}>
-                      Add Instance
-                    </EuiButton>
+                    <EuiFlexGroup gutterSize="s">
+                      <EuiFlexItem grow={false}>
+                        <EuiButton size="s" onClick={onCancel}>
+                          Cancel
+                        </EuiButton>
+                      </EuiFlexItem>
+                      <EuiFlexItem grow={false}>
+                        <EuiButton type="submit" size="s" fill color="secondary" disabled={!isValid || isSubmitting}>
+                          Add Instance
+                        </EuiButton>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
                   </EuiFlexItem>
                 </EuiFlexGroup>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiSplitPanel.Inner>
-        </EuiSplitPanel.Outer>
-      </EuiForm>
+              </EuiSplitPanel.Inner>
+            </EuiSplitPanel.Outer>
+          </EuiForm>
+        </Form>
+      )}
     </Formik>
   )
 }

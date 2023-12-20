@@ -7,6 +7,7 @@ import config from 'src/utils/config';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
+import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
 
 const serverConfig = config.get('server');
 
@@ -105,7 +106,8 @@ export class RedisObserverProvider {
    */
   private getRedisClientFn(clientMetadata: ClientMetadata): () => Promise<RedisClient> {
     return async () => withTimeout(
-      this.databaseClientFactory.createClient(clientMetadata),
+      // workaround: use ioredis client for profiler until node-redis lib add support for "monitor" command
+      this.databaseClientFactory.createClient(clientMetadata, { clientLib: RedisClientLib.IOREDIS }),
       serverConfig.requestTimeout,
       new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
     );

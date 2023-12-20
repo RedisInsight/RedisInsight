@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Database } from 'src/modules/database/models/database';
 import { cloneClassInstance } from 'src/utils';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
-import { ClientContext, ClientMetadata } from 'src/common/models';
+import { ClientMetadata } from 'src/common/models';
 import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { RedisClient } from 'src/modules/redis/client';
@@ -81,11 +81,7 @@ export class RedisClientFactory implements OnModuleInit {
     options: IRedisConnectionOptions = {},
   ): Promise<RedisClient> {
     const opts = RedisClientFactory.prepareConnectionOptions(options);
-    let connectionStrategy = await this.getConnectionStrategy(opts.clientLib);
-
-    if (clientMetadata.context === ClientContext.Profiler) {
-      connectionStrategy = this.ioredisConnectionStrategy;
-    }
+    const connectionStrategy = this.getConnectionStrategy(opts.clientLib);
 
     // try sentinel connection
     if (database.sentinelMaster) {
@@ -98,15 +94,13 @@ export class RedisClientFactory implements OnModuleInit {
 
     // try cluster connection
     try {
-      return await this.getConnectionStrategy(opts.clientLib)
-        .createClusterClient(clientMetadata, database, opts);
+      return await connectionStrategy.createClusterClient(clientMetadata, database, opts);
     } catch (e) {
       // ignore error
     }
 
     // Standalone in any other case
-    return this.getConnectionStrategy(opts.clientLib)
-      .createStandaloneClient(clientMetadata, database, opts);
+    return connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
   }
 
   /**
@@ -129,23 +123,19 @@ export class RedisClientFactory implements OnModuleInit {
     });
 
     const opts = RedisClientFactory.prepareConnectionOptions(options);
-    let connectionStrategy = await this.getConnectionStrategy(opts.clientLib);
+    const connectionStrategy = this.getConnectionStrategy(opts.clientLib);
 
-    if (clientMetadata.context === ClientContext.Profiler) {
-      connectionStrategy = this.ioredisConnectionStrategy;
-    }
-
-    let client;
+    let client: RedisClient;
 
     switch (database.connectionType) {
       case ConnectionType.STANDALONE:
-        client = connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createStandaloneClient(clientMetadata, database, opts);
         break;
       case ConnectionType.CLUSTER:
-        client = connectionStrategy.createClusterClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createClusterClient(clientMetadata, database, opts);
         break;
       case ConnectionType.SENTINEL:
-        client = connectionStrategy.createSentinelClient(clientMetadata, database, opts);
+        client = await connectionStrategy.createSentinelClient(clientMetadata, database, opts);
         break;
       default:
         // AUTO

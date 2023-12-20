@@ -6,7 +6,7 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
-import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
@@ -47,13 +47,14 @@ export class DatabaseClientFactory {
    * for some business logic
    * ! Will be not automatically closed by idle time
    * @param clientMetadata
+   * @param options
    */
-  async createClient(clientMetadata: ClientMetadata): Promise<RedisClient> {
+  async createClient(clientMetadata: ClientMetadata, options?: IRedisConnectionOptions): Promise<RedisClient> {
     this.logger.log('Creating new redis client.');
     const database = await this.databaseService.get(clientMetadata.databaseId);
 
     try {
-      const client = await this.redisClientFactory.createClient(clientMetadata, database);
+      const client = await this.redisClientFactory.createClient(clientMetadata, database, options);
 
       if (database.connectionType === ConnectionType.NOT_CONNECTED) {
         await this.repository.update(database.id, {

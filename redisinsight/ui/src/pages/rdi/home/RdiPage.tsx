@@ -2,11 +2,12 @@ import { EuiPage, EuiPageBody, EuiPanel, EuiResizableContainer, EuiResizeObserve
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   createInstanceAction,
+  editInstanceAction,
   fetchInstancesAction,
-  instancesSelector,
-  setEditedInstance
+  instancesSelector
 } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import EmptyMessage from './components/EmptyMessage'
@@ -19,6 +20,7 @@ import styles from './styles.module.scss'
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
   const [isConnectionFormOpen, setIsConnectionFormOpen] = useState(false)
+  const [editInstance, setEditInstance] = useState<RdiInstance | null>(null)
 
   const { data, loading, loadingChanging } = useSelector(instancesSelector)
 
@@ -26,29 +28,23 @@ const RdiPage = () => {
 
   useEffect(() => {
     dispatch(fetchInstancesAction())
-
-    return () => {
-      dispatch(setEditedInstance(null))
-    }
   }, [])
 
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)
   }
 
-  const handleAddInstance = () => {
-    dispatch(
-      createInstanceAction({
-        name: 'My first integration',
-        url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
-        version: '1.2',
-        username: 'username',
-        password: 'password'
-      })
-    )
-    dispatch(fetchInstancesAction())
-    dispatch(setEditedInstance(null))
+  const handleAddInstance = (instance: Partial<RdiInstance>) => {
+    const name = instance.name === '' ? instance.url : instance.name
+
+    if (editInstance) {
+      dispatch(editInstanceAction({ ...editInstance, ...instance, name }))
+    } else {
+      dispatch(createInstanceAction({ ...instance, name }))
+    }
+
     setIsConnectionFormOpen(false)
+    setEditInstance(null)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_SUBMITTED
     })
@@ -63,15 +59,26 @@ const RdiPage = () => {
 
   const handleCloseConnectionForm = () => {
     setIsConnectionFormOpen(false)
+    setEditInstance(null)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED
     })
   }
 
+  const handleEditInstance = (instance: RdiInstance) => {
+    setEditInstance(instance)
+    setIsConnectionFormOpen(true)
+  }
+
+  const handleDeleteInstance = () => {
+    setEditInstance(null)
+    setIsConnectionFormOpen(false)
+  }
+
   const InstanceList = () =>
     (!data.length ? (
       <EuiPanel className={styles.emptyPanel} borderRadius="none">
-        {!loading && !loadingChanging && <EmptyMessage />}
+        {!loading && !loadingChanging && <EmptyMessage onAddInstanceClick={handleOpenConnectionForm} />}
       </EuiPanel>
     ) : (
       <EuiResizeObserver onResize={onResize}>
@@ -80,9 +87,9 @@ const RdiPage = () => {
             <RdiInstancesListWrapper
               width={width}
               dialogIsOpen={isConnectionFormOpen}
-              editedInstance={null}
-              onEditInstance={() => {}}
-              onDeleteInstances={() => {}}
+              editedInstance={editInstance}
+              onEditInstance={handleEditInstance}
+              onDeleteInstances={handleDeleteInstance}
             />
           </div>
         )}
@@ -95,7 +102,9 @@ const RdiPage = () => {
         <div className={styles.header}>
           <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
         </div>
-        {isConnectionFormOpen ? (
+        {!isConnectionFormOpen ? (
+          <InstanceList />
+        ) : (
           <EuiResizableContainer style={{ height: '100%' }}>
             {(EuiResizablePanel, EuiResizableButton) => (
               <>
@@ -110,13 +119,15 @@ const RdiPage = () => {
                   paddingSize="none"
                   minSize="400px"
                 >
-                  <ConnectionForm onAddInstance={handleAddInstance} onCancel={handleCloseConnectionForm} />
+                  <ConnectionForm
+                    onAddInstance={handleAddInstance}
+                    onCancel={handleCloseConnectionForm}
+                    editInstance={editInstance}
+                  />
                 </EuiResizablePanel>
               </>
             )}
           </EuiResizableContainer>
-        ) : (
-          <InstanceList />
         )}
       </EuiPageBody>
     </EuiPage>

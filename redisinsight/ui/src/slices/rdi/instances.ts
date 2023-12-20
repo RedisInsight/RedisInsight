@@ -5,7 +5,7 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { Nullable, getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 import { AppDispatch, RootState } from '../store'
@@ -23,11 +23,6 @@ export const initialState: InitialStateRdiInstances = {
     version: '',
     lastConnection: new Date(),
     loading: false
-  },
-  editedInstance: {
-    loading: false,
-    error: '',
-    data: null
   },
   loadingChanging: false,
   errorChanging: '',
@@ -103,11 +98,6 @@ const instancesSlice = createSlice({
       }
     },
 
-    // set edited instance
-    setEditedInstance: (state, { payload }: { payload: Nullable<RdiInstance> }) => {
-      state.editedInstance.data = payload
-    },
-
     // reset connected instance
     resetConnectedInstance: (state) => {
       state.connectedInstance = initialState.connectedInstance
@@ -130,7 +120,6 @@ export const {
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
   setConnectedInstanceId,
-  setEditedInstance,
   resetConnectedInstance
 } = instancesSlice.actions
 
@@ -164,7 +153,7 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
 // Asynchronous thunk action
 export function createInstanceAction(
   payload: Partial<RdiInstance>,
-  onSuccess?: (data: RdiInstanceResponse[]) => void
+  onSuccess?: (data: RdiInstanceResponse) => void
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
@@ -177,6 +166,32 @@ export function createInstanceAction(
         dispatch(fetchInstancesAction())
 
         dispatch(addMessageNotification(successMessages.ADDED_NEW_RDI_INSTANCE(payload.name ?? '')))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(defaultInstanceChangingFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function editInstanceAction(
+  { id, ...payload }: Partial<RdiInstance>,
+  onSuccess?: (data: RdiInstanceResponse) => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(defaultInstanceChanging())
+
+    try {
+      const { status, data } = await apiService.patch(`${ApiEndpoints.RDI_INSTANCES}/${id}`, payload)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(defaultInstanceChangingSuccess())
+        dispatch(fetchInstancesAction())
+
         onSuccess?.(data)
       }
     } catch (_err) {

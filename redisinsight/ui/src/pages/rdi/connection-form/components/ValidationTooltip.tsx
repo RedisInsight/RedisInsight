@@ -5,7 +5,7 @@ import React from 'react'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { ConnectionFormValues } from '../ConnectionForm'
 
-interface Props {
+export interface Props {
   isValid: boolean
   errors: FormikErrors<ConnectionFormValues>
   children: React.ReactElement
@@ -22,6 +22,7 @@ const ValidationTooltip = ({ isValid, errors, children }: Props) => {
 
   return (
     <EuiToolTip
+      data-testid="connection-form-validation-tooltip"
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
       title={!isValid ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length) : null}

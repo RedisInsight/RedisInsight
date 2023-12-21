@@ -1,0 +1,35 @@
+import { EuiToolTip } from '@elastic/eui'
+import { FormikErrors } from 'formik'
+import React from 'react'
+
+import validationErrors from 'uiSrc/constants/validationErrors'
+import { ConnectionFormValues } from '../ConnectionForm'
+
+interface Props {
+  isValid: boolean
+  errors: FormikErrors<ConnectionFormValues>
+  children: React.ReactElement
+}
+
+const ValidationTooltip = ({ isValid, errors, children }: Props) => {
+  const tooltipContent = (
+    <ul>
+      {Object.values(errors).map((value) => (
+        <li key={value}>{value}</li>
+      ))}
+    </ul>
+  )
+
+  return (
+    <EuiToolTip
+      position="top"
+      anchorClassName="euiToolTip__btn-disabled"
+      title={!isValid ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length) : null}
+      content={!isValid ? tooltipContent : null}
+    >
+      {children}
+    </EuiToolTip>
+  )
+}
+
+export default ValidationTooltip

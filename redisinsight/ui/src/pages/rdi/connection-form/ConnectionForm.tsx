@@ -6,18 +6,22 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
+  EuiIcon,
   EuiSpacer,
   EuiSplitPanel,
-  EuiTitle
+  EuiTitle,
+  EuiToolTip
 } from '@elastic/eui'
 import { Field, FieldInputProps, Form, Formik, FormikErrors } from 'formik'
 import React, { useEffect, useState } from 'react'
 
 import { RdiInstance } from 'uiSrc/slices/interfaces'
+import SubmitButton from './components/ValidationTooltip'
 
+import ValidationTooltip from './components/ValidationTooltip'
 import styles from './styles.module.scss'
 
-interface ConnectionFormValues {
+export interface ConnectionFormValues {
   name: string
   url: string
   username: string
@@ -28,6 +32,7 @@ export interface Props {
   onAddInstance: (instance: Partial<RdiInstance>) => void
   onCancel: () => void
   editInstance: RdiInstance | null
+  isLoading: boolean
 }
 
 const buildInitialValues = (values: RdiInstance | null): ConnectionFormValues => ({
@@ -37,7 +42,33 @@ const buildInitialValues = (values: RdiInstance | null): ConnectionFormValues =>
   password: values?.password || ''
 })
 
-const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
+const UrlTooltip = () => (
+  <EuiToolTip
+    title={(
+      <div>
+        <p>
+          <b>Pasting a connection URL auto fills the instance details.</b>
+        </p>
+        <p style={{ margin: 0, paddingTop: '10px' }}>The following connection URLs are supported:</p>
+      </div>
+    )}
+    className={styles.urlTooltip}
+    anchorClassName="inputAppendIcon"
+    position="right"
+    content={(
+      <ul>
+        <li>
+          <span />
+          TBD
+        </li>
+      </ul>
+    )}
+  >
+    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+  </EuiToolTip>
+)
+
+const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Props) => {
   const [initialFormValues, setInitialFormValues] = useState(buildInitialValues(editInstance))
 
   useEffect(() => {
@@ -52,11 +83,13 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
     const errors: FormikErrors<ConnectionFormValues> = {}
 
     if (!values.url) {
-      errors.url = 'Required'
-    } else if (!values.username) {
-      errors.username = 'Required'
-    } else if (!values.password) {
-      errors.password = 'Required'
+      errors.url = 'URL'
+    }
+    if (!values.username) {
+      errors.username = 'Username'
+    }
+    if (!values.password) {
+      errors.password = 'Password'
     }
 
     return errors
@@ -64,7 +97,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
 
   return (
     <Formik enableReinitialize initialValues={initialFormValues} validate={validate} onSubmit={onSubmit}>
-      {({ isSubmitting, isValid }) => (
+      {({ isValid, errors }) => (
         <Form>
           <EuiForm component="div">
             <EuiSplitPanel.Outer className={styles.connectionFormPanel} borderRadius="none">
@@ -83,7 +116,13 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
                 <EuiFormRow label="URL*" fullWidth>
                   <Field name="url">
                     {({ field }: { field: FieldInputProps<string> }) => (
-                      <EuiFieldText fullWidth placeholder="Enter URL" {...field} />
+                      <EuiFieldText
+                        fullWidth
+                        placeholder="Enter URL"
+                        disabled={!!editInstance}
+                        append={!editInstance ? <UrlTooltip /> : undefined}
+                        {...field}
+                      />
                     )}
                   </Field>
                 </EuiFormRow>
@@ -111,9 +150,17 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
               <EuiSplitPanel.Inner grow={false}>
                 <EuiFlexGroup justifyContent="spaceBetween">
                   <EuiFlexItem grow={false}>
-                    <EuiButton size="s" className={styles.testConnectionBtn}>
-                      Test Connection
-                    </EuiButton>
+                    <ValidationTooltip isValid={isValid} errors={errors}>
+                      <EuiButton
+                        size="s"
+                        className={styles.testConnectionBtn}
+                        iconType={!isValid ? 'iInCircle' : undefined}
+                        isLoading={isLoading}
+                        disabled={!isValid}
+                      >
+                        Test Connection
+                      </EuiButton>
+                    </ValidationTooltip>
                   </EuiFlexItem>
                   <EuiFlexItem grow={false}>
                     <EuiFlexGroup gutterSize="s">
@@ -123,9 +170,19 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance }: Props) => {
                         </EuiButton>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
-                        <EuiButton type="submit" size="s" fill color="secondary" disabled={!isValid || isSubmitting}>
-                          Add Instance
-                        </EuiButton>
+                        <ValidationTooltip isValid={isValid} errors={errors}>
+                          <EuiButton
+                            type="submit"
+                            size="s"
+                            fill
+                            color="secondary"
+                            iconType={!isValid ? 'iInCircle' : undefined}
+                            isLoading={isLoading}
+                            disabled={!isValid}
+                          >
+                            Add Instance
+                          </EuiButton>
+                        </ValidationTooltip>
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </EuiFlexItem>

@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import { EuiListGroupItem, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
+import { truncateText } from 'uiSrc/utils'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 
 import styles from './styles.module.scss'
 import './styles.scss'
-import { truncateText } from 'uiSrc/utils'
 
 export interface Props {
   testId: string

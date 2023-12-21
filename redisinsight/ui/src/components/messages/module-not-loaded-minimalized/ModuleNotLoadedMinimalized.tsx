@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
-import { EuiLink, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
@@ -9,7 +9,7 @@ import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { Theme } from 'uiSrc/constants'
-import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { ExternalLink, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
@@ -46,31 +46,27 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             <EuiSpacer size="s" />
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick) => (
-                <EuiLink
-                  external={false}
-                  target="_blank"
+                <ExternalLink
+                  iconSize="s"
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     ssoCloudHandlerClick(e, source, `${moduleName}_${source}`)
                     onClose?.()
                   }}
-                  className="externalLink externalLink-sm"
                   data-testid="tutorials-get-started-link"
                 >
                   Start with Cloud for free
-                </EuiLink>
+                </ExternalLink>
               )}
             </OAuthSsoHandlerDialog>
             <EuiSpacer size="xs" />
-            <EuiLink
-              external={false}
-              target="_blank"
+            <ExternalLink
+              iconSize="s"
               href={getUtmExternalLink(EXTERNAL_LINKS.docker, { campaign: UTM_CAMPAINGS[source] ?? source })}
-              className="externalLink externalLink-sm"
               data-testid="tutorials-docker-link"
             >
               Start with Docker
-            </EuiLink>
+            </ExternalLink>
           </>
         )}
         {!!freeDbWithModule && (

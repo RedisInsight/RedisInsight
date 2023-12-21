@@ -5,10 +5,12 @@ import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementArea
 
 import styles from './styles.module.scss'
 import './styles.scss'
+import { truncateText } from 'uiSrc/utils'
 
 export interface Props {
   testId: string
   label: string
+  summary?: string
   children: React.ReactElement[] | string
   path?: string
   size?: 's' | 'xs' | 'm' | 'l'
@@ -22,6 +24,7 @@ export interface Props {
 const InternalLink = (props: Props) => {
   const {
     label,
+    summary,
     testId,
     children,
     path = '',
@@ -42,7 +45,14 @@ const InternalLink = (props: Props) => {
 
   const content = (
     <EuiToolTip content={toolTip} anchorClassName={styles.content}>
-      <>{children || label}</>
+      <>
+        <div className={styles.title}>{children || label}</div>
+        {!!summary && (
+          <div className={styles.summary}>
+            {truncateText(summary, 140)}
+          </div>
+        )}
+      </>
     </EuiToolTip>
   )
   return (

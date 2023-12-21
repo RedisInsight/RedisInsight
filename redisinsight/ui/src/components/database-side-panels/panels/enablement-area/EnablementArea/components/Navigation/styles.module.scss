@@ -1,0 +1,28 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+
+:export {
+  paddingHorizontal: 16
+}
+
+.baseGroup {
+  background-color: var(--tableLightBorderColor);
+
+  :global {
+    .group-header {
+      font-weight: 500 !important;
+    }
+  }
+}
+
+.innerContainer {
+  @include euiScrollBar;
+  padding: 8px 0 !important;
+  overflow: auto;
+  height: 100%;
+  text-align: left;
+  letter-spacing: 0;
+  color: var(--euiTextSubduedColor) !important;
+}

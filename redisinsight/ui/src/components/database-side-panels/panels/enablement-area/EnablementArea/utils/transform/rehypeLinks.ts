@@ -7,13 +7,10 @@ interface IConfig {
 }
 
 export const rehypeLinks = (config?: IConfig): (tree: Node) => void => (tree: any) => {
-  visit(tree, 'element', (node) => {
+  visit(tree, 'link', (node) => {
     if (node.tagName === 'a' && node.properties && typeof node.properties.href === 'string') {
       const url: string = node.properties.href
-      if (IS_ABSOLUTE_PATH.test(url)) { // External link
-        node.properties.rel = ['nofollow', 'noopener', 'noreferrer']
-        node.properties.target = '_blank'
-        node.properties.className = 'externalLink'
+      if (IS_ABSOLUTE_PATH.test(url)) {
         delete node.properties.title
       }
       if (url.startsWith('#') && config?.history) {

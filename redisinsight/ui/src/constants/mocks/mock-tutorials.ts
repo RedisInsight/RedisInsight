@@ -3,8 +3,8 @@ import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/inter
 export const MOCK_TUTORIALS_ITEMS: IEnablementAreaItem[] = [
   {
     type: EnablementAreaComponent.Group,
-    id: 'quick-guides',
-    label: 'Quick Guides',
+    id: 'tutorials',
+    label: 'Tutorials',
     children: [
       {
         type: EnablementAreaComponent.InternalLink,

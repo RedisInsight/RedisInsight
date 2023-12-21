@@ -3,7 +3,7 @@ import {
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiIcon, EuiLink,
+  EuiIcon,
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
@@ -16,6 +16,7 @@ import Divider from 'uiSrc/components/divider/Divider'
 import { OAuthProviders } from 'uiSrc/components/oauth/oauth-select-plan/constants'
 
 import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
+import { ExternalLink } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -117,14 +118,11 @@ export const INFINITE_MESSAGES = {
               <EuiSpacer size="m" />
               <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" gutterSize="none">
                 <EuiFlexItem grow={false}>
-                  <EuiLink
-                    external={false}
+                  <ExternalLink
                     href={MANAGE_DB_LINK}
-                    className="externalLink"
-                    target="_blank"
                   >
                     Manage DB
-                  </EuiLink>
+                  </ExternalLink>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   <EuiButton

@@ -8,6 +8,9 @@
   overflow: auto;
   @include euiScrollBar;
 
+  border: 1px solid var(--separatorColor);
+  border-radius: 4px;
+
   font-size: 11px;
   background: var(--browserTableRowEven);
   word-wrap: break-word;
@@ -64,7 +67,7 @@
     color: var(--euiTextSubduedColor) !important;
 
     :global(.euiButton__text) {
-      margin-inline-start: 4px;
+      margin-inline-start: 4px !important;
       color: var(--euiTextSubduedColor) !important;
     }
   }
@@ -74,9 +77,9 @@
   &:global(.euiButton) {
     color: var(--buttonSuccessColor) !important;
 
-    :global(.euiButtonEmpty__text) {
+    :global(.euiButton__text) {
       color: var(--buttonSuccessColor) !important;
-      margin-inline-end: 4px;
+      margin-inline-end: 4px !important;
     }
   }
 

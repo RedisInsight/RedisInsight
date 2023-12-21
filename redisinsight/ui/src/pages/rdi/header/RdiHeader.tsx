@@ -16,8 +16,8 @@ const RdiHeader = ({ onRdiInstanceClick }: Props) => (
       <EuiFlexItem>
         <EuiFlexGroup justifyContent="flexEnd" alignItems="center" gutterSize="s">
           <EuiFlexItem grow={false}>
-            <EuiButton fill size="s" color="secondary" onClick={onRdiInstanceClick} data-testid="toggle-rdi-instance-form">
-              RDI instance
+            <EuiButton fill size="s" color="secondary" onClick={onRdiInstanceClick}>
+              RDI Instance
             </EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>

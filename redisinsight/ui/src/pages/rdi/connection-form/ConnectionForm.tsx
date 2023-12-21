@@ -16,9 +16,8 @@ import { Field, FieldInputProps, Form, Formik, FormikErrors } from 'formik'
 import React, { useEffect, useState } from 'react'
 
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import SubmitButton from './components/ValidationTooltip'
-
 import ValidationTooltip from './components/ValidationTooltip'
+
 import styles from './styles.module.scss'
 
 export interface ConnectionFormValues {
@@ -44,6 +43,7 @@ const buildInitialValues = (values: RdiInstance | null): ConnectionFormValues =>
 
 const UrlTooltip = () => (
   <EuiToolTip
+    data-testid="connection-form-url-tooltip"
     title={(
       <div>
         <p>
@@ -64,7 +64,7 @@ const UrlTooltip = () => (
       </ul>
     )}
   >
-    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+    <EuiIcon data-testid="connection-form-url-icon" type="iInCircle" style={{ cursor: 'pointer' }} />
   </EuiToolTip>
 )
 
@@ -99,7 +99,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
     <Formik enableReinitialize initialValues={initialFormValues} validate={validate} onSubmit={onSubmit}>
       {({ isValid, errors }) => (
         <Form>
-          <EuiForm component="div">
+          <EuiForm component="div" data-testid="connection-form">
             <EuiSplitPanel.Outer className={styles.connectionFormPanel} borderRadius="none">
               <EuiSplitPanel.Inner>
                 <EuiTitle size="s">
@@ -109,7 +109,13 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                 <EuiFormRow label="RDI Alias" fullWidth>
                   <Field name="name">
                     {({ field }: { field: FieldInputProps<string> }) => (
-                      <EuiFieldText fullWidth placeholder="Enter RDI Alias" maxLength={500} {...field} />
+                      <EuiFieldText
+                        data-testid="connection-form-name-input"
+                        fullWidth
+                        placeholder="Enter RDI Alias"
+                        maxLength={500}
+                        {...field}
+                      />
                     )}
                   </Field>
                 </EuiFormRow>
@@ -117,6 +123,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                   <Field name="url">
                     {({ field }: { field: FieldInputProps<string> }) => (
                       <EuiFieldText
+                        data-testid="connection-form-url-input"
                         fullWidth
                         placeholder="Enter URL"
                         disabled={!!editInstance}
@@ -129,7 +136,13 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                 <EuiFormRow label="Username*" fullWidth>
                   <Field name="username">
                     {({ field }: { field: FieldInputProps<string> }) => (
-                      <EuiFieldText fullWidth placeholder="Enter Username" maxLength={500} {...field} />
+                      <EuiFieldText
+                        data-testid="connection-form-username-input"
+                        fullWidth
+                        placeholder="Enter Username"
+                        maxLength={500}
+                        {...field}
+                      />
                     )}
                   </Field>
                 </EuiFormRow>
@@ -137,6 +150,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                   <Field name="password">
                     {({ field }: { field: FieldInputProps<string> }) => (
                       <EuiFieldPassword
+                        data-testid="connection-form-password-input"
                         className={styles.passwordField}
                         fullWidth
                         placeholder="Enter Password"

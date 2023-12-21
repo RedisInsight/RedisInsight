@@ -11,12 +11,13 @@ import {
 } from '@elastic/eui'
 import { find } from 'lodash'
 import { CloudJobStep } from 'uiSrc/electron/constants'
+import ExternalLink from 'uiSrc/components/base/external-link'
 import ChampagneIcon from 'uiSrc/assets/img/icons/champagne.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { OAuthProviders } from 'uiSrc/components/oauth/oauth-select-plan/constants'
 
 import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
-import { ExternalLink } from 'uiSrc/components'
+
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {

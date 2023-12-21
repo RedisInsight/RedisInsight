@@ -37,14 +37,17 @@ const RdiPage = () => {
   const handleAddInstance = (instance: Partial<RdiInstance>) => {
     const name = instance.name === '' ? instance.url : instance.name
 
-    if (editInstance) {
-      dispatch(editInstanceAction({ ...editInstance, ...instance, name }))
-    } else {
-      dispatch(createInstanceAction({ ...instance, name }))
+    const onSuccess = () => {
+      setIsConnectionFormOpen(false)
+      setEditInstance(null)
     }
 
-    setIsConnectionFormOpen(false)
-    setEditInstance(null)
+    if (editInstance) {
+      dispatch(editInstanceAction({ ...editInstance, ...instance, name }, onSuccess))
+    } else {
+      dispatch(createInstanceAction({ ...instance, name }, onSuccess))
+    }
+
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_SUBMITTED
     })
@@ -123,6 +126,7 @@ const RdiPage = () => {
                     onAddInstance={handleAddInstance}
                     onCancel={handleCloseConnectionForm}
                     editInstance={editInstance}
+                    isLoading={loading || loadingChanging}
                   />
                 </EuiResizablePanel>
               </>

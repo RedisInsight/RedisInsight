@@ -110,9 +110,11 @@ const EnablementArea = (props: Props) => {
   }, [search, tutorials, guides])
 
   useEffect(() => {
-    const manifestPath = new URLSearchParams(search).get('path')
-    const guidePath = new URLSearchParams(search).get('guidePath')
-    const contextManifestPath = new URLSearchParams(searchEAContext).get('path')
+    const searchParams = new URLSearchParams(search)
+
+    const manifestPath = searchParams.get('path')
+    const guidePath = searchParams.get('guidePath')
+    const contextManifestPath = searchParams.get('path')
     const { manifest, prefixFolder } = getManifestByPath(manifestPath)
 
     if (guidePath || (isEmpty(manifest) && !contextManifestPath)) {

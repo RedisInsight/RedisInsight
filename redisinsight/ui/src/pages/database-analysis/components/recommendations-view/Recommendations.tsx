@@ -16,7 +16,7 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { Pages, Theme } from 'uiSrc/constants'
+import { Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -27,7 +27,6 @@ import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
-import { openNewWindowDatabase } from 'uiSrc/utils'
 
 import {
   sortRecommendations,
@@ -36,6 +35,7 @@ import {
   renderRecommendationContent,
 } from 'uiSrc/utils/recommendation/utils'
 
+import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -70,14 +70,7 @@ const Recommendations = () => {
       }
     })
 
-    // dispatch(setWorkbenchEAOpened(false))
-    if (mdPath) {
-      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
-      return
-    }
-
-    // dispatch(resetExplorePanelSearchContext())
-    history.push(Pages.workbench(instanceId))
+    dispatch(openTutorialByPath(mdPath || '', history))
   }
 
   const onRedisStackClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => event.stopPropagation()

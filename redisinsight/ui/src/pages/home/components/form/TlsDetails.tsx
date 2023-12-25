@@ -64,6 +64,7 @@ const TlsDetails = (props: Props) => {
       inputDisplay: cert.name,
     })
   })
+  console.log(formik.values.verifyServerTlsCert, formik.values.tlsClientAuthRequired)
 
   return (
     <>
@@ -219,7 +220,11 @@ const TlsDetails = (props: Props) => {
               name="tlsClientAuthRequired"
               label="Requires TLS Client Authentication"
               checked={!!formik.values.tlsClientAuthRequired}
-              onChange={formik.handleChange}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                formik.setFieldValue(
+                  'tlsClientAuthRequired',
+                  e.target.checked
+                )}
               data-testid="tls-required-checkbox"
             />
           </EuiFlexItem>

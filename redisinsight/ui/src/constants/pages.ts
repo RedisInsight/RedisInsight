@@ -57,8 +57,8 @@ export const Pages = {
   // rdi pages
   rdi: '/integrate',
   rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline`,
-  rdiPipelineConfig: (rdiInstance: string) => `/${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
-  rdiPipelinePrepare: (rdiInstance: string) => `/${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
+  rdiPipelineConfig: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
+  rdiPipelinePrepare: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
-    `/${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
+    `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

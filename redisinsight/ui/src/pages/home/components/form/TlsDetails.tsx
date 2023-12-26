@@ -64,7 +64,6 @@ const TlsDetails = (props: Props) => {
       inputDisplay: cert.name,
     })
   })
-  console.log(formik.values.verifyServerTlsCert, formik.values.tlsClientAuthRequired)
 
   return (
     <>

@@ -23,7 +23,7 @@ import {
   validatePortNumber,
   validateTimeoutNumber,
 } from 'uiSrc/utils'
-import { DbConnectionInfo, IPasswordType } from 'uiSrc/pages/home/interfaces'
+import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
 interface IShowFields {
   alias: boolean
@@ -39,7 +39,6 @@ export interface Props {
   onHostNamePaste: (content: string) => boolean
   showFields: IShowFields
   autoFocus?: boolean
-  passwordType?: IPasswordType
 }
 
 const DatabaseForm = (props: Props) => {
@@ -50,7 +49,6 @@ const DatabaseForm = (props: Props) => {
     onHostNamePaste,
     autoFocus = false,
     showFields,
-    passwordType = IPasswordType.Password,
   } = props
 
   const { server } = useSelector(appInfoSelector)
@@ -185,7 +183,7 @@ const DatabaseForm = (props: Props) => {
         <EuiFlexItem className={flexItemClassName}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
-              type={passwordType}
+              type="password"
               name="password"
               id="password"
               data-testid="password"

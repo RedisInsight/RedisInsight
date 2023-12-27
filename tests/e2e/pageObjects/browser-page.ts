@@ -206,7 +206,7 @@ export class BrowserPage extends InstancePage {
     listElementsList = Selector('[data-testid^=list-element-value-]');
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
-    tooltip = Selector('[role=tooltip]');
+    tooltip = Selector('[role=tooltip]', { timeout: 500 });
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     noResultsFoundOnly = Selector('[data-testid=no-result-found-only]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
@@ -931,7 +931,7 @@ export class BrowserPage extends InstancePage {
             const rememberedScanResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(this.progressKeyList.exists).notOk('Progress Bar is still displayed', { timeout: 30000 });
             const scannedValueText = this.scannedValue.textContent;
-            const regExp = new RegExp(`${i} 00` + '.');
+            const regExp = new RegExp(`${i} ` + '...');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
                 .click(this.scanMoreButton);

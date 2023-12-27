@@ -12,8 +12,8 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 import {
-  InsightsRecommendationsFlagStrategy,
-} from 'src/modules/feature/providers/feature-flag/strategies/insights-recommendations.flag.strategy';
+  CommonFlagStrategy,
+} from 'src/modules/feature/providers/feature-flag/strategies/common.flag.strategy';
 import {
   FeatureConfigFilter,
   FeatureConfigFilterAnd,
@@ -45,7 +45,7 @@ describe('FeatureFlagStrategy', () => {
 
     settingsService = module.get(SettingsService);
     featuresConfigService = module.get(FeaturesConfigService);
-    service = new InsightsRecommendationsFlagStrategy(
+    service = new CommonFlagStrategy(
       featuresConfigService as unknown as FeaturesConfigService,
       settingsService as unknown as SettingsService,
     );

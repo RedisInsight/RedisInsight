@@ -6,6 +6,7 @@ import {
   refreshKey,
   selectedKeyDataSelector,
   selectedKeySelector,
+  setSelectedKeyRefreshDisabled,
 } from 'uiSrc/slices/browser/keys'
 import {
   KeyTypes,
@@ -57,7 +58,10 @@ const StringDetails = (props: Props) => {
       title="Edit Value"
       tooltipContent={editToolTip}
       isEditable={isStringEditable && isEditable}
-      onEditItem={() => setEditItem(!editItem)}
+      onEditItem={() => {
+        dispatch(setSelectedKeyRefreshDisabled(!editItem))
+        setEditItem(!editItem)
+      }}
     />
   )
 
@@ -75,7 +79,10 @@ const StringDetails = (props: Props) => {
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
             <StringDetailsTable
               isEditItem={editItem}
-              setIsEdit={(isEdit: boolean) => setEditItem(isEdit)}
+              setIsEdit={(isEdit: boolean) => {
+                setEditItem(isEdit)
+                dispatch(setSelectedKeyRefreshDisabled(isEdit))
+              }}
               onRefresh={handleRefreshKey}
             />
           </div>

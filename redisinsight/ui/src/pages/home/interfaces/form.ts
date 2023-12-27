@@ -23,7 +23,7 @@ export interface DbConnectionInfo extends Instance {
   showCompressor?: boolean
   sni?: boolean
   sentinelMasterUsername?: string
-  sentinelMasterPassword?: string
+  sentinelMasterPassword?: string | true
   sentinelMasterName?: string
   ssh?: boolean
   sshPassType?: string
@@ -39,9 +39,4 @@ export interface ISubmitButton {
   onClick: () => void
   text?: string
   submitIsDisabled?: boolean
-}
-
-export enum IPasswordType {
-  Password = 'password',
-  Dual = 'dual',
 }

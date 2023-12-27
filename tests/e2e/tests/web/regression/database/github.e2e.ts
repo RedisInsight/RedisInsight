@@ -1,4 +1,3 @@
-// import {ClientFunction} from 'testcafe';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
@@ -9,7 +8,6 @@ import { Common } from '../../../../helpers/common';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
-// const getPageUrl = ClientFunction(() => window.location.href);
 
 fixture `Github functionality`
     .meta({ type: 'regression', rte: rte.standalone })

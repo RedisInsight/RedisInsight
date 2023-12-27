@@ -6,18 +6,20 @@ import { get } from 'lodash'
 import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
 import { createFreeDbJob, createFreeDbSuccess, oauthCloudJobSelector, oauthCloudSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { CloudImportDatabaseResources } from 'uiSrc/slices/interfaces/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { CustomErrorCodes } from 'uiSrc/constants'
+import { BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
+import { localStorageService } from 'uiSrc/services'
 
 const OAuthJobs = () => {
   const {
     status,
     error,
     step,
-    result: { resourceId = '' } = {},
+    result,
   } = useSelector(oauthCloudJobSelector) ?? {}
   const { showProgress } = useSelector(oauthCloudSelector)
 
@@ -33,21 +35,22 @@ const OAuthJobs = () => {
         break
 
       case CloudJobStatus.Finished:
-        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(resourceId, history))))
+        dispatch(fetchInstancesAction(() => dispatch(createFreeDbSuccess(result, history))))
         dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
+        localStorageService.remove(BrowserStorageItem.OAuthJobId)
         break
 
       case CloudJobStatus.Failed:
 
         const errorCode = get(error, 'errorCode', 0) as CustomErrorCodes
         const subscriptionId = get(error, 'resource.subscriptionId', 0)
-        const databaseId = get(error, 'resource.databaseId', 0)
+        const resources = get(error, 'resource', {}) as CloudImportDatabaseResources
         // eslint-disable-next-line sonarjs/no-nested-switch
         switch (errorCode) {
           case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:
             dispatch(addInfiniteNotification(
               INFINITE_MESSAGES.DATABASE_EXISTS(
-                () => importDatabase(subscriptionId, databaseId),
+                () => importDatabase(resources),
                 closeImportDatabase,
               )
             ))
@@ -73,15 +76,15 @@ const OAuthJobs = () => {
       default:
         break
     }
-  }, [status, error, step, resourceId, showProgress])
+  }, [status, error, step, result, showProgress])
 
-  const importDatabase = (subscriptionId: number, databaseId: number) => {
+  const importDatabase = (resources: CloudImportDatabaseResources) => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE,
     })
     dispatch(createFreeDbJob({
       name: CloudJobName.ImportFreeDatabase,
-      resources: { subscriptionId, databaseId },
+      resources,
       onSuccessAction: () => {
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.databaseExists))
         dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))

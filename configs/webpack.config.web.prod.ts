@@ -79,8 +79,6 @@ const configuration: webpack.Configuration = {
       RI_APP_PORT: '5000',
       API_PREFIX: '',
       BASE_API_URL: 'api/',
-      RESOURCES_BASE_URL:
-        process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
       SCAN_COUNT_DEFAULT: '500',
       SCAN_TREE_COUNT_DEFAULT: '10000',
       PIPELINE_COUNT_DEFAULT: '5',

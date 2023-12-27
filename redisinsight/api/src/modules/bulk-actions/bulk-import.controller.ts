@@ -1,16 +1,17 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, HttpCode, Post,
+  Controller, HttpCode, Post, Req,
   UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
+import * as Busboy from 'busboy';
+import { Readable } from 'stream';
+import { Request } from 'express';
 import {
   ApiConsumes, ApiTags,
 } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
-import { FormDataRequest } from 'nestjs-form-data';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
-import { UploadImportFileDto } from 'src/modules/bulk-actions/dto/upload-import-file.dto';
 import { ClientMetadataParam } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
@@ -26,7 +27,6 @@ export class BulkImportController {
   @Post('import')
   @ApiConsumes('multipart/form-data')
   @HttpCode(200)
-  @FormDataRequest()
   @ApiEndpoint({
     description: 'Import data from file',
     responses: [
@@ -36,10 +36,21 @@ export class BulkImportController {
     ],
   })
   async import(
-    @Body() dto: UploadImportFileDto,
+    @Req() req: Request,
       @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<IBulkActionOverview> {
-    return this.service.import(clientMetadata, dto);
+    return new Promise((res, rej) => {
+      const busboy = Busboy({ headers: req.headers });
+
+      busboy.on(
+        'file',
+        (_fieldName: string, fileStream: Readable) => {
+          this.service.import(clientMetadata, fileStream).then(res).catch(rej);
+        },
+      );
+
+      req.pipe(busboy);
+    });
   }
 
   @Post('import/tutorial-data')

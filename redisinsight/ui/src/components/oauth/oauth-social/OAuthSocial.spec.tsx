@@ -58,7 +58,10 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'Google',
         action: 'create',
-        recommendedSettings: 'not displayed'
+        cloudRecommendedSettings: 'not displayed'
+      },
+      traits: {
+        cloudRecommendedSettings: 'not displayed'
       }
     })
 
@@ -85,7 +88,10 @@ describe('OAuthSocial', () => {
       eventData: {
         accountOption: 'GitHub',
         action: 'create',
-        recommendedSettings: 'not displayed'
+        cloudRecommendedSettings: 'not displayed'
+      },
+      traits: {
+        cloudRecommendedSettings: 'not displayed'
       }
     })
 
@@ -121,7 +127,10 @@ describe('OAuthSocial', () => {
         eventData: {
           accountOption: 'Google',
           action: 'create',
-          recommendedSettings: 'enabled'
+          cloudRecommendedSettings: 'enabled'
+        },
+        traits: {
+          cloudRecommendedSettings: 'enabled'
         }
       })
 
@@ -148,7 +157,10 @@ describe('OAuthSocial', () => {
         eventData: {
           accountOption: 'GitHub',
           action: 'create',
-          recommendedSettings: 'enabled'
+          cloudRecommendedSettings: 'enabled'
+        },
+        traits: {
+          cloudRecommendedSettings: 'enabled'
         }
       })
 
@@ -178,7 +190,8 @@ describe('OAuthSocial', () => {
         eventData: {
           accountOption: 'Google',
           action: 'import',
-        }
+        },
+        traits: {}
       })
 
       expect(invokeMock).toBeCalledTimes(1)

@@ -40,18 +40,25 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
   const getAction = () => (isAutodiscovery ? 'import' : 'create')
 
-  const sendTelemetry = (accountOption: string) => sendEventTelemetry({
-    event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
-    eventData: {
-      accountOption,
-      action: getAction(),
-      recommendedSettings: isAutodiscovery
-        ? undefined
-        : (!isRecommendedFeatureEnabled?.flag
-          ? 'not displayed'
-          : (isRecommended ? 'enabled' : 'disabled'))
-    }
-  })
+  const sendTelemetry = (accountOption: string) => {
+    const cloudRecommendedSettings = isAutodiscovery
+      ? undefined
+      : (!isRecommendedFeatureEnabled?.flag
+        ? 'not displayed'
+        : (isRecommended ? 'enabled' : 'disabled'))
+
+    return sendEventTelemetry({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption,
+        action: getAction(),
+        cloudRecommendedSettings
+      },
+      traits: {
+        cloudRecommendedSettings
+      }
+    })
+  }
 
   const handleClickSso = () => {
     dispatch(signIn())

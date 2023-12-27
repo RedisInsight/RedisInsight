@@ -244,7 +244,7 @@ describe('slices', () => {
         }]
       }
 
-      // Actч
+      // Act
       const nextState = reducer(currentState, deleteWBCustomTutorialSuccess(id))
 
       // Assert

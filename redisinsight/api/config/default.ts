@@ -55,6 +55,7 @@ export default {
     pluginsAssetsUri: '/static/resources/plugins',
     base: process.env.RI_BASE || '/',
     secretStoragePassword: process.env.SECRET_STORAGE_PASSWORD,
+    encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.SERVER_STATIC_CONTENT || false,

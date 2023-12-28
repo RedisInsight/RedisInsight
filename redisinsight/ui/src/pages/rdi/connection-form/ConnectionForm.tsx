@@ -193,6 +193,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                             iconType={!isValid ? 'iInCircle' : undefined}
                             isLoading={isLoading}
                             disabled={!isValid}
+                            data-testid="add-instance-btn"
                           >
                             Add Instance
                           </EuiButton>

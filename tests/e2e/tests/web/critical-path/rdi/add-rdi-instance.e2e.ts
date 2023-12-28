@@ -25,6 +25,8 @@ fixture `Rdi instance`
 test('Verify that user can add and remove RDI', async() => {
 
     await t.navigateTo('http://localhost:8080/integrate');
+    await t.setPageLoadTimeout(10000);
+
     await rdiInstancePage.addRdi(rdiInstance);
     //TODO verify header
     const addRdiInstance = await rdiInstancePage.getRdiInstanceValuesByIndex(0);
@@ -46,7 +48,7 @@ test('Verify that user can add and remove RDI', async() => {
 });
 test
     .after(async() => {
-        await t.typeText(rdiInstancePage.searchInput, '');
+        await t.typeText(rdiInstancePage.searchInput, '', { replace: true });
         await rdiInstancePage.deleteAllRdi();
     })('Verify that user can search by RDI', async() => {
 
@@ -58,6 +60,7 @@ test
             version: '1.2'
         };
         await t.navigateTo('http://localhost:8080/integrate');
+        await t.setPageLoadTimeout(5000);
 
         await rdiInstancePage.addRdi(rdiInstance);
         await rdiInstancePage.addRdi(rdiInstance2);

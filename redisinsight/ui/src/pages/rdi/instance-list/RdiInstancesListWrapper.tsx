@@ -143,7 +143,8 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       name: 'RDI Version',
       dataType: 'string',
       sortable: true,
-      width: '100px'
+      width: '100px',
+      'data-test-subj': 'rdi-instance-version-column',
     },
     {
       field: 'lastConnection',
@@ -152,6 +153,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       dataType: 'date',
       align: 'right',
       width: '170px',
+      'data-test-subj': 'rdi-instance-last-connection-column',
       sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
       render: (date: Date) => lastConnectionFormat(date)
     },

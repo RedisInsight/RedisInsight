@@ -24,8 +24,7 @@ fixture `Rdi instance`
     });
 test('Verify that user can add and remove RDI', async() => {
 
-    await t.navigateTo('http://localhost:8080/integrate');
-    await t.setPageLoadTimeout(10000);
+    await t.navigateTo('https://localhost:5000/integrate');
 
     await rdiInstancePage.addRdi(rdiInstance);
     //TODO verify header
@@ -59,8 +58,7 @@ test
             password: 'pass',
             version: '1.2'
         };
-        await t.navigateTo('http://localhost:8080/integrate');
-        await t.setPageLoadTimeout(5000);
+        await t.navigateTo('https://localhost:5000/integrate');
 
         await rdiInstancePage.addRdi(rdiInstance);
         await rdiInstancePage.addRdi(rdiInstance2);

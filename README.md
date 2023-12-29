@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
 
-RedisInsight is a visual tool that provides capabilities to design, develop, and optimize your Redis application. Query, analyze, and interact with your Redis data.
+RedisInsight is a visual tool that provides capabilities to design, develop, and optimize your Redis application.
 Query, analyse and interact with your Redis data. [Download it here](https://redis.com/redis-enterprise/redis-insight/#insight-form)!
 
 ![RedisInsight Browser screenshot](/.github/redisinsight_browser.png)

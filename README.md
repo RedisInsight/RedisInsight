@@ -24,7 +24,7 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 * CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets, and Streams
 * CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
 * Interactive tutorials to learn easily, among other things, how to leverage the native JSON data structure supporting structured querying and full-text search, including vector similarity search for your AI use cases
-* Contextualised recommendations to optimize performance and memory usage. The list of recommendations gets updated as you interact with your database. 
+* Contextualised recommendations to optimize performance and memory usage. The list of recommendations gets updated as you interact with your database
 * Profiler - analyze every command sent to Redis in real-time
 * SlowLog - analyze slow operations in Redis instances based on the [Slowlog](https://github.com/RedisInsight/RedisInsight/releases#:~:text=results%20of%20the-,Slowlog,-command%20to%20analyze) command
 * Pub/Sub - support for [Redis pub/sub](https://redis.io/docs/manual/pubsub/), enabling subscription to channels and posting messages to channels

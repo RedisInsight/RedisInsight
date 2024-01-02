@@ -158,7 +158,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         await workbenchPage.deleteTutorialByName(tutorialName);
         await t.expect(workbenchPage.tutorialAccordionButton.withText(tutorialName).exists)
-        .notOk(`${tutorialName} tutorial is not deleted`);
+            .notOk(`${tutorialName} tutorial is not deleted`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can bulk upload data from custom tutorial', async t => {
         const allKeysResults = ['9Commands Processed', '9Success', '0Errors'];

@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import PopoverItemEditor from 'uiSrc/components/popover-item-editor'
 import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  setSelectedKeyRefreshDisabled,
+  updateSelectedKeyRefreshTime
+} from 'uiSrc/slices/browser/keys'
 
 import {
   streamGroupsSelector,
@@ -175,6 +179,7 @@ const GroupsViewWrapper = (props: Props) => {
 
     setGroups(newGroupsState)
     setEditValue(lastDeliveredId)
+    dispatch(setSelectedKeyRefreshDisabled(true))
   }
 
   const columns: ITableColumn[] = [
@@ -300,7 +305,11 @@ const GroupsViewWrapper = (props: Props) => {
               btnTestId={`edit-stream-last-id-${lastDeliveredId}`}
               isOpen={editing}
               onOpen={() => handleEditId(name, lastDeliveredId)}
-              onApply={() => handleApplyEditId(name)}
+              onDecline={() => dispatch(setSelectedKeyRefreshDisabled(false))}
+              onApply={() => {
+                handleApplyEditId(name)
+                dispatch(setSelectedKeyRefreshDisabled(false))
+              }}
               className={styles.editLastId}
               isDisabled={!editValue.length || !!idError}
               isLoading={loading}

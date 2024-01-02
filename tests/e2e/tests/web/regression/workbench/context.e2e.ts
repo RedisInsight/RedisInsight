@@ -50,7 +50,7 @@ test('Verify that user can see saved CLI size when navigates away to any other p
 test('Verify that user can see all the information removed when reloads the page', async t => {
     const command = 'FT._LIST';
     // Create context modificaions and navigate to Browser
-    await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed});
+    await t.typeText(workbenchPage.queryInput, command, { replace: true, speed: speed });
     await t.click(workbenchPage.Cli.cliExpandButton);
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Open Workbench page and verify context

@@ -12,7 +12,7 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const command = 'GRAPH.QUERY graph';
 
 fixture `Cypher syntax at Workbench`
-    .meta({type: 'regression', rte: rte.standalone})
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);

@@ -57,11 +57,11 @@ formattersHighlightedSet.forEach(formatter => {
                 // Verify that value is formatted and highlighted
                 await t.expect(valueSelector.find(browserPage.cssJsonValue).exists).ok(`${key.textType} Value is not formatted to ${formatter.format}`);
                 // Verify that Hash field is formatted and highlighted for JSON and PHP serialized
-                if (key.keyName === 'hash') {
+                if (key.textType === 'Hash') {
                     await t.expect(browserPage.hashField.find(browserPage.cssJsonValue).exists).ok(`Hash field is not formatted to ${formatter.format}`);
                 }
                 // Verify that Stream field is formatted and highlighted for JSON and PHP serialized
-                if (key.keyName === 'stream') {
+                if (key.textType === 'Stream') {
                     await t.expect(Selector(browserPage.cssJsonValue).count).eql(2, `Hash field is not formatted to ${formatter.format}`);
                 }
             }
@@ -193,10 +193,10 @@ notEditableFormattersSet.forEach(formatter => {
         // Verify for Protobuf, Java serialized, Pickle
         // Verify for Hash, List, ZSet, String keys
         for (const key of keysData) {
-            if (key.keyName === 'hash' || key.keyName === 'list' || key.keyName === 'zset' || key.keyName === 'string') {
-                const editBtn = (key.keyName === 'string')
+            if (key.textType === 'Hash' || key.textType === 'List' || key.textType === 'String') {
+                const editBtn = (key.textType === 'String')
                     ? browserPage.editKeyValueButton
-                    : Selector(`[data-testid^=edit-][data-testid*=${key.keyName.split('-')[0]}]`);
+                    : Selector(`[data-testid*=edit-][data-testid*=${key.keyName.split('-')[0]}]`, { timeout: 500 });
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that edit button disabled
@@ -205,6 +205,13 @@ notEditableFormattersSet.forEach(formatter => {
                 await t.hover(editBtn);
                 // Verify tooltip content
                 await t.expect(browserPage.tooltip.textContent).contains('Cannot edit the value in this format', 'Tooltip has wrong text');
+            }
+            if (key.textType === 'Sorted Set') {
+                const editBtn = Selector(`[data-testid*=edit-][data-testid*=${key.keyName.split('-')[0]}]`, { timeout: 500 });
+                await browserPage.openKeyDetailsByKeyName(key.keyName);
+                await browserPage.selectFormatter(formatter.format);
+                // Verify that edit button enabled for ZSet
+                await t.expect(editBtn.hasAttribute('disabled')).notOk(`Key ${key.textType} is disabled for ${formatter.format} formatter`);
             }
         }
     });

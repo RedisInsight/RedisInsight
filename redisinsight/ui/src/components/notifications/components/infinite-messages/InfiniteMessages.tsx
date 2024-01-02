@@ -1,6 +1,22 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiLoadingSpinner, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon, EuiLink,
+  EuiLoadingSpinner,
+  EuiSpacer,
+  EuiText,
+  EuiTitle
+} from '@elastic/eui'
+import { find } from 'lodash'
 import { CloudJobStep } from 'uiSrc/electron/constants'
+import ChampagneIcon from 'uiSrc/assets/img/icons/champagne.svg'
+import Divider from 'uiSrc/components/divider/Divider'
+import { OAuthProviders } from 'uiSrc/components/oauth/oauth-select-plan/constants'
+
+import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
+import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
   oAuthProgress = 'oAuthProgress',
@@ -10,6 +26,9 @@ export enum InfiniteMessagesIds {
   subscriptionExists = 'subscriptionExists',
   appUpdateAvailable = 'appUpdateAvailable',
 }
+
+// TODO: after merge insights - remove and change to function
+const MANAGE_DB_LINK = 'https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
 
 export const INFINITE_MESSAGES = {
   PENDING_CREATE_DB: (step?: CloudJobStep) => ({
@@ -44,37 +63,87 @@ export const INFINITE_MESSAGES = {
       </div>
     )
   }),
-  SUCCESS_CREATE_DB: (onSuccess: () => void) => ({
-    id: InfiniteMessagesIds.oAuthSuccess,
-    Inner: (
-      <div
-        role="presentation"
-        onMouseDown={(e) => { e.preventDefault() }}
-        onMouseUp={(e) => { e.preventDefault() }}
-        data-testid="success-create-db-notification"
-      >
-        <EuiTitle className="infiniteMessage__title"><span>Congratulations!</span></EuiTitle>
-        <EuiText size="xs">
-          You can now use your Redis Stack database in Redis Cloud
-          to start exploring all its developer capabilities via RedisInsight tutorials.
-        </EuiText>
-        <EuiSpacer size="m" />
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="none">
-          <EuiFlexItem grow={false}>
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              onClick={() => onSuccess()}
-              data-testid="notification-connect-db"
-            >
-              Get started
-            </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </div>
-    )
-  }),
+  SUCCESS_CREATE_DB: (details: Omit<CloudSuccessResult, 'resourceId'>, onSuccess: () => void) => {
+    const vendor = find(OAuthProviders, ({ id }) => id === details.provider)
+    return ({
+      id: InfiniteMessagesIds.oAuthSuccess,
+      className: 'wide',
+      Inner: (
+        <div
+          role="presentation"
+          onMouseDown={(e) => { e.preventDefault() }}
+          onMouseUp={(e) => { e.preventDefault() }}
+          data-testid="success-create-db-notification"
+        >
+          <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
+            <EuiFlexItem className="infiniteMessage__icon" grow={false}>
+              <EuiIcon type={ChampagneIcon} size="original" />
+            </EuiFlexItem>
+            <EuiFlexItem grow>
+              <EuiTitle className="infiniteMessage__title"><span>Congratulations!</span></EuiTitle>
+              <EuiText size="xs">
+                You can now use your Redis Stack database in Redis Cloud.
+                <EuiSpacer size="s" />
+                <b>Notice:</b> the database will be deleted after 15 days of inactivity.
+              </EuiText>
+              {!!details && (
+                <>
+                  <EuiSpacer size="m" />
+                  <Divider variant="fullWidth" />
+                  <EuiSpacer size="m" />
+                  <EuiFlexGroup className={styles.detailsRow} justifyContent="spaceBetween" gutterSize="none">
+                    <EuiFlexItem grow={false}><EuiText size="xs">Plan</EuiText></EuiFlexItem>
+                    <EuiFlexItem grow={false} data-testid="notification-details-plan">
+                      <EuiText size="xs">Free</EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                  <EuiFlexGroup className={styles.detailsRow} justifyContent="spaceBetween" gutterSize="none">
+                    <EuiFlexItem grow={false}>
+                      <EuiText size="xs">Cloud Vendor</EuiText>
+                    </EuiFlexItem>
+                    <EuiFlexItem className={styles.vendorLabel} grow={false} data-testid="notification-details-vendor">
+                      {!!vendor?.icon && <EuiIcon type={vendor?.icon} />}
+                      <EuiText size="xs">{vendor?.label}</EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                  <EuiFlexGroup className={styles.detailsRow} justifyContent="spaceBetween" gutterSize="none">
+                    <EuiFlexItem grow={false}><EuiText size="xs">Region</EuiText></EuiFlexItem>
+                    <EuiFlexItem grow={false} data-testid="notification-details-region">
+                      <EuiText size="xs">{details.region}</EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </>
+              )}
+              <EuiSpacer size="m" />
+              <EuiFlexGroup justifyContent="spaceBetween" alignItems="center" gutterSize="none">
+                <EuiFlexItem grow={false}>
+                  <EuiLink
+                    external={false}
+                    href={MANAGE_DB_LINK}
+                    className="externalLink"
+                    target="_blank"
+                  >
+                    Manage DB
+                  </EuiLink>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiButton
+                    fill
+                    size="s"
+                    color="secondary"
+                    onClick={() => onSuccess()}
+                    data-testid="notification-connect-db"
+                  >
+                    Connect
+                  </EuiButton>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </div>
+      )
+    })
+  },
   DATABASE_EXISTS: (onSuccess?: () => void, onClose?: () => void) => ({
     id: InfiniteMessagesIds.databaseExists,
     Inner: (

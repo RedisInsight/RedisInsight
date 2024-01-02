@@ -16,7 +16,7 @@ import {
 } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
+import { CommandExecutionStatus, ICliExecResultFromNode } from 'src/modules/cli/dto/cli.dto';
 import { NotFoundException } from '@nestjs/common';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Repository } from 'typeorm';
@@ -24,7 +24,6 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { KeytarDecryptionErrorException } from 'src/modules/encryption/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
 import config from 'src/utils/config';
 import { LocalCommandExecutionRepository } from 'src/modules/workbench/repositories/local-command-execution.repository';
 

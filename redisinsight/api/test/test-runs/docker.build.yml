@@ -22,10 +22,10 @@ services:
     environment:
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
       TEST_REDIS_HOST: "redis"
-      DB_SYNC: "true"
+      RI_DB_SYNC: "true"
       TEST_BE_SERVER: ${TEST_BE_SERVER}
       TEST_LOCAL_DB_FILE_PATH: "/root/.redisinsight-v2.0/redisinsight.db"
-      SECRET_STORAGE_PASSWORD: "somepassword"
+      RI_SECRET_STORAGE_PASSWORD: "somepassword"
   app:
     cap_add:
       - ipc_lock
@@ -36,11 +36,11 @@ services:
       - ${COV_FOLDER}:/root/.redisinsight-v2.0
     environment:
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
-      DB_SYNC: "true"
-      DB_MIGRATIONS: "false"
-      APP_FOLDER_NAME: ".redisinsight-v2.0"
-      SECRET_STORAGE_PASSWORD: "somepassword"
-      NOTIFICATION_UPDATE_URL: "https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json"
+      RI_DB_SYNC: "true"
+      RI_DB_MIGRATIONS: "false"
+      RI_APP_FOLDER_NAME: ".redisinsight-v2.0"
+      RI_SECRET_STORAGE_PASSWORD: "somepassword"
+      RI_NOTIFICATION_UPDATE_URL: "https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json"
       RI_FEATURES_CONFIG_URL: "http://test:5551/remote/features-config.json"
 
 networks:

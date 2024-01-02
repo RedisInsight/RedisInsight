@@ -43,7 +43,7 @@ export default async function bootstrap(): Promise<IApp> {
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
 
-  if (process.env.APP_ENV !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron') {
     SwaggerModule.setup(
       serverConfig.docPrefix,
       app,
@@ -84,6 +84,6 @@ export default async function bootstrap(): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (process.env.APP_ENV !== 'electron') {
+if (process.env.RI_APP_TYPE !== 'electron') {
   bootstrap();
 }

@@ -26,7 +26,7 @@ RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
-ENV BUILD_TYPE='DOCKER_ON_PREMISE'
+ENV RI_BUILD_TYPE='DOCKER_ON_PREMISE'
 
 WORKDIR /usr/src/app
 

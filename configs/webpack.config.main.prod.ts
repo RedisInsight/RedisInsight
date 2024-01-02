@@ -55,18 +55,18 @@ export default merge(baseConfig, {
       NODE_ENV: 'production',
       DEBUG_PROD: false,
       START_MINIMIZED: false,
-      APP_ENV: 'electron',
+      RI_APP_TYPE: 'electron',
       RI_SERVER_TLS_CERT: process.env.RI_SERVER_TLS_CERT || '',
       RI_SERVER_TLS_KEY: process.env.RI_SERVER_TLS_KEY || '',
-      APP_FOLDER_NAME: process.env.APP_FOLDER_NAME || '',
-      UPGRADES_LINK: process.env.UPGRADES_LINK || '',
+      RI_SERVE_STATICS: false,
+      RI_APP_FOLDER_NAME: process.env.RI_APP_FOLDER_NAME || '',
+      RI_UPGRADES_LINK: process.env.RI_UPGRADES_LINK || '',
       RI_APP_HOST: '127.0.0.1',
-      BUILD_TYPE: 'ELECTRON',
-      APP_VERSION: version,
-      AWS_BUCKET_NAME: 'AWS_BUCKET_NAME' in process.env ? process.env.AWS_BUCKET_NAME : '',
-      SEGMENT_WRITE_KEY: 'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+      RI_BUILD_TYPE: 'ELECTRON',
+      RI_APP_VERSION: version,
+      RI_SEGMENT_WRITE_KEY: 'RI_SEGMENT_WRITE_KEY' in process.env ? process.env.RI_SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      RI_CONNECTIONS_TIMEOUT_DEFAULT: 'RI_CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
       // cloud auth
       RI_CLOUD_IDP_AUTHORIZE_URL: 'RI_CLOUD_IDP_AUTHORIZE_URL' in process.env ? process.env.RI_CLOUD_IDP_AUTHORIZE_URL: '',

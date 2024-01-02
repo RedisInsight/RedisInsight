@@ -24,7 +24,6 @@ import {
 } from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
-import IORedis from 'ioredis';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
@@ -45,9 +44,6 @@ const mockGetKeysWithDetailsResponse: GetKeysWithDetailsResponse = {
   scanned: 0,
   keys: [getKeyInfoResponse],
 };
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.isCluster = false;
 
 describe('KeysService', () => {
   let service: KeysService;

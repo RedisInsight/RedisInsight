@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { RedisToolFactory } from 'src/modules/redis/redis-tool.factory';
 import { RedisService } from 'src/modules/redis/redis.service';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
@@ -15,7 +14,6 @@ import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
     NodeRedisConnectionStrategy,
     // todo: remove providers below
     RedisService,
-    RedisToolFactory,
     RedisConnectionFactory,
   ],
   exports: [
@@ -23,7 +21,6 @@ import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
     RedisClientFactory,
     // todo: remove providers below
     RedisService,
-    RedisToolFactory,
     RedisConnectionFactory,
   ],
 })

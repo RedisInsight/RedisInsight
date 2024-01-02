@@ -1,15 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsBoolean,
-  IsDefined,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  MaxLength,
 } from 'class-validator';
-import { Expose } from 'class-transformer';
-import { Endpoint } from 'src/common/models';
 import {
   CliOutputFormatterTypes,
 } from 'src/modules/cli/services/cli-business/output-formatter/output-formatter.interface';
@@ -19,23 +14,13 @@ export enum CommandExecutionStatus {
   Fail = 'fail',
 }
 
-export enum ClusterNodeRole {
-  All = 'ALL',
-  Master = 'MASTER',
-  Slave = 'SLAVE',
-}
-
-export class CreateCliClientDto {
-  @ApiPropertyOptional({
-    type: String,
-    example: 'workbench',
-    description: 'This namespace will be used in Redis client connection name',
-  })
-  @IsString()
-  @IsOptional()
-  @MaxLength(50)
-  @IsNotEmpty()
-  namespace: string;
+export interface ICliExecResultFromNode {
+  host: string;
+  port: number;
+  response: any;
+  status: CommandExecutionStatus;
+  slot?: number;
+  error?: any,
 }
 
 export class SendCommandDto {
@@ -59,18 +44,6 @@ export class SendCommandDto {
     )}.`,
   })
   outputFormat?: CliOutputFormatterTypes;
-}
-
-export class ClusterSingleNodeOptions extends Endpoint {
-  @ApiProperty({
-    description: 'Use redirects for OSS Cluster or not.',
-    type: Boolean,
-    default: true,
-  })
-  @IsBoolean()
-  @IsDefined()
-  @Expose()
-  enableRedirection: boolean;
 }
 
 export class SendCommandResponse {

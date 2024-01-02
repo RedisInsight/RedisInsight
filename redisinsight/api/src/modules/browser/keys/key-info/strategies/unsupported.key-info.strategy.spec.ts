@@ -1,14 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
-  mockRedisConsumer,
-  mockRedisNoPermError,
-  mockBrowserClientMetadata, mockStandaloneRedisClient
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
 import {
   UnsupportedKeyInfoStrategy,
 } from 'src/modules/browser/keys/key-info/strategies/unsupported.key-info.strategy';

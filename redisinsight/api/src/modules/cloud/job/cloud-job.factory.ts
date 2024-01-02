@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CloudJob,
   CreateFreeSubscriptionAndDatabaseCloudJob,
-  ImportFreeDatabaseCloudJob
+  ImportFreeDatabaseCloudJob,
 } from 'src/modules/cloud/job/jobs';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CreateFreeDatabaseCloudJob } from 'src/modules/cloud/job/jobs/create-free-database.cloud-job';

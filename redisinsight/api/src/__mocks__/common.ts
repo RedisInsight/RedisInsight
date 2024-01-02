@@ -6,23 +6,6 @@ export type MockType<T> = {
   [P in keyof T]: jest.Mock<any>;
 };
 
-export const mockRedisConsumer = () => ({
-  execCommand: jest.fn(),
-  execPipeline: jest.fn(),
-  execPipelineFromClient: jest.fn(),
-  getRedisClient: jest.fn(),
-  execMulti: jest.fn(),
-});
-
-export const mockRedisClusterConsumer = () => ({
-  execCommand: jest.fn(),
-  execCommandFromNodes: jest.fn(),
-  execCommandFromNode: jest.fn(),
-  execPipeline: jest.fn(),
-  getNodes: jest.fn(),
-  getRedisClient: jest.fn(),
-});
-
 export const mockQueryBuilderWhere = jest.fn().mockReturnThis();
 export const mockQueryBuilderGetOne = jest.fn();
 export const mockQueryBuilderGetMany = jest.fn();

@@ -16,22 +16,11 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { GetKeyInfoResponse, GetKeysDto, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.interface';
-import IORedis from 'ioredis';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import * as Utils from 'src/modules/redis/utils/keys.util';
 import { ClusterScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/cluster.scanner.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
-
-const mockClusterNode1 = nodeClient;
-const mockClusterNode2 = nodeClient;
-const clusterClient = Object.create(IORedis.Cluster.prototype);
-clusterClient.sendCommand = jest.fn();
-mockClusterNode1.options = { ...nodeClient.options, host: 'localhost', port: 5000 };
-mockClusterNode2.options = { ...nodeClient.options, host: 'localhost', port: 5001 };
 
 const getKeyInfoResponse = {
   name: 'testString',

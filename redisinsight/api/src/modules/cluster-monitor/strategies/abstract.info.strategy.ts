@@ -1,10 +1,10 @@
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
-import { Cluster, Redis, Command } from 'ioredis';
 import { convertRedisInfoReplyToObject, convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
 import { plainToClass } from 'class-transformer';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
+import { RedisClient } from 'src/modules/redis/client';
 
 export abstract class AbstractInfoStrategy implements IClusterInfo {
   /**
@@ -12,7 +12,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * with each node details and cluster topology
    * @param client
    */
-  async getClusterDetails(client: Cluster): Promise<ClusterDetails> {
+  async getClusterDetails(client: RedisClient): Promise<ClusterDetails> {
     let clusterDetails = await AbstractInfoStrategy.getClusterInfo(client);
 
     const redisClusterNodes = await this.getClusterNodesFromRedis(client);
@@ -36,8 +36,8 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param nodes
    * @private
    */
-  private async getClusterNodesInfo(client: Cluster, nodes): Promise<ClusterNodeDetails[]> {
-    const clientNodes = client.nodes();
+  private async getClusterNodesInfo(client: RedisClient, nodes): Promise<ClusterNodeDetails[]> {
+    const clientNodes = await client.nodes();
     return await Promise.all(nodes.map((node) => {
       const clientNode = clientNodes.find((n) => n.options?.host === node.host && n.options?.port === node.port);
 
@@ -56,8 +56,11 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param node
    * @private
    */
-  private async getClusterNodeInfo(nodeClient: Redis, node): Promise<ClusterNodeDetails> {
-    const info = convertRedisInfoReplyToObject(await nodeClient.info());
+  private async getClusterNodeInfo(nodeClient: RedisClient, node): Promise<ClusterNodeDetails> {
+    const info = convertRedisInfoReplyToObject(await nodeClient.sendCommand(
+      ['info'],
+      { replyEncoding: 'utf8' },
+    ) as string);
 
     return {
       ...node,
@@ -87,11 +90,11 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * Get bunch of fields from CLUSTER INFO command
    * @param client
    */
-  static async getClusterInfo(client: Cluster): Promise<Partial<ClusterDetails>> {
-    // @ts-ignore
-    const info = convertMultilineReplyToObject(await client.sendCommand(new Command('cluster', ['info'], {
-      replyEncoding: 'utf8',
-    })));
+  static async getClusterInfo(client: RedisClient): Promise<Partial<ClusterDetails>> {
+    const info = convertMultilineReplyToObject(await client.sendCommand(
+      ['cluster', 'info'],
+      { replyEncoding: 'utf8' },
+    ) as string);
 
     const slotsState = {
       slotsAssigned: convertStringToNumber(info.cluster_slots_assigned, 0),
@@ -168,7 +171,7 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param nodes
    */
   static calculateAdditionalClusterMetrics(
-    client: Cluster,
+    client: RedisClient,
     nodes: ClusterNodeDetails[],
   ): Partial<ClusterDetails> {
     const additionalDetails: Partial<ClusterDetails> = {
@@ -185,5 +188,5 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     return additionalDetails;
   }
 
-  abstract getClusterNodesFromRedis(client: Cluster);
+  abstract getClusterNodesFromRedis(client: RedisClient);
 }

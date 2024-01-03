@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as IORedis from 'ioredis';
 import {
   calculateRedisHitRatio,
   catchAclError,
@@ -13,6 +12,7 @@ import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.d
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { convertArrayReplyToObject, convertMultilineReplyToObject } from 'src/modules/redis/utils';
+import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 
 @Injectable()
 export class DatabaseInfoProvider {
@@ -46,9 +46,12 @@ export class DatabaseInfoProvider {
    * In case when "module" command is not available use "command info" approach
    * @param client
    */
-  public async determineDatabaseModules(client: any): Promise<AdditionalRedisModule[]> {
+  public async determineDatabaseModules(client: RedisClient): Promise<AdditionalRedisModule[]> {
     try {
-      const reply = await client.call('module', ['list']);
+      const reply = await client.call(
+        ['module', 'list'],
+        { replyEncoding: 'utf8' },
+      ) as string[][];
       const modules = await this.filterRawModules(
         reply.map((module: any[]) => convertArrayReplyToObject(module)),
       );
@@ -69,9 +72,12 @@ export class DatabaseInfoProvider {
    * Determine database server version using "module list" command
    * @param client
    */
-  public async determineDatabaseServer(client: any): Promise<string> {
+  public async determineDatabaseServer(client: RedisClient): Promise<string> {
     try {
-      const reply = convertRedisInfoReplyToObject(await client.call('info', ['server']));
+      const reply = convertRedisInfoReplyToObject(await client.call(
+        ['info', 'server'],
+        { replyEncoding: 'utf8' },
+      ) as string);
       return reply['server']?.redis_version;
     } catch (e) {
       // continue regardless of error
@@ -84,11 +90,14 @@ export class DatabaseInfoProvider {
    * @param client
    * @private
    */
-  public async determineDatabaseModulesUsingInfo(client: any): Promise<AdditionalRedisModule[]> {
+  public async determineDatabaseModulesUsingInfo(client: RedisClient): Promise<AdditionalRedisModule[]> {
     const modules: AdditionalRedisModule[] = [];
     await Promise.all(Array.from(REDIS_MODULES_COMMANDS, async ([moduleName, commands]) => {
       try {
-        let commandsInfo = await client.call('command', ['info', ...commands]);
+        let commandsInfo = await client.call(
+          ['command', 'info', ...commands],
+          { replyEncoding: 'utf8' },
+        ) as string[];
         commandsInfo = commandsInfo.filter((info) => !isNil(info));
         if (commandsInfo.length) {
           modules.push({ name: moduleName });
@@ -102,21 +111,22 @@ export class DatabaseInfoProvider {
   }
 
   public async getRedisGeneralInfo(
-    client: IORedis.Redis | IORedis.Cluster,
+    client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
-    if (client.isCluster) {
+    if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
       return this.getRedisMasterNodesGeneralInfo(client);
     }
-    return this.getRedisNodeGeneralInfo(client as IORedis.Redis);
+    return this.getRedisNodeGeneralInfo(client);
   }
 
   private async getRedisNodeGeneralInfo(
-    client: IORedis.Redis,
+    client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
     try {
-      const info = convertRedisInfoReplyToObject(
-        await client.info(),
-      );
+      const info = convertRedisInfoReplyToObject(await client.sendCommand(
+        ['info'],
+        { replyEncoding: 'utf8' },
+      ) as string);
       const serverInfo = info['server'];
       const memoryInfo = info['memory'];
       const keyspaceInfo = info['keyspace'];
@@ -144,12 +154,10 @@ export class DatabaseInfoProvider {
   }
 
   private async getRedisMasterNodesGeneralInfo(
-    client,
+    client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
     const nodesResult: RedisDatabaseInfoResponse[] = await Promise.all(
-      client
-        .nodes('all')
-        .map(async (node) => this.getRedisNodeGeneralInfo(node)),
+      (await client.nodes()).map(async (node) => this.getRedisNodeGeneralInfo(node)),
     );
     return nodesResult.reduce((prev, cur) => ({
       version: cur.version,
@@ -159,18 +167,24 @@ export class DatabaseInfoProvider {
     }));
   }
 
-  public async getDatabasesCount(client: any, keyspaceInfo?: object): Promise<number> {
+  public async getDatabasesCount(client: RedisClient, keyspaceInfo?: object): Promise<number> {
     try {
-      const reply = await client.call('config', ['get', 'databases']);
+      const reply = await client.call(
+        ['config', 'get', 'databases'],
+        { replyEncoding: 'utf8' },
+      ) as string;
       return reply.length ? parseInt(reply[1], 10) : 1;
     } catch (e) {
       return this.getDatabaseCountFromKeyspace(keyspaceInfo);
     }
   }
 
-  public async getClientListInfo(client: any): Promise<any[]> {
+  public async getClientListInfo(client: RedisClient): Promise<any[]> {
     try {
-      const clientListResponse = await client.call('client', ['list']);
+      const clientListResponse = await client.call(
+        ['client', 'list'],
+        { replyEncoding: 'utf8' },
+      ) as string;
 
       return clientListResponse
         .split(/\r?\n/)

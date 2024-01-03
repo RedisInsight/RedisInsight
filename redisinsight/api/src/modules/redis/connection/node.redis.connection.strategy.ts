@@ -7,7 +7,7 @@ import {
   RedisClientOptions, createClient, createCluster, RedisClusterOptions,
 } from 'redis';
 import { isNumber } from 'lodash';
-import { IRedisConnectionOptions } from 'src/modules/redis/redis-connection.factory';
+import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
 import { ConnectionOptions } from 'tls';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ClusterNodeRedisClient, RedisClient } from 'src/modules/redis/client';
@@ -207,6 +207,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
               {
                 host: database.host,
                 port: database.port,
+                connectTimeout: database.timeout,
               },
             )));
 
@@ -261,6 +262,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
             {
               host: database.host,
               port: database.port,
+              connectTimeout: database.timeout,
             },
           )));
       } catch (e) {

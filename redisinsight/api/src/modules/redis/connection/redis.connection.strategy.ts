@@ -2,7 +2,7 @@ import { ClientMetadata } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
 import { Injectable, Logger } from '@nestjs/common';
-import { IRedisConnectionOptions } from 'src/modules/redis/redis-connection.factory';
+import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 

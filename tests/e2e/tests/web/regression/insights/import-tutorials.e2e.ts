@@ -115,10 +115,11 @@ test
     });
 // https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4213, https://redislabs.atlassian.net/browse/RI-4302
 test('Verify that user can upload tutorial with URL with manifest.json', async t => {
-    const labelFromManifest = 'LabelFromManifest';
-    const link = 'https://drive.google.com/uc?id=1puRUoT8HmyZCekkeWNxBzXe_48TzXcJc&export=download';
+    const labelFromManifest = 'Working with JSON label';
+    const link = 'https://drive.google.com/u/2/uc?id=1a45zHZGYYvtKgM83Rff6rfjy1yfWiwHt&export=download';
     internalLinkName1 = 'manifest-id';
-    tutorialName = 'tutorialTestByLink';
+    tutorialName = 'Tutorials with manifest';
+    const summary = 'Summary for JSON';
 
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
@@ -133,7 +134,9 @@ test('Verify that user can upload tutorial with URL with manifest.json', async t
     await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).visible)
         .ok(`${internalLinkName1} folder specified in manifest is not visible`);
     await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
-        .eql(labelFromManifest, `${labelFromManifest} tutorial specified in manifest is not visible`);
+        .contains(labelFromManifest, `${labelFromManifest} tutorial specified in manifest is not visible`);
+    await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
+        .contains(summary, `${summary} tutorial specified in manifest is not visible`);
     await t.click(tutorials.getInternalLinkWithoutManifest(internalLinkName1));
     await t.expect(tutorials.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
     await t.click(tutorials.closeEnablementPage);

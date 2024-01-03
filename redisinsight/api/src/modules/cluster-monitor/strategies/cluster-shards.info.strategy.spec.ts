@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import IORedis from 'ioredis';
 import { ClusterShardsInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-shards.info.strategy';
+import { mockClusterRedisClient } from 'src/__mocks__';
 
-const clusterClient = Object.create(IORedis.Cluster.prototype);
-clusterClient.sendCommand = jest.fn();
+const clusterClient = mockClusterRedisClient;
 
 const m1 = {
   id: 'm1',
@@ -111,6 +110,7 @@ const mockClusterShardsReply = [
     ],
   ],
 ];
+
 describe('ClusterShardsInfoStrategy', () => {
   let service: ClusterShardsInfoStrategy;
 

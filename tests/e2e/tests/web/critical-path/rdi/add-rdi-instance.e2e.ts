@@ -2,9 +2,10 @@ import { t } from 'testcafe';
 
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { RdiInstance } from '../../../../pageObjects/components/myRedisDatabase/add-rdi-instance';
-import { commonUrl } from '../../../../helpers/conf';
 
 const rdiInstancePage = new RdiInstancePage();
+
+export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000/integrate';
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
@@ -16,15 +17,13 @@ const rdiInstance: RdiInstance = {
 
 fixture `Rdi instance`
     .meta({ type: 'smoke' })
-    // it will be remove
+    // it will be removeв
     .page(commonUrl)
     .beforeEach(async() => {
         await t.maximizeWindow();
 
     });
 test('Verify that user can add and remove RDI', async() => {
-
-    await t.navigateTo('https://localhost:5000/integrate');
 
     await rdiInstancePage.addRdi(rdiInstance);
     //TODO verify header
@@ -58,7 +57,6 @@ test
             password: 'pass',
             version: '1.2'
         };
-        await t.navigateTo('https://localhost:5000/integrate');
 
         await rdiInstancePage.addRdi(rdiInstance);
         await rdiInstancePage.addRdi(rdiInstance2);

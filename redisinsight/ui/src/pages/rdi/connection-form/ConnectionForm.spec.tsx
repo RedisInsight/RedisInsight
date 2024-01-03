@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import { fireEvent, render, screen, waitFor, within } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import ConnectionForm, { Props } from './ConnectionForm'
 
 const mockedProps: Props = {

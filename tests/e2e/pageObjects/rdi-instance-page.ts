@@ -12,6 +12,8 @@ export class RdiInstancePage extends BaseOverviewPage {
 
     searchInput = Selector('[data-testid=search-rdi-instance-list]');
 
+    sortBy = Selector('[data-test-subj=tableHeaderSortButton] span');
+
     cssRdiAlias = '[data-test-subj=rdi-alias-column]';
     cssUrl = '[data-testid=url]';
     cssRdiVersion = '[data-test-subj=rdi-instance-version-column]';
@@ -69,6 +71,44 @@ export class RdiInstancePage extends BaseOverviewPage {
                 break;
             }
         }
+    }
+
+    /**
+     * Edit Rdi by name
+     * @param dbName The name of the rdi to be edited
+     */
+    async clickOnEditRdiByName(dbName: string): Promise<void> {
+        const dbNames = this.rdiInstanceRow;
+        const count = await dbNames.count;
+
+        for (let i = 0; i < count; i++) {
+            if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
+                await t
+                    .click(this.editRowButton.nth(i));
+                break;
+            }
+        }
+    }
+
+    /**
+     * Sort rdi list by column
+     * @param columnName The name of column
+     */
+    async sortByColumn(columnName: string): Promise<void> {
+        await t.click(this.sortBy.withText(columnName));
+    }
+    /**
+     * Get all Rdi alias
+     */
+    async getAllRdiNames(): Promise<string[]> {
+        const rdis: string[] = [];
+        const n = await this.rdiInstanceRow.count;
+
+        for(let k = 0; k < n; k++) {
+            const name = await this.rdiInstanceRow.nth(k).find(this.cssRdiAlias).innerText;
+            rdis.push(name);
+        }
+        return rdis;
     }
 }
 

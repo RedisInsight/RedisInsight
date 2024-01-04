@@ -153,17 +153,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     }
 
     /**
-     * Get all databases from List of DBs page
-     * @param actualList Actual databases list
-     * @param sortedList Expected list
-     */
-    async compareDatabases(actualList: string[], sortedList: string[]): Promise<void> {
-        for (let k = 0; k < actualList.length; k++) {
-            await t.expect(actualList[k].trim()).eql(sortedList[k].trim());
-        }
-    }
-
-    /**
      * Verify database status is visible
      * @param databaseName The name of the database
     */

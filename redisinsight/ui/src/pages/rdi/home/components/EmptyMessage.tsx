@@ -28,8 +28,8 @@ const EmptyMessage = () => {
     <div className={styles.noResultsContainer} data-testid="empty-rdi-instance-list">
       <EuiImage src={EmptyListIcon} alt="empty" size="m" />
       <EuiSpacer size="xl" />
-      <EuiText>No deployments found</EuiText>
-      <EuiText className={styles.subTitle}>Add your first deployment to get started!</EuiText>
+      <EuiText>No RDI instances added</EuiText>
+      <EuiText className={styles.subTitle}>Add your first RDI instance to get started!</EuiText>
       <EuiText>More info</EuiText>
       <EuiSpacer size="s" />
       <EuiFlexGroup className={styles.moreInfoContainer} gutterSize="m">

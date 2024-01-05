@@ -1,9 +1,22 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import InternalPage, { Props } from './InternalPage'
 
 const mockedProps = mock<Props>()
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/app/context', () => ({
+  ...jest.requireActual('uiSrc/slices/app/context'),
+  appContextCapability: jest.fn().mockReturnValue({
+    source: 'workbench RediSearch',
+  }),
+}))
 
 /**
  * InternalPage tests
@@ -38,5 +51,19 @@ describe('InternalPage', () => {
     const { queryByTestId } = render(<InternalPage {...instance(mockedProps)} content={content} />)
 
     expect(queryByTestId('header')).toBeInTheDocument()
+  })
+  it('should send CAPABILITY_POPOVER_DISPLAYED telemetry event', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<InternalPage {...instance(mockedProps)} showCapabilityPopover />)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CAPABILITY_POPOVER_DISPLAYED,
+      eventData: {
+        databaseId: 'instanceId',
+        capabilityName: 'searchAndQuery',
+      }
+    })
   })
 })

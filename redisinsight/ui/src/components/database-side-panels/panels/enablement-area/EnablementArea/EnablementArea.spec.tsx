@@ -7,6 +7,7 @@ import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, MOCK_CUSTOM_TUTORIALS_ITEMS } 
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import { deleteWbCustomTutorial, uploadWbCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { showCapabilityTutorialPopover } from 'uiSrc/utils'
 import EnablementArea, { Props } from './EnablementArea'
 
 const mockedProps = mock<Props>()
@@ -28,6 +29,11 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => {
     }),
   }
 })
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  showCapabilityTutorialPopover: jest.fn(),
+}))
 
 describe('EnablementArea', () => {
   beforeEach(() => {
@@ -113,6 +119,15 @@ describe('EnablementArea', () => {
     await waitFor(() => {
       expect(pushMock).toBeCalledWith({ search: '?path=quick-guides/0/1' })
     }, { timeout: 1000 })
+  })
+
+  it('should call showCapabilityTutorialPopover', async () => {
+    const showCapabilityTutorialPopoverMock = jest.fn();
+    (showCapabilityTutorialPopover as jest.Mock).mockImplementation(() => showCapabilityTutorialPopoverMock)
+
+    render(<EnablementArea {...instance(mockedProps)} />)
+
+    expect(showCapabilityTutorialPopover).toBeCalled()
   })
 
   describe('Custom Tutorials', () => {

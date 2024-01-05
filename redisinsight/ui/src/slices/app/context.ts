@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RelativeWidthSizes } from 'uiSrc/components/virtual-table/interfaces'
-import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { Nullable } from 'uiSrc/utils'
+import { CapabilityStorageItem, ConfigDBStorageItem } from 'uiSrc/constants/storage'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import {
   BrowserStorageItem,
   DEFAULT_DELIMITER,
@@ -11,7 +11,7 @@ import {
   SortOrder,
   DEFAULT_TREE_SORTING,
 } from 'uiSrc/constants'
-import { localStorageService, setDBConfigStorageField } from 'uiSrc/services'
+import { localStorageService, setCapabilityStorageField, setDBConfigStorageField } from 'uiSrc/services'
 import { RootState } from '../store'
 import { RedisResponseBuffer, StateAppContext } from '../interfaces'
 import { SearchMode } from '../interfaces/keys'
@@ -67,6 +67,10 @@ export const initialState: StateAppContext = {
   },
   triggeredFunctions: {
     lastViewedPage: ''
+  },
+  capability: {
+    source: '',
+    tutorialPopoverShown: false,
   }
 }
 
@@ -82,7 +86,8 @@ const appContextSlice = createSlice({
         ...initialState.browser,
         keyDetailsSizes: state.browser.keyDetailsSizes
       },
-      contextInstanceId: state.contextInstanceId
+      contextInstanceId: state.contextInstanceId,
+      capability: state.capability,
     }),
     // set connected instance
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
@@ -93,7 +98,6 @@ const appContextSlice = createSlice({
       state.dbConfig.treeViewSort = payload?.treeViewSort ?? DEFAULT_TREE_SORTING
       state.dbConfig.slowLogDurationUnit = payload?.slowLogDurationUnit ?? DEFAULT_SLOWLOG_DURATION_UNIT
       state.dbConfig.showHiddenRecommendations = payload?.showHiddenRecommendations
-        ?? DEFAULT_SHOW_HIDDEN_RECOMMENDATIONS
     },
     setSlowLogUnits: (state, { payload }) => {
       state.dbConfig.slowLogDurationUnit = payload
@@ -178,6 +182,20 @@ const appContextSlice = createSlice({
     setLastTriggeredFunctionsPage: (state, { payload }: { payload: string }) => {
       state.triggeredFunctions.lastViewedPage = payload
     },
+    setCapabilityPopoverShown: (state, { payload }: PayloadAction<boolean>) => {
+      state.capability.tutorialPopoverShown = payload
+      setCapabilityStorageField(CapabilityStorageItem.tutorialPopoverShown, payload)
+    },
+    setCapability: (state, { payload }: PayloadAction<Maybe<{ source: string, tutorialPopoverShown: boolean }>>) => {
+      const source = payload?.source ?? ''
+      const tutorialPopoverShown = !!payload?.tutorialPopoverShown
+
+      state.capability.source = source
+      state.capability.tutorialPopoverShown = tutorialPopoverShown
+
+      setCapabilityStorageField(CapabilityStorageItem.source, source)
+      setCapabilityStorageField(CapabilityStorageItem.tutorialPopoverShown, tutorialPopoverShown)
+    },
   },
 })
 
@@ -209,6 +227,8 @@ export const {
   setRecommendationsShowHidden,
   setLastTriggeredFunctionsPage,
   setBrowserTreeSort,
+  setCapability,
+  setCapabilityPopoverShown,
 } = appContextSlice.actions
 
 // Selectors
@@ -234,6 +254,8 @@ export const appContextDbIndex = (state: RootState) =>
   state.app.context.dbIndex
 export const appContextTriggeredFunctions = (state: RootState) =>
   state.app.context.triggeredFunctions
+export const appContextCapability = (state: RootState) =>
+  state.app.context.capability
 
 // The reducer
 export default appContextSlice.reducer

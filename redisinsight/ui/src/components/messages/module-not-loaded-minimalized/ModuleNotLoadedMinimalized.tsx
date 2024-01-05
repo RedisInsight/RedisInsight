@@ -12,7 +12,8 @@ import { Theme } from 'uiSrc/constants'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
-import { getDbWithModuleLoaded } from 'uiSrc/utils'
+import { getDbWithModuleLoaded, getSourceTutorialByCapability } from 'uiSrc/utils'
+import { useCapabilty } from 'uiSrc/services'
 import { MODULE_CAPABILITY_TEXT_NOT_AVAILABLE } from './constants'
 import styles from './styles.module.scss'
 
@@ -28,8 +29,11 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
 
   const { theme } = useContext(ThemeContext)
 
+  const sourceTutorial = getSourceTutorialByCapability(moduleName)
   const moduleText = MODULE_CAPABILITY_TEXT_NOT_AVAILABLE[moduleName]
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
+
+  useCapabilty(sourceTutorial)
 
   return (
     <div className={styles.wrapper}>
@@ -81,7 +85,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             <EuiSpacer size="s" />
             <OAuthConnectFreeDb
               id={freeDbWithModule.id}
-              source={`${moduleName}_tutorial`}
+              source={sourceTutorial}
             />
           </>
         )}

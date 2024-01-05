@@ -1,20 +1,24 @@
-import React, { useMemo, useRef, useEffect } from 'react'
+import React, { useMemo, useRef, useEffect, useState } from 'react'
 import {
   EuiFlyoutHeader,
   EuiText,
   EuiButtonEmpty,
   EuiLoadingContent,
   EuiHorizontalRule,
+  EuiPopover,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 
-import { Nullable } from 'uiSrc/utils'
+import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/icons/rocket.svg'
+import { appContextCapability, setCapabilityPopoverShown } from 'uiSrc/slices/app/context'
 import './styles/main.scss'
 import { getTutorialSection } from '../../utils'
 import {
@@ -42,6 +46,7 @@ export interface Props {
   manifestPath?: Nullable<string>
   sourcePath: string
   pagination?: IEnablementAreaItem[]
+  showCapabilityPopover?: boolean
 }
 const InternalPage = (props: Props) => {
   const location = useLocation()
@@ -59,10 +64,15 @@ const InternalPage = (props: Props) => {
     path,
     manifestPath,
     sourcePath,
+    showCapabilityPopover = false,
   } = props
   const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { source } = useSelector(appContextCapability)
+
+  const dispatch = useDispatch()
+
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
       onScroll(containerRef.current.scrollTop)
@@ -89,6 +99,24 @@ const InternalPage = (props: Props) => {
       sendEventClickExternalLinkTelemetry(target?.innerText)
     }
   }
+
+  const handleClosePopover = () => {
+    dispatch(setCapabilityPopoverShown(true))
+  }
+
+  useEffect(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CAPABILITY_POPOVER_DISPLAYED,
+      eventData: {
+        capabilityName: getTutorialCapability(source!).telemetryName,
+        databaseId: instanceId,
+      }
+    })
+
+    return () => {
+      showCapabilityPopover && dispatch(setCapabilityPopoverShown(true))
+    }
+  }, [showCapabilityPopover])
 
   useEffect(() => {
     if (!isLoading && !error && containerRef.current) {
@@ -126,15 +154,36 @@ const InternalPage = (props: Props) => {
     <div className={styles.container} data-test-subj="internal-page">
       <EuiFlyoutHeader className={styles.header}>
         <div style={{ padding: 0 }}>
-          <EuiButtonEmpty
-            data-testid="enablement-area__page-close"
-            iconType="arrowLeft"
-            onClick={onClose}
-            className={styles.backButton}
-            aria-label="Back"
+          <EuiPopover
+            initialFocus={false}
+            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            anchorClassName={styles.popoverAnchor}
+            anchorPosition="leftCenter"
+            isOpen={showCapabilityPopover}
+            panelPaddingSize="m"
+            closePopover={handleClosePopover}
+            button={(
+              <EuiButtonEmpty
+                data-testid="enablement-area__page-close"
+                iconType="arrowLeft"
+                onClick={onClose}
+                className={styles.backButton}
+                aria-label="Back"
+              >
+                {backTitle}
+              </EuiButtonEmpty>
+            )}
           >
-            {backTitle}
-          </EuiButtonEmpty>
+            <div>
+              <RocketIcon className={styles.rocketIcon} />
+              <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
+              <EuiText className={styles.popoverText}>
+                {'You expressed interest in learning about the '}
+                <b>{getTutorialCapability(source!).name}</b>
+                . Try this tutorial to get started.
+              </EuiText>
+            </div>
+          </EuiPopover>
         </div>
         <div>
           <EuiHorizontalRule margin="xs" />

@@ -100,6 +100,10 @@ export interface StateAppContext {
   triggeredFunctions: {
     lastViewedPage: string
   }
+  capability: {
+    source: string
+    tutorialPopoverShown: boolean
+  }
 }
 
 export interface StateAppRedisCommands {

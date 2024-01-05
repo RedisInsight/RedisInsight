@@ -24,7 +24,7 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
-import { useCapabilty } from 'uiSrc/services'
+import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -65,7 +65,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
   const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
 
-  useCapabilty(source)
+  useCapability(source)
 
   useEffect(() => {
     const parentEl = document?.getElementById(id)

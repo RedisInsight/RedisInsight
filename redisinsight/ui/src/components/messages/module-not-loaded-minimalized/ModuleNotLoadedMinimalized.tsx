@@ -13,7 +13,7 @@ import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded, getSourceTutorialByCapability } from 'uiSrc/utils'
-import { useCapabilty } from 'uiSrc/services'
+import { useCapability } from 'uiSrc/services'
 import { MODULE_CAPABILITY_TEXT_NOT_AVAILABLE } from './constants'
 import styles from './styles.module.scss'
 
@@ -33,7 +33,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
   const moduleText = MODULE_CAPABILITY_TEXT_NOT_AVAILABLE[moduleName]
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
 
-  useCapabilty(sourceTutorial)
+  useCapability(sourceTutorial)
 
   return (
     <div className={styles.wrapper}>

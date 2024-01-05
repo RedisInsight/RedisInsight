@@ -22,7 +22,7 @@ interface IApp {
   gracefulShutdown: Function;
 }
 
-export default async function bootstrap(): Promise<IApp> {
+export default async function bootstrap(apiPort?: number): Promise<IApp> {
   await migrateHomeFolder();
 
   const { port, host } = serverConfig;
@@ -62,7 +62,7 @@ export default async function bootstrap(): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(port, host);
+  await app.listen(apiPort || port, host);
   logger.log({
     message: `Server is running on http(s)://${host}:${port}`,
     context: 'bootstrap',

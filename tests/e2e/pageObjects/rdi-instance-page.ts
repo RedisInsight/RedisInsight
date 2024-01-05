@@ -36,7 +36,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     }
 
     /**
-     * add Rdi instance
+     * get Rdi instance by index
      * @param index index of rdi
      */
     async getRdiInstanceValuesByIndex(index: number): Promise<RdiInstance> {

@@ -30,7 +30,7 @@ const rdiInstance3: RdiInstance = {
 };
 //skip the tests until rdi integration is added
 
-fixture `Rdi instance`
+fixture.skip `Rdi instance`
     .meta({ type: 'smoke' })
     // it will be removed
     .page(commonUrl)

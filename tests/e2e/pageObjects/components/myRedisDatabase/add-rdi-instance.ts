@@ -8,7 +8,7 @@ export class AddRdiInstance {
     passwordInput = Selector('[data-testid=connection-form-password-input]');
 
     //BUTTONS
-    addInstanceButton = Selector('[data-testid=add-instance-btn]');
+    addInstanceButton = Selector('[data-testid=connection-form-add-button]');
 }
 
 /**

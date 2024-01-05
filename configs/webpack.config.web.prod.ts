@@ -77,6 +77,7 @@ const configuration: webpack.Configuration = {
       NODE_ENV: 'production',
       RI_APP_TYPE: 'web',
       RI_APP_PORT: '5000',
+      RI_BASE_API_URL: '',
       RI_API_PREFIX: 'api',
       RI_SCAN_COUNT_DEFAULT: '500',
       RI_SCAN_TREE_COUNT_DEFAULT: '10000',

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import ConnectionForm, { Props } from './ConnectionForm'
 
 const mockedProps: Props = {
@@ -27,49 +27,52 @@ describe('ConnectionForm', () => {
   it('should disable submit button when form is invalid', async () => {
     render(<ConnectionForm {...mockedProps} />)
 
-    // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
-
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Add Instance' })).toBeDisabled(), {
-      timeout: 1000
+    await act(() => {
+      // click submit to trigger form validation
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
+
+    expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
   })
 
   it('should disable test connection button when form is invalid', async () => {
     render(<ConnectionForm {...mockedProps} />)
 
-    // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
-
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Test Connection' })).toBeDisabled(), {
-      timeout: 1000
+    await act(() => {
+      // click submit to trigger form validation
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
+
+    expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
   })
 
   it('should not disable submit button when form is valid', async () => {
     render(<ConnectionForm {...mockedProps} />)
 
-    // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
-
-    fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
-    fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
-    fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
-
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Add Instance' })).not.toBeDisabled(), {
-      timeout: 1000
+    await act(() => {
+      // click submit to trigger form validation
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
+    expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
+      fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
+      fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
+    })
+
+    expect(screen.getByTestId('connection-form-add-button')).not.toBeDisabled()
   })
 
   it('should not disable submit button when form is provided editInstance', async () => {
     render(<ConnectionForm {...mockedProps} editInstance={mockedEditInstance} />)
 
-    // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
-
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Add Instance' })).not.toBeDisabled(), {
-      timeout: 1000
+    await act(() => {
+      // click submit to trigger form validation
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
+
+    expect(screen.getByTestId('connection-form-add-button')).not.toBeDisabled()
   })
 
   it('should disable URL input when form is provided editInstance', () => {
@@ -82,7 +85,7 @@ describe('ConnectionForm', () => {
     render(<ConnectionForm {...mockedProps} />)
 
     // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
+    fireEvent.click(screen.getByTestId('connection-form-add-button'))
 
     fireEvent.mouseOver(screen.getByTestId('connection-form-url-icon'))
 
@@ -95,9 +98,9 @@ describe('ConnectionForm', () => {
     render(<ConnectionForm {...mockedProps} />)
 
     // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
+    fireEvent.click(screen.getByTestId('connection-form-add-button'))
 
-    fireEvent.mouseOver(screen.getByRole('button', { name: 'Add Instance' }))
+    fireEvent.mouseOver(screen.getByTestId('connection-form-add-button'))
 
     const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
 
@@ -108,9 +111,9 @@ describe('ConnectionForm', () => {
     render(<ConnectionForm {...mockedProps} />)
 
     // click submit to trigger form validation
-    fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
+    fireEvent.click(screen.getByTestId('connection-form-add-button'))
 
-    fireEvent.mouseOver(screen.getByRole('button', { name: 'Test Connection' }))
+    fireEvent.mouseOver(screen.getByTestId('connection-form-test-button'))
 
     const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
 
@@ -120,12 +123,12 @@ describe('ConnectionForm', () => {
   it('should disable submit button when isLoading = true', async () => {
     render(<ConnectionForm {...mockedProps} isLoading />)
 
-    expect(screen.getByRole('button', { name: 'Add Instance' })).toBeDisabled()
+    expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
   })
 
   it('should disable test connection button when isLoading = true', async () => {
     render(<ConnectionForm {...mockedProps} isLoading />)
 
-    expect(screen.getByRole('button', { name: 'Test Connection' })).toBeDisabled()
+    expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
   })
 })

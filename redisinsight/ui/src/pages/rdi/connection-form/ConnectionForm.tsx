@@ -34,7 +34,7 @@ export interface Props {
   isLoading: boolean
 }
 
-const buildInitialValues = (values: RdiInstance | null): ConnectionFormValues => ({
+const getInitialValues = (values: RdiInstance | null): ConnectionFormValues => ({
   name: values?.name || '',
   url: values?.url || '',
   username: values?.username || '',
@@ -69,10 +69,10 @@ const UrlTooltip = () => (
 )
 
 const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Props) => {
-  const [initialFormValues, setInitialFormValues] = useState(buildInitialValues(editInstance))
+  const [initialFormValues, setInitialFormValues] = useState(getInitialValues(editInstance))
 
   useEffect(() => {
-    setInitialFormValues(buildInitialValues(editInstance))
+    setInitialFormValues(getInitialValues(editInstance))
   }, [editInstance])
 
   const onSubmit = (formValues: ConnectionFormValues) => {
@@ -166,6 +166,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                   <EuiFlexItem grow={false}>
                     <ValidationTooltip isValid={isValid} errors={errors}>
                       <EuiButton
+                        data-testid="connection-form-test-button"
                         size="s"
                         className={styles.testConnectionBtn}
                         iconType={!isValid ? 'iInCircle' : undefined}
@@ -179,13 +180,14 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                   <EuiFlexItem grow={false}>
                     <EuiFlexGroup gutterSize="s">
                       <EuiFlexItem grow={false}>
-                        <EuiButton size="s" onClick={onCancel}>
+                        <EuiButton data-testid="connection-form-cancel-button" size="s" onClick={onCancel}>
                           Cancel
                         </EuiButton>
                       </EuiFlexItem>
                       <EuiFlexItem grow={false}>
                         <ValidationTooltip isValid={isValid} errors={errors}>
                           <EuiButton
+                            data-testid="connection-form-add-button"
                             type="submit"
                             size="s"
                             fill

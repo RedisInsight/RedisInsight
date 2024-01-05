@@ -14,8 +14,8 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
   <div className={styles.noResultsContainer} data-testid="empty-rdi-instance-list">
     <EuiImage src={EmptyListIcon} alt="empty" size="m" />
     <EuiSpacer size="xl" />
-    <EuiText>No deployments found</EuiText>
-    <EuiText className={styles.subTitle}>Add your first deployment to get started!</EuiText>
+    <EuiText>No RDI instances added</EuiText>
+    <EuiText className={styles.subTitle}>Add your first RDI instance to get started!</EuiText>
     <EuiFlexGroup alignItems="center">
       <EuiFlexItem>
         <EuiButton color="secondary" fill size="s" onClick={onAddInstanceClick}>

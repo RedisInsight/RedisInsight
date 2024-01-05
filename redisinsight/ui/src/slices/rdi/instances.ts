@@ -151,15 +151,12 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
 }
 
 // Asynchronous thunk action
-export function createInstanceAction(
-  payload: Partial<RdiInstance>,
-  onSuccess?: (data: RdiInstanceResponse) => void
-) {
+export function createInstanceAction(payload: Partial<RdiInstance>, onSuccess?: (data: RdiInstanceResponse) => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status, data } = await apiService.post(`${ApiEndpoints.RDI_INSTANCES}`, payload)
+      const { status, data } = await apiService.post<RdiInstanceResponse>(`${ApiEndpoints.RDI_INSTANCES}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
@@ -186,7 +183,10 @@ export function editInstanceAction(
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status, data } = await apiService.patch(`${ApiEndpoints.RDI_INSTANCES}/${id}`, payload)
+      const { status, data } = await apiService.patch<RdiInstanceResponse>(
+        `${ApiEndpoints.RDI_INSTANCES}/${id}`,
+        payload
+      )
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())

@@ -1,0 +1,93 @@
+.wrapper {
+  .navItem {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .folderIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+  }
+
+  .fileIcon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+  }
+
+  .loader {
+    margin-left: 8px;
+  }
+
+  .jobsCount {
+    font-size: 12px !important;
+    color: var(--euiColorMediumShade) !important;
+  }
+
+  .job {
+    padding: 3px 16px 3px 42px;
+
+    &.active {
+      background-color: var(--hoverInListColorDarken);
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 26px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: var(--externalLinkColor);
+      }
+
+      .navItem {
+        cursor: default;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+
+  :global {
+    .euiAccordion__triggerWrapper {
+      padding: 0 16px;
+    }
+
+    .euiAccordion__triggerWrapper,
+    .euiAccordion__childWrapper {
+      background-color: transparent;
+    }
+
+    .euiIEFlexWrapFix {
+      display: inline-block;
+      width: 100%;
+    }
+
+    .truncateText {
+      display: block;
+    }
+
+    .euiAccordion__icon.euiAccordion__icon-isOpen {
+      transform: rotate(90deg) !important;
+    }
+
+    .euiAccordion__icon {
+      transform: rotate(0) !important;
+    }
+
+    .euiFlexItem {
+      font: normal normal normal 14px/17px Graphik, sans-serif;
+      color: var(--euiTextSubduedColor) !important;
+    }
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}

@@ -12,6 +12,7 @@ export const EXTERNAL_LINKS = {
   tryFree: 'https://redis.com/try-free',
   docker: 'https://redis.io/docs/getting-started/install-stack/docker',
   rdiQuickStart: 'https://docs.redis.com/latest/rdi/quickstart/',
+  rdiTransformation: 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/',
 }
 
 export const UTM_CAMPAINGS: Record<any, string> = {

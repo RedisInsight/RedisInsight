@@ -14,6 +14,7 @@ import PubSubPage from 'uiSrc/pages/pub-sub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
 import TriggeredFunctionsPage from 'uiSrc/pages/triggered-functions'
 import RdiPage from 'uiSrc/pages/rdi/home'
+import RdiPipeline from 'uiSrc/pages/rdi/pipeline/PipelinePage'
 import { ANALYTICS_ROUTES, RDI_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
@@ -77,9 +78,19 @@ const ROUTES: IRoute[] = [
     ],
   },
   {
+    path: '/integrate/:rdiInstanceId',
+    component: RdiPipeline,
+    routes: RDI_ROUTES
+  },
+  {
     path: Pages.rdi,
     component: RdiPage,
-    routes: RDI_ROUTES
+    exact: true,
+  },
+  {
+    path: '/integrate/:rdiInstanceId',
+    component: RdiPipeline,
+    routes: RDI_ROUTES,
   },
   {
     path: '/:instanceId',

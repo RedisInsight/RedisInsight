@@ -28,9 +28,9 @@ describe('Navigation', () => {
     render(<Navigation path="" />)
 
     fireEvent.click(screen.getByTestId('rdi-nav-btn-config'))
-    expect(pushMock).toBeCalledWith('/integrate/undefined/pipeline/config')
+    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline/config')
 
     fireEvent.click(screen.getByTestId('rdi-nav-btn-prepare'))
-    expect(pushMock).toBeCalledWith('/integrate/undefined/pipeline/prepare')
+    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline/prepare')
   })
 })

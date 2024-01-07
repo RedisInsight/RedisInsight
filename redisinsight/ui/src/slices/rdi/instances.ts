@@ -108,6 +108,23 @@ const instancesSlice = createSlice({
       state.editedInstance.data = payload
     },
 
+    // set connected instance
+    setConnectedInstance: (state) => {
+      state.connectedInstance.loading = true
+    },
+
+    // set connected instance success
+    setConnectedInstanceSuccess: (state, { payload }: { payload: RdiInstance }) => {
+      state.connectedInstance = payload
+      state.connectedInstance.loading = false
+    },
+
+    // set connected instance failed
+    setConnectedInstanceFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
+
     // reset connected instance
     resetConnectedInstance: (state) => {
       state.connectedInstance = initialState.connectedInstance
@@ -131,11 +148,16 @@ export const {
   setDefaultInstanceFailure,
   setConnectedInstanceId,
   setEditedInstance,
+  setConnectedInstance,
+  setConnectedInstanceSuccess,
+  setConnectedInstanceFailure,
   resetConnectedInstance
 } = instancesSlice.actions
 
 // selectors
 export const instancesSelector = (state: RootState) => state.rdi.instances
+export const connectedInstanceSelector = (state: RootState) =>
+  state.rdi.instances.connectedInstance
 
 // The reducer
 export default instancesSlice.reducer
@@ -220,6 +242,26 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setConnectedInstance())
+
+    try {
+      const { data, status } = await apiService.get<RdiInstanceResponse>(`${ApiEndpoints.RDI_INSTANCES}/${id}`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setConnectedInstanceSuccess(data))
+      }
+      onSuccess?.()
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(setConnectedInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
     }
   }

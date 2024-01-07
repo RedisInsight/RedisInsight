@@ -8,6 +8,7 @@ import {
   instancesSelector,
   setEditedInstance
 } from 'uiSrc/slices/rdi/instances'
+import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import EmptyMessage from './components/EmptyMessage'
 import RdiHeader from '../header/RdiHeader'
 import RdiInstancesListWrapper from '../instance-list/RdiInstancesListWrapper'
@@ -18,6 +19,7 @@ export interface Props {}
 
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
+  const [isPageViewSent, setIsPageViewSent] = useState(false)
 
   const {
     data,
@@ -34,6 +36,19 @@ const RdiPage = () => {
       dispatch(setEditedInstance(null))
     }
   }, [])
+
+  useEffect(() => {
+    if (!isPageViewSent) {
+      sendPageView()
+    }
+  }, [isPageViewSent])
+
+  const sendPageView = () => {
+    sendPageViewTelemetry({
+      name: TelemetryPageView.RDI_INSTANCES_PAGE,
+    })
+    setIsPageViewSent(true)
+  }
 
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)

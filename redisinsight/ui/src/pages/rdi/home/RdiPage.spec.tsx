@@ -5,12 +5,18 @@ import { instance, mock } from 'ts-mockito'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { RootState, store } from 'uiSrc/slices/store'
 import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 
 import RdiPage, { Props } from './RdiPage'
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useSelector: jest.fn()
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendPageViewTelemetry: jest.fn(),
 }))
 
 let storeMock: typeof mockedStore
@@ -98,5 +104,16 @@ describe('RdiPage', () => {
 
     expect(screen.queryByTestId('rdi-instance-list')).not.toBeInTheDocument()
     expect(screen.getByTestId('empty-rdi-instance-list')).toBeInTheDocument()
+  })
+
+  it('should call proper sendPageViewTelemetry', () => {
+    const sendPageViewTelemetryMock = jest.fn()
+    sendPageViewTelemetry.mockImplementation(() => sendPageViewTelemetryMock)
+
+    render(<RdiPage />)
+
+    expect(sendPageViewTelemetry).toBeCalledWith({
+      name: TelemetryPageView.RDI_INSTANCES_PAGE,
+    })
   })
 })

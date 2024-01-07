@@ -20,7 +20,6 @@ module.exports = {
     d3: '<rootDir>/node_modules/d3/dist/d3.min.js',
     '^uuid$': require.resolve('uuid'),
     msgpackr: require.resolve('msgpackr'),
-    axios: '<rootDir>/node_modules/axios/dist/node/axios.cjs',
   },
   setupFiles: [
     '<rootDir>/redisinsight/ui/src/setup-env.ts',

@@ -158,7 +158,8 @@
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",
-      "tests/(.*)": "<rootDir>/__tests__/$1"
+      "tests/(.*)": "<rootDir>/__tests__/$1",
+      "axios": "axios/dist/node/axios.cjs"
     }
   }
 }

@@ -42,7 +42,7 @@ services:
     env_file:
       - ./.env
     environment:
-      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
+      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT0
       RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:
       - rihomedir:/data

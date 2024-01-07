@@ -12,7 +12,6 @@ import {
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
-import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -21,6 +20,7 @@ import { AppDispatch, RootState } from '../store'
 import {
   CloudCapiKey,
   CloudJobInfoState,
+  CloudSuccessResult,
   EnhancedAxiosError,
   Instance,
   OAuthSocialSource,
@@ -33,7 +33,6 @@ import {
   removeInfiniteNotification
 } from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
-import { setAppContextInitialState } from '../app/context'
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -235,8 +234,9 @@ export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.cap
 // The reducer
 export default oauthCloudSlice.reducer
 
-export function createFreeDbSuccess(id: string, history: any) {
+export function createFreeDbSuccess(result: CloudSuccessResult, history: any) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const { resourceId: id, ...details } = result
     try {
       const onConnect = () => {
         const state = stateInit()
@@ -245,8 +245,6 @@ export function createFreeDbSuccess(id: string, history: any) {
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthSuccess))
 
         if (!isConnected) {
-          dispatch(resetKeys())
-          dispatch(setAppContextInitialState())
           dispatch(setConnectedInstanceId(id ?? ''))
           dispatch(checkConnectToInstanceAction(id))
         }
@@ -256,7 +254,7 @@ export function createFreeDbSuccess(id: string, history: any) {
 
       dispatch(showOAuthProgress(true))
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(details, onConnect)))
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {
       const error = _err as AxiosError
@@ -317,6 +315,9 @@ export function createFreeDbJob({
     planId?: number,
     databaseId?: number,
     subscriptionId?: number,
+    region?: string,
+    provider?: string,
+    isRecommendedSettings?: boolean
   }
   onSuccessAction?: () => void,
   onFailAction?: () => void

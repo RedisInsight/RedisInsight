@@ -24,6 +24,8 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
       return CloudSsoUtmCampaign.TriggersAndFunctions
     case OAuthSocialSource.Tutorials:
       return CloudSsoUtmCampaign.Tutorial
+    case OAuthSocialSource.Autodiscovery:
+      return CloudSsoUtmCampaign.AutoDiscovery
     default:
       return CloudSsoUtmCampaign.Unknown
   }

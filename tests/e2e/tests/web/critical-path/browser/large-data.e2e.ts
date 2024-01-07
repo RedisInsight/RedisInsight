@@ -103,7 +103,8 @@ test
         await t.expect(browserPage.tooltip.textContent).eql(disabledFormattersTooltip, 'Edit button tooltip contains invalid message');
 
         // Verify that user can see String key value with only 5000 characters uploaded if length is more than 5000
-        await t.expect((await browserPage.stringKeyValueInput.textContent).length).eql(stringKeyParameters.value.length, 'String key > 5000 value is fully loaded by default');
+        // Verify that 3 dots after truncated big strings displayed
+        await t.expect((await browserPage.stringKeyValueInput.textContent).length).eql(stringKeyParameters.value.length + 3, 'String key > 5000 value is fully loaded by default');
 
         await t.click(browserPage.loadAllBtn);
         // Verify that user can see "Load all" button for String Key with more than 5000 characters and see full value by clicking on it

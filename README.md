@@ -7,7 +7,7 @@
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
 
-RedisInsight is a visual tool that provides capabilities to design, develop and optimize your Redis application. 
+RedisInsight is a visual tool that provides capabilities to design, develop, and optimize your Redis application.
 Query, analyse and interact with your Redis data. [Download it here](https://redis.com/redis-enterprise/redis-insight/#insight-form)!
 
 ![RedisInsight Browser screenshot](/.github/redisinsight_browser.png)
@@ -23,26 +23,26 @@ RedisInsight is an intuitive and efficient GUI for Redis, allowing you to intera
 * Browse, filter, visualise your key-value Redis data structures and see key values in different formats (including JSON, Hex, ASCII, etc.)
 * CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets, and Streams
 * CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
+* Interactive tutorials to learn easily, among other things, how to leverage the native JSON data structure supporting structured querying and full-text search, including vector similarity search for your AI use cases
+* Contextualised recommendations to optimize performance and memory usage. The list of recommendations gets updated as you interact with your database
 * Profiler - analyze every command sent to Redis in real-time
 * SlowLog - analyze slow operations in Redis instances based on the [Slowlog](https://github.com/RedisInsight/RedisInsight/releases#:~:text=results%20of%20the-,Slowlog,-command%20to%20analyze) command
 * Pub/Sub - support for [Redis pub/sub](https://redis.io/docs/manual/pubsub/), enabling subscription to channels and posting messages to channels
 * Bulk actions - Delete the keys in bulk based on the filters set in Browser or Tree view
-* Introducing Workbench - advanced command line interface with intelligent command auto-complete, complex data visualizations and support for the raw mode
+* Workbench - advanced command line interface with intelligent command auto-complete, complex data visualizations and support for the raw mode
 * Command auto-complete support for [RediSearch](https://oss.redis.com/redisearch/), [RedisJSON](https://oss.redis.com/redisjson/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
-* Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations
-* Ability to build your own data visualization plugins
-* Built-in click-through guides for Redis capabilities
-* Officially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming).
-* Available for macOS (including M1), Windows and Linux 
+* Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations. Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
+* Officially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming)
 
 Check out the [release notes](https://docs.redis.com/latest/ri/release-notes/). 
 
 ## Get started with RedisInsight
 
-This repository includes the code for the GA version of RedisInsight 2.0. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
+This repository includes the code for RedisInsight. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
 
 ### Installable 
 Available to download for free from [here](https://redis.com/redis-enterprise/redis-insight/#insight-form).
+Supports Windows, macOS (including M1), and Linux.
 
 ### Build 
 Alternatively you can also build from source. See our wiki for instructions.

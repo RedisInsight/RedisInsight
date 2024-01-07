@@ -9,7 +9,7 @@ services:
     volumes:
       - ./results:/usr/src/app/results
       - ./plugins:/usr/src/app/plugins
-      - .redisinsight-v2:/root/.redisinsight-v2
+      - .redisinsight-app:/root/.redisinsight-app
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
       - ./remote:/root/remote
@@ -33,7 +33,7 @@ services:
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',
-        'npx', 'yarn', 'test:chrome:ci'
+        'npm', 'run', 'test:chrome:ci'
     ]
 
   # Redisinsight API + UI build
@@ -46,7 +46,7 @@ services:
       context: ./../../
       dockerfile: Dockerfile
     volumes:
-      - .redisinsight-v2:/root/.redisinsight-v2
+      - .redisinsight-app:/root/.redisinsight-app
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
     ports:

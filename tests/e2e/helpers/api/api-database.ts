@@ -27,28 +27,28 @@ export class DatabaseAPIRequests {
     ): Promise<void> {
         const uniqueId = chance.string({ length: 10 });
         const requestBody: {
-            name?: string;
-            host: string;
-            port: number;
-            username?: string;
-            password?: string;
-            tls?: boolean;
-            verifyServerCert?: boolean;
+            name?: string,
+            host: string,
+            port: number,
+            username?: string,
+            password?: string,
+            tls?: boolean,
+            verifyServerCert?: boolean,
             caCert?: {
-                name: string;
-                certificate?: string;
-            };
+                name: string,
+                certificate?: string
+            },
             clientCert?: {
-                name: string;
-                certificate?: string;
-                key?: string;
-            };
+                name: string,
+                certificate?: string,
+                key?: string
+            }
         } = {
             name: databaseParameters.databaseName,
             host: databaseParameters.host,
             port: Number(databaseParameters.port),
             username: databaseParameters.databaseUsername,
-            password: databaseParameters.databasePassword,
+            password: databaseParameters.databasePassword
         };
 
         if (databaseParameters.caCert) {

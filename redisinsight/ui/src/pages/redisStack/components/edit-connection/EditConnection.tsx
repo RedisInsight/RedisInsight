@@ -11,14 +11,14 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Instance } from 'uiSrc/slices/interfaces'
-import AddDatabaseContainer from 'uiSrc/pages/home/components/AddDatabases/AddDatabasesContainer'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
-import { HELP_LINKS } from 'uiSrc/pages/home/constants/help-links'
+import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
+import DatabasePanel from 'uiSrc/pages/home/components/database-panel/DatabasePanel'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -119,7 +119,7 @@ const EditConnection = () => {
               )}
               <div className={styles.formContainer}>
                 <div className={styles.form}>
-                  <AddDatabaseContainer
+                  <DatabasePanel
                     editMode
                     width={600}
                     editedInstance={state.data}

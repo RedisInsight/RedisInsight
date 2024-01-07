@@ -26,7 +26,10 @@ import ShowChildByCondition from './show-child-by-condition'
 import RecommendationVoting from './recommendation-voting'
 import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
+import AutoRefresh from './auto-refresh'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
+
+export { FullScreen } from './full-screen'
 
 export * from './oauth'
 
@@ -64,4 +67,5 @@ export {
   FeatureFlagComponent,
   ModuleNotLoaded,
   FilterNotAvailable,
+  AutoRefresh,
 }

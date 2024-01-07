@@ -66,6 +66,7 @@ licenses
 /tests/e2e/results
 /tests/e2e/remote
 /tests/e2e/.redisinsight-v2
+/tests/e2e/.redisinsight-app
 
 # Parcel
 .parcel-cache

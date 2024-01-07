@@ -3,7 +3,7 @@ import { BrowserPage } from '../../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
-    ossStandaloneConfig
+    ossStandaloneConfigEmpty
 } from '../../../../helpers/conf';
 import { keyLength, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../../helpers/keys';
@@ -24,17 +24,17 @@ fixture `Filtering per key name in Browser page`
     .meta({ type: 'critical_path', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
     })
     .afterEach(async() => {
         // Delete database
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
     });
 test
     .after(async() => {
         // Clear and delete database
-        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfigEmpty.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
     })('Verify that user can search a key with selected data type is filters', async t => {
         keyName = Common.generateWord(10);
         // Add new key
@@ -62,7 +62,7 @@ test
     .after(async() => {
         // Clear keys and database
         await deleteKeysViaCli(keysData);
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
     })('Verify that user can filter keys per data type in Browser page', async t => {
         keyName = Common.generateWord(10);
         // Create new keys
@@ -70,6 +70,20 @@ test
         for (const { textType, keyName } of keysData) {
             await browserPage.selectFilterGroupType(textType);
             await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key of type ${textType} was found`);
+            textType !== KeyTypesTexts.Graph
+            ? await t.expect(browserPage.filteringLabel.textContent).contains(textType, 'Keys not filtered by key type')
+            : await t.expect(browserPage.filteringLabel.textContent).contains('graphdata', 'Keys not filtered by key type')
+            const regExp = new RegExp('[1-9]');
+            await t.expect(browserPage.keysNumberOfResults.textContent).match(regExp, 'Number of found keys');
+        }
+        // Check for tree view
+        await t.click(browserPage.treeViewButton);
+        for (const { textType, keyName } of keysData) {
+            await browserPage.selectFilterGroupType(textType);
+            await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).ok(`The key of type ${textType} was found`);
+            textType !== KeyTypesTexts.Graph
+            ? await t.expect(browserPage.filteringLabel.textContent).contains(textType, 'Keys not filtered by key type')
+            : await t.expect(browserPage.filteringLabel.textContent).contains('graphdata', 'Keys not filtered by key type')
             const regExp = new RegExp('[1-9]');
             await t.expect(browserPage.keysNumberOfResults.textContent).match(regExp, 'Number of found keys');
         }

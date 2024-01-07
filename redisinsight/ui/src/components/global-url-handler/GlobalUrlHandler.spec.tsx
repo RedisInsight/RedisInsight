@@ -13,6 +13,7 @@ import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { Pages } from 'uiSrc/constants'
+import { ADD_NEW, ADD_NEW_CA_CERT } from 'uiSrc/pages/home/constants'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import GlobalUrlHandler from './GlobalUrlHandler'
 
@@ -131,7 +132,9 @@ describe('GlobalUrlHandler', () => {
           password: 'password',
           port: 6379,
           tls: false,
-          username: undefined
+          username: undefined,
+          caCert: undefined,
+          clientCert: undefined,
         }
       }),
     ]
@@ -141,7 +144,147 @@ describe('GlobalUrlHandler', () => {
     expect(pushMock).toBeCalledWith(Pages.home)
   })
 
-  it('should call proper actions only after consents popup is accepted and open form to add db', async () => {
+  it('should call proper actions only after consents popup is accepted and open form to add db with caCert', async () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
+    (userSettingsSelector as jest.Mock).mockReturnValueOnce({
+      config: {},
+      isShowConsents: false
+    })
+
+    const url = `${fromUrl}&requiredCaCert=true`;
+
+    (appRedirectionSelector as jest.Mock).mockReturnValueOnce({
+      fromUrl: url
+    })
+
+    await act(() => {
+      render(<GlobalUrlHandler />)
+    })
+
+    const actionUrl = new URL(url)
+    const fromParams = new URLSearchParams(actionUrl.search)
+    // @ts-ignore
+    const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
+
+    const expectedActions = [
+      setUrlProperties(urlProperties),
+      setFromUrl(null),
+      setUrlDbConnection({
+        action: UrlHandlingActions.Connect,
+        dbConnection: {
+          host: 'localhost',
+          name: 'My Name',
+          password: 'password',
+          port: 6379,
+          tls: true,
+          caCert: { id: ADD_NEW_CA_CERT },
+          username: 'default',
+        }
+      })
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(pushMock).toBeCalledWith(Pages.home)
+  })
+
+  it('should call proper actions only after consents popup is accepted and open form to add db with client cert', async () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
+    (userSettingsSelector as jest.Mock).mockReturnValueOnce({
+      config: {},
+      isShowConsents: false
+    })
+
+    const url = `${fromUrl}&requiredClientCert=true`;
+
+    (appRedirectionSelector as jest.Mock).mockReturnValueOnce({
+      fromUrl: url
+    })
+
+    await act(() => {
+      render(<GlobalUrlHandler />)
+    })
+
+    const actionUrl = new URL(url)
+    const fromParams = new URLSearchParams(actionUrl.search)
+    // @ts-ignore
+    const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
+
+    const expectedActions = [
+      setUrlProperties(urlProperties),
+      setFromUrl(null),
+      setUrlDbConnection({
+        action: UrlHandlingActions.Connect,
+        dbConnection: {
+          host: 'localhost',
+          name: 'My Name',
+          password: 'password',
+          port: 6379,
+          tls: true,
+          caCert: undefined,
+          clientCert: { id: ADD_NEW },
+          username: 'default',
+        }
+      })
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(pushMock).toBeCalledWith(Pages.home)
+  })
+
+  it('should call proper actions only after consents popup is accepted and open form to add db with tls certs', async () => {
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
+    (userSettingsSelector as jest.Mock).mockReturnValueOnce({
+      config: {},
+      isShowConsents: false
+    })
+
+    const url = `${fromUrl}&requiredCaCert=true&requiredClientCert=true`;
+
+    (appRedirectionSelector as jest.Mock).mockReturnValueOnce({
+      fromUrl: url
+    })
+
+    await act(() => {
+      render(<GlobalUrlHandler />)
+    })
+
+    const actionUrl = new URL(url)
+    const fromParams = new URLSearchParams(actionUrl.search)
+    // @ts-ignore
+    const urlProperties = Object.fromEntries(fromParams) || {}
+    urlProperties.cloudId = urlProperties.cloudBdbId
+    delete urlProperties.cloudBdbId
+
+    const expectedActions = [
+      setUrlProperties(urlProperties),
+      setFromUrl(null),
+      setUrlDbConnection({
+        action: UrlHandlingActions.Connect,
+        dbConnection: {
+          host: 'localhost',
+          name: 'My Name',
+          password: 'password',
+          port: 6379,
+          tls: true,
+          caCert: { id: ADD_NEW_CA_CERT },
+          clientCert: { id: ADD_NEW },
+          username: 'default',
+        }
+      })
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(pushMock).toBeCalledWith(Pages.home)
+  })
+
+  it('should call proper actions only after consents popup is accepted and open form to add db with tls', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock });
     (userSettingsSelector as jest.Mock).mockReturnValueOnce({
@@ -177,6 +320,8 @@ describe('GlobalUrlHandler', () => {
           password: 'password',
           port: 6379,
           tls: true,
+          caCert: undefined,
+          clientCert: undefined,
           username: 'default',
         }
       })

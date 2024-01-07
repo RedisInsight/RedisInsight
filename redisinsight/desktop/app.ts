@@ -1,5 +1,6 @@
 /* eslint global-require: off, no-console: off */
 import { app, nativeTheme } from 'electron'
+import log from 'electron-log'
 import path from 'path'
 import {
   initElectronHandlers,
@@ -7,7 +8,7 @@ import {
   WindowType,
   windowFactory,
   AboutPanelOptions,
-  checkForUpdate,
+  initAutoUpdateChecks,
   installExtensions,
   initTray,
   initAutoUpdaterHandlers,
@@ -70,10 +71,12 @@ const init = async () => {
 
     await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
 
-    checkForUpdate(process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK)
-  } catch (_err) {
-    const error = _err as Error
-    console.log(wrapErrorMessageSensitiveData(error))
+    initAutoUpdateChecks(
+      process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
+      parseInt(process.env.RIAUTOUPDATEINTERVAL, 10) || 84 * 3600 * 1000,
+    )
+  } catch (err) {
+    log.error(wrapErrorMessageSensitiveData(err as Error))
   }
 }
 

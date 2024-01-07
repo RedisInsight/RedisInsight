@@ -16,7 +16,6 @@ import {
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
-
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const chance = new Chance();
@@ -47,8 +46,8 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see the list of Modules updated each time when he connects to the database', async t => {
-        let firstDatabaseModules: string[] = [];
-        let secondDatabaseModules: string[] = [];
+        const firstDatabaseModules: string[] = [];
+        const secondDatabaseModules: string[] = [];
         //Remember modules
         await t.click(browserPage.OverviewPanel.overviewMoreInfo);
         const moduleIcons = Selector('div').find('[data-testid^=Redi]');

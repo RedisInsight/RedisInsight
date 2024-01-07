@@ -7,6 +7,7 @@ import { getApproximatePercentage, Maybe, Nullable } from 'uiSrc/utils'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BulkActionsStatus, KeyTypes } from 'uiSrc/constants'
 import GroupBadge from 'uiSrc/components/group-badge/GroupBadge'
+import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -46,7 +47,7 @@ const BulkActionsInfo = (props: Props) => {
             </div>
           )}
         </EuiText>
-        {!isUndefined(status) && status !== BulkActionsStatus.Completed && status !== BulkActionsStatus.Aborted && (
+        {!isUndefined(status) && !isProcessedBulkAction(status) && (
           <EuiText color="subdued" className={styles.progress} data-testid="bulk-status-progress">
             In progress:
             <span>{` ${getApproximatePercentage(total, scanned)}`}</span>
@@ -60,6 +61,11 @@ const BulkActionsInfo = (props: Props) => {
         {status === BulkActionsStatus.Completed && (
           <EuiText className={cx(styles.progress, styles.progressCompleted)} data-testid="bulk-status-completed">
             Action completed
+          </EuiText>
+        )}
+        {status === BulkActionsStatus.Disconnected && (
+          <EuiText color="danger" className={styles.progress} data-testid="bulk-status-disconnected">
+            Connection Lost: {getApproximatePercentage(total, scanned)}
           </EuiText>
         )}
       </div>

@@ -113,17 +113,17 @@ const Navigation = (props: Props) => {
             {...args}
           >
             {isCustomTutorials && actions?.includes(EAItemActions.Create) && (
-              <>
+              <div className={styles.customTuturoialsForm}>
+                {children?.length === 0 && (
+                  <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
+                )}
                 {isCreateOpen && (
                   <UploadTutorialForm
                     onSubmit={submitCreate}
                     onCancel={() => setIsCreateOpen(false)}
                   />
                 )}
-                {!isCreateOpen && children?.length === 0 && (
-                  <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
-                )}
-              </>
+              </div>
             )}
             {renderTreeView(
               children ? getManifestItems(children) : [],

@@ -16,7 +16,7 @@ const WelcomeMyTutorials = ({ handleOpenUpload }: Props) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const onClickReadMore = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_TUTORIAL_INFO_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_CREATE_TUTORIAL_LINK_CLICKED,
       eventData: {
         databaseId: instanceId
       }

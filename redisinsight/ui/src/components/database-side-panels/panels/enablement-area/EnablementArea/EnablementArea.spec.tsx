@@ -135,6 +135,7 @@ describe('EnablementArea', () => {
 
       fireEvent.click(screen.getByTestId('upload-tutorial-btn'))
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
+      expect(screen.getByTestId('welcome-my-tutorials')).toBeInTheDocument()
     })
 
     it('should call proper actions after upload form submit', async () => {
@@ -163,6 +164,11 @@ describe('EnablementArea', () => {
 
       const expectedActions = [deleteWbCustomTutorial()]
       expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    })
+
+    it('should not render welcome screen if at least one tutorial uploaded', () => {
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      expect(screen.queryByTestId('welcome-my-tutorials')).not.toBeInTheDocument()
     })
   })
 })

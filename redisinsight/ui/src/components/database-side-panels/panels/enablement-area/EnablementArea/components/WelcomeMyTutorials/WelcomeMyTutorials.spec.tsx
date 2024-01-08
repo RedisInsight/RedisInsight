@@ -34,7 +34,7 @@ describe('WelcomeMyTutorials', () => {
     fireEvent.click(screen.getByTestId('read-more-link'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_TUTORIAL_INFO_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_CREATE_TUTORIAL_LINK_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
       }

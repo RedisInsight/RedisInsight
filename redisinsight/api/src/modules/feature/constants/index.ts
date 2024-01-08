@@ -22,6 +22,7 @@ export enum FeatureConfigConfigDestination {
 export enum KnownFeatures {
   InsightsRecommendations = 'insightsRecommendations',
   CloudSso = 'cloudSso',
+  CloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   RedisModuleFilter = 'redisModuleFilter',
 }
 

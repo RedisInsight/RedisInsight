@@ -4,6 +4,7 @@ import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { BrowserPage } from '../../../../pageObjects';
+import { goBackHistory } from '../../../../helpers/utils';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -89,12 +90,10 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // update after resolving testcafe Native Automation mode limitations
-    // // Click on Read More link for selected command
-    // await t.click(browserPage.CommandHelper.readMoreButton);
-    // // Check new opened window page with the correct URL
-    // await Common.checkURL(externalPageLink);
-    // await t.switchToParentWindow();
+    // Click on Read More link for selected command
+    await t.click(browserPage.CommandHelper.readMoreButton);
+    // Check new opened window page with the correct URL
+    await Common.checkURL(externalPageLink);
 });
 test('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
     filteringGroup = 'Search';
@@ -109,12 +108,10 @@ test('Verify that user can see in Command helper and click on new group "Search"
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // update after resolving testcafe Native Automation mode limitations
-    // // Click on Read More link for selected command
-    // await t.click(browserPage.CommandHelper.readMoreButton);
-    // // Check new opened window page with the correct URL
-    // await Common.checkURL(externalPageLink);
-    // await t.switchToParentWindow();
+    // Click on Read More link for selected command
+    await t.click(browserPage.CommandHelper.readMoreButton);
+    // Check new opened window page with the correct URL
+    await Common.checkURL(externalPageLink);
 });
 test('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
     filteringGroup = 'HyperLogLog';
@@ -129,13 +126,10 @@ test('Verify that user can see HyperLogLog title in Command Helper for this comm
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // update after resolving testcafe Native Automation mode limitations
-    // // Click on Read More link for selected command
-    // await t.click(browserPage.CommandHelper.readMoreButton);
-    // // Check new opened window page with the correct URL
-    // await Common.checkURL(externalPageLink);
-    // // await t.expect(getPageUrl()).eql(externalPageLink, 'The opened page');
-    // await t.switchToParentWindow();
+    // Click on Read More link for selected command
+    await t.click(browserPage.CommandHelper.readMoreButton);
+    // Check new opened window page with the correct URL
+    await Common.checkURL(externalPageLink);
 });
 test('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
     filteringGroups = ['Model', 'Script', 'Inference', 'Tensor'];
@@ -168,13 +162,13 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandsToCheck[i]));
         // Verify results of opened command
         await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandsArgumentsToCheck[i], 'Selected command title not correct');
-        // update after resolving testcafe Native Automation mode limitations
-        // // Click on Read More link for selected command
-        // await t.click(browserPage.CommandHelper.readMoreButton);
-        // // Check new opened window page with the correct URL
-        // await Common.checkURL(externalPageLinks[i]);
-        // // Close the window with external link to switch to the application window
-        // await t.closeWindow();
+        // Click on Read More link for selected command
+        await t.click(browserPage.CommandHelper.readMoreButton);
+        // Check new opened window page with the correct URL
+        await Common.checkURL(externalPageLinks[i]);
+        // Close the window with external link to switch to the application window
+        await goBackHistory();
+        await t.click(browserPage.CommandHelper.expandCommandHelperButton);
         i++;
     }
 });
@@ -192,13 +186,10 @@ test('Verify that user can work with Gears group in Command Helper (RedisGears m
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // update after resolving testcafe Native Automation mode limitations
-    // // Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
-    // await t.click(browserPage.CommandHelper.readMoreButton);
-    // // Check new opened window page with the correct URL
-    // await Common.checkURL(externalPageLink);
-    // // Close the window with external link to switch to the application window
-    // await t.closeWindow();
+    // Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
+    await t.click(browserPage.CommandHelper.readMoreButton);
+    // Check new opened window page with the correct URL
+    await Common.checkURL(externalPageLink);
 });
 test('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
     filteringGroups = ['Bloom Filter', 'CMS', 'TDigest', 'TopK', 'Cuckoo Filter'];
@@ -234,13 +225,13 @@ test('Verify that user can work with Bloom groups in Command Helper (RedisBloom 
         await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandsToCheck[i]));
         // Verify results of opened command
         await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandsArgumentsToCheck[i], 'Selected command title not correct');
-        // update after resolving testcafe Native Automation mode limitations
-        // // Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
-        // await t.click(browserPage.CommandHelper.readMoreButton);
-        // // Check new opened window page with the correct URL
-        // await Common.checkURL(externalPageLinks[i]);
-        // // Close the window with external link to switch to the application window
-        // await t.closeWindow();
+        // Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
+        await t.click(browserPage.CommandHelper.readMoreButton);
+        // Check new opened window page with the correct URL
+        await Common.checkURL(externalPageLinks[i]);
+        // Close the window with external link to switch to the application window
+        await goBackHistory();
+        await t.click(browserPage.CommandHelper.expandCommandHelperButton);
         i++;
     }
 });

@@ -126,7 +126,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
     openSelectedKey(selectedKeyName)
   }
 
-  const handleStatusOpen = (name: string, value:boolean) => {
+  const handleStatusOpen = (name: string, value: boolean) => {
     setStatusOpen((prevState) => {
       const newState = { ...prevState }
       // add or remove opened node
@@ -212,4 +212,4 @@ const KeyTree = forwardRef((props: Props, ref) => {
   )
 })
 
-export default KeyTree
+export default React.memo(KeyTree)

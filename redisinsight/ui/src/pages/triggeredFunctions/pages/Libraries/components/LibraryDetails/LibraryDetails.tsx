@@ -29,7 +29,6 @@ import DeleteLibraryButton from 'uiSrc/pages/triggeredFunctions/pages/Libraries/
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 import { FunctionType } from 'uiSrc/slices/interfaces/triggeredFunctions'
 
-import AutoRefresh from 'uiSrc/pages/browser/components/auto-refresh'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 
@@ -40,6 +39,7 @@ import {
 } from 'uiSrc/pages/triggeredFunctions/constants'
 import { Pages } from 'uiSrc/constants'
 import { getFunctionsLengthByType } from 'uiSrc/utils/triggered-functions/utils'
+import { AutoRefresh } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {

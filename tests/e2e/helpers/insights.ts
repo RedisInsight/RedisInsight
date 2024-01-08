@@ -1,5 +1,5 @@
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as fs from 'fs-extra';
 import { BasePage } from '../pageObjects';
 import { deleteRowsFromTableInDB, updateColumnValueInDBTable } from './database-scripts';
 import { syncFeaturesApi } from './api/api-info';

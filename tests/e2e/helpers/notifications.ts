@@ -1,4 +1,4 @@
-import { workingDirectory} from '../helpers/conf';
+import { workingDirectory } from '../helpers/conf';
 import { NotificationParameters } from '../pageObjects/components/navigation/notification-panel';
 
 const dbPath = `${workingDirectory}/redisinsight.db`;

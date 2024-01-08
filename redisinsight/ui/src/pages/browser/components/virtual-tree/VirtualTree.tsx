@@ -6,7 +6,7 @@ import {
   TreeWalkerValue,
   FixedSizeTree as Tree,
 } from 'react-vtree'
-import { EuiIcon, EuiLoadingSpinner, EuiProgress } from '@elastic/eui'
+import { EuiIcon, EuiImage, EuiLoadingSpinner, EuiProgress } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
@@ -63,7 +63,7 @@ const VirtualTree = (props: Props) => {
     onStatusOpen,
     onStatusSelected,
     setConstructingTree,
-    webworkerFn = () => {},
+    webworkerFn = () => { },
     onDeleteClicked,
     onDeleteLeaf,
   } = props
@@ -94,6 +94,8 @@ const VirtualTree = (props: Props) => {
     nodes.current = result
     rerender({})
     setConstructingTree?.(false)
+
+    openSingleFolderNode(nodes.current)
   }, [result])
 
   useEffect(() => {
@@ -134,17 +136,18 @@ const VirtualTree = (props: Props) => {
   }), [])
 
   const getMetadata = useCallback((
-    itemsInit: any[] = []
+    itemsInit: any[] = [],
+    filter: Nullable<KeyTypes>
   ): void => {
     dispatch(fetchKeysMetadataTree(
       itemsInit,
-      commonFilterType,
+      filter,
       controller.current?.signal,
       (loadedItems) =>
         onSuccessFetchedMetadata(loadedItems),
       () => { rerender({}) }
     ))
-  }, [commonFilterType])
+  }, [])
 
   const onSuccessFetchedMetadata = (
     loadedItems: any[],
@@ -156,18 +159,18 @@ const VirtualTree = (props: Props) => {
     rerender({})
   }
 
-  const getMetadataDebounced = debounce(() => {
+  const getMetadataDebounced = debounce((filter: Nullable<KeyTypes>) => {
     const entries = Object.entries(elements.current)
 
-    getMetadata(entries)
+    getMetadata(entries, filter)
 
     elements.current = {}
   }, 100)
 
   const getMetadataNode = useCallback((nameBuffer: any, path: string) => {
     elements.current[path] = nameBuffer
-    getMetadataDebounced()
-  }, [])
+    getMetadataDebounced(commonFilterType)
+  }, [commonFilterType])
 
   // This helper function constructs the object that will be sent back at the step
   // [2] during the treeWalker function work. Except for the mandatory `data`
@@ -204,6 +207,15 @@ const VirtualTree = (props: Props) => {
     nestingLevel,
     node,
   })
+
+  const openSingleFolderNode = useCallback((treeNodes?: TreeNode[]) => {
+    let nodes = treeNodes
+    while (nodes?.length === 1) {
+      const singleNode = nodes[0]
+      onStatusOpen?.(singleNode.fullName, true)
+      nodes = singleNode.children
+    }
+  }, [onStatusOpen])
 
   // The `treeWalker` function runs only on tree re-build which is performed
   // whenever the `treeWalker` prop is changed.
@@ -264,7 +276,15 @@ const VirtualTree = (props: Props) => {
             <div className={styles.loadingContainer} style={{ width, height }} data-testid="virtual-tree-spinner">
               <div className={styles.loadingBody}>
                 <EuiLoadingSpinner size="xl" className={styles.loadingSpinner} />
-                <EuiIcon type={loadingIcon || 'empty'} className={styles.loadingIcon} />
+                {loadingIcon ? (
+                  <EuiImage
+                    className={styles.loadingIcon}
+                    src={loadingIcon}
+                    alt="loading"
+                  />
+                ) : (
+                  <EuiIcon type="empty" className={styles.loadingIcon} />
+                )}
               </div>
             </div>
           )}

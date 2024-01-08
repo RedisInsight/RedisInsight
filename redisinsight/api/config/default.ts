@@ -60,7 +60,7 @@ export default {
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || false,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.36.0',
+    appVersion: process.env.RI_APP_VERSION || '2.40.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -77,7 +77,7 @@ export default {
   redis_clients: {
     idleSyncInterval: parseInt(process.env.RI_CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
     maxIdleThreshold: parseInt(process.env.RI_CLIENTS_MAX_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1hr
-    retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 5,
+    retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 3,
     retryDelay: parseInt(process.env.RI_CLIENTS_RETRY_DELAY, 10) || 500,
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
   },

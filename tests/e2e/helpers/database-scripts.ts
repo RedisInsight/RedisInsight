@@ -1,5 +1,5 @@
-import { workingDirectory } from '../helpers/conf';
 import * as sqlite3 from 'sqlite3';
+import { workingDirectory } from '../helpers/conf';
 
 const dbPath = `${workingDirectory}/redisinsight.db`;
 
@@ -17,7 +17,8 @@ export async function updateColumnValueInDBTable(tableName: string, columnName: 
         db.run(query, (err: { message: string }) => {
             if (err) {
                 reject(new Error(`Error during changing ${columnName} column value: ${err.message}`));
-            } else {
+            }
+            else {
                 db.close();
                 resolve();
             }
@@ -38,7 +39,8 @@ export async function getColumnValueFromTableInDB(tableName: string, columnName:
         db.get(query, (err: { message: string }, row: any) => {
             if (err) {
                 reject(new Error(`Error during getting ${columnName} column value: ${err.message}`));
-            } else {
+            }
+            else {
                 const columnValue = row[columnName];
                 db.close();
                 resolve(columnValue);
@@ -57,11 +59,11 @@ export async function deleteRowsFromTableInDB(tableName: string): Promise<void> 
 
     return new Promise<void>((resolve, reject) => {
 
-
         db.run(query, (err: { message: string }) => {
             if (err) {
                 reject(new Error(`Error during ${tableName} table rows deletion: ${err.message}`));
-            } else {
+            }
+            else {
                 db.close();
                 resolve();
             }

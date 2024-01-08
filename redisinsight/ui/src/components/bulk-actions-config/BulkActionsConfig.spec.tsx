@@ -4,13 +4,13 @@ import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { BulkActionsServerEvent, BulkActionsType, SocketEvent } from 'uiSrc/constants'
+import { BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
 import {
   bulkActionsDeleteSelector,
   bulkActionsSelector,
   disconnectBulkDeleteAction,
   setBulkActionConnected,
-  setBulkDeleteLoading
+  setBulkDeleteLoading, setDeleteOverviewStatus
 } from 'uiSrc/slices/browser/bulkActions'
 import BulkActionsConfig from './BulkActionsConfig'
 
@@ -110,6 +110,7 @@ describe('BulkActionsConfig', () => {
     const afterRenderActions = [
       setBulkActionConnected(true),
       setBulkDeleteLoading(true),
+      setDeleteOverviewStatus(BulkActionsStatus.Disconnected),
       disconnectBulkDeleteAction(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])

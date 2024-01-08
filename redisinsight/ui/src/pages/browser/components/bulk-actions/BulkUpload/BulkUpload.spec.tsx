@@ -5,7 +5,8 @@ import { render, screen, fireEvent, act, mockedStore, cleanup } from 'uiSrc/util
 import {
   bulkActionsUploadOverviewSelector,
   bulkUpload,
-  setBulkUploadStartAgain
+  setBulkUploadStartAgain,
+  uploadController
 } from 'uiSrc/slices/browser/bulkActions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BulkActionsType } from 'uiSrc/constants'
@@ -24,6 +25,9 @@ jest.mock('uiSrc/slices/browser/bulkActions', () => ({
   }),
   bulkActionsUploadOverviewSelector: jest.fn().mockReturnValue(null),
   bulkActionsUploadSummarySelector: jest.fn().mockReturnValue(null),
+  uploadController: {
+    abort: jest.fn()
+  }
 }))
 
 let store: typeof mockedStore
@@ -45,6 +49,18 @@ describe('BulkUpload', () => {
     fireEvent.click(screen.getByTestId('bulk-action-cancel-btn'))
 
     expect(onCancel).toBeCalled()
+  })
+
+  it('should call abort controller', () => {
+    const onCancel = jest.fn()
+    const abortMock = jest.fn();
+    (uploadController as any).abort = abortMock
+
+    render(<BulkUpload onCancel={onCancel} />)
+
+    fireEvent.click(screen.getByTestId('bulk-action-cancel-btn'))
+
+    expect(abortMock).toBeCalled()
   })
 
   it('submit btn should be disabled without file', () => {

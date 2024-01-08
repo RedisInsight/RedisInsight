@@ -174,7 +174,7 @@ const InternalPage = (props: Props) => {
               </EuiButtonEmpty>
             )}
           >
-            <div>
+            <div data-testid="explore-capability-popover">
               <RocketIcon className={styles.rocketIcon} />
               <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
               <EuiText className={styles.popoverText}>

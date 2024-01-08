@@ -12,9 +12,11 @@ import {
   EuiTitle,
   EuiToolTip
 } from '@elastic/eui'
-import { Field, FieldInputProps, Form, Formik, FormikErrors } from 'formik'
+import { Field, FieldInputProps, FieldMetaProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
+import { omit } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
+import { SECURITY_FIELD } from 'uiSrc/constants'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import ValidationTooltip from './components/ValidationTooltip'
 
@@ -38,7 +40,7 @@ const getInitialValues = (values: RdiInstance | null): ConnectionFormValues => (
   name: values?.name || '',
   url: values?.url || '',
   username: values?.username || '',
-  password: values?.password || ''
+  password: !values ? '' : SECURITY_FIELD
 })
 
 const UrlTooltip = () => (
@@ -70,13 +72,14 @@ const UrlTooltip = () => (
 
 const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Props) => {
   const [initialFormValues, setInitialFormValues] = useState(getInitialValues(editInstance))
+  const [passwordChanged, setPasswordChanged] = useState(false)
 
   useEffect(() => {
     setInitialFormValues(getInitialValues(editInstance))
   }, [editInstance])
 
   const onSubmit = (formValues: ConnectionFormValues) => {
-    onAddInstance(formValues)
+    onAddInstance({ ...omit(formValues, !passwordChanged ? 'password' : '') })
   }
 
   const validate = (values: ConnectionFormValues) => {
@@ -151,7 +154,15 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                 </EuiFormRow>
                 <EuiFormRow label="Password*" fullWidth>
                   <Field name="password">
-                    {({ field }: { field: FieldInputProps<string> }) => (
+                    {({
+                      field,
+                      form,
+                      meta
+                    }: {
+                      field: FieldInputProps<string>
+                      form: FormikHelpers<string>
+                      meta: FieldMetaProps<string>
+                    }) => (
                       <EuiFieldPassword
                         data-testid="connection-form-password-input"
                         className={styles.passwordField}
@@ -159,6 +170,12 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                         placeholder="Enter Password"
                         maxLength={500}
                         {...field}
+                        onFocus={() => {
+                          if (field.value === SECURITY_FIELD && !meta.touched) {
+                            form.setFieldValue('password', '')
+                            setPasswordChanged(true)
+                          }
+                        }}
                       />
                     )}
                   </Field>

@@ -37,7 +37,7 @@
 
       &__editorWrapper {
         height: calc(100% - 105px);
-          border: 1px solid var(--separatorColorLight) !important;
+        border: 1px solid var(--separatorColorLight) !important;
 
         :global(.inlineMonacoEditor) {
           height: 100%;

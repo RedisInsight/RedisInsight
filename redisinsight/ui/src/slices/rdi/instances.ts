@@ -22,7 +22,8 @@ export const initialState: InitialStateRdiInstances = {
     url: '',
     version: '',
     lastConnection: new Date(),
-    loading: false
+    loading: false,
+    error: '',
   },
   editedInstance: {
     loading: false,
@@ -110,7 +111,10 @@ const instancesSlice = createSlice({
 
     // set connected instance
     setConnectedInstance: (state) => {
-      state.connectedInstance.loading = true
+      state.connectedInstance = {
+        ...initialState.connectedInstance,
+        loading: true,
+      }
     },
 
     // set connected instance success
@@ -121,8 +125,11 @@ const instancesSlice = createSlice({
 
     // set connected instance failed
     setConnectedInstanceFailure: (state, { payload }) => {
-      state.loading = false
-      state.error = payload
+      state.connectedInstance = {
+        ...initialState.connectedInstance,
+        loading: false,
+        error: payload,
+      }
     },
 
     // reset connected instance

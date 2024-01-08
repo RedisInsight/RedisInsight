@@ -68,8 +68,11 @@ describe('rdi instances slice', () => {
       const error = 'error'
       const state = {
         ...initialState,
-        loading: false,
-        error,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+          error,
+        }
       }
 
       // Act

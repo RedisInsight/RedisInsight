@@ -37,7 +37,6 @@ import reducer, {
   setDbIndexState,
   appContextDbIndex,
   setRecommendationsShowHidden,
-  setCapabilityPopoverShown,
   appContextCapability,
   setCapability,
 } from '../../app/context'
@@ -66,7 +65,7 @@ describe('slices', () => {
     it('should properly set initial state with existing contextId and capability', () => {
       // Arrange
       const contextInstanceId = '12312-3123'
-      const capability = { source: '123123', tutorialPopoverShown: true }
+      const capability = { source: '123123' }
       const prevState = {
         ...initialState,
         contextInstanceId,
@@ -612,34 +611,11 @@ describe('slices', () => {
     })
   })
 
-  describe('setCapabilityPopoverShown', () => {
-    it('should properly set is show hidden tutorial capability popover', () => {
-      // Arrange
-      const value = true
-
-      const state = {
-        ...initialState.capability,
-        tutorialPopoverShown: value
-      }
-
-      // Act
-      const nextState = reducer(initialState, setCapabilityPopoverShown(value))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextCapability(rootState)).toEqual(state)
-    })
-  })
-
   describe('setCapability', () => {
     it('should properly set db config', () => {
       // Arrange
       const data = {
         source: '123123',
-        tutorialPopoverShown: true,
       }
 
       const state = {

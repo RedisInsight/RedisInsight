@@ -102,7 +102,6 @@ export interface StateAppContext {
   }
   capability: {
     source: string
-    tutorialPopoverShown: boolean
   }
 }
 

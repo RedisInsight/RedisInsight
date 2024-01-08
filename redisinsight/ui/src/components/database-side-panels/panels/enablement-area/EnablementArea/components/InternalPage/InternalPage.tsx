@@ -11,14 +11,16 @@ import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 
 import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/icons/rocket.svg'
-import { appContextCapability, setCapabilityPopoverShown } from 'uiSrc/slices/app/context'
+import { appContextCapability } from 'uiSrc/slices/app/context'
+import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
+import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import './styles/main.scss'
 import { getTutorialSection } from '../../utils'
 import {
@@ -46,7 +48,6 @@ export interface Props {
   manifestPath?: Nullable<string>
   sourcePath: string
   pagination?: IEnablementAreaItem[]
-  showCapabilityPopover?: boolean
 }
 const InternalPage = (props: Props) => {
   const location = useLocation()
@@ -64,14 +65,14 @@ const InternalPage = (props: Props) => {
     path,
     manifestPath,
     sourcePath,
-    showCapabilityPopover = false,
   } = props
   const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { source } = useSelector(appContextCapability)
-
-  const dispatch = useDispatch()
+  const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
+  const [showCapabilityPopover, setShowCapabilityPopover] = useState(false)
+  const tutorialCapability = getTutorialCapability(source!)
 
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
@@ -100,23 +101,19 @@ const InternalPage = (props: Props) => {
     }
   }
 
-  const handleClosePopover = () => {
-    dispatch(setCapabilityPopoverShown(true))
-  }
-
   useEffect(() => {
-    sendEventTelemetry({
-      event: TelemetryEvent.CAPABILITY_POPOVER_DISPLAYED,
-      eventData: {
-        capabilityName: getTutorialCapability(source!).telemetryName,
-        databaseId: instanceId,
-      }
-    })
-
-    return () => {
-      showCapabilityPopover && dispatch(setCapabilityPopoverShown(true))
+    if (isShowCapabilityTutorialPopover(free) && !!tutorialCapability?.tutorialPage?.id) {
+      setShowCapabilityPopover(true)
+      setCapabilityPopoverShown()
+      sendEventTelemetry({
+        event: TelemetryEvent.CAPABILITY_POPOVER_DISPLAYED,
+        eventData: {
+          capabilityName: tutorialCapability.telemetryName,
+          databaseId: instanceId,
+        }
+      })
     }
-  }, [showCapabilityPopover])
+  }, [free])
 
   useEffect(() => {
     if (!isLoading && !error && containerRef.current) {
@@ -161,7 +158,7 @@ const InternalPage = (props: Props) => {
             anchorPosition="leftCenter"
             isOpen={showCapabilityPopover}
             panelPaddingSize="m"
-            closePopover={handleClosePopover}
+            closePopover={() => setShowCapabilityPopover(false)}
             button={(
               <EuiButtonEmpty
                 data-testid="enablement-area__page-close"
@@ -179,7 +176,7 @@ const InternalPage = (props: Props) => {
               <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
               <EuiText className={styles.popoverText}>
                 {'You expressed interest in learning about the '}
-                <b>{getTutorialCapability(source!).name}</b>
+                <b>{tutorialCapability?.name}</b>
                 . Try this tutorial to get started.
               </EuiText>
             </div>

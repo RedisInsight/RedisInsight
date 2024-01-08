@@ -4,6 +4,7 @@ import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
 import { freeInstancesSelector, setDefaultInstance } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { setCapability } from 'uiSrc/slices/app/context'
 import OAuthConnectFreeDb from './OAuthConnectFreeDb'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -56,7 +57,10 @@ describe('OAuthConnectFreeDb', () => {
       }
     })
 
-    const expectedActions = [setDefaultInstance()]
+    const expectedActions = [
+      setCapability({ source: OAuthSocialSource.ListOfDatabases, tutorialPopoverShown: false }),
+      setDefaultInstance(),
+    ]
     expect(store.getActions()).toEqual(expectedActions)
   })
 

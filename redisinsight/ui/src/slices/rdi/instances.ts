@@ -125,11 +125,8 @@ const instancesSlice = createSlice({
 
     // set connected instance failed
     setConnectedInstanceFailure: (state, { payload }) => {
-      state.connectedInstance = {
-        ...initialState.connectedInstance,
-        loading: false,
-        error: payload,
-      }
+      state.connectedInstance.error = payload
+      state.connectedInstance.loading = false
     },
 
     // reset connected instance

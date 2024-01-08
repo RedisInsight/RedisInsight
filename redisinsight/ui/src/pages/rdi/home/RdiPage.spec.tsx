@@ -179,28 +179,6 @@ describe('RdiPage', () => {
     expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
   })
 
-  it('should populate RDI Alias with URL when RDI Alias is not provided', async () => {
-    render(<RdiPage />)
-
-    // open form
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
-    await screen.findByTestId('connection-form')
-
-    await act(() => {
-      fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
-      fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
-      fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
-
-      // submit form
-      fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
-    })
-
-    expect(createInstanceAction).toBeCalledWith(
-      { name: 'url', url: 'url', username: 'username', password: 'password' },
-      expect.any(Function)
-    )
-  })
-
   it('should call edit instance when editInstance is provided', async () => {
     render(<RdiPage />)
 

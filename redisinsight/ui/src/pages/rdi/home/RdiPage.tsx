@@ -35,17 +35,15 @@ const RdiPage = () => {
   }
 
   const handleAddInstance = (instance: Partial<RdiInstance>) => {
-    const name = instance.name === '' ? instance.url : instance.name
-
     const onSuccess = () => {
       setIsConnectionFormOpen(false)
       setEditInstance(null)
     }
 
     if (editInstance) {
-      dispatch(editInstanceAction({ ...editInstance, ...instance, name }, onSuccess))
+      dispatch(editInstanceAction({ ...editInstance, ...instance }, onSuccess))
     } else {
-      dispatch(createInstanceAction({ ...instance, name }, onSuccess))
+      dispatch(createInstanceAction({ ...instance }, onSuccess))
     }
 
     sendEventTelemetry({

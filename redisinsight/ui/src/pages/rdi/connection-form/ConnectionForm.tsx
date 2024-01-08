@@ -82,6 +82,9 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
   const validate = (values: ConnectionFormValues) => {
     const errors: FormikErrors<ConnectionFormValues> = {}
 
+    if (!values.name) {
+      errors.name = 'RDI Alias'
+    }
     if (!values.url) {
       errors.url = 'URL'
     }
@@ -106,7 +109,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                   <h3>Connect to RDI</h3>
                 </EuiTitle>
                 <EuiSpacer />
-                <EuiFormRow label="RDI Alias" fullWidth>
+                <EuiFormRow label="RDI Alias*" fullWidth>
                   <Field name="name">
                     {({ field }: { field: FieldInputProps<string> }) => (
                       <EuiFieldText

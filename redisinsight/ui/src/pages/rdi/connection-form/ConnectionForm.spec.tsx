@@ -56,6 +56,7 @@ describe('ConnectionForm', () => {
     expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
 
     await act(() => {
+      fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'alias' } })
       fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
       fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
       fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })

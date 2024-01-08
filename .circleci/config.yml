@@ -462,6 +462,8 @@ jobs:
                 command: |
                   cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
+                  RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
+                  RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
                   -f tests/e2e/docker.web.docker-compose.yml \
@@ -476,6 +478,8 @@ jobs:
                 command: |
                   cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
+                  RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
+                  RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
                   -f tests/e2e/local.web.docker-compose.yml \
@@ -871,8 +875,6 @@ jobs:
             fi
 
             docker build --build-arg NODE_ENV=<< parameters.env >> \
-            --build-arg RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
-            --build-arg RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
             --build-arg RI_SEGMENT_WRITE_KEY="$TELEMETRY" \
             -t riv2:latest .
 

@@ -20,6 +20,7 @@ export class EncryptionModule {
         // todo: rework to not export strategies
         PlainEncryptionStrategy,
         KeytarEncryptionStrategy,
+        KeyEncryptionStrategy,
       ],
     };
   }

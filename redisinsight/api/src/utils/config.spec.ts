@@ -50,7 +50,7 @@ describe('Config util', () => {
     });
 
     it('should return stack server config', () => {
-      process.env.BUILD_TYPE = 'REDIS_STACK';
+      process.env.RI_BUILD_TYPE = 'REDIS_STACK';
       process.env.NODE_ENV = 'staging';
       // eslint-disable-next-line global-require
       const { get } = require('./config');

@@ -17,5 +17,5 @@ docker-compose -f tests/e2e/rte.docker-compose.yml up --force-recreate -d -V
 # run tests
 COMMON_URL=$(tail -n 1 apppath)/resources/app.asar/dist/renderer/index.html \
 ELECTRON_PATH=$(tail -n 1 apppath)/redisinsight \
-SOCKETS_CORS=true \
+RI_SOCKETS_CORS=true \
 yarn --cwd tests/e2e dotenv -e .desktop.env yarn --cwd tests/e2e test:desktop:ci

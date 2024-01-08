@@ -1,4 +1,4 @@
-import { Server } from 'src/modules/server/models/server';
+import { AppType, Server } from 'src/modules/server/models/server';
 import { ServerEntity } from 'src/modules/server/entities/server.entity';
 import { mockControlGroup, mockControlNumber } from 'src/__mocks__/feature';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
@@ -24,7 +24,7 @@ export const mockGetServerInfoResponse = Object.assign(new GetServerInfoResponse
   appVersion: SERVER_CONFIG.appVersion,
   osPlatform: process.platform,
   buildType: SERVER_CONFIG.buildType,
-  appType: SERVER_CONFIG.buildType,
+  appType: AppType.Docker,
   controlGroup: mockControlGroup,
   controlNumber: mockControlNumber,
   encryptionStrategies: [

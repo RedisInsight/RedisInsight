@@ -2,9 +2,9 @@ import axios from 'axios'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
 const { apiPort } = window.app.config
-const baseApiUrl = process.env.BASE_API_URL
+const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
-const isWebApp = process.env.APP_ENV === 'web'
+const isWebApp = process.env.RI_APP_TYPE === 'web'
 
 export const RESOURCES_BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
 axios.defaults.adapter = require('axios/lib/adapters/http')

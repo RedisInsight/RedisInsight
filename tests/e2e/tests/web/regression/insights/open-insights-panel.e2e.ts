@@ -35,7 +35,7 @@ test('Verify Explore redis tab is opened from empty screens', async t => {
     await t.click(workbenchPage.exploreRedisBtn);
     await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
 });
-test.only
+test
     .before(async t => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.deleteAllDatabasesApi();
@@ -47,7 +47,7 @@ test.only
 
     })
     .after(async() => {
-        //  await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseAPIRequests.deleteAllDatabasesApi();
     })('Verify that insights panel is opened in cloud db if users db does not have some module', async t => {
         await t.click(browserPage.redisearchModeBtn);
         await t.click(browserPage.closeDialogButton);

@@ -46,7 +46,7 @@ services:
       context: ./../../
       dockerfile: Dockerfile
     environment:
-      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT0
+      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
       RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:
       - .redisinsight-app:/root/.redisinsight-app

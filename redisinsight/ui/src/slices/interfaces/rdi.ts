@@ -6,16 +6,41 @@ export enum PipelineJobsTabs {
   Output = 'output'
 }
 
+export enum DryRunJobResultStatus {
+  Success = 'success',
+  Failed = 'failed'
+}
+
 export interface IPipeline {
   config: string
   jobs: any[]
 }
 
+export interface IDryRunJobResults {
+  transformations: {
+    status: DryRunJobResultStatus
+    error?: string
+    data?: any
+  }
+  commands: {
+    status: DryRunJobResultStatus
+    error?: string
+    data?: string[]
+  }
+}
+
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
-  data: Nullable<IPipeline>
+  data: Nullable<IDryRunJobResults>
 }
+
+export interface IStateRdiDryRunJob {
+  loading: boolean
+  error: string
+  results: Nullable<IPipeline>
+}
+
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading?: boolean

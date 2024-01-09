@@ -3,10 +3,11 @@ import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
-export const initialState: any = {
+export const initialState: IStateRdiDryRunJob = {
   loading: false,
   error: '',
   results: null,

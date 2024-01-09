@@ -287,4 +287,23 @@ describe('RdiPage', () => {
       name: TelemetryPageView.RDI_INSTANCES_PAGE
     })
   })
+
+  it('should call proper telemetry when instance is deleted', async () => {
+    render(<RdiPage />)
+
+    await act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Remove field' }))
+    })
+
+    await act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_INSTANCE_DELETED,
+      eventData: {
+        ids: ['1']
+      }
+    })
+  })
 })

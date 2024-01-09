@@ -90,7 +90,14 @@ const RdiPage = () => {
     setIsConnectionFormOpen(true)
   }
 
-  const handleDeleteInstance = () => {
+  const handleDeleteInstance = (instances: RdiInstance[]) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.RDI_INSTANCE_DELETED,
+      eventData: {
+        ids: instances.map(({ id }) => id)
+      }
+    })
+
     setEditInstance(null)
     setIsConnectionFormOpen(false)
   }

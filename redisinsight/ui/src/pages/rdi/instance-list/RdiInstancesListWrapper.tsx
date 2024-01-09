@@ -102,8 +102,6 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
-  const handleExportInstances = () => {}
-
   const columnsFull: EuiTableFieldDataColumnType<RdiInstance>[] = [
     {
       field: 'name',
@@ -220,12 +218,12 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
         dialogIsOpen={dialogIsOpen}
         columnVariations={columnVariations}
         onDelete={handleDeleteInstances}
-        onExport={handleExportInstances}
         onWheel={closePopover}
         loading={instances.loading}
         data={instances.data}
         onTableChange={onTableChange}
         sort={sort}
+        disableExport
       />
     </div>
   )

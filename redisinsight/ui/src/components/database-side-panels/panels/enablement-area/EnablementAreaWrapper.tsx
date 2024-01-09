@@ -33,7 +33,7 @@ const EnablementAreaWrapper = () => {
 
   const onOpenInternalPage = ({ path, manifestPath }: IInternalPage) => {
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED,
+      event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
       eventData: {
         path,
         section: getTutorialSection(manifestPath),

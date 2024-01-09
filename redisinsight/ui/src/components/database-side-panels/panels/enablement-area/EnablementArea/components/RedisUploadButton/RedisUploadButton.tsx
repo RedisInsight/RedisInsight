@@ -32,7 +32,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
   const openPopover = () => {
     if (!isPopoverOpen) {
       sendEventTelemetry({
-        event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_DATA_UPLOAD_CLICKED,
+        event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
         eventData: {
           databaseId: instanceId
         }
@@ -46,7 +46,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
     setIsPopoverOpen(false)
     dispatch(uploadDataBulkAction(instanceId, path))
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_DATA_UPLOAD_SUBMITTED,
+      event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
         databaseId: instanceId
       }

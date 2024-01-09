@@ -72,7 +72,7 @@ const InternalPage = (props: Props) => {
 
   const sendEventClickExternalLinkTelemetry = (link: string = '') => {
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_LINK_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_LINK_CLICKED,
       eventData: {
         path,
         link,

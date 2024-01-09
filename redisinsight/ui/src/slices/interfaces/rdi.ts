@@ -1,6 +1,11 @@
 import { Nullable } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
+export enum PipelineJobsTabs {
+  Transformations = 'transformations',
+  Output = 'output'
+}
+
 export interface IPipeline {
   config: string
   jobs: any[]

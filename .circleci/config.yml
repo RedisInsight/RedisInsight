@@ -1156,6 +1156,9 @@ workflows:
             - Setup sign certificates (stage)
       - linux:
           name: Build app - Linux (stage)
+          env: stage
+          redisstack: false
+          target: AppImage
           requires:
             - Setup build (stage)
       - docker:

@@ -4,7 +4,7 @@ import { EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
-import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -12,7 +12,8 @@ import { connectedInstanceCDSelector, connectedInstanceSelector } from 'uiSrc/sl
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { FullScreen, OnboardingTour } from 'uiSrc/components'
 import { appContextCapability } from 'uiSrc/slices/app/context'
-import { getTutorialCapability, showCapabilityTutorialPopover } from 'uiSrc/utils'
+import { getTutorialCapability } from 'uiSrc/utils'
+import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -58,14 +59,20 @@ const DatabaseSidePanels = (props: Props) => {
   }, [pathname, isFullScreen])
 
   useEffect(() => {
-    if (!capabilitySource || !showCapabilityTutorialPopover()) {
+    if (!capabilitySource || !isShowCapabilityTutorialPopover(free)) {
       return
     }
 
     const search = new URLSearchParams(window.location.search)
+    const tutorialCapabilityPath = getTutorialCapability(capabilitySource)?.tutorialPage?.args?.path || ''
 
     // set 'guidPath' with the path to capability tutorial
-    search.set('guidePath', getTutorialCapability(capabilitySource)?.tutorialPage?.args?.path)
+    if (tutorialCapabilityPath) {
+      search.set('guidePath', tutorialCapabilityPath)
+    } else {
+      // reset explore if tutorial is not found
+      dispatch(resetExplorePanelSearch())
+    }
 
     history.push({ search: search.toString() })
 

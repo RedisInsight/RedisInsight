@@ -12,12 +12,6 @@ const getCapability = (
 })
 
 export const getSourceTutorialByCapability = (moduleName = '') => `${moduleName}_tutorial`
-export const showCapabilityTutorialPopover = () => {
-  const state = store.getState()
-
-  return !!state.connections.instances?.connectedInstance?.cloudDetails?.free
-    && !state.app.context.capability?.tutorialPopoverShown
-}
 
 export const getTutorialCapability = (source: any = '') => {
   switch (source) {
@@ -30,7 +24,7 @@ export const getTutorialCapability = (source: any = '') => {
     case getSourceTutorialByCapability(RedisDefaultModules.FTL):
       return getCapability(
         'searchAndQuery',
-        'Search and Query capability',
+        'Search and query capability',
         findMarkdownPathById(store.getState()?.workbench?.tutorials?.items, 'vector_similarity_search')
       )
 
@@ -48,7 +42,7 @@ export const getTutorialCapability = (source: any = '') => {
     case getSourceTutorialByCapability(RedisDefaultModules.TimeSeries):
       return getCapability(
         'timeSeries',
-        'time series data structure',
+        'Time series data structure',
         findMarkdownPathById(store.getState()?.workbench?.tutorials?.items, 'redis_for_time_series')
       )
 
@@ -57,7 +51,7 @@ export const getTutorialCapability = (source: any = '') => {
     case getSourceTutorialByCapability(RedisDefaultModules.Bloom):
       return getCapability(
         'probabilistic',
-        'probabilistic data structures',
+        'Probabilistic data structures',
         findMarkdownPathById(store.getState()?.workbench?.tutorials?.items, 'probabilistic_data_structures')
       )
 

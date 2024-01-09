@@ -8,7 +8,7 @@ import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/inter
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey, CodeButtonParams } from 'uiSrc/constants'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
-import { findMarkdownPathByPath, Nullable, showCapabilityTutorialPopover } from 'uiSrc/utils'
+import { findMarkdownPathByPath, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   explorePanelSelector,
@@ -16,8 +16,6 @@ import {
   setExplorePanelIsPageOpen,
   setExplorePanelManifest,
 } from 'uiSrc/slices/panels/insights'
-import { appContextCapability } from 'uiSrc/slices/app/context'
-import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import {
   FormValues
 } from './components/UploadTutorialForm/UploadTutorialForm'
@@ -67,8 +65,6 @@ const EnablementArea = (props: Props) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const { manifest, search: searchEAContext, isPageOpen: isInternalPageVisible } = useSelector(explorePanelSelector)
-  const { tutorialPopoverShown } = useSelector(appContextCapability)
-  const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
 
   const contextManifestPath = new URLSearchParams(searchEAContext).get('path')
 
@@ -77,7 +73,6 @@ const EnablementArea = (props: Props) => {
     manifestPath: contextManifestPath
   })
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [showCapabilityPopover, setShowCapabilityPopover] = useState(showCapabilityTutorialPopover())
 
   const searchRef = useRef<string>('')
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -140,10 +135,6 @@ const EnablementArea = (props: Props) => {
 
     dispatch(setExplorePanelIsPageOpen(false))
   }, [search, customTutorials, guides, tutorials])
-
-  useEffect(() => {
-    setShowCapabilityPopover(showCapabilityTutorialPopover())
-  }, [tutorialPopoverShown, free])
 
   const getManifestByPath = (path: Nullable<string> = '') => {
     const manifestPath = path?.replace(/^\//, '') || ''
@@ -355,7 +346,6 @@ const EnablementArea = (props: Props) => {
               manifestPath={internalPage?.manifestPath}
               sourcePath={getWBSourcePath(internalPage?.path)}
               search={searchRef.current}
-              showCapabilityPopover={showCapabilityPopover}
             />
           )}
         </div>

@@ -69,8 +69,7 @@ export const initialState: StateAppContext = {
     lastViewedPage: ''
   },
   capability: {
-    source: '',
-    tutorialPopoverShown: false,
+    source: ''
   }
 }
 
@@ -182,16 +181,11 @@ const appContextSlice = createSlice({
     setLastTriggeredFunctionsPage: (state, { payload }: { payload: string }) => {
       state.triggeredFunctions.lastViewedPage = payload
     },
-    setCapabilityPopoverShown: (state, { payload }: PayloadAction<boolean>) => {
-      state.capability.tutorialPopoverShown = payload
-      setCapabilityStorageField(CapabilityStorageItem.tutorialPopoverShown, payload)
-    },
     setCapability: (state, { payload }: PayloadAction<Maybe<{ source: string, tutorialPopoverShown: boolean }>>) => {
       const source = payload?.source ?? ''
       const tutorialPopoverShown = !!payload?.tutorialPopoverShown
 
       state.capability.source = source
-      state.capability.tutorialPopoverShown = tutorialPopoverShown
 
       setCapabilityStorageField(CapabilityStorageItem.source, source)
       setCapabilityStorageField(CapabilityStorageItem.tutorialPopoverShown, tutorialPopoverShown)
@@ -228,7 +222,6 @@ export const {
   setLastTriggeredFunctionsPage,
   setBrowserTreeSort,
   setCapability,
-  setCapabilityPopoverShown,
 } = appContextSlice.actions
 
 // Selectors

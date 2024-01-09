@@ -46,11 +46,10 @@ export interface Props {
   manifestPath?: Nullable<string>
   sourcePath: string
   search: string
-  showCapabilityPopover: boolean
 }
 
 const LazyInternalPage = ({
-  onClose, title, path, sourcePath, manifest, manifestPath, search, showCapabilityPopover,
+  onClose, title, path, sourcePath, manifest, manifestPath, search,
 }: Props) => {
   const history = useHistory()
   const { itemScrollTop, data: contentContext, url } = useSelector(explorePanelSelector)
@@ -131,7 +130,6 @@ const LazyInternalPage = ({
       onScroll={handlePageScroll}
       scrollTop={itemScrollTop}
       pagination={pageData.relatedPages}
-      showCapabilityPopover={showCapabilityPopover}
     />
   )
 }

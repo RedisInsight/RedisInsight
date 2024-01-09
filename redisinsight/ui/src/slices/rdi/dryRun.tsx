@@ -52,7 +52,7 @@ export function rdiDryRunJob(
   rdiInstanceId: string,
   input: string,
   job: string,
-  onSuccessAction?: (data: any) => void,
+  onSuccessAction?: (data: IDryRunJobResults) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {

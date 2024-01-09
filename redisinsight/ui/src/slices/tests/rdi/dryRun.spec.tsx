@@ -11,6 +11,7 @@ import reducer, {
 } from 'uiSrc/slices/rdi/dryRun'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { DryRunJobResultStatus } from 'uiSrc/slices/interfaces'
 
 let store: typeof mockedStore
 
@@ -106,7 +107,10 @@ describe('rdi dry run slice', () => {
   describe('thunks', () => {
     describe('rdiDryRunJob', () => {
       it('succeed to fetch data', async () => {
-        const mockData = { commands: ['HSET 1 1'], transformations: { name: 'John' } }
+        const mockData = {
+          commands: { status: DryRunJobResultStatus.Success, data: ['HSET 1 1'] },
+          transformations: { status: DryRunJobResultStatus.Success, data: { name: 'John' } },
+        }
         const responsePayload = { data: mockData, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)

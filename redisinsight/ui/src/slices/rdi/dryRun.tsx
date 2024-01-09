@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
-import { IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
+import { IDryRunJobResults, IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -22,7 +22,7 @@ const rdiPipelineSlice = createSlice({
       state.loading = true
       state.results = null
     },
-    dryRunJobSuccess: (state, { payload }: PayloadAction<any>) => {
+    dryRunJobSuccess: (state, { payload }: PayloadAction<IDryRunJobResults>) => {
       state.loading = false
       state.results = payload
       state.error = ''
@@ -58,7 +58,7 @@ export function rdiDryRunJob(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(dryRunJob())
-      const { data, status } = await apiService.post<any>(
+      const { data, status } = await apiService.post<IDryRunJobResults>(
         `rdi/${rdiInstanceId}/pipeline/dry-run-job`,
         {
           input,

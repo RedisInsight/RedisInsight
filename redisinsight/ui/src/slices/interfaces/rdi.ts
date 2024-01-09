@@ -11,9 +11,14 @@ export enum DryRunJobResultStatus {
   Failed = 'failed'
 }
 
+export interface IRdiPipelineJob {
+  name: string
+  value: string
+}
+
 export interface IPipeline {
   config: string
-  jobs: any[]
+  jobs: IRdiPipelineJob[]
 }
 
 export interface IDryRunJobResults {
@@ -32,13 +37,13 @@ export interface IDryRunJobResults {
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
-  data: Nullable<IDryRunJobResults>
+  data: Nullable<IPipeline>
 }
 
 export interface IStateRdiDryRunJob {
   loading: boolean
   error: string
-  results: Nullable<IPipeline>
+  results: Nullable<IDryRunJobResults>
 }
 
 export interface RdiInstance extends RdiInstanceResponse {

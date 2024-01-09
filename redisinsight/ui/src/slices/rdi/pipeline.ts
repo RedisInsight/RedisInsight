@@ -51,7 +51,7 @@ export function fetchRdiPipeline(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipeline())
-      const { data, status } = await apiService.get<any>(
+      const { data, status } = await apiService.get<IPipeline>(
         // TODO connect with Kyle to find solution
         `rdi/${rdiInstanceId}/pipeline`
       )

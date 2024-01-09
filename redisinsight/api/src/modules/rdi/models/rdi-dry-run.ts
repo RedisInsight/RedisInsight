@@ -1,6 +1,6 @@
 export enum DyRunJobStatus {
   Success = 'success',
-  Fail = 'fail',
+  Fail = 'failed',
 }
 
 export class RdiDryRunJobResult {

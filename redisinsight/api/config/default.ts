@@ -58,7 +58,7 @@ export default {
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
-    staticContent: !!process.env.RI_SERVE_STATICS || false,
+    staticContent: !!process.env.RI_SERVE_STATICS || true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
     appVersion: process.env.RI_APP_VERSION || '2.40.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,

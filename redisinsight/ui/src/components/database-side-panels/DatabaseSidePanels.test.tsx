@@ -7,12 +7,13 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { fireEvent, screen, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
-import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, setExplorePanelIsPageOpen, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
 import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { getTutorialCapability } from 'uiSrc/utils'
+import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import DatabaseSidePanels from './DatabaseSidePanels'
 
 let store: typeof mockedStore
@@ -76,6 +77,11 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/utils', () => ({
   ...jest.requireActual('uiSrc/utils'),
   getTutorialCapability: jest.fn().mockReturnValue({ tutorialPage: { id: 'id' }, telemetryName: 'searchAndQuery' }),
+}))
+
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+  isShowCapabilityTutorialPopover: jest.fn(),
 }))
 
 /**
@@ -227,7 +233,8 @@ describe('DatabaseSidePanels', () => {
 
   describe('capability', () => {
     beforeEach(() => {
-      (connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({ free: true })
+      (connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({ free: true });
+      (isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(() => true)
     })
     it('should call store actions', () => {
       (getTutorialCapability as jest.Mock).mockImplementation(() => ({
@@ -250,6 +257,7 @@ describe('DatabaseSidePanels', () => {
       const expectedActions = [
         getRecommendations(),
         resetExplorePanelSearch(),
+        setExplorePanelIsPageOpen(false),
         changeSelectedTab(InsightsPanelTabs.Explore),
         toggleInsightsPanel(true),
       ]

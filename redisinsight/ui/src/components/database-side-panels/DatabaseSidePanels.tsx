@@ -4,7 +4,7 @@ import { EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
-import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, setExplorePanelIsPageOpen, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -63,18 +63,18 @@ const DatabaseSidePanels = (props: Props) => {
       return
     }
 
-    const search = new URLSearchParams(window.location.search)
     const tutorialCapabilityPath = getTutorialCapability(capabilitySource)?.tutorialPage?.args?.path || ''
 
     // set 'guidPath' with the path to capability tutorial
     if (tutorialCapabilityPath) {
+      const search = new URLSearchParams(window.location.search)
       search.set('guidePath', tutorialCapabilityPath)
+      history.push({ search: search.toString() })
     } else {
       // reset explore if tutorial is not found
       dispatch(resetExplorePanelSearch())
+      dispatch(setExplorePanelIsPageOpen(false))
     }
-
-    history.push({ search: search.toString() })
 
     dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
     dispatch(toggleInsightsPanel(true))

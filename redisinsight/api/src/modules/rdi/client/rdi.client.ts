@@ -1,6 +1,7 @@
 import {
   RdiClientMetadata, RdiJob, RdiPipeline, RdiType,
 } from 'src/modules/rdi/models';
+import { DryRunJobDto, DryRunJobResponseDto } from 'src/modules/rdi/dto';
 
 export abstract class RdiClient {
   abstract type: RdiType;
@@ -25,6 +26,8 @@ export abstract class RdiClient {
   abstract deploy(pipeline: RdiPipeline): Promise<RdiPipeline>;
 
   abstract deployJob(job: RdiJob): Promise<RdiJob>;
+
+  abstract dryRunJob(data: DryRunJobDto): Promise<DryRunJobResponseDto>;
 
   abstract disconnect(): Promise<void>;
 

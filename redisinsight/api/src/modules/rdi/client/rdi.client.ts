@@ -1,5 +1,5 @@
 import {
-  RdiClientMetadata, RdiJob, RdiPipeline, RdiType,
+  RdiClientMetadata, RdiJob, RdiPipeline, RdiType, RdiDryRunJobResult,
 } from 'src/modules/rdi/models';
 import { DryRunJobDto, DryRunJobResponseDto } from 'src/modules/rdi/dto';
 
@@ -26,6 +26,10 @@ export abstract class RdiClient {
   abstract deploy(pipeline: RdiPipeline): Promise<RdiPipeline>;
 
   abstract deployJob(job: RdiJob): Promise<RdiJob>;
+
+  abstract getDryRunJobTransformations(data: DryRunJobDto): Promise<RdiDryRunJobResult>;
+
+  abstract getDryRunJobCommands(data: DryRunJobDto): Promise<RdiDryRunJobResult>;
 
   abstract dryRunJob(data: DryRunJobDto): Promise<DryRunJobResponseDto>;
 

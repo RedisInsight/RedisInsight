@@ -2,9 +2,8 @@ import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
-import { DryRunJobDto } from 'src/modules/rdi/dto';
-import { DryRunJobResponseDto } from 'src/modules/rdi/dto/dry-run.job.response.dto';
-import { DyRunJobStatus } from 'src/modules/rdi/models/rdi-dry-run';
+import { DryRunJobDto, DryRunJobResponseDto } from 'src/modules/rdi/dto';
+import { DyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
 
 export class ApiRdiClient extends RdiClient {
   public type = RdiType.API;
@@ -35,28 +34,34 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async dryRunJob(data: DryRunJobDto): Promise<DryRunJobResponseDto> {
-    const results: any = {};
+    const response = await Promise.all(
+      [this.getDryRunJobTransformations(data), this.getDryRunJobCommands(data)],
+    );
+    return ({ transformations: response[0], commands: response[1] });
+  }
+
+  async getDryRunJobTransformations(data: DryRunJobDto): Promise<RdiDryRunJobResult> {
     try {
       const transformations = await this.client.post(
         RdiUrl.DryRunJob,
         { input: data.input, job: data.job, test_output: false },
       );
-      results.transformations = { status: DyRunJobStatus.Success, data: transformations.data };
+      return ({ status: DyRunJobStatus.Success, data: transformations.data });
     } catch (e) {
-      results.transformations = { status: DyRunJobStatus.Fail, error: e.message };
+      return ({ status: DyRunJobStatus.Fail, error: e.message });
     }
+  }
 
+  async getDryRunJobCommands(data: DryRunJobDto): Promise<RdiDryRunJobResult> {
     try {
       const commands = await this.client.post(
         RdiUrl.DryRunJob,
         { input: data.input, job: data.job, test_output: true },
       );
-      results.commands = { status: DyRunJobStatus.Success, data: commands.data };
+      return ({ status: DyRunJobStatus.Success, data: commands.data });
     } catch (e) {
-      results.commands = { status: DyRunJobStatus.Fail, error: e.message };
+      return ({ status: DyRunJobStatus.Fail, error: e.message });
     }
-
-    return results;
   }
 
   async disconnect(): Promise<void> {

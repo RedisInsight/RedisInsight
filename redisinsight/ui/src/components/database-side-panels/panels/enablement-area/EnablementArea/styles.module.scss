@@ -1,25 +1,7 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 .container {
   overflow: hidden;
   height: 100%;
   flex-grow: 1;
-}
-
-.tutorialWrapper {
-  margin-bottom: 6px;
-}
-
-.innerContainer {
-  @include euiScrollBar;
-  padding: 8px 0 !important;
-  overflow: auto;
-  height: 100%;
-  text-align: left;
-  letter-spacing: 0;
-  color: var(--euiTextSubduedColor) !important;
 }
 
 .innerContainerLoader {
@@ -43,6 +25,4 @@
   transform: translateX(0);
 }
 
-:export {
-  paddingHorizontal: 16
-}
+

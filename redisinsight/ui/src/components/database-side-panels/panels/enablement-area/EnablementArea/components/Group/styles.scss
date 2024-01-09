@@ -17,7 +17,9 @@
     }
 
     .group-header {
-      font: normal normal medium 11px/15px Graphik, sans-serif;
+      display: flex;
+      align-items: center;
+
       letter-spacing: -0.12px;
       overflow: hidden;
       white-space: nowrap;
@@ -50,6 +52,10 @@
           background-color: var(--euiColorSecondary);
         }
       }
+
+      .euiIcon {
+        margin-right: 4px;
+      }
     }
 
     .divider {
@@ -70,7 +76,6 @@
   .euiAccordion__button {
     padding: 3px 0;
     flex-grow: 1;
-    margin-bottom: 2px;
 
     & > span {
       overflow: hidden;
@@ -104,14 +109,12 @@
     .euiListGroupItem {
       button {
         padding: 3px 8px;
-        line-height: 24px;
-        max-height: 30px;
+        line-height: 20px;
       }
 
       .euiListGroupItem__label {
-        font: normal normal normal 14px/20px Graphik, sans-serif;
-        letter-spacing: -0.14px;
-        height: 24px;
+        font: normal normal normal 12px/14px Graphik, sans-serif;
+        white-space: break-spaces;
       }
     }
 

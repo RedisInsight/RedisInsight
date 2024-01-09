@@ -28,6 +28,7 @@ export interface IEnablementAreaItem {
   id: string
   type: EnablementAreaComponent
   label: string
+  summary?: string
   children?: IEnablementAreaItem[]
   args?: Record<string, any>
   _actions?: string[]

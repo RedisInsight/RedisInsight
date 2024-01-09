@@ -3,13 +3,12 @@
 
   .wrapper {
     padding: 18px;
-    background: var(--browserTableRowEven);
-    border: 1px solid var(--separatorColor);
+    background: var(--euiColorLightestShade);
     border-radius: 4px;
 
     .input {
       height: 34px !important;
-      background: var(--browserTableRowEven) !important;
+      background: var(--euiColorEmptyShade) !important;
     }
 
     .uploadFileWrapper {

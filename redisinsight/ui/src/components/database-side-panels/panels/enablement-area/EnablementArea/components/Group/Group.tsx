@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -27,8 +27,7 @@ export interface Props {
   arrowDisplay?: 'left' | 'right' | 'none'
   onToggle?: (isOpen: boolean) => void
   triggerStyle?: any
-  isCustomTutorialsLoading?: boolean
-  highlightGroup?: boolean
+  buttonClassName?: string
   isPageOpened?: boolean
 }
 
@@ -47,10 +46,13 @@ const Group = (props: Props) => {
     onCreate,
     onDelete,
     triggerStyle,
+    buttonClassName,
     isPageOpened,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(workbenchCustomTutorialsSelector)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const [isGroupOpen, setIsGroupOpen] = useState<boolean>(initialIsOpen)
 
   const handleCreate = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -66,6 +68,11 @@ const Group = (props: Props) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
     onDelete?.(id)
+  }
+
+  const handleOpen = (isOpen: boolean) => {
+    setIsGroupOpen(isOpen)
+    onToggle?.(isOpen)
   }
 
   const actionsContent = (
@@ -101,14 +108,17 @@ const Group = (props: Props) => {
   const buttonContent = (
     <div className="group-header-wrapper">
       <EuiText className="group-header" size="m">
+        <EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />
         {label}
       </EuiText>
       {isShowActions && actionsContent}
     </div>
   )
+
   const buttonProps: any = {
     'data-testid': `accordion-button-${id}`,
     style: triggerStyle,
+    className: buttonClassName,
   }
 
   return (
@@ -119,7 +129,7 @@ const Group = (props: Props) => {
       buttonProps={buttonProps}
       forceState={forceState}
       arrowDisplay={arrowDisplay}
-      onToggle={onToggle}
+      onToggle={handleOpen}
       initialIsOpen={initialIsOpen}
       style={{ whiteSpace: 'nowrap', width: 'auto' }}
       className={[withBorder ? 'withBorder' : ''].join(' ')}

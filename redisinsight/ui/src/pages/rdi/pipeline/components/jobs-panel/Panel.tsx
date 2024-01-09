@@ -11,16 +11,14 @@ import {
   keys,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
-import parse from 'html-react-parser'
-import { monaco } from 'react-monaco-editor'
-
 import { useParams } from 'react-router-dom'
+
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { CodeBlock } from 'uiSrc/components'
 import { rdiDryRunJobSelector, rdiDryRunJob, setInitialDryRunJob } from 'uiSrc/slices/rdi/dryRun'
-import { MonacoLanguage } from 'uiSrc/constants'
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
+import DryRunJobCommands from 'uiSrc/pages/rdi/pipeline/components/dry-run-job-commands'
+import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline/components/dry-run-job-transformations'
 
 import styles from './styles.module.scss'
 
@@ -31,13 +29,11 @@ export interface Props {
 
 const DryRunJobPanel = (props: Props) => {
   const { job, onClose } = props
-  const { loading: isDryRunning, results } = useSelector(rdiDryRunJobSelector)
+  const { loading: isDryRunning } = useSelector(rdiDryRunJobSelector)
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [selectedTab, changeSelectedTab] = useState<PipelineJobsTabs>(PipelineJobsTabs.Transformations)
   const [input, setInput] = useState<string>('')
-  const [transformations, setTransformations] = useState('')
-  const [commands, setCommands] = useState('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -60,36 +56,6 @@ const DryRunJobPanel = (props: Props) => {
     }
   }, [input])
 
-  useEffect(() => {
-    if (results && results.transformations?.status === 'success') {
-      try {
-        const transformations = JSON.stringify(results.transformations?.data, null, 2)
-        setTransformations(transformations)
-      } catch (e) {
-        setTransformations(results.transformations?.data ?? '')
-      }
-    }
-
-    if (results && results.transformations?.status === 'failed') {
-      setTransformations(results.transformations?.error ?? '')
-    }
-
-    if (results && results.commands?.status === 'success') {
-      try {
-        monaco.editor.colorize(results.commands?.data.join('\n').trim(), MonacoLanguage.Redis, {})
-          .then((data) => {
-            setCommands(data)
-          })
-      } catch (e) {
-        setCommands(results?.commands.data)
-      }
-    }
-
-    if (results && results?.commands?.status === 'failed') {
-      setCommands(`<span className=${styles.error}>${results?.commands.error ?? ''}</span>`)
-    }
-  }, [results])
-
   // componentWillUnmount
   useEffect(() => () => {
     dispatch(setInitialDryRunJob())
@@ -99,10 +65,6 @@ const DryRunJobPanel = (props: Props) => {
     if (event.key === keys.ESCAPE && isFullScreen) {
       handleFullScreen()
     }
-  }
-
-  const handleClose = () => {
-    onClose()
   }
 
   const handleChangeTab = (name: PipelineJobsTabs) => {
@@ -172,7 +134,7 @@ const DryRunJobPanel = (props: Props) => {
               color="primary"
               aria-label="close dry run panel"
               className={styles.closeBtn}
-              onClick={handleClose}
+              onClick={onClose}
               data-testid="close-dry-run-btn"
             />
           </div>
@@ -210,31 +172,8 @@ const DryRunJobPanel = (props: Props) => {
             <EuiText>Results</EuiText>
             <Tabs />
           </div>
-          {selectedTab === PipelineJobsTabs.Transformations && (
-            <>
-              {results?.transformations?.status === 'failed' ? (
-                <div className={styles.codeBlock} data-testid="transformations-output">
-                  <CodeBlock className={styles.code}>
-                    <span className={styles.error}>{transformations}</span>
-                  </CodeBlock>
-                </div>
-              ) : (
-                <MonacoJson
-                  readOnly
-                  value={transformations}
-                  wrapperClassName={styles.outputCode}
-                  data-testid="transformations-output"
-                />
-              ) }
-            </>
-          )}
-          {selectedTab === PipelineJobsTabs.Output && (
-            <div className={styles.codeBlock} data-testid="commands-output">
-              <CodeBlock className={styles.code}>
-                {parse(commands)}
-              </CodeBlock>
-            </div>
-          )}
+          {selectedTab === PipelineJobsTabs.Transformations && (<DryRunJobTransformations />)}
+          {selectedTab === PipelineJobsTabs.Output && (<DryRunJobCommands />)}
         </div>
       </div>
     </div>

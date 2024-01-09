@@ -164,23 +164,6 @@ $animation-duration: 300ms;
   }
 }
 
-.code {
-  word-wrap: break-word;
-  white-space: break-spaces;
-}
-
-.codeBlock {
-  @include euiScrollBar;
-  border: 1px solid var(--separatorColorLight);
-  background: var(--rdiSearchInstanceListBgColor);
-  height: 350px;
-  overflow: auto;
-}
-
-.error {
-  color: var(--cliOutputResponseFailColor);
-}
-
 .inputCode {
   height: 325px;
 
@@ -189,10 +172,31 @@ $animation-duration: 300ms;
   }
 }
 
-.outputCode {
-  height: 350px;
+:global {
+  .rdi-dry-run {
+    &__codeBlock {
+      @include euiScrollBar;
+      border: 1px solid var(--separatorColorLight);
+      background: var(--rdiSearchInstanceListBgColor);
+      height: 350px;
+      overflow: auto;
+    }
 
-  :global(.inlineMonacoEditor) {
-    height: 348px;
+    &__transformationsCode {
+      height: 350px;
+
+      .inlineMonacoEditor {
+        height: 348px;
+      }
+    }
+
+    &__code {
+      word-wrap: break-word;
+      white-space: break-spaces;
+    }
+
+    &__error {
+      color: var(--cliOutputResponseFailColor);
+    }
   }
 }

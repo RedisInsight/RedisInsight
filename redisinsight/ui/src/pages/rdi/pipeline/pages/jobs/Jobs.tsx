@@ -10,7 +10,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 
-import Panel from 'uiSrc/pages/rdi/pipeline/components/jobs-panel/Panel'
+import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline/components/jobs-panel'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
@@ -99,7 +99,7 @@ const Jobs = () => {
         </div>
       </div>
       {isPanelOpen && (
-        <Panel onClose={() => setIsPanelOpen(false)} job={value} />
+        <DryRunJobPanel onClose={() => setIsPanelOpen(false)} job={value} />
       )}
     </>
 

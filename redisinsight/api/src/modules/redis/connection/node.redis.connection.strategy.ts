@@ -43,16 +43,20 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
       host, port, password, username, tls, db, timeout,
     } = database;
 
-    //
-    // if (tls) {
-    //   redisOptions.tls = await this.getTLSConfig(database);
-    // }
+    let tlsOptions = { };
+    if (tls) {
+      tlsOptions = {
+        tls: true,
+        ...await this.getTLSConfig(database),
+      };
+    }
 
     return {
       socket: {
         host,
         port,
         connectTimeout: timeout,
+        ...tlsOptions,
       },
       username,
       password,

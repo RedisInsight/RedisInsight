@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Database } from 'src/modules/database/models/database';
@@ -16,7 +15,6 @@ export class DatabaseConnectionService {
 
   constructor(
     private readonly databaseClientFactory: DatabaseClientFactory,
-    private readonly databaseService: DatabaseService,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,

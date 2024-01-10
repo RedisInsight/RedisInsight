@@ -38,13 +38,19 @@ export class InsightsPanel {
     async setActiveTab(type: ExploreTabs.Explore): Promise<ExploreTab>
     async setActiveTab(type: ExploreTabs.Recommendations): Promise<RecommendationsTab>
     async setActiveTab(type: ExploreTabs): Promise<ExploreTab | RecommendationsTab> {
+        const activeTabName  = await this.getActiveTabName();
         if(type === ExploreTabs.Explore) {
-            await t.click(this.exploreTab);
+            if(type !== activeTabName) {
+                await t.click(this.exploreTab);
+            }
             return new ExploreTab();
         }
 
-        await t.click(this.recommendationsTab);
+        if(type !== activeTabName) {
+            await t.click(this.recommendationsTab);
+        }
         return new RecommendationsTab();
+
     }
 
     /**

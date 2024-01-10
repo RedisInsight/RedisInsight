@@ -3,7 +3,7 @@ import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
 import { RdiDryRunJobDto, RdiDryRunJobResponseDto } from 'src/modules/rdi/dto';
-import { DyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
+import { RdiDyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
 
 export class ApiRdiClient extends RdiClient {
   public type = RdiType.API;
@@ -46,9 +46,9 @@ export class ApiRdiClient extends RdiClient {
         RdiUrl.DryRunJob,
         { input: data.input, job: data.job, test_output: false },
       );
-      return ({ status: DyRunJobStatus.Success, data: transformations.data });
+      return ({ status: RdiDyRunJobStatus.Success, data: transformations.data });
     } catch (e) {
-      return ({ status: DyRunJobStatus.Fail, error: e.message });
+      return ({ status: RdiDyRunJobStatus.Fail, error: e.message });
     }
   }
 
@@ -58,9 +58,9 @@ export class ApiRdiClient extends RdiClient {
         RdiUrl.DryRunJob,
         { input: data.input, job: data.job, test_output: true },
       );
-      return ({ status: DyRunJobStatus.Success, data: commands.data });
+      return ({ status: RdiDyRunJobStatus.Success, data: commands.data });
     } catch (e) {
-      return ({ status: DyRunJobStatus.Fail, error: e.message });
+      return ({ status: RdiDyRunJobStatus.Fail, error: e.message });
     }
   }
 

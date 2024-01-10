@@ -1,10 +1,10 @@
-export enum DyRunJobStatus {
+export enum RdiDyRunJobStatus {
   Success = 'success',
   Fail = 'failed',
 }
 
 export class RdiDryRunJobResult {
-  status: DyRunJobStatus;
+  status: RdiDyRunJobStatus;
 
   // TODO validate with RDI team
   data?: any;

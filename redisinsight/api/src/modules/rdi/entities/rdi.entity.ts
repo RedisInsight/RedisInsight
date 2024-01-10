@@ -43,4 +43,7 @@ export class RdiEntity {
   @Expose()
   @Column({ nullable: false })
   version: string;
+
+  @Column({ nullable: true })
+  encryption: string;
 }

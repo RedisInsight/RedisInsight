@@ -53,6 +53,7 @@ import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
 import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { initialState as initialStateRdiPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/instances'
+import { initialState as initialStateRdiDryRunJob } from 'uiSrc/slices/rdi/dryRun'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -131,6 +132,7 @@ const initialStateDefault: RootState = {
   rdi: {
     pipeline: cloneDeep(initialStateRdiPipeline),
     instances: cloneDeep(initialStateRdi),
+    dryRun: cloneDeep(initialStateRdiDryRunJob),
   }
 }
 

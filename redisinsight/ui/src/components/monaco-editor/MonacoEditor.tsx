@@ -14,7 +14,7 @@ import styles from './styles.modules.scss'
 
 export interface CommonProps {
   value: string
-  onChange: (value: string) => void
+  onChange?: (value: string) => void
   onApply?: (
     event: React.MouseEvent,
     closeEditor: () => void

@@ -2,62 +2,72 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { IStateRdiPipeline, IPipeline } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { IDryRunJobResults, IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
-export const initialState: IStateRdiPipeline = {
+export const initialState: IStateRdiDryRunJob = {
   loading: false,
   error: '',
-  data: null,
+  results: null,
 }
 
 const rdiPipelineSlice = createSlice({
-  name: 'rdiPipeline',
+  name: 'dryRunJob',
   initialState,
   reducers: {
-    getPipeline: (state) => {
+    setInitialDryRunJob: () => initialState,
+    dryRunJob: (state) => {
       state.loading = true
+      state.results = null
     },
-    getPipelineSuccess: (state, { payload }: PayloadAction<IPipeline>) => {
+    dryRunJobSuccess: (state, { payload }: PayloadAction<IDryRunJobResults>) => {
       state.loading = false
-      state.data = payload
+      state.results = payload
+      state.error = ''
     },
-    getPipelineFailure: (state, { payload }) => {
+    dryRunJobFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
+      state.results = null
     },
   }
 })
 
-export const rdiPipelineSelector = (state: RootState) => state.rdi.pipeline
+export const rdiDryRunJobSelector = (state: RootState) => state.rdi.dryRun
 
 export const {
-  getPipeline,
-  getPipelineSuccess,
-  getPipelineFailure,
+  dryRunJob,
+  dryRunJobSuccess,
+  dryRunJobFailure,
+  setInitialDryRunJob,
 } = rdiPipelineSlice.actions
 
 // The reducer
 export default rdiPipelineSlice.reducer
 
 // Asynchronous thunk action
-export function fetchRdiPipeline(
+export function rdiDryRunJob(
   rdiInstanceId: string,
-  onSuccessAction?: (data: any) => void,
+  input: string,
+  job: string,
+  onSuccessAction?: (data: IDryRunJobResults) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(getPipeline())
-      const { data, status } = await apiService.get<IPipeline>(
-        // TODO connect with Kyle to find solution
-        `rdi/${rdiInstanceId}/pipeline`
+      dispatch(dryRunJob())
+      const { data, status } = await apiService.post<IDryRunJobResults>(
+        `rdi/${rdiInstanceId}/pipeline/dry-run-job`,
+        {
+          input,
+          job,
+        }
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getPipelineSuccess(data))
+        dispatch(dryRunJobSuccess(data))
 
         onSuccessAction?.(data)
       }
@@ -65,7 +75,7 @@ export function fetchRdiPipeline(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
-      dispatch(getPipelineFailure(errorMessage))
+      dispatch(dryRunJobFailure(errorMessage))
       onFailAction?.()
     }
   }

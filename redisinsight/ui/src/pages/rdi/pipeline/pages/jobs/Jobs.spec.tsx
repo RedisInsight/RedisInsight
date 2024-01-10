@@ -1,14 +1,15 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Jobs from './Jobs'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendPageViewTelemetry: jest.fn(),
+  sendEventTelemetry: jest.fn(),
 }))
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
@@ -81,5 +82,30 @@ describe('Jobs', () => {
     render(<Jobs />)
 
     expect(screen.getByTestId('rdi-pipeline-transformation-link')).toHaveAttribute('href', 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/')
+  })
+
+  it('should send telemetry event with proper data', () => {
+    render(<Jobs />)
+
+    fireEvent.click(screen.getByTestId('rdi-jobs-dry-run'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_TEST_JOB_OPENED,
+      eventData: {
+        id: 'rdiInstanceId',
+      }
+    })
+  })
+
+  it('should render Panel and disable dry run btn', () => {
+    const { queryByTestId } = render(<Jobs />)
+
+    expect(screen.getByTestId('rdi-jobs-dry-run')).not.toBeDisabled()
+    expect(queryByTestId('dry-run-panel')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('rdi-jobs-dry-run'))
+
+    expect(screen.getByTestId('rdi-jobs-dry-run')).toBeDisabled()
+    expect(queryByTestId('dry-run-panel')).toBeInTheDocument()
   })
 })

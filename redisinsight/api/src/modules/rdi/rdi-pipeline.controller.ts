@@ -7,8 +7,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
-import { DryRunJobDto } from 'src/modules/rdi/dto';
-import { DryRunJobResponseDto } from 'src/modules/rdi/dto/dry-run.job.response.dto';
+import { RdiDryRunJobDto } from 'src/modules/rdi/dto';
+import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 
 @ApiTags('RDI')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -44,12 +44,12 @@ export class RdiPipelineController {
   @Post('/dry-run-job')
   @ApiEndpoint({
     description: 'Dry run job',
-    responses: [{ status: 200, type: DryRunJobResponseDto }],
+    responses: [{ status: 200, type: RdiDryRunJobResponseDto }],
   })
   async dryRunJob(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() dto: DryRunJobDto,
-  ): Promise<DryRunJobResponseDto> {
+      @Body() dto: RdiDryRunJobDto,
+  ): Promise<RdiDryRunJobResponseDto> {
     return this.rdiPipelineService.dryRunJob(rdiClientMetadata, dto);
   }
 }

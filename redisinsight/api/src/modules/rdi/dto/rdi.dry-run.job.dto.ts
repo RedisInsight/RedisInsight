@@ -3,7 +3,7 @@ import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString, Validate } from 'class-validator';
 import { SerializedJsonValidator } from 'src/validators';
 
-export class DryRunJobDto {
+export class RdiDryRunJobDto {
   @ApiProperty({
     description: 'Input data',
     type: String,

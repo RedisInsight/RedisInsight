@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
 
-export class DryRunJobResponseDto {
+export class RdiDryRunJobResponseDto {
   @ApiProperty({
     description: 'Dry run job transformations result',
     type: RdiDryRunJobResult,

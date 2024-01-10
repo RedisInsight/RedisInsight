@@ -2,7 +2,7 @@ import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
-import { DryRunJobDto, DryRunJobResponseDto } from 'src/modules/rdi/dto';
+import { RdiDryRunJobDto, RdiDryRunJobResponseDto } from 'src/modules/rdi/dto';
 import { DyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
 
 export class ApiRdiClient extends RdiClient {
@@ -33,14 +33,14 @@ export class ApiRdiClient extends RdiClient {
     return null;
   }
 
-  async dryRunJob(data: DryRunJobDto): Promise<DryRunJobResponseDto> {
+  async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
     const response = await Promise.all(
       [this.getDryRunJobTransformations(data), this.getDryRunJobCommands(data)],
     );
     return ({ transformations: response[0], commands: response[1] });
   }
 
-  async getDryRunJobTransformations(data: DryRunJobDto): Promise<RdiDryRunJobResult> {
+  async getDryRunJobTransformations(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
     try {
       const transformations = await this.client.post(
         RdiUrl.DryRunJob,
@@ -52,7 +52,7 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async getDryRunJobCommands(data: DryRunJobDto): Promise<RdiDryRunJobResult> {
+  async getDryRunJobCommands(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
     try {
       const commands = await this.client.post(
         RdiUrl.DryRunJob,

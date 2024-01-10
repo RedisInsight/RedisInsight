@@ -6,7 +6,7 @@ export interface IPipeline {
   jobs: any[]
 }
 
-export interface IStateRdi {
+export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
@@ -14,6 +14,7 @@ export interface IStateRdi {
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading?: boolean
+  error: string,
 }
 
 export interface InitialStateRdiInstances {

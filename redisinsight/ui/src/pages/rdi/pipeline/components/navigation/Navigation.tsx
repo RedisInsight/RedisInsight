@@ -9,10 +9,6 @@ import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
 
 import styles from './styles.module.scss'
 
-export interface IProps {
-  path: string
-}
-
 enum RdiPipelineTabs {
   Prepare = PageNames.rdiPipelinePrepare,
   Config = PageNames.rdiPipelineConfig,
@@ -42,14 +38,15 @@ const getSelectedTab = (path: string, rdiInstanceId: string) => {
   return null
 }
 
-const Navigation = (props: IProps) => {
-  const { path } = props
+const Navigation = () => {
 
   const [selectedTab, setSelectedTab] = useState<Nullable<RdiPipelineTabs>>(null)
 
   const history = useHistory()
   const { pathname } = useLocation()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
+  const path = pathname?.split('/').pop() || ''
 
   const onSelectedTabChanged = (id: string | RdiPipelineTabs) => {
     switch (id) {

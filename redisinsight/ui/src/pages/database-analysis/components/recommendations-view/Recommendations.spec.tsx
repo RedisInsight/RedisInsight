@@ -357,9 +357,9 @@ describe('Recommendations', () => {
       }
     }))
 
-    const sendEventTelemetryMock = jest.fn()
+    const sendEventTelemetryMock = jest.fn();
 
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     const { container } = render(<Recommendations />)
 
@@ -369,27 +369,27 @@ describe('Recommendations', () => {
 
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).not.toBeTruthy()
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_COLLAPSED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'luaScript',
         provider: 'RE_CLOUD'
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(container.querySelector('[data-test-subj="luaScript-button"]') as HTMLInputElement)
 
     expect(screen.queryAllByTestId('luaScript-accordion')[0]?.classList.contains('euiAccordion-isOpen')).toBeTruthy()
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED,
+      event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_EXPANDED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'luaScript',
         provider: 'RE_CLOUD',
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should not render badges legend', () => {
@@ -446,8 +446,8 @@ describe('Recommendations', () => {
   })
 
   it('should call proper history push after click go tutorial button', () => {
-    const sendEventTelemetryMock = jest.fn()
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock);
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
@@ -462,14 +462,14 @@ describe('Recommendations', () => {
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.DATABASE_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         recommendation: 'shardHashes',
         provider: 'RE_CLOUD',
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry after click go tutorial button', () => {
@@ -488,7 +488,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
-    expect(openNewWindowDatabase).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/document/introduction.md')
-    openNewWindowDatabase.mockRestore()
+    expect(openNewWindowDatabase).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/document/introduction.md');
+    (openNewWindowDatabase as jest.Mock).mockRestore()
   })
 })

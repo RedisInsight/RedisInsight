@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
@@ -46,13 +46,12 @@ const Recommendations = () => {
 
   const { theme } = useContext(ThemeContext)
   const history = useHistory()
-  const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
     event: isOpen
-      ? TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED
-      : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
+      ? TelemetryEvent.DATABASE_ANALYSIS_TIPS_EXPANDED
+      : TelemetryEvent.DATABASE_ANALYSIS_TIPS_COLLAPSED,
     eventData: {
       databaseId: instanceId,
       recommendation: recommendationsContent[id]?.telemetryEvent || id,
@@ -62,7 +61,7 @@ const Recommendations = () => {
 
   const goToTutorial = (mdPath: string, id: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.DATABASE_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
         recommendation: recommendationsContent[id]?.telemetryEvent || id,
@@ -134,7 +133,7 @@ const Recommendations = () => {
           data-testid="no=recommendations-icon"
         />
         <EuiText className={styles.bigText}>AMAZING JOB!</EuiText>
-        <EuiText size="m">No Recommendations at the moment,</EuiText>
+        <EuiText size="m">No Tips at the moment,</EuiText>
         <br />
         <EuiText size="m">keep up the good work!</EuiText>
       </div>

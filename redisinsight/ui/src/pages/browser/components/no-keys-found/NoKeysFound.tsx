@@ -82,7 +82,7 @@ const NoKeysFound = (props: Props) => {
           className={styles.exploreBtn}
           data-testid="explore-msg-btn"
         >
-          Explore Redis
+          Explore
         </EuiButton>
       </div>
     </div>

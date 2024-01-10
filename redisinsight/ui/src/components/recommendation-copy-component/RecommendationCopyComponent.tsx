@@ -24,7 +24,7 @@ const RecommendationCopyComponent = ({ live = false, keyName, telemetryEvent, pr
     sendEventTelemetry({
       event: live
         ? TelemetryEvent.INSIGHTS_RECOMMENDATION_KEY_COPIED
-        : TelemetryEvent.DATABASE_RECOMMENDATIONS_KEY_COPIED,
+        : TelemetryEvent.DATABASE_TIPS_KEY_COPIED,
       eventData: {
         databaseId: instanceId,
         name: telemetryEvent,

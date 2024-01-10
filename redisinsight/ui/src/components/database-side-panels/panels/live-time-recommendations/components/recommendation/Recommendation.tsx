@@ -216,8 +216,8 @@ const Recommendation = ({
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
-            title="Snooze recommendation"
-            content="This recommendation will be removed from the list and displayed again when relevant."
+            title="Snooze tip"
+            content="This tip will be removed from the list and displayed again when relevant."
             position="top"
             display="inlineBlock"
             anchorClassName="flex-row"
@@ -227,17 +227,17 @@ const Recommendation = ({
               iconType={SnoozeIcon}
               className={styles.snoozeBtn}
               onClick={handleDelete}
-              aria-label="snooze recommendation"
+              aria-label="snooze tip"
               data-testid={`${name}-delete-btn`}
             />
           </EuiToolTip>
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
-            title={`${hide ? 'Show' : 'Hide'} recommendation`}
+            title={`${hide ? 'Show' : 'Hide'} tip`}
             content={`${hide
-              ? 'This recommendation will be shown in the list.'
-              : 'This recommendation will be removed from the list and not displayed again.'
+              ? 'This tip will be shown in the list.'
+              : 'This tip will be removed from the list and not displayed again.'
             }`}
             position="top"
             display="inlineBlock"
@@ -248,7 +248,7 @@ const Recommendation = ({
               iconType={hide ? 'eyeClosed' : 'eye'}
               className={styles.hideBtn}
               onClick={toggleHide}
-              aria-label="hide/unhide recommendation"
+              aria-label="hide/unhide tip"
               data-testid={`toggle-hide-${name}-btn`}
             />
           </EuiToolTip>

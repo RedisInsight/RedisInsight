@@ -115,7 +115,7 @@ const DatabaseSidePanels = (props: Props) => {
           anchorWrapperClassName={styles.onboardingAnchorWrapper}
           fullSize
         >
-          <span className={styles.tabName}>Explore Redis</span>
+          <span className={styles.tabName}>Explore</span>
         </OnboardingTour>
       </EuiTab>
       <EuiTab
@@ -125,7 +125,7 @@ const DatabaseSidePanels = (props: Props) => {
         data-testid="recommendations-tab"
       >
         <>
-          <span className={styles.tabName}>Redis Tips</span>
+          <span className={styles.tabName}>Tips</span>
           {!!totalUnread && (
             <div
               className={styles.tabTotalUnread}

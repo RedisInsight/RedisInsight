@@ -127,19 +127,19 @@ const LiveTimeRecommendations = () => {
       {!!recommendations.length && (
         <div className={styles.actions}>
           <div>
-            <EuiTextColor className={styles.boldText}>Our Recommendations</EuiTextColor>
+            <EuiTextColor className={styles.boldText}>Our Tips</EuiTextColor>
             <EuiToolTip
               position="bottom"
               anchorClassName={styles.tooltipAnchor}
               className={styles.tooltip}
               content={(
                 <>
-                  Recommendations will help you improve your database.
+                  Tips will help you improve your database.
                   <br />
-                  New recommendations appear while you work with your database,
+                  New tips appear while you work with your database,
                   including how to improve performance and optimize memory usage.
                   <br />
-                  Eager for more recommendations? Run Database Analysis to get started.
+                  Eager for more tips? Run Database Analysis to get started.
                 </>
             )}
             >
@@ -218,7 +218,7 @@ const LiveTimeRecommendations = () => {
               Database Analysis
             </EuiLink>
           </PopoverRunAnalyze>
-          {' to get more recommendations'}
+          {' to get more tips'}
         </EuiText>
       </div>
     </div>

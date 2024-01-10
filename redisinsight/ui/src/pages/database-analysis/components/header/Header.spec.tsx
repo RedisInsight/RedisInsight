@@ -21,7 +21,7 @@ import Header, { Props } from './Header'
 
 const mockedProps = mock<Props>()
 
-const mockReports = [
+const mockReports: any = [
   { id: 'id_1', createdAt: '2022-09-23T05:30:23.000Z' },
   { id: 'id_2', createdAt: '2022-09-23T05:15:19.000Z' }
 ]
@@ -96,9 +96,9 @@ describe('DatabaseAnalysisHeader', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
   it('should send telemetry event after click "new analysis" btn', async () => {
-    const sendEventTelemetryMock = jest.fn()
+    const sendEventTelemetryMock = jest.fn();
 
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<Header {...instance(mockedProps)} />)
 
@@ -110,9 +110,9 @@ describe('DatabaseAnalysisHeader', () => {
         databaseId: INSTANCE_ID_MOCK,
         provider: 'RE_CLOUD'
       }
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it.skip('should call onChangeSelectedAnalysis after change selector', async () => {
@@ -148,7 +148,7 @@ describe('CLUSTER db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys per shard to get an overview of your data and recommendations on how to save memory and optimize the usage of your database.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys per shard to get an overview of your data and tips on how to save memory and optimize the usage of your database.')
   })
 })
 
@@ -166,7 +166,7 @@ describe('STANDALONE db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and recommendations on how to save memory and optimize the usage of your database.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and tips on how to save memory and optimize the usage of your database.')
   })
 })
 
@@ -184,6 +184,6 @@ describe('SENTINEL db', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and recommendations on how to save memory and optimize the usage of your database.')
+    expect(screen.getByTestId('db-new-reports-tooltip')).toHaveTextContent('Analyze up to 10 000 keys to get an overview of your data and tips on how to save memory and optimize the usage of your database.')
   })
 })

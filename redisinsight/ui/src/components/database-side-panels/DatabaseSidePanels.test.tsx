@@ -89,7 +89,7 @@ describe('DatabaseSidePanels', () => {
 
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     })
 
     render(<DatabaseSidePanels />)
@@ -115,7 +115,7 @@ describe('DatabaseSidePanels', () => {
   it('should render recommendations count with totalUnread > 0', () => {
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     });
 
     (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
@@ -138,7 +138,7 @@ describe('DatabaseSidePanels', () => {
 
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     })
 
     render(<DatabaseSidePanels />)
@@ -151,11 +151,11 @@ describe('DatabaseSidePanels', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         page: '/triggered-functions/libraries',
-        tab: 'recommendations'
+        tab: 'tips'
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on change tab', () => {
@@ -166,7 +166,7 @@ describe('DatabaseSidePanels', () => {
 
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     })
 
     render(<DatabaseSidePanels />)
@@ -177,12 +177,12 @@ describe('DatabaseSidePanels', () => {
       event: TelemetryEvent.INSIGHTS_PANEL_TAB_CHANGED,
       eventData: {
         databaseId: 'instanceId',
-        prevTab: 'recommendations',
+        prevTab: 'tips',
         currentTab: 'explore',
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on fullscreen', () => {
@@ -203,8 +203,8 @@ describe('DatabaseSidePanels', () => {
         databaseId: 'instanceId',
         state: 'open'
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

@@ -34,7 +34,7 @@ enum OnboardingStepName {
   ExploreCustomTutorials = 'insights_explore_custom_tutorials',
   ClusterOverview = 'cluster_overview',
   DatabaseAnalysisOverview = 'database_analysis_overview',
-  DatabaseAnalysisRecommendations = 'database_analysis_recommendations',
+  DatabaseAnalysisRecommendations = 'database_analysis_tips',
   SlowLog = 'slow_log',
   PubSub = 'pub_sub',
   TriggeredFunctions = 'triggers_and_functions',

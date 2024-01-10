@@ -12,7 +12,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchRecommendationsAction,
-  resetRecommendationsHighlighting,
+  setInitialRecommendationsState,
 } from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,
@@ -94,7 +94,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setDatabaseAnalysisInitialState())
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
-    dispatch(resetRecommendationsHighlighting())
+    dispatch(setInitialRecommendationsState())
     dispatch(setTriggeredFunctionsInitialState())
     setTimeout(() => {
       dispatch(resetOutput())

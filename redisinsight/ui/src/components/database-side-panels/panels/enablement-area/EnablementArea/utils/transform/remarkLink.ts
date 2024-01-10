@@ -1,8 +1,15 @@
 import { visit } from 'unist-util-visit'
+import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
 export const remarkLink = (): (tree: Node) => void => (tree: any) => {
   // Find link node in syntax tree
   visit(tree, 'link', (node) => {
+    if (IS_ABSOLUTE_PATH.test(node.url)) { // External link
+      const [text] = node.children || []
+      node.type = 'html'
+      node.value = `<ExternalLink href="${node.url}" rel="nofollow noopener noreferrer">${text?.value || ''}</ExternalLink>`
+    }
+
     if (node.title === 'Redis Cloud') {
       const [text] = node.children || []
       node.type = 'html'

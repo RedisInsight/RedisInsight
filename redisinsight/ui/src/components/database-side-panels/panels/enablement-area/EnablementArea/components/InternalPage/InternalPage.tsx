@@ -11,6 +11,7 @@ import cx from 'classnames'
 import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 
+import { ExternalLink } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -60,7 +61,7 @@ const InternalPage = (props: Props) => {
     manifestPath,
     sourcePath,
   } = props
-  const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink }
+  const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink, ExternalLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const handleScroll = debounce(() => {

@@ -63,7 +63,7 @@ export class MyRedisDatabasePage extends BasePage {
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     hostPort = Selector('[data-testid=host-port]');
     noResultsFoundMessage = Selector('div').withExactText('No results found');
-    noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
+    noResultsFoundText = Selector('div').withExactText('No results matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
     successImportMessage = Selector('[data-testid=result-success]');
     importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');

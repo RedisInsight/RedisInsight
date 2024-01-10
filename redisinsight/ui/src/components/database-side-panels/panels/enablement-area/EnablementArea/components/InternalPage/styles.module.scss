@@ -1,6 +1,6 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 .container {
   min-height: 1px;
@@ -22,6 +22,9 @@
     width: 100%;
     padding: 0 16px;
   }
+  :global(.euiPopover) {
+    width: 100%;
+  }
 }
 
 .footer {
@@ -30,14 +33,18 @@
 }
 .pageTitle {
   margin: 8px 0 4px;
-  font: normal normal 500 14px/24px Graphik, sans-serif;
+  font:
+    normal normal 500 14px/24px Graphik,
+    sans-serif;
 }
 .backButton {
   padding: 0 4px;
   max-height: 30px;
   line-height: 24px;
   width: 100%;
-  font: normal normal 14px/24px Graphik, sans-serif !important;
+  font:
+    normal normal 14px/24px Graphik,
+    sans-serif !important;
   text-decoration: none;
   color: var(--euiTextSubduedColor) !important;
   & > span {
@@ -58,4 +65,31 @@
   flex: 1;
 }
 
+.popover {
+  min-width: 356px !important;
+  width: 356px;
+}
 
+.popoverAnchor {
+  width: 100%;
+}
+
+.rocketIcon {
+  position: absolute;
+  margin-top: 6px;
+}
+
+.popoverTitle,
+.popoverText {
+  padding-left: 45px;
+}
+
+.popoverTitle {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+.popoverText {
+  padding-top: 4px;
+  font-size: 14px !important;
+  line-height: 1.1rem !important;
+}

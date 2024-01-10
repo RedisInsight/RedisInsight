@@ -1,5 +1,5 @@
 import { ExecuteQueryParams, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
-import { getExecuteParams, getParsedParamsInQuery, findMarkdownPathByPath, parseParams } from 'uiSrc/utils'
+import { getExecuteParams, getParsedParamsInQuery, findMarkdownPathByPath, parseParams, findMarkdownPathById } from 'uiSrc/utils'
 import { CodeButtonParams, MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 
 const paramsState: ExecuteQueryParams = {
@@ -87,6 +87,20 @@ describe('parseParams', () => {
   it.each(parseParamsTests)('for input: %s (params), should be output: %s',
     (params, expected) => {
       const result = parseParams(params)
+      expect(result).toEqual(expected)
+    })
+})
+
+const findMarkdownPathByIdTests: any[] = [
+  ['123', null],
+  ['second-internal-page', { args: { path: 'quick-guides/document-capabilities.html' }, id: 'second-internal-page', label: 'Second Internal Page', type: 'internal-link' }],
+  ['document-capabilities', { args: { path: '/static/workbench/quick-guides/document/learn-more.md' }, id: 'document-capabilities', label: 'Document Capabilities', type: 'internal-link' }],
+]
+
+describe('findMarkdownPathById', () => {
+  it.each(findMarkdownPathByIdTests)('for input: %s (id), should be output: %s',
+    (id, expected) => {
+      const result = findMarkdownPathById(MOCK_TUTORIALS_ITEMS, id)
       expect(result).toEqual(expected)
     })
 })

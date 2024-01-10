@@ -28,6 +28,7 @@ export * from './events'
 export * from './telemetry'
 export * from './oauth'
 export * from './redisearch'
+export * from './capability'
 
 export {
   Maybe,

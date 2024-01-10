@@ -9,7 +9,12 @@ import {
   fetchInstancesAction,
   instancesSelector
 } from 'uiSrc/slices/rdi/instances'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import {
+  TelemetryEvent,
+  TelemetryPageView,
+  sendEventTelemetry,
+  sendPageViewTelemetry
+} from 'uiSrc/telemetry'
 import EmptyMessage from './components/EmptyMessage'
 import ConnectionForm from '../connection-form/ConnectionForm'
 import RdiHeader from '../header/RdiHeader'
@@ -21,6 +26,7 @@ const RdiPage = () => {
   const [width, setWidth] = useState(0)
   const [isConnectionFormOpen, setIsConnectionFormOpen] = useState(false)
   const [editInstance, setEditInstance] = useState<RdiInstance | null>(null)
+  const [isPageViewSent, setIsPageViewSent] = useState(false)
 
   const { data, loading, loadingChanging } = useSelector(instancesSelector)
 
@@ -29,6 +35,19 @@ const RdiPage = () => {
   useEffect(() => {
     dispatch(fetchInstancesAction())
   }, [])
+
+  useEffect(() => {
+    if (!isPageViewSent) {
+      sendPageView()
+    }
+  }, [isPageViewSent])
+
+  const sendPageView = () => {
+    sendPageViewTelemetry({
+      name: TelemetryPageView.RDI_INSTANCES_PAGE,
+    })
+    setIsPageViewSent(true)
+  }
 
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)

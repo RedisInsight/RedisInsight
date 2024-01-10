@@ -1,10 +1,16 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { useSelector } from 'react-redux'
+
 import { InitialStateRdiInstances, RdiInstance } from 'uiSrc/slices/interfaces'
 import { createInstanceAction, editInstanceAction } from 'uiSrc/slices/rdi/instances'
 import { RootState, store } from 'uiSrc/slices/store'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import {
+  TelemetryEvent,
+  TelemetryPageView,
+  sendEventTelemetry,
+  sendPageViewTelemetry
+} from 'uiSrc/telemetry'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 
 import RdiPage from './RdiPage'
@@ -22,6 +28,7 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
+  sendPageViewTelemetry: jest.fn(),
   sendEventTelemetry: jest.fn()
 }))
 
@@ -271,6 +278,17 @@ describe('RdiPage', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED
+    })
+  })
+
+  it('should call proper sendPageViewTelemetry', () => {
+    const sendPageViewTelemetryMock = jest.fn()
+    sendPageViewTelemetry.mockImplementation(() => sendPageViewTelemetryMock)
+
+    render(<RdiPage />)
+
+    expect(sendPageViewTelemetry).toBeCalledWith({
+      name: TelemetryPageView.RDI_INSTANCES_PAGE
     })
   })
 })

@@ -3,16 +3,18 @@ import { AxiosError } from 'axios'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
-  getPipeline,
-  getPipelineSuccess,
-  getPipelineFailure,
-  fetchRdiPipeline,
-  rdiPipelineSelector,
-} from 'uiSrc/slices/rdi/pipeline'
+  setConnectedInstance,
+  setConnectedInstanceSuccess,
+  setConnectedInstanceFailure,
+  instancesSelector,
+  fetchConnectedInstanceAction,
+} from 'uiSrc/slices/rdi/instances'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 let store: typeof mockedStore
+
+const mockRdiInstance = { name: 'name', version: '1.2', url: 'http://localhost:4000' }
 
 beforeEach(() => {
   cleanup()
@@ -20,103 +22,90 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('rdi pipe slice', () => {
-  describe('reducer, actions and selectors', () => {
-    it('should return the initial state', () => {
+describe('rdi instances slice', () => {
+  describe('setConnectedInstance', () => {
+    it('should properly set loading=true', () => {
       // Arrange
-      const nextState = initialState
-
+      const state = {
+        ...initialState,
+      }
       // Act
-      const result = reducer(undefined, {})
+      const nextState = reducer(initialState, setConnectedInstance())
 
       // Assert
-      expect(result).toEqual(nextState)
+      const rootState = Object.assign(initialStateDefault, {
+        instances: nextState,
+      })
+
+      expect(instancesSelector(rootState)).toEqual(state)
     })
   })
 
-  describe('rdiPipelineSelector', () => {
+  describe('setConnectedInstanceSuccess', () => {
     it('should properly set state', () => {
       // Arrange
       const state = {
         ...initialState,
-        loading: true,
+        connectedInstance: mockRdiInstance,
       }
 
       // Act
-      const nextState = reducer(initialState, getPipeline())
+      const nextState = reducer(initialState, setConnectedInstanceSuccess(mockRdiInstance))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
-          pipeline: nextState,
-        }
+          instances: nextState
+        },
       })
-      expect(rdiPipelineSelector(rootState)).toEqual(state)
+      expect(instancesSelector(rootState)).toEqual(state)
     })
   })
 
-  describe('getPipelineSuccess', () => {
-    it('should properly set state', () => {
-      // Arrange
-      const pipeline = { config: 'string', jobs: [] }
-      const state = {
-        ...initialState,
-        data: pipeline,
-      }
-      // Act
-      const nextState = reducer(initialState, getPipelineSuccess(pipeline))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('getPipelineFailure', () => {
+  describe('setConnectedInstanceFailure', () => {
     it('should properly set state', () => {
       // Arrange
       const error = 'error'
       const state = {
         ...initialState,
-        error,
+        connectedInstance: {
+          ...initialState.connectedInstance,
+          loading: false,
+          error,
+        }
       }
 
       // Act
-      const nextState = reducer(initialState, getPipelineFailure(error))
+      const nextState = reducer(initialState, setConnectedInstanceFailure(error))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
-          pipeline: nextState,
-        }
+          instances: nextState,
+        },
       })
-      expect(rdiPipelineSelector(rootState)).toEqual(state)
+      expect(instancesSelector(rootState)).toEqual(state)
     })
   })
 
   // thunks
 
   describe('thunks', () => {
-    describe('fetchRdiPipeline', () => {
+    describe('fetchConnectedInstanceAction', () => {
       it('succeed to fetch data', async () => {
-        const data = { config: 'string', jobs: [] }
-        const responsePayload = { data, status: 200 }
+        const responsePayload = { data: mockRdiInstance, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
         await store.dispatch<any>(
-          fetchRdiPipeline('123')
+          fetchConnectedInstanceAction('123')
         )
 
         // Assert
         const expectedActions = [
-          getPipeline(),
-          getPipelineSuccess(data),
+          setConnectedInstance(),
+          setConnectedInstanceSuccess(mockRdiInstance),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -135,14 +124,14 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchRdiPipeline('123')
+          fetchConnectedInstanceAction('123')
         )
 
         // Assert
         const expectedActions = [
-          getPipeline(),
+          setConnectedInstance(),
+          setConnectedInstanceFailure(errorMessage),
           addErrorNotification(responsePayload as AxiosError),
-          getPipelineFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

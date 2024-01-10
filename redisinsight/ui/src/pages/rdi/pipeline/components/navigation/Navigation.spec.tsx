@@ -18,14 +18,14 @@ jest.mock('react-router-dom', () => ({
 
 describe('Navigation', () => {
   it('should render', () => {
-    expect(render(<Navigation path="" />)).toBeTruthy()
+    expect(render(<Navigation />)).toBeTruthy()
   })
 
   it('should call proper history push after click on tabs', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
-    render(<Navigation path="" />)
+    render(<Navigation />)
 
     fireEvent.click(screen.getByTestId('rdi-nav-btn-config'))
     expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline/config')

@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { IStateRdi, IPipeline } from 'uiSrc/slices/interfaces/rdi'
+import { IStateRdiPipeline, IPipeline } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 
 import { AppDispatch, RootState } from '../store'
 
-export const initialState: IStateRdi = {
+export const initialState: IStateRdiPipeline = {
   loading: false,
   error: '',
   data: null,
@@ -31,7 +31,6 @@ const rdiPipelineSlice = createSlice({
   }
 })
 
-export const rdiSelector = (state: RootState) => state.rdi
 export const rdiPipelineSelector = (state: RootState) => state.rdi.pipeline
 
 export const {

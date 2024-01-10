@@ -1,8 +1,8 @@
 .wrapper {
   display: flex;
   width: 100%;
-  height: 100%;
-  padding: 16px;
+  height: calc(100% - 65px);
+  padding: 0 16px 16px 16px;
 
   :global(.content) {
     border-radius: 8px;
@@ -37,7 +37,7 @@
 
       &__editorWrapper {
         height: calc(100% - 105px);
-          border: 1px solid var(--separatorColorLight) !important;
+        border: 1px solid var(--separatorColorLight) !important;
 
         :global(.inlineMonacoEditor) {
           height: 100%;

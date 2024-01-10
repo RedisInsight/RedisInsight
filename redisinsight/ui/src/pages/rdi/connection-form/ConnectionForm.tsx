@@ -173,8 +173,9 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                         onFocus={() => {
                           if (field.value === SECURITY_FIELD && !meta.touched) {
                             form.setFieldValue('password', '')
-                            setPasswordChanged(true)
                           }
+
+                          setPasswordChanged(true)
                         }}
                       />
                     )}

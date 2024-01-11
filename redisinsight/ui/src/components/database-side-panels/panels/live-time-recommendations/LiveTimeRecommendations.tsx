@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiLink,
   EuiLoadingContent,
@@ -37,7 +37,7 @@ import PopoverRunAnalyze from './components/popover-run-analyze'
 import styles from './styles.module.scss'
 
 const LiveTimeRecommendations = () => {
-  const { id: connectedInstanceId = '', provider, connectionType } = useSelector(connectedInstanceSelector)
+  const { provider, connectionType } = useSelector(connectedInstanceSelector)
   const {
     loading,
     data: { recommendations },
@@ -48,6 +48,8 @@ const LiveTimeRecommendations = () => {
     treeViewDelimiter: delimiter = '',
   } = useSelector(appContextDbConfig)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   const [isShowApproveRun, setIsShowApproveRun] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -56,20 +58,20 @@ const LiveTimeRecommendations = () => {
   const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
 
   useEffect(() => {
-    dispatch(fetchRecommendationsAction(connectedInstanceId))
+    dispatch(fetchRecommendationsAction(instanceId))
 
     return () => {
-      dispatch(readRecommendationsAction(connectedInstanceId))
+      dispatch(readRecommendationsAction(instanceId))
     }
   }, [])
 
   const handleClickDbAnalysisLink = () => {
-    dispatch(createNewAnalysis(connectedInstanceId, delimiter))
-    history.push(Pages.databaseAnalysis(connectedInstanceId))
+    dispatch(createNewAnalysis(instanceId, delimiter))
+    history.push(Pages.databaseAnalysis(instanceId))
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
       eventData: {
-        databaseId: connectedInstanceId,
+        databaseId: instanceId,
         total: recommendations?.length,
         provider
       },
@@ -90,7 +92,7 @@ const LiveTimeRecommendations = () => {
   }
 
   const getTelemetryData = (recommendationsData: IRecommendation[]) => ({
-    databaseId: connectedInstanceId,
+    databaseId: instanceId,
     total: recommendationsData?.length,
     list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
     provider

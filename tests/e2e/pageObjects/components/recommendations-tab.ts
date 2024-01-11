@@ -69,4 +69,12 @@ export class RecommendationsTab {
         const recommendationSnoozeBtn = Selector(`[data-testid=${recommendationName}-delete-btn]`);
         await t.click(recommendationSnoozeBtn);
     }
+    /**
+     * click tutorial button in the recommendation
+     * @param recommendationName Name of recommendation
+     */
+    async clickOnTutorialLink(recommendationName: RecommendationIds): Promise<void> {
+        const tutorialBtn = Selector(`[data-testid=${recommendationName}-to-tutorial-btn]`);
+        await t.click(tutorialBtn);
+    }
 }

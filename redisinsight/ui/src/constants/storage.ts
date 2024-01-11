@@ -29,7 +29,8 @@ enum BrowserStorageItem {
   showHiddenRecommendations = 'showHiddenRecommendations',
   OAuthJobId = 'OAuthJobId',
   OAuthAgreement = 'OAuthAgreement',
-  capability = 'capability'
+  insightsPanel = 'insightsPanel',
+  capability = 'capability',
 }
 
 export default BrowserStorageItem

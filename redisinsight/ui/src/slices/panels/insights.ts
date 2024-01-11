@@ -1,13 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { isBoolean } from 'lodash'
+import { useHistory } from 'react-router-dom'
 import { Maybe } from 'uiSrc/utils'
 import { InsightsPanelState, InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
-import { RootState } from '../store'
+import { sessionStorageService } from 'uiSrc/services'
+import { BrowserStorageItem } from 'uiSrc/constants'
+import { AppDispatch, RootState } from '../store'
+
+const getTabSelected = (tab?: string): InsightsPanelTabs => {
+  if (Object.values(InsightsPanelTabs).includes(tab as unknown as InsightsPanelTabs)) {
+    return tab as InsightsPanelTabs
+  }
+
+  return InsightsPanelTabs.Explore
+}
 
 export const initialState: InsightsPanelState = {
-  isOpen: false,
-  tabSelected: InsightsPanelTabs.Explore,
+  isOpen: sessionStorageService.get(BrowserStorageItem.insightsPanel)?.[1] || false,
+  tabSelected: getTabSelected(sessionStorageService.get(BrowserStorageItem.insightsPanel)?.[0]),
   explore: {
     search: '',
     itemScrollTop: 0,
@@ -25,9 +36,11 @@ const insightsPanelSlice = createSlice({
   reducers: {
     toggleInsightsPanel: (state, { payload }: { payload: Maybe<boolean> }) => {
       state.isOpen = isBoolean(payload) ? payload : !state.isOpen
+      sessionStorageService.set(BrowserStorageItem.insightsPanel, [state.tabSelected, state.isOpen])
     },
     changeSelectedTab: (state, { payload }) => {
       state.tabSelected = payload
+      sessionStorageService.set(BrowserStorageItem.insightsPanel, [payload, state.isOpen])
     },
     setExplorePanelSearch: (state, { payload }: { payload: string }) => {
       const prevValue = state.explore.search
@@ -71,6 +84,17 @@ export const {
   setExplorePanelIsPageOpen,
   setExplorePanelManifest,
 } = insightsPanelSlice.actions
+
+export function openTutorialByPath(guidePath: string, history: ReturnType<typeof useHistory>) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    dispatch(toggleInsightsPanel(true))
+
+    history.push({
+      search: `guidePath=${guidePath}`
+    })
+  }
+}
 
 // The reducer
 export default insightsPanelSlice.reducer

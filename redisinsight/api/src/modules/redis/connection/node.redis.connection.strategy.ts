@@ -89,14 +89,19 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
           host: database.host,
           port: database.port,
         },
-      }].concat(database.nodes && database.nodes.map((node) => ({
-        socket: {
-          host: node.host,
-          port: node.port,
-        },
-      }))),
+      }].concat(
+        database.nodes
+        && database.nodes
+          .filter((node) => node.host !== database.host)
+          .map((node) => ({
+            socket: {
+              host: node.host,
+              port: node.port,
+            },
+          })),
+      ),
       defaults: { ...config },
-      maxCommandRedirections: 100,
+      maxCommandRedirections: database.nodes ? (database.nodes.length * 16) : 16, // TODO: Temporary solution
       // clusterRetryStrategy: options.useRetry ? this.retryStrategy : this.dummyFn,
     };
   }

@@ -192,9 +192,9 @@ export class ClusterScannerStrategy extends ScannerStrategy {
       }
 
       const [
-        [, ttl],
-        [, size],
-        [, type],
+        [, ttl = null],
+        [, size = null],
+        [, type = null],
       ] = result;
 
       return {

@@ -1,6 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Expose } from 'class-transformer';
-import { RdiType } from 'src/modules/rdi/models';
 
 @Entity('rdi')
 export class RdiEntity {
@@ -10,7 +9,7 @@ export class RdiEntity {
 
   @Expose()
   @Column({ nullable: false })
-  type: RdiType;
+  type: string;
 
   @Expose()
   @Column({ nullable: true })

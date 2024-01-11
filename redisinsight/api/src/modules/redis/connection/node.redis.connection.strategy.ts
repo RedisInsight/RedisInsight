@@ -96,6 +96,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
         },
       }))),
       defaults: { ...config },
+      maxCommandRedirections: 100,
       // clusterRetryStrategy: options.useRetry ? this.retryStrategy : this.dummyFn,
     };
   }

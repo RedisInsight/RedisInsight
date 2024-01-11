@@ -14,7 +14,7 @@ export interface IStateRdiPipeline {
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading?: boolean
-  error: string,
+  error: string
 }
 
 export interface InitialStateRdiInstances {

@@ -16,7 +16,8 @@ const mockedEditInstance: RdiInstance = {
   name: 'name',
   url: 'url',
   username: 'username',
-  password: 'password'
+  password: 'password',
+  error: ''
 }
 
 describe('ConnectionForm', () => {

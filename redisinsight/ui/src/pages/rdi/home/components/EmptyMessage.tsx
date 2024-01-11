@@ -18,13 +18,14 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
     <EuiText className={styles.subTitle}>Add your first RDI instance to get started!</EuiText>
     <EuiFlexGroup alignItems="center">
       <EuiFlexItem>
-        <EuiButton color="secondary" fill size="s" onClick={onAddInstanceClick}>
+        <EuiButton data-testid="empty-rdi-instance-button" color="secondary" fill size="s" onClick={onAddInstanceClick}>
           + RDI Instance
         </EuiButton>
       </EuiFlexItem>
       or
       <EuiFlexItem>
         <EuiLink
+          data-testid="empty-rdi-quickstart-button"
           target="_blank"
           external={false}
           href="https://docs.redis.com/rdi-preview/rdi/quickstart/"

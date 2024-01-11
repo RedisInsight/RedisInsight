@@ -5,12 +5,7 @@ import { useSelector } from 'react-redux'
 import { InitialStateRdiInstances, RdiInstance } from 'uiSrc/slices/interfaces'
 import { createInstanceAction, editInstanceAction } from 'uiSrc/slices/rdi/instances'
 import { RootState, store } from 'uiSrc/slices/store'
-import {
-  TelemetryEvent,
-  TelemetryPageView,
-  sendEventTelemetry,
-  sendPageViewTelemetry
-} from 'uiSrc/telemetry'
+import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 
 import RdiPage from './RdiPage'
@@ -41,7 +36,8 @@ const instancesMock: RdiInstance[] = [
     lastConnection: new Date('1/1/2024'),
     version: '1.2',
     username: 'user',
-    visible: true
+    visible: true,
+    error: ''
   }
 ]
 
@@ -64,7 +60,9 @@ describe('RdiPage', () => {
 
     const state: RootState = store.getState();
     (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback(mockState(state, { loading: false, data: instancesMock })))
+      callback(mockState(state, { loading: false, loadingChanging: false, data: instancesMock })));
+    (sendEventTelemetry as jest.Mock).mockRestore();
+    (sendPageViewTelemetry as jest.Mock).mockRestore()
   })
 
   it('should render', () => {
@@ -103,7 +101,7 @@ describe('RdiPage', () => {
   it('should open connection form when using header button', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
+    fireEvent.click(screen.getByTestId('rdi-instance'))
     const form = await screen.findByTestId('connection-form')
 
     expect(form).toBeInTheDocument()
@@ -111,12 +109,12 @@ describe('RdiPage', () => {
 
   it('should open connection form when using empty message button', async () => {
     const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementationOnce((callback: (arg0: RootState) => RootState) =>
+    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
       callback(mockState(state, { data: [], loading: false })))
 
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: '+ RDI Instance' }))
+    fireEvent.click(screen.getByTestId('empty-rdi-instance-button'))
     const form = await screen.findByTestId('connection-form')
 
     expect(form).toBeInTheDocument()
@@ -125,7 +123,7 @@ describe('RdiPage', () => {
   it('should open connection form when using edit button', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    fireEvent.click(screen.getByTestId('edit-instance-1'))
     const form = await screen.findByTestId('connection-form')
 
     expect(form).toBeInTheDocument()
@@ -135,11 +133,11 @@ describe('RdiPage', () => {
     render(<RdiPage />)
 
     // open form
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
+    fireEvent.click(screen.getByTestId('rdi-instance'))
     await screen.findByTestId('connection-form')
 
     // close form
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    fireEvent.click(screen.getByTestId('connection-form-cancel-button'))
     expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument()
   })
 
@@ -147,11 +145,11 @@ describe('RdiPage', () => {
     render(<RdiPage />)
 
     // open form
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
+    fireEvent.click(screen.getByTestId('rdi-instance'))
     await screen.findByTestId('connection-form')
 
     // close form
-    fireEvent.click(screen.getByRole('button', { name: 'Remove field' }))
+    fireEvent.click(screen.getByTestId('delete-instance-1-icon'))
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
 
     await waitFor(() => expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument(), {
@@ -162,7 +160,7 @@ describe('RdiPage', () => {
   it('should populate connection form with existing values when using edit button', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
 
     expect(screen.getByTestId('connection-form-name-input')).toHaveValue('My first integration')
@@ -177,7 +175,7 @@ describe('RdiPage', () => {
     render(<RdiPage />)
 
     // open form
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
+    fireEvent.click(screen.getByTestId('rdi-instance'))
     await screen.findByTestId('connection-form')
 
     expect(screen.getByTestId('connection-form-name-input')).toHaveValue('')
@@ -189,7 +187,7 @@ describe('RdiPage', () => {
   it('should call edit instance when editInstance is provided', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
 
     await act(() => {
@@ -197,7 +195,7 @@ describe('RdiPage', () => {
       fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password2' } })
 
       // submit form
-      fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
 
     expect(editInstanceAction).toBeCalledWith(
@@ -209,7 +207,8 @@ describe('RdiPage', () => {
         url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
         username: 'user',
         version: '1.2',
-        visible: true
+        visible: true,
+        error: ''
       },
       expect.any(Function)
     )
@@ -219,7 +218,7 @@ describe('RdiPage', () => {
     render(<RdiPage />)
 
     // open form
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
+    fireEvent.click(screen.getByTestId('rdi-instance'))
     await screen.findByTestId('connection-form')
 
     await act(() => {
@@ -229,7 +228,7 @@ describe('RdiPage', () => {
       fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
 
       // submit form
-      fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
 
     expect(createInstanceAction).toBeCalledWith(
@@ -242,7 +241,7 @@ describe('RdiPage', () => {
     render(<RdiPage />)
 
     // open form
-    fireEvent.click(screen.getByRole('button', { name: 'RDI Instance' }))
+    fireEvent.click(screen.getByTestId('rdi-instance'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED
@@ -252,14 +251,14 @@ describe('RdiPage', () => {
   it('should call proper telemetry when instance is submitted', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
 
     await act(() => {
       fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password3' } })
 
       // submit form
-      fireEvent.click(screen.getByRole('button', { name: 'Add Instance' }))
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -270,11 +269,11 @@ describe('RdiPage', () => {
   it('should call proper telemetry when connection form is closed', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
 
     // close form
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    fireEvent.click(screen.getByTestId('connection-form-cancel-button'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED
@@ -282,9 +281,6 @@ describe('RdiPage', () => {
   })
 
   it('should call proper sendPageViewTelemetry', () => {
-    const sendPageViewTelemetryMock = jest.fn()
-    sendPageViewTelemetry.mockImplementation(() => sendPageViewTelemetryMock)
-
     render(<RdiPage />)
 
     expect(sendPageViewTelemetry).toBeCalledWith({

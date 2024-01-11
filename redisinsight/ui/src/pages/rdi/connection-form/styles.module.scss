@@ -1,0 +1,62 @@
+@import '@elastic/eui/src/global_styling/index';
+
+.connectionFormPanel {
+  @include euiScrollBar;
+
+  overflow: auto;
+  position: relative;
+
+  height: calc(100vh - 261px);
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 123px);
+  }
+}
+
+.passwordField {
+  padding-left: 12px !important;
+}
+
+.testConnectionBtn {
+  border-color: transparent !important;
+}
+
+.urlTooltip {
+  width: 470px !important;
+  max-width: 470px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  padding-left: 15px !important;
+  padding-top: 15px !important;
+
+  :global {
+    .euiToolTip__title {
+      padding: 5px 10px 0 !important;
+    }
+
+    p {
+      opacity: 0.8 !important;
+    }
+
+    ul {
+      font-weight: 300 !important;
+      opacity: 0.85;
+      padding-bottom: 10px;
+    
+      li {
+        line-height: 20px;
+      }
+    }
+
+    span {
+      margin-left: 10px;
+    }
+
+    span::before {
+      font-size: 8px;
+      padding: 0 14px;
+      content: " \25CF";
+      vertical-align: middle;
+    }
+  }
+}

@@ -40,14 +40,16 @@ const mockInstances: RdiInstance[] = [
     name: 'My first integration',
     url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
     lastConnection: new Date(),
-    version: '1.2'
+    version: '1.2',
+    error: ''
   },
   {
     id: '2',
     name: 'My second integration',
     url: 'redis-67890.c253.us-central1-1.gce.cloud.redislabs.com:67890',
     lastConnection: new Date(),
-    version: '1.3'
+    version: '1.3',
+    error: ''
   }
 ]
 
@@ -136,7 +138,7 @@ describe('RdiInstancesListWrapper', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED,
+      event: TelemetryEvent.RDI_INSTANCE_MULTIPLE_DELETE_CLICKED,
       eventData: {
         ids: ['2']
       }
@@ -155,7 +157,7 @@ describe('RdiInstancesListWrapper', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_URL_COPIED,
+      event: TelemetryEvent.RDI_INSTANCE_URL_COPIED,
       eventData: {
         id: '1'
       }
@@ -173,7 +175,7 @@ describe('RdiInstancesListWrapper', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_SINGLE_DELETE_CLICKED,
+      event: TelemetryEvent.RDI_INSTANCE_SINGLE_DELETE_CLICKED,
       eventData: {
         id: '2'
       }
@@ -191,7 +193,7 @@ describe('RdiInstancesListWrapper', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SORTED,
+      event: TelemetryEvent.RDI_INSTANCE_LIST_SORTED,
       eventData: { field: 'name', direction: 'asc' }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

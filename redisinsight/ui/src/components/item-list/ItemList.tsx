@@ -31,7 +31,7 @@ export interface Props<T> {
 
 const columnsHideWidth = 950
 
-function ItemList<T extends { id: string; name?: string; visible?: boolean }>({
+function ItemList<T extends { id: string; visible?: boolean }>({
   width,
   dialogIsOpen,
   columnVariations,

@@ -39,7 +39,7 @@ test
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see message "No keys to display." when there are no keys in the database', async t => {
-        const message = 'No Keys Found\nCreate your first key to get started\nKeys are the foundation of Redis. Create your first key to start exploring Redis and Redis Stack capabilities';
+        const message = 'No Keys to Display\\nCreate your first key to get started\nKeys are the foundation of Redis.\nCreate your first key or try our interactive Tutorials to learn how Redis can solve your use cases.\n+ Key\nor\nExplore';
 
         // Verify the message
         await t.click(browserPage.treeViewButton);

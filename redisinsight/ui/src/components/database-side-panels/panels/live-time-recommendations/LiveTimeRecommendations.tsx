@@ -67,7 +67,7 @@ const LiveTimeRecommendations = () => {
     dispatch(createNewAnalysis(connectedInstanceId, delimiter))
     history.push(Pages.databaseAnalysis(connectedInstanceId))
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_TIP_DATABASE_ANALYSIS_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_DATABASE_ANALYSIS_CLICKED,
       eventData: {
         databaseId: connectedInstanceId,
         total: recommendations?.length,
@@ -81,7 +81,7 @@ const LiveTimeRecommendations = () => {
     dispatch(setRecommendationsShowHidden(value))
 
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_TIP_SHOW_HIDDEN,
+      event: TelemetryEvent.INSIGHTS_TIPS_SHOW_HIDDEN,
       eventData: {
         action: !value ? 'hide' : 'show',
         ...getTelemetryData(recommendations)

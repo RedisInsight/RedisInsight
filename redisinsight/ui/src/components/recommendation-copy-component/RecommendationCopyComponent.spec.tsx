@@ -38,7 +38,7 @@ describe('RecommendationCopyComponent', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_TIP_KEY_COPIED,
+      event: TelemetryEvent.INSIGHTS_TIPS_KEY_COPIED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: mockTelemetryEvent,

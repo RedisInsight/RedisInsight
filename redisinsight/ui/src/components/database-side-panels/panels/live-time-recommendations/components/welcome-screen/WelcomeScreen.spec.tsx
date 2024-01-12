@@ -92,7 +92,7 @@ describe('WelcomeScreen', () => {
     fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_TIP_DATABASE_ANALYSIS_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_DATABASE_ANALYSIS_CLICKED,
       eventData: {
         databaseId: 'instanceId',
         total: 1,

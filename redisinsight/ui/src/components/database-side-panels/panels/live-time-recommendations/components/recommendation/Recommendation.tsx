@@ -69,7 +69,7 @@ const Recommendation = ({
 
   const handleRedirect = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_TIP_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name].telemetryEvent || name,
@@ -95,7 +95,7 @@ const Recommendation = ({
         id,
         { hide: !hide },
         ({ hide, name }) => sendEventTelemetry({
-          event: TelemetryEvent.INSIGHTS_TIP_HIDE,
+          event: TelemetryEvent.INSIGHTS_TIPS_HIDE,
           eventData: {
             databaseId: instanceId,
             action: hide ? 'hide' : 'show',
@@ -120,7 +120,7 @@ const Recommendation = ({
 
   const onSuccessActionDelete = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_TIP_SNOOZED,
+      event: TelemetryEvent.INSIGHTS_TIPS_SNOOZED,
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
@@ -131,7 +131,7 @@ const Recommendation = ({
 
   const onRecommendationLinkClick = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_TIP_LINK_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_LINK_CLICKED,
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,

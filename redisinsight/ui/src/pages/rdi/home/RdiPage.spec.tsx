@@ -168,7 +168,7 @@ describe('RdiPage', () => {
       'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345'
     )
     expect(screen.getByTestId('connection-form-username-input')).toHaveValue('user')
-    expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
+    expect(screen.getByTestId('connection-form-password-input')).toHaveValue('••••••••••••')
   })
 
   it('should open empty connection form with when using header button', async () => {
@@ -184,6 +184,20 @@ describe('RdiPage', () => {
     expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
   })
 
+  it('should clear password input when focused for an edited instance', async () => {
+    render(<RdiPage />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    await screen.findByTestId('connection-form')
+
+    await act(() => {
+      // focus input to clear it first
+      fireEvent.focus(screen.getByTestId('connection-form-password-input'))
+    })
+
+    expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
+  })
+
   it('should call edit instance when editInstance is provided', async () => {
     render(<RdiPage />)
 
@@ -192,6 +206,9 @@ describe('RdiPage', () => {
 
     await act(() => {
       fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
+
+      // focus input to clear it first
+      fireEvent.focus(screen.getByTestId('connection-form-password-input'))
       fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password2' } })
 
       // submit form
@@ -225,6 +242,9 @@ describe('RdiPage', () => {
       fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
       fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
       fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
+
+      // focus input to trigger password change flow
+      fireEvent.focus(screen.getByTestId('connection-form-password-input'))
       fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
 
       // submit form

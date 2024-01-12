@@ -7,18 +7,7 @@
 # `docker run`
 set -e
 
-# Set up mDNS functionality, to play well with Redis Enterprise
-# clusters on the network. Also, run it as a non-root user.
-# https://linux.die.net/man/8/avahi-daemon
-avahi-daemon --daemonize --no-drop-root
-
-# Launching system's secret storage
-eval "$(dbus-launch --sh-syntax)"
-mkdir -p ~/.cache
-mkdir -p ~/.local/share/keyrings # where the automatic keyring is created
-eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --unlock)"
-sleep 1
-eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --start)"
+echo "Running docker-entry.sh"
 
 # Run the application's entry script with the exec command so it catches SIGTERM properly
 exec "$@"

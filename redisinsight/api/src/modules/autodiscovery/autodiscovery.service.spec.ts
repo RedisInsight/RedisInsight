@@ -15,7 +15,7 @@ import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.se
 import { DatabaseService } from 'src/modules/database/database.service';
 import { mocked } from 'ts-jest/utils';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 
 jest.mock(
   'src/modules/autodiscovery/utils/autodiscovery.util',
@@ -39,7 +39,7 @@ jest.mock('src/utils/config', jest.fn(
   () => jest.requireActual('src/utils/config') as object,
 ));
 
-const mockServerConfig = config.get('server');
+const mockServerConfig = config.get('server') as Config['server'];
 
 describe('AutodiscoveryService', () => {
   let service: AutodiscoveryService;

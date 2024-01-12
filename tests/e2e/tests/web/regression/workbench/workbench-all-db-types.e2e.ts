@@ -2,7 +2,7 @@ import { t } from 'testcafe';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
-import { cloudDatabaseConfig, commonUrl, ossClusterConfig, ossSentinelConfig, redisEnterpriseClusterConfig } from '../../../../helpers/conf';
+import { cloudDatabaseConfig, commonUrl, ossClusterConfig, ossSentinelConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -38,17 +38,6 @@ const verifyCommandsInWorkbench = async(): Promise<void> => {
 fixture `Work with Workbench in all types of databases`
     .meta({ type: 'regression' })
     .page(commonUrl);
-test
-    .meta({ rte: rte.reCluster })
-    .before(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
-    })
-    .after(async() => {
-        // Delete database
-        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can run commands in Workbench in RE Cluster DB', async() => {
-        await verifyCommandsInWorkbench();
-    });
 test
     .meta({ rte: rte.reCloud })
     .before(async() => {

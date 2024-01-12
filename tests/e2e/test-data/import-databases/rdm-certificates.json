@@ -48,27 +48,27 @@
 		"host": "localhost",
 		"port": 8102,
 		"name": "theSameBody1Path",
-		"ssl_ca_cert_path": "/root/certs/certsByPath/caPath.crt",
-		"ssl_local_cert_path": "/root/certs/certsByPath/clientPath.crt",
-		"ssl_private_key_path": "/root/certs/certsByPath/clientPath.key",
+		"ssl_ca_cert_path": "/test-data/certs/certsByPath/caPath.crt",
+		"ssl_local_cert_path": "/test-data/certs/certsByPath/clientPath.crt",
+		"ssl_private_key_path": "/test-data/certs/certsByPath/clientPath.key",
 		"result": "success"
 	},
 	{
 		"host": "localhost",
 		"port": 8101,
 		"name": "theSameBody2Path",
-		"ssl_ca_cert_path": "/root/certs/certsByPath/caSameBody.crt",
-		"ssl_local_cert_path": "/root/certs/certsByPath/clientSameBody.crt",
-		"ssl_private_key_path": "/root/certs/certsByPath/clientSameBody.key",
+		"ssl_ca_cert_path": "/test-data/certs/certsByPath/caSameBody.crt",
+		"ssl_local_cert_path": "/test-data/certs/certsByPath/clientSameBody.crt",
+		"ssl_private_key_path": "/test-data/certs/certsByPath/clientSameBody.key",
 		"result": "success"
 	},
 	{
 		"host": "localhost",
 		"port": 8103,
 		"name": "theSameNamePath",
-		"ssl_ca_cert_path": "/root/certs/sameNameCerts/caPath.crt",
-		"ssl_local_cert_path": "/root/certs/sameNameCerts/clientPath.crt",
-		"ssl_private_key_path": "/root/certs/sameNameCerts/clientPath.key",
+		"ssl_ca_cert_path": "/test-data/certs/sameNameCerts/caPath.crt",
+		"ssl_local_cert_path": "/test-data/certs/sameNameCerts/clientPath.crt",
+		"ssl_private_key_path": "/test-data/certs/sameNameCerts/clientPath.key",
 		"result": "success"
 	}
 ]

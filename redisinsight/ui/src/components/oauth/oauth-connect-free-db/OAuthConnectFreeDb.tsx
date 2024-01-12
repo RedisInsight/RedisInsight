@@ -14,6 +14,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { openNewWindowDatabase } from 'uiSrc/utils'
 import { Pages } from 'uiSrc/constants'
+import { setCapability } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
@@ -65,6 +66,7 @@ const OAuthConnectFreeDb = ({
   const handleCheckConnectToInstance = (
   ) => {
     sendTelemetry()
+    dispatch(setCapability({ source, tutorialPopoverShown: false }))
     dispatch(checkConnectToInstanceAction(
       targetDatabaseId,
       connectToInstanceSuccess,

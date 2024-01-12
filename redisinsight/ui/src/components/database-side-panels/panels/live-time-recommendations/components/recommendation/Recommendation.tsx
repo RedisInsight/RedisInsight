@@ -16,9 +16,9 @@ import {
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, Maybe, openNewWindowDatabase } from 'uiSrc/utils'
+import { Nullable, Maybe } from 'uiSrc/utils'
 import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
-import { Pages, Theme } from 'uiSrc/constants'
+import { Theme } from 'uiSrc/constants'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -32,6 +32,7 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import { ReactComponent as SnoozeIcon } from 'uiSrc/assets/img/icons/snooze.svg'
 import { ReactComponent as StarsIcon } from 'uiSrc/assets/img/icons/stars.svg'
 
+import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -77,14 +78,7 @@ const Recommendation = ({
       }
     })
 
-    // dispatch(setWorkbenchEAOpened(false))
-    if (tutorial) {
-      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
-      return
-    }
-
-    // dispatch(resetExplorePanelSearchContext())
-    history.push(Pages.workbench(instanceId))
+    dispatch(openTutorialByPath(tutorial || '', history))
   }
 
   const toggleHide = (event: React.MouseEvent) => {

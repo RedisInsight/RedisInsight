@@ -47,7 +47,6 @@ export const initialState: InitialStateInstances = {
     isRediStack: false,
     modules: [],
     loading: false,
-    isFreeDb: false,
   },
   editedInstance: {
     loading: false,
@@ -305,6 +304,8 @@ export const instancesSelector = (state: RootState) => state.connections.instanc
 export const freeInstancesSelector = (state: RootState) => state.connections.instances.freeInstances
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
+export const connectedInstanceCDSelector = (state: RootState) =>
+  state.connections.instances.connectedInstance.cloudDetails
 export const connectedInstanceInfoSelector = (state: RootState) =>
   state.connections.instances.instanceInfo
 export const editedInstanceSelector = (state: RootState) =>

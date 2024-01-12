@@ -109,6 +109,10 @@ test
         tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         // Verify that user can see the live recommendation "Optimize the use of time series"
         await t.expect(await tab.getRecommendationByName(redisTimeSeriesRecom).visible).ok('Optimize Time Series recommendation not displayed');
+        await tab.clickOnTutorialLink(redisTimeSeriesRecom);
+        const tabTutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.expect(tabTutorial.preselectArea.textContent).contains('INTRODUCTION', 'the tutorial page is incorrect');
+        await t.expect(tabTutorial.preselectArea.textContent).contains('Time Series', 'the tutorial is incorrect');
     });
 test
     .requestHooks(logger)

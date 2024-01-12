@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiText, EuiToolTip } from '@elastic/eui'
 
@@ -20,12 +20,22 @@ const InsightsTrigger = () => {
   const { provider } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const page = pathname
     .replace(instanceId, '')
     .replace(/^\//g, '')
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(search)
+    const isExploreShouldBeOpened = searchParams.get('insights') === 'open'
+
+    if (isExploreShouldBeOpened) {
+      dispatch(toggleInsightsPanel(true))
+      dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    }
+  }, [search])
 
   const handleClickTrigger = () => {
     if (isHighlighted) {

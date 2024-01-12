@@ -74,6 +74,7 @@ export const mockCustomTutorialManifestJson = {
               type: CustomTutorialManifestType.InternalLink,
               id: 'introduction',
               label: 'introduction',
+              summary: 'Introduction summary',
               args: {
                 path: '/ct-folder-1/ct-sub-folder-1/introduction.md',
               },

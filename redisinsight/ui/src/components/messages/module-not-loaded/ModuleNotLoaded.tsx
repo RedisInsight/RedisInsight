@@ -24,6 +24,7 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
+import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -62,6 +63,9 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
 
   const module = MODULE_TEXT_VIEW[moduleName]
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
+  const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
+
+  useCapability(source)
 
   useEffect(() => {
     const parentEl = document?.getElementById(id)
@@ -134,7 +138,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
       <div className={styles.linksWrapper}>
         {!!freeDbWithModule && (
           <OAuthConnectFreeDb
-            source={type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]}
+            source={source}
             id={freeDbWithModule.id}
           />
         )}

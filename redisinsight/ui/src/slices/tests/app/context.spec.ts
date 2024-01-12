@@ -37,6 +37,8 @@ import reducer, {
   setDbIndexState,
   appContextDbIndex,
   setRecommendationsShowHidden,
+  appContextCapability,
+  setCapability,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -60,12 +62,14 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(initialState)
     })
 
-    it('should properly set initial state with existing contextId', () => {
+    it('should properly set initial state with existing contextId and capability', () => {
       // Arrange
       const contextInstanceId = '12312-3123'
+      const capability = { source: '123123' }
       const prevState = {
         ...initialState,
         contextInstanceId,
+        capability,
         browser: {
           ...initialState.browser,
           keyList: {
@@ -99,7 +103,8 @@ describe('slices', () => {
       }
       const state = {
         ...initialState,
-        contextInstanceId
+        contextInstanceId,
+        capability,
       }
 
       // Act
@@ -603,6 +608,30 @@ describe('slices', () => {
       })
 
       expect(appContextDbIndex(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setCapability', () => {
+    it('should properly set db config', () => {
+      // Arrange
+      const data = {
+        source: '123123',
+      }
+
+      const state = {
+        ...initialState.capability,
+        ...data,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setCapability(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextCapability(rootState)).toEqual(state)
     })
   })
 })

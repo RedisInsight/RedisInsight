@@ -58,7 +58,7 @@ const Group = (props: Props) => {
     e.stopPropagation()
     onCreate?.()
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_IMPORT_CLICKED,
       eventData: {
         databaseId: instanceId,
       }

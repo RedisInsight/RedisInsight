@@ -73,7 +73,7 @@ describe('RedisUploadButton', () => {
     fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_DATA_UPLOAD_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
       eventData: {
         databaseId: 'databaseId'
       }
@@ -84,7 +84,7 @@ describe('RedisUploadButton', () => {
     fireEvent.click(screen.getByTestId('upload-data-bulk-apply-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_DATA_UPLOAD_SUBMITTED,
+      event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
         databaseId: 'databaseId'
       }

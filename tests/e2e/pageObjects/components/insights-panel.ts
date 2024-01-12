@@ -38,7 +38,7 @@ export class InsightsPanel {
      * @param type of the tab
      */
     async setActiveTab(type: ExploreTabs.Explore): Promise<ExploreTab>
-    async setActiveTab(type: ExploreTabs.Recommendations): Promise<RecommendationsTab>
+    async setActiveTab(type: ExploreTabs.Tips): Promise<RecommendationsTab>
     async setActiveTab(type: ExploreTabs): Promise<ExploreTab | RecommendationsTab> {
         const activeTabName  = await this.getActiveTabName();
         if(type === ExploreTabs.Explore) {
@@ -59,7 +59,7 @@ export class InsightsPanel {
      * Get Insights panel selector
      */
     getInsightsPanel(): Selector {
-        return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Recommendations);
+        return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Tips);
     }
 
 }

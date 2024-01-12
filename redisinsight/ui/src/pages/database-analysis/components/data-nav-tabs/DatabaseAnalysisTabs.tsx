@@ -45,10 +45,10 @@ const DatabaseAnalysisTabs = (props: Props) => {
     }
     if (id === DatabaseAnalysisViewTab.Recommendations) {
       sendEventTelemetry({
-        event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED,
+        event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_CLICKED,
         eventData: {
           databaseId: instanceId,
-          recommendationsCount: data?.recommendations?.length,
+          tipsCount: data?.recommendations?.length,
           list: data?.recommendations?.map(({ name }) => recommendationsContent[name]?.telemetryEvent || name),
           provider,
         }

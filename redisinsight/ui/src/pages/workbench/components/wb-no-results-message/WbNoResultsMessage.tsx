@@ -74,7 +74,7 @@ const WbNoResultsMessage = () => {
                 className={styles.exploreBtn}
                 data-testid="no-results-explore-btn"
               >
-                Explore Redis
+                Explore
               </EuiButton>
             </div>
             <EuiSpacer size="s" />

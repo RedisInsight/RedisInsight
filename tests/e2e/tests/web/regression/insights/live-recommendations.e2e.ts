@@ -27,7 +27,7 @@ const databasesForAdding = [
 const tenSecondsTimeout = 10000;
 const keyName = `recomKey-${Common.generateWord(10)}`;
 const logger = telemetry.createLogger();
-const telemetryEvent = 'INSIGHTS_RECOMMENDATION_VOTED';
+const telemetryEvent = 'INSIGHTS_TIPS_VOTED';
 const expectedProperties = [
     'buildType',
     'databaseId',
@@ -83,10 +83,10 @@ test
     })('Verify Insights panel Recommendations displaying', async t => {
         await browserPage.InsightsPanel.togglePanel(true);
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
-        let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t
-            .expect(tab.noRecommendationsScreen.exists).ok('No recommendations panel not displayed')
-            .expect(tab.noRecommendationsScreen.textContent).contains('Welcome toRecommendations', 'Welcome to recommendations text not displayed');
+            .expect(tab.noRecommendationsScreen.exists).ok('No tips panel not displayed')
+            .expect(tab.noRecommendationsScreen.textContent).contains('Welcome toTips!', 'Welcome to recommendations text not displayed');
 
         await browserPage.InsightsPanel.togglePanel(false);
         // Go to 2nd database
@@ -95,7 +95,7 @@ test
         await browserPage.InsightsPanel.togglePanel(true);
         // Verify that live recommendations displayed for each database separately
         // Verify that user can see the live recommendation "Update Redis database" when Redis database is less than 6.0 highlighted as RedisStack
-        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t
             .expect(await tab.getRecommendationByName(redisVersionRecom).visible).ok('Redis Version recommendation not displayed')
             .expect(await tab.getRecommendationByName(redisTimeSeriesRecom).visible).notOk('Optimize Time Series recommendation displayed');
@@ -106,7 +106,7 @@ test
         // Verify that the list of recommendations updated every 10 seconds
         await t.wait(tenSecondsTimeout);
         await browserPage.InsightsPanel.togglePanel(true);
-        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         // Verify that user can see the live recommendation "Optimize the use of time series"
         await t.expect(await tab.getRecommendationByName(redisTimeSeriesRecom).visible).ok('Optimize Time Series recommendation not displayed');
         await tab.clickOnTutorialLink(redisTimeSeriesRecom);
@@ -131,7 +131,7 @@ test
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
         await browserPage.InsightsPanel.togglePanel(true);
-        await t.expect(await browserPage.InsightsPanel.getActiveTabName()).contains(ExploreTabs.Recommendations);
+        await t.expect(await browserPage.InsightsPanel.getActiveTabName()).contains(ExploreTabs.Tips);
         await recommendationsActions.voteForRecommendation(redisVersionRecom, notUsefulVoteOption);
         // Verify that user can rate recommendations with one of 2 existing types at the same time
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
@@ -147,7 +147,7 @@ test
         // Verify that user can see previous votes when reload the page
         await browserPage.reloadPage();
         await browserPage.InsightsPanel.togglePanel(true);
-        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await tab.toggleRecommendation(redisVersionRecom, true);
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, notUsefulVoteOption);
 
@@ -161,10 +161,10 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
     await browserPage.InsightsPanel.togglePanel(true);
-    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.click(browserPage.InsightsPanel.closeButton);
     await browserPage.InsightsPanel.togglePanel(true);
-    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Recommendations);
+    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Tips);
     await tab.toggleShowHiddenRecommendations(false);
     await tab.hideRecommendation(searchVisualizationRecom);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).exists)
@@ -173,7 +173,7 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
     // check recommendation state is saved after reload
     await browserPage.reloadPage();
     await browserPage.InsightsPanel.togglePanel(true);
-    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).exists)
         .notOk('recommendation is displayed when show hide recommendation is unchecked');
 
@@ -183,7 +183,7 @@ test('Verify that user can hide recommendations and checkbox value is saved', as
         .ok('recommendation is not displayed when show hide recommendation is checked');
     await browserPage.reloadPage();
     await browserPage.InsightsPanel.togglePanel(true);
-    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible)
         .ok('recommendation is not displayed when show hide recommendation is checked');
 });
@@ -192,18 +192,18 @@ test('Verify that user can snooze recommendation', async t => {
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
     await browserPage.InsightsPanel.togglePanel(true);
-    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await tab.snoozeRecommendation(searchVisualizationRecom);
 
     await browserPage.reloadPage();
     await browserPage.InsightsPanel.togglePanel(true);
-    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible)
         .notOk('recommendation is displayed when after snoozing');
     await browserPage.InsightsPanel.togglePanel(false);
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
     await browserPage.InsightsPanel.togglePanel(true);
-    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible).ok('recommendation is not displayed again');
 });
 test
@@ -221,7 +221,7 @@ test
     })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
 
         await browserPage.InsightsPanel.togglePanel(true);
-        let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         const redisVersionRecommendationSelector = tab.getRecommendationByName(redisVersionRecom);
         // Verify that live recommendation displayed in Insights panel
         await t.expect(await tab.getRecommendationByName(redisVersionRecom).visible).ok(`${redisVersionRecom} recommendation not displayed`);
@@ -232,7 +232,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         await t.click(memoryEfficiencyPage.newReportBtn);
         await browserPage.InsightsPanel.togglePanel(true);
-        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         // Verify that recommendations are synchronized
         await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).ok('Recommendations are not synchronized');
         // Verify that duplicates are not displayed
@@ -241,7 +241,7 @@ test
 //https://redislabs.atlassian.net/browse/RI-4413
 test('Verify that if user clicks on the Analyze button and link, the pop up with analyze button is displayed and new report is generated', async t => {
     await browserPage.InsightsPanel.togglePanel(true);
-    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.click(tab.analyzeDatabaseButton);
     await t.click(tab.analyzeTooltipButton);
     //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
@@ -249,7 +249,7 @@ test('Verify that if user clicks on the Analyze button and link, the pop up with
     await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
     await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
     await workbenchPage.InsightsPanel.togglePanel(true);
-    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.click(tab.analyzeDatabaseLink);
     await t.click(tab.analyzeTooltipButton);
     //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
@@ -267,7 +267,7 @@ test
         await browserPage.Cli.sendCommandInCli(cliCommand);
         await t.click(browserPage.refreshKeysButton);
         await browserPage.InsightsPanel.togglePanel(true);
-        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         let keyNameFromRecommendation = await tab.getRecommendationByName(RecommendationIds.searchJson)
             .find(tab.cssKeyName)
             .innerText;

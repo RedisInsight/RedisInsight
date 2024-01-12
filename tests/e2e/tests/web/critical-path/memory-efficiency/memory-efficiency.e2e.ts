@@ -45,7 +45,7 @@ test
     })('No reports/keys message and report tooltip', async t => {
         const noReportsMessage = 'No Reports foundRun "New Analysis" to generate first report.';
         const noKeysMessage = 'No keys to displayUse Workbench Guides and Tutorials to quickly load the data.';
-        const tooltipText = 'Analyze up to 10 000 keys to get an overview of your data and recommendations';
+        const tooltipText = 'Analyze up to 10 000 keys to get an overview of your data and tips';
 
         // Verify that user can see the “No reports found” message when report wasn't generated
         await t.expect(memoryEfficiencyPage.noReportsText.textContent).eql(noReportsMessage, 'No reports message not displayed or text is invalid');

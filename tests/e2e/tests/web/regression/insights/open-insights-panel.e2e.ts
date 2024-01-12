@@ -29,7 +29,7 @@ test('Verify Explore redis tab is opened from empty screens', async t => {
     await t.click(browserPage.openTutorialsBtn);
     await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('the panel is opened');
     await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
-    await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+    await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await browserPage.InsightsPanel.togglePanel(false);
     await t.click(browserPage.NavigationPanel.workbenchButton);
     await t.click(workbenchPage.exploreRedisBtn);

@@ -87,10 +87,10 @@ describe('InsightsTrigger', () => {
         provider: 'RE_CLOUD',
         source: 'overview',
         page: '/browser',
-        tab: 'recommendations'
+        tab: 'tips'
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

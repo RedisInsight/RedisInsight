@@ -63,8 +63,8 @@ const InsightsTrigger = () => {
       <EuiToolTip
         title={isHighlighted ? undefined : 'Insights'}
         content={isHighlighted
-          ? 'New recommendations are available'
-          : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use recommendations to improve your database.'}
+          ? 'New tips are available'
+          : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use tips to improve your database.'}
       >
         <EuiButton
           fill

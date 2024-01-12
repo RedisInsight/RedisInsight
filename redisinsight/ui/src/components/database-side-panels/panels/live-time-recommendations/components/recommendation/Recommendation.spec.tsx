@@ -77,7 +77,7 @@ describe('Recommendation', () => {
 
     expect(pushMock).toHaveBeenCalledWith({ search: 'guidePath=' })
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
@@ -110,7 +110,7 @@ describe('Recommendation', () => {
         search: 'guidePath=quick-guides/working-with-hash.html'
       })
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
@@ -144,7 +144,7 @@ describe('Recommendation', () => {
         search: 'guidePath=/redis_stack/working_with_json.md'
       })
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',

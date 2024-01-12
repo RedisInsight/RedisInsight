@@ -13,6 +13,7 @@ const getRedirectionPageTests = [
   { input: ['/analytics/slowlog'], expected: null },
   { input: ['/analytics', databaseId], expected: '/1/analytics' },
   { input: ['/analytics/page', databaseId], expected: null },
+  { input: ['/workbench?guidePath=introduction.md', databaseId], expected: '/1/workbench?guidePath=introduction.md&insights=open' },
 ]
 
 describe('getRedirectionPage', () => {

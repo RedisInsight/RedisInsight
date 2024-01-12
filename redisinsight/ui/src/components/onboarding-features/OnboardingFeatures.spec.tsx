@@ -667,7 +667,7 @@ describe('ONBOARDING_FEATURES', () => {
       expect(
         render(<OnboardingTour options={ONBOARDING_FEATURES.ANALYTICS_RECOMMENDATIONS}><span /></OnboardingTour>)
       ).toBeTruthy()
-      expect(screen.getByTestId('step-content')).toHaveTextContent('See recommendations to optimize the memory usage, performance')
+      expect(screen.getByTestId('step-content')).toHaveTextContent('See tips to optimize the memory usage, performance')
     })
 
     it('should call proper telemetry events', () => {

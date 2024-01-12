@@ -13,6 +13,8 @@ export class InsightsPanel {
     recommendationsTab = Selector('[data-testid=recommendations-tab]');
     exploreTab = Selector('[data-testid=explore-tab]');
 
+    existsCompatibilityPopover = Selector('[data-testid=explore-capability-popover]');
+
     /**
      * Open/Close  Panel
      * @param state State of panel
@@ -36,22 +38,28 @@ export class InsightsPanel {
      * @param type of the tab
      */
     async setActiveTab(type: ExploreTabs.Explore): Promise<ExploreTab>
-    async setActiveTab(type: ExploreTabs.Recommendations): Promise<RecommendationsTab>
+    async setActiveTab(type: ExploreTabs.Tips): Promise<RecommendationsTab>
     async setActiveTab(type: ExploreTabs): Promise<ExploreTab | RecommendationsTab> {
+        const activeTabName  = await this.getActiveTabName();
         if(type === ExploreTabs.Explore) {
-            await t.click(this.exploreTab);
+            if(type !== activeTabName) {
+                await t.click(this.exploreTab);
+            }
             return new ExploreTab();
         }
 
-        await t.click(this.recommendationsTab);
+        if(type !== activeTabName) {
+            await t.click(this.recommendationsTab);
+        }
         return new RecommendationsTab();
+
     }
 
     /**
      * Get Insights panel selector
      */
     getInsightsPanel(): Selector {
-        return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Recommendations);
+        return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Tips);
     }
 
 }

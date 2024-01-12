@@ -31,7 +31,7 @@ const NoRecommendationsScreen = () => {
     dispatch(createNewAnalysis(instanceId, delimiter))
     history.push(Pages.databaseAnalysis(instanceId))
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIP_DATABASE_ANALYSIS_CLICKED,
       eventData: {
         databaseId: instanceId,
         total: recommendations?.length,

@@ -55,7 +55,7 @@ const VoteOption = (props: Props) => {
   const onSuccessVoted = ({ vote, name }: { name: string, vote: Nullable<Vote> }) => {
     sendEventTelemetry({
       event: live
-        ? TelemetryEvent.INSIGHTS_RECOMMENDATION_VOTED
+        ? TelemetryEvent.INSIGHTS_TIP_VOTED
         : TelemetryEvent.DATABASE_ANALYSIS_TIPS_VOTED,
       eventData: {
         databaseId: instanceId,

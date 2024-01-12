@@ -84,7 +84,7 @@ describe('Recommendation', () => {
 
     expect(pushMock).toHaveBeenCalledWith(Pages.workbench(INSTANCE_ID_MOCK))
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIP_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
@@ -115,7 +115,7 @@ describe('Recommendation', () => {
     expect(openNewWindowDatabase)
       .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=quick-guides/working-with-hash.html`)
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIP_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',
@@ -147,7 +147,7 @@ describe('Recommendation', () => {
     expect(openNewWindowDatabase)
       .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/redis_stack/working_with_json.md`)
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIP_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         name: 'searchJSON',

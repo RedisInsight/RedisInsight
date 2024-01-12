@@ -127,7 +127,7 @@ describe('LiveTimeRecommendations', () => {
 
     expect(pushMock).toHaveBeenCalledWith(Pages.databaseAnalysis('instanceId'))
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIP_DATABASE_ANALYSIS_CLICKED,
       eventData: {
         databaseId: 'instanceId',
         total: 1,
@@ -151,7 +151,7 @@ describe('LiveTimeRecommendations', () => {
     fireEvent.click(queryByTestId('checkbox-show-hidden')!)
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_SHOW_HIDDEN,
+      event: TelemetryEvent.INSIGHTS_TIP_SHOW_HIDDEN,
       eventData: {
         databaseId: 'instanceId',
         list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(({ name }) =>

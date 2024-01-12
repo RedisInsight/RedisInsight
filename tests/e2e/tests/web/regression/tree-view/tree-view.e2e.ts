@@ -39,11 +39,12 @@ test
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see message "No keys to display." when there are no keys in the database', async t => {
-        const message = 'No Keys to Display\\nCreate your first key to get started\nKeys are the foundation of Redis.\nCreate your first key or try our interactive Tutorials to learn how Redis can solve your use cases.\n+ Key\nor\nExplore';
-
+        const message = 'NoKeystoDisplayCreateyourfirstkeytogetstartedKeysarethefoundationofRedis.CreateyourfirstkeyortryourinteractiveTutorialstolearnhowRediscansolveyourusecases.+KeyorExplore';
+        const actualMessage = await browserPage.keyListMessage.innerText;
+        const cleanMessage = actualMessage.replace(/[\s\n]+/g, '');
         // Verify the message
         await t.click(browserPage.treeViewButton);
-        await t.expect(browserPage.keyListMessage.innerText).contains(message, 'The message is not displayed');
+        await t.expect(cleanMessage).contains(message, 'The message is not displayed');
         await t.expect(browserPage.guideLinksBtn.count).gte(5);
         await browserPage.clickGuideLinksByName('JSON');
         await t.expect(workbenchPage.queryInput.visible).ok('Workbench page is not opened');

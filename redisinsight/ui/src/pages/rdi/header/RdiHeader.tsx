@@ -4,10 +4,10 @@ import React from 'react'
 import SearchRdiList from '../search/SearchRdiList'
 
 export interface Props {
-  onAddInstance: () => void
+  onRdiInstanceClick: () => void
 }
 
-const RdiHeader = ({ onAddInstance }: Props) => (
+const RdiHeader = ({ onRdiInstanceClick }: Props) => (
   <EuiPanel>
     <EuiFlexGroup responsive={false}>
       <EuiFlexItem>
@@ -16,8 +16,8 @@ const RdiHeader = ({ onAddInstance }: Props) => (
       <EuiFlexItem>
         <EuiFlexGroup justifyContent="flexEnd" alignItems="center" gutterSize="s">
           <EuiFlexItem grow={false}>
-            <EuiButton fill size="s" color="secondary" onClick={onAddInstance} data-testid="add-rdi-instance">
-              RDI instance
+            <EuiButton fill size="s" color="secondary" onClick={onRdiInstanceClick} data-testid="rdi-instance">
+              RDI Instance
             </EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>

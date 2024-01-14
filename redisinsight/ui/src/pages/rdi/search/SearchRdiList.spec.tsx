@@ -27,7 +27,8 @@ const instancesMock: RdiInstance[] = [
     url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
     lastConnection: new Date(),
     version: '1.2',
-    visible: true
+    visible: true,
+    error: ''
   },
   {
     id: '2',
@@ -35,7 +36,8 @@ const instancesMock: RdiInstance[] = [
     url: 'redis-67890.c253.us-central1-1.gce.cloud.redislabs.com:67890',
     lastConnection: new Date(),
     version: '1.3',
-    visible: true
+    visible: true,
+    error: ''
   }
 ]
 
@@ -74,7 +76,7 @@ describe('SearchRdiList', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SEARCHED,
+      event: TelemetryEvent.RDI_INSTANCE_LIST_SEARCHED,
       eventData: {
         instancesFullCount: 2,
         instancesSearchedCount: 1,

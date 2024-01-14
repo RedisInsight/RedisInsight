@@ -74,6 +74,7 @@ export enum ResourcePath {
     RedisSentinel = '/redis-sentinel',
     ClusterDetails = '/cluster-details',
     SyncFeatures = '/features/sync',
+    Rdi = '/rdi'
 }
 
 export enum ExploreTabs {

@@ -67,7 +67,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
   const handleCopy = (text = '', id: string) => {
     navigator.clipboard?.writeText(text)
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_URL_COPIED,
+      event: TelemetryEvent.RDI_INSTANCE_URL_COPIED,
       eventData: {
         id
       }
@@ -76,7 +76,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
 
   const handleClickDeleteInstance = (id: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_SINGLE_DELETE_CLICKED,
+      event: TelemetryEvent.RDI_INSTANCE_SINGLE_DELETE_CLICKED,
       eventData: {
         id
       }
@@ -94,7 +94,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
 
   const handleDeleteInstances = (instances: RdiInstance[]) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_RDI_INSTANCES_MULTIPLE_DELETE_CLICKED,
+      event: TelemetryEvent.RDI_INSTANCE_MULTIPLE_DELETE_CLICKED,
       eventData: {
         ids: instances.map((instance) => instance.id)
       }
@@ -143,7 +143,8 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       name: 'RDI Version',
       dataType: 'string',
       sortable: true,
-      width: '100px'
+      width: '100px',
+      'data-test-subj': 'rdi-instance-version-column',
     },
     {
       field: 'lastConnection',
@@ -152,6 +153,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       dataType: 'date',
       align: 'right',
       width: '170px',
+      'data-test-subj': 'rdi-instance-last-connection-column',
       sortable: ({ lastConnection }) => (lastConnection ? -new Date(`${lastConnection}`) : -Infinity),
       render: (date: Date) => lastConnectionFormat(date)
     },
@@ -199,7 +201,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
     if (sort && !page) {
       localStorageService.set(BrowserStorageItem.rdiInstancesSorting, sort)
       sendEventTelemetry({
-        event: TelemetryEvent.CONFIG_RDI_INSTANCES_LIST_SORTED,
+        event: TelemetryEvent.RDI_INSTANCE_LIST_SORTED,
         eventData: sort
       })
     }

@@ -5,7 +5,7 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { Nullable, getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 import { AppDispatch, RootState } from '../store'
@@ -24,11 +24,6 @@ export const initialState: InitialStateRdiInstances = {
     lastConnection: new Date(),
     loading: false,
     error: '',
-  },
-  editedInstance: {
-    loading: false,
-    error: '',
-    data: null
   },
   loadingChanging: false,
   errorChanging: '',
@@ -188,21 +183,47 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
 }
 
 // Asynchronous thunk action
-export function createInstanceAction(
-  payload: Partial<RdiInstance>,
-  onSuccess?: (data: RdiInstanceResponse[]) => void
-) {
+export function createInstanceAction(payload: Partial<RdiInstance>, onSuccess?: (data: RdiInstanceResponse) => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(defaultInstanceChanging())
 
     try {
-      const { status, data } = await apiService.post(`${ApiEndpoints.RDI_INSTANCES}`, payload)
+      const { status, data } = await apiService.post<RdiInstanceResponse>(`${ApiEndpoints.RDI_INSTANCES}`, payload)
 
       if (isStatusSuccessful(status)) {
         dispatch(defaultInstanceChangingSuccess())
         dispatch(fetchInstancesAction())
 
         dispatch(addMessageNotification(successMessages.ADDED_NEW_RDI_INSTANCE(payload.name ?? '')))
+        onSuccess?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(defaultInstanceChangingFailure(errorMessage))
+      dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function editInstanceAction(
+  { id, ...payload }: Partial<RdiInstance>,
+  onSuccess?: (data: RdiInstanceResponse) => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(defaultInstanceChanging())
+
+    try {
+      const { status, data } = await apiService.patch<RdiInstanceResponse>(
+        `${ApiEndpoints.RDI_INSTANCES}/${id}`,
+        payload
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(defaultInstanceChangingSuccess())
+        dispatch(fetchInstancesAction())
+
         onSuccess?.(data)
       }
     } catch (_err) {

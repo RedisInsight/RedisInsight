@@ -49,7 +49,7 @@ export interface IStateRdiDryRunJob {
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading?: boolean
-  error: string,
+  error: string
 }
 
 export interface InitialStateRdiInstances {
@@ -57,14 +57,7 @@ export interface InitialStateRdiInstances {
   error: string
   data: RdiInstance[]
   connectedInstance: RdiInstance
-  editedInstance: InitialStateEditedRdiInstances
   loadingChanging: boolean
   errorChanging: string
   changedSuccessfully: boolean
-}
-
-export interface InitialStateEditedRdiInstances {
-  loading: boolean
-  error: string
-  data: Nullable<RdiInstance>
 }

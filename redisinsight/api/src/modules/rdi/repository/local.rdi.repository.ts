@@ -41,7 +41,17 @@ export class LocalRdiRepository extends RdiRepository {
   public async list(): Promise<Rdi[]> {
     const entities = await this.repository
       .createQueryBuilder('r')
-      .select(['r.id', 'r.name', 'r.host', 'r.port', 'r.url', 'r.type', 'r.version', 'r.lastConnection'])
+      .select([
+        'r.id',
+        'r.name',
+        'r.host',
+        'r.port',
+        'r.url',
+        'r.type',
+        'r.version',
+        'r.username',
+        'r.lastConnection',
+      ])
       .getMany();
     return entities.map((entity) => classToClass(Rdi, entity));
   }
@@ -55,9 +65,7 @@ export class LocalRdiRepository extends RdiRepository {
     return classToClass(
       Rdi,
       await this.modelEncryptor.decryptEntity(
-        await this.repository.save(
-          await this.modelEncryptor.encryptEntity(entity),
-        ),
+        await this.repository.save(await this.modelEncryptor.encryptEntity(entity)),
       ),
     );
   }
@@ -66,8 +74,13 @@ export class LocalRdiRepository extends RdiRepository {
    * @inheritDoc
    */
   public async update(id: string, rdi: Partial<Rdi>): Promise<Rdi> {
-    // todo: the same way as PATCH for databases
-    return null;
+    const oldEntity = await this.modelEncryptor.decryptEntity((await this.repository.findOneBy({ id })), true);
+    const newEntity = classToClass(RdiEntity, rdi);
+
+    const encrypted = await this.modelEncryptor.encryptEntity(this.repository.merge(oldEntity, newEntity));
+    await this.repository.save(encrypted);
+
+    return this.get(id);
   }
 
   /**

@@ -13,6 +13,11 @@
 }
 
 .emptyPanel {
+  @include euiScrollBar;
+
+  overflow: auto;
+  position: relative;
+
   height: calc(100vh - 160px);
 
   @media (min-width: 768px) {

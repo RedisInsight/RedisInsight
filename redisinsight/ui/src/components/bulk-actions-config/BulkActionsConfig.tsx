@@ -11,6 +11,7 @@ import {
   setDeleteOverview,
   setBulkActionsInitialState,
   bulkActionsDeleteSelector,
+  setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
 import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
 import { sessionStorageService } from 'uiSrc/services'
@@ -21,11 +22,7 @@ import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActi
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CustomHeaders } from 'uiSrc/constants/api'
 
-interface IProps {
-  retryDelay?: number
-}
-
-const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
+const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isConnected } = useSelector(bulkActionsSelector)
   const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
@@ -60,11 +57,8 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
 
     // Catch disconnect
     socketRef.current?.on(SocketEvent.Disconnect, () => {
-      if (retryDelay) {
-        retryTimer = setTimeout(handleDisconnect, retryDelay)
-      } else {
-        handleDisconnect()
-      }
+      dispatch(setDeleteOverviewStatus(BulkActionsStatus.Disconnected))
+      handleDisconnect()
     })
   }, [instanceId, isDeleteTriggered])
 
@@ -147,10 +141,8 @@ const BulkActionsConfig = ({ retryDelay = 5000 } : IProps) => {
   const onBulkDeleteAborted = (data: any) => {
     dispatch(setBulkDeleteLoading(false))
     sessionStorageService.set(BrowserStorageItem.bulkActionDeleteId, '')
-
-    if (data.status === 'aborted') {
-      dispatch(setDeleteOverview(data))
-    }
+    dispatch(setDeleteOverview(data))
+    handleDisconnect()
   }
 
   useEffect(() => {

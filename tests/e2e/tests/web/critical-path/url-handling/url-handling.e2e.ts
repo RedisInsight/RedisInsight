@@ -42,6 +42,7 @@ test
         await t.navigateTo(generateLink(connectUrlParams));
         await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
+        await t.wait(5_000);
         await t.click(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
         // wait for db is added
         await t.wait(10_000);

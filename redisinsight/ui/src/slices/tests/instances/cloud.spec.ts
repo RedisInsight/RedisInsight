@@ -20,6 +20,7 @@ import reducer, {
   loadAccountRedisCloudSuccess,
   loadAccountRedisCloud,
   setIsAutodiscoverySSO,
+  setIsRecommendedSettingsSSO,
   fetchSubscriptionsRedisCloud,
   fetchAccountRedisCloud,
   loadInstancesRedisCloud,
@@ -573,6 +574,28 @@ describe('cloud slice', () => {
         initialState,
         setIsAutodiscoverySSO(data)
       )
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          cloud: nextState,
+        },
+      })
+      expect(cloudSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setIsRecommendedSettingsSSO', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const data = true
+      const state = {
+        ...initialState,
+        isRecommendedSettings: true,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setIsRecommendedSettingsSSO(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

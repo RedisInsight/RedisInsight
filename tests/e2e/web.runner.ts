@@ -6,16 +6,16 @@ import testcafe from 'testcafe';
             return t
                 .createRunner()
                 .compilerOptions({
-                    "typescript": {
+                    'typescript': {
                         configPath: 'tsconfig.testcafe.json',
                         experimentalDecorators: true
-                     }})
+                    } })
                 .src((process.env.TEST_FILES || 'tests/web/**/*.e2e.ts').split('\n'))
                 .browsers(['chromium:headless --cache --allow-insecure-localhost --ignore-certificate-errors'])
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,
-                    pathPattern: '${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png',
+                    pathPattern: '${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png'
                 })
                 .reporter([
                     'spec',
@@ -39,14 +39,15 @@ import testcafe from 'testcafe';
                     assertionTimeout: 5000,
                     speed: 1,
                     quarantineMode: { successThreshold: 1, attemptLimit: 3 },
-                    pageRequestTimeout: 8000
+                    pageRequestTimeout: 8000,
+                    disableMultipleWindows: true
                 });
         })
         .then((failedCount) => {
             process.exit(failedCount);
         })
         .catch((e) => {
-            console.error(e)
+            console.error(e);
             process.exit(1);
         });
 })();

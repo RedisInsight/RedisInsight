@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CloudJob,
   CreateFreeSubscriptionAndDatabaseCloudJob,
-  ImportFreeDatabaseCloudJob
+  ImportFreeDatabaseCloudJob,
 } from 'src/modules/cloud/job/jobs';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CreateFreeDatabaseCloudJob } from 'src/modules/cloud/job/jobs/create-free-database.cloud-job';
@@ -16,6 +16,7 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
+import { CloudSubscriptionApiService } from 'src/modules/cloud/subscription/cloud-subscription.api.service';
 
 @Injectable()
 export class CloudJobFactory {
@@ -26,6 +27,7 @@ export class CloudJobFactory {
     private readonly cloudDatabaseAnalytics: CloudDatabaseAnalytics,
     private readonly databaseService: DatabaseService,
     private readonly cloudCapiKeyService: CloudCapiKeyService,
+    private readonly cloudSubscriptionApiService: CloudSubscriptionApiService,
   ) {}
 
   async create(
@@ -53,6 +55,7 @@ export class CloudJobFactory {
             cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
             databaseService: this.databaseService,
             cloudCapiKeyService: this.cloudCapiKeyService,
+            cloudSubscriptionApiService: this.cloudSubscriptionApiService,
           },
         );
       case CloudJobName.CreateFreeDatabase:

@@ -47,7 +47,7 @@ test('Verify that default config applied when remote config version is lower', a
 
     const featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
 
-    await t.expect(featureVersion).eql(2.3402, 'Config with lowest version applied');
+    await t.expect(featureVersion).eql(2.3403, 'Config with lowest version applied');
     await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel displayed when disabled in default config');
 });
 test('Verify that invaid remote config not applied even if its version is higher than in the default config', async t => {
@@ -57,7 +57,7 @@ test('Verify that invaid remote config not applied even if its version is higher
 
     const featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
 
-    await t.expect(featureVersion).eql(2.3402, 'Config highest version not applied');
+    await t.expect(featureVersion).eql(2.3403, 'Config highest version not applied');
     await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel displayed when disabled in default config');
 });
 test

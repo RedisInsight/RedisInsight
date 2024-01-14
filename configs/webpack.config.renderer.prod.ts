@@ -202,20 +202,20 @@ const configuration: webpack.Configuration = {
     new webpack.DefinePlugin({
       'process.type': '"renderer"',
       'process.env.NODE_ENV': JSON.stringify('development'),
-      'process.env.APP_ENV': JSON.stringify('electron'),
-      'process.env.API_PREFIX': JSON.stringify('api'),
-      'process.env.BASE_API_URL': JSON.stringify(apiUrl),
-      'process.env.RESOURCES_BASE_URL': JSON.stringify(apiUrl),
-      'process.env.SCAN_COUNT_DEFAULT': JSON.stringify('500'),
-      'process.env.SCAN_TREE_COUNT_DEFAULT': JSON.stringify('10000'),
-      'process.env.PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),
-      'process.env.BUILD_TYPE': JSON.stringify('ELECTRON'),
-      'process.env.APP_VERSION': JSON.stringify(version),
-      'process.env.CONNECTIONS_TIMEOUT_DEFAULT': 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? JSON.stringify(process.env.CONNECTIONS_TIMEOUT_DEFAULT)
+      'process.env.RI_APP_TYPE': JSON.stringify('electron'),
+      'process.env.RI_API_PREFIX': JSON.stringify('api'),
+      'process.env.RI_BASE_API_URL': JSON.stringify(apiUrl),
+      'process.env.RI_RESOURCES_BASE_URL': JSON.stringify(apiUrl),
+      'process.env.RI_SCAN_COUNT_DEFAULT': JSON.stringify('500'),
+      'process.env.RI_SCAN_TREE_COUNT_DEFAULT': JSON.stringify('10000'),
+      'process.env.RI_PIPELINE_COUNT_DEFAULT': JSON.stringify('5'),
+      'process.env.RI_BUILD_TYPE': JSON.stringify('ELECTRON'),
+      'process.env.RI_APP_VERSION': JSON.stringify(version),
+      'process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT': 'RI_CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? JSON.stringify(process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT)
         : JSON.stringify(30 * 1000),
-      'process.env.SEGMENT_WRITE_KEY': 'SEGMENT_WRITE_KEY' in process.env
-        ? JSON.stringify(process.env.SEGMENT_WRITE_KEY)
+      'process.env.RI_SEGMENT_WRITE_KEY': 'RI_SEGMENT_WRITE_KEY' in process.env
+        ? JSON.stringify(process.env.RI_SEGMENT_WRITE_KEY)
         : JSON.stringify('SOURCE_WRITE_KEY'),
     }),
   ],

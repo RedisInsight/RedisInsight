@@ -8,8 +8,8 @@ const chance = new Chance();
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
 export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
 
-export const workingDirectory = process.env.APP_FOLDER_ABSOLUTE_PATH
-    || (joinPath(os.homedir(), process.env.APP_FOLDER_NAME || '.redisinsight-app'));
+export const workingDirectory = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
+    || (joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redisinsight-app'));
 export const fileDownloadPath = joinPath(os.homedir(), 'Downloads');
 const uniqueId = chance.string({ length: 10 });
 

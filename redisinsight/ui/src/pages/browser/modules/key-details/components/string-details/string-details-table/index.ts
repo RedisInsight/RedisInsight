@@ -1,0 +1,1 @@
+export { StringDetailsTable } from './StringDetailsTable'

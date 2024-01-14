@@ -4,7 +4,6 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Readable } from 'stream';
 import * as readline from 'readline';
 import { wrapHttpError } from 'src/common/utils';
-import { UploadImportFileDto } from 'src/modules/bulk-actions/dto/upload-import-file.dto';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
 import { splitCliCommandLine } from 'src/utils/cli-helper';
@@ -14,7 +13,6 @@ import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/const
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-import-file-by-path.dto';
 import config, { Config } from 'src/utils/config';
-import { MemoryStoredFile } from 'nestjs-form-data';
 
 const BATCH_LIMIT = 10_000;
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -63,9 +61,9 @@ export class BulkImportService {
 
   /**
    * @param clientMetadata
-   * @param dto
+   * @param fileStream
    */
-  public async import(clientMetadata: ClientMetadata, dto: UploadImportFileDto): Promise<IBulkActionOverview> {
+  public async import(clientMetadata: ClientMetadata, fileStream: Readable): Promise<IBulkActionOverview> {
     const startTime = Date.now();
     const result: IBulkActionOverview = {
       id: 'empty',
@@ -92,18 +90,20 @@ export class BulkImportService {
     try {
       client = await this.databaseConnectionService.createClient(clientMetadata);
 
-      const stream = Readable.from(dto.file.buffer);
       let batch = [];
 
-      const batchResults: Promise<BulkActionSummary>[] = [];
+      const batchResults: BulkActionSummary[] = [];
 
-      await new Promise((res) => {
-        const rl = readline.createInterface(stream);
-        rl.on('line', (line) => {
+      try {
+        const rl = readline.createInterface({
+          input: fileStream,
+        });
+
+        for await (const line of rl) {
           try {
             const [command, ...args] = splitCliCommandLine((line.trim()));
             if (batch.length >= BATCH_LIMIT) {
-              batchResults.push(this.executeBatch(client, batch));
+              batchResults.push(await this.executeBatch(client, batch));
               batch = [];
             }
             if (command) {
@@ -112,20 +112,16 @@ export class BulkImportService {
           } catch (e) {
             parseErrors += 1;
           }
-        });
-        rl.on('error', (error) => {
-          result.summary.errors.push(error);
-          result.status = BulkActionStatus.Failed;
-          this.analyticsService.sendActionFailed(result, error);
-          res(null);
-        });
-        rl.on('close', () => {
-          batchResults.push(this.executeBatch(client, batch));
-          res(null);
-        });
-      });
+        }
+      } catch (e) {
+        result.summary.errors.push(e);
+        result.status = BulkActionStatus.Failed;
+        this.analyticsService.sendActionFailed(result, e);
+      }
 
-      (await Promise.all(batchResults)).forEach((batchResult) => {
+      batchResults.push(await this.executeBatch(client, batch));
+
+      batchResults.forEach((batchResult) => {
         result.summary.processed += batchResult.getOverview().processed;
         result.summary.succeed += batchResult.getOverview().succeed;
         result.summary.failed += batchResult.getOverview().failed;
@@ -176,15 +172,7 @@ export class BulkImportService {
         throw new BadRequestException('Data file was not found');
       }
 
-      if ((await fs.stat(path))?.size > 100 * 1024 * 1024) {
-        throw new BadRequestException('Maximum file size is 100MB');
-      }
-
-      const buffer = await fs.readFile(path);
-
-      return this.import(clientMetadata, {
-        file: { buffer } as MemoryStoredFile,
-      });
+      return this.import(clientMetadata, fs.createReadStream(path));
     } catch (e) {
       this.logger.error('Unable to process an import file path from tutorial', e);
       throw wrapHttpError(e);

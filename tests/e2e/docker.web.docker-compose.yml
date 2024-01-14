@@ -43,6 +43,9 @@ services:
       RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
     env_file:
       - ./.env
+    environment:
+      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
+      RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:
       - rihomedir:/data
       - tmp:/tmp

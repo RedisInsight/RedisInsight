@@ -22,7 +22,7 @@ interface IApp {
   gracefulShutdown: Function;
 }
 
-export default async function bootstrap(): Promise<IApp> {
+export default async function bootstrap(apiPort?: number): Promise<IApp> {
   await migrateHomeFolder();
 
   const { port, host } = serverConfig;
@@ -43,7 +43,7 @@ export default async function bootstrap(): Promise<IApp> {
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
 
-  if (process.env.APP_ENV !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron') {
     SwaggerModule.setup(
       serverConfig.docPrefix,
       app,
@@ -62,7 +62,7 @@ export default async function bootstrap(): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(port, host);
+  await app.listen(apiPort || port, host);
   logger.log({
     message: `Server is running on http(s)://${host}:${port}`,
     context: 'bootstrap',
@@ -84,6 +84,6 @@ export default async function bootstrap(): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (process.env.APP_ENV !== 'electron') {
+if (process.env.RI_APP_TYPE !== 'electron') {
   bootstrap();
 }

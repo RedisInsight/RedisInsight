@@ -1,17 +1,17 @@
 export default {
   server: {
     env: 'test',
-    requestTimeout: parseInt(process.env.REQUEST_TIMEOUT, 10) || 1000,
+    requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 1000,
   },
   db: {
-    synchronize: process.env.DB_SYNC ? process.env.DB_SYNC === 'true' : true,
-    migrationsRun: process.env.DB_MIGRATIONS ? process.env.DB_MIGRATIONS === 'true' : false,
+    synchronize: process.env.RI_DB_SYNC ? process.env.RI_DB_SYNC === 'true' : true,
+    migrationsRun: process.env.RI_DB_MIGRATIONS ? process.env.RI_DB_MIGRATIONS === 'true' : false,
   },
   profiler: {
-    logFileIdleThreshold: parseInt(process.env.PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 2, // 3sec
+    logFileIdleThreshold: parseInt(process.env.RI_PROFILER_LOG_FILE_IDLE_THRESHOLD, 10) || 1000 * 2, // 3sec
   },
   notifications: {
-    updateUrl: process.env.NOTIFICATION_UPDATE_URL
+    updateUrl: process.env.RI_NOTIFICATION_UPDATE_URL
       || 'https://s3.amazonaws.com/redisinsight.test/public/tests/notifications.json',
   },
   features_config: {

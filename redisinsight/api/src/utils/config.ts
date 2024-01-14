@@ -26,7 +26,7 @@ switch (process.env.NODE_ENV) {
 
 let buildTypeConfig;
 // eslint-disable-next-line sonarjs/no-small-switch
-switch (process.env.BUILD_TYPE) {
+switch (process.env.RI_BUILD_TYPE) {
   case 'REDIS_STACK':
     buildTypeConfig = stack;
     break;

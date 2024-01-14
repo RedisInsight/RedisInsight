@@ -11,7 +11,7 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `Empty command history in Workbench`
-    .meta({type: 'regression'})
+    .meta({ type: 'regression' })
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);

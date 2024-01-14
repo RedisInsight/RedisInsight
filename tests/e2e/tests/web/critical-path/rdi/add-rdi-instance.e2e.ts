@@ -31,7 +31,7 @@ const rdiInstance3: RdiInstance = {
 //skip the tests until rdi integration is added
 
 fixture.skip `Rdi instance`
-    .meta({ type: 'smoke' })
+    .meta({ type: 'critical_path' })
     // it will be removed
     .page(commonUrl)
     .beforeEach(async() => {

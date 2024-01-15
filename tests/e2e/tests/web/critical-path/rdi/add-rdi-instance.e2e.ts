@@ -2,8 +2,10 @@ import { t } from 'testcafe';
 
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { RdiInstance } from '../../../../pageObjects/components/myRedisDatabase/add-rdi-instance';
+import { BrowserActions } from '../../../../common-actions/browser-actions';
 
 const rdiInstancesListPage = new RdiInstancesListPage();
+const browserActions = new BrowserActions();
 export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
 
 const rdiInstance: RdiInstance = {
@@ -111,4 +113,34 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     const sortedByAliasTypeUpdated = [rdiInstance3.alias, rdiInstance.alias, rdiInstance2.alias];
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAliasTypeUpdated);
+});
+test('Verify that user can edit added instance', async t => {
+    const newAliasName  = 'New alias';
+
+    await rdiInstancesListPage.addRdi(rdiInstance);
+    let addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
+
+    await t.expect(addRdiInstance.alias).eql(rdiInstance.alias, 'added alias is not corrected');
+
+    await rdiInstancesListPage.editRdiByName(rdiInstance.alias);
+    await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, newAliasName, { replace: true });
+    await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
+
+    addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
+    await t.expect(addRdiInstance.alias).eql(newAliasName, 'added alias is not corrected');
+});
+test('Verify that button is displayed if user does not enter all mandatory information', async t => {
+
+    const tooltipText = [
+        'URL'
+    ];
+
+    await t.click(rdiInstancesListPage.rdiInstanceButton);
+    await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, rdiInstance.alias);
+
+    await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
+
+    for (const text of tooltipText) {
+        await browserActions.verifyTooltipContainsText(text, true);
+    }
 });

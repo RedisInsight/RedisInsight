@@ -12,11 +12,11 @@ import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-ac
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
 import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-import-file-by-path.dto';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 
 const BATCH_LIMIT = 10_000;
-const PATH_CONFIG = config.get('dir_path');
-const SERVER_CONFIG = config.get('server');
+const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class BulkImportService {

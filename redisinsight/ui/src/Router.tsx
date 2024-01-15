@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Router = ({ children }: Props) =>
-  (process.env.APP_ENV !== AppEnv.ELECTRON ? (
+  (process.env.RI_APP_TYPE !== AppEnv.ELECTRON ? (
     <BrowserRouter>{children}</BrowserRouter>
   ) : (
     <HashRouter>{children}</HashRouter>

@@ -1,14 +1,14 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
 import { convertRedisInfoReplyToObject } from 'src/utils';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class AutodiscoveryService implements OnModuleInit {

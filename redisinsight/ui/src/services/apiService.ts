@@ -5,15 +5,15 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { CustomHeaders } from 'uiSrc/constants/api'
 
 const { apiPort } = window.app.config
-const baseApiUrl = process.env.BASE_API_URL
-const apiPrefix = process.env.API_PREFIX
+const baseApiUrl = process.env.RI_BASE_API_URL
+const apiPrefix = process.env.RI_API_PREFIX
 const isDevelopment = process.env.NODE_ENV === 'development'
-const isWebApp = process.env.APP_ENV === 'web'
+const isWebApp = process.env.RI_APP_TYPE === 'web'
 
 const axiosInstance = axios.create({
   baseURL:
     !isDevelopment && isWebApp
-      ? `${window.location.origin}/api/`
+      ? `${window.location.origin}/${apiPrefix}/`
       : `${baseApiUrl}:${apiPort}/${apiPrefix}/`,
 })
 

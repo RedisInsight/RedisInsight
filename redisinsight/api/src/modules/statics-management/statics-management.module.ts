@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { AutoUpdatedStaticsProvider } from './providers/auto-updated-statics.provider';
 
-const SERVER_CONFIG = config.get('server');
-const PATH_CONFIG = config.get('dir_path');
-const GUIDES_CONFIG = config.get('guides');
-const TUTORIALS_CONFIG = config.get('tutorials');
+const SERVER_CONFIG = config.get('server') as Config['server'];
+const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
+const GUIDES_CONFIG = config.get('guides') as Config['guides'];
+const TUTORIALS_CONFIG = config.get('tutorials') as Config['tutorials'];
 
 const CONTENT_CONFIG = config.get('content');
 

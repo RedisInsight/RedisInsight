@@ -10,6 +10,6 @@ config.version = pkg.version
 config.author = pkg.author
 config.isDevelopment = process.env.NODE_ENV === 'development'
 config.isProduction = process.env.NODE_ENV === 'production'
-config.apiPort = process.env.API_PORT || configInit.defaultPort
+config.apiPort = process.env.RI_APP_PORT || configInit.defaultPort
 
 export const configRenderer = config

@@ -9,12 +9,12 @@ import {
   KeytarEncryptionErrorException,
   KeytarUnavailableException,
 } from 'src/modules/encryption/exceptions';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 
 const SERVICE = 'redisinsight';
 const ACCOUNT = 'app';
 const ALGORITHM = 'aes-256-cbc';
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class KeytarEncryptionStrategy implements IEncryptionStrategy {

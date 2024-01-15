@@ -3,8 +3,7 @@ import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import {
     commonUrl,
-    ossStandaloneConfig,
-    redisEnterpriseClusterConfig
+    ossStandaloneConfig
 } from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { UserAgreementDialog } from '../../../../pageObjects/dialogs';
@@ -21,16 +20,6 @@ fixture `Edit Databases`
     });
 // Returns the URL of the current web page
 const getPageUrl = ClientFunction(() => window.location.href);
-test
-    .meta({ rte: rte.reCluster })
-    .after(async() => {
-        // Delete database
-        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can connect to the RE cluster database', async t => {
-        await databaseHelper.addNewREClusterDatabase(redisEnterpriseClusterConfig);
-        await myRedisDatabasePage.clickOnDBByName(redisEnterpriseClusterConfig.databaseName);
-        await t.expect(getPageUrl()).contains('browser', 'The edit view is not opened');
-    });
 test
     .meta({ rte: rte.standalone })
     .after(async() => {

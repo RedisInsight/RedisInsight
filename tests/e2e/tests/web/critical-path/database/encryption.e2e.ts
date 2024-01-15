@@ -16,8 +16,8 @@ const dbTableParams: DbTableParameters = {
     tableName: 'database_instance',
     columnName: 'caCertId',
     rowValue: 'invalid',
-    conditionColumnName: 'name',
-    conditionColumnValue: ossStandaloneTlsConfig.databaseName
+    conditionWhereColumnName: 'name',
+    conditionWhereColumnValue: ossStandaloneTlsConfig.databaseName
 };
 
 fixture `Encryption`
@@ -31,7 +31,7 @@ fixture `Encryption`
     .afterEach(async() => {
         await databaseHelper.deleteDatabase(ossStandaloneTlsConfig.databaseName);
     });
-test.only('Verify that data encrypted using KEY', async t => {
+test('Verify that data encrypted using KEY', async t => {
     const decryptionError = 'Unable to decrypt data';
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneTlsConfig.databaseName);
@@ -40,7 +40,9 @@ test.only('Verify that data encrypted using KEY', async t => {
 
     await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
     // Verify that Encription by KEY applied for connection if RI_ENCRYPTION_KEY variable exists
-    await t.expect(await DatabaseScripts.getColumnValueFromTableInDB({ ...dbTableParams, columnName: 'encryption' })).eql('KEY', 'Encription is not applied by RI_ENCRYPTION_KEY');
+    await t
+        .expect(await DatabaseScripts.getColumnValueFromTableInDB({ ...dbTableParams, columnName: 'encryption' }))
+        .eql('KEY', 'Encryption is not applied by RI_ENCRYPTION_KEY');
     await databaseHelper.clickOnEditDatabaseByName(ossStandaloneTlsConfig.databaseName);
     await t.expect(myRedisDatabasePage.Toast.toastError.textContent).contains(decryptionError, 'Invalid encrypted field is decrypted');
 });

@@ -26,8 +26,8 @@ const pathes = {
 const dbTableParams: DbTableParameters = {
     tableName: featuresConfigTable,
     columnName: 'data',
-    conditionColumnName: 'id',
-    conditionColumnValue: '1'
+    conditionWhereColumnName: 'id',
+    conditionWhereColumnValue: '1'
 };
 
 fixture `Feature flag`

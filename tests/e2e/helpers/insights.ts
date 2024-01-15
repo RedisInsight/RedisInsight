@@ -8,8 +8,8 @@ const basePage = new BasePage();
 const dbTableParams: DbTableParameters = {
     tableName: 'features_config',
     columnName: 'controlNumber',
-    conditionColumnName: 'id',
-    conditionColumnValue: '1'
+    conditionWhereColumnName: 'id',
+    conditionWhereColumnValue: '1'
 };
 
 /**

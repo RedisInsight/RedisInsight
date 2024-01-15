@@ -4,7 +4,7 @@ import { RecommendationIds, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { getColumnValueFromTableInDB } from '../../../../helpers/database-scripts';
+import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { modifyFeaturesConfigJson, refreshFeaturesTestData, updateControlNumber } from '../../../../helpers/insights';
 import { Common } from '../../../../helpers/common';
 
@@ -23,6 +23,12 @@ const pathes = {
     buildTypeConfig: path.join('.', 'test-data', 'features-configs', 'insights-build-type-filter.json'),
     flagOffConfig: path.join('.', 'test-data', 'features-configs', 'insights-flag-off.json')
 };
+const dbTableParams: DbTableParameters = {
+    tableName: featuresConfigTable,
+    columnName: 'data',
+    conditionWhereColumnName: 'id',
+    conditionWhereColumnValue: '1'
+};
 
 fixture `Feature flag`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -39,7 +45,7 @@ fixture `Feature flag`
 test('Verify that default config applied when remote config version is lower', async t => {
     await updateControlNumber(19.2);
 
-    const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+    const featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
 
     await t.expect(featureVersion).eql(2.3403, 'Config with lowest version applied');
     await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel displayed when disabled in default config');
@@ -49,7 +55,7 @@ test('Verify that invaid remote config not applied even if its version is higher
     await modifyFeaturesConfigJson(pathes.invalidConfig);
     await updateControlNumber(19.2);
 
-    const featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+    const featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
 
     await t.expect(featureVersion).eql(2.3403, 'Config highest version not applied');
     await t.expect(browserPage.InsightsPanel.insightsBtn.exists).ok('Insights panel displayed when disabled in default config');
@@ -73,7 +79,7 @@ test
         // Update remote config .json to valid
         await modifyFeaturesConfigJson(pathes.validConfig);
         await updateControlNumber(48.2);
-        let featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+        let featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
         let versionFromConfig = await Common.getJsonPropertyValue('version', pathes.validConfig);
 
         await t.expect(featureVersion).eql(versionFromConfig, 'Config with invalid data applied');
@@ -108,7 +114,7 @@ test
         await modifyFeaturesConfigJson(pathes.buildTypeConfig);
         await updateControlNumber(48.2);
         // Verify that buildType filter applied
-        featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+        featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
         versionFromConfig = await Common.getJsonPropertyValue('version', pathes.buildTypeConfig);
         await t.expect(featureVersion).eql(versionFromConfig, 'Config highest version not applied');
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when filter excludes this buildType');
@@ -117,7 +123,7 @@ test
         await modifyFeaturesConfigJson(pathes.flagOffConfig);
         await updateControlNumber(48.2);
         // Verify that Insights panel not displayed if the remote config file has it disabled
-        featureVersion = await JSON.parse(await getColumnValueFromTableInDB(featuresConfigTable, 'data')).version;
+        featureVersion = await JSON.parse(await DatabaseScripts.getColumnValueFromTableInDB(dbTableParams)).version;
         versionFromConfig = await Common.getJsonPropertyValue('version', pathes.flagOffConfig);
         await t.expect(featureVersion).eql(versionFromConfig, 'Config highest version not applied');
         await t.expect(browserPage.InsightsPanel.insightsBtn.exists).notOk('Insights panel displayed when filter excludes this buildType');

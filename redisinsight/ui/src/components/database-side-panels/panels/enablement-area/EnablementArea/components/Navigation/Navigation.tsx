@@ -57,7 +57,7 @@ const Navigation = (props: Props) => {
     }
 
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_IMPORT_SUBMITTED,
+      event: TelemetryEvent.EXPLORE_PANEL_IMPORT_SUBMITTED,
       eventData: {
         databaseId: instanceId,
         source: file ? 'Upload' : 'URL'
@@ -73,7 +73,7 @@ const Navigation = (props: Props) => {
   const onDeleteCustomTutorial = (id: string) => {
     dispatch(deleteCustomTutorial(id, () => {
       sendEventTelemetry({
-        event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_TUTORIAL_DELETED,
+        event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_DELETED,
         eventData: {
           databaseId: instanceId,
         }

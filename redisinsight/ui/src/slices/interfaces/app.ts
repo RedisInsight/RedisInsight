@@ -100,6 +100,9 @@ export interface StateAppContext {
   triggeredFunctions: {
     lastViewedPage: string
   }
+  capability: {
+    source: string
+  }
 }
 
 export interface StateAppRedisCommands {

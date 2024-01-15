@@ -39,6 +39,7 @@ export interface IRecommendationsStatic {
     redisStack?: boolean
     tutorial?: string
     content?: IRecommendationContent[]
+    badges?: string[]
   }
 }
 

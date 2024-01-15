@@ -93,6 +93,27 @@ export const findMarkdownPathByPath = (manifest: IEnablementAreaItem[], markdown
   return result ? result.join('/') : null
 }
 
+export const findMarkdownPathById = (
+  manifest: IEnablementAreaItem[] = [],
+  id: string = '',
+): Nullable<IEnablementAreaItem> => {
+  const stack = [...manifest]
+
+  while (stack.length > 0) {
+    const currentObject = stack.pop()
+
+    if (currentObject?.id === id) {
+      return currentObject
+    }
+
+    if (currentObject?.children) {
+      stack.push(...currentObject.children)
+    }
+  }
+
+  return null
+}
+
 const isGroupMode = (mode?: ResultsMode) => mode === ResultsMode.GroupMode
 const isRawMode = (mode?: RunQueryMode) => mode === RunQueryMode.Raw
 const isSilentMode = (mode?: ResultsMode) => mode === ResultsMode.Silent

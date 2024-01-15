@@ -1,21 +1,27 @@
-import React, { useMemo, useRef, useEffect } from 'react'
+import React, { useMemo, useRef, useEffect, useState } from 'react'
 import {
   EuiFlyoutHeader,
   EuiText,
   EuiButtonEmpty,
   EuiLoadingContent,
   EuiHorizontalRule,
+  EuiPopover,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import { ExternalLink } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 
-import { Nullable } from 'uiSrc/utils'
+import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/icons/rocket.svg'
+import { appContextCapability } from 'uiSrc/slices/app/context'
+import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
+import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import './styles/main.scss'
 import { getTutorialSection } from '../../utils'
 import {
@@ -64,6 +70,11 @@ const InternalPage = (props: Props) => {
   const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink, ExternalLink }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
+  const { source } = useSelector(appContextCapability)
+  const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
+  const [showCapabilityPopover, setShowCapabilityPopover] = useState(false)
+  const tutorialCapability = getTutorialCapability(source!)
+
   const handleScroll = debounce(() => {
     if (containerRef.current && onScroll) {
       onScroll(containerRef.current.scrollTop)
@@ -72,7 +83,7 @@ const InternalPage = (props: Props) => {
 
   const sendEventClickExternalLinkTelemetry = (link: string = '') => {
     sendEventTelemetry({
-      event: TelemetryEvent.WORKBENCH_ENABLEMENT_AREA_LINK_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_LINK_CLICKED,
       eventData: {
         path,
         link,
@@ -90,6 +101,20 @@ const InternalPage = (props: Props) => {
       sendEventClickExternalLinkTelemetry(target?.innerText)
     }
   }
+
+  useEffect(() => {
+    if (isShowCapabilityTutorialPopover(free) && !!tutorialCapability?.tutorialPage?.id) {
+      setShowCapabilityPopover(true)
+      setCapabilityPopoverShown()
+      sendEventTelemetry({
+        event: TelemetryEvent.CAPABILITY_POPOVER_DISPLAYED,
+        eventData: {
+          capabilityName: tutorialCapability.telemetryName,
+          databaseId: instanceId,
+        }
+      })
+    }
+  }, [free])
 
   useEffect(() => {
     if (!isLoading && !error && containerRef.current) {
@@ -127,15 +152,36 @@ const InternalPage = (props: Props) => {
     <div className={styles.container} data-test-subj="internal-page">
       <EuiFlyoutHeader className={styles.header}>
         <div style={{ padding: 0 }}>
-          <EuiButtonEmpty
-            data-testid="enablement-area__page-close"
-            iconType="arrowLeft"
-            onClick={onClose}
-            className={styles.backButton}
-            aria-label="Back"
+          <EuiPopover
+            initialFocus={false}
+            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            anchorClassName={styles.popoverAnchor}
+            anchorPosition="leftCenter"
+            isOpen={showCapabilityPopover}
+            panelPaddingSize="m"
+            closePopover={() => setShowCapabilityPopover(false)}
+            button={(
+              <EuiButtonEmpty
+                data-testid="enablement-area__page-close"
+                iconType="arrowLeft"
+                onClick={onClose}
+                className={styles.backButton}
+                aria-label="Back"
+              >
+                {backTitle}
+              </EuiButtonEmpty>
+            )}
           >
-            {backTitle}
-          </EuiButtonEmpty>
+            <div data-testid="explore-capability-popover">
+              <RocketIcon className={styles.rocketIcon} />
+              <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
+              <EuiText className={styles.popoverText}>
+                {'You expressed interest in learning about the '}
+                <b>{tutorialCapability?.name}</b>
+                . Try this tutorial to get started.
+              </EuiText>
+            </div>
+          </EuiPopover>
         </div>
         <div>
           <EuiHorizontalRule margin="xs" />

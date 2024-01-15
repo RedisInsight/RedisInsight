@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiText, EuiToolTip } from '@elastic/eui'
 
@@ -27,12 +27,22 @@ const InsightsTrigger = () => {
   const { insights: insightsHighlighting } = getHighlightingFeatures(features)
 
   const dispatch = useDispatch()
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const page = pathname
     .replace(instanceId, '')
     .replace(/^\//g, '')
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(search)
+    const isExploreShouldBeOpened = searchParams.get('insights') === 'open'
+
+    if (isExploreShouldBeOpened) {
+      dispatch(toggleInsightsPanel(true))
+      dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    }
+  }, [search])
 
   const handleClickTrigger = () => {
     if (isHighlighted) {
@@ -67,8 +77,8 @@ const InsightsTrigger = () => {
         <EuiToolTip
           title={isHighlighted ? undefined : 'Insights'}
           content={isHighlighted
-            ? 'New recommendations are available'
-            : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use recommendations to improve your database.'}
+            ? 'New tips are available'
+            : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use tips to improve your database.'}
         >
           <EuiButton
             fill

@@ -89,7 +89,7 @@ test
         await browserPage.InsightsPanel.togglePanel(true);
         await t.expect(browserPage.InsightsPanel.getInsightsPanel().exists).ok('Insights panel not displayed for the other db connection');
         await browserPage.InsightsPanel.togglePanel(true);
-        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Recommendations);
+        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t.expect(tab.getRecommendationByName(redisVersionRecom).exists).ok('Redis Version recommendation not displayed');
 
         await browserPage.InsightsPanel.togglePanel(false);

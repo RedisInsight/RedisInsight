@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
@@ -16,7 +16,7 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { Pages, Theme } from 'uiSrc/constants'
+import { Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
@@ -27,7 +27,6 @@ import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
-import { openNewWindowDatabase } from 'uiSrc/utils'
 
 import {
   sortRecommendations,
@@ -36,6 +35,7 @@ import {
   renderRecommendationContent,
 } from 'uiSrc/utils/recommendation/utils'
 
+import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -46,13 +46,12 @@ const Recommendations = () => {
 
   const { theme } = useContext(ThemeContext)
   const history = useHistory()
-  const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({
     event: isOpen
-      ? TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_EXPANDED
-      : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_COLLAPSED,
+      ? TelemetryEvent.DATABASE_ANALYSIS_TIPS_EXPANDED
+      : TelemetryEvent.DATABASE_ANALYSIS_TIPS_COLLAPSED,
     eventData: {
       databaseId: instanceId,
       recommendation: recommendationsContent[id]?.telemetryEvent || id,
@@ -62,7 +61,7 @@ const Recommendations = () => {
 
   const goToTutorial = (mdPath: string, id: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.DATABASE_RECOMMENDATIONS_TUTORIAL_CLICKED,
+      event: TelemetryEvent.DATABASE_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: instanceId,
         recommendation: recommendationsContent[id]?.telemetryEvent || id,
@@ -70,14 +69,7 @@ const Recommendations = () => {
       }
     })
 
-    // dispatch(setWorkbenchEAOpened(false))
-    if (mdPath) {
-      openNewWindowDatabase(`${Pages.workbench(instanceId)}?guidePath=${mdPath}`)
-      return
-    }
-
-    // dispatch(resetExplorePanelSearchContext())
-    history.push(Pages.workbench(instanceId))
+    dispatch(openTutorialByPath(mdPath || '', history))
   }
 
   const onRedisStackClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => event.stopPropagation()
@@ -134,7 +126,7 @@ const Recommendations = () => {
           data-testid="no=recommendations-icon"
         />
         <EuiText className={styles.bigText}>AMAZING JOB!</EuiText>
-        <EuiText size="m">No Recommendations at the moment,</EuiText>
+        <EuiText size="m">No Tips at the moment,</EuiText>
         <br />
         <EuiText size="m">keep up the good work!</EuiText>
       </div>

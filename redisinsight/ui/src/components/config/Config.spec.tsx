@@ -20,6 +20,7 @@ import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
 import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { setCapability } from 'uiSrc/slices/app/context'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -60,6 +61,7 @@ describe('Config', () => {
   it('should render', () => {
     render(<Config />)
     const afterRenderActions = [
+      setCapability(),
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
@@ -97,6 +99,7 @@ describe('Config', () => {
     userSettingsSelector.mockImplementation(userSettingsSelectorMock)
     render(<Config />)
     const afterRenderActions = [
+      setCapability(),
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),

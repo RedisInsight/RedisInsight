@@ -261,6 +261,7 @@ export class BrowserPage extends InstancePage {
     keyListItem = Selector('[role=rowgroup] [role=row]');
     // Dialog
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
+    closeDialogButton = Selector('[class*=euiModal__closeIcon]');
 
     /**
      * Common part for Add any new key

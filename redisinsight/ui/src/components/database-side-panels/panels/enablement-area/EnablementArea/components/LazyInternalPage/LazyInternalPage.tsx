@@ -48,7 +48,9 @@ export interface Props {
   search: string
 }
 
-const LazyInternalPage = ({ onClose, title, path, sourcePath, manifest, manifestPath, search }: Props) => {
+const LazyInternalPage = ({
+  onClose, title, path, sourcePath, manifest, manifestPath, search,
+}: Props) => {
   const history = useHistory()
   const { itemScrollTop, data: contentContext, url } = useSelector(explorePanelSelector)
   const { loading: guidesLoading } = useSelector(workbenchGuidesSelector)

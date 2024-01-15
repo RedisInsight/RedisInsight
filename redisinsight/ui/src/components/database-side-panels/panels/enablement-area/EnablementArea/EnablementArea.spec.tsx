@@ -6,7 +6,12 @@ import { cleanup, mockedStore, render, screen, fireEvent, act, waitFor } from 'u
 import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, MOCK_CUSTOM_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
-import { deleteWbCustomTutorial, uploadWbCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import {
+  deleteCustomTutorial,
+  deleteWbCustomTutorial,
+  uploadWbCustomTutorial
+} from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import EnablementArea, { Props } from './EnablementArea'
 
 const mockedProps = mock<Props>()
@@ -19,6 +24,18 @@ beforeEach(() => {
   store.clearActions()
 })
 
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/workbench/wb-custom-tutorials', () => ({
+  ...jest.requireActual('uiSrc/slices/workbench/wb-custom-tutorials'),
+  deleteCustomTutorial: jest.fn().mockImplementation(
+    jest.requireActual('uiSrc/slices/workbench/wb-custom-tutorials').deleteCustomTutorial
+  )
+}))
+
 jest.mock('uiSrc/slices/workbench/wb-guides', () => {
   const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
   return {
@@ -29,6 +46,11 @@ jest.mock('uiSrc/slices/workbench/wb-guides', () => {
   }
 })
 
+/**
+ * Explore Redis tests
+ *
+ * @group component
+ */
 describe('EnablementArea', () => {
   beforeEach(() => {
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: jest.fn() })
@@ -169,6 +191,82 @@ describe('EnablementArea', () => {
     it('should not render welcome screen if at least one tutorial uploaded', () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
       expect(screen.queryByTestId('welcome-my-tutorials')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Telemetry', () => {
+    it('should call proper event on click create button', () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+
+      fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.EXPLORE_PANEL_IMPORT_CLICKED,
+        eventData: {
+          databaseId: 'instanceId',
+        },
+      });
+
+      (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+
+    it('should call proper event on submit custom tutorial', async () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'));
+
+      (sendEventTelemetry as jest.Mock).mockRestore()
+
+      await act(() => {
+        fireEvent.change(
+          screen.getByTestId('tutorial-link-field'),
+          { target: { value: 'link' } }
+        )
+      })
+
+      await act(() => {
+        fireEvent.click(screen.getByTestId('submit-upload-tutorial-btn'))
+      })
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.EXPLORE_PANEL_IMPORT_SUBMITTED,
+        eventData: {
+          databaseId: 'instanceId',
+          source: 'URL',
+        },
+      });
+
+      (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+
+    it('should call proper event on delete custom tutorial', async () => {
+      (deleteCustomTutorial as jest.Mock).mockImplementation((_, onSuccess: () => void) => () => onSuccess?.())
+
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      await act(() => {
+        fireEvent.click(screen.getByTestId('delete-tutorial-icon-12mfp-rem'))
+      })
+
+      await act(() => {
+        fireEvent.click(screen.getByTestId('delete-tutorial-12mfp-rem'))
+      })
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_DELETED,
+        eventData: {
+          databaseId: 'instanceId',
+        },
+      });
+
+      (sendEventTelemetry as jest.Mock).mockRestore()
     })
   })
 })

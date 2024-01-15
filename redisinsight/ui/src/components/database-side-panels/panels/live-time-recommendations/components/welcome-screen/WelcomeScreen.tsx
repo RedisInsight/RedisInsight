@@ -31,7 +31,7 @@ const NoRecommendationsScreen = () => {
     dispatch(createNewAnalysis(instanceId, delimiter))
     history.push(Pages.databaseAnalysis(instanceId))
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_DATABASE_ANALYSIS_CLICKED,
       eventData: {
         databaseId: instanceId,
         total: recommendations?.length,
@@ -44,15 +44,15 @@ const NoRecommendationsScreen = () => {
   return (
     <div className={styles.container} data-testid="no-recommendations-screen">
       <EuiText className={styles.bigText}>Welcome to</EuiText>
-      <EuiText className={styles.hugeText}>Recommendations!</EuiText>
+      <EuiText className={styles.hugeText}>Tips!</EuiText>
       <EuiText className={styles.mediumText}>Where we help improve your database.</EuiText>
       <EuiText className={cx(styles.text, styles.bigMargin)}>
-        New recommendations appear while you work with your database,
+        New tips appear while you work with your database,
         including how to improve performance and optimize memory usage.
       </EuiText>
       <WelcomeIcon className={styles.icon} />
       <EuiText className={styles.text}>
-        Eager for more recommendations? Run Database Analysis to get started.
+        Eager for more tips? Run Database Analysis to get started.
       </EuiText>
 
       <PopoverRunAnalyze

@@ -89,7 +89,7 @@ describe('InsightsTrigger', () => {
         provider: 'RE_CLOUD',
         source: 'overview',
         page: '/browser',
-        tab: 'recommendations'
+        tab: 'tips'
       },
     });
 

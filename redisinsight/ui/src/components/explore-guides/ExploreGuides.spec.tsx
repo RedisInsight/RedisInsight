@@ -52,7 +52,9 @@ describe('ExploreGuides', () => {
     fireEvent.click(screen.getByTestId('guide-button-Search and Query'))
 
     expect(pushMock)
-      .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/quick-guides/document/introduction.md`)
+      .toHaveBeenCalledWith({
+        search: 'guidePath=/quick-guides/document/introduction.md'
+      })
   })
 
   it('should call proper history push after click on guide with tutorial', () => {
@@ -63,9 +65,9 @@ describe('ExploreGuides', () => {
 
     fireEvent.click(screen.getByTestId('guide-button-JSON'))
 
-    expect(pushMock).toHaveBeenCalledWith(
-      `${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/quick-guides/document/working-with-json.md`
-    )
+    expect(pushMock).toHaveBeenCalledWith({
+      search: 'guidePath=/quick-guides/document/working-with-json.md'
+    })
   })
 
   it('should call proper telemetry event after click on guide', () => {

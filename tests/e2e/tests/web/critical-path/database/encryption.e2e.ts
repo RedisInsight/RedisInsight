@@ -31,7 +31,7 @@ fixture `Encryption`
     .afterEach(async() => {
         await databaseHelper.deleteDatabase(ossSentinelConfig.masters[1].alias);
     });
-test.only('Verify that data encrypted using KEY', async t => {
+test('Verify that data encrypted using KEY', async t => {
     const decryptionError = 'Unable to decrypt data';
     // Connect to DB
     await myRedisDatabasePage.clickOnDBByName(ossSentinelConfig.masters[1].alias);

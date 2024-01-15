@@ -1,22 +1,20 @@
 import { t } from 'testcafe';
-import { RdiInstance } from '../../../../pageObjects/components/myRedisDatabase/add-rdi-instance';
 import { updateColumnValueInDBTable } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
-import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
+import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 
 const rdiInstancePage = new RdiInstancePage();
-const rdiInstancesListPage = new RdiInstancesListPage();
+const rdiApiRequests = new RdiApiRequests();
 export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
 const rdiTable = 'rdi';
 const resultMock = `{··"name":·"John",··"years":·123}`;
 const outputMock = 'Shirizli';
 
-const rdiInstance: RdiInstance = {
-    alias: 'testInstance',
-    url: 'url',
+const rdiInstance: AddNewRdiParameters = {
+    name: 'testInstance',
+    url: 'http://localhost:4000',
     username: 'username',
     password: 'password',
-    version: '1.2'
 };
 //skip the tests until rdi integration is added
 
@@ -29,18 +27,16 @@ fixture.skip `Rdi dry run job`
 
     })
     .afterEach(async() => {
-        // delete instances via UI
-        await rdiInstancesListPage.deleteAllInstance();
+        await rdiApiRequests.deleteAllRdiApi();
     });
 test('Verify that user can use Dry run panel', async() => {
     const instanceId = 'testId';
-    const instanceUrl = 'http://localhost:4000';
-    // const job = 'testJob';
-    const job = 'job2';
+    const job = 'testJob';
 
-    await rdiInstancesListPage.addRdi(rdiInstance);
+    // Need to add method to add jobs once it is implemented
+
+    await rdiApiRequests.addNewRdiApi(rdiInstance);
     await updateColumnValueInDBTable(rdiTable, 'id', instanceId);
-    await updateColumnValueInDBTable(rdiTable, 'url', instanceUrl);
     await t.navigateTo(commonUrl + `/${instanceId}/pipeline/config`);
     await rdiInstancePage.openJobByName(job);
     await t.click(rdiInstancePage.dryRunButton);
@@ -62,7 +58,7 @@ test('Verify that user can use Dry run panel', async() => {
 
     await t.click(rdiInstancePage.outputTab);
     await t.expect(rdiInstancePage.commandsOutput.innerText).contains(outputMock, 'Transformation output not displayed');
-
+    // Verify that user can close the right panel
     await t.click(rdiInstancePage.closeDryRunPanelBtn);
     await t.expect(rdiInstancePage.dryRunPanel.exists).notOk('Dry run panel still displayed');
 });

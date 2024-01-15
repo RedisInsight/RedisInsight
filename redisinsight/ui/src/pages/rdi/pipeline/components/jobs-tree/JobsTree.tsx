@@ -14,6 +14,7 @@ import cx from 'classnames'
 import { sortBy } from 'lodash'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { IRdiPipelineJob } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -29,7 +30,7 @@ const JobsTree = (props: IProps) => {
 
   const { loading, data } = useSelector(rdiPipelineSelector)
 
-  const renderJobsList = (jobs: any[]) => (
+  const renderJobsList = (jobs: IRdiPipelineJob[]) => (
     jobs.map(({ name }) => (
       <EuiFlexGroup
         key={name}

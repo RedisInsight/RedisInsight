@@ -1,9 +1,37 @@
 import { Nullable } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
+export enum PipelineJobsTabs {
+  Transformations = 'transformations',
+  Output = 'output'
+}
+
+export enum DryRunJobResultStatus {
+  Success = 'success',
+  Failed = 'failed'
+}
+
+export interface IRdiPipelineJob {
+  name: string
+  value: string
+}
+
 export interface IPipeline {
   config: string
-  jobs: any[]
+  jobs: IRdiPipelineJob[]
+}
+
+export interface IDryRunJobResults {
+  transformations: {
+    status: DryRunJobResultStatus
+    error?: string
+    data?: any
+  }
+  commands: {
+    status: DryRunJobResultStatus
+    error?: string
+    data?: string[]
+  }
 }
 
 export interface IStateRdiPipeline {
@@ -11,6 +39,13 @@ export interface IStateRdiPipeline {
   error: string
   data: Nullable<IPipeline>
 }
+
+export interface IStateRdiDryRunJob {
+  loading: boolean
+  error: string
+  results: Nullable<IDryRunJobResults>
+}
+
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
   loading?: boolean

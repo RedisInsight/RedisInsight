@@ -45,7 +45,8 @@ import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 import insightsPanelReducer from './panels/insights'
 import rdiInstancesReducer from './rdi/instances'
-import rdiPipelineSlice from './rdi/pipeline'
+import rdiPipelineReducer from './rdi/pipeline'
+import rdiDryRunJobReducer from './rdi/dryRun'
 
 export const history = createBrowserHistory()
 
@@ -115,7 +116,8 @@ export const rootReducer = combineReducers({
   }),
   rdi: combineReducers({
     instances: rdiInstancesReducer,
-    pipeline: rdiPipelineSlice,
+    pipeline: rdiPipelineReducer,
+    dryRun: rdiDryRunJobReducer,
   })
 })
 

@@ -5,12 +5,17 @@
   padding: 0 16px 16px 16px;
 
   :global(.content) {
+    display: flex;
+    flex-direction: column;
     border-radius: 8px;
     padding: 32px 24px 16px 24px;
     margin-left: 16px;
     background-color: var(--euiColorEmptyShade);
     width: calc(100% - 269px);
-    height: 100%;
+  }
+
+  :global(.content.isSidePanelOpen) {
+    max-width: calc(100% - 793px);
   }
 
   :global {
@@ -36,7 +41,7 @@
       }
 
       &__editorWrapper {
-        height: calc(100% - 105px);
+        flex: 1 1 auto;
         border: 1px solid var(--separatorColorLight) !important;
 
         :global(.inlineMonacoEditor) {

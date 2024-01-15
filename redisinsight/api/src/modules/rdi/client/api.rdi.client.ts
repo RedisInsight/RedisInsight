@@ -2,6 +2,8 @@ import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
+import { RdiDryRunJobDto, RdiDryRunJobResponseDto } from 'src/modules/rdi/dto';
+import { RdiDyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
 
 export class ApiRdiClient extends RdiClient {
   public type = RdiType.API;
@@ -29,6 +31,37 @@ export class ApiRdiClient extends RdiClient {
 
   async deployJob(job: RdiJob): Promise<RdiJob> {
     return null;
+  }
+
+  async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
+    const response = await Promise.all(
+      [this.getDryRunJobTransformations(data), this.getDryRunJobCommands(data)],
+    );
+    return ({ transformations: response[0], commands: response[1] });
+  }
+
+  async getDryRunJobTransformations(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
+    try {
+      const transformations = await this.client.post(
+        RdiUrl.DryRunJob,
+        { input: data.input, job: data.job, test_output: false },
+      );
+      return ({ status: RdiDyRunJobStatus.Success, data: transformations.data });
+    } catch (e) {
+      return ({ status: RdiDyRunJobStatus.Fail, error: e.message });
+    }
+  }
+
+  async getDryRunJobCommands(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
+    try {
+      const commands = await this.client.post(
+        RdiUrl.DryRunJob,
+        { input: data.input, job: data.job, test_output: true },
+      );
+      return ({ status: RdiDyRunJobStatus.Success, data: commands.data });
+    } catch (e) {
+      return ({ status: RdiDyRunJobStatus.Fail, error: e.message });
+    }
   }
 
   async disconnect(): Promise<void> {

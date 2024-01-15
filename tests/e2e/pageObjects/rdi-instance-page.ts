@@ -3,112 +3,36 @@ import { AddRdiInstance, RdiInstance } from './components/myRedisDatabase/add-rd
 import { BaseOverviewPage } from './base-overview-page';
 
 export class RdiInstancePage extends BaseOverviewPage {
-    AddRdiInstance = new AddRdiInstance();
-
-    rdiInstanceButton = Selector('[data-testid=rdi-instance]');
-
-    rdiInstanceRow = Selector('[class*=euiTableRow-isSelectable]');
-    emptyRdiList = Selector('[data-testid=empty-rdi-instance-list]', { timeout: 1000 });
-
-    searchInput = Selector('[data-testid=search-rdi-instance-list]');
-
-    sortBy = Selector('[data-test-subj=tableHeaderSortButton] span');
-
-    cssRdiAlias = '[data-test-subj=rdi-alias-column]';
-    cssUrl = '[data-testid=url]';
-    cssRdiVersion = '[data-test-subj=rdi-instance-version-column]';
-    cssLastConnection = '[data-test-subj=rdi-instance-last-connection-column]';
+    dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
+    dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');
+    closeDryRunPanelBtn = Selector('[data-testid=close-dry-run-btn]');
+    dryRunPanel = Selector('[data-testid=dry-run-panel]');
+    transformationsTab = Selector('[data-testid=transformations-tab]');
+    transformationInput = Selector('[data-testid=wrapper-input-value]');
+    transformationResults = Selector('[data-testid=wrapper-transformations-output]');
+    commandsOutput = Selector('[data-testid=commands-output]');
+    outputTab = Selector('[data-testid=output-tab]');
 
     /**
-     * add Rdi instance
-     * @param instanceValue rdi instance data
+     * Open Job by name
+     * @param name job name
      */
-    async addRdi(instanceValue: RdiInstance): Promise<void> {
+        async openJobByName(name: string): Promise<void> {
+            const jobBtnSelector = Selector(`[data-testid=rdi-nav-job-${name}]`);
+            await t.click(jobBtnSelector);
+        }
 
-        await t.click(this.rdiInstanceButton);
+    /**
+     * Send a data in Transformation Input
+     * @param text The text to send
+     * @param speed The speed in seconds. Default is 1
+     * @param paste
+     */
+    async sendTransformationInput(command: string, speed = 1, paste = true): Promise<void> {
         await t
-            .typeText(this.AddRdiInstance.rdiAliasInput, instanceValue.alias)
-            .typeText(this.AddRdiInstance.urlInput, instanceValue.url)
-            .typeText(this.AddRdiInstance.usernameInput, instanceValue.username as string)
-            .typeText(this.AddRdiInstance.passwordInput, instanceValue.password as string);
-        await t.click(this.AddRdiInstance.addInstanceButton);
-
-    }
-
-    /**
-     * get Rdi instance by index
-     * @param index index of rdi
-     */
-    async getRdiInstanceValuesByIndex(index: number): Promise<RdiInstance> {
-        const alias: string = await this.rdiInstanceRow.nth(index).find(this.cssRdiAlias).innerText;
-        const currentLastConnection: string =  await this.rdiInstanceRow.nth(0).find(this.cssLastConnection).innerText;
-        const currentVersion: string =  await this.rdiInstanceRow.nth(0).find(this.cssRdiVersion).innerText;
-        const currentUrl: string =  await this.rdiInstanceRow.nth(0).find(this.cssUrl).innerText;
-
-        const rdiInstance: RdiInstance = {
-            alias: alias,
-            url: currentUrl,
-            version: currentVersion,
-            lastConnection: currentLastConnection
-        };
-
-        return rdiInstance;
-    }
-
-    /**
-     * Delete Rdi by name
-     * @param dbName The name of the rdi to be deleted
-     */
-    async deleteRdiByName(dbName: string): Promise<void> {
-        const dbNames = this.rdiInstanceRow;
-        const count = await dbNames.count;
-
-        for (let i = 0; i < count; i++) {
-            if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
-                await t
-                    .click(this.deleteRowButton.nth(i))
-                    .click(this.confirmDeleteButton);
-                break;
-            }
-        }
-    }
-
-    /**
-     * Edit Rdi by name
-     * @param dbName The name of the rdi to be edited
-     */
-    async clickOnEditRdiByName(dbName: string): Promise<void> {
-        const dbNames = this.rdiInstanceRow;
-        const count = await dbNames.count;
-
-        for (let i = 0; i < count; i++) {
-            if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
-                await t
-                    .click(this.editRowButton.nth(i));
-                break;
-            }
-        }
-    }
-
-    /**
-     * Sort rdi list by column
-     * @param columnName The name of column
-     */
-    async sortByColumn(columnName: string): Promise<void> {
-        await t.click(this.sortBy.withText(columnName));
-    }
-    /**
-     * Get all Rdi alias
-     */
-    async getAllRdiNames(): Promise<string[]> {
-        const rdis: string[] = [];
-        const n = await this.rdiInstanceRow.count;
-
-        for(let k = 0; k < n; k++) {
-            const name = await this.rdiInstanceRow.nth(k).find(this.cssRdiAlias).innerText;
-            rdis.push(name);
-        }
-        return rdis;
+            .click(this.transformationInput)
+            .typeText(this.transformationInput, command, { replace: true, speed, paste })
+            .click(this.dryRunSubmitBtn);
     }
 }
 

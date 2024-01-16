@@ -75,14 +75,14 @@ export class RdiInstancesListPage extends BaseOverviewPage {
 
     /**
      * Edit Rdi by name
-     * @param dbName The name of the rdi to be edited
+     * @param dbName The name of the rdi to be deleted
      */
-    async clickOnEditRdiByName(dbName: string): Promise<void> {
-        const dbNames = this.rdiInstanceRow;
-        const count = await dbNames.count;
+    async editRdiByName(dbName: string): Promise<void> {
+        const rdiNames = this.rdiInstanceRow;
+        const count = await rdiNames.count;
 
         for (let i = 0; i < count; i++) {
-            if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
+            if ((await rdiNames.nth(i).innerText || '').includes(dbName)) {
                 await t
                     .click(this.editRowButton.nth(i));
                 break;

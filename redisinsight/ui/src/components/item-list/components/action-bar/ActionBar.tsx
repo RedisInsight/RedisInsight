@@ -6,7 +6,7 @@ import styles from './styles.module.scss'
 export interface Props {
   width: number
   selectionCount: number
-  actions: JSX.Element[]
+  actions: (JSX.Element | null)[]
   onCloseActionBar: () => void
 }
 

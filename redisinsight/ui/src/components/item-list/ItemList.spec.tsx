@@ -1,7 +1,7 @@
 import { EuiBasicTableColumn } from '@elastic/eui'
 import React from 'react'
 import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import ItemList, { Props } from './ItemList'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -132,5 +132,16 @@ describe('ItemList', () => {
     fireEvent.click(exportButton)
 
     expect(screen.getByText(/exported/i)).toBeInTheDocument()
+  })
+
+  it('should hide export button when disable export prop is passed', async () => {
+    render(<ItemList {...mockedProps} hideExport />)
+
+    await act(() => {
+      // select items to be exported
+      fireEvent.click(screen.getAllByLabelText(/Select all rows/i)[0])
+    })
+
+    expect(screen.queryByText('Export')).not.toBeInTheDocument()
   })
 })

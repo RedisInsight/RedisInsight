@@ -106,28 +106,17 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     let actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAliasType);
     // Change DB name insides of sorted list
-    await rdiInstancesListPage.clickOnEditRdiByName(rdiInstance.alias);
-    await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, newAliasName, { replace: true });
-    await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
-    rdiInstance.alias = newAliasName;
-    const sortedByAliasTypeUpdated = [rdiInstance3.alias, rdiInstance.alias, rdiInstance2.alias];
-    actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
-    await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAliasTypeUpdated);
-});
-test('Verify that user can edit added instance', async t => {
-    const newAliasName  = 'New alias';
-
-    await rdiInstancesListPage.addRdi(rdiInstance);
-    let addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
-
-    await t.expect(addRdiInstance.alias).eql(rdiInstance.alias, 'added alias is not corrected');
-
     await rdiInstancesListPage.editRdiByName(rdiInstance.alias);
     await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, newAliasName, { replace: true });
     await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
 
-    addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
+    const addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
     await t.expect(addRdiInstance.alias).eql(newAliasName, 'added alias is not corrected');
+    rdiInstance.alias = newAliasName;
+
+    const sortedByAliasTypeUpdated = [rdiInstance3.alias, rdiInstance.alias, rdiInstance2.alias];
+    actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
+    await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAliasTypeUpdated);
 });
 test('Verify that button is displayed if user does not enter all mandatory information', async t => {
 

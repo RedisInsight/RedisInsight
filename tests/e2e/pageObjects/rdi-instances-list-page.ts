@@ -91,23 +91,6 @@ export class RdiInstancesListPage extends BaseOverviewPage {
     }
 
     /**
-     * Edit Rdi by name
-     * @param dbName The name of the rdi to be edited
-     */
-    async clickOnEditRdiByName(dbName: string): Promise<void> {
-        const dbNames = this.rdiInstanceRow;
-        const count = await dbNames.count;
-
-        for (let i = 0; i < count; i++) {
-            if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
-                await t
-                    .click(this.editRowButton.nth(i));
-                break;
-            }
-        }
-    }
-
-    /**
      * Sort rdi list by column
      * @param columnName The name of column
      */

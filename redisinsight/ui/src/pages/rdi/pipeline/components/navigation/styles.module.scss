@@ -5,6 +5,8 @@
   height: 100%;
 
   .title {
+    display: flex;
+    justify-content: space-between;
     padding: 16px;
     font: normal normal 500 14px/17px Graphik, sans-serif;
     border-bottom: 1px solid var(--separatorColor);

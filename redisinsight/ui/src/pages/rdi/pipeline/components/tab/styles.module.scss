@@ -7,6 +7,10 @@
   padding: 16px 0;
   border-bottom: 1px solid var(--separatorColor);
 
+  .loader {
+    margin-left: 8px;
+  }
+
   :global {
     .rdi-pipeline-nav {
       &__text {

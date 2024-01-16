@@ -22,7 +22,7 @@ export const databaseAnalysisTabs: DatabaseAnalysisTabs[] = [
   },
   {
     id: DatabaseAnalysisViewTab.Recommendations,
-    name: (count?: number) => (count ? `Recommendations (${count})` : 'Recommendations'),
+    name: (count?: number) => (count ? `Tips (${count})` : 'Tips'),
     content: <Recommendations />,
     onboard: ONBOARDING_FEATURES?.ANALYTICS_RECOMMENDATIONS
   },

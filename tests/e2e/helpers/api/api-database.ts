@@ -23,32 +23,40 @@ export class DatabaseAPIRequests {
      * @param databaseParameters The database parameters
      */
     async addNewStandaloneDatabaseApi(
-        databaseParameters: AddNewDatabaseParameters
+        databaseParameters: AddNewDatabaseParameters, isCloud = false
     ): Promise<void> {
         const uniqueId = chance.string({ length: 10 });
+        const uniqueIdNumber = chance.integer({ min: 1, max: 1000 });
         const requestBody: {
-            name?: string;
-            host: string;
-            port: number;
-            username?: string;
-            password?: string;
-            tls?: boolean;
-            verifyServerCert?: boolean;
+            name?: string,
+            host: string,
+            port: number,
+            username?: string,
+            password?: string,
+            tls?: boolean,
+            verifyServerCert?: boolean,
             caCert?: {
-                name: string;
-                certificate?: string;
-            };
+                name: string,
+                certificate?: string
+            },
             clientCert?: {
-                name: string;
-                certificate?: string;
-                key?: string;
-            };
+                name: string,
+                certificate?: string,
+                key?: string
+            },
+            cloudDetails?: {
+                cloudId: number,
+                subscriptionType: string,
+                planMemoryLimit: number,
+                memoryLimitMeasurementUnit: string,
+                free: boolean
+            }
         } = {
             name: databaseParameters.databaseName,
             host: databaseParameters.host,
             port: Number(databaseParameters.port),
             username: databaseParameters.databaseUsername,
-            password: databaseParameters.databasePassword,
+            password: databaseParameters.databasePassword
         };
 
         if (databaseParameters.caCert) {
@@ -62,6 +70,16 @@ export class DatabaseAPIRequests {
                 name: `client}-${uniqueId}`,
                 certificate: databaseParameters.clientCert!.certificate,
                 key: databaseParameters.clientCert!.key
+            };
+        }
+
+        if(isCloud) {
+            requestBody.cloudDetails = {
+                cloudId: uniqueIdNumber,
+                subscriptionType: 'fixed',
+                planMemoryLimit: 30,
+                memoryLimitMeasurementUnit: 'mb',
+                free: true
             };
         }
         const response = await sendPostRequest(

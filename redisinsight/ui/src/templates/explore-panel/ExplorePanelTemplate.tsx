@@ -16,11 +16,13 @@ const ExplorePanelTemplate = (props: Props) => {
   const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
 
   return (
-    <div className={cx(styles.mainWrapper)}>
-      <div className={cx(styles.mainPanel, { [styles.insightsOpen]: isInsightsOpen })}>
+    <div className={styles.mainWrapper}>
+      <div className={cx(styles.mainPanel, { insightsOpen: isInsightsOpen })}>
         {children}
       </div>
-      <DatabaseSidePanels panelClassName={panelClassName} />
+      <div className={cx(styles.insigtsWrapper, { [styles.insightsOpen]: isInsightsOpen })}>
+        <DatabaseSidePanels panelClassName={panelClassName} />
+      </div>
     </div>
   )
 }

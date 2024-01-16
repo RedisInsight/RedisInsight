@@ -19,7 +19,7 @@ import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
-import { getRecommendations, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
+import { getRecommendations, setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import {
   getDatabaseConfigInfo,
@@ -114,7 +114,7 @@ describe('InstancePage', () => {
       setDatabaseAnalysisInitialState(),
       setInitialAnalyticsSettings(),
       setRedisearchInitialState(),
-      resetRecommendationsHighlighting(),
+      setInitialRecommendationsState(),
       setTriggeredFunctionsInitialState(),
     ]
 

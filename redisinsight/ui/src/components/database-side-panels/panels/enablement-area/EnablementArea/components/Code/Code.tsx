@@ -49,7 +49,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
 
     const file = getFile()
     sendEventTelemetry({
-      event: TelemetryEvent.EXPLORE_PANEL_COMMAND_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_COMMAND_RUN_CLICKED,
       eventData: {
         databaseId: instanceId,
         path,

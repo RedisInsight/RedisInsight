@@ -4,6 +4,8 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, clearStoreActions, render, fireEvent, screen, mockedStore } from 'uiSrc/utils/test-utils'
 
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import NoLibrariesScreen, { IProps } from './NoLibrariesScreen'
 
 const mockedProps = mock<IProps>()
@@ -54,9 +56,14 @@ describe('NoLibrariesScreen', () => {
 
     fireEvent.click(screen.getByTestId('no-libraries-tutorial-link'))
 
-    const expectedActions = []
+    const expectedActions = [
+      changeSelectedTab(InsightsPanelTabs.Explore),
+      toggleInsightsPanel(true)
+    ]
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
-    expect(pushMock).toBeCalledWith('/instanceId/workbench?guidePath=/quick-guides/triggers-and-functions/introduction.md')
+    expect(pushMock).toBeCalledWith({
+      search: 'guidePath=/quick-guides/triggers-and-functions/introduction.md'
+    })
   })
 
   it('should have proper text when module is loaded', () => {

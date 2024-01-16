@@ -12,7 +12,7 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
 
 export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
-  protected name = CloudJobName.CreateFreeDatabase;
+  protected name = CloudJobName.CreateFreeSubscriptionAndDatabase;
 
   constructor(
     readonly options: CloudJobOptions,
@@ -62,7 +62,11 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
       this.options,
     );
 
-    this.result = { resourceId: database.id };
+    this.result = {
+      resourceId: database.id,
+      region: freeSubscription?.region,
+      provider: freeSubscription?.provider,
+    };
 
     this.changeState({ status: CloudJobStatus.Finished });
 

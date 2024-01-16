@@ -29,6 +29,7 @@ import { fetchCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { fetchContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { fetchGuideLinksAction } from 'uiSrc/slices/content/guide-links'
+import { setCapability } from 'uiSrc/slices/app/context'
 
 import favicon from 'uiSrc/assets/favicon.ico'
 
@@ -41,6 +42,8 @@ const Config = () => {
   const dispatch = useDispatch()
   useEffect(() => {
     setFavicon(favicon)
+
+    dispatch(setCapability(localStorageService?.get(BrowserStorageItem.capability)))
 
     dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())

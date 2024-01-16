@@ -2,13 +2,15 @@
   width: auto;
   white-space: nowrap;
   font: normal normal normal 13px/30px Graphik, sans-serif;
-  letter-spacing: -0.13px;
   font-weight: normal !important;
+
   & > button {
-    align-items: center;
+    align-items: flex-start;
+    height: auto;
+
     svg {
-      margin-right: 12px;
-      margin-left: -8px;
+      margin-top: 4px;
+      margin-right: 6px;
     }
   }
 }
@@ -28,8 +30,25 @@
 
 .content {
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 24px;
+
+  .title {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 24px;
+    text-decoration: underline;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 12px;
+  }
 }

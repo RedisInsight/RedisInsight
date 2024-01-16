@@ -17,13 +17,15 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 const cloudConfig = config.get('cloud');
 
 export class ImportFreeDatabaseCloudJob extends CloudJob {
-  protected name = CloudJobName.CreateFreeDatabase;
+  protected name = CloudJobName.ImportFreeDatabase;
 
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
       subscriptionId: number,
       databaseId: number,
+      region: string,
+      provider: string,
     },
     protected readonly dependencies: {
       cloudDatabaseCapiService: CloudDatabaseCapiService,
@@ -84,7 +86,11 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
       timeout: cloudConfig.cloudDatabaseConnectionTimeout,
     });
 
-    this.result = { resourceId: database.id };
+    this.result = {
+      resourceId: database.id,
+      region: this.data?.region,
+      provider: this.data?.provider,
+    };
 
     this.changeState({ status: CloudJobStatus.Finished });
 

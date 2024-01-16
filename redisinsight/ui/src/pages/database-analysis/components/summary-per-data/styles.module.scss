@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .wrapper {
 
   .chartsWrapper {
@@ -51,6 +53,14 @@
     font-size: 12px;
     .tooltipPercentage {
       margin-right: 8px;
+    }
+  }
+}
+
+@include insights-open {
+  .wrapper {
+    .chartsWrapper {
+      flex-direction: column;
     }
   }
 }

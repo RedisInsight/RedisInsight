@@ -102,7 +102,7 @@ describe('Code', () => {
 
     fireEvent.click(screen.queryByTestId(`run-btn-${label}`) as Element)
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.EXPLORE_PANEL_COMMAND_CLICKED,
+      event: TelemetryEvent.EXPLORE_PANEL_COMMAND_RUN_CLICKED,
       eventData:
         {
           databaseId: 'instanceId',

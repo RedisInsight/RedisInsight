@@ -2,6 +2,8 @@
 @import "@elastic/eui/src/components/table/mixins";
 @import "@elastic/eui/src/global_styling/index";
 
+@import "uiSrc/styles/mixins/_global.scss";
+
 $breakpoint-to-hide-resize-panel: 1124px;
 
 .main {
@@ -73,10 +75,16 @@ $breakpoint-to-hide-resize-panel: 1124px;
       }
 
       &__resizePanelLeft {
-        padding-right: 8px;
-
         &.openedRightPanel {
+          padding-right: 8px;
+
           @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+            display: none;
+          }
+        }
+
+        &.openedRightPanel.isNarrowed {
+          @media screen and (max-width: 1440px) {
             display: none;
           }
         }
@@ -86,6 +94,12 @@ $breakpoint-to-hide-resize-panel: 1124px;
         @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
           display: none;
         }
+
+        &.isNarrowed {
+          @media screen and (max-width: 1440px) {
+            display: none;
+          }
+        }
       }
 
       &__resizePanelRight {
@@ -94,6 +108,13 @@ $breakpoint-to-hide-resize-panel: 1124px;
         @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
           padding-left: 0;
           width: 100% !important;
+        }
+
+        &.isNarrowed {
+          @media screen and (max-width: 1440px) {
+            padding-left: 0;
+            width: 100% !important;
+          }
         }
       }
 
@@ -141,9 +162,8 @@ $breakpoint-to-hide-resize-panel: 1124px;
           pointer-events: auto !important;
         }
 
-        tbody .euiTableCellContent span {
+        tbody .euiTableCellContent .emptyTableTextContent span {
           white-space: break-spaces;
-          width: 100%;
         }
 
         .euiTableRow:hover,
@@ -195,6 +215,30 @@ $breakpoint-to-hide-resize-panel: 1124px;
     }
   }
 }
+
+@include insights-open {
+  .main {
+    :global {
+      .triggeredFunctions {
+        &__resizePanelLeft {
+          &.openedRightPanel {
+            display: none;
+          }
+        }
+
+        &__resizableButton {
+          display: none;
+        }
+
+        &__resizePanelRight {
+          padding-left: 0;
+          width: 100% !important;
+        }
+      }
+    }
+  }
+}
+
 
 .onboardAnchor {
   position: fixed;

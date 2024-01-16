@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiLink,
   EuiLoadingContent,
@@ -37,7 +37,7 @@ import PopoverRunAnalyze from './components/popover-run-analyze'
 import styles from './styles.module.scss'
 
 const LiveTimeRecommendations = () => {
-  const { id: connectedInstanceId = '', provider, connectionType } = useSelector(connectedInstanceSelector)
+  const { provider, connectionType } = useSelector(connectedInstanceSelector)
   const {
     loading,
     data: { recommendations },
@@ -48,6 +48,8 @@ const LiveTimeRecommendations = () => {
     treeViewDelimiter: delimiter = '',
   } = useSelector(appContextDbConfig)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
+
   const [isShowApproveRun, setIsShowApproveRun] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -56,20 +58,20 @@ const LiveTimeRecommendations = () => {
   const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
 
   useEffect(() => {
-    dispatch(fetchRecommendationsAction(connectedInstanceId))
+    dispatch(fetchRecommendationsAction(instanceId))
 
     return () => {
-      dispatch(readRecommendationsAction(connectedInstanceId))
+      dispatch(readRecommendationsAction(instanceId))
     }
   }, [])
 
   const handleClickDbAnalysisLink = () => {
-    dispatch(createNewAnalysis(connectedInstanceId, delimiter))
-    history.push(Pages.databaseAnalysis(connectedInstanceId))
+    dispatch(createNewAnalysis(instanceId, delimiter))
+    history.push(Pages.databaseAnalysis(instanceId))
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED,
+      event: TelemetryEvent.INSIGHTS_TIPS_DATABASE_ANALYSIS_CLICKED,
       eventData: {
-        databaseId: connectedInstanceId,
+        databaseId: instanceId,
         total: recommendations?.length,
         provider
       },
@@ -81,7 +83,7 @@ const LiveTimeRecommendations = () => {
     dispatch(setRecommendationsShowHidden(value))
 
     sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_RECOMMENDATION_SHOW_HIDDEN,
+      event: TelemetryEvent.INSIGHTS_TIPS_SHOW_HIDDEN,
       eventData: {
         action: !value ? 'hide' : 'show',
         ...getTelemetryData(recommendations)
@@ -90,7 +92,7 @@ const LiveTimeRecommendations = () => {
   }
 
   const getTelemetryData = (recommendationsData: IRecommendation[]) => ({
-    databaseId: connectedInstanceId,
+    databaseId: instanceId,
     total: recommendationsData?.length,
     list: recommendationsData?.map(({ name }) => recommendationsContent[name]?.telemetryEvent ?? name),
     provider
@@ -127,19 +129,19 @@ const LiveTimeRecommendations = () => {
       {!!recommendations.length && (
         <div className={styles.actions}>
           <div>
-            <EuiTextColor className={styles.boldText}>Our Recommendations</EuiTextColor>
+            <EuiTextColor className={styles.boldText}>Our Tips</EuiTextColor>
             <EuiToolTip
               position="bottom"
               anchorClassName={styles.tooltipAnchor}
               className={styles.tooltip}
               content={(
                 <>
-                  Recommendations will help you improve your database.
+                  Tips will help you improve your database.
                   <br />
-                  New recommendations appear while you work with your database,
+                  New tips appear while you work with your database,
                   including how to improve performance and optimize memory usage.
                   <br />
-                  Eager for more recommendations? Run Database Analysis to get started.
+                  Eager for more tips? Run Database Analysis to get started.
                 </>
             )}
             >
@@ -218,7 +220,7 @@ const LiveTimeRecommendations = () => {
               Database Analysis
             </EuiLink>
           </PopoverRunAnalyze>
-          {' to get more recommendations'}
+          {' to get more tips'}
         </EuiText>
       </div>
     </div>

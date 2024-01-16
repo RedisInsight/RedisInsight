@@ -1,9 +1,18 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
+@include insights-open(1200px) {
+  .actions {
+    width: auto !important;
+  }
+}
+
 .actions {
   width: 370px;
 
   @media only screen and (max-width: 870px) {
     width: 300px;
   }
+
 
   .icon {
     color: var(--iconsDefaultColor);

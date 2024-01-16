@@ -6,7 +6,7 @@ import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
 import { CloudSsoUtmCampaign, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { instancesSelector } from 'uiSrc/slices/instances/instances'
+import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 
@@ -18,7 +18,7 @@ const utm = {
 }
 
 const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
-  const { freeInstance } = useSelector(instancesSelector)
+  const freeInstances = useSelector(freeInstancesSelector) || []
   const onFreeDatabaseClick = () => {
     onClose?.()
   }
@@ -30,16 +30,20 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
       </EuiTitle>
       <EuiText>Filtering by data type is supported in Redis 6 and above.</EuiText>
       <EuiSpacer size="m" />
-      {!!freeInstance && (
+      {!!freeInstances.length && (
         <>
           <EuiText color="subdued">
             Use your free all-in-one Redis Cloud database to start exploring these capabilities.
           </EuiText>
           <EuiSpacer size="l" />
-          <OAuthConnectFreeDb source={OAuthSocialSource.BrowserFiltering} onSuccessClick={onClose} />
+          <OAuthConnectFreeDb
+            id={freeInstances[0].id}
+            source={OAuthSocialSource.BrowserFiltering}
+            onSuccessClick={onClose}
+          />
         </>
       )}
-      {!freeInstance && (
+      {!freeInstances.length && (
         <>
           <EuiText color="subdued">
             Create a free Redis Stack database that supports filtering and extends

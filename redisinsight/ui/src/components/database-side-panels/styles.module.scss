@@ -4,7 +4,7 @@ $animation-duration: 300ms;
 
 .panel {
   height: 100%;
-  width: 460px;
+  width: 100%;
   padding-right: 16px;
 
   &.fullScreen {
@@ -27,28 +27,21 @@ $animation-duration: 300ms;
 }
 
 .header {
-  height: 100px;
+  height: 60px;
   position: relative;
 
   padding: 15px;
-}
 
-.fullScreenBtn {
-  position: absolute;
-  top: 10px;
-  right: 42px;
-  z-index: 1;
+  display: flex;
+  align-items: center;
 }
 
 .closeBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1;
+  margin-left: 4px;
 }
 
 .body {
-  height: calc(100% - 100px);
+  height: calc(100% - 60px);
 }
 
 .trigger {
@@ -122,13 +115,13 @@ $animation-duration: 300ms;
 
 .tabs {
   display: flex;
-  max-width: 440px !important;
-  margin-top: 28px;
+  flex: 1;
+  margin-right: 12px;
 
   .tab {
     flex-basis: 50%;
 
-    background-color: var(--buttonGuideBgColor);
+    background-color: transparent;
     color: var(--euiColorMediumShade);
     margin: 0 !important;
     border-radius: 4px 0 0 4px;
@@ -143,8 +136,13 @@ $animation-duration: 300ms;
     }
 
     &:global(.euiTab-isSelected) {
+      color: var(--euiColorPrimary);
       &:hover {
         text-decoration: none;
+      }
+
+      .tabTotalUnread {
+        background-color: var(--recommendationsCountBgColor);
       }
     }
 
@@ -164,14 +162,14 @@ $animation-duration: 300ms;
       }
     }
 
-    .tabTotalUnred {
+    .tabTotalUnread {
       display: inline-block;
-      background-color: #8ba2ff;
+      background-color: var(--iconsDefaultColor);
       color: var(--euiColorLightestShade);
       height: 18px;
       width: 18px;
       font-size: 10px;
-      line-height: 16px;
+      line-height: 17px;
       font-weight: 500;
       margin-left: 4px;
       border-radius: 100%;

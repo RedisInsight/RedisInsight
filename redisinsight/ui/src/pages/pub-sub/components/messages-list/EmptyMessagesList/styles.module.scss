@@ -16,9 +16,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   margin: auto;
+  padding: 0 20px;
 
-  width: 530px;
+  width: auto;
   height: 110px;
 
   &Cluster {

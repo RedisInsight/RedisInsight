@@ -10,6 +10,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import DatabaseAnalysisTabs, { Props } from './DatabaseAnalysisTabs'
 
 const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
@@ -31,10 +32,10 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
 
 const mockedProps = mock<Props>()
 
-const mockReports = [
+const mockReports: ShortDatabaseAnalysis[] = [
   {
     id: MOCK_ANALYSIS_REPORT_DATA.id,
-    createdAt: '2022-09-23T05:30:23.000Z'
+    createdAt: '2022-09-23T05:30:23.000Z' as any
   }
 ]
 
@@ -76,7 +77,7 @@ describe('DatabaseAnalysisTabs', () => {
   })
 
   it('should render encrypt message', () => {
-    const mockData = {
+    const mockData: any = {
       totalKeys: null
     }
     render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
@@ -85,8 +86,8 @@ describe('DatabaseAnalysisTabs', () => {
   })
 
   describe('recommendations count', () => {
-    it('should render "Recommendation (3)" in the tab name', () => {
-      const mockData = {
+    it('should render "Tips (3)" in the tab name', () => {
+      const mockData: any = {
         recommendations: [
           { name: 'luaScript' },
           { name: 'luaScript' },
@@ -96,34 +97,34 @@ describe('DatabaseAnalysisTabs', () => {
 
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
 
-      expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Recommendations (3)')
+      expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Tips (3)')
     })
 
-    it('should render "Recommendation (3)" in the tab name', () => {
-      const mockData = {
+    it('should render "Tips (3)" in the tab name', () => {
+      const mockData: any = {
         recommendations: [{ name: 'luaScript' }]
       }
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
 
-      expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Recommendations (1)')
+      expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Tips (1)')
     })
 
-    it('should render "Recommendation" in the tab name', () => {
-      const mockData = {
+    it('should render "Tips" in the tab name', () => {
+      const mockData: any = {
         recommendations: []
       }
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
 
-      expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Recommendations')
+      expect(screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`)).toHaveTextContent('Tips')
     })
   })
 
   describe('Telemetry', () => {
     it('should call DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED telemetry event with 0 count', () => {
-      const sendEventTelemetryMock = jest.fn()
-      sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-      const mockData = {
+      const mockData: any = {
         recommendations: []
       }
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
@@ -136,15 +137,15 @@ describe('DatabaseAnalysisTabs', () => {
           databaseId: INSTANCE_ID_MOCK,
           provider: 'RE_CLOUD',
         }
-      })
-      sendEventTelemetry.mockRestore()
+      });
+      (sendEventTelemetry as jest.Mock).mockRestore()
     })
 
     it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 0 count', () => {
-      const sendEventTelemetryMock = jest.fn()
-      sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-      const mockData = {
+      const mockData: any = {
         recommendations: []
       }
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
@@ -152,22 +153,22 @@ describe('DatabaseAnalysisTabs', () => {
       fireEvent.click(screen.getByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`))
 
       expect(sendEventTelemetry).toBeCalledWith({
-        event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED,
+        event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
-          recommendationsCount: 0,
+          tipsCount: 0,
           list: [],
           provider: 'RE_CLOUD'
         }
-      })
-      sendEventTelemetry.mockRestore()
+      });
+      (sendEventTelemetry as jest.Mock).mockRestore()
     })
 
     it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 2 count', () => {
-      const sendEventTelemetryMock = jest.fn()
-      sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-      const mockData = {
+      const mockData: any = {
         recommendations: [{ name: 'luaScript' }, { name: 'bigHashes' }]
       }
       render(<DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} data={mockData} />)
@@ -175,15 +176,15 @@ describe('DatabaseAnalysisTabs', () => {
       fireEvent.click(screen.getByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`))
 
       expect(sendEventTelemetry).toBeCalledWith({
-        event: TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED,
+        event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
-          recommendationsCount: 2,
+          tipsCount: 2,
           list: ['luaScript', 'shardHashes'],
           provider: 'RE_CLOUD'
         }
-      })
-      sendEventTelemetry.mockRestore()
+      });
+      (sendEventTelemetry as jest.Mock).mockRestore()
     })
   })
 })

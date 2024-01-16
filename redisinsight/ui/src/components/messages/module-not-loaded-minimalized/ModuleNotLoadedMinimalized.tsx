@@ -1,17 +1,19 @@
 import React, { useContext } from 'react'
 import { useSelector } from 'react-redux'
-import { EuiLink, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
-import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { Theme } from 'uiSrc/constants'
-import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { ExternalLink, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { getDbWithModuleLoaded, getSourceTutorialByCapability } from 'uiSrc/utils'
+import { useCapability } from 'uiSrc/services'
 import { MODULE_CAPABILITY_TEXT_NOT_AVAILABLE } from './constants'
 import styles from './styles.module.scss'
 
@@ -23,10 +25,15 @@ export interface Props {
 
 const ModuleNotLoadedMinimalized = (props: Props) => {
   const { moduleName, source, onClose } = props
-  const freeInstance = useSelector(freeInstanceSelector)
+  const freeInstances = useSelector(freeInstancesSelector) || []
 
   const { theme } = useContext(ThemeContext)
+
+  const sourceTutorial = getSourceTutorialByCapability(moduleName)
   const moduleText = MODULE_CAPABILITY_TEXT_NOT_AVAILABLE[moduleName]
+  const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
+
+  useCapability(sourceTutorial)
 
   return (
     <div className={styles.wrapper}>
@@ -35,7 +42,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
           <h5>{moduleText?.title}</h5>
         </EuiTitle>
         <EuiSpacer size="s" />
-        {!freeInstance && (
+        {!freeDbWithModule && (
           <>
             <EuiText color="subdued" size="s">
               {moduleText?.text}
@@ -43,41 +50,38 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             <EuiSpacer size="s" />
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick) => (
-                <EuiLink
-                  external={false}
-                  target="_blank"
+                <ExternalLink
+                  iconSize="s"
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     ssoCloudHandlerClick(e, source, `${moduleName}_${source}`)
                     onClose?.()
                   }}
-                  className="externalLink externalLink-sm"
                   data-testid="tutorials-get-started-link"
                 >
                   Start with Cloud for free
-                </EuiLink>
+                </ExternalLink>
               )}
             </OAuthSsoHandlerDialog>
             <EuiSpacer size="xs" />
-            <EuiLink
-              external={false}
-              target="_blank"
+            <ExternalLink
+              iconSize="s"
               href={getUtmExternalLink(EXTERNAL_LINKS.docker, { campaign: UTM_CAMPAINGS[source] ?? source })}
-              className="externalLink externalLink-sm"
               data-testid="tutorials-docker-link"
             >
               Start with Docker
-            </EuiLink>
+            </ExternalLink>
           </>
         )}
-        {!!freeInstance && (
+        {!!freeDbWithModule && (
           <>
             <EuiText color="subdued" size="s">
               Use your free all-in-one Redis Cloud database to start exploring these capabilities.
             </EuiText>
             <EuiSpacer size="s" />
             <OAuthConnectFreeDb
-              source={`${moduleName}_tutorial`}
+              id={freeDbWithModule.id}
+              source={sourceTutorial}
             />
           </>
         )}

@@ -8,6 +8,7 @@ import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
+import { removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import InsightsTrigger from './InsightsTrigger'
 
 let store: typeof mockedStore
@@ -49,7 +50,7 @@ describe('InsightsTrigger', () => {
 
     fireEvent.click(screen.getByTestId('insights-trigger'))
 
-    expect(store.getActions()).toEqual([toggleInsightsPanel()])
+    expect(store.getActions()).toEqual([toggleInsightsPanel(), removeFeatureFromHighlighting('insights')])
   })
 
   it('should call proper actions after click on the button when there are any recommendations', () => {
@@ -63,7 +64,8 @@ describe('InsightsTrigger', () => {
     expect(store.getActions()).toEqual([
       resetRecommendationsHighlighting(),
       changeSelectedTab(InsightsPanelTabs.Recommendations),
-      toggleInsightsPanel()
+      toggleInsightsPanel(),
+      removeFeatureFromHighlighting('insights')
     ])
   })
 
@@ -85,11 +87,12 @@ describe('InsightsTrigger', () => {
       eventData: {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
+        source: 'overview',
         page: '/browser',
-        tab: 'recommendations'
+        tab: 'tips'
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

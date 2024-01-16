@@ -24,7 +24,7 @@ export const databaseSchema = Joi.object().keys({
   sentinelMaster: Joi.object({
     name: Joi.string().required(),
     username: Joi.string().allow(null),
-    password: Joi.string().allow(null),
+    password: Joi.boolean().allow(null),
   }).allow(null),
   nodes: Joi.array().items({
     host: Joi.string().required(),

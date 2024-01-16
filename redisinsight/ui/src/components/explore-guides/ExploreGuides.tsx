@@ -3,13 +3,13 @@ import { EuiIcon, EuiText, EuiTitle, EuiSpacer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
-import { Pages } from 'uiSrc/constants'
 
 import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 
+import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
@@ -23,8 +23,6 @@ const ExploreGuides = () => {
   const dispatch = useDispatch()
 
   const handleLinkClick = (tutorial: string, title: string) => {
-    // dispatch(setWorkbenchEAOpened(false))
-
     sendEventTelemetry({
       event: TelemetryEvent.BROWSER_TUTORIAL_CLICKED,
       eventData: {
@@ -35,14 +33,7 @@ const ExploreGuides = () => {
       }
     })
 
-    // dispatch(setWorkbenchEAOpened(false))
-    if (tutorial) {
-      history.push(`${Pages.workbench(instanceId)}?guidePath=${tutorial}`)
-      return
-    }
-
-    // dispatch(resetExplorePanelSearchContext())
-    history.push(Pages.workbench(instanceId))
+    dispatch(openTutorialByPath(tutorial, history))
   }
 
   return (

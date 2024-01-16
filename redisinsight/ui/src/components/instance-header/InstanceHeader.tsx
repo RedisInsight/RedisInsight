@@ -199,7 +199,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           <DatabaseOverviewWrapper />
         </EuiFlexItem>
 
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem grow={false} style={{ marginLeft: 40 }}>
           <InsightsTrigger />
         </EuiFlexItem>
       </EuiFlexGroup>

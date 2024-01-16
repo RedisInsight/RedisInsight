@@ -2,15 +2,18 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 
-import { useLocation, useParams } from 'react-router-dom'
-import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, setExplorePanelIsPageOpen, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceCDSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { OnboardingTour } from 'uiSrc/components'
+import { FullScreen, OnboardingTour } from 'uiSrc/components'
+import { appContextCapability } from 'uiSrc/slices/app/context'
+import { getTutorialCapability } from 'uiSrc/utils'
+import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -25,9 +28,12 @@ const DatabaseSidePanels = (props: Props) => {
   const { isOpen, tabSelected } = useSelector(insightsPanelSelector)
   const { data: { totalUnread } } = useSelector(recommendationsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
+  const { source: capabilitySource } = useSelector(appContextCapability)
+  const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
 
+  const history = useHistory()
   const { pathname } = useLocation()
   const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -51,6 +57,28 @@ const DatabaseSidePanels = (props: Props) => {
 
     pathnameRef.current = pathname
   }, [pathname, isFullScreen])
+
+  useEffect(() => {
+    if (!capabilitySource || !isShowCapabilityTutorialPopover(free)) {
+      return
+    }
+
+    const tutorialCapabilityPath = getTutorialCapability(capabilitySource)?.tutorialPage?.args?.path || ''
+
+    // set 'guidPath' with the path to capability tutorial
+    if (tutorialCapabilityPath) {
+      const search = new URLSearchParams(window.location.search)
+      search.set('guidePath', tutorialCapabilityPath)
+      history.push({ search: search.toString() })
+    } else {
+      // reset explore if tutorial is not found
+      dispatch(resetExplorePanelSearch())
+      dispatch(setExplorePanelIsPageOpen(false))
+    }
+
+    dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    dispatch(toggleInsightsPanel(true))
+  }, [capabilitySource, free])
 
   const handleEscFullScreen = (event: KeyboardEvent) => {
     if (event.key === keys.ESCAPE && isFullScreen) {
@@ -115,7 +143,7 @@ const DatabaseSidePanels = (props: Props) => {
           anchorWrapperClassName={styles.onboardingAnchorWrapper}
           fullSize
         >
-          <span className={styles.tabName}>Explore Redis</span>
+          <span className={styles.tabName}>Explore</span>
         </OnboardingTour>
       </EuiTab>
       <EuiTab
@@ -125,10 +153,10 @@ const DatabaseSidePanels = (props: Props) => {
         data-testid="recommendations-tab"
       >
         <>
-          <span className={styles.tabName}>Recommendations</span>
+          <span className={styles.tabName}>Tips</span>
           {!!totalUnread && (
             <div
-              className={styles.tabTotalUnred}
+              className={styles.tabTotalUnread}
               data-testid="recommendations-unread-count"
             >
               {totalUnread}
@@ -140,7 +168,7 @@ const DatabaseSidePanels = (props: Props) => {
   ), [tabSelected, totalUnread, isFullScreen])
 
   return (
-    <div className={styles.wrapper}>
+    <>
       {isOpen && (
         <div
           className={cx(styles.panel, panelClassName, { [styles.fullScreen]: isFullScreen })}
@@ -149,15 +177,7 @@ const DatabaseSidePanels = (props: Props) => {
           <div className={styles.panelInner}>
             <div className={styles.header}>
               <Tabs />
-              <EuiButtonIcon
-                iconSize="m"
-                iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-                color="primary"
-                aria-label="toggle fullscrenn insights"
-                className={styles.fullScreenBtn}
-                onClick={handleFullScreen}
-                data-testid="fullScreen-insights-btn"
-              />
+              <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={handleFullScreen} btnTestId="fullScreen-insights-btn" />
               <EuiButtonIcon
                 iconSize="m"
                 iconType="cross"
@@ -175,7 +195,7 @@ const DatabaseSidePanels = (props: Props) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 

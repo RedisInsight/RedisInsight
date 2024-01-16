@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .wrapper {
   padding: 32px 30px;
   display: flex;
@@ -23,6 +25,7 @@
   }
 
   .contentWrapper {
+    white-space: break-spaces;
     text-align: left;
   }
 
@@ -101,11 +104,28 @@
     }
   }
 
-  .btn :global(.euiButton__text) {
-    color: var(--euiColorPrimaryText) !important;
+  .btn {
+    :global {
+      .euiButton__text, .euiButton__content {
+        color: var(--euiColorPrimaryText) !important;
+      }
+    }
   }
 
-  .marginBottom {
+  .row {
     margin-bottom: 16px;
+  }
+}
+
+@include insights-open {
+  .wrapper {
+    .content {
+      padding-right: 0;
+      width: 100%;
+    }
+  }
+
+  .imageWrapper {
+    display: none;
   }
 }

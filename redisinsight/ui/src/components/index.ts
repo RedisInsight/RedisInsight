@@ -32,6 +32,7 @@ import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 export { FullScreen } from './full-screen'
 
 export * from './oauth'
+export * from './base'
 
 export {
   NavigationMenu,

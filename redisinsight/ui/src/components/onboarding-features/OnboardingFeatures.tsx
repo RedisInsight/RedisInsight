@@ -358,10 +358,10 @@ const ONBOARDING_FEATURES = {
         content: (
           <>
             Use Database Analysis to get summary of your database and receive
-            recommendations to improve memory usage and performance.
+            tips to improve memory usage and performance.
             <EuiSpacer size="xs" />
             Run a new report to get an overview of the database and receive
-            recommendations to optimize your database usage.
+            tips to optimize your database usage.
           </>
         ),
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
@@ -389,14 +389,14 @@ const ONBOARDING_FEATURES = {
   },
   ANALYTICS_RECOMMENDATIONS: {
     step: OnboardingSteps.AnalyticsRecommendations,
-    title: 'Database Recommendations',
+    title: 'Database Tips',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
       const history = useHistory()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.DatabaseAnalysisRecommendations]
 
       return {
-        content: 'See recommendations to optimize the memory usage, performance and increase the security of your Redis database',
+        content: 'See tips to optimize the memory usage, performance and increase the security of your Redis database',
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {

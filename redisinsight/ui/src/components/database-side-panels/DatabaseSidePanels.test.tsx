@@ -7,10 +7,13 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { fireEvent, screen, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
-import { insightsPanelSelector } from 'uiSrc/slices/panels/insights'
-
+import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, setExplorePanelIsPageOpen, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Pages } from 'uiSrc/constants'
+import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { getTutorialCapability } from 'uiSrc/utils'
+import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import DatabaseSidePanels from './DatabaseSidePanels'
 
 let store: typeof mockedStore
@@ -36,6 +39,16 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     connectionType: 'CLUSTER',
     provider: 'RE_CLOUD'
   }),
+  connectedInstanceCDSelector: jest.fn().mockReturnValue({
+    free: false,
+  }),
+}))
+
+jest.mock('uiSrc/slices/app/context', () => ({
+  ...jest.requireActual('uiSrc/slices/app/context'),
+  appContextCapability: jest.fn().mockReturnValue({
+    source: 'workbench RediSearch',
+  }),
 }))
 
 jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
@@ -59,6 +72,16 @@ jest.mock('uiSrc/slices/panels/insights', () => ({
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  getTutorialCapability: jest.fn().mockReturnValue({ tutorialPage: { id: 'id' }, telemetryName: 'searchAndQuery' }),
+}))
+
+jest.mock('uiSrc/services', () => ({
+  ...jest.requireActual('uiSrc/services'),
+  isShowCapabilityTutorialPopover: jest.fn(),
 }))
 
 /**
@@ -89,7 +112,7 @@ describe('DatabaseSidePanels', () => {
 
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     })
 
     render(<DatabaseSidePanels />)
@@ -115,7 +138,7 @@ describe('DatabaseSidePanels', () => {
   it('should render recommendations count with totalUnread > 0', () => {
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     });
 
     (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
@@ -138,7 +161,7 @@ describe('DatabaseSidePanels', () => {
 
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     })
 
     render(<DatabaseSidePanels />)
@@ -151,11 +174,11 @@ describe('DatabaseSidePanels', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         page: '/triggered-functions/libraries',
-        tab: 'recommendations'
+        tab: 'tips'
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on change tab', () => {
@@ -166,7 +189,7 @@ describe('DatabaseSidePanels', () => {
 
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,
-      tabSelected: 'recommendations'
+      tabSelected: 'tips'
     })
 
     render(<DatabaseSidePanels />)
@@ -177,12 +200,12 @@ describe('DatabaseSidePanels', () => {
       event: TelemetryEvent.INSIGHTS_PANEL_TAB_CHANGED,
       eventData: {
         databaseId: 'instanceId',
-        prevTab: 'recommendations',
+        prevTab: 'tips',
         currentTab: 'explore',
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on fullscreen', () => {
@@ -203,8 +226,42 @@ describe('DatabaseSidePanels', () => {
         databaseId: 'instanceId',
         state: 'open'
       },
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  describe('capability', () => {
+    beforeEach(() => {
+      (connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({ free: true });
+      (isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(() => true)
+    })
+    it('should call store actions', () => {
+      (getTutorialCapability as jest.Mock).mockImplementation(() => ({
+        tutorialPage: { args: { path: 'path' } }
+      }))
+      render(<DatabaseSidePanels />)
+
+      const expectedActions = [
+        getRecommendations(),
+        changeSelectedTab(InsightsPanelTabs.Explore),
+        toggleInsightsPanel(true),
+      ]
+      expect(store.getActions()).toEqual(expectedActions);
+
+      (getTutorialCapability as jest.Mock).mockRestore()
+    })
+    it('should call resetExplorePanelSearch if capability was not found', () => {
+      render(<DatabaseSidePanels />)
+
+      const expectedActions = [
+        getRecommendations(),
+        resetExplorePanelSearch(),
+        setExplorePanelIsPageOpen(false),
+        changeSelectedTab(InsightsPanelTabs.Explore),
+        toggleInsightsPanel(true),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
   })
 })

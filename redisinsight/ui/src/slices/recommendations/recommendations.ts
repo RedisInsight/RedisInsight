@@ -2,8 +2,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
 import { remove, some } from 'lodash'
-import { apiService, localStorageService, resourcesService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
+import { apiService, resourcesService } from 'uiSrc/services'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { DeleteDatabaseRecommendationResponse, ModifyDatabaseRecommendationDto } from 'apiSrc/modules/database-recommendation/dto'
@@ -19,7 +19,7 @@ export const initialState: StateRecommendations = {
   content: {},
   loading: false,
   error: '',
-  isHighlighted: !localStorageService?.get(BrowserStorageItem.recommendationsViewed)
+  isHighlighted: false
 }
 
 // A slice for recipes
@@ -27,11 +27,12 @@ const recommendationsSlice = createSlice({
   name: 'recommendations',
   initialState,
   reducers: {
+    setInitialRecommendationsState: (state) => ({
+      ...initialState,
+      content: state.content,
+    }),
     resetRecommendationsHighlighting: (state) => {
-      if (state.isHighlighted && !localStorageService?.get(BrowserStorageItem.recommendationsViewed)) {
-        localStorageService?.set(BrowserStorageItem.recommendationsViewed, true)
-        state.isHighlighted = false
-      }
+      state.isHighlighted = false
     },
     getRecommendations: (state) => {
       state.loading = true
@@ -55,8 +56,8 @@ const recommendationsSlice = createSlice({
     },
     addUnreadRecommendations: (state, { payload }) => {
       payload.recommendations?.forEach((r: IRecommendation) => {
-        const isRecommnedationExists = some(state.data.recommendations, (stateR) => r.id === stateR.id)
-        if (!isRecommnedationExists) {
+        const isRecommendationExists = some(state.data.recommendations, (stateR) => r.id === stateR.id)
+        if (!isRecommendationExists) {
           state.data.recommendations?.unshift(r)
         }
       })
@@ -102,6 +103,7 @@ const recommendationsSlice = createSlice({
 
 // Actions generated from the slice
 export const {
+  setInitialRecommendationsState,
   resetRecommendationsHighlighting,
   getRecommendations,
   getRecommendationsSuccess,

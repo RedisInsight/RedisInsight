@@ -22,7 +22,7 @@ class MarkdownToJsxString implements IFormatter {
         .use(remarkRedisUpload, path) // Add custom component for redis-upload code block
         .use(remarkRedisCode) // Add custom component for Redis code block
         .use(remarkImage, path) // Add custom component for Redis code block
-        .use(remarkLink) // Add custom component for Redis code block
+        .use(remarkLink) // Customise links
         .use(remarkRehype, { allowDangerousHtml: true }) // Pass raw HTML strings through.
         .use(rehypeLinks, config ? { history: config.history } : undefined) // Customise links
         .use(MarkdownToJsxString.rehypeWrapSymbols) // Wrap special symbols inside curly braces for JSX parse

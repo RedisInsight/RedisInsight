@@ -135,7 +135,7 @@ describe('ItemList', () => {
   })
 
   it('should hide export button when disable export prop is passed', async () => {
-    render(<ItemList {...mockedProps} disableExport />)
+    render(<ItemList {...mockedProps} hideExport />)
 
     await act(() => {
       // select items to be exported

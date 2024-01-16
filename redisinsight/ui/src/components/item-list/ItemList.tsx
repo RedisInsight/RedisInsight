@@ -21,7 +21,7 @@ export interface Props<T> {
   editedInstance: Nullable<T>
   columnVariations: EuiBasicTableColumn<T>[][]
   onDelete: (ids: T[]) => void
-  disableExport?: boolean
+  hideExport?: boolean
   onExport?: (ids: T[], withSecrets: boolean) => void
   onWheel: () => void
   loading: boolean
@@ -37,7 +37,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   dialogIsOpen,
   columnVariations,
   onDelete,
-  disableExport = false,
+  hideExport = false,
   onExport,
   onWheel,
   editedInstance,
@@ -143,7 +143,7 @@ function ItemList<T extends { id: string; visible?: boolean }>({
           selectionCount={selection.length}
           onCloseActionBar={handleResetSelection}
           actions={[
-            !disableExport ? <ExportAction<T> selection={selection} onExport={handleExport} subTitle={actionMsg('exported')} /> : null,
+            !hideExport ? <ExportAction<T> selection={selection} onExport={handleExport} subTitle={actionMsg('exported')} /> : null,
             <DeleteAction<T>
               selection={selection}
               onDelete={handleDelete}

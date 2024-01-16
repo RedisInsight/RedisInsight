@@ -223,7 +223,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
         data={instances.data}
         onTableChange={onTableChange}
         sort={sort}
-        disableExport
+        hideExport
       />
     </div>
   )

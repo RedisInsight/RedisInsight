@@ -2,10 +2,18 @@
 set -e
 
 PLATFORM=${PLATFORM:-'linux'}
-ELECTRON_VERSION=$(cat electron/version)
 ARCH=${ARCH:-'x64'}
+LIBC=${LIBC:-''}
 #FILENAME="RedisInsight-$PLATFORM.$VERSION.$ARCH.zip"
-FILENAME="RedisInsight-web-$PLATFORM.$ARCH.tar.gz"
+FILENAME="RedisInsight-web-$PLATFORM"
+if [ ! -z $LIBC ]
+then
+  FILENAME="$FILENAME-$LIBC.$ARCH.tar.gz"
+  export npm_config_target_libc="$LIBC"
+else
+  FILENAME="$FILENAME.$ARCH.tar.gz"
+fi
+echo $FILENAME
 
 # reinstall backend prod dependencies only (optimise space)
 rm -rf redisinsight/api/node_modules
@@ -23,7 +31,7 @@ rm -rf redisinsight/build.zip
 
 cp LICENSE ./redisinsight
 
-cd redisinsight && tar -czvf build.tar.gz \
+cd redisinsight && tar -czf build.tar.gz \
 --exclude="api/node_modules/**/build/node_gyp_bins/python3" \
 api/node_modules \
 api/dist \
@@ -31,5 +39,5 @@ ui/dist \
 LICENSE \
 && cd ..
 
-mkdir -p release/redisstack
-cp redisinsight/build.tar.gz release/redisstack/"$FILENAME"
+mkdir -p release/web
+cp redisinsight/build.tar.gz release/web/"$FILENAME"

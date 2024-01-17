@@ -8,7 +8,6 @@ import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { resourcesService } from 'uiSrc/services'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { workbenchGuidesSelector } from 'uiSrc/slices/workbench/wb-guides'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
@@ -53,7 +52,6 @@ const LazyInternalPage = ({
 }: Props) => {
   const history = useHistory()
   const { itemScrollTop, data: contentContext, url } = useSelector(explorePanelSelector)
-  const { loading: guidesLoading } = useSelector(workbenchGuidesSelector)
   const { loading: tutorialsLoading } = useSelector(workbenchTutorialsSelector)
   const { loading: customTutorialsLoading } = useSelector(workbenchCustomTutorialsSelector)
   const [isLoading, setLoading] = useState<boolean>(false)
@@ -75,7 +73,7 @@ const LazyInternalPage = ({
     startLoadContent()
   }, [path, sourcePath])
 
-  const isMarkdownLoading = isLoading || guidesLoading || tutorialsLoading || customTutorialsLoading
+  const isMarkdownLoading = isLoading || tutorialsLoading || customTutorialsLoading
   const getRelatedPages = () => (manifest ? getPagesInsideGroup(manifest, manifestPath) : [])
   const loadContent = async () => {
     setLoading(true)

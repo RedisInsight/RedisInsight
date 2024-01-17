@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { ApiEndpoints, EAManifestFirstKey, CodeButtonParams } from 'uiSrc/constants'
-import { findMarkdownPathByPath, Nullable } from 'uiSrc/utils'
+import { findMarkdownPath, Nullable } from 'uiSrc/utils'
 import {
   explorePanelSelector,
   resetExplorePanelSearch,
@@ -27,7 +27,6 @@ import {
 import styles from './styles.module.scss'
 
 export interface Props {
-  guides: IEnablementAreaItem[]
   tutorials: IEnablementAreaItem[]
   customTutorials: IEnablementAreaItem[]
   loading: boolean
@@ -42,7 +41,6 @@ export interface Props {
 
 const EnablementArea = (props: Props) => {
   const {
-    guides = [],
     tutorials = [],
     customTutorials = [],
     openScript,
@@ -75,26 +73,23 @@ const EnablementArea = (props: Props) => {
   }, [search])
 
   useEffect(() => {
-    // handle guidePath search param
-    const guidePathParam = new URLSearchParams(search).get('guidePath')
-    if (guidePathParam) {
-      const guidesPath = findMarkdownPathByPath(guides, guidePathParam)
+    // handle guidePath or tutorialId search params
+    const tutorialPathParam = new URLSearchParams(search).get('guidePath') ?? ''
+    const tutorialIdParam = new URLSearchParams(search).get('tutorialId') ?? ''
+    if (tutorialPathParam || tutorialIdParam) {
       let manifestPath = ''
+      const options = tutorialIdParam ? { id: tutorialIdParam } : { mdPath: tutorialPathParam }
+      const tutorialPath = findMarkdownPath(tutorials, options)
 
-      if (guidesPath) {
-        manifestPath = `${EAManifestFirstKey.GUIDES}/${guidesPath}`
-      }
-
-      const tutorialsPath = findMarkdownPathByPath(tutorials, guidePathParam)
-      if (tutorialsPath) {
-        manifestPath = `${EAManifestFirstKey.TUTORIALS}/${tutorialsPath}`
+      if (tutorialPath) {
+        manifestPath = `${EAManifestFirstKey.TUTORIALS}/${tutorialPath}`
       }
 
       if (manifestPath) {
         handleOpenInternalPage({ path: '', manifestPath }, false)
       }
     }
-  }, [search, tutorials, guides])
+  }, [search, tutorials])
 
   useEffect(() => {
     const searchParams = new URLSearchParams(search)
@@ -102,10 +97,11 @@ const EnablementArea = (props: Props) => {
 
     const manifestPath = searchParams.get('path')
     const guidePath = searchParams.get('guidePath')
+    const tutorialId = searchParams.get('tutorialId')
     const contextManifestPath = searchContextParams.get('path')
     const { manifest, prefixFolder } = getManifestByPath(manifestPath)
 
-    if (guidePath || (isEmpty(manifest) && !contextManifestPath)) {
+    if (guidePath || tutorialId || (isEmpty(manifest) && !contextManifestPath)) {
       return
     }
 
@@ -124,7 +120,7 @@ const EnablementArea = (props: Props) => {
     }
 
     dispatch(setExplorePanelIsPageOpen(false))
-  }, [search, customTutorials, guides, tutorials])
+  }, [search, customTutorials, tutorials])
 
   const getManifestByPath = (path: Nullable<string> = '') => {
     const manifestPath = path?.replace(/^\//, '') || ''
@@ -133,9 +129,6 @@ const EnablementArea = (props: Props) => {
     }
     if (manifestPath.startsWith(EAManifestFirstKey.TUTORIALS)) {
       return ({ manifest: tutorials, prefixFolder: ApiEndpoints.TUTORIALS_PATH })
-    }
-    if (manifestPath.startsWith(EAManifestFirstKey.GUIDES)) {
-      return ({ manifest: guides, prefixFolder: ApiEndpoints.GUIDES_PATH })
     }
 
     return { manifest: null }
@@ -175,7 +168,6 @@ const EnablementArea = (props: Props) => {
           : (
             <Navigation
               tutorials={tutorials}
-              guides={guides}
               customTutorials={customTutorials}
               isInternalPageVisible={isInternalPageVisible}
             />

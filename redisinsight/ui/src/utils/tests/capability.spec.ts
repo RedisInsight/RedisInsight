@@ -15,11 +15,11 @@ describe('getSourceTutorialByCapability', () => {
     })
 })
 
-const emptyCapability = { name: '', telemetryName: '', tutorialPage: null, }
-const searchCapability = { name: 'Search and query capability', telemetryName: 'searchAndQuery', tutorialPage: null, }
-const jsonCapability = { name: 'JSON capability', telemetryName: 'JSON', tutorialPage: null, }
-const tsCapability = { name: 'Time series data structure', telemetryName: 'timeSeries', tutorialPage: null, }
-const bloomCapability = { name: 'Probabilistic data structures', telemetryName: 'probabilistic', tutorialPage: null, }
+const emptyCapability = { name: '', telemetryName: '', path: null, }
+const searchCapability = { name: 'Search and query capability', telemetryName: 'searchAndQuery', path: null, }
+const jsonCapability = { name: 'JSON capability', telemetryName: 'JSON', path: null, }
+const tsCapability = { name: 'Time series data structure', telemetryName: 'timeSeries', path: null, }
+const bloomCapability = { name: 'Probabilistic data structures', telemetryName: 'probabilistic', path: null, }
 
 const getTutorialCapabilityTests: any[] = [
   [OAuthSocialSource.RediSearch, searchCapability],

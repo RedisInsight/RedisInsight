@@ -77,7 +77,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     telemetryEvent: 'shardHashes',
     title: 'Shard big hashes to small hashes',
     redisStack: true,
-    tutorial: '/quick-guides/document/introduction.md',
+    tutorialId: 'ds-hashes',
     content: [
       {
         type: 'paragraph',
@@ -135,6 +135,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   combineSmallStringsToHashes: {
     id: 'combineSmallStringsToHashes',
     title: 'Combine small strings to hashes',
+    tutorialId: 'ds-hashes',
     content: [
       {
         type: 'span',
@@ -382,7 +383,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   bigStrings: {
     id: 'bigStrings',
     title: 'Avoid large strings',
-    tutorial: '/quick-guides/document/introduction.md',
+    tutorialId: 'ds-json-intro',
     content: [
       {
         type: 'span',
@@ -517,7 +518,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'bigSets',
     telemetryEvent: 'optimizeExistenceChecks',
     title: 'Consider using probabilistic data structures such as Bloom Filter or HyperLogLog',
-    tutorial: '/quick-guides/probabilistic-data-structures/introduction.md',
+    tutorialId: 'ds-prob-intro',
     redisStack: true,
     content: [
       {
@@ -663,7 +664,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     telemetryEvent: 'optimizeTimeSeries',
     title: 'Try using the Redis native time series data structure and querying capabilities',
     redisStack: true,
-    tutorial: '/quick-guides/time-series/introduction.md',
+    tutorialId: 'ds-ts-intro',
     content: [
       {
         type: 'span',
@@ -868,7 +869,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     title: 'Optimize your query and search experience',
     deprecated: true,
     redisStack: true,
-    tutorial: '/redis_stack/working_with_json.md',
+    tutorialId: 'ds-json-intro',
     content: [
       {
         type: 'link',
@@ -918,7 +919,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'searchIndexes',
     title: 'Try using the indexing, querying, and full-text search, natively developed in Redis',
     redisStack: true,
-    tutorial: '/quick-guides/document/introduction.md',
+    tutorialId: 'sq-intro',
     content: [
       {
         type: 'paragraph',
@@ -1041,7 +1042,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'searchJSON',
     title: 'Try indexing your JSON documents for efficient data retrieval',
     redisStack: true,
-    tutorial: '/quick-guides/document/introduction.md',
+    tutorialId: 'sq-intro',
     content: [
       {
         type: 'span',
@@ -1132,7 +1133,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'stringToJson',
     title: 'Try using our JSON native document store',
     redisStack: true,
-    tutorial: '/quick-guides/document/introduction.md',
+    tutorialId: 'ds-json-intro',
     content: [
       {
         type: 'paragraph',
@@ -1249,7 +1250,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   searchVisualization: {
     id: 'searchVisualization',
     title: 'Try Workbench, the advanced command-line interface',
-    tutorial: '',
+    tutorialId: '',
     content: [
       {
         type: 'paragraph',
@@ -1312,7 +1313,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   searchHash: {
     id: 'searchHash',
     title: 'Try indexing your hash documents to query and retrieve data',
-    tutorial: '/quick-guides/document/introduction.md',
+    tutorialId: 'sq-intro',
     redisStack: true,
     content: [
       {
@@ -1442,7 +1443,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   luaToFunctions: {
     id: 'luaToFunctions',
     title: 'Consider using triggers and functions',
-    tutorial: '/quick-guides/triggers-and-functions/introduction.md',
+    tutorialId: 'tf-intro',
     content: [
       {
         type: 'paragraph',
@@ -1503,7 +1504,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   functionsWithStreams: {
     id: 'functionsWithStreams',
     title: 'Consider using triggers and functions to react in real-time to stream entries',
-    tutorial: '/quick-guides/triggers-and-functions/introduction.md',
+    tutorialId: 'tf-intro',
     content: [
       {
         type: 'paragraph',
@@ -1580,7 +1581,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
   functionsWithKeyspace: {
     id: 'functionsWithKeyspace',
     title: 'Consider using triggers and functions to react in real-time to database changes',
-    tutorial: '/quick-guides/triggers-and-functions/introduction.md',
+    tutorialId: 'tf-intro',
     content: [
       {
         type: 'paragraph',

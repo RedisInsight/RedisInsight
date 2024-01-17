@@ -6,7 +6,7 @@ ARCH=${ARCH:-'x64'}
 LIBC=${LIBC:-''}
 #FILENAME="RedisInsight-$PLATFORM.$VERSION.$ARCH.zip"
 FILENAME="RedisInsight-web-$PLATFORM"
-if [ ! -z $LIBC ]
+if [ $LIBC == 'musl' ]
 then
   FILENAME="$FILENAME-$LIBC.$ARCH.tar.gz"
   export npm_config_target_libc="$LIBC"
@@ -19,6 +19,7 @@ echo "Platform: $PLATFORM"
 echo "Arch: $ARCH"
 echo "Libc: $LIBC"
 echo "npm target libc: $npm_config_target_libc"
+echo "Filname: $FILENAME"
 
 rm -rf redisinsight/api/node_modules
 

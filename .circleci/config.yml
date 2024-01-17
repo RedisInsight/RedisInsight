@@ -840,6 +840,9 @@ jobs:
       - run:
           name: Build web archives
           command: |
+            unset npm_config_keytar_binary_host_mirror
+            unset npm_config_node_sqlite3_binary_host_mirror
+
             # Docker sources
             PLATFORM=linux ARCH=x64 LIBC=musl .circleci/build/build_modules.sh
             PLATFORM=linux ARCH=arm64 LIBC=musl .circleci/build/build_modules.sh

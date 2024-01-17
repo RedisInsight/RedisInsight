@@ -29,8 +29,6 @@ export default {
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
-    guides: process.env.RI_GUIDES_PATH || join(homedir, 'guides'),
-    defaultGuides: join(defaultsDir, 'guides'),
     tutorials: process.env.RI_TUTORIALS_PATH || join(homedir, 'tutorials'),
     defaultTutorials: join(defaultsDir, 'tutorials'),
     content: process.env.RI_CONTENT_PATH || join(homedir, 'content'),
@@ -47,7 +45,6 @@ export default {
     globalPrefix: 'api',
     customPluginsUri: '/plugins',
     staticUri: '/static',
-    guidesUri: '/static/guides',
     tutorialsUri: '/static/tutorials',
     customTutorialsUri: '/static/custom-tutorials',
     contentUri: '/static/content',
@@ -109,13 +106,6 @@ export default {
   },
   plugins: {
     stateMaxSize: parseInt(process.env.RI_PLUGIN_STATE_MAX_SIZE, 10) || 1024 * 1024,
-  },
-  guides: {
-    updateUrl: process.env.RI_GUIDES_UPDATE_URL
-      || 'https://github.com/RedisInsight/Guides/releases/download/2.x.x',
-    zip: process.env.RI_GUIDES_ZIP || dataZipFileName,
-    buildInfo: process.env.RI_GUIDES_INFO || buildInfoFileName,
-    devMode: !!process.env.RI_GUIDES_PATH,
   },
   tutorials: {
     updateUrl: process.env.RI_TUTORIALS_UPDATE_URL

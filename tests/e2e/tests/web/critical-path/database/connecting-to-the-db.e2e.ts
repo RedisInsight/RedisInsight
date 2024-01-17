@@ -110,9 +110,15 @@ test
             sshPassphrase: 'test'
         };
         // Verify that if user have not entered any required value he can see that this field should be specified when hover over the button to add a database
+        if (await welcomePage.addDbManuallyBtn.exists) {
+            await t.click(welcomePage.addDbManuallyBtn);
+        }
+        else {
+            await t
+                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+        }
         await t
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
-            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually)
             .click(myRedisDatabasePage.AddRedisDatabase.useSSHCheckbox)
             .click(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyRadioBtn)
             .hover(myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);

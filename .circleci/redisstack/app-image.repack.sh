@@ -4,7 +4,7 @@ set -e
 ARCH=${ARCH:-x86_64}
 WORKING_DIRECTORY=$(pwd)
 SOURCE_APP=${SOURCE_APP:-"RedisInsight-linux-$ARCH.AppImage"}
-APP_FOLDER_NAME="RedisInsight-linux"
+RI_APP_FOLDER_NAME="RedisInsight-linux"
 TAR_NAME="RedisInsight-app-linux.$ARCH.tar.gz"
 TMP_FOLDER="/tmp/RedisInsight-app-$ARCH"
 
@@ -17,9 +17,9 @@ cp "./release/$SOURCE_APP" "$TMP_FOLDER"
 cd "$TMP_FOLDER" || exit 1
 
 ./"$SOURCE_APP" --appimage-extract
-mv squashfs-root "$APP_FOLDER_NAME"
+mv squashfs-root "$RI_APP_FOLDER_NAME"
 
-tar -czvf "$TAR_NAME" "$APP_FOLDER_NAME"
+tar -czvf "$TAR_NAME" "$RI_APP_FOLDER_NAME"
 
 cp "$TAR_NAME" "$WORKING_DIRECTORY/release/redisstack/"
 cd "$WORKING_DIRECTORY" || exit 1

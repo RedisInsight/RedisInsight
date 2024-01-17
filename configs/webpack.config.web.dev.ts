@@ -200,17 +200,17 @@ const configuration: webpack.Configuration = {
      */
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'development',
-      APP_ENV: 'web',
-      API_PREFIX: 'api',
-      BASE_API_URL: `http://${HOST}`,
-      RESOURCES_BASE_URL: `http://${HOST}`,
-      PIPELINE_COUNT_DEFAULT: '5',
-      SCAN_COUNT_DEFAULT: '500',
-      SCAN_TREE_COUNT_DEFAULT: '10000',
-      SEGMENT_WRITE_KEY:
-        'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+      RI_APP_TYPE: 'web',
+      RI_API_PREFIX: 'api',
+      RI_BASE_API_URL: `http://${HOST}`,
+      RI_RESOURCES_BASE_URL: `http://${HOST}`,
+      RI_PIPELINE_COUNT_DEFAULT: '5',
+      RI_SCAN_COUNT_DEFAULT: '500',
+      RI_SCAN_TREE_COUNT_DEFAULT: '10000',
+      RI_SEGMENT_WRITE_KEY:
+        'RI_SEGMENT_WRITE_KEY' in process.env ? process.env.RI_SEGMENT_WRITE_KEY : 'RI_SEGMENT_WRITE_KEY',
+      RI_CONNECTIONS_TIMEOUT_DEFAULT: 'RI_CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000),
     }),
 

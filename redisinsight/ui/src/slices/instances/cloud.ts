@@ -30,6 +30,7 @@ export const initialState: InitialStateCloud = {
   subscriptions: null,
   credentials: null,
   isAutodiscoverySSO: false,
+  isRecommendedSettings: undefined,
   account: {
     error: '',
     data: null,
@@ -151,6 +152,9 @@ const cloudSlice = createSlice({
     setIsAutodiscoverySSO: (state, { payload }: PayloadAction<boolean>) => {
       state.isAutodiscoverySSO = payload
     },
+    setIsRecommendedSettingsSSO: (state, { payload }: PayloadAction<Maybe<boolean>>) => {
+      state.isRecommendedSettings = payload
+    },
   },
 })
 
@@ -172,6 +176,7 @@ export const {
   resetSubscriptionsRedisCloud,
   resetLoadedRedisCloud,
   setIsAutodiscoverySSO,
+  setIsRecommendedSettingsSSO
 } = cloudSlice.actions
 
 // A selector

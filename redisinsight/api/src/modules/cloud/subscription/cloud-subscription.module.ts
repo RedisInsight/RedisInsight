@@ -25,6 +25,7 @@ import { CloudSubscriptionCapiProvider } from './providers/cloud-subscription.ca
   ],
   exports: [
     CloudSubscriptionCapiService,
+    CloudSubscriptionApiService,
   ],
 })
 export class CloudSubscriptionModule {}

@@ -11,9 +11,10 @@ import {
   cloneDeep,
 } from 'lodash';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { AgreementIsNotDefinedException } from 'src/constants';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
+import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
 import { SettingsAnalytics } from 'src/modules/settings/settings.analytics';
 import { SettingsRepository } from 'src/modules/settings/repositories/settings.repository';
 import { classToClass } from 'src/utils';
@@ -22,7 +23,7 @@ import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class SettingsService {
@@ -33,6 +34,7 @@ export class SettingsService {
     private readonly agreementRepository: AgreementsRepository,
     private readonly analytics: SettingsAnalytics,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
+    private readonly keyEncryptionStrategy: KeyEncryptionStrategy,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -113,8 +115,11 @@ export class SettingsService {
    */
   private async getAgreementsOption(checker: string, defaultOption: string): Promise<string> {
     try {
+      // Check if any encryption strategy is available (not KEYTAR only)
+      // KEY has a precedence on KEYTAR strategy
       if (checker === 'KEYTAR') {
-        const isEncryptionAvailable = await this.keytarEncryptionStrategy.isAvailable();
+        const isEncryptionAvailable = await this.keyEncryptionStrategy.isAvailable()
+          || await this.keytarEncryptionStrategy.isAvailable();
 
         if (!isEncryptionAvailable && SERVER_CONFIG.buildType === 'REDIS_STACK') {
           return 'stack_false';

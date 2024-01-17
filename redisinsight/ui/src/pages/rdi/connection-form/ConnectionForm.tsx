@@ -102,7 +102,13 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
   }
 
   return (
-    <Formik enableReinitialize initialValues={initialFormValues} validate={validate} onSubmit={onSubmit}>
+    <Formik
+      enableReinitialize
+      initialValues={initialFormValues}
+      validateOnMount
+      validate={validate}
+      onSubmit={onSubmit}
+    >
       {({ isValid, errors }) => (
         <Form>
           <EuiForm component="div" data-testid="connection-form">

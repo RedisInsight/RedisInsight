@@ -615,7 +615,7 @@ describe('InstanceForm', () => {
     })
     expect(handleTestConnection).toBeCalledWith(
       expect.objectContaining({
-        tlsClientAuthRequired: ['on'],
+        tlsClientAuthRequired: true,
       })
     )
     await act(() => {
@@ -624,7 +624,7 @@ describe('InstanceForm', () => {
 
     expect(handleSubmit).toBeCalledWith(
       expect.objectContaining({
-        tlsClientAuthRequired: ['on'],
+        tlsClientAuthRequired: true,
       })
     )
   })

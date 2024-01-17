@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {

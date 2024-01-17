@@ -45,6 +45,10 @@ services:
     build:
       context: ./../../
       dockerfile: Dockerfile
+    environment:
+      RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
+      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
+      RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:
       - .redisinsight-app:/root/.redisinsight-app
       - ./test-data/certs:/root/certs

@@ -1,11 +1,11 @@
-import { Server } from 'src/modules/server/models/server';
+import { AppType, Server } from 'src/modules/server/models/server';
 import { ServerEntity } from 'src/modules/server/entities/server.entity';
 import { mockControlGroup, mockControlNumber } from 'src/__mocks__/feature';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 export const mockServerId = 'a77b23c1-7816-4ea4-b61f-d37a0f805ser';
 
@@ -24,7 +24,7 @@ export const mockGetServerInfoResponse = Object.assign(new GetServerInfoResponse
   appVersion: SERVER_CONFIG.appVersion,
   osPlatform: process.platform,
   buildType: SERVER_CONFIG.buildType,
-  appType: SERVER_CONFIG.buildType,
+  appType: AppType.Docker,
   controlGroup: mockControlGroup,
   controlNumber: mockControlNumber,
   encryptionStrategies: [

@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { readdirSync, existsSync, readFileSync } from 'fs';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import * as path from 'path';
 import { filter } from 'lodash';
 import { PluginsResponse, Plugin } from 'src/modules/plugin/plugin.response';
 
-const PATH_CONFIG = config.get('dir_path');
-const SERVER_CONFIG = config.get('server');
+const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export class PluginService {

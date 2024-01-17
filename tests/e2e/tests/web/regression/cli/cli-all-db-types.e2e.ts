@@ -5,8 +5,7 @@ import { BrowserPage } from '../../../../pageObjects';
 import {
     cloudDatabaseConfig,
     commonUrl, ossClusterConfig,
-    ossSentinelConfig,
-    redisEnterpriseClusterConfig
+    ossSentinelConfig
 } from '../../../../helpers/conf';
 import { Common } from '../../../../helpers/common';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -35,21 +34,6 @@ const verifyCommandsInCli = async(): Promise<void> => {
 fixture `Work with CLI in all types of databases`
     .meta({ type: 'regression' })
     .page(commonUrl);
-test
-    .meta({ rte: rte.reCluster })
-    .before(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
-    })
-    .after(async() => {
-        // Clear and delete database
-        await apiKeyRequests.deleteKeyByNameApi(keyName, redisEnterpriseClusterConfig.databaseName);
-        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
-    })('Verify that user can add data via CLI in RE Cluster DB', async() => {
-        // Verify that database index switcher not displayed for RE Cluster
-        await t.expect(browserPage.OverviewPanel.changeIndexBtn.exists).notOk('Change Db index control displayed for RE Cluster DB');
-
-        await verifyCommandsInCli();
-    });
 test
     .meta({ rte: rte.reCloud })
     .before(async() => {

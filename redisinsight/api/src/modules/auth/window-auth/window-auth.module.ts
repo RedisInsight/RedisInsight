@@ -1,9 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { WindowAuthService } from './window-auth.service';
 import { WindowAuthMiddleware } from './middleware/window.auth.middleware';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Module({
   providers: [WindowAuthService],

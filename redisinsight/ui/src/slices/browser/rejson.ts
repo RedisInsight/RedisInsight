@@ -26,7 +26,7 @@ import { AppDispatch, RootState } from '../store'
 
 export const initialState: InitialStateRejson = {
   loading: false,
-  error: '',
+  error: null,
   data: {
     downloaded: false,
     data: undefined,
@@ -42,7 +42,7 @@ const rejsonSlice = createSlice({
     // load reJSON part
     loadRejsonBranch: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
-      state.error = ''
+      state.error = null
 
       if (resetData) {
         state.data = initialState.data
@@ -58,11 +58,11 @@ const rejsonSlice = createSlice({
     },
     appendReJSONArrayItem: (state) => {
       state.loading = true
-      state.error = ''
+      state.error = null
     },
     appendReJSONArrayItemSuccess: (state) => {
       state.loading = false
-      state.error = ''
+      state.error = null
     },
     appendReJSONArrayItemFailure: (state, { payload }) => {
       state.loading = false
@@ -70,11 +70,11 @@ const rejsonSlice = createSlice({
     },
     setReJSONData: (state) => {
       state.loading = true
-      state.error = ''
+      state.error = null
     },
     setReJSONDataSuccess: (state) => {
       state.loading = false
-      state.error = ''
+      state.error = null
     },
     setReJSONDataFailure: (state, { payload }) => {
       state.loading = false
@@ -82,11 +82,11 @@ const rejsonSlice = createSlice({
     },
     removeRejsonKey: (state) => {
       state.loading = true
-      state.error = ''
+      state.error = null
     },
     removeRejsonKeySuccess: (state) => {
       state.loading = false
-      state.error = ''
+      state.error = null
     },
     removeRejsonKeyFailure: (state, { payload }) => {
       state.loading = false

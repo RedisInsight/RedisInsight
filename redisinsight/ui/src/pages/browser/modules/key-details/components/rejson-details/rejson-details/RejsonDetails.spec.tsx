@@ -1,9 +1,10 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
-import RejsonDetails, { Props } from './RejsonDetails'
+import RejsonDetails from './RejsonDetails'
+import { BaseProps, } from '../types'
 
-const mockedProps = mock<Props>()
+const mockedProps = mock<BaseProps>()
 
 const mockedJSONObject = [
   {
@@ -50,7 +51,6 @@ describe('RejsonDetails', () => {
         <RejsonDetails
           {...instance(mockedProps)}
           data={mockedJSONObject}
-          path="."
           dataType="object"
           selectedKey="keyName"
           shouldRejsonDataBeDownloaded
@@ -62,7 +62,6 @@ describe('RejsonDetails', () => {
         <RejsonDetails
           {...instance(mockedProps)}
           data={mockedJSONObject}
-          path="."
           dataType="object"
           selectedKey="keyName"
           shouldRejsonDataBeDownloaded={false}
@@ -77,7 +76,6 @@ describe('RejsonDetails', () => {
         <RejsonDetails
           {...instance(mockedProps)}
           data={[1, 2, 3]}
-          path="."
           dataType="array"
           selectedKey="keyName"
           shouldRejsonDataBeDownloaded={false}
@@ -162,7 +160,6 @@ describe('RejsonDetails', () => {
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={{ a: 1, b: 2 }}
-      path="."
       dataType="object"
       selectedKey="keyName"
       shouldRejsonDataBeDownloaded={false}
@@ -174,15 +171,15 @@ describe('RejsonDetails', () => {
   })
 
   it('should be able to add proper key value into json object', () => {
-    const onJSONPropertyAdded = jest.fn()
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleSubmitUpdateValue = jest.fn()
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={{ a: 1, b: 2 }}
-      onJSONPropertyAdded={onJSONPropertyAdded}
-      path="."
       dataType="object"
       selectedKey="keyName"
-      handleSubmitJsonUpdateValue={jest.fn()}
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
       shouldRejsonDataBeDownloaded={false}
     />)
 
@@ -200,19 +197,20 @@ describe('RejsonDetails', () => {
       }
     )
     fireEvent.click(screen.getByTestId('apply-btn'))
-    expect(onJSONPropertyAdded).toBeCalled()
+    expect(handleSubmitJsonUpdateValue).toBeCalled()
+    expect(handleSubmitUpdateValue).not.toBeCalled()
   })
 
   it('should not be able to add wrong key value into json object', () => {
-    const onJSONPropertyAdded = jest.fn()
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleSubmitUpdateValue = jest.fn()
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={{ a: 1, b: 2 }}
-      path="."
-      onJSONPropertyAdded={onJSONPropertyAdded}
       dataType="object"
       selectedKey="keyName"
-      handleSubmitJsonUpdateValue={jest.fn()}
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
       shouldRejsonDataBeDownloaded={false}
     />)
 
@@ -230,19 +228,20 @@ describe('RejsonDetails', () => {
       }
     )
     fireEvent.click(screen.getByTestId('apply-btn'))
-    expect(onJSONPropertyAdded).not.toBeCalled()
+    expect(handleSubmitJsonUpdateValue).not.toBeCalled()
+    expect(handleSubmitUpdateValue).not.toBeCalled()
   })
 
   it('should be able to add proper value into json array', () => {
-    const onJSONPropertyAdded = jest.fn()
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleSubmitUpdateValue = jest.fn()
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={[1, 2, 3]}
-      path="."
-      onJSONPropertyAdded={onJSONPropertyAdded}
       dataType="array"
       selectedKey="keyName"
-      handleSubmitJsonUpdateValue={jest.fn()}
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
       shouldRejsonDataBeDownloaded={false}
     />)
 
@@ -254,18 +253,20 @@ describe('RejsonDetails', () => {
       }
     )
     fireEvent.click(screen.getByTestId('apply-btn'))
-    expect(onJSONPropertyAdded).toBeCalled()
+    expect(handleSubmitJsonUpdateValue).toBeCalled()
+    expect(handleSubmitUpdateValue).not.toBeCalled()
   })
 
   it('should not be able to add wrong value into json array', () => {
-    const onJSONPropertyAdded = jest.fn()
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleSubmitUpdateValue = jest.fn()
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={[1, 2, 3]}
-      path="."
       dataType="array"
-      onJSONPropertyAdded={onJSONPropertyAdded}
       selectedKey="keyName"
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
       shouldRejsonDataBeDownloaded={false}
     />)
 
@@ -276,20 +277,21 @@ describe('RejsonDetails', () => {
         target: { value: '{' }
       }
     )
-    expect(onJSONPropertyAdded).not.toBeCalled()
+    expect(handleSubmitJsonUpdateValue).not.toBeCalled()
+    expect(handleSubmitUpdateValue).not.toBeCalled()
   })
 
   it('should submit to add proper key value into json object', () => {
-    const onJSONPropertyAdded = jest.fn()
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleSubmitUpdateValue = jest.fn()
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={{ a: 1, b: 2 }}
-      path="."
       dataType="object"
       selectedKey="keyName"
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
       shouldRejsonDataBeDownloaded={false}
-      onJSONPropertyAdded={onJSONPropertyAdded}
-      handleSubmitJsonUpdateValue={jest.fn()}
     />)
 
     fireEvent.click(screen.getByTestId('add-object-btn'))
@@ -306,20 +308,21 @@ describe('RejsonDetails', () => {
       }
     )
     fireEvent.click(screen.getByTestId('apply-btn'))
-    expect(onJSONPropertyAdded).toBeCalled()
+    expect(handleSubmitJsonUpdateValue).toBeCalled()
+    expect(handleSubmitUpdateValue).not.toBeCalled()
   })
 
   it('should submit to add proper value into json array', () => {
-    const onJSONPropertyAdded = jest.fn()
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleSubmitUpdateValue = jest.fn()
     render(<RejsonDetails
       {...instance(mockedProps)}
       data={[1, 2, 3]}
-      path="."
       dataType="array"
       selectedKey="keyName"
       shouldRejsonDataBeDownloaded={false}
-      onJSONPropertyAdded={onJSONPropertyAdded}
-      handleSubmitJsonUpdateValue={jest.fn()}
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
     />)
 
     fireEvent.click(screen.getByTestId('add-array-btn'))
@@ -330,6 +333,7 @@ describe('RejsonDetails', () => {
       }
     )
     fireEvent.click(screen.getByTestId('apply-btn'))
-    expect(onJSONPropertyAdded).toBeCalled()
+    expect(handleSubmitJsonUpdateValue).toBeCalled()
+    expect(handleSubmitUpdateValue).not.toBeCalled()
   })
 })

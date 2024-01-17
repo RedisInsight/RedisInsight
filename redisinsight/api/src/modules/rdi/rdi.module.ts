@@ -8,6 +8,7 @@ import { LocalRdiRepository } from 'src/modules/rdi/repository/local.rdi.reposit
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
+import { RdiAnalytics } from './rdi.analytics';
 
 @Module({})
 export class RdiModule {
@@ -26,6 +27,7 @@ export class RdiModule {
         RdiClientProvider,
         RdiClientStorage,
         RdiClientFactory,
+        RdiAnalytics,
         {
           provide: RdiRepository,
           useClass: rdiRepository,

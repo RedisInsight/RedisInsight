@@ -13,9 +13,13 @@ then
 else
   FILENAME="$FILENAME.$ARCH.tar.gz"
 fi
-echo $FILENAME
 
-# reinstall backend prod dependencies only (optimise space)
+echo "Building node modules..."
+echo "Platform: $PLATFORM"
+echo "Arch: $ARCH"
+echo "Libc: $LIBC"
+echo "npm target libc: $npm_config_target_libc"
+
 rm -rf redisinsight/api/node_modules
 
 npm_config_arch="$ARCH" \

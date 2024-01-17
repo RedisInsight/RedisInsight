@@ -36,7 +36,7 @@ const RefreshPipelinePopover = () => {
       event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
       eventData: {
         id: rdiInstanceId,
-        jobsNumber: data?.jobs.length,
+        jobsNumber: data?.jobs?.length,
       }
     })
   }

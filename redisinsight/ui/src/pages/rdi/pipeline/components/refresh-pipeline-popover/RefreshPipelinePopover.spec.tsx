@@ -33,14 +33,15 @@ describe('RefreshPipelinePopover', () => {
   })
 
   it('should open confirmation message', async () => {
-    const { queryByTestId } = render(<RefreshPipelinePopover />)
-    expect(queryByTestId('refresh-pipeline-apply-btn')).not.toBeInTheDocument()
+    render(<RefreshPipelinePopover />)
+
+    expect(screen.queryByTestId('refresh-pipeline-apply-btn')).not.toBeInTheDocument()
 
     await act(() => {
       fireEvent.click(screen.getByTestId('refresh-pipeline-btn'))
     })
 
-    expect(queryByTestId('refresh-pipeline-apply-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('refresh-pipeline-apply-btn')).toBeInTheDocument()
   })
 
   it('should call proper actions', async () => {
@@ -78,10 +79,9 @@ describe('RefreshPipelinePopover', () => {
   })
 
   it('should render disabled trigger btn', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: true,
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+    (rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
+      loading: true
+    }))
 
     render(<RefreshPipelinePopover />)
 

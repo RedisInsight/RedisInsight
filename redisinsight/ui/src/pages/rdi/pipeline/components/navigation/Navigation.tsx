@@ -17,7 +17,14 @@ enum RdiPipelineTabs {
   Jobs = PageNames.rdiPipelineJobs,
 }
 
-const defaultNavList = [
+interface INavItem {
+  id: RdiPipelineTabs
+  title: string
+  fileName: string
+  isShowLoader?: boolean
+}
+
+const defaultNavList: INavItem[] = [
   {
     id: RdiPipelineTabs.Prepare,
     title: 'Prepare',
@@ -27,7 +34,7 @@ const defaultNavList = [
     id: RdiPipelineTabs.Config,
     title: 'Configuration',
     fileName: 'Target connection details',
-    spinner: true,
+    isShowLoader: true,
   }
 ]
 
@@ -76,7 +83,7 @@ const Navigation = () => {
 
   const renderTabs = () => (
     <>
-      {defaultNavList.map(({ id, title, fileName, spinner }) => (
+      {defaultNavList.map(({ id, title, fileName, isShowLoader = false }) => (
         <div
           key={id}
           role="button"
@@ -91,7 +98,7 @@ const Navigation = () => {
             fileName={fileName}
             isSelected={selectedTab === id}
             data-testid={`rdi-pipeline-tab-${id}`}
-            isSpinner={loading && !!spinner}
+            isLoading={loading && isShowLoader}
           />
         </div>
       ))}

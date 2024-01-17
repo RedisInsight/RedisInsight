@@ -11,7 +11,7 @@ export interface IProps {
   fileName?: string
   children?: React.ReactElement | string
   testID?: string
-  isSpinner?: boolean
+  isLoading?: boolean
 }
 
 const Tab = (props: IProps) => {
@@ -22,7 +22,7 @@ const Tab = (props: IProps) => {
     fileName,
     testID,
     className,
-    isSpinner,
+    isLoading = false,
   } = props
 
   return (
@@ -37,7 +37,7 @@ const Tab = (props: IProps) => {
         >
           <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
           <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
-          {isSpinner && <EuiLoadingSpinner data-testid="rdi-nav-config-loader" className={styles.loader} />}
+          {isLoading && <EuiLoadingSpinner data-testid="rdi-nav-config-loader" className={styles.loader} />}
         </div>
       ) : children}
     </div>

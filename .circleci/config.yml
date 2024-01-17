@@ -828,6 +828,12 @@ jobs:
         enum: [ 'staging', 'production' ]
     steps:
       - checkout
+      - node/install:
+          node-version: '18.15.0'
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt-get update -y && sudo apt-get install -y ca-certificates
       - run:
           name: Build sources
           command: ./.circleci/build/build.sh

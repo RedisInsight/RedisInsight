@@ -6,7 +6,7 @@ ARCH=${ARCH:-'x64'}
 LIBC=${LIBC:-''}
 #FILENAME="RedisInsight-$PLATFORM.$VERSION.$ARCH.zip"
 FILENAME="RedisInsight-web-$PLATFORM"
-if [ $LIBC == 'musl' ]
+if [ ! -z $LIBC ]
 then
   FILENAME="$FILENAME-$LIBC.$ARCH.tar.gz"
   export npm_config_target_libc="$LIBC"

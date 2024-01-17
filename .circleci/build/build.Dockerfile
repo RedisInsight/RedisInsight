@@ -36,4 +36,3 @@ USER node
 
 # serve the application 🚀
 ENTRYPOINT ["./docker-entry.sh", "node", "redisinsight/api/dist/src/main"]
-#ENTRYPOINT ["tail", "-f", "/dev/null"]

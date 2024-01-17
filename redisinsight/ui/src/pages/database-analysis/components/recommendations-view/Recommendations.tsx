@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useHistory } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
@@ -46,6 +46,7 @@ const Recommendations = () => {
 
   const { theme } = useContext(ThemeContext)
   const history = useHistory()
+  const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const handleToggle = (isOpen: boolean, id: string) => sendEventTelemetry({

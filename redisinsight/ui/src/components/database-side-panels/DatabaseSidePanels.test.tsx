@@ -243,7 +243,6 @@ describe('DatabaseSidePanels', () => {
       render(<DatabaseSidePanels />)
 
       const expectedActions = [
-        getRecommendations(),
         changeSelectedTab(InsightsPanelTabs.Explore),
         toggleInsightsPanel(true),
       ]
@@ -255,7 +254,6 @@ describe('DatabaseSidePanels', () => {
       render(<DatabaseSidePanels />)
 
       const expectedActions = [
-        getRecommendations(),
         resetExplorePanelSearch(),
         setExplorePanelIsPageOpen(false),
         changeSelectedTab(InsightsPanelTabs.Explore),

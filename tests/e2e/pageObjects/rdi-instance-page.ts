@@ -1,5 +1,4 @@
 import { Selector, t } from 'testcafe';
-import { AddRdiInstance, RdiInstance } from './components/myRedisDatabase/add-rdi-instance';
 import { BaseOverviewPage } from './base-overview-page';
 
 export class RdiInstancePage extends BaseOverviewPage {
@@ -12,15 +11,19 @@ export class RdiInstancePage extends BaseOverviewPage {
     transformationResults = Selector('[data-testid=wrapper-transformations-output]');
     commandsOutput = Selector('[data-testid=commands-output]');
     outputTab = Selector('[data-testid=output-tab]');
+    refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
+    applyRefreshBtn = Selector('[data-testid=refresh-pipeline-apply-btn]');
+
+    configurationInput = Selector('[data-testid=wrapper-rdi-config]');
 
     /**
      * Open Job by name
      * @param name job name
      */
-        async openJobByName(name: string): Promise<void> {
-            const jobBtnSelector = Selector(`[data-testid=rdi-nav-job-${name}]`);
-            await t.click(jobBtnSelector);
-        }
+    async openJobByName(name: string): Promise<void> {
+        const jobBtnSelector = Selector(`[data-testid=rdi-nav-job-${name}]`);
+        await t.click(jobBtnSelector);
+    }
 
     /**
      * Send a data in Transformation Input

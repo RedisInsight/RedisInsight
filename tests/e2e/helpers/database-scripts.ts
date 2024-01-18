@@ -11,7 +11,7 @@ const dbPath = `${workingDirectory}/redisinsight.db`;
  */
 export async function updateColumnValueInDBTable(tableName: string, columnName: string, value: number | string): Promise<void> {
     const db = new sqlite3.Database(dbPath);
-    const query = `UPDATE ${tableName} SET ${columnName} = ${value}`;
+    const query = `UPDATE ${tableName} SET ${columnName} = '${value}'`;
 
     return new Promise<void>((resolve, reject) => {
         db.run(query, (err: { message: string }) => {

@@ -14,6 +14,7 @@ export default {
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),
+    guides: process.env.RI_GUIDES_PATH || join(homedir, 'guides'),
     tutorials: process.env.RI_TUTORIALS_PATH || join(homedir, 'tutorials'),
     content: process.env.RI_CONTENT_PATH || join(homedir, 'content'),
     caCertificates: join(homedir, 'ca_certificates'),

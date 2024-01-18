@@ -6,6 +6,7 @@ import { cleanup, clearStoreActions, render, fireEvent, screen, mockedStore } fr
 
 import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { findTutorialPath } from 'uiSrc/utils'
 import NoLibrariesScreen, { IProps } from './NoLibrariesScreen'
 
 const mockedProps = mock<IProps>()
@@ -17,8 +18,13 @@ beforeEach(() => {
   store.clearActions()
 })
 
-jest.mock('uiSrc/slices/workbench/wb-guides', () => ({
-  ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  findTutorialPath: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/workbench/wb-tutorials', () => ({
+  ...jest.requireActual('uiSrc/slices/workbench/wb-tutorials'),
   workbenchGuidesSelector: jest.fn().mockReturnValue({
     items: [{
       label: 'Quick guides',
@@ -50,7 +56,8 @@ describe('NoLibrariesScreen', () => {
 
   it('should call proper actions and push to quick guides page ', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<NoLibrariesScreen {...instance(mockedProps)} />)
 
@@ -62,7 +69,7 @@ describe('NoLibrariesScreen', () => {
     ]
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     expect(pushMock).toBeCalledWith({
-      search: 'guidePath=/quick-guides/triggers-and-functions/introduction.md'
+      search: 'path=tutorials/path'
     })
   })
 

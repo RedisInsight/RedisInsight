@@ -1,13 +1,13 @@
 import { act } from '@testing-library/react'
 import React from 'react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { ApiEndpoints, MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
+import { ApiEndpoints, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { defaultValue, EnablementAreaProvider } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { EnablementAreaComponent } from 'uiSrc/slices/interfaces'
 
 import Pagination from './Pagination'
 
-const paginationItems = MOCK_GUIDES_ITEMS[0]?.children
+const paginationItems = MOCK_TUTORIALS_ITEMS[0]?.children
   ?.map((item, index) => ({ ...item, _key: `${index}` }))
   ?.filter((item) => item.type === EnablementAreaComponent.InternalLink)
   || []

@@ -36,6 +36,7 @@ import {
 } from 'uiSrc/utils/recommendation/utils'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { findTutorialPath } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -60,7 +61,7 @@ const Recommendations = () => {
     }
   })
 
-  const goToTutorial = (mdPath: string, id: string) => {
+  const goToTutorial = (tutorialId: string, id: string) => {
     sendEventTelemetry({
       event: TelemetryEvent.DATABASE_TIPS_TUTORIAL_CLICKED,
       eventData: {
@@ -70,7 +71,8 @@ const Recommendations = () => {
       }
     })
 
-    dispatch(openTutorialByPath(mdPath || '', history))
+    const tutorialPath = findTutorialPath({ id: tutorialId || '' })
+    dispatch(openTutorialByPath(tutorialPath || '', history))
   }
 
   const onRedisStackClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => event.stopPropagation()
@@ -145,7 +147,7 @@ const Recommendations = () => {
             content = [],
             badges = [],
             redisStack = false,
-            tutorial,
+            tutorialId,
             telemetryEvent
           } = recommendationsContent[name] || {}
 
@@ -180,12 +182,12 @@ const Recommendations = () => {
               </EuiAccordion>
               <div className={styles.footer}>
                 <RecommendationVoting vote={vote as Vote} name={name} />
-                {tutorial && (
+                {tutorialId && (
                   <EuiButton
                     fill
                     color="secondary"
                     size="s"
-                    onClick={() => goToTutorial(tutorial, id)}
+                    onClick={() => goToTutorial(tutorialId, id)}
                     data-testid={`${id}-to-tutorial-btn`}
                   >
                     Tutorial

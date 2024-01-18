@@ -14,6 +14,7 @@ import { FullScreen, OnboardingTour } from 'uiSrc/components'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
+import { EAManifestFirstKey } from 'uiSrc/constants'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -63,12 +64,12 @@ const DatabaseSidePanels = (props: Props) => {
       return
     }
 
-    const tutorialCapabilityPath = getTutorialCapability(capabilitySource)?.tutorialPage?.args?.path || ''
+    const tutorialCapabilityPath = getTutorialCapability(capabilitySource)?.path || ''
 
-    // set 'guidPath' with the path to capability tutorial
+    // set 'path' with the path to capability tutorial
     if (tutorialCapabilityPath) {
       const search = new URLSearchParams(window.location.search)
-      search.set('guidePath', tutorialCapabilityPath)
+      search.set('path', `${EAManifestFirstKey.TUTORIALS}/${tutorialCapabilityPath}`)
       history.push({ search: search.toString() })
     } else {
       // reset explore if tutorial is not found

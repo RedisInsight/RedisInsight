@@ -7,6 +7,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
+import { findTutorialPath } from 'uiSrc/utils'
 import Recommendations from './Recommendations'
 
 const recommendationsContent = MOCK_RECOMMENDATIONS
@@ -55,6 +56,11 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   connectedInstanceSelector: jest.fn().mockReturnValue({
     provider: 'RE_CLOUD'
   }),
+}))
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  findTutorialPath: jest.fn(),
 }))
 
 beforeEach(() => {
@@ -440,7 +446,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
   })
 
-  it('should call proper history push after click go tutorial button', () => {
+  it('should call proper telemetry after click go tutorial button', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
@@ -467,9 +473,11 @@ describe('Recommendations', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
-  it('should call proper telemetry after click go tutorial button', () => {
+  it('should call proper history push after click go tutorial button', () => {
     const pushMock = jest.fn()
+    const path = 'path'
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => path);
     (dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -483,7 +491,7 @@ describe('Recommendations', () => {
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
     expect(pushMock).toBeCalledWith({
-      search: 'guidePath=/quick-guides/document/introduction.md'
+      search: 'path=tutorials/path'
     })
     pushMock.mockRestore()
   })

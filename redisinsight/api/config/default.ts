@@ -109,14 +109,14 @@ export default {
   },
   tutorials: {
     updateUrl: process.env.RI_TUTORIALS_UPDATE_URL
-      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.x.x',
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.42',
     zip: process.env.RI_TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.RI_TUTORIALS_INFO || buildInfoFileName,
     devMode: !!process.env.RI_TUTORIALS_PATH,
   },
   content: {
     updateUrl: process.env.RI_CONTENT_UPDATE_URL
-      || 'https://github.com/RedisInsight/Statics/releases/download/latest',
+      || 'https://github.com/RedisInsight/Statics/releases/download/2.42',
     zip: process.env.RI_CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.RI_CONTENT_INFO || buildInfoFileName,
     devMode: !!process.env.RI_CONTENT_PATH,

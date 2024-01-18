@@ -38,3 +38,19 @@ export const migrateHomeFolder = async () => {
     // continue initialization even without migration
   }
 };
+
+/**
+ * Remove old guides folder
+ */
+export const removeGuidesFolder = async () => {
+  try {
+    console.log({guides: PATH_CONFIG.guides});
+
+    if (await fs.pathExists(PATH_CONFIG.guides)) {
+      console.log({guides2: PATH_CONFIG.guides});
+      await fs.rm(PATH_CONFIG.guides, { recursive: true, force: true });
+    }
+  } catch (e) {
+    // continue initialization even without migration
+  }
+};

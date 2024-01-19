@@ -165,6 +165,9 @@ describe('EnablementArea', () => {
 
     it('should call proper actions after upload form submit', async () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+
+      const afterRenderActions = [...store.getActions()]
+
       fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
 
       await act(() => {
@@ -178,16 +181,18 @@ describe('EnablementArea', () => {
         fireEvent.click(screen.getByTestId('submit-upload-tutorial-btn'))
       })
 
-      const expectedActions = [uploadWbCustomTutorial()]
+      const expectedActions = [...afterRenderActions, uploadWbCustomTutorial()]
       expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     })
 
     it('should render delete button and call proper actions after click on delete', () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      const afterRenderActions = [...store.getActions()]
+
       fireEvent.click(screen.getByTestId('delete-tutorial-icon-12mfp-rem'))
       fireEvent.click(screen.getByTestId('delete-tutorial-12mfp-rem'))
 
-      const expectedActions = [deleteWbCustomTutorial()]
+      const expectedActions = [...afterRenderActions, deleteWbCustomTutorial()]
       expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     })
 

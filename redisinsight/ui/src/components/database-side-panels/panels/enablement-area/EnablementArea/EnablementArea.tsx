@@ -3,7 +3,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import cx from 'classnames'
 import { EuiLoadingContent } from '@elastic/eui'
-import { isEmpty } from 'lodash'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { EnablementAreaProvider, IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { ApiEndpoints, EAManifestFirstKey, CodeButtonParams } from 'uiSrc/constants'
@@ -87,31 +86,38 @@ const EnablementArea = (props: Props) => {
 
       if (manifestPath) {
         handleOpenInternalPage({ path: '', manifestPath }, false)
+        return
       }
+
+      dispatch(setExplorePanelIsPageOpen(false))
     }
   }, [search, tutorials])
 
   useEffect(() => {
     const searchParams = new URLSearchParams(search)
-    const searchContextParams = new URLSearchParams(searchEAContext)
 
-    const manifestPath = searchParams.get('path')
     const guidePath = searchParams.get('guidePath')
     const tutorialId = searchParams.get('tutorialId')
-    const contextManifestPath = searchContextParams.get('path')
-    const { manifest, prefixFolder } = getManifestByPath(manifestPath)
+    const itemPath = searchParams.get('item')
 
-    if (guidePath || tutorialId || (isEmpty(manifest) && !contextManifestPath)) {
+    // if we have guidePath or tutorialId another useUffect handle it
+    if (guidePath || tutorialId || itemPath) {
       return
     }
 
-    dispatch(setExplorePanelManifest(manifest))
-
+    // otherwise we handle path from url or from the context
+    const manifestPath = searchParams.get('path')
     if (manifestPath) {
+      const { manifest, prefixFolder } = getManifestByPath(manifestPath)
       const path = getMarkdownPathByManifest(manifest, manifestPath, prefixFolder)
-      dispatch(setExplorePanelIsPageOpen(true))
-      setInternalPage({ path, manifestPath })
-      return
+
+      if (path) {
+        dispatch(setExplorePanelIsPageOpen(true))
+        dispatch(setExplorePanelManifest(manifest))
+
+        setInternalPage({ path, manifestPath })
+        return
+      }
     }
 
     if (contextManifestPath) {

@@ -462,6 +462,8 @@ jobs:
                 command: |
                   cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
+                  RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
+                  RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
                   -f tests/e2e/docker.web.docker-compose.yml \
@@ -476,6 +478,8 @@ jobs:
                 command: |
                   cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/web/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
                   TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
+                  RI_SERVER_TLS_CERT="$RI_SERVER_TLS_CERT" \
+                  RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
                   docker-compose \
                   -f tests/e2e/rte.docker-compose.yml \
                   -f tests/e2e/local.web.docker-compose.yml \
@@ -618,11 +622,11 @@ jobs:
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage --linux << parameters.target >>
+              RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE yarn package:stage --linux << parameters.target >>
               exit 0;
             fi
 
-            UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage --linux << parameters.target >>
+            RI_UPGRADES_LINK='' RI_SEGMENT_WRITE_KEY='' yarn package:stage --linux << parameters.target >>
       - when:
           condition:
             equal: [ true, << parameters.redisstack >> ]
@@ -710,12 +714,12 @@ jobs:
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
-            export UPGRADES_LINK=''
-            export SEGMENT_WRITE_KEY=''
+            export RI_UPGRADES_LINK=''
+            export RI_SEGMENT_WRITE_KEY=''
 
             if [ << parameters.env >> == 'stage' ]; then
-              export UPGRADES_LINK=$UPGRADES_LINK_STAGE
-              export SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE
+              export RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE
+              export RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE
             fi
 
             # handle manual builds
@@ -792,9 +796,9 @@ jobs:
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
-              UPGRADES_LINK=$UPGRADES_LINK_STAGE SEGMENT_WRITE_KEY=$SEGMENT_WRITE_KEY_STAGE yarn package:stage --win << parameters.target >>
+              RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE yarn package:stage --win << parameters.target >>
             else
-              UPGRADES_LINK='' SEGMENT_WRITE_KEY='' yarn package:stage --win << parameters.target >>
+              RI_UPGRADES_LINK='' RI_SEGMENT_WRITE_KEY='' yarn package:stage --win << parameters.target >>
             fi
 
             rm -rf release/win-unpacked
@@ -860,20 +864,18 @@ jobs:
       - run:
           name: Build Docker image (API + UI)
           command: |
-            TELEMETRY=$SEGMENT_WRITE_KEY_DEV
+            TELEMETRY=$RI_SEGMENT_WRITE_KEY_DEV
 
             if [ << parameters.env >> == 'production' ]; then
-              TELEMETRY=$SEGMENT_WRITE_KEY
+              TELEMETRY=$RI_SEGMENT_WRITE_KEY
             fi
 
             if [ << parameters.env >> == 'staging' ]; then
-              TELEMETRY=$SEGMENT_WRITE_KEY_STAGE
+              TELEMETRY=$RI_SEGMENT_WRITE_KEY_STAGE
             fi
 
             docker build --build-arg NODE_ENV=<< parameters.env >> \
-            --build-arg SERVER_TLS_CERT="$SERVER_TLS_CERT" \
-            --build-arg SERVER_TLS_KEY="$SERVER_TLS_KEY" \
-            --build-arg SEGMENT_WRITE_KEY="$TELEMETRY" \
+            --build-arg RI_SEGMENT_WRITE_KEY="$TELEMETRY" \
             -t riv2:latest .
 
             mkdir -p docker-release
@@ -1154,6 +1156,9 @@ workflows:
             - Setup sign certificates (stage)
       - linux:
           name: Build app - Linux (stage)
+          env: stage
+          redisstack: false
+          target: AppImage
           requires:
             - Setup build (stage)
       - docker:

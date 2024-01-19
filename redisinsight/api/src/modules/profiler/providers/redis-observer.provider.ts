@@ -5,10 +5,10 @@ import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 
 @Injectable()
 export class RedisObserverProvider {

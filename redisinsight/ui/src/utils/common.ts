@@ -1,8 +1,8 @@
 import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 
-const baseApiUrl = process.env.BASE_API_URL
+const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
-const isWebApp = process.env.APP_ENV === 'web'
+const isWebApp = process.env.RI_APP_TYPE === 'web'
 const { apiPort } = window.app.config
 
 export const getBaseApiUrl = () => (!isDevelopment && isWebApp

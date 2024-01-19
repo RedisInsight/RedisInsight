@@ -85,6 +85,9 @@ export enum TelemetryEvents {
 
   // Insights
   InsightsRecommendationGenerated = 'INSIGHTS_RECOMMENDATION_GENERATED',
+
+  // RDI
+  RdiInstanceDeleted = 'RDI_INSTANCE_DELETED',
 }
 
 export enum CommandType {

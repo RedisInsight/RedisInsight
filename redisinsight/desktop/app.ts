@@ -72,8 +72,8 @@ const init = async () => {
     await windowFactory(WindowType.Main, splashWindow, { parsedDeepLink })
 
     initAutoUpdateChecks(
-      process.env.MANUAL_UPGRADES_LINK || process.env.UPGRADES_LINK,
-      parseInt(process.env.RIAUTOUPDATEINTERVAL, 10) || 84 * 3600 * 1000,
+      process.env.RI_MANUAL_UPGRADES_LINK || process.env.RI_UPGRADES_LINK,
+      parseInt(process.env.RI_AUTO_UPDATE_INTERVAL, 10) || 84 * 3600 * 1000,
     )
   } catch (err) {
     log.error(wrapErrorMessageSensitiveData(err as Error))

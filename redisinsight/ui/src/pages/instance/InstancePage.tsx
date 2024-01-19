@@ -27,7 +27,7 @@ import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
-import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
+import { resetBulkActions } from 'uiSrc/slices/browser/bulkActions'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
@@ -85,7 +85,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(resetKeys())
     dispatch(setMonitorInitialState())
     dispatch(setInitialPubSubState())
-    dispatch(setBulkActionsInitialState())
+    dispatch(resetBulkActions())
     dispatch(setAppContextInitialState())
     dispatch(resetPatternKeysData())
     dispatch(resetCliHelperSettings())

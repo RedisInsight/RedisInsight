@@ -2,6 +2,8 @@ version: "3.4"
 
 services:
   static-server:
+    logging: &logging
+      driver: none
     build:
       context: .
       dockerfile: static-server.Dockerfile
@@ -11,6 +13,7 @@ services:
       - 5551:5551
   # ssh
   ssh:
+    logging: *logging
     image: lscr.io/linuxserver/openssh-server:latest
     environment:
       - PASSWORD_ACCESS=true
@@ -30,6 +33,7 @@ services:
 
   # oss standalone
   oss-standalone:
+    logging: *logging
     image: redislabs/redismod
     command: [
         "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
@@ -42,6 +46,7 @@ services:
       - 8100:6379
 
   oss-standalone-empty:
+    logging: *logging
     image: redislabs/redismod
     command: [
       "--loadmodule", "/usr/lib/redis/modules/redisearch.so",
@@ -55,6 +60,7 @@ services:
 
   # oss standalone v5
   oss-standalone-v5:
+    logging: *logging
     image: redis:5
     ports:
       - 8101:6379
@@ -65,16 +71,19 @@ services:
         ipv4_address: 172.33.100.111
   # oss standalone redisearch
   oss-standalone-redisearch:
+    logging: *logging
     image: redislabs/redismod
     ports:
       - 8102:6379
 
   oss-standalone-redisgears-2-0:
+    logging: *logging
     image: redislabs/redisgears:edge
     ports:
       - 8106:6379
 
   oss-standalone-big:
+    logging: *logging
     build:
       context: ./rte/oss-standalone-big
       dockerfile: Dockerfile
@@ -85,6 +94,7 @@ services:
 
   # oss standalone tls
   oss-standalone-tls:
+    logging: *logging
     build:
       context: ./rte/oss-standalone-tls
       dockerfile: Dockerfile
@@ -93,6 +103,7 @@ services:
 
   # oss sentinel
   oss-sentinel:
+    logging: *logging
     build: ./rte/oss-sentinel
     depends_on:
       - oss-sentinel-primary-1
@@ -101,13 +112,16 @@ services:
       - 28100:26379
 
   oss-sentinel-primary-1:
+    logging: *logging
     image: redis:5
 
   oss-sentinel-primary-2:
+    logging: *logging
     image: redis:5
 
   # oss cluster (v7)
   cluster-plain-creator-7:
+    logging: *logging
     build:
       context: ./rte/oss-cluster-7
       dockerfile: creator.Dockerfile
@@ -116,6 +130,7 @@ services:
       - master-plain-7-2
       - master-plain-7-3
   master-plain-7-1:
+    logging: *logging
     build: &cluster-plain-7-build ./rte/oss-cluster-7
     ports:
       - 8200:6379
@@ -123,11 +138,13 @@ services:
       default:
         ipv4_address: 172.31.100.211
   master-plain-7-2:
+    logging: *logging
     build: *cluster-plain-7-build
     networks:
       default:
         ipv4_address: 172.31.100.212
   master-plain-7-3:
+    logging: *logging
     build: *cluster-plain-7-build
     networks:
       default:
@@ -135,6 +152,7 @@ services:
 
   # oss cluster (v7) with rediserch > 2.2
   cluster-rs-creator-7:
+    logging: *logging
     build:
       context: &cluster-rs-7-build ./rte/oss-cluster-7-rs
       dockerfile: creator.Dockerfile
@@ -143,6 +161,7 @@ services:
       - master-rs-7-2
       - master-rs-7-3
   master-rs-7-1:
+    logging: *logging
     build: *cluster-rs-7-build
     ports:
       - 8221:6379
@@ -150,11 +169,13 @@ services:
       default:
         ipv4_address: 172.31.100.221
   master-rs-7-2:
+    logging: *logging
     build: *cluster-rs-7-build
     networks:
       default:
         ipv4_address: 172.31.100.222
   master-rs-7-3:
+    logging: *logging
     build: *cluster-rs-7-build
     networks:
       default:
@@ -162,6 +183,7 @@ services:
 
   # oss cluster with redisgears 2
   gears-cluster-2-0-creator:
+    logging: *logging
     image: redis:latest
     entrypoint: ['/bin/sh', '-c', 'redis-cli --cluster create 172.31.100.191:6379 172.31.100.192:6379 172.31.100.193:6379 172.31.100.194:6379 172.31.100.195:6379 172.31.100.196:6379 --cluster-replicas 1 --cluster-yes && tail -f /dev/null']
     depends_on:
@@ -172,36 +194,42 @@ services:
       - gears-cluster-2-0-node-5
       - gears-cluster-2-0-node-6
   gears-cluster-2-0-node-1:
+    logging: *logging
     image: &gears-cluster-img redislabs/redisgears:edge
     command: &gears-cluster-cmd redis-server --protected-mode no --loadmodule /build/target/release/libredisgears.so v8-plugin-path /build/target/release/libredisgears_v8_plugin.so --cluster-enabled yes
     networks:
       default:
         ipv4_address: 172.31.100.191
   gears-cluster-2-0-node-2:
+    logging: *logging
     image: *gears-cluster-img
     command: *gears-cluster-cmd
     networks:
       default:
         ipv4_address: 172.31.100.192
   gears-cluster-2-0-node-3:
+    logging: *logging
     image: *gears-cluster-img
     command: *gears-cluster-cmd
     networks:
       default:
         ipv4_address: 172.31.100.193
   gears-cluster-2-0-node-4:
+    logging: *logging
     image: *gears-cluster-img
     command: *gears-cluster-cmd
     networks:
       default:
         ipv4_address: 172.31.100.194
   gears-cluster-2-0-node-5:
+    logging: *logging
     image: *gears-cluster-img
     command: *gears-cluster-cmd
     networks:
       default:
         ipv4_address: 172.31.100.195
   gears-cluster-2-0-node-6:
+    logging: *logging
     image: *gears-cluster-img
     command: *gears-cluster-cmd
     networks:
@@ -210,6 +238,7 @@ services:
 
   # redis enterprise
   redis-enterprise:
+    logging: *logging
     build: ./rte/redis-enterprise
     cap_add:
       - sys_resource

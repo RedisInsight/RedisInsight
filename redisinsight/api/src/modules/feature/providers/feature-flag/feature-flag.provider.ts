@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 import {
-  InsightsRecommendationsFlagStrategy,
-} from 'src/modules/feature/providers/feature-flag/strategies/insights-recommendations.flag.strategy';
+  CommonFlagStrategy,
+} from 'src/modules/feature/providers/feature-flag/strategies/common.flag.strategy';
 import { DefaultFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/default.flag.strategy';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants';
 import { CloudSsoFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso.flag.strategy';
 import { Feature } from 'src/modules/feature/model/feature';
-import { SimpleFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/simple.flag.strategy';
+import { WithDataFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/with-data.flag.strategy';
 
 @Injectable()
 export class FeatureFlagProvider {
@@ -23,7 +23,7 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
-    this.strategies.set(KnownFeatures.InsightsRecommendations, new InsightsRecommendationsFlagStrategy(
+    this.strategies.set(KnownFeatures.InsightsRecommendations, new CommonFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));
@@ -31,7 +31,11 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
-    this.strategies.set(KnownFeatures.RedisModuleFilter, new SimpleFlagStrategy(
+    this.strategies.set(KnownFeatures.CloudSsoRecommendedSettings, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.RedisModuleFilter, new WithDataFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

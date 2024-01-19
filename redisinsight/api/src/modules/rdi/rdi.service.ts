@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
 import { Rdi, RdiType } from 'src/modules/rdi/models';
 import { RdiRepository } from 'src/modules/rdi/repository/rdi.repository';
 import { classToClass } from 'src/utils';
+import { RdiAnalytics } from './rdi.analytics';
 
 @Injectable()
 export class RdiService {
+  private logger = new Logger('RdiService');
+
   constructor(
     private readonly repository: RdiRepository,
+    private readonly analytics: RdiAnalytics,
   ) {}
 
   async list(): Promise<Rdi[]> {
@@ -39,6 +43,13 @@ export class RdiService {
   }
 
   async delete(ids: string[]): Promise<void> {
-    return await this.repository.delete(ids);
+    try {
+      await this.repository.delete(ids);
+      this.analytics.sendRdiInstanceDeleted(ids.length);
+    } catch (error) {
+      this.logger.error(`Failed to delete instance(s): ${ids}`, error.message);
+      this.analytics.sendRdiInstanceDeleted(ids.length, error.message);
+      throw new InternalServerErrorException();
+    }
   }
 }

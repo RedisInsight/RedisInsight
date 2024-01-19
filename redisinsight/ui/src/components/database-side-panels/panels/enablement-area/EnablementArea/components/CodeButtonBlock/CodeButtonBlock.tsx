@@ -1,4 +1,4 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -136,20 +136,25 @@ const CodeButtonBlock = (props: Props) => {
               scrollLock: true
             }}
             button={(
-              <EuiButton
-                onClick={handleRunClicked}
-                iconType={isRunned ? 'check' : 'play'}
-                iconSide="right"
-                color="success"
-                size="s"
-                disabled={isLoading || isRunned}
-                isLoading={isLoading}
-                className={cx(styles.actionBtn, styles.runBtn)}
-                {...rest}
-                data-testid={`run-btn-${label}`}
+              <EuiToolTip
+                content={isPopoverOpen ? undefined : 'Open Workbench in the left menu to see the command results.'}
+                data-testid="run-btn-open-workbench-tooltip"
               >
-                Run
-              </EuiButton>
+                <EuiButton
+                  onClick={handleRunClicked}
+                  iconType={isRunned ? 'check' : 'play'}
+                  iconSide="right"
+                  color="success"
+                  size="s"
+                  disabled={isLoading || isRunned}
+                  isLoading={isLoading}
+                  className={cx(styles.actionBtn, styles.runBtn)}
+                  {...rest}
+                  data-testid={`run-btn-${label}`}
+                >
+                  Run
+                </EuiButton>
+              </EuiToolTip>
             )}
           >
             {!!notLoadedModule && (

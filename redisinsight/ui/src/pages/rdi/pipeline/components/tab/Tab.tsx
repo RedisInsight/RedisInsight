@@ -1,8 +1,8 @@
 import React from 'react'
 import cx from 'classnames'
+import { EuiIcon, EuiLoadingSpinner, EuiText } from '@elastic/eui'
 
 import styles from './styles.module.scss'
-import {EuiIcon, EuiText} from "@elastic/eui";
 
 export interface IProps {
   title: string | JSX.Element
@@ -11,6 +11,7 @@ export interface IProps {
   fileName?: string
   children?: React.ReactElement | string
   testID?: string
+  isLoading?: boolean
 }
 
 const Tab = (props: IProps) => {
@@ -21,6 +22,7 @@ const Tab = (props: IProps) => {
     fileName,
     testID,
     className,
+    isLoading = false,
   } = props
 
   return (
@@ -35,6 +37,7 @@ const Tab = (props: IProps) => {
         >
           <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
           <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
+          {isLoading && <EuiLoadingSpinner data-testid="rdi-nav-config-loader" className={styles.loader} />}
         </div>
       ) : children}
     </div>

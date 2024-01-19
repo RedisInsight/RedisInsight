@@ -85,7 +85,7 @@ const UploadTutorialForm = (props: Props) => {
           </div>
           <div className={styles.hr}>OR</div>
           <EuiFieldText
-            placeholder="Tutorial Link"
+            placeholder="GitHub link to tutorials"
             value={formik.values.link}
             onChange={(e) => formik.setFieldValue('link', e.target.value)}
             className={styles.input}

@@ -97,6 +97,9 @@ beforeEach(() => {
 })
 
 describe('DatabaseSidePanels', () => {
+  beforeEach(() => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 'instanceId' })
+  })
   it('should render', () => {
     expect(render(<DatabaseSidePanels />)).toBeTruthy()
   })

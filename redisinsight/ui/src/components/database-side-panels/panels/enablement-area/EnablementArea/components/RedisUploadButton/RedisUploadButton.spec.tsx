@@ -7,13 +7,6 @@ import { customTutorialsBulkUploadSelector, uploadDataBulk } from 'uiSrc/slices/
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RedisUploadButton, { Props } from './RedisUploadButton'
 
-jest.mock('uiSrc/slices/instances/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances/instances'),
-  connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: 'databaseId',
-  }),
-}))
-
 jest.mock('uiSrc/slices/workbench/wb-custom-tutorials', () => ({
   ...jest.requireActual('uiSrc/slices/workbench/wb-custom-tutorials'),
   customTutorialsBulkUploadSelector: jest.fn().mockReturnValue({
@@ -39,6 +32,10 @@ const props: Props = {
 }
 
 describe('RedisUploadButton', () => {
+  beforeEach(() => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 'instanceId' })
+  })
+
   it('should render', () => {
     expect(render(<RedisUploadButton {...props} />)).toBeTruthy()
   })
@@ -85,7 +82,7 @@ describe('RedisUploadButton', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
       eventData: {
-        databaseId: 'databaseId'
+        databaseId: 'instanceId'
       }
     });
 
@@ -96,7 +93,7 @@ describe('RedisUploadButton', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
-        databaseId: 'databaseId'
+        databaseId: 'instanceId'
       }
     });
 

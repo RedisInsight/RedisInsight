@@ -1,0 +1,87 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+.wrapper {
+  background-color: var(--browserTableRowEven);
+  border-radius: 8px;
+  height: 48px;
+  min-height: 48px;
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+
+  &:global(.reduced) {
+    .img, .title {
+      display: none;
+    }
+  }
+
+  .img {
+    width: auto;
+    height: 100%;
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .guides {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    padding: 0 12px;
+    height: 100%;
+  }
+
+  .guideItem {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:focus, &:hover {
+      text-decoration: none;
+    }
+
+    &:nth-child(1) { .guideIcon { color: #FFAF2B; }}
+    &:nth-child(2) { .guideIcon { color: #4FDAE0; }}
+    &:nth-child(3) { .guideIcon { color: #F74B57; }}
+    &:nth-child(4) { .guideIcon { color: #9E7EE8; }}
+    &:nth-child(5) { .guideIcon { color: #5BC69B; }}
+
+    .guideIcon {
+      margin-right: 4px;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .img { display: none;}
+  .title { margin-left: 12px }
+}
+
+@include insights-open {
+  .img { display: none;}
+  .title { margin-left: 12px }
+}
+
+@include insights-open(1240px) {
+  .title { display: none;}
+}
+
+@include insights-open(1110px) {
+  .guideItem:nth-child(5) { display: none;}
+}
+
+@include insights-open(1024px) {
+  .guideItem:nth-child(4) { display: none;}
+}

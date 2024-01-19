@@ -1,5 +1,6 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import reactRouterDom from 'react-router-dom'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { customTutorialsBulkUploadSelector, uploadDataBulk } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
@@ -63,6 +64,15 @@ describe('RedisUploadButton', () => {
 
     const expectedActions = [uploadDataBulk(props.path)]
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should render no database poper', () => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    render(<RedisUploadButton {...props} />)
+
+    fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
+
+    expect(screen.getByTestId('database-not-opened-popover')).toBeInTheDocument()
   })
 
   it('should call proper telemetry events', () => {

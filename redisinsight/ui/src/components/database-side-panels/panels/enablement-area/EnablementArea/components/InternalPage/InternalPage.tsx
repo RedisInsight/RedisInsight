@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux'
 
 import { ExternalLink } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 
 import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/icons/rocket.svg'
@@ -88,7 +88,7 @@ const InternalPage = (props: Props) => {
         path,
         link,
         section: getTutorialSection(manifestPath),
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
       }
     })
   }

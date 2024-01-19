@@ -29,7 +29,7 @@
 
   max-width: 800px;
   margin: 0 auto;
-  padding: 10px 0;
+  padding: 10px 15px;
 }
 
 .controls {
@@ -45,16 +45,18 @@
   margin-bottom: 12px;
 }
 
-.btn {
-  display: flex;
-  align-items: center;
-  position: relative;
-
+.section {
   padding: 15px 40px 15px 15px;
   background-color: var(--euiColorLightestShade);
   border-radius: 8px;
   border: 1px solid var(--separatorColorLight);
   box-shadow: 4px 4px 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  position: relative;
 
   cursor: pointer;
 
@@ -139,4 +141,15 @@
       text-decoration: none;
     }
   }
+}
+
+.explorePanel {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  border-left: 1px solid var(--separatorColorLight);
+}
+
+.capabilityPromotion {
+  min-height: 80px;
+  padding: 15px 0;
 }

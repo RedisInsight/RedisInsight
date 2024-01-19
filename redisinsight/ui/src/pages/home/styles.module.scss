@@ -1,12 +1,71 @@
 @import "@elastic/eui/src/global_styling/index";
+@import "uiSrc/styles/mixins/_global.scss";
+
 .contentActive {
   border: 1px solid var(--euiColorPrimary);
 }
 
-.page {
-  padding: 16px 0 0 !important;
+.pageHeader {
+  min-height: 56px;
+}
 
-  @include euiBreakpoint("m", "l", "xl") {
-    padding: 16px 12px 10px !important;
+.pageWrapper {
+  height: calc(100% - 70px);
+  overflow: hidden;
+}
+
+.page {
+  height: 100%;
+  padding: 0 16px 16px !important;
+
+  :global {
+    .homePage {
+      height: calc(100% - 120px);
+    }
+    .home__resizePanelLeft {
+      flex-grow: 1;
+      height: 100%;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .fullWidth {
+      width: 100% !important;
+      min-width: 100% !important;
+      padding: 0;
+      :global(.euiResizablePanel__content) {
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
+  }
+}
+
+.explorePanel {
+  padding-bottom: 16px;
+}
+
+@include insights-open {
+  .page {
+    :global {
+      .home {
+        &__resizePanelLeft {
+          &.openedRightPanel {
+            display: none;
+          }
+        }
+
+        &__resizableButton {
+          display: none;
+        }
+
+        &__resizePanelRight {
+          padding-left: 0;
+          width: 100% !important;
+        }
+      }
+    }
   }
 }

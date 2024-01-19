@@ -135,6 +135,25 @@ describe('DatabaseSidePanels', () => {
     expect(screen.queryByTestId('recommendations-unread-count')).not.toBeInTheDocument()
   })
 
+  it('should not render recommendations count without instanceId', () => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined });
+    (insightsPanelSelector as jest.Mock).mockReturnValue({
+      isOpen: true,
+      tabSelected: 'tips'
+    });
+
+    (recommendationsSelector as jest.Mock).mockImplementationOnce(() => ({
+      ...mockRecommendationsSelector,
+      data: {
+        recommendations: [],
+        totalUnread: 7,
+      },
+    }))
+
+    render(<DatabaseSidePanels />)
+    expect(screen.queryByTestId('recommendations-unread-count')).not.toBeInTheDocument()
+  })
+
   it('should render recommendations count with totalUnread > 0', () => {
     (insightsPanelSelector as jest.Mock).mockReturnValue({
       isOpen: true,

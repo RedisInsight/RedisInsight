@@ -104,6 +104,7 @@ $breakpoint-l: 1400px;
 }
 
 .container {
+  height: 100%;
   // Database alias column
   tr > th:nth-child(2),
   tr > td:nth-child(2) {

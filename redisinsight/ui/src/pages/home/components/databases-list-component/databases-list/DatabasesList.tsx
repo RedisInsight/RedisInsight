@@ -1,13 +1,13 @@
 import {
   Criteria,
   Direction,
-  EuiBasicTableColumn,
   EuiInMemoryTable,
+  EuiTableFieldDataColumnType,
   EuiTableSelectionType,
   PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { first, last } from 'lodash'
+import { find } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
@@ -23,27 +23,27 @@ import styles from '../styles.module.scss'
 
 export interface Props {
   width: number
-  dialogIsOpen: boolean
   editedInstance: Nullable<Instance>
-  columnVariations: EuiBasicTableColumn<Instance>[][]
+  columns: EuiTableFieldDataColumnType<Instance>[]
+  columnsToHide?: string[]
   onDelete: (ids: Instance[]) => void
   onExport: (ids: Instance[], withSecrets: boolean) => void
   onWheel: () => void
 }
 
-const columnsHideWidth = 950
+const MIN_COLUMN_LENGTH = 180
 const loadingMsg = 'loading...'
 
 function DatabasesList({
   width,
-  dialogIsOpen,
-  columnVariations,
+  columns: columnsProp,
+  columnsToHide = [],
   onDelete,
   onExport,
   onWheel,
   editedInstance,
 }: Props) {
-  const [columns, setColumns] = useState(first(columnVariations))
+  const [columns, setColumns] = useState<EuiTableFieldDataColumnType<Instance>[]>(columnsProp)
   const [selection, setSelection] = useState<Instance[]>([])
 
   const { loading, data: instances } = useSelector(instancesSelector)
@@ -54,25 +54,9 @@ function DatabasesList({
   useEffect(() => {
     if (containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
-
-      if (dialogIsOpen) {
-        setColumns(columnVariations[1])
-        return
-      }
-
-      if (
-        offsetWidth < columnsHideWidth
-        && columns?.length !== last(columnVariations)?.length
-      ) {
-        setColumns(last(columnVariations))
-        return
-      }
-
-      if (
-        offsetWidth > columnsHideWidth
-        && columns?.length !== first(columnVariations)?.length
-      ) {
-        setColumns(first(columnVariations))
+      const columnsResults = adjustColumns(columns, offsetWidth)
+      if (columnsResults?.length !== columns?.length) {
+        setColumns(columnsResults)
       }
     }
   }, [width])
@@ -84,6 +68,46 @@ function DatabasesList({
 
   const selectionValue: EuiTableSelectionType<Instance> = {
     onSelectionChange: (selected: Instance[]) => setSelection(selected),
+  }
+
+  const getColumnWidth = (width?: string) => (width && /^[0-9]+px/.test(width) ? parseInt(width, 10) : MIN_COLUMN_LENGTH)
+
+  const adjustColumns = (
+    cols: EuiTableFieldDataColumnType<Instance>[],
+    offsetWidth: number,
+    numberOfChangedColumns: number = 0
+  ): EuiTableFieldDataColumnType<Instance>[] => {
+    const sum = cols?.reduce((prev, next) => {
+      const columnWidth = getColumnWidth(next.width)
+      return prev + columnWidth
+    }, 0)
+
+    // remove columns
+    if (sum > offsetWidth && columnsProp.length < columnsToHide.length + cols.length) {
+      return adjustColumns(
+        cols.filter(({ field }) => !columnsToHide.slice(0, numberOfChangedColumns + 1).includes(field)),
+        offsetWidth,
+        numberOfChangedColumns + 1
+      )
+    }
+
+    // recover columns
+    if (columnsProp.length > cols.length) {
+      const lastRemovedColumnName = columnsToHide[columnsProp.length - cols.length - 1]
+      if (lastRemovedColumnName) {
+        const lastRemovedColumn = find(columnsProp, ({ field }) => field === lastRemovedColumnName)
+        const lastRemovedColumnWidth = getColumnWidth(lastRemovedColumn?.width)
+
+        if (lastRemovedColumnWidth + sum < offsetWidth) {
+          return adjustColumns(
+            columnsProp.filter(({ field }) => find([...cols, lastRemovedColumn], (item) => item?.field === field)),
+            offsetWidth,
+          )
+        }
+      }
+    }
+
+    return cols
   }
 
   const handleResetSelection = () => {
@@ -128,6 +152,7 @@ function DatabasesList({
   return (
     <div className="databaseList" ref={containerTableRef}>
       <EuiInMemoryTable
+        responsive={false}
         ref={tableRef}
         items={instances.filter(({ visible = true }) => visible)}
         itemId="id"

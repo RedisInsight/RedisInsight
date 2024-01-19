@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import cx from 'classnames'
 import { EuiText, EuiButton } from '@elastic/eui'
 
@@ -18,12 +18,13 @@ import PopoverRunAnalyze from '../popover-run-analyze'
 import styles from './styles.module.scss'
 
 const NoRecommendationsScreen = () => {
-  const { id: instanceId, provider, connectionType } = useSelector(connectedInstanceSelector)
+  const { provider, connectionType } = useSelector(connectedInstanceSelector)
   const { data: { recommendations } } = useSelector(recommendationsSelector)
   const { treeViewDelimiter: delimiter = '' } = useSelector(appContextDbConfig)
 
   const [isShowInfo, setIsShowInfo] = useState(false)
 
+  const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
   const history = useHistory()
 
@@ -51,30 +52,31 @@ const NoRecommendationsScreen = () => {
         including how to improve performance and optimize memory usage.
       </EuiText>
       <WelcomeIcon className={styles.icon} />
-      <EuiText className={styles.text}>
-        Eager for more tips? Run Database Analysis to get started.
+      <EuiText className={styles.text} data-testid="no-recommendations-analyse-text">
+        {instanceId ? 'Eager for more tips? Run Database Analysis to get started.' : 'Eager for tips? Connect to a database to get started.'}
       </EuiText>
-
-      <PopoverRunAnalyze
-        isShowPopover={isShowInfo}
-        setIsShowPopover={setIsShowInfo}
-        onApproveClick={handleClickDbAnalysisLink}
-        popoverContent={
+      {instanceId && (
+        <PopoverRunAnalyze
+          isShowPopover={isShowInfo}
+          setIsShowPopover={setIsShowInfo}
+          onApproveClick={handleClickDbAnalysisLink}
+          popoverContent={
           connectionType === ConnectionType.Cluster
             ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
             : ANALYZE_TOOLTIP_MESSAGE
         }
-      >
-        <EuiButton
-          fill
-          color="secondary"
-          size="s"
-          onClick={() => setIsShowInfo(true)}
-          data-testid="insights-db-analysis-link"
         >
-          Analyze Database
-        </EuiButton>
-      </PopoverRunAnalyze>
+          <EuiButton
+            fill
+            color="secondary"
+            size="s"
+            onClick={() => setIsShowInfo(true)}
+            data-testid="insights-db-analysis-link"
+          >
+            Analyze Database
+          </EuiButton>
+        </PopoverRunAnalyze>
+      )}
     </div>
   )
 }

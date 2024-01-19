@@ -25,6 +25,10 @@
   height: 188px;
 }
 
+.popover {
+  min-width: 378px !important;
+}
+
 .panelPopover {
   border-color: var(--euiColorPrimary) !important;
   :global(.euiPopover__panelArrow--bottom:before) {

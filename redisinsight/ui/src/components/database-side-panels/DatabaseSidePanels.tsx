@@ -7,7 +7,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, setExplorePanelIsPageOpen, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceCDSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { FullScreen, OnboardingTour } from 'uiSrc/components'
@@ -92,7 +92,7 @@ const DatabaseSidePanels = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
       eventData: {
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         provider,
         page,
         tab: tabSelected
@@ -108,7 +108,7 @@ const DatabaseSidePanels = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_PANEL_TAB_CHANGED,
       eventData: {
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         prevTab: tabSelected,
         currentTab: name,
       },
@@ -120,7 +120,7 @@ const DatabaseSidePanels = (props: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.INSIGHTS_PANEL_FULL_SCREEN_CLICKED,
         eventData: {
-          databaseId: instanceId,
+          databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
           state: value ? 'exit' : 'open'
         },
       })
@@ -154,7 +154,7 @@ const DatabaseSidePanels = (props: Props) => {
       >
         <>
           <span className={styles.tabName}>Tips</span>
-          {!!totalUnread && (
+          {(!!totalUnread && instanceId) && (
             <div
               className={styles.tabTotalUnread}
               data-testid="recommendations-unread-count"

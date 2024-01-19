@@ -10,8 +10,7 @@ import { BooleanParams, CodeButtonParams, MonacoLanguage } from 'uiSrc/constants
 import { CodeBlock } from 'uiSrc/components'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import ModuleNotLoadedMinimalized
-  from 'uiSrc/components/messages/module-not-loaded-minimalized/ModuleNotLoadedMinimalized'
+import { ModuleNotLoadedMinimalized, DatabaseNotOpened } from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -82,12 +81,7 @@ const CodeButtonBlock = (props: Props) => {
   }
 
   const handleRunClicked = () => {
-    if (notLoadedModule) {
-      setIsPopoverOpen(true)
-      return
-    }
-
-    if (!isNotShowConfirmation && isButtonHasConfirmation) {
+    if (!instanceId || notLoadedModule || (!isNotShowConfirmation && isButtonHasConfirmation)) {
       setIsPopoverOpen(true)
       return
     }
@@ -102,6 +96,24 @@ const CodeButtonBlock = (props: Props) => {
 
   const handleClosePopover = () => {
     setIsPopoverOpen(false)
+  }
+
+  const getPopoverMessage = (): React.ReactNode => {
+    if (!instanceId) {
+      return (<DatabaseNotOpened />)
+    }
+
+    if (notLoadedModule) {
+      return (
+        <ModuleNotLoadedMinimalized
+          moduleName={notLoadedModule}
+          source={OAuthSocialSource.Tutorials}
+          onClose={() => setIsPopoverOpen(false)}
+        />
+      )
+    }
+
+    return (<RunConfirmationPopover onApply={handleApplyRun} />)
   }
 
   return (
@@ -152,14 +164,7 @@ const CodeButtonBlock = (props: Props) => {
               </EuiButton>
             )}
           >
-            {!!notLoadedModule && (
-              <ModuleNotLoadedMinimalized
-                moduleName={notLoadedModule}
-                source={OAuthSocialSource.Tutorials}
-                onClose={() => setIsPopoverOpen(false)}
-              />
-            )}
-            {!notLoadedModule && <RunConfirmationPopover onApply={handleApplyRun} />}
+            {getPopoverMessage()}
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>

@@ -28,6 +28,11 @@ describe('HomeHeader', () => {
     expect(render(<HomeHeader {...instance(mockedProps)} />)).toBeTruthy()
   })
 
+  it('should render capability promotion component', () => {
+    render(<HomeHeader {...instance(mockedProps)} />)
+    expect(screen.getByTestId('capability-promotion')).toBeInTheDocument()
+  })
+
   it('should open import dbs dialog', () => {
     render(<HomeHeader {...instance(mockedProps)} />)
 

@@ -20,6 +20,13 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({}),
 }))
 
+jest.mock('uiSrc/slices/panels/insights', () => ({
+  ...jest.requireActual('uiSrc/slices/panels/insights'),
+  insightsPanelSelector: jest.fn().mockReturnValue({
+    isOpen: true
+  }),
+}))
+
 const mockedProps = mock<Props>()
 
 let store: typeof mockedStore
@@ -92,5 +99,17 @@ describe('WelcomeComponent', () => {
     fireEvent.click(screen.getByTestId('import-cloud-db-btn'))
 
     expect(store.getActions()).toEqual([setSocialDialogState(OAuthSocialSource.WelcomeScreen)])
+  })
+
+  it('should render capability promotion component', () => {
+    render(<WelcomeComponent {...instance(mockedProps)} />)
+
+    expect(screen.queryByTestId('capability-promotion')).toBeInTheDocument()
+  })
+
+  it('should render insights panel', () => {
+    render(<WelcomeComponent {...instance(mockedProps)} />)
+
+    expect(screen.queryByTestId('insights-panel')).toBeInTheDocument()
   })
 })

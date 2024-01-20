@@ -998,8 +998,8 @@ jobs:
             docker login -u $DOCKER_USER -p $DOCKER_PASS
 
             ./.circleci/build/release-docker.sh \
-            -d redisinsight
-            -r $DOCKER_REPO
+            -d redisinsight \
+            -r $DOCKER_REPO \
             -v $appVersion
 
   publish-prod-aws:

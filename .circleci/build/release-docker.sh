@@ -7,7 +7,7 @@ HELP="Args:
 -r - Target repository (Ex: -r redis/redisinsight)
 "
 
-while getopts "c:d:r:t:h:" opt; do
+while getopts "v:d:r:h:" opt; do
   case $opt in
     v) VERSION="$OPTARG";;
     d) DEV_REPO="$OPTARG";;

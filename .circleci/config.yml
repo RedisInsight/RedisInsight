@@ -980,6 +980,24 @@ jobs:
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
 
+  release-docker:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+            at: .
+      - run:
+          name: Release docker images
+          command: |
+            appVersion=$(jq -r '.version' redisinsight/package.json)
+
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+            ./.circleci/build/release-docker.sh \
+            -d redisinsight
+            -r $DOCKER_REPO
+            -v $appVersion
+
   publish-prod-aws:
     executor: linux-executor
     steps:
@@ -1610,6 +1628,11 @@ workflows:
       # Publish release
       - publish-prod-aws:
           name: Publish AWS S3
+          requires:
+            - Approve Publish Release (prod)
+          <<: *prodFilter # double check for "latest"
+      - release-docker:
+          name: Release docker images
           requires:
             - Approve Publish Release (prod)
           <<: *prodFilter # double check for "latest"

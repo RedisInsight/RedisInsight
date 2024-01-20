@@ -956,7 +956,11 @@ jobs:
           at: .
       - run:
           command: |
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/manual-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*" --include "RedisInsight*"
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/manual-builds/${CIRCLE_BUILD_NUM} --recursive \
+            --exclude "*" \
+            --include "RedisInsight*" \
+            --include "web" \
+            --include "docker"
 
   release-aws-private:
     executor: linux-executor
@@ -1397,6 +1401,10 @@ workflows:
             - Build docker images (stage)
       - release-aws-manual:
           name: Release AWS stage
+          requires:
+            - Build docker images (stage)
+      - release-docker:
+          name: Release docker images
           requires:
             - Build docker images (stage)
 

@@ -58,7 +58,6 @@ const RefreshPipelinePopover = () => {
           iconType="refresh"
           disabled={loading}
           onClick={handleRefreshWarning}
-          className={styles.trigger}
           aria-labelledby="Refresh pipeline button"
           data-testid="refresh-pipeline-btn"
         />

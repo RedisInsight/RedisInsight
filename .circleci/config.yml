@@ -1403,10 +1403,6 @@ workflows:
           name: Release AWS stage
           requires:
             - Build docker images (stage)
-      - release-docker:
-          name: Release docker images
-          requires:
-            - Build docker images (stage)
 
   # build electron app (dev) from "build" branches
   build:

@@ -6,13 +6,26 @@ import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/tes
 import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { capabilities } from './constants'
+import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
+import { findTutorialPath } from 'uiSrc/utils'
 
 import CapabilityPromotion from './CapabilityPromotion'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/content/guide-links', () => ({
+  ...jest.requireActual('uiSrc/slices/content/guide-links'),
+  guideLinksSelector: jest.fn().mockReturnValue({
+    data: MOCK_EXPLORE_GUIDES
+  })
+}))
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  findTutorialPath: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -30,16 +43,17 @@ describe('CapabilityPromotion', () => {
   it('should render capabilities', () => {
     render(<CapabilityPromotion />)
 
-    capabilities.forEach(({ id }) => {
-      expect(screen.getByTestId(`capability-promotion-${id}`)).toBeInTheDocument()
+    MOCK_EXPLORE_GUIDES.forEach(({ tutorialId }) => {
+      expect(screen.getByTestId(`capability-promotion-${tutorialId}`)).toBeInTheDocument()
     })
   })
 
   it('should call proper actions and history push on click capability', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => '0/1/0')
 
-    const id = capabilities[0]?.id
+    const id = MOCK_EXPLORE_GUIDES[0]?.tutorialId
     render(<CapabilityPromotion />)
 
     fireEvent.click(screen.getByTestId(`capability-promotion-${id}`))
@@ -50,8 +64,8 @@ describe('CapabilityPromotion', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
-    expect(pushMock).toBeCalledWith({
-      search: `guidePath=${id}`
+    expect(pushMock).toHaveBeenCalledWith({
+      search: 'path=tutorials/0/1/0'
     })
   })
 
@@ -59,7 +73,7 @@ describe('CapabilityPromotion', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    const id = capabilities[0]?.id
+    const id = MOCK_EXPLORE_GUIDES[0]?.tutorialId
     render(<CapabilityPromotion />)
 
     fireEvent.click(screen.getByTestId(`capability-promotion-${id}`))

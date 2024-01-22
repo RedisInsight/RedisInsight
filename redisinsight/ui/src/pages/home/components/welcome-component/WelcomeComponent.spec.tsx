@@ -8,6 +8,7 @@ import { AddDbType } from 'uiSrc/pages/home/constants'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import WelcomeComponent, { Props } from './WelcomeComponent'
 
 jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
@@ -25,6 +26,13 @@ jest.mock('uiSrc/slices/panels/insights', () => ({
   insightsPanelSelector: jest.fn().mockReturnValue({
     isOpen: true
   }),
+}))
+
+jest.mock('uiSrc/slices/content/guide-links', () => ({
+  ...jest.requireActual('uiSrc/slices/content/guide-links'),
+  guideLinksSelector: jest.fn().mockReturnValue({
+    data: MOCK_EXPLORE_GUIDES
+  })
 }))
 
 const mockedProps = mock<Props>()

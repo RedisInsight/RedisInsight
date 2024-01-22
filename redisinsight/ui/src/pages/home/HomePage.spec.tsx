@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
 import { localStorageService } from 'uiSrc/services'
+import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import HomePage from './HomePage'
 
 jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
@@ -15,6 +16,13 @@ jest.mock('uiSrc/services', () => ({
     set: jest.fn(),
     get: jest.fn(),
   },
+}))
+
+jest.mock('uiSrc/slices/content/guide-links', () => ({
+  ...jest.requireActual('uiSrc/slices/content/guide-links'),
+  guideLinksSelector: jest.fn().mockReturnValue({
+    data: MOCK_EXPLORE_GUIDES
+  })
 }))
 
 jest.mock('uiSrc/slices/panels/insights', () => ({

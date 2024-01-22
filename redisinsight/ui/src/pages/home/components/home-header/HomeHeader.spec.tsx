@@ -3,6 +3,7 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import HomeHeader, { Props } from './HomeHeader'
 
 const mockedProps = mock<Props>()
@@ -17,6 +18,13 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => {
     }),
   }
 })
+
+jest.mock('uiSrc/slices/content/guide-links', () => ({
+  ...jest.requireActual('uiSrc/slices/content/guide-links'),
+  guideLinksSelector: jest.fn().mockReturnValue({
+    data: MOCK_EXPLORE_GUIDES
+  })
+}))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),

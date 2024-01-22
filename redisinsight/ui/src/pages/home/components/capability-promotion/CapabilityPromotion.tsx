@@ -2,13 +2,15 @@ import React from 'react'
 
 import { EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import ClickLearnRocketIcon from 'uiSrc/assets/img/click-learn-rocket.svg'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { capabilities } from './constants'
+import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
+import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
+import { findTutorialPath } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -18,12 +20,14 @@ export interface Props {
 
 const CapabilityPromotion = (props: Props) => {
   const { mode = 'wide', wrapperClassName } = props
+  const { data } = useSelector(guideLinksSelector)
 
   const dispatch = useDispatch()
   const history = useHistory()
 
   const onClickTutorial = (id: string) => {
-    dispatch(openTutorialByPath(id, history))
+    const tutorialPath = findTutorialPath({ id: id ?? '' })
+    dispatch(openTutorialByPath(tutorialPath ?? '', history))
 
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
@@ -33,6 +37,10 @@ const CapabilityPromotion = (props: Props) => {
         tutorialId: id
       },
     })
+  }
+
+  if (!data?.length) {
+    return null
   }
 
   return (
@@ -46,17 +54,23 @@ const CapabilityPromotion = (props: Props) => {
         <span>Click & Learn</span>
       </EuiTitle>
       <div className={styles.guides}>
-        {capabilities.map(({ title, id, icon }) => (
+        {data.map(({ title, tutorialId, icon }) => (
           // eslint-disable-next-line jsx-a11y/click-events-have-key-events
           <div
-            key={id}
+            key={tutorialId}
             tabIndex={0}
             role="button"
-            onClick={() => onClickTutorial(id)}
+            onClick={() => onClickTutorial(tutorialId)}
             className={styles.guideItem}
-            data-testid={`capability-promotion-${id}`}
+            data-testid={`capability-promotion-${tutorialId}`}
           >
-            <EuiIcon type={icon} className={styles.guideIcon} />
+            {icon in GUIDE_ICONS && (
+              <EuiIcon
+                className={styles.guideIcon}
+                type={GUIDE_ICONS[icon]}
+                data-testid={`guide-icon-${icon}`}
+              />
+            )}
             <EuiText>{title}</EuiText>
           </div>
         ))}

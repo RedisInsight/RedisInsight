@@ -81,3 +81,9 @@ export enum ExploreTabs {
     Tips = 'Tips',
 }
 
+export enum Compatibility {
+    SearchAndQuery  = 'search',
+    Json = 'json',
+    TimeSeries = 'time-series'
+}
+

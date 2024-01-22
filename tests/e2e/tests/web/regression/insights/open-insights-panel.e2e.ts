@@ -1,5 +1,5 @@
 import { BrowserPage, MyRedisDatabasePage, WelcomePage, WorkbenchPage } from '../../../../pageObjects';
-import { ExploreTabs, rte } from '../../../../helpers/constants';
+import { Compatibility, ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import {
     commonUrl,
@@ -70,8 +70,8 @@ test
         await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('time series', 'popover is not displayed');
         await t.expect(tab.preselectArea.textContent).contains('REDIS FOR TIME SERIES', 'the tutorial is incorrect');
     });
-// the test is skipped until https://redislabs.atlassian.net/browse/RI-5345 is finished
-test.skip
+
+test
     .before(async t => {
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
@@ -83,7 +83,7 @@ test.skip
         const myRedisTutorial = 'Time series';
 
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
-        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(myRedisTutorial);
+        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.TimeSeries);
         await t.expect(await myRedisDatabasePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
         let tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t.expect(tab.preselectArea.textContent).contains(myRedisTutorial, 'the tutorial is incorrect');
@@ -93,7 +93,7 @@ test.skip
         await myRedisDatabasePage.InsightsPanel.togglePanel(false);
         await myRedisDatabasePage.deleteAllDatabases();
 
-        await welcomePage.CompatibilityPromotion.clickOnLinkByName(welcomeTutorial);
+        await welcomePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.Json);
         await t.expect(await welcomePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
         tab = await welcomePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t.expect(tab.preselectArea.textContent).contains(welcomeTutorial, 'the tutorial is incorrect');

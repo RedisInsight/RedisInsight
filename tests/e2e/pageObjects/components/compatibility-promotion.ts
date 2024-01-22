@@ -1,14 +1,14 @@
 import { Selector, t } from 'testcafe';
+import { Compatibility } from '../../helpers/constants';
 
 export class CompatibilityPromotion {
-    compatibilityLinks = Selector('[data-testid*=capability-promotion-]').find('div');
-
+    linkMask = '[data-testid="guide-icon-$name"]';
     /**
      * Click on link
      * @param name Name of the compatibility
      */
-    async clickOnLinkByName(name: string): Promise<void> {
-        const link = this.compatibilityLinks.withText(name);
+    async clickOnLinkByName(name: Compatibility): Promise<void> {
+        const link = Selector(this.linkMask.replace(/\$name/g, name));
         await t.click(link);
     }
 }

@@ -12,7 +12,6 @@ import {
   nock,
   _,
 } from '../deps';
-import * as fs from 'fs-extra'
 const { server, request, localDb } = deps;
 
 // create endpoint
@@ -117,7 +116,7 @@ describe('POST /custom-tutorials', () => {
     await fsExtra.remove(customTutorialsFolder);
     await (await localDb.getRepository(localDb.repositories.CUSTOM_TUTORIAL)).clear();
 
-    const zip = fs.readFileSync(path.join(staticsFolder, 'test.zip'))
+    const zip = await fsExtra.readFile(path.join(staticsFolder, 'test.zip'))
     nockScope.get('/test.zip').reply(200, zip);
   });
 

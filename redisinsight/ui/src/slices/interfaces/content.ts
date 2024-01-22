@@ -34,7 +34,7 @@ export interface StateContentGuideLinks {
 
 export interface ContentGuideLinks {
   title: string
-  tutorial: string
+  tutorialId: string
   icon: string
   description?: string
 }

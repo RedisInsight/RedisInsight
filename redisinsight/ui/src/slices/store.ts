@@ -30,7 +30,6 @@ import appFeaturesReducer from './app/features'
 import appUrlHandlingReducer from './app/url-handling'
 import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
-import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
 import workbenchCustomTutorialsReducer from './workbench/wb-custom-tutorials'
 import contentCreateRedisButtonReducer from './content/create-redis-buttons'
@@ -89,7 +88,6 @@ export const rootReducer = combineReducers({
   }),
   workbench: combineReducers({
     results: workbenchResultsReducer,
-    guides: workbenchGuidesReducer,
     tutorials: workbenchTutorialsReducer,
     customTutorials: workbenchCustomTutorialsReducer,
   }),

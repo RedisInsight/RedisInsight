@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom'
 import { Maybe } from 'uiSrc/utils'
 import { InsightsPanelState, InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { sessionStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, EAManifestFirstKey } from 'uiSrc/constants'
 import { AppDispatch, RootState } from '../store'
 
 const getTabSelected = (tab?: string): InsightsPanelTabs => {
@@ -85,14 +85,16 @@ export const {
   setExplorePanelManifest,
 } = insightsPanelSlice.actions
 
-export function openTutorialByPath(guidePath: string, history: ReturnType<typeof useHistory>) {
+export function openTutorialByPath(path: string, history: ReturnType<typeof useHistory>) {
   return async (dispatch: AppDispatch) => {
     dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
     dispatch(toggleInsightsPanel(true))
 
-    history.push({
-      search: `guidePath=${guidePath}`
-    })
+    if (path) {
+      history.push({
+        search: `path=${EAManifestFirstKey.TUTORIALS}/${path}`
+      })
+    }
   }
 }
 

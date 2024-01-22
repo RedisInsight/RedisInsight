@@ -25,7 +25,6 @@ import styles from './styles.module.scss'
 const padding = parseInt(styles.paddingHorizontal)
 
 export interface Props {
-  guides: IEnablementAreaItem[]
   tutorials: IEnablementAreaItem[]
   customTutorials: IEnablementAreaItem[]
   isInternalPageVisible: boolean
@@ -40,7 +39,7 @@ const PATHS = {
 }
 
 const Navigation = (props: Props) => {
-  const { guides, tutorials, customTutorials, isInternalPageVisible } = props
+  const { tutorials, customTutorials, isInternalPageVisible } = props
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
 
@@ -171,7 +170,6 @@ const Navigation = (props: Props) => {
       flush
       className={cx(styles.innerContainer)}
     >
-      {guides && renderTreeView(getManifestItems(guides), PATHS.guides)}
       {tutorials && renderTreeView(getManifestItems(tutorials), PATHS.tutorials)}
       {customTutorials && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
     </EuiListGroup>

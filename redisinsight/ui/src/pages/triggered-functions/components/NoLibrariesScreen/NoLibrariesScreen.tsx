@@ -20,7 +20,7 @@ import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
-import { getDbWithModuleLoaded } from 'uiSrc/utils'
+import { findTutorialPath, getDbWithModuleLoaded } from 'uiSrc/utils'
 import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import styles from './styles.module.scss'
 
@@ -30,7 +30,7 @@ export interface IProps {
   onAddLibrary?: () => void
 }
 
-const mdPath = '/quick-guides/triggers-and-functions/introduction.md'
+const tutorialId = 'tf-intro'
 
 const ListItem = ({ item }: { item: string }) => (
   <li className={styles.listItem}>
@@ -54,7 +54,8 @@ const NoLibrariesScreen = (props: IProps) => {
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, RedisDefaultModules.RedisGears)
 
   const goToTutorial = () => {
-    dispatch(openTutorialByPath(mdPath, history))
+    const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
+    dispatch(openTutorialByPath(tutorialPath ?? '', history))
   }
 
   return (

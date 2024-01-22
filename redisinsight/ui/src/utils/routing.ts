@@ -28,7 +28,7 @@ export const getRedirectionPage = (pageInput: string, databaseId?: string): Null
     const pageUrl = new URL(page, window.location.origin)
     const { pathname, searchParams } = pageUrl
 
-    if (searchParams.has('guidePath')) {
+    if (searchParams.has('guidePath') || searchParams.has('tutorialId')) {
       page += '&insights=open'
     }
 

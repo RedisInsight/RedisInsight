@@ -10,6 +10,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { findTutorialPath } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
@@ -22,7 +23,7 @@ const ExploreGuides = () => {
   const history = useHistory()
   const dispatch = useDispatch()
 
-  const handleLinkClick = (tutorial: string, title: string) => {
+  const handleLinkClick = (tutorialId: string, title: string) => {
     sendEventTelemetry({
       event: TelemetryEvent.BROWSER_TUTORIAL_CLICKED,
       eventData: {
@@ -33,7 +34,8 @@ const ExploreGuides = () => {
       }
     })
 
-    dispatch(openTutorialByPath(tutorial, history))
+    const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
+    dispatch(openTutorialByPath(tutorialPath ?? '', history))
   }
 
   return (
@@ -45,13 +47,13 @@ const ExploreGuides = () => {
       <EuiSpacer size="xl" />
       {!!data.length && (
         <div className={styles.guides}>
-          {data.map(({ title, tutorial, icon }) => (
+          {data.map(({ title, tutorialId, icon }) => (
             <div
               key={title}
               role="button"
               tabIndex={0}
               onKeyDown={() => {}}
-              onClick={() => handleLinkClick(tutorial, title)}
+              onClick={() => handleLinkClick(tutorialId, title)}
               className={styles.btn}
               data-testid={`guide-button-${title}`}
             >

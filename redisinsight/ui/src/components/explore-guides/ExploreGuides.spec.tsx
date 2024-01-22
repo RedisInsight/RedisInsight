@@ -3,10 +3,10 @@ import reactRouterDom from 'react-router-dom'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
-import { Pages } from 'uiSrc/constants'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { findTutorialPath } from 'uiSrc/utils'
 
 import ExploreGuides from './ExploreGuides'
 
@@ -29,6 +29,11 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  findTutorialPath: jest.fn(),
+}))
+
 describe('ExploreGuides', () => {
   it('should render', () => {
     expect(render(<ExploreGuides />)).toBeTruthy()
@@ -45,7 +50,8 @@ describe('ExploreGuides', () => {
 
   it('should call proper history push after click on guide', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<ExploreGuides />)
 
@@ -53,20 +59,21 @@ describe('ExploreGuides', () => {
 
     expect(pushMock)
       .toHaveBeenCalledWith({
-        search: 'guidePath=/quick-guides/document/introduction.md'
+        search: 'path=tutorials/path'
       })
   })
 
   it('should call proper history push after click on guide with tutorial', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<ExploreGuides />)
 
     fireEvent.click(screen.getByTestId('guide-button-JSON'))
 
     expect(pushMock).toHaveBeenCalledWith({
-      search: 'guidePath=/quick-guides/document/working-with-json.md'
+      search: 'path=tutorials/path'
     })
   })
 

@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
+import { useFormikContext } from 'formik'
 import cx from 'classnames'
 
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { IPipeline } from 'uiSrc/slices/interfaces'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 
 const Config = () => {
-  const { loading, data } = useSelector(rdiPipelineSelector)
+  const { loading } = useSelector(rdiPipelineSelector)
 
-  const [value, setValue] = useState<string>(data?.config ?? '')
-
-  useEffect(() => {
-    setValue(data?.config ?? '')
-  }, [data])
+  const { values, setFieldValue } = useFormikContext<IPipeline>()
 
   useEffect(() => {
     sendPageViewTelemetry({
@@ -45,8 +43,8 @@ const Config = () => {
         </div>
       ) : (
         <MonacoYaml
-          value={value}
-          onChange={setValue}
+          value={values?.config ?? ''}
+          onChange={(value) => setFieldValue('config', value)}
           disabled={loading}
           wrapperClassName="rdi__editorWrapper"
           data-testid="rdi-config"

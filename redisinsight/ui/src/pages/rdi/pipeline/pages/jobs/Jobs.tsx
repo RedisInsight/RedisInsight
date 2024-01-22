@@ -2,37 +2,40 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
+import { useFormikContext } from 'formik'
+import { findIndex } from 'lodash'
 import cx from 'classnames'
 
 import { Pages } from 'uiSrc/constants'
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { IPipeline } from 'uiSrc/slices/interfaces'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline/components/jobs-panel'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
-  const [decodedJobName, setDecodedJobName] = useState(decodeURIComponent(jobName))
-  const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [decodedJobName, setDecodedJobName] = useState<string>(decodeURIComponent(jobName))
+  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
+  const [jobIndex, setJobIndex] = useState<number>(-1)
+
   const history = useHistory()
 
-  const { loading, data } = useSelector(rdiPipelineSelector)
+  const { loading } = useSelector(rdiPipelineSelector)
 
-  const [value, setValue] = useState<string>('')
+  const { values, setFieldValue } = useFormikContext<IPipeline>()
 
   useEffect(() => {
-    const job = data?.jobs.find(({ name }) => name === decodedJobName)
+    const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
 
-    if (job) {
-      setValue(job?.value ?? '')
-    }
+    setJobIndex(jobIndex)
 
-    if (data?.jobs && !job) {
+    if (values?.jobs?.length && jobIndex === -1) {
       history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
-  }, [data, rdiInstanceId, decodedJobName])
+  }, [values, rdiInstanceId, decodedJobName, history])
 
   useEffect(() => {
     setDecodedJobName(decodeURIComponent(jobName))
@@ -77,8 +80,8 @@ const Jobs = () => {
           </div>
         ) : (
           <MonacoYaml
-            value={value}
-            onChange={setValue}
+            value={values.jobs?.[jobIndex]?.value ?? ''}
+            onChange={(value) => setFieldValue(`jobs.${jobIndex}.value`, value)}
             disabled={loading}
             wrapperClassName="rdi__editorWrapper"
             data-testid="rdi-config"
@@ -99,7 +102,7 @@ const Jobs = () => {
         </div>
       </div>
       {isPanelOpen && (
-        <DryRunJobPanel onClose={() => setIsPanelOpen(false)} job={value} />
+        <DryRunJobPanel onClose={() => setIsPanelOpen(false)} job={values.jobs?.[jobIndex]?.value ?? ''} />
       )}
     </>
 

@@ -38,6 +38,7 @@ export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
+  isDeployPopoverOpen: boolean
 }
 
 export interface IStateRdiDryRunJob {

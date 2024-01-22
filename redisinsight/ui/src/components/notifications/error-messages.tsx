@@ -1,6 +1,7 @@
 import React from 'react'
 import { EuiTextColor } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
+import RdiDeployErrorContent from './components/rdi-deploy-error-content'
 import { EncryptionErrorContent, DefaultErrorContent } from './components'
 import CloudCapiUnAuthorizedErrorContent from './components/cloud-capi-unauthorized'
 
@@ -59,5 +60,22 @@ export default {
         onClose={onClose}
       />
     ),
-  })
+  }),
+  RDI_DEPLOY_PIPELINE: (
+    { id, title, message }: { id: string, title?: string, message: string },
+    onClose?: () => void
+  ): Toast => ({
+    id,
+    'data-test-subj': 'toast-error-encryption',
+    color: 'danger',
+    iconType: 'alert',
+    onClose,
+    toastLifeTimeMs: 1000 * 60 * 60 * 12, // 12hr,
+    title: (
+      <EuiTextColor color="ghost">
+        <b>{title}</b>
+      </EuiTextColor>
+    ),
+    text: <RdiDeployErrorContent message={message} onClose={onClose} />,
+  }),
 }

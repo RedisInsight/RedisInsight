@@ -3,6 +3,7 @@ import { CodeButtonResults, CodeButtonRunQueryMode, CodeButtonParams } from 'uiS
 import { WBQueryType } from 'uiSrc/pages/workbench/constants'
 import { EnablementAreaComponent, ExecuteQueryParams, IEnablementAreaItem, IPluginVisualization, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { getVisualizationsByCommand } from 'uiSrc/utils/plugins'
+import { store } from 'uiSrc/slices/store'
 import { getMonacoLines, isParamsLine } from './monaco'
 import { Maybe, Nullable } from './types'
 
@@ -65,54 +66,39 @@ export const getParsedParamsInQuery = (query: string) => {
   return parsedParams
 }
 
-export const findMarkdownPathByPath = (manifest: IEnablementAreaItem[], markdownPath: string) => {
+export const findMarkdownPath = (
+  manifest: IEnablementAreaItem[],
+  { mdPath = '', id = '' }: { mdPath?: string, id?: string }
+): Nullable<string> => {
   if (!manifest) return null
 
-  const findPath = (data: IEnablementAreaItem[], mdPath: string, path: number[] = []): Nullable<number[]> => {
+  const stack: { data: IEnablementAreaItem[]; mdPath: string; id: string; path: number[] }[] = [
+    { data: manifest, mdPath, id, path: [] }
+  ]
+
+  while (stack.length > 0) {
+    const { data, mdPath, id, path } = stack.pop()!
+
     for (let i = 0; i < data.length; i++) {
       const obj = data[i]
       const currentPath = [...path, i]
+      const isCurrentObject = (id && obj.id === id) || (mdPath && obj.args?.path?.includes(mdPath))
 
-      if (obj.type === EnablementAreaComponent.InternalLink && obj.args?.path?.includes(mdPath)) {
-        return currentPath
+      if (obj.type === EnablementAreaComponent.InternalLink && isCurrentObject) {
+        return currentPath.join('/')
       }
 
       if (obj.type === EnablementAreaComponent.Group && obj.children) {
-        const result = findPath(obj.children, mdPath, currentPath)
-
-        if (result) {
-          return result
-        }
+        stack.push({ data: obj.children, mdPath, id, path: currentPath })
       }
-    }
-
-    return null
-  }
-
-  const result = findPath(manifest, markdownPath)
-  return result ? result.join('/') : null
-}
-
-export const findMarkdownPathById = (
-  manifest: IEnablementAreaItem[] = [],
-  id: string = '',
-): Nullable<IEnablementAreaItem> => {
-  const stack = [...manifest]
-
-  while (stack.length > 0) {
-    const currentObject = stack.pop()
-
-    if (currentObject?.id === id) {
-      return currentObject
-    }
-
-    if (currentObject?.children) {
-      stack.push(...currentObject.children)
     }
   }
 
   return null
 }
+
+export const findTutorialPath = (options: { mdPath?: string, id?: string }) =>
+  findMarkdownPath(store.getState().workbench.tutorials?.items, options)
 
 const isGroupMode = (mode?: ResultsMode) => mode === ResultsMode.GroupMode
 const isRawMode = (mode?: RunQueryMode) => mode === RunQueryMode.Raw

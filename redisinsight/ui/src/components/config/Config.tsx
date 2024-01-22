@@ -23,7 +23,6 @@ import {
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
 import { fetchUnsupportedCliCommandsAction } from 'uiSrc/slices/cli/cli-settings'
 import { fetchRedisCommandsInfo } from 'uiSrc/slices/app/redis-commands'
-import { fetchGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { fetchTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { fetchCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -52,8 +51,7 @@ const Config = () => {
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 
-    // get guides & tutorials
-    dispatch(fetchGuides())
+    // get tutorials
     dispatch(fetchTutorials())
     dispatch(fetchCustomTutorials())
 

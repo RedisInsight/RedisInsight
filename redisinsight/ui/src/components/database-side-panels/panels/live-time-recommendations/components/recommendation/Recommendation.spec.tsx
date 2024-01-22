@@ -8,6 +8,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { updateRecommendation } from 'uiSrc/slices/recommendations/recommendations'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
+import { findTutorialPath } from 'uiSrc/utils'
 import Recommendation, { IProps } from './Recommendation'
 
 const recommendationsContent = MOCK_RECOMMENDATIONS
@@ -21,6 +22,11 @@ const instanceMock = {
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  findTutorialPath: jest.fn(),
 }))
 
 let store: typeof mockedStore
@@ -43,7 +49,7 @@ describe('Recommendation', () => {
     render(<Recommendation
       {...instanceMock}
       name="searchJSON"
-      tutorial=""
+      tutorialId=""
       isRead={false}
     />)
 
@@ -60,14 +66,15 @@ describe('Recommendation', () => {
   it('should properly push history on workbench page', () => {
     // will be improved
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     const { container } = render(
       <Recommendation
         {...instanceMock}
         isRead={false}
         name="searchJSON"
-        tutorial=""
+        tutorialId="123"
         provider={PROVIDER}
       />
     )
@@ -75,7 +82,7 @@ describe('Recommendation', () => {
     fireEvent.click(container.querySelector('[data-test-subj="searchJSON-button"]') as HTMLButtonElement)
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
-    expect(pushMock).toHaveBeenCalledWith({ search: 'guidePath=' })
+    expect(pushMock).toHaveBeenCalledWith({ search: 'path=tutorials/path' })
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
       eventData: {
@@ -90,14 +97,15 @@ describe('Recommendation', () => {
   it('should properly call openNewWindowDatabase and open a new window on workbench page to specific guide', () => {
     // will be improved
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     const { container } = render(
       <Recommendation
         {...instanceMock}
         isRead={false}
         name="searchJSON"
-        tutorial="quick-guides/working-with-hash.html"
+        tutorialId="123"
         provider={PROVIDER}
       />
     )
@@ -107,7 +115,7 @@ describe('Recommendation', () => {
 
     expect(pushMock)
       .toHaveBeenCalledWith({
-        search: 'guidePath=quick-guides/working-with-hash.html'
+        search: 'path=tutorials/path'
       })
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
@@ -124,14 +132,15 @@ describe('Recommendation', () => {
   it('should properly push history on workbench page to specific tutorial', () => {
     // will be improved
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     const { container } = render(
       <Recommendation
         {...instanceMock}
         isRead={false}
         name="searchJSON"
-        tutorial="/redis_stack/working_with_json.md"
+        tutorialId="123"
         provider={PROVIDER}
       />
     )
@@ -141,7 +150,7 @@ describe('Recommendation', () => {
 
     expect(pushMock)
       .toHaveBeenCalledWith({
-        search: 'guidePath=/redis_stack/working_with_json.md'
+        search: 'path=tutorials/path'
       })
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_TIPS_TUTORIAL_CLICKED,
@@ -185,21 +194,21 @@ describe('Recommendation', () => {
 
   it('should not render "Tutorial" btn if tutorial is Undefined', () => {
     const name = 'searchJSON'
-    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorial={undefined} />)
+    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorialId={undefined} />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).not.toBeInTheDocument()
   })
 
-  it('should render "Tutorial" if tutorial="path"', () => {
+  it('should render "Tutorial" if tutorialId="path"', () => {
     const name = 'searchJSON'
-    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorial="path" />)
+    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorialId="path" />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('Tutorial')
   })
 
-  it('should render "Workbench" btn if tutorial=""', () => {
+  it('should render "Workbench" btn if tutorialId=""', () => {
     const name = 'searchJSON'
-    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorial="" />)
+    const { queryByTestId } = render(<Recommendation {...instanceMock} name={name} tutorialId="" />)
 
     expect(queryByTestId(`${name}-to-tutorial-btn`)).toHaveTextContent('Workbench')
   })

@@ -76,7 +76,7 @@ jest.mock('uiSrc/telemetry', () => ({
 
 jest.mock('uiSrc/utils', () => ({
   ...jest.requireActual('uiSrc/utils'),
-  getTutorialCapability: jest.fn().mockReturnValue({ tutorialPage: { id: 'id' }, telemetryName: 'searchAndQuery' }),
+  getTutorialCapability: jest.fn().mockReturnValue({ path: 'path', telemetryName: 'searchAndQuery' }),
 }))
 
 jest.mock('uiSrc/services', () => ({
@@ -265,6 +265,8 @@ describe('DatabaseSidePanels', () => {
       render(<DatabaseSidePanels />)
 
       const expectedActions = [
+        resetExplorePanelSearch(),
+        setExplorePanelIsPageOpen(false),
         changeSelectedTab(InsightsPanelTabs.Explore),
         toggleInsightsPanel(true),
       ]

@@ -16,7 +16,7 @@ import {
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
-import { Nullable, Maybe } from 'uiSrc/utils'
+import { Nullable, Maybe, findTutorialPath } from 'uiSrc/utils'
 import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
 import { Theme } from 'uiSrc/constants'
 import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
@@ -41,7 +41,7 @@ export interface IProps {
   isRead: boolean
   vote: Nullable<Vote>
   hide: boolean
-  tutorial?: string
+  tutorialId?: string
   provider?: string
   params: IRecommendationParams
   recommendationsContent: IRecommendationsStatic
@@ -52,7 +52,7 @@ const Recommendation = ({
   name,
   isRead,
   vote,
-  tutorial,
+  tutorialId,
   hide,
   provider,
   params,
@@ -78,7 +78,8 @@ const Recommendation = ({
       }
     })
 
-    dispatch(openTutorialByPath(tutorial || '', history))
+    const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
+    dispatch(openTutorialByPath(tutorialPath ?? '', history))
   }
 
   const toggleHide = (event: React.MouseEvent) => {
@@ -136,7 +137,7 @@ const Recommendation = ({
 
   const recommendationContent = () => (
     <EuiText>
-      {!isUndefined(tutorial) && (
+      {!isUndefined(tutorialId) && (
         <EuiButton
           fill
           iconType={StarsIcon}
@@ -146,7 +147,7 @@ const Recommendation = ({
           color="secondary"
           data-testid={`${name}-to-tutorial-btn`}
         >
-          { tutorial ? 'Start Tutorial' : 'Workbench' }
+          { tutorialId ? 'Start Tutorial' : 'Workbench' }
         </EuiButton>
       )}
       {renderRecommendationContent(

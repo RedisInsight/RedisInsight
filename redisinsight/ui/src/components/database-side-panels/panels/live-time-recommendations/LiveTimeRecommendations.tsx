@@ -118,7 +118,7 @@ const LiveTimeRecommendations = () => {
         isRead={read}
         vote={vote}
         hide={hide}
-        tutorial={recommendationsContent[name]?.tutorial}
+        tutorialId={recommendationsContent[name]?.tutorialId}
         provider={provider}
         params={params}
         recommendationsContent={recommendationsContent}

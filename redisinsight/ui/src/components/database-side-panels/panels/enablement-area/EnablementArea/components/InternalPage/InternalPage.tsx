@@ -103,7 +103,7 @@ const InternalPage = (props: Props) => {
   }
 
   useEffect(() => {
-    if (isShowCapabilityTutorialPopover(free) && !!tutorialCapability?.tutorialPage?.id) {
+    if (isShowCapabilityTutorialPopover(free) && !!tutorialCapability?.path) {
       setShowCapabilityPopover(true)
       setCapabilityPopoverShown()
       sendEventTelemetry({

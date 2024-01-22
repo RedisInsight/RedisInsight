@@ -15,16 +15,6 @@ beforeEach(() => {
   store.clearActions()
 })
 
-jest.mock('uiSrc/slices/workbench/wb-guides', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
-  return {
-    ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
-    workbenchGuidesSelector: jest.fn().mockReturnValue({
-      ...defaultState,
-    }),
-  }
-})
-
 jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
   const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-tutorials').initialState
   return {

@@ -37,7 +37,7 @@ export interface IRecommendationsStatic {
     liveTitle?: string
     telemetryEvent?: string
     redisStack?: boolean
-    tutorial?: string
+    tutorialId?: string
     content?: IRecommendationContent[]
     badges?: string[]
   }

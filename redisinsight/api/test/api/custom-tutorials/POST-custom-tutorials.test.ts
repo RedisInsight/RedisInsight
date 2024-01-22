@@ -115,9 +115,6 @@ describe('POST /custom-tutorials', () => {
   before(async () => {
     await fsExtra.remove(customTutorialsFolder);
     await (await localDb.getRepository(localDb.repositories.CUSTOM_TUTORIAL)).clear();
-
-    const zip = await fsExtra.readFile(path.join(staticsFolder, 'test.zip'))
-    nockScope.get('/test.zip').reply(200, zip);
   });
 
   describe('Common', () => {
@@ -202,6 +199,8 @@ describe('POST /custom-tutorials', () => {
 
     it('should import tutorial from the external link with manifest', async () => {
       const zip = new AdmZip(path.join(staticsFolder, 'test.zip'));
+      const file = await fsExtra.readFile(path.join(staticsFolder, 'test.zip'))
+      nockScope.get('/test.zip').reply(200, file);
       const link = `https://github.com/somerepo/test.zip`;
 
       await validateApiCall({

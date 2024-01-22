@@ -9,9 +9,10 @@ import {
   path,
   serverConfig, requirements,
   before,
+  nock,
   _,
 } from '../deps';
-import { getBaseURL } from '../../helpers/server';
+import * as fs from 'fs-extra'
 const { server, request, localDb } = deps;
 
 // create endpoint
@@ -107,12 +108,17 @@ const globalManifest = {
   children: [],
 };
 
+const nockScope = nock('https://github.com/somerepo');
+
 describe('POST /custom-tutorials', () => {
   requirements('rte.serverType=local');
 
   before(async () => {
     await fsExtra.remove(customTutorialsFolder);
     await (await localDb.getRepository(localDb.repositories.CUSTOM_TUTORIAL)).clear();
+
+    const zip = fs.readFileSync(path.join(staticsFolder, 'test.zip'))
+    nockScope.get('/test.zip').reply(200, zip);
   });
 
   describe('Common', () => {
@@ -197,7 +203,7 @@ describe('POST /custom-tutorials', () => {
 
     it('should import tutorial from the external link with manifest', async () => {
       const zip = new AdmZip(path.join(staticsFolder, 'test.zip'));
-      const link = `${getBaseURL()}/static/test.zip`;
+      const link = `https://github.com/somerepo/test.zip`;
 
       await validateApiCall({
         endpoint: creatEndpoint,

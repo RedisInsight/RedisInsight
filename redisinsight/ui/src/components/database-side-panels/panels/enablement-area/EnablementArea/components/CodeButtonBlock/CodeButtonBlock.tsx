@@ -31,7 +31,7 @@ export interface Props {
   params?: CodeButtonParams
 }
 
-const FINISHED_COMMAND_INDICATOR_TIME_MS = 3_000
+const FINISHED_COMMAND_INDICATOR_TIME_MS = 5_000
 
 const CodeButtonBlock = (props: Props) => {
   const {

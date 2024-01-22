@@ -26,6 +26,7 @@ export class ExploreTab {
     codeBlock = Selector('[data-testid=code-button-block-content]');
     codeBlockLabel = Selector('[data-testid=code-button-block-label]');
     cloudFreeLinkTooltip = Selector('[data-testid=tutorials-get-started-link]');
+    openDatabasePopover = Selector('[data-testid=database-not-opened-popover]');
     //Custom tutorials
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');

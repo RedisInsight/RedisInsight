@@ -1,4 +1,4 @@
-import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WelcomePage, WorkbenchPage } from '../../../../pageObjects';
 import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import {
@@ -11,6 +11,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const welcomePage  = new WelcomePage();
 
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
@@ -68,4 +69,32 @@ test
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('the panel is opened');
         await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('time series', 'popover is not displayed');
         await t.expect(tab.preselectArea.textContent).contains('REDIS FOR TIME SERIES', 'the tutorial is incorrect');
+    });
+// the test is skipped until https://redislabs.atlassian.net/browse/RI-5345 is finished
+test.skip
+    .before(async t => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+    })
+    .after(async() => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
+    })('Verify that insights panel can be opened from Welcome and Overview pages', async t => {
+        const welcomeTutorial = 'JSON';
+        const myRedisTutorial = 'Time series';
+
+        await t.click(browserPage.NavigationPanel.myRedisDBButton);
+        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(myRedisTutorial);
+        await t.expect(await myRedisDatabasePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
+        let tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.expect(tab.preselectArea.textContent).contains(myRedisTutorial, 'the tutorial is incorrect');
+        await t.click(tab.nextPageButton);
+        await tab.runBlockCode('Create time series for each shop');
+        await t.expect(tab.openDatabasePopover.exists).ok('Open a database popover is not displayed');
+        await myRedisDatabasePage.InsightsPanel.togglePanel(false);
+        await myRedisDatabasePage.deleteAllDatabases();
+
+        await welcomePage.CompatibilityPromotion.clickOnLinkByName(welcomeTutorial);
+        await t.expect(await welcomePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
+        tab = await welcomePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.expect(tab.preselectArea.textContent).contains(welcomeTutorial, 'the tutorial is incorrect');
     });

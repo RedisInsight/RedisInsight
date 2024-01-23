@@ -77,10 +77,10 @@ function DatabasesList({
     offsetWidth: number,
   ): EuiTableFieldDataColumnType<Instance>[] => {
     let sum = cols?.reduce((prev, next) => prev + getColumnWidth(next.width), 0)
-    const visibleColumns = cols.length - hiddenCols.current.size
+    const visibleColumnsLength = cols.length - hiddenCols.current.size
 
     // hide columns
-    if (sum > offsetWidth && columnsToHide.length + visibleColumns) {
+    if (sum > offsetWidth && columnsToHide.length + visibleColumnsLength) {
       let resultsCol = [...cols]
       while (sum > offsetWidth) {
         const colToHide = columnsToHide[hiddenCols.current.size]
@@ -97,7 +97,7 @@ function DatabasesList({
     }
 
     // show columns
-    if (columnsProp.length > visibleColumns) {
+    if (columnsProp.length > visibleColumnsLength) {
       // early return to not calculate other columns
       const lastHiddenColWidth = getColumnWidth(lastHiddenColumn.current?.width)
       if (sum + lastHiddenColWidth > offsetWidth) {

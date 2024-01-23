@@ -29,6 +29,7 @@ export * from './telemetry'
 export * from './errors'
 export * from './redisearch'
 export * from './capability'
+export * from './rdi'
 
 export {
   Maybe,

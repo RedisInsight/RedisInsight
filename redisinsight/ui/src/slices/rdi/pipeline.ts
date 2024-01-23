@@ -3,10 +3,10 @@ import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { IStateRdiPipeline, IPipeline } from 'uiSrc/slices/interfaces/rdi'
-import { getApiErrorMessage, getAxiosError, isStatusSuccessful } from 'uiSrc/utils'
-
+import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { ApiEndpoints } from 'uiSrc/constants'
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: IStateRdiPipeline = {
@@ -67,8 +67,7 @@ export function fetchRdiPipeline(
     try {
       dispatch(getPipeline())
       const { data, status } = await apiService.get<IPipeline>(
-        // TODO connect with Kyle to find solution
-        `rdi/${rdiInstanceId}/pipeline`
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE),
       )
 
       if (isStatusSuccessful(status)) {
@@ -95,8 +94,8 @@ export function deployPipelineAction(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(deployPipeline())
-      const { status } = await apiService.post<any>(
-        `rdi/${rdiInstanceId}/pipeline/deploy`,
+      const { status } = await apiService.post(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_DEPLOY_PIPELINE),
         pipeline,
       )
 

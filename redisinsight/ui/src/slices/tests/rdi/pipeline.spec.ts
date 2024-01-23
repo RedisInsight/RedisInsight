@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
+import { AnyAction } from '@reduxjs/toolkit'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
@@ -16,7 +17,6 @@ import reducer, {
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
-import {AnyAction} from "@reduxjs/toolkit";
 
 let store: typeof mockedStore
 

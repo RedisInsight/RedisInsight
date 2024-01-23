@@ -1,28 +1,28 @@
-export const MOCK_RDI_PIPELINE_CONFIG = 'connections:\n'
-  + '# Redis data DB connection \n'
-  + '# This section is for configuring the Redis database to which Redis Data Integration will connect to\n'
-  + '  target:\n'
-  + '    # Target type - Redis is the only supported type\n'
-  + '    type: redis\n'
+export const MOCK_RDI_PIPELINE_CONFIG = `connections:
+  # Redis data DB connection
+  # This section is for configuring the Redis database to which Redis Data Integration will connect to
+    target:
+      # Target type - Redis is the only supported type
+      type: redis`
 
 export const MOCK_RDI_PIPELINE_JOB2 = {
   name: 'job2',
-  value: 'job2:\n'
-    + '# Job information \n'
-    + '# This section is for transformation\n'
-    + '  transform:\n'
-    + '    # Target type - Redis is the only supported type\n'
-    + '    type: redis\n'
+  value: `job2:
+    # Job information
+    # This section is for transformation
+      transform:
+        # Target type - Redis is the only supported type
+        type: redis`
 }
 
 export const MOCK_RDI_PIPELINE_JOB1 = {
   name: 'jobName',
-  value: 'job:\n'
-    + '# Job information \n'
-    + '# This section is for transformation\n'
-    + '  transform:\n'
-    + '    # Target type - Redis is the only supported type\n'
-    + '    type: redis\n'
+  value: `job:
+    # Job information
+    # This section is for transformation
+      transform:
+        # Target type - Redis is the only supported type
+        type: redis`
 }
 
 export const MOCK_RDI_PIPELINE_DATA = {

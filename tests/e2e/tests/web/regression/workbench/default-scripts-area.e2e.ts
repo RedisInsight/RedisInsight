@@ -1,6 +1,6 @@
 import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -8,6 +8,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const browserPage = new BrowserPage();
 
 fixture `Default scripts area at Workbench`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -42,16 +43,29 @@ test('Verify that user can see the [Manual] option in the Enablement area', asyn
     }
 });
 test('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
+    const tooltipText = 'Open Workbench in the left menu to see the command results.';
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
     await t.click(tutorials.documentButtonInQuickGuides);
     await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is not visible', { timeout: 5000 });
     // Open Working with Hashes section
     await t.click(tutorials.internalLinkWorkingWithHashes);
+    let selector = tutorials.getRunSelector('Create');
+
+    // https://redislabs.atlassian.net/browse/RI-5340
+    // Verify that user can see “Open Workbench in the left menu to see the command results.” tooltip when hovering over Run button
+    await t.hover(selector);
+    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Tooltip is not displayed or text is invalid');
+
     // Check the button from Hash page is visible
     await tutorials.runBlockCode('Create');
-    let selector = await tutorials.getRunSelector('Create');
     await t.expect(selector.visible).ok('The end of the page is not visible');
+
+    // Verify that user can see the “success” icon during 5 s after a command has been run and button can't be clicked at that time
+    await t.expect(selector.withAttribute('disabled').exists).ok('Run button is not disabled', { timeout: 5000 });
+    await t.wait(5000);
+    await t.expect(selector.withAttribute('disabled').exists).notOk('Run button is still disabled');
+
     // Go to Browser page
     await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     // Go back to Workbench page
@@ -127,7 +141,7 @@ test('Verify that the same type of content is supported in the “Tutorials” a
         'Redis for time series',
         'Probabilistic data structures'
     ];
-    const command = 'HSET bikes:10000  ';
+    // const command = 'HSET bikes:10000  ';
 
     // Verify the redis stack links
     await workbenchPage.InsightsPanel.togglePanel(true);

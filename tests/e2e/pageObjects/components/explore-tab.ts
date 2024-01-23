@@ -2,10 +2,11 @@ import { Selector, t } from 'testcafe';
 
 export class ExploreTab {
 
-    documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
-    internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
+    dataStructureAccordionTutorialButton = Selector('[data-testid=accordion-button-ds]');
+    internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-ds-hashes]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
-    timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
+    timeSeriesLink = Selector('[data-testid=accordion-button-ds-ts]');
+    internalTimeSeriesLink = Selector('[data-testid=internal-link-ds-ts-ret-compact]');
     scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');

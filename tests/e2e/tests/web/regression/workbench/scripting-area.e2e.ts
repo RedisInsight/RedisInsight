@@ -85,14 +85,14 @@ test
         // Open Working with Hashes page
         await workbenchPage.InsightsPanel.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
         await t.click(tutorials.internalLinkWorkingWithHashes);
         // Put Create Hash commands into Editing area
-        const codeText  = await tutorials.getBlockCode('Create');
+        const codeText  = await tutorials.getBlockCode('Create a hash');
         const regex = new RegExp('HSET', 'g');
         const monacoCommandIndicatorCount = codeText.match(regex).length;
-        await tutorials.runBlockCode('Create');
+        await tutorials.runBlockCode('Create a hash');
         //Get number of commands in scripting area
         const numberOfCommands = await workbenchPage.executedCommandTitle.withText('HSET').count;
         //Compare number of indicator displayed and expected value

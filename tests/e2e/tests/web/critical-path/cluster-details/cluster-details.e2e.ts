@@ -78,7 +78,7 @@ test
         await clusterDetailsPage.InsightsPanel.togglePanel(true);
         const tutorials = await clusterDetailsPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
 
-        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);
         await tutorials.runBlockCode('Create');
         // Go to Analysis Tools page

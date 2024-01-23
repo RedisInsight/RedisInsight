@@ -51,7 +51,7 @@ test
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
         await workbenchPage.InsightsPanel.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);
 
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
@@ -78,7 +78,7 @@ test('Verify that user can edit and run automatically added "Search" script in W
     // Run automatically added FT.SEARCH script with edits
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tutorials.documentButtonInQuickGuides);
+    await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.internalLinkWorkingWithHashes);
     await tutorials.runBlockCode('Exact text search');
 
@@ -105,7 +105,7 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     // Run automatically added FT.Aggregate script with edits
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tab.documentButtonInQuickGuides);
+    await t.click(tab.dataStructureAccordionTutorialButton);
     await t.click(tab.internalLinkWorkingWithHashes);
     await tab.runBlockCode('Group by & sort by aggregation: COUNT');
     //await t.click(workbenchPage.preselectGroupBy);

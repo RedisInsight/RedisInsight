@@ -38,7 +38,7 @@ services:
   app:
     logging:
       driver: none
-    image: riv2:latest
+    image: redisinsight:amd64
     env_file:
       - ./.env
     environment:

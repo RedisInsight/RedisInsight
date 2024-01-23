@@ -22,10 +22,13 @@ const Download = () => {
       }
     })
 
+    // zip config and job contents
     const zip = new JSZip()
-    zip.file('config.yaml', Buffer.from(data?.config || '', 'utf8'))
+    zip.file('config.yaml', data?.config || '')
+
     const jobs = zip.folder('jobs')
-    data?.jobs.forEach(({ name, value }) => jobs?.file(name, value))
+    data?.jobs.forEach(({ name, value }) => jobs?.file(`${name}.yaml`, value))
+
     const content = await zip.generateAsync({ type: 'blob' })
     saveAs(content, 'RDI_pipeline.zip')
   }

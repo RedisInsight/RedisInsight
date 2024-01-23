@@ -73,8 +73,8 @@ export class ExploreTab {
      * get run selector
      * @param block Name of the block
      */
-    async getRunSelector(block: string): Promise<Selector> {
-        return  Selector(this.runMask.replace(/\$name/g, block));
+    getRunSelector(block: string): Selector {
+        return Selector(this.runMask.replace(/\$name/g, block));
     }
 
     /**

@@ -37,7 +37,7 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test
+test.only
     .requestHooks(logger)('Verify that user can run automatically  "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = 'idx:schools';
         keyName = chance.word({ length: 5 });
@@ -46,9 +46,9 @@ test
             `HMSET product:1 name "${keyName}"`,
             `HMSET product:2 name "${keyName}"`
         ];
-        const addedScript = `FT._LIST // Return a list of all indices\n' +
-            '\n' +
-            'FT.INFO "${indexName}"" // Display information about a particular index`;
+        const addedScript = 'FT._LIST \n' +
+
+            `FT.INFO "${indexName}"`;
         // Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts

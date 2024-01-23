@@ -205,7 +205,7 @@ const InternalPage = (props: Props) => {
       {!!pagination?.length && (
         <>
           <div className={styles.footer}>
-            <Pagination sourcePath={sourcePath} items={pagination} activePageKey={activeKey} />
+            <Pagination sourcePath={sourcePath} items={pagination} activePageKey={activeKey} compressed />
           </div>
         </>
       )}

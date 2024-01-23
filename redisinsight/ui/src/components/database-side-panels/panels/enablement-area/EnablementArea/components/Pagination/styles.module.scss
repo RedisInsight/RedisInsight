@@ -13,9 +13,14 @@
 }
 
 .paginationCompressed {
-  padding: 8px 6px;
+  padding: 8px 16px;
   & > div:first-of-type, & > div:last-of-type {
     min-width: 70px;
+  }
+
+  :global(.euiButtonContent .euiIcon) {
+    width: 14px;
+    height: 14px;
   }
 }
 

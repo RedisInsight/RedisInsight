@@ -12,6 +12,7 @@ export class RdiPipelineDeployFailedException extends HttpException {
       statusCode: HttpStatus.BAD_REQUEST,
       error: 'RdiPipelineDeployFailed',
       errorCode: CustomErrorCodes.RdiDeployPipelineFailure,
+      errors: [options?.error],
     };
 
     super(response, response.statusCode, options);

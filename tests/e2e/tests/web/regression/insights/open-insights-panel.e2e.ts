@@ -55,9 +55,9 @@ test
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('the panel is opened');
-        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Search and Query capability', 'popover is not displayed');
+        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Search and query capability', 'popover is not displayed');
         const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-        await t.expect(tab.preselectArea.textContent).contains('VECTOR SIMILARITY SEARCH', 'the tutorial is incorrect');
+        await t.expect(tab.preselectArea.textContent).contains('How To Query Your Data', 'the tutorial is incorrect');
 
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
@@ -67,8 +67,8 @@ test
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('the panel is opened');
-        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('time series', 'popover is not displayed');
-        await t.expect(tab.preselectArea.textContent).contains('REDIS FOR TIME SERIES', 'the tutorial is incorrect');
+        await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Time series data', 'popover is not displayed');
+        await t.expect(tab.preselectArea.textContent).contains('Time Series', 'the tutorial is incorrect');
     });
 
 test

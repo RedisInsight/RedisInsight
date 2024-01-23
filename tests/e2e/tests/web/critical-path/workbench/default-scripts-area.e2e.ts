@@ -16,8 +16,8 @@ const telemetry = new Telemetry();
 let indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 5 });
 const logger = telemetry.createLogger();
-const telemetryEvent = 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED';
-const telemetryPath = 'static/guides/quick-guides/document/working-with-hashes.md';
+const telemetryEvent = 'EXPLORE_PANEL_TUTORIAL_OPENED';
+const telemetryPath = 'static/tutorials/ds/hashes.md';
 const expectedProperties = [
     'databaseId',
     'path'
@@ -46,6 +46,9 @@ test
             `HMSET product:1 name "${keyName}"`,
             `HMSET product:2 name "${keyName}"`
         ];
+        const addedScript = `FT._LIST // Return a list of all indices\n' +
+            '\n' +
+            'FT.INFO "${indexName}"" // Display information about a particular index`;
         // Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
@@ -57,7 +60,9 @@ test
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
-        await tutorials.runBlockCode('Additional index information');
+
+        await workbenchPage.sendCommandInWorkbench(addedScript);
+
         // Check the FT._LIST result
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
         // Check the FT.INFO result
@@ -76,13 +81,7 @@ test('Verify that user can edit and run automatically added "Search" script in W
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
     // Run automatically added FT.SEARCH script with edits
-    await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tutorials.dataStructureAccordionTutorialButton);
-    await t.click(tutorials.internalLinkWorkingWithHashes);
-    await tutorials.runBlockCode('Exact text search');
 
-    await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     // Check the FT.SEARCH result
     await t.switchToIframe(workbenchPage.iframe);
@@ -103,13 +102,6 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     // Run automatically added FT.Aggregate script with edits
-    await workbenchPage.InsightsPanel.togglePanel(true);
-    const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tab.dataStructureAccordionTutorialButton);
-    await t.click(tab.internalLinkWorkingWithHashes);
-    await tab.runBlockCode('Group by & sort by aggregation: COUNT');
-    //await t.click(workbenchPage.preselectGroupBy);
-    await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     // Check the FT.Aggregate result
     await t.switchToIframe(workbenchPage.iframe);

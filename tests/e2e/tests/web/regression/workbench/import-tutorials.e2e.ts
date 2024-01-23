@@ -114,7 +114,7 @@ test
 // https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4213, https://redislabs.atlassian.net/browse/RI-4302
 test('Verify that user can upload tutorial with URL with manifest.json', async t => {
     const labelFromManifest = 'LabelFromManifest';
-    const link = 'https://drive.google.com/uc?id=1puRUoT8HmyZCekkeWNxBzXe_48TzXcJc&export=download';
+    const link = 'https://github.com/RedisInsight/RedisInsight/tree/main/tests/e2e/test-data/upload-tutorials/sample-manifest-link.zip';
     internalLinkName1 = 'manifest-id';
     tutorialName = 'tutorialTestByLink';
 

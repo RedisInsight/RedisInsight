@@ -79,6 +79,7 @@ export class MyRedisDatabasePage extends BasePage {
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
     // CONTAINERS
     databaseContainer = Selector('.databaseContainer');
+    connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
 
     /**
      * Click on the database by name

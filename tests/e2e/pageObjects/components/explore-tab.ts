@@ -2,10 +2,13 @@ import { Selector, t } from 'testcafe';
 
 export class ExploreTab {
 
-    documentButtonInQuickGuides = Selector('[data-testid=accordion-button-document]');
-    internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-working-with-hashes]');
+    dataStructureAccordionTutorialButton = Selector('[data-testid=accordion-button-ds]');
+    triggersFunctionsAccordionTutorialButton = Selector('[data-testid=accordion-button-tf]');
+    internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-ds-hashes]');
+    internalTriggersAndFunctionsLink = Selector('[data-testid=internal-link-tf-load]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
-    timeSeriesLink = Selector('[data-testid=internal-link-redis_for_time_series]');
+    timeSeriesLink = Selector('[data-testid=accordion-button-ds-ts]');
+    internalTimeSeriesLink = Selector('[data-testid=internal-link-ds-ts-ret-compact]');
     scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
@@ -15,8 +18,6 @@ export class ExploreTab {
     enablementAreaPagination = Selector('[data-testid=enablement-area__pagination-popover-btn]');
     paginationPopoverButtons = Selector('[data-testid=enablement-area__pagination-popover] button');
     enablementAreaPaginationPopover = Selector('[data-testid=enablement-area__pagination-popover]');
-    redisStackLinks = Selector('[data-testid=accordion-redis_stack] [data-testid^=internal-link]');
-    vectorSimilitaritySearchButton = Selector('[data-testid=internal-link-vector_similarity_search]');
     nextPageButton = Selector('[data-testid=enablement-area__next-page-btn]');
     prevPageButton = Selector('[data-testid=enablement-area__prev-page-btn]');
     guidesGraphAccordion = Selector('[data-testid=accordion-button-graph]');

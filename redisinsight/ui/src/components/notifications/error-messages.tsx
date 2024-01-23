@@ -5,6 +5,8 @@ import RdiDeployErrorContent from './components/rdi-deploy-error-content'
 import { EncryptionErrorContent, DefaultErrorContent } from './components'
 import CloudCapiUnAuthorizedErrorContent from './components/cloud-capi-unauthorized'
 
+const TOAST_LIFE_TIME = 1000 * 60 * 60 * 12 // 12hr
+
 // TODO: use i18n file for texts
 export default {
   DEFAULT: (id: string, text: any, onClose = () => {}, title: string = 'Error'): Toast => ({
@@ -26,7 +28,7 @@ export default {
     color: 'danger',
     iconType: 'iInCircle',
     onClose,
-    toastLifeTimeMs: 1000 * 60 * 60 * 12, // 12hr,
+    toastLifeTimeMs: TOAST_LIFE_TIME,
     title: (
       <EuiTextColor color="ghost">
         <b>Unable to decrypt</b>
@@ -66,11 +68,11 @@ export default {
     onClose?: () => void
   ): Toast => ({
     id,
-    'data-test-subj': 'toast-error-encryption',
+    'data-test-subj': 'toast-error-deploy',
     color: 'danger',
     iconType: 'alert',
     onClose,
-    toastLifeTimeMs: 1000 * 60 * 60 * 12, // 12hr,
+    toastLifeTimeMs: TOAST_LIFE_TIME,
     title: (
       <EuiTextColor color="ghost">
         <b>{title}</b>

@@ -13,20 +13,21 @@ const RdiDeployErrorContent = (props: Props) => {
     <>
       <EuiTextColor color="ghost">{message}</EuiTextColor>
       <EuiSpacer />
-      {/*<EuiFlexGroup justifyContent="flexEnd">*/}
-      {/*  <EuiFlexItem grow={false}>*/}
-      {/*    <EuiButton*/}
-      {/*      fill*/}
-      {/*      size="s"*/}
-      {/*      color="warning"*/}
-      {/*      onClick={() => {}}*/}
-      {/*      className="toast-danger-btn"*/}
-      {/*      data-testid="see-errors-btn"*/}
-      {/*    >*/}
-      {/*      Remove API key*/}
-      {/*    </EuiButton>*/}
-      {/*  </EuiFlexItem>*/}
-      {/*</EuiFlexGroup>*/}
+      {/* // TODO remove display none when logs column will be available */}
+      <EuiFlexGroup style={{ display: 'none' }} justifyContent="flexEnd">
+        <EuiFlexItem grow={false}>
+          <EuiButton
+            fill
+            size="s"
+            color="warning"
+            onClick={() => {}}
+            className="toast-danger-btn"
+            data-testid="see-errors-btn"
+          >
+            Remove API key
+          </EuiButton>
+        </EuiFlexItem>
+      </EuiFlexGroup>
     </>
   )
 }

@@ -42,10 +42,6 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('formik')
 
-beforeEach(() => {
-  cleanup()
-})
-
 const mockHandleSubmit = jest.fn()
 
 describe('InstanceHeader', () => {

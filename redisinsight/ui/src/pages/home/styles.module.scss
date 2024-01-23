@@ -1,10 +1,6 @@
 @import "@elastic/eui/src/global_styling/index";
 @import "uiSrc/styles/mixins/_global.scss";
 
-.contentActive {
-  border: 1px solid var(--euiColorPrimary);
-}
-
 .pageHeader {
   min-height: 56px;
 }

@@ -252,7 +252,6 @@ const HomePage = () => {
                                 hidden: !instances.length && !loading,
                                 fullWidth: !openRightPanel,
                                 openedRightPanel: !!openRightPanel,
-                                [styles.contentActive]: openRightPanel === RightPanelName.EditDatabase,
                               })
                             }}
                           >
@@ -282,7 +281,6 @@ const HomePage = () => {
                               className: cx('home__resizePanelRight', {
                                 hidden: !openRightPanel,
                                 fullWidth: !instances.length,
-                                [styles.contentActive]: openRightPanel === RightPanelName.EditDatabase,
                               })
                             }}
                             id="form"

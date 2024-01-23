@@ -53,6 +53,7 @@ export interface Props {
 }
 
 const suffix = '_db_instance'
+const COLS_TO_HIDE = ['connectionType', 'modules', 'lastConnection']
 
 const DatabasesListWrapper = ({
   width,
@@ -300,7 +301,6 @@ const DatabasesListWrapper = ({
       sortable: true,
       width: '180px',
       truncateText: true,
-      hideForMobile: true,
       render: (cellData: ConnectionType) =>
         CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
     },
@@ -409,7 +409,7 @@ const DatabasesListWrapper = ({
         width={width}
         editedInstance={editedInstance}
         columns={columns}
-        columnsToHide={['connectionType', 'modules', 'lastConnection']}
+        columnsToHide={COLS_TO_HIDE}
         onDelete={handleDeleteInstances}
         onExport={handleExportInstances}
         onWheel={closePopover}
@@ -418,4 +418,4 @@ const DatabasesListWrapper = ({
   )
 }
 
-export default DatabasesListWrapper
+export default React.memo(DatabasesListWrapper)

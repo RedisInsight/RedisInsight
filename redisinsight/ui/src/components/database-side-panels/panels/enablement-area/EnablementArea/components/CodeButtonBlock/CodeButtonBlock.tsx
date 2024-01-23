@@ -137,6 +137,7 @@ const CodeButtonBlock = (props: Props) => {
             }}
             button={(
               <EuiToolTip
+                anchorClassName={styles.popoverAnchor}
                 content={isPopoverOpen ? undefined : 'Open Workbench in the left menu to see the command results.'}
                 data-testid="run-btn-open-workbench-tooltip"
               >

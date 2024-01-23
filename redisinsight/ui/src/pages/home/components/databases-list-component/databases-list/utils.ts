@@ -13,6 +13,7 @@ const findColumn = (columns: EuiTableFieldDataColumnType<Instance>[], colName: s
   find(columns, ({ field }) => field === colName)
 
 export {
+  MIN_COLUMN_WIDTH,
   getColumnWidth,
   hideColumn,
   findColumn,

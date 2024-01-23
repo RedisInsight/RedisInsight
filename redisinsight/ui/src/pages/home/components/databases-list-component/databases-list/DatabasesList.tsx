@@ -56,9 +56,13 @@ function DatabasesList({
     if (columnsToHide?.length && containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
       const beforeAdjustHiddenCols = hiddenCols.current.size
-      const columnsResults = adjustColumns(columns, offsetWidth)
-      if (beforeAdjustHiddenCols !== hiddenCols.current.size) {
-        setColumns(columnsResults)
+      try {
+        const columnsResults = adjustColumns(columns, offsetWidth)
+        if (beforeAdjustHiddenCols !== hiddenCols.current.size) {
+          setColumns(columnsResults)
+        }
+      } catch (_) {
+        // ignore
       }
     }
   }, [width])

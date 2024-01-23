@@ -205,7 +205,7 @@ const DatabasePanel = React.memo((props: Props) => {
   )
 
   return (
-    <>
+    <div className="databasePanelWrapper">
       <div className={cx('container relative', { addDbWrapper: !editMode })}>
         {!isFullWidth && onClose && (
           <EuiToolTip
@@ -235,7 +235,7 @@ const DatabasePanel = React.memo((props: Props) => {
         {Form()}
       </div>
       <div id="footerDatabaseForm" />
-    </>
+    </div>
   )
 })
 

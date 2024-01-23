@@ -968,7 +968,7 @@ export class BrowserPage extends InstancePage {
     * @param guide The guide name
     */
     async clickGuideLinksByName(guide: string): Promise<void> {
-        const linkGuide = Selector(`[data-testid="guide-button-${guide}"]`);
+        const linkGuide = Selector(`[data-testid^="guide-button-"]`).withExactText(guide);
         await t.click(linkGuide);
     }
 }

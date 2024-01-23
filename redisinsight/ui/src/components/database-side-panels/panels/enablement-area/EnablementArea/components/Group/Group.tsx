@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { EAItemActions } from 'uiSrc/constants'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
@@ -60,7 +60,7 @@ const Group = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_IMPORT_CLICKED,
       eventData: {
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
       }
     })
   }

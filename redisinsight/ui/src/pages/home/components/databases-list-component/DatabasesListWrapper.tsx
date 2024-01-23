@@ -40,23 +40,23 @@ import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLog
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+
 import DatabasesList from './databases-list'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  width: number;
-  dialogIsOpen: boolean;
-  editedInstance: Nullable<Instance>;
-  onEditInstance: (instance: Instance) => void;
-  onDeleteInstances: (instances: Instance[]) => void;
+  width: number
+  editedInstance: Nullable<Instance>
+  onEditInstance: (instance: Instance) => void
+  onDeleteInstances: (instances: Instance[]) => void
 }
 
 const suffix = '_db_instance'
+const COLS_TO_HIDE = ['connectionType', 'modules', 'lastConnection']
 
 const DatabasesListWrapper = ({
   width,
-  dialogIsOpen,
   onEditInstance,
   editedInstance,
   onDeleteInstances
@@ -207,7 +207,7 @@ const DatabasesListWrapper = ({
     })
   }
 
-  const columnsFull: EuiTableFieldDataColumnType<Instance>[] = [
+  const columns: EuiTableFieldDataColumnType<Instance>[] = [
     {
       field: 'name',
       className: 'column_name',
@@ -301,7 +301,6 @@ const DatabasesListWrapper = ({
       sortable: true,
       width: '180px',
       truncateText: true,
-      hideForMobile: true,
       render: (cellData: ConnectionType) =>
         CONNECTION_TYPE_DISPLAY[cellData] || capitalize(cellData),
     },
@@ -334,7 +333,9 @@ const DatabasesListWrapper = ({
                     </>
                   ) : undefined}
                   modules={modules}
-                  maxViewModules={columnWidth > 40 ? (Math.floor((columnWidth - 12) / 28) - 1) : 0}
+                  maxViewModules={columnWidth
+                    ? ((columnWidth) > 40 ? (Math.floor((columnWidth - 12) / 28) - 1) : 0)
+                    : 0}
                 />
               </div>
             )}
@@ -402,24 +403,13 @@ const DatabasesListWrapper = ({
     },
   ]
 
-  const columnsHideForTablet = ['connectionType']
-  const columnsHideForEditing = ['connectionType', 'modules']
-  const columnsTablet = columnsFull.filter(
-    ({ field = '' }) => columnsHideForTablet.indexOf(field) === -1
-  )
-  const columnsEditing = columnsFull.filter(
-    ({ field }) => columnsHideForEditing.indexOf(field) === -1
-  )
-
-  const columnVariations = [columnsFull, columnsEditing, columnsTablet]
-
   return (
     <div className={styles.container}>
       <DatabasesList
         width={width}
         editedInstance={editedInstance}
-        dialogIsOpen={dialogIsOpen}
-        columnVariations={columnVariations}
+        columns={columns}
+        columnsToHide={COLS_TO_HIDE}
         onDelete={handleDeleteInstances}
         onExport={handleExportInstances}
         onWheel={closePopover}
@@ -428,4 +418,4 @@ const DatabasesListWrapper = ({
   )
 }
 
-export default DatabasesListWrapper
+export default React.memo(DatabasesListWrapper)

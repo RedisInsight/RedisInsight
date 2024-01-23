@@ -2,11 +2,15 @@ import { t, Selector } from 'testcafe';
 import { DatabaseAPIRequests } from '../helpers/api/api-database';
 import { BasePage } from './base-page';
 import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
+import { InsightsPanel } from './components/insights-panel';
+import { CompatibilityPromotion } from './components/compatibility-promotion';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
 export class MyRedisDatabasePage extends BasePage {
     AddRedisDatabase = new AddRedisDatabase();
+    InsightsPanel = new InsightsPanel();
+    CompatibilityPromotion = new CompatibilityPromotion();
 
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
@@ -75,6 +79,7 @@ export class MyRedisDatabasePage extends BasePage {
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
     // CONTAINERS
     databaseContainer = Selector('.databaseContainer');
+    connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
 
     /**
      * Click on the database by name

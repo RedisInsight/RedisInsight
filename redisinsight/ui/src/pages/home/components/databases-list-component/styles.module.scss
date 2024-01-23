@@ -46,6 +46,13 @@ $breakpoint-l: 1400px;
   margin-right: 5px;
 }
 
+:global {
+  .hiddenColumn {
+    width: 0 !important;
+    display: none !important;
+  }
+}
+
 .columnModules {
   height: 40px;
   padding-right: 0 !important;
@@ -104,6 +111,7 @@ $breakpoint-l: 1400px;
 }
 
 .container {
+  height: 100%;
   // Database alias column
   tr > th:nth-child(2),
   tr > td:nth-child(2) {

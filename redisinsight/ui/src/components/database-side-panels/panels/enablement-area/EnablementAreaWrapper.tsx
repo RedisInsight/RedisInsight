@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { IInternalPage } from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { workbenchTutorialsSelector } from 'uiSrc/slices/workbench/wb-tutorials'
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { CodeButtonParams } from 'uiSrc/constants'
 import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
 import { getTutorialSection } from './EnablementArea/utils'
@@ -35,7 +35,7 @@ const EnablementAreaWrapper = () => {
       eventData: {
         path,
         section: getTutorialSection(manifestPath),
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source: 'Workbench',
       }
     })

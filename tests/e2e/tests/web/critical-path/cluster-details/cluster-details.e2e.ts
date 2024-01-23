@@ -78,9 +78,9 @@ test
         await clusterDetailsPage.InsightsPanel.togglePanel(true);
         const tutorials = await clusterDetailsPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
 
-        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);
-        await tutorials.runBlockCode('Create');
+        await tutorials.runBlockCode('Create a hash');
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
         // Verify that values in table are dynamic

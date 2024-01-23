@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import {
@@ -58,7 +58,7 @@ const Navigation = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_IMPORT_SUBMITTED,
       eventData: {
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source: file ? 'Upload' : 'URL'
       }
     })
@@ -74,7 +74,7 @@ const Navigation = (props: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_DELETED,
         eventData: {
-          databaseId: instanceId,
+          databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         }
       })
     }))

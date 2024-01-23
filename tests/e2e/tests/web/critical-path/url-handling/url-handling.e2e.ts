@@ -68,7 +68,7 @@ test
         const connectUrlParams = {
             redisUrl: `redis://${databaseUsername}:${databasePassword}@${host}:${port}`,
             databaseAlias: databaseName,
-            redirect: 'workbench?guidePath=/quick-guides/document/introduction.md',
+            redirect: 'workbench?guidePath=/sq/introduction.md',
             cloudBdbId: '1232',
             subscriptionType: 'fixed',
             planMemoryLimit: '30',
@@ -81,7 +81,7 @@ test
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
         const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t.expect(tab.preselectArea.textContent).contains('INTRODUCTION', 'the tutorial page is incorrect');
-        await t.expect(tab.preselectArea.textContent).contains('Document', 'the tutorial is incorrect');
+        await t.expect(tab.preselectArea.textContent).contains('How To Query Your Data', 'the tutorial is incorrect');
 
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));

@@ -29,9 +29,10 @@ test('Verify that user can switches between Chart and Text for TimeSeries comman
     // Send TimeSeries command
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tutorials.redisStackTutorialsButton);
+    await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.timeSeriesLink);
-    await tutorials.runBlockCode('Show all sales per region');
+    await t.click(tutorials.internalTimeSeriesLink);
+    await tutorials.runBlockCode('Get all samples');
     await t.click(workbenchPage.submitCommandButton);
     // Check result is in chart view
     await t.expect(workbenchPage.chartViewTypeOptionSelected.exists).ok('The chart view option is not selected by default');

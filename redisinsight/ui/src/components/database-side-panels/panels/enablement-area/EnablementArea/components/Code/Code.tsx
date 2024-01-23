@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { CodeButtonParams } from 'uiSrc/constants'
 import { parseParams } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getFileInfo, getTutorialSection, } from '../../utils'
 
@@ -64,7 +64,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_COMMAND_COPIED,
       eventData: {
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         buttonName: label,
         path,
         provider,

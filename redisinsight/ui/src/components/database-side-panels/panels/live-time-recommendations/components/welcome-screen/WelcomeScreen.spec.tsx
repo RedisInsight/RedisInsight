@@ -98,7 +98,15 @@ describe('WelcomeScreen', () => {
         total: 1,
         provider: 'RE_CLOUD'
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should not render part of content if no instanceId', () => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    render(<WelcomeScreen />)
+
+    expect(screen.queryByTestId('insights-db-analysis-link')).not.toBeInTheDocument()
+    expect(screen.getByTestId('no-recommendations-analyse-text')).toHaveTextContent('Eager for tips? Connect to a database to get started.')
   })
 })

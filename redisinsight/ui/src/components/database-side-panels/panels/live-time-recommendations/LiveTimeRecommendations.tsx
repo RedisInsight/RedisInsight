@@ -58,6 +58,8 @@ const LiveTimeRecommendations = () => {
   const isShowHiddenDisplayed = recommendations.filter((r) => r.hide).length > 0
 
   useEffect(() => {
+    if (!instanceId) return undefined
+
     dispatch(fetchRecommendationsAction(instanceId))
 
     return () => {
@@ -104,7 +106,7 @@ const LiveTimeRecommendations = () => {
       remove(recommendationsList, { hide: true })
     }
 
-    if (!recommendationsList?.length) {
+    if (!instanceId || !recommendationsList?.length) {
       return <WelcomeScreen />
     }
 
@@ -125,104 +127,100 @@ const LiveTimeRecommendations = () => {
   }
 
   const renderHeader = () => (
-    <>
-      {!!recommendations.length && (
-        <div className={styles.actions}>
-          <div>
-            <EuiTextColor className={styles.boldText}>Our Tips</EuiTextColor>
-            <EuiToolTip
-              position="bottom"
-              anchorClassName={styles.tooltipAnchor}
-              className={styles.tooltip}
-              content={(
-                <>
-                  Tips will help you improve your database.
-                  <br />
-                  New tips appear while you work with your database,
-                  including how to improve performance and optimize memory usage.
-                  <br />
-                  Eager for more tips? Run Database Analysis to get started.
-                </>
+    <div className={styles.actions}>
+      <div>
+        <EuiTextColor className={styles.boldText}>Our Tips</EuiTextColor>
+        <EuiToolTip
+          position="bottom"
+          anchorClassName={styles.tooltipAnchor}
+          className={styles.tooltip}
+          content={(
+            <>
+              Tips will help you improve your database.
+              <br />
+              New tips appear while you work with your database,
+              including how to improve performance and optimize memory usage.
+              <br />
+              Eager for more tips? Run Database Analysis to get started.
+            </>
             )}
-            >
-              <EuiIcon
-                className={styles.infoIcon}
-                type="iInCircle"
-                size="s"
-                data-testid="recommendations-info-icon"
-              />
-            </EuiToolTip>
-            <EuiLink
-              external={false}
-              href={EXTERNAL_LINKS.githubRepo}
-              target="_blank"
-              style={{ marginLeft: 6 }}
-              data-testid="github-repo-btn"
-            >
-              <EuiIcon
-                className={styles.githubIcon}
-                aria-label="redis insight github repository"
-                type={GithubSVG}
-                size="s"
-                data-testid="github-repo-icon"
-              />
-            </EuiLink>
-          </div>
+        >
+          <EuiIcon
+            className={styles.infoIcon}
+            type="iInCircle"
+            size="s"
+            data-testid="recommendations-info-icon"
+          />
+        </EuiToolTip>
+        <EuiLink
+          external={false}
+          href={EXTERNAL_LINKS.githubRepo}
+          target="_blank"
+          style={{ marginLeft: 6 }}
+          data-testid="github-repo-btn"
+        >
+          <EuiIcon
+            className={styles.githubIcon}
+            aria-label="redis insight github repository"
+            type={GithubSVG}
+            size="s"
+            data-testid="github-repo-icon"
+          />
+        </EuiLink>
+      </div>
 
-          {isShowHiddenDisplayed && (
-            <EuiCheckbox
-              id="showHidden"
-              name="showHidden"
-              label="Show hidden"
-              checked={isShowHidden}
-              className={styles.hideCheckbox}
-              onChange={(e) => onChangeShowHidden(e.target.checked)}
-              data-testid="checkbox-show-hidden"
-              aria-label="checkbox show hidden"
-            />
-          )}
-        </div>
+      {isShowHiddenDisplayed && (
+      <EuiCheckbox
+        id="showHidden"
+        name="showHidden"
+        label="Show hidden"
+        checked={isShowHidden}
+        className={styles.hideCheckbox}
+        onChange={(e) => onChangeShowHidden(e.target.checked)}
+        data-testid="checkbox-show-hidden"
+        aria-label="checkbox show hidden"
+      />
       )}
-    </>
+    </div>
   )
 
   return (
-    <div
-      className={styles.content}
-    >
+    <div className={styles.content}>
       <div className={styles.header}>
-        {renderHeader()}
+        {(instanceId && recommendations.length) ? renderHeader() : null}
       </div>
       <div className={styles.body}>
         {(loading)
           ? (<EuiLoadingContent className={styles.loading} lines={4} />)
           : renderBody()}
       </div>
-      <div className={styles.footer}>
-        <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
-        <EuiText className={styles.text}>
-          {'Run '}
-          <PopoverRunAnalyze
-            isShowPopover={isShowApproveRun}
-            setIsShowPopover={setIsShowApproveRun}
-            onApproveClick={handleClickDbAnalysisLink}
-            popoverContent={
-                  connectionType === ConnectionType.Cluster
-                    ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
-                    : ANALYZE_TOOLTIP_MESSAGE
-                }
-          >
-            <EuiLink
-              className={styles.link}
-              onClick={() => setIsShowApproveRun(true)}
-              data-testid="footer-db-analysis-link"
+      {instanceId && (
+        <div className={styles.footer}>
+          <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
+          <EuiText className={styles.text}>
+            {'Run '}
+            <PopoverRunAnalyze
+              isShowPopover={isShowApproveRun}
+              setIsShowPopover={setIsShowApproveRun}
+              onApproveClick={handleClickDbAnalysisLink}
+              popoverContent={
+                    connectionType === ConnectionType.Cluster
+                      ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
+                      : ANALYZE_TOOLTIP_MESSAGE
+                  }
             >
-              Database Analysis
-            </EuiLink>
-          </PopoverRunAnalyze>
-          {' to get more tips'}
-        </EuiText>
-      </div>
+              <EuiLink
+                className={styles.link}
+                onClick={() => setIsShowApproveRun(true)}
+                data-testid="footer-db-analysis-link"
+              >
+                Database Analysis
+              </EuiLink>
+            </PopoverRunAnalyze>
+            {' to get more tips'}
+          </EuiText>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,17 +1,11 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import reactRouterDom from 'react-router-dom'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { customTutorialsBulkUploadSelector, uploadDataBulk } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RedisUploadButton, { Props } from './RedisUploadButton'
-
-jest.mock('uiSrc/slices/instances/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances/instances'),
-  connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: 'databaseId',
-  }),
-}))
 
 jest.mock('uiSrc/slices/workbench/wb-custom-tutorials', () => ({
   ...jest.requireActual('uiSrc/slices/workbench/wb-custom-tutorials'),
@@ -38,6 +32,10 @@ const props: Props = {
 }
 
 describe('RedisUploadButton', () => {
+  beforeEach(() => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 'instanceId' })
+  })
+
   it('should render', () => {
     expect(render(<RedisUploadButton {...props} />)).toBeTruthy()
   })
@@ -65,6 +63,15 @@ describe('RedisUploadButton', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
+  it('should render no database poper', () => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    render(<RedisUploadButton {...props} />)
+
+    fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
+
+    expect(screen.getByTestId('database-not-opened-popover')).toBeInTheDocument()
+  })
+
   it('should call proper telemetry events', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
@@ -75,7 +82,7 @@ describe('RedisUploadButton', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
       eventData: {
-        databaseId: 'databaseId'
+        databaseId: 'instanceId'
       }
     });
 
@@ -86,7 +93,7 @@ describe('RedisUploadButton', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
-        databaseId: 'databaseId'
+        databaseId: 'instanceId'
       }
     });
 

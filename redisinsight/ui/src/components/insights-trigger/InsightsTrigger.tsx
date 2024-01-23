@@ -10,15 +10,21 @@ import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 
 import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { appFeatureHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
+
 import styles from './styles.module.scss'
 
-const InsightsTrigger = () => {
+export interface Props {
+  source?: string
+}
+
+const InsightsTrigger = (props: Props) => {
+  const { source = 'overview' } = props
   const { isOpen: isInsigtsOpen, tabSelected } = useSelector(insightsPanelSelector)
   const { isHighlighted, } = useSelector(recommendationsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
@@ -54,11 +60,11 @@ const InsightsTrigger = () => {
     sendEventTelemetry({
       event: isInsigtsOpen ? TelemetryEvent.INSIGHTS_PANEL_CLOSED : TelemetryEvent.INSIGHTS_PANEL_OPENED,
       eventData: {
-        databaseId: instanceId,
         provider,
         page,
+        source,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         tab: isHighlighted ? InsightsPanelTabs.Recommendations : tabSelected,
-        source: 'overview'
       },
     })
 
@@ -75,8 +81,8 @@ const InsightsTrigger = () => {
         {...(BUILD_FEATURES.insights || {})}
       >
         <EuiToolTip
-          title={isHighlighted ? undefined : 'Insights'}
-          content={isHighlighted
+          title={isHighlighted && instanceId ? undefined : 'Insights'}
+          content={isHighlighted && instanceId
             ? 'New tips are available'
             : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use tips to improve your database.'}
         >
@@ -96,7 +102,7 @@ const InsightsTrigger = () => {
             >
               Insights
             </EuiText>
-            {isHighlighted && (<span className={styles.highlighting} />)}
+            {(isHighlighted && instanceId) && (<span className={styles.highlighting} />)}
           </EuiButton>
         </EuiToolTip>
       </HighlightedFeature>

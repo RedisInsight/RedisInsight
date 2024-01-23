@@ -228,6 +228,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
               </EuiTitle>
               <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} mode="reduced" />
             </div>
+            <EuiTitle className={styles.addDbTitle} size="s"><span>Add Redis databases</span></EuiTitle>
             <div className={styles.controlsGroup}>
               <EuiTitle className={styles.controlsGroupTitle} size="s">
                 <h5>Redis Cloud Database</h5>

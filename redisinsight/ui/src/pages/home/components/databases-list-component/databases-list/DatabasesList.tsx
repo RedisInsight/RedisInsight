@@ -7,7 +7,6 @@ import {
   PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { find } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
@@ -18,6 +17,7 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
 import { ActionBar, DeleteAction, ExportAction } from './components'
+import { findColumn, getColumnWidth, hideColumn } from './utils'
 
 import styles from '../styles.module.scss'
 
@@ -31,7 +31,6 @@ export interface Props {
   onWheel: () => void
 }
 
-const MIN_COLUMN_LENGTH = 180
 const loadingMsg = 'loading...'
 
 function DatabasesList({
@@ -50,12 +49,15 @@ function DatabasesList({
 
   const tableRef = useRef<EuiInMemoryTable<Instance>>(null)
   const containerTableRef = useRef<HTMLDivElement>(null)
+  const hiddenCols = useRef<Set<string>>(new Set([]))
+  const lastHiddenColumn = useRef<EuiTableFieldDataColumnType<Instance>>()
 
   useEffect(() => {
-    if (containerTableRef.current) {
+    if (columnsToHide?.length && containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
+      const beforeAdjustHiddenCols = hiddenCols.current.size
       const columnsResults = adjustColumns(columns, offsetWidth)
-      if (columnsResults?.length !== columns?.length) {
+      if (beforeAdjustHiddenCols !== hiddenCols.current.size) {
         setColumns(columnsResults)
       }
     }
@@ -70,41 +72,53 @@ function DatabasesList({
     onSelectionChange: (selected: Instance[]) => setSelection(selected),
   }
 
-  const getColumnWidth = (width?: string) => (width && /^[0-9]+px/.test(width) ? parseInt(width, 10) : MIN_COLUMN_LENGTH)
-
   const adjustColumns = (
     cols: EuiTableFieldDataColumnType<Instance>[],
     offsetWidth: number,
-    numberOfChangedColumns: number = 0
   ): EuiTableFieldDataColumnType<Instance>[] => {
-    const sum = cols?.reduce((prev, next) => {
-      const columnWidth = getColumnWidth(next.width)
-      return prev + columnWidth
-    }, 0)
+    let sum = cols?.reduce((prev, next) => prev + getColumnWidth(next.width), 0)
+    const visibleColumns = cols.length - hiddenCols.current.size
 
-    // remove columns
-    if (sum > offsetWidth && columnsProp.length < columnsToHide.length + cols.length) {
-      return adjustColumns(
-        cols.filter(({ field }) => !columnsToHide.slice(0, numberOfChangedColumns + 1).includes(field)),
-        offsetWidth,
-        numberOfChangedColumns + 1
-      )
+    // hide columns
+    if (sum > offsetWidth && columnsToHide.length + visibleColumns) {
+      let resultsCol = [...cols]
+      while (sum > offsetWidth) {
+        const colToHide = columnsToHide[hiddenCols.current.size]
+        const initialCol = findColumn(columnsProp, colToHide)
+        if (!initialCol) return resultsCol
+
+        sum -= getColumnWidth(initialCol?.width)
+        hiddenCols.current.add(colToHide)
+        lastHiddenColumn.current = initialCol
+        resultsCol = resultsCol.map((item) => (item.field === colToHide ? hideColumn(item) : item))
+      }
+
+      return resultsCol
     }
 
-    // recover columns
-    if (columnsProp.length > cols.length) {
-      const lastRemovedColumnName = columnsToHide[columnsProp.length - cols.length - 1]
-      if (lastRemovedColumnName) {
-        const lastRemovedColumn = find(columnsProp, ({ field }) => field === lastRemovedColumnName)
-        const lastRemovedColumnWidth = getColumnWidth(lastRemovedColumn?.width)
-
-        if (lastRemovedColumnWidth + sum < offsetWidth) {
-          return adjustColumns(
-            columnsProp.filter(({ field }) => find([...cols, lastRemovedColumn], (item) => item?.field === field)),
-            offsetWidth,
-          )
-        }
+    // show columns
+    if (columnsProp.length > visibleColumns) {
+      // early return to not calculate other columns
+      const lastHiddenColWidth = getColumnWidth(lastHiddenColumn.current?.width)
+      if (sum + lastHiddenColWidth > offsetWidth) {
+        return cols
       }
+
+      let resultsCol = [...cols]
+      Array.from(hiddenCols.current).reverse().forEach((hiddenCol) => {
+        const initialCol = findColumn(columnsProp, hiddenCol)
+        if (!initialCol) return
+
+        const hiddenColWidth = getColumnWidth(initialCol.width)
+        if (hiddenColWidth + sum < offsetWidth) {
+          hiddenCols.current.delete(hiddenCol)
+          sum += hiddenColWidth
+          lastHiddenColumn.current = initialCol
+          resultsCol = resultsCol.map((item) => (item.field === hiddenCol ? initialCol : item))
+        }
+      })
+
+      return resultsCol
     }
 
     return cols

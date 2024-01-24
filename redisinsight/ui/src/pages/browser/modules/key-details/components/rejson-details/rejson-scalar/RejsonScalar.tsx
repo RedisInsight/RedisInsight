@@ -86,25 +86,20 @@ const RejsonScalar = (props: JSONScalarProps) => {
     <>
       <div>
         {isBigString ? (
-          <p
-            style={{ border: 'None', padding: '0em' }}
-            className={getClassNameByValue(value)}
-          >
+          <p className={getClassNameByValue(value)}>
             {`${changedValue}`}
           </p>
         ) : (
           <div className={styles.row}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', flexGrow: 1, }}>
-                <span className="flex-row" style={{ alignItems: 'flex-end' }}>
-                  <span
-                    className={cx(styles.keyName, styles.quoted)}
-                    style={{ paddingLeft: `${leftPadding}em`, }}
-                  >
-                    {keyName}
-                  </span>
-                  <span style={{ paddingLeft: '0.2em' }}>:</span>
+            <div className={styles.rowContainer}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', flexGrow: 1 }}>
+                <span
+                  className={cx(styles.quoted, styles.keyName)}
+                  style={{ paddingLeft: `${leftPadding}em`, }}
+                >
+                  {keyName}
                 </span>
+                <div style={{ paddingLeft: '0.2em', display: 'inline-block' }}>:</div>
                 {editing ? (
                   <div className="jsonItemEditor">
                     <InlineItemEditor

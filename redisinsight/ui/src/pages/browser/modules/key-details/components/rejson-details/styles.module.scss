@@ -42,6 +42,11 @@
   }
 }
 
+.fullWidthContainer {
+  width: 100%;
+  padding: 10px 0;
+}
+
 .placeholder {
   display: flex;
   justify-content: center;
@@ -79,7 +84,8 @@
   width: 100%;
 }
 
-.controls, .controlsBottom {
+.controls,
+.controlsBottom {
   background-color: var(--euiColorLightestShade);
   height: 24px !important;
   z-index: 2;
@@ -249,4 +255,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.fullWidthTextArea {
+  height: 150px;
+  width: 100%;
+  max-width: none;
 }

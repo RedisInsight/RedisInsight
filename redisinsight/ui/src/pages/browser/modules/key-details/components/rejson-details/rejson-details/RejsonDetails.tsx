@@ -67,7 +67,7 @@ const RejsonDetails = (props: BaseProps) => {
   }
 
   const handleOnEsc = (e: KeyboardEvent) => {
-    if (e.code.toLowerCase() === 'escape' || e.keyCode === 27) {
+    if (e.code?.toLowerCase() === 'escape' || e.keyCode === 27) {
       e.stopPropagation()
       handlerResetAddRootKVPair()
     }
@@ -100,8 +100,9 @@ const RejsonDetails = (props: BaseProps) => {
   const validateRootKVPair = (): string | null => {
     const isObject = shouldRejsonDataBeDownloaded && dataType === 'object'
     const isArray = !shouldRejsonDataBeDownloaded && !(data instanceof Array)
+    const isValidKeyAndValue = isValidKey(newRootKey) && isValidJSON(newRootValue as string)
 
-    if ((isObject || isArray) && (!isValidKey(newRootKey) || !isValidJSON(newRootValue as string))) {
+    if ((isObject || isArray) && !isValidKeyAndValue) {
       return JSONErrors.keyCorrectSyntax
     }
 
@@ -147,8 +148,8 @@ const RejsonDetails = (props: BaseProps) => {
     const body: IJSONObject = {
       operation: 'update',
       value: newRootValue,
-      previous_path: path as string,
-      new_key: newRootKey as string,
+      previous_path: path,
+      new_key: newRootKey,
       type: null,
       path: null
     }
@@ -158,7 +159,7 @@ const RejsonDetails = (props: BaseProps) => {
       body.path = '.'
       handleAppendRejsonArrayItemAction(selectedKey, '.', newRootValue as string)
     } else {
-      const unescapedKey = JSON.parse(newRootKey as string)
+      const unescapedKey = JSON.parse(newRootKey)
       const updatedPath = unescapedKey.includes('"') ? `['${unescapedKey}']` : `["${unescapedKey}"]`
       body.path = updatedPath
       handleSetRejsonDataAction(selectedKey, updatedPath, newRootValue as string)
@@ -186,8 +187,8 @@ const RejsonDetails = (props: BaseProps) => {
               data={data}
               parentPath={parentPath}
               selectedKey={selectedKey}
-              onClickRemoveKey={onClickRemoveKey}
               shouldRejsonDataBeDownloaded={shouldRejsonDataBeDownloaded}
+              onClickRemoveKey={onClickRemoveKey}
               onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
               handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
               handleSubmitUpdateValue={handleSubmitUpdateValue}

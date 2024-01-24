@@ -81,7 +81,7 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
   }
 
   const handleOnEsc = (e: KeyboardEvent, type: string) => {
-    if (e.code.toLowerCase() === 'escape' || e.keyCode === 27) {
+    if (e.code?.toLowerCase() === 'escape' || e.keyCode === 27) {
       e.stopPropagation()
       setError(null)
 
@@ -123,7 +123,6 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
   const onClickSetKVPair = () => {
     setAddNewKeyValuePair(!addNewKeyValuePair)
     setNewValue('')
-    setError(null)
   }
 
   const onClickAddNewKVPair = () => {
@@ -257,14 +256,13 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
           <>{value ? (
             <RejsonDynamicTypes
               data={value}
-              selectedKey={selectedKey}
-              onClickRemoveKey={onClickRemoveKey}
-              handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-              shouldRejsonDataBeDownloaded={!downloaded}
-              onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
-              handleSubmitUpdateValue={handleSubmitUpdateValue}
               parentPath={path}
-              onClickFunc={onClickFunc}
+              selectedKey={selectedKey}
+              shouldRejsonDataBeDownloaded={!downloaded}
+              onClickRemoveKey={onClickRemoveKey}
+              onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
+              handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+              handleSubmitUpdateValue={handleSubmitUpdateValue}
               handleFetchVisualisationResults={handleFetchVisualisationResults}
               handleAppendRejsonArrayItemAction={handleAppendRejsonArrayItemAction}
               handleSetRejsonDataAction={handleSetRejsonDataAction}
@@ -287,6 +285,7 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
                       component="form"
                       className="relative"
                       onSubmit={(e) => handleAppendArrayFormSubmit(e)}
+                      style={{ display: 'flex' }}
                       noValidate
                     >
                       <EuiFlexItem grow component="span">

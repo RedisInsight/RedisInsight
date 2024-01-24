@@ -14,14 +14,8 @@ export function isScalar(x: JSONScalarValue) {
   return ['string', 'number', 'boolean'].indexOf(typeof x) !== -1 || x === null
 }
 
-export const convertStringToNumberOrKeepString = (str: string) => {
-  const parsedNumber = parseFloat(str)
-  return Number.isNaN(parsedNumber) ? str : parsedNumber
-}
-
 export const generatePath = (parentPath: string, keyName: string | number) => {
   const currentPath = typeof keyName === 'number' ? `${keyName}` : `'${keyName}'`
-  console.log(parentPath ? `${parentPath}[${currentPath}]` : `[${currentPath}]`)
   return parentPath ? `${parentPath}[${currentPath}]` : `[${currentPath}]`
 }
 

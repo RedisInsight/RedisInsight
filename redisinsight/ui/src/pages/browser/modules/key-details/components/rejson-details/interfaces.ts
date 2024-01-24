@@ -70,7 +70,7 @@ interface JSONCommonProps {
   value: IJSONValue;
   cardinality?: number;
   selectedKey: string | RedisResponseBuffer;
-  path: string,
+  path?: string,
   parentPath: string;
   leftPadding: string;
   handleSubmitJsonUpdateValue: (body: UpdateValueBody) => Promise<void>;

@@ -33,7 +33,7 @@ const EditEntireItemAction = ({
   setError
 }: Props) => (
   <div className={styles.row}>
-    <div style={{ width: '100%', padding: '10px 0' }}>
+    <div className={styles.fullWidthContainer}>
       <EuiOutsideClickDetector onOutsideClick={() => {
         setError(null)
         setEditEntireItem(false)
@@ -51,7 +51,7 @@ const EditEntireItemAction = ({
               <EuiFlexItem grow component="span">
                 <EuiTextArea
                   isInvalid={!!error}
-                  style={{ height: '150px', width: '100%', maxWidth: 'none' }}
+                  className={styles.fullWidthTextArea}
                   value={valueOfEntireItem ? valueOfEntireItem.toString() : ''}
                   placeholder="Enter JSON value"
                   onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setValueOfEntireItem(event.target.value)}

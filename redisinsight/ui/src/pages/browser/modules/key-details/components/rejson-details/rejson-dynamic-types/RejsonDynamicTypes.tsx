@@ -7,7 +7,10 @@ import {
 import RejsonArray from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-array/RejsonArray'
 import RejsonObject from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-object/RejsonObject'
 import { DynamicTypesProps } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
-import { MIN_LEFT_PADDING_NESTING } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/constants'
+import {
+  MIN_LEFT_PADDING_NESTING,
+  MAX_LEFT_PADDING_NESTING
+} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/constants'
 
 const RejsonDynamicTypes = (props: DynamicTypesProps) => {
   const {
@@ -26,8 +29,10 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
   const countBracketedElements = (input: string) => (input.match(/\]/g) || []).length
 
-  const calculateLeftPadding = (parentPath: string) =>
-    String(MIN_LEFT_PADDING_NESTING + (parentPath ? countBracketedElements(parentPath) * 1.5 : 0))
+  const calculateLeftPadding = (parentPath: string) => {
+    const calculatedValue = MIN_LEFT_PADDING_NESTING + (parentPath ? countBracketedElements(parentPath) * 1.5 : 0)
+    return String(Math.min(calculatedValue, MAX_LEFT_PADDING_NESTING))
+  }
 
   const renderScalar = (data) =>
     (
@@ -99,7 +104,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
     return renderScalar(data)
   }
 
-  const renderArrayItem = ([key, value], i: number) => {
+  const renderArrayItem = (key: string | number, value: any) => {
     if (Array.isArray(value)) {
       return renderJSONArray({
         key,
@@ -116,7 +121,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
         parentPath
       })
     }
-    return renderScalar({ key: key || i, value, parentPath })
+    return renderScalar({ key, value, parentPath })
   }
 
   const renderResult = (data) => {
@@ -128,7 +133,11 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
       return data.map(renderRejsonDataBeDownloaded)
     }
 
-    return Object.entries(data).map(renderArrayItem)
+    if (Array.isArray(data)) {
+      return data.map((item, i) => renderArrayItem(i, item))
+    }
+
+    return Object.entries(data).map(([key, value]) => renderArrayItem(key, value))
   }
 
   return (

@@ -84,7 +84,7 @@ const RejsonObject = (props: JSONObjectProps) => {
   }
 
   const handleOnEsc = (e: KeyboardEvent, type: string) => {
-    if (e.code.toLowerCase() === 'escape' || e.keyCode === 27) {
+    if (e.code?.toLowerCase() === 'escape' || e.keyCode === 27) {
       e.stopPropagation()
       setError(null)
 
@@ -277,14 +277,13 @@ const RejsonObject = (props: JSONObjectProps) => {
             ? (
               <RejsonDynamicTypes
                 data={value}
-                selectedKey={selectedKey}
-                onClickRemoveKey={onClickRemoveKey}
-                handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-                shouldRejsonDataBeDownloaded={!downloaded}
-                onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
-                handleSubmitUpdateValue={handleSubmitUpdateValue}
                 parentPath={path}
-                onClickFunc={onClickFunc}
+                selectedKey={selectedKey}
+                shouldRejsonDataBeDownloaded={!downloaded}
+                onClickRemoveKey={onClickRemoveKey}
+                onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
+                handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+                handleSubmitUpdateValue={handleSubmitUpdateValue}
                 handleFetchVisualisationResults={handleFetchVisualisationResults}
                 handleAppendRejsonArrayItemAction={handleAppendRejsonArrayItemAction}
                 handleSetRejsonDataAction={handleSetRejsonDataAction}

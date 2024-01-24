@@ -270,7 +270,7 @@ export function appendReJSONArrayItemAction(
 
 // Asynchronous thunk action
 export function removeReJSONKeyAction(
-  key: string,
+  key: string | RedisResponseBuffer,
   path = '.',
   jsonKeyName = ''
 ) {

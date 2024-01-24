@@ -17,8 +17,8 @@ services:
       - ./.env
     environment:
       TEST_FILES: $TEST_FILES
-      COMMON_URL: 'http://app:5000'
-      API_URL: 'http://app:5000/api'
+      COMMON_URL: 'http://app:5540'
+      API_URL: 'http://app:5540/api'
       E2E_CLOUD_DATABASE_HOST: $E2E_CLOUD_DATABASE_HOST
       E2E_CLOUD_DATABASE_PORT: $E2E_CLOUD_DATABASE_PORT
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
@@ -54,4 +54,4 @@ services:
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
     ports:
-      - 5000:5000
+      - 5540:5540

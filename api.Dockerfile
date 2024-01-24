@@ -38,5 +38,5 @@ RUN chmod +x api-docker-entry.sh
 ENTRYPOINT ["./api-docker-entry.sh"]
 CMD ["node", "dist/src/main"]
 
-EXPOSE 5000
+EXPOSE 5540
 

@@ -1,22 +1,16 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { EuiOutsideClickDetector, EuiPopover } from '@elastic/eui'
 import { Props as PopoverProps } from '@elastic/eui/src/components/popover/popover'
 
-export interface Props extends PopoverProps {
-  children: ReactElement
-}
-
-const Popover = (props: Props) => {
-  const { closePopover, children, ...rest } = props
+const Popover = (props: PopoverProps) => {
+  const { closePopover, ...rest } = props
 
   return (
-    <EuiPopover {...rest} closePopover={closePopover}>
-      <EuiOutsideClickDetector
-        onOutsideClick={closePopover}
-      >
-        {children}
-      </EuiOutsideClickDetector>
-    </EuiPopover>
+    <EuiOutsideClickDetector
+      onOutsideClick={closePopover}
+    >
+      <EuiPopover {...rest} closePopover={closePopover} />
+    </EuiOutsideClickDetector>
   )
 }
 

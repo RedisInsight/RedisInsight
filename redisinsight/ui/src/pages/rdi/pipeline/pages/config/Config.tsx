@@ -14,7 +14,7 @@ const Config = () => {
   const { loading } = useSelector(rdiPipelineSelector)
 
   const { values, setFieldValue } = useFormikContext<IPipeline>()
-
+  console.log(values?.config)
   useEffect(() => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_CONFIG,

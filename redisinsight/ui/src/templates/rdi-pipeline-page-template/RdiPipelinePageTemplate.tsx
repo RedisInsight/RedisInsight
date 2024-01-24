@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Formik, Form } from 'formik'
+import React, { useEffect, useRef, useState } from 'react'
+import { Formik, Form, FormikProps } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -27,6 +27,7 @@ const RdiPipelinePageTemplate = (props: Props) => {
 
   const dispatch = useDispatch()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+  const formikRef = useRef<FormikProps<IPipeline>>(null)
 
   const [initialFormValues, setInitialFormValues] = useState<IPipeline>(getInitialValues(data))
 
@@ -36,6 +37,7 @@ const RdiPipelinePageTemplate = (props: Props) => {
 
   useEffect(() => {
     setInitialFormValues(getInitialValues(data))
+    formikRef.current?.resetForm()
   }, [data])
 
   // TODO add side panel logs
@@ -44,6 +46,7 @@ const RdiPipelinePageTemplate = (props: Props) => {
       initialValues={initialFormValues}
       enableReinitialize
       onSubmit={onSubmit}
+      innerRef={formikRef}
     >
       <Form className={styles.fullHeight}>
         <RdiPipelineHeader />

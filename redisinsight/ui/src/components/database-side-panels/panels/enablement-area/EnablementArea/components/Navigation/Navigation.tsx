@@ -113,7 +113,7 @@ const Navigation = (props: Props) => {
           >
             {isCustomTutorials && actions?.includes(EAItemActions.Create) && (
               <div className={styles.customTuturoialsForm}>
-                {children?.length === 0 && (
+                {!isCreateOpen && children?.length === 0 && (
                   <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
                 )}
                 {isCreateOpen && (

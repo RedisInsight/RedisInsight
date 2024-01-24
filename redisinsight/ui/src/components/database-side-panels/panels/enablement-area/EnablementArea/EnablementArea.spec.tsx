@@ -153,14 +153,13 @@ describe('EnablementArea', () => {
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
     })
 
-    it('should render welcome screen and open form', () => {
+    it('should render open form with tutorials', () => {
       const customTutorials = [{ ...MOCK_CUSTOM_TUTORIALS_ITEMS[0], children: [] }]
       render(<EnablementArea {...instance(mockedProps)} customTutorials={customTutorials} />)
       expect(screen.getByTestId('welcome-my-tutorials')).toBeInTheDocument()
 
       fireEvent.click(screen.getByTestId('upload-tutorial-btn'))
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
-      expect(screen.getByTestId('welcome-my-tutorials')).toBeInTheDocument()
     })
 
     it('should call proper actions after upload form submit', async () => {

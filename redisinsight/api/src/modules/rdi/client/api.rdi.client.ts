@@ -4,6 +4,9 @@ import { RdiUrl } from 'src/modules/rdi/constants';
 import { AxiosInstance } from 'axios';
 import { RdiDryRunJobDto, RdiDryRunJobResponseDto } from 'src/modules/rdi/dto';
 import { RdiDyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
+import { RdiPipelineDeployFailedException } from 'src/modules/rdi/exceptions';
+
+const RDI_DEPLOY_FAILED_STATUS = 'failed';
 
 export class ApiRdiClient extends RdiClient {
   public type = RdiType.API;
@@ -25,8 +28,12 @@ export class ApiRdiClient extends RdiClient {
     return response.data;
   }
 
-  async deploy(pipeline: RdiPipeline): Promise<RdiPipeline> {
-    return null;
+  async deploy(pipeline: RdiPipeline): Promise<void> {
+    const response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
+
+    if (response.data?.status === RDI_DEPLOY_FAILED_STATUS) {
+      throw new RdiPipelineDeployFailedException(undefined, { error: response.data?.error });
+    }
   }
 
   async deployJob(job: RdiJob): Promise<RdiJob> {

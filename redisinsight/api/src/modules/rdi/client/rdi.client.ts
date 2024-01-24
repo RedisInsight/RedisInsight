@@ -23,7 +23,7 @@ export abstract class RdiClient {
 
   abstract getPipeline(): Promise<RdiPipeline>;
 
-  abstract deploy(pipeline: RdiPipeline): Promise<RdiPipeline>;
+  abstract deploy(pipeline: RdiPipeline): Promise<void>;
 
   abstract deployJob(job: RdiJob): Promise<RdiJob>;
 

@@ -50,7 +50,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
     // Open Working with Hashes section
     await t.click(tutorials.internalLinkWorkingWithHashes);
-    let selector = tutorials.getRunSelector('Create');
+    let selector = tutorials.getRunSelector('Create a hash');
 
     // https://redislabs.atlassian.net/browse/RI-5340
     // Verify that user can see “Open Workbench in the left menu to see the command results.” tooltip when hovering over Run button
@@ -59,7 +59,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
 
     // Check the button from Hash page is visible
     await tutorials.runBlockCode('Create a hash');
-    let selector = await tutorials.getRunSelector('Create a hash');
+    selector = tutorials.getRunSelector('Create a hash');
     await t.expect(selector.visible).ok('The end of the page is not visible');
 
     // Verify that user can see the “success” icon during 5 s after a command has been run and button can't be clicked at that time
@@ -72,14 +72,14 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     // Go back to Workbench page
     await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     // Verify that the same article is opened in Enablement area
-    selector = await tutorials.getRunSelector('Create a hash');
+    selector = tutorials.getRunSelector('Create a hash');
     await t.expect(selector.visible).ok('The end of the page is not visible');
     // Go to list of DBs page
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go back to active DB again
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     // Check that user is on Workbench page and "Working with Hashes" page is displayed
-    selector = await tutorials.getRunSelector('Create a hash');
+    selector = tutorials.getRunSelector('Create a hash');
     await t.expect(selector.visible).ok('The end of the page is not visible');
 });
 //skipped due the issue RI-2384

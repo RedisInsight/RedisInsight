@@ -37,7 +37,7 @@ fixture `Default scripts area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test.only
+test
     .requestHooks(logger)('Verify that user can run automatically  "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
         indexName = 'idx:schools';
         keyName = chance.word({ length: 5 });

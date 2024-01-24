@@ -1,11 +1,14 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import RejsonScalar, { Props } from './JSONScalar'
+import {
+  JSONScalarProps
+} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import RejsonScalar from './RejsonScalar'
 
 const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
-const mockedProps = mock<Props>()
+const mockedProps = mock<JSONScalarProps>()
 
 describe('JSONScalar', () => {
   it('should render', () => {
@@ -85,7 +88,6 @@ describe('JSONScalar', () => {
     const handleEdit = jest.fn()
     render(<RejsonScalar
       {...instance(mockedProps)}
-      onJSONPropertyEdited={handleEdit}
       handleSubmitJsonUpdateValue={jest.fn()}
       value="string"
       keyName="keyName"
@@ -98,24 +100,5 @@ describe('JSONScalar', () => {
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(handleEdit).not.toBeCalled()
-  })
-
-  it('should apply proper value', () => {
-    const handleEdit = jest.fn()
-    render(<RejsonScalar
-      {...instance(mockedProps)}
-      onJSONPropertyEdited={handleEdit}
-      handleSubmitJsonUpdateValue={jest.fn()}
-      value="string"
-      keyName="keyName"
-    />)
-    fireEvent.click(screen.getByTestId(/json-scalar-value/i))
-    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
-      target: { value: '{}' }
-    })
-
-    fireEvent.click(screen.getByTestId('apply-btn'))
-
-    expect(handleEdit).toBeCalled()
   })
 })

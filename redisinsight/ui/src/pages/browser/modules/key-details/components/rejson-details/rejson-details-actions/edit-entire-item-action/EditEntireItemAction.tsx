@@ -46,6 +46,7 @@ const EditEntireItemAction = ({
               component="form"
               className="relative"
               onSubmit={(e) => handleUpdateValueFormSubmit(e)}
+              data-testid="json-entire-form"
               noValidate
             >
               <EuiFlexItem grow component="span">

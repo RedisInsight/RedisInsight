@@ -40,7 +40,7 @@ const EditItemFieldAction = ({
         onClick={onClickEditEntireItem}
         aria-label="Edit field"
         color="primary"
-        data-testid={dataTestId}
+        data-testid={dataTestId()}
       />
       <PopoverDelete
         header={createDeleteFieldHeader(keyName)}

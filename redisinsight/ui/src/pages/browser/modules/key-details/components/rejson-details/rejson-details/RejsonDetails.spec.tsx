@@ -1,8 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { BaseProps, } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
 import RejsonDetails from './RejsonDetails'
-import { BaseProps, } from '../types'
 
 const mockedProps = mock<BaseProps>()
 

@@ -1,15 +1,17 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { fetchVisualisationResults } from 'uiSrc/slices/browser/rejson'
-import JSONArray, { Props } from './JSONArray'
+import {
+  JSONArrayProps
+} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import RejsonArray from './RejsonArray'
 
 const EXPAND_ARRAY = 'expand-array'
 const JSON_ARRAY_DOT = '.jsonValue'
 const JSON_ARRAY = 'json-value'
 const BTN_EDIT_FIELD = 'btn-edit-field'
 
-const mockedProps = mock<Props>()
+const mockedProps = mock<JSONArrayProps>()
 
 const mockedDownloadedSimpleArray = [1, 2, 3]
 
@@ -35,7 +37,7 @@ jest.mock('uiSrc/slices/browser/rejson', () => ({
 
 describe('JSONArray', () => {
   it('should render simple JSON', () => {
-    expect(render(<JSONArray
+    expect(render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       shouldRejsonDataBeDownloaded={false}
@@ -44,12 +46,12 @@ describe('JSONArray', () => {
   })
 
   it('should expand simple downloaded JSON', async () => {
-    const { container } = render(<JSONArray
+    const { container } = render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
     await act(async () => {
@@ -60,12 +62,12 @@ describe('JSONArray', () => {
   })
 
   it('should render and expand downloaded JSON with objects', async () => {
-    const { container } = render(<JSONArray
+    const { container } = render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedArrayWithObjects}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
     await act(async () => {
@@ -80,12 +82,12 @@ describe('JSONArray', () => {
   })
 
   it('should render and expand downloaded JSON with arrays', async () => {
-    const { container } = render(<JSONArray
+    const { container } = render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedArrayWithArrays}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
     await act(async () => {
@@ -100,15 +102,16 @@ describe('JSONArray', () => {
   })
 
   it('should render simple not downloaded JSON', async () => {
-    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
+    const fetchVisualisationResults = jest.fn().mockReturnValue(
       Promise.resolve({ data: mockedDownloadedSimpleArray })
-    ))
-    const { container } = render(<JSONArray
+    )
+    const { container } = render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
+      handleFetchVisualisationResults={fetchVisualisationResults}
     />)
 
     await act(async () => {
@@ -119,15 +122,16 @@ describe('JSONArray', () => {
   })
 
   it('should render not downloaded JSON with arrays', async () => {
-    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
+    const fetchVisualisationResults = jest.fn().mockReturnValue(
       Promise.resolve({ data: mockedDownloadedArrayWithArrays })
-    ))
-    const { container } = render(<JSONArray
+    )
+    const { container } = render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
+      handleFetchVisualisationResults={fetchVisualisationResults}
     />)
 
     await act(async () => {
@@ -138,15 +142,16 @@ describe('JSONArray', () => {
   })
 
   it('should render not downloaded JSON with objects', async () => {
-    fetchVisualisationResults.mockImplementation(() => jest.fn().mockReturnValue(
+    const fetchVisualisationResults = jest.fn().mockReturnValue(
       Promise.resolve({ data: mockedDownloadedArrayWithObjects })
-    ))
-    const { container } = render(<JSONArray
+    )
+    const { container } = render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
+      handleFetchVisualisationResults={fetchVisualisationResults}
     />)
 
     await act(async () => {
@@ -157,12 +162,12 @@ describe('JSONArray', () => {
   })
 
   it('should render inline editor to add', async () => {
-    render(<JSONArray
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
     await act(async () => {
@@ -177,15 +182,16 @@ describe('JSONArray', () => {
   })
 
   it('should not be able to add value with wrong json', async () => {
-    const onJSONPropertyAdded = jest.fn()
-    render(<JSONArray
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleAppendRejsonArrayItemAction = jest.fn()
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
-      handleSubmitJsonUpdateValue={jest.fn()}
-      onJSONPropertyAdded={onJSONPropertyAdded}
+      onJsonKeyExpandAndCollapse={jest.fn()}
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleAppendRejsonArrayItemAction={handleAppendRejsonArrayItemAction}
     />)
 
     await act(async () => {
@@ -204,19 +210,21 @@ describe('JSONArray', () => {
       await fireEvent.click(screen.getByTestId('apply-btn'))
     })
 
-    expect(onJSONPropertyAdded).not.toBeCalled()
+    expect(handleSubmitJsonUpdateValue).not.toBeCalled()
+    expect(handleAppendRejsonArrayItemAction).not.toBeCalled()
   })
 
   it('should apply proper value to add element in array', async () => {
-    const onJSONPropertyAdded = jest.fn()
-    render(<JSONArray
+    const handleSubmitJsonUpdateValue = jest.fn()
+    const handleAppendRejsonArrayItemAction = jest.fn()
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
-      handleSubmitJsonUpdateValue={jest.fn()}
-      onJSONPropertyAdded={onJSONPropertyAdded}
+      onJsonKeyExpandAndCollapse={jest.fn()}
+      handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
+      handleAppendRejsonArrayItemAction={handleAppendRejsonArrayItemAction}
     />)
 
     await act(async () => {
@@ -235,16 +243,17 @@ describe('JSONArray', () => {
       await fireEvent.click(screen.getByTestId('apply-btn'))
     })
 
-    expect(onJSONPropertyAdded).toBeCalled()
+    expect(handleSubmitJsonUpdateValue).toBeCalled()
+    expect(handleAppendRejsonArrayItemAction).toBeCalled()
   })
 
   it('should render inline editor to edit value', async () => {
-    render(<JSONArray
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
     await act(async () => {
@@ -255,12 +264,12 @@ describe('JSONArray', () => {
   })
 
   it('should change value when editing', async () => {
-    render(<JSONArray
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
     await act(async () => {
@@ -268,22 +277,21 @@ describe('JSONArray', () => {
     })
 
     fireEvent.change(screen.getByTestId(JSON_ARRAY), {
-      target: { value: '{}' }
+      target: { value: '[]' }
     })
 
-    expect(screen.getByTestId(JSON_ARRAY)).toHaveValue('{}')
+    expect(screen.getByTestId(JSON_ARRAY)).toHaveValue('[]')
   })
 
   it('should not be apply wrong value for edit', async () => {
     const onJSONPropertyEdited = jest.fn()
-    render(<JSONArray
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
       handleSubmitJsonUpdateValue={jest.fn()}
-      onJSONPropertyEdited={onJSONPropertyEdited}
     />)
 
     await act(async () => {
@@ -303,14 +311,13 @@ describe('JSONArray', () => {
 
   it('should apply proper value for edit', async () => {
     const onJSONPropertyEdited = jest.fn()
-    render(<JSONArray
+    render(<RejsonArray
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedSimpleArray}
       shouldRejsonDataBeDownloaded={false}
-      onJSONKeyExpandAndCollapse={jest.fn()}
+      onJsonKeyExpandAndCollapse={jest.fn()}
       handleSubmitJsonUpdateValue={jest.fn()}
-      onJSONPropertyEdited={onJSONPropertyEdited}
     />)
 
     await act(async () => {

@@ -7,14 +7,10 @@ import {
   EuiForm,
   EuiLoadingSpinner,
   EuiOutsideClickDetector,
-  EuiText,
-  EuiTextArea,
   EuiWindowEvent
 } from '@elastic/eui'
 import cx from 'classnames'
-import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
 
-import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { RejsonDynamicTypes } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-dynamic-types'
 import {
@@ -26,6 +22,10 @@ import {
 import { generatePath, validateRejsonValue } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
 import { JSONErrors } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/constants'
 
+import {
+  EditEntireItemAction,
+  AddItemFieldAction, EditItemFieldAction
+} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-details-actions'
 import styles from '../styles.module.scss'
 
 const RejsonObject = (props: JSONObjectProps) => {
@@ -235,27 +235,16 @@ const RejsonObject = (props: JSONObjectProps) => {
           </div>
           <>
             {!editEntireObject && !loading && (
-              <div className={styles.actionButtons}>
-                <EuiButtonIcon
-                  iconType="documentEdit"
-                  className={styles.jsonButtonStyle}
-                  onClick={onClickEditEntireObject}
-                  aria-label="Edit field"
-                  color="primary"
-                  data-testid="edit-object-btn"
-                />
-                <PopoverDelete
-                  header={createDeleteFieldHeader(keyName.toString())}
-                  text={createDeleteFieldMessage(bufferToString(selectedKey))}
-                  item={keyName.toString()}
-                  suffix="object"
-                  deleting={deleting}
-                  closePopover={() => setDeleting('')}
-                  updateLoading={false}
-                  showPopover={(item) => { setDeleting(`${item}object`) }}
-                  handleDeleteItem={() => handleSubmitRemoveKey(path, keyName.toString())}
-                />
-              </div>
+              <EditItemFieldAction
+                type="object"
+                keyName={keyName.toString()}
+                selectedKey={selectedKey}
+                path={path}
+                deleting={deleting}
+                setDeleting={setDeleting}
+                handleSubmitRemoveKey={handleSubmitRemoveKey}
+                onClickEditEntireItem={onClickEditEntireObject}
+              />
             )}
           </>
           <>
@@ -271,72 +260,15 @@ const RejsonObject = (props: JSONObjectProps) => {
       </div>
       <>
         {editEntireObject && (
-          <div className={styles.row}>
-            <div style={{ width: '100%', padding: '10px 0' }}>
-              <EuiOutsideClickDetector onOutsideClick={() => {
-                setError(null)
-                setEditEntireObject(false)
-              }}
-              >
-                <div style={{ marginBottom: '34px' }}>
-                  <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e, 'edit')} />
-                  <EuiFocusTrap>
-                    <EuiForm
-                      component="form"
-                      className="relative"
-                      onSubmit={(e) => handleUpdateValueFormSubmit(e)}
-                      noValidate
-                    >
-                      <EuiFlexItem grow component="span">
-                        <EuiTextArea
-                          isInvalid={!!error}
-                          style={{ height: '150px', width: '100%', maxWidth: 'none' }}
-                          value={valueOfEntireObject ? valueOfEntireObject.toString() : ''}
-                          placeholder="Enter JSON value"
-                          onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setValueOfEntireObject(event.target.value)}
-                          data-testid="json-value"
-                        />
-                      </EuiFlexItem>
-                      <div className={cx(styles.controls, styles.controlsBottom)}>
-                        <EuiButtonIcon
-                          iconSize="m"
-                          iconType="cross"
-                          color="primary"
-                          aria-label="Cancel add"
-                          className={styles.declineBtn}
-                          onClick={() => {
-                            setError(null)
-                            setEditEntireObject(false)
-                          }}
-                        />
-                        <EuiButtonIcon
-                          iconSize="m"
-                          iconType="check"
-                          color="primary"
-                          type="submit"
-                          aria-label="Apply"
-                          className={styles.applyBtn}
-                          data-testid="apply-edit-btn"
-                        />
-                      </div>
-                    </EuiForm>
-                    {error && (
-                      <div className={cx(styles.errorMessage, styles.errorMessageForTextArea)}>
-                        <FieldMessage
-                          scrollViewOnAppear
-                          icon="alert"
-                          testID="edit-json-error"
-                        >
-                          {error}
-                        </FieldMessage>
-                      </div>
-                    )}
-                  </EuiFocusTrap>
-                </div>
-
-              </EuiOutsideClickDetector>
-            </div>
-          </div>
+          <EditEntireItemAction
+            error={error}
+            setError={setError}
+            handleOnEsc={handleOnEsc}
+            handleUpdateValueFormSubmit={handleUpdateValueFormSubmit}
+            valueOfEntireItem={valueOfEntireObject}
+            setValueOfEntireItem={setValueOfEntireObject}
+            setEditEntireItem={setEditEntireObject}
+          />
         )}
       </>
       {!editEntireObject ? (
@@ -434,21 +366,11 @@ const RejsonObject = (props: JSONObjectProps) => {
       </>
       <>
         {openIndex && !editEntireObject ? (
-          <div
-            className={styles.row}
-            style={{ paddingLeft: `${leftPadding}em` }}
-          >
-            <EuiText>
-              <span className={styles.defaultFont}>&#125;</span>
-              <EuiButtonIcon
-                iconType="plus"
-                className={styles.buttonStyle}
-                onClick={onClickSetKVPair}
-                aria-label="Add field"
-                data-testid="add-field-btn"
-              />
-            </EuiText>
-          </div>
+          <AddItemFieldAction
+            leftPadding={leftPadding}
+            type="object"
+            onClickSetKVPair={onClickSetKVPair}
+          />
         ) : null}
       </>
     </>

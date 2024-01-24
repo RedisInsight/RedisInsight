@@ -8,12 +8,9 @@ import {
   EuiForm,
   EuiLoadingSpinner,
   EuiOutsideClickDetector,
-  EuiTextArea,
   EuiWindowEvent
 } from '@elastic/eui'
-import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage } from 'uiSrc/utils'
 
-import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import {
   REJSONResponse,
@@ -29,6 +26,10 @@ import {
 } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
 import { JSONErrors } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/constants'
 
+import {
+  EditEntireItemAction,
+  AddItemFieldAction, EditItemFieldAction
+} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-details-actions'
 import styles from '../styles.module.scss'
 
 const RejsonArrayComponent = (props: JSONArrayProps) => {
@@ -188,7 +189,7 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
 
   return (
     <>
-      <div className={styles.row}>
+      <div className={styles.row} key={keyName + parentPath}>
         <div className={styles.rowContainer}>
           <div className={styles.quotedKeyName} style={{ paddingLeft: `${leftPadding}em` }}>
             <span
@@ -215,27 +216,16 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
           </div>
           <>
             {!editEntireArray && !loading && (
-              <div className={styles.actionButtons}>
-                <EuiButtonIcon
-                  iconType="documentEdit"
-                  className={styles.jsonButtonStyle}
-                  onClick={onClickEditEntireArray}
-                  aria-label="Edit field"
-                  color="primary"
-                  data-testid="btn-edit-field"
-                />
-                <PopoverDelete
-                  header={createDeleteFieldHeader(keyName.toString())}
-                  text={createDeleteFieldMessage(bufferToString(selectedKey))}
-                  item={keyName.toString()}
-                  suffix="array"
-                  deleting={deleting}
-                  closePopover={() => setDeleting('')}
-                  updateLoading={false}
-                  showPopover={(item) => { setDeleting(`${item}array`) }}
-                  handleDeleteItem={() => handleSubmitRemoveKey(path, keyName.toString())}
-                />
-              </div>
+              <EditItemFieldAction
+                type="array"
+                keyName={keyName.toString()}
+                selectedKey={selectedKey}
+                path={path}
+                deleting={deleting}
+                setDeleting={setDeleting}
+                handleSubmitRemoveKey={handleSubmitRemoveKey}
+                onClickEditEntireItem={onClickEditEntireArray}
+              />
             )}
           </>
           <>
@@ -251,68 +241,15 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
       </div>
       <>
         {editEntireArray ? (
-          <div className={styles.row}>
-            <div style={{ width: '100%', padding: '10px 0' }}>
-              <EuiOutsideClickDetector onOutsideClick={() => { setEditEntireArray(false) }}>
-                <div style={{ marginBottom: '34px' }}>
-                  <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e, 'edit')} />
-                  <EuiFocusTrap>
-                    <EuiForm
-                      component="form"
-                      className="relative"
-                      onSubmit={(e) => handleUpdateValueFormSubmit(e)}
-                      noValidate
-                    >
-                      <EuiFlexItem grow component="span">
-                        <EuiTextArea
-                          isInvalid={!!error}
-                          style={{ height: '150px', width: '100%', maxWidth: 'none' }}
-                          value={valueOfEntireArray ? valueOfEntireArray.toString() : ''}
-                          placeholder="Enter JSON value"
-                          onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => setValueOfEntireArray(event.target.value)}
-                          data-testid="json-value"
-                        />
-                      </EuiFlexItem>
-                      <div className={cx(styles.controls, styles.controlsBottom)}>
-                        <EuiButtonIcon
-                          iconSize="m"
-                          iconType="cross"
-                          color="primary"
-                          aria-label="Cancel add"
-                          className={styles.declineBtn}
-                          onClick={() => {
-                            setError(null)
-                            setEditEntireArray(false)
-                          }}
-                        />
-                        <EuiButtonIcon
-                          iconSize="m"
-                          iconType="check"
-                          color="primary"
-                          type="submit"
-                          aria-label="Apply"
-                          className={styles.applyBtn}
-                          data-testid="apply-edit-btn"
-                        />
-                      </div>
-                    </EuiForm>
-                    {error && (
-                      <div className={cx(styles.errorMessage, styles.errorMessageForTextArea)}>
-                        <FieldMessage
-                          scrollViewOnAppear
-                          icon="alert"
-                          testID="edit-json-error"
-                        >
-                          {error}
-                        </FieldMessage>
-                      </div>
-                    )}
-                  </EuiFocusTrap>
-                </div>
-
-              </EuiOutsideClickDetector>
-            </div>
-          </div>
+          <EditEntireItemAction
+            error={error}
+            setError={setError}
+            handleOnEsc={handleOnEsc}
+            handleUpdateValueFormSubmit={handleUpdateValueFormSubmit}
+            valueOfEntireItem={valueOfEntireArray}
+            setValueOfEntireItem={setValueOfEntireArray}
+            setEditEntireItem={setEditEntireArray}
+          />
         ) : null}
       </>
       <>
@@ -405,19 +342,11 @@ const RejsonArrayComponent = (props: JSONArrayProps) => {
         </>
         <>
           {openIndex && !editEntireArray ? (
-            <div
-              className={styles.row}
-              style={{ paddingLeft: `${leftPadding}em` }}
-            >
-              <span className={styles.defaultFont}>&#93;</span>
-              <EuiButtonIcon
-                iconType="plus"
-                className={styles.jsonButtonStyle}
-                onClick={onClickSetKVPair}
-                aria-label="Add field"
-                data-testid="add-field-btn"
-              />
-            </div>
+            <AddItemFieldAction
+              leftPadding={leftPadding}
+              type="array"
+              onClickSetKVPair={onClickSetKVPair}
+            />
           ) : null}
         </>
       </>

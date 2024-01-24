@@ -10,8 +10,6 @@ const apiPrefix = process.env.RI_API_PREFIX
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
 
-axios.defaults.adapter = require('axios/lib/adapters/http')
-
 const axiosInstance = axios.create({
   baseURL:
     !isDevelopment && isWebApp

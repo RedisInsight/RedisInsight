@@ -9,9 +9,9 @@ import {
   path,
   serverConfig, requirements,
   before,
+  nock,
   _,
 } from '../deps';
-import { getBaseURL } from '../../helpers/server';
 const { server, request, localDb } = deps;
 
 // create endpoint
@@ -107,6 +107,8 @@ const globalManifest = {
   children: [],
 };
 
+const nockScope = nock('https://github.com/somerepo');
+
 describe('POST /custom-tutorials', () => {
   requirements('rte.serverType=local');
 
@@ -197,7 +199,9 @@ describe('POST /custom-tutorials', () => {
 
     it('should import tutorial from the external link with manifest', async () => {
       const zip = new AdmZip(path.join(staticsFolder, 'test.zip'));
-      const link = `${getBaseURL()}/static/test.zip`;
+      const file = await fsExtra.readFile(path.join(staticsFolder, 'test.zip'))
+      nockScope.get('/test.zip').reply(200, file);
+      const link = `https://github.com/somerepo/test.zip`;
 
       await validateApiCall({
         endpoint: creatEndpoint,

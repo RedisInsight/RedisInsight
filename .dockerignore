@@ -5,7 +5,6 @@
 .docker
 
 **/node_modules
-release
 
 **/dist
 **/coverage

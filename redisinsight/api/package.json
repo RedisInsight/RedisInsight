@@ -57,7 +57,7 @@
     "@okta/okta-auth-js": "^7.3.0",
     "adm-zip": "^0.5.9",
     "analytics-node": "^4.0.1",
-    "axios": "^0.25.0",
+    "axios": "^1.6.0",
     "body-parser": "^1.19.0",
     "busboy": "^1.6.0",
     "class-transformer": "^0.2.3",
@@ -157,7 +157,8 @@
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
       "apiSrc/(.*)": "<rootDir>/$1",
-      "tests/(.*)": "<rootDir>/__tests__/$1"
+      "tests/(.*)": "<rootDir>/__tests__/$1",
+      "axios": "axios/dist/node/axios.cjs"
     }
   }
 }

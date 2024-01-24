@@ -122,8 +122,8 @@ test.after(async() => {
     }
     await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
 })('Verify that user can upload tutorial with URL with manifest.json', async t => {
-    const labelFromManifest = 'Working with JSON label';
-    const link = 'https://drive.google.com/u/2/uc?id=1a45zHZGYYvtKgM83Rff6rfjy1yfWiwHt&export=download';
+    const labelFromManifest = 'LabelFromManifest';
+    const link = 'https://github.com/RedisInsight/RedisInsight/tree/main/tests/e2e/test-data/upload-tutorials/sample-manifest-link.zip';
     internalLinkName1 = 'manifest-id';
     tutorialName = 'Tutorials with manifest';
     const summary = 'Summary for JSON';

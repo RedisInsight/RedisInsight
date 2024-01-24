@@ -7,7 +7,6 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
 
 export const RESOURCES_BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
-axios.defaults.adapter = require('axios/lib/adapters/http')
 
 const resourcesService = axios.create({
   baseURL: RESOURCES_BASE_URL,

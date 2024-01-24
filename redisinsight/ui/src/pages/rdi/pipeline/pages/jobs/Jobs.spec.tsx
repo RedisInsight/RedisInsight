@@ -1,9 +1,11 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
+import { useFormikContext } from 'formik'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
 import Jobs from './Jobs'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -16,19 +18,31 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
-    error: '',
-    data: null,
   }),
 }))
 
+jest.mock('formik')
+
+beforeEach(() => {
+  cleanup()
+})
+
 describe('Jobs', () => {
+  beforeEach(() => {
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: MOCK_RDI_PIPELINE_DATA,
+    };
+    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+  })
+
   it('should render', () => {
     expect(render(<Jobs />)).toBeTruthy()
   })
 
   it('should call proper sendPageViewTelemetry', () => {
-    const sendPageViewTelemetryMock = jest.fn()
-    sendPageViewTelemetry.mockImplementation(() => sendPageViewTelemetryMock)
+    const sendPageViewTelemetryMock = jest.fn();
+    (sendPageViewTelemetry as jest.Mock).mockImplementation(() => sendPageViewTelemetryMock)
 
     render(<Jobs />)
 
@@ -40,8 +54,8 @@ describe('Jobs', () => {
   it('should render loading spinner', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
     render(<Jobs />)
 
@@ -51,12 +65,16 @@ describe('Jobs', () => {
   it('should push to config page', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
-      error: '',
-      data: { jobs: [{ name: 'job1' }, { name: 'job2' }] },
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
+
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [MOCK_RDI_PIPELINE_JOB2] },
+    };
+    (useFormikContext as jest.Mock).mockReturnValueOnce(mockUseFormikContext)
 
     render(<Jobs />)
 
@@ -67,9 +85,8 @@ describe('Jobs', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
       error: '',
-      data: { jobs: [{ name: 'jobName' }, { name: 'job2' }] },
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
 

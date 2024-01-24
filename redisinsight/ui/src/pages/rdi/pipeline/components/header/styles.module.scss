@@ -45,3 +45,7 @@
   margin: 0 8px;
 }
 
+:global(.euiPanel).popover {
+  max-width: 450px !important;
+  word-wrap: break-word;
+}

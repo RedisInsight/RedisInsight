@@ -6,7 +6,7 @@ import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 
-export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
+export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
   const error = {
     response: {
       status: 500,
@@ -148,6 +148,12 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
           Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
         </>
       )
+      break
+
+    case CustomErrorCodes.RdiDeployPipelineFailure:
+      title = 'Pipeline not deployed'
+      message = 'Unfortunately we’ve found some errors in your pipeline.'
+      additionalInfo.errorCode = err.errorCode
       break
 
     default:

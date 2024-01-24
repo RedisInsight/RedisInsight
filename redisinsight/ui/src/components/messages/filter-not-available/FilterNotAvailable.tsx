@@ -4,16 +4,21 @@ import { EuiIcon, EuiText, EuiTitle, EuiSpacer, EuiLink, EuiButton } from '@elas
 import { useSelector } from 'react-redux'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { CloudSsoUtmCampaign, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { instancesSelector } from 'uiSrc/slices/instances/instances'
+import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+
 import styles from './styles.module.scss'
 
-const GET_STARTED_LINK = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
-const LEARN_MORE_LINK = 'https://redis.io/docs/about/about-stack/?utm_source=redisinsight&utm_medium=main&utm_campaign=browser_filter'
+const utm = {
+  medium: 'main',
+  campaign: UTM_CAMPAINGS[CloudSsoUtmCampaign.BrowserFilter],
+}
 
 const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
-  const { freeInstance } = useSelector(instancesSelector)
+  const freeInstances = useSelector(freeInstancesSelector) || []
   const onFreeDatabaseClick = () => {
     onClose?.()
   }
@@ -25,16 +30,20 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
       </EuiTitle>
       <EuiText>Filtering by data type is supported in Redis 6 and above.</EuiText>
       <EuiSpacer size="m" />
-      {!!freeInstance && (
+      {!!freeInstances.length && (
         <>
           <EuiText color="subdued">
             Use your free all-in-one Redis Cloud database to start exploring these capabilities.
           </EuiText>
           <EuiSpacer size="l" />
-          <OAuthConnectFreeDb source={OAuthSocialSource.BrowserFiltering} onSuccessClick={onClose} />
+          <OAuthConnectFreeDb
+            id={freeInstances[0].id}
+            source={OAuthSocialSource.BrowserFiltering}
+            onSuccessClick={onClose}
+          />
         </>
       )}
-      {!freeInstance && (
+      {!freeInstances.length && (
         <>
           <EuiText color="subdued">
             Create a free Redis Stack database that supports filtering and extends
@@ -48,7 +57,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
                   fill
                   color="secondary"
                   target="_blank"
-                  href={GET_STARTED_LINK}
+                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, utm)}
                   onClick={(e) => {
                     ssoCloudHandlerClick(e, OAuthSocialSource.BrowserFiltering)
                     onFreeDatabaseClick()
@@ -66,7 +75,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
               external={false}
               target="_blank"
               color="text"
-              href={LEARN_MORE_LINK}
+              href={getUtmExternalLink(EXTERNAL_LINKS.redisStack, utm)}
               data-testid="learn-more-link"
             >
               Learn More

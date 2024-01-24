@@ -1,11 +1,12 @@
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
+const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -64,10 +65,14 @@ test('Verify that user can see all the information removed when reloads the page
 });
 test('Verify that user can see saved state of the Enablement area when navigates back to the Workbench from other page', async t => {
     // Collapse the Enablement area and open Settings
-    await t.hover(workbenchPage.preselectArea);
-    await t.click(workbenchPage.collapsePreselectAreaButton);
-    await t.click(myRedisDatabasePage.NavigationPanel.settingsButton);
-    // Navigate back to Workbench and Verify the context
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-    await t.expect(workbenchPage.enablementAreaTreeView.visible).notOk('The Enablement area is not collapsed');
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    await workbenchPage.InsightsPanel.togglePanel(false);
+    await t.expect(tutorials.preselectArea.exists).notOk('the panel is not closed');
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    await t.click(workbenchPage.NavigationPanel.browserButton);
+    await t.expect(tutorials.preselectArea.exists).ok('the panel is opened');
+    await t.click(browserPage.InsightsPanel.closeButton);
+    await t.expect(tutorials.preselectArea.exists).notOk('the panel is not closed');
+
 });

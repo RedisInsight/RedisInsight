@@ -4,9 +4,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
 import { cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
-import { BrowserStorageItem } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
@@ -22,7 +19,7 @@ import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
-import { resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
+import { getRecommendations, setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import {
   getDatabaseConfigInfo,
@@ -30,7 +27,7 @@ import {
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
-import InstancePage, { getDefaultSizes, Props } from './InstancePage'
+import InstancePage, { Props } from './InstancePage'
 
 const INSTANCE_ID_MOCK = 'instanceId'
 const mockedProps = mock<Props>()
@@ -91,49 +88,6 @@ describe('InstancePage', () => {
     expect(queryByTestId('expand-cli')).toBeInTheDocument()
   })
 
-  it('should not render LiveTimeRecommendations Component by default', () => {
-    const { queryByTestId } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    expect(queryByTestId('recommendations-trigger')).not.toBeInTheDocument()
-  })
-
-  it('should render LiveTimeRecommendations Component with feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      insightsRecommendations: {
-        flag: true
-      }
-    })
-    const { queryByTestId } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    expect(queryByTestId('recommendations-trigger')).toBeInTheDocument()
-  })
-
-  it('should be called LocalStorage after Component Will Unmount', () => {
-    const defaultSizes = getDefaultSizes()
-    localStorageService.set = jest.fn()
-
-    const { unmount } = render(
-      <BrowserRouter>
-        <InstancePage {...instance(mockedProps)} />
-      </BrowserRouter>
-    )
-
-    unmount()
-
-    expect(localStorageService.set).toBeCalledWith(
-      BrowserStorageItem.cliResizableContainer,
-      defaultSizes
-    )
-  })
-
   it('should call proper actions with resetting context', async () => {
     (appContextSelector as jest.Mock).mockReturnValue({
       contextInstanceId: 'prevId'
@@ -160,7 +114,7 @@ describe('InstancePage', () => {
       setDatabaseAnalysisInitialState(),
       setInitialAnalyticsSettings(),
       setRedisearchInitialState(),
-      resetRecommendationsHighlighting(),
+      setInitialRecommendationsState(),
       setTriggeredFunctionsInitialState(),
     ]
 
@@ -169,6 +123,7 @@ describe('InstancePage', () => {
       setConnectedInstance(),
       getDatabaseConfigInfo(),
       setConnectedInfoInstance(),
+      getRecommendations(),
       ...resetContextActions,
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),

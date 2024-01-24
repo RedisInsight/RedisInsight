@@ -25,30 +25,24 @@
 }
 
 .overviewItem {
-  padding: 6px 20px;
-  min-width: 116px;
+  min-width: 78px;
+  padding: 4px 14px;
   color: var(--euiTextSubduedColor);
-  border-right: 1px solid var(--separatorColor);
 
-  @media only screen and (max-width: 1024px) {
-    padding: 6px 10px;
-    min-width: 96px;
-  }
-
-  @media only screen and (max-width: 1124px) {
+  &:not(:last-child) {
     border-right: 1px solid var(--separatorColor);
   }
 }
 .icon {
   margin-right: 6px;
   width: auto !important;
-  height: 18px !important;
-  max-width: 22px;
+  height: 14px !important;
+  max-width: 18px;
 }
 
 .overviewItemContent {
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .tooltip {

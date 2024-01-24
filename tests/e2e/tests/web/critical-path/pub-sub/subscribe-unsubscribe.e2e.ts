@@ -122,7 +122,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     // Verify that user can see a custom message when he tries to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
     await t.click(pubSubPage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(commandSecond);
-    await t.expect(await workbenchPage.commandExecutionResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
+    await t.expect(await workbenchPage.queryResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
 
 });
 test('Verify that the Message field input is preserved until user Publish a message', async t => {

@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .container {
   width: 168px;
   height: 36px;
@@ -41,6 +43,13 @@
     }
   }
 }
+
+@include insights-open {
+  .container {
+    width: 128px;
+  }
+}
+
 
 .filterKeyType {
   position: relative;

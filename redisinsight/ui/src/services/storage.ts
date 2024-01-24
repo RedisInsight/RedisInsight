@@ -49,31 +49,45 @@ class StorageService {
 export const localStorageService = new StorageService(localStorage)
 export const sessionStorageService = new StorageService(sessionStorage)
 
-export const getDBConfigStorageField = (instanceId: string, field: string = '') => {
+export const getObjectStorageField = (itemName = '', field = '') => {
   try {
-    return localStorageService.get(BrowserStorageItem.dbConfig + instanceId)?.[field]
+    return localStorageService?.get(itemName)?.[field]
   } catch (e) {
     return null
   }
 }
 
-export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
+export const setObjectStorageField = (itemName = '', field = '', value?: any) => {
   try {
-    const config = localStorageService.get(BrowserStorageItem.dbConfig + instanceId) || {}
+    const config = localStorageService?.get(itemName) || {}
 
     if (value === undefined) {
       delete config[field]
-      localStorageService.set(BrowserStorageItem.dbConfig + instanceId, config)
+      localStorageService?.set(itemName, config)
       return
     }
 
-    localStorageService.set(BrowserStorageItem.dbConfig + instanceId, {
+    localStorageService?.set(itemName, {
       ...config,
       [field]: value
     })
   } catch (e) {
     console.error(e)
   }
+}
+
+export const getDBConfigStorageField = (instanceId: string, field: string = '') =>
+  getObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field)
+
+export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
+  setObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field, value)
+}
+
+export const getCapabilityStorageField = (field: string = '') =>
+  getObjectStorageField(BrowserStorageItem.capability, field)
+
+export const setCapabilityStorageField = (field: string = '', value?: any) => {
+  setObjectStorageField(BrowserStorageItem.capability, field, value)
 }
 
 export default StorageService

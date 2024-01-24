@@ -1,13 +1,12 @@
 import {
   Criteria,
   Direction,
-  EuiBasicTableColumn,
   EuiInMemoryTable,
+  EuiTableFieldDataColumnType,
   EuiTableSelectionType,
   PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { first, last } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
@@ -18,61 +17,52 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
 import { ActionBar, DeleteAction, ExportAction } from './components'
+import { findColumn, getColumnWidth, hideColumn } from './utils'
 
 import styles from '../styles.module.scss'
 
 export interface Props {
   width: number
-  dialogIsOpen: boolean
   editedInstance: Nullable<Instance>
-  columnVariations: EuiBasicTableColumn<Instance>[][]
+  columns: EuiTableFieldDataColumnType<Instance>[]
+  columnsToHide?: string[]
   onDelete: (ids: Instance[]) => void
   onExport: (ids: Instance[], withSecrets: boolean) => void
   onWheel: () => void
 }
 
-const columnsHideWidth = 950
 const loadingMsg = 'loading...'
 
 function DatabasesList({
   width,
-  dialogIsOpen,
-  columnVariations,
+  columns: columnsProp,
+  columnsToHide = [],
   onDelete,
   onExport,
   onWheel,
   editedInstance,
 }: Props) {
-  const [columns, setColumns] = useState(first(columnVariations))
+  const [columns, setColumns] = useState<EuiTableFieldDataColumnType<Instance>[]>(columnsProp)
   const [selection, setSelection] = useState<Instance[]>([])
 
   const { loading, data: instances } = useSelector(instancesSelector)
 
   const tableRef = useRef<EuiInMemoryTable<Instance>>(null)
   const containerTableRef = useRef<HTMLDivElement>(null)
+  const hiddenCols = useRef<Set<string>>(new Set([]))
+  const lastHiddenColumn = useRef<EuiTableFieldDataColumnType<Instance>>()
 
   useEffect(() => {
-    if (containerTableRef.current) {
+    if (columnsToHide?.length && containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
-
-      if (dialogIsOpen) {
-        setColumns(columnVariations[1])
-        return
-      }
-
-      if (
-        offsetWidth < columnsHideWidth
-        && columns?.length !== last(columnVariations)?.length
-      ) {
-        setColumns(last(columnVariations))
-        return
-      }
-
-      if (
-        offsetWidth > columnsHideWidth
-        && columns?.length !== first(columnVariations)?.length
-      ) {
-        setColumns(first(columnVariations))
+      const beforeAdjustHiddenCols = hiddenCols.current.size
+      try {
+        const columnsResults = adjustColumns(columns, offsetWidth)
+        if (beforeAdjustHiddenCols !== hiddenCols.current.size) {
+          setColumns(columnsResults)
+        }
+      } catch (_) {
+        // ignore
       }
     }
   }, [width])
@@ -84,6 +74,58 @@ function DatabasesList({
 
   const selectionValue: EuiTableSelectionType<Instance> = {
     onSelectionChange: (selected: Instance[]) => setSelection(selected),
+  }
+
+  const adjustColumns = (
+    cols: EuiTableFieldDataColumnType<Instance>[],
+    offsetWidth: number,
+  ): EuiTableFieldDataColumnType<Instance>[] => {
+    let sum = cols?.reduce((prev, next) => prev + getColumnWidth(next.width), 0)
+    const visibleColumnsLength = cols.length - hiddenCols.current.size
+
+    // hide columns
+    if (sum > offsetWidth && columnsToHide.length + visibleColumnsLength) {
+      let resultsCol = [...cols]
+      while (sum > offsetWidth) {
+        const colToHide = columnsToHide[hiddenCols.current.size]
+        const initialCol = findColumn(columnsProp, colToHide)
+        if (!initialCol) return resultsCol
+
+        sum -= getColumnWidth(initialCol?.width)
+        hiddenCols.current.add(colToHide)
+        lastHiddenColumn.current = initialCol
+        resultsCol = resultsCol.map((item) => (item.field === colToHide ? hideColumn(item) : item))
+      }
+
+      return resultsCol
+    }
+
+    // show columns
+    if (columnsProp.length > visibleColumnsLength) {
+      // early return to not calculate other columns
+      const lastHiddenColWidth = getColumnWidth(lastHiddenColumn.current?.width)
+      if (sum + lastHiddenColWidth > offsetWidth) {
+        return cols
+      }
+
+      let resultsCol = [...cols]
+      Array.from(hiddenCols.current).reverse().forEach((hiddenCol) => {
+        const initialCol = findColumn(columnsProp, hiddenCol)
+        if (!initialCol) return
+
+        const hiddenColWidth = getColumnWidth(initialCol.width)
+        if (hiddenColWidth + sum < offsetWidth) {
+          hiddenCols.current.delete(hiddenCol)
+          sum += hiddenColWidth
+          lastHiddenColumn.current = initialCol
+          resultsCol = resultsCol.map((item) => (item.field === hiddenCol ? initialCol : item))
+        }
+      })
+
+      return resultsCol
+    }
+
+    return cols
   }
 
   const handleResetSelection = () => {
@@ -128,6 +170,7 @@ function DatabasesList({
   return (
     <div className="databaseList" ref={containerTableRef}>
       <EuiInMemoryTable
+        responsive={false}
         ref={tableRef}
         items={instances.filter(({ visible = true }) => visible)}
         itemId="id"

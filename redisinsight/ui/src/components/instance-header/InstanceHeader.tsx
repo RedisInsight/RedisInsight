@@ -27,10 +27,12 @@ import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/Database
 
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
+import InsightsTrigger from 'uiSrc/components/insights-trigger'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -47,31 +49,19 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
     db = 0,
     id,
     loading: instanceLoading,
+    modules = []
   } = useSelector(connectedInstanceSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
   const history = useHistory()
-  const [windowDimensions, setWindowDimensions] = useState(0)
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
   const [isDbIndexEditing, setIsDbIndexEditing] = useState<boolean>(false)
 
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    updateWindowDimensions()
-    globalThis.addEventListener('resize', updateWindowDimensions)
-    return () => {
-      globalThis.removeEventListener('resize', updateWindowDimensions)
-    }
-  }, [])
-
   useEffect(() => { setDbIndex(String(db || 0)) }, [db])
-
-  const updateWindowDimensions = () => {
-    setWindowDimensions(globalThis.innerWidth)
-  }
 
   const goHome = () => {
     history.push(Pages.home)
@@ -185,6 +175,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                           info={{
                             name, host, port, user: username, connectionType, version, dbIndex: db
                           }}
+                          modules={modules}
                           databases={databases}
                         />
                       )}
@@ -205,10 +196,13 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         </EuiFlexItem>
 
         <EuiFlexItem grow={false}>
-          <DatabaseOverviewWrapper windowDimensions={windowDimensions} />
+          <DatabaseOverviewWrapper />
+        </EuiFlexItem>
+
+        <EuiFlexItem grow={false} style={{ marginLeft: 40 }}>
+          <InsightsTrigger />
         </EuiFlexItem>
       </EuiFlexGroup>
-
     </div>
   )
 }

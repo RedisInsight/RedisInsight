@@ -1,0 +1,34 @@
+.mainWrapper {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.mainPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  &:global(.insightsOpen) {
+    max-width: calc(100% - 460px);
+
+    @media only screen and (max-width: 1440px) {
+      max-width: calc(100% - 380px);
+    }
+  }
+}
+
+.insigtsWrapper {
+  width: 0;
+
+  &.insightsOpen {
+    width: 460px;
+    @media only screen and (max-width: 1440px) {
+      width: 380px;
+    }
+  }
+}

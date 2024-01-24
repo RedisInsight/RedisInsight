@@ -10,7 +10,7 @@ import {
 import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
 import { Pages } from 'uiSrc/constants'
 import { PagePlaceholder } from 'uiSrc/components'
-import ProtectedRoute from 'uiSrc/pages/redisStack/components/protected-route/ProtectedRoute'
+import ProtectedRoute from 'uiSrc/pages/redis-stack/components/protected-route/ProtectedRoute'
 import ROUTES from '../constants/redisStackRoutes'
 
 interface IProps {

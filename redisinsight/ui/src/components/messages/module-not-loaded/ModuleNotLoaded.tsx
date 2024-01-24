@@ -18,9 +18,13 @@ import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW, Theme } from 'uiSrc/constants'
 import { RedisDefaultModules, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { freeInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 
+import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
+import { getDbWithModuleLoaded } from 'uiSrc/utils'
+import { useCapability } from 'uiSrc/services'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -54,10 +58,14 @@ const ListItem = ({ item }: { item: string }) => (
 
 const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
   const [width, setWidth] = useState(0)
-  const freeInstance = useSelector(freeInstanceSelector)
+  const freeInstances = useSelector(freeInstancesSelector) || []
   const { theme } = useContext(ThemeContext)
 
   const module = MODULE_TEXT_VIEW[moduleName]
+  const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
+  const source = type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
+
+  useCapability(source)
 
   useEffect(() => {
     const parentEl = document?.getElementById(id)
@@ -66,19 +74,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     }
   })
 
-  const getStartedLink = (baseUrl: string) => {
-    try {
-      const url = new URL(baseUrl)
-      url.searchParams.append('utm_source', 'redisinsight')
-      url.searchParams.append('utm_medium', 'app')
-      url.searchParams.append('utm_campaign', type === 'browser' ? 'redisinsight_browser_search' : 'redisinsight_workbench')
-      return url.toString()
-    } catch (e) {
-      return baseUrl
-    }
-  }
-
-  const renderText = useCallback((moduleName?: string) => (!freeInstance ? (
+  const renderText = useCallback((moduleName?: string) => (!freeDbWithModule ? (
     <EuiText className={cx(styles.text, styles.marginBottom)}>
       {`Create a free Redis Stack database with ${moduleName} which extends the core capabilities of open-source Redis`}
     </EuiText>
@@ -86,11 +82,15 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
       Use your free all-in-one Redis Cloud database to start exploring these capabilities.
     </EuiText>
-  )), [freeInstance])
+  )), [freeDbWithModule])
 
   const onFreeDatabaseClick = () => {
     onClose?.()
   }
+
+  const utmCampaign = type === 'browser'
+    ? UTM_CAMPAINGS[OAuthSocialSource.BrowserSearch]
+    : UTM_CAMPAINGS[OAuthSocialSource.Workbench]
 
   return (
     <div className={cx(styles.container, {
@@ -136,18 +136,19 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
         </div>
       </div>
       <div className={styles.linksWrapper}>
-        {!!freeInstance && (
+        {!!freeDbWithModule && (
           <OAuthConnectFreeDb
-            source={type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]}
+            source={source}
+            id={freeDbWithModule.id}
           />
         )}
-        {!freeInstance && (
+        {!freeDbWithModule && (
           <>
             <EuiLink
               className={cx(styles.text, styles.link)}
               external={false}
               target="_blank"
-              href={getStartedLink(CONTENT[moduleName]?.link)}
+              href={getUtmExternalLink(CONTENT[moduleName]?.link, { campaign: utmCampaign })}
               data-testid="learn-more-link"
             >
               Learn More
@@ -158,7 +159,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
                   className={styles.link}
                   external={false}
                   target="_blank"
-                  href={getStartedLink('https://redis.com/try-free')}
+                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: utmCampaign })}
                   onClick={(e) => {
                     ssoCloudHandlerClick(
                       e,
@@ -186,4 +187,4 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
   )
 }
 
-export default ModuleNotLoaded
+export default React.memo(ModuleNotLoaded)

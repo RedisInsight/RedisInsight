@@ -1,6 +1,6 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -26,18 +26,20 @@ test.skip('Verify that when user clicks on auto-execute button, command is run',
     // Verify that clicking on auto-executed button, command is not inserted to Editor
     await t.typeText(workbenchPage.queryInput, command, { replace: true, paste: true });
     // Verify that admin can use redis-auto format in .md file for Guides for auto-executed button
-    await t.click(workbenchPage.documentButtonInQuickGuides);
-    await t.click(workbenchPage.internalLinkWorkingWithHashes);
-    await t.click(workbenchPage.preselectHashCreate);
+    await workbenchPage.InsightsPanel.togglePanel(true);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    await t.click(tutorials.dataStructureAccordionTutorialButton);
+    await t.click(tutorials.internalLinkWorkingWithHashes);
+    await tutorials.runBlockCode('Create');
     await t.expect(workbenchPage.queryInput.textContent).eql(command, 'Editor is changed');
     // Verify that admin can use redis-auto format in .md file for Tutorials for auto-executed button
-    await t.click(workbenchPage.redisStackTutorialsButton);
-    await t.click(workbenchPage.timeSeriesLink);
+    await t.click(tutorials.redisStackTutorialsButton);
+    await t.click(tutorials.timeSeriesLink);
     // Verify that when user runs auto-executed commands, selected group mode setting is considered
     await t.click(workbenchPage.groupMode);
     // Verify that when user runs auto-executed commands, selected raw mode setting is considered
     await t.click(workbenchPage.rawModeBtn);
-    await t.click(workbenchPage.redisStackTimeSeriesLoadMorePoints);
+    await tutorials.runBlockCode('Load more data points');
     // Verify that user can see auto-executed command result in command history
     const regExp = new RegExp('66[1-9] Command(s) - \d+ success, \d+ error(s)');
     await t.expect(workbenchPage.queryCardCommand.textContent).match(regExp, 'Not valid summary for group mode');

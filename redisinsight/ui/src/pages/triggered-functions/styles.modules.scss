@@ -1,0 +1,253 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+@import "uiSrc/styles/mixins/_global.scss";
+
+$breakpoint-to-hide-resize-panel: 1124px;
+
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px 16px 0;
+  overflow: auto;
+
+  :global {
+    .euiTableRow {
+      border-left: 3px solid transparent;
+
+      &:hover, &:focus {
+        background-color: var(--tableRowSelectedColor) !important;
+      }
+      &.selected {
+        background-color: var(--hoverInListColorDarken) !important;
+        border-left: 3px solid var(--euiColorPrimary);
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .noVisible {
+      visibility: hidden;
+    }
+
+    .fullWidth {
+      width: 100% !important;
+      min-width: 100% !important;
+      padding: 0;
+      :global(.euiResizablePanel__content) {
+        padding-right: 0;
+        padding-left: 0;
+      }
+    }
+
+    .triggeredFunctions {
+      &__page {
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100% - 36px);
+      }
+
+      &__topPanel {
+        margin: 16px 0;
+        min-height: 40px;
+
+        .euiFormControlLayout {
+          max-width: 600px;
+        }
+      }
+
+      &__content {
+        max-height: calc(100% - 72px);
+      }
+
+      &__search {
+        &.euiFieldSearch {
+          position: relative;
+          border-top: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          background-color: transparent !important;
+        }
+      }
+
+      &__resizePanelLeft {
+        &.openedRightPanel {
+          padding-right: 8px;
+
+          @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+            display: none;
+          }
+        }
+
+        &.openedRightPanel.isNarrowed {
+          @media screen and (max-width: 1440px) {
+            display: none;
+          }
+        }
+      }
+
+      &__resizableButton {
+        @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+          display: none;
+        }
+
+        &.isNarrowed {
+          @media screen and (max-width: 1440px) {
+            display: none;
+          }
+        }
+      }
+
+      &__resizePanelRight {
+        padding-left: 8px;
+
+        @media screen and (max-width: $breakpoint-to-hide-resize-panel) {
+          padding-left: 0;
+          width: 100% !important;
+        }
+
+        &.isNarrowed {
+          @media screen and (max-width: 1440px) {
+            padding-left: 0;
+            width: 100% !important;
+          }
+        }
+      }
+
+      &__panelWrapper {
+        background-color: var(--euiColorEmptyShade);
+        height: 100%;
+      }
+
+      &__tableWrapper {
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      &__tableHeader {
+        height: 42px;
+        background-color: var(--browserTableRowEven);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 20px;
+      }
+
+      &__table {
+        @include euiScrollBar;
+        overflow: auto;
+        position: relative;
+        max-height: calc(100% - 42px);
+
+        thead {
+          border-bottom: 1px solid var(--tableDarkestBorderColor);
+        }
+
+        .euiTableHeaderCell {
+          background-color: var(--euiColorEmptyShade);
+        }
+
+        .euiTableCellContent {
+          padding: 16px 18px !important;
+        }
+      }
+
+      &__emptyTable {
+        .euiTableCellContent__text {
+          pointer-events: auto !important;
+        }
+
+        tbody .euiTableCellContent .emptyTableTextContent span {
+          white-space: break-spaces;
+        }
+
+        .euiTableRow:hover,
+        .euiTableRow:focus {
+          background-color: inherit !important;
+        }
+      }
+
+      &__closeRightPanel {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
+    }
+
+    .euiAccordion {
+      &.euiAccordion-isOpen {
+        .euiAccordion__triggerWrapper {
+          border-radius: 4px 4px 0 0;
+          background: var(--euiColorLightestShade);
+        }
+      }
+
+      .euiAccordion__triggerWrapper {
+        padding: 6px 16px;
+        background: transparent;
+        border: 1px solid var(--controlsBorderColor);
+        border-radius: 4px;
+      }
+
+      .euiAccordion__childWrapper {
+        background: transparent;
+        border: 1px solid var(--controlsBorderColor) !important;
+        border-top-width: 0 !important;
+        border-radius: 0 0 4px 4px;
+      }
+
+      .euiCollapsibleNavGroup__title {
+        color: var(--euiTextSubduedColor) !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+      }
+
+      .euiCollapsibleNavGroup__children {
+        max-height: 200px;
+        overflow-y: auto;
+        @include euiScrollBar;
+      }
+    }
+  }
+}
+
+@include insights-open {
+  .main {
+    :global {
+      .triggeredFunctions {
+        &__resizePanelLeft {
+          &.openedRightPanel {
+            display: none;
+          }
+        }
+
+        &__resizableButton {
+          display: none;
+        }
+
+        &__resizePanelRight {
+          padding-left: 0;
+          width: 100% !important;
+        }
+      }
+    }
+  }
+}
+
+
+.onboardAnchor {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.onboardPanel {
+  position: fixed;
+  top: calc(100% - 212px) !important;
+  left: calc(100% - 328px) !important;
+}

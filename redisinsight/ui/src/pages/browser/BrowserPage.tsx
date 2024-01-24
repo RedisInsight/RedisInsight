@@ -7,6 +7,7 @@ import {
   EuiButton,
 } from '@elastic/eui'
 
+import { isNumber } from 'lodash'
 import {
   formatLongName,
   getDbIndex,
@@ -34,13 +35,13 @@ import {
   setBrowserBulkActionOpen,
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
-import InstanceHeader from 'uiSrc/components/instance-header'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
+import { insightsPanelSelector } from 'uiSrc/slices/panels/insights'
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -48,13 +49,18 @@ import BrowserRightPanel from './components/browser-right-panel'
 import styles from './styles.module.scss'
 
 const widthResponsiveSize = 1280
+const widthExplorePanel = 460
+
 export const firstPanelId = 'keys'
 export const secondPanelId = 'keyDetails'
+
+const isOneSideMode = (isInsightsOpen: boolean) =>
+  globalThis.innerWidth < widthResponsiveSize + (isInsightsOpen ? widthExplorePanel : 0)
 
 const BrowserPage = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, db = 0 } = useSelector(connectedInstanceSelector)
   const {
     panelSizes,
     keyList: { selectedKey: selectedKeyContext },
@@ -63,9 +69,10 @@ const BrowserPage = () => {
   const { isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
   const { viewType, searchMode } = useSelector(keysSelector)
+  const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
-  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(false)
+  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(isInsightsOpen))
   const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
@@ -74,8 +81,10 @@ const BrowserPage = () => {
   const [sizes, setSizes] = useState(panelSizes)
 
   const prevSelectedType = useRef<string>(type)
+  const prevDbIndex = useRef(db)
   const selectedKeyRef = useRef<Nullable<RedisResponseBuffer>>(selectedKey)
   const isBulkActionsPanelOpenRef = useRef<boolean>(isBulkActionsPanelOpen)
+  const isInsightsOpenRef = useRef<boolean>(isInsightsOpen)
 
   const dispatch = useDispatch()
 
@@ -117,13 +126,18 @@ const BrowserPage = () => {
   }, [selectedKey])
 
   useEffect(() => {
+    setArePanelsCollapsed(() => isOneSideMode(isInsightsOpen))
+    isInsightsOpenRef.current = isInsightsOpen
+  }, [isInsightsOpen])
+
+  useEffect(() => {
     if (connectedInstanceName && !isPageViewSent) {
       sendPageView(instanceId)
     }
   }, [connectedInstanceName, isPageViewSent])
 
   const updateWindowDimensions = () => {
-    setArePanelsCollapsed(globalThis.innerWidth < widthResponsiveSize)
+    setArePanelsCollapsed(isOneSideMode(isInsightsOpenRef.current))
   }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {
@@ -176,6 +190,13 @@ const BrowserPage = () => {
     setIsCreateIndexPanelOpen(false)
   }, [])
 
+  useEffect(() => {
+    if (isNumber(db) && db !== prevDbIndex.current) {
+      onChangeDbIndex()
+    }
+    prevDbIndex.current = db
+  }, [db])
+
   const onChangeDbIndex = () => {
     if (selectedKey) {
       dispatch(toggleBrowserFullScreen(true))
@@ -212,21 +233,18 @@ const BrowserPage = () => {
 
   return (
     <div className={`browserPage ${styles.container}`}>
-      <InstanceHeader onChangeDbIndex={onChangeDbIndex} />
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
-        <div>
-          <EuiButton
-            fill
-            color="secondary"
-            iconType="arrowLeft"
-            size="s"
-            onClick={closePanel}
-            className={styles.backBtn}
-            data-testid="back-right-panel-btn"
-          >
-            Browser
-          </EuiButton>
-        </div>
+        <EuiButton
+          fill
+          color="secondary"
+          iconType="arrowLeft"
+          size="s"
+          onClick={closePanel}
+          className={styles.backBtn}
+          data-testid="back-right-panel-btn"
+        >
+          Browser
+        </EuiButton>
       )}
       <div className={cx({
         [styles.hidden]: isRightPanelFullScreen })}
@@ -267,7 +285,6 @@ const BrowserPage = () => {
                     selectKey={selectKey}
                     removeSelectedKey={handleRemoveSelectedKey}
                     handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
                   />
                 </EuiResizablePanel>
 

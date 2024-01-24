@@ -1,30 +1,47 @@
 import React, { useContext } from 'react'
 import { EuiTitle, EuiText, EuiSpacer, EuiButton, EuiImage } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
-import { BulkActionsType, Theme } from 'uiSrc/constants'
+import { useParams } from 'react-router-dom'
+import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
 import TelescopeDark from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLight from 'uiSrc/assets/img/telescope-light.svg'
 
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import styles from './styles.module.scss'
 
 export interface Props {
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 const NoKeysFound = (props: Props) => {
-  const { onAddKeyPanel, onBulkActionsPanel } = props
+  const { onAddKeyPanel } = props
+
+  const { provider } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
+
+  const { instanceId } = useParams<{ instanceId: string }>()
   const { theme } = useContext(ThemeContext)
 
-  const handleOpenBulkUpload = () => {
-    onBulkActionsPanel(true)
-    dispatch(setBulkActionType(BulkActionsType.Upload))
+  const handleOpenInsights = () => {
+    dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    dispatch(toggleInsightsPanel(true))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
+      eventData: {
+        databaseId: instanceId,
+        provider,
+        source: 'browser',
+      },
+    })
   }
 
   return (
@@ -35,14 +52,16 @@ const NoKeysFound = (props: Props) => {
         alt="no results image"
       />
       <EuiSpacer size="l" />
-      <EuiText>No Keys Found</EuiText>
+      <EuiText>No Keys to Display</EuiText>
       <EuiSpacer size="m" />
       <EuiTitle className={styles.title} size="s">
         <span>Create your first key to get started</span>
       </EuiTitle>
       <EuiSpacer size="m" />
       <EuiText>
-        Keys are the foundation of Redis. Create your first key to start exploring Redis and Redis Stack capabilities
+        Keys are the foundation of Redis.
+        <br />
+        Create your first key or try our interactive Tutorials to learn how Redis can solve your use cases.
       </EuiText>
       <EuiSpacer size="l" />
       <div className={styles.actions}>
@@ -58,11 +77,12 @@ const NoKeysFound = (props: Props) => {
         <span>or</span>
         <EuiButton
           color="secondary"
-          onClick={() => handleOpenBulkUpload()}
-          className={styles.uploadBtn}
-          data-testid="upload-data-msg-btn"
+          iconType={TriggerIcon}
+          onClick={() => handleOpenInsights()}
+          className={styles.exploreBtn}
+          data-testid="explore-msg-btn"
         >
-          Upload your data
+          Explore
         </EuiButton>
       </div>
     </div>

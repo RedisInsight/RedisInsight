@@ -23,10 +23,6 @@ import reducer, {
   appContextSelector,
   appContextBrowser,
   appContextWorkbench,
-  setWorkbenchEASearch,
-  appContextWorkbenchEA,
-  setWorkbenchEAItemScrollTop,
-  resetWorkbenchEASearch,
   setBrowserTreeNodesOpen,
   resetBrowserTree,
   appContextBrowserTree,
@@ -41,6 +37,8 @@ import reducer, {
   setDbIndexState,
   appContextDbIndex,
   setRecommendationsShowHidden,
+  appContextCapability,
+  setCapability,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -64,12 +62,14 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(initialState)
     })
 
-    it('should properly set initial state with existing contextId', () => {
+    it('should properly set initial state with existing contextId and capability', () => {
       // Arrange
       const contextInstanceId = '12312-3123'
+      const capability = { source: '123123' }
       const prevState = {
         ...initialState,
         contextInstanceId,
+        capability,
         browser: {
           ...initialState.browser,
           keyList: {
@@ -103,7 +103,8 @@ describe('slices', () => {
       }
       const state = {
         ...initialState,
-        contextInstanceId
+        contextInstanceId,
+        capability,
       }
 
       // Act
@@ -331,91 +332,6 @@ describe('slices', () => {
       })
 
       expect(appContextWorkbench(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setWorkbenchEASearch', () => {
-    it('should properly set path to opened guide page', () => {
-      // Arrange
-      const prevState = {
-        ...initialState,
-        workbench: {
-          ...initialState.workbench,
-          enablementArea: {
-            ...initialState.workbench.enablementArea,
-            search: 'static/enablement-area/guides/guide1.html',
-            itemScrollTop: 200,
-          }
-        },
-      }
-      const itemPath = 'static/enablement-area/guides/guide2.html'
-      const state = {
-        ...initialState.workbench.enablementArea,
-        search: itemPath,
-        itemScrollTop: 0,
-      }
-
-      // Act
-      const nextState = reducer(prevState, setWorkbenchEASearch(itemPath))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextWorkbenchEA(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setWorkbenchEAItemScrollTop', () => {
-    it('should properly set state', () => {
-      // Arrange
-      const state = {
-        ...initialState.workbench.enablementArea,
-        itemScrollTop: 200,
-      }
-
-      // Act
-      const nextState = reducer(initialState, setWorkbenchEAItemScrollTop(200))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextWorkbenchEA(rootState)).toEqual(state)
-    })
-  })
-
-  describe('resetWorkbenchEASearch', () => {
-    it('should properly reset enablement-area context', () => {
-      // Arrange
-      const prevState = {
-        ...initialState,
-        workbench: {
-          ...initialState.workbench,
-          enablementArea: {
-            ...initialState.workbench.enablementArea,
-            search: 'static/enablement-area/guides/guide1.html',
-            itemScrollTop: 200,
-          }
-        },
-      }
-      const state = {
-        ...initialState.workbench.enablementArea,
-        search: '',
-        itemScrollTop: 0,
-      }
-
-      // Act
-      const nextState = reducer(prevState, resetWorkbenchEASearch())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        app: { context: nextState },
-      })
-
-      expect(appContextWorkbenchEA(rootState)).toEqual(state)
     })
   })
 
@@ -692,6 +608,30 @@ describe('slices', () => {
       })
 
       expect(appContextDbIndex(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setCapability', () => {
+    it('should properly set db config', () => {
+      // Arrange
+      const data = {
+        source: '123123',
+      }
+
+      const state = {
+        ...initialState.capability,
+        ...data,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setCapability(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextCapability(rootState)).toEqual(state)
     })
   })
 })

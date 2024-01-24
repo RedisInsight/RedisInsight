@@ -10,10 +10,9 @@
   },
   "scripts": {
     "build:defaults:commands": "ts-node ./scripts/default-commands.ts",
-    "build:defaults:guides": "ts-node ./scripts/default-guides.ts",
     "build:defaults:tutorials": "ts-node ./scripts/default-tutorials.ts",
     "build:defaults:content": "ts-node ./scripts/default-content.ts",
-    "build:defaults": "yarn build:defaults:guides && yarn build:defaults:commands && yarn build:defaults:content && yarn build:defaults:tutorials",
+    "build:defaults": "yarn build:defaults:commands && yarn build:defaults:content && yarn build:defaults:tutorials",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:prod": "rimraf dist && nest build -p ./tsconfig.build.prod.json && cross-env NODE_ENV=production",

@@ -26,6 +26,10 @@ $breakpoint-to-hide-resize-panel: 1280px;
   }
 }
 
+.resizableButton {
+  z-index: 10 !important;
+}
+
 .resizableContainer {
   width: 100%;
   position: relative;
@@ -106,6 +110,8 @@ $breakpoint-to-hide-resize-panel: 1280px;
   }
 }
 
-.backBtn { 
+.backBtn {
+  flex-grow: 0;
+  align-self: self-start;
   margin: 0 0 8px 16px;
 }

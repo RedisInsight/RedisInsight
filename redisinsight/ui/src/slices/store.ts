@@ -27,11 +27,9 @@ import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
 import appFeaturesReducer from './app/features'
-import appActionBarReducer from './app/actionBar'
 import appUrlHandlingReducer from './app/url-handling'
 import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
-import workbenchGuidesReducer from './workbench/wb-guides'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
 import workbenchCustomTutorialsReducer from './workbench/wb-custom-tutorials'
 import contentCreateRedisButtonReducer from './content/create-redis-buttons'
@@ -44,6 +42,8 @@ import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
+import insightsPanelReducer from './panels/insights'
+import appRDIReducer from './rdi/rdi'
 
 export const history = createBrowserHistory()
 
@@ -56,7 +56,6 @@ export const rootReducer = combineReducers({
     plugins: appPluginsReducer,
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
-    actionBar: appActionBarReducer,
     urlHandling: appUrlHandlingReducer,
   }),
   connections: combineReducers({
@@ -89,7 +88,6 @@ export const rootReducer = combineReducers({
   }),
   workbench: combineReducers({
     results: workbenchResultsReducer,
-    guides: workbenchGuidesReducer,
     tutorials: workbenchTutorialsReducer,
     customTutorials: workbenchCustomTutorialsReducer,
   }),
@@ -109,6 +107,12 @@ export const rootReducer = combineReducers({
   oauth: combineReducers({
     cloud: appOauthReducer,
   }),
+  panels: combineReducers({
+    insights: insightsPanelReducer,
+  }),
+  rdi: combineReducers({
+    rdi: appRDIReducer
+  })
 })
 
 const store = configureStore({

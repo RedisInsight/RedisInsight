@@ -1,23 +1,26 @@
 import { t } from 'testcafe';
-import { updateColumnValueInDBTable } from '../../../../helpers/database-scripts';
+import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 
 const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
 export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
-const rdiTable = 'rdi';
 const resultMock = `{··"name":·"John",··"years":·123}`;
 const outputMock = 'Shirizli';
-
+const dbTableParams: DbTableParameters = {
+    tableName: 'rdi',
+    columnName: 'id',
+    rowValue: 'testId'
+};
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'http://localhost:4000',
     username: 'username',
     password: 'password',
 };
-//skip the tests until rdi integration is added
 
+//skip the tests until rdi integration is added
 fixture.skip `Rdi dry run job`
     .meta({ type: 'critical_path' })
     // it will be removed
@@ -36,7 +39,7 @@ test('Verify that user can use Dry run panel', async() => {
     // Need to add method to add jobs once it is implemented
 
     await rdiApiRequests.addNewRdiApi(rdiInstance);
-    await updateColumnValueInDBTable(rdiTable, 'id', instanceId);
+    await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
     await t.navigateTo(commonUrl + `/${instanceId}/pipeline/config`);
     await rdiInstancePage.openJobByName(job);
     await t.click(rdiInstancePage.dryRunButton);

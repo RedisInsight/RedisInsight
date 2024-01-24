@@ -13,8 +13,12 @@ export class RdiInstancePage extends BaseOverviewPage {
     outputTab = Selector('[data-testid=output-tab]');
     refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
     applyRefreshBtn = Selector('[data-testid=refresh-pipeline-apply-btn]');
+    deployPipelineBtn = Selector('[data-testid=deploy-rdi-pipeline]');
+    deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');
 
     configurationInput = Selector('[data-testid=wrapper-rdi-config]');
+    successDeployNotification = Selector('[data-testid=success-deploy-pipeline-notification]');
+    errorDeployNotification = Selector('[data-test-subj=toast-error-deploy]');
 
     /**
      * Open Job by name

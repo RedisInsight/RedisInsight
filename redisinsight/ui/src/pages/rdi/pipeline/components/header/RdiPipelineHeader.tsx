@@ -94,7 +94,7 @@ const RdiPipelineHeader = () => {
             </div>
           </div>
         </EuiFlexItem>
-        <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>2
+        <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
           <EuiOutsideClickDetector
             onOutsideClick={handleClosePopover}
           >

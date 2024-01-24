@@ -8,7 +8,6 @@ import {
   EuiToolTip,
   EuiText,
   EuiButton,
-  EuiPopover,
   EuiTitle,
   EuiSpacer,
 } from '@elastic/eui'
@@ -19,6 +18,7 @@ import { Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
+import { Popover } from 'uiSrc/components'
 import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/rdi/rocket.svg'
 
 import styles from './styles.module.scss'
@@ -90,7 +90,8 @@ const RdiPipelineHeader = () => {
           </div>
         </EuiFlexItem>
         <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
-          <EuiPopover
+          <Popover
+            closePopover={() => setIsPopoverOpen(false)}
             ownFocus
             initialFocus={false}
             className={styles.popoverAnchor}
@@ -99,7 +100,6 @@ const RdiPipelineHeader = () => {
             anchorPosition="upLeft"
             isOpen={isPopoverOpen}
             panelPaddingSize="m"
-            closePopover={() => setIsPopoverOpen(false)}
             focusTrapProps={{
               scrollLock: true
             }}
@@ -118,29 +118,31 @@ const RdiPipelineHeader = () => {
               </EuiButton>
             )}
           >
-            <EuiTitle size="xxs">
-              <span>Are you sure you want to deploy the pipeline?</span>
-            </EuiTitle>
-            <EuiSpacer size="s" />
-            <EuiText size="s">
-              When deployed, this local configuration will overwrite any existing pipeline.
-            </EuiText>
-            <EuiSpacer size="s" />
-            <EuiFlexGroup justifyContent="flexEnd">
-              <EuiFlexItem grow={false}>
-                <EuiButton
-                  fill
-                  size="s"
-                  color="secondary"
-                  className={styles.popoverBtn}
-                  onClick={handleDeployPipeline}
-                  data-testid="deploy-confirm-btn"
-                >
-                  Deploy
-                </EuiButton>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiPopover>
+            <>
+              <EuiTitle size="xxs">
+                <span>Are you sure you want to deploy the pipeline?</span>
+              </EuiTitle>
+              <EuiSpacer size="s" />
+              <EuiText size="s">
+                When deployed, this local configuration will overwrite any existing pipeline.
+              </EuiText>
+              <EuiSpacer size="s" />
+              <EuiFlexGroup justifyContent="flexEnd">
+                <EuiFlexItem grow={false}>
+                  <EuiButton
+                    fill
+                    size="s"
+                    color="secondary"
+                    className={styles.popoverBtn}
+                    onClick={handleDeployPipeline}
+                    data-testid="deploy-confirm-btn"
+                  >
+                    Deploy
+                  </EuiButton>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </>
+          </Popover>
         </EuiFlexItem>
       </EuiFlexGroup>
     </div>

@@ -28,7 +28,6 @@ import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
 import AutoRefresh from './auto-refresh'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
-import Popover from './popover'
 
 export { FullScreen } from './full-screen'
 
@@ -70,5 +69,4 @@ export {
   ModuleNotLoaded,
   FilterNotAvailable,
   AutoRefresh,
-  Popover,
 }

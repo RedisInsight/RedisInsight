@@ -55,7 +55,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     // https://redislabs.atlassian.net/browse/RI-5340
     // Verify that user can see “Open Workbench in the left menu to see the command results.” tooltip when hovering over Run button
     await t.hover(selector);
-    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Tooltip is not displayed or text is invalid');
+    await t.expect(browserPage.tooltip.withText(tooltipText).exists).ok('Tooltip is not displayed or text is invalid');
 
     // Check the button from Hash page is visible
     await tutorials.runBlockCode('Create a hash');

@@ -52,4 +52,16 @@ export class RdiPipelineController {
   ): Promise<RdiDryRunJobResponseDto> {
     return this.rdiPipelineService.dryRunJob(rdiClientMetadata, dto);
   }
+
+  @Post('/deploy')
+  @ApiEndpoint({
+    description: 'Deploy the pipeline',
+    responses: [{ status: 200, type: RdiPipeline }],
+  })
+  async deploy(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+      @Body() dto: RdiPipeline,
+  ): Promise<void> {
+    return this.rdiPipelineService.deploy(rdiClientMetadata, dto);
+  }
 }

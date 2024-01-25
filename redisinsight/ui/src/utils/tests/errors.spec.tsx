@@ -1,11 +1,13 @@
 import { set, cloneDeep } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
-import { parseCloudOAuthError } from 'uiSrc/utils'
+import { AxiosError } from 'axios'
+import { parseCustomError } from 'uiSrc/utils'
+import { CustomError } from 'uiSrc/slices/interfaces'
 
 const responseData = { response: { data: { }, status: 500 } }
 
-const parseCloudOAuthErrorTests = [
+const parseCustomErrorTests = [
   [undefined, set(cloneDeep(responseData), 'response.data', { message: 'Something was wrong!' })],
   ['', set(cloneDeep(responseData), 'response.data', { message: '' })],
   ['test', set(cloneDeep(responseData), 'response.data', { message: 'test' })],
@@ -101,13 +103,21 @@ const parseCloudOAuthErrorTests = [
         resourceId: undefined
       }
     })],
+  [{ errorCode: 11_301 },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Pipeline not deployed',
+      message: 'Unfortunately we’ve found some errors in your pipeline.',
+      additionalInfo: {
+        errorCode: 11301,
+      }
+    })],
 ]
 
-describe('parseCloudOAuthError', () => {
-  test.each(parseCloudOAuthErrorTests)(
+describe('parseCustomError', () => {
+  test.each(parseCustomErrorTests as [string | CustomError, AxiosError][])(
     '%j',
     (input, expected) => {
-      const result = parseCloudOAuthError(input)
+      const result = parseCustomError(input)
       expect(result).toEqual(expected)
     }
   )

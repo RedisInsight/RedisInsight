@@ -34,4 +34,7 @@ export enum CustomErrorCodes {
 
   // General database errors [11200, 11299]
   DatabaseAlreadyExists = 11_200,
+
+  // RDI errors [11300, 11499]
+  RdiDeployPipelineFailure = 11_301,
 }

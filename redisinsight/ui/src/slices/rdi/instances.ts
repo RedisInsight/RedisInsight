@@ -5,7 +5,7 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 import { AppDispatch, RootState } from '../store'

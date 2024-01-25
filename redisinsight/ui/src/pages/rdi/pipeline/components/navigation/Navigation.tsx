@@ -5,6 +5,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import Download from 'uiSrc/pages/rdi/pipeline/components/download/Download'
+import Upload from 'uiSrc/pages/rdi/pipeline/components/upload/Upload'
 import JobsTree from 'uiSrc/pages/rdi/pipeline/components/jobs-tree'
 import RefreshPipelinePopover from 'uiSrc/pages/rdi/pipeline/components/refresh-pipeline-popover'
 import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
@@ -120,6 +121,7 @@ const Navigation = () => {
         <EuiTextColor component="div">Pipeline Management</EuiTextColor>
         <div className={styles.actions}>
           <RefreshPipelinePopover />
+          <Upload />
           <Download />
         </div>
       </div>

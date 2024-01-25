@@ -37,6 +37,7 @@ export const initAutoUpdaterHandlers = () => {
 
     // set updateDownloaded to electron storage for Telemetry send event APPLICATION_UPDATED
     electronStore?.set(ElectronStorageItem.updateDownloaded, true)
+    electronStore?.set(ElectronStorageItem.isUpdateAvailable, false)
     electronStore?.set(ElectronStorageItem.updateDownloadedForTelemetry, true)
     electronStore?.set(ElectronStorageItem.updateDownloadedVersion, info.version)
     electronStore?.set(ElectronStorageItem.updatePreviousVersion, app.getVersion())

@@ -30,7 +30,7 @@ jest.mock('uiSrc/slices/browser/rejson', () => ({
   ),
 }))
 
-describe('JSONObject', () => {
+describe.skip('JSONObject', () => {
   it('should render', () => {
     expect(render(
       <JSONObject

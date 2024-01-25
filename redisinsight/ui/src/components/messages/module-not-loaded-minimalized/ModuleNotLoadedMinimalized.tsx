@@ -36,7 +36,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
   useCapability(sourceTutorial)
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="module-not-loaded-popover">
       <div>
         <EuiTitle size="xxs" className={styles.title}>
           <h5>{moduleText?.title}</h5>

@@ -52,8 +52,8 @@ test('Verify that user can see options on what can be done to work with capabili
     await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
         .ok('Missing RedisSearch title is not visible');
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tutorials.redisStackTutorialsButton);
-    await t.click(tutorials.vectorSimilitaritySearchButton);
-    await tutorials.runBlockCode('Create index for VSS');
+    await t.click(tutorials.triggersFunctionsAccordionTutorialButton);
+    await t.click(tutorials.internalTriggersAndFunctionsLink);
+    await tutorials.runBlockCode('Upload library');
     await t.expect(tutorials.cloudFreeLinkTooltip.visible).ok('the tooltip, that module is unavailable is not opened');
 });

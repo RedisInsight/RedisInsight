@@ -87,7 +87,7 @@ export enum OAuthSocialSource {
   TriggersAndFunctions = 'triggers_and_functions',
   'triggers and functions' = 'workbench triggers_and_functions',
   Workbench = 'workbench',
-  Tutorials = 'tutorials'
+  Tutorials = 'tutorials',
 }
 
 export enum CloudSsoUtmCampaign {

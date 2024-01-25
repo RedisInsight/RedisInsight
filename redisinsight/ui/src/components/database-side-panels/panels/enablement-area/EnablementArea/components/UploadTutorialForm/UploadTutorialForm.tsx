@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash'
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 
+import CreateTutorialLink from '../CreateTutorialLink'
 import styles from './styles.module.scss'
 
 export interface FormValues {
@@ -85,7 +86,7 @@ const UploadTutorialForm = (props: Props) => {
           </div>
           <div className={styles.hr}>OR</div>
           <EuiFieldText
-            placeholder="Tutorial Link"
+            placeholder="GitHub link to tutorials"
             value={formik.values.link}
             onChange={(e) => formik.setFieldValue('link', e.target.value)}
             className={styles.input}
@@ -93,37 +94,40 @@ const UploadTutorialForm = (props: Props) => {
           />
           <EuiSpacer size="l" />
           <div className={styles.footer}>
-            <EuiButton
-              color="secondary"
-              size="s"
-              onClick={() => onCancel?.()}
-              data-testid="cancel-upload-tutorial-btn"
-            >
-              Cancel
-            </EuiButton>
-            <EuiToolTip
-              position="top"
-              anchorClassName="euiToolTip__btn-disabled"
-              title={
-                isSubmitDisabled
-                  ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
-                  : null
-              }
-              content={getSubmitButtonContent(isSubmitDisabled)}
-            >
+            <CreateTutorialLink />
+            <div className={styles.footerButtons}>
               <EuiButton
-                className={styles.btnSubmit}
                 color="secondary"
                 size="s"
-                fill
-                onClick={() => formik.handleSubmit()}
-                iconType={isSubmitDisabled ? 'iInCircle' : undefined}
-                disabled={isSubmitDisabled}
-                data-testid="submit-upload-tutorial-btn"
+                onClick={() => onCancel?.()}
+                data-testid="cancel-upload-tutorial-btn"
               >
-                Submit
+                Cancel
               </EuiButton>
-            </EuiToolTip>
+              <EuiToolTip
+                position="top"
+                anchorClassName="euiToolTip__btn-disabled"
+                title={
+                  isSubmitDisabled
+                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    : null
+                }
+                content={getSubmitButtonContent(isSubmitDisabled)}
+              >
+                <EuiButton
+                  className={styles.btnSubmit}
+                  color="secondary"
+                  size="s"
+                  fill
+                  onClick={() => formik.handleSubmit()}
+                  iconType={isSubmitDisabled ? 'iInCircle' : undefined}
+                  disabled={isSubmitDisabled}
+                  data-testid="submit-upload-tutorial-btn"
+                >
+                  Submit
+                </EuiButton>
+              </EuiToolTip>
+            </div>
           </div>
         </div>
       </div>

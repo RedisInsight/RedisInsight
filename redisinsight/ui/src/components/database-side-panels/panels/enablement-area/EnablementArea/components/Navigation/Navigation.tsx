@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import {
@@ -25,7 +25,6 @@ import styles from './styles.module.scss'
 const padding = parseInt(styles.paddingHorizontal)
 
 export interface Props {
-  guides: IEnablementAreaItem[]
   tutorials: IEnablementAreaItem[]
   customTutorials: IEnablementAreaItem[]
   isInternalPageVisible: boolean
@@ -40,7 +39,7 @@ const PATHS = {
 }
 
 const Navigation = (props: Props) => {
-  const { guides, tutorials, customTutorials, isInternalPageVisible } = props
+  const { tutorials, customTutorials, isInternalPageVisible } = props
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
 
@@ -59,7 +58,7 @@ const Navigation = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_IMPORT_SUBMITTED,
       eventData: {
-        databaseId: instanceId,
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source: file ? 'Upload' : 'URL'
       }
     })
@@ -75,7 +74,7 @@ const Navigation = (props: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_DELETED,
         eventData: {
-          databaseId: instanceId,
+          databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         }
       })
     }))
@@ -114,7 +113,7 @@ const Navigation = (props: Props) => {
           >
             {isCustomTutorials && actions?.includes(EAItemActions.Create) && (
               <div className={styles.customTuturoialsForm}>
-                {children?.length === 0 && (
+                {!isCreateOpen && children?.length === 0 && (
                   <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
                 )}
                 {isCreateOpen && (
@@ -171,7 +170,6 @@ const Navigation = (props: Props) => {
       flush
       className={cx(styles.innerContainer)}
     >
-      {guides && renderTreeView(getManifestItems(guides), PATHS.guides)}
       {tutorials && renderTreeView(getManifestItems(tutorials), PATHS.tutorials)}
       {customTutorials && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
     </EuiListGroup>

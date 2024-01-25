@@ -24,6 +24,7 @@ import { instancesSelector } from 'uiSrc/slices/instances/instances'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import CapabilityPromotion from 'uiSrc/pages/home/components/capability-promotion'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -144,14 +145,14 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
 
   const Guides = () => (
     <div className={styles.links}>
-      <EuiFlexGroup>
+      <EuiFlexGroup gutterSize="s">
         <EuiFlexItem grow={false} className={styles.clearMarginFlexItem}>
           <EuiText className={styles.followText}>
             {promoData ? 'Or follow the guides:' : 'Follow the guides:'}
           </EuiText>
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiFlexGroup className={styles.otherGuides}>
+      <EuiFlexGroup className={styles.otherGuides} gutterSize="s">
         {guides
           .filter(({ id }) => id?.toLowerCase() !== 'cloud')
           .map(({ id, url, title, event }) => (
@@ -204,22 +205,21 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
 
   return (
     <>
+      <CapabilityPromotion />
+      <EuiSpacer size="m" />
       {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
       <div className={styles.containerDl}>
-        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false}>
+        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
           <EuiFlexItem grow={false}>
             <AddInstanceBtn />
           </EuiFlexItem>
-          <EuiFlexItem grow={false} style={{ marginLeft: 0, marginRight: 0 }}>
+          <EuiFlexItem grow={false}>
             <ImportDatabasesBtn />
-          </EuiFlexItem>
-          <EuiFlexItem className={cx(styles.separatorContainer)} grow={false}>
-            <div className={styles.separator} />
           </EuiFlexItem>
           {!loading && !isEmpty(data) && (
             <>
-              <EuiFlexItem grow className={cx(styles.promo)}>
-                <EuiFlexGroup alignItems="center">
+              <EuiFlexItem grow={false} className={cx(styles.promo)}>
+                <EuiFlexGroup alignItems="center" gutterSize="s">
                   {promoData && (
                     <EuiFlexItem grow={false}>
                       <CreateBtn content={promoData} />

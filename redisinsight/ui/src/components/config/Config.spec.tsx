@@ -15,7 +15,6 @@ import { appServerInfoSelector, getServerInfo } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
@@ -68,7 +67,6 @@ describe('Config', () => {
       getNotifications(),
       getContentRecommendations(),
       getGuideLinks(),
-      getWBGuides(),
       getWBTutorials(),
       getWBCustomTutorials(),
       getFeatureFlags(),
@@ -106,7 +104,6 @@ describe('Config', () => {
       getNotifications(),
       getContentRecommendations(),
       getGuideLinks(),
-      getWBGuides(),
       getWBTutorials(),
       getWBCustomTutorials(),
       getFeatureFlags(),

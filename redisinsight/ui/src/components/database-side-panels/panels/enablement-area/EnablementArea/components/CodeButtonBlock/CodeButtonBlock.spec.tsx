@@ -149,16 +149,13 @@ describe('CodeButtonBlock', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATABASE_CHANGE_CLICKED,
-      eventData:
-        {
-          databaseId: 'instanceId'
-        }
+      eventData: {
+        databaseId: 'instanceId'
+      }
     })
   })
 
   it('should call popover with no module loaded', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
     const onApply = jest.fn()
 
     render(
@@ -166,7 +163,7 @@ describe('CodeButtonBlock', () => {
         {...instance(mockedProps)}
         label={label}
         onApply={onApply}
-        params={{ run_confirmation: 'true' }}
+        params={{ run_confirmation: 'false' }}
         content="ft.info"
       />
     )
@@ -174,7 +171,26 @@ describe('CodeButtonBlock', () => {
       fireEvent.click(screen.getByTestId(`run-btn-${label}`))
     })
 
-    expect(screen.getByTestId('tutorials-docker-link')).toBeInTheDocument()
-    expect(screen.getByTestId('tutorials-get-started-link')).toBeInTheDocument()
+    expect(screen.getByTestId('module-not-loaded-popover')).toBeInTheDocument()
+  })
+
+  it('should call not opened db popover without instanceId', async () => {
+    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    const onApply = jest.fn()
+
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        params={{ run_confirmation: 'false' }}
+        content={simpleContent}
+      />
+    )
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`run-btn-${label}`))
+    })
+
+    expect(screen.getByTestId('database-not-opened-popover')).toBeInTheDocument()
   })
 })

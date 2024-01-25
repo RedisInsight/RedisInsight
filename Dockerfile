@@ -69,8 +69,8 @@ RUN mkdir -p /data && chown -R node:node /data
 COPY --chown=node:node ./docker-entry.sh ./
 RUN chmod +x docker-entry.sh
 
-# since RI is hard-code to port 5000, expose it from the container
-EXPOSE 5000
+# since RI is hard-code to port 5540, expose it from the container
+EXPOSE 5540
 
 # don't run the node process as root
 USER node

@@ -1,4 +1,4 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -10,8 +10,7 @@ import { BooleanParams, CodeButtonParams, MonacoLanguage } from 'uiSrc/constants
 import { CodeBlock } from 'uiSrc/components'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import ModuleNotLoadedMinimalized
-  from 'uiSrc/components/messages/module-not-loaded-minimalized/ModuleNotLoadedMinimalized'
+import { ModuleNotLoadedMinimalized, DatabaseNotOpened } from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -31,7 +30,7 @@ export interface Props {
   params?: CodeButtonParams
 }
 
-const FINISHED_COMMAND_INDICATOR_TIME_MS = 3_000
+const FINISHED_COMMAND_INDICATOR_TIME_MS = 5_000
 
 const CodeButtonBlock = (props: Props) => {
   const {
@@ -82,12 +81,7 @@ const CodeButtonBlock = (props: Props) => {
   }
 
   const handleRunClicked = () => {
-    if (notLoadedModule) {
-      setIsPopoverOpen(true)
-      return
-    }
-
-    if (!isNotShowConfirmation && isButtonHasConfirmation) {
+    if (!instanceId || notLoadedModule || (!isNotShowConfirmation && isButtonHasConfirmation)) {
       setIsPopoverOpen(true)
       return
     }
@@ -102,6 +96,24 @@ const CodeButtonBlock = (props: Props) => {
 
   const handleClosePopover = () => {
     setIsPopoverOpen(false)
+  }
+
+  const getPopoverMessage = (): React.ReactNode => {
+    if (!instanceId) {
+      return (<DatabaseNotOpened />)
+    }
+
+    if (notLoadedModule) {
+      return (
+        <ModuleNotLoadedMinimalized
+          moduleName={notLoadedModule}
+          source={OAuthSocialSource.Tutorials}
+          onClose={() => setIsPopoverOpen(false)}
+        />
+      )
+    }
+
+    return (<RunConfirmationPopover onApply={handleApplyRun} />)
   }
 
   return (
@@ -136,30 +148,29 @@ const CodeButtonBlock = (props: Props) => {
               scrollLock: true
             }}
             button={(
-              <EuiButton
-                onClick={handleRunClicked}
-                iconType={isRunned ? 'check' : 'play'}
-                iconSide="right"
-                color="success"
-                size="s"
-                disabled={isLoading || isRunned}
-                isLoading={isLoading}
-                className={cx(styles.actionBtn, styles.runBtn)}
-                {...rest}
-                data-testid={`run-btn-${label}`}
+              <EuiToolTip
+                anchorClassName={styles.popoverAnchor}
+                content={isPopoverOpen ? undefined : 'Open Workbench in the left menu to see the command results.'}
+                data-testid="run-btn-open-workbench-tooltip"
               >
-                Run
-              </EuiButton>
+                <EuiButton
+                  onClick={handleRunClicked}
+                  iconType={isRunned ? 'check' : 'play'}
+                  iconSide="right"
+                  color="success"
+                  size="s"
+                  disabled={isLoading || isRunned}
+                  isLoading={isLoading}
+                  className={cx(styles.actionBtn, styles.runBtn)}
+                  {...rest}
+                  data-testid={`run-btn-${label}`}
+                >
+                  Run
+                </EuiButton>
+              </EuiToolTip>
             )}
           >
-            {!!notLoadedModule && (
-              <ModuleNotLoadedMinimalized
-                moduleName={notLoadedModule}
-                source={OAuthSocialSource.Tutorials}
-                onClose={() => setIsPopoverOpen(false)}
-              />
-            )}
-            {!notLoadedModule && <RunConfirmationPopover onApply={handleApplyRun} />}
+            {getPopoverMessage()}
           </EuiPopover>
         </EuiFlexItem>
       </EuiFlexGroup>

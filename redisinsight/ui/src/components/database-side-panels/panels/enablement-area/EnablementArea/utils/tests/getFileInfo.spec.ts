@@ -1,4 +1,4 @@
-import { ApiEndpoints, MOCK_GUIDES_ITEMS } from 'uiSrc/constants'
+import { ApiEndpoints, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import {
   getFileInfo,
   getGroupPath,
@@ -48,14 +48,14 @@ const getFileInfoTests = [
     expected: { name: '', parent: '', extension: '', location: '', label: '', _key: null, parents: [] }
   },
   {
-    input: [{ manifestPath: 'quick-guides/0/0', path: '/static/workbench/quick-guides/document/learn-more.md' }, MOCK_GUIDES_ITEMS],
+    input: [{ manifestPath: 'quick-guides/0/0', path: '/static/workbench/quick-guides/document/learn-more.md' }, MOCK_TUTORIALS_ITEMS],
     expected: { name: 'learn-more',
-      parent: MOCK_GUIDES_ITEMS[0].label,
+      parent: MOCK_TUTORIALS_ITEMS[0].label,
       extension: 'md',
       location: '/static/workbench/quick-guides/document',
-      label: MOCK_GUIDES_ITEMS?.[0]?.children?.[0].label,
+      label: MOCK_TUTORIALS_ITEMS?.[0]?.children?.[0].label,
       _key: '0',
-      parents: [MOCK_GUIDES_ITEMS[0]] }
+      parents: [MOCK_TUTORIALS_ITEMS[0]] }
   }
 ]
 
@@ -72,15 +72,15 @@ describe('getFileInfo', () => {
 
 const getPagesInsideGroupTests = [
   {
-    input: [MOCK_GUIDES_ITEMS, 'quick-guides/0/0'],
-    expected: (MOCK_GUIDES_ITEMS[0].children || []).map((item, index) => ({
+    input: [MOCK_TUTORIALS_ITEMS, 'quick-guides/0/0'],
+    expected: (MOCK_TUTORIALS_ITEMS[0].children || []).map((item, index) => ({
       ...item,
       _groupPath: 'quick-guides/0',
       _key: `${index}`
     }))
   },
   {
-    input: [MOCK_GUIDES_ITEMS, 'https://domen.com/workbench/enablement-area/'],
+    input: [MOCK_TUTORIALS_ITEMS, 'https://domen.com/workbench/enablement-area/'],
     expected: []
   },
   {
@@ -137,23 +137,23 @@ describe('getWBSourcePath', () => {
 
 const getMarkdownPathByManifestTests = [
   {
-    input: [MOCK_GUIDES_ITEMS, '/quick-guides/0/0', 'static/my-folder'],
-    expected: `static/my-folder${MOCK_GUIDES_ITEMS[0]?.children?.[0]?.args?.path}`
+    input: [MOCK_TUTORIALS_ITEMS, '/quick-guides/0/0', 'static/my-folder'],
+    expected: `static/my-folder${MOCK_TUTORIALS_ITEMS[0]?.children?.[0]?.args?.path}`
   },
   {
-    input: [MOCK_GUIDES_ITEMS, '/quick-guides/0/0'],
-    expected: MOCK_GUIDES_ITEMS[0]?.children?.[0]?.args?.path
+    input: [MOCK_TUTORIALS_ITEMS, '/quick-guides/0/0'],
+    expected: MOCK_TUTORIALS_ITEMS[0]?.children?.[0]?.args?.path
   },
   {
-    input: [MOCK_GUIDES_ITEMS, '/my-guides/0/0', 'path/'],
+    input: [MOCK_TUTORIALS_ITEMS, '/my-guides/0/0', 'path/'],
     expected: ''
   },
   {
-    input: [MOCK_GUIDES_ITEMS, '/quick-guides/0/1'],
-    expected: `/123123-123123${MOCK_GUIDES_ITEMS[0]?.children?.[1]?.args?.path}`
+    input: [MOCK_TUTORIALS_ITEMS, '/quick-guides/0/1'],
+    expected: `/${MOCK_TUTORIALS_ITEMS[0]?.children?.[1]?.args?.path}`
   },
   {
-    input: [MOCK_GUIDES_ITEMS, '/quick-guides/0/3'],
+    input: [MOCK_TUTORIALS_ITEMS, '/quick-guides/0/2'],
     expected: '/quick-guides/working-with-hash.html'
   },
 ]
@@ -202,9 +202,9 @@ describe('getGroupPath', () => {
 })
 
 const getParentByManifestTests = [
-  { input: [MOCK_GUIDES_ITEMS, '0/0'], expected: MOCK_GUIDES_ITEMS[0] },
-  { input: [MOCK_GUIDES_ITEMS, '100/0'], expected: null },
-  { input: [MOCK_GUIDES_ITEMS, null], expected: null },
+  { input: [MOCK_TUTORIALS_ITEMS, '0/0'], expected: MOCK_TUTORIALS_ITEMS[0] },
+  { input: [MOCK_TUTORIALS_ITEMS, '100/0'], expected: null },
+  { input: [MOCK_TUTORIALS_ITEMS, null], expected: null },
 ]
 
 describe('getParentByManifest', () => {

@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import reactRouterDom from 'react-router-dom'
 import { cleanup, mockedStore, render, screen, fireEvent, act, waitFor } from 'uiSrc/utils/test-utils'
-import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS, MOCK_CUSTOM_TUTORIALS_ITEMS } from 'uiSrc/constants'
+import { MOCK_TUTORIALS_ITEMS, MOCK_CUSTOM_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { EnablementAreaComponent, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 
 import {
@@ -36,11 +36,11 @@ jest.mock('uiSrc/slices/workbench/wb-custom-tutorials', () => ({
   )
 }))
 
-jest.mock('uiSrc/slices/workbench/wb-guides', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
+jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
+  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-tutorials').initialState
   return {
-    ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
-    workbenchGuidesSelector: jest.fn().mockReturnValue({
+    ...jest.requireActual('uiSrc/slices/workbench/wb-tutorials'),
+    workbenchTutorialsSelector: jest.fn().mockReturnValue({
       ...defaultState,
     }),
   }
@@ -59,7 +59,6 @@ describe('EnablementArea', () => {
   it('should render', () => {
     expect(render(<EnablementArea
       {...instance(mockedProps)}
-      guides={MOCK_GUIDES_ITEMS}
       tutorials={MOCK_TUTORIALS_ITEMS}
     />))
       .toBeTruthy()
@@ -94,7 +93,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        guides={[item]}
+        tutorials={[item]}
       />
     )
 
@@ -114,7 +113,7 @@ describe('EnablementArea', () => {
     const { queryByTestId } = render(
       <EnablementArea
         {...instance(mockedProps)}
-        guides={[item]}
+        tutorials={[item]}
       />
     )
 
@@ -122,18 +121,22 @@ describe('EnablementArea', () => {
   })
 
   it('should find guide and push proper search path', async () => {
-    const search = '?guidePath=/quick-guides/working-with-json.html'
+    const search = '?guidePath=quick-guides/working-with-json.html'
 
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
     reactRouterDom.useLocation = jest.fn().mockImplementationOnce(() => ({ search }))
 
     await act(() => {
-      render(<EnablementArea {...instance(mockedProps)} guides={MOCK_GUIDES_ITEMS} onOpenInternalPage={jest.fn} />)
+      render(<EnablementArea
+        {...instance(mockedProps)}
+        tutorials={MOCK_TUTORIALS_ITEMS}
+        onOpenInternalPage={jest.fn}
+      />)
     })
 
     await waitFor(() => {
-      expect(pushMock).toBeCalledWith({ search: '?path=quick-guides/0/1' })
+      expect(pushMock).toBeCalledWith({ search: '?path=tutorials/0/1' })
     }, { timeout: 1000 })
   })
 
@@ -150,18 +153,20 @@ describe('EnablementArea', () => {
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
     })
 
-    it('should render welcome screen and open form', () => {
+    it('should render open form with tutorials', () => {
       const customTutorials = [{ ...MOCK_CUSTOM_TUTORIALS_ITEMS[0], children: [] }]
       render(<EnablementArea {...instance(mockedProps)} customTutorials={customTutorials} />)
       expect(screen.getByTestId('welcome-my-tutorials')).toBeInTheDocument()
 
       fireEvent.click(screen.getByTestId('upload-tutorial-btn'))
       expect(screen.getByTestId('upload-tutorial-form')).toBeInTheDocument()
-      expect(screen.getByTestId('welcome-my-tutorials')).toBeInTheDocument()
     })
 
     it('should call proper actions after upload form submit', async () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+
+      const afterRenderActions = [...store.getActions()]
+
       fireEvent.click(screen.getByTestId('open-upload-tutorial-btn'))
 
       await act(() => {
@@ -175,16 +180,18 @@ describe('EnablementArea', () => {
         fireEvent.click(screen.getByTestId('submit-upload-tutorial-btn'))
       })
 
-      const expectedActions = [uploadWbCustomTutorial()]
+      const expectedActions = [...afterRenderActions, uploadWbCustomTutorial()]
       expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     })
 
     it('should render delete button and call proper actions after click on delete', () => {
       render(<EnablementArea {...instance(mockedProps)} customTutorials={MOCK_CUSTOM_TUTORIALS_ITEMS} />)
+      const afterRenderActions = [...store.getActions()]
+
       fireEvent.click(screen.getByTestId('delete-tutorial-icon-12mfp-rem'))
       fireEvent.click(screen.getByTestId('delete-tutorial-12mfp-rem'))
 
-      const expectedActions = [deleteWbCustomTutorial()]
+      const expectedActions = [...afterRenderActions, deleteWbCustomTutorial()]
       expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     })
 

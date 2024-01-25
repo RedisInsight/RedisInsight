@@ -1,12 +1,16 @@
 import { t, Selector } from 'testcafe';
 import { DatabaseAPIRequests } from '../helpers/api/api-database';
 import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
+import { InsightsPanel } from './components/insights-panel';
+import { CompatibilityPromotion } from './components/compatibility-promotion';
 import { BaseOverviewPage } from './base-overview-page';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
 export class MyRedisDatabasePage extends BaseOverviewPage {
     AddRedisDatabase = new AddRedisDatabase();
+    InsightsPanel = new InsightsPanel();
+    CompatibilityPromotion = new CompatibilityPromotion();
 
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
@@ -18,6 +22,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     cssNumberOfDbs = '[data-testid=number-of-dbs]';
     cssRedisStackIcon = '[data-testid=redis-stack-icon]';
     //BUTTONS
+    deleteDatabaseButton = Selector('[data-testid^=delete-instance-]');
+    confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
+    deleteButtonInPopover = Selector('#deletePopover button');
+    confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
     editAliasButton = Selector('[data-testid=edit-alias-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
@@ -71,6 +79,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
     // CONTAINERS
     databaseContainer = Selector('.databaseContainer');
+    connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
 
     /**
      * Click on the database by name
@@ -83,6 +92,27 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
         const db = this.dbNameList.withExactText(dbName.trim());
         await t.expect(db.exists).ok(`"${dbName}" database doesn't exist`, { timeout: 10000 });
         await t.click(db);
+    }
+
+    //Delete all the databases from the list
+    async deleteAllDatabases(): Promise<void> {
+        await t.click(this.NavigationPanel.myRedisDBButton);
+        const dbNames = this.tableRowContent;
+        const count = await dbNames.count;
+        if (count > 1) {
+            await t
+                .click(this.selectAllCheckbox)
+                .click(this.deleteButtonInPopover)
+                .click(this.confirmDeleteAllDbButton);
+        }
+        else if (count === 1) {
+            await t
+                .click(this.deleteDatabaseButton)
+                .click(this.confirmDeleteButton);
+        }
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
+        }
     }
 
     /**
@@ -150,6 +180,17 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
             databases.push(name);
         }
         return databases;
+    }
+
+    /**
+     * Get all databases from List of DBs page
+     * @param actualList Actual databases list
+     * @param sortedList Expected list
+     */
+    async compareDatabases(actualList: string[], sortedList: string[]): Promise<void> {
+        for (let k = 0; k < actualList.length; k++) {
+            await t.expect(actualList[k].trim()).eql(sortedList[k].trim());
+        }
     }
 
     /**

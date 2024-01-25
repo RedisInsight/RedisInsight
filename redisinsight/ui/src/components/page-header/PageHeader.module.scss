@@ -1,6 +1,8 @@
 @import "@elastic/eui/src/global_styling/index";
 
 .pageHeader {
+  display: flex;
+  align-items: center;
 }
 
 .pageHeaderTop {
@@ -8,11 +10,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 12px 4px 4px 18px;
-
-  @include euiBreakpoint("m", "l", "xl") {
-    padding: 8px 14px;
-  }
+  padding: 8px 16px;
+  min-height: 70px;
 }
 
 .title {

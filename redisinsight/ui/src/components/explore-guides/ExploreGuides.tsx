@@ -7,33 +7,33 @@ import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
 import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { keysSelector } from 'uiSrc/slices/browser/keys'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { findTutorialPath } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
   const { data } = useSelector(guideLinksSelector)
   const { provider } = useSelector(connectedInstanceSelector)
-  const { viewType } = useSelector(keysSelector)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const history = useHistory()
   const dispatch = useDispatch()
 
-  const handleLinkClick = (tutorial: string, title: string) => {
+  const handleLinkClick = (tutorialId: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
       eventData: {
         databaseId: instanceId,
-        guideName: title,
+        tutorialId,
         provider,
-        viewType
+        source: 'empty browser'
       }
     })
 
-    dispatch(openTutorialByPath(tutorial, history))
+    const tutorialPath = findTutorialPath({ id: tutorialId ?? '' })
+    dispatch(openTutorialByPath(tutorialPath ?? '', history))
   }
 
   return (
@@ -45,15 +45,15 @@ const ExploreGuides = () => {
       <EuiSpacer size="xl" />
       {!!data.length && (
         <div className={styles.guides}>
-          {data.map(({ title, tutorial, icon }) => (
+          {data.map(({ title, tutorialId, icon }) => (
             <div
               key={title}
               role="button"
               tabIndex={0}
               onKeyDown={() => {}}
-              onClick={() => handleLinkClick(tutorial, title)}
+              onClick={() => handleLinkClick(tutorialId)}
               className={styles.btn}
-              data-testid={`guide-button-${title}`}
+              data-testid={`guide-button-${tutorialId}`}
             >
               {icon in GUIDE_ICONS && (
                 <EuiIcon

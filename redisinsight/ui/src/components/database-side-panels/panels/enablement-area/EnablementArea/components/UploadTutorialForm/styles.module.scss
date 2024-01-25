@@ -95,5 +95,11 @@
 .footer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+
+  .footerButtons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
 }

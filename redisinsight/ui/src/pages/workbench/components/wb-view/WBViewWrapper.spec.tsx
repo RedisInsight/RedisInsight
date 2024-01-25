@@ -21,7 +21,6 @@ import {
   workbenchResultsSelector
 } from 'uiSrc/slices/workbench/wb-results'
 
-import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import WBViewWrapper from './WBViewWrapper'
 
 let store: typeof mockedStore
@@ -80,16 +79,6 @@ jest.mock('uiSrc/slices/workbench/wb-results', () => ({
     items: []
   })
 }))
-
-jest.mock('uiSrc/slices/workbench/wb-guides', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-guides').initialState
-  return {
-    ...jest.requireActual('uiSrc/slices/workbench/wb-guides'),
-    workbenchGuidesSelector: jest.fn().mockReturnValue({
-      ...defaultState,
-    }),
-  }
-})
 
 jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
   const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-tutorials').initialState

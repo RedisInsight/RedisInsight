@@ -114,47 +114,49 @@ test
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4213, https://redislabs.atlassian.net/browse/RI-4302
-test.after(async() => {
-    tutorialName = 'Tutorials with manifest';
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    if(await tutorials.tutorialAccordionButton.withText(tutorialName).exists) {
-        await tutorials.deleteTutorialByName(tutorialName);
-    }
-    await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
-})('Verify that user can upload tutorial with URL with manifest.json', async t => {
-    const labelFromManifest = 'Working with JSON label';
-    const link = 'https://drive.google.com/u/2/uc?id=1a45zHZGYYvtKgM83Rff6rfjy1yfWiwHt&export=download';
-    internalLinkName1 = 'manifest-id';
-    tutorialName = 'Tutorials with manifest';
-    const summary = 'Summary for JSON';
+// skipped because need to move .zip tutorial to another github repository
+test.skip
+    .after(async() => {
+        tutorialName = 'Tutorials with manifest';
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        if(await tutorials.tutorialAccordionButton.withText(tutorialName).exists) {
+            await tutorials.deleteTutorialByName(tutorialName);
+        }
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify that user can upload tutorial with URL with manifest.json', async t => {
+        const labelFromManifest = 'LabelFromManifest';
+        const link = 'https://github.com/RedisInsight/RedisInsight/raw/main/tests/e2e/test-data/upload-tutorials/TutorialsWithManifest.zip';
+        internalLinkName1 = 'manifest-id';
+        tutorialName = 'Tutorials with manifest';
+        const summary = 'Summary for JSON';
 
-    await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tutorials.tutorialOpenUploadButton);
-    // Verify that user can upload tutorials using a URL
-    await t.typeText(tutorials.tutorialLinkField, link);
-    await t.click(tutorials.tutorialSubmitButton);
-    await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).with({ timeout: 20000 }).visible)
-        .ok(`${tutorialName} tutorial is not uploaded`);
-    await t.click(tutorials.tutorialAccordionButton.withText(tutorialName));
-    // Verify that User can see the same structure in the tutorial uploaded as described in the .json manifest
-    await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).visible)
-        .ok(`${internalLinkName1} folder specified in manifest is not visible`);
-    await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
-        .contains(labelFromManifest, `${labelFromManifest} tutorial specified in manifest is not visible`);
-    await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
-        .contains(summary, `${summary} tutorial specified in manifest is not visible`);
-    await t.click(tutorials.getInternalLinkWithoutManifest(internalLinkName1));
-    await t.expect(tutorials.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
-    await t.click(tutorials.closeEnablementPage);
-    await t.click(tutorials.tutorialLatestDeleteIcon);
-    await t.expect(tutorials.tutorialDeleteButton.visible).ok('Delete popup is not visible');
-    await t.click(tutorials.tutorialDeleteButton);
-    await t.expect(tutorials.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
-    // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
-    await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
-        .notOk(`${tutorialName} tutorial is not uploaded`);
-});
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.click(tutorials.tutorialOpenUploadButton);
+        // Verify that user can upload tutorials using a URL
+        await t.typeText(tutorials.tutorialLinkField, link);
+        await t.click(tutorials.tutorialSubmitButton);
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).with({ timeout: 20000 }).visible)
+            .ok(`${tutorialName} tutorial is not uploaded`);
+        await t.click(tutorials.tutorialAccordionButton.withText(tutorialName));
+        // Verify that User can see the same structure in the tutorial uploaded as described in the .json manifest
+        await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).visible)
+            .ok(`${internalLinkName1} folder specified in manifest is not visible`);
+        await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
+            .contains(labelFromManifest, `${labelFromManifest} tutorial specified in manifest is not visible`);
+        await t.expect(tutorials.getInternalLinkWithoutManifest(internalLinkName1).textContent)
+            .contains(summary, `${summary} tutorial specified in manifest is not visible`);
+        await t.click(tutorials.getInternalLinkWithoutManifest(internalLinkName1));
+        await t.expect(tutorials.scrolledEnablementArea.visible).ok('enablement area is not visible after clicked');
+        await t.click(tutorials.closeEnablementPage);
+        await t.click(tutorials.tutorialLatestDeleteIcon);
+        await t.expect(tutorials.tutorialDeleteButton.visible).ok('Delete popup is not visible');
+        await t.click(tutorials.tutorialDeleteButton);
+        await t.expect(tutorials.tutorialDeleteButton.exists).notOk('Delete popup is still visible');
+        // Verify that when User delete the tutorial, then User can see this tutorial and relevant markdown files are deleted from: the Enablement area in Workbench
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
+            .notOk(`${tutorialName} tutorial is not uploaded`);
+    });
 // https://redislabs.atlassian.net/browse/RI-4352
 test
     .before(async t => {

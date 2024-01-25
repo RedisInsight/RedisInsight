@@ -159,9 +159,9 @@ test
         //Run Create hash index command
         await browserPage.InsightsPanel.togglePanel(true);
         const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-        await t.click(tutorials.documentButtonInQuickGuides);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);
-        await tutorials.runBlockCode('Create');
+        await tutorials.runBlockCode('Create a hash');
         //Verify that CPU and commands per second parameters are changed
         const commandsSecAfterEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;
         await browserPage.OverviewPanel.waitForCpuIsCalculated();

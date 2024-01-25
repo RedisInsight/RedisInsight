@@ -28,7 +28,7 @@ test.skip('Verify that when user clicks on auto-execute button, command is run',
     // Verify that admin can use redis-auto format in .md file for Guides for auto-executed button
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-    await t.click(tutorials.documentButtonInQuickGuides);
+    await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.internalLinkWorkingWithHashes);
     await tutorials.runBlockCode('Create');
     await t.expect(workbenchPage.queryInput.textContent).eql(command, 'Editor is changed');

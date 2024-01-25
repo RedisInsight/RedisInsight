@@ -62,11 +62,12 @@ test('Verify that user can see DB modules on DB list page for Standalone DB', as
 });
 test('Verify that user can see full module list in the Edit mode', async t => {
     // Verify that module column is displayed
-    await t.expect(myRedisDatabasePage.moduleColumn.visible).ok('Module column not found');
+    await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).ok('connection type column not found');
     // Open Edit mode
     await t.click(myRedisDatabasePage.editDatabaseButton);
+    await myRedisDatabasePage.InsightsPanel.togglePanel(true);
     // Verify that module column is not displayed
-    await t.expect(myRedisDatabasePage.moduleColumn.exists).notOk('Module column not found');
+    await t.expect(myRedisDatabasePage.connectionTypeTitle.visible).notOk('connection type column not found');
     // Verify modules in Edit mode
     await myRedisDatabasePage.checkModulesOnPage(moduleList);
 });

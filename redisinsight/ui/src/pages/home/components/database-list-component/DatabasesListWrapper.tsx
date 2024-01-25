@@ -49,15 +49,15 @@ import styles from './styles.module.scss'
 
 export interface Props {
   width: number
-  dialogIsOpen: boolean
   editedInstance: Nullable<Instance>
   onEditInstance: (instance: Instance) => void
   onDeleteInstances: (instances: Instance[]) => void
 }
 
 const suffix = '_db_instance'
+const COLS_TO_HIDE = ['connectionType', 'modules', 'lastConnection']
 
-const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
+const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
@@ -214,7 +214,7 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
     })
   }
 
-  const columnsFull: EuiTableFieldDataColumnType<Instance>[] = [
+  const columns: EuiTableFieldDataColumnType<Instance>[] = [
     {
       field: 'name',
       className: 'column_name',
@@ -397,13 +397,6 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
     },
   ]
 
-  const columnsHideForTablet = ['connectionType']
-  const columnsHideForEditing = ['connectionType', 'modules']
-  const columnsTablet = columnsFull.filter(({ field = '' }) => columnsHideForTablet.indexOf(field) === -1)
-  const columnsEditing = columnsFull.filter(({ field }) => columnsHideForEditing.indexOf(field) === -1)
-
-  const columnVariations = [columnsFull, columnsEditing, columnsTablet]
-
   const onTableChange = ({ sort, page }: Criteria<Instance>) => {
     // calls also with page changing
     if (sort && !page) {
@@ -425,8 +418,8 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
       <ItemList<Instance>
         width={width}
         editedInstance={editedInstance}
-        dialogIsOpen={dialogIsOpen}
-        columnVariations={columnVariations}
+        columns={columns}
+        columnsToHide={COLS_TO_HIDE}
         onDelete={handleDeleteInstances}
         onExport={handleExportInstances}
         onWheel={closePopover}
@@ -439,4 +432,4 @@ const DatabasesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInsta
   )
 }
 
-export default DatabasesListWrapper
+export default React.memo(DatabasesListWrapper)

@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn } from '@elastic/eui'
+import { EuiTableFieldDataColumnType } from '@elastic/eui'
 import React from 'react'
 import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
@@ -9,7 +9,7 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn()
 }))
 
-const columnsMock: EuiBasicTableColumn<Instance>[] = [
+const columnsMock: EuiTableFieldDataColumnType<Instance>[] = [
   {
     field: 'subscriptionId',
     className: 'column_subscriptionId',
@@ -20,8 +20,6 @@ const columnsMock: EuiBasicTableColumn<Instance>[] = [
     truncateText: true
   }
 ]
-
-const columnVariationsMock: EuiBasicTableColumn<Instance>[][] = [columnsMock, columnsMock]
 
 const mockedProps: Props<Instance> = {
   loading: false,
@@ -54,9 +52,8 @@ const mockedProps: Props<Instance> = {
     }
   ],
   width: 0,
-  dialogIsOpen: false,
   editedInstance: null,
-  columnVariations: columnVariationsMock,
+  columns: columnsMock,
   onDelete: () => {},
   onExport: () => {},
   onWheel: () => {},

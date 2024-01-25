@@ -1,5 +1,4 @@
 import { EuiInMemoryTable } from '@elastic/eui'
-import { first } from 'lodash'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
@@ -81,9 +80,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 }))
 
 const mockDatabasesList = (props: ItemListProps<Instance>) => {
-  const columns = first(props.columnVariations)
-
-  if (!columns) {
+  if (!props.columns) {
     return null
   }
 
@@ -94,7 +91,7 @@ const mockDatabasesList = (props: ItemListProps<Instance>) => {
       </button>
       <button
         type="button"
-        onClick={() => props.onExport([mockInstances[0]], true)}
+        onClick={() => props.onExport?.([mockInstances[0]], true)}
         data-testid="onExport-btn"
       >
         onExport
@@ -118,7 +115,7 @@ const mockDatabasesList = (props: ItemListProps<Instance>) => {
           items={mockInstances}
           itemId="id"
           loading={false}
-          columns={columns}
+          columns={props.columns}
           data-testid="table"
         />
       </div>

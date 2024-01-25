@@ -3,14 +3,10 @@
 .noResults {
   display: flex;
 
-  height: calc(100vh - 370px);
+  height: 100%;
   align-items: center;
   flex-direction: column;
   justify-content: center;
-
-  @media (min-width: 768px) {
-    height: calc(100vh - 195px);
-  }
 }
 
 .tableMsgTitle {

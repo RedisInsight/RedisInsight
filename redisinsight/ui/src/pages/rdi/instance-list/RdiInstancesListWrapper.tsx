@@ -16,7 +16,6 @@ import styles from './styles.module.scss'
 
 export interface Props {
   width: number
-  dialogIsOpen: boolean
   editedInstance: Nullable<RdiInstance>
   onEditInstance: (instance: RdiInstance) => void
   onDeleteInstances: (instances: RdiInstance[]) => void
@@ -24,7 +23,7 @@ export interface Props {
 
 const suffix = '_rdi_instance'
 
-const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
+const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteInstances }: Props) => {
   const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
@@ -102,7 +101,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
     dispatch(deleteInstancesAction(instances, () => onDeleteInstances(instances)))
   }
 
-  const columnsFull: EuiTableFieldDataColumnType<RdiInstance>[] = [
+  const columns: EuiTableFieldDataColumnType<RdiInstance>[] = [
     {
       field: 'name',
       className: 'column_name',
@@ -187,13 +186,6 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
     }
   ]
 
-  const columnsHideForTablet = ['']
-  const columnsHideForEditing = ['']
-  const columnsTablet = columnsFull.filter(({ field = '' }) => columnsHideForTablet.indexOf(field) === -1)
-  const columnsEditing = columnsFull.filter(({ field }) => columnsHideForEditing.indexOf(field) === -1)
-
-  const columnVariations = [columnsFull, columnsEditing, columnsTablet]
-
   const onTableChange = ({ sort, page }: Criteria<RdiInstance>) => {
     // calls also with page changing
     if (sort && !page) {
@@ -215,8 +207,7 @@ const RdiInstancesListWrapper = ({ width, dialogIsOpen, onEditInstance, editedIn
       <ItemList<RdiInstance>
         width={width}
         editedInstance={editedInstance}
-        dialogIsOpen={dialogIsOpen}
-        columnVariations={columnVariations}
+        columns={columns}
         onDelete={handleDeleteInstances}
         onWheel={closePopover}
         loading={instances.loading}

@@ -1,5 +1,4 @@
 import { EuiInMemoryTable } from '@elastic/eui'
-import { first } from 'lodash'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
@@ -63,9 +62,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 }))
 
 const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
-  const columns = first(props.columnVariations)
-
-  if (!columns) {
+  if (!props.columns) {
     return null
   }
 
@@ -93,7 +90,7 @@ const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
           items={mockInstances}
           itemId="id"
           loading={false}
-          columns={columns}
+          columns={props.columns}
           data-testid="table"
         />
       </div>

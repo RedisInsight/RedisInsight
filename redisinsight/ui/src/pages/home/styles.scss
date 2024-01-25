@@ -63,21 +63,21 @@
     }
   }
 
+  .databasePanelWrapper {
+    height: 100%;
+    background-color: var(--euiColorEmptyShade);
+  }
+
   .container {
     @include euiScrollBar;
 
     background-color: var(--euiColorEmptyShade);
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(100vh - 242px);
+    height: calc(100% - 74px);
     padding: 40px 30px 25px;
-    border: 1px solid var(--euiColorPrimary);
     margin-right: 5px;
     border-radius: 4px;
-
-    @media only screen and (max-width: 767px) {
-      height: calc(100vh - 340px);
-    }
   }
 
   .formDataTypes {
@@ -116,8 +116,10 @@
     text-align: right;
     vertical-align: bottom;
     width: 100%;
-    padding: 15px 24px 10px;
+    padding: 15px 24px 0;
     border-radius: 0 0 4px 4px;
+
+    border-top: 1px solid var(--euiColorLightShade);
   }
 
   .euiResizableContainer {

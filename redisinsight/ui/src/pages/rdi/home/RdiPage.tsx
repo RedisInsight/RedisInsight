@@ -106,7 +106,6 @@ const RdiPage = () => {
           <div key="homePage" className="homePage" data-testid="rdi-instance-list" ref={resizeRef}>
             <RdiInstancesListWrapper
               width={width}
-              dialogIsOpen={isConnectionFormOpen}
               editedInstance={editInstance}
               onEditInstance={handleEditInstance}
               onDeleteInstances={handleDeleteInstance}

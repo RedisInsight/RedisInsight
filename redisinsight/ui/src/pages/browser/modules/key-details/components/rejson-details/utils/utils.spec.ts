@@ -1,4 +1,4 @@
-import { generatePath, isScalar } from './JSONUtils'
+import { generatePath, isScalar } from './utils'
 
 describe('JSONUtils', () => {
   describe('generatePath', () => {

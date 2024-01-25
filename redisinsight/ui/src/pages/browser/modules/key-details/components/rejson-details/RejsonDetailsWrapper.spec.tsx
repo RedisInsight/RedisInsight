@@ -5,7 +5,7 @@ import { RejsonDetailsWrapper, Props } from './RejsonDetailsWrapper'
 
 const mockedProps = mock<Props>()
 
-describe('ReJSONDetailsWrapper', () => {
+describe('RejsonDetailsWrapper', () => {
   it('should render', () => {
     expect(render(<RejsonDetailsWrapper {...instance(mockedProps)} />)).toBeTruthy()
   })

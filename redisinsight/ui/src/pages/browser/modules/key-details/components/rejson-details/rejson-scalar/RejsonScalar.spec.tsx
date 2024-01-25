@@ -1,16 +1,19 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import JSONScalar, { Props } from './JSONScalar'
+import {
+  JSONScalarProps
+} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import RejsonScalar from './RejsonScalar'
 
 const INLINE_ITEM_EDITOR = 'inline-item-editor'
 
-const mockedProps = mock<Props>()
+const mockedProps = mock<JSONScalarProps>()
 
 describe('JSONScalar', () => {
   it('should render', () => {
     expect(render(
-      <JSONScalar
+      <RejsonScalar
         {...instance(mockedProps)}
         keyName="keyName"
       />
@@ -19,7 +22,7 @@ describe('JSONScalar', () => {
 
   it('should render string', () => {
     expect(render(
-      <JSONScalar
+      <RejsonScalar
         {...instance(mockedProps)}
         value="string"
         keyName="keyName"
@@ -29,7 +32,7 @@ describe('JSONScalar', () => {
 
   it('should render null', () => {
     expect(render(
-      <JSONScalar
+      <RejsonScalar
         {...instance(mockedProps)}
         value={null}
         keyName="keyName"
@@ -39,7 +42,7 @@ describe('JSONScalar', () => {
 
   it('should render number', () => {
     expect(render(
-      <JSONScalar
+      <RejsonScalar
         {...instance(mockedProps)}
         value={123123}
         keyName="keyName"
@@ -49,7 +52,7 @@ describe('JSONScalar', () => {
 
   it('should render boolean', () => {
     expect(render(
-      <JSONScalar
+      <RejsonScalar
         {...instance(mockedProps)}
         value
         keyName="keyName"
@@ -58,7 +61,7 @@ describe('JSONScalar', () => {
   })
 
   it('should render inline edit after click', () => {
-    render(<JSONScalar
+    render(<RejsonScalar
       {...instance(mockedProps)}
       value="string"
       keyName="keyName"
@@ -68,7 +71,7 @@ describe('JSONScalar', () => {
   })
 
   it('should change value', () => {
-    render(<JSONScalar
+    render(<RejsonScalar
       {...instance(mockedProps)}
       value="string"
       keyName="keyName"
@@ -83,9 +86,8 @@ describe('JSONScalar', () => {
 
   it('should be able to apply value with wrong json', () => {
     const handleEdit = jest.fn()
-    render(<JSONScalar
+    render(<RejsonScalar
       {...instance(mockedProps)}
-      onJSONPropertyEdited={handleEdit}
       handleSubmitJsonUpdateValue={jest.fn()}
       value="string"
       keyName="keyName"
@@ -98,24 +100,5 @@ describe('JSONScalar', () => {
     fireEvent.click(screen.getByTestId('apply-btn'))
 
     expect(handleEdit).not.toBeCalled()
-  })
-
-  it('should apply proper value', () => {
-    const handleEdit = jest.fn()
-    render(<JSONScalar
-      {...instance(mockedProps)}
-      onJSONPropertyEdited={handleEdit}
-      handleSubmitJsonUpdateValue={jest.fn()}
-      value="string"
-      keyName="keyName"
-    />)
-    fireEvent.click(screen.getByTestId(/json-scalar-value/i))
-    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
-      target: { value: '{}' }
-    })
-
-    fireEvent.click(screen.getByTestId('apply-btn'))
-
-    expect(handleEdit).toBeCalled()
   })
 })

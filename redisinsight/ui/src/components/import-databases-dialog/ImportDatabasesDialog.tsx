@@ -60,6 +60,7 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
       onClose={handleOnClose}
       onFileChange={onFileChange}
       onSubmit={onSubmit}
+      title="Import Database Connections"
       submitResults={<ResultsLog data={data} />}
       loading={loading}
       data={data}

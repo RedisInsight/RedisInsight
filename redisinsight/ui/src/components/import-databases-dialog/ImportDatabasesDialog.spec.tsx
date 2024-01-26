@@ -61,7 +61,7 @@ describe('ImportDatabasesDialog', () => {
 
     await act(() => {
       fireEvent.change(
-        screen.getByTestId('import-databases-input-file'),
+        screen.getByTestId('import-file-modal-filepicker'),
         {
           target: { files: [file] },
         }

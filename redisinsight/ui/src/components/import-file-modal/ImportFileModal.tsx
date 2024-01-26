@@ -25,6 +25,7 @@ export interface Props<T> {
   onClose: () => void
   onFileChange: (files: FileList | null) => void
   onSubmit: () => void
+  title: string
   submitResults: JSX.Element
   loading: boolean
   data: Nullable<T>
@@ -39,6 +40,7 @@ const ImportFileModal = <T,>({
   onClose,
   onFileChange,
   onSubmit,
+  title,
   submitResults,
   loading,
   data,
@@ -53,12 +55,12 @@ const ImportFileModal = <T,>({
     <EuiModal
       onClose={onClose}
       className={cx(styles.modal, { [styles.result]: !!data })}
-      data-testid="import-dbs-dialog"
+      data-testid="import-file-modal"
     >
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <EuiTitle size="xs" data-testid="import-dbs-dialog-title">
-            <span>{!data && !error ? 'Import Database Connections' : 'Import Results'}</span>
+          <EuiTitle size="xs" data-testid="import-file-modal-title">
+            <span>{!data && !error ? title : 'Import Results'}</span>
           </EuiTitle>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
@@ -69,13 +71,13 @@ const ImportFileModal = <T,>({
             {isShowForm && (
               <EuiFlexItem>
                 <EuiFilePicker
-                  id="import-databases-input-file"
+                  id="import-file-modal-filepicker"
                   initialPromptText="Select or drag and drop a file"
                   className={styles.fileDrop}
                   isInvalid={isInvalid}
                   onChange={onFileChange}
                   display="large"
-                  data-testid="import-databases-input-file"
+                  data-testid="import-file-modal-filepicker"
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (

@@ -46,7 +46,7 @@ describe('HomeHeader', () => {
 
     fireEvent.click(screen.getByTestId('import-from-file-btn'))
 
-    expect(screen.getByTestId('import-dbs-dialog')).toBeInTheDocument()
+    expect(screen.getByTestId('import-file-modal')).toBeInTheDocument()
   })
 
   it('should call proper telemetry on open and close import databases dialog', () => {
@@ -63,7 +63,7 @@ describe('HomeHeader', () => {
 
     (sendEventTelemetry as jest.Mock).mockRestore()
 
-    fireEvent.click(within(screen.getByTestId('import-dbs-dialog')).getByTestId('cancel-btn'))
+    fireEvent.click(within(screen.getByTestId('import-file-modal')).getByTestId('cancel-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_CANCELLED

@@ -87,7 +87,7 @@ describe('WelcomeComponent', () => {
 
     fireEvent.click(screen.getByTestId('import-from-file-btn'))
 
-    expect(screen.getByTestId('import-dbs-dialog')).toBeInTheDocument()
+    expect(screen.getByTestId('import-file-modal')).toBeInTheDocument()
   })
 
   it('should not render import oath cloud db btn', () => {

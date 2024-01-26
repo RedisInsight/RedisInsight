@@ -42,8 +42,7 @@ describe('Upload', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_CLICKED,
       eventData: {
-        id: 'rdiInstanceId',
-        jobsNumber: 2
+        id: 'rdiInstanceId'
       }
     })
   })

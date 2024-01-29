@@ -646,6 +646,10 @@ jobs:
         type: enum
         default: stage
         enum: ['stage', 'prod', 'dev']
+      redisstack:
+        description: Build RedisStack archives
+        type: boolean
+        default: true
       target:
         description: Build target
         type: string
@@ -710,6 +714,15 @@ jobs:
             rm -rf release/mac
             mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
           no_output_timeout: 60m
+      - when:
+          condition:
+            equal: [ true, << parameters.redisstack >> ]
+          steps:
+            - run:
+                name: Repack dmg to tar
+                command: |
+                  ARCH=x64 ./.circleci/redisstack/dmg.repack.sh
+                  ARCH=arm64 ./.circleci/redisstack/dmg.repack.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -718,6 +731,7 @@ jobs:
             - release/RedisInsight*.dmg.blockmap
             - release/RedisInsight*.pkg
             - release/*-mac.yml
+            - release/redisstack
   windows:
     executor:
       name: win/default
@@ -961,6 +975,7 @@ jobs:
             --include "RedisInsight*" \
             --include "web/*" \
             --include "docker/*"
+            --include "redisstack/*"
 
   release-aws-private:
     executor: linux-executor
@@ -1334,6 +1349,7 @@ workflows:
       - macosx:
           name: Build app - MacOS (stage)
           env: stage
+          redisstack: false
           target: << pipeline.parameters.mac >>
           requires:
             - Setup build (stage)

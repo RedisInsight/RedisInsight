@@ -1,8 +1,4 @@
 #!/bin/bash
 set -e
 
-cd ./release/web
-
-for f in *.tar.gz; do
-  sha256sum "$f" > "$f.sha256"
-done
+find ./release -type f -name '*.tar.gz' -execdir sh -c 'sha256sum "$1" > "$1.sha256"' _ {} \;

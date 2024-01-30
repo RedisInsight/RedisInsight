@@ -1,0 +1,82 @@
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+@import '@elastic/eui/src/components/table/mixins';
+@import '@elastic/eui/src/global_styling/index';
+
+:global(.homePage) :global(.cloudDatabaseList) {
+  height: calc(100vh - 326px) !important;
+
+  @media (min-width: 1130px) {
+    height: calc(100vh - 272px) !important;
+  }
+}
+
+.footer {
+  padding: 15px 14px 10px 30px !important;
+}
+
+.title {
+  padding-bottom: 5px !important;
+}
+
+.subTitle {
+  padding-bottom: 10px;
+}
+
+.searchForm {
+  width: 266px !important;
+
+  @media (min-width: 1130px) {
+    position: absolute;
+    right: 30px;
+    margin-top: -70px;
+  }
+}
+
+.search {
+  background-color: var(--euiColorLightestShade) !important;
+  height: 40px !important;
+}
+
+.table {
+  @include euiScrollBar;
+  overflow: auto;
+  max-height: calc(100vh - 320px) !important;
+
+  @media (min-width: 1130px) {
+    max-height: calc(100vh - 260px) !important;
+  }
+}
+
+.panelCancelBtn {
+  max-width: 350px !important;
+  margin-left: -10px;
+}
+
+.tooltipColumnName {
+  max-width: 370px !important;
+  * {
+    line-height: 1.19;
+    font-size: 14px !important;
+
+    &:not(:global(.euiToolTip__title)) {
+      font-weight: 300 !important;
+    }
+  }
+}
+
+.errorBtn {
+  height: 100% !important;
+  > span {
+    padding: 0 !important;
+  }
+}
+
+.tooltipColumnNameText {
+  text-decoration: underline;
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  vertical-align: top;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

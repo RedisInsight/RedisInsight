@@ -7,7 +7,7 @@ import {
     ossStandaloneConfigEmpty,
     ossStandaloneRedisearch
 } from '../../../../helpers/conf';
-import { KeyTypesTexts, rte } from '../../../../helpers/constants';
+import { ExploreTabs, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 import { Common } from '../../../../helpers/common';
@@ -39,14 +39,43 @@ test
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can see message "No keys to display." when there are no keys in the database', async t => {
-        const message = 'No Keys Found\nCreate your first key to get started\nKeys are the foundation of Redis. Create your first key to start exploring Redis and Redis Stack capabilities';
-
+        const message = 'NoKeystoDisplayCreateyourfirstkeytogetstartedKeysarethefoundationofRedis.CreateyourfirstkeyortryourinteractiveTutorialstolearnhowRediscansolveyourusecases.+KeyorExplore';
+        const actualMessage = await browserPage.keyListMessage.innerText;
+        const cleanMessage = actualMessage.replace(/[\s\n]+/g, '');
+        const capabilities = [{
+            name: 'Search and Query',
+            tutorial: 'How To Query Your Data'
+        },
+        {
+            name: 'JSON',
+            tutorial: 'JSON'
+        },
+        {
+            name: 'Triggers and functions',
+            tutorial: 'Triggers And Functions Explained'
+        },
+        {
+            name: 'Time Series',
+            tutorial: 'Time Series'
+        },
+        {
+            name: 'Probabilistic',
+            tutorial: 'Probabilistic'
+        }];
         // Verify the message
         await t.click(browserPage.treeViewButton);
-        await t.expect(browserPage.keyListMessage.innerText).contains(message, 'The message is not displayed');
+        await t.expect(cleanMessage).contains(message, 'The message is not displayed');
+        // Verify that user can see the same tutorial opened as on the list of databases when clicking on capabilities
         await t.expect(browserPage.guideLinksBtn.count).gte(5);
-        await browserPage.clickGuideLinksByName('JSON');
-        await t.expect(workbenchPage.expandArea.visible).ok('Workbench page is not opened');
+        for (const capability of capabilities) {
+            await browserPage.clickGuideLinksByName(capability.name);
+            await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel not opened');
+            const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+            await t.expect(tutorials.closeEnablementPage.textContent)
+                .contains(capability.tutorial, `${capability.tutorial} tutorial not opened from No Keys page`);
+            await t.click(browserPage.InsightsPanel.closeButton);
+        }
+
     });
 test('Verify that user can see the total number of keys, the number of keys scanned, the “Scan more” control displayed at the top of Tree view and Browser view', async t => {
     await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);

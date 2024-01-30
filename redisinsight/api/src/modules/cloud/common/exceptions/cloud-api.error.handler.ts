@@ -16,7 +16,7 @@ export const wrapCloudApiError = (error: AxiosError, message?: string): HttpExce
   const { response } = error;
 
   if (response) {
-    const errorOptions = { cause: response?.data };
+    const errorOptions = { cause: new Error(response?.data as string) };
     switch (response?.status) {
       case 401:
         return new CloudApiUnauthorizedException(message, errorOptions);

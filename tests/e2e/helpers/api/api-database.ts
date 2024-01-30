@@ -23,9 +23,10 @@ export class DatabaseAPIRequests {
      * @param databaseParameters The database parameters
      */
     async addNewStandaloneDatabaseApi(
-        databaseParameters: AddNewDatabaseParameters
+        databaseParameters: AddNewDatabaseParameters, isCloud = false
     ): Promise<void> {
         const uniqueId = chance.string({ length: 10 });
+        const uniqueIdNumber = chance.integer({ min: 1, max: 1000 });
         const requestBody: {
             name?: string,
             host: string,
@@ -42,6 +43,13 @@ export class DatabaseAPIRequests {
                 name: string,
                 certificate?: string,
                 key?: string
+            },
+            cloudDetails?: {
+                cloudId: number,
+                subscriptionType: string,
+                planMemoryLimit: number,
+                memoryLimitMeasurementUnit: string,
+                free: boolean
             }
         } = {
             name: databaseParameters.databaseName,
@@ -62,6 +70,16 @@ export class DatabaseAPIRequests {
                 name: `client}-${uniqueId}`,
                 certificate: databaseParameters.clientCert!.certificate,
                 key: databaseParameters.clientCert!.key
+            };
+        }
+
+        if(isCloud) {
+            requestBody.cloudDetails = {
+                cloudId: uniqueIdNumber,
+                subscriptionType: 'fixed',
+                planMemoryLimit: 30,
+                memoryLimitMeasurementUnit: 'mb',
+                free: true
             };
         }
         const response = await sendPostRequest(

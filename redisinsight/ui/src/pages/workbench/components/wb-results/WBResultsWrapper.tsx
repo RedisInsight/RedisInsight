@@ -1,8 +1,8 @@
 import React from 'react'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { CodeButtonParams } from 'uiSrc/constants'
 import WBResults from './WBResults'
 
 export interface Props {

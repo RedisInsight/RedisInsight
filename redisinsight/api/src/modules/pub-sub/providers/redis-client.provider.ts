@@ -1,12 +1,12 @@
 import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 
 @Injectable()
 export class RedisClientProvider {

@@ -5,7 +5,7 @@ import * as editJsonFile from 'edit-json-file';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, workingDirectory } from '../../../../helpers/conf';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -57,15 +57,17 @@ if (fs.existsSync(workingDirectory)) {
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
 
         // Check Enablement area and validate that removed file is existed in Guides
-        await t.click(workbenchPage.guidesGraphAccordion);
-        await t.click(workbenchPage.guidesIntroductionGraphLink.nth(1));
-        await t.expect(workbenchPage.enablementAreaEmptyContent.visible).notOk('Guides folder is not updated');
-        await t.click(workbenchPage.closeEnablementPage);
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.click(tab.guidesGraphAccordion);
+        await t.click(tab.guidesIntroductionGraphLink.nth(1));
+        await t.expect(tab.enablementAreaEmptyContent.visible).notOk('Guides folder is not updated');
+        await t.click(tab.closeEnablementPage);
 
         // Check Enablement area and validate that removed file is existed in Tutorials
-        await t.click(workbenchPage.redisStackTutorialsButton);
-        await t.click(workbenchPage.timeSeriesLink);
-        await t.expect(workbenchPage.enablementAreaEmptyContent.visible).notOk('Tutorials folder is not updated');
+        await t.click(tab.redisStackTutorialsButton);
+        await t.click(tab.timeSeriesLink);
+        await t.expect(tab.enablementAreaEmptyContent.visible).notOk('Tutorials folder is not updated');
 
         // Check that timestamp is new
         const actualGuidesTimestamp = await guidesTimestampFileNew.get('timestamp');

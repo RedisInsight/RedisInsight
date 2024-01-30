@@ -62,6 +62,13 @@ export class CustomTutorialManifest {
   @IsNotEmpty()
   label: string;
 
+  @ApiProperty({ type: String })
+  @IsOptional()
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  summary?: string;
+
   @ApiPropertyOptional({ type: CustomTutorialManifestArgs })
   @IsOptional()
   @Expose()

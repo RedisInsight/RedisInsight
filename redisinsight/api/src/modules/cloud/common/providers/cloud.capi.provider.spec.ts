@@ -1,9 +1,9 @@
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { CloudCapiProvider } from './cloud.capi.provider';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 
 const getPrefixTests = [
   {

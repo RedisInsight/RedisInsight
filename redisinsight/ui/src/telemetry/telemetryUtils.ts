@@ -19,6 +19,8 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
+const TELEMETRY_EMPTY_VALUE = 'none'
+
 const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
@@ -196,11 +198,12 @@ const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisMo
 }
 
 export {
+  TELEMETRY_EMPTY_VALUE,
   sendEventTelemetry,
   sendPageViewTelemetry,
   getBasedOnViewTypeEvent,
   getJsonPathLevel,
   getAdditionalAddedEventData,
   getMatchType,
-  getRedisModulesSummary
+  getRedisModulesSummary,
 }

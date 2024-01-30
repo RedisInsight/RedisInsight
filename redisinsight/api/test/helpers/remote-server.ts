@@ -9,5 +9,5 @@ export const initRemoteServer = async () => {
 
   const app = express();
   app.use(constants.TEST_REMOTE_STATIC_URI, express.static(constants.TEST_REMOTE_STATIC_PATH, { etag: false }))
-  await app.listen(5551, '0.0.0.0');
+  await app.listen(5551);
 }

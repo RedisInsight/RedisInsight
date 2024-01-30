@@ -1,15 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { capitalize } from 'lodash'
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
 
-import { CONNECTION_TYPE_DISPLAY, ConnectionType } from 'uiSrc/slices/interfaces'
-import { Nullable } from 'uiSrc/utils'
+import cx from 'classnames'
+import { CONNECTION_TYPE_DISPLAY, ConnectionType, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
+import { getModule, Nullable, truncateText } from 'uiSrc/utils'
 
 import { ReactComponent as ConnectionIcon } from 'uiSrc/assets/img/icons/connection.svg'
 import { ReactComponent as UserIcon } from 'uiSrc/assets/img/icons/user.svg'
 import { ReactComponent as VersionIcon } from 'uiSrc/assets/img/icons/version.svg'
 import MessageInfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
+import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
+import { Theme } from 'uiSrc/constants'
+import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
+import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -23,9 +30,21 @@ export interface Props {
     user?: Nullable<string>
   }
   databases: number
+  modules: AdditionalRedisModule[]
 }
-const ShortInstanceInfo = ({ info, databases }: Props) => {
+const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
   const { name, host, port, connectionType, version, user } = info
+  const { theme } = useContext(ThemeContext)
+
+  const getIcon = (name: string) => {
+    const icon = DEFAULT_MODULES_INFO[name]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
+    if (icon) {
+      return icon
+    }
+
+    return theme === Theme.Dark ? UnknownDark : UnknownLight
+  }
+
   return (
     <div data-testid="db-info-tooltip">
       <div className={styles.tooltipItem}>
@@ -73,6 +92,27 @@ const ShortInstanceInfo = ({ info, databases }: Props) => {
           <span className={styles.tooltipItemValue}>{user || 'Default'}</span>
         </EuiFlexItem>
       </EuiFlexGroup>
+      {!!modules?.length && (
+        <div className={styles.modules}>
+          <h4 className={styles.mi_fieldName}>Database Modules</h4>
+          {modules?.map(({ name = '', semanticVersion = '', version = '' }) => (
+            <div
+              key={name}
+              className={cx(styles.mi_moduleName)}
+              data-testid={`module_${name}`}
+            >
+              <EuiIcon type={getIcon(name)} className={styles.mi_icon} />
+              <span>{truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}</span>
+              {!!(semanticVersion || version) && (
+                <span className={styles.mi_version}>
+                  v.
+                  {semanticVersion || version}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

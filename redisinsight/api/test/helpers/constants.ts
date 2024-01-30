@@ -41,7 +41,7 @@ export const constants = {
   getRandomString: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   generateRandomKey: () => `${TEST_RUN_ID}_${uuidv4()}_${CLUSTER_HASH_SLOT}`,
   APP_DEFAULT_SETTINGS,
-  TEST_KEYTAR_PASSWORD: process.env.SECRET_STORAGE_PASSWORD || 'somepassword',
+  TEST_KEYTAR_PASSWORD: process.env.RI_SECRET_STORAGE_PASSWORD || 'somepassword',
   TEST_INCORRECT_PASSWORD: 'incorrect',
   TEST_ENCRYPTION_STRATEGY: 'KEYTAR',
   TEST_AGREEMENTS_VERSION: '1.0.3',

@@ -3,14 +3,14 @@ import {
   BrowserPage, InstancePage,
 } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
-import SlowLogPage from 'uiSrc/pages/slowLog'
-import PubSubPage from 'uiSrc/pages/pubSub'
-import EditConnection from 'uiSrc/pages/redisStack/components/edit-connection'
-import ClusterDetailsPage from 'uiSrc/pages/clusterDetails'
+import SlowLogPage from 'uiSrc/pages/slow-log'
+import PubSubPage from 'uiSrc/pages/pub-sub'
+import EditConnection from 'uiSrc/pages/redis-stack/components/edit-connection'
+import ClusterDetailsPage from 'uiSrc/pages/cluster-details'
 import AnalyticsPage from 'uiSrc/pages/analytics'
-import DatabaseAnalysisPage from 'uiSrc/pages/databaseAnalysis'
-import TriggeredFunctionsPage from 'uiSrc/pages/triggeredFunctions'
-import { LibrariesPage, FunctionsPage } from 'uiSrc/pages/triggeredFunctions/pages'
+import DatabaseAnalysisPage from 'uiSrc/pages/database-analysis'
+import TriggeredFunctionsPage from 'uiSrc/pages/triggered-functions'
+import { LibrariesPage, FunctionsPage } from 'uiSrc/pages/triggered-functions/pages'
 import COMMON_ROUTES from './commonRoutes'
 
 const ANALYTICS_ROUTES: IRoute[] = [

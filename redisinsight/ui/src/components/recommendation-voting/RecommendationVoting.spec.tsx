@@ -57,7 +57,7 @@ describe('RecommendationVoting', () => {
   })
 
   it('should render proper popover and btn should be disabled"', async () => {
-    userSettingsConfigSelector.mockImplementation(() => ({
+    (userSettingsConfigSelector as jest.Mock).mockImplementation(() => ({
       agreements: {
         analytics: false,
       },
@@ -69,7 +69,7 @@ describe('RecommendationVoting', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('not useful-vote-tooltip')).toHaveTextContent('Enable Analytics on the Settings page to vote for a recommendation')
+    expect(screen.getByTestId('not useful-vote-tooltip')).toHaveTextContent('Enable Analytics on the Settings page to vote for a tip')
     expect(screen.getByTestId('not useful-vote-btn')).toBeDisabled()
   })
 })

@@ -3,7 +3,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import {
   mockAgreements,
   mockAgreementsRepository, mockAppSettings,
-  mockEncryptionStrategyInstance, mockSettings,
+  mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
   MockType, mockUserId,
 } from 'src/__mocks__';
@@ -20,6 +20,7 @@ import { Agreements } from 'src/modules/settings/models/agreements';
 import { Settings } from 'src/modules/settings/models/settings';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
+import { KeyEncryptionStrategy } from 'src/modules/encryption/strategies/key-encryption.strategy';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -37,6 +38,7 @@ describe('SettingsService', () => {
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
   let keytarStrategy: MockType<KeytarEncryptionStrategy>;
+  let keyStrategy: MockType<KeyEncryptionStrategy>;
   let eventEmitter: EventEmitter2;
 
   beforeEach(async () => {
@@ -61,6 +63,10 @@ describe('SettingsService', () => {
           useFactory: mockEncryptionStrategyInstance,
         },
         {
+          provide: KeyEncryptionStrategy,
+          useFactory: mockKeyEncryptionStrategyInstance,
+        },
+        {
           provide: EventEmitter2,
           useFactory: () => ({
             emit: jest.fn(),
@@ -72,6 +78,7 @@ describe('SettingsService', () => {
     agreementsRepository = await module.get(AgreementsRepository);
     settingsRepository = await module.get(SettingsRepository);
     keytarStrategy = await module.get(KeytarEncryptionStrategy);
+    keyStrategy = await module.get(KeyEncryptionStrategy);
     analyticsService = await module.get<SettingsAnalytics>(SettingsAnalytics);
     service = await module.get(SettingsService);
     eventEmitter = await module.get(EventEmitter2);

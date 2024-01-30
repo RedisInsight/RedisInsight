@@ -25,37 +25,3 @@ a[target="_blank"], a.euiLink[target="_blank"] {
     color: var(--linkToastColor) !important;
   }
 }
-
-a.externalLink {
-  display: inline;
-  position: relative;
-  padding-right: 1em;
-  line-height: 1;
-
-  &:before, &:after {
-    display: inline-flex;
-    content: '';
-    position: absolute;
-  }
-
-  &:before {
-    width: 0.8em;
-    height: 1px;
-    transform: rotate(135deg) translate(0, 50%);
-    transform-origin: 50%;
-    right: -0.1em;
-    top: 50%;
-    background-color: currentColor;
-    border-radius: 100% 0 0 100%;
-  }
-
-  &:after {
-    width: 0.5em;
-    height: 0.5em;
-    border-right: 1px solid currentColor;
-    border-bottom: 1px solid currentColor;
-    top: 0.2em;
-    right: 0;
-    transform: rotate(-90deg);
-  }
-}

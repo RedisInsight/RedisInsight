@@ -1,4 +1,3 @@
-import IORedis from 'ioredis';
 import * as MockedSocket from 'socket.io-mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
@@ -17,13 +16,6 @@ import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.anal
 export const mockSocket1 = new MockedSocket();
 mockSocket1.id = '1';
 mockSocket1['emit'] = jest.fn();
-
-export const mockSocket2 = new MockedSocket();
-mockSocket2.id = '2';
-mockSocket2['emit'] = jest.fn();
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
 
 const mockBulkActionFilter = Object.assign(new BulkActionFilter(), {
   count: 10_000,

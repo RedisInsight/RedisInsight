@@ -1,10 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Scanner } from 'src/modules/browser/keys/scanner/scanner';
-import {
-  BrowserToolClusterService,
-} from 'src/modules/browser/services/browser-tool-cluster/browser-tool-cluster.service';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { mockRedisConsumer, mockSettingsService } from 'src/__mocks__';
+import { mockSettingsService } from 'src/__mocks__';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClusterScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/cluster.scanner.strategy';
@@ -17,19 +13,6 @@ describe('Scanner Manager', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Scanner,
-        {
-          provide: BrowserToolClusterService,
-          useFactory: () => ({
-            execCommand: jest.fn(),
-            execCommandFromNodes: jest.fn(),
-            execCommandFromNode: jest.fn(),
-            execPipeline: jest.fn(),
-          }),
-        },
-        {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
-        },
         {
           provide: SettingsService,
           useFactory: mockSettingsService,

@@ -16,9 +16,9 @@ export class ZSetKeyInfoStrategy extends KeyInfoStrategy {
     this.logger.log(`Getting ${RedisDataType.ZSet} type info.`);
 
     const [
-      [, ttl],
-      [, size],
-      [, length],
+      [, ttl = null],
+      [, size = null],
+      [, length = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
@@ -29,7 +29,7 @@ export class ZSetKeyInfoStrategy extends KeyInfoStrategy {
       name: key,
       type,
       ttl,
-      size: size || null,
+      size,
       length,
     };
   }

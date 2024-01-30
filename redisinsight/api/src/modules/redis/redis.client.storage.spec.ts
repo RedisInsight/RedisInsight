@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { generateMockRedisClient, mockDatabase, mockRedisConnectionFactory } from 'src/__mocks__';
+import { generateMockRedisClient, mockDatabase } from 'src/__mocks__';
 import { ClientContext, SessionMetadata } from 'src/common/models';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import apiConfig from 'src/utils/config';
 import { BadRequestException } from '@nestjs/common';
@@ -47,10 +46,6 @@ describe('RedisClientStorage', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisClientStorage,
-        {
-          provide: RedisConnectionFactory,
-          useFactory: mockRedisConnectionFactory,
-        },
       ],
     }).compile();
 

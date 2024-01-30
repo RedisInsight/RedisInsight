@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockCommonClientMetadata, mockDatabaseClientFactory } from 'src/__mocks__';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
-import { RedisService } from 'src/modules/redis/redis.service';
 import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
@@ -14,10 +13,6 @@ describe('RedisClientProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisClientProvider,
-        {
-          provide: RedisService,
-          useFactory: () => ({}),
-        },
         {
           provide: DatabaseClientFactory,
           useFactory: mockDatabaseClientFactory,

@@ -13,8 +13,8 @@ export class UnsupportedKeyInfoStrategy extends KeyInfoStrategy {
     this.logger.log(`Getting ${type} type info.`);
 
     const [
-      [, ttl],
-      [, size],
+      [, ttl = null],
+      [, size = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
@@ -24,7 +24,7 @@ export class UnsupportedKeyInfoStrategy extends KeyInfoStrategy {
       name: key,
       type,
       ttl,
-      size: size || null,
+      size,
     };
   }
 }

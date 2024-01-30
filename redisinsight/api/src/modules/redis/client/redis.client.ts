@@ -27,6 +27,7 @@ export interface IRedisClientCommandOptions {
 export interface IRedisClientOptions {
   host?: string,
   port?: number,
+  connectTimeout?: number,
 }
 
 export type RedisClientCommandArgument = RedisString | number;

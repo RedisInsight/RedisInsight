@@ -15,8 +15,8 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
   ): Promise<GetKeyInfoResponse> {
     this.logger.log(`Getting ${RedisDataType.JSON} type info.`);
     const [
-      [, ttl],
-      [, size],
+      [, ttl = null],
+      [, size = null],
     ] = await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
@@ -28,7 +28,7 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
       name: key,
       type,
       ttl,
-      size: size || null,
+      size,
       length,
     };
   }

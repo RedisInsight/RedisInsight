@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -8,10 +9,12 @@ import {
   resetImportInstances,
   uploadInstancesFile
 } from 'uiSrc/slices/instances/instances'
+import { ImportDatabasesData } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
 
 import ResultsLog from './components/ResultsLog'
+import styles from './styles.module.scss'
 
 export interface Props {
   onClose: (isCancelled: boolean) => void
@@ -56,10 +59,11 @@ const ImportDatabasesDialog = ({ onClose }: Props) => {
   }
 
   return (
-    <ImportFileModal
+    <ImportFileModal<ImportDatabasesData>
       onClose={handleOnClose}
       onFileChange={onFileChange}
       onSubmit={onSubmit}
+      modalClassName={cx(styles.modal, { [styles.result]: !!data })}
       title="Import Database Connections"
       submitResults={<ResultsLog data={data} />}
       loading={loading}

@@ -1,17 +1,7 @@
-import {
-  EuiButton,
-  EuiFilePicker,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiModal,
-  EuiModalBody,
-  EuiModalFooter,
-  EuiModalHeader,
-  EuiModalHeaderTitle,
-  EuiText,
-  EuiTitle
-} from '@elastic/eui'
+import { EuiIcon, EuiText } from '@elastic/eui'
 import React, { useState } from 'react'
+
+import ImportFileModal from 'uiSrc/components/import-file-modal'
 
 import styles from './styles.module.scss'
 
@@ -19,60 +9,58 @@ export interface Props {
   onClose: () => void
   onConfirm: () => void
   onFileChange: (file: File) => void
+  isUploaded: boolean
+  showWarning: boolean
+  error?: string
+  loading: boolean
 }
 
-const UploadDialog = ({ onClose, onConfirm, onFileChange }: Props) => {
+const warningMessage = 'If a new pipeline is uploaded, existing pipeline configuration and transformation\n'
+  + 'jobs will be overwritten. Changes will not be applied until the pipeline is deployed.'
+
+const UploadDialog = ({ onClose, onConfirm, onFileChange, isUploaded, showWarning, error, loading }: Props) => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true)
 
   const handleFileChange = (files: FileList | null) => {
-    if (files) {
+    if (!files?.length) {
+      setIsSubmitDisabled(true)
+    } else {
       onFileChange(files[0])
+      setIsSubmitDisabled(false)
     }
-    setIsSubmitDisabled(!files?.length)
   }
 
   return (
-    <EuiModal onClose={onClose} className={styles.modal} data-testid="upload-rdi-pipeline-dialog">
-      <EuiModalHeader>
-        <EuiModalHeaderTitle>
-          <EuiTitle size="xs" data-testid="upload-rdi-pipeline-dialog-title">
-            <span>Upload an archive with an RDI pipeline</span>
-          </EuiTitle>
-        </EuiModalHeaderTitle>
-      </EuiModalHeader>
-      <EuiModalBody>
-        <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
-          <EuiFlexItem grow={false} style={{ maxWidth: '100%' }}>
-            <EuiFilePicker
-              id="upload-rdi-pipeline-file-picker"
-              initialPromptText="Select or drag and drop a file"
-              className={styles.fileDrop}
-              onChange={handleFileChange}
-              display="large"
-              accept=".zip"
-              data-testid="upload-rdi-pipeline-file-picker"
-              aria-label="Select or drag and drop a file"
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
-          <EuiFlexItem>
-            <EuiText>
-              If a new pipeline is uploaded, existing pipeline configuration and transformation jobs will be
-              overwritten. Changes will not be applied until the pipeline is deployed.
+    <ImportFileModal
+      onClose={onClose}
+      onFileChange={handleFileChange}
+      onSubmit={onConfirm}
+      title="Upload an archive with an RDI pipeline"
+      resultsTitle="Pipeline has been uploaded"
+      submitResults={(
+        <div className={styles.result} data-testid="result-succeeded">
+          <EuiText color="subdued">A new pipeline has been successfully uploaded.</EuiText>
+        </div>
+      )}
+      loading={loading}
+      data={isUploaded}
+      warning={
+        showWarning ? (
+          <div className={styles.warning} data-testid="input-file-warning">
+            <EuiText size="xs" color="subdued">
+              <EuiIcon type="alert" className={styles.alertIcon} />
+              {warningMessage}
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiModalBody>
-      <EuiModalFooter>
-        <EuiButton color="secondary" onClick={onClose} data-testid="cancel-btn">
-          Cancel
-        </EuiButton>
-        <EuiButton color="secondary" onClick={onConfirm} fill isDisabled={isSubmitDisabled} data-testid="submit-btn">
-          Upload
-        </EuiButton>
-      </EuiModalFooter>
-    </EuiModal>
+          </div>
+        ) : null
+      }
+      error={error}
+      errorMessage="Failed to add RDI Instances"
+      isInvalid={false}
+      isSubmitDisabled={isSubmitDisabled}
+      submitBtnText="Upload"
+      acceptedFileExtension=".zip"
+    />
   )
 }
 

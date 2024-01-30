@@ -1,0 +1,19 @@
+.modal {
+  &.result {
+    width: 500px !important;
+
+    @media screen and (min-width: 1024px) {
+      width: 700px !important;
+      min-width: 700px !important;
+    }
+  }
+
+  .result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 20px;
+  }
+}

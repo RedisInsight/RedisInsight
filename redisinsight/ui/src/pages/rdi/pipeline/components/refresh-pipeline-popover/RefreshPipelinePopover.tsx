@@ -8,12 +8,14 @@ import {
   EuiText,
   EuiSpacer,
   EuiFlexGroup,
-  EuiFlexItem,
+  EuiFlexItem
 } from '@elastic/eui'
+import { useFormikContext } from 'formik'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { IPipeline } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -22,12 +24,20 @@ const RefreshPipelinePopover = () => {
 
   const { loading, data } = useSelector(rdiPipelineSelector)
 
+  const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
+
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const dispatch = useDispatch()
 
   const handleRefreshClick = () => {
     setIsPopoverOpen(false)
-    dispatch(fetchRdiPipeline(rdiInstanceId))
+    dispatch(
+      fetchRdiPipeline(rdiInstanceId, (pipeline: IPipeline) => {
+        resetForm()
+        setFieldValue('config', pipeline?.config)
+        setFieldValue('jobs', pipeline?.jobs)
+      })
+    )
   }
 
   const handleRefreshWarning = () => {
@@ -36,7 +46,7 @@ const RefreshPipelinePopover = () => {
       event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
       eventData: {
         id: rdiInstanceId,
-        jobsNumber: data?.jobs?.length || 'none',
+        jobsNumber: data?.jobs?.length || 'none'
       }
     })
   }
@@ -65,10 +75,7 @@ const RefreshPipelinePopover = () => {
     >
       <EuiFlexGroup alignItems="center" gutterSize="none">
         <EuiFlexItem grow={false}>
-          <EuiIcon
-            type="alert"
-            className={styles.alertIcon}
-          />
+          <EuiIcon type="alert" className={styles.alertIcon} />
         </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiText className={styles.popoverTitle}>Refresh a pipeline</EuiText>
@@ -76,13 +83,11 @@ const RefreshPipelinePopover = () => {
       </EuiFlexGroup>
       <EuiSpacer size="xs" />
       <EuiText size="s">
-        A new pipeline will be uploaded from the RDI instance,
-        which may result in overwriting details displayed in RedisInsight.
+        A new pipeline will be uploaded from the RDI instance, which may result in overwriting details displayed in
+        RedisInsight.
       </EuiText>
       <EuiSpacer size="s" />
-      <EuiText size="s">
-        You can download the pipeline displayed to save it locally.
-      </EuiText>
+      <EuiText size="s">You can download the pipeline displayed to save it locally.</EuiText>
       <EuiSpacer size="m" />
       <EuiButton
         fill

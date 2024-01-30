@@ -1,62 +1,126 @@
 import React from 'react'
-import { render } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
-import ImportFileModal from './ImportFileModal'
+import ImportFileModal, { Props } from './ImportFileModal'
+
+const mockProps: Props<Object> = {
+  onClose: jest.fn(),
+  onFileChange: jest.fn(),
+  onSubmit: jest.fn(),
+  title: 'title',
+  submitResults: <div>submitResults</div>,
+  loading: false,
+  data: null,
+  error: '',
+  errorMessage: '',
+  invalidMessage: '',
+  isInvalid: false,
+  isSubmitDisabled: false
+}
 
 describe('ImportFileModal', () => {
   it('should render', () => {
-    expect(render(<ImportFileModal onClose={jest.fn()} />)).toBeTruthy()
+    expect(render(<ImportFileModal {...mockProps} />)).toBeTruthy()
   })
 
-  it('should render with error', () => {
-    expect(
-      render(<ImportFileModal onClose={jest.fn()} error="error" errorMessage="errorMessage" />)
-    ).toBeTruthy()
+  it('should call onClose', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    fireEvent.click(screen.getByTestId('cancel-btn'))
+
+    expect(mockProps.onClose).toBeCalled()
   })
 
-  it('should render with invalid message', () => {
-    expect(
-      render(
-        <ImportFileModal onClose={jest.fn()} isInvalid invalidMessage="invalidMessage" />
-      )
-    ).toBeTruthy()
+  it('should call onFileChange', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
+      target: { files: ['file'] }
+    })
+
+    expect(mockProps.onFileChange).toBeCalled()
   })
 
-  it('should render with submit results', () => {
-    expect(
-      render(
-        <ImportFileModal
-          onClose={jest.fn()}
-          submitResults={<div>submitResults</div>}
-        />
-      )
-    ).toBeTruthy()
+  it('should call onSubmit', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    fireEvent.click(screen.getByTestId('submit-btn'))
+
+    expect(mockProps.onSubmit).toBeCalled()
   })
 
-  it('should render with loading', () => {
-    expect(render(<ImportFileModal onClose={jest.fn()} loading />)).toBeTruthy()
+  it('should show title before submit', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('title')
   })
 
-  it('should render with data', () => {
-    expect(
-      render(
-        <ImportFileModal
-          onClose={jest.fn()}
-          data={{ success: [], partial: [], failed: [] }}
-        />
-      )
-    ).toBeTruthy()
+  it('should show custom results title after submit', () => {
+    render(<ImportFileModal {...mockProps} data={{}} resultsTitle="resultsTitle" />)
+
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('resultsTitle')
   })
 
-  it('should render with data and error', () => {
-    expect(
-      render(
-        <ImportFileModal
-          onClose={jest.fn()}
-          data={{ success: [], partial: [], failed: [] }}
-          error="error"
-        />
-      )
-    ).toBeTruthy()
+  it('should show default results title after submit', () => {
+    render(<ImportFileModal {...mockProps} data={{}} />)
+
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Import Results')
+  })
+
+  it('should show submit results after submit', () => {
+    render(<ImportFileModal {...mockProps} data={{}} />)
+
+    expect(screen.getByText('submitResults')).toBeTruthy()
+  })
+
+  it('should render loading indicator', () => {
+    render(<ImportFileModal {...mockProps} loading />)
+    expect(screen.getByTestId('file-loading-indicator')).toBeInTheDocument()
+  })
+
+  it('should render error message', () => {
+    render(<ImportFileModal {...mockProps} error="error" />)
+
+    expect(screen.getByTestId('result-failed')).toHaveTextContent('error')
+  })
+
+  it('should render invalid message', () => {
+    render(<ImportFileModal {...mockProps} isInvalid invalidMessage="invalidMessage" />)
+
+    expect(screen.getByTestId('input-file-error-msg')).toHaveTextContent('invalidMessage')
+  })
+
+  it('submit btn should be disabled without file', () => {
+    render(<ImportFileModal {...mockProps} isSubmitDisabled />)
+
+    expect(screen.getByTestId('submit-btn')).toBeDisabled()
+  })
+
+  it('submit btn should be enabled with file', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
+      target: { files: ['file'] }
+    })
+
+    expect(screen.getByTestId('submit-btn')).not.toBeDisabled()
+  })
+
+  it('should render submit button with custom text', () => {
+    render(<ImportFileModal {...mockProps} submitBtnText="custom text" />)
+
+    expect(screen.getByTestId('submit-btn')).toHaveTextContent('custom text')
+  })
+
+  it('should render submit button with default text', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    expect(screen.getByTestId('submit-btn')).toHaveTextContent('Import')
+  })
+
+  it('should render body message', () => {
+    render(<ImportFileModal {...mockProps} bodyMessage="bodyMessage" />)
+
+    expect(screen.getByTestId('input-file-body-msg')).toHaveTextContent('bodyMessage')
   })
 })

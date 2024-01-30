@@ -25,51 +25,66 @@ export interface Props<T> {
   onClose: () => void
   onFileChange: (files: FileList | null) => void
   onSubmit: () => void
+  modalClassName?: string
   title: string
+  resultsTitle?: string
   submitResults: JSX.Element
   loading: boolean
   data: Nullable<T>
-  error: string
+  warning?: JSX.Element | null
+  error?: string
   errorMessage?: string
   invalidMessage?: string
   isInvalid: boolean
   isSubmitDisabled: boolean
+  submitBtnText?: string
+  acceptedFileExtension?: string
 }
 
 const ImportFileModal = <T,>({
   onClose,
   onFileChange,
   onSubmit,
+  modalClassName,
   title,
+  resultsTitle,
   submitResults,
   loading,
   data,
+  warning,
   error,
   errorMessage,
   invalidMessage,
   isInvalid,
-  isSubmitDisabled
+  isSubmitDisabled,
+  submitBtnText,
+  acceptedFileExtension
 }: Props<T>) => {
   const isShowForm = !loading && !data && !error
   return (
     <EuiModal
       onClose={onClose}
-      className={cx(styles.modal, { [styles.result]: !!data })}
+      className={cx(styles.modal, modalClassName)}
       data-testid="import-file-modal"
     >
       <EuiModalHeader>
         <EuiModalHeaderTitle>
           <EuiTitle size="xs" data-testid="import-file-modal-title">
-            <span>{!data && !error ? title : 'Import Results'}</span>
+            <span>{!data && !error ? title : resultsTitle || 'Import Results'}</span>
           </EuiTitle>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 
       <EuiModalBody>
-        <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
-          <EuiFlexItem grow={!!data} style={{ maxWidth: '100%' }}>
+        <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false} direction="column">
+          {warning && (
+            <EuiFlexItem grow={false}>
+              {warning}
+            </EuiFlexItem>
+          )}
+          <EuiFlexItem grow={false}>
             {isShowForm && (
-              <EuiFlexItem>
+              <>
                 <EuiFilePicker
                   id="import-file-modal-filepicker"
                   initialPromptText="Select or drag and drop a file"
@@ -77,6 +92,7 @@ const ImportFileModal = <T,>({
                   isInvalid={isInvalid}
                   onChange={onFileChange}
                   display="large"
+                  accept={acceptedFileExtension}
                   data-testid="import-file-modal-filepicker"
                   aria-label="Select or drag and drop file"
                 />
@@ -85,9 +101,8 @@ const ImportFileModal = <T,>({
                     {invalidMessage}
                   </EuiTextColor>
                 )}
-              </EuiFlexItem>
+              </>
             )}
-
             {loading && (
               <div className={styles.loading} data-testid="file-loading-indicator">
                 <EuiLoadingSpinner size="xl" />
@@ -96,7 +111,6 @@ const ImportFileModal = <T,>({
                 </EuiText>
               </div>
             )}
-            {data && submitResults}
             {error && (
               <div className={styles.result} data-testid="result-failed">
                 <EuiIcon type="crossInACircleFilled" size="xxl" color="danger" />
@@ -108,6 +122,11 @@ const ImportFileModal = <T,>({
             )}
           </EuiFlexItem>
         </EuiFlexGroup>
+        {data && (
+          <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
+            <EuiFlexItem style={{ maxWidth: '100%' }}>{submitResults}</EuiFlexItem>
+          </EuiFlexGroup>
+        )}
       </EuiModalBody>
 
       {data && (
@@ -125,7 +144,7 @@ const ImportFileModal = <T,>({
           </EuiButton>
 
           <EuiButton color="secondary" onClick={onSubmit} fill isDisabled={isSubmitDisabled} data-testid="submit-btn">
-            Import
+            {submitBtnText || 'Import'}
           </EuiButton>
         </EuiModalFooter>
       )}

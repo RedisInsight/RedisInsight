@@ -62,7 +62,10 @@ const DbCompressor = (props: Props) => {
       // Reset db field to initial value
       formik.setFieldValue('compressor', NONE)
     }
-    formik.handleChange(e)
+    formik.setFieldValue(
+      'showCompressor',
+      isChecked
+    )
   }
 
   return (

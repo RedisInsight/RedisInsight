@@ -22,7 +22,7 @@ services:
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
       TEST_REDIS_HOST: "redis"
       NODE_ENV: "test"
-      REQUEST_TIMEOUT: "25000"
+      RI_REQUEST_TIMEOUT: "25000"
 
   # dummy service to prevent docker validation errors
   app:

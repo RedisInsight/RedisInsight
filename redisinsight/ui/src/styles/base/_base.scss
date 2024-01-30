@@ -23,7 +23,7 @@ html {
 main.euiPageBody {
   height: calc(100vh - 60px);
   @media only screen and (min-width: 768px) {
-    height: auto;
+    height: 100vh;
   }
 }
 

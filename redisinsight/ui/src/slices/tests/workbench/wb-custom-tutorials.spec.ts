@@ -227,7 +227,7 @@ describe('slices', () => {
   describe('deleteWBCustomTutorialSuccess', () => {
     it('should properly set state after success', () => {
       // Arrange
-      const id = 'quick-guides'
+      const id = 'tutorials'
       const currentState = {
         ...initialState,
         items: [{

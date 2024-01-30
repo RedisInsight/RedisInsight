@@ -1,5 +1,4 @@
-import { Selector } from 'testcafe';
-import { rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { MyRedisDatabasePage, WorkbenchPage, SettingsPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
@@ -84,17 +83,20 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         // Open Working with Hashes page
-        await t.click(workbenchPage.documentButtonInQuickGuides);
-        await t.expect(workbenchPage.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is not visible', { timeout: 5000 });
-        await t.click(workbenchPage.internalLinkWorkingWithHashes);
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
+        await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
+        await t.click(tutorials.internalLinkWorkingWithHashes);
         // Put Create Hash commands into Editing area
-        await t.click(workbenchPage.preselectHashCreate);
-        // Maximize Scripting area to see all the commands
-        await t.drag(workbenchPage.resizeButtonForScriptingAndResults, 0, 300, { speed: 0.4 });
+        const codeText  = await tutorials.getBlockCode('Create a hash');
+        const regex = new RegExp('HSET', 'g');
+        const monacoCommandIndicatorCount = codeText.match(regex).length;
+        await tutorials.runBlockCode('Create a hash');
         //Get number of commands in scripting area
-        const numberOfCommands = Selector('span').withExactText('HSET').count;
+        const numberOfCommands = await workbenchPage.executedCommandTitle.withText('HSET').count;
         //Compare number of indicator displayed and expected value
-        await t.expect(workbenchPage.monacoCommandIndicator.count).eql(await numberOfCommands, 'Number of command indicator is incorrect');
+        await t.expect(monacoCommandIndicatorCount).eql(numberOfCommands, 'Number of command indicator is incorrect');
     });
 test
     .after(async() => {

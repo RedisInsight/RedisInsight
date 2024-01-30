@@ -1,6 +1,6 @@
 import { t } from 'testcafe';
-import { sendPostRequest } from './api-common';
 import { ResourcePath } from '../constants';
+import { sendPostRequest } from './api-common';
 
 /**
  * Synchronize features

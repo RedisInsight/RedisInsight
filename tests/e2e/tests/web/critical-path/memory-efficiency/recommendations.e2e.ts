@@ -1,5 +1,5 @@
 import { MyRedisDatabasePage, MemoryEfficiencyPage, BrowserPage, WorkbenchPage } from '../../../../pageObjects';
-import { RecommendationIds, rte } from '../../../../helpers/constants';
+import { ExploreTabs, RecommendationIds, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import {
     commonUrl,
@@ -39,7 +39,7 @@ fixture `Memory Efficiency Recommendations`
         // Go to Analysis Tools page
         await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     })
-    .afterEach(async t => {
+    .afterEach(async() => {
         // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -174,7 +174,7 @@ test.skip
         // Go to Recommendations tab
         await t.click(memoryEfficiencyPage.recommendationsTab);
     })
-    .after(async t => {
+    .after(async() => {
         // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
@@ -189,7 +189,10 @@ test.skip
         await t.expect(recommendation.exists).ok('Query and search JSON documents recommendation not displayed');
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
-        await t.expect(workbenchPage.preselectArea.visible).ok('Workbench Enablement area not opened');
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        await t.expect(await workbenchPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
+        const tutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.expect(tutorial.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded
-        await t.expect(workbenchPage.getTutorialByName('INTRODUCTION').visible).ok('INTRODUCTION tutorial is not expanded');
+        await t.expect(tutorial.getTutorialByName('INTRODUCTION').visible).ok('INTRODUCTION tutorial is not expanded');
     });

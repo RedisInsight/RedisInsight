@@ -1,4 +1,4 @@
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import {
   MiddlewareConsumer, Module, RequestMethod, Type,
 } from '@nestjs/common';
@@ -17,7 +17,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
-const SERVER_CONFIG = config.get('server');
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Module({})
 export class DatabaseModule {

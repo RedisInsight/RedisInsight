@@ -1,0 +1,42 @@
+.container {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  user-select: none;
+
+  &.isOpen {
+    .btn {
+      outline: 0 !important;
+      border-color: var(--euiColorPrimary) !important;
+    }
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    color: var(--recommendationColor);
+    background-color: var(--insightsTriggerBgColor) !important;
+    border-radius: 4px;
+    border-color: var(--insightsTriggerBgColor) !important;
+    position: relative;
+
+    > div {
+      color: var(--buttonSecondaryTextColor) !important;
+    }
+
+    svg {
+      color: var(--buttonSecondaryTextColor) !important;
+    }
+  }
+
+  .highlighting {
+    position: absolute;
+    right: -4px;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--triggerIconActiveColor);
+  }
+}

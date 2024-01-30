@@ -17,9 +17,9 @@ import { ReactComponent as CodeIcon } from 'uiSrc/assets/img/code-changes.svg'
 import { ReactComponent as ConfigurationIcon } from 'uiSrc/assets/img/configuration-changes.svg'
 import { ReactComponent as UpgradeIcon } from 'uiSrc/assets/img/upgrade.svg'
 
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import styles from './styles.module.scss'
 
-const utmSource = 'redisinsight'
 const utmMedium = 'recommendation'
 
 interface ITelemetry {
@@ -75,19 +75,6 @@ const replaceVariables = (value: any[] | any, parameter?: string[], params?: any
   }) : value
 )
 
-const addUtmToLink = (href: string, telemetryName: string): string => {
-  try {
-    const url = new URL(href)
-    url.searchParams.append('utm_source', utmSource)
-    url.searchParams.append('utm_medium', utmMedium)
-    url.searchParams.append('utm_campaign', telemetryName)
-    return url.toString()
-  } catch (e) {
-    // ignore errors
-    return href
-  }
-}
-
 const renderContentElement = (
   { type, value: jsonValue, parameter }: IRecommendationContent,
   params: any,
@@ -140,7 +127,7 @@ const renderContentElement = (
           external={false}
           data-testid={`link-${telemetry.telemetryName}-${idx}`}
           target="_blank"
-          href={addUtmToLink(value.href, telemetry.telemetryName)}
+          href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetry.telemetryName })}
           onClick={() => telemetry.onClickLink?.()}
         >
           {value.name}
@@ -158,7 +145,7 @@ const renderContentElement = (
               onClick={(e) => {
                 ssoCloudHandlerClick?.(e, telemetry.telemetryName as OAuthSocialSource)
               }}
-              href={addUtmToLink(value.href, telemetry.telemetryName)}
+              href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetry.telemetryName })}
             >
               {value.name}
             </EuiLink>
@@ -176,7 +163,7 @@ const renderContentElement = (
           external={false}
           data-testid={`code-link-${telemetry.telemetryName}-${idx}`}
           target="_blank"
-          href={addUtmToLink(value.href, telemetry.telemetryName)}
+          href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetry.telemetryName })}
         >
           <EuiTextColor
             className={cx(styles.code, { [styles.insights]: insights })}
@@ -236,7 +223,6 @@ const sortRecommendations = (recommendations: any[], recommendationsContent: IRe
   ])
 
 export {
-  addUtmToLink,
   sortRecommendations,
   renderRecommendationContent,
   replaceVariables,

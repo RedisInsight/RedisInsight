@@ -1,4 +1,4 @@
-import { first, isNull, map, find, orderBy, get } from 'lodash'
+import { first, isNull, map, filter, orderBy, get } from 'lodash'
 import { createSlice } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
@@ -34,7 +34,7 @@ export const initialState: InitialStateInstances = {
   errorChanging: '',
   changedSuccessfully: false,
   deletedSuccessfully: false,
-  freeInstance: null,
+  freeInstances: [],
   connectedInstance: {
     id: '',
     name: '',
@@ -47,7 +47,6 @@ export const initialState: InitialStateInstances = {
     isRediStack: false,
     modules: [],
     loading: false,
-    isFreeDb: false,
   },
   editedInstance: {
     loading: false,
@@ -81,10 +80,10 @@ const instancesSlice = createSlice({
     loadInstancesSuccess: (state, { payload }: { payload: DatabaseInstanceResponse[] }) => {
       state.data = checkRediStack(payload)
       state.loading = false
-      state.freeInstance = find(
+      state.freeInstances = filter(
         [...(orderBy(payload, 'lastConnection', 'desc'))],
         'cloudDetails.free'
-      ) as unknown as Instance || null
+      ) as unknown as Instance[] || null
       if (state.connectedInstance.id) {
         const isRediStack = state.data.find((db) => db.id === state.connectedInstance.id)?.isRediStack
         state.connectedInstance.isRediStack = isRediStack || false
@@ -302,9 +301,11 @@ export const {
 
 // selectors
 export const instancesSelector = (state: RootState) => state.connections.instances
-export const freeInstanceSelector = (state: RootState) => state.connections.instances.freeInstance
+export const freeInstancesSelector = (state: RootState) => state.connections.instances.freeInstances
 export const connectedInstanceSelector = (state: RootState) =>
   state.connections.instances.connectedInstance
+export const connectedInstanceCDSelector = (state: RootState) =>
+  state.connections.instances.connectedInstance.cloudDetails
 export const connectedInstanceInfoSelector = (state: RootState) =>
   state.connections.instances.instanceInfo
 export const editedInstanceSelector = (state: RootState) =>

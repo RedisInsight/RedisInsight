@@ -3,13 +3,13 @@ import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { withTimeout } from 'src/utils/promise-with-timeout';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
 
-const serverConfig = config.get('server');
+const serverConfig = config.get('server') as Config['server'];
 
 @Injectable()
 export class RedisObserverProvider {

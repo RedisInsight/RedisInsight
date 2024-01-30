@@ -326,7 +326,7 @@ export interface InitialStateInstances {
   editedInstance: InitialStateEditedInstances
   instanceOverview: DatabaseConfigInfo
   instanceInfo: RedisNodeInfoResponse
-  freeInstance: Nullable<Instance>
+  freeInstances: Nullable<Instance[]>
   importInstances: {
     loading: boolean
     error: string
@@ -384,6 +384,7 @@ export interface InitialStateCloud {
   credentials: Nullable<ICredentialsRedisCloud>
   subscriptions: Nullable<RedisCloudSubscription[]>
   isAutodiscoverySSO: boolean
+  isRecommendedSettings: Maybe<boolean>
   account: {
     data: Nullable<RedisCloudAccount>
     error: string

@@ -9,7 +9,7 @@ export const wrapCloudCapiError = (error: AxiosError, message?: string): HttpExc
   }
 
   if (error.response?.status === 401) {
-    return new CloudCapiUnauthorizedException(message, { cause: error.response?.data });
+    return new CloudCapiUnauthorizedException(message, { cause: new Error(error.response?.data as string) });
   }
 
   return wrapCloudApiError(error, message);

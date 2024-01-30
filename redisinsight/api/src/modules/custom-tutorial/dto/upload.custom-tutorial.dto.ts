@@ -3,6 +3,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import {
   HasMimeType, IsFile, MaxFileSize, MemoryStoredFile,
 } from 'nestjs-form-data';
+import { IsGitHubLink } from 'src/common/decorators';
 
 export class UploadCustomTutorialDto {
   @ApiPropertyOptional({
@@ -23,5 +24,6 @@ export class UploadCustomTutorialDto {
   @IsOptional()
   @IsString()
   @IsNotEmpty()
+  @IsGitHubLink()
   link?: string;
 }

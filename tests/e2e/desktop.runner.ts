@@ -6,16 +6,16 @@ import testcafe from 'testcafe';
             return t
                 .createRunner()
                 .compilerOptions({
-                    "typescript": {
+                    'typescript': {
                         configPath: 'tsconfig.testcafe.json',
                         experimentalDecorators: true
-                     }})
+                    } })
                 .src((process.env.TEST_FILES || 'tests/electron/**/*.e2e.ts').split('\n'))
                 .browsers(['electron'])
                 .screenshots({
                     path: './report/screenshots/',
                     takeOnFails: true,
-                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png',
+                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png'
                 })
                 .reporter([
                     'spec',
@@ -46,7 +46,7 @@ import testcafe from 'testcafe';
             process.exit(failedCount);
         })
         .catch((e) => {
-            console.error(e)
+            console.error(e);
             process.exit(1);
         });
 })();

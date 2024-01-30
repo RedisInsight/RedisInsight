@@ -168,7 +168,7 @@ const BrowserSearchPanel = (props: Props) => {
       className={styles.addKey}
       data-testid="btn-add-key"
     >
-      + Key
+      + <span className={styles.addKeyText}>Key</span>
     </EuiButton>
   )
 
@@ -182,7 +182,7 @@ const BrowserSearchPanel = (props: Props) => {
       data-testid="btn-bulk-actions"
       aria-label="bulk actions"
     >
-      Bulk Actions
+      <span className={styles.bulkActionsText}>Bulk Actions</span>
     </EuiButton>
   )
 

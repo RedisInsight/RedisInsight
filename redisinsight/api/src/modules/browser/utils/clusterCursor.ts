@@ -4,7 +4,7 @@ import { IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.inter
 const NODES_SEPARATOR = '||';
 const CURSOR_SEPARATOR = '@';
 // Correct format 172.17.0.1:7001@-1||172.17.0.1:7002@33
-const CLUSTER_CURSOR_REGEX = /^(([a-z0-9.])+:[0-9]+(@-?\d+)(?:\|{2}(?!$)|$))+$/;
+const CLUSTER_CURSOR_REGEX = /^(([a-z0-9.-])+:[0-9]+(@-?\d+)(?:\|{2}(?!$)|$))+$/;
 
 export const isClusterCursorValid = (cursor: string) => CLUSTER_CURSOR_REGEX.test(cursor);
 

@@ -55,8 +55,8 @@ const VoteOption = (props: Props) => {
   const onSuccessVoted = ({ vote, name }: { name: string, vote: Nullable<Vote> }) => {
     sendEventTelemetry({
       event: live
-        ? TelemetryEvent.INSIGHTS_RECOMMENDATION_VOTED
-        : TelemetryEvent.DATABASE_ANALYSIS_RECOMMENDATIONS_VOTED,
+        ? TelemetryEvent.INSIGHTS_TIPS_VOTED
+        : TelemetryEvent.DATABASE_ANALYSIS_TIPS_VOTED,
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
@@ -78,7 +78,7 @@ const VoteOption = (props: Props) => {
 
   const getTooltipContent = (voteOption: Vote) => (isAnalyticsEnable
     ? voteTooltip[voteOption]
-    : 'Enable Analytics on the Settings page to vote for a recommendation')
+    : 'Enable Analytics on the Settings page to vote for a tip')
 
   return (
     <EuiPopover

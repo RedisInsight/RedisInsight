@@ -1,7 +1,7 @@
 import { merge } from 'webpack-merge';
 import { resolve } from 'path';
 import webpack from 'webpack';
-import { toString } from 'lodash'
+import { toString } from 'lodash';
 import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
@@ -75,19 +75,17 @@ const configuration: webpack.Configuration = {
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
-      APP_ENV: 'web',
-      API_PORT: '5000',
-      API_PREFIX: '',
-      BASE_API_URL: 'api/',
-      RESOURCES_BASE_URL:
-        process.env.SERVER_TLS_CERT && process.env.SERVER_TLS_KEY ? 'https://localhost' : 'http://localhost',
-      SCAN_COUNT_DEFAULT: '500',
-      SCAN_TREE_COUNT_DEFAULT: '10000',
-      PIPELINE_COUNT_DEFAULT: '5',
-      SEGMENT_WRITE_KEY:
-        'SEGMENT_WRITE_KEY' in process.env ? process.env.SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
-      CONNECTIONS_TIMEOUT_DEFAULT: 'CONNECTIONS_TIMEOUT_DEFAULT' in process.env
-        ? process.env.CONNECTIONS_TIMEOUT_DEFAULT
+      RI_APP_TYPE: 'web',
+      RI_APP_PORT: '5540',
+      RI_BASE_API_URL: '',
+      RI_API_PREFIX: 'api',
+      RI_SCAN_COUNT_DEFAULT: '500',
+      RI_SCAN_TREE_COUNT_DEFAULT: '10000',
+      RI_PIPELINE_COUNT_DEFAULT: '5',
+      RI_SEGMENT_WRITE_KEY:
+        'RI_SEGMENT_WRITE_KEY' in process.env ? process.env.RI_SEGMENT_WRITE_KEY : 'SOURCE_WRITE_KEY',
+      RI_CONNECTIONS_TIMEOUT_DEFAULT: 'RI_CONNECTIONS_TIMEOUT_DEFAULT' in process.env
+        ? process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
     }),
 

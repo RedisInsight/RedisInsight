@@ -15,10 +15,11 @@ import { appServerInfoSelector, getServerInfo } from 'uiSrc/slices/app/info'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { getRedisCommands } from 'uiSrc/slices/app/redis-commands'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { getWBGuides } from 'uiSrc/slices/workbench/wb-guides'
 import { getWBTutorials } from 'uiSrc/slices/workbench/wb-tutorials'
 import { getContentRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { getGuideLinks } from 'uiSrc/slices/content/guide-links'
+import { getWBCustomTutorials } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import { setCapability } from 'uiSrc/slices/app/context'
 import Config from './Config'
 
 let store: typeof mockedStore
@@ -59,14 +60,15 @@ describe('Config', () => {
   it('should render', () => {
     render(<Config />)
     const afterRenderActions = [
+      setCapability(),
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
       getNotifications(),
       getContentRecommendations(),
       getGuideLinks(),
-      getWBGuides(),
       getWBTutorials(),
+      getWBCustomTutorials(),
       getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(false)
@@ -95,14 +97,15 @@ describe('Config', () => {
     userSettingsSelector.mockImplementation(userSettingsSelectorMock)
     render(<Config />)
     const afterRenderActions = [
+      setCapability(),
       getServerInfo(),
       processCliClient(),
       getRedisCommands(),
       getNotifications(),
       getContentRecommendations(),
       getGuideLinks(),
-      getWBGuides(),
       getWBTutorials(),
+      getWBCustomTutorials(),
       getFeatureFlags(),
       getUserConfigSettings(),
       setSettingsPopupState(true),

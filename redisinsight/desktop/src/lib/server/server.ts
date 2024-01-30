@@ -32,7 +32,7 @@ export const launchApiServer = async () => {
 
     log.info('Available port:', detectPortConst)
 
-    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server()
+    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
     gracefulShutdown = gracefulShutdownFn
     beApp = apiApp
 

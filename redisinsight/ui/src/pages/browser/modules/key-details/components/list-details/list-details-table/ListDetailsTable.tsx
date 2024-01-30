@@ -48,7 +48,12 @@ import {
   validateListIndex,
   Nullable
 } from 'uiSrc/utils'
-import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+  selectedKeySelector,
+  setSelectedKeyRefreshDisabled
+} from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
@@ -116,6 +121,7 @@ const ListDetailsTable = (props: Props) => {
       setExpandedRows([])
       setViewFormat(viewFormatProp)
       setEditingIndex(null)
+      dispatch(setSelectedKeyRefreshDisabled(false))
 
       clearCache()
     }
@@ -132,6 +138,7 @@ const ListDetailsTable = (props: Props) => {
     valueItem?: RedisResponseBuffer
   ) => {
     setEditingIndex(editing ? index : null)
+    dispatch(setSelectedKeyRefreshDisabled(editing))
 
     if (editing) {
       const value = bufferToSerializedFormat(viewFormat, valueItem, 4)

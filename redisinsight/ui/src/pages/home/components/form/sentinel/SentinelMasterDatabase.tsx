@@ -11,7 +11,9 @@ import {
 import { FormikProps } from 'formik'
 
 import { Nullable } from 'uiSrc/utils'
+import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -53,7 +55,7 @@ const SentinelMasterDatabase = (props: Props) => {
         <EuiFlexItem className={flexItemClassName}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
-              type="dual"
+              type="password"
               name="sentinelMasterPassword"
               id="sentinelMasterPassword"
               data-testid="sentinel-master-password"
@@ -61,8 +63,16 @@ const SentinelMasterDatabase = (props: Props) => {
               className="passwordField"
               maxLength={200}
               placeholder="Enter Password"
-              value={formik.values.sentinelMasterPassword ?? ''}
+              value={formik.values.sentinelMasterPassword === true ? SECURITY_FIELD : formik.values.sentinelMasterPassword ?? ''}
               onChange={formik.handleChange}
+              onFocus={() => {
+                if (formik.values.sentinelMasterPassword === true) {
+                  formik.setFieldValue(
+                    'sentinelMasterPassword',
+                    '',
+                  )
+                }
+              }}
               dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
             />

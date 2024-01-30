@@ -9,6 +9,7 @@ import {
   keysSelector,
   selectedKeyDataSelector,
   selectedKeySelector,
+  setSelectedKeyRefreshDisabled,
 } from 'uiSrc/slices/browser/keys'
 import { KeyTypes } from 'uiSrc/constants'
 
@@ -57,6 +58,7 @@ const KeyDetails = (props: Props) => {
     // Restore key details from context in future
     // (selectedKey.data?.name !== keyProp)
     dispatch(fetchKeyInfo(keyProp))
+    dispatch(setSelectedKeyRefreshDisabled(false))
   }, [keyProp])
 
   useEffect(() => {

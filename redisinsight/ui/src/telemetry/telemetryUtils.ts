@@ -19,13 +19,15 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-const sendEventTelemetry = async ({ event, eventData = {} }: ITelemetrySendEvent) => {
+const TELEMETRY_EMPTY_VALUE = 'none'
+
+const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData })
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData, traits })
   } catch (e) {
     // continue regardless of error
   }
@@ -196,11 +198,12 @@ const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): IRedisMo
 }
 
 export {
+  TELEMETRY_EMPTY_VALUE,
   sendEventTelemetry,
   sendPageViewTelemetry,
   getBasedOnViewTypeEvent,
   getJsonPathLevel,
   getAdditionalAddedEventData,
   getMatchType,
-  getRedisModulesSummary
+  getRedisModulesSummary,
 }

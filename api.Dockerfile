@@ -26,7 +26,7 @@ RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
-ENV BUILD_TYPE='DOCKER_ON_PREMISE'
+ENV RI_BUILD_TYPE='DOCKER_ON_PREMISE'
 
 WORKDIR /usr/src/app
 
@@ -38,5 +38,5 @@ RUN chmod +x api-docker-entry.sh
 ENTRYPOINT ["./api-docker-entry.sh"]
 CMD ["node", "dist/src/main"]
 
-EXPOSE 5000
+EXPOSE 5540
 

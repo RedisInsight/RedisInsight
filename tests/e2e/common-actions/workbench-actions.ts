@@ -1,4 +1,4 @@
-import {t, Selector} from 'testcafe';
+import { t, Selector } from 'testcafe';
 import { WorkbenchPage } from '../pageObjects';
 
 const workbenchPage = new WorkbenchPage();

@@ -17,8 +17,8 @@ services:
       - ./.env
     environment:
       TEST_FILES: $TEST_FILES
-      COMMON_URL: 'http://app:5000'
-      API_URL: 'http://app:5000/api'
+      COMMON_URL: 'http://app:5540'
+      API_URL: 'http://app:5540/api'
       E2E_CLOUD_DATABASE_HOST: $E2E_CLOUD_DATABASE_HOST
       E2E_CLOUD_DATABASE_PORT: $E2E_CLOUD_DATABASE_PORT
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
@@ -45,9 +45,13 @@ services:
     build:
       context: ./../../
       dockerfile: Dockerfile
+    environment:
+      RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
+      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
+      RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:
       - .redisinsight-app:/root/.redisinsight-app
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
     ports:
-      - 5000:5000
+      - 5540:5540

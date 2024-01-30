@@ -27,5 +27,5 @@ export {
     InstancePage,
     TriggersAndFunctionsLibrariesPage,
     TriggersAndFunctionsFunctionsPage,
-    WelcomePage,
+    WelcomePage
 };

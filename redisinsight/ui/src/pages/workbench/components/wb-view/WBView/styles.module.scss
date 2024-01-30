@@ -9,46 +9,14 @@
   display: flex;
   flex: 1;
   padding: 0 16px 0;
-  height: calc(100% - 70px);
-}
-
-.sidebar {
-  flex-shrink: 0;
-  margin-right: 12px;
-  position: relative;
-  width: 24%;
-  min-width: 324px;
-  max-width: 420px;
-  @media only screen and (max-width: 992px) {
-    width: 240px;
-    min-width: auto;
-    max-width: none;
-  }
-
-  &.minimized {
-    width: 38px;
-    min-width: auto;
-    max-width: none;
-  }
+  height: 100%;
+  width: 100%;
 }
 
 .content {
   display: flex;
   flex-grow: 1;
-  width: 76%;
-  max-width: calc(100% - 336px);
-  min-width: calc(100% - 452px);
-  @media only screen and (max-width: 992px) {
-    width: calc(100% - 252px);
-    min-width: auto;
-    max-width: none;
-  }
-
-  &.minimized {
-    width: calc(100% - 50px);
-    min-width: auto;
-    max-width: none;
-  }
+  width: 100%;
 }
 
 .resizeButton {
@@ -63,14 +31,14 @@
   padding-top: 8px;
 }
 
-.sidebar, .queryResults {
+.queryResults {
   & > div {
     border-bottom-width: 0;
   }
 }
 
 :global(.show-cli) {
-  .sidebar, .queryResults {
+  .queryResults {
     & > div {
       border-bottom-width: 1px;
     }

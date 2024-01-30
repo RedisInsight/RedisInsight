@@ -380,6 +380,7 @@ describe('keys slice', () => {
         selectedKey: {
           ...initialState.selectedKey,
           loading: false,
+          isRefreshDisabled: false,
           data: {
             ...data,
           },

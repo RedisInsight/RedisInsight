@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn } from '@elastic/eui'
+import { EuiTableFieldDataColumnType } from '@elastic/eui'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { Instance } from 'uiSrc/slices/interfaces'
@@ -52,7 +52,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   })
 }))
 
-const columnsMock = [
+const columnsMock: EuiTableFieldDataColumnType<Instance>[] = [
   {
     field: 'subscriptionId',
     className: 'column_subscriptionId',
@@ -62,11 +62,15 @@ const columnsMock = [
     width: '170px',
     truncateText: true,
   },
-]
-
-const columnVariationsMock: EuiBasicTableColumn<Instance>[][] = [
-  columnsMock,
-  columnsMock,
+  {
+    field: 'lastConnection',
+    className: 'column_subscriptionId',
+    name: 'Last connection',
+    dataType: 'string',
+    sortable: true,
+    width: '170px',
+    truncateText: true,
+  },
 ]
 
 describe('DatabasesList', () => {
@@ -75,7 +79,7 @@ describe('DatabasesList', () => {
       render(
         <DatabasesList
           {...instance(mockedProps)}
-          columnVariations={columnVariationsMock}
+          columns={columnsMock}
         />
       )
     ).toBeTruthy()
@@ -83,15 +87,15 @@ describe('DatabasesList', () => {
 
   it('should call onExport and send telemetry on click export btn', () => {
     const sendEventTelemetryMock = jest.fn()
-    const onExport = jest.fn()
+    const onExport = jest.fn();
 
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     const { container } = render(
       <DatabasesList
         {...instance(mockedProps)}
         onExport={onExport}
-        columnVariations={columnVariationsMock}
+        columns={columnsMock}
       />
     )
 

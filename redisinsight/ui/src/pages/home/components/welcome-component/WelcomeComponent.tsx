@@ -1,12 +1,13 @@
-import { EuiIcon, EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle, EuiSpacer, EuiFlexGrid } from '@elastic/eui'
+import { EuiIcon, EuiFlexGroup, EuiFlexItem, EuiTitle, EuiSpacer, EuiFlexGrid } from '@elastic/eui'
 import React, { useContext, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import { isEmpty } from 'lodash'
 import { FeatureFlags, Theme } from 'uiSrc/constants'
 import { setTitle } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import { ExplorePanelTemplate } from 'uiSrc/templates'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
@@ -17,6 +18,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { AddDbType, HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants'
+import CapabilityPromotion from 'uiSrc/pages/home/components/capability-promotion'
 
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import {
@@ -151,7 +153,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
             role="button"
             tabIndex={0}
             href={links?.main?.url || '#'}
-            className={cx(styles.btn, styles.promoButton)}
+            className={cx(styles.section, styles.btn, styles.promoButton)}
             onClick={(e) => {
               handleClickLink(HELP_LINKS.cloud.event, { source: OAuthSocialSource.WelcomeScreen })
               ssoCloudHandlerClick(e, OAuthSocialSource.WelcomeScreen)
@@ -187,7 +189,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
         key={`btn-${testId}`}
         role="button"
         tabIndex={0}
-        className={styles.btn}
+        className={cx(styles.section, styles.btn)}
         onKeyDown={() => {}}
         onClick={(e) => {
           optionalOnClick?.(e)
@@ -206,7 +208,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
   )
 
   return (
-    <>
+    <ExplorePanelTemplate panelClassName={styles.explorePanel}>
       {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
       <div className={cx(styles.welcome, theme === Theme.Dark ? styles.welcome_dark : styles.welcome_light)}>
         <div className={styles.content}>
@@ -218,17 +220,15 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
             className={styles.logo}
             src={theme === Theme.Dark ? darkLogo : lightLogo}
           />
-          <EuiText className={styles.text}>
-            Thanks for choosing RedisInsight to visualize and optimize Redis data.
-          </EuiText>
-          <EuiTitle size="s" className={styles.subTitle}>
-            <h4>Add database connections</h4>
-          </EuiTitle>
-          <EuiText className={styles.text}>
-            To get started, add your existing Redis database connections or create a free Redis Cloud database.
-          </EuiText>
 
           <div className={styles.controls}>
+            <div className={styles.controlsGroup}>
+              <EuiTitle className={styles.controlsGroupTitle} size="s">
+                <h5>Click & Learn</h5>
+              </EuiTitle>
+              <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} mode="reduced" />
+            </div>
+            <EuiTitle className={styles.addDbTitle} size="s"><span>Add Redis databases</span></EuiTitle>
             <div className={styles.controlsGroup}>
               <EuiTitle className={styles.controlsGroupTitle} size="s">
                 <h5>Redis Cloud Database</h5>
@@ -289,7 +289,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
           )}
         </div>
       </div>
-    </>
+    </ExplorePanelTemplate>
   )
 }
 

@@ -15,6 +15,7 @@ const isClusterCursorValidTests = [
   },
   { input: '172.17.0.1:7001@-1', expected: true },
   { input: 'domain.com:7001@-1', expected: true },
+  { input: 'domain-with-hyphens.com:7001@-1', expected: true },
   { input: '172.17.0.1:7001@1228822', expected: true },
   { input: '172.17.0.1:7001@', expected: false },
   { input: '172.17.0.1:7001@text', expected: false },

@@ -37,7 +37,12 @@ import {
   updateHashFieldsAction,
   updateHashValueStateSelector,
 } from 'uiSrc/slices/browser/hash'
-import { keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import {
+  keysSelector,
+  selectedKeyDataSelector,
+  selectedKeySelector,
+  setSelectedKeyRefreshDisabled
+} from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -120,6 +125,7 @@ const HashDetailsTable = (props: Props) => {
       setExpandedRows([])
       setViewFormat(viewFormatProp)
       setEditingIndex(null)
+      dispatch(setSelectedKeyRefreshDisabled(false))
 
       clearCache()
     }
@@ -165,6 +171,7 @@ const HashDetailsTable = (props: Props) => {
     valueItem?: RedisResponseBuffer
   ) => {
     setEditingIndex(editing ? rowIndex : null)
+    dispatch(setSelectedKeyRefreshDisabled(editing))
 
     if (editing) {
       const value = bufferToSerializedFormat(viewFormat, valueItem, 4)

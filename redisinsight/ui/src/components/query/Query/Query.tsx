@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useDispatch, useSelector } from 'react-redux'
-import { compact, findIndex, first } from 'lodash'
+import { compact, first } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom'
 import {
   Theme,
   MonacoLanguage,
-  redisLanguageConfig,
   KEYBOARD_SHORTCUTS,
   DSLNaming,
 } from 'uiSrc/constants'
@@ -23,7 +22,6 @@ import {
   findCompleteQuery,
   getMonacoAction,
   getRedisCompletionProvider,
-  getRedisMonarchTokensProvider,
   getRedisSignatureHelpProvider,
   isGroupMode,
   isParamsLine,
@@ -36,7 +34,6 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
@@ -96,6 +93,7 @@ const Query = (props: Props) => {
   const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+  const runTooltipRef = useRef<EuiToolTip>(null)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -428,11 +426,6 @@ const Query = (props: Props) => {
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
-    const languages = monaco.languages.getLanguages()
-    const isRedisLangRegistered = findIndex(languages, { id: MonacoLanguage.Redis }) > -1
-    if (!isRedisLangRegistered) {
-      monaco.languages.register({ id: MonacoLanguage.Redis })
-    }
     disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(
       MonacoLanguage.Redis,
       getRedisCompletionProvider(REDIS_COMMANDS_SPEC)
@@ -442,12 +435,6 @@ const Query = (props: Props) => {
       MonacoLanguage.Redis,
       getRedisSignatureHelpProvider(REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY, isWidgetOpen)
     ).dispose
-
-    monaco.languages.setLanguageConfiguration(MonacoLanguage.Redis, redisLanguageConfig)
-    monaco.languages.setMonarchTokensProvider(
-      MonacoLanguage.Redis,
-      getRedisMonarchTokensProvider(REDIS_COMMANDS_ARRAY)
-    )
   }
 
   const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
@@ -463,11 +450,6 @@ const Query = (props: Props) => {
       showIcons: false,
     },
     lineNumbersMinChars: 4
-  }
-
-  if (monaco?.editor) {
-    monaco.editor.defineTheme(MonacoThemes.Dark, darkTheme)
-    monaco.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
   const isLoading = loading || processing
@@ -511,6 +493,7 @@ const Query = (props: Props) => {
             </EuiButton>
           </EuiToolTip>
           <EuiToolTip
+            ref={runTooltipRef}
             position="left"
             content={
               isLoading
@@ -533,7 +516,10 @@ const Query = (props: Props) => {
                 <EuiLoadingSpinner size="l" data-testid="loading-spinner" />
               )}
               <EuiButtonIcon
-                onClick={() => handleSubmit()}
+                onClick={() => {
+                  handleSubmit()
+                  setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
+                }}
                 disabled={isLoading}
                 iconType="playFilled"
                 className={cx(styles.submitButton, { [styles.submitButtonLoading]: isLoading })}

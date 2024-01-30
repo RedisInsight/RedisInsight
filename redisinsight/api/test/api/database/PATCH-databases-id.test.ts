@@ -920,4 +920,47 @@ describe(`PATCH /databases/:id`, () => {
       });
     });
   });
+
+  describe('SENTINEL', () => {
+    describe('PASS', function () {
+      requirements('rte.type=SENTINEL', '!rte.tls', 'rte.pass');
+      it('Should update database without full sentinel master information', async () => {
+        const dbName = constants.getRandomString();
+
+        expect(await localDb.getInstanceByName(dbName)).to.eql(null);
+
+        await validateApiCall({
+          endpoint,
+          data: {
+            name: dbName,
+            sentinelMaster: {
+              password: constants.TEST_SENTINEL_MASTER_PASS || null,
+            },
+          },
+        });
+
+        expect(await localDb.getInstanceByName(dbName)).to.be.an('object');
+      });
+
+      it('Should throw Unauthorized error', async () => {
+        const dbName = constants.getRandomString();
+
+        await validateApiCall({
+          endpoint,
+          statusCode: 401,
+          data: {
+            name: dbName,
+            sentinelMaster: {
+              password: 'incorrect password'
+            },
+          },
+          responseBody: {
+            statusCode: 401,
+            message: 'Failed to authenticate, please check the username or password.',
+            error: 'Unauthorized'
+          },
+        });
+      });
+    });
+  });
 });

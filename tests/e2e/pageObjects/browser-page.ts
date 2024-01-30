@@ -39,7 +39,7 @@ export class BrowserPage extends InstancePage {
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
     refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
-    editKeyValueButton = Selector('[data-testid=edit-key-value-btn]');
+    editKeyValueButton = Selector('[data-testid=edit-key-value-btn]', { timeout: 500 });
     closeKeyButton = Selector('[data-testid=close-key-btn]');
     plusAddKeyButton = Selector('[data-testid=btn-add-key]');
     addKeyValueItemsButton = Selector('[data-testid=add-key-value-items-btn]');
@@ -68,8 +68,6 @@ export class BrowserPage extends InstancePage {
     applyEditButton = Selector('[data-testid=apply-edit-btn]');
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
-    modulesButton = Selector('[data-testid$=_module]');
-    databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     treeViewButton = Selector('[data-testid=view-type-list-btn]');
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
     searchButton = Selector('[data-testid=search-btn]');
@@ -106,6 +104,7 @@ export class BrowserPage extends InstancePage {
     backToBrowserBtn = Selector('[data-testid=back-right-panel-btn]');
     loadAllBtn = Selector('[data-testid=load-all-value-btn]');
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
+    openTutorialsBtn = Selector('[data-testid=explore-msg-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -206,15 +205,12 @@ export class BrowserPage extends InstancePage {
     listElementsList = Selector('[data-testid^=list-element-value-]');
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
-    tooltip = Selector('[role=tooltip]');
+    tooltip = Selector('[role=tooltip]', { timeout: 500 });
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     noResultsFoundOnly = Selector('[data-testid=no-result-found-only]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     keysTotalNumber = Selector('[data-testid=keys-total]');
-    overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
-    overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
-    overviewCpu = Selector('[data-test-subj=overview-cpu]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
     totalKeysNumber = Selector('[data-testid=keys-total]');
     databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
@@ -265,6 +261,7 @@ export class BrowserPage extends InstancePage {
     keyListItem = Selector('[role=rowgroup] [role=row]');
     // Dialog
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
+    closeDialogButton = Selector('[class*=euiModal__closeIcon]');
 
     /**
      * Common part for Add any new key
@@ -931,7 +928,7 @@ export class BrowserPage extends InstancePage {
             const rememberedScanResults = Number((await this.keysNumberOfResults.textContent).replace(/\s/g, ''));
             await t.expect(this.progressKeyList.exists).notOk('Progress Bar is still displayed', { timeout: 30000 });
             const scannedValueText = this.scannedValue.textContent;
-            const regExp = new RegExp(`${i} 00` + '.');
+            const regExp = new RegExp(`${i} ` + '...');
             await t
                 .expect(scannedValueText).match(regExp, `The database is not automatically scanned by ${i} 000 keys`)
                 .click(this.scanMoreButton);
@@ -971,7 +968,7 @@ export class BrowserPage extends InstancePage {
     * @param guide The guide name
     */
     async clickGuideLinksByName(guide: string): Promise<void> {
-        const linkGuide = Selector(`[data-testid="guide-button-${guide}"]`);
+        const linkGuide = Selector(`[data-testid^="guide-button-"]`).withExactText(guide);
         await t.click(linkGuide);
     }
 }

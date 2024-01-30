@@ -36,6 +36,7 @@ export interface KeysStore {
   selectedKey: {
     loading: boolean
     refreshing: boolean
+    isRefreshDisabled: boolean
     lastRefreshTime: Nullable<number>
     error: string
     data: Nullable<IKeyPropTypes>

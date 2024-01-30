@@ -1,9 +1,8 @@
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { ConnectionString } from 'connection-string'
 import { isNull, isNumber, every, values, pick, some } from 'lodash'
-import { Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
+import { Pages } from 'uiSrc/constants'
 import { ADD_NEW_CA_CERT, ADD_NEW } from 'uiSrc/pages/home/constants'
 import {
   appRedirectionSelector,
@@ -16,7 +15,7 @@ import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { autoCreateAndConnectToInstanceAction } from 'uiSrc/slices/instances/instances'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
-import { Nullable, transformQueryParamsObject } from 'uiSrc/utils'
+import { Nullable, transformQueryParamsObject, parseRedisUrl } from 'uiSrc/utils'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
@@ -60,7 +59,7 @@ const GlobalUrlHandler = () => {
       const from = params.get('from')
 
       if (from) {
-        dispatch(setFromUrl(decodeURIComponent(from)))
+        dispatch(setFromUrl(from))
         history.replace({
           search: ''
         })
@@ -101,15 +100,14 @@ const GlobalUrlHandler = () => {
         )
       )
 
-      const url = new ConnectionString(redisUrl)
+      const url = parseRedisUrl(redisUrl)
 
-      /* If a protocol exists, it should be a redis protocol */
-      if (url.protocol && !REDIS_URI_SCHEMES.includes(url.protocol)) return
+      if (!url) return
 
       const obligatoryForAutoConnectFields = {
-        host: url.hostname,
-        port: url.port,
-        username: url.user,
+        host: url.host,
+        port: url.port || 6379,
+        username: url.username,
         password: url.password,
       }
 

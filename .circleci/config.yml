@@ -1584,6 +1584,19 @@ workflows:
           name: Build docker images (prod)
           env: production
           requires: *prodElectronBuildRequires
+      # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (prod)
+      # e2e docker tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker images (prod)
       # virus check all electron apps (prod)
       - virustotal-file:
           name: Virus check - AppImage (prod)

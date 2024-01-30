@@ -1,6 +1,7 @@
 import { parseRedisUrl } from 'uiSrc/utils/parseRedisUrl'
 
 const defaultRedisParams = {
+  protocol: 'redis',
   username: '',
   password: '',
   port: undefined,
@@ -21,28 +22,36 @@ const parseRedisUrlTests: Array<[string, any]> = [
     null
   ],
   [
+    'localhost',
+    null
+  ],
+  [
+    'localhost:6379',
+    { ...defaultRedisParams, host: 'localhost', port: 6379 }
+  ],
+  [
     'redis://localhost',
-    { ...defaultRedisParams, protocol: 'redis', host: 'localhost' }
+    { ...defaultRedisParams, host: 'localhost' }
   ],
   [
     'redis://localhost:6380',
-    { ...defaultRedisParams, protocol: 'redis', host: 'localhost', port: 6380 }
+    { ...defaultRedisParams, host: 'localhost', port: 6380 }
   ],
   [
     'redis://@localhost:6380',
-    { ...defaultRedisParams, protocol: 'redis', host: 'localhost', port: 6380 }
+    { ...defaultRedisParams, host: 'localhost', port: 6380 }
   ],
   [
     'redis://user@localhost:6380',
-    { ...defaultRedisParams, username: 'user', protocol: 'redis', host: 'localhost', port: 6380 }
+    { ...defaultRedisParams, username: 'user', host: 'localhost', port: 6380 }
   ],
   [
     'redis://:pass@localhost:6380',
-    { ...defaultRedisParams, protocol: 'redis', password: 'pass', host: 'localhost', port: 6380 }
+    { ...defaultRedisParams, password: 'pass', host: 'localhost', port: 6380 }
   ],
   [
     'redis://user:pass@localhost:6380',
-    { ...defaultRedisParams, protocol: 'redis', username: 'user', password: 'pass', host: 'localhost', port: 6380 }
+    { ...defaultRedisParams, username: 'user', password: 'pass', host: 'localhost', port: 6380 }
   ],
   [
     'rediss://user:pa%712ss@localhost:6380',

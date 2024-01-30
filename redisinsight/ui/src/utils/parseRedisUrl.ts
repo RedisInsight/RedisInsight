@@ -1,7 +1,7 @@
 import { Maybe, Nullable } from 'uiSrc/utils/types'
 
 /*
-  redis[s]://               - Protocol (redis or rediss)
+  [redis[s]://]             - Optional Protocol (redis or rediss)
   [username][:password]@    - Optional username and password
   host                      - Hostname or IP address
   [:port]                   - Optional port
@@ -17,7 +17,22 @@ interface ParsedRedisUrl {
   dbNumber: Maybe<number>
 }
 
-const parseRedisUrl = (urlString: string): Nullable<ParsedRedisUrl> => {
+const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
+  const pureUrlPattern = /^([^:]+):(\d+)$/
+  const pureMatch = urlString.match(pureUrlPattern)
+
+  if (pureMatch) {
+    const [, host, port] = pureMatch
+    return {
+      protocol: 'redis',
+      username: '',
+      password: '',
+      host,
+      port: port ? parseInt(port, 10) : undefined,
+      dbNumber: undefined
+    }
+  }
+
   // eslint-disable-next-line no-useless-escape
   const redisUrlPattern = /^(redis[s]?):\/\/(?:([^:@]+)?(?::([^@]+))?@)?([^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
   const match = urlString.match(redisUrlPattern)
@@ -29,7 +44,7 @@ const parseRedisUrl = (urlString: string): Nullable<ParsedRedisUrl> => {
   const [, protocol, username, password, host, port, dbNumber] = match
 
   return {
-    protocol,
+    protocol: protocol || 'redis',
     username: username || '',
     password: password || '',
     host,

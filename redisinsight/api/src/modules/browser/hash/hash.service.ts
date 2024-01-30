@@ -37,7 +37,7 @@ const REDIS_SCAN_CONFIG = config.get('redis_scan');
 
 @Injectable()
 export class HashService {
-  private logger = new Logger('hashBusinessService');
+  private logger = new Logger('HashService');
 
   constructor(
     private databaseClientFactory: DatabaseClientFactory,

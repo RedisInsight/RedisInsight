@@ -1,6 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BrowserToolService } from 'src/modules/browser/services/browser-tool/browser-tool.service';
-import { mockRedisConsumer } from 'src/__mocks__';
 import { KeyInfoProvider } from 'src/modules/browser/keys/key-info/key-info.provider';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
 import {
@@ -33,10 +31,6 @@ describe('KeyInfoProvider', () => {
         TsKeyInfoStrategy,
         ZSetKeyInfoStrategy,
         UnsupportedKeyInfoStrategy,
-        {
-          provide: BrowserToolService,
-          useFactory: mockRedisConsumer,
-        },
       ],
     }).compile();
 

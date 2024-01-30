@@ -1,4 +1,3 @@
-import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
@@ -31,7 +30,8 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
 
     if (isRedisearchModule(modules)) {
       const indexes = await data.client.sendCommand(
-        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+        ['FT._LIST'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       if (indexes.length) {

@@ -16,7 +16,7 @@ import { DatabaseOverviewProvider } from 'src/modules/database/providers/databas
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { DatabaseClientInfoProvider } from 'src/modules/database/providers/database-client-info.provider';
+import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseService } from './database.service';
 
 describe('DatabaseInfoService', () => {
@@ -41,7 +41,7 @@ describe('DatabaseInfoService', () => {
           useFactory: mockDatabaseOverviewProvider,
         },
         {
-          provide: DatabaseClientInfoProvider,
+          provide: DatabaseInfoProvider,
           useFactory: mockDatabaseInfoProvider,
         },
         {

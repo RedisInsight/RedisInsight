@@ -7,7 +7,7 @@ import {
   RedisClientOptions, createClient, createCluster, RedisClusterOptions,
 } from 'redis';
 import { isNumber } from 'lodash';
-import { IRedisConnectionOptions } from 'src/modules/redis/redis-connection.factory';
+import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
 import { ConnectionOptions } from 'tls';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ClusterNodeRedisClient, RedisClient } from 'src/modules/redis/client';
@@ -43,16 +43,20 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
       host, port, password, username, tls, db, timeout,
     } = database;
 
-    //
-    // if (tls) {
-    //   redisOptions.tls = await this.getTLSConfig(database);
-    // }
+    let tlsOptions = { };
+    if (tls) {
+      tlsOptions = {
+        tls: true,
+        ...await this.getTLSConfig(database),
+      };
+    }
 
     return {
       socket: {
         host,
         port,
         connectTimeout: timeout,
+        ...tlsOptions,
       },
       username,
       password,
@@ -85,13 +89,19 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
           host: database.host,
           port: database.port,
         },
-      }].concat(database.nodes && database.nodes.map((node) => ({
-        socket: {
-          host: node.host,
-          port: node.port,
-        },
-      }))),
+      }].concat(
+        database.nodes
+        && database.nodes
+          .filter((node) => node.host !== database.host)
+          .map((node) => ({
+            socket: {
+              host: node.host,
+              port: node.port,
+            },
+          })),
+      ),
       defaults: { ...config },
+      maxCommandRedirections: database.nodes ? (database.nodes.length * 16) : 16, // TODO: Temporary solution
       // clusterRetryStrategy: options.useRetry ? this.retryStrategy : this.dummyFn,
     };
   }
@@ -207,6 +217,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
               {
                 host: database.host,
                 port: database.port,
+                connectTimeout: database.timeout,
               },
             )));
 
@@ -261,6 +272,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
             {
               host: database.host,
               port: database.port,
+              connectTimeout: database.timeout,
             },
           )));
       } catch (e) {

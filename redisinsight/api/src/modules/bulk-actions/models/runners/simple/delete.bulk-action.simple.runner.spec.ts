@@ -1,9 +1,8 @@
-/* eslint-disable import/first */
-import IORedis from 'ioredis';
 import {
   mockSocket,
   mockBulkActionsAnalytics,
   mockCreateBulkActionDto,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
@@ -11,8 +10,6 @@ import {
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
-
-const nodeClient = Object.create(IORedis.prototype);
 
 const mockBulkActionFilter = Object.assign(new BulkActionFilter(), {
   count: 10_000,
@@ -33,10 +30,11 @@ const mockKey = 'mockedKey';
 const mockKeyBuffer = Buffer.from(mockKey);
 
 describe('DeleteBulkActionSimpleRunner', () => {
+  const client = mockStandaloneRedisClient;
   let deleteRunner: DeleteBulkActionSimpleRunner;
 
   beforeEach(() => {
-    deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, nodeClient);
+    deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, client);
   });
 
   it('prepareCommands 3 commands', () => {

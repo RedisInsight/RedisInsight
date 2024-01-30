@@ -8,14 +8,13 @@ import { DatabaseRepository } from 'src/modules/database/repositories/database.r
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { DatabaseInfoController } from 'src/modules/database/database-info.controller';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { DatabaseClientInfoProvider } from './providers/database-client-info.provider';
+import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
 const SERVER_CONFIG = config.get('server');
@@ -36,7 +35,6 @@ export class DatabaseModule {
         DatabaseService,
         DatabaseConnectionService,
         DatabaseClientFactory,
-        DatabaseClientInfoProvider,
         DatabaseInfoProvider,
         DatabaseAnalytics,
         DatabaseFactory,

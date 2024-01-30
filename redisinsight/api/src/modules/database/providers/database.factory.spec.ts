@@ -11,19 +11,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCaCertificateService,
   mockClientCertificateService,
-  mockClusterDatabaseWithTlsAuth, mockClusterRedisClient,
+  mockClusterDatabaseWithTlsAuth,
+  mockClusterRedisClient,
   mockDatabase,
   mockDatabaseInfoProvider,
   mockDatabaseWithTlsAuth,
   mockRedisClientFactory,
   mockRedisNoPermError,
-  mockRedisService,
   mockSentinelDatabaseWithTlsAuth,
   mockSentinelRedisClient,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
-import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -42,10 +41,6 @@ describe('DatabaseFactory', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DatabaseFactory,
-        {
-          provide: RedisService,
-          useFactory: mockRedisService,
-        },
         {
           provide: RedisClientFactory,
           useFactory: mockRedisClientFactory,

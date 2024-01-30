@@ -7,7 +7,7 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
-import { DatabaseClientInfoProvider } from 'src/modules/database/providers/database-client-info.provider';
+import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseService } from './database.service';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class DatabaseInfoService {
   constructor(
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly databaseOverviewProvider: DatabaseOverviewProvider,
-    private readonly databaseInfoProvider: DatabaseClientInfoProvider,
+    private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly recommendationService: DatabaseRecommendationService,
     private readonly databaseService: DatabaseService,
   ) {}

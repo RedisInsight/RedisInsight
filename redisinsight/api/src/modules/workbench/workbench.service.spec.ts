@@ -4,7 +4,6 @@ import { when } from 'jest-when';
 import {
   mockDatabase,
   mockDatabaseClientFactory,
-  mockDatabaseConnectionService,
   mockStandaloneRedisClient,
   mockWorkbenchAnalyticsService,
   mockWorkbenchClientMetadata,
@@ -22,7 +21,6 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
@@ -139,10 +137,6 @@ describe('WorkbenchService', () => {
         {
           provide: CommandExecutionRepository,
           useFactory: mockCommandExecutionRepository,
-        },
-        {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
         },
         {
           provide: DatabaseClientFactory,

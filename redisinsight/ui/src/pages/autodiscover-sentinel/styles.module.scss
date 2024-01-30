@@ -3,18 +3,10 @@
 @import "@elastic/eui/src/global_styling/index";
 
 :global(.homePage) :global(.sentinelDatabaseList) {
-  height: calc(100vh - 340px) !important;
+  height: calc(100vh - 356px) !important;
 
   @media (min-width: 1180px) {
-    height: calc(100vh - 280px) !important;
-  }
-
-  @media only screen and (max-width: 767px) {
-    height: calc(100vh - 440px) !important;
-  }
-
-  @media (min-width: 768px) and (max-width: 870px) {
-    height: calc(100vh - 360px) !important;
+    height: calc(100vh - 292px) !important;
   }
 }
 

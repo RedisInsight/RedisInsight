@@ -20,7 +20,12 @@ import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import { bufferToString, Nullable } from 'uiSrc/utils'
 import { CodeBlock } from 'uiSrc/components'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import {
+  changeSelectedTab,
+  resetExplorePanelSearch,
+  setExplorePanelIsPageOpen,
+  toggleInsightsPanel
+} from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import styles from './styles.module.scss'
 
@@ -281,7 +286,11 @@ const ONBOARDING_FEATURES = {
           dispatch(toggleInsightsPanel(false))
           sendBackTelemetryEvent(...telemetryArgs)
         },
-        onNext: () => sendNextTelemetryEvent(...telemetryArgs)
+        onNext: () => {
+          dispatch(resetExplorePanelSearch())
+          dispatch(setExplorePanelIsPageOpen(false))
+          sendNextTelemetryEvent(...telemetryArgs)
+        }
       }
     }
   },

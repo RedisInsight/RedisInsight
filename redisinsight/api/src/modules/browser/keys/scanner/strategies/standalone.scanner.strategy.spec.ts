@@ -95,20 +95,15 @@ describe('StandaloneScannerStrategy', () => {
     });
     it('should scan 2000 items when count provided more then 2k', async () => {
       const args = { ...getKeysDto, count: 10_000, match: '*' };
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_1);
+      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
 
-      when(browserTool.execCommand)
-        .calledWith(
-          mockBrowserClientMetadata,
-          BrowserToolKeysCommands.Scan,
-          expect.anything(),
-          null,
-        )
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
         .mockResolvedValue([0, [getKeyInfoResponse.name]]);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([getKeyInfoResponse]);
 
-      const result = await strategy.getKeys(mockBrowserClientMetadata, args);
+      const result = await strategy.getKeys(mockStandaloneRedisClient, args);
 
       expect(result).toEqual([
         {
@@ -119,12 +114,9 @@ describe('StandaloneScannerStrategy', () => {
         },
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalled();
-      expect(browserTool.execCommand).toHaveBeenNthCalledWith(
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
         1,
-        mockBrowserClientMetadata,
-        BrowserToolKeysCommands.Scan,
-        ['0', 'MATCH', args.match, 'COUNT', 2000],
-        null,
+        [BrowserToolKeysCommands.Scan, '0', 'MATCH', args.match, 'COUNT', 2000],
       );
     });
     it('should return keys names and type only', async () => {

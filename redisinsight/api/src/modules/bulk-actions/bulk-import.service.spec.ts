@@ -223,7 +223,7 @@ describe('BulkImportService', () => {
         mockClientMetadata,
         Readable.from(Buffer.from('\n SET foo bar \n     \n SET foo bar \n    ')),
       );
-      expect(spy).toBeCalledWith(mockStandaloneRedisClient, [['SET', 'foo', 'bar']], ['SET', ['foo', 'bar']]);
+      expect(spy).toBeCalledWith(mockStandaloneRedisClient, [['SET', 'foo', 'bar'], ['SET', 'foo', 'bar']]);
       expect(mockStandaloneRedisClient.disconnect).toHaveBeenCalled();
     });
 

@@ -99,7 +99,7 @@ const JobsTree = (props: IProps) => {
           {'Jobs '}
           {!loading && (
             <EuiTextColor className={styles.jobsCount} component="span" data-testid="rdi-jobs-count">
-              {values?.jobs.length ? `(${values?.jobs.length})` : ''}
+              {values?.jobs?.length ? `(${values?.jobs?.length})` : ''}
             </EuiTextColor>
           )}
           {loading && <EuiLoadingSpinner data-testid="rdi-nav-jobs-loader" className={styles.loader} />}

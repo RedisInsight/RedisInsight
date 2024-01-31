@@ -2,14 +2,20 @@ import React from 'react'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { act, fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import Upload from './Upload'
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
-    loading: false,
-    data: {
+    loading: false
+  })
+}))
+
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
       config: 'value',
       jobs: [
         { name: 'job1', value: 'value' },
@@ -55,5 +61,17 @@ describe('Upload', () => {
     render(<Upload />)
 
     expect(screen.getByTestId('upload-pipeline-btn')).toBeDisabled()
+  })
+
+  it('should open modal when upload button is clicked', async () => {
+    render(<Upload />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
+    })
+
+    waitFor(() => {
+      expect(screen.getByTestId('import-file-modal')).toBeInTheDocument()
+    })
   })
 })

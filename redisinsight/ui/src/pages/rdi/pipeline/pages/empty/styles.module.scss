@@ -1,10 +1,17 @@
+@import "@elastic/eui/src/global_styling/index";
+
 .emptyPipelineContainer {
   display: flex;
   align-items: center;
-  // justify-content: center;
-  // align-self: center;
-  // vertical-align: bottom;
   flex-direction: column;
+  margin: auto;
+}
+
+.scroll {
+  @include euiScrollBar;
+
+  overflow: auto;
+  position: relative;
 }
 
 .subTitle {

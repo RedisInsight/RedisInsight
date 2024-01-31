@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiButtonIcon,
@@ -16,6 +16,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
+import { Nullable } from 'uiSrc/utils'
+import { Pages } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 
@@ -26,16 +28,23 @@ const RefreshPipelinePopover = () => {
 
   const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
 
+  const history = useHistory()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
   const dispatch = useDispatch()
 
   const handleRefreshClick = () => {
     setIsPopoverOpen(false)
     dispatch(
-      fetchRdiPipeline(rdiInstanceId, (pipeline: IPipeline) => {
+      fetchRdiPipeline(rdiInstanceId, (pipeline: Nullable<IPipeline>) => {
         resetForm()
         setFieldValue('config', pipeline?.config)
         setFieldValue('jobs', pipeline?.jobs)
+
+        // redirect to empty pipeline page if pipeline is empty
+        if (!pipeline) {
+          history.push(Pages.rdiPipeline(rdiInstanceId))
+        }
       })
     )
   }

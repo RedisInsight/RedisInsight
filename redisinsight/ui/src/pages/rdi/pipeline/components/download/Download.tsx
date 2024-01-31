@@ -41,7 +41,7 @@ const Download = () => {
     <EuiButtonIcon
       size="xs"
       iconSize="s"
-      iconType="importAction"
+      iconType="exportAction"
       disabled={loading}
       onClick={handleDownloadClick}
       aria-labelledby="Download pipeline button"

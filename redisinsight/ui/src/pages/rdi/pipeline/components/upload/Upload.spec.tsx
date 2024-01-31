@@ -30,19 +30,25 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn()
 }))
 
+const button = (
+  <button type="button" data-testid="btn">
+    test
+  </button>
+)
+
 describe('Upload', () => {
   it('should render', () => {
-    expect(render(<Upload />)).toBeTruthy()
+    expect(render(<Upload>{button}</Upload>)).toBeTruthy()
   })
 
   it('should call proper telemetry event when button is clicked', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<Upload />)
+    render(<Upload>{button}</Upload>)
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
+      fireEvent.click(screen.getByTestId('btn'))
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -58,16 +64,16 @@ describe('Upload', () => {
       loading: true
     }))
 
-    render(<Upload />)
+    render(<Upload>{button}</Upload>)
 
-    expect(screen.getByTestId('upload-pipeline-btn')).toBeDisabled()
+    expect(screen.getByTestId('btn')).toBeDisabled()
   })
 
   it('should open modal when upload button is clicked', async () => {
-    render(<Upload />)
+    render(<Upload>{button}</Upload>)
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
+      fireEvent.click(screen.getByTestId('btn'))
     })
 
     waitFor(() => {

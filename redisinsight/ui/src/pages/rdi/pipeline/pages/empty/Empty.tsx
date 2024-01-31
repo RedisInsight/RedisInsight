@@ -1,4 +1,6 @@
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiImage, EuiLink, EuiSpacer, EuiText } from '@elastic/eui'
+import cx from 'classnames'
+import { useFormikContext } from 'formik'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -6,17 +8,21 @@ import { useHistory, useParams } from 'react-router-dom'
 import EmptyPipelineIcon from 'uiSrc/assets/img/rdi/empty_pipeline.svg'
 import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { Pages } from 'uiSrc/constants'
+import { IPipeline } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import Upload from 'uiSrc/pages/rdi/pipeline/components/upload/Upload'
 
 import styles from './styles.module.scss'
 
 const Empty = () => {
-  const { data, loading } = useSelector(rdiPipelineSelector)
+  const { loading } = useSelector(rdiPipelineSelector)
+
+  const { values } = useFormikContext<IPipeline>()
 
   const history = useHistory()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
-  const isPipelineEmpty = !data?.config && !data?.jobs?.length
+  const isPipelineEmpty = !values?.config && !values?.jobs?.length
 
   if (!isPipelineEmpty) {
     history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
@@ -27,7 +33,7 @@ const Empty = () => {
   }
 
   return (
-    <div className="content">
+    <div className={cx('content', styles.scroll)} data-testid="empty-pipeline">
       <div className={styles.emptyPipelineContainer}>
         <EuiImage src={EmptyPipelineIcon} alt="empty" size="s" />
         <EuiSpacer size="xl" />
@@ -53,17 +59,19 @@ const Empty = () => {
           </EuiFlexItem>
           or
           <EuiFlexItem>
-            <EuiButton data-testid="upload-pipeline-btn" size="s" onClick={() => {}}>
-              Open from file
-            </EuiButton>
+            <Upload>
+              <EuiButton data-testid="upload-pipeline-btn" size="s">
+                Open from file
+              </EuiButton>
+            </Upload>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer size="l" />
         <EuiLink
-          data-testid="empty-rdi-quickstart-button"
+          data-testid="read-more-btn"
           target="_blank"
           external={false}
-          href="https://docs.redis.com/rdi-preview/rdi/quickstart/"
+          href="https://docs.redis.com/rdi-preview/rdi/data-transformation/data-transformation-pipeline/"
         >
           Read More <EuiIcon type={NewTabIcon} />
         </EuiLink>

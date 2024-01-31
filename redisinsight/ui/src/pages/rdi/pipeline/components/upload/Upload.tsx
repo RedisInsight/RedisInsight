@@ -1,4 +1,3 @@
-import { EuiButtonIcon } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import JSZip from 'jszip'
 import React, { useState } from 'react'
@@ -10,7 +9,11 @@ import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import UploadDialog from './components/upload-dialog/UploadDialog'
 
-const Upload = () => {
+export interface Props {
+  children: React.ReactElement
+}
+
+const Upload = ({ children }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [file, setFile] = useState<File>()
   const [isUploaded, setIsUploaded] = useState(false)
@@ -87,6 +90,8 @@ const Upload = () => {
     setFile(file)
   }
 
+  const button = React.cloneElement(children, { disabled: loading, onClick: handleUploadClick })
+
   return (
     <>
       {isModalVisible && (
@@ -100,15 +105,7 @@ const Upload = () => {
           loading={loading}
         />
       )}
-      <EuiButtonIcon
-        size="xs"
-        iconSize="s"
-        iconType="exportAction"
-        disabled={loading}
-        onClick={handleUploadClick}
-        aria-labelledby="Upload pipeline button"
-        data-testid="upload-pipeline-btn"
-      />
+      {button}
     </>
   )
 }

@@ -3,7 +3,7 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { act, fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import Empty from './Empty'
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({

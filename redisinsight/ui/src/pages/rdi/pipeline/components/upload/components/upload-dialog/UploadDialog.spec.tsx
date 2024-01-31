@@ -70,10 +70,16 @@ describe('UploadDialog', () => {
     expect(screen.getByTestId('import-file-modal-filepicker')).toHaveAttribute('accept', '.zip')
   })
 
-  it('should show custom results title after submit', () => {
+  it('should show custom results success title after submit', () => {
     render(<UploadDialog {...mockedProps} isUploaded />)
 
     expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Pipeline has been uploaded')
+  })
+
+  it('should show custom results failed title after submit', () => {
+    render(<UploadDialog {...mockedProps} isUploaded error="error" />)
+
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Failed to upload pipeline')
   })
 
   it('should show results after submit', () => {
@@ -85,7 +91,7 @@ describe('UploadDialog', () => {
   it('should show error message when error is present', () => {
     render(<UploadDialog {...mockedProps} error="error" />)
 
-    expect(screen.getByTestId('result-failed')).toHaveTextContent('Failed to add RDI Instances')
+    expect(screen.getByTestId('result-failed')).toHaveTextContent('There was a problem with the .zip file')
     expect(screen.getByTestId('result-failed')).toHaveTextContent('error')
   })
 })

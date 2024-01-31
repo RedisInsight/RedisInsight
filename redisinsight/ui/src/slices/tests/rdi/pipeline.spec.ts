@@ -67,6 +67,7 @@ describe('rdi pipe slice', () => {
       const pipeline = { config: 'string', jobs: [] }
       const state = {
         ...initialState,
+        loading: false,
         data: pipeline,
       }
       // Act
@@ -88,6 +89,7 @@ describe('rdi pipe slice', () => {
       const error = 'error'
       const state = {
         ...initialState,
+        loading: false,
         error,
       }
 

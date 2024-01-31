@@ -74,9 +74,27 @@ const Upload = ({ children }: Props) => {
       setFieldValue('config', config)
       setFieldValue('jobs', jobs)
 
+      sendEventTelemetry({
+        event: TelemetryEvent.RDI_PIPELINE_UPLOAD_SUCCEEDED,
+        eventData: {
+          id: rdiInstanceId,
+          jobsNumber: jobs.length
+        }
+      })
+
       setIsUploaded(true)
     } catch (err) {
-      setError((err as Error).message)
+      const errorMessage = (err as Error).message
+
+      sendEventTelemetry({
+        event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FAILED,
+        eventData: {
+          id: rdiInstanceId,
+          errorMessage
+        }
+      })
+
+      setError(errorMessage)
     }
   }
 

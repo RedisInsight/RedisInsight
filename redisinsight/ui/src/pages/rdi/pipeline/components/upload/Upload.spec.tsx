@@ -1,4 +1,5 @@
 import React from 'react'
+import { loadAsync } from 'jszip'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -21,13 +22,35 @@ jest.mock('formik', () => ({
         { name: 'job1', value: 'value' },
         { name: 'job2', value: 'value' }
       ]
-    }
+    },
+    resetForm: jest.fn(),
+    setFieldValue: jest.fn()
   })
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn()
+}))
+
+jest.mock('jszip', () => ({
+  ...jest.requireActual('jszip'),
+  loadAsync: jest.fn().mockReturnValue({
+    file: jest.fn().mockReturnValue({
+      async: jest.fn().mockReturnValue('config')
+    }),
+    files: {
+      'jobs/': {
+        async: jest.fn()
+      },
+      'jobs/job1.yaml': {
+        async: jest.fn().mockReturnValue('value1')
+      },
+      'jobs/job2.yaml': {
+        async: jest.fn().mockReturnValue('value2')
+      }
+    }
+  })
 }))
 
 const button = (
@@ -55,6 +78,62 @@ describe('Upload', () => {
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_CLICKED,
       eventData: {
         id: 'rdiInstanceId'
+      }
+    })
+  })
+
+  it('should call proper telemetry event when file upload is successful', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<Upload>{button}</Upload>)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('btn'))
+    })
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
+        target: { files: ['file'] }
+      })
+      fireEvent.click(screen.getByTestId('submit-btn'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_PIPELINE_UPLOAD_SUCCEEDED,
+      eventData: {
+        id: 'rdiInstanceId',
+        jobsNumber: 2
+      }
+    })
+  })
+
+  it('should call proper telemetry event when file upload has failed', async () => {
+    (loadAsync as jest.Mock).mockImplementation(() => {
+      throw new Error('error')
+    })
+
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<Upload>{button}</Upload>)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('btn'))
+    })
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
+        target: { files: ['file'] }
+      })
+      fireEvent.click(screen.getByTestId('submit-btn'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FAILED,
+      eventData: {
+        id: 'rdiInstanceId',
+        errorMessage: 'error'
       }
     })
   })

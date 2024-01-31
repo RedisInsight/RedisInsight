@@ -36,7 +36,7 @@ const UploadDialog = ({ onClose, onConfirm, onFileChange, isUploaded, showWarnin
       onFileChange={handleFileChange}
       onSubmit={onConfirm}
       title="Upload an archive with an RDI pipeline"
-      resultsTitle="Pipeline has been uploaded"
+      resultsTitle={!error ? 'Pipeline has been uploaded' : 'Failed to upload pipeline'}
       submitResults={(
         <div className={styles.result} data-testid="result-succeeded">
           <EuiText color="subdued">A new pipeline has been successfully uploaded.</EuiText>
@@ -55,7 +55,7 @@ const UploadDialog = ({ onClose, onConfirm, onFileChange, isUploaded, showWarnin
         ) : null
       }
       error={error}
-      errorMessage="Failed to add RDI Instances"
+      errorMessage="There was a problem with the .zip file"
       isInvalid={false}
       isSubmitDisabled={isSubmitDisabled}
       submitBtnText="Upload"

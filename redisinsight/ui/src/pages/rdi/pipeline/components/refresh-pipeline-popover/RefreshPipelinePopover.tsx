@@ -4,15 +4,16 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiIcon,
-  EuiPopover,
   EuiText,
   EuiSpacer,
   EuiFlexGroup,
-  EuiFlexItem
+  EuiFlexItem,
+  EuiPopover,
+  EuiOutsideClickDetector,
 } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-
 import { useDispatch, useSelector } from 'react-redux'
+
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
@@ -60,55 +61,69 @@ const RefreshPipelinePopover = () => {
     })
   }
 
+  const handleClosePopover = () => {
+    setIsPopoverOpen(false)
+  }
+
   return (
-    <EuiPopover
-      id="refresh-pipeline-warning-popover"
-      ownFocus
-      anchorPosition="downCenter"
-      isOpen={isPopoverOpen}
-      closePopover={() => setIsPopoverOpen(false)}
-      panelPaddingSize="m"
-      display="inlineBlock"
-      panelClassName={styles.panelPopover}
-      button={(
-        <EuiButtonIcon
-          size="xs"
-          iconSize="s"
-          iconType="refresh"
-          disabled={loading}
-          onClick={handleRefreshWarning}
-          aria-labelledby="Refresh pipeline button"
-          data-testid="refresh-pipeline-btn"
-        />
-      )}
+    <EuiOutsideClickDetector
+      onOutsideClick={handleClosePopover}
     >
-      <EuiFlexGroup alignItems="center" gutterSize="none">
-        <EuiFlexItem grow={false}>
-          <EuiIcon type="alert" className={styles.alertIcon} />
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiText className={styles.popoverTitle}>Refresh a pipeline</EuiText>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="xs" />
-      <EuiText size="s">
-        A new pipeline will be uploaded from the RDI instance, which may result in overwriting details displayed in
-        RedisInsight.
-      </EuiText>
-      <EuiSpacer size="s" />
-      <EuiText size="s">You can download the pipeline displayed to save it locally.</EuiText>
-      <EuiSpacer size="m" />
-      <EuiButton
-        fill
-        size="s"
-        color="secondary"
-        className={styles.popoverApproveBtn}
-        onClick={handleRefreshClick}
-        data-testid="refresh-pipeline-apply-btn"
+      <EuiPopover
+        id="refresh-pipeline-warning-popover"
+        ownFocus
+        anchorPosition="downCenter"
+        isOpen={isPopoverOpen}
+        closePopover={handleClosePopover}
+        panelPaddingSize="m"
+        display="inlineBlock"
+        panelClassName={styles.panelPopover}
+        button={(
+          <EuiButtonIcon
+            size="xs"
+            iconSize="s"
+            iconType="refresh"
+            disabled={loading}
+            onClick={handleRefreshWarning}
+            className={styles.trigger}
+            aria-labelledby="Refresh pipeline button"
+            data-testid="refresh-pipeline-btn"
+          />
+        )}
       >
-        Refresh
-      </EuiButton>
-    </EuiPopover>
+        <EuiFlexGroup alignItems="center" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiIcon
+              type="alert"
+              className={styles.alertIcon}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiText className={styles.popoverTitle}>Refresh a pipeline</EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="xs" />
+        <EuiText size="s">
+          A new pipeline will be uploaded from the RDI instance,
+          which may result in overwriting details displayed in RedisInsight.
+        </EuiText>
+        <EuiSpacer size="s" />
+        <EuiText size="s">
+          You can download the pipeline displayed to save it locally.
+        </EuiText>
+        <EuiSpacer size="m" />
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          className={styles.popoverApproveBtn}
+          onClick={handleRefreshClick}
+          data-testid="refresh-pipeline-apply-btn"
+        >
+          Refresh
+        </EuiButton>
+      </EuiPopover>
+    </EuiOutsideClickDetector>
   )
 }
 

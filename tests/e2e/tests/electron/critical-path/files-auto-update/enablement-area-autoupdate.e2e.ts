@@ -14,9 +14,6 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
 if (fs.existsSync(workingDirectory)) {
-    // Guides content
-    const guidesTimestampPath = `${workingDirectory}/guides/build.json`;
-    // const guidesGraphIntroductionFilePath = `${workingDirectory}/guides/quick-guides/graph/introduction.md`;
 
     // Tutorials content
     const tutorialsTimestampPath = `${workingDirectory}/tutorials/build.json`;
@@ -28,14 +25,10 @@ if (fs.existsSync(workingDirectory)) {
     // fs.unlinkSync(tutorialsTimeSeriesFilePath);
 
     // Update timestamp for build files
-    const guidesTimestampFile = editJsonFile(guidesTimestampPath);
     const tutorialsTimestampFile = editJsonFile(tutorialsTimestampPath);
 
-    const guidesNewTimestamp = guidesTimestampFile.get('timestamp') - 10;
     const tutorialNewTimestamp = tutorialsTimestampFile.get('timestamp') - 10;
 
-    guidesTimestampFile.set('timestamp', guidesNewTimestamp);
-    guidesTimestampFile.save();
     tutorialsTimestampFile.set('timestamp', tutorialNewTimestamp);
     tutorialsTimestampFile.save();
 
@@ -50,7 +43,6 @@ if (fs.existsSync(workingDirectory)) {
         });
     test('Verify that user can see updated info in Enablement Area', async t => {
         // Create new file due to cache-ability
-        const guidesTimestampFileNew = editJsonFile(guidesTimestampPath);
         const tutorialsTimestampFileNew = editJsonFile(tutorialsTimestampPath);
 
         // Open Workbench page
@@ -70,9 +62,7 @@ if (fs.existsSync(workingDirectory)) {
         await t.expect(tab.enablementAreaEmptyContent.visible).notOk('Tutorials folder is not updated');
 
         // Check that timestamp is new
-        const actualGuidesTimestamp = await guidesTimestampFileNew.get('timestamp');
         const actualTutorialTimestamp = await tutorialsTimestampFileNew.get('timestamp');
-        await t.expect(actualGuidesTimestamp).notEql(guidesNewTimestamp, 'Guides timestamp is not updated');
         await t.expect(actualTutorialTimestamp).notEql(tutorialNewTimestamp, 'Tutorials timestamp is not updated');
     });
 }

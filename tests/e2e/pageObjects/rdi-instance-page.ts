@@ -12,6 +12,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     commandsOutput = Selector('[data-testid=commands-output]');
     outputTab = Selector('[data-testid=output-tab]');
     refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
+    exportPipelineIcon = Selector('[data-testid=download-pipeline-btn]');
     applyRefreshBtn = Selector('[data-testid=refresh-pipeline-apply-btn]');
     deployPipelineBtn = Selector('[data-testid=deploy-rdi-pipeline]');
     deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');

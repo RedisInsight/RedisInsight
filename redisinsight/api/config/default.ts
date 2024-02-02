@@ -57,7 +57,7 @@ export default {
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.40.0',
+    appVersion: process.env.RI_APP_VERSION || '2.42.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],

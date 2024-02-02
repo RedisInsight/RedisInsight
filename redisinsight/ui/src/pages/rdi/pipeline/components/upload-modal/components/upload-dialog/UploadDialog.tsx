@@ -35,7 +35,7 @@ const UploadDialog = ({ onClose, onConfirm, onFileChange, isUploaded, showWarnin
       onClose={onClose}
       onFileChange={handleFileChange}
       onSubmit={onConfirm}
-      title="Upload an archive with an RDI pipeline"
+      title={showWarning ? 'Upload a new pipeline' : 'Upload an archive with an RDI pipeline'}
       resultsTitle={!error ? 'Pipeline has been uploaded' : 'Failed to upload pipeline'}
       submitResults={(
         <div className={styles.result} data-testid="result-succeeded">

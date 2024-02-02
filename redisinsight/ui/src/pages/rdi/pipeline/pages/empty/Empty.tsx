@@ -10,7 +10,7 @@ import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { Pages } from 'uiSrc/constants'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import Upload from 'uiSrc/pages/rdi/pipeline/components/upload/Upload'
+import UploadModal from 'uiSrc/pages/rdi/pipeline/components/upload-modal/UploadModal'
 
 import styles from './styles.module.scss'
 
@@ -59,11 +59,11 @@ const Empty = () => {
           </EuiFlexItem>
           or
           <EuiFlexItem>
-            <Upload>
+            <UploadModal>
               <EuiButton data-testid="upload-pipeline-btn" size="s">
                 Open from file
               </EuiButton>
-            </Upload>
+            </UploadModal>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer size="l" />

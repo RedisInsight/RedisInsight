@@ -4,7 +4,7 @@ import { loadAsync } from 'jszip'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { act, fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
-import Upload from './Upload'
+import UploadModal from './UploadModal'
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
@@ -59,16 +59,16 @@ const button = (
   </button>
 )
 
-describe('Upload', () => {
+describe('UploadModal', () => {
   it('should render', () => {
-    expect(render(<Upload>{button}</Upload>)).toBeTruthy()
+    expect(render(<UploadModal>{button}</UploadModal>)).toBeTruthy()
   })
 
   it('should call proper telemetry event when button is clicked', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<Upload>{button}</Upload>)
+    render(<UploadModal>{button}</UploadModal>)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -86,7 +86,7 @@ describe('Upload', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<Upload>{button}</Upload>)
+    render(<UploadModal>{button}</UploadModal>)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -116,7 +116,7 @@ describe('Upload', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<Upload>{button}</Upload>)
+    render(<UploadModal>{button}</UploadModal>)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -143,13 +143,13 @@ describe('Upload', () => {
       loading: true
     }))
 
-    render(<Upload>{button}</Upload>)
+    render(<UploadModal>{button}</UploadModal>)
 
     expect(screen.getByTestId('btn')).toBeDisabled()
   })
 
   it('should open modal when upload button is clicked', async () => {
-    render(<Upload>{button}</Upload>)
+    render(<UploadModal>{button}</UploadModal>)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))

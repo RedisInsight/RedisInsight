@@ -8,7 +8,7 @@ import Download from 'uiSrc/pages/rdi/pipeline/components/download/Download'
 import JobsTree from 'uiSrc/pages/rdi/pipeline/components/jobs-tree'
 import RefreshPipelinePopover from 'uiSrc/pages/rdi/pipeline/components/refresh-pipeline-popover'
 import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
-import Upload from 'uiSrc/pages/rdi/pipeline/components/upload/Upload'
+import UploadModal from 'uiSrc/pages/rdi/pipeline/components/upload-modal/UploadModal'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { Nullable } from 'uiSrc/utils'
 
@@ -121,7 +121,7 @@ const Navigation = () => {
         <EuiTextColor component="div">Pipeline Management</EuiTextColor>
         <div className={styles.actions}>
           <RefreshPipelinePopover />
-          <Upload>
+          <UploadModal>
             <EuiButtonIcon
               size="xs"
               iconSize="s"
@@ -129,7 +129,7 @@ const Navigation = () => {
               aria-labelledby="Upload pipeline button"
               data-testid="upload-pipeline-btn"
             />
-          </Upload>
+          </UploadModal>
           <Download />
         </div>
       </div>

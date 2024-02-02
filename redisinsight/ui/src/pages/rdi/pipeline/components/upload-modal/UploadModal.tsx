@@ -13,7 +13,7 @@ export interface Props {
   children: React.ReactElement
 }
 
-const Upload = ({ children }: Props) => {
+const UploadModal = ({ children }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [file, setFile] = useState<File>()
   const [isUploaded, setIsUploaded] = useState(false)
@@ -128,4 +128,4 @@ const Upload = ({ children }: Props) => {
   )
 }
 
-export default Upload
+export default UploadModal

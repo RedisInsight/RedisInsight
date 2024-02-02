@@ -101,6 +101,16 @@ describe('Empty', () => {
     expect(screen.getByTestId('import-file-modal')).toBeInTheDocument()
   })
 
+  it('should render upload modal with correct title', async () => {
+    render(<Empty />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
+    })
+
+    expect(screen.getByTestId('import-file-modal-title')).toHaveTextContent('Upload an archive with an RDI pipeline')
+  })
+
   it('should have "Read More" button link to the correct docs page', async () => {
     render(<Empty />)
 

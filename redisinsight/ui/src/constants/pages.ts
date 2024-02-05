@@ -21,6 +21,7 @@ export enum PageNames {
   triggeredFunctionsLibraries = 'libraries',
   triggeredFunctionsFunctions = 'functions',
   // rdi pages
+  rdiPipelineManagement = 'pipeline',
   rdiPipelinePrepare = 'prepare',
   rdiPipelineConfig = 'config',
   rdiPipelineJobs = 'jobs',
@@ -30,6 +31,7 @@ const redisCloud = '/redis-cloud'
 const sentinel = '/sentinel'
 const rdi = '/integrate'
 
+export type PageValues = typeof Pages[keyof typeof Pages]
 export const Pages = {
   home: '/',
   homeEditInstance: (instanceId: string) => `/?editInstance=${instanceId}`,
@@ -55,7 +57,7 @@ export const Pages = {
   triggeredFunctionsFunctions: (instanceId: string) =>
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
-  rdi: '/integrate',
+  rdi,
   rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline`,
   rdiPipelineConfig: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
   rdiPipelinePrepare: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,

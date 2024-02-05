@@ -75,6 +75,12 @@ function ItemList<T extends { id: string; visible?: boolean }>({
       return
     }
 
+    if (!instances.length) {
+      // TODO: add proper message about no instances
+      setMessage('No Added instances')
+      return
+    }
+
     if (instances.length && instances.every(({ visible }) => !visible)) {
       setMessage(
         <div className={styles.noResults}>

@@ -22,7 +22,7 @@ export class MonacoEditor {
      * Get  text from monacoEditor
      */
     static async getTextFromMonaco(): Promise<string> {
-        const textAreaMonaco = Selector('[class^=view-lines]');
+        const textAreaMonaco = Selector('[class^=view-lines ]');
         return (await textAreaMonaco.textContent).replace(/\s+/g, ' ');
     }
 }

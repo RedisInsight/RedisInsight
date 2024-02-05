@@ -37,7 +37,11 @@ const Empty = () => {
       <div className={styles.emptyPipelineContainer}>
         <EuiImage src={EmptyPipelineIcon} alt="empty" size="s" />
         <EuiSpacer size="xl" />
-        <EuiText>No pipelines found</EuiText>
+        <EuiText
+          data-testid="no-pipeline"
+        >
+          No pipelines found
+        </EuiText>
         <EuiText className={styles.subTitle}>Add your first pipeline to get started!</EuiText>
         <EuiSpacer size="m" />
         <EuiText>Piplelines are the foundation of RDI.</EuiText>

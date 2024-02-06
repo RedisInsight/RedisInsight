@@ -266,7 +266,7 @@ const NavigationMenu = () => {
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
         <EuiToolTip
-          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : isRdiWorkspace ? 'My RDI databases' : 'My Redis databases'}
+          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : isRdiWorkspace ? 'My RDI instances' : 'My Redis databases'}
           position="right"
         >
           <span className={cx(styles.iconNavItem, styles.homeIcon)}>

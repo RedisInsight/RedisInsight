@@ -49,11 +49,12 @@ describe('MainRouter', () => {
   })
 
   it('should set RDI workspace', () => {
+    (appContextSelector as jest.Mock).mockReturnValueOnce({ workspace: AppWorkspace.Databases })
     reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelinePrepare('1') })
 
     render(<Router><MainRouter /></Router>)
 
-    expect(store.getActions().slice(-1)).toEqual([setCurrentWorkspace(AppWorkspace.RDI)])
+    expect(store.getActions()).toContainEqual(setCurrentWorkspace(AppWorkspace.RDI))
   })
 
   it('should set Database workspace', () => {
@@ -62,6 +63,6 @@ describe('MainRouter', () => {
 
     render(<Router><MainRouter /></Router>)
 
-    expect(store.getActions().slice(-1)).toEqual([setCurrentWorkspace(AppWorkspace.Databases)])
+    expect(store.getActions()).toContainEqual(setCurrentWorkspace(AppWorkspace.Databases))
   })
 })

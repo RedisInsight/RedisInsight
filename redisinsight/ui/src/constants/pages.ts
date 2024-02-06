@@ -58,9 +58,11 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
   rdi,
-  rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline`,
-  rdiPipelineConfig: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
-  rdiPipelinePrepare: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
+  rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
+  rdiPipelineConfig: (rdiInstance: string) =>
+    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineConfig}`,
+  rdiPipelinePrepare: (rdiInstance: string) =>
+    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelinePrepare}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
     `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

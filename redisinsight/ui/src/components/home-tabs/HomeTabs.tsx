@@ -45,11 +45,7 @@ const HomeTabs = () => {
     </EuiTab>
   )), [activeTab])
 
-  return (
-    <>
-      <EuiTabs data-testid="home-tabs" className={styles.tabs}>{renderTabs()}</EuiTabs>
-    </>
-  )
+  return (<EuiTabs data-testid="home-tabs" className={styles.tabs}>{renderTabs()}</EuiTabs>)
 }
 
 export default React.memo(HomeTabs)

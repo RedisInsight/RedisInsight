@@ -6,14 +6,14 @@ import JobsPage from 'uiSrc/pages/rdi/pipeline/pages/jobs'
 export const RDI_ROUTES: IRoute[] = [
   {
     path: Pages.rdiPipelinePrepare(':rdiInstanceId'),
-    component: PreparePage,
+    component: PreparePage
   },
   {
     path: Pages.rdiPipelineConfig(':rdiInstanceId'),
-    component: ConfigPage,
+    component: ConfigPage
   },
   {
     path: Pages.rdiPipelineJobs(':rdiInstanceId', ':jobName'),
-    component: JobsPage,
+    component: JobsPage
   },
 ]

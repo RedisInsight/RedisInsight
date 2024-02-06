@@ -12,13 +12,22 @@ export class RdiInstancePage extends BaseOverviewPage {
     commandsOutput = Selector('[data-testid=commands-output]');
     outputTab = Selector('[data-testid=output-tab]');
     refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
+    exportPipelineIcon = Selector('[data-testid=download-pipeline-btn]');
+    importPipelineIcon = Selector('[data-testid=upload-pipeline-btn]');
     applyRefreshBtn = Selector('[data-testid=refresh-pipeline-apply-btn]');
     deployPipelineBtn = Selector('[data-testid=deploy-rdi-pipeline]');
     deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');
+    uploadPipelineBtn = Selector('[data-testid=submit-btn]');
+    okUploadPipelineBtn = Selector('[data-testid=ok-btn]');
+    closeImportModelBtn = Selector('[data-testid=import-file-modal] button');
 
     configurationInput = Selector('[data-testid=wrapper-rdi-config]');
+    importInput = Selector('[data-testid=import-file-modal-filepicker]');
     successDeployNotification = Selector('[data-testid=success-deploy-pipeline-notification]');
     errorDeployNotification = Selector('[data-test-subj=toast-error-deploy]');
+    failedUploadingPipelineNotification = Selector('[data-testid=result-failed]');
+    closeNotification =  Selector('[class*=euiModal__closeIcon]');
+    noPipelineText = Selector('[data-testid=no-pipeline]');
 
     /**
      * Open Job by name
@@ -40,6 +49,17 @@ export class RdiInstancePage extends BaseOverviewPage {
             .click(this.transformationInput)
             .typeText(this.transformationInput, command, { replace: true, speed, paste })
             .click(this.dryRunSubmitBtn);
+    }
+
+    /**
+     * Import pipeline
+     * @param filePath the name if the file
+     */
+    async uploadPipeline(filePath: string): Promise<void> {
+        await t
+            .click(this.importPipelineIcon)
+            .setFilesToUpload(this.importInput, filePath)
+            .click(this.uploadPipelineBtn);
     }
 }
 

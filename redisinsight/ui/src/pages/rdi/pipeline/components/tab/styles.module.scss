@@ -61,12 +61,37 @@
           cursor: default;
 
           &:hover {
-            text-decoration: none;
+            text-decoration: none !important;
           }
         }
 
         &__fileIcon path {
           fill: var(--iconsDefaultHoverColor);
+        }
+      }
+    }
+  }
+
+  &.disabled {
+    background-color: transparent !important;
+    cursor: not-allowed;
+
+    :global {
+      .rdi-pipeline-nav {
+        &__title {
+          color: var(--euiColorMediumShade) !important;
+        }
+
+        &__text {
+          color: var(--euiColorMediumShade) !important;
+
+          &:hover {
+            text-decoration: none !important;
+          }
+        }
+
+        &__fileIcon path {
+          fill: var(--euiColorMediumShade);
         }
       }
     }

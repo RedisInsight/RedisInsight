@@ -1,4 +1,4 @@
-import { Nullable } from 'uiSrc/utils'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 export enum PipelineJobsTabs {
@@ -39,12 +39,18 @@ export interface IStateRdiPipeline {
   error: string
   data: Nullable<IPipeline>
   isDeployPopoverOpen: boolean
+  mode: Maybe<RdiPipelineMode>
 }
 
 export interface IStateRdiDryRunJob {
   loading: boolean
   error: string
   results: Nullable<IDryRunJobResults>
+}
+
+export enum RdiPipelineMode {
+  ingest = 'Ingest',
+  writeBehind = 'Write-behind',
 }
 
 export interface RdiInstance extends RdiInstanceResponse {

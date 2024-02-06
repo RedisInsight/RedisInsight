@@ -21,7 +21,7 @@ export enum PageNames {
   triggeredFunctionsLibraries = 'libraries',
   triggeredFunctionsFunctions = 'functions',
   // rdi pages
-  rdiPipelinePrepare = 'prepare',
+  rdiPipelineSelectMode = 'select-mode',
   rdiPipelineConfig = 'config',
   rdiPipelineJobs = 'jobs',
 }
@@ -55,10 +55,10 @@ export const Pages = {
   triggeredFunctionsFunctions: (instanceId: string) =>
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
-  rdi: '/integrate',
+  rdi,
   rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline`,
   rdiPipelineConfig: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineConfig}`,
-  rdiPipelinePrepare: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelinePrepare}`,
+  rdiPipelineSelectMode: (rdiInstance: string) => `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineSelectMode}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
     `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

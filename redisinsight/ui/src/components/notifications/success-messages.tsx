@@ -271,4 +271,8 @@ export default {
     title: 'Database already exists',
     message: 'No new database connections have been added.',
   }),
+  PIPELINE_MODE_CHANGED: () => ({
+    title: 'The pipeline mode has been saved',
+		message: 'Open the configuration page to proceed.'
+  }),
 }

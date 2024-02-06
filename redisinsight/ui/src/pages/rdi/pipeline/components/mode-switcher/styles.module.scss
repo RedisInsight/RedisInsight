@@ -1,0 +1,35 @@
+.wrapper {
+  display: flex;
+
+  .btn {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-radius: 4px;
+    background-color: var(--buttonGuideBgColor);
+
+    &.isSelected {
+      border: 1px solid var(--euiColorPrimary);
+    }
+
+    &:first-child {
+      margin-right: 16px;
+    }
+
+    .title {
+      font: normal normal 500 14px/17px Graphik, sans-serif !important;
+      margin-bottom: 4px;
+    }
+
+    .text {
+      font: normal normal normal 12px/14px Graphik, sans-serif !important;
+      color: var(--euiTextSubduedColor) !important;
+      margin-bottom: 4px;
+    }
+
+    .link {
+      max-width: max-content;
+    }
+  }
+}
+

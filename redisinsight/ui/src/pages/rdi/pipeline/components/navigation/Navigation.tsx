@@ -1,4 +1,4 @@
-import { EuiTextColor } from '@elastic/eui'
+import { EuiTextColor, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
@@ -14,7 +14,7 @@ import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 enum RdiPipelineTabs {
-  Prepare = PageNames.rdiPipelinePrepare,
+  SelectMode = PageNames.rdiPipelineSelectMode,
   Config = PageNames.rdiPipelineConfig,
   Jobs = PageNames.rdiPipelineJobs,
 }
@@ -28,9 +28,9 @@ interface INavItem {
 
 const defaultNavList: INavItem[] = [
   {
-    id: RdiPipelineTabs.Prepare,
-    title: 'Prepare',
-    fileName: 'Select pipeline type',
+    id: RdiPipelineTabs.SelectMode,
+    title: 'Select mode',
+    fileName: 'Pipeline mode configuration',
   },
   {
     id: RdiPipelineTabs.Config,
@@ -41,9 +41,9 @@ const defaultNavList: INavItem[] = [
 ]
 
 const getSelectedTab = (path: string, rdiInstanceId: string) => {
-  const tabsPath = path?.replace(`/${Pages.rdiPipeline(rdiInstanceId)}/`, '')
+  const tabsPath = path?.replace(`${Pages.rdiPipeline(rdiInstanceId)}/`, '')
 
-  if (tabsPath.startsWith(PageNames.rdiPipelinePrepare)) return RdiPipelineTabs.Prepare
+  if (tabsPath.startsWith(PageNames.rdiPipelineSelectMode)) return RdiPipelineTabs.SelectMode
   if (tabsPath.startsWith(PageNames.rdiPipelineConfig)) return RdiPipelineTabs.Config
   if (tabsPath.startsWith(PageNames.rdiPipelineJobs)) return RdiPipelineTabs.Jobs
 
@@ -53,7 +53,7 @@ const getSelectedTab = (path: string, rdiInstanceId: string) => {
 const Navigation = () => {
   const [selectedTab, setSelectedTab] = useState<Nullable<RdiPipelineTabs>>(null)
 
-  const { loading } = useSelector(rdiPipelineSelector)
+  const { loading, mode, data: pipeline } = useSelector(rdiPipelineSelector)
 
   const history = useHistory()
   const { pathname } = useLocation()
@@ -62,9 +62,13 @@ const Navigation = () => {
   const path = pathname?.split('/').pop() || ''
 
   const onSelectedTabChanged = (id: string | RdiPipelineTabs) => {
+    if (!mode) {
+      return
+    }
+
     switch (id) {
-      case RdiPipelineTabs.Prepare: {
-        history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
+      case RdiPipelineTabs.SelectMode: {
+        history.push(Pages.rdiPipelineSelectMode(rdiInstanceId))
         break
       }
       case RdiPipelineTabs.Config: {
@@ -83,34 +87,52 @@ const Navigation = () => {
     setSelectedTab(activeTab)
   }, [pathname, rdiInstanceId])
 
+  useEffect(() => {
+    // redirect if there is no selected pipeline mode
+    if (pipeline && !mode) {
+      history.push(Pages.rdiPipelineSelectMode(rdiInstanceId))
+    }
+  }, [pipeline])
+
   const renderTabs = () => (
     <>
       {defaultNavList.map(({ id, title, fileName, isShowLoader = false }) => (
-        <div
-          key={id}
-          role="button"
-          tabIndex={0}
-          onKeyDown={() => {}}
-          onClick={() => onSelectedTabChanged(id)}
-          className={styles.tab}
-          data-testid={`rdi-nav-btn-${id}`}
+        <EuiToolTip
+          content={id !== RdiPipelineTabs.SelectMode && !mode ? 'Select a pipeline mode to deploy your pipeline.' : ''}
         >
-          <Tab
-            title={title}
-            fileName={fileName}
-            isSelected={selectedTab === id}
-            data-testid={`rdi-pipeline-tab-${id}`}
-            isLoading={loading && isShowLoader}
-          />
-        </div>
+          <div
+            key={id}
+            role="button"
+            tabIndex={0}
+            onKeyDown={() => {}}
+            onClick={() => onSelectedTabChanged(id)}
+            className={styles.tab}
+            data-testid={`rdi-nav-btn-${id}`}
+          >
+            <Tab
+              title={title}
+              fileName={fileName}
+              isSelected={selectedTab === id}
+              data-testid={`rdi-pipeline-tab-${id}`}
+              isLoading={loading && isShowLoader}
+              isDisabled={id !== RdiPipelineTabs.SelectMode && !mode}
+            />
+          </div>
+        </EuiToolTip>
+
       ))}
-      <Tab
-        title="Data Transformation"
-        isSelected={selectedTab === RdiPipelineTabs.Jobs}
-        data-testid="rdi-pipeline-tab-jobs"
+      <EuiToolTip
+        content={!mode ? 'Select a pipeline mode to deploy your pipeline.' : ''}
       >
-        <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} />
-      </Tab>
+        <Tab
+          title="Data Transformation"
+          isSelected={selectedTab === RdiPipelineTabs.Jobs}
+          data-testid="rdi-pipeline-tab-jobs"
+          isDisabled={!mode}
+        >
+          <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} isDisabled={!mode} />
+        </Tab>
+      </EuiToolTip>
     </>
   )
 

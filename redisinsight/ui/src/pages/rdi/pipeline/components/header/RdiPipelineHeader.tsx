@@ -28,7 +28,7 @@ const RdiPipelineHeader = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const { name = '' } = useSelector(connectedInstanceSelector)
-  const { loading } = useSelector(rdiPipelineSelector)
+  const { loading, mode } = useSelector(rdiPipelineSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
@@ -112,18 +112,24 @@ const RdiPipelineHeader = () => {
                 scrollLock: true
               }}
               button={(
-                <EuiButton
-                  fill
-                  size="s"
-                  color="secondary"
-                  onClick={handleClickDeploy}
-                  iconType={RocketIcon}
-                  disabled={loading}
-                  isLoading={loading}
-                  data-testid="deploy-rdi-pipeline"
+                <EuiToolTip
+                  content={mode ? '' : 'Select a pipeline mode to deploy your pipeline.'}
+                  position="bottom"
                 >
-                  Deploy Pipeline
-                </EuiButton>
+                  <EuiButton
+                    fill
+                    size="s"
+                    color="secondary"
+                    onClick={handleClickDeploy}
+                    iconType={RocketIcon}
+                    disabled={loading || !mode}
+                    isLoading={loading}
+                    data-testid="deploy-rdi-pipeline"
+                  >
+                    Deploy Pipeline
+                  </EuiButton>
+                </EuiToolTip>
+
               )}
             >
               <EuiTitle size="xxs">

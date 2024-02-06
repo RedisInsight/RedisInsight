@@ -12,4 +12,5 @@ export enum TelemetryPageView {
   RDI_INSTANCES_PAGE = 'RDI Instances',
   RDI_CONFIG = 'RDI Configuration',
   RDI_JOBS = 'RDI Jobs',
+  RDI_MODE_SELECTION = 'RDI Mode Selection'
 }

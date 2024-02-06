@@ -21,14 +21,22 @@ import styles from './styles.module.scss'
 export interface IProps {
   onSelectedTab: (id: string) => void
   path: string
+  isDisabled: boolean
 }
 
 const JobsTree = (props: IProps) => {
-  const { onSelectedTab, path } = props
+  const { onSelectedTab, path, isDisabled } = props
 
   const [isExpanded, setIsExpanded] = useState(true)
 
   const { loading, data } = useSelector(rdiPipelineSelector)
+
+  const handleToggle = (isOpen: boolean) => {
+    // isDisabled option added only in version 64.0 https://github.com/elastic/eui/pull/6095
+    if (!isDisabled) {
+      setIsExpanded(isOpen)
+    }
+  }
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) => (
     jobs.map(({ name }) => (
@@ -66,6 +74,7 @@ const JobsTree = (props: IProps) => {
               <EuiButtonIcon
                 iconType="pencil"
                 onClick={() => {}}
+                disabled={isDisabled}
                 aria-label="edit job file name"
                 data-testid="edit-job-name"
               />
@@ -111,6 +120,7 @@ const JobsTree = (props: IProps) => {
             <EuiButtonIcon
               iconType="plus"
               onClick={() => {}}
+              disabled={isDisabled}
               aria-label="add new job file"
               data-testid="add-new-job"
             />
@@ -125,8 +135,10 @@ const JobsTree = (props: IProps) => {
       id="rdi-pipeline-jobs-nav"
       buttonContent={folder}
       initialIsOpen={isExpanded}
-      onToggle={(isOpen: boolean) => setIsExpanded(isOpen)}
-      className={styles.wrapper}
+      onToggle={handleToggle}
+      // isDisabled option added only in version 64.0 https://github.com/elastic/eui/pull/6095
+      className={cx(styles.wrapper, { [styles.disabled]: isDisabled })}
+      forceState={isExpanded ? 'open' : 'closed'}
     >
       {/* // TODO confirm with RDI team and put sort in separate component */}
       {renderJobsList(sortBy(data?.jobs ?? [], ['name']))}

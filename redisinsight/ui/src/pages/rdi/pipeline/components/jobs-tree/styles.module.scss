@@ -1,4 +1,22 @@
 .wrapper {
+  &.disabled {
+    .navItem {
+      cursor: not-allowed;
+    }
+
+    :global {
+      .euiFlexItem {
+        color: var(--euiColorMediumShade) !important;
+        cursor: not-allowed;
+      }
+
+      .euiIcon {
+        fill: var(--euiColorMediumShade);
+        cursor: not-allowed;
+      }
+    }
+  }
+
   .navItem {
     cursor: pointer;
 

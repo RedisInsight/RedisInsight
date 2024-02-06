@@ -1,0 +1,42 @@
+.actions {
+  margin-top: auto;
+  align-self: flex-end;
+}
+
+.warning {
+  margin-bottom: 24px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+
+  .infoText {
+    font: normal normal normal 14px/17px Graphik, sans-serif !important;
+    margin-left: 4px;
+  }
+}
+
+:global .popover {
+
+  &__wrapper {
+    padding: 16px;
+  }
+
+  &__title {
+    font: normal normal 500 16px/19px Graphik, sans-serif !important;
+    color: var(--htmlColor) !important;
+    margin-bottom: 4px;
+  }
+
+  &__text {
+    font: normal normal normal 14px/17px Graphik, sans-serif !important;
+    color: var(--htmlColor) !important;
+  }
+
+  &__action {
+    float: right;
+    margin-top: 16px;
+  }
+}

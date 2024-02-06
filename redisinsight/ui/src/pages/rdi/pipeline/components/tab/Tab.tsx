@@ -7,6 +7,7 @@ import styles from './styles.module.scss'
 export interface IProps {
   title: string | JSX.Element
   isSelected: boolean
+  isDisabled: boolean
   className?: string
   fileName?: string
   children?: React.ReactElement | string
@@ -23,11 +24,12 @@ const Tab = (props: IProps) => {
     testID,
     className,
     isLoading = false,
+    isDisabled,
   } = props
 
   return (
     <div
-      className={cx(styles.wrapper, className, { [styles.active]: isSelected })}
+      className={cx(styles.wrapper, className, { [styles.active]: isSelected, [styles.disabled]: isDisabled })}
       data-testid={testID}
     >
       <EuiText className="rdi-pipeline-nav__title" size="m">{title}</EuiText>

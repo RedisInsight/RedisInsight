@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { IStateRdiPipeline, IPipeline } from 'uiSrc/slices/interfaces/rdi'
+import { IStateRdiPipeline, IPipeline, RdiPipelineMode } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
@@ -14,6 +14,7 @@ export const initialState: IStateRdiPipeline = {
   error: '',
   data: null,
   isDeployPopoverOpen: false,
+  mode: undefined,
 }
 
 const rdiPipelineSlice = createSlice({
@@ -40,6 +41,9 @@ const rdiPipelineSlice = createSlice({
     deployPipelineFailure: (state) => {
       state.loading = false
     },
+    selectMode: (state, { payload }: PayloadAction<RdiPipelineMode>) => {
+      state.mode = payload
+    }
   },
 })
 
@@ -52,6 +56,7 @@ export const {
   deployPipeline,
   deployPipelineSuccess,
   deployPipelineFailure,
+  selectMode,
 } = rdiPipelineSlice.actions
 
 // The reducer

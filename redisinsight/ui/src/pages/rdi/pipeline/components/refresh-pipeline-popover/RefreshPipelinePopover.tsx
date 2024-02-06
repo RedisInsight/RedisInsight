@@ -18,7 +18,6 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
-import { Pages } from 'uiSrc/constants'
 
 import styles from './styles.module.scss'
 
@@ -29,7 +28,6 @@ const RefreshPipelinePopover = () => {
 
   const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
 
-  const history = useHistory()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
@@ -41,11 +39,6 @@ const RefreshPipelinePopover = () => {
         resetForm()
         setFieldValue('config', pipeline?.config)
         setFieldValue('jobs', pipeline?.jobs)
-
-        // redirect to empty pipeline page if pipeline is empty
-        if (!pipeline) {
-          history.push(Pages.rdiPipeline(rdiInstanceId))
-        }
       })
     )
   }

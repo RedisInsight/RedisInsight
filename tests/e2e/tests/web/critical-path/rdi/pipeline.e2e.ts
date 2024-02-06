@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { join as joinPath } from 'path';
+import * as path from 'path';
 import { t } from 'testcafe';
 import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
@@ -17,6 +18,10 @@ const databasesActions = new DatabasesActions();
 let foundExportedFiles: string[];
 
 export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
+const filePathes = {
+    successful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDIPipeline.zip'),
+    unsuccessful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'UnsuccessRDI_Pipeline.zip')
+};
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'http://localhost:4000',
@@ -102,3 +107,18 @@ test
         // Verify that user can export database
         await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
     });
+
+// https://redislabs.atlassian.net/browse/RI-5143
+test('Verify that user can import pipeline', async() => {
+    const expectedText = 'Uploaded';
+    // check success uploading
+    await rdiInstancePage.uploadPipeline(filePathes.successful);
+    await t.click(rdiInstancePage.okUploadPipelineBtn);
+    const updatedText = await MonacoEditor.getTextFromMonaco();
+    await t.expect(updatedText).contains(expectedText, 'config text was not updated');
+    // check unsuccessful uploading
+    await rdiInstancePage.uploadPipeline(filePathes.unsuccessful);
+    const failedText = await rdiInstancePage.failedUploadingPipelineNotification.textContent;
+    await t.expect(failedText).contains('There was a problem with the .zip file');
+    await t.click(rdiInstancePage.closeNotification);
+});

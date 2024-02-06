@@ -1,7 +1,7 @@
 import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
 import serverConfig from 'src/utils/config';
 import { InternalServerErrorException } from '@nestjs/common';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, Endpoint } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import Redis, { Cluster, RedisOptions } from 'ioredis';
 import { isEmpty, isNumber } from 'lodash';
@@ -16,6 +16,7 @@ import {
   SentinelIoredisClient,
   ClusterIoredisClient,
 } from 'src/modules/redis/client';
+import { parseClusterNodesResponse } from '../../../../test/helpers/utils';
 
 const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
 
@@ -161,22 +162,22 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
       const config = await this.getRedisOptions(clientMetadata, database, options);
 
       if (database.ssh) {
-        tnl = await this.sshTunnelProvider.createTunnel(database);
+        tnl = await this.sshTunnelProvider.createTunnelNew(database, database.sshOptions);
       }
 
       return await new Promise((resolve, reject) => {
         try {
           if (tnl) {
-            tnl.on('error', (error) => {
-              reject(error);
-            });
+            // tnl.on('error', (error) => {
+            //   reject(error);
+            // });
+            //
+            // tnl.on('close', () => {
+            //   reject(new TunnelConnectionLostException());
+            // });
 
-            tnl.on('close', () => {
-              reject(new TunnelConnectionLostException());
-            });
-
-            config.host = tnl.serverAddress.host;
-            config.port = tnl.serverAddress.port;
+            config.host = tnl[0].address().host;
+            config.port = tnl[0].address().port;
           }
 
           const connection = new Redis({
@@ -211,7 +212,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         }
       });
     } catch (e) {
-      tnl?.close?.();
+      // tnl?.close?.();
       throw e;
     }
   }
@@ -225,17 +226,52 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     options: IRedisConnectionOptions,
   ): Promise<RedisClient> {
     const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+    let rootNodes = [{
+      host: database.host,
+      port: database.port,
+    }];
 
+    console.log('___ Creating standalone client...')
+    const standaloneClient = await this.createStandaloneClient(clientMetadata, database, options);
+
+    console.log('___ Fetching cluster nodes...')
+
+    const nodes = parseClusterNodesResponse(
+      await standaloneClient.sendCommand(['cluster', 'nodes'], { replyEncoding: 'utf8' }) as string,
+    ) as Endpoint[];
+
+    await standaloneClient.disconnect();
+
+    console.log('___ nodes', nodes);
+
+    rootNodes = nodes.map((node) => ({ host: node.host, port: node.port }));
+
+    let tnls = []
     if (database.ssh) {
-      throw new Error('SSH is unsupported for cluster databases.');
+      let natMap = {};
+
+      tnls = await Promise.all(nodes.map((node) => this.sshTunnelProvider.createTunnelNew(node, database.sshOptions)));
+
+      tnls.forEach(([server], i) => {
+        natMap[`${nodes[i].host}:${nodes[i].port}`] = {
+          host: server.address().address,
+          port: server.address().port,
+        }
+      })
+
+
+      console.log('____ natMap', natMap)
+      rootNodes = tnls.map(([server]) => ({ host: server.address().address, port: server.address().port }));
+      config.natMap = natMap;
     }
+
+    console.log('___ config', require('util').inspect(config, { depth: null }));
+    console.log('___ rootNodes', require('util').inspect(rootNodes, { depth: null }));
+    // throw new Error('SSH is not supported for cluster databases.');
 
     return new Promise((resolve, reject) => {
       try {
-        const cluster = new Cluster([{
-          host: database.host,
-          port: database.port,
-        }].concat(database.nodes), {
+        const cluster = new Cluster(rootNodes.concat(database.nodes), {
           ...config,
         });
         cluster.on('error', (e): void => {

@@ -3,12 +3,14 @@ import * as detectPort from 'detect-port';
 import { Database } from 'src/modules/database/models/database';
 import { Server, createServer } from 'net';
 import { Client } from 'ssh2';
+import { createTunnel } from 'tunnel-ssh';
 import { SshTunnel } from 'src/modules/ssh/models/ssh-tunnel';
 import {
   UnableToCreateLocalServerException,
   UnableToCreateSshConnectionException,
   UnableToCreateTunnelException,
 } from 'src/modules/ssh/exceptions';
+import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 
 @Injectable()
 export class SshTunnelProvider {
@@ -66,5 +68,20 @@ export class SshTunnelProvider {
 
       throw new UnableToCreateTunnelException(e.message);
     }
+  }
+
+  public async createTunnelNew(target: { host: string, port: number }, sshOptions: SshOptions) {
+    const tnl = await createTunnel({
+      autoClose: true,
+    }, {
+      host: '127.0.0.1',
+    }, {
+      ...sshOptions,
+    }, {
+      dstAddr: target.host,
+      dstPort: target.port,
+    });
+
+    return tnl;
   }
 }

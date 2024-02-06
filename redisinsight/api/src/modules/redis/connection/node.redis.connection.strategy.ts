@@ -1,7 +1,7 @@
 import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
 import serverConfig from 'src/utils/config';
 import { InternalServerErrorException } from '@nestjs/common';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, Endpoint } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import {
   RedisClientOptions, createClient, createCluster, RedisClusterOptions,
@@ -12,6 +12,8 @@ import { ConnectionOptions } from 'tls';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ClusterNodeRedisClient, RedisClient } from 'src/modules/redis/client';
 import { StandaloneNodeRedisClient } from 'src/modules/redis/client/node-redis/standalone.node-redis.client';
+import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
+import { parseClusterNodesResponse } from '../../../../test/helpers/utils';
 
 const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
 
@@ -180,25 +182,25 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
 
     try {
       const config = await this.getRedisOptions(clientMetadata, database, options);
-      //
-      // if (database.ssh) {
-      //   tnl = await this.sshTunnelProvider.createTunnel(database);
-      // }
+
+      if (database.ssh) {
+        tnl = await this.sshTunnelProvider.createTunnelNew(database, database.sshOptions);
+      }
 
       return await new Promise((resolve, reject) => {
         try {
-          // if (tnl) {
-          //   tnl.on('error', (error) => {
-          //     reject(error);
-          //   });
-          //
-          //   tnl.on('close', () => {
-          //     reject(new TunnelConnectionLostException());
-          //   });
-          //
-          //   config.host = tnl.serverAddress.host;
-          //   config.port = tnl.serverAddress.port;
-          // }
+          if (tnl) {
+            // tnl.on('error', (error) => {
+            //   reject(error);
+            // });
+            //
+            // tnl.on('close', () => {
+            //   reject(new TunnelConnectionLostException());
+            // });
+
+            config.socket['host'] = tnl[0].address().host;
+            config.socket['port'] = tnl[0].address().port;
+          }
 
           const connection = createClient({
             ...config,
@@ -250,13 +252,49 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<RedisClient> {
     const config = await this.getRedisClusterOptions(clientMetadata, database, options);
 
+    console.log('___ Creating standalone client...')
+    const standaloneClient = await this.createStandaloneClient(clientMetadata, database, options);
+
+    console.log('___ Fetching cluster nodes...')
+
+    const nodes = parseClusterNodesResponse(
+      await standaloneClient.sendCommand(['cluster', 'nodes'], { replyEncoding: 'utf8' }) as string,
+    ) as Endpoint[];
+
+    await standaloneClient.disconnect();
+
+    console.log('___ nodes', nodes);
+
+    config.rootNodes = nodes.map((node) => ({ socket: { host: node.host, port: node.port } }));
+
+    let tnls = []
+    let nodeAddressMap = {};
     if (database.ssh) {
-      throw new Error('SSH is not supported for cluster databases.');
+      tnls = await Promise.all(nodes.map((node) => this.sshTunnelProvider.createTunnelNew(node, database.sshOptions)));
+
+      tnls.forEach(([server], i) => {
+        nodeAddressMap[`${nodes[i].host}:${nodes[i].port}`] = {
+          host: server.address().address,
+          port: server.address().port,
+        }
+      })
+
+      
+      console.log('____ nodeAddressMap', nodeAddressMap)
+      config.defaults = undefined;
+      config.rootNodes = tnls.map(([server]) => ({ socket: { host: server.address().address, port: server.address().port } }));
+      config.nodeAddressMap = nodeAddressMap;
     }
+
+    console.log('___ config', require('util').inspect(config, { depth: null }));
+    // throw new Error('SSH is not supported for cluster databases.');
 
     return new Promise((resolve, reject) => {
       try {
-        const connection = createCluster(config);
+        // const connection = createCluster(config);
+        const connection = createCluster({
+          ...config,
+        });
         connection.on('error', (e): void => {
           this.logger.error('Failed connection to the redis oss cluster', e);
           reject(e);

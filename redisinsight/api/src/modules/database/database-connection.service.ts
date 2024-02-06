@@ -42,10 +42,10 @@ export class DatabaseConnectionService {
 
     // !Temporary. Refresh cluster nodes on connection
     if (client?.getConnectionType() === RedisClientConnectionType.CLUSTER) {
-      const primaryNodeOptions = (await client.nodes(RedisClientNodeRole.PRIMARY))[0].options;
+      // const primaryNodeOptions = (await client.nodes(RedisClientNodeRole.PRIMARY))[0].options;
 
-      toUpdate.host = primaryNodeOptions.host;
-      toUpdate.port = primaryNodeOptions.port;
+      // toUpdate.host = primaryNodeOptions.host;
+      // toUpdate.port = primaryNodeOptions.port;
 
       toUpdate.nodes = (await client.nodes()).map(({ options }) => ({
         host: options.host,

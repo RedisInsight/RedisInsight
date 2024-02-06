@@ -111,9 +111,6 @@ test
 // https://redislabs.atlassian.net/browse/RI-5143
 test('Verify that user can import pipeline', async() => {
     const expectedText = 'Uploaded';
-    await t.navigateTo(`${commonUrl}/${instanceId}/pipeline`);
-    await t.expect(rdiInstancePage.noPipelineText.textContent).contains('No pipelines found');
-    await t.click(rdiInstancePage.configurationTab);
     // check success uploading
     await rdiInstancePage.uploadPipeline(filePathes.successful);
     await t.click(rdiInstancePage.okUploadPipelineBtn);

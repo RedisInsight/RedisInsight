@@ -2,9 +2,6 @@ import { Selector, t } from 'testcafe';
 import { BaseOverviewPage } from './base-overview-page';
 
 export class RdiInstancePage extends BaseOverviewPage {
-    //Left Panel
-    configurationTab = Selector('[data-testid=rdi-pipeline-tabs]');
-
     dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');
     closeDryRunPanelBtn = Selector('[data-testid=close-dry-run-btn]');

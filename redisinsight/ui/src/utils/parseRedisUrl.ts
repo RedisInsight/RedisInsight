@@ -34,14 +34,15 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
   }
 
   // eslint-disable-next-line no-useless-escape
-  const redisUrlPattern = /^(redis[s]?):\/\/(?:([^:@]+)?(?::([^@]+))?@)?([^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
+  const redisUrlPattern = /^(redis[s]?):\/\/(?:([^\/]+)?@)?(?:.*@)?([^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
   const match = urlString.match(redisUrlPattern)
 
   if (!match) {
     return null
   }
 
-  const [, protocol, username, password, host, port, dbNumber] = match
+  const [, protocol, userInfo, host, port, dbNumber] = match
+  const [, username, password] = userInfo?.match(/^(.*?)(?::(.*))?$/) || []
 
   return {
     protocol: protocol || 'redis',

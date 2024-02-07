@@ -13,6 +13,7 @@ services:
       - ./test-data/certs:/root/certs
       - ./test-data/ssh:/root/ssh
       - ./remote:/root/remote
+      - ./rdi:/root/rdi
     env_file:
       - ./.env
     environment:

@@ -25,13 +25,13 @@ import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  onCancel: (isCancelled?: boolean) => void
 }
 
 export interface IZsetMemberState {
-  name: string;
-  score: string;
-  id: number;
+  name: string
+  score: string
+  id: number
 }
 
 export const INITIAL_ZSET_MEMBER_STATE: IZsetMemberState = {
@@ -222,7 +222,6 @@ const AddZsetMembers = (props: Props) => {
                 length={members.length}
                 addItem={addMember}
                 removeItem={removeMember}
-                removeCanClear
                 clearIsDisabled={isClearDisabled(item)}
                 addItemIsDisabled={members.some((item) => !item.score.length)}
                 clearItemValues={clearMemberValues}

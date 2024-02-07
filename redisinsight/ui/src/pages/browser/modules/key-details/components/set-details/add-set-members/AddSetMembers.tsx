@@ -22,7 +22,7 @@ import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/Ad
 import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  onCancel: (isCancelled?: boolean) => void
 }
 
 export interface ISetMemberState {
@@ -154,7 +154,6 @@ const AddSetMembers = (props: Props) => {
                 length={members.length}
                 addItem={addMember}
                 removeItem={removeMember}
-                removeCanClear
                 clearIsDisabled={isClearDisabled(item)}
                 clearItemValues={clearMemberValues}
                 loading={loading}

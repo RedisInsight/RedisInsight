@@ -23,10 +23,9 @@ import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/Ad
 
 import { stringToBuffer } from 'uiSrc/utils'
 import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
-import styles from '../styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  onCancel: (isCancelled?: boolean) => void
 }
 
 export interface IHashFieldState {

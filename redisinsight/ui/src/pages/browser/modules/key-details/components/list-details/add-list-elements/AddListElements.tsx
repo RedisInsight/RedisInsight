@@ -25,7 +25,7 @@ import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  onCancel: (isCancelled?: boolean) => void
 }
 
 export enum ListElementDestination {

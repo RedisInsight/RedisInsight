@@ -36,9 +36,11 @@ const ListDetails = (props: Props) => {
     onOpenAddItemPanel()
   }
 
-  const closeAddItemPanel = () => {
+  const closeAddItemPanel = (isCancelled?: boolean) => {
     setIsAddItemPanelOpen(false)
-    onCloseAddItemPanel()
+    if (isCancelled) {
+      onCloseAddItemPanel()
+    }
   }
 
   const closeRemoveItemPanel = () => {

@@ -40,7 +40,7 @@ import {
 import styles from './styles.module.scss'
 
 export interface Props {
-  onCancel: () => void
+  onCancel: (isCancelled?: boolean) => void
   onRemoveKey: () => void
 }
 
@@ -278,7 +278,7 @@ const RemoveListElements = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel()} data-testid="cancel-elements-btn">
+              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-elements-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

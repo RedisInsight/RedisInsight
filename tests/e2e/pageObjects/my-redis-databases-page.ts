@@ -4,10 +4,13 @@ import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-databas
 import { InsightsPanel } from './components/insights-panel';
 import { CompatibilityPromotion } from './components/compatibility-promotion';
 import { BaseOverviewPage } from './base-overview-page';
+import { NavigationPanel } from './components/navigation-panel';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
 export class MyRedisDatabasePage extends BaseOverviewPage {
+
+    NavigationPanel = new NavigationPanel();
     AddRedisDatabase = new AddRedisDatabase();
     InsightsPanel = new InsightsPanel();
     CompatibilityPromotion = new CompatibilityPromotion();

@@ -4,12 +4,17 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import { commonUrl } from '../../../../helpers/conf';
+import { MyRedisDatabasePage } from '../../../../pageObjects';
+import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
+import { RedisOverviewPage } from '../../../../helpers/constants';
 
+const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancePage = new RdiInstancePage();
+const rdiInstancesListPage = new RdiInstancesListPage();
 const rdiApiRequests = new RdiApiRequests();
 const browserActions = new BrowserActions();
 
-export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
 const dbTableParams: DbTableParameters = {
     tableName: 'rdi',
     columnName: 'id',
@@ -26,13 +31,13 @@ const instanceId = 'testId';
 //skip the tests until rdi integration is added
 fixture.skip `Pipeline`
     .meta({ type: 'critical_path' })
-    // it will be removed
     .page(commonUrl)
     .beforeEach(async() => {
         await t.maximizeWindow();
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
-        await t.navigateTo(`${commonUrl}/${instanceId}/pipeline/config`);
+        await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
+        await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
 
     })
     .afterEach(async() => {

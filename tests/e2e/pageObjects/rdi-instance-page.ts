@@ -1,7 +1,11 @@
 import { Selector, t } from 'testcafe';
 import { BaseOverviewPage } from './base-overview-page';
+import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
 
 export class RdiInstancePage extends BaseOverviewPage {
+
+    NavigationPanel = new RdiNavigationPanel();
+
     dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');
     closeDryRunPanelBtn = Selector('[data-testid=close-dry-run-btn]');
@@ -19,6 +23,8 @@ export class RdiInstancePage extends BaseOverviewPage {
     configurationInput = Selector('[data-testid=wrapper-rdi-config]');
     successDeployNotification = Selector('[data-testid=success-deploy-pipeline-notification]');
     errorDeployNotification = Selector('[data-test-subj=toast-error-deploy]');
+
+    breadcrumbsLink = Selector('[data-testid=my-rdi-instances-btn]');
 
     /**
      * Open Job by name

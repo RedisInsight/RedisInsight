@@ -52,6 +52,20 @@
         }
       }
     }
+
+    .inputContainer {
+      max-width: 140px;
+      height: 24px;
+    }
+    
+    .input {
+      height: 24px !important;
+    }
+    
+    .controls {
+      height: 22px;
+      width: 50px;
+    }
   }
 
   :global {

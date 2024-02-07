@@ -54,6 +54,7 @@ export interface Props {
   disableFocusTrap?: boolean
   approveByValidation?: (value: string) => boolean
   approveText?: { title: string, text: string }
+  formComponentType?: 'form' | 'div'
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -85,6 +86,7 @@ const InlineItemEditor = (props: Props) => {
     disableFocusTrap = false,
     approveByValidation,
     approveText,
+    formComponentType = 'form'
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -188,7 +190,7 @@ const InlineItemEditor = (props: Props) => {
               <EuiWindowEvent event="keydown" handler={handleOnEsc} />
               <EuiFocusTrap disabled={disableFocusTrap}>
                 <EuiForm
-                  component="form"
+                  component={formComponentType}
                   className="relative"
                   onSubmit={handleFormSubmit}
                 >

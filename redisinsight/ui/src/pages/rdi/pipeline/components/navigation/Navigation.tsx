@@ -106,7 +106,7 @@ const Navigation = () => {
         </div>
       ))}
       <Tab
-        title="Data Transformation"
+        title="Transform and Validate"
         isSelected={selectedTab === RdiPipelineTabs.Jobs}
         data-testid="rdi-pipeline-tab-jobs"
       >

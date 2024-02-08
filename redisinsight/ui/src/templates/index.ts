@@ -3,5 +3,5 @@ import InstancePageTemplate from './instance-page-template'
 
 export {
   ExplorePanelTemplate,
-  InstancePageTemplate,
+  InstancePageTemplate
 }

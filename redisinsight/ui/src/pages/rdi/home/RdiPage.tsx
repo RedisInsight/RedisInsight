@@ -15,6 +15,8 @@ import {
   sendEventTelemetry,
   sendPageViewTelemetry
 } from 'uiSrc/telemetry'
+import HomePageTemplate from 'uiSrc/templates/home-page-template'
+import { setTitle } from 'uiSrc/utils'
 import EmptyMessage from './components/EmptyMessage'
 import ConnectionForm from '../connection-form/ConnectionForm'
 import RdiHeader from '../header/RdiHeader'
@@ -26,7 +28,6 @@ const RdiPage = () => {
   const [width, setWidth] = useState(0)
   const [isConnectionFormOpen, setIsConnectionFormOpen] = useState(false)
   const [editInstance, setEditInstance] = useState<RdiInstance | null>(null)
-  const [isPageViewSent, setIsPageViewSent] = useState(false)
 
   const { data, loading, loadingChanging } = useSelector(instancesSelector)
 
@@ -34,20 +35,12 @@ const RdiPage = () => {
 
   useEffect(() => {
     dispatch(fetchInstancesAction())
-  }, [])
 
-  useEffect(() => {
-    if (!isPageViewSent) {
-      sendPageView()
-    }
-  }, [isPageViewSent])
-
-  const sendPageView = () => {
+    setTitle('My RDI instances')
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_INSTANCES_PAGE,
     })
-    setIsPageViewSent(true)
-  }
+  }, [])
 
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)
@@ -116,41 +109,43 @@ const RdiPage = () => {
     ))
 
   return (
-    <EuiPage className={styles.page}>
-      <EuiPageBody component="div">
-        <div className={styles.header}>
-          <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
-        </div>
-        {!isConnectionFormOpen ? (
-          <InstanceList />
-        ) : (
-          <EuiResizableContainer style={{ height: '100%' }}>
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel scrollable={false} initialSize={65} id="instances" minSize="50%" paddingSize="none">
-                  <InstanceList />
-                </EuiResizablePanel>
-                <EuiResizableButton style={{ margin: 0 }} />
-                <EuiResizablePanel
-                  scrollable={false}
-                  initialSize={35}
-                  id="connection-form"
-                  paddingSize="none"
-                  minSize="400px"
-                >
-                  <ConnectionForm
-                    onAddInstance={handleAddInstance}
-                    onCancel={handleCloseConnectionForm}
-                    editInstance={editInstance}
-                    isLoading={loading || loadingChanging}
-                  />
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
-        )}
-      </EuiPageBody>
-    </EuiPage>
+    <HomePageTemplate>
+      <EuiPage className={styles.page}>
+        <EuiPageBody component="div">
+          <div className={styles.header}>
+            <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
+          </div>
+          {!isConnectionFormOpen ? (
+            <InstanceList />
+          ) : (
+            <EuiResizableContainer style={{ height: '100%' }}>
+              {(EuiResizablePanel, EuiResizableButton) => (
+                <>
+                  <EuiResizablePanel scrollable={false} initialSize={65} id="instances" minSize="50%" paddingSize="none">
+                    <InstanceList />
+                  </EuiResizablePanel>
+                  <EuiResizableButton style={{ margin: 0 }} />
+                  <EuiResizablePanel
+                    scrollable={false}
+                    initialSize={35}
+                    id="connection-form"
+                    paddingSize="none"
+                    minSize="400px"
+                  >
+                    <ConnectionForm
+                      onAddInstance={handleAddInstance}
+                      onCancel={handleCloseConnectionForm}
+                      editInstance={editInstance}
+                      isLoading={loading || loadingChanging}
+                    />
+                  </EuiResizablePanel>
+                </>
+              )}
+            </EuiResizableContainer>
+          )}
+        </EuiPageBody>
+      </EuiPage>
+    </HomePageTemplate>
   )
 }
 

@@ -88,3 +88,8 @@ export enum Compatibility {
     TimeSeries = 'time-series'
 }
 
+export enum RedisOverviewPage {
+    DataBase  = 'My Redis databases',
+    Rdi = 'My RDI instances',
+}
+

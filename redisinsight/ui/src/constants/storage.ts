@@ -1,4 +1,5 @@
 enum BrowserStorageItem {
+  homePage = 'homePage',
   instancesCount = 'instancesCount',
   instancesSorting = 'instancesSorting',
   rdiInstancesSorting = 'rdiInstancesSorting',

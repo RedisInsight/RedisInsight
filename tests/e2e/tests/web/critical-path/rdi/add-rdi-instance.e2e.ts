@@ -3,10 +3,15 @@ import { t } from 'testcafe';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { RdiInstance } from '../../../../pageObjects/components/myRedisDatabase/add-rdi-instance';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
+import { commonUrl } from '../../../../helpers/conf';
+import { RedisOverviewPage } from '../../../../helpers/constants';
+import { MyRedisDatabasePage } from '../../../../pageObjects';
 
 const rdiInstancesListPage = new RdiInstancesListPage();
 const browserActions = new BrowserActions();
-export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
+const rdiInstancePage = new RdiInstancePage();
+const myRedisDatabasePage = new MyRedisDatabasePage();
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
@@ -34,10 +39,10 @@ const rdiInstance3: RdiInstance = {
 
 fixture.skip `Rdi instance`
     .meta({ type: 'critical_path' })
-    // it will be removed
     .page(commonUrl)
     .beforeEach(async() => {
         await t.maximizeWindow();
+        await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
 
     })
     .afterEach(async() => {
@@ -89,7 +94,8 @@ test('Verify that sorting on the list of rdi saved when rdi opened', async t => 
     await rdiInstancesListPage.sortByColumn('URL');
     let actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
-    // TODO Open any RDI and go back
+    await rdiInstancesListPage.clickRdiByName(rdiInstance.alias);
+    await t.click(rdiInstancePage.breadcrumbsLink);
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
 });

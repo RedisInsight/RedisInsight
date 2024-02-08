@@ -67,7 +67,7 @@ export class RdiApiRequests {
  */
 export type AddNewRdiParameters = {
     username: string,
-    name?: string,
+    name: string,
     password: string,
     url: string
 };

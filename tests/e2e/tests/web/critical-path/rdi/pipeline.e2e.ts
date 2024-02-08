@@ -1,9 +1,14 @@
+import * as fs from 'fs';
+import { join as joinPath } from 'path';
+import * as path from 'path';
 import { t } from 'testcafe';
 import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import { fileDownloadPath } from '../../../../helpers/conf';
+import { DatabasesActions } from '../../../../common-actions/databases-actions';
 import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
@@ -14,7 +19,14 @@ const rdiInstancePage = new RdiInstancePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const rdiApiRequests = new RdiApiRequests();
 const browserActions = new BrowserActions();
+const databasesActions = new DatabasesActions();
 
+let foundExportedFiles: string[];
+
+const filePathes = {
+    successful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDIPipeline.zip'),
+    unsuccessful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'UnsuccessRDI_Pipeline.zip')
+};
 const dbTableParams: DbTableParameters = {
     tableName: 'rdi',
     columnName: 'id',
@@ -26,6 +38,15 @@ const rdiInstance: AddNewRdiParameters = {
     username: 'username',
     password: 'password'
 };
+
+const dbTableParams: DbTableParameters = {
+    tableName: 'rdi',
+    columnName: 'id',
+    rowValue: 'testId',
+    conditionWhereColumnName: 'name',
+    conditionWhereColumnValue: `${rdiInstance.name}`
+};
+
 const instanceId = 'testId';
 
 //skip the tests until rdi integration is added
@@ -79,4 +100,35 @@ test('Verify that user can deploy pipeline', async() => {
     await t.expect(rdiInstancePage.errorDeployNotification.textContent).contains(errorMessage, 'Pipeline deployment is successful');
 
     await t.click(rdiInstancePage.Toast.toastCloseButton);
+});
+// https://redislabs.atlassian.net/browse/RI-5142
+test
+    .after(async() => {
+        // Delete exported file
+        fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
+        await rdiApiRequests.deleteAllRdiApi();
+    })('Verify that user can download pipeline', async() => {
+        await t
+            .click(rdiInstancePage.exportPipelineIcon)
+            .wait(2000);
+
+        // Verify that user can see “RDI_pipeline” as the default file name
+        foundExportedFiles = await databasesActions.findFilesByFileStarts(fileDownloadPath, 'RDI_pipeline');
+        // Verify that user can export database
+        await t.expect(foundExportedFiles.length).gt(0, 'The Exported file not saved');
+    });
+
+// https://redislabs.atlassian.net/browse/RI-5143
+test('Verify that user can import pipeline', async() => {
+    const expectedText = 'Uploaded';
+    // check success uploading
+    await rdiInstancePage.uploadPipeline(filePathes.successful);
+    await t.click(rdiInstancePage.okUploadPipelineBtn);
+    const updatedText = await MonacoEditor.getTextFromMonaco();
+    await t.expect(updatedText).contains(expectedText, 'config text was not updated');
+    // check unsuccessful uploading
+    await rdiInstancePage.uploadPipeline(filePathes.unsuccessful);
+    const failedText = await rdiInstancePage.failedUploadingPipelineNotification.textContent;
+    await t.expect(failedText).contains('There was a problem with the .zip file');
+    await t.click(rdiInstancePage.closeNotification);
 });

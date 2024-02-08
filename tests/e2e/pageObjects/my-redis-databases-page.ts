@@ -62,7 +62,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     //TEXT INPUTS (also referred to as 'Text fields')
     aliasInput = Selector('[data-testid=alias-input]');
     searchInput = Selector('[data-testid=search-database-list]');
-    importDatabaseInput = Selector('[data-testid=import-databases-input-file]');
+    importDatabaseInput = Selector('[data-testid=import-file-modal-filepicker]');
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
@@ -73,10 +73,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     noResultsFoundText = Selector('div').withExactText('No results matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
     successImportMessage = Selector('[data-testid=result-success]');
-    importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');
+    importDialogTitle = Selector('[data-testid=import-file-modal-title]');
     importResult = Selector('[data-testid^=table-result-]');
     // DIALOG
-    importDbDialog = Selector('[data-testid=import-dbs-dialog]');
+    importDbDialog = Selector('[data-testid=import-file-modal]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');
     partialResultsAccordion = Selector('[data-testid^=partial-results-]');
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');

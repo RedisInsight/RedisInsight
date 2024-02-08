@@ -24,4 +24,11 @@
       text-decoration: underline;
     }
   }
+
+  .actions {
+    :global(.euiIcon) {
+      width: 14px;
+      height: 14px;
+    }
+  }
 }

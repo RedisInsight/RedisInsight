@@ -1,20 +1,23 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
-import { EuiTextColor } from '@elastic/eui'
+import { EuiButtonIcon, EuiTextColor } from '@elastic/eui'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
+
 import { PageNames, Pages } from 'uiSrc/constants'
-import { Nullable } from 'uiSrc/utils'
+import Download from 'uiSrc/pages/rdi/pipeline/components/download/Download'
 import JobsTree from 'uiSrc/pages/rdi/pipeline/components/jobs-tree'
-import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
 import RefreshPipelinePopover from 'uiSrc/pages/rdi/pipeline/components/refresh-pipeline-popover'
+import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
+import UploadModal from 'uiSrc/pages/rdi/pipeline/components/upload-modal/UploadModal'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 enum RdiPipelineTabs {
   Prepare = PageNames.rdiPipelinePrepare,
   Config = PageNames.rdiPipelineConfig,
-  Jobs = PageNames.rdiPipelineJobs,
+  Jobs = PageNames.rdiPipelineJobs
 }
 
 interface INavItem {
@@ -28,13 +31,13 @@ const defaultNavList: INavItem[] = [
   {
     id: RdiPipelineTabs.Prepare,
     title: 'Prepare',
-    fileName: 'Select pipeline type',
+    fileName: 'Select pipeline type'
   },
   {
     id: RdiPipelineTabs.Config,
     title: 'Configuration',
     fileName: 'Target connection details',
-    isShowLoader: true,
+    isShowLoader: true
   }
 ]
 
@@ -118,9 +121,21 @@ const Navigation = () => {
         <EuiTextColor component="div">Pipeline Management</EuiTextColor>
         <div className={styles.actions}>
           <RefreshPipelinePopover />
+          <UploadModal>
+            <EuiButtonIcon
+              size="xs"
+              iconSize="s"
+              iconType="importAction"
+              aria-labelledby="Upload pipeline button"
+              data-testid="upload-pipeline-btn"
+            />
+          </UploadModal>
+          <Download />
         </div>
       </div>
-      <div className={styles.tabs} data-testid="rdi-pipeline-tabs">{renderTabs()}</div>
+      <div className={styles.tabs} data-testid="rdi-pipeline-tabs">
+        {renderTabs()}
+      </div>
     </div>
   )
 }

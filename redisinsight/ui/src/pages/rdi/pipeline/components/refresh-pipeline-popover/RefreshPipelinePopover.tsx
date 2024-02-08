@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiButtonIcon,
@@ -11,10 +11,13 @@ import {
   EuiPopover,
   EuiOutsideClickDetector,
 } from '@elastic/eui'
+import { useFormikContext } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { IPipeline } from 'uiSrc/slices/interfaces'
+import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -23,12 +26,21 @@ const RefreshPipelinePopover = () => {
 
   const { loading, data } = useSelector(rdiPipelineSelector)
 
+  const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
+
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
   const dispatch = useDispatch()
 
   const handleRefreshClick = () => {
     setIsPopoverOpen(false)
-    dispatch(fetchRdiPipeline(rdiInstanceId))
+    dispatch(
+      fetchRdiPipeline(rdiInstanceId, (pipeline: Nullable<IPipeline>) => {
+        resetForm()
+        setFieldValue('config', pipeline?.config)
+        setFieldValue('jobs', pipeline?.jobs)
+      })
+    )
   }
 
   const handleRefreshWarning = () => {
@@ -37,7 +49,7 @@ const RefreshPipelinePopover = () => {
       event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
       eventData: {
         id: rdiInstanceId,
-        jobsNumber: data?.jobs?.length || 'none',
+        jobsNumber: data?.jobs?.length || 'none'
       }
     })
   }

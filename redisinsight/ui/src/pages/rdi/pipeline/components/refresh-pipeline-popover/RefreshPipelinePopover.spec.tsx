@@ -11,13 +11,26 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
     loading: false,
     data: {
       jobs: [{ name: 'job1', value: 'value' }]
-    },
+    }
+  })
+}))
+
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      config: 'value',
+      jobs: [
+        { name: 'job1', value: 'value' },
+        { name: 'job2', value: 'value' }
+      ]
+    }
   })
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn(),
+  sendEventTelemetry: jest.fn()
 }))
 
 let store: typeof mockedStore
@@ -73,7 +86,7 @@ describe('RefreshPipelinePopover', () => {
       event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
       eventData: {
         id: 'rdiInstanceId',
-        jobsNumber: 1,
+        jobsNumber: 1
       }
     })
   })

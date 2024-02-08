@@ -1,7 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { useFormikContext } from 'formik'
 
+import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import JobsTree, { IProps } from './JobsTree'
 
@@ -11,9 +12,15 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
-    error: '',
-    data: null,
-  }),
+    error: ''
+  })
+}))
+
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: null
+  })
 }))
 
 describe('JobsTree', () => {
@@ -24,10 +31,9 @@ describe('JobsTree', () => {
   it('should render loader', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-      error: '',
-      data: null,
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+      error: ''
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
     render(<JobsTree {...instance(mockedProps)} />)
 
@@ -37,10 +43,19 @@ describe('JobsTree', () => {
   it('should render proper count of jobs', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
-      error: '',
-      data: { jobs: [{ name: 'job1' }, { name: 'job2' }] },
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+      error: ''
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    const useFormikContextMock = jest.fn().mockReturnValue({
+      values: {
+        jobs: [
+          { name: 'job1', value: 'value' },
+          { name: 'job2', value: 'value' }
+        ]
+      }
+    });
+    (useFormikContext as jest.Mock).mockImplementation(useFormikContextMock)
 
     render(<JobsTree {...instance(mockedProps)} />)
 
@@ -51,22 +66,30 @@ describe('JobsTree', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
       error: '',
-      data: { jobs: [] },
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    const useFormikContextMock = jest.fn().mockReturnValue({
+      values: { jobs: [] }
+    });
+    (useFormikContext as jest.Mock).mockImplementation(useFormikContextMock)
 
     render(<JobsTree {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('')
   })
 
-  it('should call ', () => {
+  it('should call selected tab', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
       error: '',
-      data: { jobs: [{ name: 'job1' }] },
-    })
-    rdiPipelineSelector.mockImplementation(rdiPipelineSelectorMock)
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    const useFormikContextMock = jest.fn().mockReturnValue({
+      values: { jobs: [{ name: 'job1' }] }
+    });
+    (useFormikContext as jest.Mock).mockImplementation(useFormikContextMock)
 
     const mockOnSelectedTab = jest.fn()
 

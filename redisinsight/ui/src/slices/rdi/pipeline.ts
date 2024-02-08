@@ -10,7 +10,7 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: IStateRdiPipeline = {
-  loading: false,
+  loading: true,
   error: '',
   data: null,
   isDeployPopoverOpen: false,

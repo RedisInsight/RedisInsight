@@ -10,11 +10,12 @@ import {
   EuiToolTip,
   EuiButtonIcon,
 } from '@elastic/eui'
+import { useFormikContext } from 'formik'
 import cx from 'classnames'
 import { sortBy } from 'lodash'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { IRdiPipelineJob } from 'uiSrc/slices/interfaces'
+import { IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -28,7 +29,9 @@ const JobsTree = (props: IProps) => {
 
   const [isExpanded, setIsExpanded] = useState(true)
 
-  const { loading, data } = useSelector(rdiPipelineSelector)
+  const { loading } = useSelector(rdiPipelineSelector)
+
+  const { values } = useFormikContext<IPipeline>()
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) => (
     jobs.map(({ name }) => (
@@ -96,7 +99,7 @@ const JobsTree = (props: IProps) => {
           {'Jobs '}
           {!loading && (
             <EuiTextColor className={styles.jobsCount} component="span" data-testid="rdi-jobs-count">
-              {data?.jobs.length ? `(${data?.jobs.length})` : ''}
+              {values?.jobs?.length ? `(${values?.jobs?.length})` : ''}
             </EuiTextColor>
           )}
           {loading && <EuiLoadingSpinner data-testid="rdi-nav-jobs-loader" className={styles.loader} />}
@@ -129,7 +132,7 @@ const JobsTree = (props: IProps) => {
       className={styles.wrapper}
     >
       {/* // TODO confirm with RDI team and put sort in separate component */}
-      {renderJobsList(sortBy(data?.jobs ?? [], ['name']))}
+      {renderJobsList(sortBy(values?.jobs ?? [], ['name']))}
     </EuiAccordion>
   )
 }

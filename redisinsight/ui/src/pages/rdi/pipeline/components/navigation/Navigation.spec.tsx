@@ -16,6 +16,19 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      config: 'value',
+      jobs: [
+        { name: 'job1', value: 'value' },
+        { name: 'job2', value: 'value' }
+      ]
+    }
+  })
+}))
+
 describe('Navigation', () => {
   it('should render', () => {
     expect(render(<Navigation />)).toBeTruthy()

@@ -25,7 +25,7 @@ import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void
+  closePanel: (isCancelled?: boolean) => void
 }
 
 export interface IZsetMemberState {
@@ -41,7 +41,7 @@ export const INITIAL_ZSET_MEMBER_STATE: IZsetMemberState = {
 }
 
 const AddZsetMembers = (props: Props) => {
-  const { onCancel } = props
+  const { closePanel } = props
   const dispatch = useDispatch()
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const [members, setMembers] = useState<IZsetMemberState[]>([{ ...INITIAL_ZSET_MEMBER_STATE }])
@@ -159,7 +159,7 @@ const AddZsetMembers = (props: Props) => {
         score: toNumber(item.score),
       })),
     }
-    dispatch(fetchAddZSetMembers(data, onCancel))
+    dispatch(fetchAddZSetMembers(data, closePanel))
   }
 
   const isClearDisabled = (item: IZsetMemberState): boolean =>
@@ -240,7 +240,7 @@ const AddZsetMembers = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

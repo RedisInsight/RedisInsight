@@ -58,7 +58,7 @@ const SetDetails = (props: Props) => {
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddSetMembers onCancel={closeAddItemPanel} />
+            <AddSetMembers closePanel={closeAddItemPanel} />
           </div>
         )}
       </div>

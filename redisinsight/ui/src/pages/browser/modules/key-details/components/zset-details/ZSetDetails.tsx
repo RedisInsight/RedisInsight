@@ -59,7 +59,7 @@ const ZSetDetails = (props: Props) => {
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddZsetMembers onCancel={closeAddItemPanel} />
+            <AddZsetMembers closePanel={closeAddItemPanel} />
           </div>
         )}
       </div>

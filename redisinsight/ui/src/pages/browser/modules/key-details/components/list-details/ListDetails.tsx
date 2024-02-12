@@ -75,12 +75,12 @@ const ListDetails = (props: Props) => {
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddListElements onCancel={closeAddItemPanel} />
+            <AddListElements closePanel={closeAddItemPanel} />
           </div>
         )}
         {isRemoveItemPanelOpen && (
           <div className={cx('formFooterBar', styles.contentActive)}>
-            <RemoveListElements onCancel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
+            <RemoveListElements closePanel={closeRemoveItemPanel} onRemoveKey={onRemoveKey} />
           </div>
         )}
       </div>

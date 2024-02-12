@@ -242,7 +242,7 @@ export const autoFillFormDetails = (
           }
 
           case InstanceType.Standalone: {
-            return ({
+            return (getFormValues({
               name: details.host || initialValues.name || 'localhost:6379',
               host: details.hostname || initialValues.host || 'localhost',
               port: `${details.port || initialValues.port || 9443}`,
@@ -251,14 +251,14 @@ export const autoFillFormDetails = (
               tls: details.protocol === 'rediss',
               ssh: false,
               sshPassType: SshPassType.Password
-            })
+            }))
           }
           default: {
             return {}
           }
         }
       }
-      setInitialValues(getFormValues(getUpdatedInitialValues()))
+      setInitialValues(getUpdatedInitialValues())
       /*
        * autofill was successfull so return true
        */

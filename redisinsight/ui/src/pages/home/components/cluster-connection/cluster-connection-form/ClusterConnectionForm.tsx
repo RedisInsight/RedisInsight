@@ -136,6 +136,7 @@ const ClusterConnectionForm = (props: Props) => {
     initialValues,
     validate,
     enableReinitialize: true,
+    validateOnMount: true,
     validateOnBlur: false,
     onSubmit: (values) => {
       onSubmit({ ...values, port: parseInt(values.port) })

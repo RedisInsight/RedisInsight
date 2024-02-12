@@ -31,9 +31,11 @@ const SetDetails = (props: Props) => {
     onOpenAddItemPanel()
   }
 
-  const closeAddItemPanel = () => {
+  const closeAddItemPanel = (isCancelled?: boolean) => {
     setIsAddItemPanelOpen(false)
-    onCloseAddItemPanel()
+    if (isCancelled) {
+      onCloseAddItemPanel()
+    }
   }
 
   const Actions = ({ width }: { width: number }) => (
@@ -56,7 +58,7 @@ const SetDetails = (props: Props) => {
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddSetMembers onCancel={closeAddItemPanel} />
+            <AddSetMembers closePanel={closeAddItemPanel} />
           </div>
         )}
       </div>

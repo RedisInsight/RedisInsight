@@ -47,11 +47,12 @@ const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, 
 const JobsTree = (props: IProps) => {
   const { onSelectedTab, path } = props
 
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [accordionState, setAccordionState] = useState<'closed' | 'open'>('open')
   const [editJobName, setEditJobName] = useState<Nullable<string>>(null)
   const [editJobIndex, setEditJobIndex] = useState<Nullable<number>>(null)
   const [deleteJobIndex, setDeleteJobIndex] = useState<Nullable<number>>(null)
   const [isNewJob, setIsNewJob] = useState(false)
+  const [hideTooltip, setHideTooltip] = useState(false)
 
   const { loading } = useSelector(rdiPipelineSelector)
 
@@ -81,6 +82,8 @@ const JobsTree = (props: IProps) => {
     onSelectedTab(jobs.length <= 0 ? PageNames.rdiPipelineConfig : jobs[0].name)
   }
 
+  const handleToggleAccordion = (isOpen: boolean) => setAccordionState(isOpen ? 'open' : 'closed')
+
   const jobName = (name: string, index: number) => (
     <>
       <EuiFlexItem
@@ -92,7 +95,7 @@ const JobsTree = (props: IProps) => {
         {name}
       </EuiFlexItem>
       <EuiFlexItem grow={false} className={styles.actions} data-testid={`rdi-nav-job-actions-${name}`}>
-        <EuiToolTip title="Delete job" position="top" display="inlineBlock" anchorClassName="flex-row">
+        <EuiToolTip content={deleteJobIndex === null ? 'Delete job' : null} position="top" display="inlineBlock" anchorClassName="flex-row">
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={<EuiText size="s">Changes will not be applied until the pipeline is deployed.</EuiText>}
@@ -104,7 +107,7 @@ const JobsTree = (props: IProps) => {
             }}
           />
         </EuiToolTip>
-        <EuiToolTip title="Edit job file name" position="top" display="inlineBlock" anchorClassName="flex-row">
+        <EuiToolTip content="Edit job file name" position="top" display="inlineBlock" anchorClassName="flex-row">
           <EuiButtonIcon
             iconType="pencil"
             onClick={() => {
@@ -202,7 +205,7 @@ const JobsTree = (props: IProps) => {
       <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
         <EuiFlexItem grow={false}>
           <EuiIcon
-            type={isExpanded ? 'folderOpen' : 'folderClosed'}
+            type={accordionState === 'open' ? 'folderOpen' : 'folderClosed'}
             className={styles.folderIcon}
             data-test-subj="jobs-folder-icon"
           />
@@ -224,19 +227,21 @@ const JobsTree = (props: IProps) => {
     <EuiAccordion
       id="rdi-pipeline-jobs-nav"
       buttonContent={folder()}
-      initialIsOpen={isExpanded}
-      onToggle={(isOpen: boolean) => setIsExpanded(isOpen)}
+      onToggle={handleToggleAccordion}
       className={styles.wrapper}
+      forceState={accordionState}
       extraAction={(
-        <EuiToolTip title="Add a job file" position="top" display="inlineBlock" anchorClassName="flex-row">
+        <EuiToolTip content={!hideTooltip ? 'Add a job file' : null} position="top" display="inlineBlock" anchorClassName="flex-row">
           <EuiButtonIcon
             iconType="plus"
             onClick={() => {
-              setIsExpanded(true)
+              setAccordionState('open')
               setFieldValue('jobs', [{ name: '', value: '' }, ...values.jobs])
               setEditJobIndex(0)
               setIsNewJob(true)
             }}
+            onMouseEnter={() => { setHideTooltip(false) }}
+            onMouseLeave={() => { setHideTooltip(true) }}
             aria-label="add new job file"
             data-testid="add-new-job"
           />

@@ -191,7 +191,7 @@ export class DatabaseService {
           database.provider = getHostingProvider(database.host);
         }
 
-        await this.redisClientStorage.remove(id);
+        await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       }
 
       database = await this.repository.update(id, database);
@@ -278,7 +278,7 @@ export class DatabaseService {
     try {
       await this.repository.delete(id);
       // todo: rethink
-      await this.redisClientStorage.remove(id);
+      await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       this.logger.log('Succeed to delete database instance.');
 
       this.analytics.sendInstanceDeletedEvent(database);

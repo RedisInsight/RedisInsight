@@ -39,7 +39,13 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
   private async getClusterNodesInfo(client: RedisClient, nodes): Promise<ClusterNodeDetails[]> {
     const clientNodes = await client.nodes();
     return await Promise.all(nodes.map((node) => {
-      const clientNode = clientNodes.find((n) => n.options?.host === node.host && n.options?.port === node.port);
+      const clientNode = clientNodes.find(
+        (n) => (
+          n.options?.host === node.host && n.options?.port === node.port
+        ) || (
+          n.options?.natHost === node.host && n.options?.natPort === node.port
+        ),
+      );
 
       if (clientNode) {
         return this.getClusterNodeInfo(clientNode, node);

@@ -84,6 +84,7 @@
     "sqlite3": "5.1.6",
     "ssh2": "^1.14.0",
     "swagger-ui-express": "^4.1.4",
+    "tunnel-ssh": "^5.1.2",
     "typeorm": "^0.3.9",
     "uuid": "^8.3.2",
     "winston": "^3.3.3",

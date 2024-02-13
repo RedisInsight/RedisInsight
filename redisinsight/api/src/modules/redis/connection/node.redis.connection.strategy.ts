@@ -1,7 +1,6 @@
 import { RedisConnectionStrategy } from 'src/modules/redis/connection/redis.connection.strategy';
 import serverConfig from 'src/utils/config';
-import { InternalServerErrorException } from '@nestjs/common';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, Endpoint } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import {
   RedisClientOptions, createClient, createCluster, RedisClusterOptions,
@@ -9,19 +8,21 @@ import {
 import { isNumber } from 'lodash';
 import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
 import { ConnectionOptions } from 'tls';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ClusterNodeRedisClient, RedisClient } from 'src/modules/redis/client';
 import { StandaloneNodeRedisClient } from 'src/modules/redis/client/node-redis/standalone.node-redis.client';
+import { SshTunnel } from 'src/modules/ssh/models/ssh-tunnel';
+import { discoverClusterNodes } from 'src/modules/redis/utils';
 
 const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
 
 export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
   // common retry strategy
-  private retryStrategy = (times: number): number => {
+  private retryStrategy = (times: number): number | boolean => {
     if (times < REDIS_CLIENTS_CONFIG.retryTimes) {
       return Math.min(times * REDIS_CLIENTS_CONFIG.retryDelay, 2000);
     }
-    return undefined;
+
+    return false;
   };
 
   // disable function such as retry or checkIdentity
@@ -57,15 +58,14 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
         port,
         connectTimeout: timeout,
         ...tlsOptions,
+        reconnectStrategy: options?.useRetry ? this.retryStrategy.bind(this) : false,
       },
       username,
       password,
       database: isNumber(clientMetadata.db) ? clientMetadata.db : db,
       name: options?.connectionName
         || RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
-      // showFriendlyErrorStack: true,
       // maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
-      // retryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
     };
   }
 
@@ -89,20 +89,11 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
           host: database.host,
           port: database.port,
         },
-      }].concat(
-        database.nodes
-        && database.nodes
-          .filter((node) => node.host !== database.host)
-          .map((node) => ({
-            socket: {
-              host: node.host,
-              port: node.port,
-            },
-          })),
-      ),
+      }],
+      // TODO: node-redis issue
+      // create a bug. reconnectStrategy has no effect (both in defaults.socket or rootNodes[].socket)
       defaults: { ...config },
       maxCommandRedirections: database.nodes ? (database.nodes.length * 16) : 16, // TODO: Temporary solution
-      // clusterRetryStrategy: options.useRetry ? this.retryStrategy : this.dummyFn,
     };
   }
 
@@ -146,7 +137,7 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     let config: ConnectionOptions;
     config = {
       rejectUnauthorized: database.verifyServerCert,
-      checkServerIdentity: this.dummyFn,
+      checkServerIdentity: this.dummyFn.bind(this),
       servername: database.tlsServername || undefined,
     };
     if (database.caCert) {
@@ -176,64 +167,42 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<RedisClient> {
     this.logger.debug('Creating node-redis standalone client');
 
-    let tnl;
+    let tnl: SshTunnel;
 
     try {
       const config = await this.getRedisOptions(clientMetadata, database, options);
-      //
-      // if (database.ssh) {
-      //   tnl = await this.sshTunnelProvider.createTunnel(database);
-      // }
 
-      return await new Promise((resolve, reject) => {
-        try {
-          // if (tnl) {
-          //   tnl.on('error', (error) => {
-          //     reject(error);
-          //   });
-          //
-          //   tnl.on('close', () => {
-          //     reject(new TunnelConnectionLostException());
-          //   });
-          //
-          //   config.host = tnl.serverAddress.host;
-          //   config.port = tnl.serverAddress.port;
-          // }
+      if (database.ssh) {
+        tnl = await this.sshTunnelProvider.createTunnel(database, database.sshOptions);
+        config.socket = {
+          ...config.socket,
+          host: tnl.serverAddress.host,
+          port: tnl.serverAddress.port,
+        };
+      }
 
-          const connection = createClient({
-            ...config,
-            // cover cases when we are connecting to sentinel as to standalone to discover master groups
-            database: config.database > 0 && !database.sentinelMaster ? config.database : 0,
-          })
-            .on('error', (e): void => {
-              this.logger.error('Failed connection to the redis database.', e);
-              reject(e);
-            });
+      const client = await createClient({
+        ...config,
+        // cover cases when we are connecting to sentinel as to standalone to discover master groups
+        database: config.database > 0 && !database.sentinelMaster ? config.database : 0,
+      })
+        .on('error', (e): void => {
+          this.logger.error('Failed to connect to the redis database.', e);
+        })
+        .on('end', () => {
+          tnl?.close?.();
+        })
+        .connect();
 
-          connection.connect()
-            .then(() => resolve(new StandaloneNodeRedisClient(
-              clientMetadata,
-              connection,
-              {
-                host: database.host,
-                port: database.port,
-                connectTimeout: database.timeout,
-              },
-            )));
-
-          //
-          // connection.on('end', (): void => {
-          //   this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-          //   reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
-          // });
-          // connection.on('ready', (): void => {
-          //   this.logger.log('Successfully connected to the redis database');
-          //   resolve(new IoredisClient(clientMetadata, connection));
-          // });
-        } catch (e) {
-          reject(e);
-        }
-      });
+      return new StandaloneNodeRedisClient(
+        clientMetadata,
+        client,
+        {
+          host: database.host,
+          port: database.port,
+          connectTimeout: database.timeout,
+        },
+      );
     } catch (e) {
       tnl?.close?.();
       throw e;
@@ -248,37 +217,71 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClient> {
-    const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+    let tnls: SshTunnel[] = [];
+    let standaloneClient: RedisClient;
 
-    if (database.ssh) {
-      throw new Error('SSH is not supported for cluster databases.');
-    }
+    try {
+      const config = await this.getRedisClusterOptions(clientMetadata, database, options);
 
-    return new Promise((resolve, reject) => {
-      try {
-        const connection = createCluster(config);
-        connection.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis oss cluster', e);
-          reject(e);
+      standaloneClient = await this.createStandaloneClient(clientMetadata, database, options);
+
+      config.rootNodes = (await discoverClusterNodes(standaloneClient)).map((rootNode) => ({
+        socket: rootNode,
+      }));
+
+      await standaloneClient.disconnect();
+
+      if (database.ssh) {
+        tnls = await Promise.all(
+          config.rootNodes.map((node) => this.sshTunnelProvider.createTunnel(
+            node.socket as Endpoint,
+            database.sshOptions,
+          )),
+        );
+
+        // create NAT map
+        config.nodeAddressMap = {};
+        tnls.forEach((tnl) => {
+          config.nodeAddressMap[`${tnl.options.targetHost}:${tnl.options.targetPort}`] = {
+            host: tnl.serverAddress.host,
+            port: tnl.serverAddress.port,
+          };
         });
-        connection.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
-        });
-        connection.connect()
-          .then(() => resolve(new ClusterNodeRedisClient(
-            clientMetadata,
-            connection,
-            {
-              host: database.host,
-              port: database.port,
-              connectTimeout: database.timeout,
-            },
-          )));
-      } catch (e) {
-        reject(e);
+
+        // change root nodes
+        config.rootNodes = tnls.map((tnl) => ({ socket: tnl.serverAddress }));
       }
-    });
+
+      const client = createCluster(config);
+      client.on('error', (e): void => {
+        this.logger.error('Failed connection to the redis oss cluster', e);
+      });
+      // TODO: node-redis issue
+      // currently is not supported. https://github.com/redis/node-redis/issues/1855
+      // client.on('end', (): void => {
+      //   this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+      // });
+
+      // TODO: node-redis issue
+      // connect() doesn't return the client instance
+      await client.connect();
+
+      return new ClusterNodeRedisClient(
+        clientMetadata,
+        client,
+        {
+          host: database.host,
+          port: database.port,
+          connectTimeout: database.timeout,
+        },
+      );
+    } catch (e) {
+      tnls?.forEach((tnl) => tnl?.close?.());
+      // TODO: node-redis issue
+      // Comment until resolved unhandled error during disconnection
+      // standaloneClient?.disconnect().catch();
+      throw e;
+    }
   }
 
   /**

@@ -163,15 +163,12 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
 
       if (database.ssh) {
         tnl = await this.sshTunnelProvider.createTunnel(database, database.sshOptions);
+        config.host = tnl.serverAddress.host;
+        config.port = tnl.serverAddress.port;
       }
 
       return await new Promise((resolve, reject) => {
         try {
-          if (tnl) {
-            config.host = tnl.serverAddress.host;
-            config.port = tnl.serverAddress.port;
-          }
-
           const connection = new Redis({
             ...config,
             // cover cases when we are connecting to sentinel as to standalone to discover master groups
@@ -182,7 +179,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             reject(e);
           });
           connection.on('end', (): void => {
-            this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
             tnl?.close?.();
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
@@ -260,8 +257,8 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
           });
           cluster.on('end', (): void => {
+            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
             tnls.forEach((tnl) => tnl?.close?.());
-            this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           cluster.on('ready', (): void => {

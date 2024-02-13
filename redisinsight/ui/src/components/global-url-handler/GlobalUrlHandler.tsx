@@ -64,7 +64,7 @@ const GlobalUrlHandler = () => {
           search: ''
         })
       }
-    } catch (_e) {
+    } catch {
       // do nothing
     }
   }, [search])

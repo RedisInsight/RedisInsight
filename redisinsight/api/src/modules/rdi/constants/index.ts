@@ -3,4 +3,5 @@ export enum RdiUrl {
   GetPipeline = '/pipeline',
   DryRunJob = '/dry-run',
   Deploy = '/deploy',
+  TestConnections = '/test-connections',
 }

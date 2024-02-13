@@ -6,6 +6,7 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiLoadingSpinner,
+  EuiText,
   EuiTextColor,
   EuiToolTip
 } from '@elastic/eui'
@@ -15,8 +16,11 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
+import { PageNames } from 'uiSrc/constants'
+import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
 import { IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
@@ -26,13 +30,15 @@ export interface IProps {
   path: string
 }
 
-const validateJobName = (jobName: Nullable<string>, jobs: IRdiPipelineJob[]) => {
+const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, jobs: IRdiPipelineJob[]) => {
+  const currentJobName = jobs[jobIndex ?? 0]?.name
+
   if (!jobName) {
     return { title: '', text: 'job name is required' }
   }
 
-  if (jobs.some((job) => job.name === jobName)) {
-    return { title: '', text: 'job name must be unique' }
+  if (jobs.filter((job) => job.name !== currentJobName).some((job) => job.name === jobName)) {
+    return { title: '', text: 'job name is already in use' }
   }
 
   return undefined
@@ -44,6 +50,7 @@ const JobsTree = (props: IProps) => {
   const [isExpanded, setIsExpanded] = useState(true)
   const [editJobName, setEditJobName] = useState<Nullable<string>>(null)
   const [editJobIndex, setEditJobIndex] = useState<Nullable<number>>(null)
+  const [deleteJobIndex, setDeleteJobIndex] = useState<Nullable<number>>(null)
   const [isNewJob, setIsNewJob] = useState(false)
 
   const { loading } = useSelector(rdiPipelineSelector)
@@ -51,6 +58,28 @@ const JobsTree = (props: IProps) => {
   const { values, setFieldValue } = useFormikContext<IPipeline>()
 
   const isEditing = (index: number) => editJobIndex === index
+
+  const deleteJob = (index: Nullable<number>) =>
+    setFieldValue(
+      'jobs',
+      values.jobs.filter((_, i) => i !== index)
+    )
+
+  const handleDeleteClick = () => {
+    deleteJob(deleteJobIndex)
+    setDeleteJobIndex(null)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.RDI_PIPELINE_JOB_DELETED,
+      eventData: {
+        jobName: deleteJobIndex !== null ? values.jobs[deleteJobIndex]?.name : null
+      }
+    })
+
+    // if the last job is deleted, select the pipeline config tab
+    const jobs = values.jobs.filter((_, i) => i !== deleteJobIndex)
+    onSelectedTab(jobs.length <= 0 ? PageNames.rdiPipelineConfig : jobs[0].name)
+  }
 
   const jobName = (name: string, index: number) => (
     <>
@@ -62,7 +91,19 @@ const JobsTree = (props: IProps) => {
       >
         {name}
       </EuiFlexItem>
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={false} className={styles.actions} data-testid={`rdi-nav-job-actions-${name}`}>
+        <EuiToolTip title="Delete job" position="top" display="inlineBlock" anchorClassName="flex-row">
+          <ConfirmationPopover
+            title={`Delete ${name}`}
+            body={<EuiText size="s">Changes will not be applied until the pipeline is deployed.</EuiText>}
+            confirmButtonText="Delete"
+            onConfirm={handleDeleteClick}
+            button={<EuiButtonIcon iconType="trash" aria-label="delete job" data-testid={`delete-job-${name}`} />}
+            onButtonClick={() => {
+              setDeleteJobIndex(index)
+            }}
+          />
+        </EuiToolTip>
         <EuiToolTip title="Edit job file name" position="top" display="inlineBlock" anchorClassName="flex-row">
           <EuiButtonIcon
             iconType="pencil"
@@ -73,7 +114,7 @@ const JobsTree = (props: IProps) => {
               setIsNewJob(false)
             }}
             aria-label="edit job file name"
-            data-testid="edit-job-name"
+            data-testid={`edit-job-name-${name}`}
           />
         </EuiToolTip>
       </EuiFlexItem>
@@ -89,6 +130,13 @@ const JobsTree = (props: IProps) => {
           setEditJobIndex(null)
           setEditJobName(null)
 
+          sendEventTelemetry({
+            event: TelemetryEvent.RDI_PIPELINE_JOB_CREATED,
+            eventData: {
+              jobName: editJobName
+            }
+          })
+
           if (editJobName) {
             onSelectedTab(editJobName)
           }
@@ -98,17 +146,14 @@ const JobsTree = (props: IProps) => {
           setEditJobName(null)
 
           if (isNewJob) {
-            setFieldValue(
-              'jobs',
-              values.jobs.filter((_, i) => i !== index)
-            )
+            deleteJob(index)
           }
         }}
-        isDisabled={!!validateJobName(editJobName, values.jobs)}
-        disabledTooltipText={validateJobName(editJobName, values.jobs)}
+        isDisabled={!!validateJobName(editJobName, editJobIndex, values.jobs)}
+        disabledTooltipText={validateJobName(editJobName, editJobIndex, values.jobs)}
         isLoading={loading}
         declineOnUnmount={false}
-        controlsClassName={styles.controls}
+        controlsClassName={styles.inputControls}
         formComponentType="div"
       >
         <EuiFieldText
@@ -187,6 +232,7 @@ const JobsTree = (props: IProps) => {
           <EuiButtonIcon
             iconType="plus"
             onClick={() => {
+              setIsExpanded(true)
               setFieldValue('jobs', [{ name: '', value: '' }, ...values.jobs])
               setEditJobIndex(0)
               setIsNewJob(true)

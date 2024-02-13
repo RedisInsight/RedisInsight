@@ -48,13 +48,13 @@ describe('RefreshPipelinePopover', () => {
   it('should open confirmation message', async () => {
     render(<RefreshPipelinePopover />)
 
-    expect(screen.queryByTestId('refresh-pipeline-apply-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('confirm-btn')).not.toBeInTheDocument()
 
     await act(() => {
       fireEvent.click(screen.getByTestId('refresh-pipeline-btn'))
     })
 
-    expect(screen.queryByTestId('refresh-pipeline-apply-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('confirm-btn')).toBeInTheDocument()
   })
 
   it('should call proper actions', async () => {
@@ -65,7 +65,7 @@ describe('RefreshPipelinePopover', () => {
     })
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('refresh-pipeline-apply-btn'))
+      fireEvent.click(screen.getByTestId('confirm-btn'))
     })
 
     const expectedActions = [getPipeline()]

@@ -8,7 +8,8 @@ import {
   EuiLoadingSpinner,
   EuiText,
   EuiTextColor,
-  EuiToolTip
+  EuiToolTip,
+  keys
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useFormikContext } from 'formik'
@@ -82,6 +83,24 @@ const JobsTree = (props: IProps) => {
     onSelectedTab(jobs.length <= 0 ? PageNames.rdiPipelineConfig : jobs[0].name)
   }
 
+  const handleApplyJobName = () => {
+    setFieldValue(`jobs.${editJobIndex}.name`, editJobName)
+    setEditJobIndex(null)
+    setEditJobName(null)
+    setIsNewJob(false)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.RDI_PIPELINE_JOB_CREATED,
+      eventData: {
+        jobName: editJobName
+      }
+    })
+
+    if (editJobName) {
+      onSelectedTab(editJobName)
+    }
+  }
+
   const handleToggleAccordion = (isOpen: boolean) => setAccordionState(isOpen ? 'open' : 'closed')
 
   const jobName = (name: string, index: number) => (
@@ -95,7 +114,12 @@ const JobsTree = (props: IProps) => {
         {name}
       </EuiFlexItem>
       <EuiFlexItem grow={false} className={styles.actions} data-testid={`rdi-nav-job-actions-${name}`}>
-        <EuiToolTip content={deleteJobIndex === null ? 'Delete job' : null} position="top" display="inlineBlock" anchorClassName="flex-row">
+        <EuiToolTip
+          content={deleteJobIndex === null ? 'Delete job' : null}
+          position="top"
+          display="inlineBlock"
+          anchorClassName="flex-row"
+        >
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={<EuiText size="s">Changes will not be applied until the pipeline is deployed.</EuiText>}
@@ -128,28 +152,14 @@ const JobsTree = (props: IProps) => {
     <EuiFlexItem className={styles.inputContainer} data-testid={`rdi-nav-job-edit-${name}`}>
       <InlineItemEditor
         controlsPosition="right"
-        onApply={() => {
-          setFieldValue(`jobs.${index}.name`, editJobName)
-          setEditJobIndex(null)
-          setEditJobName(null)
-
-          sendEventTelemetry({
-            event: TelemetryEvent.RDI_PIPELINE_JOB_CREATED,
-            eventData: {
-              jobName: editJobName
-            }
-          })
-
-          if (editJobName) {
-            onSelectedTab(editJobName)
-          }
-        }}
+        onApply={handleApplyJobName}
         onDecline={() => {
           setEditJobIndex(null)
           setEditJobName(null)
 
           if (isNewJob) {
             deleteJob(index)
+            setIsNewJob(false)
           }
         }}
         isDisabled={!!validateJobName(editJobName, editJobIndex, values.jobs)}
@@ -167,6 +177,11 @@ const JobsTree = (props: IProps) => {
           autoComplete="off"
           value={editJobName ?? ''}
           placeholder="Enter job name"
+          onKeyDown={(e) => {
+            if (e.key === keys.ENTER && !validateJobName(editJobName, editJobIndex, values.jobs)) {
+              handleApplyJobName()
+            }
+          }}
           onChange={(e) => {
             setEditJobName(e.target.value)
           }}
@@ -231,7 +246,12 @@ const JobsTree = (props: IProps) => {
       className={styles.wrapper}
       forceState={accordionState}
       extraAction={(
-        <EuiToolTip content={!hideTooltip ? 'Add a job file' : null} position="top" display="inlineBlock" anchorClassName="flex-row">
+        <EuiToolTip
+          content={!hideTooltip ? 'Add a job file' : null}
+          position="top"
+          display="inlineBlock"
+          anchorClassName="flex-row"
+        >
           <EuiButtonIcon
             iconType="plus"
             onClick={() => {
@@ -240,8 +260,13 @@ const JobsTree = (props: IProps) => {
               setEditJobIndex(0)
               setIsNewJob(true)
             }}
-            onMouseEnter={() => { setHideTooltip(false) }}
-            onMouseLeave={() => { setHideTooltip(true) }}
+            onMouseEnter={() => {
+              setHideTooltip(false)
+            }}
+            onMouseLeave={() => {
+              setHideTooltip(true)
+            }}
+            disabled={isNewJob}
             aria-label="add new job file"
             data-testid="add-new-job"
           />

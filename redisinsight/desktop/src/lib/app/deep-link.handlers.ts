@@ -22,7 +22,7 @@ export const deepLinkHandler = async (from?: string): Promise<undefined | IParse
           break
         default:
           return {
-            from: encodeURIComponent(from),
+            from,
             target: url.query?.target || '_self',
             initialPage: url.query?.initialPage,
           } as IParsedDeepLink

@@ -14,6 +14,7 @@ const parseRedisUrlTests: Array<[string, any]> = [
   ['localhost:6379', { ...defaultRedisParams, host: 'localhost', port: 6379 }],
   ['redis://localhost', { ...defaultRedisParams, host: 'localhost' }],
   ['redis://:@localhost:6380', { ...defaultRedisParams, host: 'localhost', port: 6380 }],
+  ['redis://user:pass/@localhost:6380', { ...defaultRedisParams, host: 'localhost', port: 6380, username: 'user', password: 'pass/' }],
   ['redis://user:pa@ss@localhost:6380', { ...defaultRedisParams, host: 'localhost', port: 6380, username: 'user', password: 'pa@ss' }],
   ['redis://us@er:pa@ss@localhost:6380', { ...defaultRedisParams, host: 'localhost', port: 6380, username: 'us@er', password: 'pa@ss' }],
   ['redis://us@er:pa@:ss@localhost:6380', { ...defaultRedisParams, host: 'localhost', port: 6380, username: 'us@er', password: 'pa@:ss' }],

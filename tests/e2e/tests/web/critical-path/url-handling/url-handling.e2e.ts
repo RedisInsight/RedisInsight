@@ -64,7 +64,7 @@ test
     .page(commonUrl)('Add DB using url automatically', async t => {
         databaseUsername = 'alice&&';
         databasePassword = 'p1pp0@&';
-        const codedUrl = encodeURIComponent(`redis://${databaseUsername}:${databasePassword}@${host}:${port}`);
+        const codedUrl = `redis://${databaseUsername}:${databasePassword}@${host}:${port}`;
         const connectUrlParams = {
             redisUrl: codedUrl,
             databaseAlias: databaseName,
@@ -75,6 +75,8 @@ test
             memoryLimitMeasurementUnit: 'mb',
             free: 'true'
         };
+        console.log('!!!!');
+        console.log(generateLink(connectUrlParams));
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(10_000);
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');

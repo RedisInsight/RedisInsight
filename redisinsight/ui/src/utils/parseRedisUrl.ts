@@ -14,6 +14,7 @@ interface ParsedRedisUrl {
   password: string
   host: string
   port: Maybe<number>
+  hostname: Maybe<string>
   dbNumber: Maybe<number>
 }
 
@@ -29,6 +30,7 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
       password: '',
       host,
       port: port ? parseInt(port, 10) : undefined,
+      hostname: port ? `${host}:${port}` : host,
       dbNumber: undefined
     }
   }
@@ -50,6 +52,7 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
     password: password || '',
     host,
     port: port ? parseInt(port, 10) : undefined,
+    hostname: port ? `${host}:${port}` : host,
     dbNumber: dbNumber ? parseInt(dbNumber, 10) : undefined
   }
 }

@@ -163,7 +163,7 @@ test.skip
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4352
-test.only
+test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);

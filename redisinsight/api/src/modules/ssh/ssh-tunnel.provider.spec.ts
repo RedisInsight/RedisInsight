@@ -13,8 +13,6 @@ jest.mock('tunnel-ssh', () => ({
   ...jest.requireActual('tunnel-ssh') as object,
 }));
 
-jest.mock('detect-port');
-
 describe('SshTunnelProvider', () => {
   let service: SshTunnelProvider;
   let mockClient;

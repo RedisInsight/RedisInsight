@@ -1,6 +1,9 @@
-import { AddressInfo, Server } from 'net';
-import { Client } from 'ssh2';
+import { AddressInfo } from 'net';
+import { createTunnel } from 'tunnel-ssh';
 import { Endpoint } from 'src/common/models';
+
+export type SshTunnelServer = Awaited<ReturnType<typeof createTunnel>>[0];
+export type SshTunnelClient = Awaited<ReturnType<typeof createTunnel>>[1];
 
 export interface ISshTunnelOptions {
   targetHost: string,
@@ -11,8 +14,8 @@ export class SshTunnel {
   public readonly serverAddress: Endpoint;
 
   constructor(
-    private readonly server: Server,
-    private readonly client: Client,
+    private readonly server: SshTunnelServer,
+    private readonly client: SshTunnelClient,
     public readonly options: ISshTunnelOptions,
   ) {
     const address = this.server?.address() as AddressInfo;

@@ -126,7 +126,7 @@ describe('RejsonRlKeyInfoStrategy', () => {
         RedisDataType.JSON,
       );
 
-      expect(result).toEqual({ ...getKeyInfoResponse, length: undefined });
+      expect(result).toEqual({ ...getKeyInfoResponse, length: null });
     });
     it('should return size with null value', async () => {
       const replyError: ReplyError = {

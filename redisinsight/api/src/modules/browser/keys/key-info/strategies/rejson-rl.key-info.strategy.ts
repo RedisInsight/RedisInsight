@@ -57,10 +57,10 @@ export class RejsonRlKeyInfoStrategy extends KeyInfoStrategy {
             { replyEncoding: 'utf8' },
           ) as number;
         default:
-          return undefined;
+          return null;
       }
     } catch (error) {
-      return undefined;
+      return null;
     }
   }
 }

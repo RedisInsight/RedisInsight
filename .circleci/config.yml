@@ -1175,10 +1175,10 @@ workflows:
           matrix:
             alias: itest-code
             parameters:
-              rte: *iTestsNamesShort
+              rte: *iTestsNames
           name: ITest - << matrix.rte >> (code)
-          requires:
-            - UTest - API
+#          requires:
+#            - UTest - API
   # E2E tests for "e2e/feature" or "e2e/bugfix" branches only
   e2e-tests:
     jobs:

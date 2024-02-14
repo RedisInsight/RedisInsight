@@ -12,7 +12,9 @@ const browserPage = new BrowserPage();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const databaseHelper = new DatabaseHelper();
 
-let { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
+const { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
+const username = 'alice&&';
+const password = 'p1pp0@&';
 
 function generateLink(params: Record<string, any>): string {
     const params1 = Common.generateUrlTParams(params);
@@ -51,20 +53,18 @@ test
 test
     .before(async()  => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
-        await browserPage.Cli.sendCommandInCli('acl DELUSER alice&&');
-        await browserPage.Cli.sendCommandInCli('ACL SETUSER alice&& on >p1pp0@& +@all ~*');
+        await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
+        await browserPage.Cli.sendCommandInCli(`ACL SETUSER ${username} on >${password} +@all ~*`);
     })
     .after(async t => {
         // Delete all existing connections
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databaseName);
-        await browserPage.Cli.sendCommandInCli('acl DELUSER alice');
+        await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
         await databaseAPIRequests.deleteAllDatabasesApi();
     })
     .page(commonUrl)('Add DB using url automatically', async t => {
-        databaseUsername = 'alice&&';
-        databasePassword = 'p1pp0@&';
-        const codedUrl = `redis://${databaseUsername}:${databasePassword}@${host}:${port}`;
+        const codedUrl = `redis://${username}:${password}@${host}:${port}`;
         const connectUrlParams = {
             redisUrl: codedUrl,
             databaseAlias: databaseName,

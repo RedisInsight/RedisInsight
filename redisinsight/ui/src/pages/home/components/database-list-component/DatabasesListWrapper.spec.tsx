@@ -30,11 +30,6 @@ jest.mock('file-saver', () => ({
   saveAs: jest.fn()
 }))
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
-}))
-
 const mockInstances: Instance[] = [
   {
     id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
@@ -126,24 +121,6 @@ const mockDatabasesList = (props: ItemListProps<Instance>) => {
 describe('DatabasesListWrapper', () => {
   beforeAll(() => {
     (ItemList as jest.Mock).mockImplementation(mockDatabasesList)
-  })
-
-  beforeEach(() => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback({
-        ...state,
-        analytics: {
-          ...state.analytics
-        },
-        connections: {
-          ...state.connections,
-          instances: {
-            ...state.connections.instances,
-            data: mockInstances
-          }
-        }
-      }))
   })
 
   it('should render', () => {

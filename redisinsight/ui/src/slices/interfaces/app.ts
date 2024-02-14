@@ -31,6 +31,11 @@ export interface IMessage {
   className?: string
 }
 
+export enum AppWorkspace {
+  Databases = 'databases',
+  RDI = 'rdi'
+}
+
 export interface StateAppInfo {
   loading: boolean
   error: string
@@ -45,6 +50,7 @@ export interface StateAppInfo {
 }
 
 export interface StateAppContext {
+  workspace: AppWorkspace
   contextInstanceId: string
   lastPage: string
   dbConfig: {

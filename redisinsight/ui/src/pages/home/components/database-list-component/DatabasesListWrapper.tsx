@@ -66,16 +66,19 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
   const { contextInstanceId, lastPage } = useSelector(appContextSelector)
   const instances = useSelector(instancesSelector)
   const [, forceRerender] = useState({})
-  const deleting = { id: '' }
+
+  const deletingIdRef = useRef('')
   const isLoadingRef = useRef(false)
 
   const closePopover = () => {
-    deleting.id = ''
-    forceRerender({})
+    if (deletingIdRef.current) {
+      deletingIdRef.current = ''
+      forceRerender({})
+    }
   }
 
   const showPopover = (id: string) => {
-    deleting.id = `${id + suffix}`
+    deletingIdRef.current = `${id + suffix}`
     forceRerender({})
   }
 
@@ -383,7 +386,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
               text="will be deleted from RedisInsight."
               item={instance.id}
               suffix={suffix}
-              deleting={deleting.id}
+              deleting={deletingIdRef.current}
               closePopover={closePopover}
               updateLoading={false}
               showPopover={showPopover}

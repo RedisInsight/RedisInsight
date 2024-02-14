@@ -1,0 +1,31 @@
+.tabs {
+  .tab {
+    border-radius: 0 !important;
+    color: var(--euiTextSubduedColor) !important;
+
+    + .tab {
+      margin-left: 32px;
+    }
+
+    &:hover {
+      color: var(--buttonSecondaryTextColor) !important;
+      text-decoration: none;
+    }
+
+    &:global(.euiTab:after) {
+      display: none !important;
+    }
+
+    &:global(.euiTab-isSelected) {
+      color: var(--buttonSecondaryTextColor) !important;
+      background-color: transparent !important;
+
+      border-bottom: 2px solid var(--buttonSecondaryTextColor);
+    }
+
+    :global(.euiTab__content) {
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}

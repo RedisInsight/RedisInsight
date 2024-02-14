@@ -27,6 +27,7 @@ import {
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
+import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import InstancePage, { Props } from './InstancePage'
 
 const INSTANCE_ID_MOCK = 'instanceId'
@@ -127,6 +128,7 @@ describe('InstancePage', () => {
       ...resetContextActions,
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
+      resetRdiConnectedInstance(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

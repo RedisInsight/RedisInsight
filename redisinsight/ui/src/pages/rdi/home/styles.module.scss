@@ -1,11 +1,8 @@
 @import "@elastic/eui/src/global_styling/index";
 
 .page {
-  padding: 16px 0 0 !important;
-
-  @include euiBreakpoint("m", "l", "xl") {
-    padding: 16px 12px 10px !important;
-  }
+  height: 100%;
+  padding: 0 16px 16px !important;
 }
 
 .header {

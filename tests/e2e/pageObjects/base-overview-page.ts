@@ -1,8 +1,13 @@
 import { Selector, t } from 'testcafe';
-import { BasePage } from './base-page';
+import { RedisOverviewPage } from '../helpers/constants';
+import { Toast } from './components/toast';
+import { ShortcutsPanel } from './components/shortcuts-panel';
+export class BaseOverviewPage {
 
-export class BaseOverviewPage extends BasePage {
+    ShortcutsPanel = new ShortcutsPanel();
+    Toast = new Toast();
 
+    notification = Selector('[data-testid^=-notification]');
     deleteRowButton = Selector('[data-testid^=delete-instance-]');
     editRowButton = Selector('[data-testid^=edit-instance-]');
     confirmDeleteButton = Selector('[data-testid^=delete-instance-]').withExactText('Remove');
@@ -12,6 +17,26 @@ export class BaseOverviewPage extends BasePage {
 
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     deleteButtonInPopover = Selector('#deletePopover button');
+
+    databasePageLink = Selector('[data-testid=home-tab-databases]');
+    rdiPageLink = Selector('[data-testid=home-tab-rdi-instances]');
+
+    /**
+     * Reload page
+     */
+    async reloadPage(): Promise<void> {
+        await t.eval(() => location.reload());
+    }
+
+    async setActivePage(type: RedisOverviewPage): Promise<void> {
+
+        if(type === RedisOverviewPage.Rdi) {
+            await t.click(this.rdiPageLink);
+        }
+        else {
+            await t.click(this.databasePageLink);
+        }
+    }
 
     /**
      * Delete instances

@@ -1,0 +1,19 @@
+.pageHeader, .pageDefaultHeader {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pageDefaultHeader {
+  padding: 0 16px;
+}
+
+.pageWrapper {
+  height: calc(100% - 70px);
+  overflow: hidden;
+}
+
+.explorePanel {
+  padding-bottom: 16px;
+}

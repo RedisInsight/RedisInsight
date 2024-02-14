@@ -2,10 +2,16 @@ import { t } from 'testcafe';
 import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
+import { commonUrl } from '../../../../helpers/conf';
+import { MyRedisDatabasePage } from '../../../../pageObjects';
+import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 
 const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
-export const commonUrl = process.env.COMMON_URL || 'http://localhost:8080/integrate';
+const myRedisDatabasePage = new MyRedisDatabasePage();
+const rdiInstancesListPage = new RdiInstancesListPage();
+
 const resultMock = `{··"name":·"John",··"years":·123}`;
 const outputMock = 'Shirizli';
 const dbTableParams: DbTableParameters = {
@@ -23,24 +29,23 @@ const rdiInstance: AddNewRdiParameters = {
 //skip the tests until rdi integration is added
 fixture.skip `Rdi dry run job`
     .meta({ type: 'critical_path' })
-    // it will be removed
     .page(commonUrl)
     .beforeEach(async() => {
         await t.maximizeWindow();
+        await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
 
     })
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
 test('Verify that user can use Dry run panel', async() => {
-    const instanceId = 'testId';
     const job = 'testJob';
 
     // Need to add method to add jobs once it is implemented
 
     await rdiApiRequests.addNewRdiApi(rdiInstance);
     await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
-    await t.navigateTo(commonUrl + `/${instanceId}/pipeline/config`);
+    await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
     await rdiInstancePage.openJobByName(job);
     await t.click(rdiInstancePage.dryRunButton);
     // Verify that user can see dry run a job right panel

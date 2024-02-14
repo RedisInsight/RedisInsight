@@ -8,9 +8,15 @@ import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import { deleteInstancesAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
+import {
+  deleteInstancesAction,
+  instancesSelector,
+} from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
+
+import { resetDatabaseContext } from 'uiSrc/slices/app/context'
+import { resetConnectedInstance as resetConnectedDatabaseInstance } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
 
@@ -63,6 +69,15 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     closePopover()
   }, [width])
 
+  const handleConnect = (id: string) => {
+    // TODO: update connect function (check connection first?)
+    // TODO: move reset browser context to instance rdi page
+    dispatch(resetDatabaseContext())
+    dispatch(resetConnectedDatabaseInstance())
+
+    history.push(Pages.rdiPipelinePrepare(id))
+  }
+
   const handleCopy = (text = '', id: string) => {
     navigator.clipboard?.writeText(text)
     sendEventTelemetry({
@@ -110,7 +125,10 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       truncateText: true,
       'data-test-subj': 'rdi-alias-column',
       sortable: ({ name }) => name?.toLowerCase(),
-      width: '30%'
+      width: '30%',
+      render: (_, { name, id }) => (
+        <EuiText onClick={() => handleConnect(id)}>{name}</EuiText>
+      )
     },
     {
       field: 'url',

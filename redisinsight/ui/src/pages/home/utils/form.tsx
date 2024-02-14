@@ -226,7 +226,7 @@ export const autoFillFormDetails = (
 
         case InstanceType.Standalone: {
           return ({
-            name: details.host || initialValues.name || 'localhost:6379',
+            name: details.hostname || initialValues.name || 'localhost:6379',
             host: details.host || initialValues.host || 'localhost',
             port: `${details.port || initialValues.port || 9443}`,
             username: details.username || '',

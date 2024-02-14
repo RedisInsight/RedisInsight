@@ -1,18 +1,22 @@
 import * as path from 'path';
+import * as fs from 'fs';
+import { join as joinPath } from 'path';
 import { t } from 'testcafe';
 import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch, fileDownloadPath } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { deleteAllKeysFromDB, verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
+import { DatabasesActions } from '../../../../common-actions/databases-actions';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const databasesActions = new DatabasesActions();
 
 const zipFolderName = 'customTutorials';
 const folderPath = path.join('..', 'test-data', 'upload-tutorials', zipFolderName);
@@ -22,6 +26,7 @@ const internalLinkName2 = 'vector-2';
 let tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
 let zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
 let internalLinkName1 = 'probably-1';
+let foundExportedFiles: string[];
 const verifyCompletedResultText = async(resultsText: string[]): Promise<void> => {
     for (const result of resultsText) {
         await t.expect(workbenchPage.Toast.toastBody.textContent).contains(result, 'Bulk upload completed summary not correct');
@@ -158,7 +163,7 @@ test.skip
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4352
-test
+test.only
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
@@ -168,6 +173,8 @@ test
         await Common.createZipFromFolder(folderPath, zipFilePath);
     })
     .after(async() => {
+        // Delete exported file
+        fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
         await Common.deleteFileFromFolder(zipFilePath);
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
         // Clear and delete database
@@ -184,6 +191,7 @@ test
         const invalidPathes = ['Invalid relative', 'Invalid absolute'];
         const keyNames = ['hashkey1', 'listkey1', 'setkey1', 'zsetkey1', 'stringkey1', 'jsonkey1', 'streamkey1', 'graphkey1', 'tskey1', 'stringkey1test'];
         internalLinkName1 = 'probably-1';
+        const fileStarts = 'bulk';
 
         // Upload custom tutorial
         await workbenchPage.InsightsPanel.togglePanel(true);
@@ -201,7 +209,14 @@ test
         await t.expect(tutorials.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
 
         // Verify that user can bulk upload data by relative path
+
+        // Remember the number of files in Temp
+        const numberOfDownloadFiles = await databasesActions.getFileCount(fileDownloadPath, fileStarts);
         await t.click(tutorials.uploadDataBulkBtn.withText('Upload relative'));
+        await t.click(tutorials.downloadFileBtn);
+        foundExportedFiles = await databasesActions.findFilesByFileStarts(fileDownloadPath, fileStarts);
+        await t.expect(await databasesActions.getFileCount(fileDownloadPath, fileStarts)).gt(numberOfDownloadFiles, 'The Profiler logs not saved', { timeout: 5000 });
+
         await t.click(tutorials.uploadDataBulkApplyBtn);
         // Verify that user can see the summary when the command execution is completed
         await verifyCompletedResultText(allKeysResults);
@@ -227,3 +242,4 @@ test
         await browserPage.searchByKeyName('*key1*');
         await verifyKeysDisplayingInTheList(keyNames, true);
     });
+

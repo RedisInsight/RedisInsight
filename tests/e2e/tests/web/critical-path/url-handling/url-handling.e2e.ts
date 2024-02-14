@@ -49,6 +49,7 @@ test
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
     });
 
+//Verify that RedisInsight can work with the encoded redis URLs passed from Cloud via deep linking.
 test
     .before(async()  => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);

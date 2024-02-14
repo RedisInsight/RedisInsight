@@ -225,7 +225,7 @@ export const autoFillFormDetails = (
         }
 
         case InstanceType.Standalone: {
-          return ({
+          return (getFormValues({
             name: details.hostname || initialValues.name || 'localhost:6379',
             host: details.host || initialValues.host || 'localhost',
             port: `${details.port || initialValues.port || 9443}`,
@@ -235,14 +235,14 @@ export const autoFillFormDetails = (
             db: details.dbNumber,
             ssh: false,
             sshPassType: SshPassType.Password
-          })
+          }))
         }
         default: {
           return {}
         }
       }
     }
-    setInitialValues(getFormValues(getUpdatedInitialValues()))
+    setInitialValues(getUpdatedInitialValues())
     /*
        * autofill was successfull so return true
        */
@@ -251,7 +251,6 @@ export const autoFillFormDetails = (
     /* The pasted content is not a connection URI so ignore. */
     return false
   }
-  return false
 }
 
 export const getSubmitButtonContent = (errors: FormikErrors<DbConnectionInfo>, submitIsDisabled?: boolean) => {

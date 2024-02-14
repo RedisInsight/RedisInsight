@@ -25,7 +25,7 @@ import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  closePanel: (isCancelled?: boolean) => void
 }
 
 export enum ListElementDestination {
@@ -48,7 +48,7 @@ const optionsDestinations: EuiSuperSelectOption<string>[] = [
 ]
 
 const AddListElements = (props: Props) => {
-  const { onCancel } = props
+  const { closePanel } = props
 
   const [element, setElement] = useState<string>('')
   const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
@@ -66,7 +66,7 @@ const AddListElements = (props: Props) => {
   }, [])
 
   const onSuccessAdded = () => {
-    onCancel()
+    closePanel()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -138,7 +138,7 @@ const AddListElements = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

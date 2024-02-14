@@ -79,7 +79,7 @@ export class CustomTutorialFsProvider {
 
       return this.unzipToTmpFolder(new AdmZip(data));
     } catch (e) {
-      this.logger.error('Unable to fetch zip file from external source', e);
+      this.logger.error('Unable to fetch zip file from external source');
       throw wrapHttpError(e, ERROR_MESSAGES.CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL);
     }
   }

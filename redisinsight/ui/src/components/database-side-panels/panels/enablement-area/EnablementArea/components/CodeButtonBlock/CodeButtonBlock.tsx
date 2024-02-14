@@ -82,7 +82,7 @@ const CodeButtonBlock = (props: Props) => {
 
   const handleRunClicked = () => {
     if (!instanceId || notLoadedModule || (!isNotShowConfirmation && isButtonHasConfirmation)) {
-      setIsPopoverOpen(true)
+      setIsPopoverOpen((v) => !v)
       return
     }
 

@@ -58,7 +58,7 @@ test
         // Delete all existing connections
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databaseName);
-        await browserPage.Cli.sendCommandInCli('acl DELUSER alice');
+        await browserPage.Cli.sendCommandInCli('acl DELUSER alice&&');
         await databaseAPIRequests.deleteAllDatabasesApi();
     })
     .page(commonUrl)('Add DB using url automatically', async t => {

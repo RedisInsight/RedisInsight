@@ -7,7 +7,7 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { Database } from 'src/modules/database/models/database';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
+import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -40,13 +40,8 @@ export class DatabaseConnectionService {
       version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };
 
-    // !Temporary. Refresh cluster nodes on connection
+    // Update cluster nodes db record
     if (client?.getConnectionType() === RedisClientConnectionType.CLUSTER) {
-      const primaryNodeOptions = (await client.nodes(RedisClientNodeRole.PRIMARY))[0].options;
-
-      toUpdate.host = primaryNodeOptions.host;
-      toUpdate.port = primaryNodeOptions.port;
-
       toUpdate.nodes = (await client.nodes()).map(({ options }) => ({
         host: options.host,
         port: options.port,

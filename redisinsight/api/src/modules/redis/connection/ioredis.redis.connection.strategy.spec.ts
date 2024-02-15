@@ -3,8 +3,8 @@ import * as Redis from 'ioredis';
 import {
   mockClientMetadata, mockClusterDatabaseWithTlsAuth,
   mockDatabase, mockDatabaseWithSshBasic,
-  mockDatabaseWithTlsAuth,
-  mockSentinelDatabaseWithTlsAuth, mockSshTunnel, mockSshTunnelProvider,
+  mockDatabaseWithTlsAuth, mockIORedisClient,
+  mockSentinelDatabaseWithTlsAuth, mockSshTunnel, mockSshTunnelProvider, mockStandaloneRedisClient
 } from 'src/__mocks__';
 import { EventEmitter } from 'events';
 import apiConfig from 'src/utils/config';
@@ -170,26 +170,13 @@ describe('IoredisRedisConnectionStrategy', () => {
         .then(fail)
         .catch(checkError(done));
     });
-    it('should fail to create standalone client due to tunnel error', (done) => {
-      service.createStandaloneClient(mockClientMetadata, mockDatabaseWithSshBasic, {})
-        .then(fail)
-        .catch(checkError(done));
-
-      process.nextTick(() => mockSshTunnel.emit('error', mockError));
-    });
-    it('should fail to create standalone client due to tunnel close', (done) => {
-      service.createStandaloneClient(mockClientMetadata, mockDatabaseWithSshBasic, {})
-        .then(fail)
-        .catch((e) => {
-          expect(e).toBeInstanceOf(TunnelConnectionLostException);
-          done();
-        });
-
-      process.nextTick(() => mockSshTunnel.emit('close'));
-    });
   });
 
   describe('createClusterClient', () => {
+    beforeEach(() => {
+      jest.spyOn(service, 'createStandaloneClient').mockResolvedValue(mockStandaloneRedisClient);
+    });
+
     it('should successfully create cluster client', (done) => {
       service.createClusterClient(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})
         .then((client) => {
@@ -218,14 +205,6 @@ describe('IoredisRedisConnectionStrategy', () => {
         });
 
       process.nextTick(() => mockIoredisClusterNativeClient.emit('error', { lastNodeError: mockedLastNodeError }));
-    });
-    it('should fail when trying to create ssh cluster connection', (done) => {
-      service.createClusterClient(mockClientMetadata, { ...mockClusterDatabaseWithTlsAuth, ssh: true }, {})
-        .then(fail)
-        .catch((e) => {
-          expect(e.message).toEqual('SSH is unsupported for cluster databases.');
-          done();
-        });
     });
     it('should fail to create cluster connection due to "end" event', (done) => {
       service.createClusterClient(mockClientMetadata, mockClusterDatabaseWithTlsAuth, {})

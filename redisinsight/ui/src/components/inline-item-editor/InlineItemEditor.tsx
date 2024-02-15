@@ -49,7 +49,7 @@ export interface Props {
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
-  disabledTooltipText?: { title: string, text: string }
+  disabledTooltipText?: { title: string, content: string | React.ReactNode }
   preventOutsideClick?: boolean
   disableFocusTrap?: boolean
   approveByValidation?: (value: string) => boolean
@@ -165,7 +165,7 @@ const InlineItemEditor = (props: Props) => {
       position="bottom"
       display="inlineBlock"
       title={isDisabled && disabledTooltipText?.title}
-      content={isDisabled && disabledTooltipText?.text}
+      content={isDisabled && disabledTooltipText?.content}
       data-testid="apply-tooltip"
     >
       <EuiButtonIcon

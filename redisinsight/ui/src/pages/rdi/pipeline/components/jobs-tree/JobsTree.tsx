@@ -31,15 +31,27 @@ export interface IProps {
   path: string
 }
 
+const buildValidationMessage = (text: string) => ({
+  title: '',
+  content: (
+    <EuiFlexGroup alignItems="center" gutterSize="xs">
+      <EuiFlexItem grow={false}>
+        <EuiIcon type="iInCircle" />
+      </EuiFlexItem>
+      <EuiFlexItem>{text}</EuiFlexItem>
+    </EuiFlexGroup>
+  )
+})
+
 const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, jobs: IRdiPipelineJob[]) => {
   const currentJobName = jobs[jobIndex ?? 0]?.name
 
   if (!jobName) {
-    return { title: '', text: 'job name is required' }
+    return buildValidationMessage('Job name is required')
   }
 
   if (jobs.filter((job) => job.name !== currentJobName).some((job) => job.name === jobName)) {
-    return { title: '', text: 'job name is already in use' }
+    return buildValidationMessage('Job name is already in use')
   }
 
   return undefined

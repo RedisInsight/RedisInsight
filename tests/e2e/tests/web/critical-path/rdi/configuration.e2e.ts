@@ -36,7 +36,7 @@ fixture `Pipeline`
         await rdiApiRequests.deleteAllRdiApi();
     });
 
-test.only('Verify that user can test connection', async() => {
+test('Verify that user can test connection', async() => {
     //TODO do sth to get failed and success connection
     await t.click(rdiInstancePage.textConnectionBtn);
 

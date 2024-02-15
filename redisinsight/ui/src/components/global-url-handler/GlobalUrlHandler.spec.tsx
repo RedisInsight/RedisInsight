@@ -132,7 +132,7 @@ describe('GlobalUrlHandler', () => {
           password: 'password',
           port: 6379,
           tls: false,
-          username: undefined,
+          username: '',
           caCert: undefined,
           clientCert: undefined,
         }

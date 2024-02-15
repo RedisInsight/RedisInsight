@@ -1,14 +1,17 @@
 import { Selector, t } from 'testcafe';
 import { AddRdiInstance, RdiInstance } from './components/myRedisDatabase/add-rdi-instance';
 import { BaseOverviewPage } from './base-overview-page';
+import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
 
 export class RdiInstancesListPage extends BaseOverviewPage {
+    NavigationPanel = new RdiNavigationPanel();
     AddRdiInstance = new AddRdiInstance();
 
     rdiInstanceButton = Selector('[data-testid=rdi-instance]');
 
     rdiInstanceRow = Selector('[class*=euiTableRow-isSelectable]');
     emptyRdiList = Selector('[data-testid=empty-rdi-instance-list]', { timeout: 1000 });
+    rdiNameList = Selector('[class*=column_name] div', { timeout: 3000 });
 
     searchInput = Selector('[data-testid=search-rdi-instance-list]');
 
@@ -88,6 +91,19 @@ export class RdiInstancesListPage extends BaseOverviewPage {
                 break;
             }
         }
+    }
+
+    /**
+     * click Rdi by name
+     * @param dbName The name of the rdi
+     */
+    async clickRdiByName(rdiName: string): Promise<void> {
+        if (await this.Toast.toastCloseButton.exists) {
+            await t.click(this.Toast.toastCloseButton);
+        }
+        const rdi = this.rdiNameList.withExactText(rdiName.trim());
+        await t.expect(rdi.exists).ok(`"${rdi}" rdi doesn't exist`, { timeout: 10000 });
+        await t.click(rdi);
     }
 
     /**

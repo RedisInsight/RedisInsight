@@ -1,24 +1,32 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { useSelector } from 'react-redux'
 
-import { InitialStateRdiInstances, RdiInstance } from 'uiSrc/slices/interfaces'
-import { createInstanceAction, editInstanceAction } from 'uiSrc/slices/rdi/instances'
-import { RootState, store } from 'uiSrc/slices/store'
+import { createInstanceAction, editInstanceAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 
 import RdiPage from './RdiPage'
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
-}))
-
 jest.mock('uiSrc/slices/rdi/instances', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/instances'),
   editInstanceAction: jest.fn().mockReturnValue({ type: null }),
-  createInstanceAction: jest.fn().mockReturnValue({ type: null })
+  createInstanceAction: jest.fn().mockReturnValue({ type: null }),
+  instancesSelector: jest.fn().mockReturnValue({
+    loading: false,
+    loadingChanging: false,
+    data: [
+      {
+        id: '1',
+        name: 'My first integration',
+        url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
+        lastConnection: new Date('1/1/2024'),
+        version: '1.2',
+        username: 'user',
+        visible: true,
+        error: ''
+      }
+    ]
+  })
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -28,39 +36,12 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 let storeMock: typeof mockedStore
-const instancesMock: RdiInstance[] = [
-  {
-    id: '1',
-    name: 'My first integration',
-    url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
-    lastConnection: new Date('1/1/2024'),
-    version: '1.2',
-    username: 'user',
-    visible: true,
-    error: ''
-  }
-]
-
-const mockState = (rootState: RootState, rdiInstancesState: Partial<InitialStateRdiInstances>) => ({
-  ...rootState,
-  rdi: {
-    ...rootState.rdi,
-    instances: {
-      ...rootState.rdi.instances,
-      ...rdiInstancesState
-    }
-  }
-})
 
 describe('RdiPage', () => {
   beforeEach(() => {
     cleanup()
     storeMock = cloneDeep(mockedStore)
-    storeMock.clearActions()
-
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback(mockState(state, { loading: false, loadingChanging: false, data: instancesMock })));
+    storeMock.clearActions();
     (sendEventTelemetry as jest.Mock).mockRestore();
     (sendPageViewTelemetry as jest.Mock).mockRestore()
   })
@@ -77,10 +58,10 @@ describe('RdiPage', () => {
   })
 
   it('should render empty panel when initially loading', () => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback(mockState(state, { data: [] })))
-
+    (instancesSelector as jest.Mock).mockReturnValueOnce({
+      loading: true,
+      data: []
+    })
     render(<RdiPage />)
 
     expect(screen.queryByTestId('rdi-instance-list')).not.toBeInTheDocument()
@@ -88,10 +69,9 @@ describe('RdiPage', () => {
   })
 
   it('should render empty message when no instances are found', () => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback(mockState(state, { data: [], loading: false })))
-
+    (instancesSelector as jest.Mock).mockReturnValueOnce({
+      data: []
+    })
     render(<RdiPage />)
 
     expect(screen.queryByTestId('rdi-instance-list')).not.toBeInTheDocument()
@@ -108,10 +88,10 @@ describe('RdiPage', () => {
   })
 
   it('should open connection form when using empty message button', async () => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback(mockState(state, { data: [], loading: false })))
-
+    (instancesSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      data: []
+    })
     render(<RdiPage />)
 
     fireEvent.click(screen.getByTestId('empty-rdi-instance-button'))

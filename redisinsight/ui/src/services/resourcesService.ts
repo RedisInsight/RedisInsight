@@ -20,4 +20,6 @@ export const getPathToResource = (url: string = ''): string => (IS_ABSOLUTE_PATH
   ? url
   : new URL(url, resourcesService.defaults.baseURL).toString())
 
+export const checkResourse = async (url: string = '') => resourcesService.head(url)
+
 export default resourcesService

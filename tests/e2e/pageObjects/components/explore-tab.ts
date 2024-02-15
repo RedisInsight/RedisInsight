@@ -37,6 +37,7 @@ export class ExploreTab {
     tutorialAccordionButton = Selector('[data-testid^=accordion-button-]');
     uploadDataBulkBtn = Selector('[data-testid=upload-data-bulk-btn]');
     uploadDataBulkApplyBtn = Selector('[data-testid=upload-data-bulk-apply-btn]');
+    downloadFileBtn = Selector('[data-testid=download-redis-upload-file]');
 
     //CSS
     cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';

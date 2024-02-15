@@ -35,7 +35,7 @@ fixture `Add job`
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
-test.only('Verify that user can add, edit and delete job', async() => {
+test('Verify that user can add, edit and delete job', async() => {
     const jobName = 'testJob';
     const jobName2 = 'testJob2';
 
@@ -48,20 +48,20 @@ test.only('Verify that user can add, edit and delete job', async() => {
     await t
         .expect(rdiInstancePage.applyJobNameBtn.hasAttribute('disabled')).ok('the button is not disabled');
     await t.hover(rdiInstancePage.applyJobNameBtn);
-    await browserActions.verifyTooltipContainsText('job name is required', true);
+    await browserActions.verifyTooltipContainsText('Job name is required', true);
 
     await t.click(rdiInstancePage.cancelJobNameBtn);
     await rdiInstancePage.addJob(jobName);
 
     const elementItem = await rdiInstancePage.jobItem.count;
-    await t.expect(elementItem).gt(0, 'the job is not added');
+    await t.expect(elementItem).gt(0, 'The job is not added');
 
     await t.click(rdiInstancePage.addJobBtn);
     await t.typeText(rdiInstancePage.jobNameInput, jobName);
     await t
         .expect(rdiInstancePage.applyJobNameBtn.hasAttribute('disabled')).ok('the button is not disabled');
     await t.hover(rdiInstancePage.applyJobNameBtn);
-    //await browserActions.verifyTooltipContainsText('this job name is already in use', true);
+    await browserActions.verifyTooltipContainsText('This job name is already in use', true);
     await t.click(rdiInstancePage.cancelJobNameBtn);
 
     await rdiInstancePage.addJob(jobName2);

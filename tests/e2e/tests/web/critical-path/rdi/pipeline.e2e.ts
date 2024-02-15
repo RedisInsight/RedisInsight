@@ -27,11 +27,6 @@ const filePathes = {
     successful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDIPipeline.zip'),
     unsuccessful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'UnsuccessRDI_Pipeline.zip')
 };
-const dbTableParams: DbTableParameters = {
-    tableName: 'rdi',
-    columnName: 'id',
-    rowValue: 'testId'
-};
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'http://localhost:4000',
@@ -46,8 +41,6 @@ const dbTableParams: DbTableParameters = {
     conditionWhereColumnName: 'name',
     conditionWhereColumnValue: `${rdiInstance.name}`
 };
-
-const instanceId = 'testId';
 
 //skip the tests until rdi integration is added
 fixture.skip `Pipeline`

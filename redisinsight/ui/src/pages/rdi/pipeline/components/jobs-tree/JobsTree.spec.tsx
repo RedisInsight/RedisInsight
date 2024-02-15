@@ -159,7 +159,7 @@ describe('JobsTree', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={jest.fn()} />)
+    render(<JobsTree {...instance(mockedProps)} onSelectedTab={jest.fn()} rdiInstanceId="id" />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('add-new-job'))
@@ -173,6 +173,7 @@ describe('JobsTree', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_PIPELINE_JOB_CREATED,
       eventData: {
+        rdiInstanceId: 'id',
         jobName: 'job3',
       }
     })
@@ -182,7 +183,7 @@ describe('JobsTree', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={jest.fn()} />)
+    render(<JobsTree {...instance(mockedProps)} onSelectedTab={jest.fn()} rdiInstanceId="id" />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('delete-job-job1'))
@@ -195,6 +196,7 @@ describe('JobsTree', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_PIPELINE_JOB_DELETED,
       eventData: {
+        rdiInstanceId: 'id',
         jobName: 'job1',
       }
     })

@@ -86,4 +86,19 @@ describe('ConfirmationPopover', () => {
       expect(screen.queryByTestId('confirm-btn')).not.toBeInTheDocument()
     })
   })
+
+  it('should truncate title', async () => {
+    render(
+      <ConfirmationPopover
+        {...mockedProps}
+        title="job1fjdsafdhsjalkfhdsjlafhdjksalhfjdsalgldkafhjdsalfdhsjaflkdsahjfdsalkfhdsa"
+      />
+    )
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('button'))
+    })
+
+    expect(screen.getByText('job1fjdsafdhsjalkfhdsjlafhdjksalhfjdsalgldkafhjdsalfdhs...')).toBeInTheDocument()
+  })
 })

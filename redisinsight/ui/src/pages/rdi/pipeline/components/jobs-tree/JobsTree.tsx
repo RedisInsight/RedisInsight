@@ -29,6 +29,7 @@ import styles from './styles.module.scss'
 export interface IProps {
   onSelectedTab: (id: string) => void
   path: string
+  rdiInstanceId: string
 }
 
 const buildValidationMessage = (text: string) => ({
@@ -58,7 +59,7 @@ const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, 
 }
 
 const JobsTree = (props: IProps) => {
-  const { onSelectedTab, path } = props
+  const { onSelectedTab, path, rdiInstanceId } = props
 
   const [accordionState, setAccordionState] = useState<'closed' | 'open'>('open')
   const [editJobName, setEditJobName] = useState<Nullable<string>>(null)
@@ -86,6 +87,7 @@ const JobsTree = (props: IProps) => {
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_JOB_DELETED,
       eventData: {
+        rdiInstanceId,
         jobName: deleteJobIndex !== null ? values.jobs[deleteJobIndex]?.name : null
       }
     })
@@ -104,6 +106,7 @@ const JobsTree = (props: IProps) => {
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_JOB_CREATED,
       eventData: {
+        rdiInstanceId,
         jobName: editJobName
       }
     })

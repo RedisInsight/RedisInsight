@@ -10,6 +10,8 @@ import {
 } from '@elastic/eui'
 import React, { useState } from 'react'
 
+import { formatLongName } from 'uiSrc/utils'
+
 import styles from './styles.module.scss'
 
 interface Props {
@@ -57,8 +59,8 @@ const ConfirmationPopover = ({ title, body, confirmButtonText, onConfirm, button
           <EuiFlexItem grow={false}>
             <EuiIcon type="alert" className={styles.alertIcon} />
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiText className={styles.popoverTitle}>{title}</EuiText>
+          <EuiFlexItem grow={false} className="eui-textNoWrap">
+            <EuiText>{formatLongName(title, 58, 0, '...')}</EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiSpacer size="xs" />

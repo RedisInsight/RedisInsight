@@ -2,7 +2,7 @@ import React from 'react'
 import { useFormikContext } from 'formik'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
-import {fireEvent, cleanup, render, screen, act} from 'uiSrc/utils/test-utils'
+import { fireEvent, cleanup, render, screen, act } from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'

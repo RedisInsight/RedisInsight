@@ -1,19 +1,30 @@
-import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import cx from 'classnames'
 
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { useParams } from 'react-router-dom'
+import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
+import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline/components/test-connections-panel'
+import { testConnectionsAction, rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
+
+import styles from './styles.module.scss'
 
 const Config = () => {
-  const { loading } = useSelector(rdiPipelineSelector)
+  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
 
-  const { values, setFieldValue } = useFormikContext<IPipeline>()
+  const { loading: pipelineLoading } = useSelector(rdiPipelineSelector)
+  const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
+
+  const { values: { config = '' }, setFieldValue } = useFormikContext<IPipeline>()
+
+  const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     sendPageViewTelemetry({
@@ -21,48 +32,65 @@ const Config = () => {
     })
   }, [])
 
-  return (
-    <div className={cx('content', 'rdi__wrapper')}>
-      <EuiText className="rdi__title">Target database configuration</EuiText>
-      <EuiText className="rdi__text" color="subdued">
-        {'Configure target instance '}
-        <EuiLink
-          external={false}
-          data-testid="rdi-pipeline-config-link"
-          target="_blank"
-          href={EXTERNAL_LINKS.rdiQuickStart}
-        >
-          connection details
-        </EuiLink>
-        {' and applier settings.'}
-      </EuiText>
-      {loading ? (
-        <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-config-loading">
-          <EuiText color="subdued" style={{ marginBottom: 12 }}>Loading data...</EuiText>
-          <EuiLoadingSpinner color="secondary" size="l" />
-        </div>
-      ) : (
-        <MonacoYaml
-          value={values?.config ?? ''}
-          onChange={(value) => setFieldValue('config', value)}
-          disabled={loading}
-          wrapperClassName="rdi__editorWrapper"
-          data-testid="rdi-config"
-        />
-      )}
+  const testConnections = () => {
+    setIsPanelOpen(true)
+    dispatch(testConnectionsAction(rdiInstanceId, config))
+    sendEventTelemetry({
+      event: TelemetryEvent.RDI_TEST_TARGET_CONNECTIONS_CLICKED,
+      eventData: {
+        id: rdiInstanceId,
+      }
+    })
+  }
 
-      <div className="rdi__actions">
-        <EuiButton
-          fill
-          color="secondary"
-          size="s"
-          onClick={() => {}}
-          data-testid="rdi-test-connection"
-        >
-          Test Connection
-        </EuiButton>
+  return (
+    <>
+      <div className={cx('content', 'rdi__wrapper', { [styles.isPanelOpen]: isPanelOpen })}>
+        <EuiText className="rdi__title">Target database configuration</EuiText>
+        <EuiText className="rdi__text" color="subdued">
+          {'Configure target instance '}
+          <EuiLink
+            external={false}
+            data-testid="rdi-pipeline-config-link"
+            target="_blank"
+            href={EXTERNAL_LINKS.rdiQuickStart}
+          >
+            connection details
+          </EuiLink>
+          {' and applier settings.'}
+        </EuiText>
+        {pipelineLoading ? (
+          <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-config-loading">
+            <EuiText color="subdued" style={{ marginBottom: 12 }}>Loading data...</EuiText>
+            <EuiLoadingSpinner color="secondary" size="l" />
+          </div>
+        ) : (
+          <MonacoYaml
+            value={config}
+            onChange={(value) => setFieldValue('config', value)}
+            disabled={pipelineLoading}
+            wrapperClassName="rdi__editorWrapper"
+            data-testid="rdi-config"
+          />
+        )}
+        <div className="rdi__actions">
+          <EuiButton
+            fill
+            color="secondary"
+            size="s"
+            onClick={testConnections}
+            isLoading={testingConnections || pipelineLoading}
+            aria-labelledby="test target connections"
+            data-testid="rdi-test-connection-btn"
+          >
+            Test Connection
+          </EuiButton>
+        </div>
       </div>
-    </div>
+      {isPanelOpen && (
+        <TestConnectionsPanel onClose={() => setIsPanelOpen(false)} />
+      )}
+    </>
   )
 }
 

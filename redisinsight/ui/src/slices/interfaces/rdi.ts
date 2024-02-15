@@ -33,12 +33,34 @@ export interface IDryRunJobResults {
     data?: string[]
   }
 }
+export interface ITestConnection {
+  fail: FailedTestConnectionResult[]
+  success: SuccessTestConnectionResult[]
+}
+
+export interface FailedTestConnectionResult {
+  endpoint: string
+  index: number
+  error: string
+  status: string
+}
+
+export interface SuccessTestConnectionResult {
+  endpoint: string
+  index: number
+  status: string
+}
+
+export interface IStateRdiTestConnections {
+  loading: boolean
+  error: string
+  results: Nullable<ITestConnection>
+}
 
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
-  isDeployPopoverOpen: boolean
 }
 
 export interface IStateRdiDryRunJob {

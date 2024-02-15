@@ -46,6 +46,7 @@ import insightsPanelReducer from './panels/insights'
 import rdiInstancesReducer from './rdi/instances'
 import rdiPipelineReducer from './rdi/pipeline'
 import rdiDryRunJobReducer from './rdi/dryRun'
+import rdiTestConnectionsReducer from './rdi/testConnections'
 
 export const history = createBrowserHistory()
 
@@ -116,6 +117,7 @@ export const rootReducer = combineReducers({
     instances: rdiInstancesReducer,
     pipeline: rdiPipelineReducer,
     dryRun: rdiDryRunJobReducer,
+    testConnections: rdiTestConnectionsReducer,
   })
 })
 

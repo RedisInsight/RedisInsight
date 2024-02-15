@@ -8,6 +8,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     NavigationPanel = new RdiNavigationPanel();
     TestConnectionPanel = new TestConnectionPanel();
 
+    //TODO create a Pipeline Management panel
     //Tabs
     configurationTab = Selector('[data-testid=rdi-nav-btn-config]');
 

@@ -73,6 +73,22 @@ describe('CodeButtonBlock', () => {
     expect(onApply).toBeCalledWith({ pipeline: '10' }, expect.any(Function))
   })
 
+  it('should not render run button with executable=false param', () => {
+    const onApply = jest.fn()
+
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        params={{ executable: 'false' }}
+        content={simpleContent}
+      />
+    )
+
+    expect(screen.queryByTestId(`run-btn-${label}`)).not.toBeInTheDocument()
+  })
+
   it('should go to home page after click on change db', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })

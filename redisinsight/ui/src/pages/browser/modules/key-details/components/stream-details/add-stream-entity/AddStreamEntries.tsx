@@ -17,11 +17,11 @@ import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void
+  closePanel: (isCancelled?: boolean) => void
 }
 
 const AddStreamEntries = (props: Props) => {
-  const { onCancel } = props
+  const { closePanel } = props
   const { lastEntry } = useSelector(streamDataSelector)
   const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
   const { viewType } = useSelector(keysSelector)
@@ -75,7 +75,7 @@ const AddStreamEntries = (props: Props) => {
   }
 
   const onSuccessAdded = () => {
-    onCancel()
+    closePanel()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -130,7 +130,7 @@ const AddStreamEntries = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

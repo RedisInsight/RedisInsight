@@ -17,7 +17,12 @@ import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { fetchRedisearchListAction, loadList } from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import {
+  changeSelectedTab,
+  resetExplorePanelSearch,
+  setExplorePanelIsPageOpen,
+  toggleInsightsPanel
+} from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
@@ -501,6 +506,19 @@ describe('ONBOARDING_FEATURES', () => {
 
       const expectedActions = [toggleInsightsPanel(false), setOnboardPrevStep()]
       expect(clearStoreActions(store.getActions().slice(-2)))
+        .toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should call proper actions on next', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.EXPLORE_REDIS}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('next-btn'))
+
+      const expectedActions = [
+        resetExplorePanelSearch(),
+        setExplorePanelIsPageOpen(false),
+        setOnboardNextStep()
+      ]
+      expect(clearStoreActions(store.getActions().slice(-3)))
         .toEqual(clearStoreActions(expectedActions))
     })
   })

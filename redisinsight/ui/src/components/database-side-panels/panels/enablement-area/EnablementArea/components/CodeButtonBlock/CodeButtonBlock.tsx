@@ -56,6 +56,7 @@ const CodeButtonBlock = (props: Props) => {
     ConfigDBStorageItem.notShowConfirmationRunTutorial
   )
   const isButtonHasConfirmation = params?.run_confirmation === BooleanParams.true
+  const isRunButtonHidden = params?.executable === BooleanParams.false
   const [notLoadedModule] = getUnsupportedModulesFromQuery(modules, content)
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const CodeButtonBlock = (props: Props) => {
 
   const handleRunClicked = () => {
     if (!instanceId || notLoadedModule || (!isNotShowConfirmation && isButtonHasConfirmation)) {
-      setIsPopoverOpen(true)
+      setIsPopoverOpen((v) => !v)
       return
     }
 
@@ -134,44 +135,46 @@ const CodeButtonBlock = (props: Props) => {
           >
             Copy
           </EuiButton>
-          <EuiPopover
-            ownFocus
-            initialFocus={false}
-            className={styles.popoverAnchor}
-            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-            anchorClassName={styles.popoverAnchor}
-            anchorPosition="upLeft"
-            isOpen={isPopoverOpen}
-            panelPaddingSize="m"
-            closePopover={handleClosePopover}
-            focusTrapProps={{
-              scrollLock: true
-            }}
-            button={(
-              <EuiToolTip
-                anchorClassName={styles.popoverAnchor}
-                content={isPopoverOpen ? undefined : 'Open Workbench in the left menu to see the command results.'}
-                data-testid="run-btn-open-workbench-tooltip"
-              >
-                <EuiButton
-                  onClick={handleRunClicked}
-                  iconType={isRunned ? 'check' : 'play'}
-                  iconSide="right"
-                  color="success"
-                  size="s"
-                  disabled={isLoading || isRunned}
-                  isLoading={isLoading}
-                  className={cx(styles.actionBtn, styles.runBtn)}
-                  {...rest}
-                  data-testid={`run-btn-${label}`}
+          {!isRunButtonHidden && (
+            <EuiPopover
+              ownFocus
+              initialFocus={false}
+              className={styles.popoverAnchor}
+              panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+              anchorClassName={styles.popoverAnchor}
+              anchorPosition="upLeft"
+              isOpen={isPopoverOpen}
+              panelPaddingSize="m"
+              closePopover={handleClosePopover}
+              focusTrapProps={{
+                scrollLock: true
+              }}
+              button={(
+                <EuiToolTip
+                  anchorClassName={styles.popoverAnchor}
+                  content={isPopoverOpen ? undefined : 'Open Workbench in the left menu to see the command results.'}
+                  data-testid="run-btn-open-workbench-tooltip"
                 >
-                  Run
-                </EuiButton>
-              </EuiToolTip>
-            )}
-          >
-            {getPopoverMessage()}
-          </EuiPopover>
+                  <EuiButton
+                    onClick={handleRunClicked}
+                    iconType={isRunned ? 'check' : 'play'}
+                    iconSide="right"
+                    color="success"
+                    size="s"
+                    disabled={isLoading || isRunned}
+                    isLoading={isLoading}
+                    className={cx(styles.actionBtn, styles.runBtn)}
+                    {...rest}
+                    data-testid={`run-btn-${label}`}
+                  >
+                    Run
+                  </EuiButton>
+                </EuiToolTip>
+              )}
+            >
+              {getPopoverMessage()}
+            </EuiPopover>
+          )}
         </EuiFlexItem>
       </EuiFlexGroup>
       <div className={styles.content} data-testid="code-button-block-content">

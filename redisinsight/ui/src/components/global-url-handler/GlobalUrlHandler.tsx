@@ -122,7 +122,7 @@ const GlobalUrlHandler = () => {
 
       const db = {
         ...obligatoryForAutoConnectFields,
-        name: databaseAlias || url.host,
+        name: databaseAlias || url.hostname || url.host,
       } as any
 
       if (isAllObligatoryProvided && !isTlsProvided) {

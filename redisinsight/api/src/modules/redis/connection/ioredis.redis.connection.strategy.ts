@@ -8,7 +8,6 @@ import { isEmpty, isNumber } from 'lodash';
 import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
 import { ClusterOptions } from 'ioredis/built/cluster/ClusterOptions';
 import { ConnectionOptions } from 'tls';
-import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   RedisClient,
@@ -16,6 +15,8 @@ import {
   SentinelIoredisClient,
   ClusterIoredisClient,
 } from 'src/modules/redis/client';
+import { discoverClusterNodes } from 'src/modules/redis/utils';
+import { SshTunnel } from 'src/modules/ssh/models/ssh-tunnel';
 
 const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
 
@@ -57,7 +58,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         || RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
       showFriendlyErrorStack: true,
       maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
-      retryStrategy: options?.useRetry ? this.retryStrategy : this.dummyFn,
+      retryStrategy: options?.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
     };
 
     if (tls) {
@@ -80,7 +81,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     options: IRedisConnectionOptions,
   ): Promise<ClusterOptions> {
     return {
-      clusterRetryStrategy: options.useRetry ? this.retryStrategy : this.dummyFn,
+      clusterRetryStrategy: options.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
       redisOptions: await this.getRedisOptions(clientMetadata, database, options),
     };
   }
@@ -155,30 +156,19 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<RedisClient> {
     this.logger.debug('Creating ioredis standalone client');
 
-    let tnl;
+    let tnl: SshTunnel;
 
     try {
       const config = await this.getRedisOptions(clientMetadata, database, options);
 
       if (database.ssh) {
-        tnl = await this.sshTunnelProvider.createTunnel(database);
+        tnl = await this.sshTunnelProvider.createTunnel(database, database.sshOptions);
+        config.host = tnl.serverAddress.host;
+        config.port = tnl.serverAddress.port;
       }
 
       return await new Promise((resolve, reject) => {
         try {
-          if (tnl) {
-            tnl.on('error', (error) => {
-              reject(error);
-            });
-
-            tnl.on('close', () => {
-              reject(new TunnelConnectionLostException());
-            });
-
-            config.host = tnl.serverAddress.host;
-            config.port = tnl.serverAddress.port;
-          }
-
           const connection = new Redis({
             ...config,
             // cover cases when we are connecting to sentinel as to standalone to discover master groups
@@ -189,7 +179,8 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             reject(e);
           });
           connection.on('end', (): void => {
-            this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            tnl?.close?.();
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
@@ -224,43 +215,72 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClient> {
-    const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+    let tnls: SshTunnel[] = [];
+    let standaloneClient: RedisClient;
+    let rootNodes = [{
+      host: database.host,
+      port: database.port,
+    }];
 
-    if (database.ssh) {
-      throw new Error('SSH is unsupported for cluster databases.');
-    }
+    try {
+      const config = await this.getRedisClusterOptions(clientMetadata, database, options);
 
-    return new Promise((resolve, reject) => {
-      try {
-        const cluster = new Cluster([{
-          host: database.host,
-          port: database.port,
-        }].concat(database.nodes), {
-          ...config,
+      standaloneClient = await this.createStandaloneClient(clientMetadata, database, options);
+
+      rootNodes = await discoverClusterNodes(standaloneClient);
+
+      await standaloneClient.disconnect();
+
+      if (database.ssh) {
+        tnls = await Promise.all(
+          rootNodes.map((node) => this.sshTunnelProvider.createTunnel(node, database.sshOptions)),
+        );
+
+        // create NAT map
+        config.natMap = {};
+        tnls.forEach((tnl) => {
+          config.natMap[`${tnl.options.targetHost}:${tnl.options.targetPort}`] = {
+            host: tnl.serverAddress.host,
+            port: tnl.serverAddress.port,
+          };
         });
-        cluster.on('error', (e): void => {
-          this.logger.error('Failed connection to the redis oss cluster', e);
-          reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
-        });
-        cluster.on('end', (): void => {
-          this.logger.error(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-          reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
-        });
-        cluster.on('ready', (): void => {
-          this.logger.log('Successfully connected to the redis oss cluster.');
-          resolve(new ClusterIoredisClient(
-            clientMetadata,
-            cluster,
-            {
-              host: database.host,
-              port: database.port,
-            },
-          ));
-        });
-      } catch (e) {
-        reject(e);
+
+        // change root nodes
+        rootNodes = tnls.map((tnl) => tnl.serverAddress);
       }
-    });
+
+      return new Promise((resolve, reject) => {
+        try {
+          const cluster = new Cluster(rootNodes, config);
+          cluster.on('error', (e): void => {
+            this.logger.error('Failed connection to the redis oss cluster', e);
+            reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
+          });
+          cluster.on('end', (): void => {
+            this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
+            tnls.forEach((tnl) => tnl?.close?.());
+            reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
+          });
+          cluster.on('ready', (): void => {
+            this.logger.log('Successfully connected to the redis oss cluster.');
+            resolve(new ClusterIoredisClient(
+              clientMetadata,
+              cluster,
+              {
+                host: database.host,
+                port: database.port,
+              },
+            ));
+          });
+        } catch (e) {
+          reject(e);
+        }
+      });
+    } catch (e) {
+      tnls.forEach((tnl) => tnl?.close?.());
+      standaloneClient?.disconnect?.().catch();
+      throw e;
+    }
   }
 
   /**

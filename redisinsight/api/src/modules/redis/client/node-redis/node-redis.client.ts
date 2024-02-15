@@ -89,7 +89,7 @@ export abstract class NodeRedisClient extends RedisClient {
    */
   async monitor(): Promise<any> {
     // TODO: Implement this method after the monitor in the node-redis is available.
-    return undefined;
+    throw new Error('Not implemented');
   }
 
   /**

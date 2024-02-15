@@ -93,3 +93,8 @@ export enum RedisOverviewPage {
     Rdi = 'My RDI instances',
 }
 
+export enum TextConnectionSection {
+    Success  = 'success',
+    Failed = 'failed',
+}
+

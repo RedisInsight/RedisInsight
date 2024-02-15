@@ -33,7 +33,7 @@ fixture `Rdi Navigation`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await t.maximizeWindow();
+        await databaseHelper.acceptLicenseTerms();
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
 

@@ -17,10 +17,10 @@ import {
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import { setTitle } from 'uiSrc/utils'
-import EmptyMessage from './components/EmptyMessage'
-import ConnectionForm from '../connection-form/ConnectionForm'
-import RdiHeader from '../header/RdiHeader'
-import RdiInstancesListWrapper from '../instance-list/RdiInstancesListWrapper'
+import EmptyMessage from './empty-message/EmptyMessage'
+import ConnectionForm from './connection-form/ConnectionForm'
+import RdiHeader from './header/RdiHeader'
+import RdiInstancesListWrapper from './instance-list/RdiInstancesListWrapper'
 
 import styles from './styles.module.scss'
 

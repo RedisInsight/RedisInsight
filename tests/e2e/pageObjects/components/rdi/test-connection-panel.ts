@@ -35,8 +35,8 @@ export class TestConnectionPanel {
     }
 
     /**
-     * get row count in opened section
-     * @param state State of section
+     * get row count in the section
+     * @param section Name of section
      */
     async getNumberOfSectionRow(section: TextConnectionSection): Promise<string> {
         const sectionSelector = Selector(`[data-testid^=${section}-connections-]`);
@@ -45,8 +45,9 @@ export class TestConnectionPanel {
     }
 
     /**
-     * get row count in opened section
-     * @param state State of section
+     * get row endpoint text by index
+     * @param section Name of section
+     * @param index index of the row to get text
      */
     async getSectionRowTextByIndex(section: TextConnectionSection, index: number): Promise<string> {
         const sectionSelector = Selector(`[data-testid^=${section}-connections-]`);

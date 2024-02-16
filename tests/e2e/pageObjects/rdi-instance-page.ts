@@ -1,10 +1,16 @@
 import { Selector, t } from 'testcafe';
 import { BaseOverviewPage } from './base-overview-page';
 import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
+import { TestConnectionPanel } from './components/rdi/test-connection-panel';
 
 export class RdiInstancePage extends BaseOverviewPage {
 
     NavigationPanel = new RdiNavigationPanel();
+    TestConnectionPanel = new TestConnectionPanel();
+
+    //TODO create a Pipeline Management panel
+    //Tabs
+    configurationTab = Selector('[data-testid=rdi-nav-btn-config]');
 
     dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');
@@ -34,6 +40,9 @@ export class RdiInstancePage extends BaseOverviewPage {
     noPipelineText = Selector('[data-testid=no-pipeline]');
 
     breadcrumbsLink = Selector('[data-testid=my-rdi-instances-btn]');
+
+    // Test Connection
+    textConnectionBtn = Selector('[data-testid=rdi-test-connection-btn]');
 
     /**
      * Open Job by name

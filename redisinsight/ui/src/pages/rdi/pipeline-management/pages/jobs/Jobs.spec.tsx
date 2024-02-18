@@ -78,7 +78,7 @@ describe('Jobs', () => {
 
     render(<Jobs />)
 
-    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline/config')
+    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/config')
   })
 
   it('should not push to config page', () => {

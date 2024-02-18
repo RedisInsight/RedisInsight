@@ -17,8 +17,8 @@ import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { rdiDryRunJobSelector, rdiDryRunJob, setInitialDryRunJob } from 'uiSrc/slices/rdi/dryRun'
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
-import DryRunJobCommands from 'uiSrc/pages/rdi/pipeline/components/dry-run-job-commands'
-import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline/components/dry-run-job-transformations'
+import DryRunJobCommands from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-commands'
+import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-transformations'
 
 import styles from './styles.module.scss'
 

@@ -12,8 +12,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
-
-import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline/components/jobs-panel'
+import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()

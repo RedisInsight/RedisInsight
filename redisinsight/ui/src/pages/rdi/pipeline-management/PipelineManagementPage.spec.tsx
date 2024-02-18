@@ -6,7 +6,7 @@ import { instance, mock } from 'ts-mockito'
 import { act, render, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import { getPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
-import PipelinePage, { Props } from './PipelinePage'
+import PipelinePage, { Props } from './PipelineManagementPage'
 
 const mockedProps = mock<Props>()
 
@@ -38,10 +38,8 @@ describe('PipelinePage', () => {
     })
 
     const expectedActions = [
-      setConnectedInstance(),
       getPipeline(),
     ]
-
     expect(store.getActions()).toEqual(expectedActions)
   })
 })

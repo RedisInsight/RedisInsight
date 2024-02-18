@@ -5,7 +5,7 @@ import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
 export interface Props {
   routes: any[];
 }
-const PipelinePageRouter = ({ routes }: Props) => (
+const PipelineManagementPageRouter = ({ routes }: Props) => (
   <Switch>
     {routes.map((route, i) => (
       // eslint-disable-next-line react/no-array-index-key
@@ -14,4 +14,4 @@ const PipelinePageRouter = ({ routes }: Props) => (
   </Switch>
 )
 
-export default React.memo(PipelinePageRouter)
+export default React.memo(PipelineManagementPageRouter)

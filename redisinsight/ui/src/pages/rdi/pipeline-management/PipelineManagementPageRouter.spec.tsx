@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'uiSrc/utils/test-utils'
-import PipelinePageRouter from './PipelinePageRouter'
+import PipelinePageRouter from './PipelineManagementPageRouter'
 
 const mockedRoutes = [
   {

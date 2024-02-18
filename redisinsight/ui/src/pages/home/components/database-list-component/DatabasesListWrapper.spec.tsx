@@ -1,13 +1,11 @@
 import { EuiInMemoryTable } from '@elastic/eui'
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
 
 import ItemList, { Props as ItemListProps } from 'uiSrc/components/item-list/ItemList'
 import { errorHandlers } from 'uiSrc/mocks/res/responseComposition'
 import { mswServer } from 'uiSrc/mocks/server'
 import { ConnectionType, Instance, RedisCloudSubscriptionType } from 'uiSrc/slices/interfaces'
-import { RootState, store } from 'uiSrc/slices/store'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 

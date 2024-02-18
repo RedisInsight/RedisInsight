@@ -117,6 +117,14 @@ describe('RdiInstancesListWrapper', () => {
             ...state.rdi.instances,
             data: mockInstances
           }
+        },
+        app: {
+          ...state.app,
+          context: {
+            ...state.app.context,
+            lastPage: '',
+            contextRdiInstanceId: '',
+          }
         }
       }))
   })

@@ -190,7 +190,6 @@
     "husky": "^4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "ioredis-mock": "^5.5.4",
-    "ip": "^1.1.8",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-runner-groups": "^2.2.0",

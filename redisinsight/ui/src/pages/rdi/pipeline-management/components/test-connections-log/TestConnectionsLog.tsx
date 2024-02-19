@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 import { Nullable } from 'uiSrc/utils'
 import { ITestConnection } from 'uiSrc/slices/interfaces'
-import TestConnectionsTable from 'uiSrc/pages/rdi/pipeline/components/test-connections-table'
+import TestConnectionsTable from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-table'
 
 import styles from './styles.module.scss'
 

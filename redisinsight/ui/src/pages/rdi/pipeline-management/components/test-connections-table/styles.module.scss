@@ -1,6 +1,6 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
+@import "../../../../../../../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
+@import "../../../../../../../../node_modules/@elastic/eui/src/components/table/mixins";
+@import "../../../../../../../../node_modules/@elastic/eui/src/global_styling/index";
 
 .tableWrapper {
   max-height: calc(100vh - 282px);

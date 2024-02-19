@@ -83,7 +83,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       return
     }
 
-    history.push(Pages.rdiPipelinePrepare(id))
+    history.push(Pages.rdiPipelineManagement(id))
   }
 
   const handleCopy = (text = '', id: string) => {

@@ -223,7 +223,7 @@ const NavigationMenu = () => {
       tooltipText: 'Pipeline Management',
       pageName: PageNames.rdiPipelineManagement,
       ariaLabel: 'Pipeline Management page button',
-      onClick: () => handleGoPage(Pages.rdiPipelinePrepare(connectedRdiInstanceId)),
+      onClick: () => handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
       getClassName() {

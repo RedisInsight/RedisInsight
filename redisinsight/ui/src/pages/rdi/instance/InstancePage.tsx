@@ -5,9 +5,9 @@ import { useLocation, useParams } from 'react-router-dom'
 import {
   appContextSelector,
   resetDatabaseContext,
+  setAppContextConnectedRdiInstanceId,
 } from 'uiSrc/slices/app/context'
 import { IRoute } from 'uiSrc/constants'
-import { localStorageService } from 'uiSrc/services'
 import { getPageName } from 'uiSrc/utils/routing'
 import {
   fetchConnectedInstanceAction,
@@ -37,23 +37,22 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       dispatch(fetchConnectedInstanceAction(connectionRdiInstanceId))
 
       // rerender children only if the same page from scratch to clear all component states
-      // if (lastPageRef.current === getPageName(connectionRdiInstanceId, pathname)) {
-      //   setIsShouldChildrenRerender(true)
-      // }
+      if (lastPageRef.current === getPageName(connectionRdiInstanceId, pathname)) {
+        setIsShouldChildrenRerender(true)
+      }
 
       dispatch(resetRdiConnectedInstance())
     }
 
-    // dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
-    // dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
+    dispatch(setAppContextConnectedRdiInstanceId(connectionRdiInstanceId))
 
     // clear database context
     dispatch(resetDatabaseContext())
   }, [connectionRdiInstanceId])
 
-  // useEffect(() => {
-  //   lastPageRef.current = getPageName(connectionRdiInstanceId, pathname)
-  // }, [pathname])
+  useEffect(() => {
+    lastPageRef.current = getPageName(connectionRdiInstanceId, pathname)
+  }, [pathname])
 
   useEffect(() => {
     if (isShouldChildrenRerender) setIsShouldChildrenRerender(false)

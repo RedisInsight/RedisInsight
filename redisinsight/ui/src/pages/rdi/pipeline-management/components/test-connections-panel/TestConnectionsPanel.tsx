@@ -8,7 +8,7 @@ import {
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
-import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline/components/test-connections-log'
+import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-log'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
 import styles from './styles.module.scss'

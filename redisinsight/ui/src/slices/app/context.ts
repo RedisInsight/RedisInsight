@@ -284,7 +284,7 @@ export const appContextTriggeredFunctions = (state: RootState) =>
 export const appContextCapability = (state: RootState) =>
   state.app.context.capability
 export const appContextPipelineManagement = (state: RootState) =>
-  state.app.context.triggeredFunctions
+  state.app.context.pipelineManagement
 
 // The reducer
 export default appContextSlice.reducer

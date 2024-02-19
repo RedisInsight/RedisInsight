@@ -1,4 +1,4 @@
-.popoverApproveBtn {
+.popoverConfirmBtn {
   float: right;
   padding: 4px 12px !important;
   height: 24px !important;
@@ -6,11 +6,6 @@
   :global(.euiButtonContent) {
     padding: 0 !important;
   }
-}
-
-.popoverContent {
-  font-size: 13px !important;
-  line-height: 16px !important;
 }
 
 .popoverTitle {

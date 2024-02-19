@@ -43,6 +43,24 @@ export class RdiInstancePage extends BaseOverviewPage {
 
     // Test Connection
     textConnectionBtn = Selector('[data-testid=rdi-test-connection-btn]');
+    //Jobs
+    addJobBtn = Selector('[data-testid=add-new-job]');
+    jobNameInput = Selector('[data-testid^=job-name-input-]');
+    applyJobNameBtn = Selector('[data-testid=apply-btn]');
+    cancelJobNameBtn = Selector('[data-testid=cancel-btn]');
+    jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
+    deleteConfirmBtn  = Selector('[data-testid=confirm-btn]');
+    jobsPipelineTitle = Selector('[class*=rdi__title]');
+
+    /**
+     * Add Job by name
+     * @param name job name
+     */
+    async addJob(name: string): Promise<void> {
+        await t.click(this.addJobBtn);
+        await t.typeText(this.jobNameInput, name);
+        await t.click(this.applyJobNameBtn);
+    }
 
     /**
      * Open Job by name
@@ -51,6 +69,27 @@ export class RdiInstancePage extends BaseOverviewPage {
     async openJobByName(name: string): Promise<void> {
         const jobBtnSelector = Selector(`[data-testid=rdi-nav-job-${name}]`);
         await t.click(jobBtnSelector);
+    }
+
+    /**
+     * Delete Job by name
+     * @param name job name
+     */
+    async deleteJobByName(name: string): Promise<void> {
+        const jobBtnSelector = Selector(`[data-testid=delete-job-${name}]`);
+        await t.click(jobBtnSelector);
+        await t.click(this.deleteConfirmBtn);
+    }
+
+    /**
+     * Edit Job by name
+     * @param name job name
+     */
+    async editJobByName(name: string, newName: string): Promise<void> {
+        const jobBtnSelector = Selector(`[data-testid=edit-job-name-${name}]`);
+        await t.click(jobBtnSelector)
+            .typeText(this.jobNameInput, newName, { replace: true })
+            .click(this.applyJobNameBtn);
     }
 
     /**

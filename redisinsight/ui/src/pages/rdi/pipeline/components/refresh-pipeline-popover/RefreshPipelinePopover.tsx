@@ -1,29 +1,20 @@
-import React, { useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
 import {
-  EuiButton,
   EuiButtonIcon,
-  EuiIcon,
-  EuiText,
   EuiSpacer,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPopover,
-  EuiOutsideClickDetector,
+  EuiText
 } from '@elastic/eui'
 import { useFormikContext } from 'formik'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
 import { IPipeline } from 'uiSrc/slices/interfaces'
+import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
 
-import styles from './styles.module.scss'
-
 const RefreshPipelinePopover = () => {
-  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
-
   const { loading, data } = useSelector(rdiPipelineSelector)
 
   const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
@@ -33,7 +24,6 @@ const RefreshPipelinePopover = () => {
   const dispatch = useDispatch()
 
   const handleRefreshClick = () => {
-    setIsPopoverOpen(false)
     dispatch(
       fetchRdiPipeline(rdiInstanceId, (pipeline: Nullable<IPipeline>) => {
         resetForm()
@@ -44,7 +34,6 @@ const RefreshPipelinePopover = () => {
   }
 
   const handleRefreshWarning = () => {
-    setIsPopoverOpen(true)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
       eventData: {
@@ -54,69 +43,33 @@ const RefreshPipelinePopover = () => {
     })
   }
 
-  const handleClosePopover = () => {
-    setIsPopoverOpen(false)
-  }
-
   return (
-    <EuiOutsideClickDetector
-      onOutsideClick={handleClosePopover}
-    >
-      <EuiPopover
-        id="refresh-pipeline-warning-popover"
-        ownFocus
-        anchorPosition="downCenter"
-        isOpen={isPopoverOpen}
-        closePopover={handleClosePopover}
-        panelPaddingSize="m"
-        display="inlineBlock"
-        panelClassName={styles.panelPopover}
-        button={(
-          <EuiButtonIcon
-            size="xs"
-            iconSize="s"
-            iconType="refresh"
-            disabled={loading}
-            onClick={handleRefreshWarning}
-            className={styles.trigger}
-            aria-labelledby="Refresh pipeline button"
-            data-testid="refresh-pipeline-btn"
-          />
-        )}
-      >
-        <EuiFlexGroup alignItems="center" gutterSize="none">
-          <EuiFlexItem grow={false}>
-            <EuiIcon
-              type="alert"
-              className={styles.alertIcon}
-            />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiText className={styles.popoverTitle}>Refresh a pipeline</EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiSpacer size="xs" />
-        <EuiText size="s">
-          A new pipeline will be uploaded from the RDI instance,
-          which may result in overwriting details displayed in RedisInsight.
-        </EuiText>
-        <EuiSpacer size="s" />
-        <EuiText size="s">
-          You can download the pipeline displayed to save it locally.
-        </EuiText>
-        <EuiSpacer size="m" />
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          className={styles.popoverApproveBtn}
-          onClick={handleRefreshClick}
-          data-testid="refresh-pipeline-apply-btn"
-        >
-          Refresh
-        </EuiButton>
-      </EuiPopover>
-    </EuiOutsideClickDetector>
+    <ConfirmationPopover
+      title="Refresh a pipeline"
+      body={(
+        <>
+          <EuiText size="s">
+            A new pipeline will be uploaded from the RDI instance, which may result in overwriting details displayed in
+            RedisInsight.
+          </EuiText>
+          <EuiSpacer size="s" />
+          <EuiText size="s">You can download the pipeline displayed to save it locally.</EuiText>
+        </>
+      )}
+      confirmButtonText="Refresh"
+      onConfirm={handleRefreshClick}
+      button={(
+        <EuiButtonIcon
+          size="xs"
+          iconSize="s"
+          iconType="refresh"
+          disabled={loading}
+          aria-labelledby="Refresh pipeline button"
+          data-testid="refresh-pipeline-btn"
+        />
+      )}
+      onButtonClick={handleRefreshWarning}
+    />
   )
 }
 

@@ -44,8 +44,6 @@ const dbTableParams: DbTableParameters = {
     conditionWhereColumnValue: `${rdiInstance.name}`
 };
 
-const instanceId = 'testId';
-
 //skip the tests until rdi integration is added
 fixture.skip `Pipeline`
     .meta({ type: 'critical_path' })

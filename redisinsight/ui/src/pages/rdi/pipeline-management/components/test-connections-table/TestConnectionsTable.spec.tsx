@@ -1,11 +1,12 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
+import { TestConnectionStatus } from 'uiSrc/slices/interfaces'
 
 import TestConnectionsTable from './TestConnectionsTable'
 
 describe('TestConnectionsTable', () => {
   it('should render', () => {
-    render(<TestConnectionsTable data={[{ index: 0, status: 'success', endpoint: 'localhost:8080' }]} />)
+    render(<TestConnectionsTable data={[{ index: 0, status: TestConnectionStatus.Success, endpoint: 'localhost:8080' }]} />)
   })
 
   it('should not render table for empty data', () => {
@@ -17,8 +18,8 @@ describe('TestConnectionsTable', () => {
   it('should render table data with success messages', () => {
     render(
       <TestConnectionsTable data={[
-        { index: 0, status: 'success', endpoint: 'localhost:8080' },
-        { index: 1, status: 'success', endpoint: 'localhost:8081' },
+        { index: 0, status: TestConnectionStatus.Success, endpoint: 'localhost:8080' },
+        { index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:8081' },
       ]}
       />
     )
@@ -34,10 +35,14 @@ describe('TestConnectionsTable', () => {
   it('should render table data with error messages', () => {
     render(
       <TestConnectionsTable data={[
-        { index: 0, status: 'error', endpoint: 'localhost:8080', error: 'error' },
+        { index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:8080', error: 'error' },
+        { index: 1, status: TestConnectionStatus.Fail, endpoint: 'localhost:8080', error: '' },
+        { index: 2, status: TestConnectionStatus.Fail, endpoint: 'localhost:8080' },
       ]}
       />
     )
     expect(screen.getByTestId('table-result-0')).toHaveTextContent('error')
+    expect(screen.getByTestId('table-result-1')).toHaveTextContent('Error')
+    expect(screen.getByTestId('table-result-2')).toHaveTextContent('Error')
   })
 })

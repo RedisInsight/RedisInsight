@@ -106,11 +106,11 @@ const Navigation = () => {
         </div>
       ))}
       <Tab
-        title="Data Transformation"
+        title="Transform and Validate"
         isSelected={selectedTab === RdiPipelineTabs.Jobs}
         data-testid="rdi-pipeline-tab-jobs"
       >
-        <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} />
+        <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} rdiInstanceId={rdiInstanceId} />
       </Tab>
     </>
   )

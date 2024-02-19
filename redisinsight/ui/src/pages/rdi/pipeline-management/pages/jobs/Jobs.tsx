@@ -6,7 +6,6 @@ import { useFormikContext } from 'formik'
 import { findIndex } from 'lodash'
 import cx from 'classnames'
 
-import { Pages } from 'uiSrc/constants'
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
@@ -30,10 +29,6 @@ const Jobs = () => {
     const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
 
     setJobIndex(jobIndex)
-
-    if (values?.jobs?.length && jobIndex === -1) {
-      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
-    }
   }, [values, rdiInstanceId, decodedJobName, history])
 
   useEffect(() => {

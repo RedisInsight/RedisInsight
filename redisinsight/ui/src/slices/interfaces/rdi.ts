@@ -33,22 +33,21 @@ export interface IDryRunJobResults {
     data?: string[]
   }
 }
+export enum TestConnectionStatus {
+  Fail = 'fail',
+  Success = 'success',
+}
+
 export interface ITestConnection {
-  fail: FailedTestConnectionResult[]
-  success: SuccessTestConnectionResult[]
+  fail: TestConnectionResult[]
+  success: TestConnectionResult[]
 }
 
-export interface FailedTestConnectionResult {
+export interface TestConnectionResult {
   endpoint: string
   index: number
-  error: string
-  status: string
-}
-
-export interface SuccessTestConnectionResult {
-  endpoint: string
-  index: number
-  status: string
+  error?: string
+  status: TestConnectionStatus
 }
 
 export interface IStateRdiTestConnections {

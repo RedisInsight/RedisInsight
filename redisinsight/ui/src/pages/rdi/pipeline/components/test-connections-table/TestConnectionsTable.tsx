@@ -3,15 +3,10 @@ import cx from 'classnames'
 import React from 'react'
 
 import { Maybe } from 'uiSrc/utils'
+import { TestConnectionResult, TestConnectionStatus } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
-export interface TestConnectionResult {
-  index: number
-  status: string
-  error?: string
-  endpoint: string
-}
 export interface Props {
   data: Array<TestConnectionResult>
 }
@@ -38,9 +33,9 @@ const TestConnectionsTable = (props: Props) => {
       field: 'error',
       width: '48%',
       truncateText: true,
-      render: (error: Maybe<string>, { index }) => (
+      render: (error: Maybe<string>, { status, index }) => (
         <div data-testid={`table-result-${index}`}>
-          {error || 'Successful'}
+          {status === TestConnectionStatus.Fail ? error || 'Error' : 'Successful'}
         </div>
       )
     }

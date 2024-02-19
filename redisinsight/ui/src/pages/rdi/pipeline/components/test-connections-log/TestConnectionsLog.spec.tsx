@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent, within } from 'uiSrc/utils/test-utils'
-import { ITestConnection } from 'uiSrc/slices/interfaces'
+import { ITestConnection, TestConnectionStatus } from 'uiSrc/slices/interfaces'
 
 import TestConnectionsLog from './TestConnectionsLog'
 
@@ -12,8 +12,8 @@ describe('TestConnectionsLog', () => {
 
   it('should be all collapsed nav groups', () => {
     const mockedData: ITestConnection = {
-      fail: [{ index: 0, status: 'fail', endpoint: 'localhost:1233', error: 'some error' }],
-      success: [{ index: 1, status: 'success', endpoint: 'localhost:1233' }]
+      fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
+      success: [{ index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }]
     }
     render(<TestConnectionsLog data={mockedData} />)
 
@@ -23,8 +23,8 @@ describe('TestConnectionsLog', () => {
 
   it('should open and collapse other groups', () => {
     const mockedData: ITestConnection = {
-      fail: [{ index: 0, status: 'fail', endpoint: 'localhost:1233', error: 'some error' }],
-      success: [{ index: 1, status: 'success', endpoint: 'localhost:1233' }]
+      fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
+      success: [{ index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }]
     }
     render(<TestConnectionsLog data={mockedData} />)
 
@@ -44,10 +44,10 @@ describe('TestConnectionsLog', () => {
 
   it('should show proper items length', () => {
     const mockedData: ITestConnection = {
-      fail: [{ index: 0, status: 'fail', endpoint: 'localhost:1233', error: 'some error' }],
+      fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
       success: [
-        { index: 1, status: 'success', endpoint: 'localhost:1233' },
-        { index: 2, status: 'success', endpoint: 'localhost:1233' }
+        { index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' },
+        { index: 2, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }
       ]
     }
     render(<TestConnectionsLog data={mockedData} />)

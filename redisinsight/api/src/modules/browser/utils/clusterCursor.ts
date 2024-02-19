@@ -3,14 +3,15 @@ import { IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.inter
 
 const NODES_SEPARATOR = '||';
 const CURSOR_SEPARATOR = '@';
-// Correct format 172.17.0.1:7001@-1||172.17.0.1:7002@33
-const CLUSTER_CURSOR_REGEX = /^(([a-z0-9.-])+:[0-9]+(@-?\d+)(?:\|{2}(?!$)|$))+$/;
+// Correct format 172.17.0.1:7001@-1||172.17.0.1:7002@33||:::4554@1423
+const CLUSTER_CURSOR_REGEX = /^(([a-z0-9.:-])+:[0-9]+(@-?\d+)(?:\|{2}(?!$)|$))+$/;
 
 export const isClusterCursorValid = (cursor: string) => CLUSTER_CURSOR_REGEX.test(cursor);
 
 /**
  * Parses composed custom cursor from FE and returns nodes
  * Format: 172.17.0.1:7001@22||172.17.0.1:7002@33
+ * Also ipv6 is supported :::6379@22:::7001@33
  */
 export const parseClusterCursor = (cursor: string): IScannerNodeKeys[] => {
   if (!isClusterCursorValid(cursor)) {
@@ -21,7 +22,7 @@ export const parseClusterCursor = (cursor: string): IScannerNodeKeys[] => {
 
   nodeStrings.forEach((item: string) => {
     const [address, nextCursor] = item.split(CURSOR_SEPARATOR);
-    const [host, port] = address.split(':');
+    const [, host, port] = address.match(/(.+):(\d+)$/);
 
     // ignore nodes with cursor -1 (fully scanned)
     if (parseInt(nextCursor, 10) >= 0) {

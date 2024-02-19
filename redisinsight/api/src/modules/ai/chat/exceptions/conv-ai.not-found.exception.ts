@@ -2,13 +2,13 @@ import { HttpException, HttpExceptionOptions, HttpStatus } from '@nestjs/common'
 import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
-export class CloudCapiUnauthorizedException extends HttpException {
-  constructor(message = ERROR_MESSAGES.UNAUTHORIZED, options?: HttpExceptionOptions) {
+export class ConvAiNotFoundException extends HttpException {
+  constructor(message = ERROR_MESSAGES.NOT_FOUND, options?: HttpExceptionOptions) {
     const response = {
       message,
-      statusCode: HttpStatus.UNAUTHORIZED,
-      error: 'CloudCapiUnauthorized',
-      errorCode: CustomErrorCodes.CloudCapiUnauthorized,
+      statusCode: HttpStatus.NOT_FOUND,
+      error: 'ConvAiNotFound',
+      errorCode: CustomErrorCodes.ConvAiNotFound,
     };
 
     super(response, response.statusCode, options);

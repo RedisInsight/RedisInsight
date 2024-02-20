@@ -755,7 +755,10 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=18.15.0
+            nvm install 18.15.0
+            nvm use 18.15.0
+            npm install --global yarn
+
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install

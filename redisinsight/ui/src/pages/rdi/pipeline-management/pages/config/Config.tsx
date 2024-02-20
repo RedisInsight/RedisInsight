@@ -10,7 +10,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
-import TestConnectionsPanel from 'redisinsight/ui/src/pages/rdi/pipeline-management/components/test-connections-panel'
+import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import { testConnectionsAction, rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
 import styles from './styles.module.scss'

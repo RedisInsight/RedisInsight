@@ -11,7 +11,7 @@ import reducer, {
   initialState,
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
-	setAppContextConnectedRdiInstanceId,
+  setAppContextConnectedRdiInstanceId,
   setBrowserPatternKeyListDataLoaded,
   setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {IRoute, PageNames, Pages} from 'uiSrc/constants'
+import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { fetchRdiPipeline } from 'uiSrc/slices/rdi/pipeline'
 import RdiPipelinePageTemplate from 'uiSrc/templates/rdi-pipeline-page-template'
@@ -43,10 +43,6 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   })
 
   useEffect(() => {
-    console.log(lastViewedPage)
-    console.log(pathname)
-    console.log(Pages.rdiPipelineManagement(rdiInstanceId))
-    console.log(pathname === Pages.rdiPipelineManagement(rdiInstanceId))
     if (pathname === Pages.rdiPipelineManagement(rdiInstanceId)) {
       if (pathnameRef.current && pathnameRef.current !== lastViewedPage) {
         history.push(pathnameRef.current)

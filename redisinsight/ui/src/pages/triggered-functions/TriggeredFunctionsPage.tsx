@@ -59,25 +59,18 @@ const TriggeredFunctionsPage = ({ routes = [] }: Props) => {
   }, [])
 
   useEffect(() => {
-    // console.log(lastViewedPage)
-    console.log(pathname)
-    console.log(Pages.triggeredFunctions(instanceId))
-    console.log(pathname === Pages.triggeredFunctions(instanceId))
     if (pathname === Pages.triggeredFunctions(instanceId)) {
       if (pathnameRef.current && pathnameRef.current !== lastViewedPage) {
-        console.log('!= lastPage')
         history.push(pathnameRef.current)
         return
       }
 
       // restore from context
       if (lastViewedPage) {
-        console.log('restored')
         history.push(lastViewedPage)
         return
       }
 
-      console.log('finally')
       history.push(Pages.triggeredFunctionsFunctions(instanceId))
     }
 

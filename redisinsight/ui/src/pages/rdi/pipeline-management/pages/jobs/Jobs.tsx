@@ -12,6 +12,7 @@ import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { MonacoYaml } from 'uiSrc/components/monaco-editor'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
+import { Pages } from 'uiSrc/constants'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
@@ -27,6 +28,10 @@ const Jobs = () => {
 
   useEffect(() => {
     const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
+
+    if (jobIndex === -1) {
+      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+    }
 
     setJobIndex(jobIndex)
   }, [values, rdiInstanceId, decodedJobName, history])

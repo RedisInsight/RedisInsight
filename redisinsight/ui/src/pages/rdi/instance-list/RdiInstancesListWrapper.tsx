@@ -4,20 +4,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import ItemList from 'uiSrc/components/item-list'
-import { BrowserStorageItem, PageNames, Pages } from 'uiSrc/constants'
+import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   deleteInstancesAction,
   instancesSelector,
-  setConnectedInstanceId } from 'uiSrc/slices/rdi/instances'
+} from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
-import {
-  resetConnectedInstance as resetConnectedDatabaseInstance,
-} from 'uiSrc/slices/instances/instances'
-import { appContextSelector, setAppContextConnectedInstanceId } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
@@ -36,7 +32,6 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
   const { search } = useLocation()
 
   const instances = useSelector(instancesSelector)
-  const { contextRdiInstanceId, lastPage } = useSelector(appContextSelector)
   const [, forceRerender] = useState({})
   const deleting = { id: '' }
   const isLoadingRef = useRef(false)
@@ -73,17 +68,9 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
 
   const handleConnect = (id: string) => {
     // TODO: update connect function (check connection first?)
-    dispatch(resetConnectedDatabaseInstance())
-    dispatch(setConnectedInstanceId(id))
 
-    dispatch(setAppContextConnectedInstanceId(id))
 
-    if (lastPage === PageNames.rdiPipelineStatistics && contextRdiInstanceId === id) {
-      history.push(Pages.rdiPipelineStatistics(id))
-      return
-    }
-
-    history.push(Pages.rdiPipelineManagement(id))
+    history.push(Pages.rdiPipeline(id))
   }
 
   const handleCopy = (text = '', id: string) => {

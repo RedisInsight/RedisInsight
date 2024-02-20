@@ -142,7 +142,9 @@ export abstract class IoredisClient extends RedisClient {
    */
   async monitor(): Promise<any> {
     if (this.client instanceof Redis) {
-      return this.client.monitor();
+      const monitorClient = this.client.monitor();
+      this.client.disconnect();
+      return monitorClient;
     }
 
     return undefined;

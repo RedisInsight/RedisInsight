@@ -31,8 +31,14 @@ export class ClusterScannerStrategy extends ScannerStrategy {
             options: {
               host,
               port,
+              natHost,
+              natPort,
             },
-          }) => host === node.host && port === node.port,
+          }) => (
+            host === node.host && port === node.port
+          ) || (
+            natHost === node.host && natPort === node.port
+          ),
         );
       });
 
@@ -41,8 +47,8 @@ export class ClusterScannerStrategy extends ScannerStrategy {
 
     return nodesClients.map((node) => ({
       node,
-      host: node.options.host,
-      port: node.options.port,
+      host: node.options.natHost || node.options.host,
+      port: node.options.natPort || node.options.port,
       cursor: 0,
       keys: [],
       total: 0,

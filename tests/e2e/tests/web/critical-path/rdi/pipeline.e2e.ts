@@ -36,14 +36,6 @@ const rdiInstance: AddNewRdiParameters = {
     password: 'password'
 };
 
-const dbTableParams: DbTableParameters = {
-    tableName: 'rdi',
-    columnName: 'id',
-    rowValue: 'testId',
-    conditionWhereColumnName: 'name',
-    conditionWhereColumnValue: `${rdiInstance.name}`
-};
-
 //skip the tests until rdi integration is added
 fixture.skip `Pipeline`
     .meta({ type: 'critical_path' })
@@ -51,7 +43,6 @@ fixture.skip `Pipeline`
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
         await rdiApiRequests.addNewRdiApi(rdiInstance);
-        await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
 

@@ -22,7 +22,7 @@ export interface Props {
 const PipelineManagementPage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastViewedPage } = useSelector(appContextPipelineManagement)
-  const { name: connectedInstanceName } = useSelector(connectedInstanceSelector)
+  const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
 
   const pathnameRef = useRef<string>('')
 
@@ -30,7 +30,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
 
-  const rdiInstanceName = formatLongName(connectedInstanceName, 33, 0, '...')
+  const rdiInstanceName = formatLongName(connectedRdiInstanceName, 33, 0, '...')
   setTitle(`${rdiInstanceName} - Pipeline Management`)
 
   useEffect(() => {

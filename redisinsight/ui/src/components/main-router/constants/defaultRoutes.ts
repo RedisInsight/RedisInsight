@@ -51,7 +51,7 @@ const INSTANCE_ROUTES: IRoute[] = [
 
 const RDI_INSTANCE_ROUTES: IRoute[] = [
   {
-    pageName: PageNames.rdiPipelineManagement,
+    pageName: PageNames.rdiPipelineStatistics,
     path: Pages.rdiPipelineStatistics(':rdiInstanceId'),
     component: PipelineStatisticsPage,
   },

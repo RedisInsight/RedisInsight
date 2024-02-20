@@ -121,7 +121,7 @@ export const ossStandaloneForSSHConfig = {
 };
 
 export const ossClusterForSSHConfig = {
-    host: process.env.OSS_STANDALONE_SSH_HOST || '172.31.100.211',
+    host: process.env.OSS_STANDALONE_SSH_HOST || '172.33.100.211',
     port: process.env.OSS_STANDALONE_SSH_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_SSH_DATABASE_NAME || 'oss-cluster-for-ssh'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_SSH_USERNAME,

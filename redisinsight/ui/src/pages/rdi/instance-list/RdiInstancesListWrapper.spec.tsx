@@ -1,11 +1,9 @@
 import { EuiInMemoryTable } from '@elastic/eui'
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { instance, mock } from 'ts-mockito'
 
 import ItemList, { Props as ItemListProps } from 'uiSrc/components/item-list/ItemList'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
-import { RootState, store } from 'uiSrc/slices/store'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 
@@ -28,11 +26,6 @@ jest.mock('file-saver', () => ({
   saveAs: jest.fn()
 }))
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
-}))
-
 const mockInstances: RdiInstance[] = [
   {
     id: '1',
@@ -52,8 +45,8 @@ const mockInstances: RdiInstance[] = [
   }
 ]
 
-jest.mock('uiSrc/slices/instances/instances', () => ({
-  ...jest.requireActual('uiSrc/slices/instances/instances'),
+jest.mock('uiSrc/slices/rdi/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/rdi/instances'),
   instancesSelector: jest.fn().mockReturnValue({
     loading: false,
     error: '',
@@ -101,32 +94,6 @@ const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
 describe('RdiInstancesListWrapper', () => {
   beforeAll(() => {
     (ItemList as jest.Mock).mockImplementation(mockRdiInstancesList)
-  })
-
-  beforeEach(() => {
-    const state: RootState = store.getState();
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: RootState) => RootState) =>
-      callback({
-        ...state,
-        analytics: {
-          ...state.analytics
-        },
-        rdi: {
-          ...state.rdi,
-          instances: {
-            ...state.rdi.instances,
-            data: mockInstances
-          }
-        },
-        app: {
-          ...state.app,
-          context: {
-            ...state.app.context,
-            lastPage: '',
-            contextRdiInstanceId: '',
-          }
-        }
-      }))
   })
 
   it('should render', () => {

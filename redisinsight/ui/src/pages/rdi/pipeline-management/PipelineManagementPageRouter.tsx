@@ -4,7 +4,7 @@ import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
 import { IRoute } from 'uiSrc/constants'
 
 export interface Props {
-  routes: IRoute[];
+  routes: IRoute[]
 }
 const PipelineManagementPageRouter = ({ routes }: Props) => (
   <Switch>

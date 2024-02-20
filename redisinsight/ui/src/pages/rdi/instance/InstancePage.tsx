@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
@@ -8,7 +8,6 @@ import {
   setAppContextConnectedRdiInstanceId,
 } from 'uiSrc/slices/app/context'
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
-import { getPageName } from 'uiSrc/utils/routing'
 import {
   fetchConnectedInstanceAction,
   resetConnectedInstance as resetRdiConnectedInstance,
@@ -25,8 +24,6 @@ export interface Props {
 }
 
 const RdiInstancePage = ({ routes = [] }: Props) => {
-  const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
-
   const dispatch = useDispatch()
   const history = useHistory()
   const { pathname } = useLocation()
@@ -34,17 +31,9 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastPage, contextRdiInstanceId } = useSelector(appContextSelector)
 
-  const lastPageRef = useRef<string>()
-
   useEffect(() => {
     if (contextRdiInstanceId && contextRdiInstanceId !== rdiInstanceId) {
       dispatch(fetchConnectedInstanceAction(rdiInstanceId))
-
-      // rerender children only if the same page from scratch to clear all component states
-      if (lastPageRef.current === getPageName(rdiInstanceId, pathname)) {
-        setIsShouldChildrenRerender(true)
-      }
-
       dispatch(resetRdiConnectedInstance())
     }
     dispatch(setAppContextConnectedRdiInstanceId(rdiInstanceId))
@@ -67,22 +56,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       history.push(Pages.rdiPipelineManagement(rdiInstanceId))
     }
   }, [])
-
-  useEffect(() => {
-    lastPageRef.current = getPageName(rdiInstanceId, pathname)
-  }, [pathname])
-
-  useEffect(() => {
-    if (isShouldChildrenRerender) setIsShouldChildrenRerender(false)
-  }, [isShouldChildrenRerender])
-
-  useEffect(() => {
-
-  }, [])
-
-  if (isShouldChildrenRerender) {
-    return null
-  }
 
   return (
     // TODO add rdi page template

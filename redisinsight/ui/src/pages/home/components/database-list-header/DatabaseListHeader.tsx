@@ -35,7 +35,7 @@ export interface Props {
 const CREATE_DATABASE = 'CREATE DATABASE'
 const THE_GUIDES = 'THE GUIDES'
 
-const HomeHeader = ({ onAddInstance, direction }: Props) => {
+const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
   const { theme } = useContext(ThemeContext)
   const { data: instances } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
@@ -223,4 +223,4 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
   )
 }
 
-export default HomeHeader
+export default DatabaseListHeader

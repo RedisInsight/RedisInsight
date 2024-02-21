@@ -29,7 +29,7 @@ import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import DatabaseList from './components/database-list-component'
-import HomeHeader from './components/home-header'
+import DatabaseListHeader from './components/database-list-header'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -189,7 +189,7 @@ const HomePage = () => {
         {(resizeRef) => (
           <EuiPage className={styles.page}>
             <EuiPageBody component="div">
-              <HomeHeader
+              <DatabaseListHeader
                 key="instance-controls"
                 onAddInstance={handleAddInstance}
                 direction="row"

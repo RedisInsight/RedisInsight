@@ -18,7 +18,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { AddDbType, HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants'
-import CapabilityPromotion from 'uiSrc/pages/home/components/capability-promotion'
+import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
 
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import {
@@ -226,7 +226,11 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
               <EuiTitle className={styles.controlsGroupTitle} size="s">
                 <h5>Click & Learn</h5>
               </EuiTitle>
-              <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} mode="reduced" />
+              <CapabilityPromotion
+                mode="reduced"
+                capabilityIds={['sq-intro', 'ds-json-intro', 'tf-intro', 'ds-prob-intro']}
+                wrapperClassName={cx(styles.section, styles.capabilityPromotion)}
+              />
             </div>
             <EuiTitle className={styles.addDbTitle} size="s"><span>Add Redis databases</span></EuiTitle>
             <div className={styles.controlsGroup}>

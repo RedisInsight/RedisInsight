@@ -25,11 +25,9 @@
 
   .exploreItem {
     margin-right: 8px;
-  }
-
-  .exploreItem {
     text-decoration: none;
-
+    display: flex;
+    align-items: center;
     transition: transform 0.1s linear;
 
     &:hover {
@@ -59,27 +57,27 @@
       text-decoration: underline;
     }
 
-    &:nth-child(2) {
+    &:nth-child(1) {
       .guideIcon {
         color: #ffaf2b;
       }
     }
-    &:nth-child(3) {
+    &:nth-child(2) {
       .guideIcon {
         color: #4fdae0;
       }
     }
-    &:nth-child(4) {
+    &:nth-child(3) {
       .guideIcon {
         color: #f74b57;
       }
     }
-    &:nth-child(5) {
+    &:nth-child(4) {
       .guideIcon {
         color: #9e7ee8;
       }
     }
-    &:nth-child(6) {
+    &:nth-child(5) {
       .guideIcon {
         color: #5bc69b;
       }

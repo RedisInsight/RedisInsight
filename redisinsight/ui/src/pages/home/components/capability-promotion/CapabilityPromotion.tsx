@@ -53,17 +53,17 @@ const CapabilityPromotion = (props: Props) => {
 
   return (
     <div className={cx(styles.wrapper, mode, wrapperClassName)} data-testid="capability-promotion">
+      <div
+        tabIndex={0}
+        role="button"
+        onKeyDown={() => {}}
+        onClick={onClickExplore}
+        className={styles.exploreItem}
+        data-testid="explore-redis-btn"
+      >
+        <EuiText>Explore Redis</EuiText>
+      </div>
       <div className={styles.guides}>
-        <div
-          tabIndex={0}
-          role="button"
-          onKeyDown={() => {}}
-          onClick={onClickExplore}
-          className={styles.exploreItem}
-          data-testid="explore-redis-btn"
-        >
-          <EuiText>Explore Redis</EuiText>
-        </div>
         {data.map(({ title, tutorialId, icon }) => (
           // eslint-disable-next-line jsx-a11y/click-events-have-key-events
           <div

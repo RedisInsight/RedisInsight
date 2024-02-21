@@ -23,10 +23,7 @@ import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctio
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
-import {
-  setConnectedInstanceId,
-  setConnectedInstance,
-} from 'uiSrc/slices/rdi/instances'
+import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
 
 import InstancePage, { Props } from './InstancePage'
@@ -101,7 +98,6 @@ describe('InstancePage', () => {
       setAppContextConnectedRdiInstanceId('rdiInstanceId'),
       resetConnectedDatabaseInstance(),
       ...resetContextActions,
-      setConnectedInstanceId('rdiInstanceId'),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)

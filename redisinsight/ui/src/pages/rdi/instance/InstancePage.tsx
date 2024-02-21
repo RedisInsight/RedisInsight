@@ -8,11 +8,7 @@ import {
   setAppContextConnectedRdiInstanceId,
 } from 'uiSrc/slices/app/context'
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
-import {
-  fetchConnectedInstanceAction,
-  resetConnectedInstance as resetRdiConnectedInstance,
-  setConnectedInstanceId
-} from 'uiSrc/slices/rdi/instances'
+import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
@@ -32,9 +28,8 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const { lastPage, contextRdiInstanceId } = useSelector(appContextSelector)
 
   useEffect(() => {
-    if (contextRdiInstanceId && contextRdiInstanceId !== rdiInstanceId) {
+    if (!contextRdiInstanceId || contextRdiInstanceId !== rdiInstanceId) {
       dispatch(fetchConnectedInstanceAction(rdiInstanceId))
-      dispatch(resetRdiConnectedInstance())
     }
     dispatch(setAppContextConnectedRdiInstanceId(rdiInstanceId))
 
@@ -44,8 +39,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [rdiInstanceId])
 
   useEffect(() => {
-    dispatch(setConnectedInstanceId(rdiInstanceId))
-
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
       if (lastPage === PageNames.rdiPipelineStatistics && contextRdiInstanceId === rdiInstanceId) {

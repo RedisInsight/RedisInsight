@@ -410,7 +410,12 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=18.15.0
+      - run: 
+          command: |
+            choco install nodejs --version=18.15.0
+            nvm install 18.15.0
+            nvm use 18.15.0
+            npm install --global yarn
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..

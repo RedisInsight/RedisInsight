@@ -9,7 +9,7 @@ export class ExploreTab {
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
     timeSeriesLink = Selector('[data-testid=accordion-button-ds-ts]');
     internalTimeSeriesLink = Selector('[data-testid=internal-link-ds-ts-ret-compact]');
-    scrolledEnablementArea = Selector('[data-testid=enablement-area__page]');
+    scrolledEnablementArea = Selector('[data-testid=enablement-area__page]', { timeout: 1000 });
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     tutorialLinkField = Selector('[data-testid=tutorial-link-field]');
     tutorialLatestDeleteIcon = Selector('[data-testid^=delete-tutorial-icon-]').nth(0);

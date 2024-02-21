@@ -371,17 +371,20 @@ export const createDatabaseInstances = async () => {
       name: constants.TEST_INSTANCE_NAME_2,
       host: constants.TEST_INSTANCE_HOST_2,
       db: constants.TEST_REDIS_DB_INDEX,
+      timeout: 30000,
     },
     {
       id: constants.TEST_INSTANCE_ID_3,
       name: constants.TEST_INSTANCE_NAME_3,
       host: constants.TEST_INSTANCE_HOST_3,
+      timeout: 30000,
     },
     {
       id: constants.TEST_INSTANCE_ID_4,
       name: constants.TEST_INSTANCE_NAME_4,
       host: constants.TEST_INSTANCE_HOST_4,
       port: constants.TEST_INSTANCE_PORT_4,
+      timeout: 30000,
     }
   ];
 

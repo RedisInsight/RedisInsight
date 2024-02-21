@@ -434,6 +434,7 @@ export const createAclInstance = async (rte, server): Promise<void> => {
     tls: false,
     verifyServerCert: false,
     connectionType: rte.env.type,
+    timeout: 30000,
   }
 
   if (rte.env.type === constants.CLUSTER) {

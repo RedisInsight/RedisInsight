@@ -108,6 +108,7 @@ const appContextSlice = createSlice({
       contextInstanceId: state.contextInstanceId,
       contextRdiInstanceId: state.contextRdiInstanceId,
       capability: state.capability,
+      pipelineManagement: state.pipelineManagement,
     }),
     // set connected instance
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {

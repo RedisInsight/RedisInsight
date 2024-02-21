@@ -40,7 +40,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   useEffect(() => () => {
     dispatch(setLastPageContext(PageNames.rdiPipelineManagement))
     dispatch(setLastPipelineManagementPage(pathnameRef.current))
-  })
+  }, [])
 
   useEffect(() => {
     if (pathname === Pages.rdiPipelineManagement(rdiInstanceId)) {
@@ -59,7 +59,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
     }
 
     pathnameRef.current = pathname === Pages.rdiPipelineManagement(rdiInstanceId) ? '' : pathname
-  }, [pathname])
+  }, [pathname, lastViewedPage])
 
   return (
     <RdiPipelinePageTemplate>

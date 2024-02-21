@@ -128,13 +128,9 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    */
   public async update(id: string, database: Partial<Database>): Promise<Database> {
     const oldEntity = await this.decryptEntity((await this.repository.findOneBy({ id })), true);
-    console.log('___ oldEntity', oldEntity)
     const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
 
-    console.log('___ newEntity', newEntity)
-
     const mergeResult = this.repository.merge(oldEntity, newEntity);
-    console.log('___ mergeResult', mergeResult)
 
     if (newEntity.caCert === null) {
       mergeResult.caCert = null;
@@ -150,7 +146,6 @@ export class LocalDatabaseRepository extends DatabaseRepository {
 
     const encrypted = await this.encryptEntity(mergeResult);
 
-    console.log('___ encrypted', encrypted)
     await this.repository.save(encrypted);
 
     // workaround for one way cascade deletion

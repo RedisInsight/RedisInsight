@@ -70,10 +70,10 @@ const StreamDetails = (props: Props) => {
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
             {streamViewType === StreamViewType.Data && (
-              <AddStreamEntries onCancel={closeAddItemPanel} />
+              <AddStreamEntries closePanel={closeAddItemPanel} />
             )}
             {STREAM_ADD_GROUP_VIEW_TYPES.includes(streamViewType!) && (
-              <AddStreamGroup onCancel={closeAddItemPanel} />
+              <AddStreamGroup closePanel={closeAddItemPanel} />
             )}
           </div>
         )}

@@ -1,15 +1,17 @@
-import { EuiButton, EuiIcon, EuiPopover, EuiSpacer, EuiText } from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiPopover, EuiSpacer, EuiText } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
+import { AxiosError } from 'axios'
 import { truncateText } from 'uiSrc/utils'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { customTutorialsBulkUploadSelector, uploadDataBulkAction } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
-import { ReactComponent as BulkDataUploadIcon } from 'uiSrc/assets/img/icons/data-upload-bulk.svg'
 import DatabaseNotOpened from 'uiSrc/components/messages/database-not-opened'
 
+import { checkResourse, getPathToResource } from 'uiSrc/services/resourcesService'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -25,6 +27,8 @@ const RedisUploadButton = ({ label, path }: Props) => {
 
   const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
+
+  const urlToFile = getPathToResource(path)
 
   useEffect(() => {
     setIsLoading(pathsInProgress.includes(path))
@@ -54,20 +58,48 @@ const RedisUploadButton = ({ label, path }: Props) => {
     })
   }
 
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.preventDefault()
+
+    try {
+      await checkResourse(urlToFile)
+
+      const downloadAnchor = document.createElement('a')
+      downloadAnchor.setAttribute('href', `${urlToFile}?download=true`)
+      downloadAnchor.setAttribute('download', label)
+      downloadAnchor.click()
+    } catch {
+      const error = {
+        response: { data: { message: 'File not found. Check if this file exists and try again.' } }
+      } as AxiosError<any>
+      dispatch(addErrorNotification(error))
+    }
+
+    sendEventTelemetry({
+      event: TelemetryEvent.EXPLORE_PANEL_DOWNLOAD_BULK_FILE_CLICKED,
+      eventData: {
+        databaseId: instanceId
+      }
+    })
+  }
+
   return (
     <div className={cx(styles.wrapper, 'mb-s mt-s')}>
       <EuiPopover
+        ownFocus
+        initialFocus={false}
         id="upload-data-bulk-btn"
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
         closePopover={() => setIsPopoverOpen(false)}
-        panelClassName={instanceId ? styles.panelPopover : cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
         anchorClassName={styles.popoverAnchor}
         panelPaddingSize="none"
         button={(
           <EuiButton
             isLoading={isLoading}
-            iconType={BulkDataUploadIcon}
+            iconSide="right"
+            iconType="indexRuntime"
             size="s"
             className={styles.button}
             onClick={openPopover}
@@ -93,16 +125,24 @@ const RedisUploadButton = ({ label, path }: Props) => {
               All commands from the file in your tutorial will be automatically executed against your database.
               Avoid executing them in production databases.
             </div>
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              className={styles.uploadApproveBtn}
-              onClick={uploadData}
-              data-testid="upload-data-bulk-apply-btn"
-            >
-              Execute
-            </EuiButton>
+            <EuiSpacer size="m" />
+            <div className={styles.popoverActions}>
+              <EuiLink onClick={handleDownload} className={styles.link} data-testid="download-redis-upload-file">
+                Download file
+              </EuiLink>
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                iconType="playFilled"
+                iconSide="right"
+                className={styles.uploadApproveBtn}
+                onClick={uploadData}
+                data-testid="upload-data-bulk-apply-btn"
+              >
+                Execute
+              </EuiButton>
+            </div>
           </EuiText>
         ) : (<DatabaseNotOpened />)}
       </EuiPopover>

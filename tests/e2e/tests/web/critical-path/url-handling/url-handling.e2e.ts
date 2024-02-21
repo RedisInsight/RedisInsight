@@ -12,7 +12,9 @@ const browserPage = new BrowserPage();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const databaseHelper = new DatabaseHelper();
 
-let { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
+const { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
+const username = 'alice&&';
+const password = 'p1pp0@&';
 
 function generateLink(params: Record<string, any>): string {
     const params1 = Common.generateUrlTParams(params);
@@ -38,7 +40,6 @@ test
             databaseAlias: databaseName,
             redirect: 'workbench'
         };
-
         await t.navigateTo(generateLink(connectUrlParams));
         await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(0).getAttribute('title')).contains(host, 'Wrong host value');
         await t.expect(myRedisDatabasePage.AddRedisDatabase.disabledDatabaseInfo.nth(1).getAttribute('title')).contains(port, 'Wrong port value');
@@ -49,39 +50,40 @@ test
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
     });
 
+//Verify that RedisInsight can work with the encoded redis URLs passed from Cloud via deep linking.
 test
     .before(async()  => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
-        await browserPage.Cli.sendCommandInCli('acl DELUSER alice');
-        await browserPage.Cli.sendCommandInCli('ACL SETUSER alice on >p1pp0 +@all ~*');
+        await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
+        await browserPage.Cli.sendCommandInCli(`ACL SETUSER ${username} on >${password} +@all ~*`);
     })
     .after(async t => {
         // Delete all existing connections
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databaseName);
-        await browserPage.Cli.sendCommandInCli('acl DELUSER alice');
+        await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
         await databaseAPIRequests.deleteAllDatabasesApi();
     })
     .page(commonUrl)('Add DB using url automatically', async t => {
-        databaseUsername = 'alice';
-        databasePassword = 'p1pp0';
+        const codedUrl = `redis://${username}:${password}@${host}:${port}`;
         const connectUrlParams = {
-            redisUrl: `redis://${databaseUsername}:${databasePassword}@${host}:${port}`,
+            redisUrl: codedUrl,
             databaseAlias: databaseName,
-            redirect: 'workbench?guidePath=/sq/introduction.md',
+            redirect: 'workbench?tutorialId=ds-json-intro',
             cloudBdbId: '1232',
             subscriptionType: 'fixed',
             planMemoryLimit: '30',
             memoryLimitMeasurementUnit: 'mb',
             free: 'true'
         };
-
+        console.log('!!!!');
+        console.log(generateLink(connectUrlParams));
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(10_000);
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
         const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t.expect(tab.preselectArea.textContent).contains('INTRODUCTION', 'the tutorial page is incorrect');
-        await t.expect(tab.preselectArea.textContent).contains('How To Query Your Data', 'the tutorial is incorrect');
+        await t.expect(tab.preselectArea.textContent).contains('JSON', 'the tutorial is incorrect');
 
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));

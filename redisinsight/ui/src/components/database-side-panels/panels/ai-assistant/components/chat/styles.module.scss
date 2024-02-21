@@ -1,0 +1,42 @@
+.wrapper {
+  height: 100%;
+  width: 100%;
+
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    background-color: var(--tableLightBorderColor);
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 6px 12px;
+    margin: 0 -12px;
+  }
+
+  .chatHistory {
+    flex-grow: 1;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .chatForm {
+    flex-shrink: 0;
+  }
+
+  .startSessionBtn {
+    :global {
+      .euiButtonEmpty__text {
+        font-size: 12px;
+        line-height: 14px;
+      }
+    }
+  }
+}

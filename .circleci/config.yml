@@ -412,7 +412,6 @@ jobs:
           at: .
       - run: 
           command: |
-            choco install nodejs --version=18.15.0
             nvm install 18.15.0
             nvm use 18.15.0
             npm install --global yarn

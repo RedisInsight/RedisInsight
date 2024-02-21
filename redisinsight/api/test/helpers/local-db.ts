@@ -417,6 +417,7 @@ export const createIncorrectDatabaseInstances = async () => {
     password: constants.TEST_INCORRECT_PASSWORD,
     modules: '[]',
     version: '7.0',
+    timeout: 30000,
   });
 }
 

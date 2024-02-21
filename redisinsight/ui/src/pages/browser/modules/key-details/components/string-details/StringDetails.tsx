@@ -21,7 +21,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 import { resetStringValue, stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import { isFormatEditable, isFullStringLoaded } from 'uiSrc/utils'
-import { StringDetailsTable } from './string-details-table'
+import { StringDetailsValue } from './string-details-value'
 import { EditItemAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {}
@@ -77,7 +77,7 @@ const StringDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <StringDetailsTable
+            <StringDetailsValue
               isEditItem={editItem}
               setIsEdit={(isEdit: boolean) => {
                 setEditItem(isEdit)

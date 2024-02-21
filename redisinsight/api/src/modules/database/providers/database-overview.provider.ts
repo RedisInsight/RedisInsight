@@ -35,7 +35,7 @@ export class DatabaseOverviewProvider {
 
     const currentDbIndex = isNumber(clientMetadata.db)
       ? clientMetadata.db
-      : get(client, ['options', 'db'], 0);
+      : await client.getCurrentDbIndex();
 
     if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
       nodesInfo = await this.getNodesInfo(client);

@@ -50,15 +50,16 @@ import { initialState as initialStateRecommendations } from 'uiSrc/slices/recomm
 import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
 import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
 import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/rdi'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
 interface Options {
-  initialState?: RootState;
-  store?: typeof rootStore;
-  withRouter?: boolean;
-  [property: string]: any;
+  initialState?: RootState
+  store?: typeof rootStore
+  withRouter?: boolean
+  [property: string]: any
 }
 
 // root state
@@ -123,7 +124,8 @@ const initialStateDefault: RootState = {
     cloud: cloneDeep(initialStateOAuth),
   },
   panels: {
-    insights: cloneDeep(initialStateInsightsPanel)
+    insights: cloneDeep(initialStateInsightsPanel),
+    aiAssistant: cloneDeep(initialStateAiAssistant),
   },
   rdi: {
     rdi: cloneDeep(initialStateRdi),
@@ -226,7 +228,7 @@ jest.mock('react-router-dom', () => ({
 // mock <AutoSizer />
 jest.mock(
   'react-virtualized-auto-sizer',
-  () => ({ children }) => children({ height: 600, width: 600 })
+  () => ({ children }: { children: any }) => children({ height: 600, width: 600 })
 )
 
 export const MOCKED_HIGHLIGHTING_FEATURES = ['importDatabases', 'anotherFeature']

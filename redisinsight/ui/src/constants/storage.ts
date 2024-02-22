@@ -11,7 +11,6 @@ enum BrowserStorageItem {
   segmentAnonymousId = 'ajs_anonymous_id',
   wbClientUuid = 'wbClientUuid',
   wbInputHistory = 'wbInputHistory',
-  isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
   treeViewSort = 'treeViewSort',
   autoRefreshRate = 'autoRefreshRate',
@@ -31,6 +30,7 @@ enum BrowserStorageItem {
   OAuthAgreement = 'OAuthAgreement',
   insightsPanel = 'insightsPanel',
   capability = 'capability',
+  aiChatSession = 'aiChatSession',
 }
 
 export default BrowserStorageItem

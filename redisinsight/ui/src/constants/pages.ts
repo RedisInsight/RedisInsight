@@ -22,9 +22,9 @@ export enum PageNames {
   triggeredFunctionsFunctions = 'functions',
   // rdi pages
   rdiPipelineManagement = 'pipeline-management',
-  rdiPipelineStatistics = 'pipeline-statistics',
   rdiPipelineConfig = 'config',
   rdiPipelineJobs = 'jobs',
+  rdiStatistics = 'statistics'
 }
 
 const redisCloud = '/redis-cloud'
@@ -60,9 +60,9 @@ export const Pages = {
   rdi,
   rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}`,
   rdiPipelineManagement: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
-  rdiPipelineStatistics: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineStatistics}`,
   rdiPipelineConfig: (rdiInstance: string) =>
     `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineConfig}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
     `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineJobs}/${jobName}`,
+  rdiStatistics: (rdiInstance: string) => `${rdi}/${rdiInstance}/statistics`,
 }

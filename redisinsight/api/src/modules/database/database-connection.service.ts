@@ -35,7 +35,6 @@ export class DatabaseConnectionService {
     const toUpdate: Partial<Database> = {
       new: false,
       lastConnection: new Date(),
-      timeout: client.options.connectTimeout,
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
       version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };

@@ -20,7 +20,7 @@ export class SshTunnel {
   ) {
     const address = this.server?.address() as AddressInfo;
     this.serverAddress = {
-      host: address?.address,
+      host: '127.0.0.1',
       port: address?.port,
     };
   }

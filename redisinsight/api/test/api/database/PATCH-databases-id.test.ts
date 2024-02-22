@@ -854,7 +854,7 @@ describe(`PATCH /databases/:id`, () => {
     });
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
-      
+
       it('Should update database with partial sshOptions', async () => {
         await validateApiCall({
           endpoint,

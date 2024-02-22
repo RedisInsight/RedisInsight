@@ -233,4 +233,8 @@ export default {
       },
     },
   },
+  ai: {
+    convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://staging.learn.redis.com/convai/api',
+    convAiToken: process.env.RI_AI_CONVAI_TOKEN,
+  },
 };

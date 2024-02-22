@@ -61,7 +61,7 @@ export interface Props {
   onRefresh: (key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args: IFetchKeyArgs) => void;
 }
 
-const StringDetailsTable = (props: Props) => {
+const StringDetailsValue = (props: Props) => {
   const { isEditItem, setIsEdit, onRefresh } = props
 
   const { compressor = null } = useSelector(connectedInstanceSelector)
@@ -291,4 +291,4 @@ const StringDetailsTable = (props: Props) => {
   )
 }
 
-export { StringDetailsTable }
+export { StringDetailsValue }

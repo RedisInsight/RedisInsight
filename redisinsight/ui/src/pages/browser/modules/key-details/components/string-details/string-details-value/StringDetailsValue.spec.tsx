@@ -16,7 +16,7 @@ import {
 } from 'uiSrc/utils/tests/decompressors'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
-import { StringDetailsTable, Props } from './StringDetailsTable'
+import { StringDetailsValue, Props } from './StringDetailsValue'
 
 const STRING_VALUE = 'string-value'
 const STRING_VALUE_SPACE = 'string value'
@@ -70,11 +70,11 @@ jest.mock('react-redux', () => ({
   useDispatch: () => jest.fn().mockReturnValue(() => jest.fn()),
 }))
 
-describe('StringDetailsTable', () => {
+describe('StringDetailsValue', () => {
   it('should render', () => {
     expect(
       render(
-        <StringDetailsTable
+        <StringDetailsValue
           {...instance(mockedProps)}
         />
       )
@@ -83,7 +83,7 @@ describe('StringDetailsTable', () => {
 
   it('should render textarea if edit mode', () => {
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
         isEditItem
         setIsEdit={jest.fn()}
@@ -95,7 +95,7 @@ describe('StringDetailsTable', () => {
 
   it('should update string value', () => {
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
         isEditItem
         setIsEdit={jest.fn()}
@@ -111,7 +111,7 @@ describe('StringDetailsTable', () => {
 
   it('should stay empty string after cancel', async () => {
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
         isEditItem
         setIsEdit={jest.fn()}
@@ -132,7 +132,7 @@ describe('StringDetailsTable', () => {
 
   it('should update value after apply', () => {
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
         isEditItem
         setIsEdit={jest.fn()}
@@ -155,7 +155,7 @@ describe('StringDetailsTable', () => {
     stringDataSelector.mockImplementation(stringDataSelectorMock)
 
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
       />
     )
@@ -173,7 +173,7 @@ describe('StringDetailsTable', () => {
     stringDataSelector.mockImplementation(stringDataSelectorMock)
 
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
         onRefresh={onRefresh}
       />
@@ -197,7 +197,7 @@ describe('StringDetailsTable', () => {
     stringDataSelector.mockImplementation(stringDataSelectorMock)
 
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
       />
     )
@@ -211,7 +211,7 @@ describe('StringDetailsTable', () => {
     stringDataSelector.mockImplementation(stringDataSelectorMock)
 
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
       />
     )
@@ -225,7 +225,7 @@ describe('StringDetailsTable', () => {
     stringDataSelector.mockImplementation(stringDataSelectorMock)
 
     render(
-      <StringDetailsTable
+      <StringDetailsValue
         {...instance(mockedProps)}
       />
     )
@@ -253,7 +253,7 @@ describe('StringDetailsTable', () => {
       }))
 
       render(
-        <StringDetailsTable
+        <StringDetailsValue
           {...instance(mockedProps)}
           isEditItem
           setIsEdit={jest.fn()}
@@ -275,7 +275,7 @@ describe('StringDetailsTable', () => {
       }))
 
       render(
-        <StringDetailsTable
+        <StringDetailsValue
           {...instance(mockedProps)}
           isEditItem
           setIsEdit={jest.fn()}

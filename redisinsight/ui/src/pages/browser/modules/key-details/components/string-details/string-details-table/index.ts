@@ -1,1 +1,0 @@
-export { StringDetailsTable } from './StringDetailsTable'

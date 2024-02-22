@@ -61,7 +61,6 @@ import styles from './styles.module.scss'
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
 const pubSubPath = `/${PageNames.pubSub}`
-const pipelineStatisticsPath = `/${PageNames.rdiPipelineStatistics}`
 
 interface INavigations {
   isActivePage: boolean
@@ -206,12 +205,12 @@ const NavigationMenu = () => {
 
   const privateRdiRoutes: INavigations[] = [
     {
-      tooltipText: 'Pipeline Statistics',
-      pageName: PageNames.rdiPipelineStatistics,
-      ariaLabel: 'Pipeline Statistics page button',
-      onClick: () => handleGoPage(Pages.rdiPipelineStatistics(connectedRdiInstanceId)),
-      dataTestId: 'pipeline-statistics-page-btn',
-      isActivePage: activePage === pipelineStatisticsPath,
+      tooltipText: 'Statistics',
+      pageName: PageNames.rdiStatistics,
+      ariaLabel: 'Statistics page button',
+      onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
+      dataTestId: 'statistics-page-btn',
+      isActivePage: activePage === `/${PageNames.rdiStatistics}`,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },

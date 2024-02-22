@@ -1,30 +1,46 @@
-import React from 'react'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import React, { useEffect, useState } from 'react'
+import * as monaco from 'monaco-editor'
+import { configureMonacoYaml } from 'monaco-yaml'
 
-import { MonacoEditor } from 'uiSrc/components/monaco-editor'
+import ReactMonacoEditor from 'react-monaco-editor'
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
+import example from './example.json'
 
 const MonacoYaml = (props: CommonProps) => {
-  const editorDidMount = (
-    editor: monacoEditor.editor.IStandaloneCodeEditor,
-    monaco: typeof monacoEditor,
-  ) => {
-    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-      validate: true,
-      schemaValidation: 'error',
-      schemaRequest: 'error',
-      trailingCommas: 'error'
-    })
-    const messageContribution = editor.getContribution('editor.contrib.messageController')
-    editor.onDidAttemptReadOnlyEdit(() => messageContribution.dispose())
-  }
+  const [value, setValue] = useState('')
 
+  useEffect(() => {
+    configureMonacoYaml(monaco, {
+      enableSchemaRequest: false,
+      completion: true,
+      schemas: [
+        {
+          fileMatch: ['*'],
+          schema: example.data as any,
+          uri: 'http://example.com/schema-name.json',
+        }
+      ]
+    })
+  }, [])
   return (
-    <MonacoEditor
-      {...props}
+    <ReactMonacoEditor
+      width="800"
+      height="600"
       language="yaml"
-      className="yaml-monaco-editor"
-      onEditorDidMount={editorDidMount}
+      value={value}
+      onChange={setValue}
+      options={{
+        quickSuggestions: {
+          other: 'inline',
+          comments: true,
+          strings: true,
+        },
+        suggest: {
+          preview: true,
+          showStatusBar: true,
+          showIcons: false,
+        },
+      }}
     />
   )
 }

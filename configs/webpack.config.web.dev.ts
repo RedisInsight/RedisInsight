@@ -11,6 +11,7 @@ import { merge } from 'webpack-merge';
 import ip from 'ip';
 import { toString } from 'lodash'
 import commonConfig from './webpack.config.web.common';
+import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
 
 function employCache(loaders) {
   return ['cache-loader'].concat(loaders);
@@ -182,6 +183,19 @@ const configuration: webpack.Configuration = {
   plugins: [
     new webpack.HotModuleReplacementPlugin({
       multiStep: true,
+    }),
+    new MonacoWebpackPlugin({
+      languages: ['yaml', 'typescript', "javascript", "json"],
+      customLanguages: [
+        {
+          label: 'yaml',
+          entry: 'monaco-yaml',
+          worker: {
+            id: 'monaco-yaml/yamlWorker',
+            entry: 'monaco-yaml/yaml.worker'
+          }
+        }
+      ]
     }),
 
     new webpack.NoEmitOnErrorsPlugin(),

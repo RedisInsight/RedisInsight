@@ -61,8 +61,6 @@ describe('WorkbenchPage', () => {
             databaseId: '18c37d1d-bc25-4e46-a20d-a1f9bf228946',
             command: 'info',
             summary: null,
-            role: null,
-            nodeOptions: null,
             createdAt: '2022-09-28T18:04:46.000Z',
             emptyCommand: false
           }],
@@ -109,8 +107,6 @@ describe('Telemetry', () => {
             databaseId: '18c37d1d-bc25-4e46-a20d-a1f9bf228946',
             command: 'info',
             summary: null,
-            role: null,
-            nodeOptions: null,
             createdAt: '2022-09-28T18:04:46.000Z',
             emptyCommand: false
           }],
@@ -263,8 +259,6 @@ describe('Raw mode', () => {
             databaseId: '18c37d1d-bc25-4e46-a20d-a1f9bf228946',
             command: 'info',
             summary: null,
-            role: null,
-            nodeOptions: null,
             createdAt: '2022-09-28T18:04:46.000Z',
             emptyCommand: false
           }],

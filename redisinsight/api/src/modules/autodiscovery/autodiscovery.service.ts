@@ -6,7 +6,7 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata } from 'src/common/models';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -16,7 +16,7 @@ export class AutodiscoveryService implements OnModuleInit {
 
   constructor(
     private settingsService: SettingsService,
-    private redisConnectionFactory: RedisConnectionFactory,
+    private redisClientFactory: RedisClientFactory,
     private databaseService: DatabaseService,
   ) {}
 
@@ -70,7 +70,7 @@ export class AutodiscoveryService implements OnModuleInit {
    */
   private async addRedisDatabase(endpoint: { host: string, port: number }) {
     try {
-      const client = await this.redisConnectionFactory.createStandaloneConnection(
+      const client = await this.redisClientFactory.createClient(
         {
           context: ClientContext.Common,
         } as ClientMetadata,
@@ -79,7 +79,10 @@ export class AutodiscoveryService implements OnModuleInit {
       );
 
       const info = convertRedisInfoReplyToObject(
-        await client.info(),
+        await client.sendCommand(
+          ['info'],
+          { replyEncoding: 'utf8' },
+        ) as string,
       );
 
       if (info?.server?.redis_mode === 'standalone') {

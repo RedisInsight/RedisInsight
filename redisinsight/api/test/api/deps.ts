@@ -14,12 +14,20 @@ import { initCloudDatabase } from '../helpers/cloud';
 
 // Just dummy jest module implementation to be able to use common mocked models in UTests and ITests
 const dummyJest = (factory: Function) => {
-  if (!factory) return ({
-    mockReturnThis: dummyJest,
-    mockReturnValue: dummyJest,
-    mockResolvedValue: dummyJest,
-    mockImplementation: dummyJest,
-  });
+  if (!factory) {
+    const dummyMock = () => {};
+
+    dummyMock.mockReturnThis = dummyJest;
+    dummyMock.mockReturnValue = dummyJest;
+    dummyMock.mockResolvedValue = dummyJest;
+    dummyMock.mockImplementation = dummyJest;
+
+    return dummyMock;
+  }
+
+  if (typeof factory !== 'function') {
+    return () => factory;
+  }
 
   return factory;
 };
@@ -28,6 +36,10 @@ global['jest'] = {
   // @ts-ignore
   fn: dummyJest,
 };
+
+global['jasmine'] = {
+  any: () => {},
+}
 
 /**
  * Initialize dependencies

@@ -15,7 +15,7 @@ import cx from 'classnames'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { GetKeysWithDetailsResponse } from 'src/modules/browser/dto'
+import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto'
 import {
   changeSearchMode,
   fetchKeys,

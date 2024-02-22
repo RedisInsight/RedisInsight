@@ -1,17 +1,20 @@
 import config, { Config } from 'src/utils/config';
-import { MiddlewareConsumer, Module, RequestMethod, Type } from '@nestjs/common';
+import {
+  MiddlewareConsumer, Module, RequestMethod, Type,
+} from '@nestjs/common';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseController } from 'src/modules/database/database.controller';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { DatabaseInfoController } from 'src/modules/database/database-info.controller';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -31,6 +34,7 @@ export class DatabaseModule {
       providers: [
         DatabaseService,
         DatabaseConnectionService,
+        DatabaseClientFactory,
         DatabaseInfoProvider,
         DatabaseAnalytics,
         DatabaseFactory,
@@ -45,6 +49,7 @@ export class DatabaseModule {
         DatabaseRepository,
         DatabaseService,
         DatabaseConnectionService,
+        DatabaseClientFactory,
         // todo: rethink everything below
         DatabaseFactory,
         DatabaseInfoService,
@@ -52,6 +57,7 @@ export class DatabaseModule {
       ],
     };
   }
+
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(ConnectionMiddleware)

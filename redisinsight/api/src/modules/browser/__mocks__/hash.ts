@@ -4,7 +4,7 @@ import {
   GetHashFieldsDto,
   GetHashFieldsResponse,
   HashFieldDto,
-} from 'src/modules/browser/dto';
+} from 'src/modules/browser/hash/dto';
 import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 import { flatMap } from 'lodash';
 

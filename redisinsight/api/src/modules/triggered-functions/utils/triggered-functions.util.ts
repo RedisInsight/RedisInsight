@@ -1,6 +1,6 @@
 import { concat } from 'lodash';
-import { convertStringsArrayToObject } from 'src/utils';
 import { FunctionType, Function } from 'src/modules/triggered-functions/models';
+import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 
 /**
  * Get function details
@@ -18,7 +18,7 @@ const getFunctionDetails = (
     });
   }
 
-  const func = convertStringsArrayToObject(reply as string[]);
+  const func = convertArrayReplyToObject(reply as string[]);
 
   return ({
     name: func.name,
@@ -76,7 +76,7 @@ const getTotalFunctions = (lib: { [key: string]: Function[] }) => (
  * Get library information
 */
 export const getLibraryInformation = (lib: string[]) => {
-  const library = convertStringsArrayToObject(lib);
+  const library = convertArrayReplyToObject(lib);
   const functions = getFunctionNames(library);
   return ({
     name: library.name,
@@ -90,7 +90,7 @@ export const getLibraryInformation = (lib: string[]) => {
 };
 
 export const getShortLibraryInformation = (lib: string[]) => {
-  const library = convertStringsArrayToObject(lib);
+  const library = convertArrayReplyToObject(lib);
   const totalFunctions = getTotalFunctions(library);
   return ({
     name: library.name,
@@ -100,4 +100,4 @@ export const getShortLibraryInformation = (lib: string[]) => {
   });
 };
 
-export const getLibraryFunctions = (lib: string[]) => collectFunctions(convertStringsArrayToObject(lib));
+export const getLibraryFunctions = (lib: string[]) => collectFunctions(convertArrayReplyToObject(lib));

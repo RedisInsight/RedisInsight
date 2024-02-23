@@ -16,9 +16,13 @@ export const getOriginUrl = () => (IS_ABSOLUTE_PATH.test(RESOURCES_BASE_URL)
   ? RESOURCES_BASE_URL
   : (window?.location?.origin || RESOURCES_BASE_URL))
 
-export const getPathToResource = (url: string = ''): string => (IS_ABSOLUTE_PATH.test(url)
-  ? url
-  : new URL(url, resourcesService.defaults.baseURL).toString())
+export const getPathToResource = (url: string = ''): string => {
+  try {
+    return IS_ABSOLUTE_PATH.test(url) ? url : new URL(url, getOriginUrl()).toString()
+  } catch {
+    return ''
+  }
+}
 
 export const checkResourse = async (url: string = '') => resourcesService.head(url)
 

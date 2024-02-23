@@ -6,11 +6,13 @@ import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
+import { DatabaseHelper } from '../../../../helpers';
 
 const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
+const databaseHelper = new DatabaseHelper();
 
 const resultMock = `{··"name":·"John",··"years":·123}`;
 const outputMock = 'Shirizli';
@@ -31,7 +33,7 @@ fixture.skip `Rdi dry run job`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await t.maximizeWindow();
+        await databaseHelper.acceptLicenseTerms();
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
 
     })

@@ -140,6 +140,7 @@ enum ApiEndpoints {
   RDI_INSTANCES = 'rdi',
   RDI_PIPELINE = 'pipeline',
   RDI_DEPLOY_PIPELINE = 'pipeline/deploy',
+  RDI_TEST_CONNECTIONS = 'pipeline/test-connections'
 }
 
 export enum CustomHeaders {

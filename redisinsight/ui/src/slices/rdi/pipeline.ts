@@ -13,7 +13,6 @@ export const initialState: IStateRdiPipeline = {
   loading: true,
   error: '',
   data: null,
-  isDeployPopoverOpen: false,
 }
 
 const rdiPipelineSlice = createSlice({

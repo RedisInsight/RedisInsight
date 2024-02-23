@@ -6,9 +6,9 @@
  */
 
 import path from 'path';
+import os from 'os';
 import webpack from 'webpack';
 import { merge } from 'webpack-merge';
-import ip from 'ip';
 import { toString } from 'lodash'
 import commonConfig from './webpack.config.web.common';
 
@@ -16,7 +16,22 @@ function employCache(loaders) {
   return ['cache-loader'].concat(loaders);
 }
 
-const HOST = process.env.PUBLIC_DEV ? ip.address(): 'localhost'
+const getLocalIpAddress = () => {
+  const ifaces = os.networkInterfaces();
+
+  for (const ifaceName of Object.keys(ifaces)) {
+    const firstIpv4Address = ifaces[ifaceName].find(alias => alias.family === 'IPv4' && !alias.internal);
+
+    if (firstIpv4Address) {
+      return firstIpv4Address.address;
+    }
+  }
+
+  return 'localhost';
+};
+
+
+const HOST = process.env.PUBLIC_DEV ? getLocalIpAddress(): 'localhost';
 
 const configuration: webpack.Configuration = {
   target: 'web',

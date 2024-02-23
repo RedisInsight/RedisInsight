@@ -1,10 +1,12 @@
 import {
   DeleteListElementsDto,
   GetListElementResponse,
-  GetListElementsDto, GetListElementsResponse,
+  GetListElementsDto,
+  GetListElementsResponse,
   ListElementDestination,
-  PushElementToListDto, SetListElementDto,
-} from 'src/modules/browser/dto';
+  PushElementToListDto,
+  SetListElementDto,
+} from 'src/modules/browser/list/dto';
 import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 
 export const mockIndex: number = 0;

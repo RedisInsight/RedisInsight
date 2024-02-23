@@ -194,6 +194,14 @@ export const mockFeatureSso = Object.assign(new Feature(), {
   },
 });
 
+export const mockFeatureRedisClient = Object.assign(new Feature(), {
+  name: KnownFeatures.RedisClient,
+  flag: true,
+  data: {
+    strategy: 'ioredis',
+  },
+});
+
 export const mockUnknownFeature = Object.assign(new Feature(), {
   name: 'unknown',
   flag: true,

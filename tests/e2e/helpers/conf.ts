@@ -120,6 +120,14 @@ export const ossStandaloneForSSHConfig = {
     databasePassword: process.env.OSS_STANDALONE_SSH_PASSWORD
 };
 
+export const ossClusterForSSHConfig = {
+    host: process.env.OSS_STANDALONE_SSH_HOST || '172.33.100.211',
+    port: process.env.OSS_STANDALONE_SSH_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_SSH_DATABASE_NAME || 'oss-cluster-for-ssh'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_SSH_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_SSH_PASSWORD
+};
+
 export const ossStandaloneTlsConfig = {
     host: process.env.OSS_STANDALONE_TLS_HOST || 'oss-standalone-tls',
     port: process.env.OSS_STANDALONE_TLS_PORT || '6379',

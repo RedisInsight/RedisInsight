@@ -2,20 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { KeysScanner } from 'src/modules/database-analysis/scanner/keys-scanner';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
-import IORedis from 'ioredis';
 import { mockCreateDatabaseAnalysisDto } from 'src/modules/database-analysis/providers/database-analysis.provider.spec';
-import * as Utils from 'src/modules/database/utils/database.total.util';
+import * as Utils from 'src/modules/redis/utils/keys.util';
+import { mockClusterRedisClient, mockStandaloneRedisClient } from 'src/__mocks__';
 
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
-const mockExec = jest.fn();
-nodeClient.pipeline = jest.fn(() => ({
-  exec: mockExec,
-}));
-
-const clusterClient = Object.create(IORedis.Cluster.prototype);
-clusterClient.sendCommand = jest.fn();
-clusterClient.nodes = jest.fn();
+const standaloneClient = mockStandaloneRedisClient;
+const clusterClient = mockClusterRedisClient;
 
 const mockInfoStrategy = () => ({
   getLength: jest.fn(),
@@ -46,7 +38,7 @@ const mockScanResult = {
     scanned: 15,
     total: 1,
   },
-  client: Object.assign(nodeClient),
+  client: Object.assign(standaloneClient),
 };
 
 describe('KeysScanner', () => {
@@ -70,36 +62,42 @@ describe('KeysScanner', () => {
     infoStrategy = mockInfoStrategy();
     infoProvider.getStrategy.mockReturnValue(infoStrategy);
     infoStrategy.getLengthSafe.mockResolvedValue(2);
-    clusterClient.nodes.mockReturnValue([nodeClient, nodeClient, nodeClient]);
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'scan' }))
+    clusterClient.nodes.mockReturnValue([standaloneClient, standaloneClient, standaloneClient]);
+    when(standaloneClient.sendCommand)
+      .calledWith(jasmine.arrayContaining(['scan']))
       .mockResolvedValue(['0', [mockKey.name]]);
-    when(nodeClient.pipeline)
+    when(standaloneClient.sendPipeline)
       .calledWith(jasmine.arrayContaining([
         jasmine.arrayContaining(['memory']),
-      ])).mockReturnValue({ exec: jest.fn().mockResolvedValue([[null, 10]]) });
-    when(nodeClient.pipeline)
+      ]))
+      .mockReturnValue([[null, 10]]);
+    when(standaloneClient.sendPipeline)
       .calledWith(jasmine.arrayContaining([
         jasmine.arrayContaining(['ttl']),
-      ])).mockReturnValue({ exec: jest.fn().mockResolvedValue([[null, -1]]) });
-    when(nodeClient.pipeline)
-      .calledWith(jasmine.arrayContaining([
-        jasmine.arrayContaining(['type']),
-      ])).mockReturnValue({ exec: jest.fn().mockResolvedValue([[null, 'string']]) });
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'FT._LIST' }))
+      ]))
+      .mockReturnValue([[null, -1]]);
+    when(standaloneClient.sendPipeline)
+      .calledWith(
+        jasmine.arrayContaining([
+          jasmine.arrayContaining(['type']),
+        ]),
+        expect.anything(),
+      )
+      .mockReturnValue([[null, 'string']]);
+    when(standaloneClient.sendCommand)
+      .calledWith(['FT._LIST'], expect.anything())
       .mockResolvedValue([mockIndex]);
   });
 
   describe('scan', () => {
     it('should scan standalone database', async () => {
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse);
-      expect(await service.scan(nodeClient, {
+      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse);
+      expect(await service.scan(standaloneClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual([mockScanResult]);
     });
     it('should scan cluster database', async () => {
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse);
+      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse);
       expect(await service.scan(clusterClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual([mockScanResult, mockScanResult, mockScanResult]);
@@ -108,8 +106,8 @@ describe('KeysScanner', () => {
 
   describe('nodeScan', () => {
     it('should scan node keys', async () => {
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse);
-      expect(await service.nodeScan(nodeClient, {
+      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse);
+      expect(await service.nodeScan(standaloneClient, {
         filter: mockCreateDatabaseAnalysisDto.filter,
       })).toEqual(mockScanResult);
     });

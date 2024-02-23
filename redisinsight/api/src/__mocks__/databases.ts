@@ -233,8 +233,6 @@ export const mockDatabaseConnectionService = jest.fn(() => ({
 }));
 
 export const mockDatabaseInfoProvider = jest.fn(() => ({
-  isCluster: jest.fn(),
-  isSentinel: jest.fn(),
   determineDatabaseModules: jest.fn(),
   determineDatabaseServer: jest.fn(),
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),

@@ -20,6 +20,7 @@ services:
       - redis
       - app
     environment:
+      RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
       TEST_REDIS_HOST: "redis"
       RI_DB_SYNC: "true"
@@ -35,6 +36,7 @@ services:
     volumes:
       - ${COV_FOLDER}:/root/.redisinsight-v2.0
     environment:
+      RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
       RI_DB_SYNC: "true"
       RI_DB_MIGRATIONS: "false"

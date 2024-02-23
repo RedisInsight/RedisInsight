@@ -29,7 +29,7 @@ import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
+import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
   TAIL_DESTINATION,

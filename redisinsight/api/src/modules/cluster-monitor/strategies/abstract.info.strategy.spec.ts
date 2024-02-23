@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import { set } from 'lodash';
-import IORedis from 'ioredis';
 import { ClusterNodesInfoStrategy } from 'src/modules/cluster-monitor/strategies/cluster-nodes.info.strategy';
 import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
-import { mockStandaloneRedisInfoReply } from 'src/__mocks__';
+import { mockClusterRedisClient, mockStandaloneRedisClient, mockStandaloneRedisInfoReply } from 'src/__mocks__';
 
 const m1 = {
   id: 'm1',
@@ -34,23 +33,20 @@ const m3 = {
   slots: ['10923-16383'],
 };
 
-const node1 = Object.create(IORedis.prototype);
-node1.sendCommand = jest.fn();
+const node1 = Object.create(mockStandaloneRedisClient);
 set(node1, 'options', {
   host: m1.host,
   port: m1.port,
 });
 
-const node2 = Object.create(IORedis.prototype);
-node2.sendCommand = jest.fn();
+const node2 = Object.create(mockStandaloneRedisClient);
 set(node2, 'options', {
   host: m2.host,
   port: m2.port,
 });
 
-const clusterClient = Object.create(IORedis.Cluster.prototype);
-clusterClient.sendCommand = jest.fn();
-clusterClient.nodes = jest.fn().mockReturnValue([node1, node2]);
+const clusterClient = mockClusterRedisClient;
+clusterClient.nodes.mockReturnValue([node1, node2]);
 
 const mockClusterInfo: Partial<ClusterDetails> = {
   state: 'ok',

@@ -1,29 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as IORedis from 'ioredis';
-import { getRedisConnectionException } from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { RedisService } from 'src/modules/redis/redis.service';
-import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Database } from 'src/modules/database/models/database';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { ClientMetadata } from 'src/common/models';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 
 @Injectable()
 export class DatabaseConnectionService {
   private logger = new Logger('DatabaseConnectionService');
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
-    private readonly redisService: RedisService,
-    private readonly redisConnectionFactory: RedisConnectionFactory,
     private recommendationService: DatabaseRecommendationService,
   ) {}
 
@@ -32,7 +26,7 @@ export class DatabaseConnectionService {
    * @param clientMetadata
    */
   async connect(clientMetadata: ClientMetadata): Promise<void> {
-    const client = await this.getOrCreateClient(clientMetadata);
+    const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
     // refresh modules list and last connected time
     // mark database as not a new
@@ -41,19 +35,13 @@ export class DatabaseConnectionService {
     const toUpdate: Partial<Database> = {
       new: false,
       lastConnection: new Date(),
-      timeout: client.options.connectTimeout,
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
       version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };
 
-    // !Temporary. Refresh cluster nodes on connection
-    if (client?.isCluster) {
-      const primaryNodeOptions = client.nodes('master')[0].options;
-
-      toUpdate.host = primaryNodeOptions.host;
-      toUpdate.port = primaryNodeOptions.port;
-
-      toUpdate.nodes = client.nodes().map(({ options }) => ({
+    // Update cluster nodes db record
+    if (client?.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+      toUpdate.nodes = (await client.nodes()).map(({ options }) => ({
         host: options.host,
         port: options.port,
       }));
@@ -94,75 +82,7 @@ export class DatabaseConnectionService {
     this.logger.log(`Succeed to connect to database ${clientMetadata.databaseId}`);
   }
 
-  /**
-   * Gets existing database client by client metadata or
-   * fetches database and create client new client for it
-   * Also saves client to the clients pool to not create the same client in the future
-   * Client from the pool of clients will be automatically deleted by idle time
-   * @param clientMetadata
-   */
-  async getOrCreateClient(clientMetadata: ClientMetadata) {
-    this.logger.log('Getting database client.');
-
-    let client = (await this.redisService.getClientInstance(clientMetadata))?.client;
-
-    if (client && this.redisService.isClientConnected(client)) {
-      return client;
-    }
-
-    client = await this.createClient(clientMetadata);
-
-    return this.redisService.setClientInstance(clientMetadata, client)?.client;
-  }
-
-  /**
-   * Simply gets database and creates a client.
-   * Will always return new client. There is no check for the same client already exists
-   * Could be used to create temporary client for some purposes or to "isolate" client
-   * for some business logic
-   * ! Will be not automatically closed by idle time
-   * @param clientMetadata
-   */
-  async createClient(clientMetadata: ClientMetadata): Promise<IORedis.Redis | IORedis.Cluster> {
-    this.logger.log('Creating database client.');
-    const database = await this.databaseService.get(clientMetadata.databaseId);
-
-    try {
-      const client = await this.redisConnectionFactory.createRedisConnection(
-        clientMetadata,
-        database,
-      );
-
-      if (database.connectionType === ConnectionType.NOT_CONNECTED) {
-        let connectionType = ConnectionType.STANDALONE;
-
-        // cluster check
-        if (client.isCluster) {
-          connectionType = ConnectionType.CLUSTER;
-        }
-
-        // sentinel check
-        if (client?.options?.['sentinels']?.length) {
-          connectionType = ConnectionType.SENTINEL;
-        }
-
-        await this.repository.update(database.id, { connectionType });
-      }
-
-      return client;
-    } catch (error) {
-      this.logger.error('Failed to create database client', error);
-      const exception = getRedisConnectionException(
-        error,
-        database,
-        database.name,
-      );
-      this.analytics.sendConnectionFailedEvent(database, exception);
-      throw exception;
-    }
-  }
-
-  private async collectClientInfo(clientMetadata: ClientMetadata, client: any, version?: string) {
+  private async collectClientInfo(clientMetadata: ClientMetadata, client: RedisClient, version?: string) {
     try {
       const intVersion = parseInt(version, 10) || 0;
       const clients = await this.databaseInfoProvider.getClientListInfo(client) || [];

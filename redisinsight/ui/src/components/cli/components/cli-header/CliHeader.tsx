@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import cx from 'classnames'
 import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiButtonIcon,
   EuiText,
   EuiToolTip,
-  EuiTextColor,
   EuiIcon,
 } from '@elastic/eui'
 
@@ -19,10 +17,8 @@ import {
 } from 'uiSrc/slices/cli/cli-settings'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { sessionStorageService } from 'uiSrc/services'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { outputSelector, resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
-import { getDbIndex } from 'uiSrc/utils'
+import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
@@ -32,10 +28,6 @@ const CliHeader = () => {
   const dispatch = useDispatch()
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-
-  const { host, port } = useSelector(connectedInstanceSelector)
-  const { db } = useSelector(outputSelector)
-  const endpoint = `${host}:${port}${getDbIndex(db)}`
 
   const removeCliClient = () => {
     const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
@@ -92,24 +84,6 @@ const CliHeader = () => {
           </OnboardingTour>
         </EuiFlexItem>
         <EuiFlexItem grow />
-        <EuiFlexItem grow={false}>
-          <EuiToolTip
-            content={endpoint}
-            position="bottom"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiText className={cx(styles.endpointContainer)} onClick={(e) => e.stopPropagation()}>
-              <EuiTextColor color="subdued">Endpoint:</EuiTextColor>
-              <EuiTextColor
-                className={cx(styles.endpoint)}
-                data-testid={`cli-endpoint-${endpoint}`}
-              >
-                {endpoint}
-              </EuiTextColor>
-            </EuiText>
-          </EuiToolTip>
-        </EuiFlexItem>
         <EuiFlexItem grow={false}>
           <EuiToolTip
             content="Minimize"

@@ -32,17 +32,14 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { IFetchKeyArgs, IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 
-import {
-  CreateListWithExpireDto,
-  SetStringWithExpireDto,
-  CreateZSetWithExpireDto,
-  CreateHashWithExpireDto,
-  CreateRejsonRlWithExpireDto,
-  CreateSetWithExpireDto,
-  GetKeyInfoResponse,
-  GetKeysWithDetailsResponse,
-} from 'apiSrc/modules/browser/dto'
-import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { CreateListWithExpireDto, } from 'apiSrc/modules/browser/list/dto'
+import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
+import { CreateZSetWithExpireDto, } from 'apiSrc/modules/browser/z-set/dto'
+import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
+import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
+import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
+import { GetKeyInfoResponse, GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/keys/dto'
+import { CreateStreamDto } from 'apiSrc/modules/browser/stream/dto'
 
 import { fetchString } from './string'
 import { setZsetInitialState, fetchZSetMembers, refreshZsetMembersAction } from './zset'

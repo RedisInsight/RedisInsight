@@ -1,9 +1,12 @@
 import {
-  AddMembersToZSetDto, DeleteMembersFromZSetDto,
+  AddMembersToZSetDto,
+  DeleteMembersFromZSetDto,
   GetZSetMembersDto,
-  SearchZSetMembersDto, SearchZSetMembersResponse,
-  UpdateMemberInZSetDto, ZSetMemberDto,
-} from 'src/modules/browser/dto';
+  SearchZSetMembersDto,
+  SearchZSetMembersResponse,
+  UpdateMemberInZSetDto,
+  ZSetMemberDto,
+} from 'src/modules/browser/z-set/dto';
 import { SortOrder } from 'src/constants';
 
 export const mockZSetMemberDto: ZSetMemberDto = {

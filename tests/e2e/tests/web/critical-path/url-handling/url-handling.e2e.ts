@@ -76,8 +76,7 @@ test
             memoryLimitMeasurementUnit: 'mb',
             free: 'true'
         };
-        console.log('!!!!');
-        console.log(generateLink(connectUrlParams));
+
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(10_000);
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');

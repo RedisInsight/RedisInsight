@@ -1,6 +1,5 @@
 import { ILogsEmitter } from 'src/modules/profiler/interfaces/logs-emitter.interface';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
-import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 import { LogFile } from 'src/modules/profiler/models/log-file';
 import { ProfilerAnalyticsService } from 'src/modules/profiler/profiler-analytics.service';
@@ -25,25 +24,6 @@ export const mockMonitorDataItem: IMonitorData = {
 
 export const mockSocket = new MockedSocket();
 mockSocket['emit'] = jest.fn();
-//
-// export const mockProfilerClient: MockType<ProfilerClient> = {
-//   id: uuidv4(),
-//   handleOnData: jest.fn(),
-//   handleOnDisconnect: jest.fn(),
-//   addLogsEmitter: jest.fn(),
-//   flushLogs: jest.fn(),
-//   destroy: jest.fn(),
-// };
-
-export const mockRedisObserver: Partial<RedisObserver> = {
-  // status: RedisObserverStatus.Wait,
-  init: jest.fn(),
-  subscribe: jest.fn(),
-  unsubscribe: jest.fn(),
-  getProfilerClientsSize: jest.fn(),
-  clear: jest.fn(),
-  removeShardsListeners: jest.fn(),
-};
 
 export const mockRedisShardObserver: IShardObserver = {
   addListener: jest.fn(),

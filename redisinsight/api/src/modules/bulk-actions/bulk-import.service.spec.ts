@@ -1,21 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import {
+  mockBulkActionsAnalytics,
   mockClientMetadata,
-  mockDatabaseConnectionService,
-  mockIORedisClient,
-  mockIORedisCluster, MockType,
+  mockClusterRedisClient,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
+  MockType,
 } from 'src/__mocks__';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import * as fs from 'fs-extra';
 import config from 'src/utils/config';
 import { join } from 'path';
 import { wrapHttpError } from 'src/common/utils';
+import { RedisClientCommand } from 'src/modules/redis/client';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { Readable } from 'stream';
 
 const PATH_CONFIG = config.get('dir_path');
@@ -23,11 +26,14 @@ const PATH_CONFIG = config.get('dir_path');
 const generateNCommandsBuffer = (n: number) => Buffer.from(
   (new Array(n)).fill(1).map(() => ['set', ['foo', 'bar']]).join('\n'),
 );
-const generateNBatchCommands = (n: number) => (new Array(n)).fill(1).map(() => ['set', ['foo', 'bar']]);
+const generateNBatchCommands = (n: number): RedisClientCommand[] => (
+  new Array(n)).fill(1).map(() => ['set', 'foo', 'bar']);
 const generateNBatchCommandsResults = (n: number) => (new Array(n)).fill(1).map(() => [null, 'OK']);
 const mockBatchCommands = generateNBatchCommands(100);
 const mockBatchCommandsResult = generateNBatchCommandsResults(100);
-const mockBatchCommandsResultWithErrors = [...(new Array(99)).fill(1).map(() => [null, 'OK']), ['ReplyError']];
+const mockBatchCommandsResultWithErrors = [
+  ...(new Array(99)).fill(1).map(() => [null, 'OK']), [new Error('ReplyError')],
+];
 const mockSummary: BulkActionSummary = Object.assign(new BulkActionSummary(), {
   processed: 100,
   succeed: 100,
@@ -82,8 +88,8 @@ const mockedFs = fs as jest.Mocked<typeof fs>;
 
 describe('BulkImportService', () => {
   let service: BulkImportService;
-  let databaseConnectionService: MockType<DatabaseConnectionService>;
-  let analytics: MockType<BulkActionsAnalyticsService>;
+  let databaseClientFactory: MockType<DatabaseClientFactory>;
+  let analytics: MockType<BulkActionsAnalytics>;
 
   beforeEach(async () => {
     jest.mock('fs-extra', () => mockedFs);
@@ -93,47 +99,43 @@ describe('BulkImportService', () => {
       providers: [
         BulkImportService,
         {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
         {
-          provide: BulkActionsAnalyticsService,
-          useFactory: () => ({
-            sendActionStarted: jest.fn(),
-            sendActionStopped: jest.fn(),
-            sendActionSucceed: jest.fn(),
-            sendActionFailed: jest.fn(),
-          }),
+          provide: BulkActionsAnalytics,
+          useFactory: mockBulkActionsAnalytics,
         },
       ],
     }).compile();
 
     service = module.get(BulkImportService);
-    databaseConnectionService = module.get(DatabaseConnectionService);
-    analytics = module.get(BulkActionsAnalyticsService);
+    databaseClientFactory = module.get(DatabaseClientFactory);
+    analytics = module.get(BulkActionsAnalytics);
   });
 
   describe('executeBatch', () => {
     it('should execute batch in pipeline for standalone', async () => {
-      mockIORedisClient.exec.mockResolvedValueOnce(mockBatchCommandsResult);
-      expect(await service['executeBatch'](mockIORedisClient, mockBatchCommands)).toEqual(mockSummary);
+      mockStandaloneRedisClient.sendPipeline.mockResolvedValueOnce(mockBatchCommandsResult);
+      expect(await service['executeBatch'](mockStandaloneRedisClient, mockBatchCommands)).toEqual(mockSummary);
     });
     it('should execute batch in pipeline for standalone with errors', async () => {
-      mockIORedisClient.exec.mockResolvedValueOnce(mockBatchCommandsResultWithErrors);
-      expect(await service['executeBatch'](mockIORedisClient, mockBatchCommands)).toEqual(mockSummaryWithErrors);
+      mockStandaloneRedisClient.sendPipeline.mockResolvedValueOnce(mockBatchCommandsResultWithErrors);
+      expect(await service['executeBatch'](mockStandaloneRedisClient, mockBatchCommands))
+        .toEqual(mockSummaryWithErrors);
     });
     it('should return all failed in case of global error', async () => {
-      mockIORedisClient.exec.mockRejectedValueOnce(new Error());
-      expect(await service['executeBatch'](mockIORedisClient, mockBatchCommands)).toEqual({
+      mockStandaloneRedisClient.sendPipeline.mockRejectedValueOnce(new Error());
+      expect(await service['executeBatch'](mockStandaloneRedisClient, mockBatchCommands)).toEqual({
         ...mockSummary.getOverview(),
         succeed: 0,
         failed: mockSummary.getOverview().processed,
       });
     });
     it('should execute batch of commands without pipeline for cluster', async () => {
-      mockIORedisCluster.call.mockRejectedValueOnce(new Error());
-      mockIORedisCluster.call.mockResolvedValue('OK');
-      expect(await service['executeBatch'](mockIORedisCluster, mockBatchCommands)).toEqual(mockSummaryWithErrors);
+      mockClusterRedisClient.call.mockRejectedValueOnce(new Error());
+      mockClusterRedisClient.call.mockResolvedValue('OK');
+      expect(await service['executeBatch'](mockClusterRedisClient, mockBatchCommands)).toEqual(mockSummaryWithErrors);
     });
   });
 
@@ -213,7 +215,7 @@ describe('BulkImportService', () => {
         },
         duration: jasmine.anything(),
       });
-      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+      expect(mockStandaloneRedisClient.disconnect).toHaveBeenCalled();
     });
 
     it('should ignore blank lines', async () => {
@@ -221,19 +223,19 @@ describe('BulkImportService', () => {
         mockClientMetadata,
         Readable.from(Buffer.from('\n SET foo bar \n     \n SET foo bar \n    ')),
       );
-      expect(spy).toBeCalledWith(mockIORedisClient, [['set', ['foo', 'bar']], ['set', ['foo', 'bar']]]);
-      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+      expect(spy).toBeCalledWith(mockStandaloneRedisClient, [['SET', 'foo', 'bar'], ['SET', 'foo', 'bar']]);
+      expect(mockStandaloneRedisClient.disconnect).toHaveBeenCalled();
     });
 
     it('should throw an error in case of global error', async () => {
       try {
-        databaseConnectionService.createClient.mockRejectedValueOnce(new NotFoundException());
+        databaseClientFactory.createClient.mockRejectedValueOnce(new NotFoundException());
 
         await service.import(mockClientMetadata, mockReadableStream);
 
         fail();
       } catch (e) {
-        expect(mockIORedisClient.disconnect).not.toHaveBeenCalled();
+        expect(mockStandaloneRedisClient.disconnect).not.toHaveBeenCalled();
         expect(analytics.sendActionFailed).toHaveBeenCalledWith(
           { ...mockEmptyImportResult },
           wrapHttpError(e),

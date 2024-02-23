@@ -66,5 +66,11 @@ eval "ID=$ID RTE=$RTE docker-compose -p $ID \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env stop"
 
+echo "Remove containers with anonymous volumes... ${RTE}"
+eval "ID=$ID RTE=$RTE docker-compose -p $ID \
+  -f $BASEDIR/$BUILD.build.yml \
+  -f $BASEDIR/$RTE/docker-compose.yml \
+  --env-file $BASEDIR/$BUILD.build.env rm -v -f"
+
 echo "Removing test run docker network..."
 eval "docker network rm $ID || true"

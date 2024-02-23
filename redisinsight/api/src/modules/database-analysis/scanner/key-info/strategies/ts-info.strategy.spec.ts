@@ -1,9 +1,6 @@
 import { when } from 'jest-when';
-import IORedis from 'ioredis';
 import { TsInfoStrategy } from 'src/modules/database-analysis/scanner/key-info/strategies/ts-info.strategy';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 
 const mockKey = Buffer.from('key');
 const mockRedisResponse = [
@@ -24,17 +21,18 @@ const mockRedisResponse = [
 ];
 
 describe('TsInfoStrategy', () => {
+  const client = mockStandaloneRedisClient;
   const strategy = new TsInfoStrategy();
 
   beforeEach(async () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'ts.info' }))
+    when(client.sendCommand)
+      .calledWith(jasmine.arrayContaining(['ts.info']), expect.anything())
       .mockResolvedValue(mockRedisResponse);
   });
 
   describe('getLength', () => {
     it('should get length', async () => {
-      expect(await strategy.getLength(nodeClient, mockKey)).toEqual(10);
+      expect(await strategy.getLength(client, mockKey)).toEqual(10);
     });
   });
 });

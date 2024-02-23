@@ -11,7 +11,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
-import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/dto'
+import { DeleteListElementsDto, PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 import {
   defaultSelectedKeyAction,
   deleteSelectedKeySuccess,

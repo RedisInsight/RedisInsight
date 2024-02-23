@@ -1,12 +1,13 @@
-import * as IORedis from 'ioredis';
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { RedisObserver } from 'src/modules/profiler/models/redis.observer';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { withTimeout } from 'src/utils/promise-with-timeout';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config, { Config } from 'src/utils/config';
 import { ClientContext, ClientMetadata } from 'src/common/models';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
+import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
 
 const serverConfig = config.get('server') as Config['server'];
 
@@ -17,7 +18,7 @@ export class RedisObserverProvider {
   private redisObservers: Map<string, RedisObserver> = new Map();
 
   constructor(
-    private databaseConnectionService: DatabaseConnectionService,
+    private databaseClientFactory: DatabaseClientFactory,
   ) {}
 
   /**
@@ -40,7 +41,7 @@ export class RedisObserverProvider {
         redisObserver.init(this.getRedisClientFn({
           sessionMetadata: undefined,
           databaseId: instanceId,
-          context: ClientContext.Common,
+          context: ClientContext.Profiler,
         })).catch();
       } else {
         switch (redisObserver.status) {
@@ -56,7 +57,7 @@ export class RedisObserverProvider {
             redisObserver.init(this.getRedisClientFn({
               sessionMetadata: undefined,
               databaseId: instanceId,
-              context: ClientContext.Common,
+              context: ClientContext.Profiler,
             })).catch();
             break;
           case RedisObserverStatus.Initializing:
@@ -103,9 +104,10 @@ export class RedisObserverProvider {
    * @param clientMetadata
    * @private
    */
-  private getRedisClientFn(clientMetadata: ClientMetadata): () => Promise<IORedis.Redis | IORedis.Cluster> {
+  private getRedisClientFn(clientMetadata: ClientMetadata): () => Promise<RedisClient> {
     return async () => withTimeout(
-      this.databaseConnectionService.createClient(clientMetadata),
+      // workaround: use ioredis client for profiler until node-redis lib add support for "monitor" command
+      this.databaseClientFactory.createClient(clientMetadata, { clientLib: RedisClientLib.IOREDIS }),
       serverConfig.requestTimeout,
       new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
     );

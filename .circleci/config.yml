@@ -201,6 +201,9 @@ parameters:
   docker:
     type: string
     default: *ignore
+  redis_client:
+    type: string
+    default: ""
 
 jobs:
   # Test jobs
@@ -302,6 +305,10 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
+      redis_client:
+        description: Library to use for redis connection
+        type: string
+        default: ""
     steps:
       - checkout
       - restore_cache:
@@ -319,6 +326,10 @@ jobs:
       - run:
           name: Run tests
           command: |
+            if [ << parameters.redis_client >> != "" ]; then
+              export RI_REDIS_CLIENTS_FORCE_STRATEGY=<< parameters.redis_client >>
+            fi
+
             ./redisinsight/api/test/test-runs/start-test-run.sh -r << parameters.rte >> -t << parameters.build >>
             mkdir -p mkdir itest/coverages && mkdir -p itest/results
             cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/<< parameters.rte >>.result.json
@@ -410,7 +421,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=18.15.0
+      - run: 
+          command: |
+            nvm install 18.15.0
+            nvm use 18.15.0
+            npm install --global yarn
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
@@ -755,7 +770,10 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=18.15.0
+            nvm install 18.15.0
+            nvm use 18.15.0
+            npm install --global yarn
+
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install
@@ -1175,6 +1193,7 @@ workflows:
                 - /^be/feature.*/
                 - /^be/bugfix.*/
       - integration-tests-run:
+          redis_client: << pipeline.parameters.redis_client >>
           matrix:
             alias: itest-code
             parameters:
@@ -1251,6 +1270,8 @@ workflows:
             alias: itest-code
             parameters:
               rte: *iTestsNames
+              redis_client:
+                - << pipeline.parameters.redis_client >>
           name: ITest - << matrix.rte >> (code)
           requires:
             - Start All Tests
@@ -1487,6 +1508,8 @@ workflows:
             alias: itest-code
             parameters:
               rte: *iTestsNames
+              redis_client:
+                - << pipeline.parameters.redis_client >>
           name: ITest - << matrix.rte >> (code)
           filters: *releaseAndLatestFilter
       - integration-tests-coverage:

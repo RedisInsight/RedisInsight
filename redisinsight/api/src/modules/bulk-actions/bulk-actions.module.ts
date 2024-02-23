@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { BulkActionsService } from 'src/modules/bulk-actions/bulk-actions.service';
 import { BulkActionsProvider } from 'src/modules/bulk-actions/providers/bulk-actions.provider';
 import { BulkActionsGateway } from 'src/modules/bulk-actions/bulk-actions.gateway';
-import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { BulkImportController } from 'src/modules/bulk-actions/bulk-import.controller';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
 
@@ -12,7 +12,7 @@ import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service'
     BulkActionsGateway,
     BulkActionsService,
     BulkActionsProvider,
-    BulkActionsAnalyticsService,
+    BulkActionsAnalytics,
     BulkImportService,
   ],
 })

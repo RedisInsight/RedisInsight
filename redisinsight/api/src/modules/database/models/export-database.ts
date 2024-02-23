@@ -14,7 +14,6 @@ export class ExportDatabase extends PickType(Database, [
   'provider',
   'lastConnection',
   'sentinelMaster',
-  'nodes',
   'modules',
   'tls',
   'tlsServername',

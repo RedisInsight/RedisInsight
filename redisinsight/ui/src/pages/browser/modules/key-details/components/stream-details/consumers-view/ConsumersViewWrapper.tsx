@@ -19,7 +19,7 @@ import { selectedKeyDataSelector, updateSelectedKeyRefreshTime } from 'uiSrc/sli
 import { formatLongName } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
 import ConsumersView from './ConsumersView'
 
 import styles from './ConsumersView/styles.module.scss'

@@ -215,7 +215,7 @@ export const autoFillFormDetails = (
         }
 
         case InstanceType.Sentinel: {
-          return ({
+          return getFormValues({
             host: details.host || initialValues.host || 'localhost',
             port: `${details.port || initialValues.port || 9443}`,
             username: details.username || '',
@@ -225,7 +225,7 @@ export const autoFillFormDetails = (
         }
 
         case InstanceType.Standalone: {
-          return (getFormValues({
+          return getFormValues({
             name: details.hostname || initialValues.name || 'localhost:6379',
             host: details.host || initialValues.host || 'localhost',
             port: `${details.port || initialValues.port || 9443}`,
@@ -235,7 +235,7 @@ export const autoFillFormDetails = (
             db: details.dbNumber,
             ssh: false,
             sshPassType: SshPassType.Password
-          }))
+          })
         }
         default: {
           return {}

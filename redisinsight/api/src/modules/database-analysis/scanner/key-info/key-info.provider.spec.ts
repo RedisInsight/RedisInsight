@@ -1,5 +1,5 @@
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import {
   DefaultInfoStrategy,
   GraphInfoStrategy,

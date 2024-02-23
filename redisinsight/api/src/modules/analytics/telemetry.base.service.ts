@@ -4,11 +4,9 @@ import { HttpException } from '@nestjs/common';
 import { AppAnalyticsEvents } from 'src/constants';
 
 export abstract class TelemetryBaseService {
-  protected eventEmitter: EventEmitter2;
-
-  protected constructor(eventEmitter: EventEmitter2) {
-    this.eventEmitter = eventEmitter;
-  }
+  constructor(
+    protected readonly eventEmitter: EventEmitter2,
+  ) {}
 
   protected sendEvent(event: string, eventData: object = {}): void {
     try {

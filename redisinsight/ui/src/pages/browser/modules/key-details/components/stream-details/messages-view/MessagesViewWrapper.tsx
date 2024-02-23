@@ -23,7 +23,7 @@ import {
   PendingEntryDto,
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse
-} from 'apiSrc/modules/browser/dto/stream.dto'
+} from 'apiSrc/modules/browser/stream/dto'
 
 import MessagesView from './MessagesView'
 import MessageClaimPopover from './MessageClaimPopover'

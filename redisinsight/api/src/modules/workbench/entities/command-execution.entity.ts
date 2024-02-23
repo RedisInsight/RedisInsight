@@ -48,7 +48,7 @@ export class CommandExecutionEntity {
 
   @Column({ nullable: true })
   @Expose()
-  role?: string;
+  role?: string = null;
 
   @Column({ nullable: true })
   @Expose()
@@ -76,7 +76,7 @@ export class CommandExecutionEntity {
     }
   }, { toPlainOnly: true })
   @Expose()
-  nodeOptions?: string;
+  nodeOptions?: string = null;
 
   @Column({ nullable: true })
   encryption: string;

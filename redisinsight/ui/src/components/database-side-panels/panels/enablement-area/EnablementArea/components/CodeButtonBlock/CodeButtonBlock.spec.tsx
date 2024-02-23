@@ -89,6 +89,24 @@ describe('CodeButtonBlock', () => {
     expect(screen.queryByTestId(`run-btn-${label}`)).not.toBeInTheDocument()
   })
 
+  it('should not show confirmation popover with option', async () => {
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={jest.fn}
+        params={{ run_confirmation: 'true' }}
+        content={simpleContent}
+        isShowConfirmation={false}
+      />
+    )
+    await act(() => {
+      fireEvent.click(screen.getByTestId(`run-btn-${label}`))
+    })
+
+    expect(screen.queryByTestId('tutorial-popover-apply-run')).not.toBeInTheDocument()
+  })
+
   it('should go to home page after click on change db', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })

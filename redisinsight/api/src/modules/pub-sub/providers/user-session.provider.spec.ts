@@ -6,12 +6,12 @@ import {
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
-import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 const mockUserClient2 = new UserClient('socketId2', mockSocket, 'databaseId');
 const getRedisClientFn = jest.fn();
-const mockRedisClient = new RedisClient('databaseId', getRedisClientFn);
+const mockRedisClient = new RedisClientSubscriber('databaseId', getRedisClientFn);
 
 describe('UserSessionProvider', () => {
   let service: UserSessionProvider;

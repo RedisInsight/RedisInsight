@@ -4,7 +4,8 @@ import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { MessagesResponse, SubscriptionDto } from 'src/modules/pub-sub/dto';
 import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.interface';
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
-import * as IORedis from 'ioredis';
+import { RedisClient } from 'src/modules/redis/client';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
 
 const EMIT_WAIT = 30;
 const EMIT_MAX_WAIT = 100;
@@ -14,6 +15,8 @@ export abstract class AbstractSubscription implements ISubscription {
   protected readonly id: string;
 
   protected readonly userClient: UserClient;
+
+  protected readonly redisClient: RedisClientSubscriber;
 
   protected readonly debounce: any;
 
@@ -54,9 +57,9 @@ export abstract class AbstractSubscription implements ISubscription {
     return this.type;
   }
 
-  abstract subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
+  abstract subscribe(client: RedisClient): Promise<void>;
 
-  abstract unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
+  abstract unsubscribe(client: RedisClient): Promise<void>;
 
   pushMessage(message: IMessage) {
     this.messages.push(message);

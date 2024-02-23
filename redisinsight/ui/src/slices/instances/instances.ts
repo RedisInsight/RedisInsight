@@ -190,6 +190,7 @@ const instancesSlice = createSlice({
       state.connectedInstance = payload
       state.connectedInstance.loading = false
       state.connectedInstance.isRediStack = isRediStack || false
+      state.connectedInstance.isFreeDb = payload.cloudDetails?.free || false
       state.connectedInstance.db = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${payload.id}`) ?? payload.db
     },
 

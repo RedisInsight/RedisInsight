@@ -1,9 +1,6 @@
 import { when } from 'jest-when';
-import IORedis from 'ioredis';
 import { GraphInfoStrategy } from 'src/modules/database-analysis/scanner/key-info/strategies/graph-info.strategy';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 
 const mockKey = Buffer.from('key');
 const mockRedisResponse = [
@@ -16,17 +13,18 @@ const mockRedisResponse = [
 ];
 
 describe('GraphInfoStrategy', () => {
+  const client = mockStandaloneRedisClient;
   const strategy = new GraphInfoStrategy();
 
   beforeEach(async () => {
-    when(nodeClient.sendCommand)
-      .calledWith(jasmine.objectContaining({ name: 'graph.query' }))
+    when(client.sendCommand)
+      .calledWith(jasmine.arrayContaining(['graph.query']), expect.anything())
       .mockResolvedValue(mockRedisResponse);
   });
 
   describe('getLength', () => {
     it('should get length', async () => {
-      expect(await strategy.getLength(nodeClient, mockKey)).toEqual(999);
+      expect(await strategy.getLength(client, mockKey)).toEqual(999);
     });
   });
 });

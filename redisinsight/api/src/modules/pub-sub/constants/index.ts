@@ -13,14 +13,14 @@ export enum SubscriptionType {
   SSubscribe = 'ss',
 }
 
-export enum RedisClientStatus {
+export enum RedisClientSubscriberStatus {
   Connecting = 'connecting',
   Connected = 'connected',
   Error = 'error',
   End = 'end',
 }
 
-export enum RedisClientEvents {
+export enum RedisClientSubscriberEvents {
   Connected = 'connected',
   ConnectionError = 'connection_error',
   Message = 'message',

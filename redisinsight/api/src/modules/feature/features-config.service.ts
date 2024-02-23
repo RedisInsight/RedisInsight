@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  Injectable, Logger,
+  Injectable, Logger, OnApplicationBootstrap,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import config from 'src/utils/config';
@@ -16,7 +16,7 @@ import * as defaultConfig from '../../../config/features-config.json';
 const FEATURES_CONFIG = config.get('features_config');
 
 @Injectable()
-export class FeaturesConfigService {
+export class FeaturesConfigService implements OnApplicationBootstrap {
   private logger = new Logger('FeaturesConfigService');
 
   private validator = new Validator();

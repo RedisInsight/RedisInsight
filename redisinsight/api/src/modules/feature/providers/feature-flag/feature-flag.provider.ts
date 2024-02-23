@@ -39,6 +39,10 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
+    this.strategies.set(KnownFeatures.RedisClient, new WithDataFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
   }
 
   getStrategy(name: string): FeatureFlagStrategy {

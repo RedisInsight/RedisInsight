@@ -1,15 +1,15 @@
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
-import { GetHashFieldsResponse } from 'apiSrc/modules/browser/dto/hash.dto'
-import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
-import { GetRejsonRlResponseDto, SafeRejsonRlDataDtO } from 'apiSrc/modules/browser/dto/rejson-rl.dto'
+import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
+import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
+import { GetRejsonRlResponseDto, SafeRejsonRlDataDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 import {
   GetListElementsDto,
   GetListElementsResponse,
-} from 'apiSrc/modules/browser/dto/list.dto'
+} from 'apiSrc/modules/browser/list/dto'
 import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
-import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
+import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
 import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
@@ -465,7 +465,7 @@ export interface InitialStateSet {
 }
 
 export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {
-  data: Maybe<SafeRejsonRlDataDtO[] | string | number | boolean | null>
+  data: Maybe<SafeRejsonRlDataDto[] | string | number | boolean | null>
 }
 
 export interface InitialStateRejson {

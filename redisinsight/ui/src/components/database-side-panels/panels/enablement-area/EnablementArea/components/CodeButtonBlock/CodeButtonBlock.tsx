@@ -28,6 +28,7 @@ export interface Props {
   isLoading?: boolean
   className?: string
   params?: CodeButtonParams
+  isShowConfirmation?: boolean
 }
 
 const FINISHED_COMMAND_INDICATOR_TIME_MS = 5_000
@@ -41,6 +42,7 @@ const CodeButtonBlock = (props: Props) => {
     content,
     onCopy,
     modules = [],
+    isShowConfirmation = true,
     ...rest
   } = props
 
@@ -51,10 +53,6 @@ const CodeButtonBlock = (props: Props) => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const isNotShowConfirmation = getDBConfigStorageField(
-    instanceId,
-    ConfigDBStorageItem.notShowConfirmationRunTutorial
-  )
   const isButtonHasConfirmation = params?.run_confirmation === BooleanParams.true
   const isRunButtonHidden = params?.executable === BooleanParams.false
   const [notLoadedModule] = getUnsupportedModulesFromQuery(modules, content)
@@ -65,6 +63,11 @@ const CodeButtonBlock = (props: Props) => {
         setHighlightedContent(data)
       })
   }, [])
+
+  const getIsShowConfirmation = () => isShowConfirmation && !getDBConfigStorageField(
+    instanceId,
+    ConfigDBStorageItem.notShowConfirmationRunTutorial
+  )
 
   const handleCopy = () => {
     const query = getCommandsForExecution(content)?.join('\n') || ''
@@ -82,7 +85,10 @@ const CodeButtonBlock = (props: Props) => {
   }
 
   const handleRunClicked = () => {
-    if (!instanceId || notLoadedModule || (!isNotShowConfirmation && isButtonHasConfirmation)) {
+    if (!instanceId
+      || notLoadedModule
+      || (getIsShowConfirmation() && isButtonHasConfirmation)
+    ) {
       setIsPopoverOpen((v) => !v)
       return
     }

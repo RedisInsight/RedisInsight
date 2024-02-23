@@ -11,9 +11,6 @@ import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
-import { RedisToolService } from 'src/modules/redis/redis-tool.service';
-import { RedisToolFactory } from 'src/modules/redis/redis-tool.factory';
-import { ClientContext } from 'src/common/models';
 import { PluginsService } from 'src/modules/workbench/plugins.service';
 import { PluginCommandsWhitelistProvider } from 'src/modules/workbench/providers/plugin-commands-whitelist.provider';
 import { PluginsController } from 'src/modules/workbench/plugins.controller';
@@ -49,11 +46,6 @@ export class WorkbenchModule implements NestModule {
         {
           provide: PluginStateRepository,
           useClass: pluginStateRepository,
-        },
-        {
-          provide: RedisToolService,
-          useFactory: (redisToolFactory: RedisToolFactory) => redisToolFactory.createRedisTool(ClientContext.Workbench),
-          inject: [RedisToolFactory],
         },
         {
           provide: CommandsService,

@@ -12,7 +12,6 @@ import {
 } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { processCliClient, resetCliSettings, toggleCli } from 'uiSrc/slices/cli/cli-settings'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sessionStorageService } from 'uiSrc/services'
 import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import CliHeader from './CliHeader'
@@ -87,25 +86,6 @@ describe('CliHeader', () => {
 
     const expectedActions = [toggleCli()]
     expect(store.getActions()).toEqual(expectedActions)
-  })
-
-  it('Cli endpoint should be equal connected Instance host:port', () => {
-    const host = 'localhost'
-    const port = 6379
-    const endpoint = `${host}:${port}`
-    const mockEndpoint = `cli-endpoint-${endpoint}`
-
-    connectedInstanceSelector.mockImplementation(() => ({
-      host,
-      port,
-    }))
-
-    const { queryByTestId } = render(<CliHeader />)
-
-    const endpointEl = queryByTestId(mockEndpoint)
-
-    expect(endpointEl).toBeInTheDocument()
-    expect(endpointEl).toHaveTextContent(endpoint)
   })
 })
 

@@ -8,7 +8,7 @@ import {
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { PendingEntryDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
 

@@ -137,6 +137,8 @@ services:
     networks:
       default:
         ipv4_address: 172.31.100.211
+      ssh:
+        ipv4_address: 172.33.100.211
   master-plain-7-2:
     logging: *logging
     build: *cluster-plain-7-build

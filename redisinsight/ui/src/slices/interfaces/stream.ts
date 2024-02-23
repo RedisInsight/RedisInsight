@@ -5,7 +5,7 @@ import {
   ConsumerGroupDto,
   GetStreamEntriesResponse,
   PendingEntryDto,
-} from 'apiSrc/modules/browser/dto/stream.dto'
+} from 'apiSrc/modules/browser/stream/dto'
 import { RedisResponseBuffer } from './app'
 
 type Range = {

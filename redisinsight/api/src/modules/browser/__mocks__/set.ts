@@ -3,7 +3,7 @@ import {
   DeleteMembersFromSetDto,
   GetSetMembersDto,
   GetSetMembersResponse,
-} from 'src/modules/browser/dto';
+} from 'src/modules/browser/set/dto';
 
 export const mockSetMember = Buffer.from('Lorem ipsum dolor sit amet.');
 export const mockSetMembers = [mockSetMember];

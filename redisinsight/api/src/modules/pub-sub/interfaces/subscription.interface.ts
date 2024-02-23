@@ -1,5 +1,5 @@
-import * as IORedis from 'ioredis';
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
+import { RedisClient } from 'src/modules/redis/client';
 
 export interface ISubscription {
   getId(): string;
@@ -10,7 +10,7 @@ export interface ISubscription {
 
   pushMessage(message: IMessage): void;
 
-  subscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
+  subscribe(client: RedisClient,): Promise<void>;
 
-  unsubscribe(client: IORedis.Redis | IORedis.Cluster): Promise<void>;
+  unsubscribe(client: RedisClient): Promise<void>;
 }

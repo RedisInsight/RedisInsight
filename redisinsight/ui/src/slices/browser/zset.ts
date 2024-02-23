@@ -13,7 +13,7 @@ import {
   SearchZSetMembersResponse,
   ZSetMemberDto,
   GetZSetResponse,
-} from 'apiSrc/modules/browser/dto'
+} from 'apiSrc/modules/browser/z-set/dto'
 import {
   deleteKeyFromList,
   deleteSelectedKeySuccess,

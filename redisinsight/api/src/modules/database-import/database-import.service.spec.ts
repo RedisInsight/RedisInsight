@@ -165,7 +165,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
         provider: 'RE_CLOUD',
         new: true,
       }, false);
@@ -177,7 +177,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
         name: `${mockDatabase.host}:${mockDatabase.port}`,
         new: true,
       }, false);
@@ -189,7 +189,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
         compressor: Compressor.NONE,
         new: true,
       }, false);
@@ -201,7 +201,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'timeout', 'compressor', 'modules']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
         compressor: Compressor.GZIP,
         new: true,
       }, false);
@@ -214,7 +214,7 @@ describe('DatabaseImportService', () => {
       }, 0);
 
       expect(databaseRepository.create).toHaveBeenCalledWith({
-        ...pick(mockDatabase, ['host', 'port', 'name', 'timeout', 'compressor', 'modules']),
+        ...pick(mockDatabase, ['host', 'port', 'name', 'compressor', 'modules']),
         connectionType: ConnectionType.CLUSTER,
         new: true,
       }, false);

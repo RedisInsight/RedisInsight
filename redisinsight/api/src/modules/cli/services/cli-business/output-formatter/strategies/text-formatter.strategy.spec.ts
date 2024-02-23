@@ -80,16 +80,5 @@ describe('Cli TextFormatterStrategy', () => {
 
       expect(output).toEqual('"{\\"key\\":\\"value\\"}"');
     });
-    it('should return correct value with redirection', () => {
-      const input = Buffer.from('string value');
-      const mockOutput = `-> Redirected to slot [2222] located at 127.0.0.1:7000\n"${input.toString()}"`;
-
-      const output = strategy.format(input, {
-        slot: '2222',
-        address: '127.0.0.1:7000',
-      });
-
-      expect(output).toEqual(mockOutput);
-    });
   });
 });

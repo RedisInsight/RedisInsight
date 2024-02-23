@@ -20,9 +20,11 @@ module.exports = {
   },
   overrides: [
     {
-      files: [ '**/*.spec.ts' ],
+      files: [ '**/*.spec.ts', '**/__mocks__/**/*' ],
       rules: {
-        'no-duplicate-string': 'off',
+        'sonarjs/no-duplicate-string': 0,
+        'sonarjs/no-identical-functions': 0,
+        'import/first': 0,
       }
     }
   ]

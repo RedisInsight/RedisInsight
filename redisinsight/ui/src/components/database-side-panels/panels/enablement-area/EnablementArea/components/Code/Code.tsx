@@ -19,7 +19,7 @@ export interface Props {
 }
 
 const Code = ({ children, params = '', label, path, ...rest }: Props) => {
-  const { provider, modules = [] } = useSelector(connectedInstanceSelector)
+  const { provider, modules = [], isFreeDb } = useSelector(connectedInstanceSelector)
 
   const { search } = useLocation()
   const { setScript } = useContext(EnablementAreaContext)
@@ -82,6 +82,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
       modules={modules}
       label={label}
       params={parsedParams}
+      isShowConfirmation={!isFreeDb}
       {...rest}
     />
   )

@@ -21,7 +21,7 @@ import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
   AckPendingEntriesResponse,
-} from 'apiSrc/modules/browser/dto/stream.dto'
+} from 'apiSrc/modules/browser/stream/dto'
 import { AppDispatch, RootState } from '../store'
 import { StateStream, StreamViewType } from '../interfaces/stream'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'

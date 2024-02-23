@@ -13,7 +13,7 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   name: Joi.string().required(),
   provider: Joi.string().required(),
   new: Joi.boolean().allow(null).required(),
-  timeout: Joi.number().integer().required(),
+  timeout: Joi.number().integer().allow(null),
   compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
   connectionType: Joi.string().valid('STANDALONE', 'SENTINEL', 'CLUSTER', 'NOT CONNECTED').required(),
   lastConnection: Joi.string().isoDate().allow(null).required(),

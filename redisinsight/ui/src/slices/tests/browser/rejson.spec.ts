@@ -8,7 +8,7 @@ import {
   mockStore,
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { GetRejsonRlResponseDto } from 'apiSrc/modules/browser/dto'
+import { GetRejsonRlResponseDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 import reducer, {
   initialState,
   loadRejsonBranch,

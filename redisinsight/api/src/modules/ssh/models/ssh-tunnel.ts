@@ -1,77 +1,32 @@
-import { AddressInfo, Server } from 'net';
-import { EventEmitter } from 'events';
-import { Client } from 'ssh2';
+import { AddressInfo } from 'net';
+import { createTunnel } from 'tunnel-ssh';
 import { Endpoint } from 'src/common/models';
-import { UnableToCreateTunnelException } from 'src/modules/ssh/exceptions';
+
+export type SshTunnelServer = Awaited<ReturnType<typeof createTunnel>>[0];
+export type SshTunnelClient = Awaited<ReturnType<typeof createTunnel>>[1];
 
 export interface ISshTunnelOptions {
   targetHost: string,
   targetPort: number,
 }
 
-export class SshTunnel extends EventEmitter {
-  private readonly server: Server;
-
-  private readonly client: Client;
-
+export class SshTunnel {
   public readonly serverAddress: Endpoint;
 
-  constructor(server: Server, client: Client, options: ISshTunnelOptions) {
-    super();
-    this.server = server;
-    this.client = client;
+  constructor(
+    private readonly server: SshTunnelServer,
+    private readonly client: SshTunnelClient,
+    public readonly options: ISshTunnelOptions,
+  ) {
     const address = this.server?.address() as AddressInfo;
     this.serverAddress = {
-      host: address?.address,
+      host: '127.0.0.1',
       port: address?.port,
     };
-
-    this.init(options);
   }
 
   public close() {
     this.server?.close?.();
     this.client?.end?.();
-    this.server?.removeAllListeners?.();
-    this.client?.removeAllListeners?.();
-    this.removeAllListeners();
-  }
-
-  private error(e: Error) {
-    this.emit('error', e);
-  }
-
-  private init(options: ISshTunnelOptions) {
-    this.server.on('close', this.close);
-    this.client.on('close', this.close);
-    // close since net server is not being closed automatically when we need this
-    this.server.on('error', this.close);
-    this.client.on('error', this.error);
-
-    this.server.on('connection', (connection) => {
-      this.client.forwardOut(
-        this.serverAddress?.host,
-        this.serverAddress?.port,
-        options.targetHost,
-        options.targetPort,
-        (e, stream) => {
-          if (e) {
-            return this.emit('error', new UnableToCreateTunnelException(e.message));
-          }
-
-          return connection.pipe(stream).pipe(connection);
-        },
-      );
-
-      connection.on('error', (e) => {
-        this.client.emit('error', e);
-      });
-
-      connection.on('close', () => {
-        // close server and client connections (entire tunnel) when forward connection was lost
-        // todo: improve this to keep tunnel connection when there are active forward connections inside
-        this.close();
-      });
-    });
   }
 }

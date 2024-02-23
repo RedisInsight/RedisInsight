@@ -22,34 +22,22 @@ const dataSchema = Joi.object({
   command: Joi.string().required().messages({
     'any.required': '{#label} should not be empty',
   }),
-  role: Joi.string().required().valid('ALL', 'MASTER', 'SLAVE'),
   outputFormat: Joi.string().allow(null).valid('TEXT', 'RAW'),
 }).strict();
 
 const validInputData = {
   command: 'set foo bar',
-  role: 'ALL',
 };
 
-const responseSchema = Joi.array().items(Joi.object().keys({
+const responseSchema = Joi.object().keys({
   response: Joi.string().required(),
   status: Joi.string().required(),
-  node: Joi.object().keys({
-    host: Joi.string().required(),
-    port: Joi.number().integer().required(),
-    slot: Joi.number().integer(),
-  })
-}).required());
+}).required();
 
-const responseRawSchema = Joi.array().items(Joi.object().keys({
+const responseRawSchema = Joi.object().keys({
   response: Joi.any().required(),
   status: Joi.string().required(),
-  node: Joi.object().keys({
-    host: Joi.string().required(),
-    port: Joi.number().integer().required(),
-    slot: Joi.number().integer(),
-  })
-}).required());
+}).required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -90,7 +78,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         data: {
           command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
           outputFormat: 'TEXT',
-          role: 'ALL',
         },
         responseSchema,
         before: async () => {
@@ -105,12 +92,10 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         data: {
           command: `get ${constants.TEST_STRING_KEY_1}`,
           outputFormat: 'TEXT',
-          role: 'ALL',
         },
         responseSchema,
         checkFn: async ({ body }) => {
-          expect((body.filter(shard => shard.status === 'success'))[0].response)
-            .to.have.string(constants.TEST_STRING_VALUE_1)
+          expect(body.response).to.have.string(constants.TEST_STRING_VALUE_1)
         }
       },
       {
@@ -118,7 +103,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
         data: {
           command: `del ${constants.TEST_STRING_KEY_1}`,
           outputFormat: 'TEXT',
-          role: 'ALL',
         },
         responseSchema,
         after: async () => {
@@ -129,12 +113,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
   });
 
   describe('Single Node', () => {
-    const node = rte.env.nodes[0];
-    const nodeOptions = {
-      host: node?.host,
-      port: node?.port,
-      enableRedirection: true,
-    };
     describe('String', () => {
       [
         {
@@ -142,15 +120,10 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           data: {
             command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
             outputFormat: 'TEXT',
-            role: 'ALL',
-            nodeOptions
           },
           responseSchema,
           before: async () => {
             expect(await rte.client.exists(constants.TEST_STRING_KEY_1)).to.eql(0);
-          },
-          checkFn: ({ body }) => {
-            expect(body).to.have.a.lengthOf(1);
           },
           after: async () => {
             expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eql(constants.TEST_STRING_VALUE_1);
@@ -161,13 +134,10 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           data: {
             command: `get ${constants.TEST_STRING_KEY_1}`,
             outputFormat: 'TEXT',
-            role: 'ALL',
-            nodeOptions
           },
           responseSchema,
           checkFn: ({ body }) => {
-            expect(body).to.have.a.lengthOf(1);
-            expect(body[0].response).to.have.string(constants.TEST_STRING_VALUE_1);
+            expect(body.response).to.have.string(constants.TEST_STRING_VALUE_1);
           }
         },
         {
@@ -175,8 +145,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           data: {
             command: `del ${constants.TEST_STRING_KEY_1}`,
             outputFormat: 'TEXT',
-            role: 'ALL',
-            nodeOptions
           },
           responseSchema,
           after: async () => {
@@ -192,13 +160,10 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           data: {
             command: `set ${constants.TEST_STRING_KEY_1} ${constants.TEST_STRING_VALUE_1}`,
             outputFormat: 'RAW',
-            role: 'ALL',
-            nodeOptions
           },
           responseRawSchema,
           checkFn: ({ body }) => {
-            expect(body).to.have.a.lengthOf(1);
-            expect(body[0].response).to.eql('OK')
+            expect(body.response).to.eql('OK')
           }
         },
         {
@@ -206,13 +171,10 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           data: {
             command: `del ${constants.TEST_STRING_KEY_1}`,
             outputFormat: 'RAW',
-            role: 'ALL',
-            nodeOptions
           },
           responseRawSchema,
           checkFn: ({ body }) => {
-            expect(body).to.have.a.lengthOf(1);
-            expect(body[0].response).to.be.a('number')
+            expect(body.response).to.be.a('number')
           }
         },
         {
@@ -220,8 +182,6 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
           data: {
             command: `lrange ${constants.TEST_LIST_KEY_1} 0 100`,
             outputFormat: 'RAW',
-            role: 'ALL',
-            nodeOptions
           },
           responseRawSchema,
           before: async () => {
@@ -231,46 +191,24 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
             await rte.client.del(constants.TEST_LIST_KEY_1)
           },
           checkFn: ({ body }) => {
-            expect(body).to.have.a.lengthOf(1);
-            expect(body[0].response).to.eql([
+            expect(body.response).to.eql([
               constants.TEST_LIST_ELEMENT_2,
               constants.TEST_LIST_ELEMENT_1,
             ]);
-          }
-        },
-        {
-          name: 'Should return an object type response',
-          data: {
-            command: `hgetall ${constants.TEST_HASH_KEY_1}`,
-            outputFormat: 'RAW',
-            role: 'ALL',
-            nodeOptions
-          },
-          responseRawSchema,
-          before: async () => {
-            await rte.client.hset(constants.TEST_HASH_KEY_1, [constants.TEST_HASH_FIELD_1_NAME, constants.TEST_HASH_FIELD_1_VALUE]);
-          },
-          after: async () => {
-            await rte.client.del(constants.TEST_HASH_KEY_1);
-          },
-          checkFn: ({ body }) => {
-            expect(body).to.have.a.lengthOf(1);
-            expect(body[0].response).to.be.an('object');
-            expect(body[0].response).to.deep.eql({[constants.TEST_HASH_FIELD_1_NAME]: constants.TEST_HASH_FIELD_1_VALUE});
           }
         },
       ].map(mainCheckFn);
     })
   });
 
-  describe('Commands redirection', () => {
+  // Skip 'Commands redirection' and 'Client' tests because tested functionalities were removed
+  xdescribe('Commands redirection', () => {
     const nodes = rte.env.nodes;
     _.map(nodes, (node) => ({
       name: `Should create string with redirection if needed (${node.host}:${node.port})`,
       data: {
         command: `set ${constants.TEST_STRING_KEY_1} ${node.host}`,
         outputFormat: 'TEXT',
-        role: 'ALL',
         nodeOptions: {
           host: node.host,
           port: node.port,
@@ -286,14 +224,12 @@ describe('POST /databases/:instanceId/cli/:uuid/send-cluster-command', () => {
       }
     })).map(mainCheckFn);
   })
-
-  describe('Client', () => {
+  xdescribe('Client', () => {
     [
       {
         name: 'Should throw ClientNotFoundError',
         data: {
           command: 'info',
-          role: 'ALL',
           outputFormat: 'TEXT',
         },
         statusCode: 404,

@@ -1,8 +1,8 @@
-import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.interface';
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
-import { PubSubServerEvents, RedisClientEvents } from 'src/modules/pub-sub/constants';
+import { PubSubServerEvents, RedisClientSubscriberEvents } from 'src/modules/pub-sub/constants';
 import { Logger } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PubSubWsException } from 'src/modules/pub-sub/errors/pub-sub-ws.exception';
@@ -14,16 +14,16 @@ export class UserSession {
 
   private readonly userClient: UserClient;
 
-  private readonly redisClient: RedisClient;
+  private readonly redisClient: RedisClientSubscriber;
 
   private subscriptions: Map<string, ISubscription> = new Map();
 
-  constructor(userClient: UserClient, redisClient: RedisClient) {
+  constructor(userClient: UserClient, redisClient: RedisClientSubscriber) {
     this.id = userClient.getId();
     this.userClient = userClient;
     this.redisClient = redisClient;
-    redisClient.on(RedisClientEvents.Message, this.handleMessage.bind(this));
-    redisClient.on(RedisClientEvents.End, this.handleDisconnect.bind(this));
+    redisClient.on(RedisClientSubscriberEvents.Message, this.handleMessage.bind(this));
+    redisClient.on(RedisClientSubscriberEvents.End, this.handleDisconnect.bind(this));
   }
 
   getId() { return this.id; }

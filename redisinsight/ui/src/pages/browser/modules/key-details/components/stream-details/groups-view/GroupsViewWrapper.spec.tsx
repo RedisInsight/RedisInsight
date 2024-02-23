@@ -10,7 +10,7 @@ import {
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { stringToBuffer } from 'uiSrc/utils'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
 import GroupsViewWrapper, { Props } from './GroupsViewWrapper'
 

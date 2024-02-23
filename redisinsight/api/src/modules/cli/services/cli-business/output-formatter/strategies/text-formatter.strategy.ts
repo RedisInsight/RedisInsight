@@ -3,13 +3,10 @@ import {
 } from 'lodash';
 import { IS_NON_PRINTABLE_ASCII_CHARACTER } from 'src/constants';
 import { decimalToHexString } from 'src/utils/cli-helper';
-import {
-  IOutputFormatterStrategy,
-  IRedirectionInfo,
-} from '../output-formatter.interface';
+import { IOutputFormatterStrategy } from '../output-formatter.interface';
 
 export class TextFormatterStrategy implements IOutputFormatterStrategy {
-  public format(reply: any, redirectedTo: IRedirectionInfo): string {
+  public format(reply: any): string {
     let result;
     if (isNull(reply)) {
       result = '(nil)';
@@ -23,10 +20,6 @@ export class TextFormatterStrategy implements IOutputFormatterStrategy {
       result = this.formatRedisArrayReply(flattenDeep(Object.entries(reply)));
     } else {
       result = reply;
-    }
-    if (redirectedTo) {
-      const { slot, address } = redirectedTo;
-      result = `-> Redirected to slot [${slot}] located at ${address}\n${result}`;
     }
     return result;
   }

@@ -1,26 +1,25 @@
-import Redis from 'ioredis';
 import { mockSocket } from 'src/__mocks__';
 import { UserSession } from 'src/modules/pub-sub/model/user-session';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
-import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
 import { SimpleSubscription } from 'src/modules/pub-sub/model/simple.subscription';
 import { SubscriptionType } from 'src/modules/pub-sub/constants';
 import { PatternSubscription } from 'src/modules/pub-sub/model/pattern.subscription';
+import { RedisClient } from 'src/modules/redis/client';
 
 const getRedisClientFn = jest.fn();
 
-const nodeClient = Object.create(Redis.prototype);
+const nodeClient = Object.create(RedisClient.prototype);
 nodeClient.subscribe = jest.fn();
-nodeClient.psubscribe = jest.fn();
+nodeClient.pSubscribe = jest.fn();
 nodeClient.unsubscribe = jest.fn();
-nodeClient.punsubscribe = jest.fn();
-nodeClient.status = 'ready';
+nodeClient.pUnsubscribe = jest.fn();
 nodeClient.disconnect = jest.fn();
 nodeClient.quit = jest.fn();
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
-const mockRedisClient = new RedisClient('databaseId', getRedisClientFn);
+const mockRedisClientSubscriber = new RedisClientSubscriber('databaseId', getRedisClientFn);
 
 const mockSubscriptionDto = {
   channel: 'channel-a',
@@ -46,10 +45,10 @@ describe('UserSession', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    userSession = new UserSession(mockUserClient, mockRedisClient);
+    userSession = new UserSession(mockUserClient, mockRedisClientSubscriber);
     getRedisClientFn.mockResolvedValue(nodeClient);
     nodeClient.subscribe.mockResolvedValue('OK');
-    nodeClient.psubscribe.mockResolvedValue('OK');
+    nodeClient.pSubscribe.mockResolvedValue('OK');
   });
 
   describe('subscribe', () => {

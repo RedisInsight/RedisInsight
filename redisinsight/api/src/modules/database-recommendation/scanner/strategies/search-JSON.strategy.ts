@@ -1,10 +1,9 @@
-import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
+import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { SearchJSON } from 'src/modules/database-recommendation/models';
 import { isRedisearchModule } from 'src/utils';
 
@@ -31,7 +30,8 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
 
     if (isRedisearchModule(modules)) {
       const indexes = await data.client.sendCommand(
-        new Command('FT._LIST', [], { replyEncoding: 'utf8' }),
+        ['FT._LIST'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       if (indexes.length) {

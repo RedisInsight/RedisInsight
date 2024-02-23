@@ -1,8 +1,8 @@
-import { Redis, Cluster } from 'ioredis';
 import { RedisString } from 'src/common/constants';
+import { RedisClient } from 'src/modules/redis/client';
 
 export interface IntegersInSets {
-  client: Redis | Cluster;
+  client: RedisClient;
   keyName: RedisString;
   databaseId: string;
   members: RedisString[];

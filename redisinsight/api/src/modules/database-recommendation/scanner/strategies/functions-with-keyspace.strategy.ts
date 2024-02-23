@@ -1,4 +1,3 @@
-import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
@@ -28,7 +27,8 @@ export class FunctionsWithKeyspaceStrategy extends AbstractRecommendationStrateg
 
     if (isTriggeredAndFunctionsModule(modules)) {
       const libraries = await data.client.sendCommand(
-        new Command('TFUNCTION', ['LIST'], { replyEncoding: 'utf8' }),
+        ['TFUNCTION', 'LIST'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       if (libraries.length) {
@@ -37,7 +37,8 @@ export class FunctionsWithKeyspaceStrategy extends AbstractRecommendationStrateg
     }
 
     const reply = await data.client.sendCommand(
-      new Command('CONFIG', ['GET', 'notify-keyspace-events'], { replyEncoding: 'utf8' }),
+      ['CONFIG', 'GET', 'notify-keyspace-events'],
+      { replyEncoding: 'utf8' },
     ) as string[];
 
     return { isReached: checkKeyspaceNotification(reply[1]) };

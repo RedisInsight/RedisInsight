@@ -1,4 +1,3 @@
-import * as IORedis from 'ioredis';
 import { ForbiddenException, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
@@ -6,11 +5,12 @@ import { RedisObserverStatus } from 'src/modules/profiler/constants';
 import { IShardObserver } from 'src/modules/profiler/interfaces/shard-observer.interface';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RedisClient } from 'src/modules/redis/client';
 
 export class RedisObserver extends EventEmitter2 {
   private logger = new Logger('RedisObserver');
 
-  private redis: IORedis.Redis | IORedis.Cluster;
+  private redis: RedisClient;
 
   private profilerClients: Map<string, ProfilerClient> = new Map();
 
@@ -25,7 +25,7 @@ export class RedisObserver extends EventEmitter2 {
     this.status = RedisObserverStatus.Empty;
   }
 
-  init(func: () => Promise<IORedis.Redis | IORedis.Cluster>) {
+  init(func: () => Promise<RedisClient>) {
     this.status = RedisObserverStatus.Initializing;
 
     return func()
@@ -166,13 +166,9 @@ export class RedisObserver extends EventEmitter2 {
    */
   private async connect(): Promise<void> {
     try {
-      if (this.redis instanceof IORedis.Cluster) {
-        this.shardsObservers = await Promise.all(
-          this.redis.nodes('all').filter((node) => node.status === 'ready').map(RedisObserver.createShardObserver),
-        );
-      } else {
-        this.shardsObservers = [await RedisObserver.createShardObserver(this.redis)];
-      }
+      this.shardsObservers = await Promise.all(
+        (await this.redis.nodes()).map(RedisObserver.createShardObserver),
+      );
 
       this.shardsObservers.forEach((observer) => {
         observer.on('error', (e) => {
@@ -196,7 +192,7 @@ export class RedisObserver extends EventEmitter2 {
    * Create and return shard observer using IORedis common client
    * @param redis
    */
-  static async createShardObserver(redis: IORedis.Redis): Promise<IShardObserver> {
+  static async createShardObserver(redis: RedisClient): Promise<IShardObserver> {
     return await redis.monitor() as IShardObserver;
   }
 }

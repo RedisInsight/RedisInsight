@@ -1,6 +1,6 @@
 import { rte } from '../../../../helpers/constants';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneForSSHConfig } from '../../../../helpers/conf';
+import { commonUrl, ossClusterForSSHConfig, ossStandaloneForSSHConfig } from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../../test-data/sshPrivateKeys';
@@ -30,6 +30,10 @@ const sshDbPrivateKey = {
 const sshDbPasscode = {
     ...ossStandaloneForSSHConfig,
     databaseName: `SSH_${Common.generateWord(5)}`
+};
+const sshDbClusterPass = {
+    ...ossClusterForSSHConfig,
+    databaseName: `SSH_Cluster_${Common.generateWord(5)}`
 };
 
 fixture `Adding database with SSH`
@@ -116,5 +120,15 @@ test('Adding database with SSH', async t => {
     // Verify that user can add SSH tunnel with Passcode
     await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbPasscode, sshWithPassphrase);
     await myRedisDatabasePage.clickOnDBByName(sshDbPasscode.databaseName);
+    await Common.checkURLContainsText('browser');
+});
+test('Adding OSS Cluster database with SSH', async t => {
+    const sshWithPass = {
+        ...sshParams,
+        sshPassword: 'pass'
+    };
+    // Verify that user can add SSH tunnel with Password for OSS Cluster database
+    await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
+    await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
     await Common.checkURLContainsText('browser');
 });

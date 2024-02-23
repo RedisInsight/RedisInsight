@@ -9,15 +9,16 @@ import { getBlockingCommands, multilineCommandToOneLine } from 'src/utils/cli-he
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ShortCommandExecution } from 'src/modules/workbench/models/short-command-execution';
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
 import { getUnsupportedCommands } from './utils/getUnsupportedCommands';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
 export class WorkbenchService {
   constructor(
-    private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private commandsExecutor: WorkbenchCommandsExecutor,
     private commandExecutionRepository: CommandExecutionRepository,
     private analyticsService: WorkbenchAnalyticsService,
@@ -26,19 +27,17 @@ export class WorkbenchService {
   /**
    * Send redis command from workbench and save history
    *
-   * @param clientMetadata
+   * @param client
    * @param dto
-   * @param db
    */
   async createCommandExecution(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: CreateCommandExecutionDto,
-    db: number = 0,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...omit(dto, 'commands'),
-      db,
-      databaseId: clientMetadata.databaseId,
+      db: await client.getCurrentDbIndex(),
+      databaseId: client.clientMetadata.databaseId,
     };
 
     const command = multilineCommandToOneLine(dto.command);
@@ -52,7 +51,7 @@ export class WorkbenchService {
       ];
     } else {
       const startCommandExecutionTime = process.hrtime.bigint();
-      commandExecution.result = await this.commandsExecutor.sendCommand(clientMetadata, { ...dto, command });
+      commandExecution.result = await this.commandsExecutor.sendCommand(client, { ...dto, command });
       const endCommandExecutionTime = process.hrtime.bigint();
       commandExecution.executionTime = Math.round((Number(endCommandExecutionTime - startCommandExecutionTime) / 1000));
     }
@@ -63,23 +62,21 @@ export class WorkbenchService {
   /**
    * Send redis command from workbench and save history
    *
-   * @param clientMetadata
+   * @param client
    * @param dto
    * @param commands
-   * @param db
    * @param onlyErrorResponse
    */
   async createCommandsExecution(
-    clientMetadata: ClientMetadata,
+    client: RedisClient,
     dto: Partial<CreateCommandExecutionDto>,
     commands: string[],
-    db: number = 0,
     onlyErrorResponse: boolean = false,
   ): Promise<Partial<CommandExecution>> {
     const commandExecution: Partial<CommandExecution> = {
       ...dto,
-      db,
-      databaseId: clientMetadata.databaseId,
+      db: await client.getCurrentDbIndex(),
+      databaseId: client.clientMetadata.databaseId,
     };
 
     const startCommandExecutionTime = process.hrtime.bigint();
@@ -94,9 +91,10 @@ export class WorkbenchService {
           status: CommandExecutionStatus.Fail,
         });
       }
-      const result = await this.commandsExecutor.sendCommand(clientMetadata, { ...dto, command });
+      const result = await this.commandsExecutor.sendCommand(client, { ...dto, command });
       return ({ ...result[0], command });
     }));
+
     const executionTimeInNanoseconds = process.hrtime.bigint() - startCommandExecutionTime;
 
     if (Number(executionTimeInNanoseconds) !== 0) {
@@ -137,18 +135,18 @@ export class WorkbenchService {
   ): Promise<CommandExecution[]> {
     // todo: handle concurrent client creation on RedisModule side
     // temporary workaround. Just create client before any command execution precess
-    const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+    const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
     if (dto.resultsMode === ResultsMode.GroupMode || dto.resultsMode === ResultsMode.Silent) {
       return this.commandExecutionRepository.createMany(
-        [await this.createCommandsExecution(clientMetadata, dto, dto.commands, client?.options?.db, dto.resultsMode === ResultsMode.Silent)],
+        [await this.createCommandsExecution(client, dto, dto.commands, dto.resultsMode === ResultsMode.Silent)],
       );
     }
     // todo: rework to support pipeline
     // prepare and execute commands
     const commandExecutions = await Promise.all(
       dto.commands.map(
-        async (command) => await this.createCommandExecution(clientMetadata, { ...dto, command }, client?.options?.db),
+        async (command) => await this.createCommandExecution(client, { ...dto, command }),
       ),
     );
 

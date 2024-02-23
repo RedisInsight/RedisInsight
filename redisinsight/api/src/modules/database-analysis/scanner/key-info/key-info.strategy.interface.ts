@@ -1,7 +1,7 @@
 import { RedisString } from 'src/common/constants';
-import { Redis } from 'ioredis';
+import { RedisClient } from 'src/modules/redis/client';
 
 export interface IKeyInfoStrategy {
-  getLength(client: Redis, key: RedisString): Promise<number>
-  getLengthSafe(client: Redis, key: RedisString): Promise<number>
+  getLength(client: RedisClient, key: RedisString): Promise<number>
+  getLengthSafe(client: RedisClient, key: RedisString): Promise<number>
 }

@@ -1,24 +1,19 @@
-import IORedis from 'ioredis';
+import { mockRedisKeysUtilModule } from 'src/__mocks__/redis-utils';
+
+jest.doMock('src/modules/redis/utils/keys.util', mockRedisKeysUtilModule);
+
 import {
   mockSocket,
-  mockBulActionsAnalyticsService,
+  mockBulkActionsAnalytics,
+  mockRedisKeysUtil,
+  mockBulkActionFilter,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
-import * as Utils from 'src/modules/database/utils/database.total.util';
-import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
-
-const mockExec = jest.fn();
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
-nodeClient.pipeline = jest.fn(() => ({
-  exec: mockExec,
-}));
-nodeClient.options = { db: 1 };
-const mockBulkActionFilter = new BulkActionFilter();
 
 const mockCreateBulkActionDto = {
   id: 'bulk-action-id',
@@ -35,7 +30,7 @@ const mockCursorNumber = parseInt(mockCursorString, 10);
 const mockCursorBuffer = Buffer.from(mockCursorString);
 const mockZeroCursorBuffer = Buffer.from('0');
 const mockRESPError = 'Reply Error: NOPERM for delete.';
-const mockRESPErrorBuffer = Buffer.from(mockRESPError);
+const mockReplyError = new Error(mockRESPError);
 
 describe('AbstractBulkActionSimpleRunner', () => {
   let deleteRunner: DeleteBulkActionSimpleRunner;
@@ -49,15 +44,15 @@ describe('AbstractBulkActionSimpleRunner', () => {
       mockCreateBulkActionDto.type,
       mockBulkActionFilter,
       mockSocket,
-      mockBulActionsAnalyticsService,
+      mockBulkActionsAnalytics as any,
     );
 
-    deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, nodeClient);
+    deleteRunner = new DeleteBulkActionSimpleRunner(bulkAction, mockStandaloneRedisClient);
   });
 
   describe('prepareToStart', () => {
     it('should get total before start', async () => {
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(100);
+      mockRedisKeysUtil.getTotalKeys.mockResolvedValue(100);
 
       expect(deleteRunner['progress']['total']).toEqual(0);
       expect(deleteRunner['progress']['scanned']).toEqual(0);
@@ -78,9 +73,12 @@ describe('AbstractBulkActionSimpleRunner', () => {
     });
 
     it('Should get keys to process and change cursor', async () => {
-      nodeClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      nodeClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      nodeClient.sendCommand.mockResolvedValueOnce([mockZeroCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand
+        .mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand
+        .mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand
+        .mockResolvedValueOnce([mockZeroCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
 
       expect(deleteRunner['progress']['cursor']).toEqual(0);
       expect(deleteRunner['progress']['total']).toEqual(1_000_000);
@@ -102,7 +100,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
 
       await deleteRunner.getKeysToProcess();
 
-      expect(nodeClient.sendCommand).toHaveBeenCalledTimes(3);
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -113,12 +111,13 @@ describe('AbstractBulkActionSimpleRunner', () => {
     });
 
     it('Should get keys to process and change cursor', async () => {
-      nodeClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      nodeClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      nodeClient.sendCommand.mockResolvedValueOnce([mockZeroCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
-      mockExec.mockResolvedValue([
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([mockCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendCommand
+        .mockResolvedValueOnce([mockZeroCursorBuffer, [mockKeyBuffer, mockKeyBuffer]]);
+      mockStandaloneRedisClient.sendPipeline.mockResolvedValue([
         [null, 1],
-        [mockRESPErrorBuffer, null],
+        [mockReplyError, null],
       ]);
 
       expect(deleteRunner['progress']['cursor']).toEqual(0);
@@ -142,7 +141,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(deleteRunner['summary']['errors']).toEqual([
         {
           key: mockKeyBuffer,
-          error: mockRESPErrorBuffer,
+          error: mockRESPError,
         },
       ]);
 
@@ -158,11 +157,11 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(deleteRunner['summary']['errors']).toEqual([
         {
           key: mockKeyBuffer,
-          error: mockRESPErrorBuffer,
+          error: mockRESPError,
         },
         {
           key: mockKeyBuffer,
-          error: mockRESPErrorBuffer,
+          error: mockRESPError,
         },
       ]);
 
@@ -178,15 +177,15 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(deleteRunner['summary']['errors']).toEqual([
         {
           key: mockKeyBuffer,
-          error: mockRESPErrorBuffer,
+          error: mockRESPError,
         },
         {
           key: mockKeyBuffer,
-          error: mockRESPErrorBuffer,
+          error: mockRESPError,
         },
         {
           key: mockKeyBuffer,
-          error: mockRESPErrorBuffer,
+          error: mockRESPError,
         },
       ]);
     });

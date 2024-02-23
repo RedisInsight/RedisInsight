@@ -47,6 +47,19 @@ describe('BulkActionSummary', () => {
       expect(summary['succeed']).toEqual(101);
     });
   });
+  describe('addFailed', () => {
+    it('should increase failed', async () => {
+      expect(summary['failed']).toEqual(0);
+
+      summary.addFailed(1);
+
+      expect(summary['failed']).toEqual(1);
+
+      summary.addFailed(100);
+
+      expect(summary['failed']).toEqual(101);
+    });
+  });
   describe('addErrors', () => {
     it('should increase fails and store errors (up to 500)', async () => {
       expect(summary['failed']).toEqual(0);

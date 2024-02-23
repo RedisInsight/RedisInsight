@@ -14,7 +14,7 @@ import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
-import { SetStringWithExpireDto } from 'apiSrc/modules/browser/dto'
+import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import {
   AddStringFormConfig as config

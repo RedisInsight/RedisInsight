@@ -1,24 +1,7 @@
-import { flatMap } from 'lodash';
 import {
-  convertStringsArrayToObject,
   convertIntToSemanticVersion,
   convertStringToNumber,
 } from './converter';
-
-describe('convertStringsArrayToObject', () => {
-  it('should return appropriate value', () => {
-    const input = ['key1', 'value1', 'key2', 'value2'];
-
-    const output = convertStringsArrayToObject(input);
-
-    expect(flatMap(Object.entries(output))).toEqual(input);
-  });
-  it('should return empty object', () => {
-    const output = convertStringsArrayToObject([]);
-
-    expect({}).toEqual(output);
-  });
-});
 
 const convertIntToSemanticVersionTests: Record<string, any>[] = [
   { input: 1, output: '0.0.1' },

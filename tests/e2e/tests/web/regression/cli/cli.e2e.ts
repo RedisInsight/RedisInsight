@@ -97,12 +97,7 @@ test
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can use "Up" and "Down" keys to view previous commands in CLI in the application', async t => {
-        const databaseEndpoint = `${ossStandaloneConfig.host}:${ossStandaloneConfig.port}`;
-
         await t.click(browserPage.Cli.cliExpandButton);
-        // Verify that user can see DB endpoint in the header of CLI
-        await t.expect(browserPage.Cli.cliEndpoint.textContent).eql(databaseEndpoint, 'The user can not see DB endpoint in the header of CLI');
-
         await t.expect(browserPage.Cli.cliCommandInput.innerText).eql('');
         for (let i = cliCommands.length - 1; i >= 0; i--) {
             await t.pressKey('up');

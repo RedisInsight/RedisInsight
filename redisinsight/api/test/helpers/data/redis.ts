@@ -3,7 +3,8 @@ import { constants } from '../constants';
 import * as _ from 'lodash';
 import * as IORedis from 'ioredis';
 import { sleep } from '../test';
-import { convertBulkStringsToObject, convertRedisInfoReplyToObject } from 'src/utils';
+import { convertRedisInfoReplyToObject } from 'src/utils';
+import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 
 export const initDataHelper = (rte) => {
   const client = rte.client;
@@ -36,7 +37,7 @@ export const initDataHelper = (rte) => {
       const info = convertRedisInfoReplyToObject(await sendCommand('info', ['keyspace']));
       const dbInfo = get(info, 'keyspace', {});
       if (dbInfo[`db${currentDbIndex}`]) {
-        const { keys } = convertBulkStringsToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+        const { keys } = convertMultilineReplyToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
         totalKeys = parseInt(keys, 10);
       }
 

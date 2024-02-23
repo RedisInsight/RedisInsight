@@ -22,22 +22,11 @@ const responseSchema = Joi.object().keys({
   result: Joi.array().items(Joi.object({
     response: Joi.any().required(),
     status: Joi.string().required(),
-    node: Joi.object({
-      host: Joi.string().required(),
-      port: Joi.number().required(),
-      slot: Joi.number(),
-    }),
   })).allow(null),
-  role: Joi.string().allow(null),
   mode: Joi.string().required(),
   summary: Joi.string().allow(null),
   resultsMode: Joi.string().allow(null),
   executionTime: Joi.number().required(),
-  nodeOptions: Joi.object().keys({
-    host: Joi.string().required(),
-    port: Joi.number().required(),
-    enableRedirection: Joi.boolean().required(),
-  }).allow(null),
   db: Joi.number().integer().allow(null),
   createdAt: Joi.date().required(),
 }).required();

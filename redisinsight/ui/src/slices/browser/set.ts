@@ -10,7 +10,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   AddMembersToSetDto,
   GetSetMembersResponse,
-} from 'apiSrc/modules/browser/dto/set.dto'
+} from 'apiSrc/modules/browser/set/dto'
 import {
   deleteKeyFromList,
   deleteSelectedKeySuccess,

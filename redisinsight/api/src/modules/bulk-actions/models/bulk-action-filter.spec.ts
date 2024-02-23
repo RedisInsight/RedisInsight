@@ -1,5 +1,5 @@
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 
 describe('BulkActionSummary', () => {
   let filter: BulkActionFilter;

@@ -17,7 +17,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   GetRejsonRlResponseDto,
   RemoveRejsonRlResponse,
-} from 'apiSrc/modules/browser/dto/rejson-rl.dto'
+} from 'apiSrc/modules/browser/rejson-rl/dto'
 
 import { refreshKeyInfoAction } from './keys'
 import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'

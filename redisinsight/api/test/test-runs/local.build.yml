@@ -18,6 +18,7 @@ services:
     depends_on:
       - redis
     environment:
+      RI_REDIS_CLIENTS_FORCE_STRATEGY: ${RI_REDIS_CLIENTS_FORCE_STRATEGY}
       CERTS_FOLDER: "/root/.redisinsight-v2.0"
       TEST_REDIS_HOST: "redis"
       NODE_ENV: "test"

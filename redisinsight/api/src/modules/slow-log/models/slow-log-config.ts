@@ -1,7 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsInt,
-  IsNumber, Min, NotEquals, ValidateIf,
+  Min,
+  NotEquals,
+  ValidateIf,
 } from 'class-validator';
 
 export class SlowLogConfig {

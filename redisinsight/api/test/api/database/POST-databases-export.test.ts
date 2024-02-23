@@ -24,10 +24,6 @@ const responseSchema = Joi.array().items(Joi.object().keys({
     version: Joi.number().integer().required(),
     semanticVersion: Joi.string(),
   })).min(0).required(),
-  nodes: Joi.array().items(Joi.object().keys({
-    host: Joi.string().required(),
-    port: Joi.number().integer().required(),
-  })).min(0).required(),
   verifyServerCert: Joi.boolean().allow(null),
   sentinelMaster: Joi.object({
     name: Joi.string().required(),

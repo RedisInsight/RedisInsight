@@ -12,7 +12,7 @@ import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import { entryIdRegex, isRequiredStringsValid, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { StreamEntryFields } from 'uiSrc/pages/browser/modules/key-details/components/stream-details/add-stream-entity'
-import { CreateStreamDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { CreateStreamDto } from 'apiSrc/modules/browser/stream/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 import styles from './styles.module.scss'

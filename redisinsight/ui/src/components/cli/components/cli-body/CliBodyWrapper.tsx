@@ -22,13 +22,11 @@ import {
 import { CommandMonitor, CommandPSubscribe, CommandSubscribe, CommandHello3, Pages } from 'uiSrc/constants'
 import { getCommandRepeat, isRepeatCountCorrect } from 'uiSrc/utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { ClusterNodeRole } from 'uiSrc/slices/interfaces/cli'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { checkUnsupportedCommand, clearOutput, cliCommandOutput } from 'uiSrc/utils/cliHelper'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
 import { showMonitor } from 'uiSrc/slices/cli/monitor'
-import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
 
 import CliBody from './CliBody'
 
@@ -49,7 +47,7 @@ const CliBodyWrapper = () => {
     matchedCommand,
     cliClientUuid,
   } = useSelector(cliSettingsSelector)
-  const { host, port, connectionType } = useSelector(connectedInstanceSelector)
+  const { connectionType } = useSelector(connectedInstanceSelector)
   const { db: currentDbIndex } = useSelector(outputSelector)
 
   useEffect(() => {
@@ -143,16 +141,7 @@ const CliBodyWrapper = () => {
       return
     }
 
-    const options: SendClusterCommandDto = {
-      command,
-      nodeOptions: {
-        host,
-        port,
-        enableRedirection: true,
-      },
-      role: ClusterNodeRole.All,
-    }
-    dispatch(sendCliClusterCommandAction(command, options, resetCommand))
+    dispatch(sendCliClusterCommandAction(command, resetCommand))
   }
 
   const resetCommand = () => {

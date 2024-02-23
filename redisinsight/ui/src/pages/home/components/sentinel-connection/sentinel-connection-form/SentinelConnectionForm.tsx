@@ -72,6 +72,7 @@ const SentinelConnectionForm = (props: Props) => {
     initialValues,
     validate,
     enableReinitialize: true,
+    validateOnMount: true,
     onSubmit: (values: any) => {
       onSubmit(values)
     },

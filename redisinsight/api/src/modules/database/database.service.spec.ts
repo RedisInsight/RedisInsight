@@ -10,29 +10,27 @@ import {
   mockDatabaseFactory,
   mockDatabaseInfoProvider,
   mockDatabaseRepository,
-  mockRedisService,
   mockCaCertificate,
   mockClientCertificate,
   MockType,
   mockRedisGeneralInfo,
-  mockRedisConnectionFactory,
   mockDatabaseWithTls,
   mockDatabaseWithTlsAuth,
   mockDatabaseWithSshPrivateKey,
   mockSentinelDatabaseWithTlsAuth,
-  mockDatabaseWithCloudDetails,
+  mockDatabaseWithCloudDetails, mockRedisClientFactory, mockRedisClientStorage,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
-import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { Compressor } from 'src/modules/database/entities/database.entity';
+import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { ExportDatabase } from './models/export-database';
 
 const updateDatabaseTests = [
@@ -56,7 +54,7 @@ describe('DatabaseService', () => {
   let service: DatabaseService;
   let databaseRepository: MockType<DatabaseRepository>;
   let databaseFactory: MockType<DatabaseFactory>;
-  let redisConnectionFactory: MockType<RedisConnectionFactory>;
+  let redisClientFactory: MockType<RedisClientFactory>;
   let analytics: MockType<DatabaseAnalytics>;
   const exportSecurityFields: string[] = [
     'password',
@@ -79,12 +77,12 @@ describe('DatabaseService', () => {
           useFactory: mockDatabaseRepository,
         },
         {
-          provide: RedisService,
-          useFactory: mockRedisService,
+          provide: RedisClientFactory,
+          useFactory: mockRedisClientFactory,
         },
         {
-          provide: RedisConnectionFactory,
-          useFactory: mockRedisConnectionFactory,
+          provide: RedisClientStorage,
+          useFactory: mockRedisClientStorage,
         },
         {
           provide: DatabaseInfoProvider,
@@ -104,7 +102,7 @@ describe('DatabaseService', () => {
     service = await module.get(DatabaseService);
     databaseRepository = await module.get(DatabaseRepository);
     databaseFactory = await module.get(DatabaseFactory);
-    redisConnectionFactory = await module.get(RedisConnectionFactory);
+    redisClientFactory = await module.get(RedisClientFactory);
     analytics = await module.get(DatabaseAnalytics);
   });
 
@@ -151,7 +149,7 @@ describe('DatabaseService', () => {
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();
     });
     it('should not fail when collecting data for analytics event', async () => {
-      redisConnectionFactory.createRedisConnection.mockRejectedValueOnce(new Error());
+      redisClientFactory.createClient.mockRejectedValueOnce(new Error());
       expect(await service.create(mockDatabase)).toEqual(mockDatabase);
       expect(analytics.sendInstanceAddedEvent).not.toHaveBeenCalled();
       expect(analytics.sendInstanceAddFailedEvent).not.toHaveBeenCalled();

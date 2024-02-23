@@ -1,4 +1,3 @@
-import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
@@ -29,7 +28,8 @@ export class LuaToFunctionsStrategy extends AbstractRecommendationStrategy {
 
     if (isTriggeredAndFunctionsModule(modules)) {
       const libraries = await data.client.sendCommand(
-        new Command('TFUNCTION', ['LIST'], { replyEncoding: 'utf8' }),
+        ['TFUNCTION', 'LIST'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       if (libraries.length) {

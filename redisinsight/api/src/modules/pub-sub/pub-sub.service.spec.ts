@@ -3,9 +3,9 @@ import {
   mockSocket,
   MockType,
   mockPubSubAnalyticsService,
-  mockDatabaseConnectionService,
-  mockIORedisClient,
   mockCommonClientMetadata,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { PubSubService } from 'src/modules/pub-sub/pub-sub.service';
 import { UserSessionProvider } from 'src/modules/pub-sub/providers/user-session.provider';
@@ -13,10 +13,10 @@ import { SubscriptionProvider } from 'src/modules/pub-sub/providers/subscription
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscriptionType } from 'src/modules/pub-sub/constants';
 import { UserSession } from 'src/modules/pub-sub/model/user-session';
-import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
@@ -31,8 +31,8 @@ const mockPSubscriptionDto = {
 };
 
 const getRedisClientFn = jest.fn();
-const mockRedisClient = new RedisClient('databaseId', getRedisClientFn);
-const mockUserSession = new UserSession(mockUserClient, mockRedisClient);
+const mockRedisClientSubscriber = new RedisClientSubscriber('databaseId', getRedisClientFn);
+const mockUserSession = new UserSession(mockUserClient, mockRedisClientSubscriber);
 
 const mockSubscribe = jest.fn();
 const mockUnsubscribe = jest.fn();
@@ -46,9 +46,10 @@ const mockPublishDto = {
 };
 
 describe('PubSubService', () => {
+  const client = mockStandaloneRedisClient;
   let service: PubSubService;
   let sessionProvider: MockType<UserSessionProvider>;
-  let databaseConnectionService: MockType<DatabaseConnectionService>;
+  let databaseClientFactory: MockType<DatabaseClientFactory>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -71,14 +72,14 @@ describe('PubSubService', () => {
           useFactory: mockPubSubAnalyticsService,
         },
         {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();
 
     service = await module.get(PubSubService);
-    databaseConnectionService = await module.get(DatabaseConnectionService);
+    databaseClientFactory = await module.get(DatabaseClientFactory);
     sessionProvider = await module.get(UserSessionProvider);
 
     sessionProvider.getOrCreateUserSession.mockReturnValue(mockUserSession);
@@ -86,7 +87,7 @@ describe('PubSubService', () => {
     sessionProvider.removeUserSession.mockReturnValue(undefined);
     mockSubscribe.mockResolvedValue('OK');
     mockUnsubscribe.mockResolvedValue('OK');
-    mockIORedisClient.publish.mockResolvedValue(2);
+    client.publish.mockResolvedValue(2);
   });
 
   describe('subscribe', () => {
@@ -153,7 +154,7 @@ describe('PubSubService', () => {
       expect(res).toEqual({ affected: 2 });
     });
     it('should throw an error when client not found during publishing', async () => {
-      databaseConnectionService.getOrCreateClient.mockRejectedValueOnce(new NotFoundException('Not Found'));
+      databaseClientFactory.getOrCreateClient.mockRejectedValueOnce(new NotFoundException('Not Found'));
 
       try {
         await service.publish(mockCommonClientMetadata, mockPublishDto);
@@ -163,7 +164,7 @@ describe('PubSubService', () => {
       }
     });
     it('should throw forbidden error when there is no permissions to publish', async () => {
-      databaseConnectionService.getOrCreateClient.mockRejectedValueOnce(new Error('NOPERM'));
+      databaseClientFactory.getOrCreateClient.mockRejectedValueOnce(new Error('NOPERM'));
 
       try {
         await service.publish(mockCommonClientMetadata, mockPublishDto);

@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { DatabaseOverviewProvider } from 'src/modules/database/providers/database-overview.provider';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
-import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { RedisClient } from 'src/modules/redis/client';
+import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseService } from './database.service';
 
 @Injectable()
@@ -14,7 +15,7 @@ export class DatabaseInfoService {
   private logger = new Logger('DatabaseInfoService');
 
   constructor(
-    private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly databaseOverviewProvider: DatabaseOverviewProvider,
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly recommendationService: DatabaseRecommendationService,
@@ -28,7 +29,7 @@ export class DatabaseInfoService {
   public async getInfo(clientMetadata: ClientMetadata): Promise<RedisDatabaseInfoResponse> {
     this.logger.log(`Getting database info for: ${clientMetadata.databaseId}`);
 
-    const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+    const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
     return this.databaseInfoProvider.getRedisGeneralInfo(client);
   }
@@ -41,7 +42,7 @@ export class DatabaseInfoService {
   public async getOverview(clientMetadata: ClientMetadata): Promise<DatabaseOverview> {
     this.logger.log(`Getting database overview for: ${clientMetadata.databaseId}`);
 
-    const client = await this.databaseConnectionService.getOrCreateClient({
+    const client: RedisClient = await this.databaseClientFactory.getOrCreateClient({
       ...clientMetadata,
       db: undefined, // connect to default db index
     });
@@ -62,7 +63,7 @@ export class DatabaseInfoService {
     const prevDb = clientMetadata.db ?? (await this.databaseService.get(clientMetadata.databaseId))?.db ?? 0;
 
     try {
-      client = await this.databaseConnectionService.createClient({
+      client = await this.databaseClientFactory.createClient({
         ...clientMetadata,
         db,
       });

@@ -1,8 +1,4 @@
-import IORedis from 'ioredis';
 import { RedisVersionStrategy } from 'src/modules/database-recommendation/scanner/strategies';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
 
 describe('RedisVersionStrategy', () => {
   let strategy: RedisVersionStrategy;

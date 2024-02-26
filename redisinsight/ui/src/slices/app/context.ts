@@ -222,6 +222,9 @@ const appContextSlice = createSlice({
     setLastPipelineManagementPage: (state, { payload }: { payload: string }) => {
       state.pipelineManagement.lastViewedPage = payload
     },
+    resetPipelineManagement: (state) => {
+      state.pipelineManagement.lastViewedPage = ''
+    }
   },
 })
 
@@ -257,6 +260,7 @@ export const {
   setBrowserTreeSort,
   setCapability,
   setLastPipelineManagementPage,
+  resetPipelineManagement,
 } = appContextSlice.actions
 
 // Selectors
@@ -319,5 +323,12 @@ export function resetDatabaseContext() {
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)
+  }
+}
+
+export function resetRdiContext() {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setAppContextConnectedRdiInstanceId(''))
+    dispatch(resetPipelineManagement())
   }
 }

@@ -81,8 +81,8 @@ describe('RedisearchService', () => {
   describe('list', () => {
     it('should get list of indexes for standalone', async () => {
       standaloneClient.sendCommand.mockResolvedValue([
-        keyName1.toString(),
-        keyName2.toString(),
+        keyName1,
+        keyName2,
       ]);
 
       const list = await service.list(mockBrowserClientMetadata);
@@ -97,8 +97,8 @@ describe('RedisearchService', () => {
     it('should get list of indexes for cluster (handle unique index name)', async () => {
       databaseClientFactory.getOrCreateClient = jest.fn().mockResolvedValue(clusterClient);
       mockStandaloneRedisClient.sendCommand.mockResolvedValue([
-        keyName1.toString(),
-        keyName2.toString(),
+        keyName1,
+        keyName2,
       ]);
 
       const list = await service.list(mockBrowserClientMetadata);

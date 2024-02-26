@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { EuiButtonEmpty } from '@elastic/eui'
 import {
   aiAssistantChatSelector,
-  askAssistantChatbot,
+  askAssistantChatbot, createAssistantChatAction,
   getAssistantChatHistoryAction,
   removeAssistantChatAction
 } from 'uiSrc/slices/panels/aiAssistant'
@@ -31,8 +31,17 @@ const Chat = () => {
   const handleSubmit = (message: string) => {
     scrollToBottom('smooth')
 
+    if (!id) {
+      dispatch(createAssistantChatAction((chatId) => sendChatMessage(chatId, message)))
+      return
+    }
+
+    sendChatMessage(id, message)
+  }
+
+  const sendChatMessage = (chatId: string, message: string) => {
     dispatch(askAssistantChatbot(
-      id,
+      chatId,
       message,
       {
         onMessage: (message: any) => {
@@ -67,20 +76,18 @@ const Chat = () => {
 
   return (
     <div className={styles.wrapper}>
-      {!!messages?.length && (
-        <div className={styles.header}>
-          <span />
-          <EuiButtonEmpty
-            disabled={!!progressingMessage}
-            iconType="eraser"
-            size="xs"
-            onClick={onClearSession}
-            className={styles.startSessionBtn}
-          >
-            Restart Session
-          </EuiButtonEmpty>
-        </div>
-      )}
+      <div className={styles.header}>
+        <span />
+        <EuiButtonEmpty
+          disabled={!!progressingMessage || !messages?.length}
+          iconType="eraser"
+          size="xs"
+          onClick={onClearSession}
+          className={styles.startSessionBtn}
+        >
+          Restart Session
+        </EuiButtonEmpty>
+      </div>
       <div className={styles.chatHistory}>
         <ChatHistory
           progressingMessage={progressingMessage}

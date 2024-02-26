@@ -29,7 +29,7 @@ export const initialState: InitialStateCloud = {
   dataAdded: [],
   subscriptions: null,
   credentials: null,
-  isAutodiscoverySSO: false,
+  ssoFlow: '',
   isRecommendedSettings: undefined,
   account: {
     error: '',
@@ -149,8 +149,8 @@ const cloudSlice = createSlice({
     resetLoadedRedisCloud: (state, { payload }: PayloadAction<LoadedCloud>) => {
       state.loaded[payload] = false
     },
-    setIsAutodiscoverySSO: (state, { payload }: PayloadAction<boolean>) => {
-      state.isAutodiscoverySSO = payload
+    setSSOFlow: (state, { payload }: PayloadAction<string>) => {
+      state.ssoFlow = payload
     },
     setIsRecommendedSettingsSSO: (state, { payload }: PayloadAction<Maybe<boolean>>) => {
       state.isRecommendedSettings = payload
@@ -175,7 +175,7 @@ export const {
   resetDataRedisCloud,
   resetSubscriptionsRedisCloud,
   resetLoadedRedisCloud,
-  setIsAutodiscoverySSO,
+  setSSOFlow,
   setIsRecommendedSettingsSSO
 } = cloudSlice.actions
 
@@ -201,7 +201,8 @@ export function fetchSubscriptionsRedisCloud(
 
     try {
       const state = stateInit()
-      const { isAutodiscoverySSO } = state.connections.cloud
+      const { ssoFlow } = state.connections.cloud
+      const isAutodiscoverySSO = ssoFlow === 'import'
       const { data, status } = await apiService.get(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}`
@@ -241,7 +242,8 @@ export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCl
 
     try {
       const state = stateInit()
-      const { isAutodiscoverySSO } = state.connections.cloud
+      const { ssoFlow } = state.connections.cloud
+      const isAutodiscoverySSO = ssoFlow === 'import'
       const { data, status } = await apiService.get(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT}`
@@ -257,9 +259,11 @@ export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCl
         dispatch(loadAccountRedisCloudSuccess({ data }))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
+      const err = getAxiosError(error as EnhancedAxiosError)
+
       dispatch(loadAccountRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(err))
     }
   }
 }
@@ -274,7 +278,8 @@ export function fetchInstancesRedisCloud(payload: {
 
     try {
       const state = stateInit()
-      const { isAutodiscoverySSO } = state.connections.cloud
+      const { ssoFlow } = state.connections.cloud
+      const isAutodiscoverySSO = ssoFlow === 'import'
       const { data, status } = await apiService.post(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES}`
@@ -295,9 +300,11 @@ export function fetchInstancesRedisCloud(payload: {
         )
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
+      const err = getAxiosError(error as EnhancedAxiosError)
+
       dispatch(loadInstancesRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(err))
     }
   }
 }
@@ -312,7 +319,8 @@ export function addInstancesRedisCloud(payload: {
 
     try {
       const state = stateInit()
-      const { isAutodiscoverySSO } = state.connections.cloud
+      const { ssoFlow } = state.connections.cloud
+      const isAutodiscoverySSO = ssoFlow === 'import'
       const { data, status } = await apiService.post(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES}`
@@ -335,9 +343,11 @@ export function addInstancesRedisCloud(payload: {
         dispatch(createInstancesRedisCloudSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
+      const err = getAxiosError(error as EnhancedAxiosError)
+
       dispatch(createInstancesRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(err))
     }
   }
 }

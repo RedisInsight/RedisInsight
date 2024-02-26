@@ -2,9 +2,10 @@
   position: relative;
 
   .textarea {
+    height: 0;
     resize: none !important;
-    background-color: #171717 !important;
-    border: 1px solid #3D3D3D !important;
+    background-color: var(--browserTableRowEven) !important;
+    border: 1px solid var(--separatorColor) !important;
 
     padding: 8px 40px 8px 10px;
     scroll-padding-bottom: 8px;
@@ -19,7 +20,7 @@
     transition: border-color ease .3s;
 
     &:focus {
-      border-color: #8BA2FF !important;
+      border-color: var(--euiColorPrimary) !important;
     }
   }
 

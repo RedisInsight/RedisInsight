@@ -49,14 +49,18 @@ export class RedisearchService {
 
     try {
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
-      const nodes = this.getShards(client) as RedisClient[];
+      const nodes = await this.getShards(client) as RedisClient[];
 
       const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
         ['FT._LIST'],
       )));
 
       return plainToClass(ListRedisearchIndexesResponse, {
-        indexes: (uniq([].concat(...res))).map((idx) => Buffer.from(idx)),
+        indexes: (
+          uniq(
+            ([].concat(...res)).map((idx) => idx.toString('hex')),
+          )
+        ).map((idx) => Buffer.from(idx, 'hex')),
       });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e);
@@ -100,7 +104,7 @@ export class RedisearchService {
         }
       }
 
-      const nodes = this.getShards(client) as RedisClient[];
+      const nodes = await this.getShards(client) as RedisClient[];
 
       const commandArgs: any[] = [
         index, 'ON', type,
@@ -121,7 +125,7 @@ export class RedisearchService {
             ...commandArgs,
           ], { replyEncoding: 'utf8' });
         } catch (e) {
-          if (!e.message.includes('MOVED')) {
+          if (!e.message.includes('MOVED') && !e.message.includes('already exists')) {
             throw e;
           }
         }
@@ -228,7 +232,7 @@ export class RedisearchService {
    * @param client
    * @private
    */
-  private getShards(client: RedisClient): Promise<RedisClient[]> | RedisClient[] {
+  private async getShards(client: RedisClient): Promise<RedisClient[]> {
     if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
       return client.nodes(RedisClientNodeRole.PRIMARY);
     }

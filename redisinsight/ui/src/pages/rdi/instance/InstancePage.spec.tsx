@@ -117,6 +117,7 @@ describe('InstancePage', () => {
     })
 
     const expectedActions = [
+      setAppContextConnectedRdiInstanceId(''),
       resetPipelineManagement(),
       setConnectedInstance()
     ]

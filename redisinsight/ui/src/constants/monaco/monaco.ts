@@ -1,4 +1,4 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 export interface MonacoSyntaxLang {
   [key: string]: {

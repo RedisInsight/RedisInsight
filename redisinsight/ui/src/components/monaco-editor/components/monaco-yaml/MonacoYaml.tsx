@@ -1,35 +1,48 @@
-import React, { useEffect, useState } from 'react'
-import * as monaco from 'monaco-editor'
+import React, { useState } from 'react'
 import { configureMonacoYaml } from 'monaco-yaml'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
-import ReactMonacoEditor from 'react-monaco-editor'
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
-import example from './example.json'
+import { MonacoEditor } from 'uiSrc/components/monaco-editor'
+import example from './example'
 
 const MonacoYaml = (props: CommonProps) => {
   const [value, setValue] = useState('')
 
-  useEffect(() => {
+  const editorDidMount = (
+    _: monacoEditor.editor.IStandaloneCodeEditor,
+    monaco: typeof monacoEditor,
+  ) => {
     configureMonacoYaml(monaco, {
-      enableSchemaRequest: false,
-      completion: true,
+      hover: true,
       schemas: [
         {
           fileMatch: ['*'],
-          schema: example.data as any,
+          schema: example.data.ingest as any,
           uri: 'http://example.com/schema-name.json',
         }
       ]
     })
-  }, [])
+  }
+
   return (
-    <ReactMonacoEditor
-      width="800"
-      height="600"
+    <MonacoEditor
+      {...props}
       language="yaml"
       value={value}
       onChange={setValue}
+      onEditorDidMount={editorDidMount}
       options={{
+        hover: {
+          enabled: true,
+        },
+        stickyScroll: {
+          enabled: true,
+          defaultModel: 'foldingProviderModel'
+        },
+        tabSize: 2,
+        insertSpaces: true,
+        renderWhitespace: 'boundary',
         quickSuggestions: {
           other: 'inline',
           comments: true,
@@ -38,7 +51,8 @@ const MonacoYaml = (props: CommonProps) => {
         suggest: {
           preview: true,
           showStatusBar: true,
-          showIcons: false,
+          showIcons: true,
+          showProperties: true,
         },
       }}
     />

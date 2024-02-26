@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { compact, findIndex } from 'lodash'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import MonacoEditor, { monaco } from 'react-monaco-editor'
+import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { Rnd } from 'react-rnd'
 import cx from 'classnames'
 import { EuiButtonIcon } from '@elastic/eui'
@@ -33,7 +32,6 @@ export interface Props {
   lang: string
   onSubmit: (query?: string) => void
   onCancel: () => void
-  onKeyDown?: (e: React.KeyboardEvent, script: string) => void
   height: number
   initialHeight: number
 }
@@ -116,7 +114,7 @@ const DedicatedEditor = (props: Props) => {
 
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
     // trigger parameter hints
-    if (e.keyCode === monaco.KeyCode.Enter || e.keyCode === monaco.KeyCode.Space) {
+    if (e.keyCode === monacoEditor.KeyCode.Enter || e.keyCode === monacoEditor.KeyCode.Space) {
       onExitSnippetMode()
     }
   }
@@ -127,7 +125,7 @@ const DedicatedEditor = (props: Props) => {
 
     if (contribution?.isInSnippet?.()) {
       const { lineNumber = 0, column = 0 } = editor?.getPosition() ?? {}
-      editor.setSelection(new monaco.Selection(lineNumber, column, lineNumber, column))
+      editor.setSelection(new monacoEditor.Selection(lineNumber, column, lineNumber, column))
       contribution?.cancel?.()
     }
   }

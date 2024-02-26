@@ -4,7 +4,7 @@ import { cleanup, fireEvent, mockedStore, render, waitForEuiToolTipVisible, act 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { CloudAuthSocial, IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
-import { setIsAutodiscoverySSO, setIsRecommendedSettingsSSO } from 'uiSrc/slices/instances/cloud'
+import { setSSOFlow, setIsRecommendedSettingsSSO } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants'
@@ -49,7 +49,7 @@ describe('OAuthSocial', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    const { queryByTestId } = render(<OAuthSocial />)
+    const { queryByTestId } = render(<OAuthSocial type={OAuthSocialType.Create} />)
 
     fireEvent.click(queryByTestId('google-oauth') as HTMLButtonElement)
 
@@ -68,7 +68,7 @@ describe('OAuthSocial', () => {
     expect(invokeMock).toBeCalledTimes(1)
     expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Google })
 
-    const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(undefined)]
+    const expectedActions = [signIn(), setSSOFlow('create'), setIsRecommendedSettingsSSO(undefined)]
     expect(store.getActions()).toEqual(expectedActions)
 
     invokeMock.mockRestore();
@@ -79,7 +79,7 @@ describe('OAuthSocial', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    const { queryByTestId } = render(<OAuthSocial />)
+    const { queryByTestId } = render(<OAuthSocial type={OAuthSocialType.Create} />)
 
     fireEvent.click(queryByTestId('github-oauth') as HTMLButtonElement)
 
@@ -99,7 +99,7 @@ describe('OAuthSocial', () => {
     expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Github })
     invokeMock.mockRestore()
 
-    const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(undefined)]
+    const expectedActions = [signIn(), setSSOFlow('create'), setIsRecommendedSettingsSSO(undefined)]
     expect(store.getActions()).toEqual(expectedActions)
 
     invokeMock.mockRestore();
@@ -118,7 +118,7 @@ describe('OAuthSocial', () => {
       const sendEventTelemetryMock = jest.fn();
       (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-      const { queryByTestId } = render(<OAuthSocial />)
+      const { queryByTestId } = render(<OAuthSocial type={OAuthSocialType.Create} />)
 
       fireEvent.click(queryByTestId('google-oauth') as HTMLButtonElement)
 
@@ -137,7 +137,7 @@ describe('OAuthSocial', () => {
       expect(invokeMock).toBeCalledTimes(1)
       expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Google })
 
-      const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(true)]
+      const expectedActions = [signIn(), setSSOFlow('create'), setIsRecommendedSettingsSSO(true)]
       expect(store.getActions()).toEqual(expectedActions)
 
       invokeMock.mockRestore();
@@ -148,7 +148,7 @@ describe('OAuthSocial', () => {
       const sendEventTelemetryMock = jest.fn();
       (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-      const { queryByTestId } = render(<OAuthSocial />)
+      const { queryByTestId } = render(<OAuthSocial type={OAuthSocialType.Create} />)
 
       fireEvent.click(queryByTestId('github-oauth') as HTMLButtonElement)
 
@@ -168,7 +168,7 @@ describe('OAuthSocial', () => {
       expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, { action: 'create', strategy: CloudAuthSocial.Github })
       invokeMock.mockRestore()
 
-      const expectedActions = [signIn(), setIsAutodiscoverySSO(false), setIsRecommendedSettingsSSO(true)]
+      const expectedActions = [signIn(), setSSOFlow('create'), setIsRecommendedSettingsSSO(true)]
       expect(store.getActions()).toEqual(expectedActions)
 
       invokeMock.mockRestore();
@@ -199,7 +199,7 @@ describe('OAuthSocial', () => {
 
       const expectedActions = [
         signIn(),
-        setIsAutodiscoverySSO(true),
+        setSSOFlow('import'),
         setOAuthCloudSource(OAuthSocialSource.Autodiscovery),
       ]
       expect(store.getActions()).toEqual(expectedActions)

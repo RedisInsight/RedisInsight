@@ -13,6 +13,16 @@ $delay: .13s;
     .euiMarkdownFormat {
       font-family: 'Graphik', sans-serif;
       font-size: 12px;
+
+      .euiCodeBlock {
+        background: var(--browserTableRowEven);
+        font-size: 12px !important;
+
+
+        &__code {
+          font-family: 'Graphik', sans-serif;
+        }
+      }
     }
   }
 }
@@ -40,12 +50,12 @@ $delay: .13s;
 
 .answer {
   align-self: flex-start;
-  background-color: #2B2B2B;
+  background-color: var(--euiColorLightestShade);
 }
 
 .question {
   align-self: flex-end;
-  background-color: #292F47;
+  background-color: var(--insightsTriggerBgColor);
 }
 
 

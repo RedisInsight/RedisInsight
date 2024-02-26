@@ -14,17 +14,18 @@ import {
   signInFailure,
 } from 'uiSrc/slices/oauth/cloud'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { cloudSelector, fetchSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { CloudAuthResponse, CloudAuthStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { localStorageService } from 'uiSrc/services'
+import { CustomError } from 'uiSrc/slices/interfaces'
 
 const ConfigOAuth = () => {
-  const { isAutodiscoverySSO, isRecommendedSettings } = useSelector(cloudSelector)
+  const { ssoFlow, isRecommendedSettings } = useSelector(cloudSelector)
 
-  const isAutodiscoverySSORef = useRef(isAutodiscoverySSO)
+  const ssoFlowRef = useRef(ssoFlow)
   const isRecommendedSettingsRef = useRef(isRecommendedSettings)
 
   const history = useHistory()
@@ -38,8 +39,8 @@ const ConfigOAuth = () => {
   }, [])
 
   useEffect(() => {
-    isAutodiscoverySSORef.current = isAutodiscoverySSO
-  }, [isAutodiscoverySSO])
+    ssoFlowRef.current = ssoFlow
+  }, [ssoFlow])
 
   useEffect(() => {
     isRecommendedSettingsRef.current = isRecommendedSettings
@@ -48,7 +49,12 @@ const ConfigOAuth = () => {
   const fetchUserInfoSuccess = (isMultiAccount: boolean) => {
     if (isMultiAccount) return
 
-    if (isAutodiscoverySSORef.current) {
+    if (ssoFlowRef.current === 'signIn') {
+      closeInfinityNotification()
+      return
+    }
+
+    if (ssoFlowRef.current === 'import') {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
         () => {
@@ -94,11 +100,11 @@ const ConfigOAuth = () => {
     }
 
     if (status === CloudAuthStatus.Failed) {
-      const err = parseCloudOAuthError(error || message || '')
+      const err = parseCloudOAuthError((error as CustomError) || message || '')
       dispatch(setOAuthCloudSource(null))
       dispatch(signInFailure(err?.response?.data?.message || message))
       dispatch(addErrorNotification(err))
-      dispatch(setIsAutodiscoverySSO(false))
+      dispatch(setSSOFlow(''))
     }
   }
 

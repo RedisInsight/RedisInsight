@@ -7,7 +7,7 @@ import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 import { FeatureFlagComponent, OAuthAgreement } from 'uiSrc/components'
-import { setIsRecommendedSettingsSSO, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -19,9 +19,11 @@ import { ReactComponent as GithubSmallIcon } from 'uiSrc/assets/img/oauth/github
 
 import styles from './styles.module.scss'
 
+// TODO: move business logic outside of component
 export enum OAuthSocialType {
-  Modal = 'modal',
-  Autodiscovery = 'Autodiscovery',
+  Create = 'create',
+  Autodiscovery = 'autodiscovery',
+  SignIn = 'signIn'
 }
 
 interface Props {
@@ -29,7 +31,7 @@ interface Props {
   hideTitle?: boolean
 }
 
-const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props) => {
+const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props) => {
   const agreement = useSelector(oauthCloudPAgreementSelector)
   const {
     [FeatureFlags.cloudSsoRecommendedSettings]: isRecommendedFeatureEnabled
@@ -38,7 +40,8 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
 
   const dispatch = useDispatch()
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
-  const getAction = () => (isAutodiscovery ? 'import' : 'create')
+  const isSignInFlow = type === OAuthSocialType.SignIn
+  const getAction = () => (isSignInFlow ? 'signIn' : (isAutodiscovery ? 'import' : 'create'))
 
   const sendTelemetry = (accountOption: string) => {
     const cloudRecommendedSettings = isAutodiscovery
@@ -62,7 +65,10 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
 
   const handleClickSso = () => {
     dispatch(signIn())
-    dispatch(setIsAutodiscoverySSO(isAutodiscovery))
+    dispatch(setSSOFlow(getAction()))
+
+    if (isSignInFlow) return
+
     isAutodiscovery && dispatch(setOAuthCloudSource(OAuthSocialSource.Autodiscovery))
     if (!isAutodiscovery) {
       dispatch(setIsRecommendedSettingsSSO(isRecommended))
@@ -140,7 +146,7 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
     </FeatureFlagComponent>
   )
 
-  if (!isAutodiscovery) {
+  if (type === OAuthSocialType.Create) {
     return (
       <div className={cx(styles.container)}>
         {buttons}
@@ -153,14 +159,19 @@ const OAuthSocial = ({ type = OAuthSocialType.Modal, hideTitle = false }: Props)
   }
 
   return (
-    <div className={cx(styles.containerAuto)} data-testid="oauth-container-autodiscovery">
+    <div
+      className={cx(styles.container, { [styles.containerAuto]: isAutodiscovery })}
+      data-testid={`oauth-container-${type}`}
+    >
       {!hideTitle && (<EuiTitle className={styles.title}><h4>Sign in to your Cloud Account</h4></EuiTitle>)}
-      <EuiText className={styles.text} color="subdued">
-        Auto-discover subscriptions and add your databases.
-        <br />
-        A new Redis Cloud account will be created for you if you don’t have one.
-      </EuiText>
-      <div className={styles.buttonsAuto}>
+      {isAutodiscovery && (
+        <EuiText className={styles.text} color="subdued">
+          Auto-discover subscriptions and add your databases.
+          <br />
+          A new Redis Cloud account will be created for you if you don’t have one.
+        </EuiText>
+      )}
+      <div className={cx({ [styles.buttonsAuto]: isAutodiscovery })}>
         {buttons}
       </div>
       <div className={styles.containerAgreement}>

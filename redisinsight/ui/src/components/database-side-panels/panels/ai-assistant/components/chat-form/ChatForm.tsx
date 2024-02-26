@@ -56,7 +56,6 @@ const ChatForm = (props: Props) => {
         className={styles.textarea}
         value={value}
         onChange={handleChange}
-        style={{ height: textAreaRef.current?.scrollHeight || 0 }}
       />
       <EuiButton
         fill

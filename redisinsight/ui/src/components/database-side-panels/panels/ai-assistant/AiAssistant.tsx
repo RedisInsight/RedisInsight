@@ -1,16 +1,21 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import { aiAssistantChatSelector } from 'uiSrc/slices/panels/aiAssistant'
+import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import { FeatureFlags } from 'uiSrc/constants'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { WelcomeAiAssistant, Chat } from './components'
 import styles from './styles.module.scss'
 
 const AiAssistant = () => {
-  const { id } = useSelector(aiAssistantChatSelector)
+  const { data } = useSelector(oauthCloudUserSelector)
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+
+  const isShowAuth = cloudSsoFeature?.flag && !data
 
   return (
     <div className={styles.wrapper}>
-      {id ? (<Chat />) : (<WelcomeAiAssistant />)}
+      {isShowAuth ? (<WelcomeAiAssistant />) : (<Chat />)}
     </div>
   )
 }

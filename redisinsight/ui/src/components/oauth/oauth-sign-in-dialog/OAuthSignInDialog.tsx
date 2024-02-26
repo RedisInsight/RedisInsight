@@ -3,7 +3,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
-  EuiLink,
   EuiModal,
   EuiModalBody,
   EuiText,
@@ -11,7 +10,7 @@ import {
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { OAuthSocial } from 'uiSrc/components'
+import { OAuthSocial, OAuthSocialType } from 'uiSrc/components'
 import { setSignInDialogState, oauthCloudSelector } from 'uiSrc/slices/oauth/cloud'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -21,7 +20,9 @@ import styles from './styles.module.scss'
 
 const OAuthSignInDialog = () => {
   const { isOpenSignInDialog } = useSelector(oauthCloudSelector)
-  const { isAutodiscoverySSO } = useSelector(cloudSelector)
+  const { ssoFlow } = useSelector(cloudSelector)
+
+  const isAutodiscoverySSO = ssoFlow === 'import'
 
   const dispatch = useDispatch()
 
@@ -69,7 +70,7 @@ const OAuthSignInDialog = () => {
               Use Redis as an all-in-one database <br /> and cache like never before
             </EuiText>
             <h4 className={styles.socialSubTitle}>Sign up with</h4>
-            <OAuthSocial />
+            <OAuthSocial type={OAuthSocialType.Create} />
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiModalBody>

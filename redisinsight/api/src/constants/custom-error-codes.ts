@@ -43,4 +43,10 @@ export enum CustomErrorCodes {
   ConvAiForbidden = 11_302,
   ConvAiBadRequest = 11_303,
   ConvAiNotFound = 11_304,
+
+  QueryAiInternalServerError = 11_351,
+  QueryAiUnauthorized = 11_351,
+  QueryAiForbidden = 11_352,
+  QueryAiBadRequest = 11_353,
+  QueryAiNotFound = 11_354,
 }

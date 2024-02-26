@@ -9,6 +9,7 @@ export enum ClientContext {
   Browser = 'Browser',
   CLI = 'CLI',
   Workbench = 'Workbench',
+  AI = 'AI',
 }
 
 export class ClientMetadata {

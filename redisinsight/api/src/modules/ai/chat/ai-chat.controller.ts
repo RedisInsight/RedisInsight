@@ -18,7 +18,7 @@ import { Response } from 'express';
 
 @ApiTags('AI')
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('ai/chats')
+@Controller('ai/assistant/chats')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class AiChatController {
   constructor(

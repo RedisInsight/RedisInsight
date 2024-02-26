@@ -96,7 +96,7 @@ export const {
 // The reducer
 export default aiAssistantSlice.reducer
 
-export function createAssistantChatAction() {
+export function createAssistantChatAction(onSuccess?: (chatId: string) => void, onFail?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(createAssistantChat())
 
@@ -105,9 +105,11 @@ export function createAssistantChatAction() {
 
       if (isStatusSuccessful(status)) {
         dispatch(createAssistantSuccess(data.id))
+        onSuccess?.(data.id)
       }
     } catch (e) {
       dispatch(createAssistantFailed())
+      onFail?.()
     }
   }
 }
@@ -139,10 +141,14 @@ export function askAssistantChatbot(
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
         },
-        body: JSON.stringify({ content: message })
+        body: JSON.stringify({ a: message })
       })
 
       const reader = response.body!.pipeThrough(new TextDecoderStream()).getReader()
+      if (!isStatusSuccessful(response.status)) {
+        throw new Error(response.statusText)
+      }
+
       // eslint-disable-next-line no-constant-condition
       while (true) {
         // eslint-disable-next-line no-await-in-loop
@@ -158,6 +164,7 @@ export function askAssistantChatbot(
         onMessage?.(AiMessageProgressed)
       }
     } catch (error) {
+      console.error(error)
       onFinish?.()
     }
   }

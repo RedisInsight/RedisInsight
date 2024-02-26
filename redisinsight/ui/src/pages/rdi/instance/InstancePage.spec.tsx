@@ -9,7 +9,7 @@ import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import {
-  appContextSelector,
+  appContextSelector, resetPipelineManagement,
   setAppContextConnectedRdiInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
@@ -117,6 +117,8 @@ describe('InstancePage', () => {
     })
 
     const expectedActions = [
+      setAppContextConnectedRdiInstanceId(''),
+      resetPipelineManagement(),
       setConnectedInstance()
     ]
 

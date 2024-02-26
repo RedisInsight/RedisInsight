@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import cx from 'classnames'
-
 import { useParams } from 'react-router-dom'
+import { get } from 'lodash'
+
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { MonacoYaml } from 'uiSrc/components/monaco-editor'
+import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import { testConnectionsAction, rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
@@ -18,7 +19,7 @@ import styles from './styles.module.scss'
 const Config = () => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
 
-  const { loading: pipelineLoading } = useSelector(rdiPipelineSelector)
+  const { loading: pipelineLoading, schema } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
 
   const { values: { config = '' }, setFieldValue } = useFormikContext<IPipeline>()
@@ -66,11 +67,12 @@ const Config = () => {
           </div>
         ) : (
           <MonacoYaml
+            schema={get(schema, 'config', null)}
             value={config}
             onChange={(value) => setFieldValue('config', value)}
             disabled={pipelineLoading}
             wrapperClassName="rdi__editorWrapper"
-            data-testid="rdi-config"
+            data-testid="rdi-monaco-config"
           />
         )}
         <div className="rdi__actions">

@@ -60,7 +60,7 @@ export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
-  schema: Nullable<unknown>
+  schema: Nullable<object>
 }
 
 export interface IStateRdiDryRunJob {

@@ -1,5 +1,3 @@
-const mock = {
-  configureMonacoYaml: jest.fn()
-}
-
-export default mock
+export const configureMonacoYaml = () => ({
+  update: jest.fn()
+})

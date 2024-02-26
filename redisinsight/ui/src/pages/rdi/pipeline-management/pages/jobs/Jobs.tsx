@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { findIndex } from 'lodash'
+import { findIndex, get } from 'lodash'
 import cx from 'classnames'
 
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { MonacoYaml } from 'uiSrc/components/monaco-editor'
+import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { Pages } from 'uiSrc/constants'
 
@@ -22,7 +22,7 @@ const Jobs = () => {
 
   const history = useHistory()
 
-  const { loading } = useSelector(rdiPipelineSelector)
+  const { loading, schema } = useSelector(rdiPipelineSelector)
 
   const { values, setFieldValue } = useFormikContext<IPipeline>()
 
@@ -79,11 +79,12 @@ const Jobs = () => {
           </div>
         ) : (
           <MonacoYaml
+            schema={get(schema, 'jobs', null)}
             value={values.jobs?.[jobIndex]?.value ?? ''}
             onChange={(value) => setFieldValue(`jobs.${jobIndex}.value`, value)}
             disabled={loading}
             wrapperClassName="rdi__editorWrapper"
-            data-testid="rdi-config"
+            data-testid="rdi-monaco-jobs"
           />
         )}
 

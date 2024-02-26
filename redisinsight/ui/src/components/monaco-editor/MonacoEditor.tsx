@@ -29,6 +29,7 @@ export interface CommonProps {
 
 export interface Props extends CommonProps {
   onEditorDidMount?: (editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: typeof monacoEditor) => void
+  onEditorWillMount?: (monaco: typeof monacoEditor) => void
   className?: string
   language: string
 }
@@ -39,6 +40,7 @@ const MonacoEditor = (props: Props) => {
     onApply,
     onDecline,
     onEditorDidMount,
+    onEditorWillMount,
     disabled,
     readOnly,
     isEditable,
@@ -78,6 +80,10 @@ const MonacoEditor = (props: Props) => {
 
     editor.onKeyDown(onKeyDownMonaco)
     onEditorDidMount?.(editor, monaco)
+  }
+
+  const editorWillMount = (monaco: typeof monacoEditor) => {
+    onEditorWillMount?.(monaco)
   }
 
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
@@ -152,6 +158,7 @@ const MonacoEditor = (props: Props) => {
             options={monacoOptions}
             className={cx(styles.editor, className, { readMode: !isEditing && readOnly })}
             editorDidMount={editorDidMount}
+            editorWillMount={editorWillMount}
             data-testid={dataTestId}
           />
         </div>

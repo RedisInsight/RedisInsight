@@ -15,6 +15,9 @@ export enum MonacoLanguage {
   Cypher = 'cypherLanguage'
 }
 
+export const DEFAULT_MONACO_YAML_URI = 'http://example.com/schema-name.json'
+export const DEFAULT_MONACO_FILE_MATCH = '*'
+
 export const MONACO_MANUAL = '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.\n'
   + '// Enter multiple commands at different rows to run them at once.\n'
   + '// Start a new line with an indent (Tab) to specify arguments for any Redis command in multiple line mode.\n'

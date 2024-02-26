@@ -1,37 +1,50 @@
-import React, { useState } from 'react'
-import { configureMonacoYaml } from 'monaco-yaml'
-import { monaco as monacoEditor } from 'react-monaco-editor'
+import React from 'react'
+import { isNull } from 'lodash'
 
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
 import { MonacoEditor } from 'uiSrc/components/monaco-editor'
-import example from './example'
+import { Nullable } from 'uiSrc/utils'
+import { DEFAULT_MONACO_FILE_MATCH, DEFAULT_MONACO_YAML_URI } from 'uiSrc/constants'
+import { monacoYamlModel } from './monacoYamlModel'
 
-const MonacoYaml = (props: CommonProps) => {
-  const [value, setValue] = useState('')
+export interface Props extends CommonProps {
+  schema: Nullable<object>
+  uri?: string
+  fileMatch?: string
+}
 
-  const editorDidMount = (
-    _: monacoEditor.editor.IStandaloneCodeEditor,
-    monaco: typeof monacoEditor,
-  ) => {
-    configureMonacoYaml(monaco, {
-      hover: true,
-      schemas: [
-        {
-          fileMatch: ['*'],
-          schema: example.data.ingest as any,
-          uri: 'http://example.com/schema-name.json',
-        }
-      ]
+const MonacoYaml = (props: Props) => {
+  const {
+    schema,
+    uri = DEFAULT_MONACO_YAML_URI,
+    fileMatch = DEFAULT_MONACO_FILE_MATCH,
+    value,
+    onChange,
+    ...rest
+  } = props
+
+  // insert schema work only before monaco will be rendered
+  if (isNull(schema)) {
+    return null
+  }
+
+  const editorWillMount = () => {
+    monacoYamlModel?.update({
+      schemas: [{
+        schema,
+        uri,
+        fileMatch: [fileMatch],
+      }],
     })
   }
 
   return (
     <MonacoEditor
-      {...props}
+      {...rest}
       language="yaml"
       value={value}
-      onChange={setValue}
-      onEditorDidMount={editorDidMount}
+      onChange={onChange}
+      onEditorWillMount={editorWillMount}
       options={{
         hover: {
           enabled: true,

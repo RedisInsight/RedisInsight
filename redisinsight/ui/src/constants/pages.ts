@@ -23,7 +23,6 @@ export enum PageNames {
   // rdi pages
   rdiPipelineManagement = 'pipeline-management',
   rdiPipelineStatistics = 'pipeline-statistics',
-  rdiPipelinePrepare = 'prepare',
   rdiPipelineConfig = 'config',
   rdiPipelineJobs = 'jobs',
 }
@@ -64,8 +63,6 @@ export const Pages = {
   rdiPipelineStatistics: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineStatistics}`,
   rdiPipelineConfig: (rdiInstance: string) =>
     `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineConfig}`,
-  rdiPipelinePrepare: (rdiInstance: string) =>
-    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelinePrepare}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
     `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

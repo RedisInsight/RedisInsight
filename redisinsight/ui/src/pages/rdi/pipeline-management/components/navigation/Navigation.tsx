@@ -15,36 +15,13 @@ import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 enum RdiPipelineTabs {
-  Prepare = PageNames.rdiPipelinePrepare,
   Config = PageNames.rdiPipelineConfig,
   Jobs = PageNames.rdiPipelineJobs
 }
 
-interface INavItem {
-  id: RdiPipelineTabs
-  title: string
-  fileName: string
-  isShowLoader?: boolean
-}
-
-const defaultNavList: INavItem[] = [
-  {
-    id: RdiPipelineTabs.Prepare,
-    title: 'Prepare',
-    fileName: 'Select pipeline type'
-  },
-  {
-    id: RdiPipelineTabs.Config,
-    title: 'Configuration',
-    fileName: 'Target connection details',
-    isShowLoader: true
-  }
-]
-
 const getSelectedTab = (path: string, rdiInstanceId: string) => {
   const tabsPath = path?.replace(`${Pages.rdiPipelineManagement(rdiInstanceId)}/`, '')
 
-  if (tabsPath.startsWith(PageNames.rdiPipelinePrepare)) return RdiPipelineTabs.Prepare
   if (tabsPath.startsWith(PageNames.rdiPipelineConfig)) return RdiPipelineTabs.Config
   if (tabsPath.startsWith(PageNames.rdiPipelineJobs)) return RdiPipelineTabs.Jobs
 
@@ -63,20 +40,12 @@ const Navigation = () => {
   const path = pathname?.split('/').pop() || ''
 
   const onSelectedTabChanged = (id: string | RdiPipelineTabs) => {
-    switch (id) {
-      case RdiPipelineTabs.Prepare: {
-        history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
-        break
-      }
-      case RdiPipelineTabs.Config: {
-        history.push(Pages.rdiPipelineConfig(rdiInstanceId))
-        break
-      }
-      default: {
-        history.push(Pages.rdiPipelineJobs(rdiInstanceId, encodeURIComponent(id)))
-        break
-      }
+    if (id === RdiPipelineTabs.Config) {
+      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+      return
     }
+
+    history.push(Pages.rdiPipelineJobs(rdiInstanceId, encodeURIComponent(id)))
   }
 
   useEffect(() => {
@@ -86,25 +55,22 @@ const Navigation = () => {
 
   const renderTabs = () => (
     <>
-      {defaultNavList.map(({ id, title, fileName, isShowLoader = false }) => (
-        <div
-          key={id}
-          role="button"
-          tabIndex={0}
-          onKeyDown={() => {}}
-          onClick={() => onSelectedTabChanged(id)}
-          className={styles.tab}
-          data-testid={`rdi-nav-btn-${id}`}
-        >
-          <Tab
-            title={title}
-            fileName={fileName}
-            isSelected={selectedTab === id}
-            data-testid={`rdi-pipeline-tab-${id}`}
-            isLoading={loading && isShowLoader}
-          />
-        </div>
-      ))}
+      <div
+        role="button"
+        tabIndex={0}
+        onKeyDown={() => {}}
+        onClick={() => onSelectedTabChanged(RdiPipelineTabs.Config)}
+        className={styles.tab}
+        data-testid={`rdi-nav-btn-${RdiPipelineTabs.Config}`}
+      >
+        <Tab
+          title="Configuration"
+          fileName="Target connection details"
+          isSelected={selectedTab === RdiPipelineTabs.Config}
+          data-testid={`rdi-pipeline-tab-${RdiPipelineTabs.Config}`}
+          isLoading={loading}
+        />
+      </div>
       <Tab
         title="Transform and Validate"
         isSelected={selectedTab === RdiPipelineTabs.Jobs}

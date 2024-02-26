@@ -76,20 +76,18 @@ const Chat = () => {
 
   return (
     <div className={styles.wrapper}>
-      {!!messages?.length && (
-        <div className={styles.header}>
-          <span />
-          <EuiButtonEmpty
-            disabled={!!progressingMessage}
-            iconType="eraser"
-            size="xs"
-            onClick={onClearSession}
-            className={styles.startSessionBtn}
-          >
-            Restart Session
-          </EuiButtonEmpty>
-        </div>
-      )}
+      <div className={styles.header}>
+        <span />
+        <EuiButtonEmpty
+          disabled={!!progressingMessage || !messages?.length}
+          iconType="eraser"
+          size="xs"
+          onClick={onClearSession}
+          className={styles.startSessionBtn}
+        >
+          Restart Session
+        </EuiButtonEmpty>
+      </div>
       <div className={styles.chatHistory}>
         <ChatHistory
           progressingMessage={progressingMessage}

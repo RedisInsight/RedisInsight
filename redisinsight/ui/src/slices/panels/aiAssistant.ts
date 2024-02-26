@@ -141,7 +141,7 @@ export function askAssistantChatbot(
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
         },
-        body: JSON.stringify({ a: message })
+        body: JSON.stringify({ content: message })
       })
 
       const reader = response.body!.pipeThrough(new TextDecoderStream()).getReader()

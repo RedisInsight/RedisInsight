@@ -181,7 +181,7 @@ const configuration: webpack.Configuration = {
 
   plugins: [
     new MonacoWebpackPlugin({
-      languages: ['yaml', 'typescript', "javascript", "json"],
+      languages: ['yaml', 'typescript', 'javascript', 'json'],
       customLanguages: [
         {
           label: 'yaml',

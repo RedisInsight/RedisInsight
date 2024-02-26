@@ -233,7 +233,7 @@ const configuration: webpack.Configuration = {
     new ReactRefreshWebpackPlugin(),
 
     new MonacoWebpackPlugin({
-      languages: ['yaml', 'typescript', "javascript", "json"],
+      languages: ['yaml', 'typescript', 'javascript', 'json'],
       customLanguages: [
         {
           label: 'yaml',

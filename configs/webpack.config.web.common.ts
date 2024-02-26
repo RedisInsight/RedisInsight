@@ -71,7 +71,7 @@ export default {
     new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
 
     new MonacoWebpackPlugin({
-      languages: ['yaml', 'typescript', "javascript", "json"],
+      languages: ['yaml', 'typescript', 'javascript', 'json'],
       customLanguages: [
         {
           label: 'yaml',

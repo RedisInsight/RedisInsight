@@ -205,11 +205,11 @@ const NavigationMenu = () => {
 
   const privateRdiRoutes: INavigations[] = [
     {
-      tooltipText: 'Statistics',
+      tooltipText: 'Pipeline Status',
       pageName: PageNames.rdiStatistics,
-      ariaLabel: 'Statistics page button',
+      ariaLabel: 'Pipeline Status page button',
       onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
-      dataTestId: 'statistics-page-btn',
+      dataTestId: 'pipeline-status-page-btn',
       isActivePage: activePage === `/${PageNames.rdiStatistics}`,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })

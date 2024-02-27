@@ -29,7 +29,7 @@ import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
 import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { DeleteListElementsDto } from 'apiSrc/modules/browser/dto'
+import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
   TAIL_DESTINATION,
@@ -40,7 +40,7 @@ import {
 import styles from './styles.module.scss'
 
 export interface Props {
-  onCancel: () => void
+  closePanel: (isCancelled?: boolean) => void
   onRemoveKey: () => void
 }
 
@@ -56,7 +56,7 @@ const optionsDestinations: EuiSuperSelectOption<string>[] = [
 ]
 
 const RemoveListElements = (props: Props) => {
-  const { onCancel, onRemoveKey } = props
+  const { closePanel, onRemoveKey } = props
 
   const [count, setCount] = useState<string>('')
   const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
@@ -122,7 +122,7 @@ const RemoveListElements = (props: Props) => {
 
   const onSuccessRemoved = (newTotal: number) => {
     if (newTotal <= 0) onRemoveKey()
-    onCancel()
+    closePanel()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -278,7 +278,7 @@ const RemoveListElements = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel()} data-testid="cancel-elements-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-elements-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

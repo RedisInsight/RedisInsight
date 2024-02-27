@@ -170,3 +170,16 @@
     }
   }
 }
+
+.select {
+  width: 350px;
+  position: absolute;
+  z-index: 1;
+
+  :global {
+    .euiFormControlLayout__childrenWrapper {
+      width: 200px;
+      position: relative;
+    }
+  }
+}

@@ -38,6 +38,7 @@ export interface CodeButtonParams {
   results?: keyof typeof CodeButtonResults
   mode?: keyof typeof CodeButtonRunQueryMode
   run_confirmation?: keyof typeof BooleanParams
+  executable?: keyof typeof BooleanParams
 }
 
 export enum ExecuteButtonMode {

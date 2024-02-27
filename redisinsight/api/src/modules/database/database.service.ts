@@ -12,7 +12,6 @@ import {
   catchRedisConnectionError, classToClass, getHostingProvider, getRedisConnectionException,
 } from 'src/utils';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
-import { RedisService } from 'src/modules/redis/redis.service';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
@@ -20,11 +19,12 @@ import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientContext, SessionMetadata } from 'src/common/models';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { deepMerge } from 'src/common/utils';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
+import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
 export class DatabaseService {
@@ -57,8 +57,8 @@ export class DatabaseService {
 
   constructor(
     private repository: DatabaseRepository,
-    private redisService: RedisService,
-    private redisConnectionFactory: RedisConnectionFactory,
+    private redisClientStorage: RedisClientStorage,
+    private redisClientFactory: RedisClientFactory,
     private databaseInfoProvider: DatabaseInfoProvider,
     private databaseFactory: DatabaseFactory,
     private analytics: DatabaseAnalytics,
@@ -143,7 +143,7 @@ export class DatabaseService {
 
       // todo: clarify if we need this and if yes - rethink implementation
       try {
-        const client = await this.redisConnectionFactory.createRedisConnection(
+        const client = await this.redisClientFactory.createClient(
           {
             sessionMetadata: {} as SessionMetadata,
             databaseId: database.id,
@@ -191,7 +191,7 @@ export class DatabaseService {
           database.provider = getHostingProvider(database.host);
         }
 
-        this.redisService.removeClientInstances({ databaseId: id });
+        await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       }
 
       database = await this.repository.update(id, database);
@@ -278,7 +278,7 @@ export class DatabaseService {
     try {
       await this.repository.delete(id);
       // todo: rethink
-      this.redisService.removeClientInstances({ databaseId: id });
+      await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       this.logger.log('Succeed to delete database instance.');
 
       this.analytics.sendInstanceDeletedEvent(database);

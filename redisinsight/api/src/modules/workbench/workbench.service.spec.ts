@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { when } from 'jest-when';
 import {
   mockDatabase,
-  mockDatabaseConnectionService,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
   mockWorkbenchAnalyticsService,
   mockWorkbenchClientMetadata,
 } from 'src/__mocks__';
@@ -11,7 +12,6 @@ import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
 import {
-  ClusterNodeRole,
   CreateCommandExecutionDto,
   RunQueryMode,
   ResultsMode,
@@ -21,18 +21,12 @@ import { CommandExecutionResult } from 'src/modules/workbench/models/command-exe
 import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
 import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { CreateCommandExecutionsDto } from 'src/modules/workbench/dto/create-command-executions.dto';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { WorkbenchAnalyticsService } from './services/workbench-analytics/workbench-analytics.service';
 
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   command: 'set foo bar',
-  nodeOptions: {
-    host: '127.0.0.1',
-    port: 7002,
-    enableRedirection: true,
-  },
-  role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
   resultsMode: ResultsMode.Default,
 };
@@ -41,24 +35,12 @@ const mockCommands = ['set 1 1', 'get 1'];
 
 const mockCreateCommandExecutionDtoWithGroupMode: CreateCommandExecutionsDto = {
   commands: mockCommands,
-  nodeOptions: {
-    host: '127.0.0.1',
-    port: 7002,
-    enableRedirection: true,
-  },
-  role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
   resultsMode: ResultsMode.GroupMode,
 };
 
 const mockCreateCommandExecutionDtoWithSilentMode: CreateCommandExecutionsDto = {
   commands: mockCommands,
-  nodeOptions: {
-    host: '127.0.0.1',
-    port: 7002,
-    enableRedirection: true,
-  },
-  role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
   resultsMode: ResultsMode.Silent,
 };
@@ -75,11 +57,6 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
   new CommandExecutionResult({
     status: CommandExecutionStatus.Success,
     response: 'OK',
-    node: {
-      host: '127.0.0.1',
-      port: 6379,
-      slot: 0,
-    },
   }),
 ];
 const mockCommandExecutionToRun: CommandExecution = new CommandExecution({
@@ -138,6 +115,7 @@ const mockCommandExecutionRepository = () => ({
 });
 
 describe('WorkbenchService', () => {
+  const client = mockStandaloneRedisClient;
   let service: WorkbenchService;
   let workbenchCommandsExecutor;
   let commandExecutionProvider;
@@ -161,8 +139,8 @@ describe('WorkbenchService', () => {
           useFactory: mockCommandExecutionRepository,
         },
         {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();
@@ -174,22 +152,23 @@ describe('WorkbenchService', () => {
 
   describe('createCommandExecution', () => {
     it('should successfully execute command and save it', async () => {
-      const result = await service.createCommandExecution(mockWorkbenchClientMetadata, mockCreateCommandExecutionDto);
+      const result = await service.createCommandExecution(client, mockCreateCommandExecutionDto);
       // can't predict execution time
       expect(result).toMatchObject(mockCommandExecutionToRun);
       expect(result.executionTime).toBeGreaterThan(0);
     });
     it('should save db index', async () => {
       const db = 2;
+      client.getCurrentDbIndex = jest.fn().mockResolvedValueOnce(db);
       const result = await service.createCommandExecution(
-        mockWorkbenchClientMetadata,
+        client,
         mockCreateCommandExecutionDto,
-        db,
       );
       expect(result).toMatchObject({ ...mockCommandExecutionToRun, db });
       expect(result.db).toBe(db);
     });
     it('should save result as unsupported command message', async () => {
+      client.getCurrentDbIndex = jest.fn().mockResolvedValueOnce(0);
       workbenchCommandsExecutor.sendCommand.mockResolvedValueOnce(mockCommandExecutionResults);
 
       const dto = {
@@ -198,7 +177,7 @@ describe('WorkbenchService', () => {
         mode: RunQueryMode.ASCII,
       };
 
-      expect(await service.createCommandExecution(mockWorkbenchClientMetadata, dto)).toEqual({
+      expect(await service.createCommandExecution(client, dto)).toEqual({
         ...dto,
         db: 0,
         databaseId: mockWorkbenchClientMetadata.databaseId,
@@ -220,7 +199,7 @@ describe('WorkbenchService', () => {
       };
 
       try {
-        await service.createCommandExecution(mockWorkbenchClientMetadata, dto);
+        await service.createCommandExecution(client, dto);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
@@ -242,7 +221,7 @@ describe('WorkbenchService', () => {
 
     it('should successfully execute commands and save in group mode view', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(mockWorkbenchClientMetadata, expect.anything())
+        .calledWith(client, expect.anything())
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
       commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithGroupMode]);
@@ -257,7 +236,7 @@ describe('WorkbenchService', () => {
 
     it('should successfully execute commands and save in silent mode view', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(mockWorkbenchClientMetadata, expect.anything())
+        .calledWith(client, expect.anything())
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
       commandExecutionProvider.createMany.mockResolvedValueOnce([mockCommandExecutionWithSilentMode]);
@@ -272,14 +251,14 @@ describe('WorkbenchService', () => {
 
     it('should successfully execute commands with error and save summary', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(mockWorkbenchClientMetadata, {
+        .calledWith(client, {
           ...mockCreateCommandExecutionDtoWithGroupMode,
           command: mockCommands[0],
         })
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(mockWorkbenchClientMetadata, {
+        .calledWith(client, {
           ...mockCreateCommandExecutionDtoWithGroupMode,
           command: mockCommands[1],
         })
@@ -297,14 +276,14 @@ describe('WorkbenchService', () => {
 
     it('should successfully execute commands with error and save summary in silent mode view', async () => {
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(mockWorkbenchClientMetadata, {
+        .calledWith(client, {
           ...mockCreateCommandExecutionDtoWithSilentMode,
           command: mockCommands[0],
         })
         .mockResolvedValue([mockSendCommandResultSuccess]);
 
       when(workbenchCommandsExecutor.sendCommand)
-        .calledWith(mockWorkbenchClientMetadata, {
+        .calledWith(client, {
           ...mockCreateCommandExecutionDtoWithSilentMode,
           command: mockCommands[1],
         })

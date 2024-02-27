@@ -13,7 +13,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
-import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/dto'
+import { AddMembersToZSetDto, ZSetMemberDto } from 'apiSrc/modules/browser/z-set/dto'
 import {
   defaultSelectedKeyAction,
   deleteSelectedKeySuccess,

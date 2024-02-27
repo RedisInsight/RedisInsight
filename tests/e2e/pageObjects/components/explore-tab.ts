@@ -28,6 +28,7 @@ export class ExploreTab {
     codeBlockLabel = Selector('[data-testid=code-button-block-label]');
     cloudFreeLinkTooltip = Selector('[data-testid=tutorials-get-started-link]');
     openDatabasePopover = Selector('[data-testid=database-not-opened-popover]');
+    tutorialPopoverConfirmRunButton = Selector('[data-testid=tutorial-popover-apply-run]');
     //Custom tutorials
     customTutorials = Selector('[data-testid=accordion-button-custom-tutorials]');
     tutorialOpenUploadButton = Selector('[data-testid=open-upload-tutorial-btn]');
@@ -36,6 +37,7 @@ export class ExploreTab {
     tutorialAccordionButton = Selector('[data-testid^=accordion-button-]');
     uploadDataBulkBtn = Selector('[data-testid=upload-data-bulk-btn]');
     uploadDataBulkApplyBtn = Selector('[data-testid=upload-data-bulk-apply-btn]');
+    downloadFileBtn = Selector('[data-testid=download-redis-upload-file]');
 
     //CSS
     cssTutorialDeleteIcon = '[data-testid^=delete-tutorial-icon-]';
@@ -61,6 +63,9 @@ export class ExploreTab {
         const runButton = Selector(this.runMask.replace(/\$name/g, block));
         await t.scrollIntoView(runButton);
         await t.click(runButton);
+        if(await this.tutorialPopoverConfirmRunButton.exists){
+            await t.click(this.tutorialPopoverConfirmRunButton);
+        }
     }
 
     /**

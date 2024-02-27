@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { isEmpty } from 'lodash'
 
 import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
@@ -20,10 +21,8 @@ const StatisticsPage = () => {
 
   const dispatch = useDispatch()
 
-  const { loading, data: pipelineData } = useSelector(rdiPipelineSelector)
-  const { data: statisticsData } = useSelector(rdiStatisticsSelector)
-  
-  console.log(statisticsData)
+  const { loading: isPipelineLoading, data: pipelineData } = useSelector(rdiPipelineSelector)
+  const { loading: isStatisticsLoading, data: statisticsData } = useSelector(rdiStatisticsSelector)
 
   useEffect(() => {
     dispatch(fetchConnectedInstanceAction(rdiInstanceId))
@@ -31,19 +30,41 @@ const StatisticsPage = () => {
     dispatch(fetchRdiStatistics(rdiInstanceId))
   }, [])
 
+  if (!statisticsData) {
+    return null
+  }
+
   return (
     <div className={styles.pageContainer}>
-      <RdiStatisticsHeader loading={loading} />
+      <RdiStatisticsHeader loading={isPipelineLoading} />
       <div className={styles.bodyContainer}>
-        {!pipelineData ? (
+        {isEmpty(pipelineData) ? (
           <Empty rdiInstanceId={rdiInstanceId} />
         ) : (
           <>
-            <Status />
-            <ProcessingPerformance />
-            <TargetConnections />
-            <DataStreams />
-            <Clients />
+            <Status data={statisticsData.rdiPipelineStatus} />
+            <ProcessingPerformance
+              data={statisticsData.processingPerformance}
+              loading={isStatisticsLoading}
+              onRefresh={() => {
+                dispatch(fetchRdiStatistics(rdiInstanceId))
+              }}
+            />
+            <TargetConnections data={statisticsData.connections} loading={isStatisticsLoading} />
+            <DataStreams
+              data={statisticsData.dataStreams}
+              loading={isStatisticsLoading}
+              onRefresh={() => {
+                dispatch(fetchRdiStatistics(rdiInstanceId))
+              }}
+            />
+            <Clients
+              data={statisticsData.clients}
+              loading={isStatisticsLoading}
+              onRefresh={() => {
+                dispatch(fetchRdiStatistics(rdiInstanceId))
+              }}
+            />
           </>
         )}
       </div>

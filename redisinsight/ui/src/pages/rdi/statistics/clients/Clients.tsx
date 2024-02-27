@@ -1,11 +1,12 @@
+import { EuiBasicTableColumn } from '@elastic/eui'
 import React from 'react'
 
-import { EuiBasicTableColumn } from '@elastic/eui'
+import { IClients } from 'uiSrc/slices/interfaces'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import Table from '../components/table'
 
-type Client = {
+type ClientsData = {
   id: string
   addr: string
   name: string
@@ -14,7 +15,7 @@ type Client = {
   user: string
 }
 
-const columns: EuiBasicTableColumn<Client>[] = [
+const columns: EuiBasicTableColumn<ClientsData>[] = [
   {
     name: 'ID',
     field: 'id',
@@ -47,40 +48,25 @@ const columns: EuiBasicTableColumn<Client>[] = [
   }
 ]
 
-const clientsData = {
-  '03256': {
-    addr: '172.17.0.1:56982',
-    name: 'redis-di-cli',
-    ageSec: 1,
-    idleSec: 0,
-    user: 'default'
-  },
-  9875: {
-    addr: '172.16.0.2:62356',
-    name: 'redis-di-cli',
-    ageSec: 100,
-    idleSec: 2,
-    user: 'default'
-  },
-  56456: {
-    addr: '172.15.0.3:95473',
-    name: 'redis-di-cli',
-    ageSec: 60,
-    idleSec: 1,
-    user: 'default'
-  }
+interface Props {
+  data: IClients
+  loading: boolean
+  onRefresh: () => void
 }
 
-const Clients = () => {
-  const clients = Object.keys(clientsData).map((key) => ({
-    id: key,
-    ...clientsData[key]
-  }))
+const Clients = ({ data, loading, onRefresh }: Props) => {
+  const clients = Object.keys(data).map((key) => {
+    const client = data[key]
+    return {
+      id: key,
+      ...client
+    }
+  })
 
   return (
     <Panel>
-      <Accordion id="clients" title="Clients">
-        <Table<Client> id="clients" columns={columns} items={clients} initialSortField="id" />
+      <Accordion id="clients" title="Clients" loading={loading} onRefresh={onRefresh}>
+        <Table<ClientsData> id="clients" columns={columns} items={clients} initialSortField="id" />
       </Accordion>
     </Panel>
   )

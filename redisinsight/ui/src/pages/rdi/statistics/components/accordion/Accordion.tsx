@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiAccordion, EuiButtonEmpty, EuiIcon } from '@elastic/eui'
+import { EuiAccordion } from '@elastic/eui'
 
 import { AutoRefresh } from 'uiSrc/components'
 
@@ -9,31 +9,38 @@ interface Props {
   id: string
   title: string
   children: JSX.Element
+  loading: boolean
+  onRefresh?: () => void
+  hideAutoRefresh?: boolean
 }
 
-const Accordion = ({ id, title, children }: Props) => (
-  <EuiAccordion
-    id={id}
-    className={styles.wrapper}
-    buttonContent={title}
-    paddingSize="m"
-    initialIsOpen
-    extraAction={(
-      <AutoRefresh
-        postfix={id}
-        displayText
-        loading={false}
-        disabled={false}
-        lastRefreshTime={0}
-        onRefresh={() => {}}
-        onRefreshClicked={() => {}}
-        onEnableAutoRefresh={() => {}}
-        testid={`${id}-refresh-btn`}
-      />
-    )}
-  >
-    {children}
-  </EuiAccordion>
-)
+const Accordion = ({ id, title, children, loading, onRefresh, hideAutoRefresh = false }: Props) => {
+  const [lastRefreshTime, setLastRefreshTime] = React.useState(Date.now())
+
+  return (
+    <EuiAccordion
+      id={id}
+      className={styles.wrapper}
+      buttonContent={title}
+      paddingSize="m"
+      initialIsOpen
+      extraAction={!hideAutoRefresh && (
+        <AutoRefresh
+          postfix={id}
+          displayText
+          loading={loading}
+          lastRefreshTime={lastRefreshTime}
+          onRefresh={() => {
+            setLastRefreshTime(Date.now())
+            onRefresh?.()
+          }}
+          testid={`${id}-refresh-btn`}
+        />
+      )}
+    >
+      {children}
+    </EuiAccordion>
+  )
+}
 
 export default Accordion

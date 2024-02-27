@@ -1,12 +1,13 @@
 import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
+import { IConnections } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import Table from '../components/table'
 
-type Connection = {
+type ConnectionData = {
   status: string
   name: string
   type: string
@@ -15,7 +16,7 @@ type Connection = {
   user: string
 }
 
-const columns: EuiBasicTableColumn<Connection>[] = [
+const columns: EuiBasicTableColumn<ConnectionData>[] = [
   {
     name: 'Status',
     field: 'status',
@@ -65,55 +66,25 @@ const columns: EuiBasicTableColumn<Connection>[] = [
   }
 ]
 
-const connectionsData = {
-  Connection1: {
-    status: 'good',
-    type: 'type1',
-    host: 'Redis-Stack-in-Redis-Enterprise-Cloud',
-    port: 12000,
-    database: 'admin',
-    user: 'admin'
-  },
-  Connection2: {
-    status: 'bad',
-    type: 'type2',
-    host: 'redis-15797.c52.us-east-1-4.ec2.redis-15797.c52.us-east-1-4.e.us-east-1vnvnvnb-4.ec2.cloud.redislabs.com',
-    port: 13000,
-    database: 'admin_new',
-    user: 'admin_new'
-  },
-  Connection3: {
-    status: 'good',
-    type: 'type3',
-    host: 'redis-15797.c52.us-east-1-4',
-    port: 14000,
-    database: 'new',
-    user: 'new'
-  }
+interface Props {
+  data: IConnections
+  loading: boolean
 }
 
-const TargetConnections = () => {
-  const targetConnections = Object.keys(connectionsData).map((key) => {
-    const connection = connectionsData[key]
+const TargetConnections = ({ data, loading }: Props) => {
+  const connections = Object.keys(data).map((key) => {
+    const connection = data[key]
     return {
       name: key,
       hostPort: `${connection.host}:${connection.port}`,
-      status: connection.status,
-      type: connection.type,
-      database: connection.database,
-      user: connection.user
+      ...connection
     }
   })
 
   return (
     <Panel>
-      <Accordion id="target-connections" title="Target connections">
-        <Table<Connection>
-          id="target-connections"
-          columns={columns}
-          items={targetConnections}
-          initialSortField="name"
-        />
+      <Accordion id="target-connections" title="Target connections" loading={loading} hideAutoRefresh>
+        <Table<ConnectionData> id="target-connections" columns={columns} items={connections} initialSortField="name" />
       </Accordion>
     </Panel>
   )

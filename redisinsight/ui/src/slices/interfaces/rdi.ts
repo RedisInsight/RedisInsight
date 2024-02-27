@@ -75,6 +75,62 @@ export interface IRdiPipelineStrategies {
   dbType: IRdiPipelineStrategy[]
   strategyType: IRdiPipelineStrategy[]
 }
+export interface IConnection {
+  name: string
+  status: string
+  type: string
+  host: string
+  port: number
+  database: string
+  user: string
+}
+
+export interface IDataStream {
+  name: string
+  total: number
+  pending: number
+  inserted: number
+  updated: number
+  deleted: number
+  filtered: number
+  rejected: number
+  deduplicated: number
+  lastArrival: string
+}
+
+export interface IProcessingPerformance {
+  totalBatches: number
+  batchSizeAvg: number
+  readTimeAvg: number
+  processTimeAvg: number
+  ackTimeAvg: number
+  totalTimeAvg: number
+  recPerSecAvg: number
+}
+
+export interface IRdiPipelineStatus {
+  rdiVersion: string
+  address: string
+  runStatus: string
+  syncMode: string
+}
+
+export interface IClient {
+  id: string
+  addr: string
+  name: string
+  age_sec: number
+  idle_sec: number
+  user: string
+}
+
+export interface IRdiStatistics {
+  connections: IConnection[]
+  dataStreams: IDataStream[]
+  processingPerformance: IProcessingPerformance
+  rdiPipelineStatus: IRdiPipelineStatus
+  clients: IClient[]
+}
 
 export interface IStateRdiPipeline {
   loading: boolean
@@ -90,9 +146,15 @@ export interface IStateRdiDryRunJob {
   results: Nullable<IDryRunJobResults>
 }
 
+export interface IStateRdiStatistics {
+  loading: boolean
+  error: string
+  data: Nullable<IRdiStatistics>
+}
+
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
-  loading?: boolean
+  loading: boolean
   error: string
 }
 

@@ -33,7 +33,8 @@ const mockInstances: RdiInstance[] = [
     url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
     lastConnection: new Date(),
     version: '1.2',
-    error: ''
+    error: '',
+    loading: false
   },
   {
     id: '2',
@@ -41,7 +42,8 @@ const mockInstances: RdiInstance[] = [
     url: 'redis-67890.c253.us-central1-1.gce.cloud.redislabs.com:67890',
     lastConnection: new Date(),
     version: '1.3',
-    error: ''
+    error: '',
+    loading: false
   }
 ]
 

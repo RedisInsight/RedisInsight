@@ -239,5 +239,8 @@ export default {
   ai: {
     convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://staging.learn.redis.com/convai/api',
     convAiToken: process.env.RI_AI_CONVAI_TOKEN,
+    queryApiUrl: process.env.RI_AI_QUERY_URL || 'https://rsgpt.ostability.com/api/v1',
+    queryApiUser: process.env.RI_AI_QUERY_USER,
+    queryApiPass: process.env.RI_AI_QUERY_PASS,
   },
 };

@@ -49,7 +49,7 @@ const AssistanceChat = () => {
       chatId,
       message,
       {
-        onMessage: (message: any) => {
+        onMessage: (message: AiChatMessage) => {
           setProgressingMessage({ ...message })
           scrollToBottom('auto')
         },

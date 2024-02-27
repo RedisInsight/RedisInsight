@@ -160,7 +160,7 @@ export function askAssistantChatbot(
   id: string,
   message: string,
   { onMessage, onFinish }: {
-    onMessage?: (message: any) => void,
+    onMessage?: (message: AiChatMessage) => void,
     onFinish?: () => void
   }
 ) {

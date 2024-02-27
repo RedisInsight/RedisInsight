@@ -58,10 +58,6 @@ const Config = () => {
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 
-    if (cloudSsoFeature?.flag) {
-      dispatch(fetchProfile())
-    }
-
     // get tutorials
     dispatch(fetchTutorials())
     dispatch(fetchCustomTutorials())
@@ -79,6 +75,12 @@ const Config = () => {
       checkSettingsToShowPopup()
     }
   }, [spec])
+
+  useEffect(() => {
+    if (cloudSsoFeature?.flag) {
+      dispatch(fetchProfile())
+    }
+  }, [cloudSsoFeature])
 
   useEffect(() => {
     featuresHighlight()

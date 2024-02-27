@@ -6,6 +6,7 @@ import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { AiChatType, AiChatMessage, AiChatMessageType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import { arrayCommandToString, toRedisCodeBlock, isStatusSuccessful } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
+import { CustomHeaders } from 'uiSrc/constants/api'
 import { AppDispatch, RootState } from '../store'
 
 const getTabSelected = (tab?: string): AiChatType => {
@@ -181,6 +182,7 @@ export function askAssistantChatbot(
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
+          [CustomHeaders.WindowId]: window.windowId || '',
         },
         body: JSON.stringify({ content: message })
       })

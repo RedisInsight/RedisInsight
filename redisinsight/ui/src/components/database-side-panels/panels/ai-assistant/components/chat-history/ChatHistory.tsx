@@ -3,6 +3,7 @@ import cx from 'classnames'
 
 import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import MarkdownMessage from 'uiSrc/components/database-side-panels/panels/ai-assistant/components/markdown-message'
+import { Nullable } from 'uiSrc/utils'
 import EmptyHistoryScreen from '../empty-history'
 import LoadingMessage from '../loading-message'
 
@@ -10,7 +11,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   type?: AiChatType
-  progressingMessage?: any
+  progressingMessage?: Nullable<AiChatMessage>
   isLoadingAnswer?: boolean
   history: Array<AiChatMessage>
   scrollDivRef: React.Ref<HTMLDivElement>

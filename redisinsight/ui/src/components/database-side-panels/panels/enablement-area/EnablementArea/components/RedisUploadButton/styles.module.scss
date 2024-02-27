@@ -1,5 +1,6 @@
 .wrapper {
   width: 100%;
+  max-width: 480px;
 
   :global(.euiPopover) {
     width: 100%;
@@ -16,13 +17,12 @@
     &:global(.euiButton.euiButton-isDisabled) {
       color: var(--buttonSecondaryDisabledTextColor) !important;
     }
-  }
-}
 
-.containerPopover {
-  padding: 18px;
-  width: 360px;
-  height: 188px;
+    :global(.euiIcon) {
+      width: 14px;
+      height: 14px;
+    }
+  }
 }
 
 .popover {
@@ -47,25 +47,34 @@
 
 .popoverIcon {
   position: absolute;
+  top: 14px;
+  left: 14px;
+
   color: var(--euiColorWarningLight) !important;
-  width: 24px !important;
-  height: 24px !important;
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .popoverItem {
   font-size: 13px !important;
   line-height: 18px !important;
-  padding-left: 34px;
+  padding-left: 30px;
+}
+
+.link {
+  color: var(--externalLinkColor) !important;
+}
+
+.popoverActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-left: 30px;
 }
 
 .popoverItemTitle {
   color: var(--htmlColor) !important;
   font-size: 14px !important;
   line-height: 24px !important;
-}
-
-.uploadApproveBtn {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
 }

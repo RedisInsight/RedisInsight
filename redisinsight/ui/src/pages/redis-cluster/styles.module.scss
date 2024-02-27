@@ -13,26 +13,18 @@ $breakpoint-to-wrap-buttons: 660px;
 
 :global(.homePage) {
   :global(.clusterDatabaseList) {
-    height: calc(100vh - 300px) !important;
+    height: calc(100vh - 316px) !important;
 
     @media (min-width: 1130px) {
-      height: calc(100vh - 245px) !important;
-    }
-
-    @media only screen and (max-width: 767px) {
-      height: calc(100vh - 389px) !important;
+      height: calc(100vh - 256px) !important;
     }
   }
 
   :global(.clusterDatabaseListResult) {
-    height: calc(100vh - 280px) !important;
+    height: calc(100vh - 296px) !important;
 
     @media (min-width: 1130px) {
-      height: calc(100vh - 220px) !important;
-    }
-
-    @media only screen and (max-width: 767px) {
-      height: calc(100vh - 360px) !important;
+      height: calc(100vh - 232px) !important;
     }
   }
 }

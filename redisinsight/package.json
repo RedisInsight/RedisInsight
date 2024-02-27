@@ -2,7 +2,7 @@
   "name": "redisinsight",
   "productName": "RedisInsight",
   "private": true,
-  "version": "2.40.0",
+  "version": "2.44.0",
   "description": "RedisInsight",
   "main": "./dist/main/main.js",
   "author": {
@@ -17,6 +17,6 @@
   "dependencies": {
     "keytar": "^7.9.0",
     "sqlite3": "5.1.6",
-    "ssh2": "^1.14.0"
+    "tunnel-ssh": "^5.1.2"
   }
 }

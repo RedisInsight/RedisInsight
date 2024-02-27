@@ -5,8 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockAutodiscoveryEndpoint,
   mockDatabaseService,
-  mockIORedisClient, mockRedisConnectionFactory,
-  mockRedisServerInfoResponse,
+  mockRedisClientFactory,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -14,8 +13,8 @@ import { SettingsService } from 'src/modules/settings/settings.service';
 import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.service';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { mocked } from 'ts-jest/utils';
-import { RedisConnectionFactory } from 'src/modules/redis/redis-connection.factory';
 import config, { Config } from 'src/utils/config';
+import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 
 jest.mock(
   'src/modules/autodiscovery/utils/autodiscovery.util',
@@ -45,7 +44,7 @@ describe('AutodiscoveryService', () => {
   let service: AutodiscoveryService;
   let settingsService: MockType<SettingsService>;
   let databaseService: MockType<DatabaseService>;
-  let redisConnectionFactory: MockType<RedisConnectionFactory>;
+  let redisClientFactory: MockType<RedisClientFactory>;
   let configGetSpy;
 
   beforeEach(async () => {
@@ -67,8 +66,8 @@ describe('AutodiscoveryService', () => {
           useFactory: mockDatabaseService,
         },
         {
-          provide: RedisConnectionFactory,
-          useFactory: mockRedisConnectionFactory,
+          provide: RedisClientFactory,
+          useFactory: mockRedisClientFactory,
         },
       ],
     }).compile();
@@ -76,9 +75,7 @@ describe('AutodiscoveryService', () => {
     service = module.get(AutodiscoveryService);
     settingsService = module.get(SettingsService);
     databaseService = module.get(DatabaseService);
-    redisConnectionFactory = await module.get(RedisConnectionFactory);
-
-    mockIORedisClient.info.mockResolvedValue(mockRedisServerInfoResponse);
+    redisClientFactory = await module.get(RedisClientFactory);
 
     mocked(utils.convertRedisInfoReplyToObject).mockReturnValue({
       server: {
@@ -199,7 +196,7 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should not fail in case of an error', async () => {
-      redisConnectionFactory.createStandaloneConnection.mockRejectedValue(new Error());
+      redisClientFactory.createClient.mockRejectedValue(new Error());
 
       await service['addRedisDatabase'](mockAutodiscoveryEndpoint);
 

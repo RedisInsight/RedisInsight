@@ -19,16 +19,16 @@ import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
 import { consumerGroupIdRegex, stringToBuffer, validateConsumerGroupId } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void
+  closePanel: (isCancelled?: boolean) => void
 }
 
 const AddStreamGroup = (props: Props) => {
-  const { onCancel } = props
+  const { closePanel } = props
   const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
@@ -55,7 +55,7 @@ const AddStreamGroup = (props: Props) => {
   }, [id])
 
   const onSuccessAdded = () => {
-    onCancel()
+    closePanel()
     sendEventTelemetry({
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_CREATED,
       eventData: {
@@ -152,7 +152,7 @@ const AddStreamGroup = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-stream-groups-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-stream-groups-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

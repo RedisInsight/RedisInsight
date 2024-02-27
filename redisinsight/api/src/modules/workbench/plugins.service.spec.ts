@@ -1,9 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockDatabase, mockWhitelistCommandsResponse, mockWorkbenchClientMetadata } from 'src/__mocks__';
+import {
+  mockDatabase,
+  mockDatabaseClientFactory,
+  mockWhitelistCommandsResponse,
+  mockWorkbenchClientMetadata,
+} from 'src/__mocks__';
 import { v4 as uuidv4 } from 'uuid';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import {
-  ClusterNodeRole,
   CreateCommandExecutionDto,
   ResultsMode,
   RunQueryMode,
@@ -18,17 +22,12 @@ import { PluginCommandExecution } from 'src/modules/workbench/models/plugin-comm
 import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin-state.repository';
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 const PLUGINS_CONFIG = config.get('plugins');
 
 const mockCreateCommandExecutionDto: CreateCommandExecutionDto = {
   command: 'get foo',
-  nodeOptions: {
-    host: '127.0.0.1',
-    port: 7002,
-    enableRedirection: true,
-  },
-  role: ClusterNodeRole.All,
   mode: RunQueryMode.ASCII,
   resultsMode: ResultsMode.Default,
 };
@@ -37,11 +36,6 @@ const mockCommandExecutionResults: CommandExecutionResult[] = [
   new CommandExecutionResult({
     status: CommandExecutionStatus.Success,
     response: 'OK',
-    node: {
-      host: '127.0.0.1',
-      port: 6379,
-      slot: 0,
-    },
   }),
 ];
 const mockPluginCommandExecution = new PluginCommandExecution({
@@ -96,6 +90,10 @@ describe('PluginsService', () => {
         {
           provide: PluginStateRepository,
           useFactory: mockPluginStateProvider,
+        },
+        {
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();

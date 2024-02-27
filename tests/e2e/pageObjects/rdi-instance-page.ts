@@ -10,7 +10,7 @@ export class RdiInstancePage extends BaseOverviewPage {
 
     //TODO create a Pipeline Management panel
     //Tabs
-    configurationTab = Selector('[data-testid=rdi-nav-btn-config]');
+    configurationTab = Selector('[data-testid=rdi-nav-btn-config] div');
 
     dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');

@@ -14,8 +14,10 @@ import PubSubPage from 'uiSrc/pages/pub-sub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
 import TriggeredFunctionsPage from 'uiSrc/pages/triggered-functions'
 import RdiPage from 'uiSrc/pages/rdi/home'
-import RdiPipeline from 'uiSrc/pages/rdi/pipeline/PipelinePage'
-import { ANALYTICS_ROUTES, RDI_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
+import RdiInstancePage from 'uiSrc/pages/rdi/instance'
+import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
+import PipelineStatisticsPage from 'uiSrc/pages/rdi/pipeline-statistics'
+import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -44,6 +46,19 @@ const INSTANCE_ROUTES: IRoute[] = [
     path: Pages.triggeredFunctions(':instanceId'),
     component: TriggeredFunctionsPage,
     routes: TRIGGERED_FUNCTIONS_ROUTES
+  }
+]
+
+const RDI_INSTANCE_ROUTES: IRoute[] = [
+  {
+    pageName: PageNames.rdiPipelineStatistics,
+    path: Pages.rdiPipelineStatistics(':rdiInstanceId'),
+    component: PipelineStatisticsPage,
+  },
+  {
+    path: Pages.rdiPipelineManagement(':rdiInstanceId'),
+    component: PipelineManagementPage,
+    routes: RDI_PIPELINE_MANAGEMENT_ROUTES
   }
 ]
 
@@ -83,9 +98,9 @@ const ROUTES: IRoute[] = [
     exact: true,
   },
   {
-    path: '/integrate/:rdiInstanceId',
-    component: RdiPipeline,
-    routes: RDI_ROUTES,
+    path: Pages.rdiPipeline(':rdiInstanceId'),
+    component: RdiInstancePage,
+    routes: RDI_INSTANCE_ROUTES,
   },
   {
     path: '/:instanceId',

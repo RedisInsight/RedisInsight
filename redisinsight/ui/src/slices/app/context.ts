@@ -33,6 +33,7 @@ export const initialState: StateAppContext = {
     ? AppWorkspace.RDI
     : AppWorkspace.Databases,
   contextInstanceId: '',
+  contextRdiInstanceId: '',
   lastPage: '',
   dbConfig: {
     treeViewDelimiter: DEFAULT_DELIMITER,
@@ -85,7 +86,10 @@ export const initialState: StateAppContext = {
   },
   capability: {
     source: ''
-  }
+  },
+  pipelineManagement: {
+    lastViewedPage: '',
+  },
 }
 
 // A slice for recipes
@@ -102,11 +106,17 @@ const appContextSlice = createSlice({
         keyDetailsSizes: state.browser.keyDetailsSizes
       },
       contextInstanceId: state.contextInstanceId,
+      contextRdiInstanceId: state.contextRdiInstanceId,
       capability: state.capability,
+      pipelineManagement: state.pipelineManagement,
     }),
     // set connected instance
     setAppContextConnectedInstanceId: (state, { payload }: { payload: string }) => {
       state.contextInstanceId = payload
+    },
+    // set connected rdi instance
+    setAppContextConnectedRdiInstanceId: (state, { payload }: { payload: string }) => {
+      state.contextRdiInstanceId = payload
     },
     setCurrentWorkspace: (state, { payload }: PayloadAction<Maybe<AppWorkspace>>) => {
       state.workspace = payload || AppWorkspace.Databases
@@ -209,6 +219,12 @@ const appContextSlice = createSlice({
       setCapabilityStorageField(CapabilityStorageItem.source, source)
       setCapabilityStorageField(CapabilityStorageItem.tutorialPopoverShown, tutorialPopoverShown)
     },
+    setLastPipelineManagementPage: (state, { payload }: { payload: string }) => {
+      state.pipelineManagement.lastViewedPage = payload
+    },
+    resetPipelineManagement: (state) => {
+      state.pipelineManagement.lastViewedPage = ''
+    }
   },
 })
 
@@ -216,6 +232,7 @@ const appContextSlice = createSlice({
 export const {
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
+  setAppContextConnectedRdiInstanceId,
   setCurrentWorkspace,
   setDbConfig,
   setSlowLogUnits,
@@ -242,6 +259,8 @@ export const {
   setLastTriggeredFunctionsPage,
   setBrowserTreeSort,
   setCapability,
+  setLastPipelineManagementPage,
+  resetPipelineManagement,
 } = appContextSlice.actions
 
 // Selectors
@@ -269,6 +288,8 @@ export const appContextTriggeredFunctions = (state: RootState) =>
   state.app.context.triggeredFunctions
 export const appContextCapability = (state: RootState) =>
   state.app.context.capability
+export const appContextPipelineManagement = (state: RootState) =>
+  state.app.context.pipelineManagement
 
 // The reducer
 export default appContextSlice.reducer
@@ -302,5 +323,12 @@ export function resetDatabaseContext() {
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)
+  }
+}
+
+export function resetRdiContext() {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setAppContextConnectedRdiInstanceId(''))
+    dispatch(resetPipelineManagement())
   }
 }

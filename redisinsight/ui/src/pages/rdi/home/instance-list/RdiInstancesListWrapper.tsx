@@ -15,9 +15,6 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
-import { resetDatabaseContext } from 'uiSrc/slices/app/context'
-import { resetConnectedInstance as resetConnectedDatabaseInstance } from 'uiSrc/slices/instances/instances'
-
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -71,11 +68,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
 
   const handleConnect = (id: string) => {
     // TODO: update connect function (check connection first?)
-    // TODO: move reset browser context to instance rdi page
-    dispatch(resetDatabaseContext())
-    dispatch(resetConnectedDatabaseInstance())
-
-    history.push(Pages.rdiPipelinePrepare(id))
+    history.push(Pages.rdiPipeline(id))
   }
 
   const handleCopy = (text = '', id: string) => {

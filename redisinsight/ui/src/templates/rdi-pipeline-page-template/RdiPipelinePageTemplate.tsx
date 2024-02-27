@@ -3,8 +3,8 @@ import { Formik, Form, FormikProps } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import RdiPipelineHeader from 'uiSrc/pages/rdi/pipeline/components/header'
-import Navigation from 'uiSrc/pages/rdi/pipeline/components/navigation'
+import RdiPipelineHeader from 'uiSrc/pages/rdi/pipeline-management/components/header'
+import Navigation from 'uiSrc/pages/rdi/pipeline-management/components/navigation'
 import { deployPipelineAction, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 
 import { IPipeline } from 'uiSrc/slices/interfaces'

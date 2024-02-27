@@ -30,7 +30,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { localStorageService } from 'uiSrc/services'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { appContextSelector, resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
@@ -113,6 +113,9 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
   }
 
   const connectToInstance = (id = '') => {
+    // reset rdi context
+    dispatch(resetRdiContext())
+
     if (contextInstanceId && contextInstanceId !== id) {
       dispatch(resetKeys())
       dispatch(resetRedisearchKeysData())

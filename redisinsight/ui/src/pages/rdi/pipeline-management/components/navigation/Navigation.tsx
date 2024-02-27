@@ -4,11 +4,11 @@ import { useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 import { PageNames, Pages } from 'uiSrc/constants'
-import Download from 'uiSrc/pages/rdi/pipeline/components/download/Download'
-import JobsTree from 'uiSrc/pages/rdi/pipeline/components/jobs-tree'
-import RefreshPipelinePopover from 'uiSrc/pages/rdi/pipeline/components/refresh-pipeline-popover'
-import Tab from 'uiSrc/pages/rdi/pipeline/components/tab'
-import UploadModal from 'uiSrc/pages/rdi/pipeline/components/upload-modal/UploadModal'
+import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
+import JobsTree from 'uiSrc/pages/rdi/pipeline-management/components/jobs-tree'
+import RefreshPipelinePopover from 'uiSrc/pages/rdi/pipeline-management/components/refresh-pipeline-popover'
+import Tab from 'uiSrc/pages/rdi/pipeline-management/components/tab'
+import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { Nullable } from 'uiSrc/utils'
 
@@ -42,7 +42,7 @@ const defaultNavList: INavItem[] = [
 ]
 
 const getSelectedTab = (path: string, rdiInstanceId: string) => {
-  const tabsPath = path?.replace(`/${Pages.rdiPipeline(rdiInstanceId)}/`, '')
+  const tabsPath = path?.replace(`${Pages.rdiPipelineManagement(rdiInstanceId)}/`, '')
 
   if (tabsPath.startsWith(PageNames.rdiPipelinePrepare)) return RdiPipelineTabs.Prepare
   if (tabsPath.startsWith(PageNames.rdiPipelineConfig)) return RdiPipelineTabs.Config

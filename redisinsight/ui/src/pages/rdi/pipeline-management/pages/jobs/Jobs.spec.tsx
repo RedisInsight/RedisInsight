@@ -62,6 +62,39 @@ describe('Jobs', () => {
     expect(screen.getByTestId('rdi-jobs-loading')).toBeInTheDocument()
   })
 
+  it('should push to config page', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
+
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [MOCK_RDI_PIPELINE_JOB2] },
+    };
+    (useFormikContext as jest.Mock).mockReturnValueOnce(mockUseFormikContext)
+
+    render(<Jobs />)
+
+    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/config')
+  })
+
+  it('should not push to config page', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      error: '',
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    const pushMock = jest.fn()
+    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
+
+    render(<Jobs />)
+
+    expect(pushMock).not.toBeCalled()
+  })
+
   it('should render proper link', () => {
     render(<Jobs />)
 

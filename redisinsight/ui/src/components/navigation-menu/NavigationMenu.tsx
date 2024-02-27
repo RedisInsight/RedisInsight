@@ -13,7 +13,10 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
+import {
+  ANALYTICS_ROUTES,
+  TRIGGERED_FUNCTIONS_ROUTES
+} from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -39,6 +42,8 @@ import TriggeredFunctionsSVG from 'uiSrc/assets/img/sidebar/gears.svg'
 import TriggeredFunctionsActiveSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
 import PipelineManagementSVG from 'uiSrc/assets/img/sidebar/pipeline.svg'
 import PipelineManagementActiveSVG from 'uiSrc/assets/img/sidebar/pipeline_active.svg'
+import PipelineStatisticsSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics.svg'
+import PipelineStatisticsActiveSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
@@ -56,6 +61,7 @@ import styles from './styles.module.scss'
 const workbenchPath = `/${PageNames.workbench}`
 const browserPath = `/${PageNames.browser}`
 const pubSubPath = `/${PageNames.pubSub}`
+const pipelineStatisticsPath = `/${PageNames.rdiPipelineStatistics}`
 
 interface INavigations {
   isActivePage: boolean
@@ -99,6 +105,9 @@ const NavigationMenu = () => {
   const isTriggeredFunctionsPath = (activePage: string) => !!TRIGGERED_FUNCTIONS_ROUTES.find(
     ({ path }) => (`/${last(path.split('/'))}` === activePage)
   )
+
+  const isPipelineManagementPath = () =>
+    location.pathname?.startsWith(Pages.rdiPipelineManagement(connectedRdiInstanceId))
 
   const getAdditionPropsForHighlighting = (pageName: string): Omit<HighlightedFeatureProps, 'children'> => {
     if (BUILD_FEATURES[pageName]?.asPageFeature) {
@@ -197,13 +206,26 @@ const NavigationMenu = () => {
 
   const privateRdiRoutes: INavigations[] = [
     {
+      tooltipText: 'Pipeline Statistics',
+      pageName: PageNames.rdiPipelineStatistics,
+      ariaLabel: 'Pipeline Statistics page button',
+      onClick: () => handleGoPage(Pages.rdiPipelineStatistics(connectedRdiInstanceId)),
+      dataTestId: 'pipeline-statistics-page-btn',
+      isActivePage: activePage === pipelineStatisticsPath,
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? PipelineStatisticsActiveSvg : PipelineStatisticsSvg
+      },
+    },
+    {
       tooltipText: 'Pipeline Management',
       pageName: PageNames.rdiPipelineManagement,
       ariaLabel: 'Pipeline Management page button',
-      onClick: () => handleGoPage(Pages.rdiPipelinePrepare(connectedRdiInstanceId)),
+      onClick: () => handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
       dataTestId: 'pipeline-management-page-btn',
-      // TODO: get active by routes
-      isActivePage: true,
+      isActivePage: isPipelineManagementPath(),
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },

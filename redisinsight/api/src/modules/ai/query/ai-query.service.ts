@@ -1,46 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provider';
 import { SendAiQueryMessageDto } from 'src/modules/ai/query/dto/send.ai-query.message.dto';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
-import { convertStringsArrayToObject } from 'src/utils';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { getFullDbContext } from 'src/modules/ai/query/utils/context.util';
+import { AiQueryInternalServerErrorException } from 'src/modules/ai/query/exceptions';
 
 @Injectable()
 export class AiQueryService {
   constructor(
     private readonly aiQueryProvider: AiQueryProvider,
-
-    private readonly databaseConnectionService: DatabaseConnectionService,
+    private readonly databaseClientFactory: DatabaseClientFactory,
   ) {
   }
 
   async getContext(sessionMetadata: SessionMetadata, dto: SendAiQueryMessageDto) {
     try {
-      const context = {};
-      const client = await this.databaseConnectionService.getOrCreateClient({
+      const client = await this.databaseClientFactory.getOrCreateClient({
         sessionMetadata,
         databaseId: dto.databaseId,
         context: ClientContext.AI,
       });
 
-      const indexes = await client.call('ft._list') as string[];
-
-      if (!indexes?.length) {
-        return context;
-      }
-
-      await Promise.all(indexes.map(async (index) => {
-        const attrResponse = convertStringsArrayToObject(await client.call('ft.info', index));
-
-        context[index] = {
-          index_name: index,
-          attributes: attrResponse?.attributes.map((attrs) => convertStringsArrayToObject(attrs)),
-        };
-      }));
-
-      return context;
+      return await getFullDbContext(client);
     } catch (e) {
-      throw e;
+      return {};
     }
   }
 
@@ -48,11 +32,13 @@ export class AiQueryService {
     try {
       const context = await this.getContext(sessionMetadata, dto);
 
-      const aiResponse = await this.aiQueryProvider.generateQuery(sessionMetadata, dto.content, context);
-
-      return aiResponse;
+      return await this.aiQueryProvider.generateQuery(sessionMetadata, dto.content, context);
     } catch (e) {
-      throw e;
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw new AiQueryInternalServerErrorException(e.message);
     }
   }
 }

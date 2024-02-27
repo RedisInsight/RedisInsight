@@ -55,7 +55,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
         return
       }
 
-      history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
+      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
 
     pathnameRef.current = pathname === Pages.rdiPipelineManagement(rdiInstanceId) ? '' : pathname

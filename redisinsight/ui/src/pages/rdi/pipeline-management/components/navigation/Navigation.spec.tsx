@@ -42,8 +42,5 @@ describe('Navigation', () => {
 
     fireEvent.click(screen.getByTestId('rdi-nav-btn-config'))
     expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/config')
-
-    fireEvent.click(screen.getByTestId('rdi-nav-btn-prepare'))
-    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/prepare')
   })
 })

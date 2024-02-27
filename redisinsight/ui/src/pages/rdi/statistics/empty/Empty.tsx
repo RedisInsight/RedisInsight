@@ -29,7 +29,7 @@ const Empty = ({ rdiInstanceId }: Props) => {
           fill
           size="s"
           onClick={() => {
-            history.push(Pages.rdiPipelinePrepare(rdiInstanceId))
+            history.push(Pages.rdiPipelineConfig(rdiInstanceId))
           }}
         >
           Add Pipeline

@@ -56,27 +56,29 @@ export interface IStateRdiTestConnections {
   results: Nullable<ITestConnection>
 }
 
-export interface IConnection {
-  name: string
-  status: string
-  type: string
-  host: string
-  port: number
-  database: string
-  user: string
+export interface IConnections {
+  [key: string]: {
+    host: string;
+    port: number;
+    status: string;
+    type: string;
+    database: string;
+    user: string;
+  }
 }
 
-export interface IDataStream {
-  name: string
-  total: number
-  pending: number
-  inserted: number
-  updated: number
-  deleted: number
-  filtered: number
-  rejected: number
-  deduplicated: number
-  lastArrival: string
+export interface IDataStreams {
+  [key: string]: {
+    total: number
+    pending: number
+    inserted: number
+    updated: number
+    deleted: number
+    filtered: number
+    rejected: number
+    deduplicated: number
+    lastArrival: string
+  }
 }
 
 export interface IProcessingPerformance {
@@ -96,22 +98,49 @@ export interface IRdiPipelineStatus {
   syncMode: string
 }
 
-export interface IClient {
-  id: string
-  addr: string
-  name: string
-  age_sec: number
-  idle_sec: number
-  user: string
+export interface IClients {
+  [key: string]: {
+    addr: string
+    name: string
+    ageSec: number
+    idleSec: number
+    user: string
+  }
 }
 
 export interface IRdiStatistics {
-  connections: IConnection[]
-  dataStreams: IDataStream[]
+  connections: IConnections
+  dataStreams: IDataStreams
   processingPerformance: IProcessingPerformance
   rdiPipelineStatus: IRdiPipelineStatus
-  clients: IClient[]
+  clients: IClients
 }
+
+// export interface IRdiStatistics {
+//   connections: {
+//     loading: boolean
+//     data: IConnections
+//   }
+//   dataStreams: {
+//     loading: boolean
+//     lastRefresh: Nullable<number>
+//     data: IDataStreams
+//   }
+//   processingPerformance: {
+//     loading: boolean
+//     lastRefresh: Nullable<number>
+//     data: IProcessingPerformance
+//   }
+//   rdiPipelineStatus: {
+//     loading: boolean
+//     data: IRdiPipelineStatus
+//   }
+//   clients: {
+//     loading: boolean
+//     lastRefresh: Nullable<number>
+//     data: IClients
+//   }
+// }
 
 export interface IStateRdiPipeline {
   loading: boolean

@@ -1,7 +1,9 @@
 import {
   RdiClientMetadata, RdiJob, RdiPipeline, RdiType, RdiDryRunJobResult,
 } from 'src/modules/rdi/models';
-import { RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
+import {
+  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult, RdiStatisticsResult,
+} from 'src/modules/rdi/dto';
 
 export abstract class RdiClient {
   abstract type: RdiType;
@@ -35,8 +37,14 @@ export abstract class RdiClient {
 
 <<<<<<< Updated upstream
   abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
+<<<<<<< Updated upstream
 =======
   abstract getStatistics(): Promise<object>;
+>>>>>>> Stashed changes
+=======
+
+  // abstract getStatistics(data: RdiStatisticsDto): Promise<RdiStatisticsResult>;
+  abstract getStatistics(): Promise<RdiStatisticsResult>;
 >>>>>>> Stashed changes
 
   abstract disconnect(): Promise<void>;

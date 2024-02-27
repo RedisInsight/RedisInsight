@@ -71,11 +71,16 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
+<<<<<<< Updated upstream
   async testConnections(config: string): Promise<RdiTestConnectionResult> {
     const response = await this.client.post(
       RdiUrl.TestConnections,
       { config },
     );
+=======
+  async getStatistics(): Promise<object> {
+    const response = await this.client.get(RdiUrl.GetStatistics);
+>>>>>>> Stashed changes
     return response.data;
   }
 

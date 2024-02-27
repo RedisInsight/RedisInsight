@@ -3,5 +3,9 @@ export enum RdiUrl {
   GetPipeline = '/pipeline',
   DryRunJob = '/dry-run',
   Deploy = '/deploy',
+<<<<<<< Updated upstream
   TestConnections = '/test-connections',
+=======
+  GetStatistics = '/statistics',
+>>>>>>> Stashed changes
 }

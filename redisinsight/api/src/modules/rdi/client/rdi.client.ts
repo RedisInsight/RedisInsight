@@ -33,7 +33,11 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
+<<<<<<< Updated upstream
   abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
+=======
+  abstract getStatistics(): Promise<object>;
+>>>>>>> Stashed changes
 
   abstract disconnect(): Promise<void>;
 

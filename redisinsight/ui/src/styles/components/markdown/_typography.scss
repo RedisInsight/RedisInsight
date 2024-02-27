@@ -1,4 +1,3 @@
-@import './helpers';
 @import './variables';
 
 h1, h2, h3, h4, h5, h6 {
@@ -13,8 +12,10 @@ hr + h1, hr + h2, hr + h3, hr + h4, hr + h5, hr + h6 {
   margin-top: 0;
 }
 
-p {
-  margin-bottom: ($margin-size-pace * 3 + px);
+p + {
+  p, pre, h1, h2, h3, h4, h5, h6 {
+    margin-top: ($margin-size-pace * 3 + px);
+  }
 }
 
 
@@ -26,13 +27,11 @@ a {
 }
 
 b, strong {
-  @include font;
   letter-spacing: -0.12px;
   color: var(--htmlColor);
 }
 
 em, i {
-  @include font;
   b, strong {
     font-style: italic;
   }

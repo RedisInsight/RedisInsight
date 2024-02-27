@@ -2,8 +2,8 @@ import React from 'react'
 
 const SUGGESTIONS = [
   {
-    inner: (<>How a <b>free Redis Cloud</b> database can solve my use cases</>),
-    query: 'How a free Redis Cloud database can solve my use cases'
+    inner: (<>What is Redis Cloud?</>),
+    query: 'What is Redis Cloud?'
   },
   {
     inner: (<>How to perform <b>real-time searching</b> in Redis</>),

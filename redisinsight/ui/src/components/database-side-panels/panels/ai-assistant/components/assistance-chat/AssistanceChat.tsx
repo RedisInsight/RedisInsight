@@ -14,7 +14,7 @@ import ChatForm from '../chat-form'
 
 import styles from './styles.module.scss'
 
-const Chat = () => {
+const AssistanceChat = () => {
   const { id, messages } = useSelector(aiAssistantChatSelector)
 
   const [progressingMessage, setProgressingMessage] = useState(null)
@@ -23,7 +23,10 @@ const Chat = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!id || messages.length) return
+    if (!id || messages.length) {
+      scrollToBottom('auto')
+      return
+    }
 
     dispatch(getAssistantChatHistoryAction(id, () => scrollToBottom('auto')))
   }, [])
@@ -90,6 +93,7 @@ const Chat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          isLoadingAnswer={!!progressingMessage}
           progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
@@ -103,4 +107,4 @@ const Chat = () => {
   )
 }
 
-export default Chat
+export default AssistanceChat

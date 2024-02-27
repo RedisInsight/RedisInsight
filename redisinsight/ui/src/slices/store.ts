@@ -47,6 +47,7 @@ import rdiInstancesReducer from './rdi/instances'
 import rdiPipelineReducer from './rdi/pipeline'
 import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
+import rdiStatisticsReducer from './rdi/statistics'
 
 export const history = createBrowserHistory()
 
@@ -118,6 +119,7 @@ export const rootReducer = combineReducers({
     pipeline: rdiPipelineReducer,
     dryRun: rdiDryRunJobReducer,
     testConnections: rdiTestConnectionsReducer,
+    statistics: rdiStatisticsReducer,
   })
 })
 

@@ -1,6 +1,7 @@
+import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
-import { EuiBasicTableColumn, EuiIcon } from '@elastic/eui'
+import { formatLongName } from 'uiSrc/utils'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import Table from '../components/table'
@@ -13,6 +14,7 @@ type Connection = {
   database: string
   user: string
 }
+
 const columns: EuiBasicTableColumn<Connection>[] = [
   {
     name: 'Status',
@@ -42,8 +44,12 @@ const columns: EuiBasicTableColumn<Connection>[] = [
   {
     name: 'Host:port',
     field: 'hostPort',
-    truncateText: true,
-    sortable: true
+    sortable: true,
+    render: (hostPort: string) => (
+      <EuiToolTip content={hostPort}>
+        <span>{formatLongName(hostPort, 80, 0, '...')}</span>
+      </EuiToolTip>
+    )
   },
   {
     name: 'Database',

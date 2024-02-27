@@ -20,7 +20,7 @@ import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiS
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { PushElementToListDto } from 'apiSrc/modules/browser/dto'
+import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
 import styles from '../styles.module.scss'
 

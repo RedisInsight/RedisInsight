@@ -2,19 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockRedisNoPermError,
   MockType,
-  mockDatabaseConnectionService,
-  mockIORedisClient,
-  mockIORedisCluster,
-  mockIOClusterNode1,
-  mockIOClusterNode2,
   mockCommonClientMetadata,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
+  mockClusterRedisClient,
 } from 'src/__mocks__';
 import { SlowLogService } from 'src/modules/slow-log/slow-log.service';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { SlowLogArguments, SlowLogCommands } from 'src/modules/slow-log/constants/commands';
 import { SlowLogAnalyticsService } from 'src/modules/slow-log/slow-log-analytics.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 const getSlowLogDto = { count: 100 };
 const mockSlowLog = {
@@ -49,9 +47,10 @@ const mockSlowlogConfigReply = [
 const mockSlowLogReply = [mockLogReply, mockLogReply];
 
 describe('SlowLogService', () => {
+  const standaloneClient = mockStandaloneRedisClient;
+  const clusterClient = mockClusterRedisClient;
   let service: SlowLogService;
-  let analyticsService: SlowLogAnalyticsService;
-  let databaseConnectionService: MockType<DatabaseConnectionService>;
+  let databaseClientFactory: MockType<DatabaseClientFactory>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -61,19 +60,18 @@ describe('SlowLogService', () => {
         EventEmitter2,
         SlowLogAnalyticsService,
         {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();
 
     service = await module.get(SlowLogService);
-    databaseConnectionService = await module.get(DatabaseConnectionService);
-    analyticsService = await module.get(SlowLogAnalyticsService);
+    databaseClientFactory = await module.get(DatabaseClientFactory);
 
-    mockIORedisClient.call.mockResolvedValue(mockSlowLogReply);
-    mockIOClusterNode1.call.mockResolvedValue(mockSlowLogReply);
-    mockIOClusterNode2.call.mockResolvedValue(mockSlowLogReply);
+    clusterClient.call.mockResolvedValue(mockSlowLogReply);
+    clusterClient.nodes.mockReturnValue([standaloneClient, standaloneClient]);
+    standaloneClient.call.mockResolvedValue(mockSlowLogReply);
   });
 
   describe('getSlowLogs', () => {
@@ -86,12 +84,12 @@ describe('SlowLogService', () => {
       expect(res).toEqual([mockSlowLog, mockSlowLog]);
     });
     it('should return slowlogs cluster', async () => {
-      databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
       const res = await service.getSlowLogs(mockCommonClientMetadata, getSlowLogDto);
       expect(res).toEqual([mockSlowLog, mockSlowLog, mockSlowLog, mockSlowLog]);
     });
     it('should proxy HttpException', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw new BadRequestException('error');
       });
       try {
@@ -102,7 +100,7 @@ describe('SlowLogService', () => {
       }
     });
     it('should throw an Forbidden error when command execution failed', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw mockRedisNoPermError;
       });
 
@@ -118,15 +116,15 @@ describe('SlowLogService', () => {
   describe('reset', () => {
     it('should reset slowlogs for standalone', async () => {
       await service.reset(mockCommonClientMetadata);
-      expect(mockIORedisClient.call).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
+      expect(standaloneClient.call).toHaveBeenCalledWith([SlowLogCommands.SlowLog, SlowLogArguments.Reset]);
     });
     it('should reset slowlogs cluster', async () => {
-      databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
       await service.reset(mockCommonClientMetadata);
-      expect(mockIOClusterNode1.call).toHaveBeenCalledWith(SlowLogCommands.SlowLog, SlowLogArguments.Reset);
+      expect(standaloneClient.call).toHaveBeenCalledWith([SlowLogCommands.SlowLog, SlowLogArguments.Reset]);
     });
     it('should proxy HttpException', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw new BadRequestException('error');
       });
 
@@ -138,7 +136,7 @@ describe('SlowLogService', () => {
       }
     });
     it('should throw an Forbidden error when command execution failed', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw mockRedisNoPermError;
       });
 
@@ -153,13 +151,13 @@ describe('SlowLogService', () => {
 
   describe('getConfig', () => {
     it('should get slowlogs config', async () => {
-      mockIORedisClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
+      standaloneClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
 
       const res = await service.getConfig(mockCommonClientMetadata);
       expect(res).toEqual(mockSlowLogConfig);
     });
     it('should get ONLY supported slowlogs config even if there some extra fields in resp', async () => {
-      mockIORedisClient.call.mockResolvedValueOnce([
+      standaloneClient.call.mockResolvedValueOnce([
         ...mockSlowlogConfigReply,
         'slowlog-extra',
         12,
@@ -169,7 +167,7 @@ describe('SlowLogService', () => {
       expect(res).toEqual(mockSlowLogConfig);
     });
     it('should proxy HttpException', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw new BadRequestException('error');
       });
 
@@ -181,7 +179,7 @@ describe('SlowLogService', () => {
       }
     });
     it('should throw an Forbidden error when command execution failed', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw mockRedisNoPermError;
       });
 
@@ -196,27 +194,27 @@ describe('SlowLogService', () => {
 
   describe('updateConfig', () => {
     it('should update slowlogs config (1 field)', async () => {
-      mockIORedisClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
-      mockIORedisClient.call.mockResolvedValueOnce('OK');
+      standaloneClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
+      standaloneClient.call.mockResolvedValueOnce('OK');
 
       const res = await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 128 });
       expect(res).toEqual(mockSlowLogConfig);
-      expect(mockIORedisClient.call).toHaveBeenCalledTimes(2);
+      expect(standaloneClient.call).toHaveBeenCalledTimes(2);
     });
     it('should update slowlogs config (2 fields)', async () => {
-      mockIORedisClient.call
+      standaloneClient.call
         .mockResolvedValueOnce(mockSlowlogConfigReply)
         .mockResolvedValueOnce('OK')
         .mockResolvedValueOnce('OK');
 
       const res = await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
       expect(res).toEqual({ slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
-      expect(mockIORedisClient.call).toHaveBeenCalledTimes(3);
+      expect(standaloneClient.call).toHaveBeenCalledTimes(3);
     });
     it('should throw an error for cluster', async () => {
-      databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
-      databaseConnectionService.getOrCreateClient.mockResolvedValueOnce(mockIORedisCluster);
-      mockIORedisCluster.call.mockResolvedValueOnce(mockSlowlogConfigReply);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
+      databaseClientFactory.getOrCreateClient.mockResolvedValueOnce(clusterClient);
+      clusterClient.call.mockResolvedValueOnce(mockSlowlogConfigReply);
 
       try {
         await service.updateConfig(mockCommonClientMetadata, { slowlogMaxLen: 128, slowlogLogSlowerThan: 1 });
@@ -226,7 +224,7 @@ describe('SlowLogService', () => {
       }
     });
     it('should proxy HttpException', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw new BadRequestException('error');
       });
 
@@ -238,7 +236,7 @@ describe('SlowLogService', () => {
       }
     });
     it('should throw an Forbidden error when command execution failed', async () => {
-      databaseConnectionService.getOrCreateClient.mockImplementationOnce(() => {
+      databaseClientFactory.getOrCreateClient.mockImplementationOnce(() => {
         throw mockRedisNoPermError;
       });
 

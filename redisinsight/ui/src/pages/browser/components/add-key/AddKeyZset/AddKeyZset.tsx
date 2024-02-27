@@ -19,7 +19,7 @@ import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import { INITIAL_ZSET_MEMBER_STATE, IZsetMemberState } from 'uiSrc/pages/browser/modules/key-details/components/zset-details/add-zset-members/AddZsetMembers'
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/dto/z-set.dto'
+import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'
 

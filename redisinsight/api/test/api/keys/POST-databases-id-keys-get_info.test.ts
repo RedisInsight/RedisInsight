@@ -238,8 +238,8 @@ describe('POST /databases/:instanceId/keys/get-info', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           ...testCase,
           checkFn: ({ body }) => {
-            expect(body.ttl).to.eql(undefined);
-            expect(body.length).to.eql(undefined);
+            expect(body.ttl).to.eql(null);
+            expect(body.length).to.eql(null);
             expect(body.size).to.eql(null);
           }
         });

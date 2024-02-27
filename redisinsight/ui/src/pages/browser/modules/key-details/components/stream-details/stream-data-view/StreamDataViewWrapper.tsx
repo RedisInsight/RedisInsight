@@ -22,7 +22,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP, MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP } from '../constants'

@@ -2,8 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
-import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
+import { CommandExecutionStatus, ICliExecResultFromNode } from 'src/modules/cli/dto/cli.dto';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandTelemetryBaseService } from 'src/modules/analytics/command.telemetry.base.service';
 

@@ -1,14 +1,14 @@
-import { Redis, Cluster } from 'ioredis';
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { GetKeyInfoResponse } from 'src/modules/browser/dto';
+import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
+import { RedisClient } from 'src/modules/redis/client';
 
 export class SearchJSON {
   @ApiProperty({
     description: 'Redis client',
   })
   @Expose()
-  client: Redis | Cluster;
+  client: RedisClient;
 
   @ApiProperty({
     description: 'Database id',

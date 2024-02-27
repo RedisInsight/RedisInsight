@@ -1,6 +1,5 @@
 import { isArray, isObject } from 'lodash';
 import { getASCIISafeStringFromBuffer } from 'src/utils/cli-helper';
-import { ReplyError } from 'src/models';
 import { IOutputFormatterStrategy } from '../output-formatter.interface';
 
 export class RawFormatterStrategy implements IOutputFormatterStrategy {

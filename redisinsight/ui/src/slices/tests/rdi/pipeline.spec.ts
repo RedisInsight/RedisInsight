@@ -13,6 +13,8 @@ import reducer, {
   fetchRdiPipeline,
   deployPipelineAction,
   rdiPipelineSelector,
+  fetchRdiPipelineSchema,
+  setPipelineSchema,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
@@ -263,6 +265,51 @@ describe('rdi pipe slice', () => {
           deployPipeline(),
           addErrorNotification(responsePayload as AxiosError),
           deployPipelineFailure()
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchRdiPipelineSchema', () => {
+      it('succeed to fetch data', async () => {
+        const data = { config: 'string' }
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchRdiPipelineSchema('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          setPipelineSchema(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchRdiPipelineSchema('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          setPipelineSchema(null),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

@@ -17,6 +17,7 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
+    schema: { config: { test: {} } },
   }),
 }))
 
@@ -60,7 +61,7 @@ describe('Config', () => {
 
   it('should call setFieldValue with proper values', () => {
     render(<Config />)
-    const fieldName = screen.getByTestId('rdi-config')
+    const fieldName = screen.getByTestId('rdi-monaco-config')
     fireEvent.change(
       fieldName,
       { target: { value: '123' } }

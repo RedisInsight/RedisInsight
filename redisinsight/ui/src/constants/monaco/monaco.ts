@@ -1,4 +1,4 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 export interface MonacoSyntaxLang {
   [key: string]: {
@@ -14,6 +14,9 @@ export enum MonacoLanguage {
   Redis = 'redisLanguage',
   Cypher = 'cypherLanguage'
 }
+
+export const DEFAULT_MONACO_YAML_URI = 'http://example.com/schema-name.json'
+export const DEFAULT_MONACO_FILE_MATCH = '*'
 
 export const MONACO_MANUAL = '// Workbench is the advanced Redis command-line interface that allows to send commands to Redis, read and visualize the replies sent by the server.\n'
   + '// Enter multiple commands at different rows to run them at once.\n'

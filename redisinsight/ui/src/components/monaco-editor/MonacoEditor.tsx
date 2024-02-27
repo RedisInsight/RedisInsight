@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import ReactMonacoEditor, { monaco } from 'react-monaco-editor'
+import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import cx from 'classnames'
 import { EuiButton, EuiIcon } from '@elastic/eui'
 import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
 
 import { Nullable } from 'uiSrc/utils'
-import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
+import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
@@ -30,6 +29,7 @@ export interface CommonProps {
 
 export interface Props extends CommonProps {
   onEditorDidMount?: (editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: typeof monacoEditor) => void
+  onEditorWillMount?: (monaco: typeof monacoEditor) => void
   className?: string
   language: string
 }
@@ -40,6 +40,7 @@ const MonacoEditor = (props: Props) => {
     onApply,
     onDecline,
     onEditorDidMount,
+    onEditorWillMount,
     disabled,
     readOnly,
     isEditable,
@@ -50,10 +51,18 @@ const MonacoEditor = (props: Props) => {
     'data-testid': dataTestId = 'monaco-editor'
   } = props
 
+  let contribution: Nullable<ISnippetController> = null
   const [isEditing, setIsEditing] = useState(!readOnly && !disabled)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
   const { theme } = useContext(ThemeContext)
+
+  useEffect(() =>
+  // componentWillUnmount
+    () => {
+      contribution?.dispose?.()
+    },
+  [])
 
   useEffect(() => {
     monacoObjects.current?.editor.updateOptions({ readOnly: !isEditing && (disabled || readOnly) })
@@ -64,12 +73,40 @@ const MonacoEditor = (props: Props) => {
     monaco: typeof monacoEditor,
   ) => {
     monacoObjects.current = { editor, monaco }
+
+    // hack for exit from snippet mode after click Enter until no answer from monaco authors
+    // https://github.com/microsoft/monaco-editor/issues/2756
+    contribution = editor.getContribution<ISnippetController>('snippetController2')
+
+    editor.onKeyDown(onKeyDownMonaco)
     onEditorDidMount?.(editor, monaco)
   }
 
-  if (monaco?.editor) {
-    monaco.editor.defineTheme(MonacoThemes.Dark, darkTheme)
-    monaco.editor.defineTheme(MonacoThemes.Light, lightTheme)
+  const editorWillMount = (monaco: typeof monacoEditor) => {
+    onEditorWillMount?.(monaco)
+  }
+
+  const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
+    // trigger parameter hints
+    if (e.keyCode === monacoEditor.KeyCode.Enter || e.keyCode === monacoEditor.KeyCode.Space) {
+      onExitSnippetMode()
+    }
+  }
+
+  const onExitSnippetMode = () => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    if (contribution?.isInSnippet?.()) {
+      const { lineNumber = 0, column = 0 } = editor?.getPosition() ?? {}
+      editor.setSelection(new monacoEditor.Selection(lineNumber, column, lineNumber, column))
+      contribution?.cancel?.()
+    }
+  }
+
+  if (monacoEditor?.editor) {
+    monacoEditor.editor.defineTheme(MonacoThemes.Dark, darkTheme)
+    monacoEditor.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
   const monacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
@@ -121,6 +158,7 @@ const MonacoEditor = (props: Props) => {
             options={monacoOptions}
             className={cx(styles.editor, className, { readMode: !isEditing && readOnly })}
             editorDidMount={editorDidMount}
+            editorWillMount={editorWillMount}
             data-testid={dataTestId}
           />
         </div>

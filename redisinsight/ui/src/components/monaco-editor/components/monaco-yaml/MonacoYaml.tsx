@@ -1,30 +1,73 @@
 import React from 'react'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { isNull } from 'lodash'
 
-import { MonacoEditor } from 'uiSrc/components/monaco-editor'
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
+import { MonacoEditor } from 'uiSrc/components/monaco-editor'
+import { Nullable } from 'uiSrc/utils'
+import { DEFAULT_MONACO_FILE_MATCH, DEFAULT_MONACO_YAML_URI } from 'uiSrc/constants'
+import { monacoYamlModel } from './monacoYamlModel'
 
-const MonacoYaml = (props: CommonProps) => {
-  const editorDidMount = (
-    editor: monacoEditor.editor.IStandaloneCodeEditor,
-    monaco: typeof monacoEditor,
-  ) => {
-    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-      validate: true,
-      schemaValidation: 'error',
-      schemaRequest: 'error',
-      trailingCommas: 'error'
+export interface Props extends CommonProps {
+  schema: Nullable<object>
+  uri?: string
+  fileMatch?: string
+}
+
+const MonacoYaml = (props: Props) => {
+  const {
+    schema,
+    uri = DEFAULT_MONACO_YAML_URI,
+    fileMatch = DEFAULT_MONACO_FILE_MATCH,
+    value,
+    onChange,
+    ...rest
+  } = props
+
+  // insert schema work only before monaco will be rendered
+  if (isNull(schema)) {
+    return null
+  }
+
+  const editorWillMount = () => {
+    monacoYamlModel?.update({
+      schemas: [{
+        schema,
+        uri,
+        fileMatch: [fileMatch],
+      }],
     })
-    const messageContribution = editor.getContribution('editor.contrib.messageController')
-    editor.onDidAttemptReadOnlyEdit(() => messageContribution.dispose())
   }
 
   return (
     <MonacoEditor
-      {...props}
+      {...rest}
       language="yaml"
-      className="yaml-monaco-editor"
-      onEditorDidMount={editorDidMount}
+      value={value}
+      onChange={onChange}
+      onEditorWillMount={editorWillMount}
+      options={{
+        hover: {
+          enabled: true,
+        },
+        stickyScroll: {
+          enabled: true,
+          defaultModel: 'foldingProviderModel'
+        },
+        tabSize: 2,
+        insertSpaces: true,
+        renderWhitespace: 'boundary',
+        quickSuggestions: {
+          other: 'inline',
+          comments: true,
+          strings: true,
+        },
+        suggest: {
+          preview: true,
+          showStatusBar: true,
+          showIcons: true,
+          showProperties: true,
+        },
+      }}
     />
   )
 }

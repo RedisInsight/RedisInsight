@@ -1,4 +1,4 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import { FUNCTIONS, KEYWORDS } from 'uiSrc/constants/monaco/cypher/monacoCypher'
 
 export const getCypherCompletionProvider = (): monacoEditor.languages.CompletionItemProvider => ({

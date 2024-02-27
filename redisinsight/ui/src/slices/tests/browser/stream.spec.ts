@@ -72,7 +72,7 @@ import {
   ClaimPendingEntryDto,
   PendingEntryDto,
   UpdateConsumerGroupDto
-} from 'apiSrc/modules/browser/dto/stream.dto'
+} from 'apiSrc/modules/browser/stream/dto'
 import { addErrorNotification, addMessageNotification } from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({

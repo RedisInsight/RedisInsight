@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Redis, Cluster, Command } from 'ioredis';
 import { get } from 'lodash';
 import * as semverCompare from 'node-version-compare';
 import {
-  convertRedisInfoReplyToObject, convertBulkStringsToObject, checkTimestamp, checkKeyspaceNotification,
+  convertRedisInfoReplyToObject, checkTimestamp, checkKeyspaceNotification,
 } from 'src/utils';
 import { RECOMMENDATION_NAMES } from 'src/constants';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { Key } from 'src/modules/database-analysis/models';
 import {
@@ -28,6 +27,8 @@ import {
   RTS_KEYS_FOR_CHECK,
   LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT,
 } from 'src/common/constants';
+import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
+import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 
 @Injectable()
 export class RecommendationProvider {
@@ -38,12 +39,13 @@ export class RecommendationProvider {
    * @param redisClient
    */
   async determineLuaScriptRecommendation(
-    redisClient: Redis,
+    redisClient: RedisClient,
   ): Promise<Recommendation> {
     try {
       const info = convertRedisInfoReplyToObject(
         await redisClient.sendCommand(
-          new Command('info', ['memory'], { replyEncoding: 'utf8' }),
+          ['info', 'memory'],
+          { replyEncoding: 'utf8' },
         ) as string,
       );
 
@@ -91,21 +93,22 @@ export class RecommendationProvider {
    * @param redisClient
    */
   async determineLogicalDatabasesRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
   ): Promise<Recommendation> {
-    if (redisClient.isCluster) {
+    if (redisClient.getConnectionType() === RedisClientConnectionType.CLUSTER) {
       return null;
     }
     try {
       const info = convertRedisInfoReplyToObject(
         await redisClient.sendCommand(
-          new Command('info', ['keyspace'], { replyEncoding: 'utf8' }),
+          ['info', 'keyspace'],
+          { replyEncoding: 'utf8' },
         ) as string,
       );
       const keyspace = get(info, 'keyspace', {});
       const databasesWithKeys = Object.values(keyspace).filter((db) => {
-        const { keys } = convertBulkStringsToObject(db as string, ',', '=');
-        return keys > 0;
+        const { keys } = convertMultilineReplyToObject(db as string, ',', '=');
+        return parseInt(keys, 10) > 0;
       });
       return databasesWithKeys.length > 1 ? { name: RECOMMENDATION_NAMES.AVOID_LOGICAL_DATABASES } : null;
     } catch (err) {
@@ -139,14 +142,13 @@ export class RecommendationProvider {
    * @param redisClient
    */
   async determineIncreaseSetMaxIntsetEntriesRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
     keys: Key[],
   ): Promise<Recommendation> {
     try {
       const [, setMaxIntsetEntries] = await redisClient.sendCommand(
-        new Command('config', ['get', 'set-max-intset-entries'], {
-          replyEncoding: 'utf8',
-        }),
+        ['config', 'get', 'set-max-intset-entries'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       if (!setMaxIntsetEntries) {
@@ -169,14 +171,13 @@ export class RecommendationProvider {
    */
 
   async determineHashHashtableToZiplistRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
     keys: Key[],
   ): Promise<Recommendation> {
     try {
       const [, hashMaxZiplistEntries] = await redisClient.sendCommand(
-        new Command('config', ['get', 'hash-max-ziplist-entries'], {
-          replyEncoding: 'utf8',
-        }),
+        ['config', 'get', 'hash-max-ziplist-entries'],
+        { replyEncoding: 'utf8' },
       ) as string[];
       const hashMaxZiplistEntriesNumber = parseInt(hashMaxZiplistEntries, 10);
       const bigHash = keys.find((key) => key.type === RedisDataType.Hash && key.length > hashMaxZiplistEntriesNumber);
@@ -251,14 +252,13 @@ export class RecommendationProvider {
  */
 
   async determineZSetHashtableToZiplistRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
     keys: Key[],
   ): Promise<Recommendation> {
     try {
       const [, zSetMaxZiplistEntries] = await redisClient.sendCommand(
-        new Command('config', ['get', 'zset-max-ziplist-entries'], {
-          replyEncoding: 'utf8',
-        }),
+        ['config', 'get', 'zset-max-ziplist-entries'],
+        { replyEncoding: 'utf8' },
       ) as string[];
       const zSetMaxZiplistEntriesNumber = parseInt(zSetMaxZiplistEntries, 10);
       const bigHash = keys.find((key) => key.type === RedisDataType.ZSet && key.length > zSetMaxZiplistEntriesNumber);
@@ -294,12 +294,13 @@ export class RecommendationProvider {
  */
 
   async determineConnectionClientsRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
   ): Promise<Recommendation> {
     try {
       const info = convertRedisInfoReplyToObject(
         await redisClient.sendCommand(
-          new Command('info', ['clients'], { replyEncoding: 'utf8' }),
+          ['info', 'clients'],
+          { replyEncoding: 'utf8' },
         ) as string,
       );
       const connectedClients = parseInt(get(info, 'clients.connected_clients'), 10);
@@ -340,12 +341,13 @@ export class RecommendationProvider {
    */
 
   async determineRedisVersionRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
   ): Promise<Recommendation> {
     try {
       const info = convertRedisInfoReplyToObject(
         await redisClient.sendCommand(
-          new Command('info', ['server'], { replyEncoding: 'utf8' }),
+          ['info', 'server'],
+          { replyEncoding: 'utf8' },
         ) as string,
       );
       const version = get(info, 'server.redis_version');
@@ -364,7 +366,7 @@ export class RecommendationProvider {
    */
 
   async determineSetPasswordRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
   ): Promise<Recommendation> {
     if (await this.checkAuth(redisClient)) {
       return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
@@ -372,7 +374,8 @@ export class RecommendationProvider {
 
     try {
       const users = await redisClient.sendCommand(
-        new Command('acl', ['list'], { replyEncoding: 'utf8' }),
+        ['acl', 'list'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       const nopassUser = users.some((user) => user.split(' ')[3] === 'nopass');
@@ -419,12 +422,12 @@ export class RecommendationProvider {
    */
   // eslint-disable-next-line
   async determineSearchIndexesRecommendation(
-    redisClient: Redis,
+    redisClient: RedisClient,
     keys: Key[],
-    client: Redis | Cluster,
+    client: RedisClient,
   ): Promise<Recommendation> {
     try {
-      if (client.isCluster) {
+      if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
         const res = await this.determineSearchIndexesForCluster(keys, client);
         return res ? { name: RECOMMENDATION_NAMES.SEARCH_INDEXES, params: { keys: [res] } } : null;
       }
@@ -436,11 +439,9 @@ export class RecommendationProvider {
     }
   }
 
-  private async checkAuth(redisClient: Redis | Cluster): Promise<boolean> {
+  private async checkAuth(redisClient: RedisClient): Promise<boolean> {
     try {
-      await redisClient.sendCommand(
-        new Command('auth', ['pass']),
-      );
+      await redisClient.sendCommand(['auth', 'pass']);
     } catch (err) {
       if (err.message.includes('Client sent AUTH, but no password is set')) {
         return true;
@@ -449,7 +450,7 @@ export class RecommendationProvider {
     return false;
   }
 
-  private async determineSearchIndexesForCluster(keys: Key[], client: Redis | Cluster): Promise<RedisString> {
+  private async determineSearchIndexesForCluster(keys: Key[], client: RedisClient): Promise<RedisString> {
     let processedKeysNumber = 0;
     let keyName;
     let sortedSetNumber = 0;
@@ -462,10 +463,12 @@ export class RecommendationProvider {
         processedKeysNumber += 1;
       } else {
         const sortedSetMember = await client.sendCommand(
-          new Command('zrange', [keys[processedKeysNumber].name, 0, 0], { replyEncoding: 'utf8' }),
+          ['zrange', keys[processedKeysNumber].name, 0, 0],
+          { replyEncoding: 'utf8' },
         ) as string[];
         const keyType = await client.sendCommand(
-          new Command('type', [sortedSetMember[0]], { replyEncoding: 'utf8' }),
+          ['type', sortedSetMember[0]],
+          { replyEncoding: 'utf8' },
         ) as string;
         if (keyType === RedisDataType.JSON || keyType === RedisDataType.Hash) {
           keyName = keys[processedKeysNumber].name;
@@ -477,21 +480,24 @@ export class RecommendationProvider {
     return keyName;
   }
 
-  private async determineSearchIndexesForStandalone(keys: Key[], redisClient: Redis): Promise<RedisString> {
+  private async determineSearchIndexesForStandalone(keys: Key[], redisClient: RedisClient): Promise<RedisString> {
     const sortedSets = keys
       .filter(({ type }) => type === RedisDataType.ZSet)
       .slice(0, 100);
-    const res = await redisClient.pipeline(sortedSets.map(({ name }) => ([
-      'zrange',
-      name,
-      0,
-      0,
-    ]))).exec();
 
-    const types = await redisClient.pipeline(res.map(([, member]) => ([
-      'type',
-      member,
-    ]))).exec();
+    const res = await redisClient.sendPipeline(
+      sortedSets.map(({ name }) => ([
+        'zrange',
+        name,
+        0,
+        0,
+      ])),
+    );
+
+    const types = await redisClient.sendPipeline(
+      res.map(([, member]) => (['type', member[0]])),
+      { replyEncoding: 'utf8' },
+    );
 
     const keyIndex = types.findIndex(([, type]) => type === RedisDataType.JSON || type === RedisDataType.Hash);
 
@@ -505,7 +511,7 @@ export class RecommendationProvider {
    */
 
   async determineRTSRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
     keys: Key[],
   ): Promise<Recommendation> {
     try {
@@ -522,7 +528,8 @@ export class RecommendationProvider {
         } else {
           const [, membersArray] = await redisClient.sendCommand(
             // get first member-score pair
-            new Command('zscan', [keys[processedKeysNumber].name, '0', 'COUNT', 2], { replyEncoding: 'utf8' }),
+            ['zscan', keys[processedKeysNumber].name, '0', 'COUNT', 2],
+            { replyEncoding: 'utf8' },
           ) as string[];
           if (checkTimestamp(membersArray[0]) || checkTimestamp(membersArray[1].toString())) {
             timeSeriesKey = keys[processedKeysNumber].name;
@@ -546,7 +553,7 @@ export class RecommendationProvider {
    */
 
   async determineLuaToFunctionsRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
     libraries?: string[],
   ): Promise<Recommendation> {
     if (libraries?.length) {
@@ -556,7 +563,8 @@ export class RecommendationProvider {
     try {
       const info = convertRedisInfoReplyToObject(
         await redisClient.sendCommand(
-          new Command('info', ['memory'], { replyEncoding: 'utf8' }),
+          ['info', 'memory'],
+          { replyEncoding: 'utf8' },
         ) as string,
       );
 
@@ -578,7 +586,7 @@ export class RecommendationProvider {
    */
 
   async determineFunctionsWithKeyspaceRecommendation(
-    redisClient: Redis | Cluster,
+    redisClient: RedisClient,
     libraries?: string[],
   ): Promise<Recommendation> {
     if (libraries?.length) {
@@ -587,7 +595,8 @@ export class RecommendationProvider {
 
     try {
       const info = await redisClient.sendCommand(
-        new Command('CONFIG', ['GET', 'notify-keyspace-events'], { replyEncoding: 'utf8' }),
+        ['CONFIG', 'GET', 'notify-keyspace-events'],
+        { replyEncoding: 'utf8' },
       );
 
       return checkKeyspaceNotification(info[1])

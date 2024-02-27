@@ -3,7 +3,7 @@ import {
   GetStreamEntriesDto,
   StreamEntryDto,
   StreamEntryFieldDto,
-} from 'src/modules/browser/dto/stream.dto';
+} from 'src/modules/browser/stream/dto';
 import { SortOrder } from 'src/constants';
 import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 

@@ -9,7 +9,7 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { bufferToString } from 'uiSrc/utils'
-import { ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
 import ConsumersView, { Props as ConsumersViewProps } from './ConsumersView'
 import ConsumersViewWrapper, { Props } from './ConsumersViewWrapper'
 

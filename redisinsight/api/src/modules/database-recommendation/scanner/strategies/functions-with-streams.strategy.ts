@@ -1,10 +1,9 @@
-import { Command } from 'ioredis';
 import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/dto';
+import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { isTriggeredAndFunctionsModule } from 'src/utils';
 
 export class FunctionsWithStreamsStrategy extends AbstractRecommendationStrategy {
@@ -29,7 +28,8 @@ export class FunctionsWithStreamsStrategy extends AbstractRecommendationStrategy
 
     if (isTriggeredAndFunctionsModule(modules)) {
       const libraries = await data.client.sendCommand(
-        new Command('TFUNCTION', ['LIST'], { replyEncoding: 'utf8' }),
+        ['TFUNCTION', 'LIST'],
+        { replyEncoding: 'utf8' },
       ) as string[];
 
       if (libraries.length) {

@@ -35,7 +35,7 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { GetSetMembersResponse } from 'apiSrc/modules/browser/dto/set.dto'
+import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import styles from './styles.module.scss'
 
 const suffix = '_set'

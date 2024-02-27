@@ -9,5 +9,5 @@ export interface IRedirectionInfo {
 }
 
 export interface IOutputFormatterStrategy {
-  format(reply: any, redirectedTo?: IRedirectionInfo): any;
+  format(reply: any): any;
 }

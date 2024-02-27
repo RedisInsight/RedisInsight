@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render } from 'uiSrc/utils/test-utils'
-import { PendingEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { PendingEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import MessagesView, { Props } from './MessagesView'
 
 const mockedProps = mock<Props>()

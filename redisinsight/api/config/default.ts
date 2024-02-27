@@ -72,6 +72,9 @@ export default {
     migrationsRun: process.env.RI_DB_MIGRATIONS ? process.env.RI_DB_MIGRATIONS === 'true' : true,
   },
   redis_clients: {
+    forceStrategy: process.env.RI_REDIS_CLIENTS_FORCE_STRATEGY,
+    idleThreshold: parseInt(process.env.RI_REDIS_CLIENTS_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1h
+    syncInterval: parseInt(process.env.RI_REDIS_CLIENTS_SYNC_INTERVAL, 10) || 1000 * 60, // 1m
     idleSyncInterval: parseInt(process.env.RI_CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
     maxIdleThreshold: parseInt(process.env.RI_CLIENTS_MAX_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1hr
     retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 3,

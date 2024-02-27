@@ -1,97 +1,31 @@
-import IORedis from 'ioredis';
+import { mockRedisKeysUtilModule } from 'src/__mocks__/redis-utils';
+
+jest.doMock('src/modules/redis/utils/keys.util', mockRedisKeysUtilModule);
+
 import { omit } from 'lodash';
 import {
   mockSocket,
-  mockBulActionsAnalyticsService,
+  mockBulkActionsAnalytics,
+  mockCreateBulkActionDto,
+  mockBulkActionFilter,
+  mockStandaloneRedisClient,
+  mockClusterRedisClient,
+  generateMockBulkActionSummary,
+  generateMockBulkActionProgress,
+  generateMockBulkActionErrors,
+  MockType,
+  mockBulkActionOverviewMatcher,
 } from 'src/__mocks__';
 import {
   DeleteBulkActionSimpleRunner,
 } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
-import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
-import { BulkActionProgress } from 'src/modules/bulk-actions/models/bulk-action-progress';
-import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
-import * as Utils from 'src/modules/database/utils/database.total.util';
+import { BulkActionStatus } from 'src/modules/bulk-actions/constants';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 
-const mockExec = jest.fn();
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
-nodeClient.pipeline = jest.fn(() => ({
-  exec: mockExec,
-}));
-nodeClient.options = { db: 0 };
-
-const clusterClient = Object.create(IORedis.Cluster.prototype);
-clusterClient.nodes = jest.fn();
-clusterClient.sendCommand = jest.fn();
-
-const mockBulkActionFilter = new BulkActionFilter();
-
-const mockCreateBulkActionDto = {
-  id: 'bulk-action-id',
-  databaseId: 'database-id',
-  type: BulkActionType.Delete,
-};
-
-const mockOverview = {
-  ...mockCreateBulkActionDto,
-  duration: jasmine.any(Number),
-  filter: { match: '*', type: null },
-  progress: {
-    scanned: 0,
-    total: 0,
-  },
-  status: 'completed',
-  summary: {
-    failed: 0,
-    processed: 0,
-    succeed: 0,
-    errors: [],
-  },
-};
-
-let bulkAction;
+let bulkAction: BulkAction;
 let mockRunner;
-let mockSummary;
-let mockProgress;
-
-const mockKey = 'mockedKey';
-const mockKeyBuffer = Buffer.from(mockKey);
-const mockRESPError = 'Reply Error: NOPERM for delete.';
-const mockRESPErrorBuffer = Buffer.from(mockRESPError);
-
-const mockGetTotalResponse_1: number = 10000;
-
-const generateErrors = (amount: number, raw = true): any => (
-  new Array(amount).fill(1)
-).map(
-  () => ({
-    key: raw ? mockKeyBuffer : mockKey,
-    error: raw ? mockRESPErrorBuffer : mockRESPError,
-  }),
-);
-
-const generateProgress = () => {
-  const progress = new BulkActionProgress();
-
-  progress['total'] = 1_000_000;
-  progress['scanned'] = 1_000_000;
-
-  return progress;
-};
-
-const generateSummary = () => {
-  const summary = new BulkActionSummary();
-
-  summary['processed'] = 1_000_000;
-  summary['succeed'] = 900_000;
-  summary['failed'] = 100_000;
-  summary['errors'] = generateErrors(500);
-
-  return summary;
-};
+let analytics: MockType<BulkActionsAnalytics>;
 
 describe('AbstractBulkActionSimpleRunner', () => {
   beforeEach(() => {
@@ -103,20 +37,17 @@ describe('AbstractBulkActionSimpleRunner', () => {
       mockCreateBulkActionDto.type,
       mockBulkActionFilter,
       mockSocket,
-      mockBulActionsAnalyticsService,
+      mockBulkActionsAnalytics() as any,
     );
+
+    analytics = bulkAction['analytics'] as unknown as MockType<BulkActionsAnalytics>;
   });
 
   describe('prepare', () => {
-    beforeEach(() => {
-      jest.spyOn(Utils, 'getTotal').mockResolvedValue(mockGetTotalResponse_1);
-      clusterClient.nodes = jest.fn().mockReturnValue([nodeClient, nodeClient]);
-    });
-
     it('should generate single runner for standalone', async () => {
       expect(bulkAction['runners']).toEqual([]);
 
-      await bulkAction.prepare(nodeClient, DeleteBulkActionSimpleRunner);
+      await bulkAction.prepare(mockStandaloneRedisClient, DeleteBulkActionSimpleRunner);
 
       expect(bulkAction['status']).toEqual(BulkActionStatus.Ready);
       expect(bulkAction['runners'].length).toEqual(1);
@@ -124,9 +55,10 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(bulkAction['runners'][0]['progress']['total']).toEqual(10_000);
     });
     it('should generate 2 runners for cluster with 2 master nodes', async () => {
+      mockClusterRedisClient.nodes.mockResolvedValueOnce([mockStandaloneRedisClient, mockStandaloneRedisClient]);
       expect(bulkAction['runners']).toEqual([]);
 
-      await bulkAction.prepare(clusterClient, DeleteBulkActionSimpleRunner);
+      await bulkAction.prepare(mockClusterRedisClient, DeleteBulkActionSimpleRunner);
 
       expect(bulkAction['status']).toEqual(BulkActionStatus.Ready);
       expect(bulkAction['runners'].length).toEqual(2);
@@ -138,19 +70,19 @@ describe('AbstractBulkActionSimpleRunner', () => {
     it('should fail when bulk action in inappropriate state', async () => {
       try {
         bulkAction['status'] = BulkActionStatus.Ready;
-        await bulkAction.prepare(nodeClient, DeleteBulkActionSimpleRunner);
+        await bulkAction.prepare(mockStandaloneRedisClient, DeleteBulkActionSimpleRunner);
         fail();
       } catch (e) {
         expect(e.message).toEqual(`Unable to prepare bulk action with "${BulkActionStatus.Ready}" status`);
       }
     });
   });
+
   describe('start', () => {
     let runnerRunSpy;
     beforeEach(() => {
-      mockRunner = new DeleteBulkActionSimpleRunner(bulkAction, nodeClient);
+      mockRunner = new DeleteBulkActionSimpleRunner(bulkAction, mockStandaloneRedisClient);
       runnerRunSpy = jest.spyOn(mockRunner, 'run');
-      nodeClient.sendCommand.mockResolvedValue(10_000);
     });
 
     it('should throw an error when status is not READY', async () => {
@@ -242,11 +174,15 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(bulkAction.getStatus()).toEqual(BulkActionStatus.Failed);
     });
   });
+
   describe('getOverview', () => {
+    let mockSummary;
+    let mockProgress;
+
     beforeEach(() => {
-      mockSummary = generateSummary();
-      mockProgress = generateProgress();
-      mockRunner = new DeleteBulkActionSimpleRunner(bulkAction, nodeClient);
+      mockSummary = generateMockBulkActionSummary();
+      mockProgress = generateMockBulkActionProgress();
+      mockRunner = new DeleteBulkActionSimpleRunner(bulkAction, mockStandaloneRedisClient);
       mockRunner['progress'] = mockProgress;
       mockRunner['summary'] = mockSummary;
       bulkAction['status'] = BulkActionStatus.Completed;
@@ -269,7 +205,7 @@ describe('AbstractBulkActionSimpleRunner', () => {
         processed: 1_000_000,
         succeed: 900_000,
         failed: 100_000,
-        errors: generateErrors(500, false),
+        errors: generateMockBulkActionErrors(500, false),
       });
     });
     it('should return overview for cluster', async () => {
@@ -289,10 +225,11 @@ describe('AbstractBulkActionSimpleRunner', () => {
         processed: 3_000_000,
         succeed: 2_700_000,
         failed: 300_000,
-        errors: generateErrors(500, false),
+        errors: generateMockBulkActionErrors(500, false),
       });
     });
   });
+
   describe('setStatus', () => {
     const testCases = [
       { input: BulkActionStatus.Completed, affect: true },
@@ -319,17 +256,37 @@ describe('AbstractBulkActionSimpleRunner', () => {
         }
       });
     });
+
+    const currentStatusTestCases = [
+      { input: BulkActionStatus.Completed, ignore: true },
+      { input: BulkActionStatus.Failed, ignore: true },
+      { input: BulkActionStatus.Aborted, ignore: true },
+      { input: BulkActionStatus.Initialized, ignore: false },
+      { input: BulkActionStatus.Preparing, ignore: false },
+      { input: BulkActionStatus.Ready, ignore: false },
+    ];
+
+    currentStatusTestCases.forEach((testCase) => {
+      it(`should ${testCase.ignore ? 'not' : ''} change state from ${testCase.input}`, () => {
+        expect(bulkAction['status']).toEqual(BulkActionStatus.Initialized);
+        bulkAction.setStatus(testCase.input);
+        expect(bulkAction['status']).toEqual(testCase.input);
+
+        bulkAction.setStatus(BulkActionStatus.Running);
+
+        if (testCase.ignore) {
+          expect(bulkAction['status']).toEqual(testCase.input);
+        } else {
+          expect(bulkAction['status']).toEqual(BulkActionStatus.Running);
+        }
+      });
+    });
   });
+
   describe('sendOverview', () => {
     let sendOverviewSpy;
-    let sendActionSucceedSpy;
-    let sendActionFailedSpy;
-    let sendActionStoppedSpy;
 
     beforeEach(() => {
-      sendActionSucceedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionSucceed');
-      sendActionFailedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionFailed');
-      sendActionStoppedSpy = jest.spyOn(bulkAction['analyticsService'], 'sendActionStopped');
       sendOverviewSpy = jest.spyOn(bulkAction, 'sendOverview');
     });
 
@@ -354,28 +311,28 @@ describe('AbstractBulkActionSimpleRunner', () => {
       bulkAction.sendOverview();
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
-      expect(sendActionFailedSpy).not.toHaveBeenCalled();
-      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
-      expect(sendActionSucceedSpy).toHaveBeenCalledWith(mockOverview);
+      expect(analytics.sendActionFailed).not.toHaveBeenCalled();
+      expect(analytics.sendActionStopped).not.toHaveBeenCalled();
+      expect(analytics.sendActionSucceed).toHaveBeenCalledWith(mockBulkActionOverviewMatcher);
     });
 
     it('Should call sendActionFailed', () => {
       mockSocket.emit.mockReturnValue();
 
       bulkAction['status'] = BulkActionStatus.Failed;
-      bulkAction['error'] = 'some error';
+      bulkAction['error'] = new Error('some error');
 
       bulkAction.sendOverview();
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
-      expect(sendActionSucceedSpy).not.toHaveBeenCalled();
-      expect(sendActionStoppedSpy).not.toHaveBeenCalled();
-      expect(sendActionFailedSpy).toHaveBeenCalledWith(
+      expect(analytics.sendActionSucceed).not.toHaveBeenCalled();
+      expect(analytics.sendActionStopped).not.toHaveBeenCalled();
+      expect(analytics.sendActionFailed).toHaveBeenCalledWith(
         {
-          ...mockOverview,
+          ...mockBulkActionOverviewMatcher,
           status: 'failed',
         },
-        'some error',
+        new Error('some error'),
       );
     });
 
@@ -387,16 +344,17 @@ describe('AbstractBulkActionSimpleRunner', () => {
       bulkAction.sendOverview();
 
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
-      expect(sendActionSucceedSpy).not.toHaveBeenCalled();
-      expect(sendActionFailedSpy).not.toHaveBeenCalled();
-      expect(sendActionStoppedSpy).toHaveBeenCalledWith(
+      expect(analytics.sendActionSucceed).not.toHaveBeenCalled();
+      expect(analytics.sendActionFailed).not.toHaveBeenCalled();
+      expect(analytics.sendActionStopped).toHaveBeenCalledWith(
         {
-          ...mockOverview,
+          ...mockBulkActionOverviewMatcher,
           status: 'aborted',
         },
       );
     });
   });
+
   describe('Other', () => {
     it('getters', () => {
       expect(bulkAction.getSocket()).toEqual(bulkAction['socket']);

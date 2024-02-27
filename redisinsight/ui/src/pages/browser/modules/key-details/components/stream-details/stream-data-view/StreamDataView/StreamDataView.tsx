@@ -15,7 +15,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { KeyTypes, SortOrder } from 'uiSrc/constants'
 import VirtualGrid from 'uiSrc/components/virtual-grid'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { StreamEntryDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
 

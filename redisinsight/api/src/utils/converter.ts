@@ -2,14 +2,6 @@ import {
   chunk, isInteger, isString, isNumber, isNaN,
 } from 'lodash';
 
-export const convertStringsArrayToObject = (input: string[]): { [key: string]: any } => chunk(
-  input,
-  2,
-).reduce((prev: any, current: string[]) => {
-  const [key, value] = current;
-  return { ...prev, [key.toLowerCase()]: value };
-}, {});
-
 export const convertIntToSemanticVersion = (input: number): string => {
   const separator = '.';
   try {

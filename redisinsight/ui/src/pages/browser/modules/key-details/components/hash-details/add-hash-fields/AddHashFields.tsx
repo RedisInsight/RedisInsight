@@ -22,7 +22,8 @@ import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiS
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import { stringToBuffer } from 'uiSrc/utils'
-import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
+import { AddFieldsToHashDto } from 'apiSrc/modules/browser/hash/dto'
+import styles from '../styles.module.scss'
 
 export interface Props {
   closePanel: (isCancelled?: boolean) => void

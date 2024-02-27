@@ -23,7 +23,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RangeFilter from 'uiSrc/components/range-filter'
-import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/dto/stream.dto'
+import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/stream/dto'
 
 import ConsumersViewWrapper from '../consumers-view'
 import GroupsViewWrapper from '../groups-view'

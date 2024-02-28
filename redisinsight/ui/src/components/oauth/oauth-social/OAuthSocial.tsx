@@ -29,7 +29,7 @@ export enum OAuthSocialType {
 const actionsType: Record<OAuthSocialType, OAuthSocialAction> = {
   [OAuthSocialType.Create]: OAuthSocialAction.Create,
   [OAuthSocialType.Autodiscovery]: OAuthSocialAction.Import,
-  [OAuthSocialType.SignIn]: OAuthSocialAction.Create,
+  [OAuthSocialType.SignIn]: OAuthSocialAction.SignIn,
 }
 
 interface Props {

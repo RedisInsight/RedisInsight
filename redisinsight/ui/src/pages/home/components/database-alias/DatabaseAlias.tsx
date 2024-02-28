@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import { useHistory } from 'react-router'
 
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Nullable, getDbIndex } from 'uiSrc/utils'
@@ -34,7 +33,8 @@ import {
   setConnectedInstanceId
 } from 'uiSrc/slices/instances/instances'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
-import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { appContextSelector, resetRdiContext, setAppContextInitialState } from 'uiSrc/slices/app/context'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -87,6 +87,9 @@ const DatabaseAlias = (props: Props) => {
   }
 
   const connectToInstance = () => {
+    // reset rdi context
+    dispatch(resetRdiContext())
+
     if (contextInstanceId && contextInstanceId !== id) {
       dispatch(resetKeys())
       dispatch(setAppContextInitialState())

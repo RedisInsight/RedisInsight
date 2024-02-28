@@ -1,4 +1,4 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import { first, isEmpty, isUndefined, reject, without } from 'lodash'
 import { decode } from 'html-entities'
 import { ICommands } from 'uiSrc/constants'

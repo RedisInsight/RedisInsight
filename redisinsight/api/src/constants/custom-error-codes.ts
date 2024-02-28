@@ -37,16 +37,19 @@ export enum CustomErrorCodes {
   // General database errors [11200, 11299]
   DatabaseAlreadyExists = 11_200,
 
-  // AI errors [11300, 11399]
-  ConvAiInternalServerError = 11_300,
-  ConvAiUnauthorized = 11_301,
-  ConvAiForbidden = 11_302,
-  ConvAiBadRequest = 11_303,
-  ConvAiNotFound = 11_304,
+  // RDI errors [11300, 11399]
+  RdiDeployPipelineFailure = 11_301,
 
-  QueryAiInternalServerError = 11_351,
-  QueryAiUnauthorized = 11_351,
-  QueryAiForbidden = 11_352,
-  QueryAiBadRequest = 11_353,
-  QueryAiNotFound = 11_354,
+  // AI errors [11400, 11499]
+  ConvAiInternalServerError = 11_400,
+  ConvAiUnauthorized = 11_401,
+  ConvAiForbidden = 11_402,
+  ConvAiBadRequest = 11_403,
+  ConvAiNotFound = 11_404,
+
+  QueryAiInternalServerError = 11_451,
+  QueryAiUnauthorized = 11_451,
+  QueryAiForbidden = 11_452,
+  QueryAiBadRequest = 11_453,
+  QueryAiNotFound = 11_454,
 }

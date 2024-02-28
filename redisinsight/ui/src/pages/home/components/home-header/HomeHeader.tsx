@@ -120,8 +120,8 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
         className={styles.addInstanceBtn}
         data-testid="add-redis-database-short"
       >
-        <span className={cx('eui-showFor--s', 'eui-showFor--xs')}>+ ADD DATABASE</span>
-        <span className={cx('eui-hideFor--s', 'eui-hideFor--xs')}>+ ADD REDIS DATABASE</span>
+        <span className={cx('eui-showFor--s', 'eui-showFor--xs')}>+ DATABASE</span>
+        <span className={cx('eui-hideFor--s', 'eui-hideFor--xs')}>+ REDIS DATABASE</span>
       </EuiButton>
     </>
   )

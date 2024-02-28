@@ -1,0 +1,109 @@
+$breakpoint-m: 1150px;
+$breakpoint-l: 1400px;
+
+.tooltipColumnName {
+  max-width: 370px !important;
+  * {
+    line-height: 1.19;
+    font-size: 14px !important;
+    &:not(:global(.euiToolTip__title)) {
+      font-weight: 300 !important;
+    }
+  }
+}
+
+.tooltipAnchorColumnName {
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.tooltipColumnNameText {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  vertical-align: top;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: inherit;
+
+  &.withDb {
+    max-width: 89%;
+
+    @media (min-width: $breakpoint-m) {
+      max-width: 92%;
+    }
+
+    @media (min-width: $breakpoint-l) {
+      max-width: 95%;
+    }
+  }
+}
+
+.columnModules {
+  height: 40px;
+  padding-right: 0 !important;
+}
+
+.tooltipLogo {
+  width: 88px !important;
+  height: 18px !important;
+}
+
+.noSearchResults {
+  display: flex;
+
+  height: calc(100vh - 278px);
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tableMsgTitle {
+  font-size: 18px;
+  margin-bottom: 12px;
+  height: 24px;
+  color: var(--htmlColor) !important;
+}
+
+.columnNew {
+  padding: 0 !important;
+
+  .euiFlexItem {
+    margin: 0 !important;
+  }
+}
+
+.newStatus {
+  background-color: var(--euiColorPrimary) !important;
+  cursor: pointer;
+  width: 11px !important;
+  min-width: 11px !important;
+  height: 11px !important;
+  border-radius: 6px;
+}
+
+.newStatusAnchor {
+  margin-top: 20px;
+  margin-left: -19px;
+  position: absolute;
+}
+
+.container {
+  // Database alias column
+  height: 100%;
+  tr > th:nth-child(2),
+  tr > td:nth-child(2) {
+    padding-left: 5px !important;
+  }
+}
+
+.cloudIcon {
+  :global {
+    path {
+      fill: var(--euiTextSubduedColor);
+    }
+  }
+}

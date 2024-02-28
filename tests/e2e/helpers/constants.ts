@@ -74,6 +74,7 @@ export enum ResourcePath {
     RedisSentinel = '/redis-sentinel',
     ClusterDetails = '/cluster-details',
     SyncFeatures = '/features/sync',
+    Rdi = '/rdi'
 }
 
 export enum ExploreTabs {
@@ -85,5 +86,15 @@ export enum Compatibility {
     SearchAndQuery  = 'search',
     Json = 'json',
     TimeSeries = 'time-series'
+}
+
+export enum RedisOverviewPage {
+    DataBase  = 'My Redis databases',
+    Rdi = 'My RDI instances',
+}
+
+export enum TextConnectionSection {
+    Success  = 'success',
+    Failed = 'failed',
 }
 

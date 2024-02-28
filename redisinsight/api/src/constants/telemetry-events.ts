@@ -85,6 +85,11 @@ export enum TelemetryEvents {
 
   // Insights
   InsightsRecommendationGenerated = 'INSIGHTS_RECOMMENDATION_GENERATED',
+
+  // RDI
+  RdiInstanceDeleted = 'RDI_INSTANCE_DELETED',
+  RdiPipelineDeploymentSucceeded = 'RDI_PIPELINE_DEPLOYMENT_SUCCEEDED',
+  RdiPipelineDeploymentFailed = 'RDI_PIPELINE_DEPLOYMENT_FAILED',
 }
 
 export enum CommandType {

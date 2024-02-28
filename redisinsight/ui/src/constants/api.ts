@@ -139,6 +139,15 @@ enum ApiEndpoints {
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',
+
+  RDI_INSTANCES = 'rdi',
+  RDI_PIPELINE = 'pipeline',
+  RDI_PIPELINE_SCHEMA = 'pipeline/schema',
+  RDI_DEPLOY_PIPELINE = 'pipeline/deploy',
+  RDI_TEST_CONNECTIONS = 'pipeline/test-connections',
+  RDI_PIPELINE_STRATEGIES = 'pipeline/strategies',
+  RDI_PIPELINE_TEMPLATE = 'pipeline/template',
+  RDI_STATISTICS = 'statistics',
 }
 
 export enum CustomHeaders {

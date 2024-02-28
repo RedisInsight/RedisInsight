@@ -10,12 +10,13 @@ import MarkdownToJsxString
 
 export interface Props {
   children: string
+  onMessageRendered?: () => void
 }
 
 const RedisCodeBlock = (props: any) => (<Code {...props} params="[executable=false]" />)
 
 const MarkdownMessage = (props: Props) => {
-  const { children } = props
+  const { children, onMessageRendered } = props
   const components: any = { Code: RedisCodeBlock, CloudLink, ExternalLink }
   const [content, setContent] = useState('')
 
@@ -31,6 +32,12 @@ const MarkdownMessage = (props: Props) => {
 
     formatContent()
   }, [children])
+
+  useEffect(() => {
+    if (content) {
+      onMessageRendered?.()
+    }
+  }, [content])
 
   return (
     // @ts-ignore

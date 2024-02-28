@@ -15,6 +15,7 @@ export interface Props {
   isLoadingAnswer?: boolean
   history: Array<AiChatMessage>
   scrollDivRef: React.Ref<HTMLDivElement>
+  onMessageRendered?: () => void
   onSubmit: (value: string) => void
 }
 
@@ -25,7 +26,8 @@ const ChatHistory = (props: Props) => {
     isLoadingAnswer,
     history,
     scrollDivRef,
-    onSubmit
+    onMessageRendered,
+    onSubmit,
   } = props
 
   const getMessage = ({ type, content, id }: AiChatMessage) => (content ? (
@@ -36,7 +38,7 @@ const ChatHistory = (props: Props) => {
         [styles.question]: type === AiChatMessageType.HumanMessage,
       })}
     >
-      <MarkdownMessage>{content}</MarkdownMessage>
+      <MarkdownMessage onMessageRendered={onMessageRendered}>{content}</MarkdownMessage>
     </div>
   ) : null)
 

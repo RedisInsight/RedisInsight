@@ -8,7 +8,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { setOAuthCloudSource, signIn, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 import { FeatureFlagComponent, OAuthAgreement } from 'uiSrc/components'
 import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
@@ -26,6 +26,12 @@ export enum OAuthSocialType {
   SignIn = 'signIn'
 }
 
+const actionsType: Record<OAuthSocialType, OAuthSocialAction> = {
+  [OAuthSocialType.Create]: OAuthSocialAction.Create,
+  [OAuthSocialType.Autodiscovery]: OAuthSocialAction.Import,
+  [OAuthSocialType.SignIn]: OAuthSocialAction.Create,
+}
+
 interface Props {
   type?: OAuthSocialType
   hideTitle?: boolean
@@ -41,7 +47,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
   const dispatch = useDispatch()
   const isAutodiscovery = type === OAuthSocialType.Autodiscovery
   const isSignInFlow = type === OAuthSocialType.SignIn
-  const getAction = () => (isSignInFlow ? 'signIn' : (isAutodiscovery ? 'import' : 'create'))
+  const getAction = (): string => (type ? actionsType[type] : '')
 
   const sendTelemetry = (accountOption: string) => {
     const cloudRecommendedSettings = isAutodiscovery

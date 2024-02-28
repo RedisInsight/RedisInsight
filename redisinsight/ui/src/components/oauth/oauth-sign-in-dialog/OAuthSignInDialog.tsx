@@ -15,6 +15,7 @@ import { setSignInDialogState, oauthCloudSelector } from 'uiSrc/slices/oauth/clo
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import { OAuthAdvantages } from './constants'
 import styles from './styles.module.scss'
 
@@ -22,7 +23,7 @@ const OAuthSignInDialog = () => {
   const { isOpenSignInDialog } = useSelector(oauthCloudSelector)
   const { ssoFlow } = useSelector(cloudSelector)
 
-  const isAutodiscoverySSO = ssoFlow === 'import'
+  const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
 
   const dispatch = useDispatch()
 
@@ -30,7 +31,7 @@ const OAuthSignInDialog = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
       eventData: {
-        action: isAutodiscoverySSO ? 'import' : 'create',
+        action: ssoFlow,
       }
     })
     dispatch(setSignInDialogState(null))

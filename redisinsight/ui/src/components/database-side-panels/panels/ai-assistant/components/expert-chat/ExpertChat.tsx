@@ -73,7 +73,7 @@ const ExpertChat = () => {
               size="xs"
               className="truncateText"
             >
-              Scope: {connectedInstanceName}
+              db: {connectedInstanceName}
             </EuiText>
           </EuiToolTip>
         ) : (<span />)}

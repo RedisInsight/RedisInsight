@@ -292,8 +292,11 @@ const QueryCardHeader = (props: Props) => {
       data-testid="query-card-open"
       role="button"
     >
-      <EuiFlexGroup alignItems="center" justifyContent="spaceBetween" gutterSize="m" responsive={false} style={{ width: '100%' }}>
-        <EuiFlexItem className={styles.titleWrapper} grow>
+      <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
+        <EuiFlexItem
+          className={styles.titleWrapper}
+          grow={false}
+        >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
               <QueryCardTooltip query={query} summary={summaryText} db={db} resultsMode={resultsMode} />

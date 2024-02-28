@@ -10,6 +10,8 @@ import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { RdiAnalytics } from 'src/modules/rdi/rdi.analytics';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
+import { RdiStatisticsController } from 'src/modules/rdi/rdi-statistics.controller';
+import { RdiStatisticsService } from 'src/modules/rdi/rdi-statistics.service';
 
 @Module({})
 export class RdiModule {
@@ -21,10 +23,12 @@ export class RdiModule {
       controllers: [
         RdiController,
         RdiPipelineController,
+        RdiStatisticsController,
       ],
       providers: [
         RdiService,
         RdiPipelineService,
+        RdiStatisticsService,
         RdiClientProvider,
         RdiClientStorage,
         RdiClientFactory,

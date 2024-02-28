@@ -28,7 +28,8 @@ const instancesMock: RdiInstance[] = [
     lastConnection: new Date(),
     version: '1.2',
     visible: true,
-    error: ''
+    error: '',
+    loading: false
   },
   {
     id: '2',
@@ -37,7 +38,8 @@ const instancesMock: RdiInstance[] = [
     lastConnection: new Date(),
     version: '1.3',
     visible: true,
-    error: ''
+    error: '',
+    loading: false
   }
 ]
 

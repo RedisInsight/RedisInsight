@@ -6,4 +6,5 @@ export enum RdiUrl {
   DryRunJob = '/dry-run',
   Deploy = '/deploy',
   TestConnections = '/test-connections',
+  GetStatistics = '/statistics',
 }

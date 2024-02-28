@@ -76,6 +76,92 @@ export interface IRdiPipelineStrategies {
   strategyType: IRdiPipelineStrategy[]
 }
 
+export interface IConnections {
+  [key: string]: {
+    host: string;
+    port: number;
+    status: string;
+    type: string;
+    database: string;
+    user: string;
+  }
+}
+
+export interface IDataStreams {
+  [key: string]: {
+    total: number
+    pending: number
+    inserted: number
+    updated: number
+    deleted: number
+    filtered: number
+    rejected: number
+    deduplicated: number
+    lastArrival: string
+  }
+}
+
+export interface IProcessingPerformance {
+  totalBatches: number
+  batchSizeAvg: number
+  readTimeAvg: number
+  processTimeAvg: number
+  ackTimeAvg: number
+  totalTimeAvg: number
+  recPerSecAvg: number
+}
+
+export interface IRdiPipelineStatus {
+  rdiVersion: string
+  address: string
+  runStatus: string
+  syncMode: string
+}
+
+export interface IClients {
+  [key: string]: {
+    addr: string
+    name: string
+    ageSec: number
+    idleSec: number
+    user: string
+  }
+}
+
+export interface IRdiStatistics {
+  connections: IConnections
+  dataStreams: IDataStreams
+  processingPerformance: IProcessingPerformance
+  rdiPipelineStatus: IRdiPipelineStatus
+  clients: IClients
+}
+
+// export interface IRdiStatistics {
+//   connections: {
+//     loading: boolean
+//     data: IConnections
+//   }
+//   dataStreams: {
+//     loading: boolean
+//     lastRefresh: Nullable<number>
+//     data: IDataStreams
+//   }
+//   processingPerformance: {
+//     loading: boolean
+//     lastRefresh: Nullable<number>
+//     data: IProcessingPerformance
+//   }
+//   rdiPipelineStatus: {
+//     loading: boolean
+//     data: IRdiPipelineStatus
+//   }
+//   clients: {
+//     loading: boolean
+//     lastRefresh: Nullable<number>
+//     data: IClients
+//   }
+// }
+
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
@@ -90,9 +176,15 @@ export interface IStateRdiDryRunJob {
   results: Nullable<IDryRunJobResults>
 }
 
+export interface IStateRdiStatistics {
+  loading: boolean
+  error: string
+  data: Nullable<IRdiStatistics>
+}
+
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
-  loading?: boolean
+  loading: boolean
   error: string
 }
 

@@ -1,10 +1,15 @@
-import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
+import { AxiosInstance } from 'axios';
+
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { RdiUrl } from 'src/modules/rdi/constants';
-import { AxiosInstance } from 'axios';
-import { RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
-import { RdiDyRunJobStatus, RdiDryRunJobResult } from 'src/modules/rdi/models/rdi-dry-run';
+import {
+  RdiDryRunJobDto, RdiDryRunJobResponseDto,
+  RdiStatisticsResult,
+  RdiTestConnectionResult,
+} from 'src/modules/rdi/dto';
 import { RdiPipelineDeployFailedException } from 'src/modules/rdi/exceptions';
+import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
+import { RdiDryRunJobResult, RdiDyRunJobStatus } from 'src/modules/rdi/models/rdi-dry-run';
 
 const RDI_DEPLOY_FAILED_STATUS = 'failed';
 
@@ -86,6 +91,11 @@ export class ApiRdiClient extends RdiClient {
       RdiUrl.TestConnections,
       { config },
     );
+    return response.data;
+  }
+
+  async getStatistics(): Promise<RdiStatisticsResult> {
+    const response = await this.client.get(RdiUrl.GetStatistics);
     return response.data;
   }
 

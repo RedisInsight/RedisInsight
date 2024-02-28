@@ -308,7 +308,7 @@ const QueryCardHeader = (props: Props) => {
             />
           </div>
         </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem className={styles.controls} grow={false}>
           <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>
             <EuiFlexItem className={cx(styles.time)} data-testid="command-execution-date-time">
               {!!createdAt && (

@@ -295,7 +295,7 @@ const QueryCardHeader = (props: Props) => {
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
         <EuiFlexItem
           className={styles.titleWrapper}
-          grow={false}
+          grow
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">

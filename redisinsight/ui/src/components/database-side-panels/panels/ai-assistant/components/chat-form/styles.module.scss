@@ -24,11 +24,17 @@
     }
   }
 
-  .submitBtn {
+  .submitBtnTooltip {
     position: absolute;
     bottom: 10px;
     right: 10px;
+    z-index: 1;
 
+    cursor: not-allowed;
+  }
+
+
+  .submitBtn {
     width: 24px !important;
     height: 24px !important;
     min-width: 24px !important;

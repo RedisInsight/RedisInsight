@@ -31,6 +31,7 @@ enum BrowserStorageItem {
   insightsPanel = 'insightsPanel',
   capability = 'capability',
   aiChatSession = 'aiChatSession',
+  selectedAiChat = 'selectedAiChat'
 }
 
 export default BrowserStorageItem

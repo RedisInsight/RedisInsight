@@ -1,3 +1,8 @@
+export enum AiChatType {
+  Assistance = 'assistance',
+  Query = 'query'
+}
+
 export enum AiChatMessageType {
   AIMessage = 'AIMessage',
   HumanMessage = 'HumanMessage'
@@ -16,9 +21,14 @@ export interface AiChatMessage {
 }
 
 export interface StateAiAssistant {
+  activeTab: AiChatType
   assistant: {
     loading: boolean
     id: string
+    messages: Array<AiChatMessage>
+  },
+  expert: {
+    loading: boolean
     messages: Array<AiChatMessage>
   }
 }

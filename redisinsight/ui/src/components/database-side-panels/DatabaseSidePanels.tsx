@@ -172,7 +172,7 @@ const DatabaseSidePanels = (props: Props) => {
         className={styles.tab}
         data-testid="ai-assistant-tab"
       >
-        <span className={styles.tabName}>Ai Assistant</span>
+        <span className={styles.tabName}>Ai Assistants</span>
       </EuiTab>
     </EuiTabs>
   ), [tabSelected, totalUnread, isFullScreen])

@@ -127,9 +127,11 @@ const CodeButtonBlock = (props: Props) => {
     <div className={styles.wrapper}>
       <EuiFlexGroup gutterSize="none">
         <EuiFlexItem>
-          <EuiTitle size="xxxs" className={styles.label} data-testid="code-button-block-label">
-            <span>{truncateText(label, 86)}</span>
-          </EuiTitle>
+          {!!label && (
+            <EuiTitle size="xxxs" className={styles.label} data-testid="code-button-block-label">
+              <span>{truncateText(label, 86)}</span>
+            </EuiTitle>
+          )}
         </EuiFlexItem>
         <EuiFlexItem grow={false} className={styles.actions}>
           <EuiButton

@@ -14,7 +14,7 @@ const tabs: HomeTab[] = [
   },
   {
     id: 'rdi-instances',
-    title: 'My RDI instances',
+    title: 'Redis Data Integration',
     path: Pages.rdi
   }
 ]

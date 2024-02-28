@@ -36,7 +36,7 @@ const RdiPage = () => {
   useEffect(() => {
     dispatch(fetchInstancesAction())
 
-    setTitle('My RDI instances')
+    setTitle('Redis Data Integration')
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_INSTANCES_PAGE,
     })

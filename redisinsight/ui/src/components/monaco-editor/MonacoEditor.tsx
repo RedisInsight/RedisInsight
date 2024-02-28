@@ -6,9 +6,10 @@ import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cyph
 
 import { Nullable } from 'uiSrc/utils'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
-import { Theme } from 'uiSrc/constants'
+import { DSL, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
+import DedicatedEditor from './components/dedicated-editor'
 import styles from './styles.modules.scss'
 
 export interface CommonProps {
@@ -32,6 +33,7 @@ export interface Props extends CommonProps {
   onEditorWillMount?: (monaco: typeof monacoEditor) => void
   className?: string
   language: string
+  dedicatedEditorLanguages?: DSL[]
 }
 const MonacoEditor = (props: Props) => {
   const {
@@ -48,12 +50,15 @@ const MonacoEditor = (props: Props) => {
     wrapperClassName,
     className,
     options = {},
+    dedicatedEditorLanguages = [],
     'data-testid': dataTestId = 'monaco-editor'
   } = props
 
   let contribution: Nullable<ISnippetController> = null
   const [isEditing, setIsEditing] = useState(!readOnly && !disabled)
+  const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
+  const input = useRef<HTMLDivElement>(null)
 
   const { theme } = useContext(ThemeContext)
 
@@ -79,6 +84,13 @@ const MonacoEditor = (props: Props) => {
     contribution = editor.getContribution<ISnippetController>('snippetController2')
 
     editor.onKeyDown(onKeyDownMonaco)
+
+    if (dedicatedEditorLanguages?.length) {
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
+        onPressWidget()
+      })
+    }
+
     onEditorDidMount?.(editor, monaco)
   }
 
@@ -102,6 +114,55 @@ const MonacoEditor = (props: Props) => {
       editor.setSelection(new monacoEditor.Selection(lineNumber, column, lineNumber, column))
       contribution?.cancel?.()
     }
+  }
+
+  const onPressWidget = () => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    setIsDedicatedEditorOpen(true)
+    editor.updateOptions({ readOnly: true })
+  }
+
+  const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+    const position = editor.getPosition()
+    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
+    editor.trigger('mouse', '_moveTo', { position })
+    editor.focus()
+  }
+
+  const updateArgFromDedicatedEditor = (value: string = '') => {
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    const model = editor.getModel()
+    if (!model) return
+
+    const position = editor.getPosition()
+
+    editor.updateOptions({ readOnly: false })
+    editor.executeEdits(null, [
+      {
+        range: new monacoEditor.Range(
+          position?.lineNumber!,
+          position?.column!,
+          position?.lineNumber!,
+          position?.column! + value.length,
+        ),
+        text: value.replaceAll('\n', ' ')
+      }
+    ])
+    setIsDedicatedEditorOpen(false)
+    triggerUpdateCursorPosition(editor)
+  }
+
+  const onCancelDedicatedEditor = () => {
+    setIsDedicatedEditorOpen(false)
+    if (!monacoObjects.current) return
+    const { editor } = monacoObjects?.current
+
+    editor.updateOptions({ readOnly: false })
+    triggerUpdateCursorPosition(editor)
   }
 
   if (monacoEditor?.editor) {
@@ -149,7 +210,7 @@ const MonacoEditor = (props: Props) => {
         declineOnUnmount={false}
         preventOutsideClick
       >
-        <div className="inlineMonacoEditor" data-testid={`wrapper-${dataTestId}`}>
+        <div className="inlineMonacoEditor" data-testid={`wrapper-${dataTestId}`} ref={input}>
           <ReactMonacoEditor
             language={language}
             theme={theme === Theme.Dark ? 'dark' : 'light'}
@@ -163,6 +224,14 @@ const MonacoEditor = (props: Props) => {
           />
         </div>
       </InlineItemEditor>
+      {isDedicatedEditorOpen && (
+        <DedicatedEditor
+          initialHeight={input?.current?.scrollHeight || 0}
+          langs={dedicatedEditorLanguages}
+          onSubmit={updateArgFromDedicatedEditor}
+          onCancel={onCancelDedicatedEditor}
+        />
+      )}
       {isEditable && readOnly && !isEditing && (
         <EuiButton
           fill

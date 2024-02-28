@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import AutoSizer from 'react-virtualized-auto-sizer'
 import { useDispatch, useSelector } from 'react-redux'
 import { compact, first } from 'lodash'
 import cx from 'classnames'
@@ -36,7 +35,7 @@ import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
-import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
+import DedicatedEditor from 'uiSrc/components/monaco-editor/components/dedicated-editor'
 import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
 import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
 
@@ -61,9 +60,9 @@ const SYNTAX_WIDGET_ID = 'syntax.content.widget'
 const argInQuotesRegExp = /^['"](.|[\r\n])*['"]$/
 const aroundQuotesRegExp = /(^["']|["']$)/g
 
-let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
+let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollection> = null
 
 const Query = (props: Props) => {
   const {
@@ -120,7 +119,7 @@ const Query = (props: Props) => {
     if (!monacoObjects.current) return
     const commands = query.split('\n')
     const firstLine = first(commands) ?? ''
-    const { monaco, editor } = monacoObjects.current
+    const { monaco } = monacoObjects.current
     const notCommandRegEx = /^[\s|//]/
 
     const newDecorations = compact(commands.map((command, index) => {
@@ -140,10 +139,7 @@ const Query = (props: Props) => {
       })
     }
 
-    decorations = editor.deltaDecorations(
-      decorations,
-      newDecorations
-    )
+    decorationCollection?.set(newDecorations)
   }, [query])
 
   useEffect(() => {
@@ -422,6 +418,8 @@ const Query = (props: Props) => {
       hideSyntaxWidget(editor)
       isWidgetEscaped.current = true
     }, SYNTAX_CONTEXT_ID)
+
+    decorationCollection = editor.createDecorationsCollection()
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
@@ -443,6 +441,10 @@ const Query = (props: Props) => {
     automaticLayout: true,
     formatOnPaste: false,
     glyphMargin: true,
+    stickyScroll: {
+      enabled: true,
+      defaultModel: 'indentationModel'
+    },
     suggest: {
       preview: true,
       showStatusBar: true,
@@ -549,20 +551,13 @@ const Query = (props: Props) => {
         </div>
       </div>
       {isDedicatedEditorOpen && (
-        <AutoSizer>
-          {({ height }) => (
-            <div className="editorBounder">
-              <DedicatedEditor
-                initialHeight={input?.current?.scrollHeight || 0}
-                height={height}
-                lang={syntaxCommand.current.lang}
-                query={selectedArg.current.replace(aroundQuotesRegExp, '')}
-                onSubmit={updateArgFromDedicatedEditor}
-                onCancel={onCancelDedicatedEditor}
-              />
-            </div>
-          )}
-        </AutoSizer>
+        <DedicatedEditor
+          initialHeight={input?.current?.scrollHeight || 0}
+          langId={syntaxCommand.current.lang}
+          query={selectedArg.current.replace(aroundQuotesRegExp, '')}
+          onSubmit={updateArgFromDedicatedEditor}
+          onCancel={onCancelDedicatedEditor}
+        />
       )}
     </div>
   )

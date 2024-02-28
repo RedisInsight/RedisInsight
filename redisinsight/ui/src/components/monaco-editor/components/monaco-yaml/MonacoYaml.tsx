@@ -4,13 +4,14 @@ import { isNull } from 'lodash'
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
 import { MonacoEditor } from 'uiSrc/components/monaco-editor'
 import { Nullable } from 'uiSrc/utils'
-import { DEFAULT_MONACO_FILE_MATCH, DEFAULT_MONACO_YAML_URI } from 'uiSrc/constants'
+import { DEFAULT_MONACO_FILE_MATCH, DEFAULT_MONACO_YAML_URI, DSL } from 'uiSrc/constants'
 import { monacoYamlModel } from './monacoYamlModel'
 
 export interface Props extends CommonProps {
   schema: Nullable<object>
   uri?: string
   fileMatch?: string
+  dedicatedEditorLanguages?: DSL[]
 }
 
 const MonacoYaml = (props: Props) => {
@@ -51,7 +52,7 @@ const MonacoYaml = (props: Props) => {
         },
         stickyScroll: {
           enabled: true,
-          defaultModel: 'foldingProviderModel'
+          defaultModel: 'indentationModel'
         },
         tabSize: 2,
         insertSpaces: true,

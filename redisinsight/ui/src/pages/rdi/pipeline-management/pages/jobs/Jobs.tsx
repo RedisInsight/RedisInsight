@@ -12,7 +12,7 @@ import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
-import { Pages } from 'uiSrc/constants'
+import { DSL, Pages } from 'uiSrc/constants'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
@@ -83,6 +83,7 @@ const Jobs = () => {
             value={values.jobs?.[jobIndex]?.value ?? ''}
             onChange={(value) => setFieldValue(`jobs.${jobIndex}.value`, value)}
             disabled={loading}
+            dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
             wrapperClassName="rdi__editorWrapper"
             data-testid="rdi-monaco-jobs"
           />

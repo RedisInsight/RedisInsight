@@ -23,6 +23,12 @@ export abstract class RdiClient {
 
   abstract getPipeline(): Promise<RdiPipeline>;
 
+  // TODO validate options and response
+  abstract getTemplate(options: object): Promise<unknown>;
+
+  // TODO validate response schema
+  abstract getStrategies(): Promise<object>;
+
   abstract deploy(pipeline: RdiPipeline): Promise<void>;
 
   abstract deployJob(job: RdiJob): Promise<RdiJob>;

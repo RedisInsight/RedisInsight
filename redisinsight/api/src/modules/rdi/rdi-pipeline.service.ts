@@ -64,4 +64,19 @@ export class RdiPipelineService {
 
     return await client.testConnections(config);
   }
+
+  async getStrategies(rdiClientMetadata: RdiClientMetadata): Promise<object> {
+    this.logger.log('Getting RDI pipeline strategies');
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.getStrategies();
+  }
+
+  async getTemplate(rdiClientMetadata: RdiClientMetadata, options: object): Promise<unknown> {
+    this.logger.log('Getting RDI pipeline template');
+
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.getTemplate(options);
+  }
 }

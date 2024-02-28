@@ -9,17 +9,19 @@ import { get } from 'lodash'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { IPipeline } from 'uiSrc/slices/interfaces'
+import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
+import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { testConnectionsAction, rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
 import styles from './styles.module.scss'
 
 const Config = () => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
-  const { loading: pipelineLoading, schema } = useSelector(rdiPipelineSelector)
+  const { loading: pipelineLoading, schema, data } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
 
   const { values: { config = '' }, setFieldValue } = useFormikContext<IPipeline>()
@@ -32,6 +34,12 @@ const Config = () => {
       name: TelemetryPageView.RDI_CONFIG,
     })
   }, [])
+
+  useEffect(() => {
+    if (data !== null && !config) {
+      setIsPopoverOpen(true)
+    }
+  }, [data, config])
 
   const testConnections = () => {
     setIsPanelOpen(true)
@@ -47,7 +55,17 @@ const Config = () => {
   return (
     <>
       <div className={cx('content', 'rdi__wrapper', { [styles.isPanelOpen]: isPanelOpen })}>
-        <EuiText className="rdi__title">Target database configuration</EuiText>
+        <div className="rdi__content-header">
+          <EuiText className="rdi__title">Target database configuration</EuiText>
+          <TemplatePopover
+            isPopoverOpen={isPopoverOpen}
+            setIsPopoverOpen={setIsPopoverOpen}
+            value={config}
+            setFieldValue={(template) => setFieldValue('config', template)}
+            loading={pipelineLoading}
+            source={RdiPipelineTabs.Config}
+          />
+        </div>
         <EuiText className="rdi__text" color="subdued">
           {'Configure target instance '}
           <EuiLink

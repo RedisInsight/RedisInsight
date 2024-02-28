@@ -9,20 +9,22 @@ import cx from 'classnames'
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { IPipeline } from 'uiSrc/slices/interfaces'
+import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { DSL, Pages } from 'uiSrc/constants'
+import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
   const [decodedJobName, setDecodedJobName] = useState<string>(decodeURIComponent(jobName))
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [jobIndex, setJobIndex] = useState<number>(-1)
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
   const history = useHistory()
 
-  const { loading, schema } = useSelector(rdiPipelineSelector)
+  const { loading, schema, data } = useSelector(rdiPipelineSelector)
 
   const { values, setFieldValue } = useFormikContext<IPipeline>()
 
@@ -42,6 +44,12 @@ const Jobs = () => {
   }, [jobName])
 
   useEffect(() => {
+    if (data !== null && !values.jobs?.[jobIndex]?.value) {
+      setIsPopoverOpen(true)
+    }
+  }, [jobName, data])
+
+  useEffect(() => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_JOBS,
     })
@@ -59,7 +67,17 @@ const Jobs = () => {
   return (
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
-        <EuiText className={cx('rdi__title', 'line-clamp-2')}>{decodedJobName}</EuiText>
+        <div className="rdi__content-header">
+          <EuiText className={cx('rdi__title', 'line-clamp-2')}>{decodedJobName}</EuiText>
+          <TemplatePopover
+            isPopoverOpen={isPopoverOpen}
+            setIsPopoverOpen={setIsPopoverOpen}
+            value={values.jobs?.[jobIndex]?.value ?? ''}
+            setFieldValue={(template) => setFieldValue(`jobs.${jobIndex}.value`, template)}
+            loading={loading}
+            source={RdiPipelineTabs.Jobs}
+          />
+        </div>
         <EuiText className="rdi__text" color="subdued">
           {'Describe the '}
           <EuiLink

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { WelcomeAiAssistant, Chat } from './components'
+import { WelcomeAiAssistant, ChatsWrapper } from './components'
 import styles from './styles.module.scss'
 
 const AiAssistant = () => {
@@ -15,7 +15,7 @@ const AiAssistant = () => {
 
   return (
     <div className={styles.wrapper}>
-      {isShowAuth ? (<WelcomeAiAssistant />) : (<Chat />)}
+      {isShowAuth ? (<WelcomeAiAssistant />) : (<ChatsWrapper />)}
     </div>
   )
 }

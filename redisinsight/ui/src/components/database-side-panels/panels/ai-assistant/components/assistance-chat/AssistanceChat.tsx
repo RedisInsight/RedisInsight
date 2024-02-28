@@ -3,27 +3,32 @@ import { useDispatch, useSelector } from 'react-redux'
 import { EuiButtonEmpty } from '@elastic/eui'
 import {
   aiAssistantChatSelector,
-  askAssistantChatbot, createAssistantChatAction,
+  askAssistantChatbot,
+  createAssistantChatAction,
   getAssistantChatHistoryAction,
   removeAssistantChatAction
 } from 'uiSrc/slices/panels/aiAssistant'
-import { scrollIntoView } from 'uiSrc/utils'
+import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { AiChatMessage } from 'uiSrc/slices/interfaces/aiAssistant'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
 
 import styles from './styles.module.scss'
 
-const Chat = () => {
+const AssistanceChat = () => {
   const { id, messages } = useSelector(aiAssistantChatSelector)
 
-  const [progressingMessage, setProgressingMessage] = useState(null)
+  const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!id || messages.length) return
+    if (!id || messages.length) {
+      scrollToBottom('auto')
+      return
+    }
 
     dispatch(getAssistantChatHistoryAction(id, () => scrollToBottom('auto')))
   }, [])
@@ -44,7 +49,7 @@ const Chat = () => {
       chatId,
       message,
       {
-        onMessage: (message: any) => {
+        onMessage: (message: AiChatMessage) => {
           setProgressingMessage({ ...message })
           scrollToBottom('auto')
         },
@@ -90,6 +95,7 @@ const Chat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          isLoadingAnswer={!progressingMessage?.content}
           progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
@@ -103,4 +109,4 @@ const Chat = () => {
   )
 }
 
-export default Chat
+export default AssistanceChat

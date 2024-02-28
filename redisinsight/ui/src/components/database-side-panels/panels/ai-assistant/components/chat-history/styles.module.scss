@@ -10,19 +10,11 @@ $delay: .13s;
   height: 100%;
 
   :global {
-    .euiMarkdownFormat {
-      font-family: 'Graphik', sans-serif;
-      font-size: 12px;
-
-      .euiCodeBlock {
-        background: var(--browserTableRowEven);
-        font-size: 12px !important;
-
-
-        &__code {
-          font-family: 'Graphik', sans-serif;
-        }
-      }
+    code {
+      background-color: var(--euiColorEmptyShade) !important;
+    }
+    pre > code {
+      background-color:  var(--browserTableRowEven) !important;
     }
   }
 }
@@ -35,6 +27,8 @@ $delay: .13s;
   overflow-y: auto;
   @include euiScrollBar;
   padding: 8px 0;
+
+  font-size: 12px;
 
   > :first-child {
     margin-top: auto;

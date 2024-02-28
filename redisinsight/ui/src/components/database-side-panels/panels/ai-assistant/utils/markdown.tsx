@@ -15,9 +15,18 @@ const remarkLink = (data: any) => {
   )
 }
 
+const remarkCode = (data: any) => {
+  if (!data) return null
+
+  console.log(data)
+
+  return (<span>123</span>)
+}
+
 const defaultPlugins = getDefaultEuiMarkdownProcessingPlugins()
 defaultPlugins[1][1].components.a = remarkLink
-const processingMarkdownPlugins = [...defaultPlugins, remarkLink] as any
+defaultPlugins[1][1].components.code = remarkCode
+const processingMarkdownPlugins = [...defaultPlugins, remarkLink, remarkCode] as any
 
 export {
   remarkLink,

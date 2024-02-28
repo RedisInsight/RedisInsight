@@ -3,15 +3,26 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { AiChatMessage, AiChatMessageType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
-import { isStatusSuccessful } from 'uiSrc/utils'
+import { AiChatType, AiChatMessage, AiChatMessageType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { arrayCommandToString, toRedisCodeBlock, isStatusSuccessful } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
+import { CustomHeaders } from 'uiSrc/constants/api'
 import { AppDispatch, RootState } from '../store'
 
+const getTabSelected = (tab?: string): AiChatType => {
+  if (Object.values(AiChatType).includes(tab as unknown as AiChatType)) return tab as AiChatType
+  return AiChatType.Assistance
+}
+
 export const initialState: StateAiAssistant = {
+  activeTab: getTabSelected(sessionStorageService.get(BrowserStorageItem.selectedAiChat)),
   assistant: {
     loading: false,
     id: sessionStorageService.get(BrowserStorageItem.aiChatSession) ?? '',
+    messages: []
+  },
+  expert: {
+    loading: false,
     messages: []
   }
 }
@@ -23,6 +34,10 @@ const aiAssistantSlice = createSlice({
   reducers: {
     createAssistantChat: (state) => {
       state.assistant.loading = true
+    },
+    setSelectedTab: (state, { payload }: PayloadAction<AiChatType>) => {
+      state.activeTab = payload
+      sessionStorageService.set(BrowserStorageItem.selectedAiChat, payload)
     },
     createAssistantSuccess: (state, { payload }: PayloadAction<string>) => {
       state.assistant.id = payload
@@ -70,16 +85,40 @@ const aiAssistantSlice = createSlice({
     },
     clearHistory: (state) => {
       state.assistant.messages = []
+    },
+    sendExpertQuestion: (state, { payload }: PayloadAction<string>) => {
+      state.expert.messages.push({
+        id: `ai_${uuidv4()}`,
+        type: AiChatMessageType.HumanMessage,
+        content: payload,
+        context: {}
+      })
+    },
+    sendExpertAnswer: (state, { payload }: PayloadAction<string>) => {
+      state.expert.messages.push(
+        {
+          id: `ai_${uuidv4()}`,
+          type: AiChatMessageType.AIMessage,
+          content: payload,
+          context: {}
+        }
+      )
+    },
+    clearExpertChatHistory: (state) => {
+      state.expert.messages = []
     }
   }
 })
 
 // A selector
+export const aiChatSelector = (state: RootState) => state.panels.aiAssistant
 export const aiAssistantChatSelector = (state: RootState) => state.panels.aiAssistant.assistant
+export const aiExpertChatSelector = (state: RootState) => state.panels.aiAssistant.expert
 
 // Actions generated from the slice
 export const {
   createAssistantChat,
+  setSelectedTab,
   createAssistantSuccess,
   createAssistantFailed,
   getAssistantChatHistory,
@@ -91,6 +130,9 @@ export const {
   sendQuestion,
   sendAnswer,
   clearHistory,
+  sendExpertAnswer,
+  sendExpertQuestion,
+  clearExpertChatHistory,
 } = aiAssistantSlice.actions
 
 // The reducer
@@ -101,7 +143,7 @@ export function createAssistantChatAction(onSuccess?: (chatId: string) => void, 
     dispatch(createAssistantChat())
 
     try {
-      const { status, data } = await apiService.post<any>(ApiEndpoints.AI_CHATS)
+      const { status, data } = await apiService.post<any>(ApiEndpoints.AI_ASSISTANT_CHATS)
 
       if (isStatusSuccessful(status)) {
         dispatch(createAssistantSuccess(data.id))
@@ -118,7 +160,7 @@ export function askAssistantChatbot(
   id: string,
   message: string,
   { onMessage, onFinish }: {
-    onMessage?: (message: any) => void,
+    onMessage?: (message: AiChatMessage) => void,
     onFinish?: () => void
   }
 ) {
@@ -135,11 +177,12 @@ export function askAssistantChatbot(
 
     try {
       const baseUrl = getBaseUrl()
-      const response = await fetch(`${baseUrl}${ApiEndpoints.AI_CHATS}/${id}/messages`, {
+      const response = await fetch(`${baseUrl}${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'text/event-stream',
+          [CustomHeaders.WindowId]: window.windowId || '',
         },
         body: JSON.stringify({ content: message })
       })
@@ -158,7 +201,7 @@ export function askAssistantChatbot(
           onFinish?.()
           break
         }
-        console.log(value)
+        // console.log(value)
         AiMessageProgressed.content += value
         // dispatch(updateLastMessage(value))
         onMessage?.(AiMessageProgressed)
@@ -178,7 +221,7 @@ export function getAssistantChatHistoryAction(
     dispatch(getAssistantChatHistory())
 
     try {
-      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_CHATS}/${id}`)
+      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}`)
 
       if (isStatusSuccessful(status)) {
         dispatch(getAssistantChatHistorySuccess(data.messages))
@@ -195,13 +238,47 @@ export function removeAssistantChatAction(id: string) {
     dispatch(removeAssistantChatHistory())
 
     try {
-      const { status } = await apiService.delete<any>(`${ApiEndpoints.AI_CHATS}/${id}`)
+      const { status } = await apiService.delete<any>(`${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}`)
 
       if (isStatusSuccessful(status)) {
         dispatch(removeAssistantChatHistorySuccess())
       }
     } catch (e) {
       dispatch(removeAssistantChatHistoryFailed())
+    }
+  }
+}
+
+export function askExpertChatbot(
+  databaseId: string,
+  message: string,
+  onSuccess?: (chatId: string) => void,
+  onFail?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(sendExpertQuestion(message))
+
+    try {
+      const { status, data } = await apiService.post<any>(
+        ApiEndpoints.AI_EXPERT_QUERIES,
+        {
+          databaseId,
+          content: message
+        }
+      )
+
+      if (isStatusSuccessful(status)) {
+        const markdownQuery = toRedisCodeBlock(arrayCommandToString(data.query))
+
+        if (markdownQuery) {
+          dispatch(sendExpertAnswer(markdownQuery))
+        }
+
+        onSuccess?.(data)
+      }
+    } catch (e) {
+      // dispatch(createAssistantFailed())
+      onFail?.()
     }
   }
 }

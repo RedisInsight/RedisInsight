@@ -1,7 +1,7 @@
 import WelcomeAiAssistant from './welcome-ai-assistant'
-import Chat from './chat'
+import ChatsWrapper from './chats-wrapper'
 
 export {
   WelcomeAiAssistant,
-  Chat
+  ChatsWrapper
 }

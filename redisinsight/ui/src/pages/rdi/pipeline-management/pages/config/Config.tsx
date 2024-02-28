@@ -35,12 +35,6 @@ const Config = () => {
     })
   }, [])
 
-  useEffect(() => {
-    if (!config && !pipelineLoading) {
-      setIsPopoverOpen(true)
-    }
-  }, [config, pipelineLoading])
-
   const testConnections = () => {
     setIsPanelOpen(true)
     dispatch(testConnectionsAction(rdiInstanceId, config))

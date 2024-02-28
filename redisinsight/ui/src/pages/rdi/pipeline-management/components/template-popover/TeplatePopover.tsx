@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { EuiButton, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiPopover } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -30,6 +30,10 @@ const TemplatePopover = (props: Props) => {
     setIsPopoverOpen(true)
   }
 
+  const handleClose = () => {
+    setIsPopoverOpen(false)
+  }
+
   useEffect(() => {
     if (value) {
       setIsPopoverOpen(false)
@@ -41,32 +45,25 @@ const TemplatePopover = (props: Props) => {
       ownFocus
       anchorPosition="downRight"
       isOpen={isPopoverOpen}
-      closePopover={() => {}}
+      closePopover={handleClose}
       className={styles.anchor}
       panelClassName={styles.popoverWrapper}
       button={(
-        <EuiToolTip
-          content={value ? 'Templates can be accessed only with the empty Editor to prevent potential data loss.' : null}
-          position="top"
-          display="inlineBlock"
-          anchorClassName="flex-row"
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          className={styles.btn}
+          aria-label="Insert template"
+          disabled={loading}
+          onClick={handleOpen}
+          data-testid={`template-trigger-${source}`}
         >
-          <EuiButton
-            fill
-            size="s"
-            color="secondary"
-            className={styles.btn}
-            aria-label="Insert template"
-            disabled={!!value || loading}
-            onClick={handleOpen}
-            data-testid={`template-trigger-${source}`}
-          >
-            Insert template
-          </EuiButton>
-        </EuiToolTip>
+          Insert template
+        </EuiButton>
       )}
     >
-      <TemplateForm closePopover={() => setIsPopoverOpen(false)} setTemplate={setFieldValue} source={source} />
+      <TemplateForm closePopover={handleClose} setTemplate={setFieldValue} source={source} value={value} />
     </EuiPopover>
   )
 }

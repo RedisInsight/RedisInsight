@@ -36,10 +36,6 @@ const Jobs = () => {
     }
 
     setJobIndex(jobIndex)
-
-    if (jobIndex !== -1 && !values.jobs?.[jobIndex]?.value) {
-      setIsPopoverOpen(true)
-    }
   }, [values, rdiInstanceId, decodedJobName, history])
 
   useEffect(() => {

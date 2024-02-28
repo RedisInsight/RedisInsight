@@ -8,7 +8,6 @@ import { fetchPipelineStrategies, fetchPipelineTemplate, rdiPipelineStrategiesSe
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 const NO_TEMPLATE = 'No template'
@@ -25,11 +24,24 @@ const INGEST_OPTION = 'ingest'
 export interface Props {
   setTemplate: (template: string) => void
   closePopover: () => void
-  source: RdiPipelineTabs,
+  source: RdiPipelineTabs
+  value: string
+}
+
+const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
+  if (value) {
+    return 'Templates can be accessed only with the empty Editor to prevent potential data loss.'
+  }
+
+  if (isNoTemplateOptions) {
+    return 'No template is available. Close the form and try again.'
+  }
+
+  return null
 }
 
 const TemplateForm = (props: Props) => {
-  const { closePopover, setTemplate, source } = props
+  const { closePopover, setTemplate, source, value } = props
 
   const { loading, dbType, strategyType } = useSelector(rdiPipelineStrategiesSelector)
 
@@ -38,8 +50,8 @@ const TemplateForm = (props: Props) => {
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
-  const [selectedDbType, setSelectedDbType] = useState<Maybe<string>>()
-  const [selectedStrategy, setSelectedStrategy] = useState<Maybe<string>>()
+  const [selectedDbType, setSelectedDbType] = useState<string>('')
+  const [selectedStrategy, setSelectedStrategy] = useState<string>('')
 
   const dispatch = useDispatch()
 
@@ -68,7 +80,7 @@ const TemplateForm = (props: Props) => {
     })
   }
 
-  const disabledApplyBtn = source === RdiPipelineTabs.Config
+  const isNoTemplateOptions = source === RdiPipelineTabs.Config
     ? !dbType.length || !strategyType.length
     : !strategyType.length
 
@@ -137,7 +149,7 @@ const TemplateForm = (props: Props) => {
           Cancel
         </EuiButton>
         <EuiToolTip
-          content={disabledApplyBtn ? 'No template is available. Close the form and try again.' : null}
+          content={getTooltipContent(value, isNoTemplateOptions)}
           position="bottom"
           display="inlineBlock"
           className={styles.btn}
@@ -146,7 +158,7 @@ const TemplateForm = (props: Props) => {
           <EuiButton
             fill
             color="secondary"
-            isDisabled={disabledApplyBtn}
+            isDisabled={isNoTemplateOptions || !!value}
             onClick={handleApply}
             isLoading={loading}
             size="s"

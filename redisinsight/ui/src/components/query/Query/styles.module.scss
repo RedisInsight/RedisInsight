@@ -1,12 +1,3 @@
-:global {
-  .editorBounder {
-    position: absolute;
-    top: 12px;
-    bottom: 6px;
-    left: 18px;
-    right: 46px;
-  }
-}
 .wrapper {
   position: relative;
   height: 100%;
@@ -87,7 +78,7 @@
     padding: 0 !important;
   }
 
-  &:hover, 
+  &:hover,
   &:focus {
     border: 1px solid var(--buttonSecondaryHoverColor) !important;
   }
@@ -100,7 +91,7 @@
   &:focus svg path {
     fill: var(--wbHoverIconColor) !important;
   }
-  
+
   &.activeBtn {
     background: var(--browserComponentActive) !important;
     border: 1px solid var(--euiColorSecondary);

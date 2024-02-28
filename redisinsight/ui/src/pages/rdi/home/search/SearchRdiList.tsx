@@ -42,7 +42,7 @@ const SearchRdiList = () => {
     <EuiFieldSearch
       isClearable
       fullWidth
-      placeholder="Instance search"
+      placeholder="Instance List Search"
       className={styles.search}
       onChange={onQueryChange}
       aria-label="Search rdi instance list"

@@ -67,11 +67,11 @@ const RdiPipelineHeader = () => {
             <div>
               <EuiToolTip
                 position="bottom"
-                content="My RDI instances"
+                content="Redis Data Integration"
               >
                 <EuiText
                   className={styles.breadCrumbLink}
-                  aria-label="My RDI instances"
+                  aria-label="Redis Data Integration"
                   data-testid="my-rdi-instances-btn"
                   onClick={goHome}
                   onKeyDown={goHome}

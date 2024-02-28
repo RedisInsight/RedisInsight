@@ -134,6 +134,9 @@ enum ApiEndpoints {
   CLOUD_ME_AUTODISCOVERY_DATABASES = 'cloud/me/autodiscovery/databases',
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
 
+  AI_ASSISTANT_CHATS = 'ai/assistant/chats',
+  AI_EXPERT_QUERIES = 'ai/expert/queries',
+
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',
 }

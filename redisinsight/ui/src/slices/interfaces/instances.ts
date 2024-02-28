@@ -383,7 +383,7 @@ export interface InitialStateCloud {
   error: string
   credentials: Nullable<ICredentialsRedisCloud>
   subscriptions: Nullable<RedisCloudSubscription[]>
-  isAutodiscoverySSO: boolean
+  ssoFlow: string
   isRecommendedSettings: Maybe<boolean>
   account: {
     data: Nullable<RedisCloudAccount>

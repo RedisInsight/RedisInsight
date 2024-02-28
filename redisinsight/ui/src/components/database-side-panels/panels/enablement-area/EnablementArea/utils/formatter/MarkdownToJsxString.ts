@@ -14,7 +14,7 @@ import { remarkLink } from '../transform/remarkLink'
 
 class MarkdownToJsxString implements IFormatter {
   format(input: any, config?: IFormatterConfig): Promise<string> {
-    const { data, path } = input
+    const { data, path = '' } = input
     return new Promise((resolve, reject) => {
       unified()
         .use(remarkParse)

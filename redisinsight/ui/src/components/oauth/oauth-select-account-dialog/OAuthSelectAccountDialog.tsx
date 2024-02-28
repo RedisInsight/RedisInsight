@@ -38,11 +38,13 @@ interface FormValues {
 }
 
 const OAuthSelectAccountDialog = () => {
-  const { isAutodiscoverySSO, isRecommendedSettings } = useSelector(cloudSelector)
+  const { ssoFlow, isRecommendedSettings } = useSelector(cloudSelector)
   const { accounts = [], currentAccountId } = useSelector(oauthCloudUserDataSelector) ?? {}
   const { isOpenSelectAccountDialog } = useSelector(oauthCloudSelector)
   const { loading } = useSelector(oauthCloudUserSelector)
   const { loading: plansLoadings } = useSelector(oauthCloudPlanSelector)
+
+  const isAutodiscoverySSO = ssoFlow === 'import'
 
   const history = useHistory()
   const dispatch = useDispatch()

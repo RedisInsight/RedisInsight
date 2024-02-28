@@ -1,3 +1,4 @@
+export * from './ai';
 export * from './certificates';
 export * from './commands';
 export * from './common';

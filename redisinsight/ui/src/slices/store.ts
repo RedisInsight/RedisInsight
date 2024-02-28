@@ -43,6 +43,7 @@ import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 import insightsPanelReducer from './panels/insights'
+import aiAssistantReducer from './panels/aiAssistant'
 import appRDIReducer from './rdi/rdi'
 
 export const history = createBrowserHistory()
@@ -109,6 +110,7 @@ export const rootReducer = combineReducers({
   }),
   panels: combineReducers({
     insights: insightsPanelReducer,
+    aiAssistant: aiAssistantReducer,
   }),
   rdi: combineReducers({
     rdi: appRDIReducer

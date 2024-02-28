@@ -267,6 +267,33 @@ export function createFreeDbSuccess(result: CloudSuccessResult, history: any) {
 }
 
 // Asynchronous thunk action
+export function fetchProfile(onSuccessAction?: (isMultiAccount?: boolean) => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getUserInfo())
+
+    try {
+      const { data, status } = await apiService.get<CloudUser>(
+        ApiEndpoints.CLOUD_ME,
+        {
+          // params: getCloudSsoUtmParams(getState().oauth?.cloud?.source),
+        },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getUserInfoSuccess(data))
+
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+      dispatch(getUserInfoFailure(errorMessage))
+
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
 export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(getUserInfo())

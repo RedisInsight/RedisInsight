@@ -34,7 +34,13 @@ const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
   }
 
   if (isNoTemplateOptions) {
-    return 'No template is available. Close the form and try again.'
+    return (
+      <>
+        No template is available.
+        <br />
+        Close the form and try again.
+      </>
+    )
   }
 
   return null

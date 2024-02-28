@@ -24,7 +24,7 @@ const Jobs = () => {
 
   const history = useHistory()
 
-  const { loading, schema } = useSelector(rdiPipelineSelector)
+  const { loading, schema, data } = useSelector(rdiPipelineSelector)
 
   const { values, setFieldValue } = useFormikContext<IPipeline>()
 
@@ -42,6 +42,12 @@ const Jobs = () => {
     setDecodedJobName(decodeURIComponent(jobName))
     setIsPanelOpen(false)
   }, [jobName])
+
+  useEffect(() => {
+    if (data !== null && !values.jobs?.[jobIndex]?.value) {
+      setIsPopoverOpen(true)
+    }
+  }, [jobName, data])
 
   useEffect(() => {
     sendPageViewTelemetry({

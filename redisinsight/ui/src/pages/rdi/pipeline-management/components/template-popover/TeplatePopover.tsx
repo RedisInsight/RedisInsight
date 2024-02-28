@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { EuiButton, EuiPopover } from '@elastic/eui'
+import { EuiButton, EuiPopover, EuiOutsideClickDetector } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -41,30 +41,32 @@ const TemplatePopover = (props: Props) => {
   }, [value])
 
   return (
-    <EuiPopover
-      ownFocus
-      anchorPosition="downRight"
-      isOpen={isPopoverOpen}
-      closePopover={handleClose}
-      className={styles.anchor}
-      panelClassName={styles.popoverWrapper}
-      button={(
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          className={styles.btn}
-          aria-label="Insert template"
-          disabled={loading}
-          onClick={handleOpen}
-          data-testid={`template-trigger-${source}`}
-        >
-          Insert template
-        </EuiButton>
+    <EuiOutsideClickDetector onOutsideClick={handleClose}>
+      <EuiPopover
+        ownFocus
+        anchorPosition="downRight"
+        isOpen={isPopoverOpen}
+        closePopover={handleClose}
+        className={styles.anchor}
+        panelClassName={styles.popoverWrapper}
+        button={(
+          <EuiButton
+            fill
+            size="s"
+            color="secondary"
+            className={styles.btn}
+            aria-label="Insert template"
+            disabled={loading}
+            onClick={handleOpen}
+            data-testid={`template-trigger-${source}`}
+          >
+            Insert template
+          </EuiButton>
       )}
-    >
-      <TemplateForm closePopover={handleClose} setTemplate={setFieldValue} source={source} value={value} />
-    </EuiPopover>
+      >
+        <TemplateForm closePopover={handleClose} setTemplate={setFieldValue} source={source} value={value} />
+      </EuiPopover>
+    </EuiOutsideClickDetector>
   )
 }
 

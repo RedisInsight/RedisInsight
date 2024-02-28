@@ -24,6 +24,7 @@ import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
+import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { SearchMode } from '../interfaces/keys'
 import { AppWorkspace, RedisResponseBuffer, StateAppContext } from '../interfaces'
 import { AppDispatch, RootState } from '../store'
@@ -320,6 +321,7 @@ export function resetDatabaseContext() {
     dispatch(setRedisearchInitialState())
     dispatch(setInitialRecommendationsState())
     dispatch(setTriggeredFunctionsInitialState())
+    dispatch(clearExpertChatHistory())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

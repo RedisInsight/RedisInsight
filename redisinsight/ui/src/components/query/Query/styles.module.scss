@@ -1,6 +1,12 @@
 .wrapper {
   position: relative;
   height: 100%;
+
+  :global(.editorBounder) {
+    bottom: 6px;
+    left: 18px;
+    right: 46px;
+  }
 }
 .container {
   display: flex;
@@ -115,7 +121,7 @@
   &Loading {
     position: absolute;
     left: 0;
-    opacity: .5;
+    opacity: 0.5;
     margin-top: -10px;
     svg {
       width: 17px !important;

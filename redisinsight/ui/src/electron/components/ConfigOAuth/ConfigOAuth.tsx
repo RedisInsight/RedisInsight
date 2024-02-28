@@ -20,7 +20,7 @@ import { addErrorNotification, addInfiniteNotification, removeInfiniteNotificati
 import { parseCustomError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { localStorageService } from 'uiSrc/services'
-import { CustomError } from 'uiSrc/slices/interfaces'
+import { CustomError, OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
 const ConfigOAuth = () => {
   const { ssoFlow, isRecommendedSettings } = useSelector(cloudSelector)
@@ -46,15 +46,15 @@ const ConfigOAuth = () => {
     isRecommendedSettingsRef.current = isRecommendedSettings
   }, [isRecommendedSettings])
 
-  const fetchUserInfoSuccess = (isMultiAccount: boolean) => {
-    if (isMultiAccount) return
+  const fetchUserInfoSuccess = (isSelectAccout: boolean) => {
+    if (isSelectAccout) return
 
-    if (ssoFlowRef.current === 'signIn') {
+    if (ssoFlowRef.current === OAuthSocialAction.SignIn) {
       closeInfinityNotification()
       return
     }
 
-    if (ssoFlowRef.current === 'import') {
+    if (ssoFlowRef.current === OAuthSocialAction.Import) {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
         () => {

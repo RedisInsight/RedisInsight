@@ -53,10 +53,7 @@ const AssistanceChat = () => {
           setProgressingMessage({ ...message })
           scrollToBottom('auto')
         },
-        onFinish: () => {
-          setProgressingMessage(null)
-          scrollToBottom('smooth')
-        }
+        onFinish: () => setProgressingMessage(null)
       }
     ))
   }
@@ -70,13 +67,13 @@ const AssistanceChat = () => {
   }
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       scrollIntoView(scrollDivRef?.current, {
         behavior,
         block: 'start',
         inline: 'start',
       })
-    }, 0)
+    })
   }
 
   return (
@@ -95,10 +92,11 @@ const AssistanceChat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
-          isLoadingAnswer={!progressingMessage?.content}
+          isLoadingAnswer={progressingMessage?.content === ''}
           progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
+          onMessageRendered={scrollToBottom}
           onSubmit={handleSubmit}
         />
       </div>

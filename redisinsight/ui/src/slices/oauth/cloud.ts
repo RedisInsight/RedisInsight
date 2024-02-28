@@ -23,6 +23,7 @@ import {
   CloudSuccessResult,
   EnhancedAxiosError,
   Instance,
+  OAuthSocialAction,
   OAuthSocialSource,
   StateAppOAuth
 } from '../interfaces'
@@ -294,7 +295,7 @@ export function fetchProfile(onSuccessAction?: (isMultiAccount?: boolean) => voi
 }
 
 // Asynchronous thunk action
-export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => void, onFailAction?: () => void) {
+export function fetchUserInfo(onSuccessAction?: (isSelectAccout: boolean) => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(getUserInfo())
 
@@ -307,8 +308,10 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
       )
 
       if (isStatusSuccessful(status)) {
-        const isMultiAccount = (data?.accounts?.length ?? 0) > 1
-        if (isMultiAccount) {
+        const isSignInFlow = getState().connections?.cloud.ssoFlow === OAuthSocialAction.SignIn
+        const isSelectAccout = !isSignInFlow && (data?.accounts?.length ?? 0) > 1
+
+        if (isSelectAccout) {
           dispatch(setSelectAccountDialogState(true))
           dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         }
@@ -316,7 +319,7 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
         dispatch(getUserInfoSuccess(data))
         dispatch(setSignInDialogState(null))
 
-        onSuccessAction?.(isMultiAccount)
+        onSuccessAction?.(isSelectAccout)
       }
     } catch (_err) {
       const error = _err as AxiosError

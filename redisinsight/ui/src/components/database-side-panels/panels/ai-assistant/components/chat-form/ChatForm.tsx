@@ -1,9 +1,11 @@
 import React, { Ref, useRef, useState } from 'react'
 import { EuiButton, EuiForm, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
 
+import { Maybe } from 'uiSrc/utils'
+import { isModifiedEvent } from 'uiSrc/services'
+
 import { ReactComponent as SendIcon } from 'uiSrc/assets/img/icons/send.svg'
 
-import { Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -12,6 +14,8 @@ export interface Props {
   placeholder?: string
   onSubmit: (value: string) => void
 }
+
+const INDENT_TEXTAREA_SPACE = 2
 
 const ChatForm = (props: Props) => {
   const { validationMessage, isDisabled, placeholder, onSubmit } = props
@@ -25,11 +29,14 @@ const ChatForm = (props: Props) => {
 
     if (initialState) return
 
-    textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight || 0}px`
+    textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight + INDENT_TEXTAREA_SPACE}px`
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === keys.ENTER && (e.metaKey || e.ctrlKey)) {
+    if (isModifiedEvent(e)) return
+
+    if (e.key === keys.ENTER) {
+      e.preventDefault()
       submitMessage()
     }
   }

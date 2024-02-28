@@ -4,7 +4,7 @@ import { instance, mock } from 'ts-mockito'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
-import HomeHeader, { Props } from './HomeHeader'
+import DatabaseListHeader, { Props } from './DatabaseListHeader'
 
 const mockedProps = mock<Props>()
 
@@ -31,18 +31,13 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
-describe('HomeHeader', () => {
+describe('DatabaseListHeader', () => {
   it('should render', () => {
-    expect(render(<HomeHeader {...instance(mockedProps)} />)).toBeTruthy()
-  })
-
-  it('should render capability promotion component', () => {
-    render(<HomeHeader {...instance(mockedProps)} />)
-    expect(screen.getByTestId('capability-promotion')).toBeInTheDocument()
+    expect(render(<DatabaseListHeader {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should open import dbs dialog', () => {
-    render(<HomeHeader {...instance(mockedProps)} />)
+    render(<DatabaseListHeader {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('import-from-file-btn'))
 
@@ -53,7 +48,7 @@ describe('HomeHeader', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<HomeHeader {...instance(mockedProps)} />)
+    render(<DatabaseListHeader {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('import-from-file-btn'))
 

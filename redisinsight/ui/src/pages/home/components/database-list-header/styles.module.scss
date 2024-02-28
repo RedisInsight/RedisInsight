@@ -86,6 +86,8 @@
 }
 
 .searchContainer {
+  position: relative;
+  height: 42px;
   max-width: 320px;
   margin-left: auto !important;
   padding-left: 12px;
@@ -136,7 +138,8 @@
     display: flex !important;
   }
 
-  .promo, .smallGuides {
+  .promo,
+  .smallGuides {
     display: none !important;
   }
 }

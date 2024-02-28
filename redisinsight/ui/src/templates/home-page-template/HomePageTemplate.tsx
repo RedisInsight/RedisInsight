@@ -7,6 +7,7 @@ import HomeTabs from 'uiSrc/components/home-tabs'
 import { BuildType } from 'uiSrc/constants/env'
 import { PageHeader } from 'uiSrc/components'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -28,6 +29,7 @@ const HomePageTemplate = (props: Props) => {
   ) : (
     <div className={styles.pageDefaultHeader}>
       <HomeTabs />
+      <CapabilityPromotion />
       <InsightsTrigger source="home page" />
     </div>
   )), [server])

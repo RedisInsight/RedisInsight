@@ -25,7 +25,7 @@ export interface Props {
 
 const InsightsTrigger = (props: Props) => {
   const { source = 'overview' } = props
-  const { isOpen: isInsigtsOpen, tabSelected } = useSelector(insightsPanelSelector)
+  const { isOpen: isInsightsOpen, tabSelected } = useSelector(insightsPanelSelector)
   const { isHighlighted, } = useSelector(recommendationsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
 
@@ -58,7 +58,7 @@ const InsightsTrigger = (props: Props) => {
     dispatch(toggleInsightsPanel())
 
     sendEventTelemetry({
-      event: isInsigtsOpen ? TelemetryEvent.INSIGHTS_PANEL_CLOSED : TelemetryEvent.INSIGHTS_PANEL_OPENED,
+      event: isInsightsOpen ? TelemetryEvent.INSIGHTS_PANEL_CLOSED : TelemetryEvent.INSIGHTS_PANEL_OPENED,
       eventData: {
         provider,
         page,
@@ -73,7 +73,7 @@ const InsightsTrigger = (props: Props) => {
 
   return (
     <div
-      className={cx(styles.container, { [styles.isOpen]: isInsigtsOpen })}
+      className={cx(styles.container, { [styles.isOpen]: isInsightsOpen })}
     >
       <HighlightedFeature
         isHighlight={insightsHighlighting && !isHighlighted}

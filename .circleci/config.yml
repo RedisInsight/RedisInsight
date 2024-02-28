@@ -1461,24 +1461,22 @@ workflows:
                 - /^internal.*/
       - setup-build:
           name: Setup build (dev)
-          env: dev
+          env: prod
           requires:
             - Setup sign certificates (dev)
       - linux:
           name: Build app - Linux (dev)
-          env: dev
+          env: prod
           requires: &devBuildRequire
             - Setup build (dev)
       - macosx:
           name: Build app - MacOS (dev)
-          env: dev
+          env: prod
+          redisstack: false
           requires: *devBuildRequire
       - windows:
           name: Build app - Windows (dev)
-          env: dev
-          requires: *devBuildRequire
-      - docker:
-          name: Build docker images (dev)
+          env: prod
           requires: *devBuildRequire
       # release to private AWS (dev)
       - release-aws-private-dev:
@@ -1487,7 +1485,6 @@ workflows:
             - Build app - Linux (dev)
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
-            - Build docker images (dev)
 
   # Main workflow for release/* and latest branches only
   release:

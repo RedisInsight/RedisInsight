@@ -60,7 +60,7 @@ export default merge(baseConfig, {
       RI_SERVER_TLS_KEY: process.env.RI_SERVER_TLS_KEY || '',
       RI_SERVE_STATICS: false,
       RI_APP_FOLDER_NAME: process.env.RI_APP_FOLDER_NAME || '',
-      RI_UPGRADES_LINK: process.env.RI_UPGRADES_LINK || '',
+      RI_UPGRADES_LINK: '',
       RI_APP_HOST: '127.0.0.1',
       RI_BUILD_TYPE: 'ELECTRON',
       RI_APP_VERSION: version,

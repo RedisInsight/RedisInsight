@@ -268,10 +268,14 @@ export function askExpertChatbot(
       )
 
       if (isStatusSuccessful(status)) {
-        const markdownQuery = toRedisCodeBlock(arrayCommandToString(data.query))
+        if (data.error) {
+          dispatch(sendExpertAnswer(data.error))
+        } else {
+          const markdownQuery = toRedisCodeBlock(arrayCommandToString(data.query))
 
-        if (markdownQuery) {
-          dispatch(sendExpertAnswer(markdownQuery))
+          if (markdownQuery) {
+            dispatch(sendExpertAnswer(markdownQuery))
+          }
         }
 
         onSuccess?.(data)

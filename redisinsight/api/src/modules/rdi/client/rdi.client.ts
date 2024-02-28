@@ -35,17 +35,9 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-<<<<<<< Updated upstream
   abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
-<<<<<<< Updated upstream
-=======
-  abstract getStatistics(): Promise<object>;
->>>>>>> Stashed changes
-=======
 
-  // abstract getStatistics(data: RdiStatisticsDto): Promise<RdiStatisticsResult>;
   abstract getStatistics(): Promise<RdiStatisticsResult>;
->>>>>>> Stashed changes
 
   abstract disconnect(): Promise<void>;
 

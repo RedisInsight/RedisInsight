@@ -18,6 +18,7 @@ import {
   InitialStateCloud,
   InstanceRedisCloud,
   LoadedCloud,
+  OAuthSocialAction,
 } from '../interfaces'
 import { addErrorNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
@@ -202,7 +203,7 @@ export function fetchSubscriptionsRedisCloud(
     try {
       const state = stateInit()
       const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === 'import'
+      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.get(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}`
@@ -243,7 +244,7 @@ export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCl
     try {
       const state = stateInit()
       const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === 'import'
+      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.get(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT}`
@@ -279,7 +280,7 @@ export function fetchInstancesRedisCloud(payload: {
     try {
       const state = stateInit()
       const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === 'import'
+      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.post(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES}`
@@ -320,7 +321,7 @@ export function addInstancesRedisCloud(payload: {
     try {
       const state = stateInit()
       const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === 'import'
+      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.post(
         isAutodiscoverySSO
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES}`

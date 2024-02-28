@@ -9,7 +9,7 @@ import {
   setSelectedTab
 } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
-import AiChatImg from 'uiSrc/assets/img/ai/ai-chat.svg'
+import AiChatImg from 'uiSrc/assets/img/ai/ai-chat-small.svg'
 
 import AssistanceChat from '../assistance-chat'
 import ExpertChat from '../expert-chat'

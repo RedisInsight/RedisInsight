@@ -90,6 +90,12 @@ export enum OAuthSocialSource {
   Tutorials = 'tutorials',
 }
 
+export enum OAuthSocialAction {
+  Create = 'create',
+  Import = 'import',
+  SignIn = 'signIn'
+}
+
 export enum CloudSsoUtmCampaign {
   ListOfDatabases = 'list_of_databases',
   Workbench = 'redisinsight_workbench',

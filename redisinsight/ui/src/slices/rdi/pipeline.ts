@@ -14,6 +14,12 @@ export const initialState: IStateRdiPipeline = {
   error: '',
   data: null,
   schema: null,
+  strategies: {
+    loading: false,
+    error: '',
+    dbType: [],
+    strategyType: [],
+  },
 }
 
 const rdiPipelineSlice = createSlice({
@@ -43,10 +49,31 @@ const rdiPipelineSlice = createSlice({
     setPipelineSchema: (state, { payload }) => {
       state.schema = payload
     },
+    getPipelineStrategies: (state) => {
+      state.strategies.loading = true
+    },
+    getPipelineStrategiesSuccess: (state, { payload }) => {
+      state.strategies = {
+        loading: false,
+        error: '',
+        dbType: payload['db-type'],
+        strategyType: payload['strategy-type'],
+      }
+    },
+    getPipelineStrategiesFailure: (state, { payload }) => {
+      state.strategies = {
+        loading: false,
+        error: payload,
+        dbType: [],
+        strategyType: [],
+      }
+    },
   },
 })
 
 export const rdiPipelineSelector = (state: RootState) => state.rdi.pipeline
+
+export const rdiPipelineStrategiesSelector = (state: RootState) => state.rdi.pipeline.strategies
 
 export const {
   getPipeline,
@@ -56,6 +83,9 @@ export const {
   deployPipelineSuccess,
   deployPipelineFailure,
   setPipelineSchema,
+  getPipelineStrategies,
+  getPipelineStrategiesSuccess,
+  getPipelineStrategiesFailure,
 } = rdiPipelineSlice.actions
 
 // The reducer
@@ -114,6 +144,61 @@ export function deployPipelineAction(
 
       dispatch(addErrorNotification(parsedError))
       dispatch(deployPipelineFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+export function fetchPipelineStrategies(
+  rdiInstanceId: string,
+  // TODO update after confirm response with RDI team
+  onSuccessAction?: (data: unknown) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(getPipelineStrategies())
+      const { status, data } = await apiService.get(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STRATEGIES),
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getPipelineStrategiesSuccess(data))
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const parsedError = getApiErrorMessage(error as EnhancedAxiosError)
+
+      dispatch(getPipelineStrategiesFailure(parsedError))
+      onFailAction?.()
+    }
+  }
+}
+
+export function fetchPipelineTemplate(
+  rdiInstanceId: string,
+  // TODO add interface
+  options: any,
+  onSuccessAction?: (template: string) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      // dispatch(deployPipeline())
+      const { status, data } = await apiService.post(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_TEMPLATE),
+        options,
+      )
+
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.(data.template)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const parsedError = getAxiosError(error as EnhancedAxiosError)
+
+      dispatch(addErrorNotification(parsedError))
       onFailAction?.()
     }
   }

@@ -10,14 +10,10 @@ import RefreshPipelinePopover from 'uiSrc/pages/rdi/pipeline-management/componen
 import Tab from 'uiSrc/pages/rdi/pipeline-management/components/tab'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
-
-enum RdiPipelineTabs {
-  Config = PageNames.rdiPipelineConfig,
-  Jobs = PageNames.rdiPipelineJobs
-}
 
 const getSelectedTab = (path: string, rdiInstanceId: string) => {
   const tabsPath = path?.replace(`${Pages.rdiPipelineManagement(rdiInstanceId)}/`, '')

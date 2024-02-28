@@ -1,9 +1,17 @@
 import { Nullable } from 'uiSrc/utils'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
+import {PageNames} from "uiSrc/constants";
 
+// tabs for dry run job panel
 export enum PipelineJobsTabs {
   Transformations = 'transformations',
   Output = 'output'
+}
+
+// pipeline management page tabs
+export enum RdiPipelineTabs {
+  Config = PageNames.rdiPipelineConfig,
+  Jobs = PageNames.rdiPipelineJobs
 }
 
 export enum DryRunJobResultStatus {
@@ -56,11 +64,24 @@ export interface IStateRdiTestConnections {
   results: Nullable<ITestConnection>
 }
 
+export interface IRdiPipelineStrategy {
+  label: string
+  value: string
+}
+
+export interface IRdiPipelineStrategies {
+  loading: boolean
+  error: string
+  dbType: IRdiPipelineStrategy[]
+  strategyType: IRdiPipelineStrategy[]
+}
+
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
   schema: Nullable<object>
+  strategies: IRdiPipelineStrategies
 }
 
 export interface IStateRdiDryRunJob {

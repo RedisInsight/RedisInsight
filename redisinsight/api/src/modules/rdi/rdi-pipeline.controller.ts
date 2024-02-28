@@ -76,4 +76,27 @@ export class RdiPipelineController {
   ): Promise<RdiTestConnectionResult> {
     return this.rdiPipelineService.testConnections(rdiClientMetadata, config);
   }
+
+  @Get('/strategies')
+  @ApiEndpoint({
+    description: 'Get pipeline strategies and db types for template',
+    responses: [{ status: 200, type: Rdi }],
+  })
+  async getStrategies(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<object> {
+    return this.rdiPipelineService.getStrategies(rdiClientMetadata);
+  }
+
+  @Post('/template')
+  @ApiEndpoint({
+    description: 'Get pipeline template for selected pipeline type',
+    responses: [{ status: 200, type: Rdi }],
+  })
+  async getTemplate(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+      @Body() options: object,
+  ): Promise<unknown> {
+    return this.rdiPipelineService.getTemplate(rdiClientMetadata, options);
+  }
 }

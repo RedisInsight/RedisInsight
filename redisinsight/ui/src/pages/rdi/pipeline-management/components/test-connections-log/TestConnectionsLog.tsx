@@ -20,7 +20,7 @@ export interface Props {
 const TestConnectionsLog = (props: Props) => {
   const { data } = props
 
-  const [openedNav, setOpenedNav] = useState<string>('')
+  const [openedNav, setOpenedNav] = useState<string>(ResultsStatus.Success)
 
   const onToggle = (length: number = 0, isOpen: boolean, name: string) => {
     if (length === 0) return

@@ -36,6 +36,7 @@ export interface Props {
   onChangeAutoRefreshRate?: (enableAutoRefresh: boolean, refreshRate: string) => void
   iconSize?: EuiButtonIconSizes
   disabled?: boolean
+  enableAutoRefreshDefault?: boolean
 }
 
 const TIMEOUT_TO_UPDATE_REFRESH_TIME = 1_000 * MINUTE // once a minute
@@ -54,6 +55,7 @@ const AutoRefresh = ({
   onChangeAutoRefreshRate,
   iconSize = 'm',
   disabled,
+  enableAutoRefreshDefault = false
 }: Props) => {
   let intervalText: NodeJS.Timeout
   let intervalRefresh: NodeJS.Timeout
@@ -62,7 +64,7 @@ const AutoRefresh = ({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const [refreshRate, setRefreshRate] = useState<string>('')
   const [refreshRateMessage, setRefreshRateMessage] = useState<string>('')
-  const [enableAutoRefresh, setEnableAutoRefresh] = useState(false)
+  const [enableAutoRefresh, setEnableAutoRefresh] = useState(enableAutoRefreshDefault)
   const [editingRate, setEditingRate] = useState(false)
 
   const onButtonClick = () => setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)

@@ -184,6 +184,14 @@ $marginIcon: 12px;
   }
 }
 
+.titleWrapper {
+  overflow: hidden;
+}
+
+.controls {
+  flex-shrink: 0;
+}
+
 .iconDropdownOption {
   width: 20px !important;
   height: 20px !important;
@@ -218,7 +226,7 @@ $marginIcon: 12px;
   padding-right: 0;
 
   & ~ div {
-    right: 4px;
+    right: 0px;
     svg {
       width: 10px !important;
       height: 10px !important;

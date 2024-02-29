@@ -1,12 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import IORedis from 'ioredis';
-import { mockDatabaseService } from 'src/__mocks__';
+import { mockDatabaseService, mockStandaloneRedisClient } from 'src/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { FunctionsWithKeyspaceStrategy } from 'src/modules/database-recommendation/scanner/strategies';
-
-const nodeClient = Object.create(IORedis.prototype);
-nodeClient.sendCommand = jest.fn();
 
 const mockDatabaseId = 'id';
 
@@ -17,6 +13,7 @@ const mockResponseWithTriggers = ['notify-keyspace-events', 'KEA'];
 const mockResponseWithoutTriggers = ['notify-keyspace-events', 'X'];
 
 describe('FunctionsWithKeyspaceStrategy', () => {
+  const client = mockStandaloneRedisClient;
   let strategy;
   let databaseService;
 
@@ -41,42 +38,42 @@ describe('FunctionsWithKeyspaceStrategy', () => {
       });
 
       it('should return true when there is keyspace notification', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'TFUNCTION' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['TFUNCTION']), expect.anything())
           .mockResolvedValueOnce(mockEmptyLibraries);
 
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'CONFIG' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['CONFIG']), expect.anything())
           .mockResolvedValueOnce(mockResponseWithTriggers);
 
         expect(await strategy.isRecommendationReached({
-          client: nodeClient,
+          client,
           databaseId: mockDatabaseId,
         })).toEqual({ isReached: true });
       });
 
       it('should return false when there is no keyspace notifications', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'TFUNCTION' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['TFUNCTION']), expect.anything())
           .mockResolvedValueOnce(mockEmptyLibraries);
 
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'CONFIG' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['CONFIG']), expect.anything())
           .mockResolvedValueOnce(mockResponseWithoutTriggers);
 
         expect(await strategy.isRecommendationReached({
-          client: nodeClient,
+          client,
           databaseId: mockDatabaseId,
         })).toEqual({ isReached: false });
       });
 
       it('should return false when TFUNCTION return libraries', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'TFUNCTION' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['TFUNCTION']), expect.anything())
           .mockResolvedValueOnce(mockLibraries);
 
         expect(await strategy.isRecommendationReached({
-          client: nodeClient,
+          client,
           databaseId: mockDatabaseId,
         })).toEqual({ isReached: false });
       });
@@ -88,23 +85,23 @@ describe('FunctionsWithKeyspaceStrategy', () => {
       });
 
       it('should return true when there is keyspace notification', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'CONFIG' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['CONFIG']), expect.anything())
           .mockResolvedValueOnce(mockResponseWithTriggers);
 
         expect(await strategy.isRecommendationReached({
-          client: nodeClient,
+          client,
           databaseId: mockDatabaseId,
         })).toEqual({ isReached: true });
       });
 
       it('should return false when there is no keyspace notifications', async () => {
-        when(nodeClient.sendCommand)
-          .calledWith(jasmine.objectContaining({ name: 'CONFIG' }))
+        when(client.sendCommand)
+          .calledWith(jasmine.arrayContaining(['CONFIG']), expect.anything())
           .mockResolvedValueOnce(mockResponseWithoutTriggers);
 
         expect(await strategy.isRecommendationReached({
-          client: nodeClient,
+          client,
           databaseId: mockDatabaseId,
         })).toEqual({ isReached: false });
       });

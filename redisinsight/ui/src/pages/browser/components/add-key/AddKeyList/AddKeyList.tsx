@@ -14,7 +14,7 @@ import {
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
-import { CreateListWithExpireDto } from 'apiSrc/modules/browser/dto'
+import { CreateListWithExpireDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
   AddListFormConfig as config,

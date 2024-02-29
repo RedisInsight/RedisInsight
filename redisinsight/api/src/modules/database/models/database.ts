@@ -21,7 +21,6 @@ import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-maste
 import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { SshOptions } from 'src/modules/ssh/models/ssh-options';
-import { Default } from 'src/common/decorators';
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
 
 const CONNECTIONS_CONFIG = config.get('connections');
@@ -110,7 +109,6 @@ export class Database {
   @Min(1_000)
   @Max(1_000_000_000)
   @IsInt({ always: true })
-  @Default(CONNECTIONS_CONFIG.timeout)
   timeout?: number = CONNECTIONS_CONFIG.timeout;
 
   @ApiProperty({

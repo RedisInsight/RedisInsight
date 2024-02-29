@@ -1,16 +1,16 @@
 import { cloneDeep, first } from 'lodash'
 
 import { AxiosError } from 'axios'
+import { SendCommandResponse } from 'src/modules/cli/dto/cli.dto'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore, } from 'uiSrc/utils/test-utils'
-import { ClusterNodeRole, CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/constants/cliOutput'
-import { cliParseTextResponseWithOffset, cliParseTextResponseWithRedirect } from 'uiSrc/utils/cliHelper'
+import { cliParseTextResponseWithOffset } from 'uiSrc/utils/cliHelper'
 import ApiErrors from 'uiSrc/constants/apiErrors'
 import { processCliClient } from 'uiSrc/slices/cli/cli-settings'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { SendClusterCommandDto, SendClusterCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import reducer, {
   concatToOutput,
   fetchMonitorLog,
@@ -364,42 +364,25 @@ describe('cliOutput slice', () => {
     })
 
     describe('Single Node Cluster Cli command', () => {
-      const options: SendClusterCommandDto = {
-        command: 'keys *',
-        nodeOptions: {
-          host: 'localhost',
-          port: 7000,
-          enableRedirection: true,
-        },
-        role: ClusterNodeRole.All,
-      }
-
       it('call both sendCliClusterCommandAction and sendCliCommandSuccess when response status is successed', async () => {
         // Arrange
         const command = 'keys *'
-        const data: SendClusterCommandResponse[] = [
-          {
-            response: '(nil)',
-            status: CommandExecutionStatus.Success,
-            node: { host: '127.0.0.1', port: 7002, slot: 6918 },
-          },
-        ]
+        const data: SendCommandResponse = {
+          response: '(nil)',
+          status: CommandExecutionStatus.Success,
+        }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendCliClusterCommandAction(command, options))
+        await store.dispatch<any>(sendCliClusterCommandAction(command))
 
         // Assert
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(
-            cliParseTextResponseWithRedirect(
-              first(data)?.response, command, first(data)?.status, first(data)?.node
-            )
-          ),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -407,29 +390,22 @@ describe('cliOutput slice', () => {
       it('call both sendCliClusterCommandAction and sendCliCommandSuccess when response status is fail', async () => {
         // Arrange
         const command = 'keys *'
-        const data: SendClusterCommandResponse[] = [
-          {
-            response: null,
-            status: CommandExecutionStatus.Success,
-            node: { host: '127.0.0.1', port: 7002, slot: 6918 },
-          },
-        ]
+        const data: SendCommandResponse = {
+          response: null,
+          status: CommandExecutionStatus.Success,
+        }
         const responsePayload = { data, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendCliClusterCommandAction(command, options))
+        await store.dispatch<any>(sendCliClusterCommandAction(command))
 
         // Assert
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(
-            cliParseTextResponseWithRedirect(
-              first(data)?.response, command, first(data)?.status, first(data)?.node
-            )
-          ),
+          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })
@@ -448,7 +424,7 @@ describe('cliOutput slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(sendCliClusterCommandAction(command, options))
+        await store.dispatch<any>(sendCliClusterCommandAction(command))
 
         // Assert
         const expectedActions = [
@@ -478,7 +454,7 @@ describe('cliOutput slice', () => {
         const tempStore = mockStore(rootState)
 
         // Act
-        await tempStore.dispatch<any>(sendCliClusterCommandAction(command, options))
+        await tempStore.dispatch<any>(sendCliClusterCommandAction(command))
 
         // Assert
         const expectedActions = [

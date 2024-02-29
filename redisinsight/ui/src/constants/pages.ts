@@ -21,8 +21,8 @@ export enum PageNames {
   triggeredFunctionsLibraries = 'libraries',
   triggeredFunctionsFunctions = 'functions',
   // rdi pages
-  rdiPipelineManagement = 'pipeline',
-  rdiPipelinePrepare = 'prepare',
+  rdiPipelineManagement = 'pipeline-management',
+  rdiPipelineStatistics = 'pipeline-statistics',
   rdiPipelineConfig = 'config',
   rdiPipelineJobs = 'jobs',
 }
@@ -58,11 +58,11 @@ export const Pages = {
     `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
   rdi,
-  rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
+  rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}`,
+  rdiPipelineManagement: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
+  rdiPipelineStatistics: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineStatistics}`,
   rdiPipelineConfig: (rdiInstance: string) =>
     `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineConfig}`,
-  rdiPipelinePrepare: (rdiInstance: string) =>
-    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelinePrepare}`,
   rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
-    `${rdi}/${rdiInstance}/pipeline/${PageNames.rdiPipelineJobs}/${jobName}`,
+    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineJobs}/${jobName}`,
 }

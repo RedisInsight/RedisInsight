@@ -7,8 +7,8 @@ import { PublishResponse } from 'src/modules/pub-sub/dto/publish.response';
 import { PublishDto } from 'src/modules/pub-sub/dto/publish.dto';
 import { PubSubAnalyticsService } from 'src/modules/pub-sub/pub-sub.analytics.service';
 import { catchAclError } from 'src/utils';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import { ClientMetadata } from 'src/common/models';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 @Injectable()
 export class PubSubService {
@@ -17,7 +17,7 @@ export class PubSubService {
   constructor(
     private readonly sessionProvider: UserSessionProvider,
     private readonly subscriptionProvider: SubscriptionProvider,
-    private databaseConnectionService: DatabaseConnectionService,
+    private databaseClientFactory: DatabaseClientFactory,
     private analyticsService: PubSubAnalyticsService,
   ) {}
 
@@ -80,7 +80,7 @@ export class PubSubService {
     try {
       this.logger.log('Publishing message.');
 
-      const client = await this.databaseConnectionService.getOrCreateClient(clientMetadata);
+      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const affected = await client.publish(dto.channel, dto.message);
 

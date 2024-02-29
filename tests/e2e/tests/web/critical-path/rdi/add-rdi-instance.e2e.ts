@@ -7,11 +7,13 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { commonUrl } from '../../../../helpers/conf';
 import { RedisOverviewPage } from '../../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
+import { DatabaseHelper } from '../../../../helpers';
 
 const rdiInstancesListPage = new RdiInstancesListPage();
 const browserActions = new BrowserActions();
 const rdiInstancePage = new RdiInstancePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
+const databaseHelper = new DatabaseHelper();
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
@@ -41,7 +43,7 @@ fixture.skip `Rdi instance`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await t.maximizeWindow();
+        await databaseHelper.acceptLicenseTerms();
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
 
     })

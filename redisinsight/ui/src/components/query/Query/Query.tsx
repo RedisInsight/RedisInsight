@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { compact, first } from 'lodash'
 import cx from 'classnames'
 import { EuiButtonIcon, EuiButton, EuiIcon, EuiLoadingSpinner, EuiText, EuiToolTip } from '@elastic/eui'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import MonacoEditor, { monaco } from 'react-monaco-editor'
+import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -87,7 +86,7 @@ const Query = (props: Props) => {
   const selectedArg = useRef('')
   const syntaxCommand = useRef<any>(null)
   const isDedicatedEditorOpenRef = useRef<boolean>(isDedicatedEditorOpen)
-  let syntaxWidgetContext: Nullable<monaco.editor.IContextKey<boolean>> = null
+  let syntaxWidgetContext: Nullable<monacoEditor.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
   const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
@@ -210,13 +209,13 @@ const Query = (props: Props) => {
     }
   }
 
-  const onTriggerContentWidget = (position: Nullable<monacoEditor.Position>, language: string = ''): monaco.editor.IContentWidget => ({
+  const onTriggerContentWidget = (position: Nullable<monacoEditor.Position>, language: string = ''): monacoEditor.editor.IContentWidget => ({
     getId: () => SYNTAX_WIDGET_ID,
     getDomNode: () => createSyntaxWidget(`Use ${language} Editor`, 'Shift+Space'),
     getPosition: () => ({
       position,
       preference: [
-        monaco.editor.ContentWidgetPositionPreference.BELOW
+        monacoEditor.editor.ContentWidgetPositionPreference.BELOW
       ]
     })
   })
@@ -243,26 +242,26 @@ const Query = (props: Props) => {
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
     // trigger parameter hints
     if (
-      e.keyCode === monaco.KeyCode.Tab
-      || e.keyCode === monaco.KeyCode.Enter
-      || (e.keyCode === monaco.KeyCode.Space && e.ctrlKey && e.shiftKey)
-      || (e.keyCode === monaco.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
+      e.keyCode === monacoEditor.KeyCode.Tab
+      || e.keyCode === monacoEditor.KeyCode.Enter
+      || (e.keyCode === monacoEditor.KeyCode.Space && e.ctrlKey && e.shiftKey)
+      || (e.keyCode === monacoEditor.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
     ) {
       onTriggerParameterHints()
     }
 
     if (
-      e.keyCode === monaco.KeyCode.UpArrow
+      e.keyCode === monacoEditor.KeyCode.UpArrow
     ) {
       onQuickHistoryAccess()
     }
 
-    if (e.keyCode === monaco.KeyCode.Enter || e.keyCode === monaco.KeyCode.Space) {
+    if (e.keyCode === monacoEditor.KeyCode.Enter || e.keyCode === monacoEditor.KeyCode.Space) {
       onExitSnippetMode()
     }
   }
 
-  const onKeyChangeCursorMonaco = (e: monaco.editor.ICursorPositionChangedEvent) => {
+  const onKeyChangeCursorMonaco = (e: monacoEditor.editor.ICursorPositionChangedEvent) => {
     if (!monacoObjects.current) return
     const { editor } = monacoObjects?.current
     const model = editor.getModel()
@@ -314,7 +313,7 @@ const Query = (props: Props) => {
 
     if (contribution?.isInSnippet?.()) {
       const { lineNumber = 0, column = 0 } = editor?.getPosition() ?? {}
-      editor.setSelection(new monaco.Selection(lineNumber, column, lineNumber, column))
+      editor.setSelection(new monacoEditor.Selection(lineNumber, column, lineNumber, column))
       contribution?.cancel?.()
     }
   }
@@ -367,7 +366,7 @@ const Query = (props: Props) => {
     editor.updateOptions({ readOnly: false })
     editor.executeEdits(null, [
       {
-        range: new monaco.Range(
+        range: new monacoEditor.Range(
           syntaxCommand.current.commandPosition.startLine,
           0,
           syntaxCommand.current.commandPosition.endLine,
@@ -413,8 +412,8 @@ const Query = (props: Props) => {
       onPressWidget()
     }, SYNTAX_CONTEXT_ID)
 
-    editor.onMouseDown((e: monaco.editor.IEditorMouseEvent) => {
-      if (e.target.detail === SYNTAX_WIDGET_ID) {
+    editor.onMouseDown((e: monacoEditor.editor.IEditorMouseEvent) => {
+      if ((e.target as monacoEditor.editor.IMouseTargetContentWidget)?.detail === SYNTAX_WIDGET_ID) {
         onPressWidget()
       }
     })

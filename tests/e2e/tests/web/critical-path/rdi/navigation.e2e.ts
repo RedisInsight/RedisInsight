@@ -1,5 +1,4 @@
 import { t } from 'testcafe';
-import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
@@ -16,11 +15,6 @@ const rdiInstancePage = new RdiInstancePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-const dbTableParams: DbTableParameters = {
-    tableName: 'rdi',
-    columnName: 'id',
-    rowValue: 'testId'
-};
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'http://localhost:4000',
@@ -33,9 +27,10 @@ fixture `Rdi Navigation`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await t.maximizeWindow();
+        await databaseHelper.acceptLicenseTerms();
         await rdiApiRequests.addNewRdiApi(rdiInstance);
-        await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
+        await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
+        await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
 
     })
     .afterEach(async() => {
@@ -61,4 +56,16 @@ test.before(async t => {
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
     count = await myRedisDatabasePage.NavigationPanel.getButtonsCount();
     await t.expect(count).eql(3, 'rdi buttons is displayed');
+});
+
+test('Verify that context is saved after navigation panel', async() => {
+    // check that tab is not highlighted
+    let classes = await rdiInstancePage.configurationTab.getAttribute('class');
+    await t.expect(classes?.split(' ').length).eql(1, 'the tab is  selected');
+    await t.click(rdiInstancePage.configurationTab);
+
+    await t.click(rdiInstancePage.breadcrumbsLink);
+    await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
+    classes = await rdiInstancePage.configurationTab.getAttribute('class');
+    await t.expect(classes?.split(' ').length).eql(2, 'the tab is not selected');
 });

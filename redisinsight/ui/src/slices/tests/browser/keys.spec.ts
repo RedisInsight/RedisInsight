@@ -9,15 +9,12 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
-import {
-  CreateHashWithExpireDto,
-  CreateListWithExpireDto,
-  CreateRejsonRlWithExpireDto,
-  CreateSetWithExpireDto,
-  CreateZSetWithExpireDto,
-  ListElementDestination,
-  SetStringWithExpireDto,
-} from 'apiSrc/modules/browser/dto'
+import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
+import { CreateListWithExpireDto, ListElementDestination } from 'apiSrc/modules/browser/list/dto'
+import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
+import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
+import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
+import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import { getString, getStringSuccess } from '../../browser/string'
 import reducer, {
   addHashKey,

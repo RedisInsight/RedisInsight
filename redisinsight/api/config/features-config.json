@@ -1,5 +1,5 @@
 {
-  "version": 2.3403,
+  "version": 2.3405,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -81,6 +81,13 @@
             "options": "i"
           }
         ]
+      }
+    },
+    "redisClient": {
+      "flag": true,
+      "perc": [[0, 100]],
+      "data": {
+        "strategy": "ioredis"
       }
     }
   }

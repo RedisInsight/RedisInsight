@@ -180,7 +180,20 @@ const configuration: webpack.Configuration = {
   },
 
   plugins: [
-    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({
+      languages: ['yaml', 'typescript', 'javascript', 'json'],
+      customLanguages: [
+        {
+          label: 'yaml',
+          entry: 'monaco-yaml',
+          worker: {
+            id: 'monaco-yaml/yamlWorker',
+            entry: 'monaco-yaml/yaml.worker'
+          }
+        }
+      ],
+      features: ['!rename']
+    }),
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',

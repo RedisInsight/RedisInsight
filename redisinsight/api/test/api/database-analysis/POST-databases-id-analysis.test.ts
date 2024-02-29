@@ -368,7 +368,7 @@ describe('POST /databases/:instanceId/analysis', () => {
         },
       ].map(mainCheckFn);
     });
-  
+
     describe('functionsWithKeyspace recommendation', () => {
       requirements('!rte.pass');
       [
@@ -516,7 +516,7 @@ describe('POST /databases/:instanceId/analysis', () => {
               name: constants.TEST_COMPRESSION_FOR_LIST_RECOMMENDATION.name
             });
             expect(entities.length).to.eq(1);
-  
+
             const NUMBERS_OF_LIST_ELEMENTS = 1001;
             await rte.data.generateHugeElementsForListKey(NUMBERS_OF_LIST_ELEMENTS, true);
           },

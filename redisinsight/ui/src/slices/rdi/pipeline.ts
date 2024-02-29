@@ -13,7 +13,7 @@ export const initialState: IStateRdiPipeline = {
   loading: true,
   error: '',
   data: null,
-  isDeployPopoverOpen: false,
+  schema: null,
 }
 
 const rdiPipelineSlice = createSlice({
@@ -40,6 +40,9 @@ const rdiPipelineSlice = createSlice({
     deployPipelineFailure: (state) => {
       state.loading = false
     },
+    setPipelineSchema: (state, { payload }) => {
+      state.schema = payload
+    },
   },
 })
 
@@ -52,6 +55,7 @@ export const {
   deployPipeline,
   deployPipelineSuccess,
   deployPipelineFailure,
+  setPipelineSchema,
 } = rdiPipelineSlice.actions
 
 // The reducer
@@ -110,6 +114,29 @@ export function deployPipelineAction(
 
       dispatch(addErrorNotification(parsedError))
       dispatch(deployPipelineFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+export function fetchRdiPipelineSchema(
+  rdiInstanceId: string,
+  onSuccessAction?: (data: any) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { data, status } = await apiService.get<IPipeline>(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_SCHEMA),
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setPipelineSchema(data))
+
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
+      dispatch(setPipelineSchema(null))
       onFailAction?.()
     }
   }

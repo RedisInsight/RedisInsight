@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 export const mockRedisServerInfoResponse: string = ' # Server\r\n'
   + 'redis_version:6.0.5\r\n'
   + 'redis_mode:standalone\r\n'
@@ -14,6 +13,8 @@ export const mockRedisClientsInfoResponse: string = '# Clients\r\n'
   + 'blocked_clients:0\r\n';
 
 export const mockRedisKeyspaceInfoResponse: string = '# Keyspace\r\ndb0:keys=1,expires=0,avg_ttl=0\r\n';
+
+export const mockRedisKeyspaceInfoResponseNoKeyspaceData: string = '# Keyspace\r\n \r\n';
 
 export const mockRedisMemoryInfoResponse: string = '# Memory\r\n'
   + 'used_memory:1000000\r\n'

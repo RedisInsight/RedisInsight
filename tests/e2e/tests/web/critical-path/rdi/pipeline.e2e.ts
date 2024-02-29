@@ -13,6 +13,7 @@ import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { RedisOverviewPage } from '../../../../helpers/constants';
+import { DatabaseHelper } from '../../../../helpers';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancePage = new RdiInstancePage();
@@ -20,6 +21,7 @@ const rdiInstancesListPage = new RdiInstancesListPage();
 const rdiApiRequests = new RdiApiRequests();
 const browserActions = new BrowserActions();
 const databasesActions = new DatabasesActions();
+const databaseHelper = new DatabaseHelper();
 
 let foundExportedFiles: string[];
 
@@ -34,22 +36,13 @@ const rdiInstance: AddNewRdiParameters = {
     password: 'password'
 };
 
-const dbTableParams: DbTableParameters = {
-    tableName: 'rdi',
-    columnName: 'id',
-    rowValue: 'testId',
-    conditionWhereColumnName: 'name',
-    conditionWhereColumnValue: `${rdiInstance.name}`
-};
-
 //skip the tests until rdi integration is added
 fixture.skip `Pipeline`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await t.maximizeWindow();
+        await databaseHelper.acceptLicenseTerms();
         await rdiApiRequests.addNewRdiApi(rdiInstance);
-        await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
 

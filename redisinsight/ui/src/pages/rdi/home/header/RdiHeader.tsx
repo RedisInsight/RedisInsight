@@ -1,7 +1,8 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPanel, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 import SearchRdiList from '../search/SearchRdiList'
+import styles from './styles.module.scss'
 
 export interface Props {
   onRdiInstanceClick: () => void
@@ -17,13 +18,24 @@ const RdiHeader = ({ onRdiInstanceClick }: Props) => (
         <EuiFlexGroup justifyContent="flexEnd" alignItems="center" gutterSize="s">
           <EuiFlexItem grow={false}>
             <EuiButton fill size="s" color="secondary" onClick={onRdiInstanceClick} data-testid="rdi-instance">
-              RDI Instance
+              + RDI INSTANCE
             </EuiButton>
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton size="s" onClick={() => {}} data-testid="import-rdi-instance">
-              Import
-            </EuiButton>
+            <EuiToolTip
+              content="Import RDI Instances"
+            >
+              <EuiButton
+                fill
+                color="secondary"
+                onClick={() => {}}
+                size="s"
+                className={styles.importBtn}
+                data-testid="import-from-file-btn"
+              >
+                <EuiIcon type="importAction" />
+              </EuiButton>
+            </EuiToolTip>
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>

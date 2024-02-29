@@ -27,7 +27,6 @@
 
   &.insightsOpen {
     width: 460px;
-    z-index: 1001;
     @media only screen and (max-width: 1440px) {
       width: 380px;
     }

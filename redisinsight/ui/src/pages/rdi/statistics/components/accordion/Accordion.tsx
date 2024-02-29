@@ -9,7 +9,7 @@ interface Props {
   id: string
   title: string
   children: JSX.Element
-  loading: boolean
+  loading?: boolean
   onRefresh?: () => void
   hideAutoRefresh?: boolean
   enableAutoRefreshDefault?: boolean

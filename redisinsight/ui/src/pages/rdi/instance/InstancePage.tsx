@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { Formik, FormikProps } from 'formik'
 
 import {
   appContextSelector,
@@ -13,12 +14,20 @@ import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
+import { deployPipelineAction, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { IPipeline } from 'uiSrc/slices/interfaces'
+import { Nullable } from 'uiSrc/utils'
 
 import InstancePageRouter from './InstancePageRouter'
 
 export interface Props {
   routes: IRoute[]
 }
+
+const getInitialValues = (data: Nullable<IPipeline>): IPipeline => ({
+  config: data?.config ?? '',
+  jobs: data?.jobs ?? [],
+})
 
 const RdiInstancePage = ({ routes = [] }: Props) => {
   const dispatch = useDispatch()
@@ -27,6 +36,10 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastPage, contextRdiInstanceId } = useSelector(appContextSelector)
+  const { data } = useSelector(rdiPipelineSelector)
+
+  const [initialFormValues, setInitialFormValues] = useState<IPipeline>(getInitialValues(data))
+  const formikRef = useRef<FormikProps<IPipeline>>(null)
 
   useEffect(() => {
     if (!contextRdiInstanceId || contextRdiInstanceId !== rdiInstanceId) {
@@ -43,8 +56,8 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   useEffect(() => {
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
-      if (lastPage === PageNames.rdiPipelineStatistics && contextRdiInstanceId === rdiInstanceId) {
-        history.push(Pages.rdiPipelineStatistics(rdiInstanceId))
+      if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {
+        history.push(Pages.rdiStatistics(rdiInstanceId))
         return
       }
 
@@ -52,9 +65,24 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
     }
   }, [])
 
+  useEffect(() => {
+    setInitialFormValues(getInitialValues(data))
+    formikRef.current?.resetForm()
+  }, [data])
+
+  const onSubmit = (values: IPipeline) => {
+    dispatch(deployPipelineAction(rdiInstanceId, values))
+  }
+
   return (
-    // TODO add rdi page template
-    <InstancePageRouter routes={routes} />
+    <Formik
+      initialValues={initialFormValues}
+      enableReinitialize
+      onSubmit={onSubmit}
+      innerRef={formikRef}
+    >
+      <InstancePageRouter routes={routes} />
+    </Formik>
   )
 }
 

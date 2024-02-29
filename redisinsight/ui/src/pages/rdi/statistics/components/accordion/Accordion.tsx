@@ -9,12 +9,12 @@ interface Props {
   id: string
   title: string
   children: JSX.Element
-  loading: boolean
+  loading?: boolean
   onRefresh?: () => void
   hideAutoRefresh?: boolean
 }
 
-const Accordion = ({ id, title, children, loading, onRefresh, hideAutoRefresh = false }: Props) => {
+const Accordion = ({ id, title, children, loading = false, onRefresh, hideAutoRefresh = false }: Props) => {
   const [lastRefreshTime, setLastRefreshTime] = React.useState(Date.now())
 
   return (

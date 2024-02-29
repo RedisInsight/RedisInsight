@@ -306,7 +306,7 @@ const ONBOARDING_FEATURES = {
       return {
         content: (
           <>
-            Share your Redis expertise with your team and the wider community by building custom RedisInsight tutorials.
+            Share your Redis expertise with your team and the wider community by building custom Redis Insight tutorials.
             <EuiSpacer size="xs" />
             Use our <a href="https://github.com/RedisInsight/Tutorials" target="_blank" rel="noreferrer">instructions</a> to
             describe your implementations of Redis for other users to follow and

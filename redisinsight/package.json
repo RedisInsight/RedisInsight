@@ -1,9 +1,9 @@
 {
   "name": "redisinsight",
-  "productName": "RedisInsight",
+  "productName": "Redis Insight",
   "private": true,
   "version": "2.44.0",
-  "description": "RedisInsight",
+  "description": "Redis Insight",
   "main": "./dist/main/main.js",
   "author": {
     "name": "Redis Ltd.",

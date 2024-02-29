@@ -36,7 +36,7 @@ const parseCloudOAuthErrorTests = [
       title: 'Server error',
       message: (
         <>
-          Try restarting RedisInsight.
+          Try restarting Redis Insight.
           <EuiSpacer size="s" />
           If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
         </>

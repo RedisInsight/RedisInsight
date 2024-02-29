@@ -24,7 +24,7 @@ aliases:
     run:
       name: Sign application
       command: |
-        $filePath = $(Get-ChildItem release -Filter RedisInsight*.exe | % { $_.FullName })
+        $filePath = $(Get-ChildItem release -Filter Redis-Insight*.exe | % { $_.FullName })
         $filePathWithQuotes = '"{0}"' -f $filePath
         & "C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x86\signtool.exe" sign /a /sm /n "Redis Labs Inc." /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /v $FilePathWithQuotes
       shell: powershell.exe
@@ -645,11 +645,11 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - release/RedisInsight*.deb
-            - release/RedisInsight*.rpm
-            - release/RedisInsight*.AppImage
-            - release/RedisInsight*.flatpak
-            - release/RedisInsight*.snap
+            - release/Redis-Insight*.deb
+            - release/Redis-Insight*.rpm
+            - release/Redis-Insight*.AppImage
+            - release/Redis-Insight*.flatpak
+            - release/Redis-Insight*.snap
             - release/*-linux.yml
   macosx:
     macos:
@@ -697,7 +697,7 @@ jobs:
               yarn package:prod
               yarn package:mas
               rm -rf release/mac
-              mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
+              mv release/mas-universal/Redis-Insight-mac-universal-mas.pkg release/Redis-Insight-mac-universal-mas.pkg
               exit 0;
             fi
 
@@ -727,7 +727,7 @@ jobs:
 
             yarn package:stage && yarn package:mas
             rm -rf release/mac
-            mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
+            mv release/mas-universal/Redis-Insight-mac-universal-mas.pkg release/Redis-Insight-mac-universal-mas.pkg
           no_output_timeout: 60m
       - when:
           condition:
@@ -741,10 +741,10 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - release/RedisInsight*.zip
-            - release/RedisInsight*.dmg
-            - release/RedisInsight*.dmg.blockmap
-            - release/RedisInsight*.pkg
+            - release/Redis-Insight*.zip
+            - release/Redis-Insight*.dmg
+            - release/Redis-Insight*.dmg.blockmap
+            - release/Redis-Insight*.pkg
             - release/*-mac.yml
             - release/redisstack
   windows:
@@ -806,8 +806,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - release/RedisInsight*.exe
-            - release/RedisInsight*.exe.blockmap
+            - release/Redis-Insight*.exe
+            - release/Redis-Insight*.exe.blockmap
             - release/*.yml
   virustotal-file:
     executor: linux-executor
@@ -822,7 +822,7 @@ jobs:
       - run:
           name: export FILE_NAME environment variable
           command: |
-            echo 'export FILE_NAME="RedisInsight*<< parameters.ext >>"' >> $BASH_ENV
+            echo 'export FILE_NAME="Redis-Insight*<< parameters.ext >>"' >> $BASH_ENV
       - <<: *fileScan
       - <<: *validate
   virustotal-url:
@@ -905,7 +905,7 @@ jobs:
             docker buildx build \
             -f .circleci/build/build.Dockerfile \
             --platform linux/amd64 \
-            --build-arg DIST=release/web/RedisInsight-web-linux-musl.x64.tar.gz \
+            --build-arg DIST=release/web/Redis-Insight-web-linux-musl.x64.tar.gz \
             --build-arg NODE_ENV=<< parameters.env >> \
             --build-arg RI_SEGMENT_WRITE_KEY="$TELEMETRY" \
             -t redisinsight:amd64 \
@@ -915,7 +915,7 @@ jobs:
             docker buildx build \
             -f .circleci/build/build.Dockerfile \
             --platform linux/arm64 \
-            --build-arg DIST=release/web/RedisInsight-web-linux-musl.arm64.tar.gz \
+            --build-arg DIST=release/web/Redis-Insight-web-linux-musl.arm64.tar.gz \
             --build-arg NODE_ENV=<< parameters.env >> \
             --build-arg RI_SEGMENT_WRITE_KEY="$TELEMETRY" \
             -t redisinsight:arm64 \
@@ -1039,7 +1039,7 @@ jobs:
             echo "export releasesFolderPath=${releasesFolderPath}" >> $BASH_ENV
             echo "export applicationName=${appName}" >> $BASH_ENV
             echo "export applicationVersion=${appVersion}" >> $BASH_ENV
-            echo "export appFileName=RedisInsight" >> $BASH_ENV
+            echo "export appFileName=Redis-Insight" >> $BASH_ENV
 
             # download latest.yml file to get last public version
             aws s3 cp s3://${AWS_BUCKET_NAME}/${downloadLatestFolderPath}/${latestYmlFileName} .
@@ -1743,28 +1743,28 @@ workflows:
 
       - virustotal-url:
           name: Virus check - AppImage (nightly)
-          fileName: RedisInsight-linux-x86_64.AppImage
+          fileName: Redis-Insight-linux-x86_64.AppImage
       - virustotal-url:
           name: Virus check - deb (nightly)
-          fileName: RedisInsight-linux-amd64.deb
+          fileName: Redis-Insight-linux-amd64.deb
       - virustotal-url:
           name: Virus check - rpm (nightly)
-          fileName: RedisInsight-linux-x86_64.rpm
+          fileName: Redis-Insight-linux-x86_64.rpm
       - virustotal-url:
           name: Virus check - snap (nightly)
-          fileName: RedisInsight-linux-amd64.snap
+          fileName: Redis-Insight-linux-amd64.snap
       - virustotal-url:
           name: Virus check x64 - dmg (nightly)
-          fileName: RedisInsight-mac-x64.dmg
+          fileName: Redis-Insight-mac-x64.dmg
       - virustotal-url:
           name: Virus check arm64 - dmg (nightly)
-          fileName: RedisInsight-mac-arm64.dmg
+          fileName: Redis-Insight-mac-arm64.dmg
       - virustotal-url:
           name: Virus check MAS - pkg (nightly)
-          fileName: RedisInsight-mac-universal-mas.pkg
+          fileName: Redis-Insight-mac-universal-mas.pkg
       - virustotal-url:
           name: Virus check - exe (nightly)
-          fileName: RedisInsight-win-installer.exe
+          fileName: Redis-Insight-win-installer.exe
       - virustotal-report:
           name: Virus check report (prod)
           requires:

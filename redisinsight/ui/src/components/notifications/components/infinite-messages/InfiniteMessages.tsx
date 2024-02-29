@@ -58,7 +58,7 @@ export const INFINITE_MESSAGES = {
             </EuiText>
             <EuiSpacer size="m" />
             <EuiText size="xs">
-              You can continue working in RedisInsight, and we will notify you once done.
+              You can continue working in Redis Insight, and we will notify you once done.
             </EuiText>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -154,7 +154,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiTitle className="infiniteMessage__title"><span>You already have a free Redis Cloud subscription.</span></EuiTitle>
         <EuiText size="xs">
-          Do you want to import your existing database into RedisInsight?
+          Do you want to import your existing database into Redis Insight?
         </EuiText>
         <EuiSpacer size="m" />
         <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">
@@ -266,11 +266,11 @@ export const INFINITE_MESSAGES = {
         </EuiTitle>
         <EuiText size="s">
           <>
-            With RedisInsight
+            With Redis Insight
             {` ${version} `}
             you have access to new useful features and optimizations.
             <br />
-            Restart RedisInsight to install updates.
+            Restart Redis Insight to install updates.
           </>
         </EuiText>
         <br />

@@ -46,7 +46,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
 
   const { theme } = useContext(ThemeContext)
 
-  setTitle('Welcome to RedisInsight')
+  setTitle('Welcome to Redis Insight')
 
   const CONNECT_BUTTONS = [
     {
@@ -81,7 +81,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
         },
         {
           title: 'Import database connections from a file',
-          description: (<>Migrate your database connections to <br />RedisInsight</>),
+          description: (<>Migrate your database connections to <br />Redis Insight</>),
           iconType: 'download',
           onClick: () => handleClickImportDbBtn(),
           testId: 'import-from-file-btn'

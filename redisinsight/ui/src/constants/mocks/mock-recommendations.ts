@@ -1254,7 +1254,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     content: [
       {
         type: 'paragraph',
-        value: 'Try RedisInsight Workbench, our advanced command-line interface with syntax highlighting, intelligent auto-complete, and the ability to work with commands in an editor mode.'
+        value: 'Try Redis Insight Workbench, our advanced command-line interface with syntax highlighting, intelligent auto-complete, and the ability to work with commands in an editor mode.'
       },
       {
         type: 'spacer',

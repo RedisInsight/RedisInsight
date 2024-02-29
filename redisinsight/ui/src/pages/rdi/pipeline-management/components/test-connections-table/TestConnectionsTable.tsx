@@ -19,7 +19,7 @@ const TestConnectionsTable = (props: Props) => {
       name: '#',
       field: 'index',
       width: '4%',
-      render: (index: number) => (<span data-testid={`table-index-${index}`}>({index})</span>)
+      render: (index: number) => (<span data-testid={`table-index-${index}`}>{index}</span>)
     },
     {
       name: 'Endpoint',

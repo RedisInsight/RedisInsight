@@ -39,6 +39,7 @@ const ProcessingPerformance = ({
       title="Processing performance information"
       loading={loading}
       onRefresh={onRefresh}
+      enableAutoRefreshDefault
     >
       <>
         <EuiFlexGroup gutterSize="s">
@@ -53,7 +54,7 @@ const ProcessingPerformance = ({
           <EuiFlexItem>
             <EuiFlexGroup direction="column" gutterSize="s" responsive={false}>
               <InfoPanel label="ACK time average" value={ackTimeAvg} suffix="sec" />
-              <InfoPanel label="Records per second average" value={recPerSecAvg} suffix="ms" />
+              <InfoPanel label="Records per second average" value={recPerSecAvg} suffix="/sec" />
               <InfoPanel label="Read time average" value={readTimeAvg} suffix="ms" />
             </EuiFlexGroup>
           </EuiFlexItem>

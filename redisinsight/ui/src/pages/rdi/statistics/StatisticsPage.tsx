@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { isEmpty } from 'lodash'
 
-import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import Clients from './clients'
@@ -25,8 +24,10 @@ const StatisticsPage = () => {
   const { loading: isStatisticsLoading, data: statisticsData } = useSelector(rdiStatisticsSelector)
 
   useEffect(() => {
-    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
-    dispatch(fetchRdiPipeline(rdiInstanceId))
+    if (!pipelineData) {
+      dispatch(fetchRdiPipeline(rdiInstanceId))
+    }
+
     dispatch(fetchRdiStatistics(rdiInstanceId))
   }, [])
 
@@ -50,7 +51,7 @@ const StatisticsPage = () => {
                 dispatch(fetchRdiStatistics(rdiInstanceId))
               }}
             />
-            <TargetConnections data={statisticsData.connections} loading={isStatisticsLoading} />
+            <TargetConnections data={statisticsData.connections} />
             <DataStreams
               data={statisticsData.dataStreams}
               loading={isStatisticsLoading}

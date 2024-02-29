@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { fetchRdiPipeline, fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
+import { fetchRdiPipeline, fetchRdiPipelineSchema, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import RdiPipelinePageTemplate from 'uiSrc/templates/rdi-pipeline-page-template'
 import {
   appContextPipelineManagement,
@@ -23,6 +23,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastViewedPage } = useSelector(appContextPipelineManagement)
   const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
+  const { data: pipelineData } = useSelector(rdiPipelineSelector)
 
   const pathnameRef = useRef<string>('')
 
@@ -34,7 +35,10 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   setTitle(`${rdiInstanceName} - Pipeline Management`)
 
   useEffect(() => {
-    dispatch(fetchRdiPipeline(rdiInstanceId))
+    if (!pipelineData) {
+      dispatch(fetchRdiPipeline(rdiInstanceId))
+    }
+
     dispatch(fetchRdiPipelineSchema(rdiInstanceId))
   }, [])
 

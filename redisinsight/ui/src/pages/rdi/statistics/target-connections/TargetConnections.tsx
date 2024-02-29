@@ -68,10 +68,9 @@ const columns: EuiBasicTableColumn<ConnectionData>[] = [
 
 interface Props {
   data: IConnections
-  loading: boolean
 }
 
-const TargetConnections = ({ data, loading }: Props) => {
+const TargetConnections = ({ data }: Props) => {
   const connections = Object.keys(data).map((key) => {
     const connection = data[key]
     return {
@@ -83,7 +82,7 @@ const TargetConnections = ({ data, loading }: Props) => {
 
   return (
     <Panel>
-      <Accordion id="target-connections" title="Target connections" loading={loading} hideAutoRefresh>
+      <Accordion id="target-connections" title="Target connections" hideAutoRefresh>
         <Table<ConnectionData> id="target-connections" columns={columns} items={connections} initialSortField="name" />
       </Accordion>
     </Panel>

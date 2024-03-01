@@ -185,10 +185,9 @@ export function fetchPipelineTemplate(
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      // dispatch(deployPipeline())
-      const { status, data } = await apiService.post(
+      const { status, data } = await apiService.get(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_TEMPLATE),
-        options,
+        { params: options },
       )
 
       if (isStatusSuccessful(status)) {

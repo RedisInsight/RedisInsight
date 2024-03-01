@@ -34,7 +34,7 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async getTemplate(options: object): Promise<object> {
-    const response = await this.client.post(RdiUrl.GetTemplate, { ...options});
+    const response = await this.client.get(RdiUrl.GetTemplate, { params: options });
     return response.data;
   }
 

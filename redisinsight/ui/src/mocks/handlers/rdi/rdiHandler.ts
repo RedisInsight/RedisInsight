@@ -6,7 +6,7 @@ import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 
 const handlers: RestHandler[] = [
   // fetch rdi instances
-  rest.get<RdiInstanceResponse[]>(getMswURL(ApiEndpoints.RDI_INSTANCES), async (_req, res, ctx) =>
+  rest.get<RdiInstanceResponse[]>(getMswURL(getUrl(ApiEndpoints.RDI_INSTANCES)), async (_req, res, ctx) =>
     res(
       ctx.status(200),
       ctx.json([

@@ -1,6 +1,8 @@
 import { DefaultBodyType, MockedRequest, RestHandler } from 'msw'
 
 import rdiHandler from './rdiHandler'
+import rdiStrategiesHandler from './rdiPipelineStrategiesHandlers'
 
-const handlers: RestHandler<MockedRequest<DefaultBodyType>>[] = [].concat(rdiHandler)
+// @ts-ignore
+const handlers: RestHandler<MockedRequest<DefaultBodyType>>[] = [].concat(rdiHandler, rdiStrategiesHandler)
 export default handlers

@@ -29,10 +29,6 @@ export interface Props {
 }
 
 const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
-  if (value) {
-    return 'Templates can be accessed only with the empty Editor to prevent potential data loss.'
-  }
-
   if (isNoTemplateOptions) {
     return (
       <>
@@ -41,6 +37,10 @@ const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
         Close the form and try again.
       </>
     )
+  }
+
+  if (value) {
+    return 'Templates can be accessed only with the empty Editor to prevent potential data loss.'
   }
 
   return null
@@ -125,7 +125,7 @@ const TemplateForm = (props: Props) => {
               valueOfSelected={selectedStrategy}
               onChange={(value) => setSelectedStrategy(value)}
               popoverClassName={styles.selectWrapper}
-              data-test-subj={`strategy-type-select-${source}`}
+              data-testid="strategy-type-select"
             />
           </>
         </EuiFormRow>
@@ -138,7 +138,7 @@ const TemplateForm = (props: Props) => {
                 valueOfSelected={selectedDbType}
                 onChange={(value) => setSelectedDbType(value)}
                 popoverClassName={styles.selectWrapper}
-                data-test-subj={`db-type-select-${source}`}
+                data-testid="db-type-select"
               />
             </>
           </EuiFormRow>

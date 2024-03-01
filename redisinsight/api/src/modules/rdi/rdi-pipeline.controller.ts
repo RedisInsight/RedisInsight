@@ -1,6 +1,7 @@
 import {
   Body,
   ClassSerializerInterceptor, Controller, Get, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { Rdi, RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
@@ -88,14 +89,14 @@ export class RdiPipelineController {
     return this.rdiPipelineService.getStrategies(rdiClientMetadata);
   }
 
-  @Post('/template')
+  @Get('/template')
   @ApiEndpoint({
     description: 'Get pipeline template for selected pipeline type',
     responses: [{ status: 200, type: Rdi }],
   })
   async getTemplate(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() options: object,
+      @Query() options: object,
   ): Promise<unknown> {
     return this.rdiPipelineService.getTemplate(rdiClientMetadata, options);
   }

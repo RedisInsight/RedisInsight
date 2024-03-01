@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { EuiButton, EuiPopover, EuiOutsideClickDetector } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -33,12 +33,6 @@ const TemplatePopover = (props: Props) => {
   const handleClose = () => {
     setIsPopoverOpen(false)
   }
-
-  useEffect(() => {
-    if (value) {
-      setIsPopoverOpen(false)
-    }
-  }, [value])
 
   return (
     <EuiOutsideClickDetector onOutsideClick={handleClose}>

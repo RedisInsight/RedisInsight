@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import styles from './styles.module.scss'
 
-interface Props<T> {
+export interface Props<T> {
   id: string
   columns: EuiBasicTableColumn<T>[]
   items: T[]

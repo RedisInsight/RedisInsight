@@ -1,10 +1,12 @@
+import { isEmpty } from 'lodash'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { isEmpty } from 'lodash'
 
+import { connectedInstanceSelector, fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
+import { formatLongName, setTitle } from 'uiSrc/utils'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -22,12 +24,17 @@ const StatisticsPage = () => {
 
   const { loading: isPipelineLoading, data: pipelineData } = useSelector(rdiPipelineSelector)
   const { loading: isStatisticsLoading, data: statisticsData } = useSelector(rdiStatisticsSelector)
+  const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
+
+  const rdiInstanceName = formatLongName(connectedRdiInstanceName, 33, 0, '...')
+  setTitle(`${rdiInstanceName} - Pipeline Status`)
 
   useEffect(() => {
     if (!pipelineData) {
       dispatch(fetchRdiPipeline(rdiInstanceId))
     }
 
+    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
     dispatch(fetchRdiStatistics(rdiInstanceId))
   }, [])
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiImage, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiImage, EuiSpacer, EuiText } from '@elastic/eui'
 import AiChatImg from 'uiSrc/assets/img/ai/ai-chat.svg'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { SUGGESTIONS } from '../../constants'
@@ -22,7 +22,7 @@ const EmptyHistoryScreen = (props: Props) => {
       </EuiText>
       <EuiSpacer />
       <EuiText size="xs">
-        With <span style={{ color: 'red' }}>&hearts;</span>, your AI Assistant!
+        With <span style={{ color: 'red' }}>&hearts;</span>, your Redis Copilot!
       </EuiText>
       <EuiSpacer size="xs" />
       <EuiText size="xs" color="subdued">
@@ -42,7 +42,7 @@ const EmptyHistoryScreen = (props: Props) => {
       </EuiText>
       <EuiSpacer />
       <EuiText size="xs">
-        With <span style={{ color: 'red' }}>&hearts;</span>, your AI Assistant!
+        With <span style={{ color: 'red' }}>&hearts;</span>, your Redis Copilot!
       </EuiText>
       <EuiSpacer size="xs" />
       <EuiText size="xs" color="subdued">
@@ -56,7 +56,6 @@ const EmptyHistoryScreen = (props: Props) => {
       <div className={styles.welcomeText}>
         <EuiImage src={AiChatImg} alt="chat" />
         <EuiSpacer size="l" />
-        <EuiTitle size="s"><span>ASK A QUESTION ABOUT REDIS</span></EuiTitle>
         {type === AiChatType.Assistance ? AssistanceText : ExpertText}
       </div>
       {type === AiChatType.Assistance && (

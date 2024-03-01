@@ -9,7 +9,7 @@ interface HomeTab {
 const tabs: HomeTab[] = [
   {
     id: 'databases',
-    title: 'Redis databases',
+    title: 'Redis Databases',
     path: Pages.home
   },
   {

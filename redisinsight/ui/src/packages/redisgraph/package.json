@@ -17,8 +17,8 @@
     "start": "cross-env NODE_ENV=development parcel serve src/index.html",
     "build": "rimraf dist && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\" \"yarn build:css\"",
     "build-lite": "rm dist/*.js && cross-env NODE_ENV=production concurrently \"yarn build:js && yarn minify:js\"",
-    "build:js": "parcel build src/main.tsx --dist-dir dist",
-    "build:css": "parcel build src/styles/styles.less --dist-dir dist",
+    "build:js": "parcel build src/main.tsx --no-source-maps --no-cache --dist-dir dist",
+    "build:css": "parcel build src/styles/styles.less --no-source-maps --no-cache --dist-dir dist",
     "minify:js": "terser -- dist/main.js > dist/index.js && rimraf dist/main.js"
   },
   "targets": {

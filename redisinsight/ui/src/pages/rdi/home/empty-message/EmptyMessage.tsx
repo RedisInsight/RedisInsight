@@ -19,7 +19,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
     <EuiFlexGroup alignItems="center">
       <EuiFlexItem>
         <EuiButton data-testid="empty-rdi-instance-button" color="secondary" fill size="s" onClick={onAddInstanceClick}>
-          + RDI Instance
+          + RDI INSTANCE
         </EuiButton>
       </EuiFlexItem>
       or

@@ -60,15 +60,15 @@ const Navigation = () => {
         data-testid={`rdi-nav-btn-${RdiPipelineTabs.Config}`}
       >
         <Tab
-          title="Configuration"
-          fileName="Target connection details"
+          title="Configure pipeline"
+          fileName="Configuration file"
           isSelected={selectedTab === RdiPipelineTabs.Config}
           data-testid={`rdi-pipeline-tab-${RdiPipelineTabs.Config}`}
           isLoading={loading}
         />
       </div>
       <Tab
-        title="Transform and Validate"
+        title="Add transformation jobs"
         isSelected={selectedTab === RdiPipelineTabs.Jobs}
         data-testid="rdi-pipeline-tab-jobs"
       >

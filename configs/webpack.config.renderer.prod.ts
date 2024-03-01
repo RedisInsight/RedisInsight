@@ -4,6 +4,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import { merge } from 'webpack-merge';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 import webpackPaths from './webpack.paths';
@@ -26,8 +27,6 @@ const devtoolsConfig =
 const configuration: webpack.Configuration = {
   ...devtoolsConfig,
 
-  mode: 'production',
-
   target: ['web', 'electron-renderer'],
 
   entry: [path.join(webpackPaths.uiPath, 'indexElectron.tsx')],
@@ -39,6 +38,13 @@ const configuration: webpack.Configuration = {
     library: {
       type: 'umd',
     },
+  },
+
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+    ],
   },
 
   module: {

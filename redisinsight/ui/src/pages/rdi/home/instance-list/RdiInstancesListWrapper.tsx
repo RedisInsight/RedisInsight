@@ -148,7 +148,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     {
       field: 'version',
       className: 'column_type',
-      name: 'RDI Version',
+      name: 'Version',
       dataType: 'string',
       sortable: true,
       width: '100px',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
@@ -19,8 +19,10 @@ const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
   const [decodedJobName, setDecodedJobName] = useState<string>(decodeURIComponent(jobName))
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
-  const [jobIndex, setJobIndex] = useState<number>(-1)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
+  const [editorValue, setEditorValue] = useState<string>('')
+
+  const jobIndexRef = useRef<number>()
 
   const history = useHistory()
 
@@ -35,7 +37,8 @@ const Jobs = () => {
       history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
 
-    setJobIndex(jobIndex)
+    jobIndexRef.current = jobIndex
+    setEditorValue(values.jobs?.[jobIndexRef.current ?? -1]?.value)
   }, [values, rdiInstanceId, decodedJobName, history])
 
   useEffect(() => {
@@ -64,6 +67,7 @@ const Jobs = () => {
       },
     })
   }
+
   return (
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
@@ -98,8 +102,8 @@ const Jobs = () => {
         ) : (
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
-            value={values.jobs?.[jobIndex]?.value ?? ''}
-            onChange={(value) => setFieldValue(`jobs.${jobIndex}.value`, value)}
+            value={editorValue}
+            onChange={(value) => setFieldValue(`jobs.${jobIndexRef.current}.value`, value)}
             disabled={loading}
             wrapperClassName="rdi__editorWrapper"
             data-testid="rdi-monaco-jobs"
@@ -120,7 +124,10 @@ const Jobs = () => {
         </div>
       </div>
       {isPanelOpen && (
-        <DryRunJobPanel onClose={() => setIsPanelOpen(false)} job={values.jobs?.[jobIndex]?.value ?? ''} />
+        <DryRunJobPanel
+          onClose={() => setIsPanelOpen(false)}
+          job={values.jobs?.[jobIndexRef.current ?? -1]?.value ?? ''}
+        />
       )}
     </>
 

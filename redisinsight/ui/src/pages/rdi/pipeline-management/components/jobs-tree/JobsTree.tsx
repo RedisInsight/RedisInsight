@@ -129,6 +129,19 @@ const JobsTree = (props: IProps) => {
         {name}
       </EuiFlexItem>
       <EuiFlexItem grow={false} className={styles.actions} data-testid={`rdi-nav-job-actions-${name}`}>
+        <EuiToolTip content="Edit job file name" position="top" display="inlineBlock" anchorClassName="flex-row">
+          <EuiButtonIcon
+            iconType="pencil"
+            onClick={() => {
+              onSelectedTab(name)
+              setEditJobIndex(index)
+              setEditJobName(name)
+              setIsNewJob(false)
+            }}
+            aria-label="edit job file name"
+            data-testid={`edit-job-name-${name}`}
+          />
+        </EuiToolTip>
         <EuiToolTip
           content={deleteJobIndex === null ? 'Delete job' : null}
           position="top"
@@ -144,19 +157,6 @@ const JobsTree = (props: IProps) => {
             onButtonClick={() => {
               setDeleteJobIndex(index)
             }}
-          />
-        </EuiToolTip>
-        <EuiToolTip content="Edit job file name" position="top" display="inlineBlock" anchorClassName="flex-row">
-          <EuiButtonIcon
-            iconType="pencil"
-            onClick={() => {
-              onSelectedTab(name)
-              setEditJobIndex(index)
-              setEditJobName(name)
-              setIsNewJob(false)
-            }}
-            aria-label="edit job file name"
-            data-testid={`edit-job-name-${name}`}
           />
         </EuiToolTip>
       </EuiFlexItem>

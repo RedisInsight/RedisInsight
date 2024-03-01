@@ -66,7 +66,10 @@
 
 @include insights-open {
   .container {
-    width: 154px;
+    width: 154px !important;
+    :global(.euiFormControlLayout__childrenWrapper) {
+      width: 154px !important;
+    }
   }
 }
 

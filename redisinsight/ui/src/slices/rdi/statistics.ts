@@ -23,7 +23,7 @@ const rdiStatisticsSlice = createSlice({
     },
     getStatisticsSuccess: (state, { payload }: PayloadAction<IRdiStatistics>) => {
       state.loading = false
-      state.data = payload
+      state.data = { ...state.data, ...payload }
     },
     getStatisticsFailure: (state, { payload }) => {
       state.loading = false

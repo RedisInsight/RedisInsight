@@ -52,9 +52,11 @@ interface Props {
   data: IClients
   loading: boolean
   onRefresh: () => void
+  onRefreshClicked: () => void
+  onChangeAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
-const Clients = ({ data, loading, onRefresh }: Props) => {
+const Clients = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefresh }: Props) => {
   const clients = Object.keys(data).map((key) => {
     const client = data[key]
     return {
@@ -65,7 +67,14 @@ const Clients = ({ data, loading, onRefresh }: Props) => {
 
   return (
     <Panel>
-      <Accordion id="clients" title="Clients" loading={loading} onRefresh={onRefresh}>
+      <Accordion
+        id="clients"
+        title="Clients"
+        loading={loading}
+        onRefresh={onRefresh}
+        onRefreshClicked={onRefreshClicked}
+        onChangeAutoRefresh={onChangeAutoRefresh}
+      >
         <Table<ClientsData> id="clients" columns={columns} items={clients} initialSortField="id" />
       </Accordion>
     </Panel>

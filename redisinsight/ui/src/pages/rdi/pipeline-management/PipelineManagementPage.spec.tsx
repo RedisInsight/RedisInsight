@@ -22,6 +22,8 @@ jest.mock('uiSrc/slices/app/context', () => ({
   }),
 }))
 
+jest.mock('formik')
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()

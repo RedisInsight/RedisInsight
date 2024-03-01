@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 
 import { ApiEndpoints } from 'uiSrc/constants'
-import { apiService, } from 'uiSrc/services'
+import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { IRdiStatistics, IStateRdiStatistics } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getRdiUrl, isStatusSuccessful } from 'uiSrc/utils'
@@ -11,7 +11,7 @@ import { AppDispatch, RootState } from '../store'
 export const initialState: IStateRdiStatistics = {
   loading: true,
   error: '',
-  data: null,
+  data: null
 }
 
 const rdiStatisticsSlice = createSlice({
@@ -28,17 +28,13 @@ const rdiStatisticsSlice = createSlice({
     getStatisticsFailure: (state, { payload }) => {
       state.loading = false
       state.error = payload
-    },
-  },
+    }
+  }
 })
 
 export const rdiStatisticsSelector = (state: RootState) => state.rdi.statistics
 
-export const {
-  getStatistics,
-  getStatisticsSuccess,
-  getStatisticsFailure,
-} = rdiStatisticsSlice.actions
+export const { getStatistics, getStatisticsSuccess, getStatisticsFailure } = rdiStatisticsSlice.actions
 
 // The reducer
 export default rdiStatisticsSlice.reducer
@@ -46,14 +42,16 @@ export default rdiStatisticsSlice.reducer
 // Asynchronous thunk action
 export function fetchRdiStatistics(
   rdiInstanceId: string,
+  section?: string,
   onSuccessAction?: (data: any) => void,
-  onFailAction?: () => void,
+  onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getStatistics())
       const { data, status } = await apiService.get<IRdiStatistics>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_STATISTICS),
+        section ? { params: { sections: section } } : undefined
       )
 
       if (isStatusSuccessful(status)) {

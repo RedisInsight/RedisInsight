@@ -11,6 +11,8 @@ interface Props {
   children: JSX.Element
   loading?: boolean
   onRefresh?: () => void
+  onRefreshClicked?: () => void
+  onChangeAutoRefresh?: (enableAutoRefresh: boolean, refreshRate: string) => void
   hideAutoRefresh?: boolean
   enableAutoRefreshDefault?: boolean
 }
@@ -21,6 +23,8 @@ const Accordion = ({
   children,
   loading = false,
   onRefresh,
+  onRefreshClicked,
+  onChangeAutoRefresh,
   hideAutoRefresh = false,
   enableAutoRefreshDefault
 }: Props) => {
@@ -44,6 +48,8 @@ const Accordion = ({
               setLastRefreshTime(Date.now())
               onRefresh?.()
             }}
+            onRefreshClicked={onRefreshClicked}
+            onEnableAutoRefresh={onChangeAutoRefresh}
             enableAutoRefreshDefault={enableAutoRefreshDefault}
             testid={`${id}-refresh-btn`}
           />

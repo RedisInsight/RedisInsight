@@ -23,7 +23,9 @@ const mockedProps = {
     },
   },
   loading: false,
-  onRefresh: jest.fn()
+  onRefresh: jest.fn(),
+  onRefreshClicked: jest.fn(),
+  onChangeAutoRefresh: jest.fn()
 }
 
 describe('Clients', () => {

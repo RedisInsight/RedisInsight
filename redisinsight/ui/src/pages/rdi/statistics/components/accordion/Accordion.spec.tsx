@@ -7,7 +7,8 @@ const mockedProps = {
   id: 'accordion',
   title: 'Accordion Title',
   children: <div>Accordion Content</div>,
-  onRefresh: jest.fn()
+  onRefresh: jest.fn(),
+  onRefreshClicked: jest.fn()
 }
 
 describe('Accordion', () => {
@@ -28,6 +29,16 @@ describe('Accordion', () => {
     fireEvent.click(screen.getByTestId('accordion-refresh-btn'))
 
     expect(mockedProps.onRefresh).toHaveBeenCalled()
+  })
+
+  it('calls the onRefreshClicked callback when the refresh button is clicked', () => {
+    render(
+      <Accordion {...mockedProps} />
+    )
+
+    fireEvent.click(screen.getByTestId('accordion-refresh-btn'))
+
+    expect(mockedProps.onRefreshClicked).toHaveBeenCalled()
   })
 
   it('does not render the auto refresh button when hideAutoRefresh prop is true', () => {

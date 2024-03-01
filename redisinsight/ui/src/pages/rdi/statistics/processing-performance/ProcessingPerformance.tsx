@@ -26,12 +26,16 @@ interface Props {
   data: IProcessingPerformance
   loading: boolean
   onRefresh: () => void
+  onRefreshClicked: () => void
+  onChangeAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
 const ProcessingPerformance = ({
   data: { totalBatches, batchSizeAvg, processTimeAvg, ackTimeAvg, recPerSecAvg, readTimeAvg, totalTimeAvg },
   loading,
-  onRefresh
+  onRefresh,
+  onRefreshClicked,
+  onChangeAutoRefresh
 }: Props) => (
   <Panel>
     <Accordion
@@ -39,6 +43,8 @@ const ProcessingPerformance = ({
       title="Processing performance information"
       loading={loading}
       onRefresh={onRefresh}
+      onRefreshClicked={onRefreshClicked}
+      onChangeAutoRefresh={onChangeAutoRefresh}
       enableAutoRefreshDefault
     >
       <>

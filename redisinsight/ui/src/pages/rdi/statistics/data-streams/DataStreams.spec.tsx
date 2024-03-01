@@ -29,35 +29,12 @@ const mockedProps = {
     }
   },
   loading: false,
-  onRefresh: jest.fn()
+  onRefresh: jest.fn(),
+  onRefreshClicked: jest.fn(),
+  onChangeAutoRefresh: jest.fn()
 }
 
 describe('DataStreams', () => {
-  const mockData = {
-    stream1: {
-      total: 11,
-      pending: 5,
-      inserted: 3,
-      updated: 2,
-      deleted: 1,
-      filtered: 0,
-      rejected: 0,
-      deduplicated: 0,
-      lastArrival: '2022-01-01'
-    },
-    stream2: {
-      total: 20,
-      pending: 10,
-      inserted: 6,
-      updated: 4,
-      deleted: 2,
-      filtered: 0,
-      rejected: 0,
-      deduplicated: 0,
-      lastArrival: '2022-01-02'
-    }
-  }
-
   it('renders the data streams table', () => {
     render(<DataStreams {...mockedProps} />)
 

@@ -1,7 +1,8 @@
-import { EuiBasicTableColumn } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 import { IDataStreams } from 'uiSrc/slices/interfaces'
+import { formatLongName } from 'uiSrc/utils'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import Table from '../components/table'
@@ -23,7 +24,13 @@ const columns: EuiBasicTableColumn<DataStreamsData>[] = [
   {
     name: 'Stream name',
     field: 'name',
-    sortable: true
+    sortable: true,
+    render: (name: string) => (
+      <EuiToolTip content={name}>
+        <span>{formatLongName(name, 30, 0, '...')}</span>
+      </EuiToolTip>
+    ),
+    width: '20%'
   },
   {
     name: 'Total',
@@ -76,9 +83,11 @@ interface Props {
   data: IDataStreams
   loading: boolean
   onRefresh: () => void
+  onRefreshClicked: () => void
+  onChangeAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
-const DataStreams = ({ data, loading, onRefresh }: Props) => {
+const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefresh }: Props) => {
   const dataStreams = Object.keys(data).map((key) => {
     const dataStream = data[key]
     return {
@@ -89,7 +98,14 @@ const DataStreams = ({ data, loading, onRefresh }: Props) => {
 
   return (
     <Panel>
-      <Accordion id="data-streams" title="Data streams overview" loading={loading} onRefresh={onRefresh}>
+      <Accordion
+        id="data-streams"
+        title="Data streams overview"
+        loading={loading}
+        onRefresh={onRefresh}
+        onRefreshClicked={onRefreshClicked}
+        onChangeAutoRefresh={onChangeAutoRefresh}
+      >
         <Table<DataStreamsData> id="data-streams" columns={columns} items={dataStreams} initialSortField="name" />
       </Accordion>
     </Panel>

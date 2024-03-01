@@ -145,7 +145,7 @@ describe('InstancePage', () => {
   it('should redirect to rdi pipeline statistics page', async () => {
     (appContextSelector as jest.Mock).mockReturnValue({
       contextRdiInstanceId: RDI_INSTANCE_ID_MOCK,
-      lastPage: PageNames.rdiPipelineStatistics,
+      lastPage: PageNames.rdiStatistics,
     })
 
     const pushMock = jest.fn()
@@ -161,6 +161,6 @@ describe('InstancePage', () => {
       )
     })
 
-    expect(pushMock).toBeCalledWith(Pages.rdiPipelineStatistics(RDI_INSTANCE_ID_MOCK))
+    expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
   })
 })

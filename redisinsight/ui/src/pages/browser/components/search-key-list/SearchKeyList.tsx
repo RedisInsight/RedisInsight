@@ -23,6 +23,10 @@ import {
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
+import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -119,6 +123,12 @@ const SearchKeyList = () => {
     handleApply('')
   }
 
+  const handleClickAskCopilot = () => {
+    dispatch(changeSelectedTab(InsightsPanelTabs.AiAssistant))
+    dispatch(setSelectedTab(AiChatType.Query))
+    dispatch(toggleInsightsPanel(true))
+  }
+
   return (
     <div className={cx(styles.container, { [styles.redisearchMode]: searchMode === SearchMode.Redisearch })}>
       <MultiSearch
@@ -128,6 +138,7 @@ const SearchKeyList = () => {
         onChange={handleChangeValue}
         onChangeOptions={handleChangeOptions}
         onClear={onClear}
+        onAskCopilot={searchMode === SearchMode.Redisearch ? handleClickAskCopilot : undefined}
         suggestions={{
           options: mapOptions(searchMode === SearchMode.Pattern ? searchHistory : rediSearchHistory),
           buttonTooltipTitle: 'Show History',

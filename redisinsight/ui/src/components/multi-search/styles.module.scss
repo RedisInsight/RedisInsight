@@ -169,4 +169,32 @@
   .anchorSubmitBtn {
     height: 100%;
   }
+
+  .askCopilotBtn {
+    margin-left: 4px;
+    :global {
+      .euiButtonContent.euiButtonEmpty__content {
+        .euiButtonEmpty__text {
+          display: flex;
+          align-items: center;
+          color: var(--highlightDotColor) !important;
+          font-size: 12px;
+        }
+      }
+    }
+
+    .cloudIcon {
+      width: 14px;
+      height: 14px;
+      margin-right: 8px;
+
+      :global {
+        path {
+          fill: var(--highlightDotColor) !important;
+        }
+      }
+    }
+
+
+  }
 }

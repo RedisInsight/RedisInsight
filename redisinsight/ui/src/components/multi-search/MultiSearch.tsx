@@ -1,4 +1,5 @@
 import {
+  EuiButtonEmpty,
   EuiButtonIcon,
   EuiFieldText,
   EuiIcon,
@@ -11,6 +12,8 @@ import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { GroupBadge } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
+
+import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
 
 import styles from './styles.module.scss'
 
@@ -35,6 +38,7 @@ export interface Props {
   onChange: (value: string) => void
   onChangeOptions?: (options: string[]) => void
   onClear?: () => void
+  onAskCopilot?: () => void
   className?: string
   compressed?: boolean
   [key: string]: any
@@ -52,6 +56,7 @@ const MultiSearch = (props: Props) => {
     onChange,
     onKeyDown,
     onClear = () => {},
+    onAskCopilot,
     className,
     compressed,
     ...rest
@@ -268,6 +273,16 @@ const MultiSearch = (props: Props) => {
                 data-testid="show-suggestions-btn"
               />
             </EuiToolTip>
+          )}
+          {!!onAskCopilot && (
+            <EuiButtonEmpty
+              className={styles.askCopilotBtn}
+              size="xs"
+              onClick={onAskCopilot}
+            >
+              <EuiIcon className={styles.cloudIcon} type={CloudStars} />
+              <span>Ask Redis Copilot</span>
+            </EuiButtonEmpty>
           )}
           {disableSubmit && (
             <EuiToolTip

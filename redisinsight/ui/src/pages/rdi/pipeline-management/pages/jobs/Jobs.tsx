@@ -47,7 +47,7 @@ const Jobs = () => {
   }, [jobName])
 
   useEffect(() => {
-    if (data !== null && !values.jobs?.[jobIndex]?.value) {
+    if (data !== null && !values.jobs?.[jobIndexRef.current ?? -1]?.value) {
       setIsPopoverOpen(true)
     }
   }, [jobName, data])
@@ -76,8 +76,8 @@ const Jobs = () => {
           <TemplatePopover
             isPopoverOpen={isPopoverOpen}
             setIsPopoverOpen={setIsPopoverOpen}
-            value={values.jobs?.[jobIndex]?.value ?? ''}
-            setFieldValue={(template) => setFieldValue(`jobs.${jobIndex}.value`, template)}
+            value={values.jobs?.[jobIndexRef.current ?? -1]?.value ?? ''}
+            setFieldValue={(template) => setFieldValue(`jobs.${jobIndexRef.current ?? -1}.value`, template)}
             loading={loading}
             source={RdiPipelineTabs.Jobs}
           />

@@ -25,7 +25,7 @@ const configuration: webpack.Configuration = {
   target: 'web',
   entry: ['regenerator-runtime/runtime', './index.tsx'],
   output: {
-    filename: 'js/bundle.[name].min.js',
+    filename: 'js/bundle.[name].[fullhash].min.js',
     path: resolve(__dirname, '../redisinsight/ui/dist'),
     publicPath: '/',
     chunkFilename: '[id].[chunkhash].js'

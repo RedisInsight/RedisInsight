@@ -69,14 +69,14 @@ export default merge(baseConfig, {
         ? process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000), // 30 sec
       // cloud auth
-      RI_CLOUD_IDP_AUTHORIZE_URL: 'RI_CLOUD_IDP_AUTHORIZE_URL' in process.env ? process.env.RI_CLOUD_IDP_AUTHORIZE_URL: '',
-      RI_CLOUD_IDP_TOKEN_URL: 'RI_CLOUD_IDP_TOKEN_URL' in process.env ? process.env.RI_CLOUD_IDP_TOKEN_URL: '',
-      RI_CLOUD_IDP_ISSUER: 'RI_CLOUD_IDP_ISSUER' in process.env ? process.env.RI_CLOUD_IDP_ISSUER: '',
-      RI_CLOUD_IDP_CLIENT_ID: 'RI_CLOUD_IDP_CLIENT_ID' in process.env ? process.env.RI_CLOUD_IDP_CLIENT_ID: '',
-      RI_CLOUD_IDP_REDIRECT_URI: 'RI_CLOUD_IDP_REDIRECT_URI' in process.env ? process.env.RI_CLOUD_IDP_REDIRECT_URI: '',
-      RI_CLOUD_IDP_GOOGLE_ID: 'RI_CLOUD_IDP_GOOGLE_ID' in process.env ? process.env.RI_CLOUD_IDP_GOOGLE_ID: '',
-      RI_CLOUD_IDP_GH_ID: 'RI_CLOUD_IDP_GH_ID' in process.env ? process.env.RI_CLOUD_IDP_GH_ID: '',
-      RI_CLOUD_API_URL: 'RI_CLOUD_API_URL' in process.env ? process.env.RI_CLOUD_API_URL: '',
+      RI_CLOUD_IDP_AUTHORIZE_URL: 'oauth2/default/v1/authorize',
+      RI_CLOUD_IDP_TOKEN_URL: 'oauth2/default/v1/token',
+      RI_CLOUD_IDP_ISSUER: 'https://auth.qa.redislabs.com',
+      RI_CLOUD_IDP_CLIENT_ID: '0oa7ku3x9aALuh3uK1d7',
+      RI_CLOUD_IDP_REDIRECT_URI: 'https://auth.redisinsight.redis.com/callback.html',
+      RI_CLOUD_IDP_GOOGLE_ID: '0oa8in2sir3kD2jdN1d7',
+      RI_CLOUD_IDP_GH_ID: '0oa8pxbcc1PwnhZ3R1d7',
+      RI_CLOUD_API_URL: 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
       RI_CLOUD_CAPI_URL: 'RI_CLOUD_CAPI_URL' in process.env ? process.env.RI_CLOUD_CAPI_URL: '',
       RI_CLOUD_API_TOKEN: 'RI_CLOUD_API_TOKEN' in process.env ? process.env.RI_CLOUD_API_TOKEN: '',
       RI_AI_CONVAI_TOKEN: 'RI_AI_CONVAI_TOKEN' in process.env ? process.env.RI_AI_CONVAI_TOKEN: '',

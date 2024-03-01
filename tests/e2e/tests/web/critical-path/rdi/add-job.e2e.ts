@@ -6,12 +6,14 @@ import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import { DatabaseHelper } from '../../../../helpers';
 
 const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const browserActions = new BrowserActions();
+const databaseHelper = new DatabaseHelper();
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
@@ -21,11 +23,11 @@ const rdiInstance: AddNewRdiParameters = {
 };
 
 //skip the tests until rdi integration is added
-fixture `Add job`
+fixture.skip `Add job`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {
-        await t.maximizeWindow();
+        await databaseHelper.acceptLicenseTerms();
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await rdiInstancesListPage.reloadPage();
@@ -61,7 +63,7 @@ test('Verify that user can add, edit and delete job', async() => {
     await t
         .expect(rdiInstancePage.applyJobNameBtn.hasAttribute('disabled')).ok('the button is not disabled');
     await t.hover(rdiInstancePage.applyJobNameBtn);
-    await browserActions.verifyTooltipContainsText('This job name is already in use', true);
+    await browserActions.verifyTooltipContainsText('Job name is already in use', true);
     await t.click(rdiInstancePage.cancelJobNameBtn);
 
     await rdiInstancePage.addJob(jobName2);

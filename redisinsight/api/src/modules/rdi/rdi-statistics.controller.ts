@@ -2,6 +2,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Query,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -31,7 +32,8 @@ export class RdiStatisticsController {
   })
   async getStatistics(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+      @Query('sections') sections?: string,
   ): Promise<RdiStatisticsResult> {
-    return this.rdiStatisticsService.getStatistics(rdiClientMetadata);
+    return this.rdiStatisticsService.getStatistics(rdiClientMetadata, sections);
   }
 }

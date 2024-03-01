@@ -37,7 +37,7 @@ export abstract class RdiClient {
 
   abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
 
-  abstract getStatistics(): Promise<RdiStatisticsResult>;
+  abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 
   abstract disconnect(): Promise<void>;
 

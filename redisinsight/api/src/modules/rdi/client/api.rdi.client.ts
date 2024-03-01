@@ -84,8 +84,8 @@ export class ApiRdiClient extends RdiClient {
     return response.data;
   }
 
-  async getStatistics(): Promise<RdiStatisticsResult> {
-    const response = await this.client.get(RdiUrl.GetStatistics);
+  async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
+    const response = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
     return response.data;
   }
 

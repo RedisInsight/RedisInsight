@@ -1,6 +1,6 @@
 import { Nullable } from 'uiSrc/utils'
+import { PageNames } from 'uiSrc/constants'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
-import {PageNames} from "uiSrc/constants";
 
 // tabs for dry run job panel
 export enum PipelineJobsTabs {

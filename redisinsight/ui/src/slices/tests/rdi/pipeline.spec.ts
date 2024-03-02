@@ -18,7 +18,8 @@ import reducer, {
   deployPipelineAction,
   rdiPipelineSelector,
   fetchRdiPipelineSchema,
-  fetchPipelineStrategies, fetchPipelineTemplate,
+  fetchPipelineStrategies,
+  fetchPipelineTemplate,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'

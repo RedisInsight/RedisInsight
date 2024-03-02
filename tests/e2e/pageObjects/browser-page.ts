@@ -206,6 +206,7 @@ export class BrowserPage extends InstancePage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]', { timeout: 500 });
+    dialog = Selector('[role=dialog]', { timeout: 500 });
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     noResultsFoundOnly = Selector('[data-testid=no-result-found-only]');
     searchAdvices = Selector('[data-test-subj=search-advices]');

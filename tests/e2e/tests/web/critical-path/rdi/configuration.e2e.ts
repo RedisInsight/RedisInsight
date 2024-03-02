@@ -21,7 +21,7 @@ const rdiInstance: AddNewRdiParameters = {
 };
 
 //skip the tests until rdi integration is added
-fixture `Pipeline`
+fixture.skip `Pipeline`
     .meta({ type: 'critical_path' })
     .page(commonUrl)
     .beforeEach(async() => {

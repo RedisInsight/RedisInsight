@@ -24,7 +24,6 @@ export class RdiInstancePage extends BaseOverviewPage {
     refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
     exportPipelineIcon = Selector('[data-testid=download-pipeline-btn]');
     importPipelineIcon = Selector('[data-testid=upload-pipeline-btn]');
-    applyRefreshBtn = Selector('[data-testid=refresh-pipeline-apply-btn]');
     deployPipelineBtn = Selector('[data-testid=deploy-rdi-pipeline]');
     deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');
     uploadPipelineBtn = Selector('[data-testid=submit-btn]');
@@ -49,7 +48,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     applyJobNameBtn = Selector('[data-testid=apply-btn]');
     cancelJobNameBtn = Selector('[data-testid=cancel-btn]');
     jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
-    deleteConfirmBtn  = Selector('[data-testid=confirm-btn]');
+    confirmBtn  = Selector('[data-testid=confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');
 
     /**
@@ -78,7 +77,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     async deleteJobByName(name: string): Promise<void> {
         const jobBtnSelector = Selector(`[data-testid=delete-job-${name}]`);
         await t.click(jobBtnSelector);
-        await t.click(this.deleteConfirmBtn);
+        await t.click(this.confirmBtn);
     }
 
     /**

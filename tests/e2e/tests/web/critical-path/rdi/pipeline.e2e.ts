@@ -58,7 +58,7 @@ test('Verify that user can refresh pipeline', async() => {
     const enteredText = await MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).eql(text, 'config text was not changed');
     await t.click(rdiInstancePage.refreshPipelineIcon);
-    await t.click(rdiInstancePage.applyRefreshBtn);
+    await t.click(rdiInstancePage.confirmBtn);
     const updatedText = await MonacoEditor.getTextFromMonaco();
     await t.expect(updatedText).contains(expectedText, 'config text was not updated');
     await t.expect(updatedText).notContains(text, 'config text was not updated');
@@ -72,15 +72,15 @@ test('Verify that user can deploy pipeline', async() => {
 
     await t.click(rdiInstancePage.deployPipelineBtn);
     // Verify that user can see message when request to deploy the pipeline
-    await browserActions.verifyTooltipContainsText(messageText, true);
+    await browserActions.verifyDialogContainsText(messageText, true);
 
-    // Verify that user the successfull message when the pipeline has been deployed
+    // Verify that user the successful  message when the pipeline has been deployed
     await t.click(rdiInstancePage.deployConfirmBtn);
     await t.expect(rdiInstancePage.successDeployNotification.textContent).contains(successMessage, 'Pipeline deployment is unsuccessful');
 
     await t.click(rdiInstancePage.Toast.toastCloseButton);
     // Verify that user the error message when the pipeline deployment failed
-    // need to add - Modify deploy.js to receive an error
+    // TODO need to add - Modify deploy.js to receive an error
     await t.click(rdiInstancePage.deployPipelineBtn);
     await t.click(rdiInstancePage.deployConfirmBtn);
     await t.expect(rdiInstancePage.errorDeployNotification.textContent).contains(errorMessage, 'Pipeline deployment is successful');

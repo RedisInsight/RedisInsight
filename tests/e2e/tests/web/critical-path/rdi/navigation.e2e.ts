@@ -58,6 +58,7 @@ test.before(async t => {
     await t.expect(count).eql(3, 'rdi buttons is displayed');
 });
 
+// TODO should be updated
 test('Verify that context is saved after navigation panel', async() => {
     // check that tab is not highlighted
     let classes = await rdiInstancePage.configurationTab.getAttribute('class');

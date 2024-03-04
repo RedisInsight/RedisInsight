@@ -5,7 +5,7 @@ import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, cleanup, mockedStore, screen } from 'uiSrc/utils/test-utils'
 import { getPipelineStrategies } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
-import TemplatePopover, { Props } from './TeplatePopover'
+import TemplatePopover, { Props } from './TemplatePopover'
 
 const mockedProps = mock<Props>()
 

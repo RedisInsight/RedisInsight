@@ -1,3 +1,3 @@
-import TemplatePopover from './TeplatePopover'
+import TemplatePopover from './TemplatePopover'
 
 export default TemplatePopover

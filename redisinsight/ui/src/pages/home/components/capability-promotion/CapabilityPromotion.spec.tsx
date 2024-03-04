@@ -9,7 +9,7 @@ import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import { findTutorialPath } from 'uiSrc/utils'
 
-import CapabilityPromotion from './CapabilityPromotion'
+import { CapabilityPromotion } from './CapabilityPromotion'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -43,7 +43,7 @@ describe('CapabilityPromotion', () => {
   it('should render capabilities', () => {
     render(<CapabilityPromotion />)
 
-    MOCK_EXPLORE_GUIDES.forEach(({ tutorialId }) => {
+    MOCK_EXPLORE_GUIDES.slice(0, 2).forEach(({ tutorialId }) => {
       expect(screen.getByTestId(`capability-promotion-${tutorialId}`)).toBeInTheDocument()
     })
   })
@@ -84,6 +84,29 @@ describe('CapabilityPromotion', () => {
         databaseId: TELEMETRY_EMPTY_VALUE,
         source: 'home page',
         tutorialId: id
+      }
+    });
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper actions after click explore redis', () => {
+    render(<CapabilityPromotion />)
+
+    fireEvent.click(screen.getByTestId('explore-redis-btn'))
+
+    const expectedActions = [
+      toggleInsightsPanel()
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
+      eventData: {
+        databaseId: TELEMETRY_EMPTY_VALUE,
+        source: 'home page',
+        tab: InsightsPanelTabs.Explore,
       }
     });
 

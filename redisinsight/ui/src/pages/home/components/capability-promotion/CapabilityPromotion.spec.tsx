@@ -100,5 +100,16 @@ describe('CapabilityPromotion', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
+      eventData: {
+        databaseId: TELEMETRY_EMPTY_VALUE,
+        source: 'home page',
+        tab: InsightsPanelTabs.Explore,
+      }
+    });
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

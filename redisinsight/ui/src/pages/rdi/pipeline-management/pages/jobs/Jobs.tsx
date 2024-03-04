@@ -26,9 +26,9 @@ const Jobs = () => {
 
   const history = useHistory()
 
-  const { loading, schema, data } = useSelector(rdiPipelineSelector)
+  const { loading, schema } = useSelector(rdiPipelineSelector)
 
-  const { values, setFieldValue, initialValues } = useFormikContext<IPipeline>()
+  const { values, setFieldValue } = useFormikContext<IPipeline>()
 
   useEffect(() => {
     const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
@@ -47,15 +47,13 @@ const Jobs = () => {
   }, [jobName])
 
   useEffect(() => {
-    if (data !== null && !initialValues.jobs?.[jobIndexRef.current ?? -1]?.value) {
-      setIsPopoverOpen(true)
-    }
-  }, [data, jobName, initialValues])
-
-  useEffect(() => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_JOBS,
     })
+
+    if (!values.jobs?.[jobIndexRef.current ?? -1]?.value) {
+      setIsPopoverOpen(true)
+    }
   }, [])
 
   const handleDryRunJob = () => {

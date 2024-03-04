@@ -8,6 +8,7 @@ export interface MonacoSyntaxLang {
   [key: string]: {
     name: string
     id: string
+    language: string
     config?: monacoEditor.languages.LanguageConfiguration,
     completionProvider?: () => monacoEditor.languages.CompletionItemProvider,
     tokensProvider?: () => monacoEditor.languages.IMonarchLanguage
@@ -28,17 +29,20 @@ export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxLang = {
   [DSL.cypher]: {
     name: DSLNaming[DSL.cypher],
     id: MonacoLanguage.Cypher,
+    language: MonacoLanguage.Cypher,
     config: cypherLanguageConfiguration,
     completionProvider: getCypherCompletionProvider,
     tokensProvider: getCypherMonarchTokensProvider,
   },
   [DSL.sql]: {
     name: DSLNaming[DSL.sql],
-    id: MonacoLanguage.SQL,
+    id: DSL.sql,
+    language: MonacoLanguage.SQL,
   },
   [DSL.jmespath]: {
     name: DSLNaming[DSL.jmespath],
-    id: MonacoLanguage.Text,
+    id: DSL.jmespath,
+    language: MonacoLanguage.Text,
   },
 }
 

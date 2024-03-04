@@ -4,7 +4,7 @@ import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { Rnd } from 'react-rnd'
 import cx from 'classnames'
-import { EuiButtonIcon } from '@elastic/eui'
+import { EuiButtonIcon, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 
 import {
   decoration,
@@ -37,14 +37,20 @@ let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollect
 
 const DedicatedEditor = (props: Props) => {
   const { initialHeight, query = '', langId, langs = [], onCancel, onSubmit } = props
-  const selectedLang = DEDICATED_EDITOR_LANGUAGES[!langs.length ? langId! : first(langs)!]
 
   const [value, setValue] = useState<string>(query)
   const [height, setHeight] = useState(initialHeight)
+  const [selectedLang, setSelectedLang] = useState(DEDICATED_EDITOR_LANGUAGES[!langs.length ? langId! : first(langs)!])
+
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const rndRef = useRef<Nullable<any>>(null)
 
   const { theme } = useContext(ThemeContext)
+
+  const optionsLangs: EuiSuperSelectOption<DSL>[] = langs.map((lang) => ({
+    value: lang,
+    inputDisplay: DEDICATED_EDITOR_LANGUAGES[lang]?.name,
+  }))
 
   let disposeCompletionItemProvider = () => {}
 
@@ -122,21 +128,21 @@ const DedicatedEditor = (props: Props) => {
 
     if (!selectedLang) return
 
-    const isLangRegistered = findIndex(languages, { id: selectedLang.id }) > -1
+    const isLangRegistered = findIndex(languages, { id: selectedLang.language }) > -1
     if (isLangRegistered) {
       return
     }
-    monaco.languages.register({ id: selectedLang.id })
+    monaco.languages.register({ id: selectedLang.language })
 
-    monaco.languages.setLanguageConfiguration(selectedLang.id, selectedLang.config!)
+    monaco.languages.setLanguageConfiguration(selectedLang.language, selectedLang.config!)
 
     disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(
-      selectedLang.id,
+      selectedLang.language,
       selectedLang.completionProvider?.()!
     ).dispose
 
     monaco.languages.setMonarchTokensProvider(
-      selectedLang.id,
+      selectedLang.language,
       selectedLang.tokensProvider?.()!
     )
   }
@@ -198,7 +204,7 @@ const DedicatedEditor = (props: Props) => {
               <div className="draggable-area" />
               <div className={styles.input} data-testid="query-input-container">
                 <ReactMonacoEditor
-                  language={selectedLang?.id || MonacoLanguage.Cypher}
+                  language={selectedLang?.language || MonacoLanguage.Cypher}
                   theme={theme === Theme.Dark ? 'dark' : 'light'}
                   value={value}
                   onChange={setValue}
@@ -208,7 +214,18 @@ const DedicatedEditor = (props: Props) => {
                 />
               </div>
               <div className={cx(styles.actions)}>
-                <span>{ selectedLang?.name }</span>
+                {langs?.length < 2 && <span>{ selectedLang?.name }</span>}
+                {langs?.length >= 2 && (
+                  <EuiSuperSelect
+                    name="dedicated-editor-language-select"
+                    placeholder="Select language"
+                    valueOfSelected={selectedLang.id}
+                    options={optionsLangs}
+                    className={styles.selectLanguage}
+                    onChange={(id) => setSelectedLang(DEDICATED_EDITOR_LANGUAGES[id])}
+                    data-testid="dedicated-editor-language-select"
+                  />
+                )}
                 <div>
                   <EuiButtonIcon
                     iconSize="m"

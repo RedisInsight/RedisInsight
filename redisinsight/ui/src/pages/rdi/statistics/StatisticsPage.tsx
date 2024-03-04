@@ -81,7 +81,7 @@ const StatisticsPage = () => {
       <RdiStatisticsHeader />
       <ExplorePanelTemplate>
         <div className={styles.bodyContainer}>
-          {isEmpty(pipelineData) ? (
+          {isEmpty(pipelineData) ? ( // TODO: Check with RDI team on what an empty pipeline looks like
             <Empty rdiInstanceId={rdiInstanceId} />
           ) : (
             <>

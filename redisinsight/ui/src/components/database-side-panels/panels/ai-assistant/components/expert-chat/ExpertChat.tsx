@@ -8,10 +8,11 @@ import {
   clearExpertChatHistory,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { scrollIntoView } from 'uiSrc/utils'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
+import { ExpertEmptyHistoryText } from '../empty-history/texts'
 
 import styles from './styles.module.scss'
 
@@ -45,10 +46,6 @@ const ExpertChat = () => {
 
   const onClearSession = () => {
     dispatch(clearExpertChatHistory())
-
-    // sendEventTelemetry({
-    //   event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-    // })
   }
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
@@ -62,19 +59,14 @@ const ExpertChat = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="ai-document-chat">
       <div className={styles.header}>
         {instanceId ? (
           <EuiToolTip
             content={connectedInstanceName}
             anchorClassName={styles.dbName}
           >
-            <EuiText
-              size="xs"
-              className="truncateText"
-            >
-              db: {connectedInstanceName}
-            </EuiText>
+            <EuiText size="xs" className="truncateText">db: {connectedInstanceName}</EuiText>
           </EuiToolTip>
         ) : (<span />)}
         <EuiButtonEmpty
@@ -89,7 +81,7 @@ const ExpertChat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
-          type={AiChatType.Query}
+          welcomeText={ExpertEmptyHistoryText}
           isLoadingAnswer={isLoading}
           history={messages}
           scrollDivRef={scrollDivRef}
@@ -98,7 +90,7 @@ const ExpertChat = () => {
       </div>
       <div className={styles.chatForm}>
         <ChatForm
-          isDisabled={!instanceId}
+          isDisabled={!instanceId || isLoading}
           validationMessage={!instanceId ? 'Open a database' : undefined}
           placeholder="Type / for specialized expertise"
           onSubmit={handleSubmit}

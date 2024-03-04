@@ -1,6 +1,6 @@
 import { visit } from 'unist-util-visit'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
-import { remarkImage } from '../transform/remarkImage'
+import { remarkImage } from 'uiSrc/utils/formatters/markdown'
 
 jest.mock('unist-util-visit')
 const TUTORIAL_PATH = 'static/custom-tutorials/tutorial-id'

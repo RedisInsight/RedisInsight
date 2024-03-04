@@ -26,19 +26,21 @@ const ChatsWrapper = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="chat-wrapper">
       <div className={styles.tabsWrapper}>
         <EuiImage className={styles.chatImg} src={AiChatImg} alt="chat" />
         <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
           <EuiTab
             isSelected={activeTab === AiChatType.Assistance}
             onClick={() => selectTab(AiChatType.Assistance)}
+            data-testid="ai-general-chat_tab"
           >
             General
           </EuiTab>
           <EuiTab
             isSelected={activeTab === AiChatType.Query}
             onClick={() => selectTab(AiChatType.Query)}
+            data-testid="ai-database-chat_tab"
           >
             Database
           </EuiTab>

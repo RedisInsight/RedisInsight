@@ -1,5 +1,5 @@
 import { unified } from 'unified'
-import MarkdownToJsxString from '../formatter/MarkdownToJsxString'
+import MarkdownToJsxString from '../../formatter/MarkdownToJsxString'
 
 jest.mock('unified')
 describe('MarkdownToJsxString', () => {

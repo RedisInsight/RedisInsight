@@ -5,12 +5,14 @@ import remarkGfm from 'remark-gfm'
 import rehypeStringify from 'rehype-stringify'
 import { visit } from 'unist-util-visit'
 
+import {
+  remarkRedisUpload,
+  remarkLink,
+  rehypeLinks,
+  remarkImage,
+  remarkRedisCode
+} from 'uiSrc/utils/formatters/markdown'
 import { IFormatter, IFormatterConfig } from './formatter.interfaces'
-import { rehypeLinks } from '../transform/rehypeLinks'
-import { remarkRedisUpload } from '../transform/remarkRedisUpload'
-import { remarkRedisCode } from '../transform/remarkRedisCode'
-import { remarkImage } from '../transform/remarkImage'
-import { remarkLink } from '../transform/remarkLink'
 
 class MarkdownToJsxString implements IFormatter {
   format(input: any, config?: IFormatterConfig): Promise<string> {

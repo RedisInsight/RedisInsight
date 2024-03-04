@@ -1,5 +1,5 @@
 import React from 'react'
-import HtmlToJsxString from '../formatter/HtmlToJsxString'
+import HtmlToJsxString from '../../formatter/HtmlToJsxString'
 
 describe('HtmlToJsxString', () => {
   it('should return proper string', async () => {

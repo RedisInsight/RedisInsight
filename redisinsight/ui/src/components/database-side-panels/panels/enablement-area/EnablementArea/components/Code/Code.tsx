@@ -7,9 +7,9 @@ import { CodeButtonParams } from 'uiSrc/constants'
 import { parseParams } from 'uiSrc/utils'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { getFileInfo, getTutorialSection, } from '../../utils'
+import CodeButtonBlock from 'uiSrc/components/markdown/CodeButtonBlock'
 
-import CodeButtonBlock from '../CodeButtonBlock'
+import { getFileInfo, getTutorialSection, } from '../../utils'
 
 export interface Props {
   label: string

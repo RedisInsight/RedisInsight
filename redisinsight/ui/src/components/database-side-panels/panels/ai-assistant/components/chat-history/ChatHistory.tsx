@@ -1,19 +1,22 @@
 import React from 'react'
 import cx from 'classnames'
 
-import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
-import MarkdownMessage from 'uiSrc/components/database-side-panels/panels/ai-assistant/components/markdown-message'
+import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable } from 'uiSrc/utils'
+
 import EmptyHistoryScreen from '../empty-history'
 import LoadingMessage from '../loading-message'
+import MarkdownMessage from '../markdown-message'
+import { AiChatSuggestion } from '../../constants'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  type?: AiChatType
+  suggestions?: AiChatSuggestion[]
+  welcomeText?: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
   isLoadingAnswer?: boolean
-  history: Array<AiChatMessage>
+  history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
   onMessageRendered?: () => void
   onSubmit: (value: string) => void
@@ -21,10 +24,11 @@ export interface Props {
 
 const ChatHistory = (props: Props) => {
   const {
-    type = AiChatType.Assistance,
+    suggestions,
+    welcomeText,
     progressingMessage,
     isLoadingAnswer,
-    history,
+    history = [],
     scrollDivRef,
     onMessageRendered,
     onSubmit,
@@ -37,19 +41,28 @@ const ChatHistory = (props: Props) => {
         [styles.answer]: type === AiChatMessageType.AIMessage,
         [styles.question]: type === AiChatMessageType.HumanMessage,
       })}
+      data-testid={`ai-message-${type}_${id}`}
     >
       <MarkdownMessage onMessageRendered={onMessageRendered}>{content}</MarkdownMessage>
     </div>
   ) : null)
 
-  if (history.length === 0) return (<EmptyHistoryScreen type={type} onSubmit={onSubmit} />)
+  if (history.length === 0) {
+    return (
+      <EmptyHistoryScreen
+        welcomeText={welcomeText}
+        suggestions={suggestions}
+        onSubmit={onSubmit}
+      />
+    )
+  }
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.history}>
         {history.map(getMessage)}
         {!!progressingMessage && getMessage(progressingMessage)}
-        {isLoadingAnswer && (<div className={styles.answer}><LoadingMessage /></div>)}
+        {isLoadingAnswer && (<div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>)}
         <div ref={scrollDivRef} />
       </div>
     </div>

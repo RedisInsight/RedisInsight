@@ -14,7 +14,7 @@ const AiAssistant = () => {
   const isShowAuth = cloudSsoFeature?.flag && !data
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="redis-copilot">
       {isShowAuth ? (<WelcomeAiAssistant />) : (<ChatsWrapper />)}
     </div>
   )

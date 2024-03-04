@@ -1,5 +1,10 @@
 import React from 'react'
 
+interface AiChatSuggestion {
+  inner: React.ReactNode
+  query: string
+}
+
 const SUGGESTIONS = [
   {
     inner: (<>What is Redis Cloud?</>),
@@ -12,5 +17,6 @@ const SUGGESTIONS = [
 ]
 
 export {
+  AiChatSuggestion,
   SUGGESTIONS
 }

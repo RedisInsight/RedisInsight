@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import JsxParser from 'react-jsx-parser'
-import {
-  CloudLink,
-  Code,
-} from 'uiSrc/components/database-side-panels/panels/enablement-area/EnablementArea/components'
 import { ExternalLink } from 'uiSrc/components'
-import MarkdownToJsxString
-  from 'uiSrc/components/database-side-panels/panels/enablement-area/EnablementArea/utils/formatter/MarkdownToJsxString'
+import MarkdownToJsxString from 'uiSrc/services/formatter/MarkdownToJsxString'
+import { CloudLink, CodeButtonBlock } from 'uiSrc/components/markdown'
 
 export interface Props {
   children: string
   onMessageRendered?: () => void
 }
 
-const RedisCodeBlock = (props: any) => (<Code {...props} params="[executable=false]" />)
+export interface CodeProps {
+  children: string
+}
+
+const RedisCodeBlock = ({ children }: CodeProps) => (
+  <CodeButtonBlock
+    content={children}
+    isShowConfirmation={false}
+    params={{ executable: 'false' }}
+  />
+)
 
 const MarkdownMessage = (props: Props) => {
   const { children, onMessageRendered } = props

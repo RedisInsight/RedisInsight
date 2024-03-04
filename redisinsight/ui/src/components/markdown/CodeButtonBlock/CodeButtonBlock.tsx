@@ -21,10 +21,10 @@ import styles from './styles.module.scss'
 
 export interface Props {
   content: string
-  onApply: (params?: CodeButtonParams, onFinish?: () => void) => void
+  onApply?: (params?: CodeButtonParams, onFinish?: () => void) => void
   modules?: AdditionalRedisModule[]
   onCopy?: () => void
-  label: string
+  label?: string
   isLoading?: boolean
   className?: string
   params?: CodeButtonParams
@@ -77,7 +77,7 @@ const CodeButtonBlock = (props: Props) => {
 
   const runQuery = () => {
     setIsLoading(true)
-    onApply(params, () => {
+    onApply?.(params, () => {
       setIsLoading(false)
       setIsRunned(true)
       setTimeout(() => setIsRunned(false), FINISHED_COMMAND_INDICATOR_TIME_MS)

@@ -39,6 +39,10 @@ const Jobs = () => {
 
     jobIndexRef.current = jobIndex
     setEditorValue(values.jobs?.[jobIndexRef.current ?? -1]?.value)
+
+    if (!values.jobs?.[jobIndexRef.current ?? -1]?.value) {
+      setIsPopoverOpen(true)
+    }
   }, [values, rdiInstanceId, decodedJobName, history])
 
   useEffect(() => {
@@ -50,10 +54,6 @@ const Jobs = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_JOBS,
     })
-
-    if (!values.jobs?.[jobIndexRef.current ?? -1]?.value) {
-      setIsPopoverOpen(true)
-    }
   }, [])
 
   const handleDryRunJob = () => {

@@ -40,7 +40,7 @@ const rdiInstance3: RdiInstance = {
 //skip the tests until rdi integration is added
 
 fixture.skip `Rdi instance`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();

@@ -87,7 +87,7 @@ test('Verify that user insert template for jobs', async() => {
     const defaultValue = 'Ingest';
     const templateWords = 'server_name: chinook';
     // should be empty config
-    await rdiInstancePage.addJob(jobName);
+    await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
 
     await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
     const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');

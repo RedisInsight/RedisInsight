@@ -65,7 +65,7 @@ export class RdiInstancePage extends BaseOverviewPage {
             .click(this.dryRunSubmitBtn);
     }
 
-     /**
+    /**
      * Select value from template dropdowns
      * @param pipeline value of pipeline dropdown
      * @param database value of database dropdown
@@ -81,5 +81,4 @@ export class RdiInstancePage extends BaseOverviewPage {
         }
         await t.click(this.templateApplyButton);
     }
-
 }

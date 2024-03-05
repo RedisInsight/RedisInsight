@@ -1,4 +1,5 @@
 import { Selector, t } from 'testcafe';
+import { RdiTemplateDatabaseType, RdiTemplatePipelineType } from '../helpers/constants';
 import { BaseOverviewPage } from './base-overview-page';
 import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
 import { TestConnectionPanel } from './components/rdi/test-connection-panel';
@@ -50,6 +51,13 @@ export class RdiInstancePage extends BaseOverviewPage {
     jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
     confirmBtn  = Selector('[data-testid=confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');
+
+    //template
+    templateButton = Selector('[data-testid^=template-trigger-]');
+    templateApplyButton = Selector('[data-testid=template-apply-btn]');
+    templateCancelButton = Selector('[data-testid=template-apply-btn]');
+    pipelineDropdown =  Selector('[data-testid=strategy-type-select]');
+    databaseDropdown =  Selector('[data-testid=db-type-select]');
 
     /**
      * Add Job by name
@@ -114,5 +122,23 @@ export class RdiInstancePage extends BaseOverviewPage {
             .setFilesToUpload(this.importInput, filePath)
             .click(this.uploadPipelineBtn);
     }
+
+    /**
+     * Select value from template dropdowns
+     * @param pipeline value of pipeline dropdown
+     * @param database value of database dropdown
+     */
+    async setTemplateDropdownValue(pipeline: RdiTemplatePipelineType, database?: RdiTemplateDatabaseType): Promise<void> {
+        await t.click(this.pipelineDropdown);
+        let selector =  Selector(`[id='${pipeline}']`);
+        await t.click(selector);
+        if(database != null) {
+            await t.click(this.databaseDropdown);
+            selector =  Selector(`[id='${database}']`);
+            await t.click(selector);
+        }
+        await t.click(this.templateApplyButton);
+    }
+
 }
 

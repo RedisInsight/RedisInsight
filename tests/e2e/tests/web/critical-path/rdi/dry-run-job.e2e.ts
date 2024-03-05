@@ -25,12 +25,12 @@ const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'http://localhost:4000',
     username: 'username',
-    password: 'password',
+    password: 'password'
 };
 
 //skip the tests until rdi integration is added
 fixture.skip `Rdi dry run job`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
@@ -48,7 +48,7 @@ test('Verify that user can use Dry run panel', async() => {
     await rdiApiRequests.addNewRdiApi(rdiInstance);
     await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    await rdiInstancePage.openJobByName(job);
+    await rdiInstancePage.PipelineManagementPanel.openJobByName(job);
     await t.click(rdiInstancePage.dryRunButton);
     // Verify that user can see dry run a job right panel
     await t.expect(rdiInstancePage.dryRunPanel.visible).ok('Dry run panel not opened');

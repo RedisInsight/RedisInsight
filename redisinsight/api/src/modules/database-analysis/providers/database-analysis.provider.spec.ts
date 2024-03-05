@@ -14,7 +14,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { DatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { plainToClass } from 'class-transformer';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';

@@ -1,8 +1,6 @@
-import { ConnectionString } from 'connection-string'
 import { isUndefined, toString } from 'lodash'
 import React from 'react'
 import { FormikErrors } from 'formik'
-import { REDIS_URI_SCHEMES } from 'uiSrc/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
 import {
   ADD_NEW,
@@ -13,7 +11,7 @@ import {
   SshPassType
 } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, parseRedisUrl } from 'uiSrc/utils'
 
 export const getTlsSettings = (values: DbConnectionInfo) => ({
   useTls: values.tls,
@@ -100,7 +98,7 @@ export const applySSHDatabase = (database: any, values: DbConnectionInfo) => {
     database.ssh = true
     database.sshOptions = {
       host: sshHost,
-      port: +sshPort,
+      port: sshPort ? +sshPort : undefined,
       username: sshUsername,
     }
 
@@ -201,74 +199,58 @@ export const autoFillFormDetails = (
   instanceType: InstanceType
 ): boolean => {
   try {
-    const details = new ConnectionString(content)
+    const details = parseRedisUrl(content)
 
-    /* If a protocol exists, it should be a redis protocol */
-    if (details.protocol && !REDIS_URI_SCHEMES.includes(details.protocol)) return false
-    /*
-     * Auto fill logic:
-     * 1) If the port is parsed, we are sure that the user has indeed copied a connection string.
-     *    '172.18.0.2:12000'                => {host: '172,18.0.2', port: 12000}
-     *    'redis-12000.cluster.local:12000' => {host: 'redis-12000.cluster.local', port: 12000}
-     *    'lorem ipsum'                     => {host: undefined, port: undefined}
-     * 2) If the port is `undefined` but a redis URI scheme is present as protocol, we follow
-     *    the "Scheme semantics" as mentioned in the official URI schemes.
-     *    i)  redis:// - https://www.iana.org/assignments/uri-schemes/prov/redis
-     *    ii) rediss:// - https://www.iana.org/assignments/uri-schemes/prov/rediss
-     */
-    if (
-      details.port !== undefined
-      || REDIS_URI_SCHEMES.includes(details.protocol || '')
-    ) {
-      const getUpdatedInitialValues = () => {
-        switch (instanceType) {
-          case InstanceType.RedisEnterpriseCluster: {
-            return ({
-              host: details.hostname || initialValues.host || 'localhost',
-              port: `${details.port || initialValues.port || 9443}`,
-              username: details.user || '',
-              password: details.password || '',
-            })
-          }
+    if (!details) return false
 
-          case InstanceType.Sentinel: {
-            return ({
-              host: details.hostname || initialValues.host || 'localhost',
-              port: `${details.port || initialValues.port || 9443}`,
-              username: details.user || '',
-              password: details.password,
-              tls: details.protocol === 'rediss',
-            })
-          }
+    const getUpdatedInitialValues = () => {
+      switch (instanceType) {
+        case InstanceType.RedisEnterpriseCluster: {
+          return ({
+            host: details.host || initialValues.host || 'localhost',
+            port: `${details.port || initialValues.port || 9443}`,
+            username: details.username || '',
+            password: details.password || '',
+          })
+        }
 
-          case InstanceType.Standalone: {
-            return ({
-              name: details.host || initialValues.name || 'localhost:6379',
-              host: details.hostname || initialValues.host || 'localhost',
-              port: `${details.port || initialValues.port || 9443}`,
-              username: details.user || '',
-              password: details.password,
-              tls: details.protocol === 'rediss',
-              ssh: false,
-              sshPassType: SshPassType.Password
-            })
-          }
-          default: {
-            return {}
-          }
+        case InstanceType.Sentinel: {
+          return getFormValues({
+            host: details.host || initialValues.host || 'localhost',
+            port: `${details.port || initialValues.port || 9443}`,
+            username: details.username || '',
+            password: details.password,
+            tls: details.protocol === 'rediss',
+          })
+        }
+
+        case InstanceType.Standalone: {
+          return getFormValues({
+            name: details.hostname || initialValues.name || 'localhost:6379',
+            host: details.host || initialValues.host || 'localhost',
+            port: `${details.port || initialValues.port || 9443}`,
+            username: details.username || '',
+            password: details.password,
+            tls: details.protocol === 'rediss',
+            db: details.dbNumber,
+            ssh: false,
+            sshPassType: SshPassType.Password
+          })
+        }
+        default: {
+          return {}
         }
       }
-      setInitialValues(getFormValues(getUpdatedInitialValues()))
-      /*
+    }
+    setInitialValues(getUpdatedInitialValues())
+    /*
        * autofill was successfull so return true
        */
-      return true
-    }
+    return true
   } catch (err) {
     /* The pasted content is not a connection URI so ignore. */
     return false
   }
-  return false
 }
 
 export const getSubmitButtonContent = (errors: FormikErrors<DbConnectionInfo>, submitIsDisabled?: boolean) => {

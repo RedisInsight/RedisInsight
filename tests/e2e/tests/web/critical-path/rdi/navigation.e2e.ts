@@ -24,7 +24,7 @@ const rdiInstance: AddNewRdiParameters = {
 
 //skip the tests until rdi integration is added
 fixture `Rdi Navigation`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
@@ -37,7 +37,7 @@ fixture `Rdi Navigation`
         await rdiApiRequests.deleteAllRdiApi();
         await databaseAPIRequests.deleteAllDatabasesApi();
     });
-test.before(async t => {
+test.before(async() => {
     await rdiApiRequests.addNewRdiApi(rdiInstance);
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
 })('Verify that buttons are displayed correctly in navigation panel', async() => {
@@ -49,8 +49,10 @@ test.before(async t => {
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
 
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
-    await t.click(rdiInstancePage.NavigationPanel.rdiPageButton);
-    await t.expect(rdiInstancePage.refreshPipelineIcon.exists).ok('rdi instance page is opened');
+    await t.click(rdiInstancePage.NavigationPanel.managementPageButton);
+    await t.expect(rdiInstancePage.PipelineManagementPanel.refreshPipelineIcon.exists).ok('rdi instance page is opened');
+    const rdiName = rdiInstancePage.rdiNameLinkBreadcrumbs.textContent;
+    await t.expect(rdiName).eql(rdiInstance.name, 'instance name in breadcrumbs is not correct');
 
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
@@ -58,14 +60,15 @@ test.before(async t => {
     await t.expect(count).eql(3, 'rdi buttons is displayed');
 });
 
+// TODO should be updated
 test('Verify that context is saved after navigation panel', async() => {
     // check that tab is not highlighted
-    let classes = await rdiInstancePage.configurationTab.getAttribute('class');
+    let classes = await rdiInstancePage.PipelineManagementPanel.configurationTab.getAttribute('class');
     await t.expect(classes?.split(' ').length).eql(1, 'the tab is  selected');
-    await t.click(rdiInstancePage.configurationTab);
+    await t.click(rdiInstancePage.PipelineManagementPanel.configurationTab);
 
     await t.click(rdiInstancePage.breadcrumbsLink);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    classes = await rdiInstancePage.configurationTab.getAttribute('class');
+    classes = await rdiInstancePage.PipelineManagementPanel.configurationTab.getAttribute('class');
     await t.expect(classes?.split(' ').length).eql(2, 'the tab is not selected');
 });

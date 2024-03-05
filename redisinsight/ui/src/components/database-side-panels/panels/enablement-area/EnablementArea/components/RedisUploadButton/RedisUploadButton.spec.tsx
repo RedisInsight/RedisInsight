@@ -1,10 +1,13 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { AxiosError } from 'axios'
+import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
 import { customTutorialsBulkUploadSelector, uploadDataBulk } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { checkResourse } from 'uiSrc/services/resourcesService'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import RedisUploadButton, { Props } from './RedisUploadButton'
 
 jest.mock('uiSrc/slices/workbench/wb-custom-tutorials', () => ({
@@ -12,6 +15,11 @@ jest.mock('uiSrc/slices/workbench/wb-custom-tutorials', () => ({
   customTutorialsBulkUploadSelector: jest.fn().mockReturnValue({
     pathsInProgress: [],
   }),
+}))
+
+jest.mock('uiSrc/services/resourcesService', () => ({
+  ...jest.requireActual('uiSrc/services/resourcesService'),
+  checkResourse: jest.fn(),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -30,6 +38,10 @@ const props: Props = {
   label: 'Label',
   path: '/text'
 }
+
+const error = {
+  response: { data: { message: 'File not found. Check if this file exists and try again.' } }
+} as AxiosError<any>
 
 describe('RedisUploadButton', () => {
   beforeEach(() => {
@@ -72,7 +84,22 @@ describe('RedisUploadButton', () => {
     expect(screen.getByTestId('database-not-opened-popover')).toBeInTheDocument()
   })
 
-  it('should call proper telemetry events', () => {
+  it('should show error when file is not exists', async () => {
+    const checkResourseMock = jest.fn().mockRejectedValue('');
+    (checkResourse as jest.Mock).mockImplementation(checkResourseMock)
+
+    render(<RedisUploadButton {...props} />)
+
+    fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('download-redis-upload-file'))
+    })
+
+    expect(checkResourseMock).toBeCalledWith('http://localhost:5001/text')
+    expect(store.getActions()).toEqual([addErrorNotification(error)])
+  })
+
+  it('should call proper telemetry events', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
     render(<RedisUploadButton {...props} />)
@@ -81,6 +108,19 @@ describe('RedisUploadButton', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
+      eventData: {
+        databaseId: 'instanceId'
+      }
+    });
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('download-redis-upload-file'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.EXPLORE_PANEL_DOWNLOAD_BULK_FILE_CLICKED,
       eventData: {
         databaseId: 'instanceId'
       }

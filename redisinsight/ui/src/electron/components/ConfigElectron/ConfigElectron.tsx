@@ -47,8 +47,9 @@ const ConfigElectron = () => {
 
   const deepLinkAction = (_e: any, url: IParsedDeepLink) => {
     if (url.from) {
+      const fromUrl = encodeURIComponent(url.from)
       history.push({
-        search: `from=${url.from}`
+        search: `from=${fromUrl}`
       })
     }
   }

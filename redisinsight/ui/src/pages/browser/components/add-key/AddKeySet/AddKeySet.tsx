@@ -18,7 +18,7 @@ import {
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from 'uiSrc/pages/browser/modules/key-details/components/set-details/add-set-members/AddSetMembers'
-import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/dto/set.dto'
+import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import {
   AddSetFormConfig as config

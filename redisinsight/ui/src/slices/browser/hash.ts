@@ -9,7 +9,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   GetHashFieldsResponse,
   AddFieldsToHashDto,
-} from 'apiSrc/modules/browser/dto/hash.dto'
+} from 'apiSrc/modules/browser/hash/dto'
 import {
   deleteKeyFromList,
   deleteSelectedKeySuccess,

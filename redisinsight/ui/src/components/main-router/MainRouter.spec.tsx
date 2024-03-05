@@ -50,7 +50,7 @@ describe('MainRouter', () => {
 
   it('should set RDI workspace', () => {
     (appContextSelector as jest.Mock).mockReturnValueOnce({ workspace: AppWorkspace.Databases })
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelinePrepare('1') })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineConfig('1') })
 
     render(<Router><MainRouter /></Router>)
 

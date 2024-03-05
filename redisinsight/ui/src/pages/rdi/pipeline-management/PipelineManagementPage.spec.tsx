@@ -55,7 +55,7 @@ describe('PipelinePage', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should redirect to the prepare tab by default', () => {
+  it('should redirect to the config tab by default', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineManagement('rdiInstanceId') })
@@ -66,7 +66,7 @@ describe('PipelinePage', () => {
       </BrowserRouter>
     )
 
-    expect(pushMock).toBeCalledWith(Pages.rdiPipelinePrepare('rdiInstanceId'))
+    expect(pushMock).toBeCalledWith(Pages.rdiPipelineConfig('rdiInstanceId'))
   })
 
   it('should redirect to the prev page from context', () => {

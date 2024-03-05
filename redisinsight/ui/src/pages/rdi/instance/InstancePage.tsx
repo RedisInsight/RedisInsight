@@ -5,6 +5,7 @@ import { useHistory, useLocation, useParams } from 'react-router-dom'
 import {
   appContextSelector,
   resetDatabaseContext,
+  resetRdiContext,
   setAppContextConnectedRdiInstanceId,
 } from 'uiSrc/slices/app/context'
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
@@ -29,6 +30,7 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
 
   useEffect(() => {
     if (!contextRdiInstanceId || contextRdiInstanceId !== rdiInstanceId) {
+      dispatch(resetRdiContext())
       dispatch(fetchConnectedInstanceAction(rdiInstanceId))
     }
     dispatch(setAppContextConnectedRdiInstanceId(rdiInstanceId))

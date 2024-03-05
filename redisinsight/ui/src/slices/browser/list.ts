@@ -21,7 +21,7 @@ import {
   SetListElementResponse,
   PushElementToListDto,
   DeleteListElementsDto, DeleteListElementsResponse,
-} from 'apiSrc/modules/browser/dto/list.dto'
+} from 'apiSrc/modules/browser/list/dto'
 import {
   refreshKeyInfoAction,
   fetchKeyInfo,

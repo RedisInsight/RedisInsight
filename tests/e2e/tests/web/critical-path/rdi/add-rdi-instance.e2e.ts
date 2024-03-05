@@ -40,7 +40,7 @@ const rdiInstance3: RdiInstance = {
 //skip the tests until rdi integration is added
 
 fixture.skip `Rdi instance`
-    .meta({ type: 'critical_path' })
+    .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
@@ -70,7 +70,7 @@ test('Verify that user can add and remove RDI', async() => {
     notification = rdiInstancesListPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Instance has been deleted', 'The notification not displayed');
 
-    await t.expect(rdiInstancesListPage.emptyRdiList.textContent).contains('No deployments found', 'the instance is not removed');
+    await t.expect(rdiInstancesListPage.emptyRdiList.textContent).contains('No RDI instances added', 'the instance is not removed');
 });
 test
     .after(async() => {
@@ -118,8 +118,6 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     await t.typeText(rdiInstancesListPage.AddRdiInstance.rdiAliasInput, newAliasName, { replace: true });
     await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
 
-    const addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(0);
-    await t.expect(addRdiInstance.alias).eql(newAliasName, 'added alias is not corrected');
     rdiInstance.alias = newAliasName;
 
     const sortedByAliasTypeUpdated = [rdiInstance3.alias, rdiInstance.alias, rdiInstance2.alias];

@@ -3,14 +3,10 @@
 @import '@elastic/eui/src/global_styling/index';
 
 :global(.homePage) :global(.cloudDatabaseList) {
-  height: calc(100vh - 310px) !important;
+  height: calc(100vh - 326px) !important;
 
   @media (min-width: 1130px) {
-    height: calc(100vh - 255px) !important;
-  }
-
-  @media only screen and (max-width: 767px) {
-    height: calc(100vh - 394px) !important;
+    height: calc(100vh - 272px) !important;
   }
 }
 

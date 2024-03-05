@@ -42,6 +42,17 @@ export class BrowserActions {
     }
 
     /**
+     * Verify dialog contains text
+     * @param expectedText Expected link that is compared with actual
+     * @param contains Should this tooltip contains or not contains text
+     */
+    async verifyDialogContainsText(expectedText: string, contains: boolean): Promise<void> {
+        contains
+            ? await t.expect(browserPage.dialog.textContent).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`)
+            : await t.expect(browserPage.dialog.textContent).notContains(expectedText, `Dialog still contains text "${expectedText}"`);
+    }
+
+    /**
      * Verify that the new key is displayed at the top of the list of keys and opened and pre-selected in List view
      * @param keyName Key name
      */

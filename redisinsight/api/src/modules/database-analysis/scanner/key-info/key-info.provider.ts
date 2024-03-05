@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IKeyInfoStrategy } from 'src/modules/database-analysis/scanner/key-info/key-info.strategy.interface';
-import { RedisDataType } from 'src/modules/browser/dto';
+import { RedisDataType } from 'src/modules/browser/keys/dto';
 import {
   DefaultInfoStrategy,
   GraphInfoStrategy,

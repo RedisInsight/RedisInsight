@@ -1,6 +1,8 @@
 import { Selector, t } from 'testcafe';
+import { Button } from '../common/button';
 
 export class PipelineManagementPanel {
+    Button = new Button();
     configurationTab = Selector('[data-testid=rdi-nav-btn-config] div');
 
     refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
@@ -12,8 +14,6 @@ export class PipelineManagementPanel {
     //Jobs
     addJobBtn = Selector('[data-testid=add-new-job]');
     jobNameInput = Selector('[data-testid^=job-name-input-]');
-    applyJobNameBtn = Selector('[data-testid=apply-btn]');
-    cancelJobNameBtn = Selector('[data-testid=cancel-btn]');
     jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
     confirmBtn  = Selector('[data-testid=confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');
@@ -35,7 +35,7 @@ export class PipelineManagementPanel {
     async addJob(name: string): Promise<void> {
         await t.click(this.addJobBtn);
         await t.typeText(this.jobNameInput, name);
-        await t.click(this.applyJobNameBtn);
+        await t.click(this.Button.applyBtn);
     }
     /**
      * Open Job by name
@@ -64,7 +64,6 @@ export class PipelineManagementPanel {
         const jobBtnSelector = Selector(`[data-testid=edit-job-name-${name}]`);
         await t.click(jobBtnSelector)
             .typeText(this.jobNameInput, newName, { replace: true })
-            .click(this.applyJobNameBtn);
+            .click(this.Button.applyBtn);
     }
-
 }

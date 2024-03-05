@@ -29,13 +29,10 @@ export class BrowserPage extends InstancePage {
     hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
     setDeleteButton = Selector('[data-testid=set-delete-btn]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
-    closeEditTTL = Selector('[data-testid=cancel-btn]');
-    saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
     refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
@@ -593,7 +590,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editKeyNameButton)
             .typeText(this.keyNameInput, keyName, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.Button.applyBtn);
     }
 
     /**
@@ -604,7 +601,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.stringKeyValueInput)
             .typeText(this.stringKeyValueInput, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.Button.applyBtn);
     }
 
     //Get String key value from details
@@ -620,7 +617,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editZsetButton)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.Button.applyBtn);
     }
 
     //Get Zset key score from details
@@ -651,7 +648,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editHashButton)
             .typeText(this.hashFieldValueEditor, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.Button.applyBtn);
     }
 
     //Get Hash key value from details
@@ -667,7 +664,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.Button.applyBtn);
     }
 
     //Get List key value from details
@@ -683,7 +680,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.jsonScalarValue)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.Button.applyBtn);
     }
 
     //Get JSON key value from details
@@ -842,7 +839,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addJsonObjectButton);
         await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
         await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
-        await t.click(this.applyButton);
+        await t.click(this.Button.applyBtn);
     }
 
     /**
@@ -855,7 +852,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addJsonFieldButton);
         await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
         await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
-        await t.click(this.applyButton);
+        await t.click(this.Button.applyBtn);
     }
 
     /**

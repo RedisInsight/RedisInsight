@@ -10,6 +10,8 @@ import {
 import { RdiPipelineDeployFailedException } from 'src/modules/rdi/exceptions';
 import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
 import { RdiDryRunJobResult, RdiDyRunJobStatus } from 'src/modules/rdi/models/rdi-dry-run';
+import { plainToClass } from 'class-transformer';
+import { convertKeysToCamelCase } from 'src/utils/base.helper';
 
 const RDI_DEPLOY_FAILED_STATUS = 'failed';
 
@@ -86,7 +88,8 @@ export class ApiRdiClient extends RdiClient {
 
   async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
     const response = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
-    return response.data;
+
+    return plainToClass(RdiStatisticsResult, convertKeysToCamelCase(response.data));
   }
 
   async disconnect(): Promise<void> {

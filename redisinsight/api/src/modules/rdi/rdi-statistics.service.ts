@@ -17,6 +17,10 @@ export class RdiStatisticsService {
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-    return await client.getStatistics(sections);
+    const result =  await client.getStatistics(sections);
+
+    console.log('___ result', result);
+
+    return result;
   }
 }

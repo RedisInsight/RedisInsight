@@ -1,11 +1,11 @@
 import {
   ClassSerializerInterceptor,
   Controller,
-  Get,
+  Get, Param,
   Query,
   UseInterceptors,
   UsePipes,
-  ValidationPipe,
+  ValidationPipe
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -32,8 +32,11 @@ export class RdiStatisticsController {
   })
   async getStatistics(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Query('sections') sections?: string,
+      @Param('id') id: string,
+      // @Query('sections') sections?: string,
   ): Promise<RdiStatisticsResult> {
-    return this.rdiStatisticsService.getStatistics(rdiClientMetadata, sections);
+    const r = await this.rdiStatisticsService.getStatistics(rdiClientMetadata, undefined);
+    console.log('___ r', r);
+    return r;
   }
 }

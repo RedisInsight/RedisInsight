@@ -4,12 +4,14 @@ import cx from 'classnames'
 import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import MarkdownMessage from 'uiSrc/components/database-side-panels/panels/ai-assistant/components/markdown-message'
 import { Nullable } from 'uiSrc/utils'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import EmptyHistoryScreen from '../empty-history'
 import LoadingMessage from '../loading-message'
 
 import styles from './styles.module.scss'
 
 export interface Props {
+  modules?: AdditionalRedisModule[]
   type?: AiChatType
   progressingMessage?: Nullable<AiChatMessage>
   isLoadingAnswer?: boolean
@@ -21,6 +23,7 @@ export interface Props {
 
 const ChatHistory = (props: Props) => {
   const {
+    modules,
     type = AiChatType.Assistance,
     progressingMessage,
     isLoadingAnswer,
@@ -30,15 +33,21 @@ const ChatHistory = (props: Props) => {
     onSubmit,
   } = props
 
-  const getMessage = ({ type, content, id }: AiChatMessage) => (content ? (
+  const getMessage = ({ type: messageType, content, id }: AiChatMessage) => (content ? (
     <div
       key={id}
       className={cx('jsx-markdown', {
-        [styles.answer]: type === AiChatMessageType.AIMessage,
-        [styles.question]: type === AiChatMessageType.HumanMessage,
+        [styles.answer]: messageType === AiChatMessageType.AIMessage,
+        [styles.question]: messageType === AiChatMessageType.HumanMessage,
       })}
     >
-      <MarkdownMessage onMessageRendered={onMessageRendered}>{content}</MarkdownMessage>
+      <MarkdownMessage
+        onMessageRendered={onMessageRendered}
+        type={type}
+        modules={modules}
+      >
+        {content}
+      </MarkdownMessage>
     </div>
   ) : null)
 

@@ -1,8 +1,8 @@
 import { Selector, t } from 'testcafe';
-import { Button } from './common/button';
+import { EditorButton } from './common/editorButton';
 
 export class OverviewPanel {
-    Button = new Button();
+    EditorButton = new EditorButton();
     // TEXT ELEMENTS
     overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
@@ -31,7 +31,7 @@ export class OverviewPanel {
     async changeDbIndex(dbIndex: number): Promise<void> {
         await t.click(this.changeIndexBtn)
             .typeText(this.changeIndexInput, dbIndex.toString(), { replace: true, paste: true })
-            .click(this.Button.applyBtn)
+            .click(this.EditorButton.applyBtn)
             .expect(this.changeIndexBtn.textContent).contains(dbIndex.toString());
     }
 

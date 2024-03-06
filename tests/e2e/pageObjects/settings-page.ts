@@ -34,7 +34,7 @@ export class SettingsPage extends BasePage {
             .hover(this.keysToScanValue)
             .click(this.keysToScanInput)
             .typeText(this.keysToScanInput, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     /**
@@ -45,7 +45,7 @@ export class SettingsPage extends BasePage {
         await t.hover(this.commandsInPipelineValue)
             .click(this.commandsInPipelineInput)
             .typeText(this.commandsInPipelineInput, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     /**

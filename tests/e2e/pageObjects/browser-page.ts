@@ -590,7 +590,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editKeyNameButton)
             .typeText(this.keyNameInput, keyName, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     /**
@@ -601,7 +601,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.stringKeyValueInput)
             .typeText(this.stringKeyValueInput, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get String key value from details
@@ -617,7 +617,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editZsetButton)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get Zset key score from details
@@ -648,7 +648,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editHashButton)
             .typeText(this.hashFieldValueEditor, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get Hash key value from details
@@ -664,7 +664,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get List key value from details
@@ -680,7 +680,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.jsonScalarValue)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get JSON key value from details
@@ -839,7 +839,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addJsonObjectButton);
         await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
         await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
-        await t.click(this.Button.applyBtn);
+        await t.click(this.EditorButton.applyBtn);
     }
 
     /**
@@ -852,7 +852,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addJsonFieldButton);
         await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
         await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
-        await t.click(this.Button.applyBtn);
+        await t.click(this.EditorButton.applyBtn);
     }
 
     /**

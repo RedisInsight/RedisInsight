@@ -1,8 +1,8 @@
 import { Selector, t } from 'testcafe';
-import { Button } from '../common/button';
+import { EditorButton } from '../common/editorButton';
 
 export class PipelineManagementPanel {
-    Button = new Button();
+    EditorButton = new EditorButton();
     configurationTab = Selector('[data-testid=rdi-nav-btn-config] div');
 
     refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
@@ -35,7 +35,7 @@ export class PipelineManagementPanel {
     async addJob(name: string): Promise<void> {
         await t.click(this.addJobBtn);
         await t.typeText(this.jobNameInput, name);
-        await t.click(this.Button.applyBtn);
+        await t.click(this.EditorButton.applyBtn);
     }
     /**
      * Open Job by name
@@ -64,6 +64,6 @@ export class PipelineManagementPanel {
         const jobBtnSelector = Selector(`[data-testid=edit-job-name-${name}]`);
         await t.click(jobBtnSelector)
             .typeText(this.jobNameInput, newName, { replace: true })
-            .click(this.Button.applyBtn);
+            .click(this.EditorButton.applyBtn);
     }
 }

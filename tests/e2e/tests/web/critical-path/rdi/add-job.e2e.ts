@@ -48,11 +48,11 @@ test('Verify that user can add, edit and delete job', async() => {
     await t.expect(placeholder).eql('Enter job name');
 
     await t
-        .expect(rdiInstancePage.PipelineManagementPanel.Button.applyBtn.hasAttribute('disabled')).ok('the button is not disabled');
-    await t.hover(rdiInstancePage.PipelineManagementPanel.Button.applyBtn);
+        .expect(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn.hasAttribute('disabled')).ok('the button is not disabled');
+    await t.hover(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn);
     await browserActions.verifyTooltipContainsText('Job name is required', true);
 
-    await t.click(rdiInstancePage.Button.cancelBtn);
+    await t.click(rdiInstancePage.EditorButton.cancelBtn);
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
 
     const elementItem = await rdiInstancePage.PipelineManagementPanel.jobItem.count;
@@ -61,10 +61,10 @@ test('Verify that user can add, edit and delete job', async() => {
     await t.click(rdiInstancePage.PipelineManagementPanel.addJobBtn);
     await t.typeText(rdiInstancePage.PipelineManagementPanel.jobNameInput, jobName);
     await t
-        .expect(rdiInstancePage.PipelineManagementPanel.Button.applyBtn.hasAttribute('disabled')).ok('the button is not disabled');
-    await t.hover(rdiInstancePage.PipelineManagementPanel.Button.applyBtn);
+        .expect(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn.hasAttribute('disabled')).ok('the button is not disabled');
+    await t.hover(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn);
     await browserActions.verifyTooltipContainsText('Job name is already in use', true);
-    await t.click(rdiInstancePage.Button.cancelBtn);
+    await t.click(rdiInstancePage.EditorButton.cancelBtn);
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName2);
     let elementItem2 = await rdiInstancePage.PipelineManagementPanel.jobItem.count;
@@ -108,12 +108,12 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
 
     // Verify that user can close the additional editor
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
-    await t.click(rdiInstancePage.Button.cancelBtn);
+    await t.click(rdiInstancePage.EditorButton.cancelBtn);
     await t.expect(rdiInstancePage.draggableArea.exists).notOk('SQL/JMESPath editor is displayed after closing');
     await t.expect(await MonacoEditor.getTextFromMonaco()).eql('', 'Text from canceled SQL editor applied');
 
     await t.pressKey('shift+space');
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
-    await t.click(rdiInstancePage.Button.applyBtn);
+    await t.click(rdiInstancePage.EditorButton.applyBtn);
     await t.expect(await MonacoEditor.getTextFromMonaco()).eql(sqlText, 'Text from SQL editor not applied');
 });

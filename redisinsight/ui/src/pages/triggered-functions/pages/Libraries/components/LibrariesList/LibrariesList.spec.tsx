@@ -64,8 +64,8 @@ describe('LibrariesList', () => {
 
     sendEventTelemetry.mockRestore()
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('libraries-auto-refresh-config-btn'))
+    fireEvent.click(screen.getByTestId('libraries-auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_ENABLED,
@@ -76,7 +76,7 @@ describe('LibrariesList', () => {
     })
 
     sendEventTelemetry.mockRestore()
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('libraries-auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_LIST_AUTO_REFRESH_DISABLED,

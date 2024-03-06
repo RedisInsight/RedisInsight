@@ -29,52 +29,54 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/statistics'),
   rdiStatisticsSelector: jest.fn().mockReturnValue({
     loading: false,
-    data: {
-      connections: {
-        Connection1: {
-          status: 'good',
-          type: 'type1',
-          host: 'Redis-Stack-in-Redis-Enterprise-Cloud',
-          port: 12000,
-          database: 'admin',
-          user: 'admin'
-        }
-      },
-      dataStreams: {
-        Stream1: {
-          total: 35,
-          pending: 2,
-          inserted: 2530,
-          updated: 65165,
-          deleted: 1,
-          filtered: 0,
-          rejected: 5,
-          deduplicated: 0,
-          lastArrival: '1 Hour'
-        }
-      },
-      processingPerformance: {
-        totalBatches: 3427,
-        batchSizeAvg: '0.93',
-        readTimeAvg: '13',
-        processTimeAvg: '24',
-        ackTimeAvg: '6.2',
-        totalTimeAvg: '6.1',
-        recPerSecAvg: 110
-      },
-      rdiPipelineStatus: {
-        rdiVersion: '2.0',
-        address: '172.17.0.2:12006',
-        runStatus: 'Started',
-        syncMode: 'Streaming'
-      },
-      clients: {
-        9875: {
-          addr: '172.16.0.2:62356',
-          name: 'redis-di-cli',
-          ageSec: 100,
-          idleSec: 2,
-          user: 'default'
+    results: {
+      data: {
+        connections: {
+          Connection1: {
+            status: 'good',
+            type: 'type1',
+            host: 'Redis-Stack-in-Redis-Enterprise-Cloud',
+            port: 12000,
+            database: 'admin',
+            user: 'admin'
+          }
+        },
+        dataStreams: {
+          Stream1: {
+            total: 35,
+            pending: 2,
+            inserted: 2530,
+            updated: 65165,
+            deleted: 1,
+            filtered: 0,
+            rejected: 5,
+            deduplicated: 0,
+            lastArrival: '1 Hour'
+          }
+        },
+        processingPerformance: {
+          totalBatches: 3427,
+          batchSizeAvg: '0.93',
+          readTimeAvg: '13',
+          processTimeAvg: '24',
+          ackTimeAvg: '6.2',
+          totalTimeAvg: '6.1',
+          recPerSecAvg: 110
+        },
+        rdiPipelineStatus: {
+          rdiVersion: '2.0',
+          address: '172.17.0.2:12006',
+          runStatus: 'Started',
+          syncMode: 'Streaming'
+        },
+        clients: {
+          9875: {
+            addr: '172.16.0.2:62356',
+            name: 'redis-di-cli',
+            ageSec: 100,
+            idleSec: 2,
+            user: 'default'
+          }
         }
       }
     }
@@ -125,7 +127,7 @@ describe('StatisticsPage', () => {
     render(<StatisticsPage />)
 
     expect(sendPageViewTelemetry).toBeCalledWith({
-      name: TelemetryPageView.RDI_STATUS,
+      name: TelemetryPageView.RDI_STATUS
     })
   })
 
@@ -174,9 +176,10 @@ describe('StatisticsPage', () => {
   it('should call proper telemetry event when auto refresh is disabled for processing performance section', async () => {
     render(<StatisticsPage />)
 
-    const refreshConfigButtons = screen.getAllByTestId('auto-refresh-config-btn')
-    fireEvent.click(refreshConfigButtons[0])
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // disabled
+    const testid = 'processing-performance-info'
+
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_DISABLED,
@@ -192,10 +195,11 @@ describe('StatisticsPage', () => {
   it('should call proper telemetry event when auto refresh is enabled for processing performance section', async () => {
     render(<StatisticsPage />)
 
-    const refreshConfigButtons = screen.getAllByTestId('auto-refresh-config-btn')
-    fireEvent.click(refreshConfigButtons[0]) // processing performance
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // disabled
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // enabled
+    const testid = 'processing-performance-info'
+
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_ENABLED,
@@ -211,9 +215,10 @@ describe('StatisticsPage', () => {
   it('should call proper telemetry event when auto refresh is enabled for data streams section', async () => {
     render(<StatisticsPage />)
 
-    const refreshConfigButtons = screen.getAllByTestId('auto-refresh-config-btn')
-    fireEvent.click(refreshConfigButtons[1]) // data streams
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // enabled
+    const testid = 'data-streams'
+
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_ENABLED,
@@ -229,10 +234,11 @@ describe('StatisticsPage', () => {
   it('should call proper telemetry event when auto refresh is disabled for data streams section', async () => {
     render(<StatisticsPage />)
 
-    const refreshConfigButtons = screen.getAllByTestId('auto-refresh-config-btn')
-    fireEvent.click(refreshConfigButtons[1]) // data streams
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // enabled
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // disabled
+    const testid = 'data-streams'
+
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_DISABLED,
@@ -248,9 +254,10 @@ describe('StatisticsPage', () => {
   it('should call proper telemetry event when auto refresh is enabled for clients section', async () => {
     render(<StatisticsPage />)
 
-    const refreshConfigButtons = screen.getAllByTestId('auto-refresh-config-btn')
-    fireEvent.click(refreshConfigButtons[2]) // clients
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // enabled
+    const testid = 'clients'
+
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_ENABLED,
@@ -266,10 +273,11 @@ describe('StatisticsPage', () => {
   it('should call proper telemetry event when auto refresh is disabled for clients section', async () => {
     render(<StatisticsPage />)
 
-    const refreshConfigButtons = screen.getAllByTestId('auto-refresh-config-btn')
-    fireEvent.click(refreshConfigButtons[2]) // clients
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // enabled
-    fireEvent.click(screen.getByTestId('auto-refresh-switch')) // disabled
+    const testid = 'clients'
+
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
+    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_DISABLED,

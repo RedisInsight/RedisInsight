@@ -42,21 +42,6 @@ describe('PipelinePage', () => {
     ).toBeTruthy()
   })
 
-  it('should dispatch fetchRdiPipeline on render', async () => {
-    await act(() => {
-      render(
-        <BrowserRouter>
-          <PipelinePage {...instance(mockedProps)} />
-        </BrowserRouter>
-      )
-    })
-
-    const expectedActions = [
-      getPipeline(),
-    ]
-    expect(store.getActions()).toEqual(expectedActions)
-  })
-
   it('should redirect to the config tab by default', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
@@ -99,8 +84,6 @@ describe('PipelinePage', () => {
 
     unmount()
     const expectedActions = [
-      // getPipeline from componentDidMount
-      getPipeline(),
       setLastPageContext(PageNames.rdiPipelineManagement),
       setLastPipelineManagementPage(Pages.rdiPipelineConfig('rdiInstanceId'))
     ]

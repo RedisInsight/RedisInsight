@@ -25,6 +25,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
+import { getPipeline } from 'uiSrc/slices/rdi/pipeline'
 
 import InstancePage, { Props } from './InstancePage'
 
@@ -92,6 +93,8 @@ describe('InstancePage', () => {
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
       setTriggeredFunctionsInitialState(),
+      getPipeline(),
+      setConnectedInstance(),
     ]
 
     const expectedActions = [

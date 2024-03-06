@@ -24,6 +24,11 @@
     }
 
     .rdi {
+      &__content-header {
+        display: flex;
+        justify-content: space-between;
+      }
+      
       &__title {
         font: normal normal normal 16px/19px Graphik, sans-serif;
         word-break: break-word;

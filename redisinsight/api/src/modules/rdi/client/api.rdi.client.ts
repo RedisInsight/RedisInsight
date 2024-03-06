@@ -28,6 +28,16 @@ export class ApiRdiClient extends RdiClient {
     return response.data;
   }
 
+  async getStrategies(): Promise<object> {
+    const response = await this.client.get(RdiUrl.GetStrategies);
+    return response.data;
+  }
+
+  async getTemplate(options: object): Promise<object> {
+    const response = await this.client.get(RdiUrl.GetTemplate, { params: options });
+    return response.data;
+  }
+
   async deploy(pipeline: RdiPipeline): Promise<void> {
     const response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
 

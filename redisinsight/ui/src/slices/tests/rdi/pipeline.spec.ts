@@ -10,11 +10,16 @@ import reducer, {
   deployPipeline,
   deployPipelineSuccess,
   deployPipelineFailure,
+  getPipelineStrategies,
+  getPipelineStrategiesSuccess,
+  getPipelineStrategiesFailure,
+  setPipelineSchema,
   fetchRdiPipeline,
   deployPipelineAction,
   rdiPipelineSelector,
   fetchRdiPipelineSchema,
-  setPipelineSchema,
+  fetchPipelineStrategies,
+  fetchPipelineTemplate,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
@@ -171,6 +176,81 @@ describe('rdi pipe slice', () => {
     })
   })
 
+  describe('getPipelineStrategies', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        strategies: {
+          ...initialState.strategies,
+          loading: true
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPipelineStrategies())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPipelineStrategiesSuccess', () => {
+    it('should set loading = false', () => {
+      const mockData = { 'db-type': [], 'strategy-type': [] }
+      // Arrange
+      const state = {
+        ...initialState,
+        strategies: {
+          ...initialState.strategies,
+          dbType: mockData['db-type'],
+          strategyType: mockData['strategy-type'],
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPipelineStrategiesSuccess(mockData))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPipelineStrategiesFailure', () => {
+    it('should set loading = false', () => {
+      const mockError = 'some error'
+      // Arrange
+      const state = {
+        ...initialState,
+        strategies: {
+          ...initialState.strategies,
+          error: mockError,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPipelineStrategiesFailure(mockError))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('thunks', () => {
     describe('fetchRdiPipeline', () => {
@@ -314,6 +394,80 @@ describe('rdi pipe slice', () => {
 
         expect(store.getActions()).toEqual(expectedActions)
       })
+    })
+  })
+
+  describe('fetchPipelineStrategies', () => {
+    it('succeed to fetch data', async () => {
+      const data = { 'db-type': [], 'strategy-type': [] }
+      const responsePayload = { data, status: 200 }
+
+      apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(
+        fetchPipelineStrategies('123')
+      )
+
+      // Assert
+      const expectedActions = [
+        getPipelineStrategies(),
+        getPipelineStrategiesSuccess(data),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('failed to fetch data', async () => {
+      const errorMessage = 'Something was wrong!'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(
+        fetchPipelineStrategies('123')
+      )
+
+      // Assert
+      const expectedActions = [
+        getPipelineStrategies(),
+        getPipelineStrategiesFailure(errorMessage),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+  })
+
+  describe('fetchPipelineTemplate', () => {
+    it('failed to fetch data', async () => {
+      const mockOptions = { dbType: 'db type' }
+      const errorMessage = 'Something was wrong!'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(
+        fetchPipelineTemplate('123', mockOptions)
+      )
+
+      // Assert
+      const expectedActions = [
+        addErrorNotification(responsePayload as AxiosError),
+      ]
+
+      expect(store.getActions()).toEqual(expectedActions)
     })
   })
 })

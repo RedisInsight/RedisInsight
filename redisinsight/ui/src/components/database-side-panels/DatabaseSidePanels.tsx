@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
+import { EuiBadge, EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
@@ -173,6 +173,7 @@ const DatabaseSidePanels = (props: Props) => {
         data-testid="ai-assistant-tab"
       >
         <span className={styles.tabName}>Redis Copilot</span>
+        <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
       </EuiTab>
     </EuiTabs>
   ), [tabSelected, totalUnread, isFullScreen])

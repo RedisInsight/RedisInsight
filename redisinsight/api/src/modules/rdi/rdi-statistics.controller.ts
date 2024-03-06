@@ -2,14 +2,12 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
-  Param,
   Query,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
 import { RdiClientMetadata } from 'src/modules/rdi/models';

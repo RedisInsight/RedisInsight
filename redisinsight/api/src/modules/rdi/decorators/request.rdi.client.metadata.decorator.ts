@@ -3,6 +3,7 @@ import { sessionMetadataFromRequestFactory } from 'src/common/decorators';
 import { plainToClass } from 'class-transformer';
 import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { Validator } from 'class-validator';
+import { ApiParam } from '@nestjs/swagger';
 
 const validator = new Validator();
 
@@ -23,4 +24,12 @@ export const RequestRdiClientMetadata = createParamDecorator((data: unknown, ctx
   }
 
   return rdiClientMetadata;
-});
+}, [
+  (target: any, key: string) => {
+    ApiParam({
+      name: 'id',
+      schema: { type: 'string' },
+      required: true,
+    })(target, key, Object.getOwnPropertyDescriptor(target, key));
+  },
+]);

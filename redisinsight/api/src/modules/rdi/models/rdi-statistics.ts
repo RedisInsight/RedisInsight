@@ -233,7 +233,7 @@ class Clients {
   user: string;
 }
 
-export class RdiStatisticsResult {
+export class RdiStatisticsData {
   @ApiProperty({
     description: 'Connections dictionary',
   })
@@ -263,4 +263,17 @@ export class RdiStatisticsResult {
   })
   @Expose()
   clients: Record<string, Clients>;
+}
+
+export enum RdiStatisticsStatus {
+  Success = 'success',
+  Fail = 'failed',
+}
+
+export class RdiStatisticsResult {
+  status: RdiStatisticsStatus;
+
+  data?: RdiStatisticsData;
+
+  error?: string;
 }

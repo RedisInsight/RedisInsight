@@ -1,15 +1,21 @@
 import { AxiosInstance } from 'axios';
+import { plainToClass } from 'class-transformer';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import { RdiUrl } from 'src/modules/rdi/constants';
-import {
-  RdiDryRunJobDto, RdiDryRunJobResponseDto,
-  RdiStatisticsResult,
-  RdiTestConnectionResult,
-} from 'src/modules/rdi/dto';
+import { RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
 import { RdiPipelineDeployFailedException } from 'src/modules/rdi/exceptions';
-import { RdiJob, RdiPipeline, RdiType } from 'src/modules/rdi/models';
-import { RdiDryRunJobResult, RdiDyRunJobStatus } from 'src/modules/rdi/models/rdi-dry-run';
+import {
+  RdiJob,
+  RdiPipeline,
+  RdiStatisticsResult,
+  RdiType,
+  RdiDryRunJobResult,
+  RdiDyRunJobStatus,
+  RdiStatisticsStatus,
+  RdiStatisticsData,
+} from 'src/modules/rdi/models';
+import { convertKeysToCamelCase } from 'src/utils/base.helper';
 
 const RDI_DEPLOY_FAILED_STATUS = 'failed';
 
@@ -46,47 +52,51 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
-    const response = await Promise.all(
-      [this.getDryRunJobTransformations(data), this.getDryRunJobCommands(data)],
-    );
-    return ({ transformations: response[0], commands: response[1] });
+    const response = await Promise.all([this.getDryRunJobTransformations(data), this.getDryRunJobCommands(data)]);
+    return { transformations: response[0], commands: response[1] };
   }
 
   async getDryRunJobTransformations(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
     try {
-      const transformations = await this.client.post(
-        RdiUrl.DryRunJob,
-        { input: data.input, job: data.job, test_output: false },
-      );
-      return ({ status: RdiDyRunJobStatus.Success, data: transformations.data });
+      const transformations = await this.client.post(RdiUrl.DryRunJob, {
+        input: data.input,
+        job: data.job,
+        test_output: false,
+      });
+      return { status: RdiDyRunJobStatus.Success, data: transformations.data };
     } catch (e) {
-      return ({ status: RdiDyRunJobStatus.Fail, error: e.message });
+      return { status: RdiDyRunJobStatus.Fail, error: e.message };
     }
   }
 
   async getDryRunJobCommands(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
     try {
-      const commands = await this.client.post(
-        RdiUrl.DryRunJob,
-        { input: data.input, job: data.job, test_output: true },
-      );
-      return ({ status: RdiDyRunJobStatus.Success, data: commands.data });
+      const commands = await this.client.post(RdiUrl.DryRunJob, {
+        input: data.input,
+        job: data.job,
+        test_output: true,
+      });
+      return { status: RdiDyRunJobStatus.Success, data: commands.data };
     } catch (e) {
-      return ({ status: RdiDyRunJobStatus.Fail, error: e.message });
+      return { status: RdiDyRunJobStatus.Fail, error: e.message };
     }
   }
 
   async testConnections(config: string): Promise<RdiTestConnectionResult> {
-    const response = await this.client.post(
-      RdiUrl.TestConnections,
-      { config },
-    );
+    const response = await this.client.post(RdiUrl.TestConnections, { config });
     return response.data;
   }
 
   async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
-    const response = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
-    return response.data;
+    try {
+      const response = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
+      return {
+        status: RdiStatisticsStatus.Success,
+        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(response.data)),
+      };
+    } catch (e) {
+      return { status: RdiStatisticsStatus.Fail, error: e.message };
+    }
   }
 
   async disconnect(): Promise<void> {

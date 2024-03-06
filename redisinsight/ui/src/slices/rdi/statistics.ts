@@ -11,7 +11,7 @@ import { AppDispatch, RootState } from '../store'
 export const initialState: IStateRdiStatistics = {
   loading: true,
   error: '',
-  data: null
+  results: null
 }
 
 const rdiStatisticsSlice = createSlice({
@@ -23,7 +23,8 @@ const rdiStatisticsSlice = createSlice({
     },
     getStatisticsSuccess: (state, { payload }: PayloadAction<IRdiStatistics>) => {
       state.loading = false
-      state.data = { ...state.data, ...payload }
+      state.error = ''
+      state.results = { data: { ...state?.results?.data, ...payload.data }, status: payload.status }
     },
     getStatisticsFailure: (state, { payload }) => {
       state.loading = false

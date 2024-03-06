@@ -24,7 +24,7 @@ const StatisticsPage = () => {
   const dispatch = useDispatch()
 
   const { data: pipelineData } = useSelector(rdiPipelineSelector)
-  const { loading: isStatisticsLoading, data: statisticsData } = useSelector(rdiStatisticsSelector)
+  const { loading: isStatisticsLoading, results: statisticsResults } = useSelector(rdiStatisticsSelector)
   const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
 
   const rdiInstanceName = formatLongName(connectedRdiInstanceName, 33, 0, '...')
@@ -66,9 +66,11 @@ const StatisticsPage = () => {
     })
   }, [])
 
-  if (!statisticsData) {
+  if (!statisticsResults) {
     return null
   }
+
+  const { data: statisticsData } = statisticsResults
 
   return (
     <div className={styles.pageContainer}>

@@ -128,12 +128,20 @@ export interface IClients {
   }
 }
 
+export enum RdiPipelineStatus {
+  Success = 'success',
+  Failed = 'failed'
+}
+
 export interface IRdiStatistics {
-  connections: IConnections
-  dataStreams: IDataStreams
-  processingPerformance: IProcessingPerformance
-  rdiPipelineStatus: IRdiPipelineStatus
-  clients: IClients
+  status: RdiPipelineStatus,
+  data: {
+    connections: IConnections
+    dataStreams: IDataStreams
+    processingPerformance: IProcessingPerformance
+    rdiPipelineStatus: IRdiPipelineStatus
+    clients: IClients
+  }
 }
 
 export interface IStateRdiPipeline {
@@ -153,7 +161,7 @@ export interface IStateRdiDryRunJob {
 export interface IStateRdiStatistics {
   loading: boolean
   error: string
-  data: Nullable<IRdiStatistics>
+  results: Nullable<IRdiStatistics>
 }
 
 export interface RdiInstance extends RdiInstanceResponse {

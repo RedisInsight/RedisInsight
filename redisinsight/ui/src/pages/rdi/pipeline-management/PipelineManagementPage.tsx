@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { fetchRdiPipeline, fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
+import { fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
 import RdiPipelinePageTemplate from 'uiSrc/templates/rdi-pipeline-page-template'
 import {
   appContextPipelineManagement,
@@ -34,7 +34,6 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   setTitle(`${rdiInstanceName} - Pipeline Management`)
 
   useEffect(() => {
-    dispatch(fetchRdiPipeline(rdiInstanceId))
     dispatch(fetchRdiPipelineSchema(rdiInstanceId))
   }, [])
 

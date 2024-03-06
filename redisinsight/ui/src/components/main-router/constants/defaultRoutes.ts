@@ -15,8 +15,8 @@ import AnalyticsPage from 'uiSrc/pages/analytics'
 import TriggeredFunctionsPage from 'uiSrc/pages/triggered-functions'
 import RdiPage from 'uiSrc/pages/rdi/home'
 import RdiInstancePage from 'uiSrc/pages/rdi/instance'
+import RdiStatisticsPage from 'uiSrc/pages/rdi/statistics'
 import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
-import PipelineStatisticsPage from 'uiSrc/pages/rdi/pipeline-statistics'
 import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
@@ -51,9 +51,8 @@ const INSTANCE_ROUTES: IRoute[] = [
 
 const RDI_INSTANCE_ROUTES: IRoute[] = [
   {
-    pageName: PageNames.rdiPipelineStatistics,
-    path: Pages.rdiPipelineStatistics(':rdiInstanceId'),
-    component: PipelineStatisticsPage,
+    path: Pages.rdiStatistics(':rdiInstanceId'),
+    component: RdiStatisticsPage,
   },
   {
     path: Pages.rdiPipelineManagement(':rdiInstanceId'),

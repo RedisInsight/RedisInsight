@@ -68,7 +68,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
 
   const handleConnect = (id: string) => {
     // TODO: update connect function (check connection first?)
-    history.push(Pages.rdiPipeline(id))
+    history.push(Pages.rdiStatistics(id))
   }
 
   const handleCopy = (text = '', id: string) => {

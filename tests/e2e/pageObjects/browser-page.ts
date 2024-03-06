@@ -33,8 +33,10 @@ export class BrowserPage extends InstancePage {
     submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
-    refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
-    refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
+    closeEditTTL = Selector('[data-testid=cancel-btn]');
+    saveTTLValue = Selector('[data-testid=apply-btn]');
+    refreshKeysButton = Selector('[data-testid=keys-refresh-btn]');
+    refreshKeyButton = Selector('[data-testid=key-refresh-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     editKeyValueButton = Selector('[data-testid=edit-key-value-btn]', { timeout: 500 });
     closeKeyButton = Selector('[data-testid=close-key-btn]');

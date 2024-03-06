@@ -238,7 +238,7 @@ const KeysHeader = (props: Props) => {
                   onRefresh={handleRefreshKeys}
                   onEnableAutoRefresh={handleEnableAutoRefresh}
                   onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
-                  testid="refresh-keys-btn"
+                  testid="keys"
                 />
                 {ViewSwitch()}
               </div>

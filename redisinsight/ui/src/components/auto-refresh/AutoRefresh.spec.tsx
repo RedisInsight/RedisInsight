@@ -27,9 +27,9 @@ describe('AutoRefresh', () => {
 
   it('should call onRefresh', () => {
     const onRefresh = jest.fn()
-    render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} testid="refresh-key-btn" />)
+    render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
 
-    fireEvent.click(screen.getByTestId('refresh-key-btn'))
+    fireEvent.click(screen.getByTestId('refresh-btn'))
     expect(onRefresh).toBeCalled()
   })
 
@@ -48,6 +48,52 @@ describe('AutoRefresh', () => {
 
     expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(/Auto refresh:/i)
     expect(screen.getByTestId('refresh-message')).toHaveTextContent(DEFAULT_REFRESH_RATE)
+  })
+
+  it('should locate refresh message label when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} displayText testid="testid" />)
+
+    expect(screen.getByTestId('testid-refresh-message-label')).toBeInTheDocument()
+  })
+
+  it('should locate refresh message when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} displayText testid="testid" />)
+
+    expect(screen.getByTestId('testid-refresh-message')).toBeInTheDocument()
+  })
+
+  it('should locate refresh button when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} testid="testid" />)
+
+    expect(screen.getByTestId('testid-refresh-btn')).toBeInTheDocument()
+  })
+
+  it('should locate auto-refresh config button when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} testid="testid" />)
+
+    expect(screen.getByTestId('testid-auto-refresh-config-btn')).toBeInTheDocument()
+  })
+
+  it('should locate auto-refresh switch when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} testid="testid" />)
+
+    fireEvent.click(screen.getByTestId('testid-auto-refresh-config-btn'))
+    expect(screen.getByTestId('testid-auto-refresh-switch')).toBeInTheDocument()
+  })
+
+  it('should locate refresh rate when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} testid="testid" />)
+
+    fireEvent.click(screen.getByTestId('testid-auto-refresh-config-btn'))
+    expect(screen.getByTestId('testid-refresh-rate')).toBeInTheDocument()
+  })
+
+  it('should locate auto-refresh rate input when testid is provided', () => {
+    render(<AutoRefresh {...instance(mockedProps)} testid="testid" />)
+
+    fireEvent.click(screen.getByTestId('testid-auto-refresh-config-btn'))
+    fireEvent.click(screen.getByTestId('testid-refresh-rate'))
+    expect(screen.getByTestId('testid-auto-refresh-rate-input')).toBeInTheDocument()
   })
 
   describe('AutoRefresh Config', () => {

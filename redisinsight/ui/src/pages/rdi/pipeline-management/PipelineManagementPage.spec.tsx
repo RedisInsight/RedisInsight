@@ -22,6 +22,8 @@ jest.mock('uiSrc/slices/app/context', () => ({
   }),
 }))
 
+jest.mock('formik')
+
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -38,21 +40,6 @@ describe('PipelinePage', () => {
         </BrowserRouter>
       )
     ).toBeTruthy()
-  })
-
-  it('should dispatch fetchRdiPipeline on render', async () => {
-    await act(() => {
-      render(
-        <BrowserRouter>
-          <PipelinePage {...instance(mockedProps)} />
-        </BrowserRouter>
-      )
-    })
-
-    const expectedActions = [
-      getPipeline(),
-    ]
-    expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should redirect to the config tab by default', () => {
@@ -97,8 +84,6 @@ describe('PipelinePage', () => {
 
     unmount()
     const expectedActions = [
-      // getPipeline from componentDidMount
-      getPipeline(),
       setLastPageContext(PageNames.rdiPipelineManagement),
       setLastPipelineManagementPage(Pages.rdiPipelineConfig('rdiInstanceId'))
     ]

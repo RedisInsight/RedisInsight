@@ -53,6 +53,8 @@ import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/i
 import { initialState as initialStateRdiPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/instances'
 import { initialState as initialStateRdiDryRunJob } from 'uiSrc/slices/rdi/dryRun'
+import { initialState as initialStateRdiStatistics } from 'uiSrc/slices/rdi/statistics'
+import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi/testConnections'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -131,6 +133,8 @@ const initialStateDefault: RootState = {
     pipeline: cloneDeep(initialStateRdiPipeline),
     instances: cloneDeep(initialStateRdi),
     dryRun: cloneDeep(initialStateRdiDryRunJob),
+    statistics: cloneDeep(initialStateRdiStatistics),
+    testConnections: cloneDeep(initialStateRdiTestConnections)
   }
 }
 

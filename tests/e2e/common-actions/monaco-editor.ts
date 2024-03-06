@@ -2,7 +2,7 @@ import { Selector, t } from 'testcafe';
 
 export class MonacoEditor {
     /**
-     * Send  commands in monacoEditor
+     * Send commands in monacoEditor
      * @param input The input locator
      * @param command command
      * @param clean if  field should be cleaned
@@ -19,7 +19,7 @@ export class MonacoEditor {
     }
 
     /**
-     * Get  text from monacoEditor
+     * Get text from monacoEditor
      */
     static async getTextFromMonaco(): Promise<string> {
         const textAreaMonaco = Selector('[class^=view-lines ]');

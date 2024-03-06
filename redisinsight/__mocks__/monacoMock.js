@@ -15,6 +15,7 @@ const editor = {
   executeEdits: jest.fn(),
   updateOptions: jest.fn(),
   setSelection: jest.fn(),
+  createDecorationsCollection: jest.fn(),
 }
 
 const monacoEditor = {

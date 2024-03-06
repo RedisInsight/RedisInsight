@@ -33,6 +33,8 @@ export class RdiInstancePage extends BaseOverviewPage {
     configurationLink = Selector('[data-testid=rdi-pipeline-config-link]');
 
     jobsInput = Selector('[data-testid=wrapper-rdi-monaco-jobs]');
+    draggableArea = Selector('[data-testid=draggable-area]');
+    dedicatedLanguageSelect = Selector('[data-testid=dedicated-editor-language-select]');
 
     successDeployNotification = Selector('[data-testid=success-deploy-pipeline-notification]');
     errorDeployNotification = Selector('[data-test-subj=toast-error-deploy]');

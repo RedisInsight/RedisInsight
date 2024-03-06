@@ -12,7 +12,7 @@ import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
-import { Pages } from 'uiSrc/constants'
+import { DSL, Pages } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 
 const Jobs = () => {
@@ -103,6 +103,7 @@ const Jobs = () => {
             value={editorValue}
             onChange={(value) => setFieldValue(`jobs.${jobIndexRef.current}.value`, value)}
             disabled={loading}
+            dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
             wrapperClassName="rdi__editorWrapper"
             data-testid="rdi-monaco-jobs"
           />

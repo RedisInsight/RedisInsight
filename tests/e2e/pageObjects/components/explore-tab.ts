@@ -1,7 +1,6 @@
 import { Selector, t } from 'testcafe';
 
 export class ExploreTab {
-
     dataStructureAccordionTutorialButton = Selector('[data-testid=accordion-button-ds]');
     triggersFunctionsAccordionTutorialButton = Selector('[data-testid=accordion-button-tf]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-ds-hashes]');

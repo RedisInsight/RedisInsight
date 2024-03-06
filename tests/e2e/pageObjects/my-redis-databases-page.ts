@@ -31,7 +31,6 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
     editAliasButton = Selector('[data-testid=edit-alias-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     submitChangesButton = Selector('[data-testid=btn-submit]');
     promoButton = Selector('[data-testid=promo-btn]');
     sortByDatabaseAlias = Selector('span').withAttribute('title', 'Database Alias');

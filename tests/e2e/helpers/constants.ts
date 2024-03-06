@@ -98,3 +98,14 @@ export enum TextConnectionSection {
     Failed = 'failed',
 }
 
+export enum RdiTemplatePipelineType {
+    Ingest  = 'ingest',
+    WriteBehind = 'write-behind',
+}
+
+export enum RdiTemplateDatabaseType  {
+    SqlServer  = 'sql',
+    Oracle = 'oracle',
+    MyQal = 'my-sql',
+}
+

@@ -3,7 +3,7 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiTemplatePipelineType, RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { DatabaseHelper } from '../../../../helpers';
@@ -78,6 +78,33 @@ test('Verify that user can add, edit and delete job', async() => {
     await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName2);
 
     await t.expect(rdiInstancePage.PipelineManagementPanel.jobsPipelineTitle.textContent).eql(jobName2);
+});
+test('Verify that user insert template for jobs', async() => {
+    const jobName = 'testJob';
+    const disabledAttribute = 'isDisabled';
+    const defaultValue = 'Ingest';
+    const templateWords = 'server_name: chinook';
+    // should be empty config
+    await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
+
+    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
+    const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');
+    await t.expect(buttonClass).notContains(disabledAttribute, 'Apply button is disabled');
+    await t.click(rdiInstancePage.templateCancelButton);
+    await t.expect(rdiInstancePage.templateApplyButton.exists).notOk('the template popover is not closed');
+
+    await t.click(rdiInstancePage.templateButton);
+    await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
+    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the default value is set incorrectly');
+    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.WriteBehind);
+
+    //verify uniq templates words - should be undated when templates are added
+    const enteredText = await MonacoEditor.getTextFromMonaco();
+    await t.expect(enteredText).contains(templateWords, 'template is incorrect');
+
+    await t.click(rdiInstancePage.templateButton);
+    await t.expect(buttonClass).contains(disabledAttribute, 'Apply button is active');
+    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql('Write behind', 'the value is set incorrectly');
 });
 test('Verify that user can change job config', async() => {
     const jobName = 'testJob';

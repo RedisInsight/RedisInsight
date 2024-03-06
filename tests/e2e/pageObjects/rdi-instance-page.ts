@@ -1,4 +1,5 @@
 import { Selector, t } from 'testcafe';
+import { RdiTemplateDatabaseType, RdiTemplatePipelineType } from '../helpers/constants';
 import { BaseOverviewPage } from './base-overview-page';
 import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
 import { TestConnectionPanel } from './components/rdi/test-connection-panel';
@@ -19,10 +20,12 @@ export class RdiInstancePage extends BaseOverviewPage {
     transformationResults = Selector('[data-testid=wrapper-transformations-output]');
     commandsOutput = Selector('[data-testid=commands-output]');
     outputTab = Selector('[data-testid=output-tab]');
-
+    refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
+    exportPipelineIcon = Selector('[data-testid=download-pipeline-btn]');
+    importPipelineIcon = Selector('[data-testid=upload-pipeline-btn]');
     deployPipelineBtn = Selector('[data-testid=deploy-rdi-pipeline]');
     deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');
-
+    uploadPipelineBtn = Selector('[data-testid=submit-btn]');
     okUploadPipelineBtn = Selector('[data-testid=ok-btn]');
     closeImportModelBtn = Selector('[data-testid=import-file-modal] button');
 
@@ -45,6 +48,12 @@ export class RdiInstancePage extends BaseOverviewPage {
     // Test Connection
     textConnectionBtn = Selector('[data-testid=rdi-test-connection-btn]');
 
+    //template
+    templateButton = Selector('[data-testid^=template-trigger-]');
+    templateApplyButton = Selector('[data-testid=template-apply-btn]');
+    templateCancelButton = Selector('[data-testid=template-apply-btn]');
+    pipelineDropdown =  Selector('[data-testid=strategy-type-select]');
+    databaseDropdown =  Selector('[data-testid=db-type-select]');
     /**
      * Send a data in Transformation Input
      * @param text The text to send
@@ -58,5 +67,20 @@ export class RdiInstancePage extends BaseOverviewPage {
             .click(this.dryRunSubmitBtn);
     }
 
+    /**
+     * Select value from template dropdowns
+     * @param pipeline value of pipeline dropdown
+     * @param database value of database dropdown
+     */
+    async setTemplateDropdownValue(pipeline: RdiTemplatePipelineType, database?: RdiTemplateDatabaseType): Promise<void> {
+        await t.click(this.pipelineDropdown);
+        let selector =  Selector(`[id='${pipeline}']`);
+        await t.click(selector);
+        if(database != null) {
+            await t.click(this.databaseDropdown);
+            selector =  Selector(`[id='${database}']`);
+            await t.click(selector);
+        }
+        await t.click(this.templateApplyButton);
+    }
 }
-

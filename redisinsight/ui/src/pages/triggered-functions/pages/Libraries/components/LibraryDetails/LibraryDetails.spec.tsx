@@ -106,7 +106,7 @@ describe('LibraryDetails', () => {
       }
     })
 
-    fireEvent.click(screen.getByTestId('refresh-lib-details-btn'))
+    fireEvent.click(screen.getByTestId('lib-details-refresh-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_REFRESH_CLICKED,

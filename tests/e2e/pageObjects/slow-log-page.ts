@@ -20,7 +20,7 @@ export class SlowLogPage extends InstancePage {
     slowLogSaveConfigureButton = Selector('[data-testid=slowlog-config-save-btn]');
     slowLogCancelConfigureButton = Selector('[data-testid=slowlog-config-cancel-btn]');
     slowLogDefaultConfigureButton = Selector('[data-testid=slowlog-config-default-btn]');
-    slowLogRefreshButton = Selector('[data-testid=refresh-slowlog-btn]');
+    slowLogRefreshButton = Selector('[data-testid=slowlog-refresh-btn]');
     slowLogClearButton = Selector('[data-testid=clear-btn]');
     slowLogConfirmClearButton = Selector('[data-testid=reset-confirm-btn]');
     slowLogTab = Selector('[data-testid=analytics-tab-SlowLog]');

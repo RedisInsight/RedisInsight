@@ -51,7 +51,7 @@ const Accordion = ({
             onRefreshClicked={onRefreshClicked}
             onEnableAutoRefresh={onChangeAutoRefresh}
             enableAutoRefreshDefault={enableAutoRefreshDefault}
-            testid={`${id}-refresh-btn`}
+            testid={id}
           />
         )
       }

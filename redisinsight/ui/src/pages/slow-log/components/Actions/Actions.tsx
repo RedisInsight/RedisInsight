@@ -129,7 +129,7 @@ const Actions = (props: Props) => {
           onRefresh={() => onRefresh()}
           onEnableAutoRefresh={handleEnableAutoRefresh}
           onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
-          testid="refresh-slowlog-btn"
+          testid="slowlog"
         />
       </EuiFlexItem>
       <EuiFlexItem>

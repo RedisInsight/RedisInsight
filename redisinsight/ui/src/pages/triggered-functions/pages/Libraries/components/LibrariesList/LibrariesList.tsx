@@ -171,7 +171,7 @@ const LibrariesList = (props: Props) => {
           onRefreshClicked={handleRefreshClicked}
           onEnableAutoRefresh={handleEnableAutoRefresh}
           disabled={isRefreshDisabled}
-          testid="refresh-libraries-btn"
+          testid="libraries"
         />
       </div>
       <EuiInMemoryTable

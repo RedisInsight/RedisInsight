@@ -13,6 +13,7 @@ services:
       - rihomedir:/root/.redisinsight-app
       - tmp:/tmp
       - ./remote:/root/remote
+      - ./rdi:/root/rdi
     env_file:
       - ./.env
     entrypoint: [

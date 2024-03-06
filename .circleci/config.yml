@@ -385,6 +385,10 @@ jobs:
           at: .
       - run: sudo apt-get install net-tools
       - run:
+          name: Clone mocked RDI server
+          command: |
+            git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
+      - run:
           name: .AppImage tests
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
@@ -476,6 +480,10 @@ jobs:
                 name: Load built docker image from workspace
                 command: |
                   docker image load -i /tmp/release/docker/docker-linux-alpine.amd64.tar
+            - run:
+                name: Clone mocked RDI server
+                command: |
+                  git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
             - run:
                 name: Run tests
                 command: |

@@ -38,7 +38,7 @@ test('Verify that user can edit DB alias of Standalone DB', async t => {
 
     await t.click(myRedisDatabasePage.editAliasButton);
     await t.typeText(myRedisDatabasePage.aliasInput, newDatabaseName, { replace: true });
-    await t.click(myRedisDatabasePage.applyButton);
+    await t.click(myRedisDatabasePage.EditorButton.applyBtn);
     await t.click(myRedisDatabasePage.submitChangesButton);
     // Verify that database has new alias
     await t.expect(myRedisDatabasePage.dbNameList.withExactText(newDatabaseName).exists).ok('The database with new alias is in not the list', { timeout: 10000 });

@@ -100,14 +100,14 @@ test('Verify that user can modify  code', async t => {
     await t.click(await triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libraryName));
     await t.click(triggersAndFunctionsLibrariesPage.editMonacoButton);
     await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.Library, commandUpdatedPart1, commandUpdatedPart2);
-    await t.click(triggersAndFunctionsLibrariesPage.acceptButton);
+    await t.click(triggersAndFunctionsLibrariesPage.EditorButton.applyBtn);
     await t.expect(
         (await MonacoEditor.getTextFromMonaco())).eql(commandUpdatedPart1 + commandUpdatedPart2), 'code was not updated';
 
     await t.click(await triggersAndFunctionsLibrariesPage.configurationLink);
     await t.click(triggersAndFunctionsLibrariesPage.editMonacoButton);
     await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.LibraryConfiguration, configuration);
-    await t.click(triggersAndFunctionsLibrariesPage.acceptButton);
+    await t.click(triggersAndFunctionsLibrariesPage.EditorButton.applyBtn);
     await t.expect(
         (await MonacoEditor.getTextFromMonaco())).eql(configuration, 'configuration was not added');
 });

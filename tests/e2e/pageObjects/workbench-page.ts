@@ -39,8 +39,6 @@ export class WorkbenchPage extends InstancePage {
     reRunCommandButton = Selector('[data-testid=re-run-command]');
     preselectManual = Selector('[data-testid=preselect-Manual]');
     fullScreenButton = Selector('[data-testid=toggle-full-screen]');
-    cancelButton = Selector('[data-testid=cancel-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
     rawModeBtn = Selector('[data-testid="btn-change-mode"]');
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');

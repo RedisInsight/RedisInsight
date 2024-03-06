@@ -7,7 +7,6 @@ import { InstancePage } from './instance-page';
 export class TriggersAndFunctionsLibrariesPage extends InstancePage {
     //Buttons
     editMonacoButton = Selector('[data-testid=edit-monaco-value]');
-    acceptButton = Selector('[data-testid=apply-btn]');
     addLibraryButton = Selector('[data-testid=btn-add-library]');
     uploadFileButton = Selector('[data-testid=upload-file-btn]');
     addLibrarySubmitButton = Selector('[data-testid=add-library-btn-submit]');

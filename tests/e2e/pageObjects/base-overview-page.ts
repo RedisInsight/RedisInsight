@@ -1,11 +1,12 @@
 import { Selector, t } from 'testcafe';
 import { RedisOverviewPage } from '../helpers/constants';
-import { Toast } from './components/toast';
+import { Toast } from './components/common/toast';
 import { ShortcutsPanel } from './components/shortcuts-panel';
+import { EditorButton } from './components/common/editorButton';
 export class BaseOverviewPage {
-
     ShortcutsPanel = new ShortcutsPanel();
     Toast = new Toast();
+    EditorButton = new EditorButton();
 
     notification = Selector('[data-testid^=-notification]');
     deleteRowButton = Selector('[data-testid^=delete-instance-]');

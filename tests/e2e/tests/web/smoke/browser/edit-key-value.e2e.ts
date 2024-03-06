@@ -41,7 +41,7 @@ test('Verify that user can edit String value', async t => {
     // Verify that refresh is disabled for String key when editing value
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 
-    await t.click(browserPage.applyButton);
+    await t.click(browserPage.EditorButton.applyBtn);
     // Check the key value after edit
     keyValue = await browserPage.getStringKeyValue();
     await t.expect(keyValue).contains(keyValueAfter, 'Edited String value is incorrect');
@@ -62,7 +62,7 @@ test('Verify that user can edit Zset Key member', async t => {
     // Verify that refresh is disabled for Zset key when editing member
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 
-    await t.click(browserPage.applyButton);
+    await t.click(browserPage.EditorButton.applyBtn);
     // Check Zset key score after edit
     zsetScore = await browserPage.getZsetKeyScore();
     await t.expect(zsetScore).contains(scoreAfter, 'Zset Score is not edited');
@@ -82,7 +82,7 @@ test('Verify that user can edit Hash Key field', async t => {
     // Verify that refresh is disabled for Hash key when editing field
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 
-    await t.click(browserPage.applyButton);
+    await t.click(browserPage.EditorButton.applyBtn);
     // Check Hash key value after edit
     keyValue = await browserPage.getHashKeyValue();
     await t.expect(keyValue).contains(keyValueAfter, 'Edited Hash value is incorrect');
@@ -101,7 +101,7 @@ test('Verify that user can edit List Key element', async t => {
     // Verify that refresh is disabled for List key when editing element
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 
-    await t.click(browserPage.applyButton);
+    await t.click(browserPage.EditorButton.applyBtn);
     // Check List key value after edit
     keyValue = await browserPage.getListKeyValue();
     await t.expect(keyValue).contains(keyValueAfter, 'Edited List value is incorrect');
@@ -122,7 +122,7 @@ test('Verify that user can edit JSON Key value', async t => {
     // Verify that refresh is not disabled for JSON key when editing value
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).notOk('Refresh button disabled for JSON');
 
-    await t.click(browserPage.applyButton);
+    await t.click(browserPage.EditorButton.applyBtn);
     // Check JSON key value after edit
     await t.expect(await browserPage.getJsonKeyValue()).contains(jsonValueAfter, 'Edited JSON value is incorrect');
 });

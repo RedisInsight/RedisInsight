@@ -193,6 +193,7 @@ $animation-duration: 300ms;
       border: 1px solid var(--triggerIconActiveColor) !important;
       color: #FFF7EA !important;
       border-radius: 2px !important;
+      padding: 0 3px !important;
 
       transition: transform 250ms ease-in-out;
       pointer-events: none;

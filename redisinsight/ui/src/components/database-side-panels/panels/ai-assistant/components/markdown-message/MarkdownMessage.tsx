@@ -43,7 +43,7 @@ const MarkdownMessage = (props: Props) => {
         modules={modules}
       />
     )
-  }, [])
+  }, [modules])
 
   const components: any = { Code: CodeBlock, CloudLink, ExternalLink }
   const [content, setContent] = useState('')

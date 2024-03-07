@@ -51,11 +51,8 @@ const MarkdownMessage = (props: Props) => {
     const formatContent = async () => {
       try {
         const formated = await (new MarkdownToJsxString()).format({ data: children })
-        console.log('foramtted', formated)
         setContent(formated)
-      } catch (e) {
-        console.log(e)
-        console.log('error')
+      } catch {
         // ignore
       }
     }

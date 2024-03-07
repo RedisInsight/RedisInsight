@@ -1,18 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { NotificationEvents, NotificationServerEvents } from 'src/modules/notification/constants';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { NotificationDto, NotificationsDto } from 'src/modules/notification/dto';
+import { NotificationRepository } from '../repositories/notification.repository';
 
 @Injectable()
 export class NotificationEmitter {
   private logger: Logger = new Logger('NotificationEmitter');
 
   constructor(
-    @InjectRepository(NotificationEntity)
-    private readonly repository: Repository<NotificationEntity>,
+    private readonly notificationRepository: NotificationRepository,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -25,10 +22,7 @@ export class NotificationEmitter {
 
       this.logger.debug(`${notifications.length} new notification(s) to emit`);
 
-      const totalUnread = await this.repository
-        .createQueryBuilder()
-        .where({ read: false })
-        .getCount();
+      const totalUnread = await this.notificationRepository.getTotalUnread();
 
       this.eventEmitter.emit(NotificationServerEvents.Notification, new NotificationsDto({
         notifications,

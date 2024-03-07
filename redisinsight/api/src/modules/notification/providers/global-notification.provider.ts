@@ -10,10 +10,11 @@ import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { NotificationEvents, NotificationType } from 'src/modules/notification/constants';
+import { Notification } from 'src/modules/notification/models/notification';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateNotificationsDto } from 'src/modules/notification/dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { NotificationRepository } from '../repositories/notification.repository';
 
 const NOTIFICATIONS_CONFIG = config.get('notifications');
 
@@ -26,8 +27,7 @@ export class GlobalNotificationProvider {
   private interval;
 
   constructor(
-    @InjectRepository(NotificationEntity)
-    private repository: Repository<NotificationEntity>,
+    private notificationRepository: NotificationRepository,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -50,7 +50,7 @@ export class GlobalNotificationProvider {
       await this.validatedNotifications(remoteNotificationsDto);
 
       const toInsert = keyBy(
-        remoteNotificationsDto.notifications.map((notification) => new NotificationEntity({
+        remoteNotificationsDto.notifications.map((notification) => plainToClass(Notification, {
           ...notification,
           type: NotificationType.Global,
           read: false,
@@ -58,18 +58,10 @@ export class GlobalNotificationProvider {
         'timestamp',
       );
 
-      const currentNotifications = keyBy(await this.repository
-        .createQueryBuilder('n')
-        .where({ type: NotificationType.Global })
-        .select(['n.timestamp', 'n.read'])
-        .getMany(),
+      const currentNotifications = keyBy(await this.notificationRepository.getGlobalNotifications(),
       'timestamp');
 
-      await this.repository
-        .createQueryBuilder('n')
-        .delete()
-        .where({ type: NotificationType.Global })
-        .execute();
+      await this.notificationRepository.deleteGlobalNotifications();
 
       // process
 
@@ -83,7 +75,7 @@ export class GlobalNotificationProvider {
         }
       });
 
-      await this.repository.insert(values(toInsert));
+      await this.notificationRepository.insertNotifications(values(toInsert));
 
       this.eventEmitter.emit(NotificationEvents.NewNotifications, orderBy(
         newNotifications,

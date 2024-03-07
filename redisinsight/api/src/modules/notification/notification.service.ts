@@ -1,9 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
-import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { NotificationRepository } from './repositories/notification.repository';
 // import config from 'src/utils/config';
 
 // const NOTIFICATIONS_CONFIG = config.get('notifications');
@@ -13,24 +11,14 @@ export class NotificationService {
   private logger: Logger = new Logger('NotificationService');
 
   constructor(
-    @InjectRepository(NotificationEntity)
-    private readonly repository: Repository<NotificationEntity>,
+    private readonly notificationRepository: NotificationRepository
   ) {}
 
   async getNotifications(): Promise<NotificationsDto> {
     this.logger.debug('Getting notifications list.');
 
     try {
-      const notifications = await this.repository
-        .createQueryBuilder('n')
-        .orderBy('timestamp', 'DESC')
-        // .limit(NOTIFICATIONS_CONFIG.queryLimit) // todo: do not forget when introduce "local" notifications
-        .getMany();
-
-      const totalUnread = await this.repository
-        .createQueryBuilder()
-        .where({ read: false })
-        .getCount();
+     const { notifications, totalUnread } = await this.notificationRepository.getNotifications();
 
       return plainToClass(NotificationsDto, {
         notifications,
@@ -53,32 +41,13 @@ export class NotificationService {
     try {
       this.logger.debug('Updating "read=true" status for notification(s).');
       const { type, timestamp } = dto;
-      const query: Record<string, any> = {};
 
-      if (type) {
-        query.type = type;
-      }
+      const { notifications, totalUnread } = await this.notificationRepository.readNotifications(type, timestamp);
 
-      if (timestamp) {
-        query.timestamp = timestamp;
-      }
-
-      await this.repository
-        .createQueryBuilder('n')
-        .update()
-        .where(query)
-        .set({ read: true })
-        .execute();
-
-      const totalUnread = await this.repository
-        .createQueryBuilder()
-        .where({ read: false })
-        .getCount();
-
-      return new NotificationsDto({
-        notifications: [],
+      return new NotificationsDto(plainToClass(NotificationsDto, {
+        notifications,
         totalUnread,
-      });
+      }));
     } catch (e) {
       this.logger.error('Unable to "read" notification(s)', e);
       throw new InternalServerErrorException('Unable to "read" notification(s)');

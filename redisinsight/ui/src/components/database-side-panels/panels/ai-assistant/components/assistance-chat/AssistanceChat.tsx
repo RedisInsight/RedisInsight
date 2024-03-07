@@ -11,8 +11,11 @@ import {
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage } from 'uiSrc/slices/interfaces/aiAssistant'
+
+import { AssistanceEmptyHistoryText } from '../empty-history/texts'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
+import { SUGGESTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
 
@@ -77,7 +80,7 @@ const AssistanceChat = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-testid="ai-general-chat">
       <div className={styles.header}>
         <span />
         <EuiButtonEmpty
@@ -86,12 +89,15 @@ const AssistanceChat = () => {
           size="xs"
           onClick={onClearSession}
           className={styles.startSessionBtn}
+          data-testid="ai-general-restart-session-btn"
         >
           Restart Session
         </EuiButtonEmpty>
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          suggestions={SUGGESTIONS}
+          welcomeText={AssistanceEmptyHistoryText}
           isLoadingAnswer={progressingMessage?.content === ''}
           progressingMessage={progressingMessage}
           history={messages}
@@ -101,7 +107,7 @@ const AssistanceChat = () => {
         />
       </div>
       <div className={styles.chatForm}>
-        <ChatForm onSubmit={handleSubmit} />
+        <ChatForm isDisabled={!!progressingMessage} onSubmit={handleSubmit} />
       </div>
     </div>
   )

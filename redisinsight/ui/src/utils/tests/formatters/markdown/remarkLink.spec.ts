@@ -1,5 +1,5 @@
 import { visit } from 'unist-util-visit'
-import { remarkLink } from '../transform/remarkLink'
+import { remarkLink } from 'uiSrc/utils/formatters/markdown'
 
 jest.mock('unist-util-visit')
 

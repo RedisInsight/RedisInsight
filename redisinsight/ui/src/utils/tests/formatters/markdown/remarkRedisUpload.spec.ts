@@ -1,5 +1,5 @@
 import { visit } from 'unist-util-visit'
-import { remarkRedisUpload } from '../transform/remarkRedisUpload'
+import { remarkRedisUpload } from 'uiSrc/utils/formatters/markdown'
 
 jest.mock('unist-util-visit')
 

@@ -67,6 +67,7 @@ const ChatForm = (props: Props) => {
         className={styles.textarea}
         value={value}
         onChange={handleChange}
+        data-testid="ai-message-textarea"
       />
       <EuiToolTip
         content={validationMessage}
@@ -81,9 +82,9 @@ const ChatForm = (props: Props) => {
           iconType={SendIcon}
           type="submit"
           aria-label="submit"
+          data-testid="ai-submit-message-btn"
         />
       </EuiToolTip>
-
     </EuiForm>
   )
 }

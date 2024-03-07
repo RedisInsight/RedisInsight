@@ -5,9 +5,7 @@ import { OAuthSocial } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 const WelcomeAiAssistant = () => (
-  <div className={styles.wrapper}>
-    <EuiTitle><span>Use Redis AI expert</span></EuiTitle>
-    <EuiSpacer size="m" />
+  <div className={styles.wrapper} data-testid="copilot-welcome">
     <EuiText style={{ lineHeight: '1.35' }}>
       Hi! I am your Redis Copilot, here to help you be more productive.
     </EuiText>

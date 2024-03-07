@@ -32,12 +32,12 @@ const aiAssistantSlice = createSlice({
   name: 'aiAssistant',
   initialState,
   reducers: {
-    createAssistantChat: (state) => {
-      state.assistant.loading = true
-    },
     setSelectedTab: (state, { payload }: PayloadAction<AiChatType>) => {
       state.activeTab = payload
       sessionStorageService.set(BrowserStorageItem.selectedAiChat, payload)
+    },
+    createAssistantChat: (state) => {
+      state.assistant.loading = true
     },
     createAssistantSuccess: (state, { payload }: PayloadAction<string>) => {
       state.assistant.id = payload
@@ -48,15 +48,12 @@ const aiAssistantSlice = createSlice({
     createAssistantFailed: (state) => {
       state.assistant.loading = false
     },
-    createChatSession: (state, { payload }: PayloadAction<string>) => {
-      state.assistant.id = payload
-    },
     getAssistantChatHistory: (state) => {
       state.assistant.loading = true
     },
     getAssistantChatHistorySuccess: (state, { payload }: PayloadAction<Array<AiChatMessage>>) => {
       state.assistant.loading = false
-      state.assistant.messages = payload.map((m) => ({ ...m, id: `ai_${uuidv4()}` }))
+      state.assistant.messages = payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
     },
     getAssistantChatHistoryFailed: (state) => {
       state.assistant.loading = false
@@ -82,9 +79,6 @@ const aiAssistantSlice = createSlice({
     },
     sendAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
-    },
-    clearHistory: (state) => {
-      state.assistant.messages = []
     },
     sendExpertQuestion: (state, { payload }: PayloadAction<string>) => {
       state.expert.messages.push({
@@ -129,7 +123,6 @@ export const {
   removeAssistantChatHistoryFailed,
   sendQuestion,
   sendAnswer,
-  clearHistory,
   sendExpertAnswer,
   sendExpertQuestion,
   clearExpertChatHistory,

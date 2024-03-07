@@ -47,6 +47,7 @@ test.before(async() => {
     await t.expect(count).eql(3, 'dataBase buttons are displayed');
 
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
+    await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
 
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await t.click(rdiInstancePage.NavigationPanel.managementPageButton);

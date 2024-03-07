@@ -39,6 +39,7 @@ fixture.skip `Pipeline`
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
         await t.click(rdiInstancePage.PipelineManagementPanel.configurationTab);
+        await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
 
     })
     .afterEach(async() => {

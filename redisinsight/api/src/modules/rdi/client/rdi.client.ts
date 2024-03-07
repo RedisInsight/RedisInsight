@@ -1,8 +1,8 @@
 import {
-  RdiClientMetadata, RdiJob, RdiPipeline, RdiType, RdiDryRunJobResult,
+  RdiClientMetadata, RdiJob, RdiPipeline, RdiType, RdiDryRunJobResult, RdiStatisticsResult,
 } from 'src/modules/rdi/models';
 import {
-  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult, RdiStatisticsResult,
+  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult,
 } from 'src/modules/rdi/dto';
 
 export abstract class RdiClient {

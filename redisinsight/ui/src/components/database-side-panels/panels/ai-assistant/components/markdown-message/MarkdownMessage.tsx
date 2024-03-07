@@ -1,30 +1,51 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import JsxParser from 'react-jsx-parser'
+import { useDispatch } from 'react-redux'
 import { ExternalLink } from 'uiSrc/components'
 import MarkdownToJsxString from 'uiSrc/services/formatter/MarkdownToJsxString'
 import { CloudLink, CodeButtonBlock } from 'uiSrc/components/markdown'
-
-export interface Props {
-  children: string
-  onMessageRendered?: () => void
-}
+import { CodeButtonParams } from 'uiSrc/constants'
+import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 export interface CodeProps {
   children: string
 }
 
-const RedisCodeBlock = ({ children }: CodeProps) => (
-  <CodeButtonBlock
-    content={children}
-    isShowConfirmation={false}
-    params={{ executable: 'false' }}
-  />
-)
+export interface Props {
+  isExecutable?: boolean
+  modules?: AdditionalRedisModule[]
+  children: string
+  onMessageRendered?: () => void
+}
 
 const MarkdownMessage = (props: Props) => {
-  const { children, onMessageRendered } = props
-  const components: any = { Code: RedisCodeBlock, CloudLink, ExternalLink }
+  const { isExecutable = false, modules, children, onMessageRendered } = props
+
   const [content, setContent] = useState('')
+
+  const dispatch = useDispatch()
+
+  const CodeBlock = useCallback((props: CodeProps) => {
+    const { children } = props
+
+    const handleApply = (params?: CodeButtonParams, onFinish?: () => void) => {
+      dispatch(sendWbQueryAction(children, null, params, { afterAll: onFinish }, onFinish))
+    }
+
+    return (
+      <CodeButtonBlock
+        label=""
+        content={children}
+        isShowConfirmation
+        onApply={handleApply}
+        params={{ executable: isExecutable ? 'true' : 'false' }}
+        modules={modules}
+      />
+    )
+  }, [modules])
+
+  const components: any = { Code: CodeBlock, CloudLink, ExternalLink }
 
   useEffect(() => {
     const formatContent = async () => {
@@ -58,4 +79,4 @@ const MarkdownMessage = (props: Props) => {
   )
 }
 
-export default MarkdownMessage
+export default React.memo(MarkdownMessage)

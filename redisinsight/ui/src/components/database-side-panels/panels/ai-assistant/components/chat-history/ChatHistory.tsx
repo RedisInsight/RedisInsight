@@ -4,6 +4,7 @@ import cx from 'classnames'
 import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable } from 'uiSrc/utils'
 
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import EmptyHistoryScreen from '../empty-history'
 import LoadingMessage from '../loading-message'
 import MarkdownMessage from '../markdown-message'
@@ -16,6 +17,8 @@ export interface Props {
   welcomeText?: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
   isLoadingAnswer?: boolean
+  isExecutable?: boolean
+  modules?: AdditionalRedisModule[]
   history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
   onMessageRendered?: () => void
@@ -28,22 +31,30 @@ const ChatHistory = (props: Props) => {
     welcomeText,
     progressingMessage,
     isLoadingAnswer,
+    modules,
+    isExecutable,
     history = [],
     scrollDivRef,
     onMessageRendered,
     onSubmit,
   } = props
 
-  const getMessage = ({ type, content, id }: AiChatMessage) => (content ? (
+  const getMessage = ({ type: messageType, content, id }: AiChatMessage) => (content ? (
     <div
       key={id}
       className={cx('jsx-markdown', {
-        [styles.answer]: type === AiChatMessageType.AIMessage,
-        [styles.question]: type === AiChatMessageType.HumanMessage,
+        [styles.answer]: messageType === AiChatMessageType.AIMessage,
+        [styles.question]: messageType === AiChatMessageType.HumanMessage,
       })}
-      data-testid={`ai-message-${type}_${id}`}
+      data-testid={`ai-message-${messageType}_${id}`}
     >
-      <MarkdownMessage onMessageRendered={onMessageRendered}>{content}</MarkdownMessage>
+      <MarkdownMessage
+        onMessageRendered={onMessageRendered}
+        isExecutable={isExecutable}
+        modules={modules}
+      >
+        {content}
+      </MarkdownMessage>
     </div>
   ) : null)
 

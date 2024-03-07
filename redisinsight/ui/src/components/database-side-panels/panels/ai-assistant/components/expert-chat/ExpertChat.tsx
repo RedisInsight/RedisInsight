@@ -18,7 +18,7 @@ import styles from './styles.module.scss'
 
 const ExpertChat = () => {
   const { messages } = useSelector(aiExpertChatSelector)
-  const { name: connectedInstanceName } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, modules } = useSelector(connectedInstanceSelector)
   const [isLoading, setIsLoading] = useState(false)
 
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
@@ -81,11 +81,13 @@ const ExpertChat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          modules={modules}
           welcomeText={ExpertEmptyHistoryText}
           isLoadingAnswer={isLoading}
           history={messages}
           scrollDivRef={scrollDivRef}
           onSubmit={handleSubmit}
+          isExecutable
         />
       </div>
       <div className={styles.chatForm}>

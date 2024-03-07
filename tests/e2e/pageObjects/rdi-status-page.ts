@@ -13,8 +13,6 @@ export class RdiStatusPage extends BaseOverviewPage {
     clientsTable = Selector('[data-testid=clients-table]');
 
     refreshStreamsButton = Selector('[data-testid=data-streams-refresh-btn]');
-
-    autoRefreshLabel = '[data-testid=refresh-message-label]';
     processingPerformanceRefreshLabel = Selector('[data-testid=processing-performance-info-refresh-message-label]');
     clientRefreshLabel = Selector('[data-testid=clients-refresh-message-label]');
     dataStreamsRefreshLabel = Selector('[data-testid=data-streams-refresh-message-label]');

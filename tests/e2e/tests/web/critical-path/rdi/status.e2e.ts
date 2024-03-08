@@ -62,13 +62,14 @@ test('Verify that user can see data on the status page', async() => {
 
 test('Verify that user can refresh tables', async() => {
 
-    let label =  await rdiStatusPage.processingPerformanceRefreshLabel.textContent;
-    await t.expect(label).contains('Auto refresh', 'Auto refresh is not enabled');
+    let message =  await rdiStatusPage.processingPerformanceRefreshMessage.textContent;
+    await t.expect(message).contains(' 5.0 s', 'Auto refresh is not enabled');
 
-    label =  await rdiStatusPage.clientRefreshLabel.textContent;
-    await t.expect(label).contains('Last refresh', 'Last refresh is enabled');
+    await t.wait(6000);
+    message =  await rdiStatusPage.clientRefreshMessage.textContent;
+    await t.expect(message).contains('min', 'Last refresh is enabled');
 
     await t.click(rdiStatusPage.refreshStreamsButton);
-    await rdiStatusPage.dataStreamsRefreshLabel.textContent;
-    await t.expect(label).contains('Last refresh', 'Last refresh is enabled');
+    message = await rdiStatusPage.dataStreamsRefreshMessage.textContent;
+    await t.expect(message).contains('now', 'Last refresh is enabled');
 });

@@ -13,9 +13,9 @@ export class RdiStatusPage extends BaseOverviewPage {
     clientsTable = Selector('[data-testid=clients-table]');
 
     refreshStreamsButton = Selector('[data-testid=data-streams-refresh-btn]');
-    processingPerformanceRefreshLabel = Selector('[data-testid=processing-performance-info-refresh-message-label]');
-    clientRefreshLabel = Selector('[data-testid=clients-refresh-message-label]');
-    dataStreamsRefreshLabel = Selector('[data-testid=data-streams-refresh-message-label]');
+    processingPerformanceRefreshMessage = Selector('[data-testid=processing-performance-info-refresh-message]');
+    clientRefreshMessage = Selector('[data-testid=clients-refresh-message]');
+    dataStreamsRefreshMessage = Selector('[data-testid=data-streams-refresh-message]');
 
     tooltip = Selector('[role=tooltip]', { timeout: 500 });
 

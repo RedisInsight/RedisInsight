@@ -1,5 +1,4 @@
 import { t } from 'testcafe';
-import { DatabaseScripts, DbTableParameters } from '../../../../helpers/database-scripts';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { commonUrl } from '../../../../helpers/conf';
@@ -16,11 +15,7 @@ const databaseHelper = new DatabaseHelper();
 
 const resultMock = `{··"name":·"John",··"years":·123}`;
 const outputMock = 'Shirizli';
-const dbTableParams: DbTableParameters = {
-    tableName: 'rdi',
-    columnName: 'id',
-    rowValue: 'testId'
-};
+
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'http://localhost:4000',
@@ -46,8 +41,8 @@ test('Verify that user can use Dry run panel', async() => {
     // Need to add method to add jobs once it is implemented
 
     await rdiApiRequests.addNewRdiApi(rdiInstance);
-    await DatabaseScripts.updateColumnValueInDBTable(dbTableParams);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
+    await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
     await rdiInstancePage.PipelineManagementPanel.openJobByName(job);
     await t.click(rdiInstancePage.dryRunButton);
     // Verify that user can see dry run a job right panel

@@ -33,6 +33,7 @@ fixture.skip `Add job`
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await rdiInstancesListPage.reloadPage();
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
+        await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
     })
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();

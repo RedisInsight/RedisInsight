@@ -1,4 +1,5 @@
 import { find } from 'lodash';
+import { decode } from 'jsonwebtoken';
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
@@ -8,12 +9,17 @@ import { wrapHttpError } from 'src/common/utils';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
+import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
+import config from 'src/utils/config';
+
+const cloudConfig = config.get('cloud');
 
 @Injectable()
 export class CloudUserApiService {
   private logger = new Logger('CloudUserApiService');
 
   constructor(
+    private readonly cloudAuthService: CloudAuthService,
     private readonly repository: CloudUserRepository,
     private readonly sessionService: CloudSessionService,
     private readonly api: CloudUserApiProvider,
@@ -52,6 +58,27 @@ export class CloudUserApiService {
     }
   }
 
+  private async ensureAccessToken(sessionMetadata: SessionMetadata): Promise<void> {
+    try {
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+
+      if (!session?.accessToken) {
+        throw new CloudApiUnauthorizedException();
+      }
+
+      const decodedJwt = decode(session.accessToken);
+
+      const expiresIn = decodedJwt.exp * 1_000 - Date.now();
+
+      if (expiresIn < cloudConfig.renewTokensBeforeExpire) {
+        // need to renew
+        await this.cloudAuthService.renewTokens(sessionMetadata, session.idpType, session.refreshToken);
+      }
+    } catch (e) {
+      throw new CloudApiUnauthorizedException();
+    }
+  }
+
   /**
    * Login user to api using accessToken from oauth flow
    * @param sessionMetadata
@@ -60,6 +87,8 @@ export class CloudUserApiService {
    */
   private async ensureLogin(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<void> {
     try {
+      await this.ensureAccessToken(sessionMetadata);
+
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
       if (!session?.apiSessionId) {

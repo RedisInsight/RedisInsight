@@ -146,7 +146,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       return ''
     }
 
-    if (itemsRef.current.length < keysState.keys.length) {
+    if (!keysState.lastRefreshTime || itemsRef.current.length < keysState.keys.length) {
       return 'loading...'
     }
 
@@ -331,6 +331,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     },
   ]
 
+  const noItemsMessage = getNoItemsMessage()
+
   const VirtualizeTable = () => (
     <VirtualTable
       selectable
@@ -346,7 +348,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       items={itemsRef.current}
       totalItemsCount={keysState.total ?? Infinity}
       scanned={isSearched || isFiltered ? keysState.scanned : 0}
-      noItemsMessage={getNoItemsMessage()}
+      noItemsMessage={noItemsMessage}
       selectedKey={selectedKey.data}
       scrollTopProp={scrollTopPosition}
       setScrollTopPosition={setScrollTopPosition}

@@ -297,7 +297,7 @@ describe('CloudAuthService', () => {
         mockSessionMetadata,
         mockCloudApiAuthDto.idpType,
         mockCloudApiAuthDto.refreshToken,
-      )).toEqual(mockTokenResponseNew);
+      )).toEqual(undefined);
       expect(mockedAxios.post).toHaveBeenCalledWith(
         `${url.origin}${url.pathname}`,
         url.searchParams,

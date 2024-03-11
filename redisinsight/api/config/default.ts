@@ -61,6 +61,7 @@ export default {
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
+    keyThreshold: parseInt(process.env.RI_KEY_THRESHOLD, 10) || 1000,
   },
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,

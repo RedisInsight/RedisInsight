@@ -1,9 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
-  IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min,
+  IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, Max
 } from 'class-validator';
 import { RedisDataType } from './key.dto';
+import config, { Config } from 'src/utils/config';
+
+const serverConfig = config.get('server') as Config['server'];
+const keyThreshold = serverConfig.keyThreshold;
 
 export class GetKeysDto {
   @ApiProperty({
@@ -61,4 +65,13 @@ export class GetKeysDto {
   @IsOptional()
   @Transform((val) => val === true || val === 'true')
   keysInfo?: boolean = true;
+
+  @ApiPropertyOptional({
+    description: 'The maximum number of keys to return',
+    type: Number,
+    default: true,
+  })
+  @IsOptional()
+  @Max(1000)
+  threshold?: number = keyThreshold
 }

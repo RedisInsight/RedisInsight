@@ -1,8 +1,8 @@
 import { Rectangle, screen } from 'electron'
 
-export const getFitedBounds = (bounds: Rectangle): Rectangle | null => {
+export const getFittedBounds = (bounds: Rectangle): Rectangle | null => {
   try {
-    const options: Rectangle = { ...bounds }
+    const options: any = {}
     const area = screen.getDisplayMatching(bounds).workArea
 
     if (
@@ -13,17 +13,18 @@ export const getFitedBounds = (bounds: Rectangle): Rectangle | null => {
     ) {
       options.x = bounds.x
       options.y = bounds.y
-    }
+    } else return null
+
     // If the saved size is still valid, use it.
     if (bounds.width <= area.width) {
       options.width = bounds.width
-    }
+    } else return null
 
     if (bounds.height <= area.height) {
       options.height = bounds.height
-    }
+    } else return null
 
-    return options
+    return options as Rectangle
   } catch {
     return null
   }

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { IParsedDeepLink } from 'desktopSrc/lib/app/deep-link.handlers'
 import { configMain as config } from 'desktopSrc/config'
 import { electronStore, updateTray } from 'desktopSrc/lib'
-import { resolveHtmlPath, getFitedBounds } from 'desktopSrc/utils'
+import { resolveHtmlPath, getFittedBounds } from 'desktopSrc/utils'
 import { ElectronStorageItem } from 'uiSrc/electron/constants'
 import { initWindowHandlers } from './window.handlers'
 
@@ -72,7 +72,7 @@ export const createWindow = async ({
 
   const savedBounds = electronStore?.get(ElectronStorageItem.bounds)
   if (!isNewMainWindow && savedBounds) {
-    const bounds = getFitedBounds(savedBounds as Rectangle)
+    const bounds = getFittedBounds(savedBounds as Rectangle)
     if (bounds) {
       newWindow.setBounds(bounds)
     }

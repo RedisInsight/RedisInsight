@@ -12,7 +12,7 @@ import { DatabaseRecommendation } from 'src/modules/database-recommendation/mode
 import { ModifyDatabaseRecommendationDto } from 'src/modules/database-recommendation/dto';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, SessionMetadata } from 'src/common/models';
 import { sortRecommendations, classToClass } from 'src/utils';
 
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -43,7 +43,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * Save entire entity
    * @param entity
    */
-  async create(entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
+  async create(_: SessionMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
     this.logger.log('Creating database recommendation');
 
     try {
@@ -138,7 +138,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
     this.logger.log(`Updated database recommendation with id:${id}`);
 
-    return this.get(id);
+    return this.get(clientMetadata.sessionMetadata, id);
   }
 
   /**
@@ -166,7 +166,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
    * Get recommendation by id
    * @param id
    */
-  public async get(id: string): Promise<DatabaseRecommendation> {
+  public async get(_: SessionMetadata, id: string): Promise<DatabaseRecommendation> {
     this.logger.log(`Getting recommendation with id: ${id}`);
 
     const entity = await this.repository.findOneBy({ id });
@@ -203,7 +203,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
               params: sortedRecommendations[i].params,
             },
           );
-          await this.create(entity);
+          await this.create(clientMetadata.sessionMetadata, entity);
         }
       }
     } catch (e) {

@@ -80,7 +80,7 @@ describe('LocalDatabaseRecommendationRepository', () => {
 
   describe('create', () => {
     it('should create recommendation', async () => {
-      const result = await service.create(mockDatabaseRecommendation);
+      const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);
 
       expect(result).toEqual(mockDatabaseRecommendation);
     });
@@ -88,7 +88,7 @@ describe('LocalDatabaseRecommendationRepository', () => {
     it('should not create recommendation', async () => {
       repository.save.mockRejectedValueOnce(new Error());
 
-      const result = await service.create(mockDatabaseRecommendation);
+      const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);
 
       expect(result).toEqual(null);
     });

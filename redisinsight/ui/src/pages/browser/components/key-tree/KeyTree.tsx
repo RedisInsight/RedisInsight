@@ -160,9 +160,9 @@ const KeyTree = forwardRef((props: Props, ref) => {
     })
   }
 
-  if (keysState.keys.length === 0) {
+  if (keysState.lastRefreshTime && keysState.keys.length === 0) {
     const NoItemsMessage = () => {
-      if (loading || !firstDataLoaded) {
+      if (loading || !firstDataLoaded || !keysState.lastRefreshTime) {
         return <span>loading...</span>
       }
 
@@ -195,7 +195,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
           deleting={deleting}
           statusSelected={selectedKeyName}
           statusOpen={statusOpen}
-          loading={loading || constructingTree}
+          loading={loading || constructingTree || !keysState.lastRefreshTime}
           commonFilterType={commonFilterType}
           setConstructingTree={setConstructingTree}
           webworkerFn={constructKeysToTree}

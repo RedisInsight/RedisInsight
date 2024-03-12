@@ -1,9 +1,9 @@
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { ConnectionString } from 'connection-string'
-import { isNull, isNumber, every, values, pick } from 'lodash'
-import { Pages, REDIS_URI_SCHEMES } from 'uiSrc/constants'
+import { isNull, isNumber, every, values, pick, some } from 'lodash'
+import { Pages } from 'uiSrc/constants'
+import { ADD_NEW_CA_CERT, ADD_NEW } from 'uiSrc/pages/home/constants'
 import {
   appRedirectionSelector,
   setFromUrl,
@@ -15,7 +15,7 @@ import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { autoCreateAndConnectToInstanceAction } from 'uiSrc/slices/instances/instances'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
-import { Nullable, transformQueryParamsObject } from 'uiSrc/utils'
+import { Nullable, transformQueryParamsObject, parseRedisUrl } from 'uiSrc/utils'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
@@ -59,12 +59,12 @@ const GlobalUrlHandler = () => {
       const from = params.get('from')
 
       if (from) {
-        dispatch(setFromUrl(decodeURIComponent(from)))
+        dispatch(setFromUrl(from))
         history.replace({
           search: ''
         })
       }
-    } catch (_e) {
+    } catch {
       // do nothing
     }
   }, [search])
@@ -87,8 +87,10 @@ const GlobalUrlHandler = () => {
       const {
         redisUrl,
         databaseAlias,
-        requiredTls,
         redirect,
+        requiredTls,
+        requiredCaCert,
+        requiredClientCert,
       } = properties
 
       const cloudDetails = transformQueryParamsObject(
@@ -98,26 +100,32 @@ const GlobalUrlHandler = () => {
         )
       )
 
-      const url = new ConnectionString(redisUrl)
+      const url = parseRedisUrl(redisUrl)
 
-      /* If a protocol exists, it should be a redis protocol */
-      if (url.protocol && !REDIS_URI_SCHEMES.includes(url.protocol)) return
+      if (!url) return
 
       const obligatoryForAutoConnectFields = {
-        host: url.hostname,
-        port: url.port,
-        username: url.user,
-        password: url.password
+        host: url.host,
+        port: url.port || 6379,
+        username: url.username,
+        password: url.password,
+      }
+
+      const tlsFields = {
+        requiredTls,
+        requiredCaCert,
+        requiredClientCert,
       }
 
       const isAllObligatoryProvided = every(values(obligatoryForAutoConnectFields), (value) => value || isNumber(value))
+      const isTlsProvided = some(values(tlsFields), (value) => value === 'true')
 
       const db = {
         ...obligatoryForAutoConnectFields,
-        name: databaseAlias || url.host,
+        name: databaseAlias || url.hostname || url.host,
       } as any
 
-      if (isAllObligatoryProvided && requiredTls !== 'true') {
+      if (isAllObligatoryProvided && !isTlsProvided) {
         if (cloudDetails?.cloudId) {
           db.cloudDetails = cloudDetails
         }
@@ -131,7 +139,10 @@ const GlobalUrlHandler = () => {
         action: UrlHandlingActions.Connect,
         dbConnection: {
           ...db,
-          tls: requiredTls === 'true',
+          // set tls with new cert option
+          tls: isTlsProvided,
+          caCert: requiredCaCert === 'true' ? { id: ADD_NEW_CA_CERT } : undefined,
+          clientCert: requiredClientCert === 'true' ? { id: ADD_NEW } : undefined,
         }
       }))
 

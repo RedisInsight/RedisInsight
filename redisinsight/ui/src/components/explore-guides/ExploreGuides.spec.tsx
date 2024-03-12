@@ -3,10 +3,9 @@ import reactRouterDom from 'react-router-dom'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
-import { Pages } from 'uiSrc/constants'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { findTutorialPath } from 'uiSrc/utils'
 
 import ExploreGuides from './ExploreGuides'
 
@@ -29,6 +28,11 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
+jest.mock('uiSrc/utils', () => ({
+  ...jest.requireActual('uiSrc/utils'),
+  findTutorialPath: jest.fn(),
+}))
+
 describe('ExploreGuides', () => {
   it('should render', () => {
     expect(render(<ExploreGuides />)).toBeTruthy()
@@ -37,35 +41,39 @@ describe('ExploreGuides', () => {
   it('should render guides', () => {
     render(<ExploreGuides />)
 
-    MOCK_EXPLORE_GUIDES.forEach(({ title, icon }) => {
-      expect(screen.getByTestId(`guide-button-${title}`)).toBeInTheDocument()
+    MOCK_EXPLORE_GUIDES.forEach(({ tutorialId, icon }) => {
+      expect(screen.getByTestId(`guide-button-${tutorialId}`)).toBeInTheDocument()
       expect(screen.getByTestId(`guide-icon-${icon}`)).toBeInTheDocument()
     })
   })
 
   it('should call proper history push after click on guide', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<ExploreGuides />)
 
-    fireEvent.click(screen.getByTestId('guide-button-Search and Query'))
+    fireEvent.click(screen.getByTestId('guide-button-sq-intro'))
 
     expect(pushMock)
-      .toHaveBeenCalledWith(`${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/quick-guides/document/introduction.md`)
+      .toHaveBeenCalledWith({
+        search: 'path=tutorials/path'
+      })
   })
 
   it('should call proper history push after click on guide with tutorial', () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
+    (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
     render(<ExploreGuides />)
 
-    fireEvent.click(screen.getByTestId('guide-button-JSON'))
+    fireEvent.click(screen.getByTestId('guide-button-ds-json-intro'))
 
-    expect(pushMock).toHaveBeenCalledWith(
-      `${Pages.workbench(INSTANCE_ID_MOCK)}?guidePath=/quick-guides/document/working-with-json.md`
-    )
+    expect(pushMock).toHaveBeenCalledWith({
+      search: 'path=tutorials/path'
+    })
   })
 
   it('should call proper telemetry event after click on guide', () => {
@@ -74,15 +82,15 @@ describe('ExploreGuides', () => {
 
     render(<ExploreGuides />)
 
-    fireEvent.click(screen.getByTestId('guide-button-Search and Query'))
+    fireEvent.click(screen.getByTestId('guide-button-sq-intro'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.BROWSER_TUTORIAL_CLICKED,
+      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
-        guideName: 'Search and Query',
+        tutorialId: 'sq-intro',
         provider: 'RE_CLOUD',
-        viewType: KeyViewType.Browser,
+        source: 'empty browser'
       }
     })
   })

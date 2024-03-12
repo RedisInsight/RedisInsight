@@ -1,0 +1,105 @@
+.outerWrapper {
+  padding: 12px 10px;
+
+  .wrapper {
+    padding: 18px;
+    background: var(--euiColorLightestShade);
+    border-radius: 4px;
+
+    .input {
+      height: 34px !important;
+      background: var(--euiColorEmptyShade) !important;
+    }
+
+    .uploadFileWrapper {
+      text-align: right;
+      margin-top: -8px;
+    }
+
+    .uploadFileName {
+      display: flex;
+      align-items: center;
+      padding-left: 4px;
+    }
+
+    .uploadFileNameTitle {
+      max-width: calc(100% - 30px);
+    }
+  }
+
+  .btnSubmit {
+    margin-left: 6px;
+
+    svg {
+      width: 16px !important;
+      height: 16px !important;
+      margin-top: 0;
+    }
+  }
+
+  .fileDrop {
+    width: 100%;
+    margin-top: 14px;
+
+    :global {
+      .euiButtonEmpty.euiButtonEmpty--primary.euiFilePicker__clearButton,
+      .euiButtonEmpty.euiButtonEmpty--primary.euiFilePicker__clearButton .euiButtonEmpty__text {
+        color: var(--externalLinkColor) !important;
+        text-transform: lowercase;
+      }
+
+      .euiFilePicker__showDrop .euiFilePicker__prompt, .euiFilePicker__input:focus + .euiFilePicker__prompt {
+        background-color: var(--euiColorEmptyShade);
+      }
+
+      .euiFilePicker__prompt {
+        background-color: var(--euiColorEmptyShade);
+        height: 120px;
+        border-radius: 4px;
+        box-shadow: none;
+        border: 1px dashed var(--controlsBorderColor);
+      }
+
+      .euiFilePicker__clearButton {
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .hr {
+    margin: 12px 0;
+    width: 100%;
+    text-align: center;
+    position: relative;
+
+    &:before, &:after {
+      content: '';
+      display: block;
+      width: 40%;
+      height: 1px;
+      background: var(--tableDarkestBorderColor);
+      position: absolute;
+      top: 50%;
+    }
+
+    &:before {
+      left: 0;
+    }
+
+    &:after {
+      right: 0;
+    }
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .footerButtons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}

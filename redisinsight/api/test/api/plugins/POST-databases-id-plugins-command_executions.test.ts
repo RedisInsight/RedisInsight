@@ -19,31 +19,16 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   command: Joi.string().required(),
-  role: Joi.string().valid('ALL', 'MASTER', 'SLAVE').allow(null),
   mode: Joi.string().valid('RAW', 'ASCII').allow(null),
   resultsMode: Joi.string().valid('DEFAULT', 'GROUP_MODE', 'SILENT').allow(null),
-  nodeOptions: Joi.object().keys({
-    host: Joi.string().required(),
-    // todo: fix BE transform to avoid handle boolean as number
-    port: Joi.number().required().allow(true),
-    enableRedirection: Joi.boolean().required().messages({
-      'any.required': '{#label} should not be null or undefined',
-    }),
-  }).allow(null),
 }).messages({
   'any.required': '{#label} should not be empty',
 }).strict();
 
 const validInputData = {
   command: 'set foo bar',
-  role: 'ALL',
   mode: 'ASCII',
   resultsMode: 'DEFAULT',
-  nodeOptions: {
-    host: 'localhost',
-    port: 6379,
-    enableRedirection: true,
-  }
 };
 
 const responseSchema = Joi.object().keys({
@@ -52,20 +37,9 @@ const responseSchema = Joi.object().keys({
   result: Joi.array().items(Joi.object({
     response: Joi.any().required(),
     status: Joi.string().required(),
-    node: Joi.object({
-      host: Joi.string().required(),
-      port: Joi.number().required(),
-      slot: Joi.number(),
-    }),
   })),
-  role: Joi.string().allow(null),
   mode: Joi.string().required(),
   resultsMode: Joi.string().required(),
-  nodeOptions: Joi.object().keys({
-    host: Joi.string().required(),
-    port: Joi.number().required(),
-    enableRedirection: Joi.boolean().required(),
-  }).allow(null),
 }).required();
 
 const mainCheckFn = async (testCase) => {
@@ -257,7 +231,8 @@ describe('POST /databases/:instanceId/plugins/command-executions', () => {
       });
     });
   });
-  describe('Standalone + Sentinel', () => {
+  // Skip 'Standalone + Sentinel' and 'Cluster' tests because tested functionalities were removed
+  xdescribe('Standalone + Sentinel', () => {
     requirements('!rte.type=CLUSTER');
 
     describe('Incorrect requests for redis client type', () => {
@@ -299,7 +274,7 @@ describe('POST /databases/:instanceId/plugins/command-executions', () => {
       ].map(mainCheckFn);
     });
   });
-  describe('Cluster', () => {
+  xdescribe('Cluster', () => {
     requirements('rte.type=CLUSTER');
     requirements('!rte.re');
 

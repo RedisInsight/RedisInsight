@@ -1,4 +1,4 @@
-import { GetKeyInfoResponse } from 'src/modules/browser/dto';
+import { GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { BigSetStrategy } from 'src/modules/database-recommendation/scanner/strategies';
 
 const mockSetInfo: GetKeyInfoResponse = {

@@ -8,6 +8,6 @@ export const initRemoteServer = async () => {
   await fs.ensureDir(constants.TEST_REMOTE_STATIC_PATH);
 
   const app = express();
-  app.use(constants.TEST_REMOTE_STATIC_URI, express.static(constants.TEST_REMOTE_STATIC_PATH))
-  await app.listen(5551, '0.0.0.0');
+  app.use(constants.TEST_REMOTE_STATIC_URI, express.static(constants.TEST_REMOTE_STATIC_PATH, { etag: false }))
+  await app.listen(5551);
 }

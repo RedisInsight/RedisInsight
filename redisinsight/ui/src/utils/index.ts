@@ -8,6 +8,7 @@ export * from './statuses'
 export * from './instance'
 export * from './apiResponse'
 export * from './parseResponse'
+export * from './parseRedisUrl'
 export * from './comparisons'
 export * from './longNames'
 export * from './cliHelper'
@@ -28,6 +29,7 @@ export * from './events'
 export * from './telemetry'
 export * from './oauth'
 export * from './redisearch'
+export * from './capability'
 
 export {
   Maybe,

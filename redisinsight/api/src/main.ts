@@ -1,5 +1,4 @@
 import 'dotenv/config';
-import { join } from 'path';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -7,36 +6,35 @@ import { INestApplication, NestApplicationOptions } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
-import { get } from 'src/utils';
-import { migrateHomeFolder } from 'src/init-helper';
+import { get, Config } from 'src/utils';
+import { migrateHomeFolder, removeGuidesFolder } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
+import { createHttpOptions } from './utils/createHttpOptions';
 
-const serverConfig = get('server');
+const serverConfig = get('server') as Config['server'];
 
 interface IApp {
-  app: INestApplication
-  gracefulShutdown: Function
+  app: INestApplication;
+  gracefulShutdown: Function;
 }
 
-export default async function bootstrap(): Promise<IApp> {
+export default async function bootstrap(apiPort?: number): Promise<IApp> {
   await migrateHomeFolder();
+  await removeGuidesFolder();
 
-  const port = process.env.API_PORT || serverConfig.port;
+  const { port, host } = serverConfig;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
 
   const options: NestApplicationOptions = {
     logger,
   };
 
-  if (serverConfig.tls && serverConfig.tlsCert && serverConfig.tlsKey) {
-    options.httpsOptions = {
-      key: JSON.parse(`"${serverConfig.tlsKey}"`),
-      cert: JSON.parse(`"${serverConfig.tlsCert}"`),
-    };
+  if (serverConfig.tlsCert && serverConfig.tlsKey) {
+    options.httpsOptions = await createHttpOptions(serverConfig);
   }
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, options);
@@ -46,7 +44,7 @@ export default async function bootstrap(): Promise<IApp> {
   app.enableCors();
   app.setGlobalPrefix(serverConfig.globalPrefix);
 
-  if (process.env.APP_ENV !== 'electron') {
+  if (process.env.RI_APP_TYPE !== 'electron') {
     SwaggerModule.setup(
       serverConfig.docPrefix,
       app,
@@ -65,9 +63,9 @@ export default async function bootstrap(): Promise<IApp> {
 
   const logFileProvider = app.get(LogFileProvider);
 
-  await app.listen(port, serverConfig.listenInterface);
+  await app.listen(apiPort || port, host);
   logger.log({
-    message: `Server is running on http(s)://localhost:${port}`,
+    message: `Server is running on http(s)://${host}:${port}`,
     context: 'bootstrap',
   });
 
@@ -87,6 +85,6 @@ export default async function bootstrap(): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (process.env.APP_ENV !== 'electron') {
+if (process.env.RI_APP_TYPE !== 'electron') {
   bootstrap();
 }

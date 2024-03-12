@@ -295,7 +295,7 @@ const QueryCardHeader = (props: Props) => {
       <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
         <EuiFlexItem
           className={styles.titleWrapper}
-          grow={false}
+          grow
         >
           <div className="copy-btn-wrapper">
             <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
@@ -311,156 +311,160 @@ const QueryCardHeader = (props: Props) => {
             />
           </div>
         </EuiFlexItem>
-        <EuiFlexItem className={cx(styles.time)} data-testid="command-execution-date-time">
-          {!!createdAt && (
-            <EuiTextColor className={styles.timeText} component="div">
-              {getFormatTime()}
-            </EuiTextColor>
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
-          {!!message && !isOpen && (
-            <EuiTextColor className={styles.summaryText} component="div">
-              {truncateText(message, 13)}
-            </EuiTextColor>
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.executionTime} data-testid="command-execution-time">
-          {isNumber(executionTime) && (
-            <EuiToolTip
-              title="Processing Time"
-              content={getExecutionTimeString(executionTime)}
-              position="left"
-              anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
-              data-testid="execution-time-tooltip"
-            >
-              <>
-                <EuiIcon
-                  type={ExecutionTimeIcon}
-                  data-testid="command-execution-time-icon"
-                  className={styles.iconExecutingTime}
-                />
-                <EuiTextColor
-                  className={cx(styles.timeText, styles.executionTimeValue)}
-                  data-testid="command-execution-time-value"
-                >
-                  {getTruncatedExecutionTimeString(executionTime)}
+        <EuiFlexItem className={styles.controls} grow={false}>
+          <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>
+            <EuiFlexItem className={cx(styles.time)} data-testid="command-execution-date-time">
+              {!!createdAt && (
+                <EuiTextColor className={styles.timeText} component="div">
+                  {getFormatTime()}
                 </EuiTextColor>
-              </>
-            </EuiToolTip>
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem
-          grow={false}
-          className={cx(styles.buttonIcon, styles.viewTypeIcon)}
-          onClick={onDropDownViewClick}
-        >
-          {isOpen && canCommandProfile && !summaryText && (
-            <div className={styles.dropdownWrapper}>
-              <div className={styles.dropdown}>
-                <EuiSuperSelect
-                  options={profileOptions}
-                  itemClassName={cx(styles.changeViewItem, styles.dropdownProfileItem)}
-                  className={cx(styles.changeView, styles.dropdownProfileIcon)}
-                  valueOfSelected={ProfileQueryType.Profile}
-                  onChange={(value: ProfileQueryType) => onQueryProfile(value)}
-                  data-testid="run-profile-type"
-                />
-              </div>
-            </div>
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem
-          grow={false}
-          className={cx(styles.buttonIcon, styles.viewTypeIcon)}
-          onClick={onDropDownViewClick}
-        >
-          {isOpen && options.length > 1 && !summaryText && (
-            <div className={styles.dropdownWrapper}>
-              <div className={styles.dropdown}>
-                <EuiSuperSelect
-                  options={modifiedOptions}
-                  itemClassName={cx(styles.changeViewItem)}
-                  className={cx(styles.changeView)}
-                  valueOfSelected={selectedValue}
-                  onChange={(value: string) => onChangeView(value)}
-                  data-testid="select-view-type"
-                />
-              </div>
-            </div>
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.buttonIcon} onClick={onDropDownViewClick}>
-          {(isOpen || isFullScreen) && (
-            <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={toggleFullScreen} />
-          )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.buttonIcon}>
-          <EuiButtonIcon
-            disabled={loading || clearing}
-            iconType="trash"
-            aria-label="Delete command"
-            data-testid="delete-command"
-            onClick={handleQueryDelete}
-          />
-        </EuiFlexItem>
-        {!isFullScreen && (
-          <EuiFlexItem grow={false} className={cx(styles.buttonIcon, styles.playIcon)}>
-            <EuiToolTip
-              content="Run again"
-              position="left"
-            >
-              <EuiButtonIcon
-                disabled={emptyCommand}
-                iconType="play"
-                aria-label="Re-run command"
-                data-testid="re-run-command"
-                onClick={handleQueryReRun}
-              />
-            </EuiToolTip>
-          </EuiFlexItem>
-        )}
-        {!isFullScreen && (
-          <EuiFlexItem grow={false} className={styles.buttonIcon}>
-            {!isSilentModeWithoutError(resultsMode, summary?.fail)
-              && <EuiButtonIcon iconType={isOpen ? 'arrowUp' : 'arrowDown'} aria-label="toggle collapse" />}
-          </EuiFlexItem>
-        )}
-        {(isRawMode(mode) || isGroupResults(resultsMode)) && (
-          <EuiFlexItem grow={false} className={styles.buttonIcon}>
-            <EuiToolTip
-              className={styles.tooltip}
-              anchorClassName={styles.tooltipAnchor}
-              content={(
-                <>
-                  {isGroupMode(resultsMode) && (
-                    <EuiTextColor className={cx(styles.mode)} data-testid="group-mode-tooltip">
-                      <EuiIcon type={GroupModeIcon} />
-                    </EuiTextColor>
-                  )}
-                  {isSilentMode(resultsMode) && (
-                    <EuiTextColor className={cx(styles.mode)} data-testid="silent-mode-tooltip">
-                      <EuiIcon type={SilentModeIcon} />
-                    </EuiTextColor>
-                  )}
-                  {isRawMode(mode) && (
-                    <EuiTextColor className={cx(styles.mode)} data-testid="raw-mode-tooltip">
-                      -r
-                    </EuiTextColor>
-                  )}
-                </>
               )}
-              position="bottom"
-              data-testid="parameters-tooltip"
+            </EuiFlexItem>
+            <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
+              {!!message && !isOpen && (
+                <EuiTextColor className={styles.summaryText} component="div">
+                  {truncateText(message, 13)}
+                </EuiTextColor>
+              )}
+            </EuiFlexItem>
+            <EuiFlexItem grow={false} className={styles.executionTime} data-testid="command-execution-time">
+              {isNumber(executionTime) && (
+                <EuiToolTip
+                  title="Processing Time"
+                  content={getExecutionTimeString(executionTime)}
+                  position="left"
+                  anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
+                  data-testid="execution-time-tooltip"
+                >
+                  <>
+                    <EuiIcon
+                      type={ExecutionTimeIcon}
+                      data-testid="command-execution-time-icon"
+                      className={styles.iconExecutingTime}
+                    />
+                    <EuiTextColor
+                      className={cx(styles.summaryText, styles.executionTimeValue)}
+                      data-testid="command-execution-time-value"
+                    >
+                      {getTruncatedExecutionTimeString(executionTime)}
+                    </EuiTextColor>
+                  </>
+                </EuiToolTip>
+              )}
+            </EuiFlexItem>
+            <EuiFlexItem
+              grow={false}
+              className={cx(styles.buttonIcon, styles.viewTypeIcon)}
+              onClick={onDropDownViewClick}
             >
-              <EuiIcon
-                color="subdued"
-                type="boxesVertical"
-                data-testid="parameters-anchor"
+              {isOpen && canCommandProfile && !summaryText && (
+                <div className={styles.dropdownWrapper}>
+                  <div className={styles.dropdown}>
+                    <EuiSuperSelect
+                      options={profileOptions}
+                      itemClassName={cx(styles.changeViewItem, styles.dropdownProfileItem)}
+                      className={cx(styles.changeView, styles.dropdownProfileIcon)}
+                      valueOfSelected={ProfileQueryType.Profile}
+                      onChange={(value: ProfileQueryType) => onQueryProfile(value)}
+                      data-testid="run-profile-type"
+                    />
+                  </div>
+                </div>
+              )}
+            </EuiFlexItem>
+            <EuiFlexItem
+              grow={false}
+              className={cx(styles.buttonIcon, styles.viewTypeIcon)}
+              onClick={onDropDownViewClick}
+            >
+              {isOpen && options.length > 1 && !summaryText && (
+                <div className={styles.dropdownWrapper}>
+                  <div className={styles.dropdown}>
+                    <EuiSuperSelect
+                      options={modifiedOptions}
+                      itemClassName={cx(styles.changeViewItem)}
+                      className={cx(styles.changeView)}
+                      valueOfSelected={selectedValue}
+                      onChange={(value: string) => onChangeView(value)}
+                      data-testid="select-view-type"
+                    />
+                  </div>
+                </div>
+              )}
+            </EuiFlexItem>
+            <EuiFlexItem grow={false} className={styles.buttonIcon} onClick={onDropDownViewClick}>
+              {(isOpen || isFullScreen) && (
+                <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={toggleFullScreen} />
+              )}
+            </EuiFlexItem>
+            <EuiFlexItem grow={false} className={styles.buttonIcon}>
+              <EuiButtonIcon
+                disabled={loading || clearing}
+                iconType="trash"
+                aria-label="Delete command"
+                data-testid="delete-command"
+                onClick={handleQueryDelete}
               />
-            </EuiToolTip>
-          </EuiFlexItem>
-        )}
+            </EuiFlexItem>
+            {!isFullScreen && (
+              <EuiFlexItem grow={false} className={cx(styles.buttonIcon, styles.playIcon)}>
+                <EuiToolTip
+                  content="Run again"
+                  position="left"
+                >
+                  <EuiButtonIcon
+                    disabled={emptyCommand}
+                    iconType="play"
+                    aria-label="Re-run command"
+                    data-testid="re-run-command"
+                    onClick={handleQueryReRun}
+                  />
+                </EuiToolTip>
+              </EuiFlexItem>
+            )}
+            {!isFullScreen && (
+              <EuiFlexItem grow={false} className={styles.buttonIcon}>
+                {!isSilentModeWithoutError(resultsMode, summary?.fail)
+                  && <EuiButtonIcon iconType={isOpen ? 'arrowUp' : 'arrowDown'} aria-label="toggle collapse" />}
+              </EuiFlexItem>
+            )}
+            <EuiFlexItem grow={false} className={styles.buttonIcon}>
+              {(isRawMode(mode) || isGroupResults(resultsMode)) && (
+                <EuiToolTip
+                  className={styles.tooltip}
+                  anchorClassName={styles.tooltipAnchor}
+                  content={(
+                    <>
+                      {isGroupMode(resultsMode) && (
+                        <EuiTextColor className={cx(styles.mode)} data-testid="group-mode-tooltip">
+                          <EuiIcon type={GroupModeIcon} />
+                        </EuiTextColor>
+                      )}
+                      {isSilentMode(resultsMode) && (
+                        <EuiTextColor className={cx(styles.mode)} data-testid="silent-mode-tooltip">
+                          <EuiIcon type={SilentModeIcon} />
+                        </EuiTextColor>
+                      )}
+                      {isRawMode(mode) && (
+                        <EuiTextColor className={cx(styles.mode)} data-testid="raw-mode-tooltip">
+                          -r
+                        </EuiTextColor>
+                      )}
+                    </>
+                  )}
+                  position="bottom"
+                  data-testid="parameters-tooltip"
+                >
+                  <EuiIcon
+                    color="subdued"
+                    type="boxesVertical"
+                    data-testid="parameters-anchor"
+                  />
+                </EuiToolTip>
+              )}
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexItem>
       </EuiFlexGroup>
     </div>
   )

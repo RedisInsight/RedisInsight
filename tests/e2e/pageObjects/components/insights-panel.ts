@@ -1,83 +1,65 @@
 import { Selector, t } from 'testcafe';
-import { RecommendationIds } from '../../helpers/constants';
+import { ExploreTabs } from '../../helpers/constants';
+import { RecommendationsTab } from './recommendations-tab';
+import { ExploreTab } from './explore-tab';
 
 export class InsightsPanel {
-    // CSS Selectors
-    cssKeyName = '[data-testid=recommendation-key-name]';
-    // BUTTONS
-    insightsBtn = Selector('[data-testid=recommendations-trigger]');
-    showHiddenCheckBox = Selector('[data-testid=checkbox-show-hidden]');
-    showHiddenButton = Selector('[data-testid=checkbox-show-hidden ] ~ label');
-    analyzeDatabaseButton = Selector('[data-testid=insights-db-analysis-link]');
-    analyzeTooltipButton = Selector('[data-testid=approve-insights-db-analysis-btn]');
     // CONTAINERS
-    insightsPanel = Selector('[data-testid=insights-panel]');
-    noRecommendationsScreen = Selector('[data-testid=no-recommendations-screen]');
-    redisVersionRecommendation = Selector('[data-testid=redisVersion-recommendation]');
-    optimizeTimeSeriesRecommendation = Selector('[data-testid=RTS-recommendation]');
-    //LINKS
-    analyzeDatabaseLink = Selector('[data-testid=footer-db-analysis-link]');
+    sidePanel = Selector('[data-testid=insights-panel]');
+    explorePanelButton = Selector('[data-testid=insights-trigger]');
+    closeButton = Selector('[data-testid=close-insights-btn]');
+    activeTab = Selector('[class*=euiTab-isSelected]');
+
+    recommendationsTab = Selector('[data-testid=recommendations-tab]');
+    exploreTab = Selector('[data-testid=explore-tab]');
+
+    existsCompatibilityPopover = Selector('[data-testid=explore-capability-popover]');
+
     /**
-     * Open/Close Insights Panel
+     * Open/Close  Panel
      * @param state State of panel
      */
-    async toggleInsightsPanel(state: boolean): Promise<void> {
-        const isPanelExists = await this.insightsPanel.exists;
+    async togglePanel(state: boolean): Promise<void> {
+        const isPanelExists = await this.sidePanel.exists;
 
         if (state !== isPanelExists) {
-            await t.click(this.insightsBtn);
+            await t.click(this.explorePanelButton);
         }
     }
 
     /**
-     * Get Insights panel recommendation selector by name
-     * @param recommendationName name of the recommendation
+     * get active tab
      */
-    getRecommendationByName(recommendationName: RecommendationIds): Selector {
-        return Selector(`[data-testid=${recommendationName}-accordion]`);
+    async getActiveTabName(): Promise<string> {
+        return this.activeTab.textContent;
     }
-
     /**
-     * Check/uncheck recommendation
-     * @param state State of panel
+     * Click on Panel tab
+     * @param type of the tab
      */
-    async toggleShowHiddenRecommendations(state: boolean): Promise<void> {
-        if(await this.showHiddenCheckBox.exists) {
-            if ((await this.showHiddenCheckBox.checked) !== state) {
-                await t.click(this.showHiddenButton);
+    async setActiveTab(type: ExploreTabs.Explore): Promise<ExploreTab>
+    async setActiveTab(type: ExploreTabs.Tips): Promise<RecommendationsTab>
+    async setActiveTab(type: ExploreTabs): Promise<ExploreTab | RecommendationsTab> {
+        const activeTabName  = await this.getActiveTabName();
+        if(type === ExploreTabs.Explore) {
+            if(type !== activeTabName) {
+                await t.click(this.exploreTab);
             }
+            return new ExploreTab();
         }
-    }
 
-    /**
-     * Expand/Collapse Recommendation
-     * @param recommendationName Name of recommendation
-     * @param state State of recommendation
-     */
-    async toggleRecommendation(recommendationName: RecommendationIds, state: boolean): Promise<void> {
-        const recommendationSelector = Selector(`[data-test-subj=${recommendationName}-button]`);
-        const isRecommendationExpanded = await this.getRecommendationByName(recommendationName).withAttribute('class', /-isOpen/).exists;
-
-        if (state !== isRecommendationExpanded) {
-            await t.click(recommendationSelector);
+        if(type !== activeTabName) {
+            await t.click(this.recommendationsTab);
         }
+        return new RecommendationsTab();
+
     }
 
     /**
-     * Hide Recommendation
-     * @param recommendationName Name of recommendation
+     * Get Insights panel selector
      */
-    async hideRecommendation(recommendationName: RecommendationIds): Promise<void> {
-        const recommendationHideBtn = Selector(`[data-testid=toggle-hide-${recommendationName}-btn]`);
-        await t.click(recommendationHideBtn);
+    getInsightsPanel(): Selector {
+        return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Tips);
     }
 
-    /**
-     * Snooze Recommendation
-     * @param recommendationName Name of recommendation
-     */
-    async snoozeRecommendation(recommendationName: RecommendationIds): Promise<void> {
-        const recommendationSnoozeBtn = Selector(`[data-testid=${recommendationName}-delete-btn]`);
-        await t.click(recommendationSnoozeBtn);
-    }
 }

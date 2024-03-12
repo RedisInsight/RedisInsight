@@ -33,7 +33,6 @@ export interface Props {
   selectKey: ({ rowData }: { rowData: any }) => void
   removeSelectedKey: () => void
   handleAddKeyPanel: (value: boolean) => void
-  handleBulkActionsPanel: (value: boolean) => void
 }
 
 const BrowserLeftPanel = (props: Props) => {
@@ -42,7 +41,6 @@ const BrowserLeftPanel = (props: Props) => {
     selectKey,
     removeSelectedKey,
     handleAddKeyPanel,
-    handleBulkActionsPanel
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -143,7 +141,6 @@ const BrowserLeftPanel = (props: Props) => {
           selectKey={selectKey}
           onDelete={onDeleteKey}
           onAddKeyPanel={handleAddKeyPanel}
-          onBulkActionsPanel={handleBulkActionsPanel}
         />
       )}
       {viewType === KeyViewType.Tree && (
@@ -157,7 +154,6 @@ const BrowserLeftPanel = (props: Props) => {
           onDelete={onDeleteKey}
           deleting={deleting}
           onAddKeyPanel={handleAddKeyPanel}
-          onBulkActionsPanel={handleBulkActionsPanel}
         />
       )}
     </div>

@@ -61,8 +61,6 @@ describe('WorkbenchPage', () => {
             databaseId: '18c37d1d-bc25-4e46-a20d-a1f9bf228946',
             command: 'info',
             summary: null,
-            role: null,
-            nodeOptions: null,
             createdAt: '2022-09-28T18:04:46.000Z',
             emptyCommand: false
           }],
@@ -109,8 +107,6 @@ describe('Telemetry', () => {
             databaseId: '18c37d1d-bc25-4e46-a20d-a1f9bf228946',
             command: 'info',
             summary: null,
-            role: null,
-            nodeOptions: null,
             createdAt: '2022-09-28T18:04:46.000Z',
             emptyCommand: false
           }],
@@ -138,20 +134,6 @@ describe('Telemetry', () => {
       }
     })
     sendEventTelemetry.mockRestore()
-
-    // turn off Raw mode
-    fireEvent.click(screen.getByTestId('btn-change-mode'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
-      eventData: {
-        databaseId: INSTANCE_ID_MOCK,
-        changedFromMode: RunQueryMode.Raw,
-        changedToMode: RunQueryMode.ASCII,
-      }
-    })
-
-    sendEventTelemetry.mockRestore()
   })
 
   it('should send proper eventData without Raw mode', async () => {
@@ -170,7 +152,6 @@ describe('Telemetry', () => {
         command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
         results: 'single',
-        auto: false,
         multiple: 'Single',
         pipeline: true,
         rawMode: false,
@@ -187,19 +168,6 @@ describe('Telemetry', () => {
 
     render(<WorkbenchPage />)
 
-    // turn on Raw mode
-    fireEvent.click(screen.getByTestId('btn-change-mode'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.WORKBENCH_MODE_CHANGED,
-      eventData: {
-        databaseId: INSTANCE_ID_MOCK,
-        changedFromMode: RunQueryMode.ASCII,
-        changedToMode: RunQueryMode.Raw,
-      }
-    })
-    sendEventTelemetry.mockRestore()
-
     // send command with Raw mode
     fireEvent.click(screen.getByTestId('btn-submit'))
 
@@ -209,10 +177,9 @@ describe('Telemetry', () => {
         command: 'info;'.toUpperCase(),
         databaseId: INSTANCE_ID_MOCK,
         results: 'single',
-        auto: false,
         multiple: 'Single',
         pipeline: true,
-        rawMode: true,
+        rawMode: false,
       }
     })
 
@@ -292,8 +259,6 @@ describe('Raw mode', () => {
             databaseId: '18c37d1d-bc25-4e46-a20d-a1f9bf228946',
             command: 'info',
             summary: null,
-            role: null,
-            nodeOptions: null,
             createdAt: '2022-09-28T18:04:46.000Z',
             emptyCommand: false
           }],

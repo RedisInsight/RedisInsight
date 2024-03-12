@@ -17,11 +17,10 @@ export interface IRecommendations {
 }
 
 export interface StateRecommendations {
-  data: IRecommendations,
-  loading: boolean,
-  error: string,
-  isContentVisible: boolean,
-  isHighlighted: boolean,
+  data: IRecommendations
+  loading: boolean
+  error: string
+  isHighlighted: boolean
   content: IRecommendationsStatic
 }
 
@@ -38,8 +37,9 @@ export interface IRecommendationsStatic {
     liveTitle?: string
     telemetryEvent?: string
     redisStack?: boolean
-    tutorial?: string
+    tutorialId?: string
     content?: IRecommendationContent[]
+    badges?: string[]
   }
 }
 

@@ -70,6 +70,8 @@ export class CreateFreeSubscriptionCloudJob extends CloudJob {
         throw new CloudDatabaseAlreadyExistsFreeException(undefined, {
           subscriptionId: freeSubscription.id,
           databaseId: databases[0].databaseId,
+          region: freeSubscription?.region,
+          provider: freeSubscription?.provider,
         });
       }
 

@@ -987,17 +987,19 @@ describe('oauth cloud slice', () => {
     describe('createFreeDbSuccess', () => {
       it('should call proper actions without error', async () => {
       // Arrange
-        const id = '123'
+        const result = {
+          resourceId: '123',
+        }
         const onConnect = () => {}
 
         // Act
-        await store.dispatch<any>(createFreeDbSuccess(id, {}))
+        await store.dispatch<any>(createFreeDbSuccess(result, {}))
 
         // Assert
         const expectedActions = [
           showOAuthProgress(true),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
-          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(onConnect)),
+          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onConnect)),
           setSelectAccountDialogState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))

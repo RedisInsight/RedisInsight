@@ -1,33 +1,39 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
 import {
+  mockBulkActionsAnalytics,
   mockClientMetadata,
-  mockDatabaseConnectionService,
-  mockIORedisClient,
-  mockIORedisCluster, MockType,
+  mockClusterRedisClient,
+  mockDatabaseClientFactory,
+  mockStandaloneRedisClient,
+  MockType,
 } from 'src/__mocks__';
-import { MemoryStoredFile } from 'nestjs-form-data';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { BulkActionsAnalyticsService } from 'src/modules/bulk-actions/bulk-actions-analytics.service';
+import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import * as fs from 'fs-extra';
 import config from 'src/utils/config';
 import { join } from 'path';
 import { wrapHttpError } from 'src/common/utils';
+import { RedisClientCommand } from 'src/modules/redis/client';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { Readable } from 'stream';
 
 const PATH_CONFIG = config.get('dir_path');
 
 const generateNCommandsBuffer = (n: number) => Buffer.from(
   (new Array(n)).fill(1).map(() => ['set', ['foo', 'bar']]).join('\n'),
 );
-const generateNBatchCommands = (n: number) => (new Array(n)).fill(1).map(() => ['set', ['foo', 'bar']]);
+const generateNBatchCommands = (n: number): RedisClientCommand[] => (
+  new Array(n)).fill(1).map(() => ['set', 'foo', 'bar']);
 const generateNBatchCommandsResults = (n: number) => (new Array(n)).fill(1).map(() => [null, 'OK']);
 const mockBatchCommands = generateNBatchCommands(100);
 const mockBatchCommandsResult = generateNBatchCommandsResults(100);
-const mockBatchCommandsResultWithErrors = [...(new Array(99)).fill(1).map(() => [null, 'OK']), ['ReplyError']];
+const mockBatchCommandsResultWithErrors = [
+  ...(new Array(99)).fill(1).map(() => [null, 'OK']), [new Error('ReplyError')],
+];
 const mockSummary: BulkActionSummary = Object.assign(new BulkActionSummary(), {
   processed: 100,
   succeed: 100,
@@ -71,13 +77,7 @@ const mockEmptyImportResult: IBulkActionOverview = {
   duration: 0,
 };
 
-const mockUploadImportFileDto = {
-  file: {
-    originalname: 'filename',
-    size: 1,
-    buffer: Buffer.from('SET foo bar'),
-  } as unknown as MemoryStoredFile,
-};
+const mockReadableStream = Readable.from(Buffer.from('SET foo bar'));
 
 const mockUploadImportFileByPathDto = {
   path: '/some/path',
@@ -88,8 +88,8 @@ const mockedFs = fs as jest.Mocked<typeof fs>;
 
 describe('BulkImportService', () => {
   let service: BulkImportService;
-  let databaseConnectionService: MockType<DatabaseConnectionService>;
-  let analytics: MockType<BulkActionsAnalyticsService>;
+  let databaseClientFactory: MockType<DatabaseClientFactory>;
+  let analytics: MockType<BulkActionsAnalytics>;
 
   beforeEach(async () => {
     jest.mock('fs-extra', () => mockedFs);
@@ -99,47 +99,43 @@ describe('BulkImportService', () => {
       providers: [
         BulkImportService,
         {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
         {
-          provide: BulkActionsAnalyticsService,
-          useFactory: () => ({
-            sendActionStarted: jest.fn(),
-            sendActionStopped: jest.fn(),
-            sendActionSucceed: jest.fn(),
-            sendActionFailed: jest.fn(),
-          }),
+          provide: BulkActionsAnalytics,
+          useFactory: mockBulkActionsAnalytics,
         },
       ],
     }).compile();
 
     service = module.get(BulkImportService);
-    databaseConnectionService = module.get(DatabaseConnectionService);
-    analytics = module.get(BulkActionsAnalyticsService);
+    databaseClientFactory = module.get(DatabaseClientFactory);
+    analytics = module.get(BulkActionsAnalytics);
   });
 
   describe('executeBatch', () => {
     it('should execute batch in pipeline for standalone', async () => {
-      mockIORedisClient.exec.mockResolvedValueOnce(mockBatchCommandsResult);
-      expect(await service['executeBatch'](mockIORedisClient, mockBatchCommands)).toEqual(mockSummary);
+      mockStandaloneRedisClient.sendPipeline.mockResolvedValueOnce(mockBatchCommandsResult);
+      expect(await service['executeBatch'](mockStandaloneRedisClient, mockBatchCommands)).toEqual(mockSummary);
     });
     it('should execute batch in pipeline for standalone with errors', async () => {
-      mockIORedisClient.exec.mockResolvedValueOnce(mockBatchCommandsResultWithErrors);
-      expect(await service['executeBatch'](mockIORedisClient, mockBatchCommands)).toEqual(mockSummaryWithErrors);
+      mockStandaloneRedisClient.sendPipeline.mockResolvedValueOnce(mockBatchCommandsResultWithErrors);
+      expect(await service['executeBatch'](mockStandaloneRedisClient, mockBatchCommands))
+        .toEqual(mockSummaryWithErrors);
     });
     it('should return all failed in case of global error', async () => {
-      mockIORedisClient.exec.mockRejectedValueOnce(new Error());
-      expect(await service['executeBatch'](mockIORedisClient, mockBatchCommands)).toEqual({
+      mockStandaloneRedisClient.sendPipeline.mockRejectedValueOnce(new Error());
+      expect(await service['executeBatch'](mockStandaloneRedisClient, mockBatchCommands)).toEqual({
         ...mockSummary.getOverview(),
         succeed: 0,
         failed: mockSummary.getOverview().processed,
       });
     });
     it('should execute batch of commands without pipeline for cluster', async () => {
-      mockIORedisCluster.call.mockRejectedValueOnce(new Error());
-      mockIORedisCluster.call.mockResolvedValue('OK');
-      expect(await service['executeBatch'](mockIORedisCluster, mockBatchCommands)).toEqual(mockSummaryWithErrors);
+      mockClusterRedisClient.call.mockRejectedValueOnce(new Error());
+      mockClusterRedisClient.call.mockResolvedValue('OK');
+      expect(await service['executeBatch'](mockClusterRedisClient, mockBatchCommands)).toEqual(mockSummaryWithErrors);
     });
   });
 
@@ -152,7 +148,7 @@ describe('BulkImportService', () => {
 
     it('should import data', async () => {
       spy.mockResolvedValue(mockSummary);
-      expect(await service.import(mockClientMetadata, mockUploadImportFileDto)).toEqual({
+      expect(await service.import(mockClientMetadata, mockReadableStream)).toEqual({
         ...mockImportResult,
         duration: jasmine.anything(),
       });
@@ -168,21 +164,17 @@ describe('BulkImportService', () => {
         succeed: 10_000,
         failed: 0,
       }));
-      expect(await service.import(mockClientMetadata, {
-        file: {
-          ...mockUploadImportFileDto.file,
-          buffer: generateNCommandsBuffer(100_000),
-        } as unknown as MemoryStoredFile,
-      })).toEqual({
-        ...mockImportResult,
-        summary: {
-          processed: 100_000,
-          succeed: 100_000,
-          failed: 0,
-          errors: [],
-        },
-        duration: jasmine.anything(),
-      });
+      expect(await service.import(mockClientMetadata, Readable.from(generateNCommandsBuffer(100_000))))
+        .toEqual({
+          ...mockImportResult,
+          summary: {
+            processed: 100_000,
+            succeed: 100_000,
+            failed: 0,
+            errors: [],
+          },
+          duration: jasmine.anything(),
+        });
     });
 
     it('should import data (10K) from file in batches 10K each', async () => {
@@ -191,21 +183,17 @@ describe('BulkImportService', () => {
         succeed: 10_000,
         failed: 0,
       }));
-      expect(await service.import(mockClientMetadata, {
-        file: {
-          ...mockUploadImportFileDto.file,
-          buffer: generateNCommandsBuffer(10_000),
-        } as unknown as MemoryStoredFile,
-      })).toEqual({
-        ...mockImportResult,
-        summary: {
-          processed: 10_000,
-          succeed: 10_000,
-          failed: 0,
-          errors: [],
-        },
-        duration: jasmine.anything(),
-      });
+      expect(await service.import(mockClientMetadata, Readable.from(generateNCommandsBuffer(10_000))))
+        .toEqual({
+          ...mockImportResult,
+          summary: {
+            processed: 10_000,
+            succeed: 10_000,
+            failed: 0,
+            errors: [],
+          },
+          duration: jasmine.anything(),
+        });
     });
 
     it('should not import any data due to parse error', async () => {
@@ -214,12 +202,10 @@ describe('BulkImportService', () => {
         succeed: 0,
         failed: 0,
       }));
-      expect(await service.import(mockClientMetadata, {
-        file: {
-          ...mockUploadImportFileDto.file,
-          buffer: Buffer.from('{"incorrectdata"}\n{"incorrectdata"}'),
-        } as unknown as MemoryStoredFile,
-      })).toEqual({
+      expect(await service.import(
+        mockClientMetadata,
+        Readable.from(Buffer.from('{"incorrectdata"}\n{"incorrectdata"}')),
+      )).toEqual({
         ...mockImportResult,
         summary: {
           processed: 2,
@@ -229,29 +215,27 @@ describe('BulkImportService', () => {
         },
         duration: jasmine.anything(),
       });
-      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+      expect(mockStandaloneRedisClient.disconnect).toHaveBeenCalled();
     });
 
     it('should ignore blank lines', async () => {
-      await service.import(mockClientMetadata, {
-        file: {
-          ...mockUploadImportFileDto.file,
-          buffer: Buffer.from('\n SET foo bar \n     \n SET foo bar \n    '),
-        } as unknown as MemoryStoredFile,
-      })
-      expect(spy).toBeCalledWith(mockIORedisClient, [['set', ['foo', 'bar']], ['set', ['foo', 'bar']]])
-      expect(mockIORedisClient.disconnect).toHaveBeenCalled();
+      await service.import(
+        mockClientMetadata,
+        Readable.from(Buffer.from('\n SET foo bar \n     \n SET foo bar \n    ')),
+      );
+      expect(spy).toBeCalledWith(mockStandaloneRedisClient, [['SET', 'foo', 'bar'], ['SET', 'foo', 'bar']]);
+      expect(mockStandaloneRedisClient.disconnect).toHaveBeenCalled();
     });
 
     it('should throw an error in case of global error', async () => {
       try {
-        databaseConnectionService.createClient.mockRejectedValueOnce(new NotFoundException());
+        databaseClientFactory.createClient.mockRejectedValueOnce(new NotFoundException());
 
-        await service.import(mockClientMetadata, mockUploadImportFileDto);
+        await service.import(mockClientMetadata, mockReadableStream);
 
         fail();
       } catch (e) {
-        expect(mockIORedisClient.disconnect).not.toHaveBeenCalled();
+        expect(mockStandaloneRedisClient.disconnect).not.toHaveBeenCalled();
         expect(analytics.sendActionFailed).toHaveBeenCalledWith(
           { ...mockEmptyImportResult },
           wrapHttpError(e),
@@ -275,7 +259,7 @@ describe('BulkImportService', () => {
 
       await service.uploadFromTutorial(mockClientMetadata, mockUploadImportFileByPathDto);
 
-      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, mockUploadImportFileByPathDto.path));
+      expect(mockedFs.createReadStream).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, mockUploadImportFileByPathDto.path));
     });
 
     it('should import file by path with static', async () => {
@@ -283,7 +267,7 @@ describe('BulkImportService', () => {
 
       await service.uploadFromTutorial(mockClientMetadata, { path: '/static/guides/_data.file' });
 
-      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, '/guides/_data.file'));
+      expect(mockedFs.createReadStream).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, '/guides/_data.file'));
     });
 
     it('should normalize path before importing and not search for file outside home folder', async () => {
@@ -293,7 +277,7 @@ describe('BulkImportService', () => {
         path: '/../../../danger',
       });
 
-      expect(mockedFs.readFile).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, 'danger'));
+      expect(mockedFs.createReadStream).toHaveBeenCalledWith(join(PATH_CONFIG.homedir, 'danger'));
     });
 
     it('should normalize path before importing and throw an error when search for file outside home folder (relative)', async () => {
@@ -322,20 +306,6 @@ describe('BulkImportService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('Data file was not found');
-      }
-    });
-
-    it('should throw BadRequest when file size is greater then 100MB', async () => {
-      mockedFs.pathExists.mockImplementationOnce(async () => true);
-      mockedFs.stat.mockImplementationOnce(async () => ({ size: 100 * 1024 * 1024 + 1 } as fs.Stats));
-
-      try {
-        await service.uploadFromTutorial(mockClientMetadata, mockUploadImportFileByPathDto);
-
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(BadRequestException);
-        expect(e.message).toEqual('Maximum file size is 100MB');
       }
     });
   });

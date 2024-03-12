@@ -3,7 +3,6 @@ import { instance, mock } from 'ts-mockito'
 import { EuiInMemoryTable } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
-import { first } from 'lodash'
 import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { mswServer } from 'uiSrc/mocks/server'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -69,15 +68,15 @@ const mockInstances = [
 
 const mockDatabasesList = (props: DatabasesListProps) => (
   <div>
-    <button type="button" onClick={() => props.onDelete(['1'])} data-testid="onDelete-btn">onDelete</button>
-    <button type="button" onClick={() => props.onExport(['e37cc441-a4f2-402c-8bdb-fc2413cbbaff'], true)} data-testid="onExport-btn">onExport</button>
+    <button type="button" onClick={() => props.onDelete(['1'] as any)} data-testid="onDelete-btn">onDelete</button>
+    <button type="button" onClick={() => props.onExport(['e37cc441-a4f2-402c-8bdb-fc2413cbbaff'] as any, true)} data-testid="onExport-btn">onExport</button>
     <div className="databaseList">
       <EuiInMemoryTable
         isSelectable
-        items={mockInstances}
+        items={mockInstances as any}
         itemId="id"
         loading={false}
-        columns={first(props.columnVariations)}
+        columns={props.columns}
         data-testid="table"
       />
     </div>
@@ -94,15 +93,12 @@ beforeEach(() => {
     },
     connections: {
       ...state.connections,
-      instances: mockInstances,
+      instances: mockInstances as any,
     }
   }))
 })
 
 describe('DatabasesListWrapper', () => {
-  beforeAll(() => {
-    DatabasesList.mockImplementation(mockDatabasesList)
-  })
   it('should render', () => {
     expect(
       render(<DatabasesListWrapper {...instance(mockedProps)} />)
@@ -110,7 +106,7 @@ describe('DatabasesListWrapper', () => {
   })
 
   it('should call onDelete', () => {
-    DatabasesList.mockImplementation(mockDatabasesList)
+    (DatabasesList as jest.Mock).mockImplementation(mockDatabasesList)
 
     const component = render(<DatabasesListWrapper {...instance(mockedProps)} />)
     fireEvent.click(screen.getByTestId('onDelete-btn'))
@@ -118,7 +114,7 @@ describe('DatabasesListWrapper', () => {
   })
 
   it('should show indicator for a new connection', () => {
-    DatabasesList.mockImplementation(mockDatabasesList)
+    (DatabasesList as jest.Mock).mockImplementation(mockDatabasesList)
 
     const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} />)
 
@@ -130,9 +126,11 @@ describe('DatabasesListWrapper', () => {
   })
 
   it('should call proper telemetry on success export', async () => {
-    const sendEventTelemetryMock = jest.fn()
+    (DatabasesList as jest.Mock).mockImplementation(mockDatabasesList)
 
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
     render(<DatabasesListWrapper {...instance(mockedProps)} />)
 
     await act(() => {
@@ -148,10 +146,12 @@ describe('DatabasesListWrapper', () => {
   })
 
   it('should call proper telemetry on fail export', async () => {
+    (DatabasesList as jest.Mock).mockImplementation(mockDatabasesList)
     mswServer.use(...errorHandlers)
-    const sendEventTelemetryMock = jest.fn()
 
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
     render(<DatabasesListWrapper {...instance(mockedProps)} />)
 
     await act(() => {
@@ -163,12 +163,13 @@ describe('DatabasesListWrapper', () => {
       eventData: {
         numberOfDatabases: 1
       }
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should show link to cloud console', () => {
+    (DatabasesList as jest.Mock).mockImplementation(mockDatabasesList)
     render(<DatabasesListWrapper {...instance(mockedProps)} />)
 
     expect(screen.queryByTestId(`cloud-link-${mockInstances[0].id}`)).not.toBeInTheDocument()
@@ -176,17 +177,18 @@ describe('DatabasesListWrapper', () => {
   })
 
   it('should call proper telemetry on click cloud console ling', () => {
-    const sendEventTelemetryMock = jest.fn()
+    (DatabasesList as jest.Mock).mockImplementation(mockDatabasesList)
+    const sendEventTelemetryMock = jest.fn();
 
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
     render(<DatabasesListWrapper {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId(`cloud-link-${mockInstances[1].id}`))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_LINK_CLICKED,
-    })
+    });
 
-    sendEventTelemetry.mockRestore()
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

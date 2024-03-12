@@ -6,20 +6,11 @@
   .databaseList {
     @include euiScrollBar;
 
-    height: calc(100vh - 207px);
+    height: 100%;
     overflow: auto;
     position: relative;
 
     background-color: var(--euiColorEmptyShade);
-
-
-    @media (min-width: 768px) and (max-width: 1100px) {
-      height: calc(100vh - 150px);
-    }
-
-    @media (min-width: 1101px) {
-      height: calc(100vh - 175px);
-    }
 
     .euiBasicTable {
       border-top: none;
@@ -287,15 +278,18 @@
     }
   }
 
+  .databasePanelWrapper {
+    height: 100%;
+    background-color: var(--euiColorEmptyShade);
+  }
+
   .container {
     @include euiScrollBar;
 
-    background-color: var(--euiColorEmptyShade);
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(100vh - 242px);
+    height: calc(100% - 74px);
     padding: 40px 30px 25px;
-    border: 1px solid var(--euiColorPrimary);
     margin-right: 5px;
     border-radius: 4px;
 
@@ -340,8 +334,10 @@
     text-align: right;
     vertical-align: bottom;
     width: 100%;
-    padding: 15px 24px 10px;
+    padding: 16px 24px 16px;
     border-radius: 0 0 4px 4px;
+
+    border-top: 1px solid var(--euiColorLightShade);
   }
 
   .euiResizableContainer {

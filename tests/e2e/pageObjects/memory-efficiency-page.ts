@@ -54,6 +54,7 @@ export class MemoryEfficiencyPage extends InstancePage {
     // LINKS
     treeViewLink = Selector('[data-testid=tree-view-page-link]');
     readMoreLink = Selector('[data-testid=read-more-link]');
+    workbenchLink = Selector('[data-test-subj=workbench-page-btn]');
     // CONTAINERS
     veryUsefulVoteBtn = Selector('[data-testid=very-useful-vote-btn]').nth(0);
     usefulVoteBtn = Selector('[data-testid=useful-vote-btn]').nth(0);

@@ -9,7 +9,8 @@ import {
 } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { stringToBuffer } from 'uiSrc/utils'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
+import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
 import GroupsViewWrapper, { Props } from './GroupsViewWrapper'
 
@@ -72,7 +73,7 @@ const mockGroupsView = (props: GroupsViewProps) => (
 
 describe('GroupsViewWrapper', () => {
   beforeAll(() => {
-    GroupsView.mockImplementation(mockGroupsView)
+    (GroupsView as jest.Mock).mockImplementation(mockGroupsView)
   })
 
   it('should render', () => {
@@ -92,7 +93,11 @@ describe('GroupsViewWrapper', () => {
 
     fireEvent.click(screen.getByTestId('select-group-btn'))
 
-    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedGroup(), loadConsumerGroups(false)])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedGroup(),
+      loadConsumerGroups(false)
+    ])
   })
 
   it('should delete Group', () => {
@@ -104,5 +109,15 @@ describe('GroupsViewWrapper', () => {
     fireEvent.click(screen.getByTestId('remove-groups-button-test'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, deleteConsumerGroups()])
+  })
+
+  it('should disable refresh when editing Group', () => {
+    render(<GroupsViewWrapper {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('edit-stream-last-id-123'))
+
+    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
   })
 })

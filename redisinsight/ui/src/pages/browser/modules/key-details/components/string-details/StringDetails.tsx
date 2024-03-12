@@ -6,6 +6,7 @@ import {
   refreshKey,
   selectedKeyDataSelector,
   selectedKeySelector,
+  setSelectedKeyRefreshDisabled,
 } from 'uiSrc/slices/browser/keys'
 import {
   KeyTypes,
@@ -20,7 +21,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 import { resetStringValue, stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import { isFormatEditable, isFullStringLoaded } from 'uiSrc/utils'
-import { StringDetailsTable } from './string-details-table'
+import { StringDetailsValue } from './string-details-value'
 import { EditItemAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {}
@@ -57,7 +58,10 @@ const StringDetails = (props: Props) => {
       title="Edit Value"
       tooltipContent={editToolTip}
       isEditable={isStringEditable && isEditable}
-      onEditItem={() => setEditItem(!editItem)}
+      onEditItem={() => {
+        dispatch(setSelectedKeyRefreshDisabled(!editItem))
+        setEditItem(!editItem)
+      }}
     />
   )
 
@@ -73,9 +77,12 @@ const StringDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <StringDetailsTable
+            <StringDetailsValue
               isEditItem={editItem}
-              setIsEdit={(isEdit: boolean) => setEditItem(isEdit)}
+              setIsEdit={(isEdit: boolean) => {
+                setEditItem(isEdit)
+                dispatch(setSelectedKeyRefreshDisabled(isEdit))
+              }}
               onRefresh={handleRefreshKey}
             />
           </div>

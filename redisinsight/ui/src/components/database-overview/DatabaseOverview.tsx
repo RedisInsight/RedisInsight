@@ -1,55 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import cx from 'classnames'
 import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
-import MoreInfoPopover from 'uiSrc/components/database-overview/components/MoreInfoPopover'
-import { sortModulesByName } from 'uiSrc/utils/modules'
 
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
-import { getResolutionLimits } from './utils/resolutionHelper'
 import { IMetric } from './components/OverviewMetrics'
 
 import styles from './styles.module.scss'
 
 interface Props {
-  windowDimensions: number
   metrics?: Array<IMetric>
-  modules?: Array<AdditionalRedisModule>
-}
-
-interface IState<T> {
-  visible: Array<T>
-  hidden: Array<T>
 }
 
 const DatabaseOverview = (props: Props) => {
-  const { metrics: metricsProps = [], modules: modulesProps = [], windowDimensions } = props
-  const [metrics, setMetrics] = useState<IState<IMetric>>({ visible: [], hidden: [] })
-  const [modules, setModules] = useState<AdditionalRedisModule[]>([])
-
-  useEffect(() => {
-    const resolutionLimits = getResolutionLimits(
-      windowDimensions,
-      metricsProps.filter((item) => item.value !== undefined)
-    )
-    const metricsState: IState<IMetric> = {
-      visible: [],
-      hidden: []
-    }
-    metricsProps?.forEach((item) => {
-      if (item.value !== undefined && item.groupId) {
-        return
-      }
-      if (item.value === undefined || metricsState.visible.length >= resolutionLimits.metrics) {
-        metricsState.hidden.push(item)
-      } else {
-        metricsState.visible.push(item)
-      }
-    })
-    setMetrics(metricsState)
-
-    const sortedModules = sortModulesByName(modulesProps)
-    setModules(sortedModules)
-  }, [windowDimensions, metricsProps, modulesProps])
+  const { metrics } = props
 
   const getTooltipContent = (metric: IMetric) => {
     if (!metric.children?.length) {
@@ -92,7 +54,7 @@ const DatabaseOverview = (props: Props) => {
 
   return (
     <EuiFlexGroup className={styles.container} gutterSize="none" responsive={false}>
-      {metrics.visible?.length > 0 && (
+      {metrics?.length! > 0 && (
         <EuiFlexItem key="overview">
           <div className={cx(
             'flex-row',
@@ -102,7 +64,7 @@ const DatabaseOverview = (props: Props) => {
           >
             <EuiFlexGroup gutterSize="none" responsive={false}>
               {
-                metrics.visible.map((overviewItem) => (
+                metrics?.map((overviewItem) => (
                   <EuiFlexItem
                     className={cx(styles.overviewItem, overviewItem.className ?? '')}
                     key={overviewItem.id}
@@ -136,20 +98,6 @@ const DatabaseOverview = (props: Props) => {
           </div>
         </EuiFlexItem>
       )}
-      <EuiFlexItem grow={false} style={{ flexShrink: 0 }}>
-        <div
-          className={cx(
-            'flex-row',
-            styles.itemContainer,
-            styles.modules,
-          )}
-        >
-          <MoreInfoPopover
-            metrics={metrics.hidden}
-            modules={modules}
-          />
-        </div>
-      </EuiFlexItem>
     </EuiFlexGroup>
   )
 }

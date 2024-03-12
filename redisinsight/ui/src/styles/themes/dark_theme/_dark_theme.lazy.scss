@@ -98,6 +98,7 @@
   --browserComponentActive: #{$browserComponentActive};
   --browserTreeNodeOpen: #{$browserTreeNodeOpen};
   --defaultGreenColor: #{$defaultGreenColor};
+  --insightsTriggerBgColor: #{$insightsTriggerBgColor};
 
   --iconsDefaultColor: #{$iconsDefaultColor};
   --iconsDefaultHoverColor: #{$iconsDefaultHoverColor};
@@ -117,6 +118,7 @@
   --buttonDangerToastColor: #{$buttonDangerToastColor};
   --buttonDangerToastHoverColor: #{$buttonDangerToastHoverColor};
   --buttonGuideBgColor: #{$buttonGuideBgColor};
+  --buttonSuccessColor: #{$buttonSuccessColor};
 
   --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
 
@@ -200,6 +202,7 @@
   --triggerIconActiveColor: #{$triggerIconActiveColor};
   --liveRecommendationVoteBgColor: #{$controlsBorderColor};
   --triggerIconTextColor: #{$triggerIconTextColor};
+  --recommendationsCountBgColor: #{$recommendationsCountBgColor};
 
   //cloud sso
   --cloudSsoGoogle: #{$cloudSsoGoogle};

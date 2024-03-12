@@ -6,6 +6,7 @@ import { EuiPage, EuiPageBody } from '@elastic/eui'
 import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PagePlaceholder } from 'uiSrc/components'
+import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import Router from './Router'
 import { Theme } from './constants'
 import { themeService } from './services'
@@ -14,7 +15,6 @@ import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 import ThemeComponent from './components/theme/ThemeComponent'
 import GlobalDialogs from './components/global-dialogs'
-import GlobalActionBar from './components/global-action-bar'
 
 import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
 import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
@@ -44,7 +44,6 @@ const App = ({ children }: { children?: ReactElement[] }) => {
         ? <PagePlaceholder />
         : (
           <EuiPage className="main">
-            <GlobalActionBar />
             <GlobalDialogs />
             <GlobalSubscriptions />
             <NavigationMenu />
@@ -56,6 +55,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
       <Notifications />
       <Config />
       <ShortcutsFlyout />
+      <MonacoLanguages />
       {children}
     </div>
   )

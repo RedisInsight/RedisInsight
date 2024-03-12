@@ -87,4 +87,41 @@ describe('AutoRefresh', () => {
       expect(onRefresh).toBeCalledTimes(3)
     })
   })
+
+  it('should NOT call onRefresh with disabled state', async () => {
+    const onRefresh = jest.fn()
+    const { rerender } = render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
+
+    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('refresh-rate'))
+    fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: '1' } })
+
+    expect(screen.getByTestId(INLINE_ITEM_EDITOR)).toHaveValue('1')
+
+    screen.getByTestId(/apply-btn/).click()
+
+    await act(() => {
+      rerender(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} disabled />)
+    })
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1300))
+    })
+    expect(onRefresh).toBeCalledTimes(0)
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1300))
+    })
+    expect(onRefresh).toBeCalledTimes(0)
+
+    await act(() => {
+      rerender(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} disabled={false} />)
+    })
+
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1300))
+    })
+    expect(onRefresh).toBeCalledTimes(1)
+  })
 })

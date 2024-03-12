@@ -1,28 +1,31 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { isEmpty, without } from 'lodash'
-import { decode } from 'html-entities'
+import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
 import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 
-import { Maybe, Nullable, getMultiCommands, getParsedParamsInQuery, removeMonacoComments, splitMonacoValuePerLines } from 'uiSrc/utils'
-import InstanceHeader from 'uiSrc/components/instance-header'
+import {
+  Maybe,
+  Nullable,
+  getMultiCommands,
+  getParsedParamsInQuery,
+  getCommandsForExecution
+} from 'uiSrc/utils'
 import QueryWrapper from 'uiSrc/components/query'
 import {
   setWorkbenchVerticalPanelSizes,
-  appContextWorkbench, appContextWorkbenchEA
+  appContextWorkbench,
 } from 'uiSrc/slices/app/context'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode, AutoExecute } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import EnablementAreaWrapper from '../../enablement-area'
+import { CodeButtonParams } from 'uiSrc/constants'
 import WBResultsWrapper from '../../wb-results'
 import styles from './styles.module.scss'
 
@@ -87,7 +90,6 @@ const WBView = (props: Props) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { panelSizes: { vertical } } = useSelector(appContextWorkbench)
-  const { isMinimized } = useSelector(appContextWorkbenchEA)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
 
@@ -129,12 +131,7 @@ const WBView = (props: Props) => {
       const parsedParams: Maybe<CodeButtonParams> = isEmpty(executeParams)
         ? getParsedParamsInQuery(commandInit)
         : executeParams
-      const commands = without(
-        splitMonacoValuePerLines(commandInit)
-          .map((command) => removeMonacoComments(decode(command).trim())),
-        ''
-      )
-
+      const commands = getCommandsForExecution(commandInit)
       const [commandLine, ...rest] = commands.map((command = '') => {
         const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
           command.toUpperCase().startsWith(commandName))
@@ -144,17 +141,12 @@ const WBView = (props: Props) => {
       const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
       const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
 
-      const auto = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
-        ? parsedParams?.auto === AutoExecute.True
-        : undefined
-
       const pipeline = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
         ? (parsedParams?.pipeline || batchSize) > 1
         : undefined
 
       return {
         command: command?.toUpperCase(),
-        auto,
         pipeline,
         databaseId: instanceId,
         multiple: multiCommands ? 'Multiple' : 'Single',
@@ -180,18 +172,8 @@ const WBView = (props: Props) => {
 
   return (
     <div className={cx('workbenchPage', styles.container)}>
-      <InstanceHeader />
       <div className={styles.main}>
-        <div className={cx(styles.sidebar, { [styles.minimized]: isMinimized })}>
-          <EnablementAreaWrapper
-            isMinimized={isMinimized}
-            setScript={setScript}
-            onSubmit={handleSubmit}
-            scriptEl={scriptEl}
-            isCodeBtnDisabled={isCodeBtnDisabled}
-          />
-        </div>
-        <div className={cx(styles.content, { [styles.minimized]: isMinimized })}>
+        <div className={styles.content}>
           <EuiResizableContainer onPanelWidthChange={onVerticalPanelWidthChange} direction="vertical" style={{ height: '100%' }}>
             {(EuiResizablePanel, EuiResizableButton) => (
               <>
@@ -229,7 +211,7 @@ const WBView = (props: Props) => {
                   scrollable={false}
                   initialSize={vertical[verticalPanelIds.secondPanelId] ?? 80}
                   className={cx(styles.queryResults, styles.queryResultsPanel)}
-                  // Fix scroll on low height - 140px (queryPanel)
+                    // Fix scroll on low height - 140px (queryPanel)
                   style={{ maxHeight: 'calc(100% - 140px)' }}
                 >
                   <WBResultsWrapper

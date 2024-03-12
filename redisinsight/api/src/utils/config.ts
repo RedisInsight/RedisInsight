@@ -26,7 +26,7 @@ switch (process.env.NODE_ENV) {
 
 let buildTypeConfig;
 // eslint-disable-next-line sonarjs/no-small-switch
-switch (process.env.BUILD_TYPE) {
+switch (process.env.RI_BUILD_TYPE) {
   case 'REDIS_STACK':
     buildTypeConfig = stack;
     break;
@@ -37,7 +37,10 @@ switch (process.env.BUILD_TYPE) {
 
 merge(config, envConfig, buildTypeConfig);
 
-export const get = (key?: string) => (key ? config[key] : config);
+export type Config = typeof config;
+export type KeyOfConfig = keyof typeof config;
+export const get: (key?: KeyOfConfig) => Config | any = (key?: KeyOfConfig) =>
+  key ? config[key] : config;
 
 export default {
   get,

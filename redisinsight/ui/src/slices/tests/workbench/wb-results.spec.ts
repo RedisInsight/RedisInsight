@@ -6,6 +6,7 @@ import {
   mockedStore,
   initialStateDefault,
   clearStoreActions,
+  act
 } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -38,6 +39,7 @@ import reducer, {
   clearWbResults,
   clearWbResultsSuccess,
   clearWbResultsFailed,
+  sendWbQueryAction,
 } from '../../workbench/wb-results'
 
 jest.mock('uiSrc/services', () => ({
@@ -883,6 +885,125 @@ describe('workbench results slice', () => {
           loadWBHistory(),
           addErrorNotification(responsePayload as AxiosError),
           loadWBHistoryFailure(responsePayload.response.data.message),
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+    })
+
+    describe('sendWbQueryAction', () => {
+      it('should call proper actions on success', async () => {
+        // Arrange
+        const queryInit = `
+        [auto=true]
+        keys * // comment
+        set 1 1
+        `
+        const commands = ['keys *', 'set 1 1']
+        const commandId = `${Date.now()}`
+        const data = [
+          {
+            command: 'keys *',
+            databaseId: '123',
+            id: commandId + (commands.length - 1),
+            createdAt: new Date(),
+            result: [{
+              response: 'test',
+              status: CommandExecutionStatus.Success
+            }]
+          },
+          {
+            command: 'set 1 1',
+            databaseId: '123',
+            id: commandId + (commands.length - 1),
+            createdAt: new Date(),
+            result: [{
+              response: 'test',
+              status: CommandExecutionStatus.Success
+            }]
+          }
+        ]
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await act(() => {
+          store.dispatch<any>(sendWbQueryAction(queryInit, null))
+        })
+
+        // Assert
+        const expectedActions = [
+          sendWBCommand({ commands, commandId }),
+          setDbIndexState(true),
+          sendWBCommandSuccess({ data, commandId }),
+          setDbIndexState(false)
+        ]
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('should call proper actions on fail', async () => {
+        // Arrange
+        const commands = ['keys *']
+        const commandId = `${Date.now()}`
+        const data = [{
+          command: 'command',
+          databaseId: '123',
+          id: commandId,
+          createdAt: new Date(),
+          result: [{
+            response: 'test',
+            status: CommandExecutionStatus.Fail
+          }]
+        }]
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await act(() => {
+          store.dispatch<any>(sendWbQueryAction(commands[0]))
+        })
+
+        // Assert
+        const expectedActions = [
+          sendWBCommand({ commands, commandId }),
+          setDbIndexState(true),
+          sendWBCommandSuccess({ data, commandId }),
+          setDbIndexState(false)
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('should call proper actions on fetch fail', async () => {
+        // Arrange
+        const commands = ['keys *']
+        const commandId = `${Date.now()}`
+        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await act(() => {
+          store.dispatch<any>(sendWbQueryAction(commands[0]))
+        })
+
+        // Assert
+        const expectedActions = [
+          sendWBCommand({ commands, commandId }),
+          setDbIndexState(true),
+          addErrorNotification(responsePayload as AxiosError),
+          processWBCommandsFailure({
+            commandsId: commands.map((_, i) => commandId + i),
+            error: responsePayload.response.data.message
+          }),
+          setDbIndexState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
       })

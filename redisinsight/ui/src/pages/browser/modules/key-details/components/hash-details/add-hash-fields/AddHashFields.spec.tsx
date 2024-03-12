@@ -1,6 +1,6 @@
 import React from 'react'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { instance, mock } from 'ts-mockito'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import AddHashFields, { Props } from './AddHashFields'
 
 const HASH_FIELD = 'hash-field'

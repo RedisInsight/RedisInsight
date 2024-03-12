@@ -23,10 +23,14 @@ export const findRouteByPathname = (routes: IRoute[], pathname: string): Maybe<I
 }
 
 export const getRedirectionPage = (pageInput: string, databaseId?: string): Nullable<string> => {
-  const page = pageInput.replace(/^\//, '')
+  let page = pageInput.replace(/^\//, '')
   try {
     const pageUrl = new URL(page, window.location.origin)
-    const { pathname } = pageUrl
+    const { pathname, searchParams } = pageUrl
+
+    if (searchParams.has('guidePath') || searchParams.has('tutorialId')) {
+      page += '&insights=open'
+    }
 
     const foundRoute = findRouteByPathname(DEFAULT_ROUTES, pathname)
     if (!foundRoute) return null

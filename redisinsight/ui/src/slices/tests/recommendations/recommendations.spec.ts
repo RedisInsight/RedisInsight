@@ -10,7 +10,6 @@ import reducer, {
   getRecommendationsSuccess,
   getRecommendationsFailure,
   setIsHighlighted,
-  setIsContentVisible,
   readRecommendations,
   fetchRecommendationsAction,
   readRecommendationsAction,
@@ -25,7 +24,7 @@ import reducer, {
   getContentRecommendations,
   getContentRecommendationsSuccess,
   getContentRecommendationsFailure,
-  fetchContentRecommendations,
+  fetchContentRecommendations, addUnreadRecommendations,
 } from 'uiSrc/slices/recommendations/recommendations'
 import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
 
@@ -122,26 +121,6 @@ describe('recommendations slice', () => {
       })
     })
 
-    describe('setIsContentVisible', () => {
-      it('should properly isContentVisible', () => {
-        // Arrange
-        const state = {
-          ...initialState,
-          isContentVisible: true,
-          isHighlighted: false,
-        }
-
-        // Act
-        const nextState = reducer(initialState, setIsContentVisible(true))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          recommendations: nextState,
-        })
-        expect(recommendationsSelector(rootState)).toEqual(state)
-      })
-    })
-
     describe('setTotalUnread', () => {
       it('should properly set total unread', () => {
         // Arrange
@@ -157,6 +136,39 @@ describe('recommendations slice', () => {
 
         // Act
         const nextState = reducer(initialState, setTotalUnread(data))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          recommendations: nextState,
+        })
+        expect(recommendationsSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('addUnreadRecommendations', () => {
+      it('should properly set total unread', () => {
+        // Arrange
+        const currentState = {
+          ...initialState,
+          data: {
+            ...initialState.data,
+            recommendations: [{ id: '1' }, { id: '2' }],
+            totalUnread: 1
+          }
+        }
+
+        const state = {
+          ...currentState,
+          isHighlighted: true,
+          data: {
+            ...initialState.data,
+            recommendations: [{ id: '3' }, { id: '1' }, { id: '2' }],
+            totalUnread: 2
+          }
+        }
+
+        // Act
+        const nextState = reducer(currentState, addUnreadRecommendations({ recommendations: [{ id: '3' }], totalUnread: 2 }))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -241,7 +253,7 @@ describe('recommendations slice', () => {
         data: {
           ...initialState.data,
           recommendations: [{ id: '1' }, { id: '2' }, { id: '3' }],
-          totalUnread: 0
+          totalUnread: 1
         },
         loading: false,
         error: '',
@@ -259,7 +271,7 @@ describe('recommendations slice', () => {
       }
 
       // Act
-      const nextState = reducer(currentState, deleteRecommendations(['2']))
+      const nextState = reducer(currentState, deleteRecommendations([{ id: '2', isRead: false }]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -365,7 +377,6 @@ describe('recommendations slice', () => {
 
         const state = {
           ...initialStateDefault.recommendations,
-          isContentVisible: false,
         }
 
         // Assert

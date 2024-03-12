@@ -8,17 +8,18 @@ services:
     tty: true
     volumes:
       - ./results:/usr/src/app/results
+      - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
-      - .redisinsight-app:/root/.redisinsight-app
-      - ./test-data/certs:/root/certs
-      - ./test-data/ssh:/root/ssh
+      - rihomedir:/root/.redisinsight-app
+      - tmp:/tmp
       - ./remote:/root/remote
     env_file:
       - ./.env
+    entrypoint: [
+        './upload-custom-plugins.sh',
+    ]
     environment:
       TEST_FILES: $TEST_FILES
-      COMMON_URL: 'http://app:5000'
-      API_URL: 'http://app:5000/api'
       E2E_CLOUD_DATABASE_HOST: $E2E_CLOUD_DATABASE_HOST
       E2E_CLOUD_DATABASE_PORT: $E2E_CLOUD_DATABASE_PORT
       E2E_CLOUD_DATABASE_PASSWORD: $E2E_CLOUD_DATABASE_PASSWORD
@@ -27,27 +28,30 @@ services:
       E2E_CLOUD_API_ACCESS_KEY: $E2E_CLOUD_API_ACCESS_KEY
       E2E_CLOUD_API_SECRET_KEY: $E2E_CLOUD_API_SECRET_KEY
       REMOTE_FOLDER_PATH: "/root/remote"
-    entrypoint: [
-        './upload-custom-plugins.sh',
-    ]
     command: [
         './wait-for-it.sh', 'redis-enterprise:12000', '-s', '-t', '120',
         '--',
         'npm', 'run', 'test:chrome:ci'
     ]
 
-  # Redisinsight API + UI build
+  # Built image
   app:
-    cap_add:
-      - IPC_LOCK
+    logging:
+      driver: none
+    image: redisinsight:amd64
     env_file:
       - ./.env
-    build:
-      context: ./../../
-      dockerfile: Dockerfile
+    environment:
+      RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
+      RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
+      RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:
-      - .redisinsight-app:/root/.redisinsight-app
-      - ./test-data/certs:/root/certs
-      - ./test-data/ssh:/root/ssh
+      - ./rihomedir:/data
+      - tmp:/tmp
+      - ./test-data:/test-data
     ports:
-      - 5000:5000
+      - 5540:5540
+
+volumes:
+  tmp:
+  rihomedir:

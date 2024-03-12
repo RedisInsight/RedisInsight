@@ -24,7 +24,7 @@ import { isEqualBuffers, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { selectedGroupSelector, selectedConsumerSelector } from 'uiSrc/slices/browser/stream'
 import { prepareDataForClaimRequest, getDefaultConsumer, ClaimTimeOptions } from 'uiSrc/utils/streamUtils'
-import { ClaimPendingEntryDto, ClaimPendingEntriesResponse, ConsumerDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { ClaimPendingEntryDto, ClaimPendingEntriesResponse, ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
 

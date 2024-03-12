@@ -29,6 +29,9 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.cloudSso]: {
         flag: false
       },
+      [FeatureFlags.cloudSsoRecommendedSettings]: {
+        flag: false
+      },
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Chance } from 'chance';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage } from '../../../../pageObjects';
-import { rte } from '../../../../helpers/constants';
+import { MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Telemetry } from '../../../../helpers/telemetry';
@@ -16,8 +16,8 @@ const telemetry = new Telemetry();
 let indexName = chance.word({ length: 5 });
 let keyName = chance.word({ length: 5 });
 const logger = telemetry.createLogger();
-const telemetryEvent = 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED';
-const telemetryPath = 'static/guides/quick-guides/document/working-with-hashes.md';
+const telemetryEvent = 'EXPLORE_PANEL_TUTORIAL_OPENED';
+const telemetryPath = 'static/tutorials/ds/hashes.md';
 const expectedProperties = [
     'databaseId',
     'path'
@@ -38,32 +38,31 @@ fixture `Default scripts area at Workbench`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
 test
-    .requestHooks(logger)('Verify that user can edit and run automatically added "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
-        indexName = chance.word({ length: 5 });
+    .requestHooks(logger)('Verify that user can run automatically  "FT._LIST" and "FT.INFO {index}" scripts in Workbench and see the results', async t => {
+        indexName = 'idx:schools';
         keyName = chance.word({ length: 5 });
         const commandsForSend = [
             `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,
             `HMSET product:1 name "${keyName}"`,
             `HMSET product:2 name "${keyName}"`
         ];
+        const addedScript = 'FT._LIST \n' +
+
+            `FT.INFO "${indexName}"`;
         // Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
-        await t.click(workbenchPage.documentButtonInQuickGuides);
-        await t.click(workbenchPage.internalLinkWorkingWithHashes);
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.click(tutorials.dataStructureAccordionTutorialButton);
+        await t.click(tutorials.internalLinkWorkingWithHashes);
 
         // Verify that telemetry event 'WORKBENCH_ENABLEMENT_AREA_GUIDE_OPENED' sent and has all expected properties
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
         await telemetry.verifyEventPropertyValue(telemetryEvent, 'path', telemetryPath, logger);
 
-        await t.click(workbenchPage.preselectIndexInformation);
-        // Replace the {index} with indexName value in script and send
-        let addedScript = await workbenchPage.queryInputScriptArea.nth(2).textContent;
-        addedScript = addedScript.replace('"idx:schools"', indexName);
-        addedScript = addedScript.replace(/\s/g, ' ');
-        await t.click(workbenchPage.submitCommandButton);
-        await t.pressKey('ctrl+a delete');
         await workbenchPage.sendCommandInWorkbench(addedScript);
+
         // Check the FT._LIST result
         await t.expect(workbenchPage.queryTextResult.textContent).contains(indexName, 'The result of the FT._LIST command not found');
         // Check the FT.INFO result
@@ -82,10 +81,7 @@ test('Verify that user can edit and run automatically added "Search" script in W
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
     // Run automatically added FT.SEARCH script with edits
-    await t.click(workbenchPage.documentButtonInQuickGuides);
-    await t.click(workbenchPage.internalLinkWorkingWithHashes);
-    await t.click(workbenchPage.preselectExactSearch);
-    await t.pressKey('ctrl+a delete');
+
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     // Check the FT.SEARCH result
     await t.switchToIframe(workbenchPage.iframe);
@@ -106,10 +102,6 @@ test('Verify that user can edit and run automatically added "Aggregate" script i
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'), 0.5);
     // Run automatically added FT.Aggregate script with edits
-    await t.click(workbenchPage.documentButtonInQuickGuides);
-    await t.click(workbenchPage.internalLinkWorkingWithHashes);
-    await t.click(workbenchPage.preselectGroupBy);
-    await t.pressKey('ctrl+a delete');
     await workbenchPage.sendCommandInWorkbench(searchCommand);
     // Check the FT.Aggregate result
     await t.switchToIframe(workbenchPage.iframe);

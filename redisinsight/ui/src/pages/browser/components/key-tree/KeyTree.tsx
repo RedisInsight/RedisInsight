@@ -19,7 +19,7 @@ import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { deleteKeyAction, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
@@ -36,7 +36,6 @@ export interface Props {
   ) => void
   onDelete: (key: RedisResponseBuffer) => void
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 export const firstPanelId = 'tree'
@@ -56,7 +55,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
     commonFilterType,
     deleting,
     onAddKeyPanel,
-    onBulkActionsPanel,
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -173,7 +171,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
           total={keysState.total}
           scanned={keysState.scanned}
           onAddKeyPanel={onAddKeyPanel}
-          onBulkActionsPanel={onBulkActionsPanel}
         />
       )
     }
@@ -212,4 +209,4 @@ const KeyTree = forwardRef((props: Props, ref) => {
   )
 })
 
-export default KeyTree
+export default React.memo(KeyTree)

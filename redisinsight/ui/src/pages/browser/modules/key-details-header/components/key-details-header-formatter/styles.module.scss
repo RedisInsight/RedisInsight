@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .container {
   margin-right: 12px;
   height: 30px;
@@ -38,6 +40,12 @@
   .optionText {
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+@include insights-open {
+  .container {
+    margin-right: 8px;
   }
 }
 
@@ -86,6 +94,13 @@
   margin-top: 2px;
   width: 20px !important;
   height: 20px !important;
+}
+
+@include insights-open {
+  .controlsIcon {
+    width: 18px !important;
+    height: 18px !important;
+  }
 }
 
 .dropdownDisplaySmall {

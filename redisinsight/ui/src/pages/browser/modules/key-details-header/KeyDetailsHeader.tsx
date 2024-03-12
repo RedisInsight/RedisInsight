@@ -30,8 +30,6 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { resetStringValue } from 'uiSrc/slices/browser/string'
-import { Nullable } from 'uiSrc/utils'
 import { KeyDetailsHeaderFormatter } from './components/key-details-header-formatter'
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
@@ -61,7 +59,7 @@ const KeyDetailsHeader = ({
   keyType,
   Actions,
 }: KeyDetailsHeaderProps) => {
-  const { loading, lastRefreshTime } = useSelector(selectedKeySelector)
+  const { refreshing, loading, lastRefreshTime, isRefreshDisabled } = useSelector(selectedKeySelector)
   const {
     type,
     length,
@@ -169,7 +167,8 @@ const KeyDetailsHeader = ({
                   <div className={styles.subtitleActionBtns}>
                     <AutoRefresh
                       postfix={type}
-                      loading={loading}
+                      disabled={isRefreshDisabled}
+                      loading={loading || refreshing}
                       lastRefreshTime={lastRefreshTime}
                       displayText={width > HIDE_LAST_REFRESH}
                       containerClassName={styles.actionBtn}

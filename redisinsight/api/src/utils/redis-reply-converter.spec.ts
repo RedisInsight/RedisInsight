@@ -1,33 +1,9 @@
 import {
-  mockRedisClusterNodesResponse,
-  mockRedisServerInfoResponse,
   mockStandaloneRedisInfoReply,
 } from 'src/__mocks__';
-import { IRedisClusterNode, RedisClusterNodeLinkState } from 'src/models';
 import {
-  convertBulkStringsToObject,
   convertRedisInfoReplyToObject,
-  parseClusterNodes,
 } from './redis-reply-converter';
-
-const mockRedisClusterNodesDto: IRedisClusterNode[] = [
-  {
-    id: '07c37dfeb235213a872192d90877d0cd55635b91',
-    host: '127.0.0.1',
-    port: 30004,
-    replicaOf: 'e7d1eecce10fd6bb5eb35b9f99a514335d9ba9ca',
-    linkState: RedisClusterNodeLinkState.Connected,
-    slot: undefined,
-  },
-  {
-    id: 'e7d1eecce10fd6bb5eb35b9f99a514335d9ba9ca',
-    host: '127.0.0.1',
-    port: 30001,
-    replicaOf: undefined,
-    linkState: RedisClusterNodeLinkState.Connected,
-    slot: '0-16383',
-  },
-];
 
 const mockRedisServerInfoDto = {
   redis_version: '6.0.5',
@@ -79,19 +55,6 @@ const mockStandaloneRedisInfoDto = {
 
 const mockIncorrectString = '$6\r\nfoobar\r\n';
 
-describe('convertBulkStringsToObject', () => {
-  it('should return object in a defined format', async () => {
-    const result = convertBulkStringsToObject(mockRedisServerInfoResponse);
-
-    expect(result).toEqual(mockRedisServerInfoDto);
-  });
-  it('should return empty object in case of incorrect string', async () => {
-    const result = convertBulkStringsToObject(mockIncorrectString);
-
-    expect(result).toEqual({});
-  });
-});
-
 describe('convertRedisReplyInfoToObject', () => {
   it('should return object in a defined format', async () => {
     const result = convertRedisInfoReplyToObject(mockStandaloneRedisInfoReply);
@@ -102,18 +65,5 @@ describe('convertRedisReplyInfoToObject', () => {
     const result = convertRedisInfoReplyToObject(mockIncorrectString);
 
     expect(result).toEqual({});
-  });
-});
-
-describe('parseClusterNodes', () => {
-  it('should return array object in a defined format', async () => {
-    const result = parseClusterNodes(mockRedisClusterNodesResponse);
-
-    expect(result).toEqual(mockRedisClusterNodesDto);
-  });
-  it('should return empty array when incorrect string passed', async () => {
-    const result = parseClusterNodes(mockIncorrectString);
-
-    expect(result).toEqual([]);
   });
 });

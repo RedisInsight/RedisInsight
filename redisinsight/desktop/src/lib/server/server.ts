@@ -24,7 +24,7 @@ let beApp: any
 export const launchApiServer = async () => {
   try {
     const detectPortConst = await getPort({ port: portNumbers(port, port + 1_000) })
-    process.env.API_PORT = detectPortConst?.toString()
+    process.env.RI_APP_PORT = detectPortConst?.toString()
 
     if (process.env.APPIMAGE) {
       process.env.BUILD_PACKAGE = 'appimage'
@@ -32,7 +32,7 @@ export const launchApiServer = async () => {
 
     log.info('Available port:', detectPortConst)
 
-    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server()
+    const { gracefulShutdown: gracefulShutdownFn, app: apiApp } = await server(detectPortConst)
     gracefulShutdown = gracefulShutdownFn
     beApp = apiApp
 

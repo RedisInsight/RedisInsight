@@ -1,0 +1,33 @@
+.content {
+  margin-top: 70px;
+  height: calc(100% - 70px) !important;
+  background-color: var(--euiColorEmptyShade) !important;
+  border-left: none !important;
+  border-radius: 4px 0 0 4px;
+  box-shadow: -5px 0px 16px rgba(0, 0, 0, 0.16) !important;
+  min-width: 476px !important;
+
+  :global(.euiFlyout__closeButton) {
+    background-color: transparent;
+    height: 10px;
+    width: 10px;
+    right: 20px;
+    top: 20px;
+  }
+
+  :global(.euiFlyoutBody__overflowContent) {
+    height: 100%;
+  }
+}
+
+:global {
+  img {
+    max-width: 100%;
+  }
+}
+
+.onboardingAnchor {
+  position: absolute;
+  top: 80px;
+  right: 0;
+}

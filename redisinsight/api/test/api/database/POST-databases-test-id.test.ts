@@ -563,4 +563,42 @@ describe(`POST /databases/test/:id`, () => {
       });
     });
   });
+  describe('SENTINEL', () => {
+    describe('PASS', function () {
+      requirements('rte.type=SENTINEL', '!rte.tls', 'rte.pass');
+      it('Should test connection without full sentinel master information', async () => {
+        const dbName = constants.getRandomString();
+
+        await validateApiCall({
+          endpoint,
+          data: {
+            name: dbName,
+            sentinelMaster: {
+              password: constants.TEST_SENTINEL_MASTER_PASS || null,
+            },
+          },
+        });
+      });
+
+      it('Should throw Unauthorized error', async () => {
+        const dbName = constants.getRandomString();
+
+        await validateApiCall({
+          endpoint,
+          statusCode: 401,
+          data: {
+            name: dbName,
+            sentinelMaster: {
+              password: 'incorrect password'
+            },
+          },
+          responseBody: {
+            statusCode: 401,
+            message: 'Failed to authenticate, please check the username or password.',
+            error: 'Unauthorized'
+          },
+        });
+      });
+    });
+  });
 });

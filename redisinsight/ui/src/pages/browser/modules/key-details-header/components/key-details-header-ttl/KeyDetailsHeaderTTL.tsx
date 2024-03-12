@@ -78,7 +78,7 @@ const KeyDetailsHeaderTTL = ({
   }
 
   const appendTTLEditing = () =>
-    (!ttlIsEditing ? <EuiIcon type="pencil" color="subdued" /> : '')
+    (!ttlIsEditing ? <EuiIcon className={styles.iconPencil} type="pencil" color="subdued" /> : '')
 
   return (
 

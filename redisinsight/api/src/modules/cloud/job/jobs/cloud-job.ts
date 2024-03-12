@@ -24,6 +24,8 @@ export class CloudJobOptions {
   stateCallbacks?: ((self: CloudJob) => any)[] = [];
 
   name?: CloudJobName;
+
+  child?: boolean;
 }
 
 export abstract class CloudJob {
@@ -57,16 +59,20 @@ export abstract class CloudJob {
     }
 
     this.debounce = debounce(() => {
-      try {
-        (this.options?.stateCallbacks || []).forEach((cb) => {
-          cb?.(this)?.catch?.(() => {});
-        });
-      } catch (e) {
-        // silently ignore callback
-      }
+      this.triggerChangeStateCallbacks();
     }, 1_000, {
       maxWait: 2_000,
     });
+  }
+
+  private triggerChangeStateCallbacks() {
+    try {
+      (this.options?.stateCallbacks || []).forEach((cb) => {
+        cb?.(this)?.catch?.(() => {});
+      });
+    } catch (e) {
+      // silently ignore callback
+    }
   }
 
   public async run() {
@@ -127,8 +133,9 @@ export abstract class CloudJob {
     return new TargetJob(
       {
         ...this.options,
-        stateCallbacks: [() => this.changeState()],
         ...options,
+        stateCallbacks: [() => this.changeState()],
+        child: true,
       },
       data,
       this.dependencies,
@@ -154,7 +161,11 @@ export abstract class CloudJob {
   protected changeState(state = {}) {
     Object.entries(state).forEach(([key, value]) => { this[key] = value; });
 
-    this.debounce();
+    if (this.options.child) {
+      this.triggerChangeStateCallbacks();
+    } else {
+      this.debounce();
+    }
   }
 
   protected checkSignal() {

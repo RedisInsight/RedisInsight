@@ -21,7 +21,12 @@ import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TableCellAlignment, TEXT
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
-import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+  selectedKeySelector,
+  setSelectedKeyRefreshDisabled
+} from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { ZsetMember } from 'uiSrc/slices/interfaces/zset'
 import {
@@ -41,7 +46,7 @@ import { IColumnSearchState, ITableColumn, RelativeWidthSizes } from 'uiSrc/comp
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/dto'
+import { AddMembersToZSetDto, SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
 import PopoverDelete from '../../../../../components/popover-delete/PopoverDelete'
 
 import styles from './styles.module.scss'
@@ -149,6 +154,7 @@ const ZSetDetailsTable = (props: Props) => {
       return item
     })
     setMembers(newMemberState)
+    dispatch(setSelectedKeyRefreshDisabled(editing))
     cellCache.clearAll()
   }
 

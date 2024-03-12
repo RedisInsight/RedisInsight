@@ -1,3 +1,5 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
 .container {
   height: 36px;
   width: 200px;
@@ -58,6 +60,15 @@
         width: 16px;
         height: 12px;
       }
+    }
+  }
+}
+
+@include insights-open {
+  .container {
+    width: 154px !important;
+    :global(.euiFormControlLayout__childrenWrapper) {
+      width: 154px !important;
     }
   }
 }
@@ -159,6 +170,19 @@
 
     &:hover {
       transform: translateY(0) !important;
+    }
+  }
+}
+
+.select {
+  width: 350px;
+  position: absolute;
+  z-index: 1;
+
+  :global {
+    .euiFormControlLayout__childrenWrapper {
+      width: 200px;
+      position: relative;
     }
   }
 }

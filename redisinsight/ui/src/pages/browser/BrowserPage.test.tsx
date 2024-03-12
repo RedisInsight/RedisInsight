@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { render, screen, fireEvent, mockedStore, cleanup, act, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { RootState } from 'uiSrc/slices/store'
-import { toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
+import { setSelectedKeyRefreshDisabled, toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import BrowserPage from './BrowserPage'
 import KeyList, { Props as KeyListProps } from './components/key-list/KeyList'
 
@@ -198,7 +198,7 @@ describe('KeyDetailsWrapper', () => {
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
-    expect(store.getActions()).toEqual([...afterRenderActions])
+    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
 
     await act(async () => {
       fireEvent.mouseOver(screen.getByTestId('apply-btn'))
@@ -259,7 +259,7 @@ describe('KeyDetailsWrapper', () => {
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
-    expect(store.getActions()).toEqual([...afterRenderActions])
+    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
   })
 
   it('Verify that user cannot save key value (List) with unprintable characters', () => {
@@ -313,7 +313,7 @@ describe('KeyDetailsWrapper', () => {
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
 
-    expect(store.getActions()).toEqual([...afterRenderActions])
+    expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
   })
 })
 

@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockCommonClientMetadata, mockDatabaseConnectionService } from 'src/__mocks__';
+import { mockCommonClientMetadata, mockDatabaseClientFactory } from 'src/__mocks__';
 import { RedisClientProvider } from 'src/modules/pub-sub/providers/redis-client.provider';
-import { RedisService } from 'src/modules/redis/redis.service';
-import { RedisClient } from 'src/modules/pub-sub/model/redis-client';
-import { DatabaseConnectionService } from 'src/modules/database/database-connection.service';
+import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-subscriber';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 describe('RedisClientProvider', () => {
   let service: RedisClientProvider;
@@ -15,12 +14,8 @@ describe('RedisClientProvider', () => {
       providers: [
         RedisClientProvider,
         {
-          provide: RedisService,
-          useFactory: () => ({}),
-        },
-        {
-          provide: DatabaseConnectionService,
-          useFactory: mockDatabaseConnectionService,
+          provide: DatabaseClientFactory,
+          useFactory: mockDatabaseClientFactory,
         },
       ],
     }).compile();
@@ -30,8 +25,8 @@ describe('RedisClientProvider', () => {
 
   describe('createClient', () => {
     it('should create redis client', async () => {
-      const redisClient = service.createClient(mockCommonClientMetadata);
-      expect(redisClient).toBeInstanceOf(RedisClient);
+      const redisClientSubscriber = service.createClient(mockCommonClientMetadata);
+      expect(redisClientSubscriber).toBeInstanceOf(RedisClientSubscriber);
     });
   });
 });

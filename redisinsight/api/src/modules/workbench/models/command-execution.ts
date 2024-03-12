@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDefined, IsInt, IsOptional, Min } from 'class-validator';
+import {
+  IsDefined, IsInt, IsOptional, Min,
+} from 'class-validator';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { ClusterNodeRole, RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { ClusterSingleNodeOptions } from 'src/modules/cli/dto/cli.dto';
+import { RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
 import { Expose } from 'class-transformer';
 
 export class ResultsSummary {
@@ -87,21 +88,6 @@ export class CommandExecution {
   })
   @Expose()
   isNotStored?: boolean;
-
-  @ApiPropertyOptional({
-    description: 'Nodes roles where command was executed',
-    default: ClusterNodeRole.All,
-    enum: ClusterNodeRole,
-  })
-  @Expose()
-  role?: ClusterNodeRole;
-
-  @ApiPropertyOptional({
-    description: 'Node where command was executed',
-    type: ClusterSingleNodeOptions,
-  })
-  @Expose()
-  nodeOptions?: ClusterSingleNodeOptions;
 
   @ApiProperty({
     description: 'Date of command execution',

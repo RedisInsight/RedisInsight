@@ -66,7 +66,7 @@ describe('StandaloneScannerStrategy', () => {
   });
 
   describe('getKeys', () => {
-    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true };
+    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true, scanThreshold: 1000 };
     it('should return appropriate value with filter by type', async () => {
       const args = { ...getKeysDto, type: RedisDataType.String, match: 'pattern*' };
       jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
@@ -223,7 +223,7 @@ describe('StandaloneScannerStrategy', () => {
           cursor: 1,
           total: 1000000,
           scanned:
-            Math.trunc(REDIS_SCAN_CONFIG.countThreshold / getKeysDto.count)
+            Math.trunc(getKeysDto.scanThreshold / getKeysDto.count)
             * getKeysDto.count
             + getKeysDto.count,
           keys: [],
@@ -248,7 +248,7 @@ describe('StandaloneScannerStrategy', () => {
           cursor: 1,
           total: null,
           scanned:
-            Math.trunc(REDIS_SCAN_CONFIG.countThreshold / getKeysDto.count)
+            Math.trunc(getKeysDto.scanThreshold / getKeysDto.count)
             * getKeysDto.count
             + getKeysDto.count,
           keys: [],
@@ -265,6 +265,7 @@ describe('StandaloneScannerStrategy', () => {
       const result = await strategy.getKeys(mockStandaloneRedisClient, {
         cursor: '0',
         type: RedisDataType.String,
+        scanThreshold: 1000,
       });
 
       expect(strategy['scan']).toHaveBeenLastCalledWith(
@@ -272,6 +273,7 @@ describe('StandaloneScannerStrategy', () => {
         mockNodeEmptyResult,
         '*',
         REDIS_SCAN_CONFIG.countDefault,
+        1000,
         RedisDataType.String,
       );
       expect(result).toEqual([mockNodeEmptyResult]);

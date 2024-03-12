@@ -7,7 +7,7 @@ import { RedisDataType } from './key.dto';
 import config, { Config } from 'src/utils/config';
 
 const scanConfig = config.get('redis_scan') as Config['redis_scan'];
-const { countThreshold } = scanConfig;
+const { countThreshold, countThresholdMax } = scanConfig;
 
 export class GetKeysDto {
   @ApiProperty({
@@ -72,6 +72,6 @@ export class GetKeysDto {
     default: true,
   })
   @IsOptional()
-  @Max(1000)
+  @Max(countThresholdMax)
   countThreshold: number = countThreshold;
 }

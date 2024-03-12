@@ -138,7 +138,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       return [node];
     }
 
-    await this.scan(client, node, match, count, args.scanThreshold, args.type);
+    await this.scan(client, node, match, count, args.countThreshold, args.type);
 
     if (node.keys.length && args.keysInfo) {
       node.keys = await this.getKeysInfo(client, node.keys, args.type);

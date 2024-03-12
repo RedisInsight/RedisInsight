@@ -108,7 +108,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
   public async getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<GetKeysWithDetailsResponse[]> {
     const match = args.match !== undefined ? args.match : '*';
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
-    const scanThreshold = args.scanThreshold || REDIS_SCAN_CONFIG.scanThreshold;
+    const scanThreshold = args.countThreshold || REDIS_SCAN_CONFIG.countThreshold;
     const nodes = await this.getNodesToScan(client, args.cursor);
 
     await this.calculateNodesTotalKeys(nodes);

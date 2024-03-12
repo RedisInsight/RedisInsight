@@ -87,7 +87,7 @@ describe('Cluster Scanner Strategy', () => {
   });
 
   describe('getKeys', () => {
-    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true, scanThreshold: 1000 };
+    const getKeysDto: GetKeysDto = { cursor: '0', count: 15, keysInfo: true, countThreshold: 1000 };
 
     it('should return appropriate value with filter by type', async () => {
       const args = { ...getKeysDto, type: RedisDataType.String, match: 'pattern*' };
@@ -330,7 +330,7 @@ describe('Cluster Scanner Strategy', () => {
       const expectedNode3CallsBeforeThreshold = Math.trunc(
         // -5 is number of scans for node1 (3) and node2 (2)
         // since threshold applied for sum of all nodes scanned
-        getKeysDto.scanThreshold / args.count - 5,
+        getKeysDto.countThreshold / args.count - 5,
       );
 
       jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse3000);
@@ -393,7 +393,7 @@ describe('Cluster Scanner Strategy', () => {
           total: mockGetTotalResponse1000000,
           cursor: 1,
           scanned:
-            Math.trunc(getKeysDto.scanThreshold / args.count)
+            Math.trunc(getKeysDto.countThreshold / args.count)
               * args.count
               - 5 * args.count, // 5 = scan for other shards (3 and 2)
           keys: [],

@@ -5,6 +5,7 @@ import { NotificationEntity } from "../entities/notification.entity";
 import { plainToClass } from "class-transformer";
 import { NotificationType } from "../constants";
 import { Notification } from "../models/notification";
+import { SessionMetadata } from "src/common/models";
 
 export class LocalNotificationRepository extends NotificationRepository {
   constructor(
@@ -14,7 +15,7 @@ export class LocalNotificationRepository extends NotificationRepository {
     super();
   }
 
-  async getNotifications(): Promise<{ notifications: Notification[]; totalUnread: number; } {
+  async getNotifications(_: SessionMetadata): Promise<{ notifications: Notification[]; totalUnread: number; } {
     const notifications = await this.repository
       .createQueryBuilder('n')
       .orderBy('timestamp', 'DESC')
@@ -32,7 +33,7 @@ export class LocalNotificationRepository extends NotificationRepository {
     };
   }
 
-  async readNotifications(notificationType?: NotificationType, timestamp?: number): Promise<{ notifications: Notification[]; totalUnread: number; }>{
+  async readNotifications(_: SessionMetadata, notificationType?: NotificationType, timestamp?: number): Promise<{ notifications: Notification[]; totalUnread: number; }>{
     const query: Record<string, any> = {};
 
     if (notificationType) {
@@ -61,7 +62,7 @@ export class LocalNotificationRepository extends NotificationRepository {
     }
   }
 
-  async getGlobalNotifications(): Promise<Notification[]> {
+  async getGlobalNotifications(_: SessionMetadata): Promise<Notification[]> {
     const entities = await this.repository
       .createQueryBuilder('n')
       .where({ type: NotificationType.Global })
@@ -71,7 +72,7 @@ export class LocalNotificationRepository extends NotificationRepository {
     return entities.map(ne => plainToClass(Notification, ne));
   }
 
-  async deleteGlobalNotifications(): Promise<void> {
+  async deleteGlobalNotifications(_: SessionMetadata): Promise<void> {
      await this.repository
         .createQueryBuilder('n')
         .delete()
@@ -79,11 +80,11 @@ export class LocalNotificationRepository extends NotificationRepository {
         .execute();
   }
 
-  async insertNotifications(notifications: Notification[]): Promise<void> {
+  async insertNotifications(_: SessionMetadata, notifications: Notification[]): Promise<void> {
     await this.repository.insert(notifications.map(n => plainToClass(NotificationEntity, n)));
   }
 
-  async getTotalUnread(): Promise<number> {
+  async getTotalUnread(_: SessionMetadata): Promise<number> {
     const totalUnread = await this.repository
       .createQueryBuilder()
       .where({ read: false })

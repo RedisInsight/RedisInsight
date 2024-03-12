@@ -1,11 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
 import {
-  mockAppSettingsInitial,
   mockRedisNoPermError,
-  mockSettingsService,
   mockBrowserClientMetadata,
-  MockType,
   mockClusterRedisClient,
   generateMockRedisClient,
   MockRedisClient,
@@ -15,7 +12,6 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { GetKeyInfoResponse, GetKeysDto, RedisDataType } from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.interface';
-import { SettingsService } from 'src/modules/settings/settings.service';
 import * as Utils from 'src/modules/redis/utils/keys.util';
 import { ClusterScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/cluster.scanner.strategy';
 
@@ -67,7 +63,6 @@ const mockKeyInfo: GetKeyInfoResponse = {
 
 describe('Cluster Scanner Strategy', () => {
   let strategy: ClusterScannerStrategy;
-  let settingsService: MockType<SettingsService>;
   let mockNode1: MockRedisClient;
   let mockNode2: MockRedisClient;
   let mockNode3: MockRedisClient;
@@ -78,16 +73,10 @@ describe('Cluster Scanner Strategy', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ClusterScannerStrategy,
-        {
-          provide: SettingsService,
-          useFactory: mockSettingsService,
-        },
       ],
     }).compile();
 
     strategy = module.get(ClusterScannerStrategy);
-    settingsService = module.get(SettingsService);
-    settingsService.getAppSettings.mockResolvedValue(mockAppSettingsInitial);
     mockGetKeysInfoFn.mockClear();
 
     mockNode1 = generateMockRedisClient(mockBrowserClientMetadata, jest.fn(), mockClusterNodes[0]);

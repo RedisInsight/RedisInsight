@@ -105,9 +105,12 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    setFirstDataLoaded(true)
+    if (keysState.lastRefreshTime) {
+      setFirstDataLoaded(true)
+    }
+
     setItems(parseKeyNames(keysState.keys))
-  }, [sorting, delimiter, keysState.lastRefreshTime])
+  }, [keysState.lastRefreshTime])
 
   useEffect(() => {
     openSelectedKey(selectedKeyName)
@@ -160,20 +163,15 @@ const KeyTree = forwardRef((props: Props, ref) => {
     })
   }
 
-  if (keysState.lastRefreshTime && keysState.keys.length === 0) {
-    const NoItemsMessage = () => {
-      if (loading || !firstDataLoaded || !keysState.lastRefreshTime) {
-        return <span>loading...</span>
-      }
-
-      return (
-        <NoKeysMessage
-          total={keysState.total}
-          scanned={keysState.scanned}
-          onAddKeyPanel={onAddKeyPanel}
-        />
-      )
-    }
+  if (keysState.keys.length === 0) {
+    const NoItemsMessage = () => (
+      <NoKeysMessage
+        isLoading={loading || !firstDataLoaded}
+        total={keysState.total}
+        scanned={keysState.scanned}
+        onAddKeyPanel={onAddKeyPanel}
+      />
+    )
 
     return (
       <div className={cx(styles.content)}>
@@ -195,7 +193,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
           deleting={deleting}
           statusSelected={selectedKeyName}
           statusOpen={statusOpen}
-          loading={loading || constructingTree || !keysState.lastRefreshTime}
+          loading={loading || constructingTree}
           commonFilterType={commonFilterType}
           setConstructingTree={setConstructingTree}
           webworkerFn={constructKeysToTree}

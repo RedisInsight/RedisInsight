@@ -108,7 +108,7 @@ const KeyList = forwardRef((props: Props, ref) => {
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
 
-    if (!isNotRendered.current && !loading) {
+    if (!isNotRendered.current && !loading && keysState.lastRefreshTime) {
       setFirstDataLoaded(true)
     }
 
@@ -116,7 +116,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
       cancelAllMetadataRequests()
-      setFirstDataLoaded(true)
       rerender({})
       return
     }
@@ -135,6 +134,7 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const NoItemsMessage = () => (
     <NoKeysMessage
+      isLoading={loading || !firstDataLoaded}
       total={keysState.total}
       scanned={keysState.scanned}
       onAddKeyPanel={onAddKeyPanel}
@@ -144,10 +144,6 @@ const KeyList = forwardRef((props: Props, ref) => {
   const getNoItemsMessage = () => {
     if (isNotRendered.current) {
       return ''
-    }
-
-    if (!keysState.lastRefreshTime || itemsRef.current.length < keysState.keys.length) {
-      return 'loading...'
     }
 
     return <NoItemsMessage />

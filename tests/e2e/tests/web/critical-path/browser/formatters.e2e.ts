@@ -69,7 +69,7 @@ formattersHighlightedSet.forEach(formatter => {
 });
 fromBinaryFormattersSet.forEach(formatter => {
     test(`Verify that user can see highlighted key details in ${formatter.format} format`, async t => {
-        // Verify for Msgpack, Protobuf, Java serialized, Pickle formats
+        // Verify for Msgpack, Protobuf, Java serialized, Pickle, Vector 32-bit, Vector 64-bit formats
         // Open Hash key details
         await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
         // Add valid value in HEX format for convertion
@@ -190,7 +190,7 @@ test('Verify that user can format different data types of PHP serialized', async
 });
 notEditableFormattersSet.forEach(formatter => {
     test(`Verify that user see edit icon disabled for all keys when ${formatter.format} selected`, async t => {
-        // Verify for Protobuf, Java serialized, Pickle
+        // Verify for Protobuf, Java serialized, Pickle, Vector 32-bit, Vector 64-bit
         // Verify for Hash, List, ZSet, String keys
         for (const key of keysData) {
             if (key.textType === 'Hash' || key.textType === 'List' || key.textType === 'String') {

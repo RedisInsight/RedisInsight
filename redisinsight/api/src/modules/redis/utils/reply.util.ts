@@ -26,7 +26,7 @@ export const convertArrayReplyToObject = (input: string[]): { [key: string]: any
   2,
 ).reduce((prev: any, current: string[]) => {
   const [key, value] = current;
-  return { ...prev, [key.toLowerCase()]: value };
+  return { ...prev, [key.toString().toLowerCase()]: value };
 }, {});
 
 /**

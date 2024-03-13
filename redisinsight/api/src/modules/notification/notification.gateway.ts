@@ -28,7 +28,8 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
 
   async handleConnection(client: Socket): Promise<void> {
     this.logger.log(`Client connected: ${client.id}`);
-    this.globalNotificationsProvider.init();
+    // TODO: [USER_CONTEXT] how to get middleware into socket connection?
+    this.globalNotificationsProvider.init({sessionId: '', userId: '' });
   }
 
   async handleDisconnect(client: Socket): Promise<void> {

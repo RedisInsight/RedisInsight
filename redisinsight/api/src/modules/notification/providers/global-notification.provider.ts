@@ -8,13 +8,12 @@ import {
 import { getFile } from 'src/utils';
 import { plainToClass } from 'class-transformer';
 import { Validator } from 'class-validator';
-import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
 import { NotificationEvents, NotificationType } from 'src/modules/notification/constants';
 import { Notification } from 'src/modules/notification/models/notification';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateNotificationsDto } from 'src/modules/notification/dto';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { NotificationRepository } from '../repositories/notification.repository';
+import { SessionMetadata } from 'src/common/models';
 
 const NOTIFICATIONS_CONFIG = config.get('notifications');
 
@@ -31,19 +30,19 @@ export class GlobalNotificationProvider {
     private eventEmitter: EventEmitter2,
   ) {}
 
-  init() {
+  init(sessionMetadata: SessionMetadata) {
     if (this.interval) {
       return;
     }
 
     this.interval = setInterval(() => {
-      this.sync().catch();
+      this.sync(sessionMetadata).catch();
     }, NOTIFICATIONS_CONFIG.syncInterval);
 
-    this.sync().catch();
+    this.sync(sessionMetadata).catch();
   }
 
-  async sync() {
+  async sync(sessionMetadata: SessionMetadata) {
     try {
       const remoteNotificationsDto = await this.getNotificationsFromRemote();
 
@@ -58,10 +57,10 @@ export class GlobalNotificationProvider {
         'timestamp',
       );
 
-      const currentNotifications = keyBy(await this.notificationRepository.getGlobalNotifications(),
+      const currentNotifications = keyBy(await this.notificationRepository.getGlobalNotifications(sessionMetadata),
       'timestamp');
 
-      await this.notificationRepository.deleteGlobalNotifications();
+      await this.notificationRepository.deleteGlobalNotifications(sessionMetadata);
 
       // process
 
@@ -75,7 +74,7 @@ export class GlobalNotificationProvider {
         }
       });
 
-      await this.notificationRepository.insertNotifications(values(toInsert));
+      await this.notificationRepository.insertNotifications(sessionMetadata, values(toInsert));
 
       this.eventEmitter.emit(NotificationEvents.NewNotifications, orderBy(
         newNotifications,

@@ -15,7 +15,7 @@ export class LocalNotificationRepository extends NotificationRepository {
     super();
   }
 
-  async getNotifications(_: SessionMetadata): Promise<{ notifications: Notification[]; totalUnread: number; } {
+  async getNotifications(_: SessionMetadata): Promise<{ notifications: Notification[]; totalUnread: number; }> {
     const notifications = await this.repository
       .createQueryBuilder('n')
       .orderBy('timestamp', 'DESC')

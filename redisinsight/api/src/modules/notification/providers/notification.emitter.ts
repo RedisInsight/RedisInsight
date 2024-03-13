@@ -3,6 +3,7 @@ import { NotificationEvents, NotificationServerEvents } from 'src/modules/notifi
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { NotificationDto, NotificationsDto } from 'src/modules/notification/dto';
 import { NotificationRepository } from '../repositories/notification.repository';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class NotificationEmitter {
@@ -14,7 +15,7 @@ export class NotificationEmitter {
   ) {}
 
   @OnEvent(NotificationEvents.NewNotifications)
-  async notification(notifications: NotificationDto[]) {
+  async notification(sessionMetadata: SessionMetadata, notifications: NotificationDto[]) {
     try {
       if (!notifications?.length) {
         return;
@@ -22,7 +23,7 @@ export class NotificationEmitter {
 
       this.logger.debug(`${notifications.length} new notification(s) to emit`);
 
-      const totalUnread = await this.notificationRepository.getTotalUnread();
+      const totalUnread = await this.notificationRepository.getTotalUnread(sessionMetadata);
 
       this.eventEmitter.emit(NotificationServerEvents.Notification, new NotificationsDto({
         notifications,

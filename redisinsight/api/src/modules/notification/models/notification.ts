@@ -1,7 +1,6 @@
 import { NotificationType } from 'src/modules/notification/constants';
 
 export class Notification {
-
   type: NotificationType;
 
   timestamp: number;

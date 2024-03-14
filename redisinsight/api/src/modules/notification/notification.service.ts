@@ -1,8 +1,8 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
 import { plainToClass } from 'class-transformer';
-import { NotificationRepository } from './repositories/notification.repository';
 import { SessionMetadata } from 'src/common/models';
+import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
+import { NotificationRepository } from './repositories/notification.repository';
 // import config from 'src/utils/config';
 
 // const NOTIFICATIONS_CONFIG = config.get('notifications');
@@ -12,14 +12,14 @@ export class NotificationService {
   private logger: Logger = new Logger('NotificationService');
 
   constructor(
-    private readonly notificationRepository: NotificationRepository
+    private readonly notificationRepository: NotificationRepository,
   ) {}
 
   async getNotifications(sessionMetadata: SessionMetadata): Promise<NotificationsDto> {
     this.logger.debug('Getting notifications list.');
 
     try {
-     const { notifications, totalUnread } = await this.notificationRepository.getNotifications(sessionMetadata);
+      const { notifications, totalUnread } = await this.notificationRepository.getNotifications(sessionMetadata);
 
       return plainToClass(NotificationsDto, {
         notifications,
@@ -43,7 +43,8 @@ export class NotificationService {
       this.logger.debug('Updating "read=true" status for notification(s).');
       const { type, timestamp } = dto;
 
-      const { notifications, totalUnread } = await this.notificationRepository.readNotifications(sessionMetadata, type, timestamp);
+      const { notifications, totalUnread } = await
+      this.notificationRepository.readNotifications(sessionMetadata, type, timestamp);
 
       return new NotificationsDto(plainToClass(NotificationsDto, {
         notifications,

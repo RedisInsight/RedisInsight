@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockRepository,
   MockType,
 } from 'src/__mocks__';
 import { GlobalNotificationProvider } from 'src/modules/notification/providers/global-notification.provider';
@@ -73,7 +72,7 @@ const mockNotificationRepository: MockType<Partial<NotificationRepository>> = {
   getGlobalNotifications: jest.fn(),
   deleteGlobalNotifications: jest.fn(),
   insertNotifications: jest.fn(),
-}
+};
 
 describe('GlobalNotificationProvider', () => {
   let service: GlobalNotificationProvider;

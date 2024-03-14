@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { NotificationEvents, NotificationServerEvents } from 'src/modules/notification/constants';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { SessionMetadata } from 'src/common/models';
+import { NotificationEvents, NotificationServerEvents } from 'src/modules/notification/constants';
 import { NotificationDto, NotificationsDto } from 'src/modules/notification/dto';
 import { NotificationRepository } from '../repositories/notification.repository';
-import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class NotificationEmitter {

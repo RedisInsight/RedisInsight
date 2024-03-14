@@ -15,7 +15,7 @@ export class NotificationModule {
       providers: [
         {
           provide: NotificationRepository,
-          useClass: notificationRepository
+          useClass: notificationRepository,
         },
         NotificationGateway,
         NotificationService,

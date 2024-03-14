@@ -1,20 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import {
-  mockRepository,
-  MockType,
-} from 'src/__mocks__';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
-import { Repository } from 'typeorm';
-import { NotificationServerEvents, NotificationType } from 'src/modules/notification/constants';
+import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
+import { MockType } from 'src/__mocks__';
+import { SessionMetadata } from 'src/common/models';
+import {
+  NotificationServerEvents,
+  NotificationType,
+} from 'src/modules/notification/constants';
 import {
   NotificationDto,
   NotificationsDto,
 } from 'src/modules/notification/dto';
 import { NotificationEmitter } from 'src/modules/notification/providers/notification.emitter';
-import { SessionMetadata } from 'src/common/models';
 import { NotificationRepository } from '../repositories/notification.repository';
 
 jest.mock('axios');
@@ -47,7 +44,7 @@ const mockNotificationRepository: MockType<Partial<NotificationRepository>> = {
 const mockSessionMetadata: SessionMetadata = {
   sessionId: 'mockSessionId',
   userId: 'mockUserId',
-}
+};
 
 describe('NotificationEmitter', () => {
   let service: NotificationEmitter;
@@ -68,7 +65,7 @@ describe('NotificationEmitter', () => {
         {
           provide: NotificationRepository,
           useFactory: () => mockNotificationRepository,
-        }
+        },
       ],
     }).compile();
 
@@ -85,18 +82,23 @@ describe('NotificationEmitter', () => {
     it('should should init and set interval only once', async () => {
       mockNotificationRepository.getTotalUnread.mockResolvedValueOnce(2);
 
-      await service.notification(mockSessionMetadata, [mockNotification1, mockNotification2]);
+      await service.notification(mockSessionMetadata, [
+        mockNotification1,
+        mockNotification2,
+      ]);
       expect(emitter.emit).toHaveBeenCalledTimes(1);
-      expect(emitter.emit).toHaveBeenCalledWith(NotificationServerEvents.Notification, new NotificationsDto({
-        notifications: [
-          mockNotification1,
-          mockNotification2,
-        ],
-        totalUnread: 2,
-      }));
+      expect(emitter.emit).toHaveBeenCalledWith(
+        NotificationServerEvents.Notification,
+        new NotificationsDto({
+          notifications: [mockNotification1, mockNotification2],
+          totalUnread: 2,
+        }),
+      );
     });
     it('should log an error but not fail', async () => {
-      mockNotificationRepository.getTotalUnread.mockRejectedValueOnce(new Error('some error'));
+      mockNotificationRepository.getTotalUnread.mockRejectedValueOnce(
+        new Error('some error'),
+      );
 
       await service.notification(mockSessionMetadata, [mockNotification1]);
 

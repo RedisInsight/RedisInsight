@@ -46,7 +46,7 @@ const mockNotificationRepository: MockType<Partial<NotificationRepository>> = {
 const mockSessionData: SessionMetadata = {
   sessionId: 'mockSessionId',
   userId: 'mockUserId',
-}
+};
 
 describe('NotificationService', () => {
   let service: NotificationService;
@@ -60,7 +60,7 @@ describe('NotificationService', () => {
         {
           provide: NotificationRepository,
           useFactory: () => mockNotificationRepository,
-        }
+        },
       ],
     }).compile();
 

@@ -76,11 +76,15 @@ export class GlobalNotificationProvider {
 
       await this.notificationRepository.insertNotifications(sessionMetadata, values(toInsert));
 
-      this.eventEmitter.emit(NotificationEvents.NewNotifications, orderBy(
-        newNotifications,
-        ['timestamp'],
-        'desc',
-      ));
+      this.eventEmitter.emit(
+        NotificationEvents.NewNotifications,
+        sessionMetadata,
+        orderBy(
+          newNotifications,
+          ['timestamp'],
+          'desc',
+        ),
+      );
     } catch (e) {
       this.logger.error('Unable to sync notifications with remote', e);
     }

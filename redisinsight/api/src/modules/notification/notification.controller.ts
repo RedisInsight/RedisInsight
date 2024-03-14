@@ -5,8 +5,10 @@ import {
 import { NotificationService } from 'src/modules/notification/notification.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
-import { ClientMetadata } from 'src/common/models';
+import { ClientMetadata, SessionMetadata } from 'src/common/models';
 import { BrowserClientMetadata } from '../browser/decorators/browser-client-metadata.decorator';
+import { RequestSessionMetadata } from 'src/common/decorators';
+import { Session } from 'inspector';
 
 @ApiTags('Notifications')
 @Controller('notifications')
@@ -23,9 +25,9 @@ export class NotificationController {
   })
   @Get()
   getNotifications(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<NotificationsDto> {
-    return this.service.getNotifications(clientMetadata.sessionMetadata);
+    return this.service.getNotifications(sessionMetadata);
   }
 
   @HttpCode(200)
@@ -35,9 +37,9 @@ export class NotificationController {
   })
   @Patch('/read')
   readNotifications(
-    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Body() dto: ReadNotificationsDto
   ): Promise<NotificationsDto> {
-    return this.service.readNotifications(clientMetadata.sessionMetadata, dto);
+    return this.service.readNotifications(sessionMetadata, dto);
   }
 }

@@ -5,10 +5,11 @@ import { GlobalNotificationProvider } from 'src/modules/notification/providers/g
 import { NotificationEmitter } from 'src/modules/notification/providers/notification.emitter';
 import { NotificationController } from 'src/modules/notification/notification.controller';
 import { NotificationRepository } from 'src/modules/notification/repositories/notification.repository';
+import { LocalNotificationRepository } from './repositories/local.notification.repository';
 
 @Module({})
 export class NotificationModule {
-  static register(notificationRepository: Type<NotificationRepository>) {
+  static register(notificationRepository: Type<NotificationRepository> = LocalNotificationRepository) {
     return {
       module: NotificationModule,
       providers: [

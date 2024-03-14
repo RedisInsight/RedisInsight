@@ -9,6 +9,7 @@ export * from './formatBytes'
 export * from './formatDate'
 export * from './extrapolation'
 export * from './transformQueryParams'
+export * from './getTruncatedName'
 
 export {
   replaceSpaces,

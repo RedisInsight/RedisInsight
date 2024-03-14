@@ -43,7 +43,7 @@ describe('OAuthSignInDialog', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
       eventData: {
-        action: '',
+        action: undefined,
       }
     })
   })

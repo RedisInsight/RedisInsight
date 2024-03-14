@@ -104,7 +104,7 @@ const ConfigOAuth = () => {
       dispatch(setOAuthCloudSource(null))
       dispatch(signInFailure(err?.response?.data?.message || message))
       dispatch(addErrorNotification(err))
-      dispatch(setSSOFlow(''))
+      dispatch(setSSOFlow(undefined))
     }
   }
 

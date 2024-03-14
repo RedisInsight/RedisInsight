@@ -19,8 +19,9 @@ import {
 
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { FeatureFlagComponent, OAuthSocial, OAuthSocialType } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSocial } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -236,7 +237,7 @@ const CloudConnectionForm = (props: Props) => {
             initialIsOpen={false}
             data-testid="use-cloud-account-accordion"
           >
-            <OAuthSocial type={OAuthSocialType.Autodiscovery} hideTitle />
+            <OAuthSocial action={OAuthSocialAction.Import} hideTitle />
           </EuiCollapsibleNavGroup>
         </FeatureFlagComponent>
         <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={CloudApiForm}>

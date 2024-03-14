@@ -17,6 +17,7 @@ import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'
 import { ReactComponent as GoogleSmallIcon } from 'uiSrc/assets/img/oauth/google_small.svg'
 import { ReactComponent as GithubSmallIcon } from 'uiSrc/assets/img/oauth/github_small.svg'
 
+import { Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 // TODO: move business logic outside of component
@@ -26,18 +27,12 @@ export enum OAuthSocialType {
   SignIn = 'signIn'
 }
 
-const actionsType: Record<OAuthSocialType, OAuthSocialAction> = {
-  [OAuthSocialType.Create]: OAuthSocialAction.Create,
-  [OAuthSocialType.Autodiscovery]: OAuthSocialAction.Import,
-  [OAuthSocialType.SignIn]: OAuthSocialAction.SignIn,
-}
-
 interface Props {
-  type?: OAuthSocialType
+  action?: Maybe<OAuthSocialAction>
   hideTitle?: boolean
 }
 
-const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props) => {
+const OAuthSocial = ({ action = OAuthSocialAction.SignIn, hideTitle = false }: Props) => {
   const agreement = useSelector(oauthCloudPAgreementSelector)
   const {
     [FeatureFlags.cloudSsoRecommendedSettings]: isRecommendedFeatureEnabled
@@ -45,9 +40,8 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
   const [isRecommended, setIsRecommended] = useState(isRecommendedFeatureEnabled?.flag ? true : undefined)
 
   const dispatch = useDispatch()
-  const isAutodiscovery = type === OAuthSocialType.Autodiscovery
-  const isSignInFlow = type === OAuthSocialType.SignIn
-  const getAction = (): string => (type ? actionsType[type] : '')
+  const isAutodiscovery = action === OAuthSocialAction.Import
+  const isSignInFlow = action === OAuthSocialAction.SignIn
 
   const sendTelemetry = (accountOption: string) => {
     const cloudRecommendedSettings = isAutodiscovery
@@ -60,7 +54,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
         accountOption,
-        action: getAction(),
+        action,
         cloudRecommendedSettings
       },
       traits: {
@@ -71,7 +65,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
 
   const handleClickSso = () => {
     dispatch(signIn())
-    dispatch(setSSOFlow(getAction()))
+    dispatch(setSSOFlow(action))
 
     if (isSignInFlow) return
 
@@ -88,7 +82,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
       label: 'google-oauth',
       onButtonClick: () => {
         sendTelemetry('Google')
-        ipcAuthGoogle(getAction())
+        ipcAuthGoogle(action)
       },
     },
     {
@@ -97,7 +91,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
       className: styles.githubButton,
       onButtonClick: () => {
         sendTelemetry('GitHub')
-        ipcAuthGithub(getAction())
+        ipcAuthGithub(action)
       },
     }
   ]
@@ -152,7 +146,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
     </FeatureFlagComponent>
   )
 
-  if (type === OAuthSocialType.Create) {
+  if (action === OAuthSocialAction.Create) {
     return (
       <div className={cx(styles.container)}>
         {buttons}
@@ -167,7 +161,7 @@ const OAuthSocial = ({ type = OAuthSocialType.SignIn, hideTitle = false }: Props
   return (
     <div
       className={cx(styles.container, { [styles.containerAuto]: isAutodiscovery })}
-      data-testid={`oauth-container-${type}`}
+      data-testid={`oauth-container-${action}`}
     >
       {!hideTitle && (<EuiTitle className={styles.title}><h4>Sign in to your Cloud Account</h4></EuiTitle>)}
       {isAutodiscovery && (

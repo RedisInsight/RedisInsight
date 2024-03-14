@@ -2,9 +2,10 @@ import React from 'react'
 import { EuiModal, EuiModalBody } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
-import OAuthSocial, { OAuthSocialType } from 'uiSrc/components/oauth/oauth-social/OAuthSocial'
+import OAuthSocial from 'uiSrc/components/oauth/oauth-social/OAuthSocial'
 
 import { oauthCloudSelector, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 const OAuthSocialDialog = () => {
@@ -23,7 +24,7 @@ const OAuthSocialDialog = () => {
   return (
     <EuiModal onClose={handleClose} className={styles.modal} data-testid="social-oauth-dialog">
       <EuiModalBody>
-        <OAuthSocial type={OAuthSocialType.Autodiscovery} />
+        <OAuthSocial action={OAuthSocialAction.Import} />
       </EuiModalBody>
     </EuiModal>
   )

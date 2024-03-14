@@ -85,7 +85,7 @@ describe('ConfigOAuth', () => {
           status: 500
         }
       } as any),
-      setSSOFlow('')
+      setSSOFlow(undefined)
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })

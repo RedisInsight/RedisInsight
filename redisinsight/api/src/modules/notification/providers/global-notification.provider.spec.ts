@@ -5,13 +5,13 @@ import {
 } from 'src/__mocks__';
 import { GlobalNotificationProvider } from 'src/modules/notification/providers/global-notification.provider';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
-import { Repository } from 'typeorm';
 import { NotificationType } from 'src/modules/notification/constants';
 import axios from 'axios';
 import { CreateNotificationDto, CreateNotificationsDto } from 'src/modules/notification/dto';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
+import { SessionMetadata } from 'src/common/models';
+import { NotificationRepository } from '../repositories/notification.repository';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -64,9 +64,19 @@ const mockNotificationEntity3 = new NotificationEntity({
   read: false,
 });
 
+const mockSessionMetadata: SessionMetadata = {
+  sessionId: 'mockSessionId',
+  userId: 'mockUserId',
+};
+
+const mockNotificationRepository: MockType<Partial<NotificationRepository>> = {
+  getGlobalNotifications: jest.fn(),
+  deleteGlobalNotifications: jest.fn(),
+  insertNotifications: jest.fn(),
+}
+
 describe('GlobalNotificationProvider', () => {
   let service: GlobalNotificationProvider;
-  let repository: MockType<Repository<NotificationEntity>>;
   let getNotificationsFromRemoteSpy;
 
   beforeEach(async () => {
@@ -77,16 +87,13 @@ describe('GlobalNotificationProvider', () => {
         GlobalNotificationProvider,
         EventEmitter2,
         {
-          provide: getRepositoryToken(NotificationEntity),
-          useFactory: mockRepository,
+          provide: NotificationRepository,
+          useFactory: () => mockNotificationRepository,
         },
       ],
     }).compile();
 
     service = await module.get(GlobalNotificationProvider);
-    repository = await module.get(
-      getRepositoryToken(NotificationEntity),
-    );
 
     getNotificationsFromRemoteSpy = jest.spyOn(service, 'getNotificationsFromRemote');
   });
@@ -99,9 +106,9 @@ describe('GlobalNotificationProvider', () => {
       const syncSpy = jest.spyOn(service, 'sync');
 
       expect(service['interval']).toEqual(undefined);
-      await service.init();
+      await service.init(mockSessionMetadata);
       expect(service['interval']).not.toEqual(undefined);
-      await service.init();
+      await service.init(mockSessionMetadata);
       expect(syncSpy).toHaveBeenCalledTimes(1);
     });
   });
@@ -115,14 +122,17 @@ describe('GlobalNotificationProvider', () => {
         ],
       });
 
-      repository.createQueryBuilder().getMany.mockResolvedValueOnce([
+      mockNotificationRepository.getGlobalNotifications.mockResolvedValueOnce([
         mockNotificationEntity1,
         mockNotificationEntity3,
       ]);
 
-      await service.sync();
+      await service.sync(mockSessionMetadata);
 
-      expect(repository.insert).toHaveBeenCalledWith([
+      expect(mockNotificationRepository.deleteGlobalNotifications).toHaveBeenCalledTimes(1);
+      expect(mockNotificationRepository.deleteGlobalNotifications).toHaveBeenCalledWith(mockSessionMetadata);
+
+      expect(mockNotificationRepository.insertNotifications).toHaveBeenCalledWith(mockSessionMetadata, [
         mockNotificationEntity1UPD,
         mockNotificationEntity2,
       ]);

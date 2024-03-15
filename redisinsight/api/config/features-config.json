@@ -49,7 +49,7 @@
     },
     "cloudSsoRecommendedSettings": {
       "flag": true,
-      "perc": [[0, 50]],
+      "perc": [[0, 100]],
       "filters": [
         {
           "name": "config.server.buildType",

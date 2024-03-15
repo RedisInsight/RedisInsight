@@ -35,7 +35,10 @@ export abstract class DatabaseRecommendationRepository {
    * @param recommendation
    * @return DatabaseRecommendation
    */
-  abstract update(clientMetadata: ClientMetadata, id: string, recommendation: ModifyDatabaseRecommendationDto): Promise<DatabaseRecommendation>;
+  abstract update(
+    clientMetadata: ClientMetadata,
+    id: string, recommendation: ModifyDatabaseRecommendationDto
+  ): Promise<DatabaseRecommendation>;
 
   /**
    * Check is recommendation already exist in repository

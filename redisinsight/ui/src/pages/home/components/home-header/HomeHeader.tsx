@@ -1,13 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiSpacer,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiSpacer, EuiText, EuiToolTip, } from '@elastic/eui'
 import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -21,7 +13,7 @@ import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import CapabilityPromotion from 'uiSrc/pages/home/components/capability-promotion'
@@ -195,7 +187,7 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
                 HELP_LINKS.cloud.event,
                 { source: HELP_LINKS.cloud.sources.databaseList },
               )
-              ssoCloudHandlerClick(e, OAuthSocialSource.ListOfDatabases)
+              ssoCloudHandlerClick(e, { source: OAuthSocialSource.ListOfDatabases, action: OAuthSocialAction.Create })
             }}
           />
         )}

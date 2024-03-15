@@ -1,6 +1,6 @@
 import React from 'react'
 import { EuiLink } from '@elastic/eui'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 export interface Props {
@@ -16,7 +16,7 @@ const CloudLink = (props: Props) => {
         <EuiLink
           color="text"
           onClick={(e) => {
-            ssoCloudHandlerClick(e, OAuthSocialSource.Tutorials)
+            ssoCloudHandlerClick(e, { source: OAuthSocialSource.Tutorials, action: OAuthSocialAction.Create })
           }}
           external={false}
           target="_blank"

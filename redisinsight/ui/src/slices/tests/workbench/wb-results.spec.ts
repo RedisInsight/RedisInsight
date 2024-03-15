@@ -302,7 +302,8 @@ describe('workbench results slice', () => {
       const mockCommandExecution = [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: 'get test', role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z', emptyCommand: false }]
       const state = {
         ...initialStateWithItems,
-        items: mockCommandExecution
+        items: mockCommandExecution,
+        isLoaded: true
       }
 
       // Act
@@ -323,7 +324,8 @@ describe('workbench results slice', () => {
 
       const state = {
         ...initialStateWithItems,
-        items: [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: EMPTY_COMMAND, role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z', emptyCommand: true }]
+        items: [{ mode: null, id: 'e3553f5a-0fdf-4282-8406-8b377c2060d2', databaseId: '3f795233-e26a-463b-a116-58cf620b18f2', command: EMPTY_COMMAND, role: null, nodeOptions: null, createdAt: '2022-06-10T15:47:13.000Z', emptyCommand: true }],
+        isLoaded: true,
       }
 
       // Act

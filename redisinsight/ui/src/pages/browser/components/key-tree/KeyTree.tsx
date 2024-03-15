@@ -110,7 +110,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
     }
 
     setItems(parseKeyNames(keysState.keys))
-  }, [keysState.lastRefreshTime])
+  }, [keysState.lastRefreshTime, delimiter, sorting])
 
   useEffect(() => {
     openSelectedKey(selectedKeyName)

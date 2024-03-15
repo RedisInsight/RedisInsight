@@ -85,12 +85,13 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
-  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(
+    !!keysState.keys.length || !isNotRenderedContext
+  )
   const [deletePopoverIndex, setDeletePopoverIndex] = useState<Maybe<number>>(undefined)
 
   const controller = useRef<Nullable<AbortController>>(null)
   const itemsRef = useRef(keysState.keys)
-  const isNotRendered = useRef(isNotRenderedContext)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
@@ -108,12 +109,14 @@ const KeyList = forwardRef((props: Props, ref) => {
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
 
-    if (!isNotRendered.current && !loading && keysState.lastRefreshTime) {
+    if (
+      (!firstDataLoaded && keysState.lastRefreshTime)
+      || (searchMode === SearchMode.Redisearch && itemsRef.current.length === 0)
+    ) {
       setFirstDataLoaded(true)
+      dispatch(setBrowserIsNotRendered(false))
     }
 
-    isNotRendered.current = false
-    dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
       cancelAllMetadataRequests()
       rerender({})
@@ -140,14 +143,6 @@ const KeyList = forwardRef((props: Props, ref) => {
       onAddKeyPanel={onAddKeyPanel}
     />
   )
-
-  const getNoItemsMessage = () => {
-    if (isNotRendered.current) {
-      return ''
-    }
-
-    return <NoItemsMessage />
-  }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
     if (searchMode === SearchMode.Redisearch
@@ -327,7 +322,7 @@ const KeyList = forwardRef((props: Props, ref) => {
     },
   ]
 
-  const noItemsMessage = getNoItemsMessage()
+  const noItemsMessage = NoItemsMessage()
 
   const VirtualizeTable = () => (
     <VirtualTable

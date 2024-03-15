@@ -45,7 +45,7 @@ const OAuthUserProfile = (props: Props) => {
       () => {
         setSelectingAccountId(undefined)
         sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_PROFILE_OPENED
+          event: TelemetryEvent.CLOUD_ACCOUNT_SWITCHED
         })
       },
       () => {
@@ -121,7 +121,9 @@ const OAuthUserProfile = (props: Props) => {
                   onClick={() => handleClickSelectAccount(id)}
                   data-testid={`profile-account-${id}${id === currentAccountId ? '-selected' : ''}`}
                 >
-                  <EuiText className={styles.accountName}>{name}</EuiText>
+                  <EuiText className={styles.accountNameId}>
+                    <span className={styles.accountName}>{name}</span> #{id}
+                  </EuiText>
                   {id === currentAccountId && (<EuiIcon type="check" />)}
                   {id === selectingAccountId && (<EuiLoadingSpinner className={styles.loadingSpinner} size="m" />)}
                 </div>
@@ -144,8 +146,16 @@ const OAuthUserProfile = (props: Props) => {
             onClick={handleClickCloudAccount}
             data-testid="cloud-console-link"
           >
-            <EuiText className={styles.optionTitle}>Cloud Console</EuiText>
-            <EuiIcon type={CloudIcon} style={{ fill: 'none' }} />
+            <div className={styles.optionTitleWrapper}>
+              <EuiText className={styles.optionTitle}>Cloud Console</EuiText>
+              <EuiText
+                className={cx('truncateText', styles.accountFullName)}
+                data-testid="account-full-name"
+              >
+                {name}
+              </EuiText>
+            </div>
+            <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />
           </EuiLink>
           <div
             role="presentation"

@@ -58,6 +58,30 @@ describe('OAuthUserProfile', () => {
     expect(screen.queryByTestId('cloud-sign-in-btn')).not.toBeInTheDocument()
   })
 
+  it('should render profile info', async () => {
+    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: {
+        id: 1,
+        name: 'Bill Russell',
+        accounts: [
+          { id: 1, name: 'Bill R' },
+          { id: 2, name: 'Bill R 2' },
+        ],
+        currentAccountId: 1,
+      }
+    })
+    render(<OAuthUserProfile {...mockedProps} />)
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('user-profile-btn'))
+    })
+    await waitForEuiPopoverVisible()
+
+    expect(screen.getByTestId('account-full-name')).toHaveTextContent('Bill Russell')
+    expect(screen.getByTestId('profile-account-1-selected')).toHaveTextContent('Bill R #1')
+    expect(screen.getByTestId('profile-account-2')).toHaveTextContent('Bill R 2 #2')
+  })
+
   it('should call proper action and telemetry after click on account', async () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: {

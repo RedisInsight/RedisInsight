@@ -52,8 +52,26 @@
     }
   }
 
+  .optionTitleWrapper {
+    display: flex;
+    align-items: baseline;
+
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
   .optionTitle {
     font-weight: 500;
+    margin-right: 6px;
+  }
+
+  .accountFullName {
+    font-weight: 400;
+    color: var(--euiTextSubduedColor) !important;
+
+    font-size: 13px;
+    font-style: italic;
+    margin-right: 14px;
   }
 
   .accounts {
@@ -73,12 +91,18 @@
 
     cursor: pointer;
 
+    .accountNameId {
+      display: flex;
+      align-items: center;
+
+      color: currentColor !important;
+      max-width: calc(100% - 40px);
+    }
+
     .accountName {
       text-overflow: ellipsis;
       overflow: hidden;
-
-      max-width: calc(100% - 40px);
-      color: currentColor !important;
+      margin-right: 4px;
     }
 
     &.isCurrent {

@@ -18,6 +18,7 @@ import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/temp
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
   const [decodedJobName, setDecodedJobName] = useState<string>(decodeURIComponent(jobName))
+  const [previousJobName, setPreviousJobName] = useState<string>('')
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
   const [editorValue, setEditorValue] = useState<string>('')
@@ -33,17 +34,20 @@ const Jobs = () => {
   useEffect(() => {
     const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
 
-    if (jobIndex === -1) {
-      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
-    }
-
     jobIndexRef.current = jobIndex
     setEditorValue(values.jobs?.[jobIndexRef.current ?? -1]?.value)
 
-    if (!values.jobs?.[jobIndexRef.current ?? -1]?.value) {
+    if (jobIndex === -1 && previousJobName !== decodedJobName) {
+      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+    }
+
+    if (jobIndex > -1 && !values.jobs?.[jobIndexRef.current ?? -1]?.value) {
       setIsPopoverOpen(true)
     }
-  }, [values, rdiInstanceId, decodedJobName, history])
+
+    // previous job name is tracked to prevent redirecting when changing job name
+    setPreviousJobName(decodedJobName)
+  }, [values, decodedJobName, rdiInstanceId, history])
 
   useEffect(() => {
     setDecodedJobName(decodeURIComponent(jobName))

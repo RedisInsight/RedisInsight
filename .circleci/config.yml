@@ -366,7 +366,7 @@ jobs:
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
             cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
   e2e-app-image:
-    executor: linux-executor-dlc
+    executor: linux-executor
     parameters:
       report:
         description: Send report for test run to slack
@@ -1219,19 +1219,19 @@ workflows:
           target: AppImage
           requires:
             - Setup build (stage)
-      - docker:
-          name: Build docker image
-          requires:
-            - Start E2E Tests
-      - e2e-tests:
-          name: E2ETest
-          build: docker
-          parallelism: 4
-          requires:
-            - Build docker image
+      # - docker:
+      #     name: Build docker image
+      #     requires:
+      #       - Start E2E Tests
+      # - e2e-tests:
+      #     name: E2ETest
+      #     build: docker
+      #     parallelism: 4
+      #     requires:
+      #       - Build docker image
       - e2e-app-image:
           name: E2ETest (AppImage)
-          parallelism: 2
+          parallelism: 1
           requires:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches

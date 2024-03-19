@@ -1,4 +1,4 @@
-import { EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
+import { EuiFlexGroup, EuiFlexItem, EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -6,14 +6,14 @@ import { throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
-import { PageHeader } from 'uiSrc/components'
+import { OAuthUserProfile, PageHeader } from 'uiSrc/components'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { Instance } from 'uiSrc/slices/interfaces'
+import { Instance, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import {
   editedInstanceSelector,
@@ -223,7 +223,12 @@ const HomePage = () => {
         title="My Redis databases"
         className={styles.pageHeader}
         logo={(
-          <InsightsTrigger source="home page" />
+          <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none">
+            <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
+            <EuiFlexItem style={{ marginLeft: 16 }}>
+              <OAuthUserProfile source={OAuthSocialSource.ListOfDatabases} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
         )}
       />
       <div className={styles.pageWrapper}>

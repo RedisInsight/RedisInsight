@@ -1,18 +1,11 @@
 import React, { useState } from 'react'
-import {
-  EuiContextMenuItem,
-  EuiContextMenuPanel,
-  EuiIcon,
-  EuiInputPopover,
-  EuiLink,
-  EuiText,
-} from '@elastic/eui'
+import { EuiContextMenuItem, EuiContextMenuPanel, EuiIcon, EuiInputPopover, EuiLink, EuiText, } from '@elastic/eui'
 import cx from 'classnames'
 
 import { IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -62,7 +55,15 @@ const HelpLinksMenu = ({ emptyAnchor, onLinkClick, items, buttonText }: Props) =
     item.primary ? (
       <OAuthSsoHandlerDialog key="menu-items-handler-dialog">
         {(ssoCloudHandlerClick) => (
-          <MenuItem key={`menu-item-${item.id}`} {...item} onClick={ssoCloudHandlerClick} />
+          <MenuItem
+            key={`menu-item-${item.id}`}
+            {...item}
+            onClick={(e) =>
+              ssoCloudHandlerClick(e, {
+                source: OAuthSocialSource.ListOfDatabases,
+                action: OAuthSocialAction.Create
+              })}
+          />
         )}
       </OAuthSsoHandlerDialog>
     ) : <MenuItem key={`menu-item-${item.id}`} {...item} />

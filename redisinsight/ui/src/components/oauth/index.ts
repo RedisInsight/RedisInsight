@@ -8,6 +8,7 @@ import OAuthConnectFreeDb from './oauth-connect-free-db'
 import OAuthJobs from './oauth-jobs'
 import OAuthSelectPlan from './oauth-select-plan'
 import OAuthAgreement from './oauth-agreement'
+import OAuthUserProfile from './oauth-user-profile'
 
 export {
   OAuthSignInDialog,
@@ -21,4 +22,5 @@ export {
   OAuthSelectPlan,
   OAuthSocialType,
   OAuthAgreement,
+  OAuthUserProfile,
 }

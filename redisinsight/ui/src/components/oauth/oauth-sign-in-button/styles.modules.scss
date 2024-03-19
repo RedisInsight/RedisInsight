@@ -1,0 +1,21 @@
+.btn {
+  background-color: var(--euiColorEmptyShade);
+  border-color: var(--separatorColorLight) !important;
+  border-radius: 16px !important;
+
+  :global(.euiButton__text) {
+    display: flex;
+    align-items: center;
+
+    color: var(--euiTextSubduedColor);
+  }
+
+  &:hover, &:focus {
+    background-color: var(--euiColorEmptyShade) !important;
+  }
+
+  .logo {
+    width: 20px;
+    margin-right: 10px;
+  }
+}

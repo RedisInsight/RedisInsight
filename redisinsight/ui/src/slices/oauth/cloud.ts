@@ -186,6 +186,17 @@ const oauthCloudSlice = createSlice({
     removeAllCapiKeysFailure: (state) => {
       state.capiKeys.loading = false
     },
+    logoutUser: (state) => {
+      state.user.loading = true
+    },
+    logoutUserSuccess: (state) => {
+      state.user.loading = false
+      state.user.data = null
+    },
+    logoutUserFailure: (state) => {
+      state.user.loading = false
+      state.user.data = null
+    }
   },
 })
 
@@ -221,6 +232,9 @@ export const {
   removeAllCapiKeys,
   removeAllCapiKeysSuccess,
   removeAllCapiKeysFailure,
+  logoutUser,
+  logoutUserSuccess,
+  logoutUserFailure
 } = oauthCloudSlice.actions
 
 // A selector
@@ -517,6 +531,32 @@ export function removeCapiKeyAction(
       const error = _err as AxiosError
       dispatch(addErrorNotification(error))
       dispatch(removeCapiKeyFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function logoutUserAction(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(logoutUser())
+
+    try {
+      const { status } = await apiService.get(
+        ApiEndpoints.CLOUD_ME_LOGOUT
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(logoutUserSuccess())
+        onSuccessAction?.()
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      dispatch(addErrorNotification(error))
+      dispatch(logoutUserFailure())
       onFailAction?.()
     }
   }

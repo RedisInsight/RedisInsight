@@ -1,11 +1,13 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { Maybe } from 'uiSrc/utils'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import OAuthSsoHandlerDialog from './OAuthSsoHandlerDialog'
 
 let store: typeof mockedStore
@@ -35,11 +37,14 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 const childrenMock = (
-  onClick: (e: React.MouseEvent, source: OAuthSocialSource) => void,
-  source: OAuthSocialSource,
+  onClick: (
+    e: React.MouseEvent,
+    { source, action }: { source: OAuthSocialSource, action?: Maybe<OAuthSocialAction> }
+  ) => void,
+  { source, action }: { source: OAuthSocialSource, action?: Maybe<OAuthSocialAction> },
 ) => (
   <div
-    onClick={(e) => onClick(e, source)}
+    onClick={(e) => onClick(e, { source, action })}
     onKeyDown={() => {}}
     data-testid="link"
     aria-label="link"
@@ -58,7 +63,8 @@ describe('OAuthSsoHandlerDialog', () => {
   it('should render', () => {
     expect(render(
       <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) => (childrenMock(ssoCloudHandlerClick, OAuthSocialSource.BrowserContentMenu))}
+        {(ssoCloudHandlerClick) =>
+          (childrenMock(ssoCloudHandlerClick, { source: OAuthSocialSource.BrowserContentMenu }))}
       </OAuthSsoHandlerDialog>
     )).toBeTruthy()
   })
@@ -69,7 +75,8 @@ describe('OAuthSsoHandlerDialog', () => {
 
     render(
       <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) => (childrenMock(ssoCloudHandlerClick, OAuthSocialSource.BrowserContentMenu))}
+        {(ssoCloudHandlerClick) =>
+          (childrenMock(ssoCloudHandlerClick, { source: OAuthSocialSource.BrowserContentMenu }))}
       </OAuthSsoHandlerDialog>
     )
 
@@ -85,15 +92,21 @@ describe('OAuthSsoHandlerDialog', () => {
       { [FeatureFlags.cloudSso]: { flag: true } }
     ))
 
-    const { queryByTestId } = render(
+    render(
       <OAuthSsoHandlerDialog>
-        {(ssoCloudHandlerClick) => (childrenMock(ssoCloudHandlerClick, OAuthSocialSource.BrowserContentMenu))}
+        {(ssoCloudHandlerClick) => (childrenMock(
+          ssoCloudHandlerClick,
+          { source: OAuthSocialSource.BrowserContentMenu, action: OAuthSocialAction.SignIn }
+        ))}
       </OAuthSsoHandlerDialog>
     )
 
-    fireEvent.click(queryByTestId('link'))
+    fireEvent.click(screen.queryByTestId('link')!)
 
-    const expectedActions = [setSignInDialogState(OAuthSocialSource.BrowserContentMenu)]
+    const expectedActions = [
+      setSignInDialogState(OAuthSocialSource.BrowserContentMenu),
+      setSSOFlow(OAuthSocialAction.SignIn)
+    ]
     expect(store.getActions()).toEqual(expectedActions)
 
     expect(sendEventTelemetry).toBeCalledWith({

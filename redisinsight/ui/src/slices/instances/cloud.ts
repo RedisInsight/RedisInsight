@@ -30,7 +30,7 @@ export const initialState: InitialStateCloud = {
   dataAdded: [],
   subscriptions: null,
   credentials: null,
-  ssoFlow: '',
+  ssoFlow: undefined,
   isRecommendedSettings: undefined,
   account: {
     error: '',
@@ -150,7 +150,7 @@ const cloudSlice = createSlice({
     resetLoadedRedisCloud: (state, { payload }: PayloadAction<LoadedCloud>) => {
       state.loaded[payload] = false
     },
-    setSSOFlow: (state, { payload }: PayloadAction<string>) => {
+    setSSOFlow: (state, { payload }: PayloadAction<Maybe<OAuthSocialAction>>) => {
       state.ssoFlow = payload
     },
     setIsRecommendedSettingsSSO: (state, { payload }: PayloadAction<Maybe<boolean>>) => {

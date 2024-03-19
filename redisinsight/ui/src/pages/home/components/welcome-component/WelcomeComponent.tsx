@@ -27,7 +27,7 @@ import {
   OAuthSocialHandlerDialog,
   OAuthSsoHandlerDialog
 } from 'uiSrc/components'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 
 import styles from './styles.module.scss'
@@ -156,7 +156,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
             className={cx(styles.section, styles.btn, styles.promoButton)}
             onClick={(e) => {
               handleClickLink(HELP_LINKS.cloud.event, { source: OAuthSocialSource.WelcomeScreen })
-              ssoCloudHandlerClick(e, OAuthSocialSource.WelcomeScreen)
+              ssoCloudHandlerClick(e, { source: OAuthSocialSource.WelcomeScreen, action: OAuthSocialAction.Create })
             }}
             target="_blank"
             style={{

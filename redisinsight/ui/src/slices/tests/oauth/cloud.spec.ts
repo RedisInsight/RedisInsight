@@ -53,6 +53,10 @@ import reducer, {
   removeCapiKeyAction,
   setOAuthCloudSource,
   setSocialDialogState,
+  logoutUser,
+  logoutUserSuccess,
+  logoutUserFailure,
+  logoutUserAction, oauthCloudUserSelector
 } from '../../oauth/cloud'
 
 let store: typeof mockedStore
@@ -816,6 +820,77 @@ describe('oauth cloud slice', () => {
     })
   })
 
+  describe('logoutUser', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const state = {
+        ...initialState.user,
+        loading: true
+      }
+
+      // Act
+      const nextState = reducer(initialState, logoutUser())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudUserSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('logoutUserSuccess', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        user: {
+          ...initialState.user,
+          loading: true,
+          data: {}
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState as any, logoutUserSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudUserSelector(rootState)).toEqual(initialState.user)
+    })
+  })
+
+  describe('logoutUserFailure', () => {
+    it('should properly set the state', () => {
+      // Arrange
+      const currentState = {
+        ...initialState,
+        user: {
+          ...initialState.user,
+          loading: true,
+          data: {}
+        }
+      }
+
+      // Act
+      const nextState = reducer(currentState as any, logoutUserFailure())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        oauth: {
+          cloud: nextState
+        }
+      })
+      expect(oauthCloudUserSelector(rootState)).toEqual(initialState.user)
+    })
+  })
+
   describe('thunks', () => {
     describe('fetchUserInfo', () => {
       it('call both fetchUserInfo and getUserInfoSuccess when fetch is successed', async () => {
@@ -1228,6 +1303,47 @@ describe('oauth cloud slice', () => {
           removeCapiKey(),
           addErrorNotification(responsePayload as AxiosError),
           removeCapiKeyFailure(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('logoutUserAction', () => {
+      it('should call proper actions on succeed', async () => {
+        const responsePayload = { status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(logoutUserAction())
+
+        // Assert
+        const expectedActions = [
+          logoutUser(),
+          logoutUserSuccess(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions on failed', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(logoutUserAction())
+
+        // Assert
+        const expectedActions = [
+          logoutUser(),
+          addErrorNotification(responsePayload as AxiosError),
+          logoutUserFailure(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

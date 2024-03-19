@@ -71,6 +71,7 @@ export interface CloudSuccessResult {
 }
 
 export enum OAuthSocialSource {
+  Browser = 'browser',
   ListOfDatabases = 'list of databases',
   WelcomeScreen = 'welcome screen',
   BrowserContentMenu = 'browser content menu',

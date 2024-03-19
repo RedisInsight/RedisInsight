@@ -57,14 +57,21 @@
         hostname: 'localhost'
     };
 
+    console.log('Starting TestCafe script...');
+
     try {
         const testcafe = await createTestCafe(testCafeOptions);
 
+        console.log('TestCafe instance created.');
+
         const runner = testcafe.createRunner();
+
+        console.log('Runner created.');
 
         const failedCount = await runner
             .src((process.env.TEST_FILES || 'tests/electron/**/*.e2e.ts').split('\n'))
             .browsers(['electron'])
+            // Add more debug output here if needed
             .screenshots({
                 path: './report/screenshots/',
                 takeOnFails: true,
@@ -99,16 +106,22 @@
                 assertionTimeout: 5000,
                 speed: 1,
                 pageRequestTimeout: 8000,
-                quarantineMode: { successThreshold: 1, attemptLimit: 3 },
+                // quarantineMode: { successThreshold: 1, attemptLimit: 3 },
                 disableMultipleWindows: true
             });
+
+        console.log('Test execution completed.');
+
+        // Check if there were any failures
         if (failedCount > 0) {
             console.error(`There were ${failedCount} test(s) failed.`);
+        } else {
+            console.log('All tests passed successfully.');
         }
 
         await testcafe.close();
     } catch (error) {
         console.error('An error occurred:', error);
-        process.exit(1);
+        process.exit(1); // Exit with error code
     }
 })();

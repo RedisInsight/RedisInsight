@@ -13,7 +13,7 @@ const apiKeyRequests = new APIKeyRequests();
 
 let keyName = Common.generateWord(10);
 
-fixture.only `Add keys`
+fixture `Add keys`
     .meta({ type: 'smoke', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {

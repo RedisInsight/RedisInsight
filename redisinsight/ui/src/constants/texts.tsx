@@ -9,6 +9,13 @@ export const NoResultsFoundText = (
     No results found.
   </EuiText>
 )
+
+export const LoadingText = (
+  <EuiText size="m" data-testid="loading-keys" style={{ lineHeight: 1.4 }}>
+    loading...
+  </EuiText>
+)
+
 export const NoSelectedIndexText = (
   <EuiText size="m" data-testid="no-result-select-index">
     Select an index and enter a query to search per values of keys.

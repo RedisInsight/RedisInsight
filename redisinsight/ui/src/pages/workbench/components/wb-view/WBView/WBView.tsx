@@ -39,6 +39,7 @@ export interface Props {
   items: CommandExecutionUI[]
   clearing: boolean
   processing: boolean
+  isResultsLoaded: boolean
   setScript: (script: string) => void
   setScriptEl: Function
   scriptEl: Nullable<monacoEditor.editor.IStandaloneCodeEditor>
@@ -74,6 +75,7 @@ const WBView = (props: Props) => {
     scriptEl,
     activeMode,
     resultsMode,
+    isResultsLoaded,
     onSubmit,
     onQueryOpen,
     onQueryDelete,
@@ -218,6 +220,7 @@ const WBView = (props: Props) => {
                     items={items}
                     clearing={clearing}
                     processing={processing}
+                    isResultsLoaded={isResultsLoaded}
                     activeMode={activeMode}
                     activeResultsMode={resultsMode}
                     scrollDivRef={scrollDivRef}

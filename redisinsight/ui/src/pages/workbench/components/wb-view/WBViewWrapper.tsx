@@ -62,6 +62,7 @@ const WBViewWrapper = () => {
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const {
+    isLoaded,
     loading,
     items,
     clearing,
@@ -232,6 +233,7 @@ const WBViewWrapper = () => {
       items={items}
       clearing={clearing}
       processing={processing}
+      isResultsLoaded={isLoaded}
       script={script}
       setScript={setScript}
       setScriptEl={setScriptEl}

@@ -2212,13 +2212,6 @@ debug@4, debug@^4.0.1, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.3:
   dependencies:
     ms "2.1.2"
 
-debug@4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791"
-  integrity sha512-pYAIzeRo8J6KPEaJ0VWOh5Pzkbw/RetuzehGM7QRRX5he4fPHx2rdKMB256ehJCkX+XRQm16eZLqLNS8RSZXZw==
-  dependencies:
-    ms "^2.1.1"
-
 debug@4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.1.tgz#f0d229c505e0c6d8c49ac553d1b13dc183f6b2ee"
@@ -5357,14 +5350,14 @@ tar@^6.0.2, tar@^6.1.11, tar@^6.1.2:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-testcafe-browser-provider-electron@0.0.19:
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/testcafe-browser-provider-electron/-/testcafe-browser-provider-electron-0.0.19.tgz#739d0671630c4074e212ca4a23e71e58ef6cc677"
-  integrity sha512-ecSf71hRPpT7ezUWwG3eB7l+hn7t2yVXXdu4k+uTn/REa+naBzT0Koa4WiDRug7HsV8QPbA7G87A3fQ8+7PfMA==
+testcafe-browser-provider-electron@0.0.20:
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/testcafe-browser-provider-electron/-/testcafe-browser-provider-electron-0.0.20.tgz#3600b38f4f558159aa454eec005ed67f94dc456b"
+  integrity sha512-UN9HLZg5zPeHpJC8iuq7M0q1XpQ9uLl7+6fmYtpZoSpsK8evc1eCSWQmsOK3I193sYho4rW+OBRlwo2ql6JqaA==
   dependencies:
     babel-runtime "^6.25.0"
     chrome-remote-interface "^0.31.3"
-    debug "4.1.1"
+    debug "4.3.1"
     dedent "^0.7.0"
     endpoint-utils "^1.0.2"
     lodash "^4.17.4"

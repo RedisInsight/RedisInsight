@@ -23,6 +23,7 @@ const Jobs = () => {
   const [editorValue, setEditorValue] = useState<string>('')
 
   const jobIndexRef = useRef<number>()
+  const previousJobNameRef = useRef<string>()
 
   const history = useHistory()
 
@@ -33,17 +34,20 @@ const Jobs = () => {
   useEffect(() => {
     const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
 
-    if (jobIndex === -1) {
-      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
-    }
-
     jobIndexRef.current = jobIndex
     setEditorValue(values.jobs?.[jobIndexRef.current ?? -1]?.value)
 
-    if (!values.jobs?.[jobIndexRef.current ?? -1]?.value) {
+    if (jobIndex === -1 && previousJobNameRef.current !== decodedJobName) {
+      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
+    }
+
+    if (jobIndex > -1 && !values.jobs?.[jobIndexRef.current ?? -1]?.value) {
       setIsPopoverOpen(true)
     }
-  }, [values, rdiInstanceId, decodedJobName, history])
+
+    // previous job name is tracked to prevent redirecting when changing job name
+    previousJobNameRef.current = decodedJobName
+  }, [values, decodedJobName, rdiInstanceId, history])
 
   useEffect(() => {
     setDecodedJobName(decodeURIComponent(jobName))

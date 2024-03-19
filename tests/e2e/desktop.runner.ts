@@ -71,13 +71,12 @@
         const failedCount = await runner
             .src((process.env.TEST_FILES || 'tests/electron/**/*.e2e.ts').split('\n'))
             .browsers(['electron'])
-            // Add more debug output here if needed
-            .screenshots({
-                path: './report/screenshots/',
-                takeOnFails: true,
-                pathPattern:
-                    '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png',
-            })
+            // .screenshots({
+            //     path: './report/screenshots/',
+            //     takeOnFails: true,
+            //     pathPattern:
+            //         '${USERAGENT}/${FIXTURE}_${TEST}_${FILE_INDEX}.png',
+            // })
             .reporter([
                 'spec',
                 {

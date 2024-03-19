@@ -41,9 +41,10 @@ test('Verify that user can see the text in settings for pipeline with link', asy
 
     // Verify text in setting for pipeline
     await t.expect(settingsPage.accordionWorkbenchSettings.textContent).contains(pipelineText, 'Text is incorrect');
-    await t.click(settingsPage.pipelineLink);
-    // Check new opened window page with the correct URL
-    await Common.checkURL(externalPageLink);
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // await t.click(settingsPage.pipelineLink);
+    // // Check new opened window page with the correct URL
+    // await Common.checkURL(externalPageLink);
 });
 test.skip('Verify that only chosen in pipeline number of commands is loading at the same time in Workbench', async t => {
     await settingsPage.changeCommandsInPipeline(pipelineValues[1]);

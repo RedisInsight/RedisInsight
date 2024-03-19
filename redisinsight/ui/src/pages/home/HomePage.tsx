@@ -70,7 +70,7 @@ const HomePage = () => {
     dispatch(resetSubscriptionsRedisCloud())
     dispatch(fetchCreateRedisButtonsAction())
 
-    setTitle('My Redis databases')
+    setTitle('Redis Databases')
     sendPageViewTelemetry({
       name: TelemetryPageView.DATABASES_LIST_PAGE
     })

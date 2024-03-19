@@ -102,11 +102,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div>
               <EuiToolTip
                 position="bottom"
-                content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+                content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
               >
                 <EuiText
                   className={styles.breadCrumbLink}
-                  aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+                  aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
                   data-testid="my-redis-db-btn"
                   onClick={goHome}
                   onKeyDown={goHome}

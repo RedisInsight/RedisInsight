@@ -162,7 +162,7 @@ export class DatabaseHelper {
         const databaseName = await autoDiscoverREDatabases.getDatabaseName();
         await t.click(autoDiscoverREDatabases.databaseCheckbox);
         await t.click(autoDiscoverREDatabases.addSelectedDatabases);
-        // Wait for database to be exist in the My redis databases list
+        // Wait for database to be exist in the redis databases list
         await t
             .expect(
                 autoDiscoverREDatabases.title.withExactText(

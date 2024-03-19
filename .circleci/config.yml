@@ -366,7 +366,7 @@ jobs:
             sudo cp -R /tmp/itest/coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
             cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
   e2e-app-image:
-    executor: linux-executor
+    executor: linux-executor-dlc
     parameters:
       report:
         description: Send report for test run to slack

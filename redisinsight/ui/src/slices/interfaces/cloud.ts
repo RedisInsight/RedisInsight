@@ -89,6 +89,8 @@ export enum OAuthSocialSource {
   'triggers and functions' = 'workbench triggers_and_functions',
   Workbench = 'workbench',
   Tutorials = 'tutorials',
+  DiscoveryForm = 'discovery form',
+  UserProfile = 'user profile',
 }
 
 export enum OAuthSocialAction {

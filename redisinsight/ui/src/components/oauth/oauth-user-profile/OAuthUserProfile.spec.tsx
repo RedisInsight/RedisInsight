@@ -13,6 +13,9 @@ import {
 
 import { getUserInfo, logoutUser, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { loadSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
 import OAuthUserProfile, { Props } from './OAuthUserProfile'
 
 const mockedProps = mock<Props>()
@@ -30,13 +33,13 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 let store: typeof mockedStore
-beforeEach(() => {
-  cleanup()
-  store = cloneDeep(mockedStore)
-  store.clearActions()
-})
 
 describe('OAuthUserProfile', () => {
+  beforeEach(() => {
+    cleanup()
+    store = cloneDeep(mockedStore)
+    store.clearActions()
+  })
   it('should render', () => {
     expect(render(<OAuthUserProfile {...mockedProps} />)).toBeTruthy()
   })
@@ -60,15 +63,7 @@ describe('OAuthUserProfile', () => {
 
   it('should render profile info', async () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: {
-        id: 1,
-        name: 'Bill Russell',
-        accounts: [
-          { id: 1, name: 'Bill R' },
-          { id: 2, name: 'Bill R 2' },
-        ],
-        currentAccountId: 1,
-      }
+      data: MOCK_OAUTH_USER_PROFILE
     })
     render(<OAuthUserProfile {...mockedProps} />)
 
@@ -82,17 +77,36 @@ describe('OAuthUserProfile', () => {
     expect(screen.getByTestId('profile-account-2')).toHaveTextContent('Bill R 2 #2')
   })
 
+  it('should call proper action and telemetry after click on import databases', async () => {
+    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: MOCK_OAUTH_USER_PROFILE
+    })
+    render(<OAuthUserProfile {...mockedProps} />)
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('user-profile-btn'))
+    })
+    await waitForEuiPopoverVisible();
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
+
+    fireEvent.click(screen.getByTestId('profile-import-cloud-databases'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
+      eventData: {
+        source: OAuthSocialSource.UserProfile
+      }
+    })
+
+    expect(store.getActions()).toEqual([loadSubscriptionsRedisCloud()]);
+
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
   it('should call proper action and telemetry after click on account', async () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: {
-        id: 1,
-        name: 'Bill Russell',
-        accounts: [
-          { id: 1, name: 'Bill R' },
-          { id: 2, name: 'Bill R 2' },
-        ],
-        currentAccountId: 1,
-      }
+      data: MOCK_OAUTH_USER_PROFILE
     })
     render(<OAuthUserProfile {...mockedProps} />)
 
@@ -107,22 +121,14 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-account-2'))
 
-    expect(store.getActions()).toEqual([getUserInfo()]);
+    expect(store.getActions().slice(-1)).toEqual([getUserInfo()]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper action and telemetry after click on cloud link', async () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: {
-        id: 1,
-        name: 'Bill Russell',
-        accounts: [
-          { id: 1, name: 'Bill R' },
-          { id: 2, name: 'Bill R 2' },
-        ],
-        currentAccountId: 1,
-      }
+      data: MOCK_OAUTH_USER_PROFILE
     })
     render(<OAuthUserProfile {...mockedProps} />)
 
@@ -144,15 +150,7 @@ describe('OAuthUserProfile', () => {
 
   it('should call proper action after click on logout', async () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: {
-        id: 1,
-        name: 'Bill Russell',
-        accounts: [
-          { id: 1, name: 'Bill R' },
-          { id: 2, name: 'Bill R 2' },
-        ],
-        currentAccountId: 1,
-      }
+      data: MOCK_OAUTH_USER_PROFILE
     })
     render(<OAuthUserProfile {...mockedProps} />)
 

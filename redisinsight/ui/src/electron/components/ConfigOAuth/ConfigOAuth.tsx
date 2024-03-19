@@ -57,6 +57,7 @@ const ConfigOAuth = () => {
     if (ssoFlowRef.current === OAuthSocialAction.Import) {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
+        true,
         () => {
           closeInfinityNotification()
           history.push(Pages.redisCloudSubscriptions)
@@ -86,6 +87,7 @@ const ConfigOAuth = () => {
 
   const closeInfinityNotification = () => {
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
+    dispatch(setSSOFlow(undefined))
   }
 
   const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {

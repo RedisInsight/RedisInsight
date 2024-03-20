@@ -547,7 +547,7 @@ jobs:
             echo "$CSC_P12_BASE64" | base64 -id > certs/mac-developer.p12
             echo "$CSC_MAC_INSTALLER_P12_BASE64" | base64 -id > certs/mac-installer.p12
             # echo "$CSC_MAS_P12_BASE64" | base64 -id > certs/mas-distribution.p12
-            echo "$CSC_MAS_ALL_P12_BASE64" | base64 -id > certs/mac-distribution-and-installer.p12.p12
+            echo "$CSC_MAS_ALL_P12_BASE64" | base64 -id > certs/mac-distribution-and-installer.p12
             echo "$WIN_CSC_PFX_BASE64" | base64 -id > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .

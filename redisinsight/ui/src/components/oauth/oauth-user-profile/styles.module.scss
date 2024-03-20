@@ -29,15 +29,16 @@
 
   .option {
     padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 
     &:not(:last-child) {
       border-bottom: 1px solid var(--tableLightBorderColor);
     }
 
     &.clickableOption {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
       text-decoration: none !important;
       cursor: pointer;
 

@@ -28,7 +28,7 @@ const OAuthUserProfile = (props: Props) => {
   const { data } = useSelector(oauthCloudUserSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const [isImportLoading, setIsImportLoading] = useState(true)
+  const [isImportLoading, setIsImportLoading] = useState(false)
 
   const dispatch = useDispatch()
   const history = useHistory()

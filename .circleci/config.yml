@@ -10,9 +10,9 @@ aliases:
         security unlock-keychain -p mysecretpassword $KEYCHAIN
         security set-keychain-settings -u -t 10000000 $KEYCHAIN
         security import certs/mac-developer.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
-        # security import certs/mas-distribution.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
-        # security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
-        security import certs/mac-distribution-and-installer.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security import certs/mas-distribution.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+        # security import certs/mac-distribution-and-installer.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
         security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
       environment:
         KEYCHAIN: redisinsight.keychain
@@ -546,8 +546,8 @@ jobs:
             mkdir -p certs
             echo "$CSC_P12_BASE64" | base64 -id > certs/mac-developer.p12
             echo "$CSC_MAC_INSTALLER_P12_BASE64" | base64 -id > certs/mac-installer.p12
-            # echo "$CSC_MAS_P12_BASE64" | base64 -id > certs/mas-distribution.p12
-            echo "$CSC_MAS_ALL_P12_BASE64" | base64 -id > certs/mac-distribution-and-installer.p12
+            echo "$CSC_MAS_P12_BASE64" | base64 -id > certs/mas-distribution.p12
+            # echo "$CSC_MAS_ALL_P12_BASE64" | base64 -id > certs/mac-distribution-and-installer.p12
             echo "$WIN_CSC_PFX_BASE64" | base64 -id > certs/redislabs_win.pfx
       - persist_to_workspace:
           root: .

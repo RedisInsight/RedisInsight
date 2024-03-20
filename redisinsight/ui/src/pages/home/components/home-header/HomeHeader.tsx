@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import HelpLinksMenu from 'uiSrc/pages/home/components/help-links-menu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
@@ -184,32 +183,15 @@ const HomeHeader = ({ onAddInstance, direction }: Props) => {
             <ImportDatabasesBtn />
           </EuiFlexItem>
           {!loading && !isEmpty(data) && (
-            <>
-              <EuiFlexItem grow={false} className={cx(styles.promo)}>
-                <EuiFlexGroup alignItems="center" gutterSize="s">
-                  {promoData && (
-                    <EuiFlexItem grow={false}>
-                      <CreateBtn content={promoData} />
-                    </EuiFlexItem>
-                  )}
-                </EuiFlexGroup>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.fullGuides}>
-                <HelpLinksMenu
-                  items={guides}
-                  buttonText={CREATE_DATABASE}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.smallGuides}>
-                <HelpLinksMenu
-                  emptyAnchor
-                  items={guides.slice(1)}
-                  buttonText={THE_GUIDES}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-            </>
+            <EuiFlexItem grow={false} className={cx(styles.promo)}>
+              <EuiFlexGroup alignItems="center" gutterSize="s">
+                {promoData && (
+                <EuiFlexItem grow={false}>
+                  <CreateBtn content={promoData} />
+                </EuiFlexItem>
+                )}
+              </EuiFlexGroup>
+            </EuiFlexItem>
           )}
           {instances.length > 0 && (
             <EuiFlexItem grow={false} className={styles.searchContainer}>

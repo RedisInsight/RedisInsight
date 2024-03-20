@@ -68,13 +68,13 @@
   }
 }
 
-@include welcome-page(650px) {
+@include welcome-page-header(650px) {
   .guideItem:nth-child(3) {
     display: none;
   }
 }
 
-@include welcome-page(850px) {
+@include welcome-page-header(850px) {
   .guideItem:nth-child(4) {
     display: none;
   }

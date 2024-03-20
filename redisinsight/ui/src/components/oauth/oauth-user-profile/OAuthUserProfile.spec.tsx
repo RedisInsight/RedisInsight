@@ -2,19 +2,12 @@ import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { fireEvent } from '@testing-library/react'
-import {
-  cleanup,
-  mockedStore,
-  render,
-  screen,
-  act,
-  waitForEuiPopoverVisible
-} from 'uiSrc/utils/test-utils'
+import { act, cleanup, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 
 import { getUserInfo, logoutUser, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { loadSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
 import OAuthUserProfile, { Props } from './OAuthUserProfile'
 
@@ -99,7 +92,7 @@ describe('OAuthUserProfile', () => {
       }
     })
 
-    expect(store.getActions()).toEqual([loadSubscriptionsRedisCloud()]);
+    expect(store.getActions()).toEqual([setSSOFlow(OAuthSocialAction.Import), loadSubscriptionsRedisCloud()]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })

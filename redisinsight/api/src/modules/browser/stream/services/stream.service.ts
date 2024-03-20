@@ -29,6 +29,7 @@ import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { convertArrayReplyToObject } from 'src/modules/redis/utils';
 
 @Injectable()
 export class StreamService {
@@ -55,10 +56,10 @@ export class StreamService {
 
       await checkIfKeyNotExists(keyName, client);
 
-      const info = await client.sendCommand([
+      const info = convertArrayReplyToObject(await client.sendCommand([
         BrowserToolStreamCommands.XInfoStream,
         keyName,
-      ]);
+      ]) as string[]);
 
       let entries = [];
       if (sortOrder && sortOrder === SortOrder.Asc) {
@@ -71,10 +72,10 @@ export class StreamService {
 
       return plainToClass(GetStreamEntriesResponse, {
         keyName,
-        total: info[1],
-        lastGeneratedId: info[7].toString(),
-        firstEntry: StreamService.formatArrayToDto(info[11]),
-        lastEntry: StreamService.formatArrayToDto(info[13]),
+        total: info['length'],
+        lastGeneratedId: info['last-generated-id'].toString(),
+        firstEntry: StreamService.formatArrayToDto(info['first-entry']),
+        lastEntry: StreamService.formatArrayToDto(info['last-entry']),
         entries,
       });
     } catch (error) {

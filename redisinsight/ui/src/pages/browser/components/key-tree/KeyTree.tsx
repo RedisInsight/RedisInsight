@@ -105,9 +105,12 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    setFirstDataLoaded(true)
+    if (keysState.lastRefreshTime) {
+      setFirstDataLoaded(true)
+    }
+
     setItems(parseKeyNames(keysState.keys))
-  }, [sorting, delimiter, keysState.lastRefreshTime])
+  }, [keysState.lastRefreshTime, delimiter, sorting])
 
   useEffect(() => {
     openSelectedKey(selectedKeyName)
@@ -161,19 +164,14 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }
 
   if (keysState.keys.length === 0) {
-    const NoItemsMessage = () => {
-      if (loading || !firstDataLoaded) {
-        return <span>loading...</span>
-      }
-
-      return (
-        <NoKeysMessage
-          total={keysState.total}
-          scanned={keysState.scanned}
-          onAddKeyPanel={onAddKeyPanel}
-        />
-      )
-    }
+    const NoItemsMessage = () => (
+      <NoKeysMessage
+        isLoading={loading || !firstDataLoaded}
+        total={keysState.total}
+        scanned={keysState.scanned}
+        onAddKeyPanel={onAddKeyPanel}
+      />
+    )
 
     return (
       <div className={cx(styles.content)}>

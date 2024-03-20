@@ -693,13 +693,13 @@ jobs:
             export CSC_IDENTITY_AUTO_DISCOVERY=true
             export CSC_KEYCHAIN=redisinsight.keychain
 
-            if [ << parameters.env >> == 'prod' ]; then
+            # if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               yarn package:mas
               rm -rf release/mac
               mv release/mas-universal/RedisInsight-mac-universal-mas.pkg release/RedisInsight-mac-universal-mas.pkg
               exit 0;
-            fi
+            # fi
 
             export RI_CLOUD_IDP_AUTHORIZE_URL=$RI_CLOUD_IDP_AUTHORIZE_URL_STAGE
             export RI_CLOUD_IDP_TOKEN_URL=$RI_CLOUD_IDP_TOKEN_URL_STAGE

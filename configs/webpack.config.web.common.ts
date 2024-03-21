@@ -76,7 +76,11 @@ export default {
       publicPath: '{{ RIPROXYPATH }}',
     }),
 
-    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
+    new MonacoWebpackPlugin({
+      publicPath: '{{ RIPROXYPATH }}',
+      languages: ['json', 'javascript', 'typescript'],
+      features: ['!rename'],
+    }),
 
     new webpack.IgnorePlugin({
       checkResource(resource) {

@@ -6,7 +6,14 @@ const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
 
-export const RESOURCES_BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
+let BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
+
+if (window.__RIPROXYPATH__ !== '') {
+  BASE_URL = BASE_URL + window.__RIPROXYPATH__ + '/'
+}
+
+export const RESOURCES_BASE_URL = BASE_URL
+
 
 const resourcesService = axios.create({
   baseURL: RESOURCES_BASE_URL,

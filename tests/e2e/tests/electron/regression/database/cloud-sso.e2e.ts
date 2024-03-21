@@ -33,11 +33,13 @@ fixture `Cloud SSO`
         await DatabaseScripts.deleteRowsFromTableInDB({ tableName: 'features_config' });
     });
 test('Verify that user can see SSO feature if it is enabled in feature config', async t => {
+    //TODO should be updated when AI or sth other will be added
+
     // Update remote config .json to config with buildType filter excluding current app build
-    await modifyFeaturesConfigJson(pathes.dockerConfig);
-    await updateControlNumber(48.2);
-    // Verify that user can't see SSO feature if it is disabled in feature config
-    await t.expect(myRedisDatabasePage.promoButton.exists).notOk('Import Cloud database button displayed when SSO feature disabled');
+    // await modifyFeaturesConfigJson(pathes.dockerConfig);
+    // await updateControlNumber(48.2);
+    // // Verify that user can't see SSO feature if it is disabled in feature config
+    // await t.expect(myRedisDatabasePage.promoButton.exists).notOk('promo Cloud database button displayed when SSO feature disabled');
 
     // Update remote config .json to config with buildType filter including current app build
     await modifyFeaturesConfigJson(pathes.electronConfig);

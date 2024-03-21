@@ -77,11 +77,11 @@ test
     })
     .after(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
-    })('Verify that insights panel can be opened from Welcome and Overview pages', async t => {
+    })('Verify that insights panel can be opened from Overview page', async t => {
         const myRedisTutorial = 'Time series';
 
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
-        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.TimeSeries);
+        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.SearchAndQuery);
         await t.expect(await myRedisDatabasePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
         const tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t.expect(tab.preselectArea.textContent).contains(myRedisTutorial, 'the tutorial is incorrect');

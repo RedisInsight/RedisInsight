@@ -66,7 +66,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
         ServeStaticModule.forRoot({
           rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
           exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
-          serveRoot: `/${SERVER_CONFIG.proxyPath}`,
+          serveRoot: SERVER_CONFIG.proxyPath ? `/${SERVER_CONFIG.proxyPath}` : '',
           serveStaticOptions: {
             index: false,
           },

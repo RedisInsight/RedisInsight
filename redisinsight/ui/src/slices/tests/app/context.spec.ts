@@ -11,6 +11,7 @@ import reducer, {
   initialState,
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
+  setAppContextConnectedRdiInstanceId,
   setBrowserPatternKeyListDataLoaded,
   setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
@@ -62,13 +63,15 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(initialState)
     })
 
-    it('should properly set initial state with existing contextId and capability', () => {
+    it('should properly set initial state with existing contextId and capability and contextRdiInstanceId', () => {
       // Arrange
       const contextInstanceId = '12312-3123'
+      const contextRdiInstanceId = 'rdi-123'
       const capability = { source: '123123' }
       const prevState = {
         ...initialState,
         contextInstanceId,
+        contextRdiInstanceId,
         capability,
         browser: {
           ...initialState.browser,
@@ -104,6 +107,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         contextInstanceId,
+        contextRdiInstanceId,
         capability,
       }
 
@@ -130,6 +134,27 @@ describe('slices', () => {
 
       // Act
       const nextState = reducer(initialState, setAppContextConnectedInstanceId(contextInstanceId))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setAppContextConnectedRdiInstanceId', () => {
+    it('should properly set id', () => {
+      // Arrange
+      const contextRdiInstanceId = 'rdi-123'
+      const state = {
+        ...initialState,
+        contextRdiInstanceId
+      }
+
+      // Act
+      const nextState = reducer(initialState, setAppContextConnectedRdiInstanceId(contextRdiInstanceId))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -616,11 +641,12 @@ describe('slices', () => {
       // Arrange
       const data = {
         source: '123123',
+        tutorialPopoverShown: false,
       }
 
       const state = {
         ...initialState.capability,
-        ...data,
+        source: data.source,
       }
 
       // Act

@@ -1,8 +1,7 @@
 import React, { Ref, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
-import { monaco } from 'react-monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import {
   getMonacoLines,
@@ -110,7 +109,7 @@ const WBViewWrapper = () => {
     if (scriptContext) {
       setScript(scriptContext)
       setTimeout(() => {
-        scriptEl?.setSelection(new monaco.Selection(0, 0, 0, 0))
+        scriptEl?.setSelection(new monacoEditor.Selection(0, 0, 0, 0))
       }, 0)
       dispatch(setWorkbenchScript(''))
     }

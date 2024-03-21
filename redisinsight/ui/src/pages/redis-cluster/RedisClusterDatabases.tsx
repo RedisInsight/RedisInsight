@@ -129,7 +129,7 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
 
   return (
     <>
-      <PageHeader title="My Redis databases" />
+      <PageHeader title="Redis Databases" />
       <div />
       <EuiPage>
         <EuiPageBody component="div">

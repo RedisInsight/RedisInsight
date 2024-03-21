@@ -98,7 +98,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
 
   return (
     <>
-      <PageHeader title="My Redis databases" />
+      <PageHeader title="Redis Databases" />
       <div />
       <EuiPage>
         <EuiPageBody component="div">

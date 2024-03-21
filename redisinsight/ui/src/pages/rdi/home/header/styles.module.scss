@@ -1,0 +1,9 @@
+.importBtn:global(.euiButton) {
+  height: 43px;
+  min-width: auto !important;
+
+  :global(.euiButton__text) {
+    display: flex;
+    align-items: center;
+  }
+}

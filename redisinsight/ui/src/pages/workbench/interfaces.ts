@@ -1,4 +1,4 @@
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 export interface IEditorMount {
   editor: monacoEditor.editor.IStandaloneCodeEditor

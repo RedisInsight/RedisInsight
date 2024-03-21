@@ -9,7 +9,7 @@
 }
 
 .link {
-  border: 1px solid var(--separatorColorLight);
+  border: 1px solid var(--euiColorSecondary);
   padding: 6px 16px;
   letter-spacing: normal;
   border-radius: 4px;
@@ -19,7 +19,6 @@
   height: 42px;
   background-size: cover;
   background-position: center;
-  background-color: var(--euiColorEmptyShade);
 
   &::before {
     content: "";
@@ -70,12 +69,7 @@
     position: absolute;
     width: 28px;
     height: 20px;
-    top: 8px;
-    left: 10px;
-
-    path {
-      fill: var(--euiColorEmptyShade);
-      stroke: var(--euiTextSubduedColor);
-    }
+    top: 12px;
+    left: 16px;
   }
 }

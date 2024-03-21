@@ -43,7 +43,7 @@ test('Verify that when user clicks on the “X” control or use shortcut “ESC
     await t.click(workbenchPage.monacoWidget);
     // Do some changes in the Editor and close by “X” control
     await t.typeText(workbenchPage.queryInput.nth(1), 'test', { replace: true });
-    await t.click(workbenchPage.cancelButton);
+    await t.click(workbenchPage.EditorButton.cancelBtn);
     // Verify that editor is closed and changes are not saved
     let commandAfter = await workbenchPage.scriptsLines.textContent;
     await t.expect(workbenchPage.queryInput.nth(1).exists).notOk('The popover Editor is not closed');
@@ -66,7 +66,7 @@ test('Verify that when user use shortcut “CTRL+ENTER” or clicks on the “V�
     script = 'test';
     await t.pressKey('ctrl+a');
     await t.typeText(workbenchPage.queryInput.nth(1), script, { replace: true });
-    await t.click(workbenchPage.applyButton);
+    await t.click(workbenchPage.EditorButton.applyBtn);
     // Verify that editor is closed and changes are saved
     let commandAfter = await workbenchPage.scriptsLines.textContent;
     await t.expect(workbenchPage.queryInput.nth(1).exists).notOk('The popover Editor is not closed');

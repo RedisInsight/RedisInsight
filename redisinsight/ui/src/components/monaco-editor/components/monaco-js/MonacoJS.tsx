@@ -1,5 +1,5 @@
 import React from 'react'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { MonacoEditor } from 'uiSrc/components/monaco-editor'
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
@@ -9,7 +9,7 @@ const MonacoJS = (props: CommonProps) => {
     editor: monacoEditor.editor.IStandaloneCodeEditor
   ) => {
     const messageContribution = editor.getContribution('editor.contrib.messageController')
-    editor.onDidAttemptReadOnlyEdit(() => messageContribution.dispose())
+    editor.onDidAttemptReadOnlyEdit(() => messageContribution?.dispose())
   }
 
   return (

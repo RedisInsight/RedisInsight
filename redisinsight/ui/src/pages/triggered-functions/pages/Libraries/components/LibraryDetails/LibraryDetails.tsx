@@ -242,7 +242,7 @@ const LibraryDetails = (props: Props) => {
                 onRefresh={handleRefresh}
                 onRefreshClicked={handleRefreshClicked}
                 onEnableAutoRefresh={handleEnableAutoRefresh}
-                testid="refresh-lib-details-btn"
+                testid="lib-details"
               />
               <DeleteLibraryButton
                 library={library}

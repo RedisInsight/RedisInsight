@@ -1,0 +1,202 @@
+@import '@elastic/eui/src/global_styling/variables';
+@import '@elastic/eui/src/global_styling/mixins/helpers';
+
+$animation-duration: 300ms;
+
+.panel {
+  height: 100%;
+  width: 524px;
+  padding-left: 16px;
+
+  &.fullScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-left: 16px;
+    z-index: 15;
+  }
+}
+
+.panelInner {
+  @include euiScrollBar;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--euiColorEmptyShade);
+  height: 100%;
+  width: 100%;
+  padding: 32px 16px 16px;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.title {
+  font: normal normal normal 16px/19px Graphik, sans-serif !important;
+  margin-bottom: 16px;
+}
+
+.header {
+  position: relative;
+}
+
+.fullScreenBtn {
+  position: absolute;
+  top: 0;
+  right: 32px;
+  z-index: 1;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.body {
+  .text {
+    font: normal normal normal 14px/17px Graphik, sans-serif;
+    color: var(--euiTextSubduedColor) !important;
+    margin-bottom: 16px;
+  }
+
+  .codeLabel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font: normal normal normal 14px/17px Graphik, sans-serif;
+    height: 28px;
+    margin-bottom: 8px;
+  }
+}
+
+.tabs {
+  display: flex;
+
+  .tab {
+    background-color: var(--buttonGuideBgColor);
+    color: var(--euiTextSubduedColor);
+    font-size: 14px;
+    margin: 0 !important;
+    border-radius: 4px;
+    padding: 8px 16px 8px 16px !important;
+
+    &:global {
+      &.euiTab + .euiTab:after {
+        display: none !important;
+      }
+    }
+
+    &:global(.euiTab-isSelected) {
+      color: var(--externalLinkColor);
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:global:not(.euiTab-isSelected) {
+      background-color: transparent;
+
+      &:hover {
+        .tabName {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    :global {
+      .euiTab__content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.actionBtn {
+  &:global(.euiButton) {
+    height: 20px !important;
+    min-width: auto !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+
+    :global {
+      .euiButton__content {
+        padding: 0 4px !important;
+      }
+
+      .euiButton__text {
+        font-size: 12px !important;
+        line-height: 14px !important;
+        font-weight: 400 !important;
+      }
+
+      .euiButtonContent__icon {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+}
+
+.runBtn {
+  margin-bottom: 16px;
+
+  &:global(.euiButton) {
+    color: var(--buttonSuccessColor) !important;
+
+    :global(.euiButtonEmpty__text) {
+      color: var(--buttonSuccessColor) !important;
+      margin-inline-end: 4px;
+    }
+  }
+
+  :global {
+    .euiLoadingSpinner {
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
+      border-top-color: transparent !important;
+    }
+  }
+}
+
+.inputCode {
+  height: 325px;
+
+  :global(.inlineMonacoEditor) {
+    height: 323px;
+  }
+}
+
+:global {
+  .rdi-dry-run {
+    &__codeBlock {
+      @include euiScrollBar;
+      border: 1px solid var(--separatorColorLight);
+      background: var(--rdiSecondaryBgColor);
+      height: 350px;
+      overflow: auto;
+    }
+
+    &__transformationsCode {
+      height: 350px;
+
+      .inlineMonacoEditor {
+        height: 348px;
+      }
+    }
+
+    &__code {
+      word-wrap: break-word;
+      white-space: break-spaces;
+    }
+
+    &__error {
+      color: var(--cliOutputResponseFailColor);
+    }
+  }
+}

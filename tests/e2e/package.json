@@ -53,7 +53,7 @@
     "redis": "3.1.1",
     "sqlite3": "^5.1.6",
     "supertest": "^4.0.2",
-    "testcafe": "3.5.0",
+    "testcafe": "3.0.0",
     "testcafe-browser-provider-electron": "0.0.20",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "2.2.0",

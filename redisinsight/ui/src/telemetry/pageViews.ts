@@ -8,5 +8,9 @@ export enum TelemetryPageView {
   CLUSTER_DETAILS_PAGE = 'Overview',
   PUBSUB_PAGE = 'Pub/Sub',
   DATABASE_ANALYSIS = 'Database Analysis',
-  TRIGGERED_FUNCTIONS = 'Triggers and Functions'
+  TRIGGERED_FUNCTIONS = 'Triggers and Functions',
+  RDI_INSTANCES_PAGE = 'RDI Instances',
+  RDI_CONFIG = 'RDI Configuration',
+  RDI_JOBS = 'RDI Jobs',
+  RDI_STATUS = 'RDI Status',
 }

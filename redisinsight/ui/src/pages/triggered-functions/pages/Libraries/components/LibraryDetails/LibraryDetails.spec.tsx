@@ -106,7 +106,7 @@ describe('LibraryDetails', () => {
       }
     })
 
-    fireEvent.click(screen.getByTestId('refresh-lib-details-btn'))
+    fireEvent.click(screen.getByTestId('lib-details-refresh-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_REFRESH_CLICKED,
@@ -117,8 +117,8 @@ describe('LibraryDetails', () => {
 
     sendEventTelemetry.mockRestore()
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('lib-details-auto-refresh-config-btn'))
+    fireEvent.click(screen.getByTestId('lib-details-auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_AUTO_REFRESH_ENABLED,
@@ -129,7 +129,7 @@ describe('LibraryDetails', () => {
     })
 
     sendEventTelemetry.mockRestore()
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('lib-details-auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_LIBRARY_DETAILS_AUTO_REFRESH_DISABLED,

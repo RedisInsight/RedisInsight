@@ -1,0 +1,28 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+.tableWrapper {
+  max-height: calc(100vh - 282px);
+  @include euiScrollBar;
+  overflow: auto;
+
+  .table {
+    :global {
+      .euiTableHeaderCell {
+        background-color: var(--browserTableRowEven);
+      }
+
+      .euiTableRowCell {
+        vertical-align: top !important;
+      }
+
+      .euiTableCellContent {
+        white-space: normal !important;
+        font-size: 12px !important;
+        padding: 8px 14px;
+      }
+    }
+  }
+
+}

@@ -1,5 +1,5 @@
 import { isNaN } from 'lodash'
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import { ICommand, ICommandArgGenerated, ICommands } from 'uiSrc/constants'
 import { generateArgs, generateArgsNames, getDocUrlForCommand } from 'uiSrc/utils/commands'
 

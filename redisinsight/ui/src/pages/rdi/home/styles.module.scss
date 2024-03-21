@@ -1,0 +1,26 @@
+@import "@elastic/eui/src/global_styling/index";
+
+.page {
+  height: 100%;
+  padding: 0 16px 16px !important;
+}
+
+.header {
+  padding-bottom: 16px;
+}
+
+.emptyPanel {
+  @include euiScrollBar;
+
+  overflow: auto;
+  position: relative;
+
+  height: calc(100vh - 160px);
+
+  @media (min-width: 768px) {
+    height: calc(100vh - 180px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

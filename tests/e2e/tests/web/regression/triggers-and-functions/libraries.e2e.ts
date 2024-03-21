@@ -15,6 +15,7 @@ import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 import {
     StreamKeyParameters
 } from '../../../../pageObjects/browser-page';
+import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -99,16 +100,16 @@ test('Verify that user can modify  code', async t => {
     await t.click(await triggersAndFunctionsLibrariesPage.getLibraryNameSelector(libraryName));
     await t.click(triggersAndFunctionsLibrariesPage.editMonacoButton);
     await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.Library, commandUpdatedPart1, commandUpdatedPart2);
-    await t.click(triggersAndFunctionsLibrariesPage.acceptButton);
+    await t.click(triggersAndFunctionsLibrariesPage.EditorButton.applyBtn);
     await t.expect(
-        (await triggersAndFunctionsLibrariesPage.getTextFromMonaco())).eql(commandUpdatedPart1 + commandUpdatedPart2), 'code was not updated';
+        (await MonacoEditor.getTextFromMonaco())).eql(commandUpdatedPart1 + commandUpdatedPart2), 'code was not updated';
 
     await t.click(await triggersAndFunctionsLibrariesPage.configurationLink);
     await t.click(triggersAndFunctionsLibrariesPage.editMonacoButton);
     await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.LibraryConfiguration, configuration);
-    await t.click(triggersAndFunctionsLibrariesPage.acceptButton);
+    await t.click(triggersAndFunctionsLibrariesPage.EditorButton.applyBtn);
     await t.expect(
-        (await triggersAndFunctionsLibrariesPage.getTextFromMonaco())).eql(configuration, 'configuration was not added');
+        (await MonacoEditor.getTextFromMonaco())).eql(configuration, 'configuration was not added');
 });
 
 test('Verify that function details is displayed', async t => {
@@ -154,7 +155,7 @@ test.after(async() => {
     await t.click(triggersAndFunctionsFunctionsPage.librariesLink);
     await t.click(triggersAndFunctionsLibrariesPage.addLibraryButton);
     await t.setFilesToUpload(triggersAndFunctionsLibrariesPage.uploadInput, [filePathes.upload]);
-    const uploadedText = await triggersAndFunctionsLibrariesPage.getTextFromMonaco();
+    const uploadedText = await MonacoEditor.getTextFromMonaco();
     await t.expect(uploadedText.length).gte(1, 'file was not uploaded');
     await CommonElementsActions.checkCheckbox(triggersAndFunctionsLibrariesPage.addConfigurationCheckBox, true);
     await triggersAndFunctionsLibrariesPage.sendTextToMonaco(MonacoEditorInputs.Configuration, configuration);

@@ -34,7 +34,7 @@ describe('FunctionsList', () => {
 
     render(<FunctionsList {...mockedProps} items={mockedFunctions} />)
 
-    fireEvent.click(screen.getByTestId('refresh-functions-btn'))
+    fireEvent.click(screen.getByTestId('functions-refresh-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_REFRESH_CLICKED,
@@ -45,8 +45,8 @@ describe('FunctionsList', () => {
 
     sendEventTelemetry.mockRestore()
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('functions-auto-refresh-config-btn'))
+    fireEvent.click(screen.getByTestId('functions-auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_AUTO_REFRESH_ENABLED,
@@ -57,7 +57,7 @@ describe('FunctionsList', () => {
     })
 
     sendEventTelemetry.mockRestore()
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    fireEvent.click(screen.getByTestId('functions-auto-refresh-switch'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.TRIGGERS_AND_FUNCTIONS_FUNCTION_LIST_AUTO_REFRESH_DISABLED,
@@ -71,7 +71,7 @@ describe('FunctionsList', () => {
   it('should render disabled auto refresh btn', () => {
     render(<FunctionsList {...mockedProps} isRefreshDisabled />)
 
-    expect(screen.getByTestId('refresh-functions-btn')).toBeDisabled()
+    expect(screen.getByTestId('functions-refresh-btn')).toBeDisabled()
   })
 
   it('should call proper telemetry events when sorting is changed', () => {

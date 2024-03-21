@@ -49,11 +49,12 @@ export interface Props {
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
-  disabledTooltipText?: { title: string, text: string }
+  disabledTooltipText?: { title: string, content: string | React.ReactNode }
   preventOutsideClick?: boolean
   disableFocusTrap?: boolean
   approveByValidation?: (value: string) => boolean
   approveText?: { title: string, text: string }
+  formComponentType?: 'form' | 'div'
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -85,6 +86,7 @@ const InlineItemEditor = (props: Props) => {
     disableFocusTrap = false,
     approveByValidation,
     approveText,
+    formComponentType = 'form'
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -163,7 +165,7 @@ const InlineItemEditor = (props: Props) => {
       position="bottom"
       display="inlineBlock"
       title={isDisabled && disabledTooltipText?.title}
-      content={isDisabled && disabledTooltipText?.text}
+      content={isDisabled && disabledTooltipText?.content}
       data-testid="apply-tooltip"
     >
       <EuiButtonIcon
@@ -188,7 +190,7 @@ const InlineItemEditor = (props: Props) => {
               <EuiWindowEvent event="keydown" handler={handleOnEsc} />
               <EuiFocusTrap disabled={disableFocusTrap}>
                 <EuiForm
-                  component="form"
+                  component={formComponentType}
                   className="relative"
                   onSubmit={handleFormSubmit}
                 >

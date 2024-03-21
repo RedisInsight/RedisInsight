@@ -4,7 +4,7 @@ import cx from 'classnames'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { EuiResizableContainer } from '@elastic/eui'
-import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import {
   Maybe,

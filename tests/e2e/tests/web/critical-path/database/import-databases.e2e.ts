@@ -125,7 +125,8 @@ test.before(async() => {
     await t.click(myRedisDatabasePage.closeDialogBtn);
     await t.click(myRedisDatabasePage.importDatabasesBtn);
     await t.setFilesToUpload(myRedisDatabasePage.importDatabaseInput, [rdmData.path]);
-    await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(fileNames.rdmFullJson, 'Filename not displayed in import input');
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(fileNames.rdmFullJson, 'Filename not displayed in import input');
     // Click on remove button
     await t.click(myRedisDatabasePage.removeImportedFileBtn);
     await t.expect(myRedisDatabasePage.importDbDialog.textContent).contains(defaultText, 'File not removed from import input');

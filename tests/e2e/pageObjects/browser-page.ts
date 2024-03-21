@@ -29,15 +29,14 @@ export class BrowserPage extends InstancePage {
     hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
     setDeleteButton = Selector('[data-testid=set-delete-btn]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
     closeEditTTL = Selector('[data-testid=cancel-btn]');
     saveTTLValue = Selector('[data-testid=apply-btn]');
-    refreshKeysButton = Selector('[data-testid=refresh-keys-btn]');
-    refreshKeyButton = Selector('[data-testid=refresh-key-btn]');
+    refreshKeysButton = Selector('[data-testid=keys-refresh-btn]');
+    refreshKeyButton = Selector('[data-testid=key-refresh-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
     editKeyValueButton = Selector('[data-testid=edit-key-value-btn]', { timeout: 500 });
     closeKeyButton = Selector('[data-testid=close-key-btn]');
@@ -206,6 +205,7 @@ export class BrowserPage extends InstancePage {
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]', { timeout: 500 });
+    dialog = Selector('[role=dialog]', { timeout: 500 });
     noResultsFound = Selector('[data-test-subj=no-result-found]');
     noResultsFoundOnly = Selector('[data-testid=no-result-found-only]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
@@ -592,7 +592,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editKeyNameButton)
             .typeText(this.keyNameInput, keyName, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     /**
@@ -603,7 +603,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.stringKeyValueInput)
             .typeText(this.stringKeyValueInput, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get String key value from details
@@ -619,7 +619,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editZsetButton)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get Zset key score from details
@@ -650,7 +650,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editHashButton)
             .typeText(this.hashFieldValueEditor, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get Hash key value from details
@@ -666,7 +666,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get List key value from details
@@ -682,7 +682,7 @@ export class BrowserPage extends InstancePage {
         await t
             .click(this.jsonScalarValue)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     //Get JSON key value from details
@@ -841,7 +841,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addJsonObjectButton);
         await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
         await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
-        await t.click(this.applyButton);
+        await t.click(this.EditorButton.applyBtn);
     }
 
     /**
@@ -854,7 +854,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addJsonFieldButton);
         await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
         await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
-        await t.click(this.applyButton);
+        await t.click(this.EditorButton.applyBtn);
     }
 
     /**

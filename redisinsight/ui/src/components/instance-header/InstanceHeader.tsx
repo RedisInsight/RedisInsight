@@ -96,17 +96,17 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   return (
     <div className={cx(styles.container)}>
-      <EuiFlexGroup gutterSize="none" responsive={false}>
+      <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center">
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
               <EuiToolTip
                 position="bottom"
-                content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+                content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
               >
                 <EuiText
                   className={styles.breadCrumbLink}
-                  aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+                  aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
                   data-testid="my-redis-db-btn"
                   onClick={goHome}
                   onKeyDown={goHome}

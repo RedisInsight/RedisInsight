@@ -192,7 +192,7 @@ const SentinelDatabases = ({
 
   return (
     <>
-      <PageHeader title="My Redis databases" />
+      <PageHeader title="Redis Databases" />
       <div />
       <EuiPage>
         <EuiPageBody component="div">

@@ -1,4 +1,4 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 const STRING_DOUBLE = 'string.double'
 

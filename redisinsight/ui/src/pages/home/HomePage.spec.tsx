@@ -1,21 +1,12 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import { localStorageService } from 'uiSrc/services'
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import HomePage from './HomePage'
 
 jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
   ...jest.requireActual('uiSrc/slices/content/create-redis-buttons'),
   contentSelector: () => jest.fn().mockReturnValue({ data: {}, loading: false }),
-}))
-
-jest.mock('uiSrc/services', () => ({
-  ...jest.requireActual('uiSrc/services'),
-  localStorageService: {
-    set: jest.fn(),
-    get: jest.fn(),
-  },
 }))
 
 jest.mock('uiSrc/slices/content/guide-links', () => ({
@@ -48,17 +39,13 @@ describe('HomePage', () => {
     expect(screen.getByTestId('capability-promotion')).toBeInTheDocument()
   })
 
-  it('should render insights trigger when there databases', async () => {
-    localStorageService.get = jest.fn().mockReturnValue(10)
-
+  it('should render insights trigger', async () => {
     await render(<HomePage />)
 
     expect(screen.getByTestId('insights-trigger')).toBeInTheDocument()
   })
 
   it('should render insights panel', async () => {
-    localStorageService.get = jest.fn().mockReturnValue(10)
-
     await render(<HomePage />)
 
     expect(screen.getByTestId('insights-panel')).toBeInTheDocument()

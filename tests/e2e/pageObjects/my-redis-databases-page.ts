@@ -1,13 +1,16 @@
 import { t, Selector } from 'testcafe';
 import { DatabaseAPIRequests } from '../helpers/api/api-database';
-import { BasePage } from './base-page';
 import { AddRedisDatabase } from './components/myRedisDatabase/add-redis-database';
 import { InsightsPanel } from './components/insights-panel';
 import { CompatibilityPromotion } from './components/compatibility-promotion';
+import { BaseOverviewPage } from './base-overview-page';
+import { NavigationPanel } from './components/navigation-panel';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-export class MyRedisDatabasePage extends BasePage {
+export class MyRedisDatabasePage extends BaseOverviewPage {
+
+    NavigationPanel = new NavigationPanel();
     AddRedisDatabase = new AddRedisDatabase();
     InsightsPanel = new InsightsPanel();
     CompatibilityPromotion = new CompatibilityPromotion();
@@ -28,7 +31,6 @@ export class MyRedisDatabasePage extends BasePage {
     confirmDeleteAllDbButton = Selector('[data-testid=delete-selected-dbs]');
     editDatabaseButton = Selector('[data-testid^=edit-instance]');
     editAliasButton = Selector('[data-testid=edit-alias-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     submitChangesButton = Selector('[data-testid=btn-submit]');
     promoButton = Selector('[data-testid=promo-btn]');
     sortByDatabaseAlias = Selector('span').withAttribute('title', 'Database Alias');
@@ -59,7 +61,7 @@ export class MyRedisDatabasePage extends BasePage {
     //TEXT INPUTS (also referred to as 'Text fields')
     aliasInput = Selector('[data-testid=alias-input]');
     searchInput = Selector('[data-testid=search-database-list]');
-    importDatabaseInput = Selector('[data-testid=import-databases-input-file]');
+    importDatabaseInput = Selector('[data-testid=import-file-modal-filepicker]');
     //TEXT ELEMENTS
     moduleTooltip = Selector('.euiToolTipPopover');
     moduleQuantifier = Selector('[data-testid=_module]');
@@ -67,13 +69,13 @@ export class MyRedisDatabasePage extends BasePage {
     tableRowContent = Selector('[data-test-subj=database-alias-column]');
     hostPort = Selector('[data-testid=host-port]');
     noResultsFoundMessage = Selector('div').withExactText('No results found');
-    noResultsFoundText = Selector('div').withExactText('No databases matched your search. Try reducing the criteria.');
+    noResultsFoundText = Selector('div').withExactText('No results matched your search. Try reducing the criteria.');
     failedImportMessage = Selector('[data-testid=result-failed]');
     successImportMessage = Selector('[data-testid=result-success]');
-    importDialogTitle = Selector('[data-testid=import-dbs-dialog-title]');
+    importDialogTitle = Selector('[data-testid=import-file-modal-title]');
     importResult = Selector('[data-testid^=table-result-]');
     // DIALOG
-    importDbDialog = Selector('[data-testid=import-dbs-dialog]');
+    importDbDialog = Selector('[data-testid=import-file-modal]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');
     partialResultsAccordion = Selector('[data-testid^=partial-results-]');
     failedResultsAccordion = Selector('[data-testid^=failed-results-]');
@@ -126,7 +128,7 @@ export class MyRedisDatabasePage extends BasePage {
         for (let i = 0; i < count; i++) {
             if ((await dbNames.nth(i).innerText || '').includes(dbName)) {
                 await t
-                    .click(this.deleteDatabaseButton.nth(i))
+                    .click(this.deleteRowButton.nth(i))
                     .click(this.confirmDeleteButton);
                 break;
             }

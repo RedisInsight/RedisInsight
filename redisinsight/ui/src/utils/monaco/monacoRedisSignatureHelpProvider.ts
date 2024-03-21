@@ -1,5 +1,5 @@
 import { MutableRefObject } from 'react'
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import { isNull } from 'lodash'
 import { ICommands } from 'uiSrc/constants'
 import { findCommandEarlier } from 'uiSrc/utils'

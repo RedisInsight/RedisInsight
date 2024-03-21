@@ -96,7 +96,7 @@ describe('KeyDetailsHeader', () => {
   describe('should call onRefresh', () => {
     test.each(Object.values(KeyTypes))('should call onRefresh for keyType: %s', (keyType) => {
       const component = render(<KeyDetailsHeader {...mockedProps} keyType={keyType} />)
-      fireEvent.click(screen.getByTestId('refresh-key-btn'))
+      fireEvent.click(screen.getByTestId('key-refresh-btn'))
       expect(component).toBeTruthy()
     })
   })

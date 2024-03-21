@@ -12,11 +12,12 @@ import testcafe from 'testcafe';
                     } })
                 .src((process.env.TEST_FILES || 'tests/electron/**/*.e2e.ts').split('\n'))
                 .browsers(['electron'])
-                .screenshots({
-                    path: './report/screenshots/',
-                    takeOnFails: true,
-                    pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png'
-                })
+                // Skipped because screenshots don't work for electron app on linux
+                // .screenshots({
+                //     path: './report/screenshots/',
+                //     takeOnFails: true,
+                //     pathPattern: '${USERAGENT}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png'
+                // })
                 .reporter([
                     'spec',
                     {

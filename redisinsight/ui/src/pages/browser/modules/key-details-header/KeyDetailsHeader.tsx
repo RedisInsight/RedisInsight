@@ -175,7 +175,7 @@ const KeyDetailsHeader = ({
                       onRefresh={handleRefreshKey}
                       onEnableAutoRefresh={handleEnableAutoRefresh}
                       onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
-                      testid="refresh-key-btn"
+                      testid="key"
                     />
                     {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
                       <KeyDetailsHeaderFormatter width={width} />

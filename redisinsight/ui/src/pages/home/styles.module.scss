@@ -12,11 +12,11 @@
 
 .page {
   height: 100%;
-  padding: 0 16px 16px !important;
+  padding: 1px 16px 16px !important;
 
   :global {
     .homePage {
-      height: calc(100% - 120px);
+      height: calc(100% - 60px);
     }
     .home__resizePanelLeft {
       flex-grow: 1;

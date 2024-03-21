@@ -18,7 +18,6 @@ export class SettingsPage extends BasePage {
     submitConsentsPopupButton = Selector('[data-testid=consents-settings-popup] [data-testid=btn-submit]');
     switchNotificationsOption = Selector('[data-testid=switch-option-notifications]');
     switchEditorCleanupOption = Selector('[data-testid=switch-workbench-cleanup]');
-    applyButton = Selector('[data-testid=apply-btn]');
     //TEXT INPUTS (also referred to as 'Text fields')
     keysToScanValue = Selector('[data-testid=keys-to-scan-value]');
     keysToScanInput = Selector('[data-testid=keys-to-scan-input]');
@@ -35,7 +34,7 @@ export class SettingsPage extends BasePage {
             .hover(this.keysToScanValue)
             .click(this.keysToScanInput)
             .typeText(this.keysToScanInput, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     /**
@@ -46,7 +45,7 @@ export class SettingsPage extends BasePage {
         await t.hover(this.commandsInPipelineValue)
             .click(this.commandsInPipelineInput)
             .typeText(this.commandsInPipelineInput, value, { replace: true, paste: true })
-            .click(this.applyButton);
+            .click(this.EditorButton.applyBtn);
     }
 
     /**

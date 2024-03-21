@@ -113,7 +113,7 @@ const FunctionsList = (props: Props) => {
           onRefreshClicked={handleRefreshClicked}
           onEnableAutoRefresh={handleEnableAutoRefresh}
           disabled={isRefreshDisabled}
-          testid="refresh-functions-btn"
+          testid="functions"
         />
       </div>
       <EuiInMemoryTable

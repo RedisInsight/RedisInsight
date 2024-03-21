@@ -33,5 +33,6 @@ test('Verify that user can work with Github link in the application', async t =>
     await t.expect(myRedisDatabasePage.NavigationPanel.githubButton.visible).ok('Github button');
     // Verify that when user clicks on Github icon he redirects to the URL: https://github.com/RedisInsight/RedisInsight
     await t.click(myRedisDatabasePage.NavigationPanel.githubButton);
-    await Common.checkURLContainsText('https://github.com/RedisInsight/RedisInsight');
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // await Common.checkURLContainsText('https://github.com/RedisInsight/RedisInsight');
 });

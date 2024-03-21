@@ -30,6 +30,7 @@ import { ProfilerModule } from './modules/profiler/profiler.module';
 import { CliModule } from './modules/cli/cli.module';
 import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
+import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import { routes } from './app.routes';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -65,6 +66,10 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
         ServeStaticModule.forRoot({
           rootPath: join(__dirname, '..', '..', '..', 'ui', 'dist'),
           exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
+          serveRoot: `/${SERVER_CONFIG.proxyPath}`,
+          serveStaticOptions: {
+            index: false,
+          },
         }),
       ]
       : []),
@@ -77,7 +82,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
       },
     }),
     ServeStaticModule.forRoot({
-      serveRoot: SERVER_CONFIG.staticUri,
+      serveRoot: `${SERVER_CONFIG.proxyPath}${SERVER_CONFIG.staticUri}`,
       rootPath: join(PATH_CONFIG.staticDir),
       exclude: ['/api/**'],
       serveStaticOptions: {
@@ -105,6 +110,10 @@ export class AppModule implements OnModuleInit, NestModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(SubpathProxyMiddleware)
+      .forRoutes('*');
+
     consumer
       .apply(SingleUserAuthMiddleware)
       .exclude(...SERVER_CONFIG.excludeAuthRoutes)

@@ -68,7 +68,13 @@ export default {
       'window.app.config.apiPort': JSON.stringify('5540'),
     }),
 
-    new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
+    new HtmlWebpackPlugin({
+      inject: 'head',
+      isBrowser: false,
+      isDevelopment: false,
+      template: 'index.html.ejs',
+      publicPath: '{{ RIPROXYPATH }}',
+    }),
 
     new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
 

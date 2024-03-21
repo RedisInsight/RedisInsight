@@ -51,6 +51,7 @@ export default {
     defaultPluginsUri: '/static/plugins',
     pluginsAssetsUri: '/static/resources/plugins',
     base: process.env.RI_BASE || '/',
+    proxyPath: process.env.RI_PROXY_PATH || '',
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,

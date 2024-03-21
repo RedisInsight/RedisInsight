@@ -1,4 +1,4 @@
-import { BrowserPage, MyRedisDatabasePage, WelcomePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { Compatibility, ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import {
@@ -11,7 +11,6 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
-const welcomePage  = new WelcomePage();
 
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
@@ -78,23 +77,16 @@ test
     })
     .after(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
-    })('Verify that insights panel can be opened from Welcome and Overview pages', async t => {
-        const welcomeTutorial = 'JSON';
+    })('Verify that insights panel can be opened from Overview page', async t => {
         const myRedisTutorial = 'Time series';
 
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
-        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.TimeSeries);
+        await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.SearchAndQuery);
         await t.expect(await myRedisDatabasePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
-        let tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
         await t.expect(tab.preselectArea.textContent).contains(myRedisTutorial, 'the tutorial is incorrect');
         await t.click(tab.nextPageButton);
         await tab.runBlockCode('Create time series for each shop');
         await t.expect(tab.openDatabasePopover.exists).ok('Open a database popover is not displayed');
         await myRedisDatabasePage.InsightsPanel.togglePanel(false);
-        await myRedisDatabasePage.deleteAllDatabases();
-
-        await welcomePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.Json);
-        await t.expect(await welcomePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
-        tab = await welcomePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
-        await t.expect(tab.preselectArea.textContent).contains(welcomeTutorial, 'the tutorial is incorrect');
     });

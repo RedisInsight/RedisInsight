@@ -1,5 +1,5 @@
 const RedisDatabases = {
-  text: 'My Redis databases',
+  text: 'Redis Databases',
   href: '/',
 }
 

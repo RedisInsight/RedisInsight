@@ -51,7 +51,7 @@ test('Verify that the focus gets always shifted to a newest message (auto-scroll
     await t.expect(pubSubPage.clientBadge.exists).ok('Client badge is not displayed');
     await t.expect(pubSubPage.clientBadge.textContent).eql('1', 'Client badge is not displayed', { timeout: 10000 });
 
-    // Go to My Redis databases Page
+    // Go to Redis Databases Page
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Go back to PubSub page
     await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);

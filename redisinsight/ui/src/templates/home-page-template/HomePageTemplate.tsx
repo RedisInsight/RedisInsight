@@ -20,7 +20,7 @@ const HomePageTemplate = (props: Props) => {
 
   const HomeHeader = useCallback(() => (server?.buildType === BuildType.RedisStack ? (
     <PageHeader
-      title="My Redis databases"
+      title="Redis Databases"
       className={styles.pageHeader}
       logo={(
         <InsightsTrigger source="home page" />

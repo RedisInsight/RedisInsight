@@ -89,7 +89,7 @@ export enum Compatibility {
 }
 
 export enum RedisOverviewPage {
-    DataBase  = 'My Redis databases',
+    DataBase  = 'Redis Databases',
     Rdi = 'My RDI instances',
 }
 

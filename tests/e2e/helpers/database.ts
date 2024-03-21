@@ -8,8 +8,7 @@ import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sen
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    AutoDiscoverREDatabases,
-    WelcomePage
+    AutoDiscoverREDatabases
 } from '../pageObjects';
 import { UserAgreementDialog } from '../pageObjects/dialogs';
 import { DatabaseAPIRequests } from './api/api-database';
@@ -20,7 +19,6 @@ const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
 const userAgreementDialog = new UserAgreementDialog();
 const databaseAPIRequests = new DatabaseAPIRequests();
-const welcomePage = new WelcomePage();
 
 export class DatabaseHelper {
     /**
@@ -395,7 +393,7 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         if (
-            await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.exists || await welcomePage.addDbManuallyBtn.exists
+            await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.exists
         ) {
             await this.acceptLicenseTermsAndAddDatabase(databaseParameters);
         }

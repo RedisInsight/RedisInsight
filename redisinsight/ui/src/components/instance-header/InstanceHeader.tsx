@@ -96,7 +96,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
   return (
     <div className={cx(styles.container)}>
-      <EuiFlexGroup gutterSize="none" responsive={false}>
+      <EuiFlexGroup gutterSize="none" responsive={false} alignItems="center">
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>

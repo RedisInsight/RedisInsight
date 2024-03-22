@@ -2,7 +2,7 @@ import React from 'react'
 import { EuiIcon, EuiText } from '@elastic/eui'
 
 import { Nullable } from 'uiSrc/utils'
-import { ReactComponent as CloudIcon } from 'uiSrc/assets/img/oauth/cloud.svg'
+import { ReactComponent as CloudIcon } from 'uiSrc/assets/img/oauth/cloud_color.svg'
 
 import styles from './styles.module.scss'
 

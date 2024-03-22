@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { filter } from 'lodash'
 
-import { insightsPanelSelector, openTutorialByPath, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSelectedTab, insightsPanelSelector, openTutorialByPath, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
 import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
@@ -53,6 +53,7 @@ const CapabilityPromotion = (props: Props) => {
 
   const onClickExplore = () => {
     sendTelemetry()
+    dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
     dispatch(toggleInsightsPanel())
   }
 

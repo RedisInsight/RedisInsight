@@ -678,6 +678,7 @@ jobs:
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/
+      - <<: *keychain
       - run:
           name: install dependencies
           command: |
@@ -685,7 +686,6 @@ jobs:
             yarn --cwd redisinsight/api/ install
             yarn build:statics
           no_output_timeout: 15m
-      - <<: *keychain
       - run:
           name: Build macos dmg
           command: |

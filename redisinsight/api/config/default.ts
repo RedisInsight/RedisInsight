@@ -15,14 +15,13 @@ const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourc
   ? join(process['resourcesPath'], 'defaults')
   : join(__dirname, '..', 'defaults');
 
-const staticUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static` : '/static';
 const customPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/plugins` : '/plugins';
-const tutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/tutorials` : '/tutorials';
+const staticUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static` : '/static';
+const tutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/tutorials` : '/static/tutorials';
 const customTutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/custom-tutorials` : '/static/custom-tutorials';
 const contentUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/content` : '/static/content';
 const defaultPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/plugins` : '/static/plugins';
 const pluginsAssetsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/resources/plugins` : '/static/resources/plugins';
-
 
 export default {
   dir_path: {

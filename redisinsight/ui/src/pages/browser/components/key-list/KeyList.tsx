@@ -85,12 +85,13 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
-  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(
+    !!keysState.keys.length || !isNotRenderedContext
+  )
   const [deletePopoverIndex, setDeletePopoverIndex] = useState<Maybe<number>>(undefined)
 
   const controller = useRef<Nullable<AbortController>>(null)
   const itemsRef = useRef(keysState.keys)
-  const isNotRendered = useRef(isNotRenderedContext)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
@@ -108,15 +109,16 @@ const KeyList = forwardRef((props: Props, ref) => {
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
 
-    if (!isNotRendered.current && !loading) {
+    if (
+      (!firstDataLoaded && keysState.lastRefreshTime)
+      || (searchMode === SearchMode.Redisearch && itemsRef.current.length === 0)
+    ) {
       setFirstDataLoaded(true)
+      dispatch(setBrowserIsNotRendered(false))
     }
 
-    isNotRendered.current = false
-    dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
       cancelAllMetadataRequests()
-      setFirstDataLoaded(true)
       rerender({})
       return
     }
@@ -135,23 +137,12 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const NoItemsMessage = () => (
     <NoKeysMessage
+      isLoading={loading || !firstDataLoaded}
       total={keysState.total}
       scanned={keysState.scanned}
       onAddKeyPanel={onAddKeyPanel}
     />
   )
-
-  const getNoItemsMessage = () => {
-    if (isNotRendered.current) {
-      return ''
-    }
-
-    if (itemsRef.current.length < keysState.keys.length) {
-      return 'loading...'
-    }
-
-    return <NoItemsMessage />
-  }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
     if (searchMode === SearchMode.Redisearch
@@ -331,6 +322,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     },
   ]
 
+  const noItemsMessage = NoItemsMessage()
+
   const VirtualizeTable = () => (
     <VirtualTable
       selectable
@@ -346,7 +339,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       items={itemsRef.current}
       totalItemsCount={keysState.total ?? Infinity}
       scanned={isSearched || isFiltered ? keysState.scanned : 0}
-      noItemsMessage={getNoItemsMessage()}
+      noItemsMessage={noItemsMessage}
       selectedKey={selectedKey.data}
       scrollTopProp={scrollTopPosition}
       setScrollTopPosition={setScrollTopPosition}

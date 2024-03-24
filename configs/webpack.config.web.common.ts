@@ -77,7 +77,6 @@ export default {
     }),
 
     new MonacoWebpackPlugin({
-      publicPath: '{{ RIPROXYPATH }}',
       languages: ['json', 'javascript', 'typescript'],
       features: ['!rename'],
     }),

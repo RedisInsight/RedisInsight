@@ -54,6 +54,25 @@ const langs: MonacoSyntaxLang = {
 let decorations: string[] = []
 const notCommandRegEx = /^\s|\/\//
 
+function getWorkerUrl(moduleId, label) {
+  if (['json', 'typescript', 'javascript'].includes(label)) {
+    return `${label}.worker.js`
+  }
+
+  return 'editor.worker.js'
+}
+
+window.MonacoEnvironment = {
+  getWorkerUrl: (moduleId, label) => {
+    let workerUrl = getWorkerUrl(moduleId, label)
+    const proxyPath = window.__RIPROXYPATH__ || ''
+    if (proxyPath) {
+      workerUrl = proxyPath + '/' + workerUrl
+    }
+    return workerUrl
+  }
+}
+
 const DedicatedEditor = (props: Props) => {
   const { height, initialHeight, query = '', lang, onCancel, onSubmit } = props
   const selectedLang = langs[lang]

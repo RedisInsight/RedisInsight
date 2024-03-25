@@ -66,25 +66,6 @@ let decorations: string[] = []
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
 
-function getWorkerUrl(moduleId, label) {
-  if (['json', 'typescript', 'javascript'].includes(label)) {
-    return `${label}.worker.js`
-  }
-
-  return 'editor.worker.js'
-}
-
-window.MonacoEnvironment = {
-  getWorkerUrl: (moduleId, label) => {
-    let workerUrl = getWorkerUrl(moduleId, label)
-    const proxyPath = window.__RIPROXYPATH__ || ''
-    if (proxyPath) {
-      workerUrl = proxyPath + '/' + workerUrl
-    }
-    return workerUrl
-  }
-}
-
 const Query = (props: Props) => {
   const {
     query = '',

@@ -23,8 +23,12 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
 
   sendIndexInfoEvent(
     databaseId: string,
-    additionalData: object = {},
+    additionalData: object,
   ): void {
+    if (!additionalData) {
+      return;
+    }
+
     try {
       this.sendEvent(
         TelemetryEvents.WorkbenchIndexInfoSubmitted,

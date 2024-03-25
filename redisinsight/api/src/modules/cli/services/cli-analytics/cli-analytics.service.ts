@@ -78,8 +78,12 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
 
   sendIndexInfoEvent(
     databaseId: string,
-    additionalData: object = {},
+    additionalData: object,
   ): void {
+    if (!additionalData) {
+      return;
+    }
+
     try {
       this.sendEvent(
         TelemetryEvents.CliIndexInfoSubmitted,

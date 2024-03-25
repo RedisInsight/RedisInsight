@@ -1,35 +1,29 @@
 import React, { useState } from 'react'
-import cx from 'classnames'
-import { EuiButton, EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiText } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
-import { OAuthAgreement } from 'uiSrc/components'
-import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
+import { OAuthAgreement } from 'uiSrc/components/oauth/shared'
 import {
-  oauthCloudPAgreementSelector,
   oauthCloudUserSelector,
-  setOAuthCloudSource,
-  signIn
+  setOAuthCloudSource
 } from 'uiSrc/slices/oauth/cloud'
 import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { ReactComponent as GoogleSmallIcon } from 'uiSrc/assets/img/oauth/google_small.svg'
-import { ReactComponent as GithubSmallIcon } from 'uiSrc/assets/img/oauth/github_small.svg'
-
 import { Pages } from 'uiSrc/constants'
+import OAuthSocialButtons from '../../shared/oauth-social-buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
+  inline?: boolean
   source?: OAuthSocialSource
 }
 
 const OAuthAutodiscovery = (props: Props) => {
-  const { source = OAuthSocialSource.Autodiscovery } = props
+  const { inline, source = OAuthSocialSource.Autodiscovery } = props
   const { data } = useSelector(oauthCloudUserSelector)
-  const agreement = useSelector(oauthCloudPAgreementSelector)
 
   const [isDiscoverDisabled, setIsDiscoverDisabled] = useState(false)
 
@@ -86,62 +80,18 @@ const OAuthAutodiscovery = (props: Props) => {
     )
   }
 
-  const sendTelemetry = (accountOption: string) => sendEventTelemetry({
-    event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
-    eventData: {
-      accountOption,
-      action: OAuthSocialAction.Import,
-    }
-  })
-
-  const handleClickSso = () => {
-    dispatch(signIn())
+  const handleClickSso = (accountOption: string) => {
     dispatch(setSSOFlow(OAuthSocialAction.Import))
     dispatch(setOAuthCloudSource(source))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption,
+        action: OAuthSocialAction.Import,
+      }
+    })
   }
-
-  const socialLinks = [
-    {
-      className: styles.googleButton,
-      icon: GoogleSmallIcon,
-      label: 'google-oauth',
-      onButtonClick: () => {
-        sendTelemetry('Google')
-        ipcAuthGoogle(OAuthSocialAction.Import)
-      },
-    },
-    {
-      icon: GithubSmallIcon,
-      label: 'github-oauth',
-      className: styles.githubButton,
-      onButtonClick: () => {
-        sendTelemetry('GitHub')
-        ipcAuthGithub(OAuthSocialAction.Import)
-      },
-    }
-  ]
-
-  const buttons = socialLinks.map(({ icon, label, className = '', onButtonClick }) => (
-    <EuiToolTip
-      key={label}
-      position="top"
-      anchorClassName={!agreement ? 'euiToolTip__btn-disabled' : ''}
-      content={agreement ? null : 'Acknowledge the agreement'}
-      data-testid={`${label}-tooltip`}
-    >
-      <EuiButtonIcon
-        iconType={icon}
-        disabled={!agreement}
-        className={cx(styles.button, className)}
-        onClick={() => {
-          handleClickSso()
-          onButtonClick()
-        }}
-        data-testid={label}
-        aria-labelledby={label}
-      />
-    </EuiToolTip>
-  ))
 
   return (
     <div
@@ -153,11 +103,14 @@ const OAuthAutodiscovery = (props: Props) => {
         <br />
         A new Redis Cloud account will be created for you if you don’t have one.
       </EuiText>
-      <div className={styles.buttonsContainer}>
-        {buttons}
-      </div>
+      <OAuthSocialButtons
+        inline={inline}
+        className={styles.buttonsContainer}
+        onClick={handleClickSso}
+        action={OAuthSocialAction.Import}
+      />
       <div className={styles.containerAgreement}>
-        <OAuthAgreement />
+        <OAuthAgreement size="s" />
       </div>
     </div>
   )

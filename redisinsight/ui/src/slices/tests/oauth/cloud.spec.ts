@@ -15,7 +15,6 @@ import { CloudJobStatus, CloudJobName } from 'uiSrc/electron/constants'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import reducer, {
   initialState,
-  setSignInDialogState,
   oauthCloudSelector,
   signIn,
   signInSuccess,
@@ -437,49 +436,6 @@ describe('oauth cloud slice', () => {
         oauth: {
           cloud: nextState
         }
-      })
-      expect(oauthCloudSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('setSignInDialogState', () => {
-    it('should properly set the source=SignInDialogSource.BrowserSearch and isOpenSignInDialog=true', () => {
-      // Arrange
-      const state = {
-        ...initialState,
-        isOpenSignInDialog: true,
-        source: OAuthSocialSource.BrowserSearch,
-      }
-
-      // Act
-      const nextState = reducer(initialState, setSignInDialogState(OAuthSocialSource.BrowserSearch))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        oauth: { cloud: nextState },
-      })
-      expect(oauthCloudSelector(rootState)).toEqual(state)
-    })
-
-    it('should not set source=null and set and isOpenSignInDialog=false', () => {
-      // Arrange
-      const prevState = {
-        ...initialState,
-        isOpenSignInDialog: true,
-        source: OAuthSocialSource.BrowserSearch,
-      }
-      const state = {
-        ...initialState,
-        isOpenSignInDialog: false,
-        source: OAuthSocialSource.BrowserSearch,
-      }
-
-      // Act
-      const nextState = reducer(prevState, setSignInDialogState(null))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        oauth: { cloud: nextState },
       })
       expect(oauthCloudSelector(rootState)).toEqual(state)
     })
@@ -907,11 +863,11 @@ describe('oauth cloud slice', () => {
         const expectedActions = [
           getUserInfo(),
           getUserInfoSuccess(responsePayload.data),
-          setSignInDialogState(null),
+          setSocialDialogState(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
-      it('call setSelectAccountDialogState and setSignInDialogState when fetch is successed and accounts > 1', async () => {
+      it('call setSelectAccountDialogState and setSocialDialogState when fetch is successed and accounts > 1', async () => {
       // Arrange
         const data = { id: 123123, accounts: [{}, {}] }
         const responsePayload = { data, status: 200 }
@@ -927,7 +883,7 @@ describe('oauth cloud slice', () => {
           setSelectAccountDialogState(true),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
           getUserInfoSuccess(responsePayload.data),
-          setSignInDialogState(null),
+          setSocialDialogState(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1110,13 +1066,13 @@ describe('oauth cloud slice', () => {
           getPlans(),
           getPlansSuccess(responsePayload.data),
           setIsOpenSelectPlanDialog(true),
-          setSignInDialogState(null),
+          setSocialDialogState(null),
           setSelectAccountDialogState(false),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress)
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
-      it('call setIsOpenSelectPlanDialog and setSignInDialogState when fetch is successed and accounts > 1', async () => {
+      it('call setIsOpenSelectPlanDialog and setSocialDialogState when fetch is successed and accounts > 1', async () => {
       // Arrange
         const data = [{
           id: 12148,
@@ -1144,7 +1100,7 @@ describe('oauth cloud slice', () => {
           getPlans(),
           getPlansSuccess(responsePayload.data),
           setIsOpenSelectPlanDialog(true),
-          setSignInDialogState(null),
+          setSocialDialogState(null),
           setSelectAccountDialogState(false),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
         ]

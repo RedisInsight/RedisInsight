@@ -1,5 +1,9 @@
-import OAuthSocial from './OAuthSocial'
+import OAuthAutodiscovery from './oauth-autodiscovery'
+import OAuthCreateDb from './oauth-create-db'
+import OAuthSignIn from './oauth-sign-in'
 
-export * from './OAuthSocial'
-
-export default OAuthSocial
+export {
+  OAuthAutodiscovery,
+  OAuthCreateDb,
+  OAuthSignIn,
+}

@@ -2,13 +2,19 @@ import React, { ChangeEvent } from 'react'
 import { EuiLink, EuiCheckbox } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
+import cx from 'classnames'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { setAgreement, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 
 import styles from './styles.module.scss'
 
-const OAuthAgreement = () => {
+export interface Props {
+  size?: 's' | 'm'
+}
+
+const OAuthAgreement = (props: Props) => {
+  const { size = 'm' } = props
   const agreement = useSelector(oauthCloudPAgreementSelector)
 
   const dispatch = useDispatch()
@@ -19,7 +25,7 @@ const OAuthAgreement = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={cx(styles.wrapper, { [styles.small]: size === 's' })}>
       <EuiCheckbox
         id="ouath-agreement"
         name="agreement"

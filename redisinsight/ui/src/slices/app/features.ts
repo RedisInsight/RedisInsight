@@ -27,10 +27,10 @@ export const initialState: StateAppFeatures = {
         flag: false
       },
       [FeatureFlags.cloudSso]: {
-        flag: false
+        flag: true
       },
       [FeatureFlags.cloudSsoRecommendedSettings]: {
-        flag: false
+        flag: true
       },
     }
   }
@@ -156,7 +156,7 @@ export function fetchFeatureFlags(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getFeatureFlagsSuccess(data))
+        // dispatch(getFeatureFlagsSuccess(data))
         onSuccessAction?.(data)
       }
     } catch (error) {

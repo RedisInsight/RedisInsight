@@ -8,7 +8,6 @@ import {
   fetchUserInfo,
   setJob,
   setOAuthCloudSource,
-  setSignInDialogState,
   setSocialDialogState,
   showOAuthProgress,
   signInFailure,
@@ -96,7 +95,6 @@ const ConfigOAuth = () => {
       localStorageService.remove(BrowserStorageItem.OAuthJobId)
       dispatch(showOAuthProgress(true))
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
-      dispatch(setSignInDialogState(null))
       dispatch(setSocialDialogState(null))
       dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
     }

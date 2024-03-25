@@ -2,14 +2,18 @@ import React from 'react'
 import { EuiModal, EuiModalBody } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
-import OAuthSocial from 'uiSrc/components/oauth/oauth-social/OAuthSocial'
 
+import cx from 'classnames'
 import { oauthCloudSelector, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
+import { cloudSelector } from 'uiSrc/slices/instances/cloud'
+import { OAuthCreateDb, OAuthSignIn } from 'uiSrc/components/oauth/oauth-social'
+
 import styles from './styles.module.scss'
 
 const OAuthSocialDialog = () => {
-  const { isOpenSocialDialog } = useSelector(oauthCloudSelector)
+  const { ssoFlow } = useSelector(cloudSelector)
+  const { isOpenSocialDialog, source } = useSelector(oauthCloudSelector)
 
   const dispatch = useDispatch()
 
@@ -17,14 +21,24 @@ const OAuthSocialDialog = () => {
     dispatch(setSocialDialogState(null))
   }
 
-  if (!isOpenSocialDialog) {
+  if (!isOpenSocialDialog || !ssoFlow) {
     return null
   }
 
   return (
-    <EuiModal onClose={handleClose} className={styles.modal} data-testid="social-oauth-dialog">
+    <EuiModal
+      onClose={handleClose}
+      className={cx(styles.modal, {
+        [styles.createDb]: ssoFlow === OAuthSocialAction.Create,
+        [styles.signIn]: ssoFlow === OAuthSocialAction.SignIn,
+        [styles.import]: ssoFlow === OAuthSocialAction.Import,
+      })}
+      data-testid="social-oauth-dialog"
+    >
       <EuiModalBody>
-        <OAuthSocial action={OAuthSocialAction.Import} />
+        {ssoFlow === OAuthSocialAction.Create && (<OAuthCreateDb source={source} />)}
+        {ssoFlow === OAuthSocialAction.SignIn && (<OAuthSignIn source={source} />)}
+        {ssoFlow === OAuthSocialAction.Import && (<OAuthSignIn action={OAuthSocialAction.Import} source={source} />)}
       </EuiModalBody>
     </EuiModal>
   )

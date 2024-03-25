@@ -11,6 +11,6 @@ describe('WelcomeAiAssistant', () => {
   it('should render sign in form', () => {
     render(<WelcomeAiAssistant />)
 
-    expect(screen.getByTestId('oauth-container-signIn')).toBeInTheDocument()
+    expect(screen.getByTestId('oauth-container-social-buttons')).toBeInTheDocument()
   })
 })

@@ -28,7 +28,6 @@ export interface StateAppOAuth {
     loading: boolean
   }
   isOpenSocialDialog: boolean
-  isOpenSignInDialog: boolean
   isOpenSelectAccountDialog: boolean
   showProgress: boolean
   capiKeys: {

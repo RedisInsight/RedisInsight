@@ -7,11 +7,11 @@ import cx from 'classnames'
 import { oauthCloudSelector, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
-import { OAuthCreateDb, OAuthSignIn } from 'uiSrc/components/oauth/oauth-social'
+import { OAuthCreateDb, OAuthSignIn } from 'uiSrc/components/oauth/oauth-sso'
 
 import styles from './styles.module.scss'
 
-const OAuthSocialDialog = () => {
+const OAuthSsoDialog = () => {
   const { ssoFlow } = useSelector(cloudSelector)
   const { isOpenSocialDialog, source } = useSelector(oauthCloudSelector)
 
@@ -44,4 +44,4 @@ const OAuthSocialDialog = () => {
   )
 }
 
-export default OAuthSocialDialog
+export default OAuthSsoDialog

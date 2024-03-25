@@ -3,6 +3,15 @@ import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
 import OAuthRecommendedSettings from './OAuthRecommendedSettings'
 
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    cloudSsoRecommendedSettings: {
+      flag: true
+    }
+  }),
+}))
+
 describe('OAuthRecommendedSettings', () => {
   it('should render', () => {
     expect(render(<OAuthRecommendedSettings value onChange={jest.fn} />)).toBeTruthy()

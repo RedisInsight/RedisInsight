@@ -1,7 +1,6 @@
 import React from 'react'
 import { EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
-import styles from 'uiSrc/components/oauth/oauth-social/oauth-create-db/styles.module.scss'
 import {
   OAuthAdvantages,
   OAuthAgreement,
@@ -11,6 +10,8 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
+
+import styles from './styles.module.scss'
 
 export interface Props {
   source?: Nullable<OAuthSocialSource>

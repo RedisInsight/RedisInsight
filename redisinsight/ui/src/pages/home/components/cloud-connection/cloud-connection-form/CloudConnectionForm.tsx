@@ -21,7 +21,7 @@ import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
-import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-social'
+import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 

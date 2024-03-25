@@ -85,6 +85,25 @@ describe('CliAnalyticsService', () => {
   });
 
   describe('sendCliClientCreatedEvent', () => {
+    it('should emit CliIndexInfoSubmitted event', () => {
+      service.sendIndexInfoEvent(databaseId, mockCustomData);
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.CliIndexInfoSubmitted,
+        {
+          databaseId,
+          ...mockCustomData,
+        },
+      );
+    });
+    it('should not fail and should not emit when there is no data', () => {
+      service.sendIndexInfoEvent(databaseId, null);
+
+      expect(sendEventMethod).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('sendCliClientCreatedEvent', () => {
     it('should emit CliClientCreated event', () => {
       service.sendClientCreatedEvent(databaseId, mockCustomData);
 

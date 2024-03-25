@@ -8,7 +8,7 @@ export default class SubpathProxyMiddleware implements NestMiddleware {
     const originalSendFile = res.sendFile;
     const proxyPath = process.env.RI_PROXY_PATH || '';
     res.sendFile = function (this: Response, path: string, options: any, callback?: (err?: Error) => void) {
-      if (path.endsWith('.html') || (path.includes('monacoVendor'))) {
+      if (path.endsWith('.html')) {
         let content = fs.readFileSync(path, 'utf8');
         const regex = /{{ RIPROXYPATH }}/g;
         content = content.replace(regex, proxyPath);

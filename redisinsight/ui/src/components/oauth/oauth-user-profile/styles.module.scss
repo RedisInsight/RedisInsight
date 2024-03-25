@@ -50,6 +50,11 @@
         color: var(--euiTextSubduedColor);
       }
     }
+
+    &.isDisabled {
+      color: var(--controlsBorderColor);
+      pointer-events: none;
+    }
   }
 
   .optionTitleWrapper {

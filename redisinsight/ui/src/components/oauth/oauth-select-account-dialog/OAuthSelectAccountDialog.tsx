@@ -71,6 +71,7 @@ const OAuthSelectAccountDialog = () => {
     if (isAutodiscoverySSO) {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
+        true,
         () => {
           dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
           history.push(Pages.redisCloudSubscriptions)

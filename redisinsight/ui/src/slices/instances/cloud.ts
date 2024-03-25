@@ -194,23 +194,21 @@ const generateAuthHeaders = (credentials: Nullable<ICredentialsRedisCloud>) => (
 // Asynchronous thunk action
 export function fetchSubscriptionsRedisCloud(
   credentials: Nullable<ICredentialsRedisCloud>,
+  isWithinOauth?: boolean,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+  return async (dispatch: AppDispatch) => {
     dispatch(loadSubscriptionsRedisCloud())
 
     try {
-      const state = stateInit()
-      const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.get(
-        isAutodiscoverySSO
+        isWithinOauth
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS}`
           : `${ApiEndpoints.REDIS_CLOUD_SUBSCRIPTIONS}`,
         {
           headers: {
-            ...(!isAutodiscoverySSO ? generateAuthHeaders(credentials) : {}),
+            ...(!isWithinOauth ? generateAuthHeaders(credentials) : {}),
           }
         }
       )
@@ -223,7 +221,7 @@ export function fetchSubscriptionsRedisCloud(
           })
         )
         onSuccessAction?.()
-        dispatch<any>(fetchAccountRedisCloud(credentials))
+        dispatch<any>(fetchAccountRedisCloud(credentials, isWithinOauth))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
@@ -237,21 +235,21 @@ export function fetchSubscriptionsRedisCloud(
 }
 
 // Asynchronous thunk action
-export function fetchAccountRedisCloud(credentials: Nullable<ICredentialsRedisCloud>) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+export function fetchAccountRedisCloud(
+  credentials: Nullable<ICredentialsRedisCloud>,
+  isWithinOauth?: boolean,
+) {
+  return async (dispatch: AppDispatch) => {
     dispatch(loadAccountRedisCloud())
 
     try {
-      const state = stateInit()
-      const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.get(
-        isAutodiscoverySSO
+        isWithinOauth
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT}`
           : `${ApiEndpoints.REDIS_CLOUD_ACCOUNT}`,
         {
           headers: {
-            ...(!isAutodiscoverySSO ? generateAuthHeaders(credentials) : {}),
+            ...(!isWithinOauth ? generateAuthHeaders(credentials) : {}),
           }
         }
       )

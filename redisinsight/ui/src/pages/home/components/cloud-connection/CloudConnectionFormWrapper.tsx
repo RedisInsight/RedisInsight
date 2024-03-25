@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { Pages } from 'uiSrc/constants'
-import { cloudSelector, fetchSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { useResizableFormField } from 'uiSrc/services'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -40,7 +40,8 @@ const CloudConnectionFormWrapper = ({ onClose, width }: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_RE_CLOUD_AUTODISCOVERY_SUBMITTED
     })
-    dispatch(fetchSubscriptionsRedisCloud(credentials, onSuccess))
+    dispatch(setSSOFlow(undefined))
+    dispatch(fetchSubscriptionsRedisCloud(credentials, false, onSuccess))
   }
 
   const onSuccess = () => {

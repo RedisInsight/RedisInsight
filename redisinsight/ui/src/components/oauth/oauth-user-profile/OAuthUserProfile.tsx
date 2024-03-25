@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
+import { useHistory } from 'react-router-dom'
 import OAuthSignInButton from 'uiSrc/components/oauth/oauth-sign-in-button'
 import { activateAccount, logoutUserAction, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { ReactComponent as CloudIcon } from 'uiSrc/assets/img/oauth/cloud.svg'
@@ -11,8 +12,10 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName } from 'uiSrc/utils'
+import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { Pages } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -25,8 +28,10 @@ const OAuthUserProfile = (props: Props) => {
   const { data } = useSelector(oauthCloudUserSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [isImportLoading, setIsImportLoading] = useState(false)
 
   const dispatch = useDispatch()
+  const history = useHistory()
 
   if (!data) {
     return (
@@ -57,6 +62,29 @@ const OAuthUserProfile = (props: Props) => {
   const handleClickCloudAccount = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_CONSOLE_CLICKED
+    })
+  }
+
+  const handleClickImport = () => {
+    if (isImportLoading) return
+
+    setIsImportLoading(true)
+    dispatch(setSSOFlow(OAuthSocialAction.Import))
+    dispatch(fetchSubscriptionsRedisCloud(
+      null,
+      true,
+      () => {
+        history.push(Pages.redisCloudSubscriptions)
+        setIsImportLoading(false)
+      },
+      () => setIsImportLoading(false)
+    ))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
+      eventData: {
+        source: OAuthSocialSource.UserProfile
+      }
     })
   }
 
@@ -132,11 +160,16 @@ const OAuthUserProfile = (props: Props) => {
           </div>
           <div
             role="presentation"
-            className={cx(styles.option, styles.clickableOption)}
-            data-testi="import-cloud-databases"
+            className={cx(styles.option, styles.clickableOption, { [styles.isDisabled]: isImportLoading })}
+            onClick={handleClickImport}
+            data-testid="profile-import-cloud-databases"
           >
             <EuiText className={styles.optionTitle}>Import Cloud databases</EuiText>
-            <EuiIcon type="importAction" />
+            {isImportLoading ? (
+              <EuiLoadingSpinner className={styles.loadingSpinner} size="m" />
+            ) : (
+              <EuiIcon type="importAction" />
+            )}
           </div>
           <EuiLink
             external={false}

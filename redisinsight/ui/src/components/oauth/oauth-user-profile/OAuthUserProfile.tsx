@@ -12,9 +12,9 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName } from 'uiSrc/utils'
-import { fetchSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
+import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { Pages } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 
@@ -69,6 +69,7 @@ const OAuthUserProfile = (props: Props) => {
     if (isImportLoading) return
 
     setIsImportLoading(true)
+    dispatch(setSSOFlow(OAuthSocialAction.Import))
     dispatch(fetchSubscriptionsRedisCloud(
       null,
       true,
@@ -159,7 +160,7 @@ const OAuthUserProfile = (props: Props) => {
           </div>
           <div
             role="presentation"
-            className={cx(styles.option, { [styles.clickableOption]: !isImportLoading })}
+            className={cx(styles.option, styles.clickableOption, { [styles.isDisabled]: isImportLoading })}
             onClick={handleClickImport}
             data-testid="profile-import-cloud-databases"
           >

@@ -23,6 +23,8 @@ const contentUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/st
 const defaultPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/plugins` : '/static/plugins';
 const pluginsAssetsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/resources/plugins` : '/static/resources/plugins';
 
+const socketPath = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/socket.io` : '/socket.io';
+
 export default {
   dir_path: {
     tmpDir: os.tmpdir(),
@@ -74,6 +76,7 @@ export default {
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,
+    path: socketPath,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

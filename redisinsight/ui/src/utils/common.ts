@@ -9,6 +9,13 @@ export const getBaseApiUrl = () => (!isDevelopment && isWebApp
   ? window.location.origin
   : `${baseApiUrl}:${apiPort}`)
 
+export const getProxyPath = () => {
+  if (window.__RIPROXYPATH__ !== '') {
+    return `/${window.__RIPROXYPATH__}/socket.io`
+  }
+  return '/socket.io'
+}
+
 type Node = number | string | JSX.Element
 
 export const getNodeText = (node: Node | Node[]): string => {

@@ -19,6 +19,7 @@ import { Database } from 'src/modules/database/models/database';
 import config from 'src/utils/config';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
+import { SessionMetadata } from 'src/common/models';
 
 const cloudConfig = config.get('cloud');
 
@@ -114,19 +115,23 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       const [host, port] = publicEndpoint.split(':');
 
-      const database = await this.dependencies.databaseService.create({
-        host,
-        port: parseInt(port, 10),
-        name,
-        nameFromProvider: name,
-        password,
-        provider: HostingProvider.RE_CLOUD,
-        cloudDetails: {
-          ...cloudDatabase?.cloudDetails,
-          free: true,
+      // TODO: does sessionMetadata need to be passed here?
+      const database = await this.dependencies.databaseService.create(
+        {} as SessionMetadata,
+        {
+          host,
+          port: parseInt(port, 10),
+          name,
+          nameFromProvider: name,
+          password,
+          provider: HostingProvider.RE_CLOUD,
+          cloudDetails: {
+            ...cloudDatabase?.cloudDetails,
+            free: true,
+          },
+          timeout: cloudConfig.cloudDatabaseConnectionTimeout,
         },
-        timeout: cloudConfig.cloudDatabaseConnectionTimeout,
-      });
+      );
 
       this.result = {
         resourceId: database.id,

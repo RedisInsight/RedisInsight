@@ -4,6 +4,7 @@ import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { isTriggeredAndFunctionsModule, checkKeyspaceNotification } from 'src/utils';
+import { SessionMetadata } from 'src/common/models';
 
 export class FunctionsWithKeyspaceStrategy extends AbstractRecommendationStrategy {
   private databaseService: DatabaseService;
@@ -23,7 +24,8 @@ export class FunctionsWithKeyspaceStrategy extends AbstractRecommendationStrateg
   async isRecommendationReached(
     data,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const { modules } = await this.databaseService.get(data.databaseId);
+    // TODO: do the refactor outlined in search-JSON.strategy.ts?
+    const { modules } = await this.databaseService.get({} as SessionMetadata, data.databaseId);
 
     if (isTriggeredAndFunctionsModule(modules)) {
       const libraries = await data.client.sendCommand(

@@ -12,6 +12,7 @@ import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class LocalDatabaseRepository extends DatabaseRepository {
@@ -49,7 +50,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   /**
    * @inheritDoc
    */
-  public async exists(id: string): Promise<boolean> {
+  public async exists(_: SessionMetadata, id: string): Promise<boolean> {
     return !!await this.repository
       .createQueryBuilder('database')
       .where({ id })
@@ -61,6 +62,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @inheritDoc
    */
   public async get(
+    _: SessionMetadata,
     id: string,
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
@@ -99,10 +101,11 @@ export class LocalDatabaseRepository extends DatabaseRepository {
 
   /**
    * Create database with encrypted sensitive fields
+   * @param _
    * @param database
    * @param uniqueCheck
    */
-  public async create(database: Database, uniqueCheck: boolean): Promise<Database> {
+  public async create(_: SessionMetadata, database: Database, uniqueCheck: boolean): Promise<Database> {
     if (uniqueCheck) {
       await this.checkUniqueness(database);
     }
@@ -126,7 +129,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    * @throws TBD
    */
-  public async update(id: string, database: Partial<Database>): Promise<Database> {
+  public async update(_: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
     const oldEntity = await this.decryptEntity((await this.repository.findOneBy({ id })), true);
     const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
 
@@ -156,13 +159,13 @@ export class LocalDatabaseRepository extends DatabaseRepository {
         .execute();
     }
 
-    return this.get(id);
+    return this.get({} as SessionMetadata, id);
   }
 
   /**
    * @inheritDoc
    */
-  public async delete(id: string): Promise<void> {
+  public async delete(_: SessionMetadata, id: string): Promise<void> {
     await this.repository.delete(id);
   }
 

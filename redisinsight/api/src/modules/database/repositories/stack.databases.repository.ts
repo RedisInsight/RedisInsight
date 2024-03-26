@@ -6,6 +6,7 @@ import config from 'src/utils/config';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { Database } from 'src/modules/database/models/database';
+import { SessionMetadata } from 'src/common/models';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
@@ -25,25 +26,26 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
    * @inheritDoc
    */
   async exists(): Promise<boolean> {
-    return super.exists(REDIS_STACK_CONFIG.id);
+    return super.exists({} as SessionMetadata, REDIS_STACK_CONFIG.id);
   }
 
   /**
    * @inheritDoc
    */
   async get(
+    _: SessionMetadata,
     id: string,
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    return super.get(REDIS_STACK_CONFIG.id, ignoreEncryptionErrors, omitFields);
+    return super.get({} as SessionMetadata, REDIS_STACK_CONFIG.id, ignoreEncryptionErrors, omitFields);
   }
 
   /**
    * @inheritDoc
    */
   async list(): Promise<Database[]> {
-    return [await this.get(REDIS_STACK_CONFIG.id)];
+    return [await this.get({} as SessionMetadata, REDIS_STACK_CONFIG.id)];
   }
 
   /**
@@ -56,8 +58,8 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
   /**
    * @inheritDoc
    */
-  async update(id: string, data: Database) {
-    return super.update(REDIS_STACK_CONFIG.id, data);
+  async update(sessionMetadata: SessionMetadata, id: string, data: Database) {
+    return super.update(sessionMetadata, REDIS_STACK_CONFIG.id, data);
   }
 
   /**
@@ -74,16 +76,20 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
       } = options;
       const isExist = await this.exists();
       if (!isExist) {
-        await super.create({
-          id,
-          host,
-          port: parseInt(port, 10),
-          name,
-          tls: false,
-          verifyServerCert: false,
-          connectionType: ConnectionType.STANDALONE,
-          lastConnection: null,
-        }, false);
+        await super.create(
+          {} as SessionMetadata, // TODO: should empty sessionMetadata be passed here?
+          {
+            id,
+            host,
+            port: parseInt(port, 10),
+            name,
+            tls: false,
+            verifyServerCert: false,
+            connectionType: ConnectionType.STANDALONE,
+            lastConnection: null,
+          },
+          false,
+        );
       }
       this.logger.log(`Succeed to set predefined database ${id}`);
     } catch (error) {

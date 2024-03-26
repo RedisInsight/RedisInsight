@@ -21,6 +21,8 @@ import {
   stringToBuffer,
   binaryToBuffer,
   Maybe,
+  bufferToFloat64Array,
+  bufferToFloat32Array,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -39,6 +41,8 @@ const isFormatEditable = (format: KeyValueFormat) => ![
   KeyValueFormat.Protobuf,
   KeyValueFormat.JAVA,
   KeyValueFormat.Pickle,
+  KeyValueFormat.Vector32Bit,
+  KeyValueFormat.Vector64Bit,
 ].includes(format)
 
 const isFullStringLoaded = (currentLength: Maybe<number>, fullLength: Maybe<number>) => currentLength === fullLength
@@ -100,6 +104,25 @@ const formattingBuffer = (
         return { value: bufferToUTF8(reply), isValid: false }
       }
     }
+    case KeyValueFormat.Vector32Bit: {
+      try {
+        const vector = Array.from(bufferToFloat32Array(reply.data))
+        const value = JSONBigInt.stringify(vector)
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.Vector64Bit: {
+      try {
+        const vector = Array.from(bufferToFloat64Array(reply.data))
+        const value = JSONBigInt.stringify(vector)
+
+        return JSONViewer({ value, ...props })
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
     case KeyValueFormat.Protobuf: {
       try {
         const decoded = getData(Buffer.from(reply.data))
@@ -141,6 +164,8 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.HEX: return bufferToHex(value)
     case KeyValueFormat.Binary: return bufferToBinary(value)
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
+    case KeyValueFormat.Vector32Bit: return bufferToFloat32Array(value.data)
+    case KeyValueFormat.Vector64Bit: return bufferToFloat64Array(value.data)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(Uint8Array.from(value.data))

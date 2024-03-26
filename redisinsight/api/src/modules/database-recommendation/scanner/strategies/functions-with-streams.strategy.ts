@@ -5,6 +5,7 @@ import { IDatabaseRecommendationStrategyData }
 import { DatabaseService } from 'src/modules/database/database.service';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { isTriggeredAndFunctionsModule } from 'src/utils';
+import { SessionMetadata } from 'src/common/models';
 
 export class FunctionsWithStreamsStrategy extends AbstractRecommendationStrategy {
   private databaseService: DatabaseService;
@@ -24,7 +25,8 @@ export class FunctionsWithStreamsStrategy extends AbstractRecommendationStrategy
   async isRecommendationReached(
     data,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const { modules } = await this.databaseService.get(data.databaseId);
+    // TODO: do the refactor outlined in search-JSON.strategy.ts?
+    const { modules } = await this.databaseService.get({} as SessionMetadata, data.databaseId);
 
     if (isTriggeredAndFunctionsModule(modules)) {
       const libraries = await data.client.sendCommand(

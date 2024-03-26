@@ -24,6 +24,7 @@ import {
 import { ValidationException } from 'src/common/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseImportService {
@@ -243,7 +244,8 @@ export class DatabaseImportService {
 
       const database = classToClass(Database, dto);
 
-      await this.databaseRepository.create(database, false);
+      // TODO: does database import need sessionMetadata when creating the database?
+      await this.databaseRepository.create({} as SessionMetadata, database, false);
 
       return {
         index,

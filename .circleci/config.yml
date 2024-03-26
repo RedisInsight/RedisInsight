@@ -1562,7 +1562,7 @@ workflows:
       - store-build-artifacts:
           name: Store build artifacts (stage)
           requires:
-            - Build app - Linux (stage)ашч ензщ
+            - Build app - Linux (stage)
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
             - Build docker images (stage)

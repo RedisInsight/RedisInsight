@@ -1559,6 +1559,13 @@ workflows:
           parallelism: 4
           requires:
             - Build docker images (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)add build
+            - Build app - Windows (stage)
+            - Build docker images (stage)
 
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:

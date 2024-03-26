@@ -1,91 +1,60 @@
-import { RedisClient, RedisClientNodeRole } from 'src/modules/redis/client';
-import { uniq } from 'lodash';
-import { convertArrayReplyToObject } from 'src/modules/redis/utils';
+import { chunk, keyBy } from 'lodash';
 
-export const getRediSearchIndexes = async (client: RedisClient) => {
-  const nodes = await client.nodes(RedisClientNodeRole.PRIMARY);
+type ArrayReplyEntry = string | string[];
 
-  const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
-    ['FT._LIST'],
-    {
-      replyEncoding: 'utf8',
-    },
-  )));
+const quotesIfNeeded = (str: string) => (str.indexOf(' ') > -1 ? JSON.stringify(str) : str);
 
-  return uniq([].concat(...res));
+// ====================================================================
+// Reply converter
+// ====================================================================
+export const convertArrayReplyToObject = (
+  input: ArrayReplyEntry[],
+): { [key: string]: any } => {
+  const obj = {};
+
+  chunk(input, 2).forEach(([key, value]) => {
+    obj[key as string] = value;
+  });
+
+  return obj;
 };
 
-export const getIndexAttributes = async (client: RedisClient, index: string) => {
-  const res = convertArrayReplyToObject(await client.sendCommand(['ft.info', index], {
-    replyEncoding: 'utf8',
-  }) as string[]);
+export const convertIndexInfoAttributeReply = (input: string[]): object => {
+  const attribute = convertArrayReplyToObject(input);
+  attribute['SORTABLE'] = input.includes('SORTABLE') || undefined;
+  attribute['NOINDEX'] = input.includes('NOINDEX') || undefined;
+  attribute['CASESENSITIVE'] = input.includes('CASESENSITIVE') || undefined;
+  attribute['UNF'] = input.includes('UNF') || undefined;
+  attribute['NOSTEM'] = input.includes('NOSTEM') || undefined;
 
-  return res?.attributes.map(convertArrayReplyToObject);
+  return attribute;
 };
 
-export const getAttributeContext = async (client: RedisClient, index: string, attribute: any) => {
-  const context = {
-    ...attribute,
-    distinct_count: 0,
-    top_values: [],
-  };
+export const convertIndexInfoReply = (input: ArrayReplyEntry[]): object => {
+  const infoReply = convertArrayReplyToObject(input);
+  infoReply['index_definition'] = convertArrayReplyToObject(infoReply['index_definition']);
+  infoReply['attributes'] = infoReply['attributes'].map(convertIndexInfoAttributeReply);
 
-  switch (attribute.type.toUpperCase()) {
-    case 'TEXT':
-    case 'TAG':
-    case 'NUMERIC':
-    case 'GEO':
-      try {
-        const [distinct, ...top] = await client.sendCommand([
-          'FT.AGGREGATE',
-          index,
-          '*',
-          'GROUPBY',
-          '1',
-          `@${attribute.attribute}`,
-          'REDUCE',
-          'COUNT',
-          '0',
-          'AS',
-          'count',
-          'SORTBY',
-          '2',
-          '@count',
-          'DESC',
-          'MAX',
-          '5',
-        ], { replyEncoding: 'utf8' }) as [string, ...string[]];
-
-        context.distinct_count = parseInt(distinct, 10);
-        context['top_values'] = [top?.map(([, value,, count]) => ({ value, count }))];
-      } catch (e) {
-        // ignore error
-      }
-
-      return context;
-    default:
-      return context;
-  }
+  return infoReply;
 };
 
-const quotesIfNeeded = (str: string) => {
-  return str.indexOf(' ') > -1 ? JSON.stringify(str) : str;
-};
+// ====================================================================
+// Context creation
+// ====================================================================
 
-const getIndexCreateStatement = async (client: RedisClient, index: string) => {
+export const createIndexCreateStatement = (info: object) => {
   try {
-    const info = convertArrayReplyToObject(await client.sendCommand(['ft.info', index], {
-      replyEncoding: 'utf8',
-    }) as string[]);
+    const definition = info['index_definition'];
 
-    const attributes = info?.attributes.map(convertArrayReplyToObject);
-    const definition = convertArrayReplyToObject(info?.index_definition);
+    let statement = `FT.CREATE ${quotesIfNeeded(info['index_name'])} ON ${quotesIfNeeded(definition['key_type'])}`;
 
-    let statement = `FT.CREATE ${quotesIfNeeded(info['index_name'])} ON ${quotesIfNeeded(definition['key_type'])} PREFIX ${definition.prefixes.length}`;
+    if (definition['prefixes'].length) {
+      statement += `PREFIX ${definition['prefixes'].length}`;
 
-    definition.prefixes.forEach((prefix) => {
-      statement += ` ${quotesIfNeeded(prefix)}`;
-    });
+      definition['prefixes'].forEach((prefix) => {
+        statement += ` ${quotesIfNeeded(prefix)}`;
+      });
+    }
 
     if (definition.filter) {
       statement += ` FILTER ${definition.filter}`;
@@ -93,40 +62,52 @@ const getIndexCreateStatement = async (client: RedisClient, index: string) => {
 
     statement += ' SCHEMA';
 
-    attributes.forEach((attr) => {
+    info['attributes'].forEach((attr) => {
       statement += ` ${attr.identifier} AS ${attr.attribute} ${attr.type}`;
     });
 
     return statement;
   } catch (e) {
     // ignore error
+    return undefined;
   }
 };
 
-export const getIndexContext = async (client: RedisClient, index: string) => {
+export const createIndexAttributeContext = (input: object): object => ({
+  ...input,
+});
+
+export const createIndexContext = (info: object): object => {
   const context = {
-    index_name: index,
-    create_statement: await getIndexCreateStatement(client, index),
+    index_name: info['index_name'],
+    create_statement: createIndexCreateStatement(info),
     attributes: {},
   };
 
-  const attributes = await getIndexAttributes(client, index);
-
-  await Promise.all(attributes.map(async (attr) => {
-    context.attributes[attr.attribute] = await getAttributeContext(client, index, attr);
-  }));
+  context['attributes'] = keyBy(info['attributes'], 'attribute');
 
   return context;
 };
 
-export const getFullDbContext = async (client: RedisClient): Promise<object> => {
+export const createRedisearchIndexesContextFromArrayReplies = (indexesInfoReplies: string[][]): object => {
   const context = {};
 
-  const indexes = await getRediSearchIndexes(client);
+  indexesInfoReplies.forEach((infoReply) => {
+    const info = convertIndexInfoReply(infoReply);
+    const indexContext = createIndexContext(info);
+    context[indexContext['index_name']] = indexContext;
+  });
 
-  await Promise.all(indexes.map(async (index) => {
-    context[index] = await getIndexContext(client, index);
-  }));
+  return context;
+};
+
+export const createRedisearchIndexesContextFromObjects = (indexesInfo: object[]): object => {
+  const context = {};
+
+  indexesInfo.forEach((info) => {
+    const indexContext = createIndexContext(info);
+    context[indexContext['index_name']] = indexContext;
+  });
 
   return context;
 };

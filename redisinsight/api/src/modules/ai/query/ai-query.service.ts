@@ -2,14 +2,15 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provider';
 import { SendAiQueryMessageDto } from 'src/modules/ai/query/dto/send.ai-query.message.dto';
-import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { getFullDbContext } from 'src/modules/ai/query/utils/context.util';
 import { AiQueryInternalServerErrorException } from 'src/modules/ai/query/exceptions';
+import { AiContextProvider } from 'src/modules/ai/query/providers/ai-context.provider';
+import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 
 @Injectable()
 export class AiQueryService {
   constructor(
     private readonly aiQueryProvider: AiQueryProvider,
+    private readonly contextProvider: AiContextProvider,
     private readonly databaseClientFactory: DatabaseClientFactory,
   ) {
   }
@@ -22,7 +23,7 @@ export class AiQueryService {
         context: ClientContext.AI,
       });
 
-      return await getFullDbContext(client);
+      return await this.contextProvider.getDbContext(client, { topValues: true });
     } catch (e) {
       return {};
     }

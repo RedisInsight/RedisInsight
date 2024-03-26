@@ -108,7 +108,7 @@ const formattingBuffer = (
       try {
         const vector = Array.from(bufferToFloat32Array(reply.data))
         const value = JSONBigInt.stringify(vector)
-        return JSONViewer({ value, ...props })
+        return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
       }
@@ -117,8 +117,7 @@ const formattingBuffer = (
       try {
         const vector = Array.from(bufferToFloat64Array(reply.data))
         const value = JSONBigInt.stringify(vector)
-
-        return JSONViewer({ value, ...props })
+        return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
       }

@@ -14,11 +14,13 @@ import { getFileInfo, getTutorialSection, } from '../../utils'
 export interface Props {
   label: string
   children: string
+  lang: string
   params?: string
   path?: string
 }
 
-const Code = ({ children, params = '', label, path, ...rest }: Props) => {
+const Code = (props: Props) => {
+  const { children, params = '', label, path, lang, ...rest } = props
   const { provider, modules = [], isFreeDb } = useSelector(connectedInstanceSelector)
 
   const { search } = useLocation()
@@ -83,6 +85,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
       label={label}
       params={parsedParams}
       isShowConfirmation={!isFreeDb}
+      lang={lang}
       {...rest}
     />
   )

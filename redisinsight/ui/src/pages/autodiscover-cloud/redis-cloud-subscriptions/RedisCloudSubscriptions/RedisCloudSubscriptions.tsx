@@ -11,8 +11,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiPage,
-  EuiPageBody,
   EuiLoadingContent,
   EuiToolTip,
 } from '@elastic/eui'
@@ -24,9 +22,9 @@ import {
   RedisCloudSubscriptionStatus,
 } from 'uiSrc/slices/interfaces'
 import { Maybe, Nullable } from 'uiSrc/utils'
-import { PageHeader } from 'uiSrc/components'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import styles from '../styles.module.scss'
 
@@ -236,65 +234,57 @@ const RedisCloudSubscriptions = ({
   )
 
   return (
-    <>
-      <PageHeader title="My Redis databases" />
-      <div />
-      <EuiPage>
-        <EuiPageBody component="div">
-          <div className="homePage">
-            <div className="databaseContainer">
-              <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>Redis Cloud Subscriptions</h1>
-              </EuiTitle>
+    <AutodiscoveryPageTemplate>
+      <div className="databaseContainer">
+        <EuiTitle size="s" className={styles.title} data-testid="title">
+          <h1>Redis Cloud Subscriptions</h1>
+        </EuiTitle>
 
-              <MessageBar opened={countStatusActive + countStatusFailed > 0}>
-                <SummaryText />
-              </MessageBar>
-              <EuiFormRow className={styles.searchForm}>
-                <EuiFieldSearch
-                  placeholder="Search..."
-                  className={styles.search}
-                  onChange={onQueryChange}
-                  isClearable
-                  aria-label="Search"
-                  data-testid="search"
-                />
-              </EuiFormRow>
-              <br />
+        <MessageBar opened={countStatusActive + countStatusFailed > 0}>
+          <SummaryText />
+        </MessageBar>
+        <EuiFormRow className={styles.searchForm}>
+          <EuiFieldSearch
+            placeholder="Search..."
+            className={styles.search}
+            onChange={onQueryChange}
+            isClearable
+            aria-label="Search"
+            data-testid="search"
+          />
+        </EuiFormRow>
+        <br />
 
-              <div className={cx('databaseList', styles.cloudSubscriptions)}>
-                <div className={styles.account}>
-                  <Account />
-                </div>
-                <EuiInMemoryTable
-                  items={items}
-                  itemId="id"
-                  loading={loading}
-                  columns={columns}
-                  sorting={{ sort }}
-                  selection={selectionValue}
-                  className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
-                  isSelectable
-                />
-                {!items.length && <EuiText className={styles.noSubscriptions}>{message}</EuiText>}
-              </div>
-            </div>
-            <div className={cx(styles.footer, 'footerAddDatabase')}>
-              <EuiButton
-                onClick={onBack}
-                color="secondary"
-                className="btn-cancel btn-back"
-                data-testid="btn-back-adding"
-              >
-                Back to adding databases
-              </EuiButton>
-              <CancelButton isPopoverOpen={isPopoverOpen} />
-              <SubmitButton isDisabled={selection.length < 1} />
-            </div>
+        <div className={cx('databaseList', styles.cloudSubscriptions)}>
+          <div className={styles.account}>
+            <Account />
           </div>
-        </EuiPageBody>
-      </EuiPage>
-    </>
+          <EuiInMemoryTable
+            items={items}
+            itemId="id"
+            loading={loading}
+            columns={columns}
+            sorting={{ sort }}
+            selection={selectionValue}
+            className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
+            isSelectable
+          />
+          {!items.length && <EuiText className={styles.noSubscriptions}>{message}</EuiText>}
+        </div>
+      </div>
+      <div className={cx(styles.footer, 'footerAddDatabase')}>
+        <EuiButton
+          onClick={onBack}
+          color="secondary"
+          className="btn-cancel btn-back"
+          data-testid="btn-back-adding"
+        >
+          Back to adding databases
+        </EuiButton>
+        <CancelButton isPopoverOpen={isPopoverOpen} />
+        <SubmitButton isDisabled={selection.length < 1} />
+      </div>
+    </AutodiscoveryPageTemplate>
   )
 }
 

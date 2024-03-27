@@ -9,15 +9,13 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiPage,
-  EuiPageBody,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
-import { PageHeader } from 'uiSrc/components'
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
+import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import styles from './styles.module.scss'
 
@@ -104,69 +102,61 @@ const SentinelDatabasesResult = ({
   )
 
   return (
-    <>
-      <PageHeader title="My Redis databases" />
-      <div />
-      <EuiPage>
-        <EuiPageBody component="div">
-          <div className="homePage">
-            <div className="databaseContainer">
-              <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
-              </EuiTitle>
+    <AutodiscoveryPageTemplate>
+      <div className="databaseContainer">
+        <EuiTitle size="s" className={styles.title} data-testid="title">
+          <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
+        </EuiTitle>
 
-              <MessageBar
-                opened={!!countSuccessAdded || !!countFailAdded}
-              >
-                <SummaryText />
-              </MessageBar>
-              <EuiFormRow className={styles.searchForm}>
-                <EuiFieldSearch
-                  placeholder="Search..."
-                  className={styles.search}
-                  onChange={onQueryChange}
-                  isClearable
-                  aria-label="Search"
-                  data-testid="search"
-                />
-              </EuiFormRow>
-              <br />
+        <MessageBar
+          opened={!!countSuccessAdded || !!countFailAdded}
+        >
+          <SummaryText />
+        </MessageBar>
+        <EuiFormRow className={styles.searchForm}>
+          <EuiFieldSearch
+            placeholder="Search..."
+            className={styles.search}
+            onChange={onQueryChange}
+            isClearable
+            aria-label="Search"
+            data-testid="search"
+          />
+        </EuiFormRow>
+        <br />
 
-              <div className="databaseList sentinelDatabaseListResult">
-                <EuiInMemoryTable
-                  items={items}
-                  itemId="id"
-                  loading={loading}
-                  message={message}
-                  columns={columns}
-                  sorting={{ sort }}
-                  className={styles.table}
-                />
-              </div>
-            </div>
-            <div className={cx(styles.footer, 'footerAddDatabase')}>
-              <EuiButton
-                onClick={onBack}
-                color="secondary"
-                className="btn-cancel btn-back"
-                data-testid="btn-back-to-adding"
-              >
-                Back to adding databases
-              </EuiButton>
-              <EuiButton
-                fill
-                size="m"
-                onClick={handleViewDatabases}
-                color="secondary"
-                data-testid="btn-view-databases"
-              >
-                View Databases
-              </EuiButton>
-            </div>
-          </div>
-        </EuiPageBody>
-      </EuiPage>
-    </>
+        <div className="databaseList sentinelDatabaseListResult">
+          <EuiInMemoryTable
+            items={items}
+            itemId="id"
+            loading={loading}
+            message={message}
+            columns={columns}
+            sorting={{ sort }}
+            className={styles.table}
+          />
+        </div>
+      </div>
+      <div className={cx(styles.footer, 'footerAddDatabase')}>
+        <EuiButton
+          onClick={onBack}
+          color="secondary"
+          className="btn-cancel btn-back"
+          data-testid="btn-back-to-adding"
+        >
+          Back to adding databases
+        </EuiButton>
+        <EuiButton
+          fill
+          size="m"
+          onClick={handleViewDatabases}
+          color="secondary"
+          data-testid="btn-view-databases"
+        >
+          View Databases
+        </EuiButton>
+      </div>
+    </AutodiscoveryPageTemplate>
   )
 }
 

@@ -15,5 +15,6 @@ import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics'
     CloudAuthAnalytics,
   ],
   controllers: [CloudAuthController],
+  exports: [CloudAuthService],
 })
 export class CloudAuthModule {}

@@ -3,7 +3,7 @@ import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export class CloudApiForbiddenException extends HttpException {
-  constructor(message = ERROR_MESSAGES.CLOUD_API_FORBIDDEN, options?: HttpExceptionOptions) {
+  constructor(message = ERROR_MESSAGES.FORBIDDEN, options?: HttpExceptionOptions) {
     const response = {
       message,
       statusCode: HttpStatus.FORBIDDEN,

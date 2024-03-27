@@ -3,18 +3,16 @@ import {
   FeatureFlagComponent,
   OAuthSelectAccountDialog,
   OAuthSelectPlan,
-  OAuthSignInDialog,
-  OAuthSocialDialog,
+  OAuthSsoDialog,
 } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 
 const GlobalDialogs = () => (
   <>
     <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-      <OAuthSignInDialog />
       <OAuthSelectAccountDialog />
       <OAuthSelectPlan />
-      <OAuthSocialDialog />
+      <OAuthSsoDialog />
     </FeatureFlagComponent>
   </>
 )

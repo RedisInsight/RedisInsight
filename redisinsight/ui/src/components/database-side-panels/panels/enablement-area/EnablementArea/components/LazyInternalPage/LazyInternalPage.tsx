@@ -18,9 +18,9 @@ import {
   setExplorePanelSearch,
   setExplorePanelScrollTop
 } from 'uiSrc/slices/panels/insights'
+import FormatSelector from 'uiSrc/services/formatter/FormatSelector'
 import InternalPage from '../InternalPage'
 import { getFileInfo, getPagesInsideGroup, IFileInfo } from '../../utils/getFileInfo'
-import FormatSelector from '../../utils/formatter/FormatSelector'
 
 interface IPageData extends IFileInfo {
   content: string

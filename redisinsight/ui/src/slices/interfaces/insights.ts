@@ -3,7 +3,8 @@ import { IEnablementAreaItem } from 'uiSrc/slices/interfaces/workbench'
 
 export enum InsightsPanelTabs {
   Explore = 'explore',
-  Recommendations = 'tips'
+  Recommendations = 'tips',
+  AiAssistant = 'ai'
 }
 
 export interface InsightsPanelState {

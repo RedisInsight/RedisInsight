@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TelemetryEvents } from 'src/constants';
-import { InternalServerErrorException } from '@nestjs/common';
+import { HttpException, InternalServerErrorException } from '@nestjs/common';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 
@@ -83,12 +83,24 @@ describe('CloudAuthAnalytics', () => {
         { flow: CloudSsoFeatureStrategy.Web },
       );
     });
-    it('should emit error event without flow and not fail', () => {
-      service.sendCloudSignInFailed(httpException, undefined as CloudSsoFeatureStrategy);
+    it('should not fail if no exception passed', () => {
+      service.sendCloudSignInFailed(undefined, CloudSsoFeatureStrategy.Web);
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.CloudSignInFailed,
-        httpException,
+        undefined,
+        { flow: CloudSsoFeatureStrategy.Web },
+      );
+    });
+    it('should emit error event without flow and not fail', () => {
+      const exception = new InternalServerErrorException() as any;
+      exception.options = undefined;
+
+      service.sendCloudSignInFailed(exception as unknown as HttpException, undefined as CloudSsoFeatureStrategy);
+
+      expect(sendFailedEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.CloudSignInFailed,
+        exception,
         { flow: undefined },
       );
     });

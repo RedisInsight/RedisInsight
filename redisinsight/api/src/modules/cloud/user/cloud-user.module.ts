@@ -7,9 +7,10 @@ import { CloudUserCapiService } from 'src/modules/cloud/user/cloud-user.capi.ser
 import { CloudUserCapiProvider } from 'src/modules/cloud/user/providers/cloud-user.capi.provider';
 import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
+import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
 
 @Module({
-  imports: [CloudSessionModule],
+  imports: [CloudSessionModule, CloudAuthModule],
   providers: [
     CloudUserApiProvider,
     CloudUserCapiProvider,

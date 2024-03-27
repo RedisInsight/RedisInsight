@@ -3,7 +3,7 @@ import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export class CloudApiInternalServerErrorException extends HttpException {
-  constructor(message = ERROR_MESSAGES.CLOUD_API_INTERNAL_SERVER_ERROR, options?: HttpExceptionOptions) {
+  constructor(message = ERROR_MESSAGES.INTERNAL_SERVER_ERROR, options?: HttpExceptionOptions) {
     const response = {
       message,
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,

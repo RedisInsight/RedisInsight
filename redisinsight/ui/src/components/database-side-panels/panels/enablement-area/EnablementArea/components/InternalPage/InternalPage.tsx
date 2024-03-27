@@ -22,17 +22,10 @@ import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/icons/rocket.svg'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
 import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
-import './styles/main.scss'
+import { Image, RedisUploadButton, CloudLink, RedisInsightLink } from 'uiSrc/components/markdown'
 import { getTutorialSection } from '../../utils'
-import {
-  Image,
-  Code,
-  EmptyPrompt,
-  RedisUploadButton,
-  CloudLink,
-  Pagination,
-  RedisInsightLink,
-} from '..'
+import { EmptyPrompt, Pagination, Code } from '..'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -192,7 +185,7 @@ const InternalPage = (props: Props) => {
       </EuiFlyoutHeader>
       <div
         ref={containerRef}
-        className={cx(styles.content, 'enablement-area__page')}
+        className={cx(styles.content, 'jsx-markdown')}
         onScroll={handleScroll}
         onClick={handleClick}
         role="none"

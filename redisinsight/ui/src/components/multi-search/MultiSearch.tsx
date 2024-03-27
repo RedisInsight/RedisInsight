@@ -14,6 +14,18 @@ import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
+interface MultiSearchSuggestion {
+  options: null | Array<{
+    id: string
+    option?: Nullable<string>
+    value: string
+  }>
+  buttonTooltipTitle: string
+  onApply: (suggestion: any) => void
+  onDelete: (ids: string[]) => void
+  loading?: boolean
+}
+
 export interface Props {
   value: string
   options?: string[]
@@ -21,22 +33,13 @@ export interface Props {
   disableSubmit?: boolean
   onSubmit: () => void
   onKeyDown?: (e: React.KeyboardEvent) => void
-  suggestions?: {
-    options: null | Array<{
-      id: string
-      option?: Nullable<string>
-      value: string
-    }>
-    buttonTooltipTitle: string
-    onApply: (suggestion: any) => void
-    onDelete: (ids: string[]) => void
-    loading?: boolean
-  }
+  suggestions?: MultiSearchSuggestion
   onChange: (value: string) => void
   onChangeOptions?: (options: string[]) => void
   onClear?: () => void
   className?: string
   compressed?: boolean
+  appendRight?: React.ReactNode
   [key: string]: any
 }
 
@@ -54,6 +57,7 @@ const MultiSearch = (props: Props) => {
     onClear = () => {},
     className,
     compressed,
+    appendRight,
     ...rest
   } = props
   const [isInputFocus, setIsInputFocus] = useState<boolean>(false)
@@ -269,6 +273,7 @@ const MultiSearch = (props: Props) => {
               />
             </EuiToolTip>
           )}
+          {appendRight}
           {disableSubmit && (
             <EuiToolTip
               position="top"

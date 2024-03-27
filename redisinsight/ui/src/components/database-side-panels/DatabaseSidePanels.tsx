@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
+import { EuiBadge, EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
@@ -15,6 +15,7 @@ import { appContextCapability } from 'uiSrc/slices/app/context'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import { EAManifestFirstKey } from 'uiSrc/constants'
+import AiAssistant from './panels/ai-assistant'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -165,6 +166,15 @@ const DatabaseSidePanels = (props: Props) => {
           )}
         </>
       </EuiTab>
+      <EuiTab
+        isSelected={tabSelected === InsightsPanelTabs.AiAssistant}
+        onClick={() => handleChangeTab(InsightsPanelTabs.AiAssistant)}
+        className={styles.tab}
+        data-testid="ai-assistant-tab"
+      >
+        <span className={styles.tabName}>Redis Copilot</span>
+        <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
+      </EuiTab>
     </EuiTabs>
   ), [tabSelected, totalUnread, isFullScreen])
 
@@ -192,6 +202,7 @@ const DatabaseSidePanels = (props: Props) => {
             <div className={styles.body}>
               {tabSelected === InsightsPanelTabs.Explore && (<EnablementAreaWrapper />)}
               {tabSelected === InsightsPanelTabs.Recommendations && (<LiveTimeRecommendations />)}
+              {tabSelected === InsightsPanelTabs.AiAssistant && (<AiAssistant />)}
             </div>
           </div>
         </div>

@@ -1,13 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
-import { mockSessionMetadata } from 'src/__mocks__';
+import { mockCloudApiAuthDto, mockSessionMetadata } from 'src/__mocks__';
 import {
   mockCloudAuthCode,
   mockCloudAuthGithubRequest,
-  mockCloudAuthGithubTokenParams, mockCloudAuthGoogleAuthUrl,
-  mockCloudAuthGoogleRequest, mockCloudAuthGoogleTokenUrl,
-  mockOktaAuthClient,
+  mockCloudAuthGithubTokenParams,
+  mockCloudAuthGoogleAuthUrl,
+  mockCloudAuthGoogleRenewTokenUrl,
+  mockCloudAuthGoogleRequest,
+  mockCloudAuthGoogleRevokeTokenUrl,
+  mockCloudAuthGoogleTokenUrl,
+  mockCloudRefreshToken,
+  mockCloudRevokeRefreshTokenHint,
+  mockOktaAuthClient
 } from 'src/__mocks__/cloud-auth';
 import { OktaAuth } from '@okta/okta-auth-js';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
@@ -55,6 +61,20 @@ describe('CloudAuthStrategy', () => {
     it('Should generate proper auth url', () => {
       expect(CloudAuthStrategy.generateAuthUrl(mockCloudAuthGoogleRequest))
         .toEqual(new URL(mockCloudAuthGoogleAuthUrl));
+    });
+  });
+
+  describe('generateRenewTokensUrl', () => {
+    it('Should generate proper renew url', () => {
+      expect(googleStrategy.generateRenewTokensUrl(mockCloudApiAuthDto.refreshToken))
+        .toEqual(new URL(mockCloudAuthGoogleRenewTokenUrl));
+    });
+  });
+
+  describe('generateRevokeTokensUrl', () => {
+    it('Should generate proper revoke url', () => {
+      expect(googleStrategy.generateRevokeTokensUrl(mockCloudRefreshToken, mockCloudRevokeRefreshTokenHint))
+        .toEqual(new URL(mockCloudAuthGoogleRevokeTokenUrl));
     });
   });
 

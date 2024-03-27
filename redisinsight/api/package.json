@@ -70,6 +70,7 @@
     "fs-extra": "^10.0.0",
     "ioredis": "^5.2.2",
     "is-glob": "^4.0.1",
+    "jsonwebtoken": "^9.0.2",
     "keytar": "^7.9.0",
     "lodash": "^4.17.20",
     "nest-router": "^1.0.9",

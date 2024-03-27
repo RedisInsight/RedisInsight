@@ -1,0 +1,52 @@
+.wrapper {
+  position: relative;
+
+  .textarea {
+    height: 0;
+    resize: none !important;
+    background-color: var(--browserTableRowEven) !important;
+    border: 1px solid var(--separatorColor) !important;
+
+    padding: 8px 40px 8px 10px;
+    scroll-padding-bottom: 8px;
+    border-radius: 8px;
+
+    min-height: 42px;
+    max-height: 200px;
+    background-image: none !important;
+
+    font-size: 12px;
+
+    transition: border-color ease .3s;
+
+    &:focus {
+      border-color: var(--euiColorPrimary) !important;
+    }
+  }
+
+  .submitBtnTooltip {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+
+    cursor: not-allowed;
+  }
+
+
+  .submitBtn {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+
+    :global {
+      .euiButton__content {
+        padding: 0;
+      }
+
+      .euiButton__text {
+        display: none;
+      }
+    }
+  }
+}

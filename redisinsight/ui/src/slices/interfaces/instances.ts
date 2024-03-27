@@ -1,5 +1,6 @@
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces/cloud'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import { GetRejsonRlResponseDto, SafeRejsonRlDataDto } from 'apiSrc/modules/browser/rejson-rl/dto'
@@ -383,7 +384,7 @@ export interface InitialStateCloud {
   error: string
   credentials: Nullable<ICredentialsRedisCloud>
   subscriptions: Nullable<RedisCloudSubscription[]>
-  isAutodiscoverySSO: boolean
+  ssoFlow: Maybe<OAuthSocialAction>
   isRecommendedSettings: Maybe<boolean>
   account: {
     data: Nullable<RedisCloudAccount>

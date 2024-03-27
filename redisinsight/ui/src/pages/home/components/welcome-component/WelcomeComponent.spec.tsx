@@ -1,14 +1,15 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { MOCKED_CREATE_REDIS_BTN_CONTENT } from 'uiSrc/mocks/content/content'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import WelcomeComponent, { Props } from './WelcomeComponent'
 
 jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
@@ -106,7 +107,10 @@ describe('WelcomeComponent', () => {
 
     fireEvent.click(screen.getByTestId('import-cloud-db-btn'))
 
-    expect(store.getActions()).toEqual([setSocialDialogState(OAuthSocialSource.WelcomeScreen)])
+    expect(store.getActions()).toEqual([
+      setSSOFlow(OAuthSocialAction.Create),
+      setSocialDialogState(OAuthSocialSource.WelcomeScreen)
+    ])
   })
 
   it('should render capability promotion component', () => {

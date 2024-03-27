@@ -30,6 +30,7 @@ import { Pages } from 'uiSrc/constants'
 import { addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -38,11 +39,13 @@ interface FormValues {
 }
 
 const OAuthSelectAccountDialog = () => {
-  const { isAutodiscoverySSO, isRecommendedSettings } = useSelector(cloudSelector)
+  const { ssoFlow, isRecommendedSettings } = useSelector(cloudSelector)
   const { accounts = [], currentAccountId } = useSelector(oauthCloudUserDataSelector) ?? {}
   const { isOpenSelectAccountDialog } = useSelector(oauthCloudSelector)
   const { loading } = useSelector(oauthCloudUserSelector)
   const { loading: plansLoadings } = useSelector(oauthCloudPlanSelector)
+
+  const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -68,6 +71,7 @@ const OAuthSelectAccountDialog = () => {
     if (isAutodiscoverySSO) {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
+        true,
         () => {
           dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
           history.push(Pages.redisCloudSubscriptions)
@@ -98,7 +102,7 @@ const OAuthSelectAccountDialog = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_ACCOUNT_SELECTED,
       eventData: {
-        action: isAutodiscoverySSO ? 'import' : 'create',
+        action: ssoFlow,
         accountsCount: accounts.length
       },
     })

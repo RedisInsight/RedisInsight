@@ -7,7 +7,7 @@ import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { Theme } from 'uiSrc/constants'
 import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
 import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -39,7 +39,7 @@ const DatabaseNotOpened = (props: Props) => {
                 iconSize="s"
                 href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
                 onClick={(e: React.MouseEvent) => {
-                  ssoCloudHandlerClick(e, source)
+                  ssoCloudHandlerClick(e, { source, action: OAuthSocialAction.Create })
                   onClose?.()
                 }}
                 data-testid="tutorials-get-started-link"

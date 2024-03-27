@@ -31,7 +31,7 @@ export const initialState: InsightsPanelState = {
 
 // A slice for recipes
 const insightsPanelSlice = createSlice({
-  name: 'workbenchTutorials',
+  name: 'insightsPanel',
   initialState,
   reducers: {
     toggleInsightsPanel: (state, { payload }: { payload: Maybe<boolean> }) => {

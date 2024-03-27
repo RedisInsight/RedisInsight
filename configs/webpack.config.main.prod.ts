@@ -71,6 +71,7 @@ export default merge(baseConfig, {
       // cloud auth
       RI_CLOUD_IDP_AUTHORIZE_URL: 'RI_CLOUD_IDP_AUTHORIZE_URL' in process.env ? process.env.RI_CLOUD_IDP_AUTHORIZE_URL: '',
       RI_CLOUD_IDP_TOKEN_URL: 'RI_CLOUD_IDP_TOKEN_URL' in process.env ? process.env.RI_CLOUD_IDP_TOKEN_URL: '',
+      RI_CLOUD_IDP_REVOKE_TOKEN_URL: 'RI_CLOUD_IDP_REVOKE_TOKEN_URL' in process.env ? process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL: '',
       RI_CLOUD_IDP_ISSUER: 'RI_CLOUD_IDP_ISSUER' in process.env ? process.env.RI_CLOUD_IDP_ISSUER: '',
       RI_CLOUD_IDP_CLIENT_ID: 'RI_CLOUD_IDP_CLIENT_ID' in process.env ? process.env.RI_CLOUD_IDP_CLIENT_ID: '',
       RI_CLOUD_IDP_REDIRECT_URI: 'RI_CLOUD_IDP_REDIRECT_URI' in process.env ? process.env.RI_CLOUD_IDP_REDIRECT_URI: '',
@@ -79,6 +80,9 @@ export default merge(baseConfig, {
       RI_CLOUD_API_URL: 'RI_CLOUD_API_URL' in process.env ? process.env.RI_CLOUD_API_URL: '',
       RI_CLOUD_CAPI_URL: 'RI_CLOUD_CAPI_URL' in process.env ? process.env.RI_CLOUD_CAPI_URL: '',
       RI_CLOUD_API_TOKEN: 'RI_CLOUD_API_TOKEN' in process.env ? process.env.RI_CLOUD_API_TOKEN: '',
+      RI_AI_CONVAI_TOKEN: 'RI_AI_CONVAI_TOKEN' in process.env ? process.env.RI_AI_CONVAI_TOKEN: '',
+      RI_AI_QUERY_USER: 'RI_AI_QUERY_USER' in process.env ? process.env.RI_AI_QUERY_USER: '',
+      RI_AI_QUERY_PASS: 'RI_AI_QUERY_PASS' in process.env ? process.env.RI_AI_QUERY_PASS: '',
     }),
 
     new webpack.DefinePlugin({

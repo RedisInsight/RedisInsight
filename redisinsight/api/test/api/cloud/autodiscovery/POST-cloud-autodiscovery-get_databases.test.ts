@@ -127,7 +127,7 @@ describe('POST /cloud/autodiscovery/get-databases', () => {
         responseBody: {
           statusCode: 403,
           error: 'CloudApiForbidden',
-          message: ERROR_MESSAGES.CLOUD_API_FORBIDDEN,
+          message: ERROR_MESSAGES.FORBIDDEN,
           errorCode: CustomErrorCodes.CloudApiForbidden,
         },
       },
@@ -151,7 +151,7 @@ describe('POST /cloud/autodiscovery/get-databases', () => {
           statusCode: 401,
           error: 'CloudCapiUnauthorized',
           errorCode: CustomErrorCodes.CloudCapiUnauthorized,
-          message:  ERROR_MESSAGES.CLOUD_CAPI_UNAUTHORIZED,
+          message:  ERROR_MESSAGES.UNAUTHORIZED,
         },
       },
       {
@@ -173,7 +173,7 @@ describe('POST /cloud/autodiscovery/get-databases', () => {
         responseBody: {
           statusCode: 404,
           error: 'CloudApiNotFound',
-          message: ERROR_MESSAGES.CLOUD_API_NOT_FOUND,
+          message: ERROR_MESSAGES.NOT_FOUND,
           errorCode: CustomErrorCodes.CloudApiNotFound,
         },
       },

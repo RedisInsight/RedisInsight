@@ -8,8 +8,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiPage,
-  EuiPageBody,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -19,9 +17,9 @@ import {
   InstanceRedisCluster,
 } from 'uiSrc/slices/interfaces'
 import { setTitle } from 'uiSrc/utils'
-import { PageHeader } from 'uiSrc/components'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
+import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import styles from './styles.module.scss'
 
@@ -98,74 +96,66 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   )
 
   return (
-    <>
-      <PageHeader title="My Redis databases" />
-      <div />
-      <EuiPage>
-        <EuiPageBody component="div">
-          <div className="homePage">
-            <div className="databaseContainer">
-              <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>
-                  Redis Enterprise
-                  {countSuccessAdded + countFailAdded > 1
-                    ? ' Databases '
-                    : ' Database '}
-                  Added
-                </h1>
-              </EuiTitle>
-              <MessageBar
-                opened={!!countSuccessAdded || !!countFailAdded}
-              >
-                <SummaryText />
-              </MessageBar>
-              <EuiFormRow className={styles.searchForm}>
-                <EuiFieldSearch
-                  placeholder="Search..."
-                  className={styles.search}
-                  onChange={onQueryChange}
-                  isClearable
-                  aria-label="Search"
-                  data-testid="search"
-                />
-              </EuiFormRow>
-              <br />
+    <AutodiscoveryPageTemplate>
+      <div className="databaseContainer">
+        <EuiTitle size="s" className={styles.title} data-testid="title">
+          <h1>
+            Redis Enterprise
+            {countSuccessAdded + countFailAdded > 1
+              ? ' Databases '
+              : ' Database '}
+            Added
+          </h1>
+        </EuiTitle>
+        <MessageBar
+          opened={!!countSuccessAdded || !!countFailAdded}
+        >
+          <SummaryText />
+        </MessageBar>
+        <EuiFormRow className={styles.searchForm}>
+          <EuiFieldSearch
+            placeholder="Search..."
+            className={styles.search}
+            onChange={onQueryChange}
+            isClearable
+            aria-label="Search"
+            data-testid="search"
+          />
+        </EuiFormRow>
+        <br />
 
-              <div className="databaseList clusterDatabaseListResult">
-                <EuiInMemoryTable
-                  items={items}
-                  itemId="uid"
-                  loading={loading}
-                  message={message}
-                  columns={columns}
-                  sorting={{ sort }}
-                  className={styles.table}
-                />
-              </div>
-            </div>
-            <div className={cx(styles.footer, 'footerAddDatabase')}>
-              <EuiButton
-                onClick={() => onBack(false)}
-                color="secondary"
-                className="btn-cancel btn-back"
-                data-testid="btn-back-to-adding"
-              >
-                Back to adding databases
-              </EuiButton>
-              <EuiButton
-                fill
-                size="m"
-                onClick={() => onView(false)}
-                color="secondary"
-                data-testid="btn-view-databases"
-              >
-                View Databases
-              </EuiButton>
-            </div>
-          </div>
-        </EuiPageBody>
-      </EuiPage>
-    </>
+        <div className="databaseList clusterDatabaseListResult">
+          <EuiInMemoryTable
+            items={items}
+            itemId="uid"
+            loading={loading}
+            message={message}
+            columns={columns}
+            sorting={{ sort }}
+            className={styles.table}
+          />
+        </div>
+      </div>
+      <div className={cx(styles.footer, 'footerAddDatabase')}>
+        <EuiButton
+          onClick={() => onBack(false)}
+          color="secondary"
+          className="btn-cancel btn-back"
+          data-testid="btn-back-to-adding"
+        >
+          Back to adding databases
+        </EuiButton>
+        <EuiButton
+          fill
+          size="m"
+          onClick={() => onView(false)}
+          color="secondary"
+          data-testid="btn-view-databases"
+        >
+          View Databases
+        </EuiButton>
+      </div>
+    </AutodiscoveryPageTemplate>
   )
 }
 

@@ -3,7 +3,7 @@ import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export class CloudApiBadRequestException extends HttpException {
-  constructor(message = ERROR_MESSAGES.CLOUD_API_BAD_REQUEST, options?: HttpExceptionOptions) {
+  constructor(message = ERROR_MESSAGES.BAD_REQUEST, options?: HttpExceptionOptions) {
     const response = {
       message,
       statusCode: HttpStatus.BAD_REQUEST,

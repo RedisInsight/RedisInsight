@@ -22,6 +22,8 @@ export class SingleUserAuthMiddleware implements NestMiddleware {
         data: {
           cloud: {
             accessToken: process.env.MOCK_AKEY || undefined,
+            refreshToken: process.env.MOCK_RKEY || undefined,
+            idpType: process.env.MOCK_IDP_TYPE || undefined,
           },
         },
       }));

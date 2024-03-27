@@ -47,11 +47,13 @@ export enum TelemetryEvents {
   CliClientDeleted = 'CLI_CLIENT_DELETED',
   CliClientRecreated = 'CLI_CLIENT_RECREATED',
   CliCommandExecuted = 'CLI_COMMAND_EXECUTED',
+  CliIndexInfoSubmitted = 'CLI_INDEX_INFO_SUBMITTED',
   CliClusterNodeCommandExecuted = 'CLI_CLUSTER_COMMAND_EXECUTED',
   CliCommandErrorReceived = 'CLI_COMMAND_ERROR_RECEIVED',
 
   // Events for workbench tool
   WorkbenchCommandExecuted = 'WORKBENCH_COMMAND_EXECUTED',
+  WorkbenchIndexInfoSubmitted = 'WORKBENCH_INDEX_INFO_SUBMITTED',
   WorkbenchCommandErrorReceived = 'WORKBENCH_COMMAND_ERROR_RECEIVED',
   WorkbenchCommandDeleted = 'WORKBENCH_COMMAND_DELETE_COMMAND',
   // Custom tutorials

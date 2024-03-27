@@ -11,29 +11,32 @@ interface Props {
 const JSONView = (props: Props) => {
   const { value, command = '' } = props
 
-  const [formattedValue, setFormattedValue] = useState('')
+  const [result, setResult] = useState<any>(null)
 
   useEffect(() => {
-    try {
-      JSONBigInt({ useNativeBigInt: true }).parse(value)
-    } catch (_err) {
-      const formatResponse = async () => {
-        const formattedResponse = await formatRedisReply(value, command)
-        setFormattedValue(formattedResponse)
+    const parseJSON = async (value: string, command: string) => {
+      try {
+        const json = JSONBigInt({ useNativeBigInt: true }).parse(value)
+        setResult({ value: json, isValid: true })
+      } catch (_err) {
+        const reply = await formatRedisReply(value, command)
+        setResult({ value: reply, isValid: false })
       }
-      formatResponse()
     }
-  }, [])
+
+    parseJSON(value, command)
+  }, [value])
+
+  if (!result) return null
 
   return (
     <>
-      {formattedValue && (
-        <div className="cli-output-response-success">{formattedValue}</div>
-      )}
-      {!formattedValue && (
+      {result.isValid ? (
         <div className="jsonViewer" data-testid="json-view">
-          <JsonPretty data={JSONBigInt({ useNativeBigInt: true }).parse(value)} space={2} />
+          <JsonPretty data={result.value} space={2} />
         </div>
+      ) : (
+        <div className="cli-output-response-success">{result.value}</div>
       )}
     </>
   )

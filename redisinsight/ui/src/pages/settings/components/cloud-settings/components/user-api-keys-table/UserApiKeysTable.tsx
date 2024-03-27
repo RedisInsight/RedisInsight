@@ -1,17 +1,17 @@
 import React, { useCallback, useState } from 'react'
 import {
   EuiBasicTableColumn,
+  EuiButton,
+  EuiButtonEmpty,
   EuiButtonIcon,
   EuiIcon,
   EuiInMemoryTable,
   EuiLink,
+  EuiSpacer,
   EuiText,
   EuiTitle,
   EuiToolTip,
-  PropertySort,
-  EuiSpacer,
-  EuiButton,
-  EuiButtonEmpty
+  PropertySort
 } from '@elastic/eui'
 import { format } from 'date-fns'
 import cx from 'classnames'
@@ -20,7 +20,7 @@ import { isNull } from 'lodash'
 import { formatLongName, Maybe, Nullable } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OAuthSocialHandlerDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { CloudCapiKey, OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 
@@ -212,19 +212,22 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           </EuiText>
           <EuiSpacer />
           <div className={styles.actions}>
-            <OAuthSocialHandlerDialog>
+            <OAuthSsoHandlerDialog>
               {(socialCloudHandlerClick) => (
                 <EuiButtonEmpty
                   size="s"
                   color="text"
                   className={styles.autodiscoverBtn}
-                  onClick={(e: React.MouseEvent) => socialCloudHandlerClick(e, OAuthSocialSource.SettingsPage)}
+                  onClick={(e: React.MouseEvent) => socialCloudHandlerClick(e, {
+                    source: OAuthSocialSource.SettingsPage,
+                    action: OAuthSocialAction.Import
+                  })}
                   data-testid="autodiscover-btn"
                 >
                   Autodiscover
                 </EuiButtonEmpty>
               )}
-            </OAuthSocialHandlerDialog>
+            </OAuthSsoHandlerDialog>
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick) => (
                 <EuiButton

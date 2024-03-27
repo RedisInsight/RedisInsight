@@ -10,7 +10,6 @@ import {
   getUserInfo,
   setJob,
   setOAuthCloudSource,
-  setSignInDialogState,
   setSocialDialogState,
   showOAuthProgress,
   signInFailure
@@ -57,7 +56,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
       getUserInfo()
     ]
@@ -101,7 +99,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
     ]
 
@@ -126,7 +123,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
     ]
 
@@ -151,7 +147,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
     ]
 

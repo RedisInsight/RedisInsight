@@ -219,18 +219,7 @@ const HomePage = () => {
 
   return (
     <>
-      <PageHeader
-        title="My Redis databases"
-        className={styles.pageHeader}
-        logo={(
-          <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none">
-            <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
-            <EuiFlexItem style={{ marginLeft: 16 }}>
-              <OAuthUserProfile source={OAuthSocialSource.ListOfDatabases} />
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        )}
-      />
+      <PageHeader title="My Redis databases" showInsights />
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>
           <EuiResizeObserver onResize={onResizeTrottled}>

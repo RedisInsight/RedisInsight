@@ -133,8 +133,9 @@ const initialStateDefault: RootState = {
 }
 
 // mocked store
-export const mockStore = configureMockStore([thunk])
+export const mockStore = configureMockStore<RootState>([thunk])
 export const mockedStore = mockStore(initialStateDefault)
+export const mockedStoreFn = () => mockStore(initialStateDefault)
 
 // insert root state to the render Component
 const render = (

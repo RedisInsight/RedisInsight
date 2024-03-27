@@ -47,7 +47,6 @@ export const initialState: StateAppOAuth = {
   source: null,
   agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSocialDialog: false,
-  isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
   showProgress: true,
   user: {
@@ -117,12 +116,6 @@ const oauthCloudSlice = createSlice({
         state.source = payload
       }
       state.isOpenSocialDialog = !!payload
-    },
-    setSignInDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
-      if (payload) {
-        state.source = payload
-      }
-      state.isOpenSignInDialog = !!payload
     },
     setOAuthCloudSource: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
       state.source = payload
@@ -213,7 +206,6 @@ export const {
   addFreeDbSuccess,
   addFreeDbFailure,
   setSocialDialogState,
-  setSignInDialogState,
   setOAuthCloudSource,
   setSelectAccountDialogState,
   setJob,
@@ -331,7 +323,7 @@ export function fetchUserInfo(onSuccessAction?: (isSelectAccout: boolean) => voi
         }
 
         dispatch(getUserInfoSuccess(data))
-        dispatch(setSignInDialogState(null))
+        dispatch(setSocialDialogState(null))
 
         onSuccessAction?.(isSelectAccout)
       }
@@ -443,7 +435,7 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
       if (isStatusSuccessful(status)) {
         dispatch(getPlansSuccess(data))
         dispatch(setIsOpenSelectPlanDialog(true))
-        dispatch(setSignInDialogState(null))
+        dispatch(setSocialDialogState(null))
         dispatch(setSelectAccountDialogState(false))
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
 

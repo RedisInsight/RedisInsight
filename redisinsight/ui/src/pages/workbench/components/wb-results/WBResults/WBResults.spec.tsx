@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
-import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import WBResults, { Props } from './WBResults'
 
 const mockedProps = mock<Props>()
@@ -27,10 +27,16 @@ describe('WBResults', () => {
     expect(render(<WBResults {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should not render NoResults component with empty items', () => {
-    const { getByTestId } = render(<WBResults {...instance(mockedProps)} items={[]} />)
+  it('should render NoResults component with empty items', () => {
+    const { getByTestId } = render(<WBResults {...instance(mockedProps)} items={[]} isResultsLoaded />)
 
     expect(getByTestId('wb_no-results')).toBeInTheDocument()
+  })
+
+  it('should not render NoResults component with empty items and loading state', () => {
+    render(<WBResults {...instance(mockedProps)} items={[]} isResultsLoaded={false} />)
+
+    expect(screen.queryByTestId('wb_no-results')).not.toBeInTheDocument()
   })
 
   it('should render with custom props', () => {

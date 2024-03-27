@@ -1,22 +1,42 @@
 import React from 'react'
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { OAuthAgreement, OAuthSocialButtons } from 'uiSrc/components/oauth/shared'
 
-import { OAuthSocial } from 'uiSrc/components'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
-const WelcomeAiAssistant = () => (
-  <div className={styles.wrapper} data-testid="copilot-welcome">
-    <EuiText style={{ lineHeight: '1.35' }}>
-      Hi! I am your Redis Copilot, here to help you be more productive.
-    </EuiText>
-    <EuiSpacer size="s" />
-    <EuiText style={{ lineHeight: '1.35' }}>
-      Ask me questions about Redis or get specialized expertise in the context of your database.
-    </EuiText>
-    <EuiSpacer size="l" />
-    <EuiTitle size="xs"><h5 style={{ marginBottom: '-18px' }}>Sign in to start asking questions.</h5></EuiTitle>
-    <OAuthSocial hideTitle />
-  </div>
-)
+const WelcomeAiAssistant = () => {
+  const handleSsoClick = (accountOption: string) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption,
+        action: OAuthSocialAction.SignIn,
+      }
+    })
+  }
+
+  return (
+    <div className={styles.wrapper} data-testid="copilot-welcome">
+      <EuiText style={{ lineHeight: '1.35' }}>
+        Hi! I am your Redis Copilot, here to help you be more productive.
+      </EuiText>
+      <EuiSpacer size="s" />
+      <EuiText style={{ lineHeight: '1.35' }}>
+        Ask me questions about Redis or get specialized expertise in the context of your database.
+      </EuiText>
+      <EuiSpacer size="xl" />
+      <EuiTitle size="xs"><h5>Sign in to start asking questions.</h5></EuiTitle>
+
+      <EuiSpacer size="l" />
+      <OAuthSocialButtons action={OAuthSocialAction.SignIn} onClick={handleSsoClick} />
+      <EuiSpacer />
+      <div className={styles.agreement}>
+        <OAuthAgreement />
+      </div>
+    </div>
+  )
+}
 
 export default WelcomeAiAssistant

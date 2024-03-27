@@ -2,13 +2,17 @@ import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { fireEvent } from '@testing-library/react'
-import { act, cleanup, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import { act, cleanup, mockedStore, render, screen,
+  waitForEuiPopoverVisible,
+  mockedStoreFn,
+} from 'uiSrc/utils/test-utils'
 
 import { getUserInfo, logoutUser, oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
+
 import OAuthUserProfile, { Props } from './OAuthUserProfile'
 
 const mockedProps = mock<Props>()
@@ -30,9 +34,10 @@ let store: typeof mockedStore
 describe('OAuthUserProfile', () => {
   beforeEach(() => {
     cleanup()
-    store = cloneDeep(mockedStore)
+    store = cloneDeep(mockedStoreFn())
     store.clearActions()
   })
+
   it('should render', () => {
     expect(render(<OAuthUserProfile {...mockedProps} />)).toBeTruthy()
   })
@@ -58,7 +63,7 @@ describe('OAuthUserProfile', () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: MOCK_OAUTH_USER_PROFILE
     })
-    render(<OAuthUserProfile {...mockedProps} />)
+    render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
@@ -74,7 +79,7 @@ describe('OAuthUserProfile', () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: MOCK_OAUTH_USER_PROFILE
     })
-    render(<OAuthUserProfile {...mockedProps} />)
+    render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
@@ -101,7 +106,7 @@ describe('OAuthUserProfile', () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: MOCK_OAUTH_USER_PROFILE
     })
-    render(<OAuthUserProfile {...mockedProps} />)
+    render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
@@ -114,7 +119,7 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-account-2'))
 
-    expect(store.getActions().slice(-1)).toEqual([getUserInfo()]);
+    expect(store.getActions()).toEqual([getUserInfo()]);
 
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -123,7 +128,7 @@ describe('OAuthUserProfile', () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: MOCK_OAUTH_USER_PROFILE
     })
-    render(<OAuthUserProfile {...mockedProps} />)
+    render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
@@ -145,7 +150,7 @@ describe('OAuthUserProfile', () => {
     (oauthCloudUserSelector as jest.Mock).mockReturnValue({
       data: MOCK_OAUTH_USER_PROFILE
     })
-    render(<OAuthUserProfile {...mockedProps} />)
+    render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))

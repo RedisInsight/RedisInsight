@@ -6,6 +6,7 @@ import { CodeButtonParams } from 'uiSrc/constants'
 import WBResults from './WBResults'
 
 export interface Props {
+  isResultsLoaded: boolean
   items: CommandExecutionUI[]
   clearing: boolean
   processing: boolean

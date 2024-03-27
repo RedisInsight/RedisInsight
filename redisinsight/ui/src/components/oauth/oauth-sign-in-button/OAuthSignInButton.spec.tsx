@@ -3,7 +3,7 @@ import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { setSignInDialogState } from 'uiSrc/slices/oauth/cloud'
+import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import OAuthSignInButton, { Props } from './OAuthSignInButton'
@@ -37,8 +37,8 @@ describe('OAuthSignInButton', () => {
     fireEvent.click(screen.getByTestId('cloud-sign-in-btn'))
 
     expect(store.getActions()).toEqual([
-      setSignInDialogState(OAuthSocialSource.Browser),
-      setSSOFlow(OAuthSocialAction.SignIn)
+      setSSOFlow(OAuthSocialAction.SignIn),
+      setSocialDialogState(OAuthSocialSource.Browser),
     ])
   })
 })

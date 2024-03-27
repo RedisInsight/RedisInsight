@@ -30,10 +30,12 @@ import { DatabaseRecommendationService } from 'src/modules/database-recommendati
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { v4 as uuidv4 } from 'uuid';
+import { getAnalyticsDataFromIndexInfo } from 'src/utils';
 import { OutputFormatterManager } from './output-formatter/output-formatter-manager';
 import { CliOutputFormatterTypes } from './output-formatter/output-formatter.interface';
 import { TextFormatterStrategy } from './output-formatter/strategies/text-formatter.strategy';
 import { RawFormatterStrategy } from './output-formatter/strategies/raw-formatter.strategy';
+import {inspect} from "util";
 
 @Injectable()
 export class CliBusinessService {
@@ -166,6 +168,13 @@ export class CliBusinessService {
           outputFormat,
         },
       );
+
+      if (command.toLowerCase() === 'ft.info') {
+        this.cliAnalyticsService.sendIndexInfoEvent(
+          clientMetadata.databaseId,
+          getAnalyticsDataFromIndexInfo(reply as string[]),
+        );
+      }
 
       this.logger.log('Succeed to execute redis CLI command.');
 

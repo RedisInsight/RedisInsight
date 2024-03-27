@@ -1,0 +1,48 @@
+.container {
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+}
+
+.advantages {
+  align-items: stretch;
+  justify-content: space-between;
+
+  background-color: var(--cloudSsoAdvantagesBgColor);
+}
+
+.logo {
+  height: 40px;
+  width: 40px;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 400 !important;
+  color: var(--euiTextSubduedColor);
+
+  margin-bottom: 40px;
+}
+
+.advantageTitle {
+  font-size: 12px !important;
+  line-height: normal;
+}
+
+
+.advantage {
+  display: flex;
+  margin-top: 12px;
+
+  align-items: center;
+}
+
+.advantageIcon {
+  margin-right: 6px;
+}
+

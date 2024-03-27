@@ -76,6 +76,27 @@ export class CliAnalyticsService extends CommandTelemetryBaseService {
     }
   }
 
+  sendIndexInfoEvent(
+    databaseId: string,
+    additionalData: object,
+  ): void {
+    if (!additionalData) {
+      return;
+    }
+
+    try {
+      this.sendEvent(
+        TelemetryEvents.CliIndexInfoSubmitted,
+        {
+          databaseId,
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // ignore error
+    }
+  }
+
   public async sendCommandExecutedEvent(
     databaseId: string,
     additionalData: object = {},

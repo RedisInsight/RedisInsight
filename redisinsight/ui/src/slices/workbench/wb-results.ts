@@ -29,6 +29,7 @@ import {
 } from '../interfaces'
 
 export const initialState: StateWorkbenchResults = {
+  isLoaded: false,
   loading: false,
   processing: false,
   clearing: false,
@@ -54,11 +55,13 @@ const workbenchResultsSlice = createSlice({
       state.items = payload.map((item) =>
         ({ ...item, command: item.command || EMPTY_COMMAND, emptyCommand: !item.command }))
       state.loading = false
+      state.isLoaded = true
     },
 
     loadWBHistoryFailure: (state, { payload }) => {
       state.error = payload
       state.loading = false
+      state.isLoaded = true
     },
 
     // Process Workbench command to API
@@ -177,6 +180,7 @@ const workbenchResultsSlice = createSlice({
 
     resetWBHistoryItems: (state) => {
       state.items = []
+      state.isLoaded = false
     },
 
     stopProcessing: (state) => {

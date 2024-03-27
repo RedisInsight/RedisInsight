@@ -9,6 +9,7 @@ import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
+import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
 
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
@@ -54,6 +55,7 @@ const PageHeader = (props: Props) => {
           </EuiTitle>
           {subtitle ? <span>{subtitle}</span> : ''}
         </div>
+        <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
         {showInsights ? (
           <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none">
             <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>

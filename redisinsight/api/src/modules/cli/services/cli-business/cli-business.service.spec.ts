@@ -13,7 +13,7 @@ import {
   mockCliClientMetadata,
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
-  mockClusterRedisClient,
+  mockClusterRedisClient, mockRedisFtInfoReply, mockFtInfoAnalyticsData,
 } from 'src/__mocks__';
 import {
   CommandExecutionStatus,
@@ -232,6 +232,34 @@ describe('CliBusinessService', () => {
   });
 
   describe('sendCommand', () => {
+    it('should successfully execute ft.info command', async () => {
+      const dto: SendCommandDto = { command: 'ft.info idx' };
+      const formatSpy = jest.spyOn(rawFormatter, 'format');
+      const mockResult: SendCommandResponse = {
+        response: mockRedisFtInfoReply,
+        status: CommandExecutionStatus.Success,
+      };
+      when(standaloneClient.sendCommand)
+        .calledWith(['ft.info', 'idx'], expect.anything())
+        .mockReturnValue(mockRedisFtInfoReply);
+
+      const result = await service.sendCommand(mockCliClientMetadata, dto);
+
+      expect(result).toEqual(mockResult);
+      expect(formatSpy).toHaveBeenCalled();
+      expect(analyticsService.sendCommandExecutedEvent).toHaveBeenCalledWith(
+        mockCliClientMetadata.databaseId,
+        {
+          command: 'ft.info',
+          outputFormat: CliOutputFormatterTypes.Raw,
+        },
+      );
+      expect(analyticsService.sendIndexInfoEvent).toHaveBeenCalledWith(
+        mockCliClientMetadata.databaseId,
+        mockFtInfoAnalyticsData,
+      );
+    });
+
     it('should successfully execute command (RAW format)', async () => {
       const dto: SendCommandDto = { command: mockMemoryUsageCommand };
       const formatSpy = jest.spyOn(rawFormatter, 'format');

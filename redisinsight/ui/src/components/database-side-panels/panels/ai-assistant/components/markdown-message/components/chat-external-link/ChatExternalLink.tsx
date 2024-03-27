@@ -9,6 +9,7 @@ const ChatExternalLink = (props: ExternalLinkProps) => {
   return (
     <ExternalLink
       {...props}
+      data-testid="chat-external-link"
       href={getUtmExternalLink(href || EXTERNAL_LINKS.redisIo, { campaign: 'ai_assistant' })}
     />
   )

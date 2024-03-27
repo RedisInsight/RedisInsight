@@ -11,6 +11,6 @@ describe('ChatExternalLink', () => {
   it('should render proper link', () => {
     render(<ChatExternalLink href="https://localhost" />)
 
-    expect(screen.getByTestId('external-link')).toHaveAttribute('href', 'https://localhost/?utm_source=redisinsight&utm_medium=app&utm_campaign=ai_assistant')
+    expect(screen.getByTestId('chat-external-link')).toHaveAttribute('href', 'https://localhost/?utm_source=redisinsight&utm_medium=app&utm_campaign=ai_assistant')
   })
 })

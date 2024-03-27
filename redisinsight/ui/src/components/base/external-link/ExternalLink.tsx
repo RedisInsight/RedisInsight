@@ -23,7 +23,6 @@ const ExternalLink = (props: Props) => {
       {...rest}
       external={false}
       target="_blank"
-      data-testid="external-link"
     >
       {iconPosition === 'left' && (<ArrowIcon />)}
       {children}

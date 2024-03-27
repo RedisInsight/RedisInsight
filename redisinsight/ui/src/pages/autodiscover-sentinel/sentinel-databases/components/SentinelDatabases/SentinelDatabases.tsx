@@ -11,16 +11,14 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiPage,
-  EuiPageBody,
   EuiToolTip,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
-import { PageHeader } from 'uiSrc/components'
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import styles from '../../../styles.module.scss'
 
@@ -191,77 +189,69 @@ const SentinelDatabases = ({
   }
 
   return (
-    <>
-      <PageHeader title="My Redis databases" />
-      <div />
-      <EuiPage>
-        <EuiPageBody component="div">
-          <div className="homePage">
-            <div className="databaseContainer">
-              <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
-              </EuiTitle>
+    <AutodiscoveryPageTemplate>
+      <div className="databaseContainer">
+        <EuiTitle size="s" className={styles.title} data-testid="title">
+          <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
+        </EuiTitle>
 
-              <EuiText color="subdued" className={styles.subTitle}>
-                <span>
-                  Redis Sentinel instance found.
-                  {' '}
-                  <br />
-                  Here is a list of primary groups your Sentinel instance is
-                  managing. Select the primary group(s) you want to add:
-                </span>
-              </EuiText>
-              <EuiFormRow className={styles.searchForm}>
-                <EuiFieldSearch
-                  placeholder="Search..."
-                  className={styles.search}
-                  onChange={onQueryChange}
-                  isClearable
-                  aria-label="Search"
-                  data-testid="search"
-                />
-              </EuiFormRow>
-              <br />
+        <EuiText color="subdued" className={styles.subTitle}>
+          <span>
+            Redis Sentinel instance found.
+            {' '}
+            <br />
+            Here is a list of primary groups your Sentinel instance is
+            managing. Select the primary group(s) you want to add:
+          </span>
+        </EuiText>
+        <EuiFormRow className={styles.searchForm}>
+          <EuiFieldSearch
+            placeholder="Search..."
+            className={styles.search}
+            onChange={onQueryChange}
+            isClearable
+            aria-label="Search"
+            data-testid="search"
+          />
+        </EuiFormRow>
+        <br />
 
-              <div className="databaseList sentinelDatabaseList">
-                <EuiInMemoryTable
-                  isSelectable
-                  items={items}
-                  itemId="id"
-                  loading={loading}
-                  message={message}
-                  columns={columns}
-                  sorting={{ sort }}
-                  selection={selectionValue}
-                  className={cx(
-                    styles.table,
-                    !masters.length && styles.tableEmpty
-                  )}
-                  data-testid="table"
-                />
-                {!masters.length && (
-                  <EuiText className={styles.notFoundMsg} color="subdued">
-                    {notMastersMsg}
-                  </EuiText>
-                )}
-              </div>
-            </div>
-            <div className={cx(styles.footer, 'footerAddDatabase')}>
-              <EuiButton
-                onClick={onBack}
-                color="secondary"
-                className="btn-cancel btn-back"
-                data-testid="btn-back-to-adding"
-              >
-                Back to adding databases
-              </EuiButton>
-              <CancelButton isPopoverOpen={isPopoverOpen} />
-              <SubmitButton onClick={handleSubmit} />
-            </div>
-          </div>
-        </EuiPageBody>
-      </EuiPage>
-    </>
+        <div className="databaseList sentinelDatabaseList">
+          <EuiInMemoryTable
+            isSelectable
+            items={items}
+            itemId="id"
+            loading={loading}
+            message={message}
+            columns={columns}
+            sorting={{ sort }}
+            selection={selectionValue}
+            className={cx(
+              styles.table,
+              !masters.length && styles.tableEmpty
+            )}
+            data-testid="table"
+          />
+          {!masters.length && (
+          <EuiText className={styles.notFoundMsg} color="subdued">
+            {notMastersMsg}
+          </EuiText>
+          )}
+        </div>
+      </div>
+      <div className={cx(styles.footer, 'footerAddDatabase')}>
+        <EuiButton
+          onClick={onBack}
+          color="secondary"
+          className="btn-cancel btn-back"
+          data-testid="btn-back-to-adding"
+        >
+          Back to adding databases
+        </EuiButton>
+        <CancelButton isPopoverOpen={isPopoverOpen} />
+        <SubmitButton onClick={handleSubmit} />
+      </div>
+    </AutodiscoveryPageTemplate>
   )
 }
 

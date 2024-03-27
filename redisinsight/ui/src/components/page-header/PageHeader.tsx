@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { EuiButtonEmpty, EuiTitle } from '@elastic/eui'
+import { EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -14,18 +14,21 @@ import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-prom
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
 
+import InsightsTrigger from 'uiSrc/components/insights-trigger'
+import { OAuthUserProfile } from 'uiSrc/components'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import styles from './PageHeader.module.scss'
 
 interface Props {
   title: string
   subtitle?: string
   children?: React.ReactNode
-  logo?: React.ReactNode
+  showInsights?: boolean
   className?: string
 }
 
 const PageHeader = (props: Props) => {
-  const { title, subtitle, logo, children, className } = props
+  const { title, subtitle, showInsights, children, className } = props
   const history = useHistory()
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
@@ -53,7 +56,14 @@ const PageHeader = (props: Props) => {
           {subtitle ? <span>{subtitle}</span> : ''}
         </div>
         <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
-        {logo || (
+        {showInsights ? (
+          <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none">
+            <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
+            <EuiFlexItem style={{ marginLeft: 16 }}>
+              <OAuthUserProfile source={OAuthSocialSource.ListOfDatabases} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        ) : (
           <div className={styles.pageHeaderLogo}>
             <EuiButtonEmpty
               aria-label="redisinsight"

@@ -1,10 +1,6 @@
 @import "@elastic/eui/src/global_styling/index";
 @import "uiSrc/styles/mixins/_global.scss";
 
-.pageHeader {
-  min-height: 56px;
-}
-
 .pageWrapper {
   height: calc(100% - 70px);
   overflow: hidden;

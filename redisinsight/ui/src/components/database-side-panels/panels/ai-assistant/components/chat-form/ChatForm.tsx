@@ -89,4 +89,4 @@ const ChatForm = (props: Props) => {
   )
 }
 
-export default ChatForm
+export default React.memo(ChatForm)

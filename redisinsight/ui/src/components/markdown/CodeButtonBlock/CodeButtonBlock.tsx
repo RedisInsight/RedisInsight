@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
 import parse from 'html-react-parser'
 import { useParams } from 'react-router-dom'
+import { find } from 'lodash'
 import { getCommandsForExecution, getUnsupportedModulesFromQuery, truncateText } from 'uiSrc/utils'
 import { BooleanParams, CodeButtonParams, MonacoLanguage } from 'uiSrc/constants'
 
@@ -12,6 +13,7 @@ import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { ModuleNotLoadedMinimalized, DatabaseNotOpened } from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import {
@@ -29,12 +31,14 @@ export interface Props {
   className?: string
   params?: CodeButtonParams
   isShowConfirmation?: boolean
+  lang?: string
 }
 
 const FINISHED_COMMAND_INDICATOR_TIME_MS = 5_000
 
 const CodeButtonBlock = (props: Props) => {
   const {
+    lang,
     onApply,
     label,
     className,
@@ -55,13 +59,21 @@ const CodeButtonBlock = (props: Props) => {
 
   const isButtonHasConfirmation = params?.run_confirmation === BooleanParams.true
   const isRunButtonHidden = params?.executable === BooleanParams.false
-  const [notLoadedModule] = getUnsupportedModulesFromQuery(modules, content)
+  const [notLoadedModule] = isRunButtonHidden ? [] : getUnsupportedModulesFromQuery(modules, content)
 
   useEffect(() => {
-    monaco.editor.colorize(content.trim(), MonacoLanguage.Redis, {})
-      .then((data) => {
-        setHighlightedContent(data)
-      })
+    if (!lang) return
+
+    const languageId = lang === ButtonLang.Redis
+      ? MonacoLanguage.Redis
+      : find(monaco.languages?.getLanguages(), ({ id }) => id === lang)?.id
+
+    if (languageId) {
+      monaco.editor.colorize(content.trim(), languageId, {})
+        .then((data) => {
+          setHighlightedContent(data)
+        })
+    }
   }, [])
 
   const getIsShowConfirmation = () => isShowConfirmation && !getDBConfigStorageField(

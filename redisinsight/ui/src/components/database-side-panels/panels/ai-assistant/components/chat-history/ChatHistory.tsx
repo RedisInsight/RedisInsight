@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import cx from 'classnames'
 
 import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -17,7 +17,6 @@ export interface Props {
   welcomeText?: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
   isLoadingAnswer?: boolean
-  isExecutable?: boolean
   modules?: AdditionalRedisModule[]
   history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
@@ -32,14 +31,13 @@ const ChatHistory = (props: Props) => {
     progressingMessage,
     isLoadingAnswer,
     modules,
-    isExecutable,
     history = [],
     scrollDivRef,
     onMessageRendered,
     onSubmit,
   } = props
 
-  const getMessage = ({ type: messageType, content, id }: AiChatMessage) => (content ? (
+  const getMessage = useCallback(({ type: messageType, content, id }: AiChatMessage) => (content ? (
     <div
       key={id}
       className={cx('jsx-markdown', {
@@ -50,13 +48,12 @@ const ChatHistory = (props: Props) => {
     >
       <MarkdownMessage
         onMessageRendered={onMessageRendered}
-        isExecutable={isExecutable}
         modules={modules}
       >
         {content}
       </MarkdownMessage>
     </div>
-  ) : null)
+  ) : null), [modules])
 
   if (history.length === 0) {
     return (
@@ -80,4 +77,4 @@ const ChatHistory = (props: Props) => {
   )
 }
 
-export default ChatHistory
+export default React.memo(ChatHistory)

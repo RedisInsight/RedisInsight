@@ -33,6 +33,7 @@ import InsightsTrigger from 'uiSrc/components/insights-trigger'
 import DatabasesList from './components/databases-list-component'
 import WelcomeComponent from './components/welcome-component'
 import HomeHeader from './components/home-header'
+import { CapabilityPromotion } from './components/capability-promotion'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -223,7 +224,10 @@ const HomePage = () => {
         title="My Redis databases"
         className={styles.pageHeader}
         logo={(
-          <InsightsTrigger source="home page" />
+          <>
+            <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
+            <InsightsTrigger source="home page" />
+          </>
         )}
       />
       <div className={styles.pageWrapper}>

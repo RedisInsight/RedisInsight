@@ -14,6 +14,7 @@ import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import DatabaseSidePanels from './DatabaseSidePanels'
 
 let store: typeof mockedStore
@@ -27,6 +28,12 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     insightsRecommendations: {
+      flag: true
+    },
+    documentationChat: {
+      flag: true
+    },
+    databaseChat: {
       flag: true
     }
   }),
@@ -253,12 +260,70 @@ describe('DatabaseSidePanels', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
+  it('should render copilot tab if any chat is available', () => {
+    (insightsPanelSelector as jest.Mock).mockReturnValue({
+      isOpen: true,
+      tabSelected: 'recommendations'
+    });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: true
+      },
+      databaseChat: {
+        flag: false
+      }
+    })
+
+    render(<DatabaseSidePanels />)
+    expect(screen.getByTestId('ai-assistant-tab')).toBeInTheDocument()
+  })
+
+  it('should not render copilot tab if not any chats available', () => {
+    (insightsPanelSelector as jest.Mock).mockReturnValue({
+      isOpen: true,
+      tabSelected: 'recommendations'
+    });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: false
+      },
+      databaseChat: {
+        flag: false
+      }
+    })
+
+    render(<DatabaseSidePanels />)
+    expect(screen.queryByTestId('ai-assistant-tab')).not.toBeInTheDocument()
+  })
+
+  it('should switch to another tab if no any chats available', () => {
+    (insightsPanelSelector as jest.Mock).mockReturnValue({
+      isOpen: true,
+      tabSelected: InsightsPanelTabs.AiAssistant
+    });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: false
+      },
+      databaseChat: {
+        flag: false
+      }
+    })
+
+    render(<DatabaseSidePanels />)
+    expect(store.getActions()).toEqual([changeSelectedTab(InsightsPanelTabs.Explore)])
+  })
+
   describe('capability', () => {
     beforeEach(() => {
       (connectedInstanceCDSelector as jest.Mock).mockReturnValueOnce({ free: true });
       (isShowCapabilityTutorialPopover as jest.Mock).mockImplementation(() => true)
     })
     it('should call store actions', () => {
+      (insightsPanelSelector as jest.Mock).mockReturnValue({
+        isOpen: true,
+        tabSelected: ''
+      });
       (getTutorialCapability as jest.Mock).mockImplementation(() => ({
         tutorialPage: { args: { path: 'path' } }
       }))

@@ -30,6 +30,8 @@ import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 
+import { FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -149,15 +151,17 @@ const SearchKeyList = () => {
           onDelete: handleDeleteSuggestions,
         }}
         appendRight={searchMode === SearchMode.Redisearch ? (
-          <EuiButtonEmpty
-            className={styles.askCopilotBtn}
-            size="xs"
-            onClick={handleClickAskCopilot}
-            data-testid="ask-redis-copilot-btn"
-          >
-            <EuiIcon className={styles.cloudIcon} type={CloudStars} />
-            <span>Ask Redis Copilot</span>
-          </EuiButtonEmpty>
+          <FeatureFlagComponent name={FeatureFlags.databaseChat}>
+            <EuiButtonEmpty
+              className={styles.askCopilotBtn}
+              size="xs"
+              onClick={handleClickAskCopilot}
+              data-testid="ask-redis-copilot-btn"
+            >
+              <EuiIcon className={styles.cloudIcon} type={CloudStars} />
+              <span>Ask Redis Copilot</span>
+            </EuiButtonEmpty>
+          </FeatureFlagComponent>
         ) : undefined}
         disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}

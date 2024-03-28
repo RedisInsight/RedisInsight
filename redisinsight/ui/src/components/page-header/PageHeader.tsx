@@ -9,7 +9,6 @@ import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
-import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
 
 import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
 import lightLogo from 'uiSrc/assets/img/light_logo.svg'
@@ -45,14 +44,13 @@ const PageHeader = (props: Props) => {
     <div className={cx(styles.pageHeader, className)}>
       <div className={styles.pageHeaderTop}>
         <div>
-          <EuiTitle size="s" className={styles.title}>
+          <EuiTitle size="s" className={styles.title} data-testid="page-title">
             <h1>
               <b>{title}</b>
             </h1>
           </EuiTitle>
-          {subtitle ? <span>{subtitle}</span> : ''}
+          {subtitle ? <span data-testid="page-subtitle">{subtitle}</span> : ''}
         </div>
-        <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
         {logo || (
           <div className={styles.pageHeaderLogo}>
             <EuiButtonEmpty
@@ -62,6 +60,7 @@ const PageHeader = (props: Props) => {
               className={styles.logo}
               tabIndex={0}
               iconType={theme === Theme.Dark ? darkLogo : lightLogo}
+              data-testid="redis-logo-home"
             />
           </div>
         )}

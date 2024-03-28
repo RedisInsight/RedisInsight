@@ -12,7 +12,7 @@ import {
 
 const SOCKETS_CONFIG = config.get('sockets');
 
-@WebSocketGateway({ cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({ path: SOCKETS_CONFIG.path, cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
 export class DatabaseRecommendationGateway {
   @WebSocketServer() wss: Server;
 

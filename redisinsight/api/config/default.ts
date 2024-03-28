@@ -15,6 +15,16 @@ const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourc
   ? join(process['resourcesPath'], 'defaults')
   : join(__dirname, '..', 'defaults');
 
+const customPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/plugins` : '/plugins';
+const staticUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static` : '/static';
+const tutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/tutorials` : '/static/tutorials';
+const customTutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/custom-tutorials` : '/static/custom-tutorials';
+const contentUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/content` : '/static/content';
+const defaultPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/plugins` : '/static/plugins';
+const pluginsAssetsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/resources/plugins` : '/static/resources/plugins';
+
+const socketPath = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/socket.io` : '/socket.io';
+
 export default {
   dir_path: {
     tmpDir: os.tmpdir(),
@@ -43,14 +53,15 @@ export default {
     port: parseInt(process.env.RI_APP_PORT, 10) || 5540,
     docPrefix: 'api/docs',
     globalPrefix: 'api',
-    customPluginsUri: '/plugins',
-    staticUri: '/static',
-    tutorialsUri: '/static/tutorials',
-    customTutorialsUri: '/static/custom-tutorials',
-    contentUri: '/static/content',
-    defaultPluginsUri: '/static/plugins',
-    pluginsAssetsUri: '/static/resources/plugins',
+    customPluginsUri,
+    staticUri,
+    tutorialsUri,
+    customTutorialsUri,
+    contentUri,
+    defaultPluginsUri,
+    pluginsAssetsUri,
     base: process.env.RI_BASE || '/',
+    proxyPath: process.env.RI_PROXY_PATH || '',
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,
@@ -65,6 +76,7 @@ export default {
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,
+    path: socketPath,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

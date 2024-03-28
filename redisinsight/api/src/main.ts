@@ -42,7 +42,14 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
-  app.setGlobalPrefix(serverConfig.globalPrefix);
+
+  let prefix = serverConfig.globalPrefix;
+  if (serverConfig.proxyPath) {
+    prefix = `${serverConfig.proxyPath}/${prefix}`;
+  }
+
+  app.setGlobalPrefix(prefix, { exclude: ['/'] });
+
 
   if (process.env.RI_APP_TYPE !== 'electron') {
     SwaggerModule.setup(

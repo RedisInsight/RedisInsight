@@ -22,7 +22,7 @@ const SOCKETS_CONFIG = config.get('sockets');
 
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseFilters(AckWsExceptionFilter)
-@WebSocketGateway({ namespace: 'bulk-actions', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({ path: SOCKETS_CONFIG.path, namespace: 'bulk-actions', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
 export class BulkActionsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 

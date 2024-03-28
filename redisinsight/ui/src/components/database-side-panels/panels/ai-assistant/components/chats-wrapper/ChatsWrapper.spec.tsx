@@ -1,9 +1,10 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import ChatsWrapper from './ChatsWrapper'
 
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
@@ -11,6 +12,18 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   aiChatSelector: jest.fn().mockReturnValue({
     activeTab: ''
   })
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    documentationChat: {
+      flag: true
+    },
+    databaseChat: {
+      flag: true
+    }
+  }),
 }))
 
 let store: typeof mockedStore
@@ -51,12 +64,65 @@ describe('ChatsWrapper', () => {
     expect(screen.getByTestId('ai-general-chat')).toBeInTheDocument()
   })
 
-  it('should render document chat when tab is selected', () => {
+  it('should render database chat when tab is selected', () => {
     (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Query })
     render(<ChatsWrapper />)
 
     fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
 
     expect(screen.getByTestId('ai-document-chat')).toBeInTheDocument()
+  })
+
+  it('shoud not render tabs if chats are disabled', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: false
+      },
+      databaseChat: {
+        flag: false
+      }
+    })
+
+    render(<ChatsWrapper />)
+
+    expect(screen.queryByTestId('ai-general-chat_tab')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('ai-database-chat_tab')).not.toBeInTheDocument()
+  })
+
+  it('shoud not render tabs if only 1 chat is available', () => {
+    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Assistance });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: true
+      },
+      databaseChat: {
+        flag: false
+      }
+    })
+
+    render(<ChatsWrapper />)
+
+    expect(screen.queryByTestId('ai-general-chat_tab')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('ai-database-chat_tab')).not.toBeInTheDocument()
+
+    expect(screen.getByTestId('ai-general-chat')).toBeInTheDocument()
+  })
+
+  it('shoud switch to another chat if current is not available', async () => {
+    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Query });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: true
+      },
+      databaseChat: {
+        flag: false
+      }
+    })
+
+    await act(async () => {
+      render(<ChatsWrapper />)
+    })
+
+    expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Assistance)])
   })
 })

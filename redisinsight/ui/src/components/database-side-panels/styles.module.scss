@@ -122,7 +122,7 @@ $animation-duration: 300ms;
     flex-basis: 33%;
 
     background-color: transparent;
-    color: var(--euiColorMediumShade);
+    color: var(--euiTextSubduedColor);
     margin: 0 !important;
 
     padding: 6px 8px !important;
@@ -174,7 +174,7 @@ $animation-duration: 300ms;
 
     .tabTotalUnread {
       display: inline-block;
-      background-color: var(--iconsDefaultColor);
+      background-color: var(--euiTextSubduedColor);
       color: var(--euiColorLightestShade);
       height: 18px;
       width: 18px;

@@ -1020,6 +1020,13 @@ jobs:
             -r $DOCKER_REPO \
             -v $appVersion
 
+            docker login -u $DOCKER_V1_USER -p $DOCKER_V1_PASS
+
+            ./.circleci/build/release-docker.sh \
+            -d redisinsight \
+            -r $DOCKER_V1_REPO \
+            -v $appVersion
+
   publish-prod-aws:
     executor: linux-executor
     steps:

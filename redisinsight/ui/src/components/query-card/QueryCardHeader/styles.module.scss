@@ -43,28 +43,6 @@ $marginIcon: 12px;
   }
 }
 
-.titleWrapper {
-  width: calc(100% - 552px);
-  min-width: calc(100% - 552px);
-
-  @media (min-width: $breakpoint-m) {
-    width: calc(100% - 689px);
-    min-width: calc(100% - 689px);
-  }
-}
-
-:global(.fullscreen) .titleWrapper {
-  width: calc(100% - 402px);
-
-  @media (min-width: $breakpoint-m) {
-    width: calc(100% - 474px);
-  }
-
-  @media (min-width: $breakpoint-l) {
-    width: calc(100% - 519px);
-  }
-}
-
 .title {
   display: inline-block;
   font: normal normal normal 13px/17px Graphik, sans-serif !important;
@@ -83,9 +61,8 @@ $marginIcon: 12px;
 }
 
 .time {
-  max-width: 70px;
+  max-width: 90px;
   position: relative;
-  height: 18px;
 }
 
 .mode + .mode {
@@ -171,8 +148,8 @@ $marginIcon: 12px;
   width: 13px;
 
   @media (min-width: $breakpoint-m) {
-    min-width: 58px;
-    width: 58px;
+    min-width: 92px;
+    width: 92px;
   }
 }
 
@@ -197,7 +174,7 @@ $marginIcon: 12px;
   display: flex;
   align-items: center;
   position: relative;
-  padding: 3px 0 3px 8px;
+  padding: 0 0 3px 8px;
 
   span {
     margin-left: 10px;
@@ -205,6 +182,14 @@ $marginIcon: 12px;
     overflow: hidden;
     max-width: 100px;
   }
+}
+
+.titleWrapper {
+  overflow: hidden;
+}
+
+.controls {
+  flex-shrink: 0;
 }
 
 .iconDropdownOption {
@@ -241,7 +226,7 @@ $marginIcon: 12px;
   padding-right: 0;
 
   & ~ div {
-    right: 4px;
+    right: 0px;
     svg {
       width: 10px !important;
       height: 10px !important;

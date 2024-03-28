@@ -84,6 +84,7 @@ export default {
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,
     countThreshold: parseInt(process.env.RI_SCAN_COUNT_THRESHOLD, 10) || 10000,
+    countThresholdMax: parseInt(process.env.RI_SCAN_COUNT_THRESHOLD_MAX, 10) || 10000,
   },
   modules: {
     json: {

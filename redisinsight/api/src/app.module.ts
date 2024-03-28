@@ -52,7 +52,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     ProfilerModule,
     PubSubModule,
     SlowLogModule,
-    NotificationModule,
+    NotificationModule.register(),
     BulkActionsModule,
     ClusterMonitorModule,
     CustomTutorialModule.register(),

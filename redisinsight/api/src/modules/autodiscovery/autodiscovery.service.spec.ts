@@ -15,6 +15,8 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { mocked } from 'ts-jest/utils';
 import config, { Config } from 'src/utils/config';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { mockConstantsProvider } from 'src/__mocks__/constants';
 
 jest.mock(
   'src/modules/autodiscovery/utils/autodiscovery.util',
@@ -69,13 +71,17 @@ describe('AutodiscoveryService', () => {
           provide: RedisClientFactory,
           useFactory: mockRedisClientFactory,
         },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
+        },
       ],
     }).compile();
 
     service = module.get(AutodiscoveryService);
     settingsService = module.get(SettingsService);
     databaseService = module.get(DatabaseService);
-    redisClientFactory = await module.get(RedisClientFactory);
+    redisClientFactory = module.get(RedisClientFactory);
 
     mocked(utils.convertRedisInfoReplyToObject).mockReturnValue({
       server: {

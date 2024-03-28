@@ -25,7 +25,7 @@ export class FunctionsWithStreamsStrategy extends AbstractRecommendationStrategy
   async isRecommendationReached(
     data,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    // TODO: do the refactor outlined in search-JSON.strategy.ts?
+    // TODO: [USER_CONTEXT] defer passing sessionMetadata to another PR
     const { modules } = await this.databaseService.get({} as SessionMetadata, data.databaseId);
 
     if (isTriggeredAndFunctionsModule(modules)) {

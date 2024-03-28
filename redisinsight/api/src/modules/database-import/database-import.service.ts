@@ -75,9 +75,10 @@ export class DatabaseImportService {
 
   /**
    * Import databases from the file
+   * @param sessionMetadata
    * @param file
    */
-  public async import(file): Promise<DatabaseImportResponse> {
+  public async import(sessionMetadata: SessionMetadata, file): Promise<DatabaseImportResponse> {
     try {
       // todo: create FileValidation class
       if (!file) {
@@ -105,7 +106,7 @@ export class DatabaseImportService {
       };
 
       // it is very important to insert databases on-by-one to avoid db constraint errors
-      await items.reduce((prev, item, index) => prev.finally(() => this.createDatabase(item, index)
+      await items.reduce((prev, item, index) => prev.finally(() => this.createDatabase(sessionMetadata, item, index)
         .then((result) => {
           switch (result.status) {
             case DatabaseImportStatus.Fail:
@@ -139,11 +140,16 @@ export class DatabaseImportService {
   /**
    * Map data to known model, validate it and create database if possible
    * Note: will not create connection, simply create database
+   * @parama sessionMetadata
    * @param item
    * @param index
    * @private
    */
-  private async createDatabase(item: any, index: number): Promise<DatabaseImportResult> {
+  private async createDatabase(
+    sessionMetadata: SessionMetadata,
+    item: any,
+    index: number,
+  ): Promise<DatabaseImportResult> {
     try {
       let status = DatabaseImportStatus.Success;
       const errors = [];
@@ -244,8 +250,7 @@ export class DatabaseImportService {
 
       const database = classToClass(Database, dto);
 
-      // TODO: does database import need sessionMetadata when creating the database?
-      await this.databaseRepository.create({} as SessionMetadata, database, false);
+      await this.databaseRepository.create(sessionMetadata, database, false);
 
       return {
         index,

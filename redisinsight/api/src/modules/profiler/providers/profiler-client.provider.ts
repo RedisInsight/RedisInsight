@@ -18,6 +18,7 @@ export class ProfilerClientProvider {
   ) {}
 
   async getOrCreateClient(
+    sessionMetadata: SessionMetadata,
     instanceId: string,
     socket: Socket,
     settings: MonitorSettings,
@@ -33,7 +34,7 @@ export class ProfilerClientProvider {
 
         // set database alias as part of the log file name
         const alias = (await this.databaseService.get(
-          {} as SessionMetadata, // TODO: should sessionMetadata be empty here?
+          sessionMetadata,
           get(socket, 'handshake.query.instanceId') as string,
         )).name;
         profilerLogFile.setAlias(alias);

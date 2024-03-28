@@ -27,7 +27,7 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
     data: SearchJSON,
   ): Promise<IDatabaseRecommendationStrategyData> {
   // todo: refactor. no need entire entity here
-    // TODO: do the refactor in the above todo?
+    // TODO: [USER_CONTEXT] defer passing sessionMetadata to another PR
     const { modules } = await this.databaseService.get({} as SessionMetadata, data.databaseId);
 
     if (isRedisearchModule(modules)) {

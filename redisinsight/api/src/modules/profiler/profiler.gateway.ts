@@ -13,6 +13,7 @@ import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
 import { ProfilerClientEvents } from 'src/modules/profiler/constants';
 import { ProfilerService } from 'src/modules/profiler/profiler.service';
 import config from 'src/utils/config';
+import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'src/common/constants';
 
 const SOCKETS_CONFIG = config.get('sockets');
 
@@ -27,7 +28,17 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   @SubscribeMessage(ProfilerClientEvents.Monitor)
   async monitor(client: Socket, settings: MonitorSettings = null): Promise<any> {
     try {
-      await this.service.addListenerForInstance(ProfilerGateway.getInstanceId(client), client, settings);
+      // TODO: [USER_CONTEXT] implement session metadata decorator for websocket client
+      const sessionMetadata = {
+        userId: DEFAULT_USER_ID,
+        sessionId: DEFAULT_SESSION_ID,
+      };
+      await this.service.addListenerForInstance(
+        sessionMetadata,
+        ProfilerGateway.getInstanceId(client),
+        client,
+        settings,
+      );
       return { status: 'ok' };
     } catch (error) {
       this.logger.error('Unable to add listener', error);

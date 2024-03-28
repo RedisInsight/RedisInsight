@@ -76,10 +76,7 @@ export class PubSubService {
    * @param clientMetadata
    * @param dto
    */
-  async publish(
-    clientMetadata: ClientMetadata,
-    dto: PublishDto,
-  ): Promise<PublishResponse> {
+  async publish(clientMetadata: ClientMetadata, dto: PublishDto): Promise<PublishResponse> {
     try {
       this.logger.log('Publishing message.');
 

@@ -73,7 +73,7 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
 
     const [host, port] = publicEndpoint.split(':');
 
-    // TODO: does sessionMetadata need to be passed here?
+    // TODO: [USER_CONTEXT] where should sessionMetadata come from?
     const database = await this.dependencies.databaseService.create(
       {} as SessionMetadata,
       {

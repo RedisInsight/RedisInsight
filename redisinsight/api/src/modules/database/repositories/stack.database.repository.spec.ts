@@ -16,6 +16,7 @@ import {
   mockDatabaseWithTlsAuthEntity,
   mockEncryptionService,
   mockRepository,
+  mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -150,7 +151,7 @@ describe('StackDatabasesRepository', () => {
 
   describe('get', () => {
     it('should return standalone database model', async () => {
-      const result = await service.get(mockDatabaseId);
+      const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
       expect(result).toEqual(mockDatabase);
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
@@ -176,7 +177,7 @@ describe('StackDatabasesRepository', () => {
     it('should update standalone database', async () => {
       repository.merge.mockReturnValue(mockDatabase);
 
-      const result = await service.update(mockDatabaseId, mockDatabase);
+      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabase);
 
       expect(result).toEqual(mockDatabase);
     });

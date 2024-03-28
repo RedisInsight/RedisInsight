@@ -39,7 +39,8 @@ export class AutodiscoveryService implements OnModuleInit {
       // additional check for existing databases
       // We should not start auto discover if any database already exists
       // TODO: [USER_CONTEXT] rethink implementation since it is not possible to know user data at this point
-      if ((await this.databaseService.list(this.constantsProvider.getSystemSessionMetadata())).length) {
+      // this.constantsProvider.getSystemSessionMetadata()
+      if ((await this.databaseService.list({} as SessionMetadata)).length) {
         return;
       }
 

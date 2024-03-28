@@ -176,6 +176,7 @@ describe('MeCloudAutodiscoveryService', () => {
       ]);
 
       expect(cloudAutodiscoveryService.addRedisCloudDatabases).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockCloudCapiAuthDto,
         [
           mockImportCloudDatabaseDto,

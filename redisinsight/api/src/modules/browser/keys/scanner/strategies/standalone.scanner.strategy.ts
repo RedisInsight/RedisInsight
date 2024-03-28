@@ -78,7 +78,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
 
     let fullScanned = false;
     // todo: remove settings from here. threshold should be part of query?
-    const settings = await this.settingsService.getAppSettings('1');
+    const settings = await this.settingsService.getAppSettings({ userId: '1', sessionId: '1' });
     while (
       (node.total >= 0 || isNull(node.total))
       && !fullScanned

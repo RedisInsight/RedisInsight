@@ -1,6 +1,7 @@
 import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
 import { mockDatabase } from 'src/__mocks__/databases';
 import { v4 as uuidv4 } from 'uuid';
+import { mockUserId } from 'src/__mocks__/user';
 
 export type MockType<T> = {
   [P in keyof T]: jest.Mock<any>;
@@ -52,7 +53,7 @@ export const mockRepository = jest.fn(() => ({
 }));
 
 export const mockSessionMetadata: SessionMetadata = {
-  userId: uuidv4(),
+  userId: mockUserId,
   sessionId: uuidv4(),
 };
 

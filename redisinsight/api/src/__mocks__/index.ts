@@ -1,6 +1,7 @@
 export * from './certificates';
 export * from './commands';
 export * from './common';
+export * from './constants';
 export * from './encryption';
 export * from './errors';
 // export * from './redis-databases';

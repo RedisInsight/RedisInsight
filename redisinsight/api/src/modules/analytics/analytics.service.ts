@@ -156,7 +156,7 @@ export class AnalyticsService {
   private async checkIsAnalyticsGranted() {
     return !!get(
       // todo: define how to fetch userId?
-      await this.settingsService.getAppSettings('1'),
+      await this.settingsService.getAppSettings({ userId: '1', sessionId: '1' }),
       'agreements.analytics',
       false,
     );

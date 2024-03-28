@@ -110,7 +110,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
     const count = args.count || REDIS_SCAN_CONFIG.countDefault;
     const nodes = await this.getNodesToScan(client, args.cursor);
     // todo: remove settings from here. threshold should be part of query?
-    const settings = await this.settingsService.getAppSettings('1');
+    const settings = await this.settingsService.getAppSettings({ userId: '1', sessionId: '1' });
     await this.calculateNodesTotalKeys(nodes);
 
     if (!isRedisGlob(match)) {

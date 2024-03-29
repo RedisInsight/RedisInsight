@@ -13,7 +13,6 @@ import { Database } from 'src/modules/database/models/database';
 import config from 'src/utils/config';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
-import { SessionMetadata } from 'src/common/models';
 
 const cloudConfig = config.get('cloud');
 
@@ -73,9 +72,8 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
 
     const [host, port] = publicEndpoint.split(':');
 
-    // TODO: [USER_CONTEXT] where should sessionMetadata come from?
     const database = await this.dependencies.databaseService.create(
-      {} as SessionMetadata,
+      this.options.sessionMetadata,
       {
         host,
         port: parseInt(port, 10),

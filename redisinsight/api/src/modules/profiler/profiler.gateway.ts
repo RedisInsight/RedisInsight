@@ -29,6 +29,7 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   async monitor(client: Socket, settings: MonitorSettings = null): Promise<any> {
     try {
       // TODO: [USER_CONTEXT] implement session metadata decorator for websocket client
+      // use constants provider here
       const sessionMetadata = {
         userId: DEFAULT_USER_ID,
         sessionId: DEFAULT_SESSION_ID,

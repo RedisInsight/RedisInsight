@@ -77,7 +77,7 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
       const isExist = await this.exists();
       if (!isExist) {
         await super.create(
-          {} as SessionMetadata, // TODO: should empty sessionMetadata be passed here?
+          {} as SessionMetadata, // TODO: [USER_CONTEXT] should empty sessionMetadata be passed here?
           {
             id,
             host,

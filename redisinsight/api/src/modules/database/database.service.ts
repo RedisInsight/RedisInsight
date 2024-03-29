@@ -158,7 +158,7 @@ export class DatabaseService {
       try {
         const client = await this.redisClientFactory.createClient(
           {
-            sessionMetadata, // TODO: does sessionMetadata need to be passed here?
+            sessionMetadata,
             databaseId: database.id,
             context: ClientContext.Common,
           },
@@ -204,7 +204,6 @@ export class DatabaseService {
       database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {
-        // TODO: does sessionMetadata need to be passed here?
         database = await this.databaseFactory.createDatabaseModel(sessionMetadata, database);
 
         // todo: investigate manual update flag
@@ -254,7 +253,6 @@ export class DatabaseService {
     }
 
     try {
-      // TODO: does sessionMetadata need to be passed here?
       await this.databaseFactory.createDatabaseModel(sessionMetadata, database);
 
       return;

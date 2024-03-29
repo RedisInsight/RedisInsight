@@ -7,6 +7,7 @@ import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { ClientContext, ClientMetadata } from 'src/common/models';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -18,6 +19,7 @@ export class AutodiscoveryService implements OnModuleInit {
     private settingsService: SettingsService,
     private redisClientFactory: RedisClientFactory,
     private databaseService: DatabaseService,
+    private readonly constantsProvider: ConstantsProvider,
   ) {}
 
   /**
@@ -31,7 +33,10 @@ export class AutodiscoveryService implements OnModuleInit {
       }
 
       // check agreements to understand if it is first launch
-      const settings = await this.settingsService.getAppSettings('1');
+      // todo: [USER_CONTEXT] rethink implementation since it is not possible to know user data at this point
+      const settings = await this.settingsService.getAppSettings(
+        this.constantsProvider.getSystemSessionMetadata(),
+      );
       if (settings.agreements) {
         return;
       }

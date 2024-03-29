@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { plainToClass } from 'class-transformer';
 import { SessionMetadata } from 'src/common/models';
 import { Repository } from 'typeorm';
+import { classToClass } from 'src/utils';
 import { NotificationType } from '../constants';
 import { NotificationEntity } from '../entities/notification.entity';
 import { Notification } from '../models/notification';
@@ -15,30 +15,37 @@ export class LocalNotificationRepository extends NotificationRepository {
     super();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getNotifications(_: SessionMetadata): Promise<{ notifications: Notification[]; totalUnread: number }> {
+  /**
+   * @inheritDoc
+   */
+  async getNotifications(): Promise<Notification[]> {
     const notifications = await this.repository
       .createQueryBuilder('n')
       .orderBy('timestamp', 'DESC')
       // .limit(NOTIFICATIONS_CONFIG.queryLimit) // todo: do not forget when introduce "local" notifications
       .getMany();
 
-    const totalUnread = await this.repository
+    return notifications.map((ne) => classToClass(Notification, ne));
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async getTotalUnread(): Promise<number> {
+    return this.repository
       .createQueryBuilder()
       .where({ read: false })
       .getCount();
-
-    return {
-      notifications: notifications.map((ne) => plainToClass(Notification, ne)),
-      totalUnread,
-    };
   }
 
+  /**
+   * @inheritDoc
+   */
   async readNotifications(
     _: SessionMetadata,
     notificationType?: NotificationType,
     timestamp?: number,
-  ): Promise<{ notifications: Notification[]; totalUnread: number }> {
+  ): Promise<Notification[]> {
     const query: Record<string, any> = {};
 
     if (notificationType) {
@@ -56,51 +63,37 @@ export class LocalNotificationRepository extends NotificationRepository {
       .set({ read: true })
       .execute();
 
-    const totalUnread = await this.repository
-      .createQueryBuilder()
-      .where({ read: false })
-      .getCount();
-
-    return {
-      notifications: [],
-      totalUnread,
-    };
+    return [];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getGlobalNotifications(_: SessionMetadata): Promise<Notification[]> {
-    const entities = await this.repository
+  /**
+   * @inheritDoc
+   */
+  async insertNotifications(_: SessionMetadata, notifications: Notification[]): Promise<void> {
+    await this.repository.insert(
+      notifications.map((n) => classToClass(NotificationEntity, n)),
+    );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  async getGlobalNotifications(): Promise<Partial<Notification>[]> {
+    return this.repository
       .createQueryBuilder('n')
       .where({ type: NotificationType.Global })
       .select(['n.timestamp', 'n.read'])
       .getMany();
-
-    return entities.map((ne) => plainToClass(Notification, ne));
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async deleteGlobalNotifications(_: SessionMetadata): Promise<void> {
+  /**
+   * @inheritDoc
+   */
+  async deleteGlobalNotifications(): Promise<void> {
     await this.repository
       .createQueryBuilder('n')
       .delete()
       .where({ type: NotificationType.Global })
       .execute();
-  }
-
-  async insertNotifications(
-    _: SessionMetadata,
-    notifications: Notification[],
-  ): Promise<void> {
-    await this.repository.insert(
-      notifications.map((n) => plainToClass(NotificationEntity, n)),
-    );
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async getTotalUnread(_: SessionMetadata): Promise<number> {
-    return await this.repository
-      .createQueryBuilder()
-      .where({ read: false })
-      .getCount();
   }
 }

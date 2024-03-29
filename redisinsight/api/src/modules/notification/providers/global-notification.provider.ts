@@ -29,7 +29,7 @@ export class GlobalNotificationProvider {
 
   private validator = new Validator();
 
-  private interval;
+  private interval: NodeJS.Timeout;
 
   constructor(
     private notificationRepository: NotificationRepository,

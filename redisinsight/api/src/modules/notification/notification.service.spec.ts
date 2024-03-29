@@ -1,55 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MockType } from 'src/__mocks__';
-
-import { NotificationEntity } from 'src/modules/notification/entities/notification.entity';
+import {
+  mockNotificationRepository, mockNotificationsDto,
+  mockSessionMetadata,
+  MockType,
+} from 'src/__mocks__';
 import { NotificationType } from 'src/modules/notification/constants';
 import axios from 'axios';
 import { InternalServerErrorException } from '@nestjs/common';
 import { NotificationService } from 'src/modules/notification/notification.service';
-import { SessionMetadata } from 'src/common/models';
 import { NotificationRepository } from './repositories/notification.repository';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-const mockNotification1 = {
-  title: 'Title-1',
-  body: 'Body-1',
-  category: 'Release',
-  categoryColor: '#b432ea',
-  timestamp: 100,
-};
-
-const mockNotification3 = {
-  title: 'Title-3',
-  body: 'Body-3',
-  timestamp: 300,
-};
-
-const mockNotificationEntity1 = new NotificationEntity({
-  ...mockNotification1,
-  type: NotificationType.Global,
-  read: true,
-});
-
-const mockNotificationEntity3 = new NotificationEntity({
-  ...mockNotification3,
-  type: NotificationType.Global,
-  read: false,
-});
-
-const mockNotificationRepository: MockType<Partial<NotificationRepository>> = {
-  getNotifications: jest.fn(),
-  readNotifications: jest.fn(),
-};
-
-const mockSessionData: SessionMetadata = {
-  sessionId: 'mockSessionId',
-  userId: 'mockUserId',
-};
-
 describe('NotificationService', () => {
   let service: NotificationService;
+  let repository: MockType<NotificationRepository>;
 
   beforeEach(async () => {
     jest.mock('axios', () => mockedAxios);
@@ -59,36 +25,26 @@ describe('NotificationService', () => {
         NotificationService,
         {
           provide: NotificationRepository,
-          useFactory: () => mockNotificationRepository,
+          useFactory: mockNotificationRepository,
         },
       ],
     }).compile();
 
     service = await module.get(NotificationService);
+    repository = await module.get(NotificationRepository);
   });
 
   describe('getNotifications', () => {
-    it('should return list of notifications', async () => {
-      mockNotificationRepository.getNotifications.mockReturnValueOnce({
-        notifications: [mockNotificationEntity3, mockNotificationEntity1],
-        totalUnread: 2,
-      });
+    it('should return list of notifications with calculated unread field', async () => {
+      const result = await service.getNotifications(mockSessionMetadata);
 
-      const result = await service.getNotifications(mockSessionData);
-
-      expect(result).toEqual({
-        totalUnread: 2,
-        notifications: [
-          mockNotificationEntity3,
-          mockNotificationEntity1,
-        ],
-      });
+      expect(result).toEqual(mockNotificationsDto);
     });
     it('should throw an error if any', async () => {
-      mockNotificationRepository.getNotifications.mockRejectedValue(new Error('some error'));
+      repository.getNotifications.mockRejectedValue(new Error('some error'));
 
       try {
-        await service.getNotifications(mockSessionData);
+        await service.getNotifications(mockSessionMetadata);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
@@ -99,21 +55,18 @@ describe('NotificationService', () => {
 
   describe('readNotifications', () => {
     it('should update all notifications', async () => {
-      mockNotificationRepository.readNotifications.mockReturnValueOnce({
-        notifications: [],
-        totalUnread: 2,
-      });
+      repository.getTotalUnread.mockResolvedValueOnce(0);
 
-      expect(await service.readNotifications(mockSessionData, {})).toEqual({
-        totalUnread: 2,
+      expect(await service.readNotifications(mockSessionMetadata, {})).toEqual({
+        totalUnread: 0,
         notifications: [],
       });
     });
     it('should throw an error if any', async () => {
-      mockNotificationRepository.readNotifications.mockRejectedValue(new Error('some error'));
+      repository.readNotifications.mockRejectedValue(new Error('some error'));
 
       try {
-        await service.readNotifications(mockSessionData, { timestamp: 1, type: NotificationType.Global });
+        await service.readNotifications(mockSessionMetadata, { timestamp: 1, type: NotificationType.Global });
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

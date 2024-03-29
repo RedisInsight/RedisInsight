@@ -3,9 +3,6 @@ import { plainToClass } from 'class-transformer';
 import { SessionMetadata } from 'src/common/models';
 import { NotificationsDto, ReadNotificationsDto } from 'src/modules/notification/dto';
 import { NotificationRepository } from './repositories/notification.repository';
-// import config from 'src/utils/config';
-
-// const NOTIFICATIONS_CONFIG = config.get('notifications');
 
 @Injectable()
 export class NotificationService {
@@ -19,7 +16,10 @@ export class NotificationService {
     this.logger.debug('Getting notifications list.');
 
     try {
-      const { notifications, totalUnread } = await this.notificationRepository.getNotifications(sessionMetadata);
+      const [notifications, totalUnread] = await Promise.all([
+        this.notificationRepository.getNotifications(sessionMetadata),
+        this.notificationRepository.getTotalUnread(sessionMetadata),
+      ]);
 
       return plainToClass(NotificationsDto, {
         notifications,
@@ -36,6 +36,7 @@ export class NotificationService {
    * When "type" and "timestamp" defined a single notification will be modified
    * since we guarantee uniqueness by these fields
    * If no filters - all notifications
+   * @param sessionMetadata
    * @param dto
    */
   async readNotifications(sessionMetadata: SessionMetadata, dto: ReadNotificationsDto): Promise<NotificationsDto> {
@@ -43,13 +44,12 @@ export class NotificationService {
       this.logger.debug('Updating "read=true" status for notification(s).');
       const { type, timestamp } = dto;
 
-      const { notifications, totalUnread } = await
-      this.notificationRepository.readNotifications(sessionMetadata, type, timestamp);
+      const notifications = await this.notificationRepository.readNotifications(sessionMetadata, type, timestamp);
 
-      return new NotificationsDto(plainToClass(NotificationsDto, {
+      return plainToClass(NotificationsDto, {
         notifications,
-        totalUnread,
-      }));
+        totalUnread: await this.notificationRepository.getTotalUnread(sessionMetadata),
+      });
     } catch (e) {
       this.logger.error('Unable to "read" notification(s)', e);
       throw new InternalServerErrorException('Unable to "read" notification(s)');

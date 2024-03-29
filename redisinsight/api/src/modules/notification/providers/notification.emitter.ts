@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { SessionMetadata } from 'src/common/models';
 import { NotificationEvents, NotificationServerEvents } from 'src/modules/notification/constants';
-import { NotificationDto, NotificationsDto } from 'src/modules/notification/dto';
+import { NotificationsDto } from 'src/modules/notification/dto';
+import { Notification } from 'src/modules/notification/models/notification';
+import { plainToClass } from 'class-transformer';
 import { NotificationRepository } from '../repositories/notification.repository';
 
 @Injectable()
@@ -15,7 +17,7 @@ export class NotificationEmitter {
   ) {}
 
   @OnEvent(NotificationEvents.NewNotifications)
-  async notification(sessionMetadata: SessionMetadata, notifications: NotificationDto[]) {
+  async notification(sessionMetadata: SessionMetadata, notifications: Notification[]) {
     try {
       if (!notifications?.length) {
         return;
@@ -25,7 +27,7 @@ export class NotificationEmitter {
 
       const totalUnread = await this.notificationRepository.getTotalUnread(sessionMetadata);
 
-      this.eventEmitter.emit(NotificationServerEvents.Notification, new NotificationsDto({
+      this.eventEmitter.emit(NotificationServerEvents.Notification, plainToClass(NotificationsDto, {
         notifications,
         totalUnread,
       }));

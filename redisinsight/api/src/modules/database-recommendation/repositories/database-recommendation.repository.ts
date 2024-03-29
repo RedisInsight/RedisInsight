@@ -9,6 +9,7 @@ import { ClientMetadata, SessionMetadata } from 'src/common/models';
 export abstract class DatabaseRecommendationRepository {
   /**
    * Create new recommendation
+   * @param sessionMetadata
    * @param entity
    * @return DatabaseRecommendation
    */
@@ -50,6 +51,7 @@ export abstract class DatabaseRecommendationRepository {
 
   /**
    * Get database recommendation by id
+   * @param sessionMetadata
    * @param id
    * @return DatabaseRecommendation
    */

@@ -41,6 +41,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
   /**
    * Save entire entity
+   * @param _
    * @param entity
    */
   async create(_: SessionMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
@@ -164,6 +165,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
   /**
    * Get recommendation by id
+   * @param _
    * @param id
    */
   public async get(_: SessionMetadata, id: string): Promise<DatabaseRecommendation> {
@@ -223,7 +225,7 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
 
       if (!affected) {
         this.logger.error(`Recommendation with id:${id} was not Found`);
-        throw new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
+        return Promise.reject(new NotFoundException(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND));
       }
 
       this.logger.log('Succeed to delete recommendation.');

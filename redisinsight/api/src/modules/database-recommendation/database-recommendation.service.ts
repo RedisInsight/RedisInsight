@@ -31,7 +31,7 @@ export class DatabaseRecommendationService {
    * @param entity
    */
   public async create(clientMetadata: ClientMetadata, entity: DatabaseRecommendation): Promise<DatabaseRecommendation> {
-    const recommendation = await this.databaseRecommendationRepository.create(entity);
+    const recommendation = await this.databaseRecommendationRepository.create(clientMetadata.sessionMetadata, entity);
 
     const database = await this.databaseService.get(clientMetadata?.databaseId);
 

@@ -3,8 +3,8 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, Max,
 } from 'class-validator';
-import { RedisDataType } from './key.dto';
 import config, { Config } from 'src/utils/config';
+import { RedisDataType } from './key.dto';
 
 const scanConfig = config.get('redis_scan') as Config['redis_scan'];
 const { countThreshold, countThresholdMax } = scanConfig;
@@ -72,6 +72,7 @@ export class GetKeysDto {
     default: true,
   })
   @IsOptional()
+  @IsInt()
   @Max(countThresholdMax)
   countThreshold: number = countThreshold;
 }

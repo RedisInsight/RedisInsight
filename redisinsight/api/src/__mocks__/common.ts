@@ -8,6 +8,7 @@ export type MockType<T> = {
 };
 
 export const mockQueryBuilderWhere = jest.fn().mockReturnThis();
+export const mockQueryBuilderSelect = jest.fn().mockReturnThis();
 export const mockQueryBuilderGetOne = jest.fn();
 export const mockQueryBuilderGetMany = jest.fn();
 export const mockQueryBuilderGetManyRaw = jest.fn();
@@ -18,7 +19,7 @@ export const mockCreateQueryBuilder = jest.fn(() => ({
   where: mockQueryBuilderWhere,
   orWhere: mockQueryBuilderWhere,
   update: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
+  select: mockQueryBuilderSelect,
   set: jest.fn().mockReturnThis(),
   orderBy: jest.fn().mockReturnThis(),
   groupBy: jest.fn().mockReturnThis(),

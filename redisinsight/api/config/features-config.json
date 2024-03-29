@@ -49,7 +49,7 @@
     },
     "documentationChat": {
       "flag": true,
-      "perc": [[0,20]],
+      "perc": [[0,25]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -60,7 +60,7 @@
     },
     "databaseChat": {
       "flag": true,
-      "perc": [[0,20]],
+      "perc": [[0,25]],
       "filters": [
         {
           "name": "config.server.buildType",

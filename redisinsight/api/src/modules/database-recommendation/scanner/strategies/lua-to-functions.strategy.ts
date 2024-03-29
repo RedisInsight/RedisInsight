@@ -5,6 +5,7 @@ import { IDatabaseRecommendationStrategyData }
 import { DatabaseService } from 'src/modules/database/database.service';
 import { isTriggeredAndFunctionsModule } from 'src/utils';
 import { LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT } from 'src/common/constants';
+import { SessionMetadata } from 'src/common/models';
 
 export class LuaToFunctionsStrategy extends AbstractRecommendationStrategy {
   private databaseService: DatabaseService;
@@ -24,7 +25,8 @@ export class LuaToFunctionsStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    const { modules } = await this.databaseService.get(data.databaseId);
+    // TODO: [USER_CONTEXT] defer passing sessionMetadata to another PR
+    const { modules } = await this.databaseService.get({} as SessionMetadata, data.databaseId);
 
     if (isTriggeredAndFunctionsModule(modules)) {
       const libraries = await data.client.sendCommand(

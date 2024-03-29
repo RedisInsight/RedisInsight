@@ -13,6 +13,7 @@ import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
 import { ProfilerClientEvents } from 'src/modules/profiler/constants';
 import { ProfilerService } from 'src/modules/profiler/profiler.service';
 import config from 'src/utils/config';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 const SOCKETS_CONFIG = config.get('sockets');
 
@@ -22,12 +23,22 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   private logger: Logger = new Logger('MonitorGateway');
 
-  constructor(private service: ProfilerService) {}
+  constructor(
+    private service: ProfilerService,
+    private readonly constantsProvider: ConstantsProvider,
+  ) {}
 
   @SubscribeMessage(ProfilerClientEvents.Monitor)
   async monitor(client: Socket, settings: MonitorSettings = null): Promise<any> {
     try {
-      await this.service.addListenerForInstance(ProfilerGateway.getInstanceId(client), client, settings);
+      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata();
+
+      await this.service.addListenerForInstance(
+        sessionMetadata,
+        ProfilerGateway.getInstanceId(client),
+        client,
+        settings,
+      );
       return { status: 'ok' };
     } catch (error) {
       this.logger.error('Unable to add listener', error);

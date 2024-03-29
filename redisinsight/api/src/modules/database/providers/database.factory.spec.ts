@@ -20,6 +20,7 @@ import {
   mockRedisNoPermError,
   mockSentinelDatabaseWithTlsAuth,
   mockSentinelRedisClient,
+  mockSessionMetadata,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
@@ -68,7 +69,7 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(false);
       mockRedisClusterUtil.isCluster.mockResolvedValue(false);
 
-      const result = await service.createDatabaseModel(mockDatabase);
+      const result = await service.createDatabaseModel(mockSessionMetadata, mockDatabase);
 
       expect(result).toEqual(mockDatabase);
     });
@@ -76,7 +77,7 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(true);
       mockRedisClusterUtil.isCluster.mockResolvedValue(false);
 
-      const result = await service.createDatabaseModel(mockSentinelDatabaseWithTlsAuth);
+      const result = await service.createDatabaseModel(mockSessionMetadata, mockSentinelDatabaseWithTlsAuth);
 
       expect(result).toEqual(mockSentinelDatabaseWithTlsAuth);
     });
@@ -84,7 +85,7 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(true);
       mockRedisClusterUtil.isCluster.mockResolvedValue(false);
       try {
-        await service.createDatabaseModel(mockDatabase);
+        await service.createDatabaseModel(mockSessionMetadata, mockDatabase);
         fail();
       } catch (e) {
         expect(e.message).toEqual(RedisErrorCodes.SentinelParamsRequired);
@@ -94,7 +95,7 @@ describe('DatabaseFactory', () => {
       mockRedisSentinelUtil.isSentinel.mockResolvedValue(false);
       mockRedisClusterUtil.isCluster.mockResolvedValue(true);
 
-      const result = await service.createDatabaseModel(mockClusterDatabaseWithTlsAuth);
+      const result = await service.createDatabaseModel(mockSessionMetadata, mockClusterDatabaseWithTlsAuth);
 
       expect(result).toEqual(mockClusterDatabaseWithTlsAuth);
     });

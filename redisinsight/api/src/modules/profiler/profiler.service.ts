@@ -6,6 +6,7 @@ import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { RedisObserverProvider } from 'src/modules/profiler/providers/redis-observer.provider';
 import { ProfilerClientProvider } from 'src/modules/profiler/providers/profiler-client.provider';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class ProfilerService {
@@ -25,10 +26,20 @@ export class ProfilerService {
    * @param client
    * @param settings
    */
-  async addListenerForInstance(instanceId: string, client: Socket, settings: MonitorSettings = null) {
+  async addListenerForInstance(
+    sessionMetadata: SessionMetadata,
+    instanceId: string,
+    client: Socket,
+    settings: MonitorSettings = null,
+  ) {
     this.logger.log(`Add listener for instance: ${instanceId}.`);
 
-    const profilerClient = await this.profilerClientProvider.getOrCreateClient(instanceId, client, settings);
+    const profilerClient = await this.profilerClientProvider.getOrCreateClient(
+      sessionMetadata,
+      instanceId,
+      client,
+      settings,
+    );
     const monitorObserver = await this.redisObserverProvider.getOrCreateObserver(instanceId);
     await monitorObserver.subscribe(profilerClient);
   }

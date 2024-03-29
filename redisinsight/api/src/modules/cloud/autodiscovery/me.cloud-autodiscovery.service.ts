@@ -94,6 +94,7 @@ export class MeCloudAutodiscoveryService {
   ): Promise<ImportCloudDatabaseResponse[]> {
     try {
       return await this.cloudAutodiscoveryService.addRedisCloudDatabases(
+        sessionMetadata,
         await this.getCapiCredentials(sessionMetadata, utm),
         addDatabasesDto,
       );

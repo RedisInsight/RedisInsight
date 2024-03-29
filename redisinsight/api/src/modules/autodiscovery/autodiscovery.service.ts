@@ -5,7 +5,7 @@ import config, { Config } from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { ClientContext, ClientMetadata } from 'src/common/models';
+import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
@@ -32,10 +32,12 @@ export class AutodiscoveryService implements OnModuleInit {
         return;
       }
 
+      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata()
+
       // check agreements to understand if it is first launch
       // todo: [USER_CONTEXT] rethink implementation since it is not possible to know user data at this point
       const settings = await this.settingsService.getAppSettings(
-        this.constantsProvider.getSystemSessionMetadata(),
+        sessionMetadata,
       );
       if (settings.agreements) {
         return;
@@ -43,7 +45,8 @@ export class AutodiscoveryService implements OnModuleInit {
 
       // additional check for existing databases
       // We should not start auto discover if any database already exists
-      if ((await this.databaseService.list()).length) {
+      // TODO: [USER_CONTEXT] rethink implementation since it is not possible to know user data at this point
+      if ((await this.databaseService.list(sessionMetadata)).length) {
         return;
       }
 
@@ -70,10 +73,11 @@ export class AutodiscoveryService implements OnModuleInit {
 
   /**
    * Add standalone database without credentials using host and port only
+   * @param sessionMetadata
    * @param endpoint
    * @private
    */
-  private async addRedisDatabase(endpoint: { host: string, port: number }) {
+  private async addRedisDatabase(sessionMetadata: SessionMetadata, endpoint: { host: string, port: number }) {
     try {
       const client = await this.redisClientFactory.createClient(
         {
@@ -91,10 +95,13 @@ export class AutodiscoveryService implements OnModuleInit {
       );
 
       if (info?.server?.redis_mode === 'standalone') {
-        await this.databaseService.create({
-          name: `${endpoint.host}:${endpoint.port}`,
-          ...endpoint,
-        } as Database);
+        await this.databaseService.create(
+          sessionMetadata,
+          {
+            name: `${endpoint.host}:${endpoint.port}`,
+            ...endpoint,
+          } as Database,
+        );
       }
     } catch (e) {
       // ignore error

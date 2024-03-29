@@ -25,6 +25,8 @@ export enum KnownFeatures {
   CloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   RedisModuleFilter = 'redisModuleFilter',
   RedisClient = 'redisClient',
+  DocumentationChat = 'documentationChat',
+  DatabaseChat = 'databaseChat',
 }
 
 export interface IFeatureFlag {

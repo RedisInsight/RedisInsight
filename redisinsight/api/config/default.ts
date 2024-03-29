@@ -196,7 +196,8 @@ export default {
     timeout: parseInt(process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec
   },
   redisStack: {
-    id: process.env.RI_BUILD_TYPE === 'REDIS_STACK' ? process.env.RI_REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
+    id: process.env.RI_BUILD_TYPE === 'REDIS_STACK'
+      ? process.env.RI_REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
     name: process.env.RI_REDIS_STACK_DATABASE_NAME,
     host: process.env.RI_REDIS_STACK_DATABASE_HOST,
     port: process.env.RI_REDIS_STACK_DATABASE_PORT,

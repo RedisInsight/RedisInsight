@@ -1,13 +1,18 @@
 import React from 'react'
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { useDispatch } from 'react-redux'
 import { OAuthAgreement, OAuthSocialButtons } from 'uiSrc/components/oauth/shared'
 
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import styles from './styles.module.scss'
 
 const WelcomeAiAssistant = () => {
+  const dispatch = useDispatch()
+
   const handleSsoClick = (accountOption: string) => {
+    dispatch(setSSOFlow(OAuthSocialAction.SignIn))
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {

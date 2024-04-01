@@ -1,20 +1,22 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
-  addFreeDb, getPlans,
+  addFreeDb,
+  getPlans,
   oauthCloudUserSelector,
   setJob,
   setSocialDialogState,
   showOAuthProgress,
   signIn
 } from 'uiSrc/slices/oauth/cloud'
-import { setIsRecommendedSettingsSSO } from 'uiSrc/slices/instances/cloud'
+import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import OAuthCreateDb from './OAuthCreateDb'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -104,6 +106,7 @@ describe('OAuthCreateDb', () => {
     fireEvent.click(screen.getByTestId('oauth-create-db'))
 
     const expectedActions = [
+      setSSOFlow(OAuthSocialAction.Create),
       setSocialDialogState(null),
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
@@ -124,6 +127,7 @@ describe('OAuthCreateDb', () => {
     fireEvent.click(screen.getByTestId('oauth-create-db'))
 
     const expectedActions = [
+      setSSOFlow(OAuthSocialAction.Create),
       setSocialDialogState(null),
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),

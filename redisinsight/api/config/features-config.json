@@ -18,7 +18,7 @@
       "data": {
         "filterFreePlan": [{
           "field": "name",
-          "expression": "^(No HA?.)|(Cache?.)",
+          "expression": "^(No HA?.)|(Cache?.)|(30MB$)",
           "options": "i"
         }],
         "selectPlan": {

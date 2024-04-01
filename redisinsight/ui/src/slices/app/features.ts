@@ -32,6 +32,12 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.cloudSsoRecommendedSettings]: {
         flag: false
       },
+      [FeatureFlags.documentationChat]: {
+        flag: false
+      },
+      [FeatureFlags.databaseChat]: {
+        flag: false
+      },
     }
   }
 }

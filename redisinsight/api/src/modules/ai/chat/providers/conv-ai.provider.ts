@@ -24,7 +24,7 @@ export class ConvAiProvider {
         },
       );
 
-      return data?.convai_session_id;
+      return data.convai_session_id;
     } catch (e) {
       throw wrapConvAiError(e);
     }

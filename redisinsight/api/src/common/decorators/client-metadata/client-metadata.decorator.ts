@@ -32,7 +32,7 @@ export const clientMetadataParamFactory = (
   }
 
   const clientMetadata = plainToClass(ClientMetadata, {
-    sessionMetadata: sessionMetadataFromRequestExecutionContext(ctx),
+    sessionMetadata: sessionMetadataFromRequestExecutionContext(undefined, ctx),
     databaseId,
     uniqueId,
     context: options?.context || ClientContext.Common,

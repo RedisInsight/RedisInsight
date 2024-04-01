@@ -20,7 +20,7 @@ export const sessionMetadataFromRequest = (request): SessionMetadata => {
   return session;
 };
 
-export const sessionMetadataFromRequestExecutionContext = (ctx: ExecutionContext): SessionMetadata => {
+export const sessionMetadataFromRequestExecutionContext = (_: unknown, ctx: ExecutionContext): SessionMetadata => {
   const request = ctx.switchToHttp().getRequest();
 
   return sessionMetadataFromRequest(request);

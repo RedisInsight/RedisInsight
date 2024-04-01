@@ -54,7 +54,15 @@ const PageHeader = (props: Props) => {
           </EuiTitle>
           {subtitle ? <span data-testid="page-subtitle">{subtitle}</span> : ''}
         </div>
-        {logo || (
+        {children ? <>{children}</> : ''}
+        {showInsights ? (
+          <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
+            <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
+            <EuiFlexItem style={{ marginLeft: 16 }}>
+              <OAuthUserProfile source={OAuthSocialSource.ListOfDatabases} />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        ) : (
           <div className={styles.pageHeaderLogo}>
             <EuiButtonEmpty
               aria-label="redisinsight"
@@ -68,7 +76,6 @@ const PageHeader = (props: Props) => {
           </div>
         )}
       </div>
-      {children ? <div>{children}</div> : ''}
     </div>
   )
 }

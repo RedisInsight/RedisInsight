@@ -1,4 +1,4 @@
-import { EuiFlexGroup, EuiFlexItem, EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
+import { EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -6,14 +6,14 @@ import { throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
-import { OAuthUserProfile, PageHeader } from 'uiSrc/components'
+import { PageHeader } from 'uiSrc/components'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
 import { appContextSelector, setAppContextInitialState } from 'uiSrc/slices/app/context'
-import { Instance, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { Instance } from 'uiSrc/slices/interfaces'
 import { cloudSelector, resetSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import {
   editedInstanceSelector,
@@ -29,7 +29,6 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import InsightsTrigger from 'uiSrc/components/insights-trigger'
 import DatabasesList from './components/databases-list-component'
 import WelcomeComponent from './components/welcome-component'
 import HomeHeader from './components/home-header'
@@ -223,13 +222,10 @@ const HomePage = () => {
       <PageHeader
         title="My Redis databases"
         className={styles.pageHeader}
-        logo={(
-          <>
-            <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
-            <InsightsTrigger source="home page" />
-          </>
-        )}
-      />
+        showInsights
+      >
+        <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
+      </PageHeader>
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>
           <EuiResizeObserver onResize={onResizeTrottled}>

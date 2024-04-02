@@ -1,9 +1,10 @@
-import { Pages, PageValues } from 'uiSrc/constants'
+import { FeatureFlags, Pages, PageValues } from 'uiSrc/constants'
 
 interface HomeTab {
   id: string
   title: string
   path: PageValues
+  featureFlag?: FeatureFlags
 }
 
 const tabs: HomeTab[] = [
@@ -15,7 +16,8 @@ const tabs: HomeTab[] = [
   {
     id: 'rdi-instances',
     title: 'Redis Data Integration',
-    path: Pages.rdi
+    path: Pages.rdi,
+    featureFlag: FeatureFlags.rdi
   }
 ]
 

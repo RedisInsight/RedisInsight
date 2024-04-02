@@ -7,7 +7,7 @@ import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constant
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
@@ -31,6 +31,7 @@ const CommonAppSubscription = () => {
     }
 
     socketRef.current = io(`${getBaseApiUrl()}`, {
+      path: getProxyPath(),
       forceNew: false,
       rejectUnauthorized: false,
       reconnection: true,

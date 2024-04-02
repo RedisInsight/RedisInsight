@@ -16,7 +16,7 @@ import {
   setLogFileId,
   pauseMonitor, lockResume
 } from 'uiSrc/slices/cli/monitor'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
 import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'uiSrc/constants'
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -64,6 +64,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
 
     // Create SocketIO connection to instance by instanceId
     socketRef.current = io(`${getBaseApiUrl()}/monitor`, {
+      path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
       extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },

@@ -8,7 +8,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #B5B6C0;
+    background: var(--euiTextSubduedColor);
     animation: bounce 1s linear infinite;
 
     &:not(:last-child) {

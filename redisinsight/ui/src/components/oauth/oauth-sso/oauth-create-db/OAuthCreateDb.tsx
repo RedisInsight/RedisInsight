@@ -59,6 +59,7 @@ const OAuthCreateDb = (props: Props) => {
   }
 
   const handleClickCreate = () => {
+    dispatch(setSSOFlow(OAuthSocialAction.Create))
     dispatch(setSocialDialogState(null))
     dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
     localStorageService.remove(BrowserStorageItem.OAuthJobId)

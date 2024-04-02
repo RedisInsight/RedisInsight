@@ -44,6 +44,7 @@ import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/a
 import DatabasesList from './components/databases-list-component'
 import WelcomeComponent from './components/welcome-component'
 import HomeHeader from './components/home-header'
+import { CapabilityPromotion } from './components/capability-promotion'
 
 import './styles.scss'
 import styles from './styles.module.scss'
@@ -244,7 +245,13 @@ const HomePage = () => {
       >
         <AiChatbotMessage />
       </HighlightedFeature>
-      <PageHeader title="My Redis databases" showInsights />
+      <PageHeader
+        title="My Redis databases"
+        className={styles.pageHeader}
+        showInsights
+      >
+        <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
+      </PageHeader>
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>
           <EuiResizeObserver onResize={onResizeTrottled}>

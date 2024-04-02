@@ -1,10 +1,10 @@
 import { visit } from 'unist-util-visit'
-import { remarkRedisCode } from 'uiSrc/utils/formatters/markdown'
+import { remarkCode } from 'uiSrc/utils/formatters/markdown'
 
 jest.mock('unist-util-visit')
 
-const getValue = (meta: string, params?: string, value?: string) =>
-  `<Code label="${meta}" params="${params}" path={path}>{${JSON.stringify(value)}}</Code>`
+const getValue = (meta: string, lang: string, params?: string, value?: string) =>
+  `<Code label="${meta}" params="${params}" path={path} lang="${lang}">{${JSON.stringify(value)}}</Code>`
 
 describe('remarkRedisCode', () => {
   it('should not modify codeNode if lang not redis', () => {
@@ -17,7 +17,7 @@ describe('remarkRedisCode', () => {
     (visit as jest.Mock)
       .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
 
-    const remark = remarkRedisCode()
+    const remark = remarkCode()
     remark({} as Node)
     expect(codeNode).toEqual({
       ...codeNode
@@ -34,12 +34,31 @@ describe('remarkRedisCode', () => {
     (visit as jest.Mock)
       .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
 
-    const remark = remarkRedisCode()
+    const remark = remarkCode()
     remark({} as Node)
     expect(codeNode).toEqual({
       ...codeNode,
       type: 'html',
-      value: getValue(codeNode.meta, undefined, '1')
+      value: getValue(codeNode.meta, 'redis', undefined, '1')
+    })
+  })
+
+  it('should properly modify codeNode with any lang', () => {
+    const codeNode = {
+      lang: 'java',
+      value: '1',
+      meta: '2'
+    };
+    // mock implementation
+    (visit as jest.Mock)
+      .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
+
+    const remark = remarkCode({ allLangs: true })
+    remark({} as Node)
+    expect(codeNode).toEqual({
+      ...codeNode,
+      type: 'html',
+      value: `<Code label="2" lang="java">{${JSON.stringify('1')}}</Code>`
     })
   })
 
@@ -55,12 +74,12 @@ describe('remarkRedisCode', () => {
       (visit as jest.Mock)
         .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
 
-      const remark = remarkRedisCode()
+      const remark = remarkCode()
       remark({} as Node)
       expect(codeNode).toEqual({
         ...codeNode,
         type: 'html',
-        value: getValue(codeNode.meta, params, '1')
+        value: getValue(codeNode.meta, 'redis', params, '1')
       })
     })
     it('without auto execute param redis:[results=group;pipeline=2]', () => {
@@ -74,12 +93,12 @@ describe('remarkRedisCode', () => {
       (visit as jest.Mock)
         .mockImplementation((_tree: any, _name: string, callback: (codeNode: any) => void) => { callback(codeNode) })
 
-      const remark = remarkRedisCode()
+      const remark = remarkCode()
       remark({} as Node)
       expect(codeNode).toEqual({
         ...codeNode,
         type: 'html',
-        value: getValue(codeNode.meta, params, '1')
+        value: getValue(codeNode.meta, 'redis', params, '1')
       })
     })
   })

@@ -2,13 +2,17 @@
 @import '@elastic/eui/src/components/table/mixins';
 @import '@elastic/eui/src/global_styling/index';
 
+.wrapper {
+  margin-top: 8px;
+}
+
 .content {
   max-width: 100%;
   max-height: 320px;
   overflow: auto;
   @include euiScrollBar;
 
-  border: 1px solid var(--separatorColor);
+  border: 1px solid var(--tableDarkestBorderColor);
   border-radius: 4px;
 
   font-size: 11px;

@@ -1,4 +1,4 @@
-import React, { Ref, useEffect, useRef, useState } from 'react'
+import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiButtonEmpty, EuiText, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
@@ -30,7 +30,7 @@ const ExpertChat = () => {
     scrollToBottom('auto')
   }, [])
 
-  const handleSubmit = (message: string) => {
+  const handleSubmit = useCallback((message: string) => {
     scrollToBottom('smooth')
     setIsLoading(true)
     dispatch(askExpertChatbot(
@@ -42,7 +42,7 @@ const ExpertChat = () => {
       },
       () => setIsLoading(false)
     ))
-  }
+  }, [instanceId])
 
   const onClearSession = () => {
     dispatch(clearExpertChatHistory())
@@ -87,7 +87,6 @@ const ExpertChat = () => {
           history={messages}
           scrollDivRef={scrollDivRef}
           onSubmit={handleSubmit}
-          isExecutable
         />
       </div>
       <div className={styles.chatForm}>

@@ -198,7 +198,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
         <FeatureFlagComponent name={FeatureFlags.cloudSso}>
           <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
-            <OAuthUserProfile source={OAuthSocialSource.Browser} />
+            <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
           </EuiFlexItem>
         </FeatureFlagComponent>
       </EuiFlexGroup>

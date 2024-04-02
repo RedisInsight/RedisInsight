@@ -21,6 +21,12 @@ export interface Props {
   ) => React.ReactElement
 }
 
+const telemetryEventByAction = {
+  [OAuthSocialAction.SignIn]: TelemetryEvent.CLOUD_SIGN_IN_CLICKED,
+  [OAuthSocialAction.Create]: TelemetryEvent.CLOUD_FREE_DATABASE_CLICKED,
+  [OAuthSocialAction.Import]: TelemetryEvent.CLOUD_IMPORT_DATABASES_CLICKED,
+}
+
 const OAuthSsoHandlerDialog = ({ children }: Props) => {
   const { data } = useSelector(oauthCloudUserSelector)
   const { [FeatureFlags.cloudSso]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
@@ -42,30 +48,23 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
 
     dispatch(setSSOFlow(action))
 
-    if (action === OAuthSocialAction.Create) {
+    if (action === OAuthSocialAction.Import && data) {
+      // if user logged in - do not show dialog, just redirect to subscriptions page
+      dispatch(fetchSubscriptionsRedisCloud(null, true, () => {
+        history.push(Pages.redisCloudSubscriptions)
+      }))
+
       sendEventTelemetry({
-        event: TelemetryEvent.CLOUD_FREE_DATABASE_CLICKED,
-        eventData: { source: telemetrySource || source },
+        event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
+        eventData: { source }
       })
+
+      return
     }
 
-    if (action === OAuthSocialAction.Import) {
-      if (data) {
-        // if user logged in - do not show dialog, just redirect to subscriptions page
-        dispatch(fetchSubscriptionsRedisCloud(null, true, () => {
-          history.push(Pages.redisCloudSubscriptions)
-        }))
-
-        sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
-          eventData: { source }
-        })
-
-        return
-      }
-
+    if (action) {
       sendEventTelemetry({
-        event: TelemetryEvent.CLOUD_IMPORT_DATABASES_CLICKED,
+        event: telemetryEventByAction[action],
         eventData: { source: telemetrySource || source },
       })
     }

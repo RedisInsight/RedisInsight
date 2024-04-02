@@ -1,5 +1,5 @@
 {
-  "version": 2.46,
+  "version": 2.4601,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -18,7 +18,7 @@
       "data": {
         "filterFreePlan": [{
           "field": "name",
-          "expression": "^(No HA?.)|(Cache?.)",
+          "expression": "^(No HA?.)|(Cache?.)|(30MB$)",
           "options": "i"
         }],
         "selectPlan": {
@@ -49,7 +49,7 @@
     },
     "documentationChat": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0,25]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -60,7 +60,7 @@
     },
     "databaseChat": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0,25]],
       "filters": [
         {
           "name": "config.server.buildType",

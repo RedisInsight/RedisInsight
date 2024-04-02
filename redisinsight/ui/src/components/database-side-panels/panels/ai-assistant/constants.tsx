@@ -7,7 +7,7 @@ interface AiChatSuggestion {
 
 const SUGGESTIONS = [
   {
-    inner: (<>What is Redis Cloud?</>),
+    inner: (<>What is <b>Redis Cloud?</b></>),
     query: 'What is Redis Cloud?'
   },
   {

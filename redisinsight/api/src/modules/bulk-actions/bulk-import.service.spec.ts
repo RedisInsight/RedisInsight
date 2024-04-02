@@ -341,7 +341,7 @@ describe('BulkImportService', () => {
 
       await service.importDefaultData(mockClientMetadata);
 
-      expect(mockCombinedStream.append).toHaveBeenCalledTimes(2);
+      expect(mockCombinedStream.append).toHaveBeenCalledTimes(4);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
     });
@@ -353,7 +353,7 @@ describe('BulkImportService', () => {
 
       await service.importDefaultData(mockClientMetadata);
 
-      expect(mockCombinedStream.append).toHaveBeenCalledTimes(1);
+      expect(mockCombinedStream.append).toHaveBeenCalledTimes(2);
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
     });
@@ -366,7 +366,7 @@ describe('BulkImportService', () => {
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);
-        expect(e.message).toEqual('Internal Server Error');
+        expect(e.message).toEqual('Unable to import default data');
         expect(spy).toHaveBeenCalledTimes(0);
       }
     });

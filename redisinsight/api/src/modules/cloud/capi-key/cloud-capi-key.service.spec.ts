@@ -4,12 +4,17 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { CloudCapiKeyApiProvider } from 'src/modules/cloud/capi-key/cloud-capi-key.api.provider';
 import { CloudCapiKeyRepository } from 'src/modules/cloud/capi-key/repository/cloud-capi-key.repository';
 import {
-  mockCloudCapiKey, mockCloudCapiKeyAnalytics,
-  mockCloudSessionService, mockCloudUserApiService, mockRepository, mockServerService,
+  mockCloudCapiKey,
+  mockCloudCapiKeyAnalytics,
+  mockCloudSessionService,
+  mockCloudUserApiService,
+  mockServerService,
   mockSessionMetadata,
   mockCloudUser,
   mockUtm,
   MockType,
+  mockCloudCapiKeyRepository,
+  mockCloudCapiKeyApiProvider,
 } from 'src/__mocks__';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
@@ -32,11 +37,11 @@ describe('CloudCapiKeyService', () => {
         CloudCapiKeyService,
         {
           provide: CloudCapiKeyApiProvider,
-          useFactory: jest.fn(),
+          useFactory: mockCloudCapiKeyApiProvider,
         },
         {
           provide: CloudCapiKeyRepository,
-          useFactory: mockRepository,
+          useFactory: mockCloudCapiKeyRepository,
         },
         {
           provide: CloudUserApiService,

@@ -1,4 +1,4 @@
-import React, { Ref, useEffect, useRef, useState } from 'react'
+import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiButtonEmpty } from '@elastic/eui'
 import {
@@ -12,6 +12,7 @@ import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage } from 'uiSrc/slices/interfaces/aiAssistant'
 
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AssistanceEmptyHistoryText } from '../empty-history/texts'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
@@ -21,6 +22,7 @@ import styles from './styles.module.scss'
 
 const AssistanceChat = () => {
   const { id, messages } = useSelector(aiAssistantChatSelector)
+  const { modules } = useSelector(connectedInstanceSelector)
 
   const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
@@ -36,7 +38,7 @@ const AssistanceChat = () => {
     dispatch(getAssistantChatHistoryAction(id, () => scrollToBottom('auto')))
   }, [])
 
-  const handleSubmit = (message: string) => {
+  const handleSubmit = useCallback((message: string) => {
     scrollToBottom('smooth')
 
     if (!id) {
@@ -45,7 +47,7 @@ const AssistanceChat = () => {
     }
 
     sendChatMessage(id, message)
-  }
+  }, [id])
 
   const sendChatMessage = (chatId: string, message: string) => {
     dispatch(askAssistantChatbot(
@@ -61,15 +63,15 @@ const AssistanceChat = () => {
     ))
   }
 
-  const onClearSession = () => {
+  const onClearSession = useCallback(() => {
     dispatch(removeAssistantChatAction(id))
 
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
     })
-  }
+  }, [id])
 
-  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     requestAnimationFrame(() => {
       scrollIntoView(scrollDivRef?.current, {
         behavior,
@@ -77,7 +79,7 @@ const AssistanceChat = () => {
         inline: 'start',
       })
     })
-  }
+  }, [])
 
   return (
     <div className={styles.wrapper} data-testid="ai-general-chat">
@@ -96,6 +98,7 @@ const AssistanceChat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          modules={modules}
           suggestions={SUGGESTIONS}
           welcomeText={AssistanceEmptyHistoryText}
           isLoadingAnswer={progressingMessage?.content === ''}

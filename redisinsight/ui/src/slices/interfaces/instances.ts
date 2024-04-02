@@ -1,4 +1,4 @@
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces/app'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
@@ -454,7 +454,8 @@ export interface ModifiedSentinelMaster extends CreateSentinelDatabaseDto {
 export interface ModifiedGetListElementsResponse
   extends GetListElementsDto,
   GetListElementsResponse {
-  key?: string;
+  elements: { index: number, element: RedisResponseBuffer }[]
+  key?: RedisString;
   searchedIndex: Nullable<number>;
 }
 

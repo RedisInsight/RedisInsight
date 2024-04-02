@@ -162,4 +162,10 @@
 .capabilityPromotion {
   min-height: 80px;
   padding: 15px 0;
+  justify-content: flex-start;
+  padding-left: 16px;
+
+  > div {
+    justify-content: space-between;
+  }
 }

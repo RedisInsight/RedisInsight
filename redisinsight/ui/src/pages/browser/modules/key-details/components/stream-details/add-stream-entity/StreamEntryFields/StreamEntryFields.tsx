@@ -142,7 +142,7 @@ const StreamEntryFields = (props: Props) => {
           />
         </EuiFormRow>
         {!showEntryError && <span className={styles.timestampText}>Timestamp - Sequence Number or *</span>}
-        {showEntryError && <span className={styles.error}>{entryIdError}</span>}
+        {showEntryError && <span className={styles.error} data-testid="stream-entry-error">{entryIdError}</span>}
       </div>
 
       <div className={styles.fieldsWrapper}>

@@ -44,11 +44,6 @@ export class CloudCapiKeyService {
     try {
       let user = await this.cloudUserApiService.me(sessionMetadata, false, utm);
 
-      // nothing is needed since we have capi key
-      if (user?.capiKey?.id) {
-        return user.capiKey;
-      }
-
       let currentAccount = CloudUserApiService.getCurrentAccount(user);
 
       if (!currentAccount) {

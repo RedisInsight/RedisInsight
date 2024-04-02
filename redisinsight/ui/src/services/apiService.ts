@@ -8,7 +8,7 @@ const { apiPort } = window.app.config
 const baseApiUrl = process.env.RI_BASE_API_URL
 let apiPrefix = process.env.RI_API_PREFIX
 
-if (window.__RIPROXYPATH__ !== '') {
+if (window.__RIPROXYPATH__) {
   apiPrefix = window.__RIPROXYPATH__ + '/' + apiPrefix
 }
 

@@ -1,0 +1,12 @@
+.modal {
+  max-width: 400px !important;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    padding: 40px;
+  }
+
+}

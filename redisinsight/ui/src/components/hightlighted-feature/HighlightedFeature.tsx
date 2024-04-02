@@ -59,7 +59,7 @@ const HighlightedFeature = (props: Props) => {
     </EuiToolTip>
   )
 
-  if (!isHighlight) return (<>{children}</>)
+  if (!isHighlight) return type === 'dialog' ? null : (<>{children}</>)
 
   return (
     <div

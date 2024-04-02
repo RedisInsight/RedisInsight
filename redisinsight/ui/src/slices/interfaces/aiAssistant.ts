@@ -1,6 +1,6 @@
 export enum AiChatType {
-  Assistance = 'assistance',
-  Query = 'query'
+  Assistance = 'document',
+  Query = 'database'
 }
 
 export enum AiChatMessageType {

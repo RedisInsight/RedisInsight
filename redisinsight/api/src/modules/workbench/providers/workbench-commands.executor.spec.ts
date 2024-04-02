@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { get } from 'lodash';
 import {
-  mockDatabaseClientFactory,
+  mockDatabaseClientFactory, mockFtInfoAnalyticsData, mockRedisFtInfoReply,
   mockStandaloneRedisClient,
   mockWorkbenchAnalyticsService,
   mockWorkbenchClientMetadata,
@@ -74,6 +74,37 @@ describe('WorkbenchCommandsExecutor', () => {
 
   describe('sendCommand', () => {
     describe('sendCommandForStandalone', () => {
+      it('should successfully send ft.info', async () => {
+        client.sendCommand.mockResolvedValueOnce(mockRedisFtInfoReply);
+
+        const result = await service.sendCommand(client, {
+          command: 'ft.info idx',
+          mode: RunQueryMode.Raw,
+        });
+
+        expect(result).toEqual([{
+          response: mockRedisFtInfoReply,
+          status: mockCommandExecutionResult.status,
+        }]);
+
+        expect(mockAnalyticsService.sendCommandExecutedEvents).toHaveBeenCalledWith(
+          mockWorkbenchClientMetadata.databaseId,
+          [
+            {
+              response: mockRedisFtInfoReply,
+              status: CommandExecutionStatus.Success,
+            },
+          ],
+          {
+            command: 'ft.info',
+            rawMode: true,
+          },
+        );
+        expect(mockAnalyticsService.sendIndexInfoEvent).toHaveBeenCalledWith(
+          mockWorkbenchClientMetadata.databaseId,
+          mockFtInfoAnalyticsData,
+        );
+      });
       it('should successfully send command for standalone', async () => {
         client.sendCommand.mockResolvedValueOnce('OK');
 

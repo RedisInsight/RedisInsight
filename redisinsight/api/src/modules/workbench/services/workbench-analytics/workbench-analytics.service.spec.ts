@@ -82,6 +82,32 @@ describe('WorkbenchAnalyticsService', () => {
     });
   });
 
+  describe('sendIndexInfoEvent', () => {
+    it('should emit index info event', async () => {
+      service.sendIndexInfoEvent(
+        instanceId,
+        {
+          any: 'fields',
+        },
+      );
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.WorkbenchIndexInfoSubmitted,
+        {
+          databaseId: instanceId,
+          any: 'fields',
+        },
+      );
+    });
+    it('should not fail and should not emit when no data to send', async () => {
+      service.sendIndexInfoEvent(
+        instanceId,
+        null,
+      );
+
+      expect(sendEventMethod).not.toHaveBeenCalled();
+    });
+  });
   describe('sendCommandExecutedEvents', () => {
     it('should emit multiple events', async () => {
       await service.sendCommandExecutedEvents(

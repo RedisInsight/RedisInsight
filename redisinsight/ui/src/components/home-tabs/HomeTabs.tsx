@@ -36,9 +36,8 @@ const HomeTabs = () => {
 
   const renderTabs = useCallback(() => tabs.map(({ id, title, path, featureFlag }) => (
     featureFlag ? (
-      <FeatureFlagComponent name={featureFlag}>
+      <FeatureFlagComponent name={featureFlag} key={id}>
         <EuiTab
-          key={id}
           isSelected={path === activeTab}
           onClick={() => onSelectedTabChanged(path, title)}
           className={styles.tab}

@@ -1,4 +1,4 @@
-import { IRoute, PageNames, Pages } from 'uiSrc/constants'
+import { IRoute, FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import {
   BrowserPage,
   HomePage,
@@ -95,11 +95,13 @@ const ROUTES: IRoute[] = [
     path: Pages.rdi,
     component: RdiPage,
     exact: true,
+    featureFlag: FeatureFlags.rdi,
   },
   {
     path: Pages.rdiPipeline(':rdiInstanceId'),
     component: RdiInstancePage,
     routes: RDI_INSTANCE_ROUTES,
+    featureFlag: FeatureFlags.rdi,
   },
   {
     path: '/:instanceId',

@@ -3,23 +3,25 @@ import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service'
 import {
   mockBulkActionsAnalytics,
   mockClientMetadata,
-  mockClusterRedisClient,
-  mockDatabaseClientFactory,
+  mockClusterRedisClient, mockCombinedStream, mockDatabase,
+  mockDatabaseClientFactory, mockDatabaseModules, mockDatabaseService, mockDefaultDataManifest,
   mockStandaloneRedisClient,
   MockType,
 } from 'src/__mocks__';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import * as fs from 'fs-extra';
+import * as CombinedStream from 'combined-stream';
 import config from 'src/utils/config';
 import { join } from 'path';
 import { wrapHttpError } from 'src/common/utils';
 import { RedisClientCommand } from 'src/modules/redis/client';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { Readable } from 'stream';
+import { DatabaseService } from 'src/modules/database/database.service';
 
 const PATH_CONFIG = config.get('dir_path');
 
@@ -86,13 +88,18 @@ const mockUploadImportFileByPathDto = {
 jest.mock('fs-extra');
 const mockedFs = fs as jest.Mocked<typeof fs>;
 
+jest.mock('combined-stream');
+const mockedCombinedStream = CombinedStream as jest.Mocked<typeof CombinedStream>;
+
 describe('BulkImportService', () => {
   let service: BulkImportService;
   let databaseClientFactory: MockType<DatabaseClientFactory>;
+  let deviceService: MockType<DatabaseService>;
   let analytics: MockType<BulkActionsAnalytics>;
 
   beforeEach(async () => {
     jest.mock('fs-extra', () => mockedFs);
+    jest.mock('combined-stream', () => mockedCombinedStream);
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -106,12 +113,17 @@ describe('BulkImportService', () => {
           provide: BulkActionsAnalytics,
           useFactory: mockBulkActionsAnalytics,
         },
+        {
+          provide: DatabaseService,
+          useFactory: mockDatabaseService,
+        },
       ],
     }).compile();
 
     service = module.get(BulkImportService);
     databaseClientFactory = module.get(DatabaseClientFactory);
     analytics = module.get(BulkActionsAnalytics);
+    deviceService = module.get(DatabaseService);
   });
 
   describe('executeBatch', () => {
@@ -306,6 +318,56 @@ describe('BulkImportService', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(BadRequestException);
         expect(e.message).toEqual('Data file was not found');
+      }
+    });
+  });
+
+  describe('importDefaultData', () => {
+    let spy;
+
+    beforeEach(() => {
+      spy = jest.spyOn(service as any, 'import');
+      spy.mockResolvedValue(mockSummary);
+      mockedCombinedStream.create.mockReturnValue(mockCombinedStream);
+    });
+
+    it('should import default data for 2 known modules', async () => {
+      mockedFs.readFileSync.mockImplementationOnce(() => Buffer.from(JSON.stringify(mockDefaultDataManifest)));
+      mockedFs.createReadStream.mockImplementationOnce(() => new fs.ReadStream());
+      deviceService.get.mockResolvedValue({
+        ...mockDatabase,
+        modules: mockDatabaseModules,
+      });
+
+      await service.importDefaultData(mockClientMetadata);
+
+      expect(mockCombinedStream.append).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
+    });
+
+    it('should import default data for core module only', async () => {
+      mockedFs.readFileSync.mockImplementationOnce(() => Buffer.from(JSON.stringify(mockDefaultDataManifest)));
+      mockedFs.createReadStream.mockImplementationOnce(() => new fs.ReadStream());
+      deviceService.get.mockResolvedValue(mockDatabase);
+
+      await service.importDefaultData(mockClientMetadata);
+
+      expect(mockCombinedStream.append).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
+    });
+
+    it('should throw an error in case when something went wrong', async () => {
+      mockedFs.readFileSync.mockImplementationOnce(() => { throw new Error(); });
+
+      try {
+        await service.importDefaultData(mockClientMetadata);
+        fail();
+      } catch (e) {
+        expect(e).toBeInstanceOf(InternalServerErrorException);
+        expect(e.message).toEqual('Internal Server Error');
+        expect(spy).toHaveBeenCalledTimes(0);
       }
     });
   });

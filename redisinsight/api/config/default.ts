@@ -15,11 +15,16 @@ const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourc
   ? join(process['resourcesPath'], 'defaults')
   : join(__dirname, '..', 'defaults');
 
+const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+  ? join(process['resourcesPath'], 'data')
+  : join(__dirname, '..', 'data');
+
 export default {
   dir_path: {
     tmpDir: os.tmpdir(),
     homedir,
     prevHomedir: homedir,
+    dataDir: process.env.RI_DATA_DIR || dataDir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),

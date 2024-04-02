@@ -1,0 +1,11 @@
+{
+  "files": [
+    {
+      "path": "common",
+    },
+    {
+      "path": "json",
+      "modules": ["rejson"]
+    }
+  ]
+}

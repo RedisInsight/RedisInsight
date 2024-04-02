@@ -7,8 +7,10 @@ export enum AiChatMessageType {
 }
 
 export class AiChatMessageContextRecord {
+  @Expose()
   title: string;
 
+  @Expose()
   category: string;
 }
 

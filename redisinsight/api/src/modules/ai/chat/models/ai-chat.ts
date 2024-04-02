@@ -10,9 +10,10 @@ export class AiChat {
   id: string;
 
   @ApiProperty({
+    isArray: true,
     type: () => AiChatMessage,
   })
   @Type(() => AiChatMessage)
   @Expose()
-  messages: AiChatMessage;
+  messages: AiChatMessage[];
 }

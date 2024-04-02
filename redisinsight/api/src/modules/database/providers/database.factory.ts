@@ -29,12 +29,12 @@ export class DatabaseFactory {
    * Create model
    * @param database
    */
-  async createDatabaseModel(_: SessionMetadata, database: Database): Promise<Database> {
+  async createDatabaseModel(sessionMetadata: SessionMetadata, database: Database): Promise<Database> {
     let model = await this.createStandaloneDatabaseModel(database);
 
     const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient(
       {
-        sessionMetadata: {} as SessionMetadata,
+        sessionMetadata,
         databaseId: database.id,
         context: ClientContext.Common,
       },

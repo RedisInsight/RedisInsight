@@ -32,7 +32,7 @@ export class AutodiscoveryService implements OnModuleInit {
         return;
       }
 
-      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata()
+      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata();
 
       // check agreements to understand if it is first launch
       // todo: [USER_CONTEXT] rethink implementation since it is not possible to know user data at this point

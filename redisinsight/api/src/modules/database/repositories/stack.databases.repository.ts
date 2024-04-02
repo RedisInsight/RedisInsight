@@ -3,10 +3,17 @@ import {
 } from '@nestjs/common';
 import { merge } from 'lodash';
 import config from 'src/utils/config';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { Database } from 'src/modules/database/models/database';
 import { SessionMetadata } from 'src/common/models';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { Repository } from 'typeorm';
+import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
+import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
@@ -14,38 +21,55 @@ const REDIS_STACK_CONFIG = config.get('redisStack');
 export class StackDatabasesRepository extends LocalDatabaseRepository implements OnApplicationBootstrap {
   protected logger = new Logger('StackDatabasesRepository');
 
+  constructor(
+    @InjectRepository(DatabaseEntity)
+    protected readonly repository: Repository<DatabaseEntity>,
+    @InjectRepository(SshOptionsEntity)
+    protected readonly sshOptionsRepository: Repository<SshOptionsEntity>,
+    protected readonly caCertificateRepository: CaCertificateRepository,
+    protected readonly clientCertificateRepository: ClientCertificateRepository,
+    protected readonly encryptionService: EncryptionService,
+    protected readonly constantsProvider: ConstantsProvider,
+  ) {
+    super(repository, sshOptionsRepository, caCertificateRepository, clientCertificateRepository, encryptionService);
+  }
+
   async onApplicationBootstrap() {
-    await this.setPredefinedDatabase(merge({
-      name: 'Redis Stack',
-      host: 'localhost',
-      port: '6379',
-    }, REDIS_STACK_CONFIG));
+    const sessionMetadata = this.constantsProvider.getSystemSessionMetadata(); // TODO: [USER_CONTEXT]
+    await this.setPredefinedDatabase(
+      sessionMetadata,
+      merge({
+        name: 'Redis Stack',
+        host: 'localhost',
+        port: '6379',
+      }, REDIS_STACK_CONFIG),
+    );
   }
 
   /**
    * @inheritDoc
    */
-  async exists(): Promise<boolean> {
-    return super.exists({} as SessionMetadata, REDIS_STACK_CONFIG.id);
+  async exists(sessionMetadata: SessionMetadata): Promise<boolean> {
+    return super.exists(sessionMetadata, REDIS_STACK_CONFIG.id);
   }
 
   /**
    * @inheritDoc
    */
   async get(
-    _: SessionMetadata,
+    sessionMetadata: SessionMetadata,
     id: string,
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    return super.get({} as SessionMetadata, REDIS_STACK_CONFIG.id, ignoreEncryptionErrors, omitFields);
+    return super.get(sessionMetadata, REDIS_STACK_CONFIG.id, ignoreEncryptionErrors, omitFields);
   }
 
   /**
    * @inheritDoc
    */
-  async list(): Promise<Database[]> {
-    return [await this.get({} as SessionMetadata, REDIS_STACK_CONFIG.id)];
+  async list(sessionMetadata: SessionMetadata): Promise<Database[]> {
+    return [await this.get(sessionMetadata, REDIS_STACK_CONFIG.id)];
   }
 
   /**
@@ -68,16 +92,17 @@ export class StackDatabasesRepository extends LocalDatabaseRepository implements
    * @param options
    */
   private async setPredefinedDatabase(
+    sessionMetadata: SessionMetadata,
     options: { id: string; name: string; host: string; port: string; },
   ): Promise<void> {
     try {
       const {
         id, name, host, port,
       } = options;
-      const isExist = await this.exists();
+      const isExist = await this.exists(sessionMetadata);
       if (!isExist) {
         await super.create(
-          {} as SessionMetadata, // TODO: [USER_CONTEXT] should empty sessionMetadata be passed here?
+          sessionMetadata,
           {
             id,
             host,

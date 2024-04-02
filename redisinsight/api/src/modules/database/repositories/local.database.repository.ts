@@ -32,12 +32,12 @@ export class LocalDatabaseRepository extends DatabaseRepository {
 
   constructor(
     @InjectRepository(DatabaseEntity)
-    private readonly repository: Repository<DatabaseEntity>,
+    protected readonly repository: Repository<DatabaseEntity>,
     @InjectRepository(SshOptionsEntity)
-    private readonly sshOptionsRepository: Repository<SshOptionsEntity>,
-    private readonly caCertificateRepository: CaCertificateRepository,
-    private readonly clientCertificateRepository: ClientCertificateRepository,
-    private readonly encryptionService: EncryptionService,
+    protected readonly sshOptionsRepository: Repository<SshOptionsEntity>,
+    protected readonly caCertificateRepository: CaCertificateRepository,
+    protected readonly clientCertificateRepository: ClientCertificateRepository,
+    protected readonly encryptionService: EncryptionService,
   ) {
     super();
     this.modelEncryptor = new ModelEncryptor(encryptionService, ['password', 'sentinelMasterPassword']);
@@ -86,7 +86,10 @@ export class LocalDatabaseRepository extends DatabaseRepository {
   /**
    * @inheritDoc
    */
-  public async list(): Promise<Database[]> {
+  public async list(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _: SessionMetadata,
+  ): Promise<Database[]> {
     const entities = await this.repository
       .createQueryBuilder('d')
       .leftJoinAndSelect('d.cloudDetails', 'cd')
@@ -129,7 +132,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
    * @param database
    * @throws TBD
    */
-  public async update(_: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
+  public async update(sessionMetadata: SessionMetadata, id: string, database: Partial<Database>): Promise<Database> {
     const oldEntity = await this.decryptEntity((await this.repository.findOneBy({ id })), true);
     const newEntity = classToClass(DatabaseEntity, await this.populateCertificates(database as Database));
 
@@ -159,7 +162,7 @@ export class LocalDatabaseRepository extends DatabaseRepository {
         .execute();
     }
 
-    return this.get({} as SessionMetadata, id);
+    return this.get(sessionMetadata, id);
   }
 
   /**

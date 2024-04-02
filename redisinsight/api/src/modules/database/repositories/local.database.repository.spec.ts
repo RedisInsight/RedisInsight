@@ -252,7 +252,7 @@ describe('LocalDatabaseRepository', () => {
 
   describe('list', () => {
     it('should return list of databases with specific fields only', async () => {
-      expect(await service.list()).toEqual([
+      expect(await service.list(mockSessionMetadata)).toEqual([
         pick(mockDatabaseWithTlsAuth, ...listFields),
         pick(mockDatabaseWithTlsAuth, ...listFields),
       ]);
@@ -263,7 +263,7 @@ describe('LocalDatabaseRepository', () => {
         pick(mockDatabaseEntityWithCloudDetails, ...listFields),
       ]);
 
-      expect(await service.list()).toEqual([
+      expect(await service.list(mockSessionMetadata)).toEqual([
         pick(mockDatabaseWithCloudDetails, ...listFields),
         pick(mockDatabaseWithCloudDetails, ...listFields),
       ]);

@@ -31,7 +31,7 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   @SubscribeMessage(ProfilerClientEvents.Monitor)
   async monitor(client: Socket, settings: MonitorSettings = null): Promise<any> {
     try {
-      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata();
+      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata(); // todo: [USER_CONTEXT]
 
       await this.service.addListenerForInstance(
         sessionMetadata,

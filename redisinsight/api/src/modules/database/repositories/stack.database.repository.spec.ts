@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import {
   mockCaCertificateRepository,
   mockClientCertificateRepository,
+  mockConstantsProvider,
   mockDatabase,
   mockDatabaseEntity,
   mockDatabaseId,
@@ -27,6 +28,7 @@ import { StackDatabasesRepository } from 'src/modules/database/repositories/stac
 import config from 'src/utils/config';
 import { NotImplementedException } from '@nestjs/common';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
@@ -67,6 +69,10 @@ describe('StackDatabasesRepository', () => {
         {
           provide: ClientCertificateRepository,
           useFactory: mockClientCertificateRepository,
+        },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
         },
       ],
     }).compile();
@@ -138,13 +144,13 @@ describe('StackDatabasesRepository', () => {
 
   describe('exists', () => {
     it('should return true when receive database entity', async () => {
-      expect(await service.exists()).toEqual(true);
+      expect(await service.exists(mockSessionMetadata)).toEqual(true);
       expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
     });
 
     it('should return false when no database received', async () => {
       repository.createQueryBuilder().getOne.mockResolvedValue(null);
-      expect(await service.exists()).toEqual(false);
+      expect(await service.exists(mockSessionMetadata)).toEqual(false);
       expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
     });
   });
@@ -162,7 +168,7 @@ describe('StackDatabasesRepository', () => {
 
   describe('list', () => {
     it('should return list of databases with specific fields only', async () => {
-      expect(await service.list()).toEqual([mockDatabase]);
+      expect(await service.list(mockSessionMetadata)).toEqual([mockDatabase]);
       expect(repository.createQueryBuilder().getMany).not.toHaveBeenCalled();
     });
   });

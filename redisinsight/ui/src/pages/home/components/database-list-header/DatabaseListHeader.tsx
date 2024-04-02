@@ -4,13 +4,12 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
-  EuiSpacer,
   EuiToolTip,
 } from '@elastic/eui'
 import { isEmpty } from 'lodash'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { ImportDatabasesDialog, OAuthSsoHandlerDialog, HomePageHeader } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import HelpLinksMenu from 'uiSrc/pages/home/components/help-links-menu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
@@ -29,13 +28,12 @@ import styles from './styles.module.scss'
 
 export interface Props {
   onAddInstance: () => void
-  direction: 'column' | 'row'
 }
 
 const CREATE_DATABASE = 'CREATE DATABASE'
 const THE_GUIDES = 'THE GUIDES'
 
-const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
+const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const { theme } = useContext(ThemeContext)
   const { data: instances } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
@@ -172,53 +170,48 @@ const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
     )
   }
 
-  return (
-    <>
-      {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
-      <div className={styles.containerDl}>
-        <EuiFlexGroup className={styles.contentDL} alignItems="center" responsive={false} gutterSize="s">
-          <EuiFlexItem grow={false}>
-            <AddInstanceBtn />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <ImportDatabasesBtn />
-          </EuiFlexItem>
-          {!loading && !isEmpty(data) && (
-            <>
-              <EuiFlexItem grow={false} className={cx(styles.promo)}>
-                <EuiFlexGroup alignItems="center" gutterSize="s">
-                  {promoData && (
-                    <EuiFlexItem grow={false}>
-                      <CreateBtn content={promoData} />
-                    </EuiFlexItem>
-                  )}
-                </EuiFlexGroup>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.fullGuides}>
-                <HelpLinksMenu
-                  items={guides}
-                  buttonText={CREATE_DATABASE}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.smallGuides}>
-                <HelpLinksMenu
-                  emptyAnchor
-                  items={guides.slice(1)}
-                  buttonText={THE_GUIDES}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-            </>
-          )}
-          {instances.length > 0 && (
-            <EuiFlexItem grow={false} className={styles.searchContainer}>
-              <SearchDatabasesList />
+  const PromoComponent = () => {
+    if (loading || isEmpty(data)) return null
+
+    return (
+      <>
+      <EuiFlexItem grow={false} className={cx(styles.promo)}>
+        <EuiFlexGroup alignItems="center" gutterSize="s">
+          {promoData && (
+            <EuiFlexItem grow={false}>
+              <CreateBtn content={promoData} />
             </EuiFlexItem>
           )}
         </EuiFlexGroup>
-        <EuiSpacer className={styles.spacerDl} />
-      </div>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} className={styles.fullGuides}>
+        <HelpLinksMenu
+          items={guides}
+          buttonText={CREATE_DATABASE}
+          onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+        />
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} className={styles.smallGuides}>
+        <HelpLinksMenu
+          emptyAnchor
+          items={guides.slice(1)}
+          buttonText={THE_GUIDES}
+          onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
+        />
+      </EuiFlexItem>
+    </>
+    )
+  }
+
+  return (
+    <>
+      {isImportDialogOpen && <ImportDatabasesDialog onClose={handleCloseImportDb} />}
+      <HomePageHeader
+        importBtn={<ImportDatabasesBtn />}
+        addBtn={<AddInstanceBtn />}
+        searchComponent={instances.length ? <SearchDatabasesList /> : undefined}
+        promoComponent={<PromoComponent />}
+      />
     </>
   )
 }

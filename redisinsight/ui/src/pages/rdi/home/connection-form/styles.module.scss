@@ -1,16 +1,18 @@
 @import '@elastic/eui/src/global_styling/index';
 
+.form {
+  height: 100%;
+}
 .connectionFormPanel {
   @include euiScrollBar;
 
   overflow: auto;
   position: relative;
+  height: 100%;
+}
 
-  height: calc(100vh - 261px);
-
-  @media (min-width: 768px) {
-    height: calc(100vh - 180px);
-  }
+.withoutPadding {
+  margin: 0 !important;
 }
 
 .passwordField {
@@ -42,7 +44,7 @@
       font-weight: 300 !important;
       opacity: 0.85;
       padding-bottom: 10px;
-    
+
       li {
         line-height: 20px;
       }

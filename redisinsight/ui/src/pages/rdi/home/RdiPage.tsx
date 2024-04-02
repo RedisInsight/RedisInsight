@@ -2,6 +2,7 @@ import { EuiPage, EuiPageBody, EuiPanel, EuiResizableContainer, EuiResizeObserve
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import cx from 'classnames'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   createInstanceAction,
@@ -22,6 +23,7 @@ import ConnectionForm from './connection-form/ConnectionForm'
 import RdiHeader from './header/RdiHeader'
 import RdiInstancesListWrapper from './instance-list/RdiInstancesListWrapper'
 
+import 'uiSrc/pages/home/styles.scss'
 import styles from './styles.module.scss'
 
 const RdiPage = () => {
@@ -96,7 +98,7 @@ const RdiPage = () => {
     ) : (
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (
-          <div key="homePage" className="homePage" data-testid="rdi-instance-list" ref={resizeRef}>
+          <div key="homePage" className={styles.fullHeight} data-testid="rdi-instance-list" ref={resizeRef}>
             <RdiInstancesListWrapper
               width={width}
               editedInstance={editInstance}
@@ -110,27 +112,47 @@ const RdiPage = () => {
 
   return (
     <HomePageTemplate>
-      <EuiPage className={styles.page}>
+      <EuiPage className={cx(styles.page, 'homePage')}>
         <EuiPageBody component="div">
-          <div className={styles.header}>
-            <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
-          </div>
+          <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
           {!isConnectionFormOpen ? (
             <InstanceList />
           ) : (
-            <EuiResizableContainer style={{ height: '100%' }}>
+            <EuiResizableContainer style={{ height: 'calc(100% - 60px' }}>
               {(EuiResizablePanel, EuiResizableButton) => (
                 <>
-                  <EuiResizablePanel scrollable={false} initialSize={65} id="instances" minSize="50%" paddingSize="none">
+                  <EuiResizablePanel
+                    scrollable={false}
+                    initialSize={65}
+                    id="instances"
+                    minSize="50%"
+                    paddingSize="none"
+                    wrapperProps={{
+                      className: cx('home__resizePanelLeft', {
+                        fullWidth: !isConnectionFormOpen,
+                        openedRightPanel: isConnectionFormOpen,
+                      })
+                    }}
+                  >
                     <InstanceList />
                   </EuiResizablePanel>
-                  <EuiResizableButton style={{ margin: 0 }} />
+                  <EuiResizableButton
+                    style={{ margin: 0 }}
+                    className={cx('home__resizableButton', {
+                      hidden: !isConnectionFormOpen,
+                    })}
+                  />
                   <EuiResizablePanel
                     scrollable={false}
                     initialSize={35}
                     id="connection-form"
                     paddingSize="none"
-                    minSize="400px"
+                    style={{ minWidth: '474px' }}
+                    wrapperProps={{
+                      className: cx('home__resizePanelRight', {
+                        hidden: !isConnectionFormOpen
+                      })
+                    }}
                   >
                     <ConnectionForm
                       onAddInstance={handleAddInstance}

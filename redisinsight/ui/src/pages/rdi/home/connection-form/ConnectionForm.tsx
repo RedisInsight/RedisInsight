@@ -7,8 +7,6 @@ import {
   EuiForm,
   EuiFormRow,
   EuiIcon,
-  EuiSpacer,
-  EuiSplitPanel,
   EuiTitle,
   EuiToolTip
 } from '@elastic/eui'
@@ -16,6 +14,7 @@ import { Field, FieldInputProps, FieldMetaProps, Form, Formik, FormikErrors, For
 import { omit } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
+import cx from 'classnames'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import ValidationTooltip from './components/ValidationTooltip'
@@ -110,128 +109,123 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
       onSubmit={onSubmit}
     >
       {({ isValid, errors }) => (
-        <Form>
-          <EuiForm component="div" data-testid="connection-form">
-            <EuiSplitPanel.Outer className={styles.connectionFormPanel} borderRadius="none">
-              <EuiSplitPanel.Inner>
-                <EuiTitle size="s">
-                  <h3>Connect to RDI</h3>
-                </EuiTitle>
-                <EuiSpacer />
-                <EuiFormRow label="RDI Alias*" fullWidth>
-                  <Field name="name">
-                    {({ field }: { field: FieldInputProps<string> }) => (
-                      <EuiFieldText
-                        data-testid="connection-form-name-input"
-                        fullWidth
-                        placeholder="Enter RDI Alias"
-                        maxLength={500}
-                        {...field}
-                      />
-                    )}
-                  </Field>
-                </EuiFormRow>
-                <EuiFormRow label="URL*" fullWidth>
-                  <Field name="url">
-                    {({ field }: { field: FieldInputProps<string> }) => (
-                      <EuiFieldText
-                        data-testid="connection-form-url-input"
-                        fullWidth
-                        placeholder="Enter URL"
-                        disabled={!!editInstance}
-                        append={!editInstance ? <UrlTooltip /> : undefined}
-                        {...field}
-                      />
-                    )}
-                  </Field>
-                </EuiFormRow>
-                <EuiFormRow label="Username*" fullWidth>
-                  <Field name="username">
-                    {({ field }: { field: FieldInputProps<string> }) => (
-                      <EuiFieldText
-                        data-testid="connection-form-username-input"
-                        fullWidth
-                        placeholder="Enter Username"
-                        maxLength={500}
-                        {...field}
-                      />
-                    )}
-                  </Field>
-                </EuiFormRow>
-                <EuiFormRow label="Password*" fullWidth>
-                  <Field name="password">
-                    {({
-                      field,
-                      form,
-                      meta
-                    }: {
-                      field: FieldInputProps<string>
-                      form: FormikHelpers<string>
-                      meta: FieldMetaProps<string>
-                    }) => (
-                      <EuiFieldPassword
-                        data-testid="connection-form-password-input"
-                        className={styles.passwordField}
-                        fullWidth
-                        placeholder="Enter Password"
-                        maxLength={500}
-                        {...field}
-                        onFocus={() => {
-                          if (field.value === SECURITY_FIELD && !meta.touched) {
-                            form.setFieldValue('password', '')
-                          }
+        <Form className={styles.form}>
+          <EuiForm component="div" className="databasePanelWrapper" data-testid="connection-form">
+            <div className={cx('container relative')}>
+              <EuiTitle size="s">
+                <h3>Connect to RDI</h3>
+              </EuiTitle>
+              <EuiFormRow label="RDI Alias*" fullWidth className={styles.withoutPadding}>
+                <Field name="name">
+                  {({ field }: { field: FieldInputProps<string> }) => (
+                    <EuiFieldText
+                      data-testid="connection-form-name-input"
+                      fullWidth
+                      placeholder="Enter RDI Alias"
+                      maxLength={500}
+                      {...field}
+                    />
+                  )}
+                </Field>
+              </EuiFormRow>
+              <EuiFormRow label="URL*" fullWidth>
+                <Field name="url">
+                  {({ field }: { field: FieldInputProps<string> }) => (
+                    <EuiFieldText
+                      data-testid="connection-form-url-input"
+                      fullWidth
+                      placeholder="Enter URL"
+                      disabled={!!editInstance}
+                      append={!editInstance ? <UrlTooltip /> : undefined}
+                      {...field}
+                    />
+                  )}
+                </Field>
+              </EuiFormRow>
+              <EuiFormRow label="Username*" fullWidth>
+                <Field name="username">
+                  {({ field }: { field: FieldInputProps<string> }) => (
+                    <EuiFieldText
+                      data-testid="connection-form-username-input"
+                      fullWidth
+                      placeholder="Enter Username"
+                      maxLength={500}
+                      {...field}
+                    />
+                  )}
+                </Field>
+              </EuiFormRow>
+              <EuiFormRow label="Password*" fullWidth>
+                <Field name="password">
+                  {({
+                    field,
+                    form,
+                    meta
+                  }: {
+                    field: FieldInputProps<string>
+                    form: FormikHelpers<string>
+                    meta: FieldMetaProps<string>
+                  }) => (
+                    <EuiFieldPassword
+                      data-testid="connection-form-password-input"
+                      className={styles.passwordField}
+                      fullWidth
+                      placeholder="Enter Password"
+                      maxLength={500}
+                      {...field}
+                      onFocus={() => {
+                        if (field.value === SECURITY_FIELD && !meta.touched) {
+                          form.setFieldValue('password', '')
+                        }
 
-                          setPasswordChanged(true)
-                        }}
-                      />
-                    )}
-                  </Field>
-                </EuiFormRow>
-              </EuiSplitPanel.Inner>
-              <EuiSplitPanel.Inner grow={false}>
-                <EuiFlexGroup justifyContent="spaceBetween">
-                  <EuiFlexItem grow={false}>
-                    <ValidationTooltip isValid={isValid} errors={errors}>
-                      <EuiButton
-                        data-testid="connection-form-test-button"
-                        size="s"
-                        className={styles.testConnectionBtn}
-                        iconType={!isValid ? 'iInCircle' : undefined}
-                        isLoading={isLoading}
-                        disabled={!isValid}
-                      >
-                        Test Connection
+                        setPasswordChanged(true)
+                      }}
+                    />
+                  )}
+                </Field>
+              </EuiFormRow>
+            </div>
+            <div>
+              <EuiFlexGroup className="footerAddDatabase" gutterSize="none" justifyContent="spaceBetween">
+                <EuiFlexItem grow={false}>
+                  <ValidationTooltip isValid={isValid} errors={errors}>
+                    <EuiButton
+                      data-testid="connection-form-test-button"
+                      className={styles.testConnectionBtn}
+                      iconType={!isValid ? 'iInCircle' : undefined}
+                      isLoading={isLoading}
+                      disabled={!isValid}
+                    >
+                      Test Connection
+                    </EuiButton>
+                  </ValidationTooltip>
+                </EuiFlexItem>
+                <EuiFlexItem grow={false}>
+                  <EuiFlexGroup gutterSize="s">
+                    <EuiFlexItem grow={false}>
+                      <EuiButton color="secondary" data-testid="connection-form-cancel-button" onClick={onCancel}>
+                        Cancel
                       </EuiButton>
-                    </ValidationTooltip>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow={false}>
-                    <EuiFlexGroup gutterSize="s">
-                      <EuiFlexItem grow={false}>
-                        <EuiButton data-testid="connection-form-cancel-button" size="s" onClick={onCancel}>
-                          Cancel
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <ValidationTooltip isValid={isValid} errors={errors}>
+                        <EuiButton
+                          data-testid="connection-form-add-button"
+                          type="submit"
+                          fill
+                          color="secondary"
+                          iconType={!isValid ? 'iInCircle' : undefined}
+                          isLoading={isLoading}
+                          disabled={!isValid}
+                        >
+                          Add Instance
                         </EuiButton>
-                      </EuiFlexItem>
-                      <EuiFlexItem grow={false}>
-                        <ValidationTooltip isValid={isValid} errors={errors}>
-                          <EuiButton
-                            data-testid="connection-form-add-button"
-                            type="submit"
-                            size="s"
-                            fill
-                            color="secondary"
-                            iconType={!isValid ? 'iInCircle' : undefined}
-                            isLoading={isLoading}
-                            disabled={!isValid}
-                          >
-                            Add Instance
-                          </EuiButton>
-                        </ValidationTooltip>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiSplitPanel.Inner>
-            </EuiSplitPanel.Outer>
+                      </ValidationTooltip>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            </div>
           </EuiForm>
         </Form>
       )}

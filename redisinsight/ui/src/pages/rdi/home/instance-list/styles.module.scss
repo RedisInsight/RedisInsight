@@ -5,13 +5,11 @@
     padding-left: 5px !important;
   }
 
+  height: 100%;
+
   :global {
     .itemList {
-      height: calc(100vh - 261px);
-
-      @media (min-width: 768px) {
-        height: calc(100vh - 180px);
-      }
+      height: 100%;
     }
   }
 }

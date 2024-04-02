@@ -192,7 +192,6 @@ const HomePage = () => {
               <DatabaseListHeader
                 key="instance-controls"
                 onAddInstance={handleAddInstance}
-                direction="row"
               />
               <div key="homePage" className="homePage">
                 <EuiResizableContainer style={{ height: '100%' }}>

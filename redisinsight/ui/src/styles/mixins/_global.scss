@@ -6,3 +6,26 @@
   }
 }
 
+@mixin home-page-resizer {
+  @include insights-open {
+    :global {
+      .home {
+        &__resizePanelLeft {
+          &.openedRightPanel {
+            display: none;
+          }
+        }
+
+        &__resizableButton {
+          display: none;
+        }
+
+        &__resizePanelRight {
+          padding-left: 0;
+          width: 100% !important;
+        }
+      }
+    }
+  }
+}
+

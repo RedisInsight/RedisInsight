@@ -1,6 +1,8 @@
 @import "@elastic/eui/src/global_styling/index";
 @import "uiSrc/styles/mixins/_global.scss";
 
+@include home-page-resizer;
+
 .pageHeader {
   min-height: 56px;
 }
@@ -41,27 +43,4 @@
 
 .explorePanel {
   padding-bottom: 16px;
-}
-
-@include insights-open {
-  .page {
-    :global {
-      .home {
-        &__resizePanelLeft {
-          &.openedRightPanel {
-            display: none;
-          }
-        }
-
-        &__resizableButton {
-          display: none;
-        }
-
-        &__resizePanelRight {
-          padding-left: 0;
-          width: 100% !important;
-        }
-      }
-    }
-  }
 }

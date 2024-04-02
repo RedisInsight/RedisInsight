@@ -23,4 +23,8 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.RedisClient,
     storage: FeatureStorage.Database,
   },
+  [KnownFeatures.Rdi]: {
+    name: KnownFeatures.Rdi,
+    storage: FeatureStorage.Database,
+  },
 };

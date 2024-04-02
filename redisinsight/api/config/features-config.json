@@ -1,6 +1,10 @@
 {
-  "version": 2.3405,
+  "version": 2.4801,
   "features": {
+    "rdi": {
+      "flag": true,
+      "perc": [[0,100]]
+    },
     "insightsRecommendations": {
       "flag": true,
       "perc": [[0,100]]

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
 import { EuiButtonEmpty, EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip, } from '@elastic/eui'
 
-import { Pages } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BuildType } from 'uiSrc/constants/env'
@@ -18,7 +18,7 @@ import {
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
 
-import { OAuthUserProfile } from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import InsightsTrigger from 'uiSrc/components/insights-trigger'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
@@ -196,9 +196,11 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           <InsightsTrigger />
         </EuiFlexItem>
 
-        <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
-          <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-        </EuiFlexItem>
+        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+          <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+            <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+          </EuiFlexItem>
+        </FeatureFlagComponent>
       </EuiFlexGroup>
     </div>
   )

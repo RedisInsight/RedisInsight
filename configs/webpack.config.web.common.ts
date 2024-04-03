@@ -3,7 +3,6 @@
  */
 import path from 'path';
 import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import webpackPaths from './webpack.paths';
@@ -68,18 +67,7 @@ export default {
       'window.app.config.apiPort': JSON.stringify('5540'),
     }),
 
-    new HtmlWebpackPlugin({
-      inject: 'head',
-      isBrowser: false,
-      isDevelopment: false,
-      template: 'index.html.ejs',
-      publicPath: '{{ RIPROXYPATH }}',
-    }),
-
-    new MonacoWebpackPlugin({
-      languages: ['json', 'javascript', 'typescript'],
-      features: ['!rename'],
-    }),
+    new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
 
     new webpack.IgnorePlugin({
       checkResource(resource) {

@@ -268,19 +268,19 @@ export function fetchAccountRedisCloud(
 }
 
 // Asynchronous thunk action
-export function fetchInstancesRedisCloud(payload: {
-  subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[];
-  credentials: Nullable<ICredentialsRedisCloud>;
-}) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+export function fetchInstancesRedisCloud(
+  payload: {
+    subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[],
+    credentials: Nullable<ICredentialsRedisCloud>,
+  },
+  isWithinOauth?: boolean
+) {
+  return async (dispatch: AppDispatch) => {
     dispatch(loadInstancesRedisCloud())
 
     try {
-      const state = stateInit()
-      const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.post(
-        isAutodiscoverySSO
+        isWithinOauth
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES}`
           : `${ApiEndpoints.REDIS_CLOUD_GET_DATABASES}`,
         {
@@ -288,7 +288,7 @@ export function fetchInstancesRedisCloud(payload: {
         },
         {
           headers: {
-            ...(!isAutodiscoverySSO ? generateAuthHeaders(payload.credentials) : {}),
+            ...(!isWithinOauth ? generateAuthHeaders(payload.credentials) : {}),
           }
         }
       )
@@ -309,19 +309,19 @@ export function fetchInstancesRedisCloud(payload: {
 }
 
 // Asynchronous thunk action
-export function addInstancesRedisCloud(payload: {
-  databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[];
-  credentials: Nullable<ICredentialsRedisCloud>;
-}) {
-  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+export function addInstancesRedisCloud(
+  payload: {
+    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[];
+    credentials: Nullable<ICredentialsRedisCloud>;
+  },
+  isWithinOauth?: boolean
+) {
+  return async (dispatch: AppDispatch) => {
     dispatch(createInstancesRedisCloud())
 
     try {
-      const state = stateInit()
-      const { ssoFlow } = state.connections.cloud
-      const isAutodiscoverySSO = ssoFlow === OAuthSocialAction.Import
       const { data, status } = await apiService.post(
-        isAutodiscoverySSO
+        isWithinOauth
           ? `${ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES}`
           : `${ApiEndpoints.REDIS_CLOUD_DATABASES}`,
         {
@@ -329,7 +329,7 @@ export function addInstancesRedisCloud(payload: {
         },
         {
           headers: {
-            ...(!isAutodiscoverySSO ? generateAuthHeaders(payload.credentials) : {}),
+            ...(!isWithinOauth ? generateAuthHeaders(payload.credentials) : {}),
           }
         }
       )

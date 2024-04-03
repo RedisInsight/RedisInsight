@@ -76,7 +76,7 @@ describe('DatabaseConnectionService', () => {
     it('should call recommendationService', async () => {
       expect(await service.connect(mockCommonClientMetadata)).toEqual(undefined);
 
-      expect(recommendationService.check).toHaveBeenCalledTimes(5);
+      expect(recommendationService.check).toHaveBeenCalledTimes(3);
 
       expect(recommendationService.check).toBeCalledWith(
         mockCommonClientMetadata,

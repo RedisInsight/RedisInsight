@@ -190,14 +190,12 @@ describe('KeysService', () => {
         { keys: [getKeyInfoResponse.name] },
       );
 
-      expect(recommendationService.check).toBeCalledTimes(2);
+      expect(recommendationService.check).toBeCalledTimes(1);
       expect(recommendationService.check).toBeCalledWith(
         mockBrowserClientMetadata,
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client: mockStandaloneRedisClient, databaseId: mockBrowserClientMetadata.databaseId },
       );
-
-      expect(recommendationService.check).toBeCalledTimes(2);
     });
     it("user don't have required permissions for getKeyInfo", async () => {
       const replyError: ReplyError = {

@@ -6,8 +6,6 @@ import { RedisClientConnectionType } from 'src/modules/redis/client';
 
 const mockRedisMemoryInfoResponse1: string = '# Memory\r\nnumber_of_cached_scripts:10\r\n';
 const mockRedisMemoryInfoResponse2: string = '# Memory\r\nnumber_of_cached_scripts:11\r\n';
-const mockRedisMemoryInfoResponse3: string = '# Memory\r\nnumber_of_cached_scripts:0\r\n';
-const mockRedisMemoryInfoResponse4: string = '# Memory\r\nnumber_of_cached_scripts:1\r\n';
 
 const mockRedisKeyspaceInfoResponse1: string = '# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n';
 const mockRedisKeyspaceInfoResponse2: string = `# Keyspace\r\ndb0:keys=2,expires=0,avg_ttl=0\r\n
@@ -34,9 +32,6 @@ const mockRedisAclListResponse2: string[] = [
 
 const mockFTListResponse1 = [];
 const mockFTListResponse2 = ['idx'];
-
-const mockTfunctionListResponse1 = [];
-const mockTfunctionListResponse2 = ['library'];
 
 const mockKeys = [
   {
@@ -662,19 +657,5 @@ describe('RecommendationProvider', () => {
           .determineRTSRecommendation(client, mockKeys);
         expect(RTSRecommendation).toEqual(null);
       });
-  });
-
-  describe('determineFunctionsWithStreamsRecommendation', () => {
-    it('should return null when there are libraries', async () => {
-      const functionsWithStreamsRecommendation = await service
-        .determineFunctionsWithStreamsRecommendation(mockKeys, mockTfunctionListResponse2);
-      expect(functionsWithStreamsRecommendation).toEqual(null);
-    });
-
-    it('should return null when there is no stream key', async () => {
-      const functionsWithStreamsRecommendation = await service
-        .determineFunctionsWithStreamsRecommendation([mockSmallStringKey], mockTfunctionListResponse1);
-      expect(functionsWithStreamsRecommendation).toEqual(null);
-    });
   });
 });

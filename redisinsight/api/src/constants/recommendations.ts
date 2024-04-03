@@ -20,7 +20,6 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   STRING_TO_JSON: 'stringToJson',
   SEARCH_VISUALIZATION: 'searchVisualization',
   SEARCH_HASH: 'searchHash',
-  FUNCTIONS_WITH_STREAMS: 'functionsWithStreams',
 });
 
 export const ONE_NODE_RECOMMENDATIONS = [

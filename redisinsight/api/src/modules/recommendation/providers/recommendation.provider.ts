@@ -544,30 +544,4 @@ export class RecommendationProvider {
       return null;
     }
   }
-
-  /**
-   * Check functionsWithStreams recommendation
-   * @param keys
-   * @param libraries
-   */
-
-  async determineFunctionsWithStreamsRecommendation(
-    keys: Key[],
-    libraries?: string[],
-  ): Promise<Recommendation> {
-    if (libraries?.length) {
-      return null;
-    }
-
-    try {
-      const isStreamKey = keys.some((key) => key.type === RedisDataType.Stream);
-
-      return isStreamKey
-        ? { name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS }
-        : null;
-    } catch (err) {
-      this.logger.error('Can not determine functions with streams recommendation', err);
-      return null;
-    }
-  }
 }

@@ -196,11 +196,6 @@ describe('KeysService', () => {
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client: mockStandaloneRedisClient, databaseId: mockBrowserClientMetadata.databaseId },
       );
-      expect(recommendationService.check).toBeCalledWith(
-        mockBrowserClientMetadata,
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
-        { keys: result, client: mockStandaloneRedisClient, databaseId: mockBrowserClientMetadata.databaseId },
-      );
 
       expect(recommendationService.check).toBeCalledTimes(2);
     });

@@ -116,11 +116,6 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.SEARCH_HASH,
         async () => await this.recommendationProvider.determineSearchHashRecommendation(keys, indexes),
       ],
-      [
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
-        async () => await this.recommendationProvider
-          .determineFunctionsWithStreamsRecommendation(keys, libraries),
-      ],
       // it is live time recommendation (will add later)
       [
         RECOMMENDATION_NAMES.STRING_TO_JSON,

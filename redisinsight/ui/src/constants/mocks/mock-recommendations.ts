@@ -1506,6 +1506,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'functionsWithStreams',
     title: 'Consider using triggers and functions to react in real-time to stream entries',
     tutorialId: 'tf-intro',
+    deprecated: true,
     content: [
       {
         type: 'paragraph',

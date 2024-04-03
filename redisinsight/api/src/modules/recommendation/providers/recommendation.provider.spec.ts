@@ -671,12 +671,6 @@ describe('RecommendationProvider', () => {
       expect(functionsWithStreamsRecommendation).toEqual(null);
     });
 
-    it('should return functionsWithStreams recommendation when there is stream key', async () => {
-      const functionsWithStreamsRecommendation = await service
-        .determineFunctionsWithStreamsRecommendation([mockStreamKey], mockTfunctionListResponse1);
-      expect(functionsWithStreamsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS });
-    });
-
     it('should return null when there is no stream key', async () => {
       const functionsWithStreamsRecommendation = await service
         .determineFunctionsWithStreamsRecommendation([mockSmallStringKey], mockTfunctionListResponse1);

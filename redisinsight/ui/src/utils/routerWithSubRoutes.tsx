@@ -18,11 +18,14 @@ const PrivateRoute = (route: IRoute) => {
       path={path}
       exact={exact}
       render={(props) =>
-        (!haveToAcceptAgreements && (isUndefined(feature) || feature?.flag) ? (
-          // pass the sub-routes down to keep nesting
-          // @ts-ignore
-          <route.component {...props} routes={routes} />
-        ) : <Redirect to="/" />)}
+        haveToAcceptAgreements || feature?.flag === false
+          ? <Redirect to="/" />
+          : (
+            // pass the sub-routes down to keep nesting
+            // @ts-ignore
+            <route.component {...props} routes={routes} />
+          )
+      }
     />
   )
 }

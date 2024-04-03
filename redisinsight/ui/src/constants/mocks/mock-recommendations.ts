@@ -1444,6 +1444,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'luaToFunctions',
     title: 'Consider using triggers and functions',
     tutorialId: 'tf-intro',
+    deprecated: true,
     content: [
       {
         type: 'paragraph',
@@ -1582,6 +1583,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'functionsWithKeyspace',
     title: 'Consider using triggers and functions to react in real-time to database changes',
     tutorialId: 'tf-intro',
+    deprecated: true,
     content: [
       {
         type: 'paragraph',

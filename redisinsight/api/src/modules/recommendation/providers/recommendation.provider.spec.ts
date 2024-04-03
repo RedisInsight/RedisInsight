@@ -664,44 +664,6 @@ describe('RecommendationProvider', () => {
       });
   });
 
-  describe('determineLuaToFunctionsRecommendation', () => {
-    it('should return null when there are libraries', async () => {
-      const luaToFunctionsRecommendation = await service
-        .determineLuaToFunctionsRecommendation(client, mockTfunctionListResponse2);
-      expect(luaToFunctionsRecommendation).toEqual(null);
-    });
-
-    it('should return luaToFunctions recommendation when lua script > 0', async () => {
-      when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
-        .mockResolvedValueOnce(mockRedisMemoryInfoResponse4);
-
-      const luaToFunctionsRecommendation = await service
-        .determineLuaToFunctionsRecommendation(client, mockTfunctionListResponse1);
-      expect(luaToFunctionsRecommendation).toEqual({ name: RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS });
-    });
-
-    it('should return null when lua script <= 1', async () => {
-      when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
-        .mockResolvedValueOnce(mockRedisMemoryInfoResponse3);
-
-      const luaToFunctionsRecommendation = await service
-        .determineLuaToFunctionsRecommendation(client, mockTfunctionListResponse1);
-      expect(luaToFunctionsRecommendation).toEqual(null);
-    });
-
-    it('should return null when info command executed with error', async () => {
-      when(client.sendCommand)
-        .calledWith(jasmine.arrayContaining(['info']), expect.anything())
-        .mockRejectedValue('some error');
-
-      const luaToFunctionsRecommendation = await service
-        .determineLuaToFunctionsRecommendation(client, mockTfunctionListResponse1);
-      expect(luaToFunctionsRecommendation).toEqual(null);
-    });
-  });
-
   describe('determineFunctionsWithStreamsRecommendation', () => {
     it('should return null when there are libraries', async () => {
       const functionsWithStreamsRecommendation = await service

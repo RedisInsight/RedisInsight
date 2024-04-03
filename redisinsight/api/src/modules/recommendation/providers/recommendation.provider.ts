@@ -25,7 +25,6 @@ import {
   SEARCH_HASH_RECOMMENDATION_KEYS_FOR_CHECK,
   SEARCH_HASH_RECOMMENDATION_KEYS_LENGTH,
   RTS_KEYS_FOR_CHECK,
-  LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT,
 } from 'src/common/constants';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
@@ -542,68 +541,6 @@ export class RecommendationProvider {
       return timeSeriesKey ? { name: RECOMMENDATION_NAMES.RTS, params: { keys: [timeSeriesKey] } } : null;
     } catch (err) {
       this.logger.error('Can not determine RTS recommendation', err);
-      return null;
-    }
-  }
-
-  /**
-   * Check luaToFunctions recommendation
-   * @param redisClient
-   * @param libraries
-   */
-
-  async determineLuaToFunctionsRecommendation(
-    redisClient: RedisClient,
-    libraries?: string[],
-  ): Promise<Recommendation> {
-    if (libraries?.length) {
-      return null;
-    }
-
-    try {
-      const info = convertRedisInfoReplyToObject(
-        await redisClient.sendCommand(
-          ['info', 'memory'],
-          { replyEncoding: 'utf8' },
-        ) as string,
-      );
-
-      const nodesNumbersOfCachedScripts = get(info, 'memory.number_of_cached_scripts');
-
-      return parseInt(nodesNumbersOfCachedScripts, 10) > LUA_TO_FUNCTIONS_RECOMMENDATION_COUNT
-        ? { name: RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS }
-        : null;
-    } catch (err) {
-      this.logger.error('Can not determine Lua to functions recommendation', err);
-      return null;
-    }
-  }
-
-  /**
-   * Check functionsWithKeyspace recommendation
-   * @param redisClient
-   * @param libraries
-   */
-
-  async determineFunctionsWithKeyspaceRecommendation(
-    redisClient: RedisClient,
-    libraries?: string[],
-  ): Promise<Recommendation> {
-    if (libraries?.length) {
-      return null;
-    }
-
-    try {
-      const info = await redisClient.sendCommand(
-        ['CONFIG', 'GET', 'notify-keyspace-events'],
-        { replyEncoding: 'utf8' },
-      );
-
-      return checkKeyspaceNotification(info[1])
-        ? { name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE }
-        : null;
-    } catch (err) {
-      this.logger.error('Can not determine functions with keyspace recommendation', err);
       return null;
     }
   }

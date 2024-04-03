@@ -93,20 +93,6 @@ describe('DatabaseConnectionService', () => {
         RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
         mockRedisGeneralInfo,
       );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS,
-        {
-          client: mockStandaloneRedisClient,
-          databaseId: mockCommonClientMetadata.databaseId,
-          info: mockRedisGeneralInfo,
-        },
-      );
-      expect(recommendationService.check).toBeCalledWith(
-        mockCommonClientMetadata,
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE,
-        { client: mockStandaloneRedisClient, databaseId: mockCommonClientMetadata.databaseId },
-      );
     });
 
     it('should call databaseInfoProvider', async () => {

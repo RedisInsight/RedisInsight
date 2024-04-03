@@ -117,14 +117,6 @@ export class RecommendationService {
         async () => await this.recommendationProvider.determineSearchHashRecommendation(keys, indexes),
       ],
       [
-        RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS,
-        async () => await this.recommendationProvider.determineLuaToFunctionsRecommendation(client, libraries),
-      ],
-      [
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE,
-        async () => await this.recommendationProvider.determineFunctionsWithKeyspaceRecommendation(client, libraries),
-      ],
-      [
         RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
         async () => await this.recommendationProvider
           .determineFunctionsWithStreamsRecommendation(keys, libraries),

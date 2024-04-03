@@ -1,19 +1,19 @@
 import {
   Injectable, Logger, NotImplementedException, OnApplicationBootstrap,
 } from '@nestjs/common';
-import { merge } from 'lodash';
-import config from 'src/utils/config';
-import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
-import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
-import { Database } from 'src/modules/database/models/database';
-import { SessionMetadata } from 'src/common/models';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import { merge } from 'lodash';
 import { Repository } from 'typeorm';
+import { SessionMetadata } from 'src/common/models';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
-import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import { Database } from 'src/modules/database/models/database';
+import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
+import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
+import config from 'src/utils/config';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 

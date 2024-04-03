@@ -1,10 +1,28 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { render, screen, fireEvent, act, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 
 import { Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import HomeTabs from './HomeTabs'
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    rdi: {
+      flag: true
+    },
+  }),
+}))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -63,5 +81,17 @@ describe('HomeTabs', () => {
         tab: 'Redis Data Integration'
       }
     })
+  })
+
+  it('should not render rdi tab', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      rdi: {
+        flag: false
+      },
+    })
+
+    render(<HomeTabs />)
+
+    expect(screen.queryByTestId('home-tab-rdi-instances')).not.toBeInTheDocument()
   })
 })

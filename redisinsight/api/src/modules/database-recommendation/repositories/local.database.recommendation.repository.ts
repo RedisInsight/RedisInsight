@@ -234,4 +234,13 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  public async getTotalUnread(clientMetadata: ClientMetadata, databaseId: string): Promise<number> {
+    const totalUnread = await this.repository
+    .createQueryBuilder()
+    .where({ read: false, databaseId })
+    .getCount();
+
+    return totalUnread
+  }
 }

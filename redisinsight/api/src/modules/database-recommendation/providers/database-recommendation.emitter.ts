@@ -8,17 +8,15 @@ import { RecommendationEvents, RecommendationServerEvents } from 'src/modules/da
 import {
   DatabaseRecommendationsResponse,
 } from 'src/modules/database-recommendation/dto/database-recommendations.response';
-import {
-  DatabaseRecommendationEntity,
-} from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { DatabaseRecommendationRepository } from '../repositories/database-recommendation.repository';
+import { ClientMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseRecommendationEmitter {
   private logger: Logger = new Logger('DatabaseRecommendationEmitter');
 
   constructor(
-    @InjectRepository(DatabaseRecommendationEntity)
-    private readonly repository: Repository<DatabaseRecommendationEntity>,
+    private readonly databaseRecommendationRepository: DatabaseRecommendationRepository,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -31,10 +29,8 @@ export class DatabaseRecommendationEmitter {
 
       this.logger.debug(`${recommendations.length} new recommendation(s) to emit`);
 
-      const totalUnread = await this.repository
-        .createQueryBuilder()
-        .where({ read: false, databaseId: recommendations[0].databaseId })
-        .getCount();
+      // TODO: [USER_CONTEXT] how to get a client metadata here? do we even need it since it isn't used to grab the database id?
+      const totalUnread = await this.databaseRecommendationRepository.getTotalUnread({} as ClientMetadata, recommendations[0].databaseId);
 
       this.eventEmitter.emit(
         RecommendationServerEvents.Recommendation,

@@ -9,6 +9,7 @@ import { fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
 const LoadSampleData = () => {
@@ -34,6 +35,13 @@ const LoadSampleData = () => {
         }
       )
     )
+
+    sendEventTelemetry({
+      event: TelemetryEvent.BROWSER_IMPORT_SAMPLES_CLICKED,
+      eventData: {
+        databaseId: id
+      }
+    })
   }
 
   return (

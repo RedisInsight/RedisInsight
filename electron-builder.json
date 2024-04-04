@@ -199,6 +199,11 @@
       "filter": ["**/*"]
     },
     {
+      "from": "./redisinsight/api/data",
+      "to": "data",
+      "filter": ["**/*"]
+    },
+    {
       "from": "LICENSE",
       "to": "LICENSE.redisinsight.txt"
     },

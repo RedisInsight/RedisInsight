@@ -155,15 +155,19 @@ export default {
   TEST_CONNECTION: () => ({
     title: 'Connection is successful',
   }),
-  UPLOAD_DATA_BULK: (data: IBulkActionOverview, fileName: string) => {
+  UPLOAD_DATA_BULK: (data: IBulkActionOverview, fileName?: string) => {
     const { processed = 0, succeed = 0, failed = 0, } = data?.summary ?? {}
     return ({
       title: (
         <>
           Action completed
-          <br />
-          <EuiText color="ghost">Commands executed from file:</EuiText>
-          <EuiText color="ghost">{formatLongName(fileName, 34, 5)}</EuiText>
+          {fileName ? (
+            <>
+              <br />
+              <EuiText color="ghost">Commands executed from file:</EuiText>
+              <EuiText color="ghost">{formatLongName(fileName, 34, 5)}</EuiText>
+            </>
+          ) : null}
         </>
       ),
       message: (

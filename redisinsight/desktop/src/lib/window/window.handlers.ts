@@ -55,6 +55,8 @@ export const initWindowHandlers = (
   })
 
   newWindow.on('close', (event) => {
+    electronStore?.set(ElectronStorageItem.bounds, newWindow.getNormalBounds())
+
     if (!getIsQuiting() && getDisplayAppInTrayValue() && windows.size === 1) {
       event.preventDefault()
       newWindow?.hide()

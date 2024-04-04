@@ -22,7 +22,7 @@ export interface Props {
 
 const AddStreamEntries = (props: Props) => {
   const { closePanel } = props
-  const { lastEntry } = useSelector(streamDataSelector)
+  const { lastGeneratedId } = useSelector(streamDataSelector)
   const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -49,7 +49,7 @@ const AddStreamEntries = (props: Props) => {
       return
     }
 
-    if (!lastEntry?.id) {
+    if (!lastGeneratedId) {
       setEntryIdError('')
       return
     }
@@ -59,7 +59,7 @@ const AddStreamEntries = (props: Props) => {
       return
     }
 
-    const [lastIdTimestamp, lastId] = lastEntry.id?.split('-')
+    const [lastIdTimestamp, lastId] = lastGeneratedId.split('-')
     const [idTimestamp, id] = entryID?.split('-')
 
     if (toNumber(idTimestamp) > toNumber(lastIdTimestamp)) {

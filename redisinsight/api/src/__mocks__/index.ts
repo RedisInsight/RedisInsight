@@ -6,6 +6,7 @@ export * from './encryption';
 export * from './errors';
 // export * from './redis-databases';
 export * from './redis-info';
+export * from './redis-rs';
 export * from './app-settings';
 export * from './analytics';
 export * from './profiler';

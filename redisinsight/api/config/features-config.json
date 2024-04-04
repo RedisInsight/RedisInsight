@@ -1,5 +1,5 @@
 {
-  "version": 2.3405,
+  "version": 2.46,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -18,7 +18,7 @@
       "data": {
         "filterFreePlan": [{
           "field": "name",
-          "expression": "^(No HA?.)|(Cache?.)",
+          "expression": "^(No HA?.)|(Cache?.)|(30MB$)",
           "options": "i"
         }],
         "selectPlan": {
@@ -49,7 +49,7 @@
     },
     "cloudSsoRecommendedSettings": {
       "flag": true,
-      "perc": [[0, 50]],
+      "perc": [[0, 100]],
       "filters": [
         {
           "name": "config.server.buildType",

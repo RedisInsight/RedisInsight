@@ -678,6 +678,7 @@ jobs:
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/
+      - <<: *keychain
       - run:
           name: install dependencies
           command: |
@@ -685,7 +686,6 @@ jobs:
             yarn --cwd redisinsight/api/ install
             yarn build:statics
           no_output_timeout: 15m
-      - <<: *keychain
       - run:
           name: Build macos dmg
           command: |
@@ -1558,6 +1558,13 @@ workflows:
           build: docker
           parallelism: 4
           requires:
+            - Build docker images (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
+          requires:
+            - Build app - Linux (stage)
+            - Build app - MacOS (stage)
+            - Build app - Windows (stage)
             - Build docker images (stage)
 
       # Needs approval from QA team that build was tested before merging to latest

@@ -86,6 +86,8 @@
 }
 
 .searchContainer {
+  position: relative;
+  height: 42px;
   max-width: 320px;
   margin-left: auto !important;
   padding-left: 12px;
@@ -93,29 +95,8 @@
 
 .promo {
   display: flex !important;
-  @media only screen and(max-width: 1100px) {
+  @media only screen and(max-width: 800px) {
     display: none !important;
-  }
-}
-
-.linkGuides {
-  display: none !important;
-  @media (min-width: 1250px) {
-    display: flex !important;
-  }
-}
-
-.fullGuides {
-  display: none !important;
-  @media only screen and(max-width: 1100px) {
-    display: flex !important;
-  }
-}
-
-.smallGuides {
-  display: none !important;
-  @media (min-width: 1101px) and (max-width: 1249px) {
-    display: flex !important;
   }
 }
 
@@ -131,18 +112,9 @@
   margin-right: 8px;
 }
 
-@include insights-open(1712px) {
-  .fullGuides {
-    display: flex !important;
-  }
-
-  .promo, .smallGuides {
+@include insights-open(1350px) {
+  .promo {
     display: none !important;
   }
 }
 
-@include insights-open(1200px) {
-  .fullGuides {
-    display: none !important;
-  }
-}

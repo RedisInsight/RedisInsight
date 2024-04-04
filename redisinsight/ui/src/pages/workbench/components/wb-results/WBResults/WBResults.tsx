@@ -1,7 +1,7 @@
 import React from 'react'
 import cx from 'classnames'
 import {
-  EuiButtonEmpty,
+  EuiButtonEmpty, EuiProgress,
 } from '@elastic/eui'
 
 import { CodeButtonParams } from 'uiSrc/constants'
@@ -16,6 +16,7 @@ import WbNoResultsMessage from 'uiSrc/pages/workbench/components/wb-no-results-m
 import styles from './styles.module.scss'
 
 export interface Props {
+  isResultsLoaded: boolean
   items: CommandExecutionUI[]
   clearing: boolean
   processing: boolean
@@ -30,6 +31,7 @@ export interface Props {
 }
 const WBResults = (props: Props) => {
   const {
+    isResultsLoaded,
     items = [],
     clearing,
     processing,
@@ -60,7 +62,15 @@ const WBResults = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      {!!items.length && (
+      {!isResultsLoaded && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-wb-history"
+        />
+      )}
+      {!!items?.length && (
         <div className={styles.header}>
           <EuiButtonEmpty
             size="s"
@@ -76,7 +86,7 @@ const WBResults = (props: Props) => {
       )}
       <div className={cx(styles.container)}>
         <div ref={scrollDivRef} />
-        {items.length ? items.map((
+        {items?.length ? items.map((
           {
             command = '',
             isOpen = false,
@@ -124,7 +134,7 @@ const WBResults = (props: Props) => {
             onQueryDelete={() => onQueryDelete(id)}
           />
         )) : null}
-        {!items.length && (<WbNoResultsMessage />)}
+        {(isResultsLoaded && !items.length) && (<WbNoResultsMessage />)}
       </div>
     </div>
   )

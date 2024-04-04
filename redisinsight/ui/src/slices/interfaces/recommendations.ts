@@ -40,6 +40,7 @@ export interface IRecommendationsStatic {
     tutorialId?: string
     content?: IRecommendationContent[]
     badges?: string[]
+    deprecated?: boolean,
   }
 }
 

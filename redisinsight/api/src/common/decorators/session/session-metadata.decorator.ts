@@ -5,9 +5,7 @@ import { SessionMetadata } from 'src/common/models';
 
 const validator = new Validator();
 
-export const sessionMetadataFromRequestFactory = (data: unknown, ctx: ExecutionContext): SessionMetadata => {
-  const request = ctx.switchToHttp().getRequest();
-
+export const sessionMetadataFromRequest = (request): SessionMetadata => {
   // todo: do not forget to deal with session vs sessionMetadata property
   const session = plainToClass(SessionMetadata, request.session);
 
@@ -22,4 +20,10 @@ export const sessionMetadataFromRequestFactory = (data: unknown, ctx: ExecutionC
   return session;
 };
 
-export const RequestSessionMetadata = createParamDecorator(sessionMetadataFromRequestFactory);
+export const sessionMetadataFromRequestExecutionContext = (_: unknown, ctx: ExecutionContext): SessionMetadata => {
+  const request = ctx.switchToHttp().getRequest();
+
+  return sessionMetadataFromRequest(request);
+};
+
+export const RequestSessionMetadata = createParamDecorator(sessionMetadataFromRequestExecutionContext);

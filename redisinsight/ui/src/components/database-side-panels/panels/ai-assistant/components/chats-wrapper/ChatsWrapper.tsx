@@ -13,6 +13,7 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { Maybe } from 'uiSrc/utils'
 import { FeatureFlagComponent } from 'uiSrc/slices/interfaces'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import AssistanceChat from '../assistance-chat'
 import ExpertChat from '../expert-chat'
 
@@ -51,6 +52,13 @@ const ChatsWrapper = () => {
     ) {
       dispatch(setSelectedTab(chats[0].tab))
     }
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_OPENED,
+      eventData: {
+        chat: activeTab
+      }
+    })
   }, [databaseChatFeature, databaseChatFeature, activeTab])
 
   const selectTab = (tab: AiChatType) => {

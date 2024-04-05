@@ -90,6 +90,7 @@ export enum OAuthSocialSource {
   Tutorials = 'tutorials',
   DiscoveryForm = 'discovery form',
   UserProfile = 'user profile',
+  AiChat = 'ai chat'
 }
 
 export enum OAuthSocialAction {

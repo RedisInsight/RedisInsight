@@ -58,7 +58,8 @@ describe('OAuthAutodiscovery', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
         accountOption: 'GitHub',
-        action: 'import'
+        action: 'import',
+        source: OAuthSocialSource.Autodiscovery
       }
     })
 

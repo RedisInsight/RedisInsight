@@ -5,7 +5,13 @@ import { cleanup, mockedStore, render, screen, fireEvent, act } from 'uiSrc/util
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ChatsWrapper from './ChatsWrapper'
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   ...jest.requireActual('uiSrc/slices/panels/aiAssistant'),
@@ -124,5 +130,29 @@ describe('ChatsWrapper', () => {
     })
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Assistance)])
+  })
+
+  it('should call proper telemetry after open chat', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
+    (aiChatSelector as jest.Mock).mockReturnValue({ activeTab: AiChatType.Query });
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      documentationChat: {
+        flag: true
+      },
+      databaseChat: {
+        flag: true
+      }
+    })
+    render(<ChatsWrapper />)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.AI_CHAT_OPENED,
+      eventData: {
+        chat: AiChatType.Query
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

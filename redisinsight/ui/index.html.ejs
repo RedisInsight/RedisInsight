@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>RedisInsight</title>
+  <script>
+    var RIPROXYPATH = '{{ RIPROXYPATH }}';
+    window.__RIPROXYPATH__ = RIPROXYPATH;
+
+    // If the RIPROXYPATH is not set, then we need to set it to undefined
+    if (RIPROXYPATH.startsWith('{{ ') || RIPROXYPATH.endsWith(' }}')) {
+      window.__RIPROXYPATH__ = undefined;
+    }
+  </script>
   <base href="/" />
 </head>
 <body>

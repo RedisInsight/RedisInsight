@@ -42,9 +42,15 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
-  app.setGlobalPrefix(serverConfig.globalPrefix);
 
   if (process.env.RI_APP_TYPE !== 'electron') {
+    let prefix = serverConfig.globalPrefix;
+    if (serverConfig.proxyPath) {
+      prefix = `${serverConfig.proxyPath}/${prefix}`;
+    }
+
+    app.setGlobalPrefix(prefix, { exclude: ['/'] });
+
     SwaggerModule.setup(
       serverConfig.docPrefix,
       app,
@@ -58,6 +64,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
       },
     );
   } else {
+    app.setGlobalPrefix(serverConfig.globalPrefix);
     app.useWebSocketAdapter(new WindowsAuthAdapter(app));
   }
 

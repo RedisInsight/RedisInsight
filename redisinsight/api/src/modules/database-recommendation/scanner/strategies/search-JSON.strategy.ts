@@ -2,22 +2,10 @@ import { AbstractRecommendationStrategy }
   from 'src/modules/database-recommendation/scanner/strategies/abstract.recommendation.strategy';
 import { IDatabaseRecommendationStrategyData }
   from 'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
-import { DatabaseService } from 'src/modules/database/database.service';
 import { RedisDataType, GetKeyInfoResponse } from 'src/modules/browser/keys/dto';
 import { SearchJSON } from 'src/modules/database-recommendation/models';
-import { isRedisearchModule } from 'src/utils';
-import { SessionMetadata } from 'src/common/models';
 
 export class SearchJSONStrategy extends AbstractRecommendationStrategy {
-  private databaseService: DatabaseService;
-
-  constructor(
-    databaseService: DatabaseService,
-  ) {
-    super();
-    this.databaseService = databaseService;
-  }
-
   /**
    * Check redis JSON recommendation
    * @param data
@@ -26,11 +14,8 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data: SearchJSON,
   ): Promise<IDatabaseRecommendationStrategyData> {
-  // todo: refactor. no need entire entity here
-    // TODO: [USER_CONTEXT] defer passing sessionMetadata to another PR
-    const { modules } = await this.databaseService.get({} as SessionMetadata, data.databaseId);
-
-    if (isRedisearchModule(modules)) {
+    // todo:improve decision mechanism when store Recommendations to avoid infinite checks when isReached:false
+    try {
       const indexes = await data.client.sendCommand(
         ['FT._LIST'],
         { replyEncoding: 'utf8' },
@@ -39,7 +24,10 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
       if (indexes.length) {
         return { isReached: false };
       }
+    } catch (e) {
+      // ignore error
     }
+
     const isJSON = data.keys.find((key: GetKeyInfoResponse) => key.type === RedisDataType.JSON);
     return isJSON ? { isReached: !!isJSON, params: { keys: [isJSON.name] } } : { isReached: false };
   }

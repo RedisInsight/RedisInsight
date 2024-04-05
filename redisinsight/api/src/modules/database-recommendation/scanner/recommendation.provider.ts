@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { IRecommendationStrategy } from
   'src/modules/database-recommendation/scanner/recommendation.strategy.interface';
 import { RECOMMENDATION_NAMES } from 'src/constants';
-import { DatabaseService } from 'src/modules/database/database.service';
 import {
   DefaultRecommendationStrategy,
   RedisVersionStrategy,

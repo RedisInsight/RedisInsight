@@ -24,12 +24,16 @@ const defaultPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_P
 const pluginsAssetsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/resources/plugins` : '/static/resources/plugins';
 
 const socketPath = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/socket.io` : '/socket.io';
+const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+  ? join(process['resourcesPath'], 'data')
+  : join(__dirname, '..', 'data');
 
 export default {
   dir_path: {
     tmpDir: os.tmpdir(),
     homedir,
     prevHomedir: homedir,
+    dataDir: process.env.RI_DATA_DIR || dataDir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),

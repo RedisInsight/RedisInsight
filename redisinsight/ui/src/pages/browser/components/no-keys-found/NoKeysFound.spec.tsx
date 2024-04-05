@@ -3,9 +3,6 @@ import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import NoKeysFound, { Props } from './NoKeysFound'
 
 const mockedProps = mock<Props>()
@@ -42,36 +39,5 @@ describe('NoKeysFound', () => {
     fireEvent.click(screen.getByTestId('add-key-msg-btn'))
 
     expect(onAddMock).toBeCalled()
-  })
-
-  it('should call proper events on click insights', () => {
-    render(<NoKeysFound {...mockedProps} onAddKeyPanel={jest.fn()} />)
-
-    fireEvent.click(screen.getByTestId('explore-msg-btn'))
-
-    expect(store.getActions()).toEqual([
-      changeSelectedTab(InsightsPanelTabs.Explore),
-      toggleInsightsPanel(true)
-    ])
-  })
-
-  it('should call proper events on click insights', () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
-
-    render(<NoKeysFound {...mockedProps} onAddKeyPanel={jest.fn()} />)
-
-    fireEvent.click(screen.getByTestId('explore-msg-btn'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.INSIGHTS_PANEL_OPENED,
-      eventData: {
-        databaseId: 'instanceId',
-        provider: 'RE_CLOUD',
-        source: 'browser',
-      }
-    })
-    sendEventTelemetry.mockRestore()
   })
 })

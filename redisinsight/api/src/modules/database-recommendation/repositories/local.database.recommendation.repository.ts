@@ -236,11 +236,9 @@ export class LocalDatabaseRecommendationRepository extends DatabaseRecommendatio
   }
 
   public async getTotalUnread(clientMetadata: ClientMetadata, databaseId: string): Promise<number> {
-    const totalUnread = await this.repository
-    .createQueryBuilder()
-    .where({ read: false, databaseId })
-    .getCount();
-
-    return totalUnread
+    return await this.repository
+      .createQueryBuilder()
+      .where({ read: false, databaseId })
+      .getCount();
   }
 }

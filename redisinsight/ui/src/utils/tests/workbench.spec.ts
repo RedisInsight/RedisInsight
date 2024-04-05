@@ -1,7 +1,6 @@
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { ExecuteQueryParams, ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
-import { getExecuteParams, getParsedParamsInQuery, findMarkdownPathByPath } from 'uiSrc/utils'
-import { MOCK_GUIDES_ITEMS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
+import { getExecuteParams, getParsedParamsInQuery, parseParams, findMarkdownPath } from 'uiSrc/utils'
+import { CodeButtonParams, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 
 const paramsState: ExecuteQueryParams = {
   activeRunQueryMode: RunQueryMode.ASCII,
@@ -52,22 +51,49 @@ describe('getParsedParamsInQuery', () => {
     })
 })
 
-const findMarkdownPathByPathTests = [
-  { input: '/static/workbench/quick-guides/document/learn-more.md', expected: '0/0' },
-  { input: 'quick-guides/working-with-hash.html', expected: '0/2' },
-  { input: 'quick-guides/working-with-hash.html', expected: '0/2' },
-  { input: 'quick-guides/document-capabilities.html', expected: '1' },
-  { input: '/redis_stack/working_with_json.md', manifest: MOCK_TUTORIALS_ITEMS, expected: '4' },
-  { input: 'quick-guides', expected: '0/0' },
+const findMarkdownPathTests = [
+  // mdPath
+  { input: { mdPath: '/static/workbench/quick-guides/document/learn-more.md' }, expected: '0/0' },
+  { input: { mdPath: 'quick-guides/working-with-hash.html' }, expected: '0/2' },
+  { input: { mdPath: 'quick-guides/working-with-json.html' }, expected: '0/1' },
+  { input: { mdPath: 'quick-guides/document-capabilities.html' }, expected: '1' },
+  { input: { mdPath: '/redis_stack/working_with_json.md' }, expected: '4' },
+
+  // id
+  { input: { id: 'document-capabilities' }, expected: '0/0' },
+  { input: { id: 'working-with-hash' }, expected: '0/2' },
+  { input: { id: 'working-with-json' }, expected: '0/1' },
+  { input: { id: 'second-internal-page' }, expected: '2' },
+  { input: { id: 'working_with_json' }, expected: '4' },
 ]
 
-describe('findMarkdownPathByPath', () => {
-  test.each(findMarkdownPathByPathTests)(
+describe('findMarkdownPath', () => {
+  test.each(findMarkdownPathTests)(
     '%j',
-    ({ input, manifest = MOCK_GUIDES_ITEMS, expected }) => {
+    ({ input, expected }) => {
       // @ts-ignore
-      const result = findMarkdownPathByPath(manifest, input)
+      const result = findMarkdownPath(MOCK_TUTORIALS_ITEMS, input)
       expect(result).toEqual(expected)
     }
   )
+})
+
+const parseParamsTests: any[] = [
+  ['[]', undefined],
+  ['[execute=auto]', { execute: 'auto' }],
+  ['[execute=auto;]', { execute: 'auto' }],
+  ['[execute=auto;mode=group]', { execute: 'auto', mode: 'group' }],
+  ['[execute=auto;mode=group;]', { execute: 'auto', mode: 'group' }],
+  ['[execute=auto;  mode=group;   ]', { execute: 'auto', mode: 'group' }],
+  ['[mode=raw;mode=ascii;mode=group;]', { mode: 'raw' }], // first parameters should be applied
+  ['[mode=raw]\n', { mode: 'raw' }],
+  ['[mode=raw]\r', { mode: 'raw' }],
+]
+
+describe('parseParams', () => {
+  it.each(parseParamsTests)('for input: %s (params), should be output: %s',
+    (params, expected) => {
+      const result = parseParams(params)
+      expect(result).toEqual(expected)
+    })
 })

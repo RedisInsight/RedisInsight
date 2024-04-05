@@ -19,7 +19,7 @@ import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/Ad
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { IHashFieldState, INITIAL_HASH_FIELD_STATE } from 'uiSrc/pages/browser/modules/key-details/components/hash-details/add-hash-fields/AddHashFields'
-import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/dto/hash.dto'
+import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
 import {
   AddHashFormConfig as config
 } from '../constants/fields-config'

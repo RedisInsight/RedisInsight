@@ -11,7 +11,7 @@ import {
   replaceEmptyValue,
   removeDeprecatedModuleCommands,
   checkDeprecatedModuleCommand,
-  checkDeprecatedCommandGroup,
+  checkDeprecatedCommandGroup, getUnsupportedModulesFromQuery,
 } from 'uiSrc/utils'
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
 import { render, screen } from 'uiSrc/utils/test-utils'
@@ -155,6 +155,16 @@ const checkDeprecatedCommandGroupTests = [
   { input: 'cf', expected: false },
 ]
 
+const getUnsupportedModulesFromQueryTests: Array<{
+  input: [Array<any>, string],
+  expected: Set<string>
+}> = [
+  { input: [[], 'ft.info'], expected: new Set(['search']) },
+  { input: [[], 'bf.info \ntfunction load'], expected: new Set(['bf', 'redisgears']) },
+  { input: [[], 'bf.info \ntfunction load \nJSON.GET'], expected: new Set(['ReJSON', 'bf', 'redisgears']) },
+  { input: [[{ name: 'search' }], 'ft.info'], expected: new Set([]) },
+]
+
 describe('getCommandNameFromQuery', () => {
   test.each(getCommandNameFromQueryTests)('%j', ({ input, expected }) => {
     // @ts-ignore
@@ -246,5 +256,11 @@ describe('removeDeprecatedModuleCommands', () => {
 describe('checkDeprecatedCommandGroup', () => {
   test.each(checkDeprecatedCommandGroupTests)('%j', ({ input, expected }) => {
     expect(checkDeprecatedCommandGroup(input)).toEqual(expected)
+  })
+})
+
+describe('getUnsupportedModulesFromQuery', () => {
+  test.each(getUnsupportedModulesFromQueryTests)('%j', ({ input, expected }) => {
+    expect(getUnsupportedModulesFromQuery(...input)).toEqual(expected)
   })
 })

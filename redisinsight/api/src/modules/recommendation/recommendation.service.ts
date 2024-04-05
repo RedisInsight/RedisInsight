@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Redis, Cluster } from 'ioredis';
 import { difference } from 'lodash';
 import { RecommendationProvider } from 'src/modules/recommendation/providers/recommendation.provider';
 import { Recommendation } from 'src/modules/database-analysis/models/recommendation';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { RedisString } from 'src/common/constants';
 import { Key } from 'src/modules/database-analysis/models';
+import { RedisClient } from 'src/modules/redis/client';
 
 interface RecommendationInput {
-  client?: Redis,
+  client?: RedisClient,
   keys?: Key[],
   info?: RedisString,
   total?: number,
-  globalClient?: Redis | Cluster,
+  globalClient?: RedisClient,
   exclude?: string[],
   indexes?: string[],
   libraries?: string[],
@@ -115,19 +115,6 @@ export class RecommendationService {
       [
         RECOMMENDATION_NAMES.SEARCH_HASH,
         async () => await this.recommendationProvider.determineSearchHashRecommendation(keys, indexes),
-      ],
-      [
-        RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS,
-        async () => await this.recommendationProvider.determineLuaToFunctionsRecommendation(client, libraries),
-      ],
-      [
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE,
-        async () => await this.recommendationProvider.determineFunctionsWithKeyspaceRecommendation(client, libraries),
-      ],
-      [
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
-        async () => await this.recommendationProvider
-          .determineFunctionsWithStreamsRecommendation(keys, libraries),
       ],
       // it is live time recommendation (will add later)
       [

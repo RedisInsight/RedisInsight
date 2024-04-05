@@ -29,8 +29,6 @@ export default {
     pluginsAssets: join(staticDir, 'resources', 'plugins'),
     commands: join(homedir, 'commands'),
     defaultCommandsDir: join(defaultsDir, 'commands'),
-    guides: process.env.RI_GUIDES_PATH || join(homedir, 'guides'),
-    defaultGuides: join(defaultsDir, 'guides'),
     tutorials: process.env.RI_TUTORIALS_PATH || join(homedir, 'tutorials'),
     defaultTutorials: join(defaultsDir, 'tutorials'),
     content: process.env.RI_CONTENT_PATH || join(homedir, 'content'),
@@ -42,12 +40,11 @@ export default {
     version,
     env: process.env.NODE_ENV || 'development',
     host: process.env.RI_APP_HOST ?? '0.0.0.0',
-    port: parseInt(process.env.RI_APP_PORT, 10) || 5000,
+    port: parseInt(process.env.RI_APP_PORT, 10) || 5540,
     docPrefix: 'api/docs',
     globalPrefix: 'api',
     customPluginsUri: '/plugins',
     staticUri: '/static',
-    guidesUri: '/static/guides',
     tutorialsUri: '/static/tutorials',
     customTutorialsUri: '/static/custom-tutorials',
     contentUri: '/static/content',
@@ -60,7 +57,7 @@ export default {
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.40.0',
+    appVersion: process.env.RI_APP_VERSION || '2.46.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -75,6 +72,9 @@ export default {
     migrationsRun: process.env.RI_DB_MIGRATIONS ? process.env.RI_DB_MIGRATIONS === 'true' : true,
   },
   redis_clients: {
+    forceStrategy: process.env.RI_REDIS_CLIENTS_FORCE_STRATEGY,
+    idleThreshold: parseInt(process.env.RI_REDIS_CLIENTS_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1h
+    syncInterval: parseInt(process.env.RI_REDIS_CLIENTS_SYNC_INTERVAL, 10) || 1000 * 60, // 1m
     idleSyncInterval: parseInt(process.env.RI_CLIENTS_IDLE_SYNC_INTERVAL, 10) || 1000 * 60 * 60, // 1hr
     maxIdleThreshold: parseInt(process.env.RI_CLIENTS_MAX_IDLE_THRESHOLD, 10) || 1000 * 60 * 60, // 1hr
     retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 3,
@@ -110,23 +110,16 @@ export default {
   plugins: {
     stateMaxSize: parseInt(process.env.RI_PLUGIN_STATE_MAX_SIZE, 10) || 1024 * 1024,
   },
-  guides: {
-    updateUrl: process.env.RI_GUIDES_UPDATE_URL
-      || 'https://github.com/RedisInsight/Guides/releases/download/2.x.x',
-    zip: process.env.RI_GUIDES_ZIP || dataZipFileName,
-    buildInfo: process.env.RI_GUIDES_INFO || buildInfoFileName,
-    devMode: !!process.env.RI_GUIDES_PATH,
-  },
   tutorials: {
     updateUrl: process.env.RI_TUTORIALS_UPDATE_URL
-      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.x.x',
+      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.42',
     zip: process.env.RI_TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.RI_TUTORIALS_INFO || buildInfoFileName,
     devMode: !!process.env.RI_TUTORIALS_PATH,
   },
   content: {
     updateUrl: process.env.RI_CONTENT_UPDATE_URL
-      || 'https://github.com/RedisInsight/Statics/releases/download/latest',
+      || 'https://github.com/RedisInsight/Statics/releases/download/2.42',
     zip: process.env.RI_CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.RI_CONTENT_INFO || buildInfoFileName,
     devMode: !!process.env.RI_CONTENT_PATH,

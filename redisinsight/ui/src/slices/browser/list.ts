@@ -21,7 +21,7 @@ import {
   SetListElementResponse,
   PushElementToListDto,
   DeleteListElementsDto, DeleteListElementsResponse,
-} from 'apiSrc/modules/browser/dto/list.dto'
+} from 'apiSrc/modules/browser/list/dto'
 import {
   refreshKeyInfoAction,
   fetchKeyInfo,
@@ -59,9 +59,6 @@ const listSlice = createSlice({
   reducers: {
     setListInitialState: () => initialState,
 
-    setListElements: (state, { payload } : PayloadAction<RedisResponseBuffer[]>) => {
-      state.data.elements = payload
-    },
     // load List elements
     loadListElements: (state, { payload: resetData = true }: PayloadAction<Maybe<boolean>>) => {
       state.loading = true
@@ -195,7 +192,6 @@ const listSlice = createSlice({
 // Actions generated from the slice
 export const {
   setListInitialState,
-  setListElements,
   loadListElements,
   loadListElementsSuccess,
   loadListElementsFailure,

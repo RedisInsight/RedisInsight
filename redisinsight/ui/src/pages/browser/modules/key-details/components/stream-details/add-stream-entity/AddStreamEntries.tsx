@@ -11,18 +11,18 @@ import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/ad
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { AddStreamEntriesDto } from 'apiSrc/modules/browser/dto/stream.dto'
+import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
 
 import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void
+  closePanel: (isCancelled?: boolean) => void
 }
 
 const AddStreamEntries = (props: Props) => {
-  const { onCancel } = props
-  const { lastEntry } = useSelector(streamDataSelector)
+  const { closePanel } = props
+  const { lastGeneratedId } = useSelector(streamDataSelector)
   const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
@@ -49,7 +49,7 @@ const AddStreamEntries = (props: Props) => {
       return
     }
 
-    if (!lastEntry?.id) {
+    if (!lastGeneratedId) {
       setEntryIdError('')
       return
     }
@@ -59,7 +59,7 @@ const AddStreamEntries = (props: Props) => {
       return
     }
 
-    const [lastIdTimestamp, lastId] = lastEntry.id?.split('-')
+    const [lastIdTimestamp, lastId] = lastGeneratedId.split('-')
     const [idTimestamp, id] = entryID?.split('-')
 
     if (toNumber(idTimestamp) > toNumber(lastIdTimestamp)) {
@@ -75,7 +75,7 @@ const AddStreamEntries = (props: Props) => {
   }
 
   const onSuccessAdded = () => {
-    onCancel()
+    closePanel()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -130,7 +130,7 @@ const AddStreamEntries = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-members-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

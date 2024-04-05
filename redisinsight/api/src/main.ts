@@ -7,7 +7,7 @@ import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get, Config } from 'src/utils';
-import { migrateHomeFolder } from 'src/init-helper';
+import { migrateHomeFolder, removeGuidesFolder } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
@@ -24,6 +24,7 @@ interface IApp {
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
   await migrateHomeFolder();
+  await removeGuidesFolder();
 
   const { port, host } = serverConfig;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);

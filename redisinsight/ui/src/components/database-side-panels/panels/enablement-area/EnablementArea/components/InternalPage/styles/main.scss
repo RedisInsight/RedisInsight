@@ -1,0 +1,33 @@
+@import './helpers';
+@import './variables';
+
+.enablement-area__page {
+  padding-bottom: 12px;
+  height: 100%;
+  letter-spacing: -0.12px;
+  .mb-s {
+    margin-bottom: ($margin-size-pace * 3 + px);
+  }
+  .mt-s {
+    margin-top: ($margin-size-pace * 3 + px);
+  }
+
+  @include font;
+  @import './typography';
+  @import './code';
+  @import './list';
+  @import './table';
+  @import './blockquote';
+
+  hr {
+    border: none;
+    height: 1px;
+    width: 100%;
+    background-color: var(--separatorColor);
+    margin: ($margin-size-pace * 3 + px) 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}

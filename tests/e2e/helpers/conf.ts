@@ -5,8 +5,8 @@ import { Chance } from 'chance';
 const chance = new Chance();
 
 // Urls for using in the tests
-export const commonUrl = process.env.COMMON_URL || 'https://localhost:5000';
-export const apiUrl = process.env.API_URL || 'https://localhost:5000/api';
+export const commonUrl = process.env.COMMON_URL || 'https://localhost:5540';
+export const apiUrl = process.env.API_URL || 'https://localhost:5540/api';
 
 export const workingDirectory = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
     || (joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redisinsight-app'));
@@ -116,6 +116,14 @@ export const ossStandaloneForSSHConfig = {
     host: process.env.OSS_STANDALONE_SSH_HOST || '172.33.100.111',
     port: process.env.OSS_STANDALONE_SSH_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_SSH_DATABASE_NAME || 'oss-standalone-for-ssh'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_SSH_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_SSH_PASSWORD
+};
+
+export const ossClusterForSSHConfig = {
+    host: process.env.OSS_STANDALONE_SSH_HOST || '172.33.100.211',
+    port: process.env.OSS_STANDALONE_SSH_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_SSH_DATABASE_NAME || 'oss-cluster-for-ssh'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_SSH_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_SSH_PASSWORD
 };

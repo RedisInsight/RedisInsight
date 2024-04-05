@@ -1,24 +1,22 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import cx from 'classnames'
-import { EuiButtonEmpty, EuiText } from '@elastic/eui'
+import {
+  EuiButtonEmpty, EuiProgress,
+} from '@elastic/eui'
 
-import { Theme } from 'uiSrc/constants'
+import { CodeButtonParams } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
 import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils'
-import { CodeButtonParams } from 'uiSrc/pages/workbench/components/enablement-area/interfaces'
 import { Nullable } from 'uiSrc/utils'
 import QueryCard from 'uiSrc/components/query-card'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-
-import TelescopeDark from 'uiSrc/assets/img/telescope-dark.svg'
-import TelescopeLight from 'uiSrc/assets/img/telescope-light.svg'
-import { ReactComponent as ArrowToGuidesIcon } from 'uiSrc/assets/img/workbench/arrow-to-guides.svg'
+import WbNoResultsMessage from 'uiSrc/pages/workbench/components/wb-no-results-message'
 
 import styles from './styles.module.scss'
 
 export interface Props {
+  isResultsLoaded: boolean
   items: CommandExecutionUI[]
   clearing: boolean
   processing: boolean
@@ -33,6 +31,7 @@ export interface Props {
 }
 const WBResults = (props: Props) => {
   const {
+    isResultsLoaded,
     items = [],
     clearing,
     processing,
@@ -45,27 +44,6 @@ const WBResults = (props: Props) => {
     onQueryOpen,
     scrollDivRef
   } = props
-  const { theme } = useContext(ThemeContext)
-
-  const NoResults = (
-    <div className={styles.noResults} data-testid="wb_no-results">
-      <ArrowToGuidesIcon
-        className={styles.arrowToGuides}
-      />
-      <img
-        className={styles.noResultsIcon}
-        src={theme === Theme.Dark ? TelescopeDark : TelescopeLight}
-        alt="no results"
-        data-testid="wb_no-results__icon"
-      />
-      <EuiText className={styles.noResultsTitle} data-testid="wb_no-results__title">
-        No results to display yet, <br /> but here&apos;s a good starting point
-      </EuiText>
-      <EuiText className={styles.noResultsText} data-testid="wb_no-results__summary">
-        Explore the amazing world of Redis Stack <br /> with our interactive guides
-      </EuiText>
-    </div>
-  )
 
   const handleQueryProfile = (
     profileType: ProfileQueryType,
@@ -84,12 +62,19 @@ const WBResults = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      {!!items.length && (
+      {!isResultsLoaded && (
+        <EuiProgress
+          color="primary"
+          size="xs"
+          position="absolute"
+          data-testid="progress-wb-history"
+        />
+      )}
+      {!!items?.length && (
         <div className={styles.header}>
           <EuiButtonEmpty
             size="s"
             iconType="trash"
-            iconSize="s"
             className={styles.clearAllBtn}
             onClick={() => onAllQueriesDelete?.()}
             disabled={clearing || processing}
@@ -101,7 +86,7 @@ const WBResults = (props: Props) => {
       )}
       <div className={cx(styles.container)}>
         <div ref={scrollDivRef} />
-        {items.map((
+        {items?.length ? items.map((
           {
             command = '',
             isOpen = false,
@@ -148,8 +133,8 @@ const WBResults = (props: Props) => {
             )}
             onQueryDelete={() => onQueryDelete(id)}
           />
-        ))}
-        {!items.length && NoResults}
+        )) : null}
+        {(isResultsLoaded && !items.length) && (<WbNoResultsMessage />)}
       </div>
     </div>
   )

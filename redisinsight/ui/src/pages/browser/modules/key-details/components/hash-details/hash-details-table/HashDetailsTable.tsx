@@ -61,9 +61,9 @@ import {
 } from 'uiSrc/utils'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
-import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/dto/hash.dto'
+import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/hash/dto'
 
-import PopoverDelete from '../../../../../components/popover-delete/PopoverDelete'
 import styles from './styles.module.scss'
 
 const suffix = '_hash'
@@ -94,7 +94,7 @@ const HashDetailsTable = (props: Props) => {
   const { loading } = useSelector(hashSelector)
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
-  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { viewFormat: viewFormatProp, lastRefreshTime } = useSelector(selectedKeySelector)
   const { name: key, length } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { loading: updateLoading } = useSelector(updateHashValueStateSelector)
   const { [KeyTypes.Hash]: hashSizes } = useSelector(appContextBrowserKeyDetails)
@@ -115,6 +115,10 @@ const HashDetailsTable = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    resetState()
+  }, [lastRefreshTime])
+
+  useEffect(() => {
     setFields(loadedFields)
 
     if (loadedFields.length < fields.length) {
@@ -122,14 +126,18 @@ const HashDetailsTable = (props: Props) => {
     }
 
     if (viewFormat !== viewFormatProp) {
-      setExpandedRows([])
-      setViewFormat(viewFormatProp)
-      setEditingIndex(null)
-      dispatch(setSelectedKeyRefreshDisabled(false))
-
-      clearCache()
+      resetState()
     }
   }, [loadedFields, viewFormatProp])
+
+  const resetState = () => {
+    setExpandedRows([])
+    setViewFormat(viewFormatProp)
+    setEditingIndex(null)
+    dispatch(setSelectedKeyRefreshDisabled(false))
+
+    clearCache()
+  }
 
   const clearCache = () => setTimeout(() => {
     cellCache.clearAll()

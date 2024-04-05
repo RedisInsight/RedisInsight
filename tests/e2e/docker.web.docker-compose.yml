@@ -38,10 +38,11 @@ services:
   app:
     logging:
       driver: none
-    image: riv2:latest
+    image: redisinsight:amd64
     env_file:
       - ./.env
     environment:
+      RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY
       RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT
       RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY
     volumes:

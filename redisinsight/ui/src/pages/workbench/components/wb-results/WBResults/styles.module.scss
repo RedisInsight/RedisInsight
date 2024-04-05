@@ -11,6 +11,8 @@
 
   display: flex;
   flex-direction: column;
+
+  position: relative;
 }
 
 .container {
@@ -31,47 +33,6 @@
 
   flex-shrink: 0;
   border-bottom: 1px solid var(--tableDarkestBorderColor);
-}
-
-.noResults {
-  max-width: 280px;
-  height: 100%;
-  min-height: 280px;
-  display: flex;
-  margin: 0 auto;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  position: relative;
-}
-
-.noResultsTitle {
-  padding-top: 18px;
-  font: normal normal 500 15px/24px 'Graphik', sans-serif !important;
-}
-
-.noResultsText {
-  font: normal normal normal 13px/18px 'Graphik', sans-serif !important;
-  letter-spacing: -0.13px;
-  padding-top: 12px;
-}
-
-.arrowToGuides {
-  fill: none !important;
-
-  position: absolute;
-  top: calc(50% + 30px);
-  left: 0;
-  transform: translateX(-100%) !important;
-  max-width: 180px;
-  width: 11vw;
-}
-
-.noResultsIcon {
-  width: 150px !important;
-  height: auto !important;
 }
 
 .clearAllBtn {

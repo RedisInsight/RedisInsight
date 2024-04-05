@@ -1,7 +1,7 @@
 {
   "productName": "RedisInsight",
   "appId": "org.RedisLabs.RedisInsight-V2",
-  "copyright": "Copyright © 2023 Redis Ltd.",
+  "copyright": "Copyright © 2024 Redis Ltd.",
   "files": [
     "dist",
     "node_modules",

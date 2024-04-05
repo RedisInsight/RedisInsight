@@ -2,7 +2,7 @@
   width: 100%;
   background-color: var(--euiColorEmptyShade);
 
-  padding: 8px 12px;
+  padding: 4px 12px;
 
   display: flex;
   flex-shrink: 0;
@@ -16,6 +16,8 @@
   align-items: center;
   justify-content: space-between;
   min-height: 38px;
+
+  flex-wrap: wrap;
 }
 
 .viewTypeSwitch {
@@ -55,10 +57,12 @@
   }
 }
 
-.refreshContainer {
+.keysSummary {
+  margin: 4px 8px 4px 4px;
 }
 
 .keysControlsWrapper {
   display: flex;
   align-items: center;
+  margin: 4px 4px 4px auto;
 }

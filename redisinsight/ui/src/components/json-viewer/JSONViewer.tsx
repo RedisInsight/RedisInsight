@@ -11,10 +11,10 @@ interface Props {
 }
 
 const JSONViewer = (props: Props) => {
-  const { value, expanded = false, space = 2 } = props
+  const { value, expanded = false, space = 2, useNativeBigInt = true } = props
 
   try {
-    const data = JSONBigInt({ useNativeBigInt: true }).parse(value)
+    const data = JSONBigInt({ useNativeBigInt }).parse(value)
 
     return {
       value: (

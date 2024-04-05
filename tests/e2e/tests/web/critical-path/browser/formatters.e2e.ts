@@ -16,10 +16,10 @@ const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6
 keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
 const binaryFormattersSet = [formatters[5], formatters[6], formatters[7]];
 const formattersHighlightedSet = [formatters[0], formatters[3]];
-const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8]];
+const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8], formatters[9], formatters[10]];
 const formattersForEditSet = [formatters[0], formatters[1], formatters[3]];
-const formattersWithTooltipSet = [formatters[0], formatters[1], formatters[2], formatters[3], formatters[4], formatters[8]];
-const notEditableFormattersSet = [formatters[2], formatters[4], formatters[8]];
+const formattersWithTooltipSet = [formatters[0], formatters[1], formatters[2], formatters[3], formatters[4], formatters[8], formatters[9], formatters[10]];
+const notEditableFormattersSet = [formatters[2], formatters[4], formatters[8], formatters[9], formatters[10]];
 const defaultFormatter = 'Unicode';
 
 fixture `Formatters`
@@ -69,7 +69,7 @@ formattersHighlightedSet.forEach(formatter => {
 });
 fromBinaryFormattersSet.forEach(formatter => {
     test(`Verify that user can see highlighted key details in ${formatter.format} format`, async t => {
-        // Verify for Msgpack, Protobuf, Java serialized, Pickle formats
+        // Verify for Msgpack, Protobuf, Java serialized, Pickle, Vector 32-bit, Vector 64-bit formats
         // Open Hash key details
         await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
         // Add valid value in HEX format for convertion
@@ -112,8 +112,8 @@ formattersForEditSet.forEach(formatter => {
     });
 });
 formattersWithTooltipSet.forEach(formatter => {
-    test(`Verify that user can see tooltip with convertion failed message on hover when data is not valid ${formatter.format}`, async t => {
-        // Verify for JSON, Msgpack, Protobuf, PHP serialized, Java serialized object, Pickle formatters
+    test(`  ${formatter.format}`, async t => {
+        // Verify for JSON, Msgpack, Protobuf, PHP serialized, Java serialized object, Pickle, Vector 32-bit, Vector 64-bit formatters
         const failedMessage = `Failed to convert to ${formatter.format}`;
         for (let i = 0; i < keysData.length; i++) {
             const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}-][data-testid*=${keysData[i].data}]`);
@@ -190,7 +190,7 @@ test('Verify that user can format different data types of PHP serialized', async
 });
 notEditableFormattersSet.forEach(formatter => {
     test(`Verify that user see edit icon disabled for all keys when ${formatter.format} selected`, async t => {
-        // Verify for Protobuf, Java serialized, Pickle
+        // Verify for Protobuf, Java serialized, Pickle, Vector 32-bit, Vector 64-bit
         // Verify for Hash, List, ZSet, String keys
         for (const key of keysData) {
             if (key.textType === 'Hash' || key.textType === 'List' || key.textType === 'String') {

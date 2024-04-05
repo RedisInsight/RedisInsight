@@ -9,11 +9,14 @@ export interface StateWorkbenchSettings {
 }
 
 export interface StateWorkbenchResults {
+  isLoaded: boolean
   loading: boolean
   processing: boolean
   clearing: boolean
   error: string
   items: CommandExecutionUI[]
+  resultsMode: ResultsMode
+  activeRunQueryMode: RunQueryMode
 }
 
 export enum EnablementAreaComponent {
@@ -26,6 +29,7 @@ export interface IEnablementAreaItem {
   id: string
   type: EnablementAreaComponent
   label: string
+  summary?: string
   children?: IEnablementAreaItem[]
   args?: Record<string, any>
   _actions?: string[]
@@ -57,11 +61,6 @@ export interface CommandExecutionUI extends Partial<CommandExecution> {
 export enum RunQueryMode {
   Raw = 'RAW',
   ASCII = 'ASCII',
-}
-
-export enum AutoExecute {
-  True = 'true',
-  False = 'false',
 }
 
 export enum ResultsMode {

@@ -84,11 +84,6 @@ export interface StateAppContext {
   }
   workbench: {
     script: string
-    enablementArea: {
-      isMinimized: boolean
-      search: string
-      itemScrollTop: number
-    },
     panelSizes: {
       vertical: {
         [key: string]: number
@@ -104,6 +99,9 @@ export interface StateAppContext {
   }
   triggeredFunctions: {
     lastViewedPage: string
+  }
+  capability: {
+    source: string
   }
 }
 
@@ -211,17 +209,6 @@ export interface StateAppNotifications {
     totalUnread: number
     shouldDisplayToast: boolean
   }
-}
-
-export interface StateAppActionBar {
-  status: ActionBarStatus
-  text?: string
-  actions?: ActionBarActions[]
-}
-
-export interface ActionBarActions {
-  onClick: () => void
-  label: string
 }
 
 export enum ActionBarStatus {

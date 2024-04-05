@@ -5,8 +5,7 @@ import { mockRedisWrongTypeError, mockDatabase, MockType } from 'src/__mocks__';
 import { CommandType, TelemetryEvents } from 'src/constants';
 import { ReplyError } from 'src/models';
 import { CommandParsingError } from 'src/modules/cli/constants/errors';
-import { CommandExecutionStatus } from 'src/modules/cli/dto/cli.dto';
-import { ICliExecResultFromNode } from 'src/modules/redis/redis-tool.service';
+import { CommandExecutionStatus, ICliExecResultFromNode } from 'src/modules/cli/dto/cli.dto';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CliAnalyticsService } from './cli-analytics.service';
 
@@ -82,6 +81,25 @@ describe('CliAnalyticsService', () => {
           since: '1.0.0',
         },
       },
+    });
+  });
+
+  describe('sendCliClientCreatedEvent', () => {
+    it('should emit CliIndexInfoSubmitted event', () => {
+      service.sendIndexInfoEvent(databaseId, mockCustomData);
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.CliIndexInfoSubmitted,
+        {
+          databaseId,
+          ...mockCustomData,
+        },
+      );
+    });
+    it('should not fail and should not emit when there is no data', () => {
+      service.sendIndexInfoEvent(databaseId, null);
+
+      expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
 

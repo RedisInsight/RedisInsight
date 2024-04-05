@@ -19,7 +19,7 @@ import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { deleteKeyAction, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
@@ -36,7 +36,6 @@ export interface Props {
   ) => void
   onDelete: (key: RedisResponseBuffer) => void
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 export const firstPanelId = 'tree'
@@ -56,7 +55,6 @@ const KeyTree = forwardRef((props: Props, ref) => {
     commonFilterType,
     deleting,
     onAddKeyPanel,
-    onBulkActionsPanel,
   } = props
 
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -107,9 +105,12 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }, [keysState.keys])
 
   useEffect(() => {
-    setFirstDataLoaded(true)
+    if (keysState.lastRefreshTime) {
+      setFirstDataLoaded(true)
+    }
+
     setItems(parseKeyNames(keysState.keys))
-  }, [sorting, delimiter, keysState.lastRefreshTime])
+  }, [keysState.lastRefreshTime, delimiter, sorting])
 
   useEffect(() => {
     openSelectedKey(selectedKeyName)
@@ -163,20 +164,14 @@ const KeyTree = forwardRef((props: Props, ref) => {
   }
 
   if (keysState.keys.length === 0) {
-    const NoItemsMessage = () => {
-      if (loading || !firstDataLoaded) {
-        return <span>loading...</span>
-      }
-
-      return (
-        <NoKeysMessage
-          total={keysState.total}
-          scanned={keysState.scanned}
-          onAddKeyPanel={onAddKeyPanel}
-          onBulkActionsPanel={onBulkActionsPanel}
-        />
-      )
-    }
+    const NoItemsMessage = () => (
+      <NoKeysMessage
+        isLoading={loading || !firstDataLoaded}
+        total={keysState.total}
+        scanned={keysState.scanned}
+        onAddKeyPanel={onAddKeyPanel}
+      />
+    )
 
     return (
       <div className={cx(styles.content)}>

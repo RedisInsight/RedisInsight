@@ -1,0 +1,31 @@
+@import "uiSrc/styles/mixins/_global.scss";
+
+.wrapper {
+  padding: 16px 12px 0;
+
+  .panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: var(--euiColorLightestShade) !important;
+
+    padding: 8px 18px !important;
+  }
+
+  .link {
+    flex-grow: 1;
+    text-align: center;
+    margin-right: 18px;
+  }
+
+  .linkIcon {
+    transform: rotate(45deg);
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+  .hideText {
+    display: none;
+  }
+}

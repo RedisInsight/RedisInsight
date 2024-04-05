@@ -17,6 +17,9 @@ const whitelist = {
   'windows': {
     'nsis': 1,
     'nsis:x64': 1,
+  },
+  'docker': {
+    'all': 1,
   }
 };
 

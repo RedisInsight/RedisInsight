@@ -4,7 +4,7 @@ import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { deleteRowsFromTableInDB } from '../../../../helpers/database-scripts';
+import { DatabaseScripts } from '../../../../helpers/database-scripts';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -12,7 +12,6 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const welcomePage = new WelcomePage();
 
-const featuresConfigTable = 'features_config';
 const pathes = {
     defaultRemote: path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json'),
     dockerConfig: path.join('.', 'test-data', 'features-configs', 'sso-docker-build.json'),
@@ -32,7 +31,7 @@ fixture `Cloud SSO`
         // Update remote config .json to default
         await modifyFeaturesConfigJson(pathes.defaultRemote);
         // Clear features config table
-        await deleteRowsFromTableInDB(featuresConfigTable);
+        await DatabaseScripts.deleteRowsFromTableInDB({ tableName: 'features_config' });
     });
 test('Verify that user can see SSO feature if it is enabled in feature config', async t => {
     // Update remote config .json to config with buildType filter excluding current app build

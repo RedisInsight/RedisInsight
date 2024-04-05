@@ -12,12 +12,10 @@ import { getOverviewMetrics } from './components/OverviewMetrics'
 
 const TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5000 : 60_000
 
-interface IProps { windowDimensions: number }
-
-const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
+const DatabaseOverviewWrapper = () => {
   let interval: NodeJS.Timeout
   const { theme } = useContext(ThemeContext)
-  const { id: connectedInstanceId = '', modules = [], db } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '', db } = useSelector(connectedInstanceSelector)
   const overview = useSelector(connectedInstanceOverviewSelector)
 
   const dispatch = useDispatch()
@@ -37,9 +35,7 @@ const DatabaseOverviewWrapper = ({ windowDimensions } :IProps) => {
 
   return (
     <DatabaseOverview
-      modules={modules}
       metrics={getOverviewMetrics({ theme, items: overview, db })}
-      windowDimensions={windowDimensions}
     />
   )
 }

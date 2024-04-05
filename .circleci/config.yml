@@ -169,6 +169,7 @@ aliases:
       - << pipeline.parameters.linux >>
       - << pipeline.parameters.mac >>
       - << pipeline.parameters.windows >>
+      - << pipeline.parameters.docker >>
   ignore-for-manual-build: &ignore-for-manual-build
     when:
       not: *manual-build-conditions
@@ -197,6 +198,12 @@ parameters:
   windows:
     type: string
     default: *ignore
+  docker:
+    type: string
+    default: *ignore
+  redis_client:
+    type: string
+    default: ""
 
 jobs:
   # Test jobs
@@ -298,6 +305,10 @@ jobs:
         description: Send report for test run to slack
         type: boolean
         default: false
+      redis_client:
+        description: Library to use for redis connection
+        type: string
+        default: ""
     steps:
       - checkout
       - restore_cache:
@@ -311,10 +322,14 @@ jobs:
             - run:
                 name: Load built docker image from workspace
                 command: |
-                  docker image load -i /tmp/docker-release/docker.tar
+                  docker image load -i /tmp/release/docker/docker-linux-alpine.amd64.tar
       - run:
           name: Run tests
           command: |
+            if [ << parameters.redis_client >> != "" ]; then
+              export RI_REDIS_CLIENTS_FORCE_STRATEGY=<< parameters.redis_client >>
+            fi
+
             ./redisinsight/api/test/test-runs/start-test-run.sh -r << parameters.rte >> -t << parameters.build >>
             mkdir -p mkdir itest/coverages && mkdir -p itest/results
             cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/<< parameters.rte >>.result.json
@@ -406,7 +421,11 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: choco install nodejs --version=18.15.0
+      - run:
+          command: |
+            nvm install 18.15.0
+            nvm use 18.15.0
+            npm install --global yarn
       - run:
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
@@ -456,7 +475,7 @@ jobs:
             - run:
                 name: Load built docker image from workspace
                 command: |
-                  docker image load -i /tmp/docker-release/docker.tar
+                  docker image load -i /tmp/release/docker/docker-linux-alpine.amd64.tar
             - run:
                 name: Run tests
                 command: |
@@ -567,10 +586,6 @@ jobs:
         type: enum
         default: stage
         enum: ['stage', 'prod', 'dev']
-      redisstack:
-        description: Build RedisStack archives
-        type: boolean
-        default: true
       target:
         description: Build target
         type: string
@@ -627,24 +642,6 @@ jobs:
             fi
 
             RI_UPGRADES_LINK='' RI_SEGMENT_WRITE_KEY='' yarn package:stage --linux << parameters.target >>
-      - when:
-          condition:
-            equal: [ true, << parameters.redisstack >> ]
-          steps:
-            - run:
-                name: Repack AppImage to tar
-                command: |
-                  ARCH=x86_64 ./.circleci/redisstack/app-image.repack.sh
-            - run:
-                name: Build sources
-                command: ./.circleci/redisstack/build.sh
-            - run:
-                name: Build modules
-                command: |
-                  PLATFORM=linux ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=linux ARCH=arm64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=x64 .circleci/redisstack/build_modules.sh
-                  PLATFORM=darwin ARCH=arm64 .circleci/redisstack/build_modules.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -654,7 +651,6 @@ jobs:
             - release/RedisInsight*.flatpak
             - release/RedisInsight*.snap
             - release/*-linux.yml
-            - release/redisstack
   macosx:
     macos:
       xcode: 14.2.0
@@ -682,6 +678,7 @@ jobs:
       - run:
           command: |
             cp ./electron/package.json ./redisinsight/
+      - <<: *keychain
       - run:
           name: install dependencies
           command: |
@@ -689,7 +686,6 @@ jobs:
             yarn --cwd redisinsight/api/ install
             yarn build:statics
           no_output_timeout: 15m
-      - <<: *keychain
       - run:
           name: Build macos dmg
           command: |
@@ -774,7 +770,10 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            choco install nodejs --version=18.15.0
+            nvm install 18.15.0
+            nvm use 18.15.0
+            npm install --global yarn
+
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install
             yarn --cwd redisinsight/api/ install
@@ -858,11 +857,39 @@ jobs:
       env:
         type: enum
         default: staging
-        enum: ['staging', 'production']
+        enum: [ 'staging', 'production' ]
     steps:
       - checkout
+      - node/install:
+          node-version: '18.15.0'
       - run:
-          name: Build Docker image (API + UI)
+          name: Install dependencies
+          command: |
+            sudo apt-get update -y && sudo apt-get install -y ca-certificates qemu-user-static
+      - run:
+          name: Build sources
+          command: ./.circleci/build/build.sh
+      - run:
+          name: Build web archives
+          command: |
+            unset npm_config_keytar_binary_host_mirror
+            unset npm_config_node_sqlite3_binary_host_mirror
+
+            # Docker sources
+            PLATFORM=linux ARCH=x64 LIBC=musl .circleci/build/build_modules.sh
+            PLATFORM=linux ARCH=arm64 LIBC=musl .circleci/build/build_modules.sh
+
+            # Redis Stack + VSC Linux
+            PLATFORM=linux ARCH=x64 .circleci/build/build_modules.sh
+            PLATFORM=linux ARCH=arm64 .circleci/build/build_modules.sh
+
+            # VSC Darwin
+            PLATFORM=darwin ARCH=x64 .circleci/build/build_modules.sh
+            PLATFORM=darwin ARCH=arm64 .circleci/build/build_modules.sh
+            # VSC Windows
+            PLATFORM=win32 ARCH=x64 .circleci/build/build_modules.sh
+      - run:
+          name: Build Docker (x64, arm64)
           command: |
             TELEMETRY=$RI_SEGMENT_WRITE_KEY_DEV
 
@@ -874,19 +901,34 @@ jobs:
               TELEMETRY=$RI_SEGMENT_WRITE_KEY_STAGE
             fi
 
-            docker build --build-arg NODE_ENV=<< parameters.env >> \
+            # Build alpine x64 image
+            docker buildx build \
+            -f .circleci/build/build.Dockerfile \
+            --platform linux/amd64 \
+            --build-arg DIST=release/web/RedisInsight-web-linux-musl.x64.tar.gz \
+            --build-arg NODE_ENV=<< parameters.env >> \
             --build-arg RI_SEGMENT_WRITE_KEY="$TELEMETRY" \
-            -t riv2:latest .
+            -t redisinsight:amd64 \
+            .
 
-            mkdir -p docker-release
-            docker image save -o docker-release/docker.tar riv2
+            # Build alpine arm64 image
+            docker buildx build \
+            -f .circleci/build/build.Dockerfile \
+            --platform linux/arm64 \
+            --build-arg DIST=release/web/RedisInsight-web-linux-musl.arm64.tar.gz \
+            --build-arg NODE_ENV=<< parameters.env >> \
+            --build-arg RI_SEGMENT_WRITE_KEY="$TELEMETRY" \
+            -t redisinsight:arm64 \
+            .
+
+            mkdir -p release/docker
+            docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
+            docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
       - persist_to_workspace:
           root: .
           paths:
-            - ./docker-release
-      - store_artifacts:
-          path: docker-release
-          destination: docker-release
+            - ./release
+
   licenses-check:
     executor: linux-executor
     steps:
@@ -923,7 +965,7 @@ jobs:
       - store_artifacts:
           path: release
           destination: release
-  release-aws-test:
+  release-aws-private-dev:
     executor: linux-executor
     steps:
       - checkout
@@ -933,21 +975,11 @@ jobs:
           name: publish
           command: |
             rm release/._* ||:
-            chmod +x .circleci/redisstack/sum_sha256.sh
-            .circleci/redisstack/sum_sha256.sh
+            chmod +x .circleci/build/sum_sha256.sh
+            .circleci/build/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/rs-ri-builds/${CIRCLE_BUILD_NUM} --recursive
-  release-aws-manual:
-    executor: linux-executor
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          command: |
-            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/manual-builds/${CIRCLE_BUILD_NUM} --recursive --exclude "*" --include "RedisInsight*"
-
+            aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/private/builds/${CIRCLE_BUILD_NUM} --recursive
   release-aws-private:
     executor: linux-executor
     steps:
@@ -964,11 +996,29 @@ jobs:
       - run:
           name: publish
           command: |
-            chmod +x .circleci/redisstack/sum_sha256.sh
-            .circleci/redisstack/sum_sha256.sh
+            chmod +x .circleci/build/sum_sha256.sh
+            .circleci/build/sum_sha256.sh
             applicationVersion=$(jq -r '.version' redisinsight/package.json)
 
             aws s3 cp release/ s3://${AWS_BUCKET_NAME}/private/${applicationVersion} --recursive
+
+  release-docker:
+    executor: linux-executor
+    steps:
+      - checkout
+      - attach_workspace:
+            at: .
+      - run:
+          name: Release docker images
+          command: |
+            appVersion=$(jq -r '.version' redisinsight/package.json)
+
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+
+            ./.circleci/build/release-docker.sh \
+            -d redisinsight \
+            -r $DOCKER_REPO \
+            -v $appVersion
 
   publish-prod-aws:
     executor: linux-executor
@@ -1128,6 +1178,7 @@ workflows:
                 - /^be/feature.*/
                 - /^be/bugfix.*/
       - integration-tests-run:
+          redis_client: << pipeline.parameters.redis_client >>
           matrix:
             alias: itest-code
             parameters:
@@ -1157,7 +1208,6 @@ workflows:
       - linux:
           name: Build app - Linux (stage)
           env: stage
-          redisstack: false
           target: AppImage
           requires:
             - Setup build (stage)
@@ -1205,6 +1255,8 @@ workflows:
             alias: itest-code
             parameters:
               rte: *iTestsNames
+              redis_client:
+                - << pipeline.parameters.redis_client >>
           name: ITest - << matrix.rte >> (code)
           requires:
             - Start All Tests
@@ -1274,15 +1326,10 @@ workflows:
           name: Build app - Linux (stage)
           env: stage
           target: << pipeline.parameters.linux >>
-          redisstack: false
           requires:
             - Setup build (stage)
       - store-build-artifacts:
           name: Store build artifacts (stage)
-          requires:
-            - Build app - Linux (stage)
-      - release-aws-manual:
-          name: Release AWS stage
           requires:
             - Build app - Linux (stage)
   manual-build-mac:
@@ -1312,10 +1359,6 @@ workflows:
           name: Store build artifacts (stage)
           requires:
             - Build app - MacOS (stage)
-      - release-aws-manual:
-          name: Release AWS stage
-          requires:
-            - Build app - MacOS (stage)
   manual-build-windows:
     when: << pipeline.parameters.windows >>
     jobs:
@@ -1342,10 +1385,30 @@ workflows:
           name: Store build artifacts (stage)
           requires:
             - Build app - Windows (stage)
-      - release-aws-manual:
-          name: Release AWS stage
+  manual-build-docker:
+    when: << pipeline.parameters.docker >>
+    jobs:
+      - manual-build-validate:
+          name: Validating build parameters
+          os: docker
+          target: << pipeline.parameters.docker >>
+      - setup-sign-certificates:
+          name: Setup sign certificates (stage)
           requires:
-            - Build app - Windows (stage)
+            - Validating build parameters
+      - setup-build:
+          name: Setup build (stage)
+          env: stage
+          requires:
+            - Setup sign certificates (stage)
+      - docker:
+          name: Build docker images (stage)
+          requires:
+            - Setup build (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
+          requires:
+            - Build docker images (stage)
 
   # build electron app (dev) from "build" branches
   build:
@@ -1375,18 +1438,56 @@ workflows:
           name: Build app - Windows (dev)
           env: dev
           requires: *devBuildRequire
+      - docker:
+          name: Build docker images (dev)
+          requires: *devBuildRequire
       - store-build-artifacts:
           name: Store build artifacts (dev)
           requires:
             - Build app - Linux (dev)
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
-      - release-aws-test:
-          name: Release AWS dev
+            - Build docker images (dev)
+
+  # build electron app (dev) for internal use only
+  internal:
+    <<: *ignore-for-manual-build
+    jobs:
+      - setup-sign-certificates:
+          name: Setup sign certificates (dev)
+          filters:
+            branches:
+              only:
+                - /^internal.*/
+      - setup-build:
+          name: Setup build (dev)
+          env: dev
+          requires:
+            - Setup sign certificates (dev)
+      - linux:
+          name: Build app - Linux (dev)
+          env: dev
+          requires: &devBuildRequire
+            - Setup build (dev)
+      - macosx:
+          name: Build app - MacOS (dev)
+          env: dev
+          requires: *devBuildRequire
+      - windows:
+          name: Build app - Windows (dev)
+          env: dev
+          requires: *devBuildRequire
+      - docker:
+          name: Build docker images (dev)
+          requires: *devBuildRequire
+      # release to private AWS (dev)
+      - release-aws-private-dev:
+          name: Release private AWS dev
           requires:
             - Build app - Linux (dev)
             - Build app - MacOS (dev)
             - Build app - Windows (dev)
+            - Build docker images (dev)
 
   # Main workflow for release/* and latest branches only
   release:
@@ -1409,23 +1510,14 @@ workflows:
             alias: itest-code
             parameters:
               rte: *iTestsNames
+              redis_client:
+                - << pipeline.parameters.redis_client >>
           name: ITest - << matrix.rte >> (code)
           filters: *releaseAndLatestFilter
       - integration-tests-coverage:
           name: ITest - Final coverage
           requires:
             - itest-code
-        # e2e tests (doesn't affect pipeline even if fail)
-      - docker:
-          name: Build docker image
-          filters: *releaseAndLatestFilter
-      - e2e-tests:
-          name: E2ETest
-          build: docker
-          parallelism: 4
-          requires:
-            - Build docker image
-
 
       # ================== STAGE ==================
       # prebuild (stage)
@@ -1451,19 +1543,29 @@ workflows:
       - windows:
           name: Build app - Windows (stage)
           requires: *stageElectronBuildRequires
+      - docker:
+          name: Build docker images (stage)
+          requires: *stageElectronBuildRequires
       # e2e desktop tests on AppImage build
       - e2e-app-image:
           name: E2ETest (AppImage)
           parallelism: 2
           requires:
             - Build app - Linux (stage)
-      # release to AWS (stage)
-      - release-aws-test:
-          name: Release AWS stage
+      # e2e docker tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker images (stage)
+      - store-build-artifacts:
+          name: Store build artifacts (stage)
           requires:
             - Build app - Linux (stage)
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
+            - Build docker images (stage)
 
       # Needs approval from QA team that build was tested before merging to latest
       - qa-approve:
@@ -1473,6 +1575,7 @@ workflows:
             - Build app - Linux (stage)
             - Build app - MacOS (stage)
             - Build app - Windows (stage)
+            - Build docker images (stage)
 
       # ================== PROD ==================
       # build and release electron app (prod)
@@ -1501,6 +1604,23 @@ workflows:
           name: Build app - Windows (prod)
           env: prod
           requires: *prodElectronBuildRequires
+      - docker:
+          name: Build docker images (prod)
+          env: production
+          requires: *prodElectronBuildRequires
+      # e2e desktop tests on AppImage build
+      - e2e-app-image:
+          name: E2ETest (AppImage)
+          parallelism: 2
+          requires:
+            - Build app - Linux (prod)
+      # e2e docker tests
+      - e2e-tests:
+          name: E2ETest
+          build: docker
+          parallelism: 4
+          requires:
+            - Build docker images (prod)
       # virus check all electron apps (prod)
       - virustotal-file:
           name: Virus check - AppImage (prod)
@@ -1554,6 +1674,7 @@ workflows:
             - Virus check arm64 - dmg (prod)
             - Virus check MAS - pkg (prod)
             - Virus check - exe (prod)
+            - Build docker images (prod)
       # Manual approve for publish release
       - approve-publish:
           name: Approve Publish Release (prod)
@@ -1564,6 +1685,11 @@ workflows:
       # Publish release
       - publish-prod-aws:
           name: Publish AWS S3
+          requires:
+            - Approve Publish Release (prod)
+          <<: *prodFilter # double check for "latest"
+      - release-docker:
+          name: Release docker images
           requires:
             - Approve Publish Release (prod)
           <<: *prodFilter # double check for "latest"

@@ -2,29 +2,30 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import config, { Config } from 'src/utils/config';
+import { Response } from 'express';
 import { AutoUpdatedStaticsProvider } from './providers/auto-updated-statics.provider';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
-const GUIDES_CONFIG = config.get('guides') as Config['guides'];
 const TUTORIALS_CONFIG = config.get('tutorials') as Config['tutorials'];
 
 const CONTENT_CONFIG = config.get('content');
 
+const downloadableStaticFiles = (res: Response) => {
+  if (res.req?.query?.download === 'true') {
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', 'attachment;');
+  }
+};
+
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      serveRoot: SERVER_CONFIG.guidesUri,
-      rootPath: join(PATH_CONFIG.guides),
-      serveStaticOptions: {
-        fallthrough: false,
-      },
-    }),
     ServeStaticModule.forRoot({
       serveRoot: SERVER_CONFIG.tutorialsUri,
       rootPath: join(PATH_CONFIG.tutorials),
       serveStaticOptions: {
         fallthrough: false,
+        setHeaders: downloadableStaticFiles,
       },
     }),
     ServeStaticModule.forRoot({
@@ -32,6 +33,7 @@ const CONTENT_CONFIG = config.get('content');
       rootPath: join(PATH_CONFIG.customTutorials),
       serveStaticOptions: {
         fallthrough: false,
+        setHeaders: downloadableStaticFiles,
       },
     }),
     ServeStaticModule.forRoot({
@@ -64,15 +66,6 @@ const CONTENT_CONFIG = config.get('content');
     }),
   ],
   providers: [
-    {
-      provide: 'GuidesProvider',
-      useFactory: () => new AutoUpdatedStaticsProvider({
-        name: 'GuidesProvider',
-        destinationPath: PATH_CONFIG.guides,
-        defaultSourcePath: PATH_CONFIG.defaultGuides,
-        ...GUIDES_CONFIG,
-      }),
-    },
     {
       provide: 'TutorialsProvider',
       useFactory: () => new AutoUpdatedStaticsProvider({

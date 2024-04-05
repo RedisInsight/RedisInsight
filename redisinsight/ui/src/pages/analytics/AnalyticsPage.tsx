@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
-import InstanceHeader from 'uiSrc/components/instance-header'
 import { Pages } from 'uiSrc/constants'
 import { appContextAnalytics, setLastAnalyticsPage } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -58,12 +57,9 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
   }, [pathname])
 
   return (
-    <>
-      <InstanceHeader />
-      <div className={styles.main}>
-        <AnalyticsPageRouter routes={routes} />
-      </div>
-    </>
+    <div className={styles.main}>
+      <AnalyticsPageRouter routes={routes} />
+    </div>
   )
 }
 

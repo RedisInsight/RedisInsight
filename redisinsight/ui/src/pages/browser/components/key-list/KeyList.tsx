@@ -38,7 +38,7 @@ import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
 import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/dto'
+import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
@@ -56,7 +56,6 @@ export interface Props {
   onDelete: (key: RedisResponseBuffer) => void
   commonFilterType: Nullable<KeyTypes>
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 const cellCache = new CellMeasurerCache({
@@ -76,7 +75,6 @@ const KeyList = forwardRef((props: Props, ref) => {
     onDelete,
     commonFilterType,
     onAddKeyPanel,
-    onBulkActionsPanel,
   } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
@@ -87,12 +85,13 @@ const KeyList = forwardRef((props: Props, ref) => {
   const { keyList: { isNotRendered: isNotRenderedContext } } = useSelector(appContextBrowser)
 
   const [, rerender] = useState({})
-  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(!!keysState.keys.length)
+  const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(
+    !!keysState.keys.length || !isNotRenderedContext
+  )
   const [deletePopoverIndex, setDeletePopoverIndex] = useState<Maybe<number>>(undefined)
 
   const controller = useRef<Nullable<AbortController>>(null)
   const itemsRef = useRef(keysState.keys)
-  const isNotRendered = useRef(isNotRenderedContext)
   const renderedRowsIndexesRef = useRef({ startIndex: 0, lastIndex: 0 })
 
   const dispatch = useDispatch()
@@ -110,15 +109,16 @@ const KeyList = forwardRef((props: Props, ref) => {
   useEffect(() => {
     itemsRef.current = [...keysState.keys]
 
-    if (!isNotRendered.current && !loading) {
+    if (
+      (!firstDataLoaded && keysState.lastRefreshTime)
+      || (searchMode === SearchMode.Redisearch && itemsRef.current.length === 0)
+    ) {
       setFirstDataLoaded(true)
+      dispatch(setBrowserIsNotRendered(false))
     }
 
-    isNotRendered.current = false
-    dispatch(setBrowserIsNotRendered(isNotRendered.current))
     if (itemsRef.current.length === 0) {
       cancelAllMetadataRequests()
-      setFirstDataLoaded(true)
       rerender({})
       return
     }
@@ -137,24 +137,12 @@ const KeyList = forwardRef((props: Props, ref) => {
 
   const NoItemsMessage = () => (
     <NoKeysMessage
+      isLoading={loading || !firstDataLoaded}
       total={keysState.total}
       scanned={keysState.scanned}
       onAddKeyPanel={onAddKeyPanel}
-      onBulkActionsPanel={onBulkActionsPanel}
     />
   )
-
-  const getNoItemsMessage = () => {
-    if (isNotRendered.current) {
-      return ''
-    }
-
-    if (itemsRef.current.length < keysState.keys.length) {
-      return 'loading...'
-    }
-
-    return <NoItemsMessage />
-  }
 
   const onLoadMoreItems = (props: { startIndex: number, stopIndex: number }) => {
     if (searchMode === SearchMode.Redisearch
@@ -334,6 +322,8 @@ const KeyList = forwardRef((props: Props, ref) => {
     },
   ]
 
+  const noItemsMessage = NoItemsMessage()
+
   const VirtualizeTable = () => (
     <VirtualTable
       selectable
@@ -349,7 +339,7 @@ const KeyList = forwardRef((props: Props, ref) => {
       items={itemsRef.current}
       totalItemsCount={keysState.total ?? Infinity}
       scanned={isSearched || isFiltered ? keysState.scanned : 0}
-      noItemsMessage={getNoItemsMessage()}
+      noItemsMessage={noItemsMessage}
       selectedKey={selectedKey.data}
       scrollTopProp={scrollTopPosition}
       setScrollTopPosition={setScrollTopPosition}

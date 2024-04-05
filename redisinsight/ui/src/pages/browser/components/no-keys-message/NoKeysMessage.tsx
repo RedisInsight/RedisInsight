@@ -5,6 +5,7 @@ import { SearchMode } from 'uiSrc/slices/interfaces/keys'
 
 import {
   FullScanNoResultsFoundText,
+  LoadingText,
   NoResultsFoundText,
   NoSelectedIndexText,
   ScanNoResultsFoundText,
@@ -15,10 +16,10 @@ import { redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 import NoKeysFound from '../no-keys-found'
 
 export interface Props {
+  isLoading: boolean
   total: number
   scanned: number
   onAddKeyPanel: (value: boolean) => void
-  onBulkActionsPanel: (value: boolean) => void
 }
 
 const NoKeysMessage = (props: Props) => {
@@ -26,7 +27,7 @@ const NoKeysMessage = (props: Props) => {
     total,
     scanned,
     onAddKeyPanel,
-    onBulkActionsPanel,
+    isLoading,
   } = props
 
   const { selectedIndex, isSearched: redisearchIsSearched } = useSelector(redisearchSelector)
@@ -35,6 +36,10 @@ const NoKeysMessage = (props: Props) => {
   if (searchMode === SearchMode.Redisearch) {
     if (!selectedIndex) {
       return NoSelectedIndexText
+    }
+
+    if (isLoading) {
+      return LoadingText
     }
 
     if (total === 0) {
@@ -46,8 +51,12 @@ const NoKeysMessage = (props: Props) => {
     }
   }
 
+  if (isLoading) {
+    return LoadingText
+  }
+
   if (total === 0) {
-    return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} onBulkActionsPanel={onBulkActionsPanel} />)
+    return (<NoKeysFound onAddKeyPanel={onAddKeyPanel} />)
   }
 
   if (patternIsSearched) {

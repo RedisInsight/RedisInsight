@@ -18,9 +18,6 @@ import {
   BigStringStrategy,
   CompressionForListStrategy,
   BigAmountConnectedClientsStrategy,
-  FunctionsWithStreamsStrategy,
-  FunctionsWithKeyspaceStrategy,
-  LuaToFunctionsStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -46,9 +43,6 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, new CompressionForListStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS, new BigAmountConnectedClientsStrategy());
-    this.strategies.set(RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS, new FunctionsWithStreamsStrategy(databaseService));
-    this.strategies.set(RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS, new LuaToFunctionsStrategy(databaseService));
-    this.strategies.set(RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE, new FunctionsWithKeyspaceStrategy(databaseService));
   }
 
   getStrategy(type: string): IRecommendationStrategy {

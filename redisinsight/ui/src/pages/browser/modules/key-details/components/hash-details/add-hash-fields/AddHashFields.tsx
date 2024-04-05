@@ -22,11 +22,11 @@ import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiS
 import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
 import { stringToBuffer } from 'uiSrc/utils'
-import { AddFieldsToHashDto } from 'apiSrc/modules/browser/dto/hash.dto'
+import { AddFieldsToHashDto } from 'apiSrc/modules/browser/hash/dto'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  onCancel: (isCancelled?: boolean) => void;
+  closePanel: (isCancelled?: boolean) => void
 }
 
 export interface IHashFieldState {
@@ -42,7 +42,7 @@ export const INITIAL_HASH_FIELD_STATE: IHashFieldState = {
 }
 
 const AddHashFields = (props: Props) => {
-  const { onCancel } = props
+  const { closePanel } = props
   const dispatch = useDispatch()
   const [fields, setFields] = useState<IHashFieldState[]>([{ ...INITIAL_HASH_FIELD_STATE }])
   const { loading } = useSelector(updateHashValueStateSelector)
@@ -91,7 +91,7 @@ const AddHashFields = (props: Props) => {
   }
 
   const onSuccessAdded = () => {
-    onCancel()
+    closePanel()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
         viewType,
@@ -203,7 +203,7 @@ const AddHashFields = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => onCancel(true)} data-testid="cancel-fields-btn">
+              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-fields-btn">
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

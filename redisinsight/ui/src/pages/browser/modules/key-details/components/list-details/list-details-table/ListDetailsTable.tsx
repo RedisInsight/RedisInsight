@@ -64,7 +64,7 @@ import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import {
   SetListElementDto,
   SetListElementResponse,
-} from 'apiSrc/modules/browser/dto'
+} from 'apiSrc/modules/browser/list/dto'
 
 import styles from './styles.module.scss'
 
@@ -94,7 +94,7 @@ const ListDetailsTable = (props: Props) => {
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
-  const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const { viewFormat: viewFormatProp, lastRefreshTime } = useSelector(selectedKeySelector)
   const { [KeyTypes.List]: listSizes } = useSelector(appContextBrowserKeyDetails)
 
   const [elements, setElements] = useState<IListElement[]>([])
@@ -111,6 +111,10 @@ const ListDetailsTable = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    resetState()
+  }, [lastRefreshTime])
+
+  useEffect(() => {
     setElements(loadedElements)
 
     if (loadedElements.length < elements.length) {
@@ -118,14 +122,18 @@ const ListDetailsTable = (props: Props) => {
     }
 
     if (viewFormat !== viewFormatProp) {
-      setExpandedRows([])
-      setViewFormat(viewFormatProp)
-      setEditingIndex(null)
-      dispatch(setSelectedKeyRefreshDisabled(false))
-
-      clearCache()
+      resetState()
     }
   }, [loadedElements, viewFormatProp])
+
+  const resetState = () => {
+    setExpandedRows([])
+    setViewFormat(viewFormatProp)
+    setEditingIndex(null)
+    dispatch(setSelectedKeyRefreshDisabled(false))
+
+    clearCache()
+  }
 
   const clearCache = () => setTimeout(() => {
     cellCache.clearAll()

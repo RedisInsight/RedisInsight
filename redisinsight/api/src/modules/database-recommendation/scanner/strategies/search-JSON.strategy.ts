@@ -14,21 +14,26 @@ export class SearchJSONStrategy extends AbstractRecommendationStrategy {
   async isRecommendationReached(
     data: SearchJSON,
   ): Promise<IDatabaseRecommendationStrategyData> {
-    // todo:improve decision mechanism when store Recommendations to avoid infinite checks when isReached:false
-    try {
-      const indexes = await data.client.sendCommand(
-        ['FT._LIST'],
-        { replyEncoding: 'utf8' },
-      ) as string[];
+    const jsonKey = data.keys.find((key: GetKeyInfoResponse) => key.type === RedisDataType.JSON);
 
-      if (indexes.length) {
-        return { isReached: false };
+    if (jsonKey) {
+      // todo:improve decision mechanism when store Recommendations to avoid infinite checks when isReached:false
+      try {
+        const indexes = await data.client.sendCommand(
+          ['FT._LIST'],
+          { replyEncoding: 'utf8' },
+        ) as string[];
+
+        if (indexes.length) {
+          return { isReached: false };
+        }
+      } catch (e) {
+        // ignore error
       }
-    } catch (e) {
-      // ignore error
+
+      return { isReached: true, params: { keys: [jsonKey.name] } };
     }
 
-    const isJSON = data.keys.find((key: GetKeyInfoResponse) => key.type === RedisDataType.JSON);
-    return isJSON ? { isReached: !!isJSON, params: { keys: [isJSON.name] } } : { isReached: false };
+    return { isReached: false };
   }
 }

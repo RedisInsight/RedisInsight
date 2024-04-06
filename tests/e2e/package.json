@@ -24,6 +24,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "axios": "^1.6.0",
     "cli-argument-parser": "0.4.5"
   },
   "resolutions": {
@@ -42,7 +43,6 @@
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",
     "archiver": "^5.3.1",
-    "axios": "^1.6.0",
     "chance": "1.1.8",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^5.0.0",

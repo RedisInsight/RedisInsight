@@ -1,6 +1,6 @@
 import { NestMiddleware, Injectable } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-const { trim } from 'lodash';
+import { trim } from 'lodash';
 import * as fs from 'fs';
 
 @Injectable()

@@ -3,7 +3,7 @@ import {
   MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { StreamController } from 'src/modules/browser/stream/controllers/stream.controller';
 import { ConsumerController } from 'src/modules/browser/stream/controllers/consumer.controller';
@@ -18,7 +18,7 @@ export class StreamModule {
     return {
       module: StreamModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: StreamModule,
         }]),
@@ -40,9 +40,9 @@ export class StreamModule {
     consumer
       .apply(RedisConnectionMiddleware)
       .forRoutes(
-        RouterModule.resolvePath(StreamController),
-        RouterModule.resolvePath(ConsumerGroupController),
-        RouterModule.resolvePath(ConsumerController),
+        StreamController,
+        ConsumerGroupController,
+        ConsumerController,
       );
   }
 }

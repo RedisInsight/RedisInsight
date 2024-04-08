@@ -120,6 +120,7 @@ export class BrowserPage extends InstancePage {
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
     redisearchFreeLink = Selector('[data-testid=get-started-link]');
+    guideLinksBtn = Selector('[data-testid^=guide-button-]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -962,6 +963,15 @@ export class BrowserPage extends InstancePage {
     */
     async clearFilter(): Promise<void> {
         await t.click(this.clearFilterButton);
+    }
+
+    /**
+     * Open Guide link by name
+     * @param guide The guide name
+     */
+    async clickGuideLinksByName(guide: string): Promise<void> {
+        const linkGuide = Selector(`[data-testid^="guide-button-"]`).withExactText(guide);
+        await t.click(linkGuide);
     }
 }
 

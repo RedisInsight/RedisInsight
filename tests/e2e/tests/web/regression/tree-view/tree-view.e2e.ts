@@ -1,5 +1,5 @@
 import { DatabaseHelper } from '../../../../helpers/database';
-import { BrowserPage } from '../../../../pageObjects';
+import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -7,13 +7,14 @@ import {
     ossStandaloneConfigEmpty,
     ossStandaloneRedisearch, ossStandaloneRedisGears
 } from '../../../../helpers/conf';
-import { KeyTypesTexts, rte } from '../../../../helpers/constants';
+import { ExploreTabs, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 import { Common } from '../../../../helpers/common';
 import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
 const browserPage = new BrowserPage();
+const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
@@ -41,6 +42,36 @@ test
         const message = 'Let\'sstartworkingLoadsampledata+Addkeymanually';
         const actualMessage = await browserPage.keyListMessage.innerText;
         const cleanMessage = actualMessage.replace(/[\s\n]+/g, '');
+        const capabilities = [{
+            name: 'Search and Query',
+            tutorial: 'How To Query Your Data'
+        },
+        {
+            name: 'JSON',
+            tutorial: 'JSON'
+        },
+        {
+            name: 'Triggers and functions',
+            tutorial: 'Triggers And Functions Explained'
+        },
+        {
+            name: 'Time Series',
+            tutorial: 'Time Series'
+        },
+        {
+            name: 'Probabilistic',
+            tutorial: 'Probabilistic'
+        }];
+
+        await t.expect(browserPage.guideLinksBtn.count).gte(5);
+        for (const capability of capabilities) {
+            await browserPage.clickGuideLinksByName(capability.name);
+            await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel not opened');
+            const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+            await t.expect(tutorials.closeEnablementPage.textContent)
+                .contains(capability.tutorial, `${capability.tutorial} tutorial not opened from No Keys page`);
+            await t.click(browserPage.InsightsPanel.closeButton);
+        }
 
         // Verify the message
         await t.click(browserPage.treeViewButton);

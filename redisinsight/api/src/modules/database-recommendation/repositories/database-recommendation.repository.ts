@@ -70,4 +70,9 @@ export abstract class DatabaseRecommendationRepository {
    * @param id
    */
   abstract delete(clientMetadata: ClientMetadata, id: string): Promise<void>;
+
+  /**
+   * Get total unread recommendations
+   */
+  abstract getTotalUnread(clientMetadata: ClientMetadata, databaseId: string): Promise<number>;
 }

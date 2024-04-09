@@ -1,5 +1,6 @@
 import { join } from 'path';
 import * as os from 'os';
+import { trim } from 'lodash';
 import { version } from '../package.json';
 
 const homedir = join(__dirname, '..');
@@ -15,15 +16,17 @@ const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourc
   ? join(process['resourcesPath'], 'defaults')
   : join(__dirname, '..', 'defaults');
 
-const customPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/plugins` : '/plugins';
-const staticUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static` : '/static';
-const tutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/tutorials` : '/static/tutorials';
-const customTutorialsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/custom-tutorials` : '/static/custom-tutorials';
-const contentUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/content` : '/static/content';
-const defaultPluginsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/plugins` : '/static/plugins';
-const pluginsAssetsUri = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/static/resources/plugins` : '/static/resources/plugins';
+const proxyPath = trim(process.env.RI_PROXY_PATH, '/');
 
-const socketPath = process.env.RI_PROXY_PATH ? `/${process.env.RI_PROXY_PATH}/socket.io` : '/socket.io';
+const customPluginsUri = join('/', proxyPath, 'plugins');
+const staticUri = join('/', proxyPath, 'static');
+const tutorialsUri = join('/', proxyPath, 'static', 'tutorials');
+const customTutorialsUri = join('/', proxyPath, 'static', 'custom-tutorials');
+const contentUri = join('/', proxyPath, 'static', 'content');
+const defaultPluginsUri = join('/', proxyPath, 'static', 'plugins');
+const pluginsAssetsUri = join('/', proxyPath, 'static', 'resources', 'plugins');
+
+const socketPath = join('/', proxyPath, 'socket.io');
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');
@@ -65,7 +68,7 @@ export default {
     defaultPluginsUri,
     pluginsAssetsUri,
     base: process.env.RI_BASE || '/',
-    proxyPath: process.env.RI_PROXY_PATH || '',
+    proxyPath,
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,

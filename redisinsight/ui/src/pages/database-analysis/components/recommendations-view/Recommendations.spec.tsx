@@ -430,7 +430,7 @@ describe('Recommendations', () => {
     render(<Recommendations />)
 
     expect(screen.queryByTestId('bigSets-redis-stack-link')).toBeInTheDocument()
-    expect(screen.queryByTestId('bigSets-redis-stack-link')).toHaveAttribute('href', 'hhttps://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/')
+    expect(screen.queryByTestId('bigSets-redis-stack-link')).toHaveAttribute('href', 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/')
   })
 
   it('should render go tutorial button', () => {

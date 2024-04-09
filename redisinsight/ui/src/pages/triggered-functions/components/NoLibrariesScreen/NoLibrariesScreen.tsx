@@ -14,8 +14,8 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
-import { ReactComponent as TriggersAndFunctionsImageDark } from 'uiSrc/assets/img/triggers_and_functions_dark2.svg'
-import { ReactComponent as TriggersAndFunctionsImageLight } from 'uiSrc/assets/img/triggers_and_functions_light2.svg'
+import { ReactComponent as TriggersAndFunctionsImageDark } from 'uiSrc/assets/img/triggers_and_functions_dark.svg'
+import { ReactComponent as TriggersAndFunctionsImageLight } from 'uiSrc/assets/img/triggers_and_functions_light.svg'
 import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 

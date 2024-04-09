@@ -2,7 +2,7 @@
 [![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisInsight/RedisInsight.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisInsight/RedisInsight/alerts/)
 
-# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis. 
+# <img src="https://github.com/Redis-Insight/Redis-Insight/assets/99594890/333b7bbd-22ac-4457-a045-5f181e79ec50" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis. 
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 

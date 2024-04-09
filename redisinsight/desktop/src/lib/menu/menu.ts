@@ -184,13 +184,13 @@ export class MenuBuilder {
         {
           label: 'License Terms',
           click() {
-            shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE')
+            shell.openExternal('https://github.com/Redis-Insight/Redis-Insight/blob/main/LICENSE')
           }
         },
         {
           label: 'Submit a Bug or Idea',
           click() {
-            shell.openExternal('https://github.com/RedisInsight/RedisInsight/issues')
+            shell.openExternal('https://github.com/Redis-Insight/Redis-Insight/issues')
           }
         },
         {
@@ -301,13 +301,13 @@ export class MenuBuilder {
           {
             label: 'License Terms',
             click() {
-              shell.openExternal('https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE')
+              shell.openExternal('https://github.com/Redis-Insight/Redis-Insight/blob/main/LICENSE')
             }
           },
           {
             label: 'Submit a Bug or Idea',
             click() {
-              shell.openExternal('https://github.com/RedisInsight/RedisInsight/issues')
+              shell.openExternal('https://github.com/Redis-Insight/Redis-Insight/issues')
             }
           },
           {

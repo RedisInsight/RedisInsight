@@ -27,6 +27,7 @@ import {
   toggleInsightsPanel
 } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -218,9 +219,9 @@ const ONBOARDING_FEATURES = {
             <EuiSpacer size="xs" />
             Take advantage of syntax highlighting, intelligent auto-complete, and working with commands in editor mode.
             <EuiSpacer size="xs" />
-            Workbench visualizes complex <a href="https://redis.io/docs/about/about-stack/" target="_blank" rel="noreferrer">Redis Stack</a> data
+            Workbench visualizes complex <a href={EXTERNAL_LINKS.redisStack} target="_blank" rel="noreferrer">Redis Stack</a> data
             models such as documents, graphs, and time series.
-            Or you <a href="https://github.com/RedisInsight/Packages" target="_blank" rel="noreferrer">can build your own visualization</a>.
+            Or you <a href="https://github.com/Redis-Insight/Packages" target="_blank" rel="noreferrer">can build your own visualization</a>.
 
             {isString(firstIndex) && (
               <>
@@ -308,7 +309,7 @@ const ONBOARDING_FEATURES = {
           <>
             Share your Redis expertise with your team and the wider community by building custom Redis Insight tutorials.
             <EuiSpacer size="xs" />
-            Use our <a href="https://github.com/RedisInsight/Tutorials" target="_blank" rel="noreferrer">instructions</a> to
+            Use our <a href="https://github.com/Redis-Insight/Tutorials" target="_blank" rel="noreferrer">instructions</a> to
             describe your implementations of Redis for other users to follow and
             interact with in the context of a connected Redis database
           </>

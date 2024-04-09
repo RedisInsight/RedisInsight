@@ -13,7 +13,7 @@ mkdir -p "$WORKING_DIRECTORY/release/redisstack"
 mkdir -p "$TMP_FOLDER"
 
 hdiutil attach "./release/Redis-Insight-mac-$ARCH.dmg"
-rsync -av "/Volumes/Redis*/Redis\ Insight.app" "/tmp"
+rsync -av /Volumes/Redis*/Redis\ Insight.app/* "/tmp/$RI_APP_FOLDER_NAME"
 cd "/tmp" || exit 1
 tar -czvf "$TAR_NAME" "$RI_APP_FOLDER_NAME"
 cp "$TAR_NAME" "$WORKING_DIRECTORY/release/redisstack/"

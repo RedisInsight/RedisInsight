@@ -1,13 +1,19 @@
-import React, { useCallback } from 'react'
+import React from 'react'
+import cx from 'classnames'
 import { useSelector } from 'react-redux'
-import InsightsTrigger from 'uiSrc/components/insights-trigger'
+import { some } from 'lodash'
+
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import HomeTabs from 'uiSrc/components/home-tabs'
-
-import { BuildType } from 'uiSrc/constants/env'
-import { PageHeader } from 'uiSrc/components'
-import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { CapabilityPromotion } from 'uiSrc/pages/home/components/capability-promotion'
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import InsightsTrigger from 'uiSrc/components/insights-trigger'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/ai-chatbot-message'
+import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
+import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
+import { FeatureFlags } from 'uiSrc/constants'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -16,27 +22,28 @@ export interface Props {
 
 const HomePageTemplate = (props: Props) => {
   const { children } = props
-  const { server } = useSelector(appInfoSelector)
 
-  const HomeHeader = useCallback(() => (server?.buildType === BuildType.RedisStack ? (
-    <PageHeader
-      title="Redis Databases"
-      className={styles.pageHeader}
-      logo={(
-        <InsightsTrigger source="home page" />
-      )}
-    />
-  ) : (
-    <div className={styles.pageDefaultHeader}>
-      <HomeTabs />
-      <CapabilityPromotion />
-      <InsightsTrigger source="home page" />
-    </div>
-  )), [server])
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { aiChatbot: aiChatbotHighlighting } = getHighlightingFeatures(features)
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = some([databaseChatFeature, documentationChatFeature], (feature) => feature?.flag)
 
   return (
     <>
-      <HomeHeader />
+      <div className={styles.pageDefaultHeader}>
+        <HomeTabs />
+        <HighlightedFeature
+          isHighlight={isAnyChatAvailable && aiChatbotHighlighting}
+          {...(BUILD_FEATURES.aiChatbot || {})}
+        >
+          <AiChatbotMessage />
+        </HighlightedFeature>
+        <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
+        <InsightsTrigger source="home page" />
+      </div>
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>
           {children}

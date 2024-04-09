@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { filter } from 'lodash'
 
-import { insightsPanelSelector, openTutorialByPath, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSelectedTab, insightsPanelSelector, openTutorialByPath, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
 import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
@@ -16,12 +16,13 @@ import styles from './styles.module.scss'
 export interface Props {
   mode?: 'reduced' | 'wide'
   wrapperClassName?: string
+  capabilityIds?: string[]
 }
 
 const displayedCapabilityIds = ['sq-intro', 'ds-json-intro']
 
 const CapabilityPromotion = (props: Props) => {
-  const { mode = 'wide', wrapperClassName } = props
+  const { mode = 'wide', wrapperClassName, capabilityIds = displayedCapabilityIds } = props
   const { data: dataInit } = useSelector(guideLinksSelector)
   const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
 
@@ -29,7 +30,7 @@ const CapabilityPromotion = (props: Props) => {
   const history = useHistory()
 
   // display only RediSearch and JSON. In the future will be configured via github
-  const data = filter(dataInit, ({ tutorialId }) => displayedCapabilityIds.includes(tutorialId))
+  const data = filter(dataInit, ({ tutorialId }) => capabilityIds.includes(tutorialId))
 
   const sendTelemetry = (id?: string) => {
     sendEventTelemetry({
@@ -52,6 +53,7 @@ const CapabilityPromotion = (props: Props) => {
 
   const onClickExplore = () => {
     sendTelemetry()
+    dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
     dispatch(toggleInsightsPanel())
   }
 

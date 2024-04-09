@@ -1,4 +1,4 @@
-import { chunk } from 'lodash';
+import { chunk, isArray } from 'lodash';
 import { IRedisClusterNode } from 'src/models';
 
 /**
@@ -20,13 +20,20 @@ import { IRedisClusterNode } from 'src/models';
  * }
  * ```
  * @param input
+ * @param options
  */
-export const convertArrayReplyToObject = (input: string[]): { [key: string]: any } => chunk(
+export const convertArrayReplyToObject = (
+  input: string[],
+  options: { utf?: boolean } = {},
+): { [key: string]: any } => chunk(
   input,
   2,
 ).reduce((prev: any, current: string[]) => {
   const [key, value] = current;
-  return { ...prev, [key.toString().toLowerCase()]: value };
+  return {
+    ...prev,
+    [key.toString().toLowerCase()]: options.utf && !isArray(value) ? value?.toString() : value,
+  };
 }, {});
 
 /**

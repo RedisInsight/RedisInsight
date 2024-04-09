@@ -14,6 +14,11 @@ import { keysSelector, loadKeys, loadSearchHistory, setFilter, setPatternSearchM
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
+import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import SearchKeyList from './SearchKeyList'
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
@@ -44,6 +49,15 @@ jest.mock('uiSrc/slices/browser/redisearch', () => ({
   redisearchSelector: jest.fn().mockReturnValue({
     search: '',
     selectedIndex: null,
+  }),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    databaseChat: {
+      flag: true
+    }
   }),
 }))
 
@@ -108,9 +122,9 @@ describe('SearchKeyList', () => {
   })
 
   it('"loadKeys" should not be called after Enter if searchMode=Rediseach and index=null', async () => {
-    const searchTerm = 'a'
+    const searchTerm = 'a';
 
-    keysSelector.mockImplementation(() => ({
+    (keysSelector as jest.Mock).mockImplementation(() => ({
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Browser,
       isSearch: false,
@@ -133,8 +147,45 @@ describe('SearchKeyList', () => {
 
     fireEvent.click(screen.getByTestId('search-btn'))
 
-    expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions([...afterRenderActions])
-    )
+    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions([...afterRenderActions]))
+  })
+
+  it('should call proper actions after click on ask copilot', async () => {
+    (keysSelector as jest.Mock).mockImplementation(() => ({
+      searchMode: SearchMode.Redisearch,
+      viewType: KeyViewType.Browser,
+      isSearch: false,
+      isFiltered: false,
+    }))
+
+    render(<SearchKeyList />)
+
+    fireEvent.click(screen.getByTestId('ask-redis-copilot-btn'))
+
+    const expectedActions = [
+      changeSelectedTab(InsightsPanelTabs.AiAssistant),
+      setSelectedTab(AiChatType.Query),
+      toggleInsightsPanel(true),
+    ]
+
+    expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions([...expectedActions]))
+  })
+
+  it('should cnot render ask copilot if feature is disabled', async () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      databaseChat: {
+        flag: false
+      }
+    });
+    (keysSelector as jest.Mock).mockImplementation(() => ({
+      searchMode: SearchMode.Redisearch,
+      viewType: KeyViewType.Browser,
+      isSearch: false,
+      isFiltered: false,
+    }))
+
+    render(<SearchKeyList />)
+
+    expect(screen.queryByTestId('ask-redis-copilot-btn')).not.toBeInTheDocument()
   })
 })

@@ -55,14 +55,16 @@ import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/instances'
 import { initialState as initialStateRdiDryRunJob } from 'uiSrc/slices/rdi/dryRun'
 import { initialState as initialStateRdiStatistics } from 'uiSrc/slices/rdi/statistics'
 import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi/testConnections'
+import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
+import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/rdi'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
 interface Options {
-  initialState?: RootState;
-  store?: typeof rootStore;
-  withRouter?: boolean;
-  [property: string]: any;
+  initialState?: RootState
+  store?: typeof rootStore
+  withRouter?: boolean
+  [property: string]: any
 }
 
 // root state
@@ -127,7 +129,8 @@ const initialStateDefault: RootState = {
     cloud: cloneDeep(initialStateOAuth),
   },
   panels: {
-    insights: cloneDeep(initialStateInsightsPanel)
+    insights: cloneDeep(initialStateInsightsPanel),
+    aiAssistant: cloneDeep(initialStateAiAssistant),
   },
   rdi: {
     pipeline: cloneDeep(initialStateRdiPipeline),
@@ -139,8 +142,9 @@ const initialStateDefault: RootState = {
 }
 
 // mocked store
-export const mockStore = configureMockStore([thunk])
+export const mockStore = configureMockStore<RootState>([thunk])
 export const mockedStore = mockStore(initialStateDefault)
+export const mockedStoreFn = () => mockStore(initialStateDefault)
 
 // insert root state to the render Component
 const render = (
@@ -236,7 +240,7 @@ jest.mock('react-router-dom', () => ({
 // mock <AutoSizer />
 jest.mock(
   'react-virtualized-auto-sizer',
-  () => ({ children }) => children({ height: 600, width: 600 })
+  () => ({ children }: { children: any }) => children({ height: 600, width: 600 })
 )
 
 export const MOCKED_HIGHLIGHTING_FEATURES = ['importDatabases', 'anotherFeature']

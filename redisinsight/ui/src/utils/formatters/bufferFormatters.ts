@@ -107,6 +107,29 @@ const ASCIIToBuffer = (strInit: string) => {
   return anyToBuffer(Array.from(Buffer.from(result, 'hex')))
 }
 
+const bufferToFloat32Array = (data: Uint8Array) => {
+  const buffer = new Uint8Array(data).buffer
+  const dataView = new DataView(buffer)
+  let vector = []
+
+  for(let i = 0; i < dataView.byteLength; i += 4) {
+    vector.push(dataView.getFloat32(i, true))
+  }
+  return new Float32Array(vector)
+}
+
+const bufferToFloat64Array = (data: Uint8Array) => {
+  const buffer = new Uint8Array(data).buffer
+  const dataView = new DataView(buffer)
+  const vector = []
+
+  for (let i = 0; i < dataView.byteLength; i += 8) {
+    vector.push(dataView.getFloat64(i, true))
+  }
+  return new Float64Array(vector)
+}
+
+
 const bufferToUint8Array = (reply: RedisResponseBuffer): Uint8Array => new Uint8Array(reply.data)
 const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(bufferToUint8Array(reply))
 
@@ -186,7 +209,9 @@ export {
   anyToBuffer,
   bufferToBinary,
   binaryToBuffer,
-  bufferToJava
+  bufferToJava,
+  bufferToFloat32Array,
+  bufferToFloat64Array,
 }
 
 window.ri = {

@@ -16,6 +16,7 @@ import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics'
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CloudAuthServerEvent } from 'src/modules/cloud/common/constants';
+import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 
 @Injectable()
 export class CloudAuthService {
@@ -127,7 +128,7 @@ export class CloudAuthService {
 
   /**
    * Process oauth callback
-   * Exchanges code and mofidy user session
+   * Exchanges code and modify user session
    * Generates proper errors
    * @param query
    */
@@ -150,13 +151,41 @@ export class CloudAuthService {
 
     await this.sessionService.updateSessionData(authRequest.sessionMetadata.sessionId, {
       accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token,
+      idpType: authRequest.idpType,
     });
 
     return authRequest.callback;
   }
 
+  private async revokeRefreshToken(sessionMetadata: SessionMetadata): Promise<void> {
+    try {
+      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+
+      if (!session?.refreshToken) {
+        return;
+      }
+
+      const strategy = this.getAuthStrategy(session.idpType);
+
+      const tokenUrl = strategy.generateRevokeTokensUrl(session.refreshToken, 'refresh_token');
+
+      await axios.post(tokenUrl.toString()
+        .split('?')[0], tokenUrl.searchParams, {
+        headers: {
+          accept: 'application/json',
+          'cache-control': 'no-cache',
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+      });
+    } catch (e) {
+      // ignore error
+      this.logger.error('Unable to revoke tokens', e);
+    }
+  }
+
   /**
-   * Hanfle OAuth callback from Web or by deep link
+   * Handle OAuth callback from Web or by deep link
    * @param query
    * @param from
    */
@@ -184,12 +213,36 @@ export class CloudAuthService {
     }
 
     try {
-      callback?.(result)?.catch((e) => this.logger.error('Async callback failed', e));
+      callback?.(result)?.catch((e: Error) => this.logger.error('Async callback failed', e));
     } catch (e) {
       this.logger.error('Callback failed', e);
     }
 
     return result;
+  }
+
+  async renewTokens(sessionMetadata: SessionMetadata, idpType: CloudAuthIdpType, refreshToken: string) {
+    try {
+      const strategy = this.getAuthStrategy(idpType);
+
+      const tokenUrl = strategy.generateRenewTokensUrl(refreshToken);
+
+      const { data } = await axios.post(tokenUrl.toString()
+        .split('?')[0], tokenUrl.searchParams, {
+        headers: {
+          accept: 'application/json',
+          'cache-control': 'no-cache',
+          'content-type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      await this.sessionService.updateSessionData(sessionMetadata.sessionId, {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+      });
+    } catch (e) {
+      throw new CloudApiUnauthorizedException();
+    }
   }
 
   /**
@@ -200,6 +253,9 @@ export class CloudAuthService {
   async logout(sessionMetadata: SessionMetadata): Promise<void> {
     try {
       this.logger.log('Logout cloud user');
+
+      await this.revokeRefreshToken(sessionMetadata);
+
       await this.sessionService.deleteSessionData(sessionMetadata.sessionId);
 
       this.eventEmitter.emit(CloudAuthServerEvent.Logout, sessionMetadata);

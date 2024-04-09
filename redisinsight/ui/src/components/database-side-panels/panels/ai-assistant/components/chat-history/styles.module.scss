@@ -1,0 +1,55 @@
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
+
+$spacing: 6px;
+$delay: .13s;
+
+.wrapper {
+  width: 100%;
+  height: 100%;
+
+  :global {
+    code {
+      background-color: var(--euiColorEmptyShade) !important;
+    }
+    pre > code {
+      background-color:  var(--browserTableRowEven) !important;
+    }
+  }
+}
+
+.history {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  @include euiScrollBar;
+  padding: 8px 12px;
+
+  font-size: 12px;
+
+  > :first-child {
+    margin-top: auto;
+  }
+}
+
+.answer, .question {
+  max-width: 90%;
+  margin: 8px 0;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.answer {
+  align-self: flex-start;
+  background-color: var(--euiColorLightestShade);
+}
+
+.question {
+  align-self: flex-end;
+  background-color: var(--insightsTriggerBgColor);
+}
+
+

@@ -7,18 +7,20 @@ import { CodeButtonParams } from 'uiSrc/constants'
 import { parseParams } from 'uiSrc/utils'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { getFileInfo, getTutorialSection, } from '../../utils'
+import CodeButtonBlock from 'uiSrc/components/markdown/CodeButtonBlock'
 
-import CodeButtonBlock from '../CodeButtonBlock'
+import { getFileInfo, getTutorialSection, } from '../../utils'
 
 export interface Props {
   label: string
   children: string
+  lang: string
   params?: string
   path?: string
 }
 
-const Code = ({ children, params = '', label, path, ...rest }: Props) => {
+const Code = (props: Props) => {
+  const { children, params = '', label, path, lang, ...rest } = props
   const { provider, modules = [], isFreeDb } = useSelector(connectedInstanceSelector)
 
   const { search } = useLocation()
@@ -83,6 +85,7 @@ const Code = ({ children, params = '', label, path, ...rest }: Props) => {
       label={label}
       params={parsedParams}
       isShowConfirmation={!isFreeDb}
+      lang={lang}
       {...rest}
     />
   )

@@ -96,6 +96,7 @@ describe('CapabilityPromotion', () => {
     fireEvent.click(screen.getByTestId('explore-redis-btn'))
 
     const expectedActions = [
+      changeSelectedTab(InsightsPanelTabs.Explore),
       toggleInsightsPanel()
     ]
 

@@ -3,4 +3,6 @@ export enum FeatureFlags {
   cloudSso = 'cloudSso',
   cloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   rdi = 'rdi',
+  databaseChat = 'databaseChat',
+  documentationChat = 'documentationChat',
 }

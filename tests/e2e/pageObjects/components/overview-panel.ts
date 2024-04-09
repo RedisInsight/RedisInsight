@@ -11,7 +11,7 @@ export class OverviewPanel {
     overviewCpu = Selector('[data-test-subj=overview-cpu]');
     overviewConnectedClients = Selector('[data-test-subj=overview-connected-clients]');
     overviewCommandsSec = Selector('[data-test-subj=overview-commands-sec]');
-    overviewSpinner = Selector('[class^= euiLoadingSpinner--medium]');
+    overviewSpinner = Selector('[class*=euiLoadingSpinner--medium]');
     // BUTTONS
     myRedisDBLink = Selector('[data-testid=my-redis-db-btn]', { timeout: 1000 });
     overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');

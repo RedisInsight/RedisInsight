@@ -1,13 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiTextColor,
-  EuiText,
-  EuiTitle,
-  EuiLink,
-  EuiButton,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTextColor, EuiTitle, } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { ReactComponent as MobileIcon } from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg'
@@ -16,7 +9,7 @@ import { ReactComponent as TelescopeDark } from 'uiSrc/assets/img/telescope-dark
 import { ReactComponent as TelescopeLight } from 'uiSrc/assets/img/telescope-light.svg'
 import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
 import { MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW, Theme } from 'uiSrc/constants'
-import { RedisDefaultModules, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -99,7 +92,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     })}
     >
       <div className={styles.flex}>
-        <div>
+        <div>welcome-page-header
           {type !== 'browser' && (
             width > MAX_ELEMENT_WIDTH
               ? <DesktopIcon className={styles.bigIcon} />
@@ -163,7 +156,10 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
                   onClick={(e) => {
                     ssoCloudHandlerClick(
                       e,
-                      type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module]
+                      {
+                        source: type === 'browser' ? OAuthSocialSource.BrowserSearch : OAuthSocialSource[module],
+                        action: OAuthSocialAction.Create
+                      }
                     )
                     onFreeDatabaseClick()
                   }}

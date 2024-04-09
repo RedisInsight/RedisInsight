@@ -124,6 +124,7 @@ enum ApiEndpoints {
   CLOUD_ME = 'cloud/me',
   CLOUD_ME_JOBS = 'cloud/me/jobs',
   CLOUD_ME_ACCOUNTS = 'cloud/me/accounts',
+  CLOUD_ME_LOGOUT = 'cloud/me/logout',
   CLOUD_CURRENT = 'current',
 
   CLOUD_SUBSCRIPTION_PLANS = 'cloud/me/subscription/plans',
@@ -133,6 +134,9 @@ enum ApiEndpoints {
   CLOUD_ME_AUTODISCOVERY_GET_DATABASES = 'cloud/me/autodiscovery/get-databases',
   CLOUD_ME_AUTODISCOVERY_DATABASES = 'cloud/me/autodiscovery/databases',
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
+
+  AI_ASSISTANT_CHATS = 'ai/assistant/chats',
+  AI_EXPERT_QUERIES = 'ai/expert/queries',
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',

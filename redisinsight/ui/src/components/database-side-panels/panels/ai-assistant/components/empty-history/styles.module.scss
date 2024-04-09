@@ -1,0 +1,41 @@
+.welcome {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  .welcomeText {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    text-align: center;
+    justify-content: center;
+
+  }
+
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 0 12px;
+
+    justify-content: space-between;
+
+    .suggestion {
+      border: 1px solid var(--controlsBorderColor);
+      border-radius: 4px;
+      flex-basis: 48%;
+      padding: 8px;
+      margin-bottom: 12px;
+
+      color: var(--euiTextSubduedColor);
+      font-size: 12px;
+      line-height: 14px;
+
+      cursor: pointer;
+    }
+  }
+}

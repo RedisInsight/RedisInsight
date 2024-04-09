@@ -6,6 +6,7 @@ import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
 
 export type Props = EuiLinkProps & {
+  href: string
   iconPosition?: 'left' | 'right'
   iconSize?: IconSize
 }

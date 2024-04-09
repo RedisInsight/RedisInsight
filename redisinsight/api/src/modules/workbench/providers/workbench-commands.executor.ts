@@ -19,6 +19,7 @@ import {
   UTF8FormatterStrategy,
 } from 'src/common/transformers';
 import { RedisClient } from 'src/modules/redis/client';
+import { getAnalyticsDataFromIndexInfo } from 'src/utils';
 import { WorkbenchAnalyticsService } from '../services/workbench-analytics/workbench-analytics.service';
 
 @Injectable()
@@ -74,6 +75,13 @@ export class WorkbenchCommandsExecutor {
         result,
         { command, rawMode: mode === RunQueryMode.Raw },
       );
+
+      if (command.toLowerCase() === 'ft.info') {
+        this.analyticsService.sendIndexInfoEvent(
+          client.clientMetadata.databaseId,
+          getAnalyticsDataFromIndexInfo(response as string[]),
+        );
+      }
 
       return result;
     } catch (error) {

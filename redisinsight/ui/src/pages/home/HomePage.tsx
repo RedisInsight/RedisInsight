@@ -1,12 +1,18 @@
-import { EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
+import {
+  EuiPage,
+  EuiPageBody,
+  EuiResizableContainer,
+  EuiResizeObserver
+} from '@elastic/eui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
-import { Nullable, setTitle } from 'uiSrc/utils'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { Nullable } from 'uiSrc/utils'
+import { HomePageTemplate } from 'uiSrc/templates'
+import { BrowserStorageItem, } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
@@ -27,8 +33,8 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import HomePageTemplate from 'uiSrc/templates/home-page-template'
-import DatabaseList from './components/database-list-component'
+
+import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
 
 import './styles.scss'
@@ -43,6 +49,8 @@ const HomePage = () => {
   const [width, setWidth] = useState(0)
   const [openRightPanel, setOpenRightPanel] = useState<Nullable<RightPanelName>>(null)
 
+  const [isPageViewSent, setIsPageViewSent] = useState(false)
+
   const initialDbTypeRef = useRef<AddDbType>(AddDbType.manual)
 
   const dispatch = useDispatch()
@@ -53,6 +61,7 @@ const HomePage = () => {
   const { action, dbConnection } = useSelector(appRedirectionSelector)
 
   const {
+    loading,
     data: instances,
     changedSuccessfully: isChangedInstance,
     deletedSuccessfully: isDeletedInstance,
@@ -70,11 +79,6 @@ const HomePage = () => {
     dispatch(resetSubscriptionsRedisCloud())
     dispatch(fetchCreateRedisButtonsAction())
 
-    setTitle('Redis Databases')
-    sendPageViewTelemetry({
-      name: TelemetryPageView.DATABASES_LIST_PAGE
-    })
-
     return (() => {
       dispatch(setEditedInstance(null))
     })
@@ -90,8 +94,21 @@ const HomePage = () => {
     if (isChangedInstance) {
       setOpenRightPanel(null)
       dispatch(setEditedInstance(null))
+      // send page view after adding database from welcome page
+      sendPageViewTelemetry({
+        name: TelemetryPageView.DATABASES_LIST_PAGE
+      })
     }
   }, [isChangedInstance])
+
+  useEffect(() => {
+    if (!isPageViewSent && !isChangedInstance && instances.length) {
+      setIsPageViewSent(true)
+      sendPageViewTelemetry({
+        name: TelemetryPageView.DATABASES_LIST_PAGE
+      })
+    }
+  }, [instances, isPageViewSent, isChangedInstance])
 
   useEffect(() => {
     if (clusterCredentials || cloudCredentials || sentinelInstance) {
@@ -185,62 +202,66 @@ const HomePage = () => {
 
   return (
     <HomePageTemplate>
-      <EuiResizeObserver onResize={onResizeTrottled}>
-        {(resizeRef) => (
-          <EuiPage className={styles.page}>
-            <EuiPageBody component="div">
-              <DatabaseListHeader
-                key="instance-controls"
-                onAddInstance={handleAddInstance}
-                direction="row"
-              />
-              <div key="homePage" className="homePage">
-                <EuiResizableContainer style={{ height: '100%' }}>
-                  {(EuiResizablePanel, EuiResizableButton) => (
-                    <>
-                      <EuiResizablePanel
-                        scrollable={false}
-                        initialSize={62}
-                        id="databases"
-                        minSize="50%"
-                        paddingSize="none"
-                        wrapperProps={{
-                          className: cx('home__resizePanelLeft', {
-                            fullWidth: !openRightPanel,
-                            openedRightPanel: !!openRightPanel,
-                          })
-                        }}
-                      >
-                        <div ref={resizeRef} style={{ height: '100%' }}>
-                          <DatabaseList
-                            width={width}
-                            editedInstance={editedInstance}
-                            onEditInstance={handleEditInstance}
-                            onDeleteInstances={handleDeleteInstances}
-                          />
-                        </div>
-                      </EuiResizablePanel>
+      <div className={styles.pageWrapper}>
+        <EuiResizeObserver onResize={onResizeTrottled}>
+          {(resizeRef) => (
+            <EuiPage className={styles.page}>
+              <EuiPageBody component="div">
+                <DatabaseListHeader
+                  key="instance-controls"
+                  onAddInstance={handleAddInstance}
+                />
+                <div key="homePage" className="homePage">
+                  <EuiResizableContainer style={{ height: '100%' }}>
+                    {(EuiResizablePanel, EuiResizableButton) => (
+                      <>
+                        <EuiResizablePanel
+                          scrollable={false}
+                          initialSize={62}
+                          id="databases"
+                          minSize="50%"
+                          paddingSize="none"
+                          wrapperProps={{
+                            className: cx('home__resizePanelLeft', {
+                              hidden: !instances.length && !loading,
+                              fullWidth: !openRightPanel,
+                              openedRightPanel: !!openRightPanel,
+                            })
+                          }}
+                        >
+                          <div ref={resizeRef} style={{ height: '100%' }}>
+                            {(!!instances.length || loading) && (
+                            <DatabasesList
+                              width={width}
+                              editedInstance={editedInstance}
+                              onEditInstance={handleEditInstance}
+                              onDeleteInstances={handleDeleteInstances}
+                            />
+                            )}
+                          </div>
+                        </EuiResizablePanel>
 
-                      <EuiResizableButton
-                        className={cx('home__resizableButton', {
-                          hidden: !openRightPanel,
-                        })}
-                        style={{ margin: 0 }}
-                      />
+                        <EuiResizableButton
+                          className={cx('home__resizableButton', {
+                            hidden: !openRightPanel || !instances.length,
+                          })}
+                          style={{ margin: 0 }}
+                        />
 
-                      <EuiResizablePanel
-                        scrollable={false}
-                        initialSize={38}
-                        wrapperProps={{
-                          className: cx('home__resizePanelRight', {
-                            hidden: !openRightPanel
-                          })
-                        }}
-                        id="form"
-                        paddingSize="none"
-                        style={{ minWidth: '474px' }}
-                      >
-                        {!!openRightPanel && (
+                        <EuiResizablePanel
+                          scrollable={false}
+                          initialSize={38}
+                          wrapperProps={{
+                            className: cx('home__resizePanelRight', {
+                              hidden: !openRightPanel,
+                              fullWidth: !instances.length,
+                            })
+                          }}
+                          id="form"
+                          paddingSize="none"
+                          style={{ minWidth: '474px' }}
+                        >
+                          {!!openRightPanel && (
                           <DatabasePanel
                             editMode={openRightPanel === RightPanelName.EditDatabase}
                             width={width}
@@ -248,29 +269,31 @@ const HomePage = () => {
                             urlHandlingAction={action}
                             initialValues={dbConnection ?? null}
                             editedInstance={
-                              openRightPanel === RightPanelName.EditDatabase
-                                ? editedInstance
-                                : sentinelInstance ?? null
-                            }
+                                  openRightPanel === RightPanelName.EditDatabase
+                                    ? editedInstance
+                                    : sentinelInstance ?? null
+                                }
                             onClose={
-                              openRightPanel === RightPanelName.EditDatabase
-                                ? closeEditDialog
-                                : handleClose
-                            }
+                                  openRightPanel === RightPanelName.EditDatabase
+                                    ? closeEditDialog
+                                    : handleClose
+                                }
                             onDbEdited={onDbEdited}
+                            isFullWidth={!instances.length}
                             initConnectionType={initialDbTypeRef.current}
                           />
-                        )}
-                        <div id="footerDatabaseForm" />
-                      </EuiResizablePanel>
-                    </>
-                  )}
-                </EuiResizableContainer>
-              </div>
-            </EuiPageBody>
-          </EuiPage>
-        )}
-      </EuiResizeObserver>
+                          )}
+                          <div id="footerDatabaseForm" />
+                        </EuiResizablePanel>
+                      </>
+                    )}
+                  </EuiResizableContainer>
+                </div>
+              </EuiPageBody>
+            </EuiPage>
+          )}
+        </EuiResizeObserver>
+      </div>
     </HomePageTemplate>
   )
 }

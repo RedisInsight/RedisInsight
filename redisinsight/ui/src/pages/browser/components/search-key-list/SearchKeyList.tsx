@@ -1,4 +1,4 @@
-import { keys } from '@elastic/eui'
+import { EuiButtonEmpty, EuiIcon, keys } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -23,6 +23,15 @@ import {
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
+
+import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
+import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+
+import { FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -119,6 +128,12 @@ const SearchKeyList = () => {
     handleApply('')
   }
 
+  const handleClickAskCopilot = () => {
+    dispatch(changeSelectedTab(InsightsPanelTabs.AiAssistant))
+    dispatch(setSelectedTab(AiChatType.Query))
+    dispatch(toggleInsightsPanel(true))
+  }
+
   return (
     <div className={cx(styles.container, { [styles.redisearchMode]: searchMode === SearchMode.Redisearch })}>
       <MultiSearch
@@ -135,6 +150,19 @@ const SearchKeyList = () => {
           onApply: handleApplySuggestion,
           onDelete: handleDeleteSuggestions,
         }}
+        appendRight={searchMode === SearchMode.Redisearch ? (
+          <FeatureFlagComponent name={FeatureFlags.databaseChat}>
+            <EuiButtonEmpty
+              className={styles.askCopilotBtn}
+              size="xs"
+              onClick={handleClickAskCopilot}
+              data-testid="ask-redis-copilot-btn"
+            >
+              <EuiIcon className={styles.cloudIcon} type={CloudStars} />
+              <span>Ask Redis Copilot</span>
+            </EuiButtonEmpty>
+          </FeatureFlagComponent>
+        ) : undefined}
         disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}
         className={styles.input}

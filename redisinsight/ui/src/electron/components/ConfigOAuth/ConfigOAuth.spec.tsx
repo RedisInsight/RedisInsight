@@ -10,12 +10,11 @@ import {
   getUserInfo,
   setJob,
   setOAuthCloudSource,
-  setSignInDialogState,
   setSocialDialogState,
   showOAuthProgress,
   signInFailure
 } from 'uiSrc/slices/oauth/cloud'
-import { cloudSelector, loadSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import ConfigOAuth from './ConfigOAuth'
@@ -57,7 +56,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
       getUserInfo()
     ]
@@ -85,7 +83,7 @@ describe('ConfigOAuth', () => {
           status: 500
         }
       } as any),
-      setIsAutodiscoverySSO(false)
+      setSSOFlow(undefined)
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })
@@ -101,7 +99,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
     ]
 
@@ -113,7 +110,7 @@ describe('ConfigOAuth', () => {
 
   it('should call fetch subscriptions with autodiscovery flow', () => {
     (cloudSelector as jest.Mock).mockReturnValue({
-      isAutodiscoverySSO: true
+      ssoFlow: 'import'
     })
 
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());
@@ -126,7 +123,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
     ]
 
@@ -151,7 +147,6 @@ describe('ConfigOAuth', () => {
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
       setSocialDialogState(null),
     ]
 

@@ -1,8 +1,18 @@
 @mixin insights-open($max-width: 1440px) {
   :global(.insightsOpen) {
     @media only screen and (max-width: $max-width) {
-      @content
+      @content;
     }
   }
 }
 
+@mixin welcome-page-header($max-width: 1440px) {
+  h4[data-testid="welcome-page-header"] ~ div {
+    @media only screen and (max-width: $max-width) {
+      @content;
+    }
+  }
+  @include insights-open($max-width + 380px) {
+    @content;
+  }
+}

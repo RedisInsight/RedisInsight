@@ -22,7 +22,7 @@
       "data": {
         "filterFreePlan": [{
           "field": "name",
-          "expression": "^(No HA?.)|(Cache?.)",
+          "expression": "^(No HA?.)|(Cache?.)|(30MB$)",
           "options": "i"
         }],
         "selectPlan": {
@@ -50,6 +50,28 @@
           }
         }
       }
+    },
+    "documentationChat": {
+      "flag": true,
+      "perc": [[0,100]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
+    },
+    "databaseChat": {
+      "flag": true,
+      "perc": [[0,100]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
     },
     "cloudSsoRecommendedSettings": {
       "flag": true,

@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { ImportDatabasesDialog, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import HelpLinksMenu from 'uiSrc/pages/home/components/help-links-menu'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
@@ -20,7 +19,7 @@ import { HELP_LINKS, IHelpGuide } from 'uiSrc/pages/home/constants/help-links'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { instancesSelector } from 'uiSrc/slices/instances/instances'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import SearchDatabasesList from '../search-databases-list'
@@ -29,20 +28,15 @@ import styles from './styles.module.scss'
 
 export interface Props {
   onAddInstance: () => void
-  direction: 'column' | 'row'
 }
 
-const CREATE_DATABASE = 'CREATE DATABASE'
-const THE_GUIDES = 'THE GUIDES'
-
-const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
+const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const { theme } = useContext(ThemeContext)
   const { data: instances } = useSelector(instancesSelector)
   const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
   const { loading, data } = useSelector(contentSelector)
 
   const [promoData, setPromoData] = useState<ContentCreateRedis>()
-  const [guides, setGuides] = useState<IHelpGuide[]>([])
   const [isImportDialogOpen, setIsImportDialogOpen] = useState<boolean>(false)
 
   useEffect(() => {
@@ -53,21 +47,6 @@ const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
     if (data?.cloud && !isEmpty(data.cloud)) {
       setPromoData(getContentByFeature(data.cloud, featureFlags))
     }
-
-    const items = Object.entries(data)
-      .map(([key, item]) => {
-        const { title, links, description } = getContentByFeature(item, featureFlags)
-        return ({
-          id: key,
-          title,
-          description,
-          event: HELP_LINKS[key as keyof typeof HELP_LINKS]?.event,
-          url: links?.main?.url,
-          primary: key.toLowerCase() === 'cloud',
-        })
-      })
-
-    setGuides(items)
   }, [loading, data, featureFlags])
 
   const handleOnAddDatabase = () => {
@@ -164,7 +143,7 @@ const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
                 HELP_LINKS.cloud.event,
                 { source: HELP_LINKS.cloud.sources.databaseList },
               )
-              ssoCloudHandlerClick(e, OAuthSocialSource.ListOfDatabases)
+              ssoCloudHandlerClick(e, { source: OAuthSocialSource.ListOfDatabases, action: OAuthSocialAction.Create })
             }}
           />
         )}
@@ -184,32 +163,15 @@ const DatabaseListHeader = ({ onAddInstance, direction }: Props) => {
             <ImportDatabasesBtn />
           </EuiFlexItem>
           {!loading && !isEmpty(data) && (
-            <>
-              <EuiFlexItem grow={false} className={cx(styles.promo)}>
-                <EuiFlexGroup alignItems="center" gutterSize="s">
-                  {promoData && (
-                    <EuiFlexItem grow={false}>
-                      <CreateBtn content={promoData} />
-                    </EuiFlexItem>
-                  )}
-                </EuiFlexGroup>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.fullGuides}>
-                <HelpLinksMenu
-                  items={guides}
-                  buttonText={CREATE_DATABASE}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-              <EuiFlexItem grow={false} className={styles.smallGuides}>
-                <HelpLinksMenu
-                  emptyAnchor
-                  items={guides.slice(1)}
-                  buttonText={THE_GUIDES}
-                  onLinkClick={(link) => handleClickLink(HELP_LINKS[link as keyof typeof HELP_LINKS]?.event)}
-                />
-              </EuiFlexItem>
-            </>
+            <EuiFlexItem grow={false} className={cx(styles.promo)}>
+              <EuiFlexGroup alignItems="center" gutterSize="s">
+                {promoData && (
+                <EuiFlexItem grow={false}>
+                  <CreateBtn content={promoData} />
+                </EuiFlexItem>
+                )}
+              </EuiFlexGroup>
+            </EuiFlexItem>
           )}
           {instances.length > 0 && (
             <EuiFlexItem grow={false} className={styles.searchContainer}>

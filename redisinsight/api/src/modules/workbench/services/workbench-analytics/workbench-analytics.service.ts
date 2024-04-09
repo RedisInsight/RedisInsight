@@ -21,6 +21,27 @@ export class WorkbenchAnalyticsService extends CommandTelemetryBaseService {
     super(eventEmitter, commandsService);
   }
 
+  sendIndexInfoEvent(
+    databaseId: string,
+    additionalData: object,
+  ): void {
+    if (!additionalData) {
+      return;
+    }
+
+    try {
+      this.sendEvent(
+        TelemetryEvents.WorkbenchIndexInfoSubmitted,
+        {
+          databaseId,
+          ...additionalData,
+        },
+      );
+    } catch (e) {
+      // ignore error
+    }
+  }
+
   public async sendCommandExecutedEvents(
     databaseId: string,
     results: IExecResult[],

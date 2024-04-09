@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
+import { EuiBadge, EuiButtonIcon, EuiTab, EuiTabs, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
+import { some } from 'lodash'
 import { changeSelectedTab, insightsPanelSelector, resetExplorePanelSearch, setExplorePanelIsPageOpen, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
@@ -14,7 +15,9 @@ import { FullScreen, OnboardingTour } from 'uiSrc/components'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
-import { EAManifestFirstKey } from 'uiSrc/constants'
+import { EAManifestFirstKey, FeatureFlags } from 'uiSrc/constants'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import AiAssistant from './panels/ai-assistant'
 import LiveTimeRecommendations from './panels/live-time-recommendations'
 import EnablementAreaWrapper from './panels/enablement-area'
 
@@ -31,6 +34,11 @@ const DatabaseSidePanels = (props: Props) => {
   const { provider } = useSelector(connectedInstanceSelector)
   const { source: capabilitySource } = useSelector(appContextCapability)
   const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = some([databaseChatFeature, documentationChatFeature], (feature) => feature?.flag)
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
 
@@ -43,6 +51,12 @@ const DatabaseSidePanels = (props: Props) => {
   const page = pathname
     .replace(instanceId, '')
     .replace(/^\//g, '')
+
+  useEffect(() => {
+    if (tabSelected === InsightsPanelTabs.AiAssistant && !isAnyChatAvailable) {
+      dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
+    }
+  }, [isAnyChatAvailable, tabSelected])
 
   useEffect(() => {
     window.addEventListener('keydown', handleEscFullScreen)
@@ -165,8 +179,19 @@ const DatabaseSidePanels = (props: Props) => {
           )}
         </>
       </EuiTab>
+      {isAnyChatAvailable && (
+        <EuiTab
+          isSelected={tabSelected === InsightsPanelTabs.AiAssistant}
+          onClick={() => handleChangeTab(InsightsPanelTabs.AiAssistant)}
+          className={styles.tab}
+          data-testid="ai-assistant-tab"
+        >
+          <span className={styles.tabName}>Redis Copilot</span>
+          <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
+        </EuiTab>
+      )}
     </EuiTabs>
-  ), [tabSelected, totalUnread, isFullScreen])
+  ), [tabSelected, totalUnread, isFullScreen, isAnyChatAvailable])
 
   return (
     <>
@@ -192,6 +217,7 @@ const DatabaseSidePanels = (props: Props) => {
             <div className={styles.body}>
               {tabSelected === InsightsPanelTabs.Explore && (<EnablementAreaWrapper />)}
               {tabSelected === InsightsPanelTabs.Recommendations && (<LiveTimeRecommendations />)}
+              {tabSelected === InsightsPanelTabs.AiAssistant && isAnyChatAvailable && (<AiAssistant />)}
             </div>
           </div>
         </div>

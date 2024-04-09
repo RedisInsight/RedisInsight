@@ -119,18 +119,28 @@ $animation-duration: 300ms;
   margin-right: 12px;
 
   .tab {
-    flex-basis: 50%;
+    flex-basis: 33%;
 
     background-color: transparent;
-    color: var(--euiColorMediumShade);
+    color: var(--euiTextSubduedColor);
     margin: 0 !important;
-    border-radius: 4px 0 0 4px;
+
+    padding: 6px 8px !important;
+    border-radius: 0;
+
+    &:first-child {
+      border-radius: 4px 0 0 4px;
+    }
 
     &:global {
-      &.euiTab + .euiTab {
-        border-radius: 0 4px 4px 0;
+      &.euiTab {
         &:after {
           display: none !important;
+          visibility: hidden;
+        }
+
+        &:last-child {
+          border-radius: 0 4px 4px 0;
         }
       }
     }
@@ -164,7 +174,7 @@ $animation-duration: 300ms;
 
     .tabTotalUnread {
       display: inline-block;
-      background-color: var(--iconsDefaultColor);
+      background-color: var(--euiTextSubduedColor);
       color: var(--euiColorLightestShade);
       height: 18px;
       width: 18px;
@@ -174,10 +184,27 @@ $animation-duration: 300ms;
       margin-left: 4px;
       border-radius: 100%;
     }
+
+    .betaLabel {
+      margin-left: 4px;
+      font-size: 8px !important;
+      line-height: 12px !important;
+      background-color: var(--recommendationLiveBorderColor) !important;
+      border: 1px solid var(--triggerIconActiveColor) !important;
+      color: #FFF7EA !important;
+      border-radius: 2px !important;
+      padding: 0 3px !important;
+
+      transition: transform 250ms ease-in-out;
+      pointer-events: none;
+
+      :global(.euiBadge__content) {
+        min-height: 12px !important;
+      }
+    }
   }
 }
 
 .onboardingAnchorWrapper {
   display: flex;
 }
-

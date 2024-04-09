@@ -4,7 +4,7 @@ import {
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -23,13 +23,14 @@ import {
 } from 'uiSrc/utils'
 import {
   InstanceRedisCloud,
-  LoadedCloud,
+  LoadedCloud, OAuthSocialAction,
   RedisCloudSubscriptionType,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import RedisCloudDatabases from './RedisCloudDatabases'
 
 import styles from './styles.module.scss'
@@ -39,10 +40,13 @@ const RedisCloudDatabasesPage = () => {
   const history = useHistory()
 
   const {
+    ssoFlow,
     credentials,
     data: instances,
     dataAdded: instancesAdded,
   } = useSelector(cloudSelector)
+  const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
+  const currentAccountIdRef = useRef(userOAuthProfile?.id)
 
   setTitle('Redis Cloud Databases')
 
@@ -53,6 +57,15 @@ const RedisCloudDatabasesPage = () => {
 
     dispatch(resetLoadedRedisCloud(LoadedCloud.Instances))
   }, [])
+
+  useEffect(() => {
+    if (ssoFlow !== OAuthSocialAction.Import) return
+
+    if (!userOAuthProfile || currentAccountIdRef.current !== userOAuthProfile?.id) {
+      dispatch(resetDataRedisCloud())
+      history.push(Pages.home)
+    }
+  }, [ssoFlow, userOAuthProfile])
 
   useEffect(() => {
     if (instancesAdded.length) {
@@ -81,7 +94,7 @@ const RedisCloudDatabasesPage = () => {
   const handleAddInstances = (
     databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[]
   ) => {
-    dispatch(addInstancesRedisCloud({ databases, credentials }))
+    dispatch(addInstancesRedisCloud({ databases, credentials }, ssoFlow === OAuthSocialAction.Import))
   }
 
   const handleCopy = (text = '') => {

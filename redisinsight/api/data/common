@@ -1,1 +1,20 @@
-set foo bar
+SET userSession:abc12345 user_id:98765432
+SET userSession:def67890 user_id:12345678
+SET userSession:ghi24680 user_id:87654321
+SET userSession:jkl13579 user_id:54321678
+SET userSession:mno24680 user_id:65432187
+SET userSession:pqr86420 user_id:23456789
+SET userSession:stu12345 user_id:76543210
+SET userSession:vwx98765 user_id:34567890
+SET userSession:yz01234 user_id:98765432
+SET userSession:ab09876 user_id:87654321
+ZADD leaderboard:tetris 1000 "user1"
+ZADD leaderboard:tetris 1500 "user2"
+ZADD leaderboard:tetris 800 "user3"
+ZADD leaderboard:tetris 2000 "user4"
+HSET shoppingCart:user2 "book431562" 3
+HSET shoppingCart:user1 "book9174-13" 1
+HSET shoppingCart:user1 "book193-3" 2
+rpush jobQueue:helpdesk uuid83198492
+rpush jobQueue:helpdesk uuid91323510
+rpush jobQueue:helpdesk uuid26429174

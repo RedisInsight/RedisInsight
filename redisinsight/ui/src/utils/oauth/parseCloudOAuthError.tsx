@@ -131,7 +131,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
         <>
           Your Redis Cloud authorization failed.
           <EuiSpacer size="xs" />
-          Remove the invalid API key from RedisInsight and try again.
+          Remove the invalid API key from Redis Insight and try again.
           <EuiSpacer size="s" />
           Open the Settings page to manage Redis Cloud API keys.
         </>

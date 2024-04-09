@@ -131,14 +131,14 @@ export default {
   },
   tutorials: {
     updateUrl: process.env.RI_TUTORIALS_UPDATE_URL
-      || 'https://github.com/RedisInsight/Tutorials/releases/download/2.42',
+      || 'https://github.com/Redis-Insight/Tutorials/releases/download/2.42',
     zip: process.env.RI_TUTORIALS_ZIP || dataZipFileName,
     buildInfo: process.env.RI_TUTORIALS_INFO || buildInfoFileName,
     devMode: !!process.env.RI_TUTORIALS_PATH,
   },
   content: {
     updateUrl: process.env.RI_CONTENT_UPDATE_URL
-      || 'https://github.com/RedisInsight/Statics/releases/download/2.42',
+      || 'https://github.com/Redis-Insight/Statics/releases/download/2.42',
     zip: process.env.RI_CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.RI_CONTENT_INFO || buildInfoFileName,
     devMode: !!process.env.RI_CONTENT_PATH,
@@ -146,7 +146,7 @@ export default {
   notifications: {
     updateUrl: process.env.RI_NOTIFICATION_DEV_PATH
       || process.env.RI_NOTIFICATION_UPDATE_URL
-      || 'https://github.com/RedisInsight/Notifications/releases/download/latest/notifications.json',
+      || 'https://github.com/Redis-Insight/Notifications/releases/download/latest/notifications.json',
     syncInterval: parseInt(process.env.RI_NOTIFICATION_SYNC_INTERVAL, 10) || 60 * 60 * 1000,
     queryLimit: parseInt(process.env.RI_NOTIFICATION_QUERY_LIMIT, 10) || 20,
     devMode: !!process.env.RI_NOTIFICATION_DEV_PATH,
@@ -222,7 +222,7 @@ export default {
   features_config: {
     url: process.env.RI_FEATURES_CONFIG_URL
       // eslint-disable-next-line max-len
-      || 'https://raw.githubusercontent.com/RedisInsight/RedisInsight/main/redisinsight/api/config/features-config.json',
+      || 'https://raw.githubusercontent.com/Redis-Insight/Redis-Insight/main/redisinsight/api/config/features-config.json',
     syncInterval: parseInt(process.env.RI_FEATURES_CONFIG_SYNC_INTERVAL, 10) || 1_000 * 60 * 60 * 24, // 24h
   },
   cloud: {

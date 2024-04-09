@@ -279,7 +279,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             <EuiLink
               external={false}
               target="_blank"
-              href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"
+              href="https://github.com/Redis-Insight/Redis-Insight/blob/main/LICENSE"
             >
               Server Side Public License
             </EuiLink>

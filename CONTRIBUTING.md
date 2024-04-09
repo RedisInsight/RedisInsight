@@ -9,7 +9,7 @@ Please ensure your commits are small and focused; they should tell a story of yo
 
 ## Submitting an issue
 If you find a bug in the source code, you can help us by
-submit an issue to our [GitHub Repository](https://github.com/RedisInsight/RedisInsight)
+submit an issue to our [GitHub Repository](https://github.com/Redis-Insight/Redis-Insight)
 
 Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion might inform you of workarounds readily available.
 
@@ -18,7 +18,7 @@ Before you submit an issue, please search the issue tracker, maybe an issue for 
 
 Use the following procedure to submit a pull request:
 
-    a. Fork RedisInsight on github ( https://docs.github.com/en/github/getting-started-with-github/fork-a-repo )
+    a. Fork Redis Insight on github ( https://docs.github.com/en/github/getting-started-with-github/fork-a-repo )
     b. Create a topic branch (git checkout -b my_branch)
     c. Push to your branch (git push origin my_branch)
     d. Initiate a pull request on github ( https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request )

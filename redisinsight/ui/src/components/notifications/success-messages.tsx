@@ -155,7 +155,7 @@ export default {
   TEST_CONNECTION: () => ({
     title: 'Connection is successful',
   }),
-  UPLOAD_DATA_BULK: (data: IBulkActionOverview, fileName?: string) => {
+  UPLOAD_DATA_BULK: (data?: IBulkActionOverview, fileName?: string) => {
     const { processed = 0, succeed = 0, failed = 0, } = data?.summary ?? {}
     return ({
       title: (

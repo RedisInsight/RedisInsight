@@ -88,10 +88,10 @@
 
 .overlay {
   &.overlay_dark {
-    background-image: url('uiSrc/assets/img/welcome_bg_dark.jpg') !important;
+    background-image: url("uiSrc/assets/img/welcome_bg_dark.png") !important;
   }
 
   &.overlay_light {
-    background-image: url('uiSrc/assets/img/welcome_bg_light.jpg') !important;
+    background-image: url("uiSrc/assets/img/welcome_bg_light.png") !important;
   }
 }

@@ -1,9 +1,22 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, waitForEuiPopoverVisible, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  waitForEuiPopoverVisible,
+  mockedStore,
+  cleanup,
+  waitForStack,
+} from 'uiSrc/utils/test-utils'
 
-import { bulkImportDefaultData } from 'uiSrc/slices/browser/bulkActions'
+import { bulkImportDefaultData, bulkImportDefaultDataSuccess } from 'uiSrc/slices/browser/bulkActions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { changeKeyViewType, loadKeys } from 'uiSrc/slices/browser/keys'
+import { apiService } from 'uiSrc/services'
+import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
+import { addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import LoadSampleData from './LoadSampleData'
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
@@ -33,6 +46,7 @@ describe('LoadSampleData', () => {
   it('should call proper actions', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    apiService.post = jest.fn().mockResolvedValueOnce({ status: 200, data: { data: {} } })
 
     render(<LoadSampleData />)
 
@@ -41,7 +55,19 @@ describe('LoadSampleData', () => {
 
     fireEvent.click(screen.getByTestId('load-sample-data-btn-confirm'))
 
-    expect(store.getActions()).toEqual([bulkImportDefaultData()])
+    await waitForStack()
+
+    const expectedActions = [
+      bulkImportDefaultData(),
+      bulkImportDefaultDataSuccess(),
+      addMessageNotification(
+        successMessages.UPLOAD_DATA_BULK()
+      ),
+      changeKeyViewType(KeyViewType.Tree),
+      loadKeys(),
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.BROWSER_IMPORT_SAMPLES_CLICKED,

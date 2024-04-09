@@ -1,6 +1,5 @@
 [![Release](https://img.shields.io/github/v/release/RedisInsight/RedisInsight.svg?sort=semver)](https://github.com/Redis-Insight/Redis-Insight/releases)
-[![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisInsight/RedisInsight.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisInsight/RedisInsight/alerts/)
+[![CircleCI](https://circleci.com/gh/Redis-Insight/Redis-Insight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
 
 # <img src="https://github.com/Redis-Insight/Redis-Insight/assets/99594890/333b7bbd-22ac-4457-a045-5f181e79ec50" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis. 
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)

@@ -14,7 +14,7 @@ export default {
       <>
         <b>{formatNameShort(instanceName)}</b>
         {' '}
-        has been added to RedisInsight.
+        has been added to Redis Insight.
       </>
     ),
   }),
@@ -24,7 +24,7 @@ export default {
       <>
         <b>{formatNameShort(instanceName)}</b>
         {' '}
-        has been deleted from RedisInsight.
+        has been deleted from Redis Insight.
       </>
     ),
   }),
@@ -37,7 +37,7 @@ export default {
           <span>
             <b>{instanceNames.length}</b>
             {' '}
-            databases have been deleted from RedisInsight:
+            databases have been deleted from Redis Insight:
           </span>
           <ul style={{ marginBottom: 0 }}>
             {instanceNames.slice(0, limitShowRemovedInstances).map((el, i) => (
@@ -155,7 +155,7 @@ export default {
   TEST_CONNECTION: () => ({
     title: 'Connection is successful',
   }),
-  UPLOAD_DATA_BULK: (data: IBulkActionOverview, fileName?: string) => {
+  UPLOAD_DATA_BULK: (data?: IBulkActionOverview, fileName?: string) => {
     const { processed = 0, succeed = 0, failed = 0, } = data?.summary ?? {}
     return ({
       title: (
@@ -221,11 +221,11 @@ export default {
   }),
   REMOVED_ALL_CAPI_KEYS: () => ({
     title: 'API keys have been removed',
-    message: 'All API keys have been removed from RedisInsight.',
+    message: 'All API keys have been removed from Redis Insight.',
   }),
   REMOVED_CAPI_KEY: (name: string) => ({
     title: 'API Key has been removed',
-    message: `${formatNameShort(name)} has been removed from RedisInsight.`
+    message: `${formatNameShort(name)} has been removed from Redis Insight.`
   }),
   DATABASE_ALREADY_EXISTS: () => ({
     title: 'Database already exists',

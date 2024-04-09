@@ -166,7 +166,6 @@ const KeysHeader = (props: Props) => {
 
     dispatch(resetBrowserTree())
     dispatch(resetKeysData(searchMode))
-    localStorageService.set(BrowserStorageItem.browserViewType, type)
 
     if (!(searchMode === SearchMode.Redisearch && !selectedIndex)) {
       loadKeys(type)

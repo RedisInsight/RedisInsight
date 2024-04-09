@@ -53,7 +53,7 @@ const CloudSettings = () => {
       <EuiFlexGroup>
         <EuiFlexItem>
           <EuiText size="s" className={styles.smallText} color="subdued">
-            The list of API user keys that are stored locally in RedisInsight. <br />
+            The list of API user keys that are stored locally in Redis Insight. <br />
             API user keys grant programmatic access to Redis Cloud. <br />
             {'To delete API keys from Redis Cloud, '}
             <EuiLink
@@ -91,7 +91,7 @@ const CloudSettings = () => {
             <div className={styles.popoverDeleteContainer}>
               <EuiText size="m">
                 <h4>
-                  All API user keys will be removed from RedisInsight.
+                  All API user keys will be removed from Redis Insight.
                 </h4>
                 {'To delete API keys from Redis Cloud, '}
                 <EuiLink

@@ -8,6 +8,7 @@ interface Props {
   value: string
   expanded?: boolean
   space?: number
+  useNativeBigInt?: boolean
 }
 
 const JSONViewer = (props: Props) => {

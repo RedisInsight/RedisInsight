@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { bulkActionsSelector, bulkImportDefaultDataAction } from 'uiSrc/slices/browser/bulkActions'
-import { fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import { changeKeyViewType, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
@@ -27,10 +27,13 @@ const LoadSampleData = () => {
       bulkImportDefaultDataAction(
         id,
         () => {
+          if (viewType === KeyViewType.Browser) {
+            dispatch(changeKeyViewType(KeyViewType.Tree))
+          }
           dispatch(fetchKeys({
             searchMode: SearchMode.Pattern,
             cursor: '0',
-            count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT
+            count: SCAN_TREE_COUNT_DEFAULT
           }))
         }
       )

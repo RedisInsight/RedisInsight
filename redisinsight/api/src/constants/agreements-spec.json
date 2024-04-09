@@ -11,7 +11,7 @@
       "since": "1.0.1",
       "title": "Analytics",
       "label": "Enable Analytics",
-      "description": "Select to help us make RedisInsight better. We aggregate anonymized user experience data and use it to fix bugs and improve experience for all users."
+      "description": "Select to help us make Redis Insight better. We aggregate anonymized user experience data and use it to fix bugs and improve experience for all users."
     },
     "notifications": {
       "defaultValue": false,
@@ -29,7 +29,7 @@
       "conditional": true,
       "checker": "KEYTAR",
       "defaultOption": "false",
-      
+
       "options": {
         "true": {
           "defaultValue": true,

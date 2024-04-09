@@ -2,6 +2,7 @@ import { set, cloneDeep } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { parseCloudOAuthError } from 'uiSrc/utils'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 const responseData = { response: { data: { }, status: 500 } }
 
@@ -18,7 +19,7 @@ const parseCloudOAuthErrorTests = [
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -38,7 +39,7 @@ const parseCloudOAuthErrorTests = [
         <>
           Try restarting Redis Insight.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -51,7 +52,7 @@ const parseCloudOAuthErrorTests = [
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -64,7 +65,7 @@ const parseCloudOAuthErrorTests = [
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],

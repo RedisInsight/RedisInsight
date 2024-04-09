@@ -5,6 +5,7 @@ import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
   const error = {
@@ -40,7 +41,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break
@@ -50,7 +51,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
         <>
           Unknown authorization request.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break
@@ -60,7 +61,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
         <>
           An unexpected error occurred.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break
@@ -72,7 +73,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break
@@ -92,7 +93,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
         <>
           Try restarting Redis Insight.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break
@@ -105,7 +106,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break
@@ -119,7 +120,7 @@ export const parseCloudOAuthError = (err: CustomError | string = DEFAULT_ERROR_M
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
       break

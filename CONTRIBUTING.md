@@ -9,7 +9,7 @@ Please ensure your commits are small and focused; they should tell a story of yo
 
 ## Submitting an issue
 If you find a bug in the source code, you can help us by
-submit an issue to our [GitHub Repository](https://github.com/Redis-Insight/Redis-Insight)
+submit an issue to our [GitHub Repository](https://github.com/RedisInsight/RedisInsight)
 
 Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion might inform you of workarounds readily available.
 

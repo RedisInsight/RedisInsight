@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, posix } from 'path';
 import * as os from 'os';
 import { trim } from 'lodash';
 import { version } from '../package.json';
@@ -18,15 +18,15 @@ const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourc
 
 const proxyPath = trim(process.env.RI_PROXY_PATH, '/');
 
-const customPluginsUri = join('/', proxyPath, 'plugins');
-const staticUri = join('/', proxyPath, 'static');
-const tutorialsUri = join('/', proxyPath, 'static', 'tutorials');
-const customTutorialsUri = join('/', proxyPath, 'static', 'custom-tutorials');
-const contentUri = join('/', proxyPath, 'static', 'content');
-const defaultPluginsUri = join('/', proxyPath, 'static', 'plugins');
-const pluginsAssetsUri = join('/', proxyPath, 'static', 'resources', 'plugins');
+const customPluginsUri = posix.join('/', proxyPath, 'plugins');
+const staticUri = posix.join('/', proxyPath, 'static');
+const tutorialsUri = posix.join('/', proxyPath, 'static', 'tutorials');
+const customTutorialsUri = posix.join('/', proxyPath, 'static', 'custom-tutorials');
+const contentUri = posix.join('/', proxyPath, 'static', 'content');
+const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
+const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
 
-const socketPath = join('/', proxyPath, 'socket.io');
+const socketPath = posix.join('/', proxyPath, 'socket.io');
 const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
   ? join(process['resourcesPath'], 'data')
   : join(__dirname, '..', 'data');

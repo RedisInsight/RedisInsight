@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { posix } from 'path';
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -46,7 +46,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   if (process.env.RI_APP_TYPE !== 'electron') {
     let prefix = serverConfig.globalPrefix;
     if (serverConfig.proxyPath) {
-      prefix = join(serverConfig.proxyPath, prefix);
+      prefix = posix.join(serverConfig.proxyPath, prefix);
     }
 
     app.setGlobalPrefix(prefix, { exclude: ['/'] });

@@ -30,7 +30,7 @@ import { fetchContentRecommendations } from 'uiSrc/slices/recommendations/recomm
 import { fetchGuideLinksAction } from 'uiSrc/slices/content/guide-links'
 import { setCapability } from 'uiSrc/slices/app/context'
 
-import favicon from 'uiSrc/assets/favicon.ico'
+import favicon from 'uiSrc/assets/favicon.svg'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {

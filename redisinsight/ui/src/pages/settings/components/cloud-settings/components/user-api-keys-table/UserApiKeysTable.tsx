@@ -97,7 +97,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           <div className={styles.nameField}>
             {!valid && (
               <EuiToolTip
-                content="This API key is invalid. Remove it from RedisInsight and Redis Cloud and create a new one instead."
+                content="This API key is invalid. Remove it from   and Redis Cloud and create a new one instead."
                 anchorClassName={styles.invalidIconAnchor}
               >
                 <EuiIcon className={styles.invalidIcon} type="alert" color="danger" />
@@ -162,7 +162,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             />
           </EuiToolTip>
           <PopoverDelete
-            header={(<>{formatLongName(name)} <br /> will be removed from RedisInsight.</>)}
+            header={(<>{formatLongName(name)} <br /> will be removed from Redis Insight.</>)}
             text={(
               <>
                 {'To delete this API key from Redis Cloud, '}

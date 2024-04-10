@@ -15,7 +15,7 @@ These commands will install dependencies and start the server.
 _Note_: Base styles are included to `index.html` 
 from [RedisInsight](https://github.com/RedisInsight/RedisInsight) repository.
 
-_From RedisInsight Repo_:
+_From Redis Insight Repo_:
 This command will generate the `vendor` folder with styles and fonts of the core app. Add this folder 
 inside the folder for your plugin and include appropriate styles to the `index.html` file.
 
@@ -29,7 +29,7 @@ yarn build:statics:win - for Windows
 
 ## Build plugin
 
-The following commands will build plugins to be used in RedisInsight:
+The following commands will build plugins to be used in Redis Insight:
 ```
 yarn
 yarn build

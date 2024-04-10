@@ -10,7 +10,7 @@ services:
       - ./results:/usr/src/app/results
       - ./report:/usr/src/app/report
       - ./plugins:/usr/src/app/plugins
-      - rihomedir:/root/.redisinsight-app
+      - rihomedir:/root/.redis-insight
       - tmp:/tmp
       - ./remote:/root/remote
     env_file:

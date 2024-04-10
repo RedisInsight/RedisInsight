@@ -21,7 +21,7 @@ const SOCKETS_CONFIG = config.get('sockets');
 
 @UsePipes(new ValidationPipe())
 @UseFilters(AckWsExceptionFilter)
-@WebSocketGateway({ namespace: 'pub-sub', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({ path: SOCKETS_CONFIG.path, namespace: 'pub-sub', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
 export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 

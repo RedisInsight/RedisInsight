@@ -30,6 +30,8 @@ const unprintableBuf = Buffer.concat([
 
 const CERTS_FOLDER = process.env.CERTS_FOLDER || './coverage';
 
+const TEST_RUN_DIR = '.test_run';
+
 export const constants = {
   // api
   API,
@@ -573,18 +575,6 @@ export const constants = {
     name: RECOMMENDATION_NAMES.SEARCH_HASH,
   },
 
-  TEST_LUA_TO_FUNCTIONS_RECOMMENDATION: {
-    name: RECOMMENDATION_NAMES.LUA_TO_FUNCTIONS,
-  },
-
-  TEST_FUNCTIONS_WITH_STREAMS_RECOMMENDATION: {
-    name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
-  },
-
-  TEST_FUNCTIONS_WITH_KEYSPACE_RECOMMENDATION: {
-    name: RECOMMENDATION_NAMES.FUNCTIONS_WITH_KEYSPACE,
-  },
-
   TEST_LUA_SCRIPT_VOTE_RECOMMENDATION: {
     name: RECOMMENDATION_NAMES.LUA_SCRIPT,
     vote: 'useful',
@@ -608,5 +598,7 @@ export const constants = {
   TEST_ANALYTICS_EVENT: TelemetryEvents.RedisInstanceAdded,
   TEST_ANALYTICS_EVENT_DATA: { length: 5 },
   TEST_ANALYTICS_PAGE,
+
+  TEST_DATA_DIR: process.env.TEST_DATA_DIR || `${TEST_RUN_DIR}/data`,
   // etc...
 }

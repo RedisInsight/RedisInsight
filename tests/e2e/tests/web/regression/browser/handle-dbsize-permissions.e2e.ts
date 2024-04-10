@@ -50,7 +50,7 @@ test('Verify that user without dbsize permissions can connect to DB', async t =>
     await browserPage.searchByKeyName(keyName);
     await t.expect(browserPage.keysNumberOfResults.textContent).eql('1', 'Found keys number not correct');
     await t.expect(browserPage.scannedValue.textContent).contains('18 000', 'Number of scanned not correct');
-    await t.expect(browserPage.keysTotalNumber.textContent).contains('18 000', 'Number of total keys not correct');
+    await t.expect(browserPage.totalKeysNumber.textContent).contains('18 000', 'Number of total keys not correct');
     // Check bulk delete
     await browserPage.Cli.sendCommandInCli(createKeyCommand);
     await browserPage.searchByKeyName(keyName);

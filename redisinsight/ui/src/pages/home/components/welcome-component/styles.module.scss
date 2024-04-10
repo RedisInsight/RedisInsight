@@ -1,6 +1,6 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
+@import "@elastic/eui/src/global_styling/mixins/helpers";
+@import "@elastic/eui/src/components/table/mixins";
+@import "@elastic/eui/src/global_styling/index";
 
 .welcome {
   @include euiScrollBar;
@@ -12,24 +12,21 @@
   text-align: center;
 
   &.welcome_dark {
-    background-image: url('uiSrc/assets/img/welcome_bg_dark.jpg');
+    background-image: url("uiSrc/assets/img/welcome_bg_dark.png");
   }
 
   &.welcome_light {
-    background-image: url('uiSrc/assets/img/welcome_bg_light.jpg');
+    background-image: url("uiSrc/assets/img/welcome_bg_light.png");
   }
 }
 
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  height: 100%;
   min-height: 100%;
 
   max-width: 800px;
   margin: 0 auto;
-  padding: 10px 15px;
+  padding: 50px 15px 40px;
 }
 
 .controls {
@@ -70,7 +67,7 @@
 
   cursor: pointer;
 
-  transition: transform ease .2s;
+  transition: transform ease 0.2s;
 
   &:hover {
     transform: translateY(-1px);
@@ -114,9 +111,10 @@
 
 .logo {
   display: inline-block;
-  width: 285px;
+  width: 170px;
   height: auto;
-  margin-bottom: 12px;
+  margin-bottom: 7px;
+  margin-top: 5px;
 }
 
 .title {

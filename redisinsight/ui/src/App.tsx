@@ -14,6 +14,7 @@ import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFl
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 import ThemeComponent from './components/theme/ThemeComponent'
+import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitializer/MonacoEnvironmentInitializer'
 import GlobalDialogs from './components/global-dialogs'
 
 import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
@@ -40,6 +41,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
   return (
     <div className="main-container">
       <ThemeComponent />
+      <MonacoEnvironmentInitializer />
       { serverLoading
         ? <PagePlaceholder />
         : (

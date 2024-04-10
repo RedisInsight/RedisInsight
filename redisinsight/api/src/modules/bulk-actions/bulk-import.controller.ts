@@ -20,11 +20,11 @@ import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-i
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Bulk Actions')
-@Controller('/bulk-actions')
+@Controller('/bulk-actions/import')
 export class BulkImportController {
   constructor(private readonly service: BulkImportService) {}
 
-  @Post('import')
+  @Post()
   @ApiConsumes('multipart/form-data')
   @HttpCode(200)
   @ApiEndpoint({
@@ -53,7 +53,7 @@ export class BulkImportController {
     });
   }
 
-  @Post('import/tutorial-data')
+  @Post('/tutorial-data')
   @HttpCode(200)
   @ApiEndpoint({
     description: 'Import data from tutorial by path',
@@ -68,5 +68,21 @@ export class BulkImportController {
       @ClientMetadataParam() clientMetadata: ClientMetadata,
   ): Promise<IBulkActionOverview> {
     return this.service.uploadFromTutorial(clientMetadata, dto);
+  }
+
+  @Post('/default-data')
+  @HttpCode(200)
+  @ApiEndpoint({
+    description: 'Import default data',
+    responses: [
+      {
+        type: Object,
+      },
+    ],
+  })
+  async importDefaultData(
+    @ClientMetadataParam() clientMetadata: ClientMetadata,
+  ): Promise<IBulkActionOverview> {
+    return this.service.importDefaultData(clientMetadata);
   }
 }

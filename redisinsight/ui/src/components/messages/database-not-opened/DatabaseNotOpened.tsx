@@ -1,12 +1,9 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { ExternalLink, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
-import { Theme } from 'uiSrc/constants'
-import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
-import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
+import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
@@ -18,8 +15,6 @@ export interface Props {
 
 const DatabaseNotOpened = (props: Props) => {
   const { source = OAuthSocialSource.Tutorials, onClose } = props
-
-  const { theme } = useContext(ThemeContext)
 
   return (
     <div className={styles.wrapper} data-testid="database-not-opened-popover">
@@ -59,7 +54,7 @@ const DatabaseNotOpened = (props: Props) => {
         </>
       </div>
       <img
-        src={theme === Theme.Dark ? TelescopeDarkImg : TelescopeLightImg}
+        src={TelescopeImg}
         className={styles.img}
         alt="telescope"
         loading="lazy"

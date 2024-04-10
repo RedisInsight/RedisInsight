@@ -2,18 +2,16 @@ import {
   Injectable, InternalServerErrorException, Logger, NotFoundException,
 } from '@nestjs/common';
 import { isUndefined } from 'lodash';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { plainToClass } from 'class-transformer';
 import { classToClass } from 'src/utils';
-import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { BrowserHistoryEntity } from '../entities/browser-history.entity';
 import { BrowserHistory } from '../dto/get.browser-history.dto';
-
-const BROWSER_HISTORY_CONFIG = config.get('browser_history');
+import { BrowserHistory as BrowserHistoryModel } from '../models/browser-history';
+import { BrowserHistoryRepository } from '../repositories/browser-history.repository';
+import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class BrowserHistoryProvider {
@@ -24,8 +22,7 @@ export class BrowserHistoryProvider {
   ];
 
   constructor(
-    @InjectRepository(BrowserHistoryEntity)
-    private readonly repository: Repository<BrowserHistoryEntity>,
+    private readonly BrowserHistoryRepository: BrowserHistoryRepository,
     private readonly encryptionService: EncryptionService,
   ) {}
 
@@ -34,32 +31,33 @@ export class BrowserHistoryProvider {
    * Should always throw and error in case when unable to encrypt for some reason
    * @param history
    */
-  async create(history: Partial<BrowserHistory>): Promise<BrowserHistory> {
-    const entity = await this.repository.save(await this.encryptEntity(plainToClass(BrowserHistoryEntity, history)));
+  async create(sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
+    const encrypted = await this.encryptEntity(plainToClass(BrowserHistoryModel, history));
+    const model = await this.BrowserHistoryRepository.save(sessionMetadata, encrypted);
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(entity.databaseId, entity.mode);
+      await this.cleanupDatabaseHistory(sessionMetadata, model.databaseId, model.mode);
     } catch (e) {
       this.logger.error('Error when trying to cleanup history after insert', e);
     }
 
-    return classToClass(BrowserHistory, await this.decryptEntity(entity));
+    return classToClass(BrowserHistory, await this.decryptEntity(model));
   }
 
   /**
    * Fetches entity, decrypt and return full BrowserHistory model
    * @param id
    */
-  async get(id: string): Promise<BrowserHistory> {
-    const entity = await this.repository.findOneBy({ id });
+  async get(sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
+    const model = await this.BrowserHistoryRepository.findById(sessionMetadata, id);
 
-    if (!entity) {
+    if (!model) {
       this.logger.error(`Browser history item with id:${id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.BROWSER_HISTORY_ITEM_NOT_FOUND);
     }
 
-    return classToClass(BrowserHistory, await this.decryptEntity(entity, true));
+    return classToClass(BrowserHistory, await this.decryptEntity(model, true));
   }
 
   /**
@@ -67,34 +65,23 @@ export class BrowserHistoryProvider {
    * @param databaseId
    * @param mode
    */
-  async list(databaseId: string, mode: BrowserHistoryMode): Promise<BrowserHistory[]> {
+  async list(sessionMetadata: SessionMetadata, databaseId: string, mode: BrowserHistoryMode): Promise<BrowserHistory[]> {
     this.logger.log('Getting browser history list');
-    const entities = await this.repository
-      .createQueryBuilder('a')
-      .where({ databaseId, mode })
-      .select([
-        'a.id',
-        'a.filter',
-        'a.mode',
-        'a.encryption',
-      ])
-      .orderBy('a.createdAt', 'DESC')
-      .limit(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
-      .getMany();
+    const models = await this.BrowserHistoryRepository.getBrowserHistory(sessionMetadata, databaseId, mode);
 
     this.logger.log('Succeed to get history list');
 
-    const decryptedEntities = await Promise.all(
-      entities.map<Promise<BrowserHistoryEntity>>(async (entity) => {
+    const decryptedModels = await Promise.all(
+      models.map<Promise<BrowserHistoryEntity>>(async (model) => {
         try {
-          return await this.decryptEntity(entity, true);
+          return await this.decryptEntity(model, true);
         } catch (e) {
           return null;
         }
       }),
     );
 
-    return decryptedEntities.map((entity) => classToClass(BrowserHistory, entity));
+    return decryptedModels.map((model) => classToClass(BrowserHistory, model));
   }
 
   /**
@@ -102,10 +89,10 @@ export class BrowserHistoryProvider {
    * @param databaseId
    * @param id
    */
-  async delete(databaseId: string, id: string): Promise<void> {
+  async delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
     this.logger.log(`Deleting browser history item: ${id}`);
     try {
-      await this.repository.delete({ id, databaseId });
+      await this.BrowserHistoryRepository.delete(sessionMetadata, id, databaseId);
       // todo: rethink
       this.logger.log('Succeed to delete browser history item.');
     } catch (error) {
@@ -119,29 +106,9 @@ export class BrowserHistoryProvider {
    * and remove duplicates
    * @param databaseId
    */
-  async cleanupDatabaseHistory(databaseId: string, mode: string): Promise<void> {
+  async cleanupDatabaseHistory(sessionMetadata: SessionMetadata, databaseId: string, mode: string): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsDuplicates = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, mode })
-      .select('id')
-      .groupBy('filter')
-      .having('COUNT(filter) > 1')
-      .getRawMany()).map((item) => item.id);
-
-    const idsOverLimit = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, mode })
-      .select('id')
-      .orderBy('createdAt', 'DESC')
-      .offset(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb + idsDuplicates.length)
-      .getRawMany()).map((item) => item.id);
-
-    await this.repository
-      .createQueryBuilder()
-      .delete()
-      .whereInIds([...idsOverLimit, ...idsDuplicates])
-      .execute();
+    await this.BrowserHistoryRepository.cleanupDatabaseHistory(sessionMetadata, databaseId, mode);
   }
 
   /**
@@ -152,7 +119,7 @@ export class BrowserHistoryProvider {
    * @param entity
    * @private
    */
-  private async encryptEntity(entity: BrowserHistoryEntity): Promise<BrowserHistoryEntity> {
+  private async encryptEntity(entity: BrowserHistoryModel): Promise<BrowserHistoryModel> {
     const encryptedEntity = {
       ...entity,
     };
@@ -181,7 +148,7 @@ export class BrowserHistoryProvider {
    * @private
    */
   private async decryptEntity(
-    entity: BrowserHistoryEntity,
+    entity: BrowserHistoryModel,
     ignoreErrors: boolean = false,
   ): Promise<BrowserHistoryEntity> {
     return new BrowserHistoryEntity({
@@ -199,7 +166,7 @@ export class BrowserHistoryProvider {
    * @private
    */
   private async decryptField(
-    entity: BrowserHistoryEntity,
+    entity: BrowserHistoryModel,
     field: string,
     ignoreErrors: boolean,
   ): Promise<string> {

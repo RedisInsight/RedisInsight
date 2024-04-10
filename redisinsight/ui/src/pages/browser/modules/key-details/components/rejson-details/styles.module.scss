@@ -69,15 +69,6 @@
   }
 }
 
-.jsonButtonStyle {
-  height: 17px;
-  width: 17px;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
 .errorMessage {
   background-color: var(--tableDarkestBorderColor);
   padding: 4px 8px 0 8px;
@@ -160,6 +151,7 @@
   word-break: break-all;
   max-width: 300px;
   box-sizing: content-box;
+  flex-shrink: 0;
 }
 
 .quotedKeyName {
@@ -239,7 +231,7 @@
   margin-left: 1em;
   display: flex;
   align-items: center;
-  min-width: 48px;
+  min-width: 24px;
 }
 
 .declineBtn:hover {

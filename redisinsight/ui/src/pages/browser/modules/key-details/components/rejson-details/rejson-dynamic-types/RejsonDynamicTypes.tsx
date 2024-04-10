@@ -1,150 +1,107 @@
 import React from 'react'
-import RejsonScalar from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-scalar/RejsonScalar'
-import {
-  generatePath,
-  isScalar
-} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
-import RejsonArray from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-array/RejsonArray'
-import RejsonObject from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-object/RejsonObject'
-import { DynamicTypesProps } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
-import {
-  MIN_LEFT_PADDING_NESTING,
-  MAX_LEFT_PADDING_NESTING
-} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/constants'
+
+import { isNull, isObject } from 'lodash'
+import { MAX_LEFT_PADDING_NESTING } from '../constants'
+import { DynamicTypesProps, ObjectTypes } from '../interfaces'
+import { generatePath, isScalar } from '../utils'
+
+import RejsonScalar from '../rejson-scalar'
+import RejsonObject from '../rejson-object'
 
 const RejsonDynamicTypes = (props: DynamicTypesProps) => {
   const {
     data,
     selectedKey,
     parentPath = '',
-    shouldRejsonDataBeDownloaded,
+    isDownloaded,
+    expadedRows,
+    leftPadding = 0,
     onClickRemoveKey,
     onJsonKeyExpandAndCollapse,
-    handleSubmitJsonUpdateValue,
     handleSubmitUpdateValue,
     handleFetchVisualisationResults,
-    handleAppendRejsonArrayItemAction,
+    handleAppendRejsonObjectItemAction,
     handleSetRejsonDataAction,
   } = props
 
-  const countBracketedElements = (input: string) => (input.match(/\]/g) || []).length
+  const nextLeftPadding = Math.min(leftPadding + 1, MAX_LEFT_PADDING_NESTING)
 
-  const calculateLeftPadding = (parentPath: string) => {
-    const calculatedValue = MIN_LEFT_PADDING_NESTING + (parentPath ? countBracketedElements(parentPath) * 1.5 : 0)
-    return String(Math.min(calculatedValue, MAX_LEFT_PADDING_NESTING))
-  }
+  const renderScalar = (data: any) => (
+    <RejsonScalar
+      isRoot={isNull(data.key) && data.parentPath === '.'}
+      leftPadding={nextLeftPadding}
+      selectedKey={selectedKey}
+      path={data.path}
+      parentPath={data.parentPath}
+      keyName={data.key}
+      key={generatePath(data.parentPath, data.key)}
+      value={data.value}
+      handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
+    />
+  )
 
-  const renderScalar = (data) =>
-    (
-      <RejsonScalar
-        leftPadding={calculateLeftPadding(data.parentPath)}
-        selectedKey={selectedKey}
-        path={data.path}
-        parentPath={data.parentPath}
-        keyName={data.key}
-        key={generatePath(data.parentPath, data.key)}
-        value={data.value}
-        handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
-        handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-      />
-    )
+  const renderJSONObject = (data: any, type: string) => (
+    <RejsonObject
+      expadedRows={expadedRows}
+      type={type as ObjectTypes}
+      isDownloaded={isDownloaded}
+      leftPadding={nextLeftPadding}
+      selectedKey={selectedKey}
+      path={data.path}
+      parentPath={data.parentPath}
+      key={generatePath(data.parentPath, data.key)}
+      keyName={data.key}
+      onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
+      value={data.value || {}}
+      cardinality={data.cardinality}
+      handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
+      onClickRemoveKey={onClickRemoveKey}
+      handleSubmitUpdateValue={handleSubmitUpdateValue}
+      handleSetRejsonDataAction={handleSetRejsonDataAction}
+      handleFetchVisualisationResults={handleFetchVisualisationResults}
+      handleAppendRejsonObjectItemAction={handleAppendRejsonObjectItemAction}
+    />
+  )
 
-  const renderJSONArray = (data) =>
-    (
-      <RejsonArray
-        shouldRejsonDataBeDownloaded={shouldRejsonDataBeDownloaded}
-        key={generatePath(data.parentPath, data.key)}
-        handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-        path={data.path}
-        parentPath={data.parentPath}
-        keyName={data.key}
-        onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
-        value={data.value || []}
-        cardinality={data.cardinality}
-        leftPadding={calculateLeftPadding(data.parentPath)}
-        selectedKey={selectedKey}
-        handleSubmitUpdateValue={handleSubmitUpdateValue}
-        handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
-        onClickRemoveKey={onClickRemoveKey}
-        handleFetchVisualisationResults={handleFetchVisualisationResults}
-        handleAppendRejsonArrayItemAction={handleAppendRejsonArrayItemAction}
-        handleSetRejsonDataAction={handleSetRejsonDataAction}
-      />
-    )
-
-  const renderJSONObject = (data) =>
-    (
-      <RejsonObject
-        shouldRejsonDataBeDownloaded={shouldRejsonDataBeDownloaded}
-        leftPadding={calculateLeftPadding(data.parentPath)}
-        handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-        selectedKey={selectedKey}
-        path={data.path}
-        parentPath={data.parentPath}
-        key={generatePath(data.parentPath, data.key)}
-        keyName={data.key}
-        onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
-        value={data.value || {}}
-        cardinality={data.cardinality}
-        handleSubmitRemoveKey={(path: string, keyName: string) => onClickRemoveKey(path, keyName)}
-        onClickRemoveKey={onClickRemoveKey}
-        handleSubmitUpdateValue={handleSubmitUpdateValue}
-        handleSetRejsonDataAction={handleSetRejsonDataAction}
-        handleFetchVisualisationResults={handleFetchVisualisationResults}
-        handleAppendRejsonArrayItemAction={handleAppendRejsonArrayItemAction}
-      />
-    )
-
-  const renderRejsonDataBeDownloaded = (item, i: number) => {
+  const renderRejsonDataBeDownloaded = (item: any, i: number) => {
     if (isScalar(item)) return renderScalar({ key: i || null, value: item, parentPath })
 
     const data = { ...item, parentPath }
-    if (item.type === 'array') return renderJSONArray(data)
-    if (item.type === 'object') return renderJSONObject(data)
+    if (['array', 'object'].includes(item.type)) return renderJSONObject(data, item.type)
     return renderScalar(data)
   }
 
   const renderArrayItem = (key: string | number, value: any) => {
-    if (Array.isArray(value)) {
-      return renderJSONArray({
-        key,
-        value,
-        cardinality: value.length,
-        parentPath
-      })
-    }
-    if (typeof value === 'object') {
+    // it is the same to render object or array
+    if (isObject(value)) {
       return renderJSONObject({
         key,
         value,
         cardinality: Object.keys(value).length,
-        parentPath
-      })
+        parentPath,
+      }, Array.isArray(value) ? ObjectTypes.Array : ObjectTypes.Object)
     }
+
     return renderScalar({ key, value, parentPath })
   }
 
-  const renderResult = (data) => {
+  const renderResult = (data: any) => {
     if (isScalar(data)) {
       return renderScalar({ key: null, value: data, parentPath })
     }
 
-    if (shouldRejsonDataBeDownloaded) {
-      return data.map(renderRejsonDataBeDownloaded)
+    if (!isDownloaded) {
+      return data?.map(renderRejsonDataBeDownloaded)
     }
 
     if (Array.isArray(data)) {
-      return data.map((item, i) => renderArrayItem(i, item))
+      return data?.map((item, i) => renderArrayItem(i, item))
     }
 
     return Object.entries(data).map(([key, value]) => renderArrayItem(key, value))
   }
 
-  return (
-    <>
-      {renderResult(data)}
-    </>
-  )
+  return renderResult(data)
 }
 
-export { RejsonDynamicTypes }
+export default RejsonDynamicTypes

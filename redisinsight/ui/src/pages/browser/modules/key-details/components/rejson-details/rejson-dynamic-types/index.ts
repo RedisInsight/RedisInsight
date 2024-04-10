@@ -1,1 +1,3 @@
-export { RejsonDynamicTypes } from './RejsonDynamicTypes'
+import RejsonDynamicTypes from './RejsonDynamicTypes'
+
+export default RejsonDynamicTypes

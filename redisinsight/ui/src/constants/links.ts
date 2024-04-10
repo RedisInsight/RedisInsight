@@ -1,12 +1,12 @@
 import { CloudSsoUtmCampaign, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 export const EXTERNAL_LINKS = {
-  githubRepo: 'https://github.com/Redis-Insight/Redis-Insight',
-  githubIssues: 'https://github.com/Redis-Insight/Redis-Insight/issues',
-  releaseNotes: 'https://github.com/Redis-Insight/Redis-Insight/releases',
+  githubRepo: 'https://github.com/RedisInsight/RedisInsight',
+  githubIssues: 'https://github.com/RedisInsight/RedisInsight/issues',
+  releaseNotes: 'https://github.com/RedisInsight/RedisInsight/releases',
   userSurvey: 'https://www.surveymonkey.com/r/redisinsight',
-  recommendationFeedback: 'https://github.com/Redis-Insight/Redis-Insight/issues/new/choose',
-  guidesRepo: 'https://github.com/Redis-Insight/Tutorials',
+  recommendationFeedback: 'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
+  guidesRepo: 'https://github.com/RedisInsight/Tutorials',
   redisStack: 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/',
   cloudConsole: 'https://app.redislabs.com/#/databases',
   tryFree: 'https://redis.com/try-free',

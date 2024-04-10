@@ -1,6 +1,7 @@
 {
   "name": "redisinsight",
-  "productName": "Redis Insight",
+  "appName": "Redis Insight",
+  "productName": "RedisInsight",
   "private": true,
   "version": "2.49.1",
   "description": "Redis Insight",

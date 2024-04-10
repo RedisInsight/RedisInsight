@@ -53,7 +53,7 @@ describe('RecommendationVoting', () => {
     fireEvent.click(screen.getByTestId('not useful-vote-btn'))
     await waitForEuiPopoverVisible()
 
-    expect(document.querySelector('[data-test-subj="github-repo-link"]')).toHaveAttribute('href', 'https://github.com/Redis-Insight/Redis-Insight/issues/new/choose')
+    expect(document.querySelector('[data-test-subj="github-repo-link"]')).toHaveAttribute('href', 'https://github.com/RedisInsight/RedisInsight/issues/new/choose')
   })
 
   it('should render proper popover and btn should be disabled"', async () => {

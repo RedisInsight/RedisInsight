@@ -1,4 +1,6 @@
 .container {
+  height: 100%;
+
   // RDI alias column
   tr > th:nth-child(2),
   tr > td:nth-child(2) {
@@ -7,11 +9,7 @@
 
   :global {
     .itemList {
-      height: calc(100vh - 261px);
-
-      @media (min-width: 768px) {
-        height: calc(100vh - 180px);
-      }
+      height: 100%;
     }
   }
 }

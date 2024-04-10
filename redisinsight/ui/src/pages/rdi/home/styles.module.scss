@@ -1,8 +1,7 @@
 @import "@elastic/eui/src/global_styling/index";
 
 .page {
-  height: 100%;
-  padding: 0 16px 16px !important;
+  padding: 1px 16px 16px !important;
 }
 
 .header {
@@ -14,11 +13,10 @@
 
   overflow: auto;
   position: relative;
+  height: 100%;
 
-  height: calc(100vh - 160px);
 
   @media (min-width: 768px) {
-    height: calc(100vh - 180px);
     display: flex;
     align-items: center;
     justify-content: center;

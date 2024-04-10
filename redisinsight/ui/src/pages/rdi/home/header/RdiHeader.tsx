@@ -1,46 +1,34 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiPanel, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui'
 import React from 'react'
+import { useSelector } from 'react-redux'
 
+import { instancesSelector } from 'uiSrc/slices/rdi/instances'
 import SearchRdiList from '../search/SearchRdiList'
-import styles from './styles.module.scss'
 
 export interface Props {
   onRdiInstanceClick: () => void
 }
 
-const RdiHeader = ({ onRdiInstanceClick }: Props) => (
-  <EuiPanel>
-    <EuiFlexGroup responsive={false}>
-      <EuiFlexItem>
-        <SearchRdiList />
-      </EuiFlexItem>
-      <EuiFlexItem>
-        <EuiFlexGroup justifyContent="flexEnd" alignItems="center" gutterSize="s">
-          <EuiFlexItem grow={false}>
-            <EuiButton fill size="s" color="secondary" onClick={onRdiInstanceClick} data-testid="rdi-instance">
-              + RDI INSTANCE
-            </EuiButton>
+const RdiHeader = ({ onRdiInstanceClick }: Props) => {
+  const { data: instances } = useSelector(instancesSelector)
+
+  return (
+    <div className="containerDl">
+      <EuiFlexGroup className="contentDL" alignItems="center" responsive={false} gutterSize="s">
+        <EuiFlexItem grow={false}>
+          <EuiButton fill color="secondary" onClick={onRdiInstanceClick} data-testid="rdi-instance">
+            + RDI Instance
+          </EuiButton>
+        </EuiFlexItem>
+        {instances.length > 0 && (
+          <EuiFlexItem grow={false} className="searchContainer">
+            <SearchRdiList />
           </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiToolTip
-              content="Import RDI Instances"
-            >
-              <EuiButton
-                fill
-                color="secondary"
-                onClick={() => {}}
-                size="s"
-                className={styles.importBtn}
-                data-testid="import-from-file-btn"
-              >
-                <EuiIcon type="importAction" />
-              </EuiButton>
-            </EuiToolTip>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  </EuiPanel>
-)
+        )}
+      </EuiFlexGroup>
+      <EuiSpacer className="spacerDl" />
+    </div>
+  )
+}
 
 export default RdiHeader

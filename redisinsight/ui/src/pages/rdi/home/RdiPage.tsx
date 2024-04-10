@@ -97,7 +97,7 @@ const RdiPage = () => {
     ) : (
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (
-          <div data-testid="rdi-instance-list" ref={resizeRef}>
+          <div data-testid="rdi-instance-list" className={styles.fullHeight} ref={resizeRef}>
             <RdiInstancesListWrapper
               width={width}
               editedInstance={editInstance}
@@ -125,6 +125,7 @@ const RdiPage = () => {
                   paddingSize="none"
                   wrapperProps={{
                     className: cx('home__resizePanelLeft', {
+                      hidden: !data.length && !loading,
                       fullWidth: !isConnectionFormOpen,
                       openedRightPanel: isConnectionFormOpen,
                     })

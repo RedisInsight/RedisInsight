@@ -33,11 +33,11 @@ fixture `Tree view verifications`
     });
 test
     .before(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
     })
     .after(async() => {
         // Delete database
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
     })('Verify that user has load sample data button when there are no keys in the database', async t => {
         const message = 'Let\'sstartworkingLoadsampledata+Addkeymanually';
         const actualMessage = await browserPage.keyListMessage.innerText;
@@ -88,9 +88,11 @@ test
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
+        await browserPage.Cli.sendCommandInCli('flushdb');
     })
     .after(async() => {
         // Delete database
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
     })('Verify that user can load sample data if database does not have modules', async t => {
         // Verify the message

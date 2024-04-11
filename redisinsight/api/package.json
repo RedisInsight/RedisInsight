@@ -77,6 +77,7 @@
     "nest-winston": "^1.4.0",
     "nestjs-form-data": "^1.8.7",
     "node-version-compare": "^1.0.3",
+    "quicktype-core": "^23.0.116",
     "redis": "^4.6.10",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",

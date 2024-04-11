@@ -1,4 +1,5 @@
 import { BrowserHistoryMode } from 'src/common/constants';
+import { DataAsJsonString } from 'src/common/decorators';
 
 export class BrowserHistory {
 
@@ -12,7 +13,9 @@ export class BrowserHistory {
   // TODO: I'm unsure how to handle this, another model type that mimics the typeorm entity?
   // database: DatabaseEntity;
 
+  @DataAsJsonString()
   public filter: string;
+
   public mode?: string = BrowserHistoryMode.Pattern;
   public encryption: string;
   public createdAt: Date;

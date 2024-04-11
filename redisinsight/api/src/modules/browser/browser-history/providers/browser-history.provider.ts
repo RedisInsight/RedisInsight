@@ -32,12 +32,9 @@ export class BrowserHistoryProvider {
    * @param history
    */
   async create(sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
-    console.log("h1-----", history);
     const encrypted = await this.encryptEntity(plainToClass(BrowserHistoryModel, history));
-    console.log('e-------', encrypted);
     const model = await this.BrowserHistoryRepository.save(sessionMetadata, encrypted);
 
-    console.log("h2-----", model);
     // cleanup history and ignore error if any
     try {
       await this.cleanupDatabaseHistory(sessionMetadata, model.databaseId, model.mode);
@@ -129,7 +126,6 @@ export class BrowserHistoryProvider {
 
     await Promise.all(this.encryptedFields.map(async (field) => {
       if (entity[field]) {
-        console.log("zzzz------", field, entity[field]);
         const { data, encryption } = await this.encryptionService.encrypt(entity[field]);
         encryptedEntity[field] = data;
         encryptedEntity['encryption'] = encryption;

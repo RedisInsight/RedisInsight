@@ -7,6 +7,7 @@ import { BrowserHistoryMode } from 'src/common/constants';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
 import { CreateBrowserHistoryDto, BrowserHistory, ScanFilter } from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryEntity } from 'src/modules/browser/browser-history/entities/browser-history.entity';
+import { BrowserHistory as BrowserHistoryModel } from 'src/modules/browser/browser-history/models/browser-history';
 
 export const mockBrowserHistoryService = () => ({
   create: jest.fn(),
@@ -50,3 +51,15 @@ export const mockBrowserHistory = {
   id: mockBrowserHistoryEntity.id,
   createdAt: mockBrowserHistoryEntity.createdAt,
 } as BrowserHistory;
+
+export const mockBrowserHistoryModel = new BrowserHistoryModel({
+  ...mockBrowserHistoryEntity,
+});
+
+export const mockBrowserHistoryRepository = jest.fn(() => ({
+  save: jest.fn(),
+  cleanupDatabaseHistory: jest.fn(),
+  findById: jest.fn(),
+  getBrowserHistory: jest.fn(),
+  delete: jest.fn(),
+}));

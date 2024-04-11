@@ -10,7 +10,7 @@ import cx from 'classnames'
 import { throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, setTitle } from 'uiSrc/utils'
 import { HomePageTemplate } from 'uiSrc/templates'
 import { BrowserStorageItem, } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
@@ -74,6 +74,8 @@ const HomePage = () => {
   const { contextInstanceId } = useSelector(appContextSelector)
 
   useEffect(() => {
+    setTitle('Redis databases')
+
     dispatch(fetchInstancesAction())
     dispatch(resetInstancesRedisCluster())
     dispatch(resetSubscriptionsRedisCloud())

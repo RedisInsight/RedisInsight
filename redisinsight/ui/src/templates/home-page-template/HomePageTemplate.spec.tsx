@@ -47,18 +47,4 @@ describe('HomePageTemplate', () => {
     expect(screen.getByTestId('child')).toBeInTheDocument()
     expect(screen.getByTestId('home-tabs')).toBeInTheDocument()
   })
-
-  it('should render title for redis stack build', () => {
-    (appInfoSelector as jest.Mock).mockImplementation(() => ({
-      ...mockAppInfoSelector,
-      server: {
-        buildType: BuildType.RedisStack
-      }
-    }))
-
-    render(<HomePageTemplate><ChildComponent /></HomePageTemplate>)
-
-    expect(screen.queryByTestId('home-tabs')).not.toBeInTheDocument()
-    expect(screen.getByTestId('page-header-title')).toBeInTheDocument()
-  })
 })

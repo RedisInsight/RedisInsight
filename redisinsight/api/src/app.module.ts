@@ -44,7 +44,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     RedisEnterpriseModule,
     CloudModule.register(),
     RedisSentinelModule,
-    BrowserModule.register(),
+    BrowserModule,
     CliModule,
     WorkbenchModule.register(),
     PluginModule,

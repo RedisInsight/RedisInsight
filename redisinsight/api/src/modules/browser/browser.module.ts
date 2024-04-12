@@ -20,20 +20,20 @@ export class BrowserModule {
     browserHistoryRepository: Type<BrowserHistoryRepository> = LocalBrowserHistoryRepository,
   ): DynamicModule {
     return {
-      module: BrowserHistoryModule,
+      module: BrowserModule,
       imports: [
         ListModule.register({ route }),
         HashModule.register({ route }),
         ZSetModule.register({ route }),
         StringModule.register({ route }),
         SetModule.register({ route }),
-        BrowserHistoryModule.register({ route }),
+        BrowserHistoryModule.register({ route }, browserHistoryRepository),
         StreamModule.register({ route }),
         RejsonRlModule.register({ route }),
         RedisearchModule.register({ route }),
         KeysModule.register({ route }),
       ],
-      exports: [BrowserHistoryModule, browserHistoryRepository],
+      exports: [BrowserHistoryModule],
     }
   }
 }

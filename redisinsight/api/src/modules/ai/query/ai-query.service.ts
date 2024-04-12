@@ -4,7 +4,7 @@ import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provide
 import { SendAiQueryMessageDto } from 'src/modules/ai/query/dto/send.ai-query.message.dto';
 import { AiQueryInternalServerErrorException } from 'src/modules/ai/query/exceptions';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { getFullDbContext } from 'src/modules/ai/query/utils/context.util';
+import { getQueryBuilderContext } from 'src/modules/ai/query/utils/context.util';
 
 @Injectable()
 export class AiQueryService {
@@ -23,7 +23,7 @@ export class AiQueryService {
       });
 
       // todo: improve if full db context is not enough
-      const context = await getFullDbContext(client);
+      const context = await getQueryBuilderContext(client);
 
       return await this.aiQueryProvider.generateQuery(sessionMetadata, dto.content, context);
     } catch (e) {

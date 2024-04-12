@@ -233,3 +233,18 @@ export const getFullDbContext = async (client: RedisClient): Promise<object> => 
 
   return context;
 };
+
+export const getQueryBuilderContext = async (client: RedisClient): Promise<object> => {
+  const context = {};
+
+  const indexes = await client.sendCommand(
+    ['FT._LIST'],
+    { replyEncoding: 'utf8' },
+  ) as string[];
+
+  await Promise.all(indexes.map(async (index) => {
+    context[index] = await getIndexContext(client, index);
+  }));
+
+  return context;
+};

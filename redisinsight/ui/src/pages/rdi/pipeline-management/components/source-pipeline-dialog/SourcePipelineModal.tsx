@@ -22,35 +22,42 @@ export const EMPTY_PIPELINE = {
   jobs: []
 }
 
+export enum PipelineSourceOptions {
+  SERVER = 'download from server',
+  FILE = 'upload from file',
+  NEW = 'new pipeline',
+}
+
 const SourcePipelineDialog = () => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
 
-  const onSelect = () => {
+  const onSelect = (option: PipelineSourceOptions) => {
     dispatch(setPipelineDialogState(false))
     sendEventTelemetry({
       event: TelemetryEvent.RDI_START_OPTION_SELECTED,
       eventData: {
         id: rdiInstanceId,
+        option,
       },
     })
   }
 
   const onLoadPipeline = () => {
     dispatch(fetchRdiPipeline(rdiInstanceId))
-    onSelect()
+    onSelect(PipelineSourceOptions.SERVER)
   }
 
   const onStartNewPipeline = () => {
     dispatch(setPipeline(EMPTY_PIPELINE))
-    onSelect()
+    onSelect(PipelineSourceOptions.NEW)
   }
 
   return (
-    <EuiModal className={styles.container} onClose={() => {}} data-testid="oauth-select-account-dialog">
-      <EuiModalBody className={styles.modalBody}>
-        <section className={styles.content}>
+    <EuiModal className={styles.container} onClose={() => {}} data-testid="rdi-pipeline-source-dialog">
+      <EuiModalBody>
+        <div className={styles.content}>
           <EuiTitle size="s">
             <h3 className={styles.title}>Select an option<br /> to start with your pipeline</h3>
           </EuiTitle>
@@ -63,7 +70,7 @@ const SourcePipelineDialog = () => {
             <div className={styles.action}>
               <EuiIcon type="exportAction" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Upload from file</EuiText>
-              <UploadModal onUploadedPipeline={onSelect}>
+              <UploadModal onUploadedPipeline={() => onSelect(PipelineSourceOptions.FILE)}>
                 <EuiButtonEmpty data-testid="file-source-pipeline-dialog" className={styles.btn}>Upload</EuiButtonEmpty>
               </UploadModal>
             </div>
@@ -73,7 +80,7 @@ const SourcePipelineDialog = () => {
               <EuiButtonEmpty onClick={onStartNewPipeline} data-testid="empty-source-pipeline-dialog" className={styles.btn}>Start</EuiButtonEmpty>
             </div>
           </div>
-        </section>
+        </div>
       </EuiModalBody>
     </EuiModal>
   )

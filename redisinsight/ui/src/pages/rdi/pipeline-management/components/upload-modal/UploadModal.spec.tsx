@@ -83,10 +83,11 @@ describe('UploadModal', () => {
   })
 
   it('should call proper telemetry event when file upload is successful', async () => {
+    const onUploadedPipelineMock = jest.fn()
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<UploadModal>{button}</UploadModal>)
+    render(<UploadModal onUploadedPipeline={onUploadedPipelineMock}>{button}</UploadModal>)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -106,6 +107,7 @@ describe('UploadModal', () => {
         jobsNumber: 2
       }
     })
+    expect(onUploadedPipelineMock).toBeCalled()
   })
 
   it('should call proper telemetry event when file upload has failed', async () => {
@@ -113,10 +115,11 @@ describe('UploadModal', () => {
       throw new Error('error')
     })
 
+    const onUploadedPipelineMock = jest.fn()
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<UploadModal>{button}</UploadModal>)
+    render(<UploadModal onUploadedPipeline={onUploadedPipelineMock}>{button}</UploadModal>)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -136,6 +139,7 @@ describe('UploadModal', () => {
         errorMessage: 'error'
       }
     })
+    expect(onUploadedPipelineMock).not.toBeCalled()
   })
 
   it('should render disabled upload button when loading', () => {

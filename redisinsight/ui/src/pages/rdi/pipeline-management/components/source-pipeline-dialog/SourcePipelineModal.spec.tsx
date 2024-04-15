@@ -4,7 +4,8 @@ import { cleanup, mockedStore, render, fireEvent, screen } from 'uiSrc/utils/tes
 import { getPipeline, setPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { setPipelineDialogState } from 'uiSrc/slices/app/context'
 
-import SourcePipelineDialog, { EMPTY_PIPELINE } from './SourcePipelineModal'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import SourcePipelineDialog, { EMPTY_PIPELINE, PipelineSourceOptions } from './SourcePipelineModal'
 
 jest.mock('formik', () => ({
   ...jest.requireActual('formik'),
@@ -14,6 +15,11 @@ jest.mock('formik', () => ({
       jobs: [],
     }
   })
+}))
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn()
 }))
 
 let store: typeof mockedStore
@@ -29,6 +35,9 @@ describe('SourcePipelineDialog', () => {
   })
 
   it('should call proper actions after select fetch from server option', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
     render(<SourcePipelineDialog />)
 
     fireEvent.click(screen.getByTestId('server-source-pipeline-dialog'))
@@ -39,9 +48,18 @@ describe('SourcePipelineDialog', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_START_OPTION_SELECTED,
+      eventData: {
+        id: 'rdiInstanceId',
+        option: PipelineSourceOptions.SERVER
+      }
+    })
   })
 
   it('should call proper actions after select empty pipeline  option', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
     render(<SourcePipelineDialog />)
 
     fireEvent.click(screen.getByTestId('empty-source-pipeline-dialog'))
@@ -52,5 +70,12 @@ describe('SourcePipelineDialog', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_START_OPTION_SELECTED,
+      eventData: {
+        id: 'rdiInstanceId',
+        option: PipelineSourceOptions.NEW
+      }
+    })
   })
 })

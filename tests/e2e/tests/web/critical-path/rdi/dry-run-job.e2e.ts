@@ -3,7 +3,7 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { DatabaseHelper } from '../../../../helpers';
 
@@ -13,7 +13,7 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const databaseHelper = new DatabaseHelper();
 
-const resultMock = `{··"name":·"John",··"years":·123}`;
+const resultMock = '{··"name":·"John",··"years":·123}';
 const outputMock = 'Shirizli';
 
 const rdiInstance: AddNewRdiParameters = {
@@ -39,10 +39,9 @@ test('Verify that user can use Dry run panel', async() => {
     const job = 'testJob';
 
     // Need to add method to add jobs once it is implemented
-
     await rdiApiRequests.addNewRdiApi(rdiInstance);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
     await rdiInstancePage.PipelineManagementPanel.openJobByName(job);
     await t.click(rdiInstancePage.dryRunButton);
     // Verify that user can see dry run a job right panel

@@ -3,7 +3,7 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { RdiTemplatePipelineType, RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiPopoverOptions, RdiTemplatePipelineType, RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { DatabaseHelper } from '../../../../helpers';
@@ -24,7 +24,7 @@ const rdiInstance: AddNewRdiParameters = {
 };
 
 //skip the tests until rdi integration is added
-fixture.skip `Add job`
+fixture `Add job`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -33,12 +33,12 @@ fixture.skip `Add job`
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await rdiInstancesListPage.reloadPage();
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-        await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
+        await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     })
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
-test('Verify that user can add, edit and delete job', async() => {
+test.only('Verify that user can add, edit and delete job', async() => {
     const jobName = 'testJob';
     const jobName2 = 'testJob2';
 
@@ -51,7 +51,7 @@ test('Verify that user can add, edit and delete job', async() => {
     await t
         .expect(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn.hasAttribute('disabled')).ok('the button is not disabled');
     await t.hover(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn);
-    await browserActions.verifyTooltipContainsText('Job name is required', true);
+    await rdiInstancePage.verifyTooltipContainsText('Job name is required');
 
     await t.click(rdiInstancePage.EditorButton.cancelBtn);
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
@@ -64,7 +64,7 @@ test('Verify that user can add, edit and delete job', async() => {
     await t
         .expect(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn.hasAttribute('disabled')).ok('the button is not disabled');
     await t.hover(rdiInstancePage.PipelineManagementPanel.EditorButton.applyBtn);
-    await browserActions.verifyTooltipContainsText('Job name is already in use', true);
+    await rdiInstancePage.verifyTooltipContainsText('Job name is already in use');
     await t.click(rdiInstancePage.EditorButton.cancelBtn);
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName2);

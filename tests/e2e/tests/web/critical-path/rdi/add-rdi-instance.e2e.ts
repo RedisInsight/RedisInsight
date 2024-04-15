@@ -5,7 +5,7 @@ import { RdiInstance } from '../../../../pageObjects/components/myRedisDatabase/
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { commonUrl } from '../../../../helpers/conf';
-import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { DatabaseHelper } from '../../../../helpers';
 
@@ -97,6 +97,7 @@ test('Verify that sorting on the list of rdi saved when rdi opened', async t => 
     let actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.alias);
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await t.click(rdiInstancePage.breadcrumbsLink);
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);

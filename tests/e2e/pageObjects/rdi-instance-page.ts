@@ -1,5 +1,5 @@
 import { Selector, t } from 'testcafe';
-import { RdiTemplateDatabaseType, RdiTemplatePipelineType } from '../helpers/constants';
+import { RdiPopoverOptions, RdiTemplateDatabaseType, RdiTemplatePipelineType } from '../helpers/constants';
 import { BaseOverviewPage } from './base-overview-page';
 import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
 import { TestConnectionPanel } from './components/rdi/test-connection-panel';
@@ -54,6 +54,8 @@ export class RdiInstancePage extends BaseOverviewPage {
     templateCancelButton = Selector('[data-testid=template-apply-btn]');
     pipelineDropdown =  Selector('[data-testid=strategy-type-select]');
     databaseDropdown =  Selector('[data-testid=db-type-select]');
+
+    tooltip = Selector('[role=tooltip]', { timeout: 500 });
     /**
      * Send a data in Transformation Input
      * @param text The text to send
@@ -82,5 +84,23 @@ export class RdiInstancePage extends BaseOverviewPage {
             await t.click(selector);
         }
         await t.click(this.templateApplyButton);
+    }
+
+    /**
+     * Select option from 'Select an option to start with your pipeline' popover
+     * @param option option to select
+     */
+    async selectStartPipelineOption(option: RdiPopoverOptions): Promise<void> {
+
+        const selector =  Selector(`[data-testid='${option}-source-pipeline-dialog']`);
+        await t.click(selector);
+    }
+
+    /**
+     * Verify tooltip contains text
+     * @param expectedText Expected link that is compared with actual
+     */
+    async verifyTooltipContainsText(expectedText: string): Promise<void> {
+        await t.expect(this.tooltip.nth(-1).textContent).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`);
     }
 }

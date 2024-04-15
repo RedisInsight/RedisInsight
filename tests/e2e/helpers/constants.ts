@@ -109,3 +109,9 @@ export enum RdiTemplateDatabaseType  {
     MyQal = 'my-sql',
 }
 
+export enum RdiPopoverOptions  {
+    Server  = 'server',
+    File = 'file',
+    Pipeline = 'empty',
+}
+

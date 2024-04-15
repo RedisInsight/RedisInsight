@@ -3,15 +3,17 @@ import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api
 import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
-import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers';
 import { RdiStatusPage } from '../../../../pageObjects/rdi-status-page';
+import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const rdiApiRequests = new RdiApiRequests();
 const databaseHelper = new DatabaseHelper();
 const rdiStatusPage = new RdiStatusPage();
+const rdiInstancePage = new RdiInstancePage();
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
@@ -29,6 +31,8 @@ fixture.skip `Pipeline`
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
+        await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
+        await t.click(rdiInstancesListPage.NavigationPanel.statusPageButton);
 
     })
     .afterEach(async() => {

@@ -13,7 +13,7 @@ import {
   bulkActionsDeleteSelector,
   setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
 import { sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -39,6 +39,7 @@ const BulkActionsConfig = () => {
     let retryTimer: NodeJS.Timer
 
     socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
+      path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
       extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },

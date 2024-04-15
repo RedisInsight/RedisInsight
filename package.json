@@ -1,7 +1,7 @@
 {
   "name": "redisinsight",
-  "productName": "RedisInsight",
-  "description": "RedisInsight",
+  "productName": "Redis Insight",
+  "description": "Redis Insight",
   "license": "SSPL",
   "private": true,
   "scripts": {

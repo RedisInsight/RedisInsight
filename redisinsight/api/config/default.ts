@@ -1,5 +1,6 @@
-import { join } from 'path';
+import { join, posix } from 'path';
 import * as os from 'os';
+import { trim } from 'lodash';
 import { version } from '../package.json';
 
 const homedir = join(__dirname, '..');
@@ -15,11 +16,27 @@ const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourc
   ? join(process['resourcesPath'], 'defaults')
   : join(__dirname, '..', 'defaults');
 
+const proxyPath = trim(process.env.RI_PROXY_PATH, '/');
+
+const customPluginsUri = posix.join('/', proxyPath, 'plugins');
+const staticUri = posix.join('/', proxyPath, 'static');
+const tutorialsUri = posix.join('/', proxyPath, 'static', 'tutorials');
+const customTutorialsUri = posix.join('/', proxyPath, 'static', 'custom-tutorials');
+const contentUri = posix.join('/', proxyPath, 'static', 'content');
+const defaultPluginsUri = posix.join('/', proxyPath, 'static', 'plugins');
+const pluginsAssetsUri = posix.join('/', proxyPath, 'static', 'resources', 'plugins');
+
+const socketPath = posix.join('/', proxyPath, 'socket.io');
+const dataDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
+  ? join(process['resourcesPath'], 'data')
+  : join(__dirname, '..', 'data');
+
 export default {
   dir_path: {
     tmpDir: os.tmpdir(),
     homedir,
     prevHomedir: homedir,
+    dataDir: process.env.RI_DATA_DIR || dataDir,
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),
@@ -43,21 +60,22 @@ export default {
     port: parseInt(process.env.RI_APP_PORT, 10) || 5540,
     docPrefix: 'api/docs',
     globalPrefix: 'api',
-    customPluginsUri: '/plugins',
-    staticUri: '/static',
-    tutorialsUri: '/static/tutorials',
-    customTutorialsUri: '/static/custom-tutorials',
-    contentUri: '/static/content',
-    defaultPluginsUri: '/static/plugins',
-    pluginsAssetsUri: '/static/resources/plugins',
+    customPluginsUri,
+    staticUri,
+    tutorialsUri,
+    customTutorialsUri,
+    contentUri,
+    defaultPluginsUri,
+    pluginsAssetsUri,
     base: process.env.RI_BASE || '/',
+    proxyPath,
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.46.0',
+    appVersion: process.env.RI_APP_VERSION || '2.48.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -65,6 +83,7 @@ export default {
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,
+    path: socketPath,
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

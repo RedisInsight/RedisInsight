@@ -536,7 +536,7 @@ describe('ONBOARDING_FEATURES', () => {
       expect(
         render(<OnboardingTour options={ONBOARDING_FEATURES.EXPLORE_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
       ).toBeTruthy()
-      expect(screen.getByTestId('step-content')).toHaveTextContent('Share your Redis expertise with your team and the wider community by building custom RedisInsight tutorials.')
+      expect(screen.getByTestId('step-content')).toHaveTextContent('Share your Redis expertise with your team and the wider community by building custom Redis Insight tutorials.')
     })
 
     it('should call proper telemetry events', () => {

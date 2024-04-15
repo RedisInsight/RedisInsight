@@ -9,7 +9,7 @@ export const commonUrl = process.env.COMMON_URL || 'https://localhost:5540';
 export const apiUrl = process.env.API_URL || 'https://localhost:5540/api';
 
 export const workingDirectory = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
-    || (joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redisinsight-app'));
+    || (joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight'));
 export const fileDownloadPath = joinPath(os.homedir(), 'Downloads');
 const uniqueId = chance.string({ length: 10 });
 

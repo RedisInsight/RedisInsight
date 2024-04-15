@@ -55,7 +55,7 @@ const OAuthAgreement = () => {
           </EuiLink>
         </li>
         <li className={styles.listItem}>
-          that RedisInsight will generate Redis Cloud API account and user keys, and store them locally on your machine
+          that Redis Insight will generate Redis Cloud API account and user keys, and store them locally on your machine
         </li>
       </ul>
     </div>

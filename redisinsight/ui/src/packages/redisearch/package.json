@@ -7,7 +7,7 @@
   "bugs": {
     "url": "https://github.com/"
   },
-  "description": "RedisInsight plugin for RediSearch module",
+  "description": "Redis Insight plugin for RediSearch module",
   "source": "./src/index.tsx",
   "styles": "./dist/styles.css",
   "main": "./dist/index.js",

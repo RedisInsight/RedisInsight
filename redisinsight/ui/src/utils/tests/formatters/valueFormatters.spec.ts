@@ -29,7 +29,7 @@ describe('bufferToSerializedFormat', () => {
         expected: JSON.stringify(v),
       }))
 
-      test.each(testValues)('test %j', ({input, expected }) => {
+      test.each(testValues)('test %j', ({ input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector32Bit, input))).toEqual(expected)
       })
     })
@@ -40,7 +40,7 @@ describe('bufferToSerializedFormat', () => {
         expected: JSON.stringify(v),
       }))
 
-      test.each(testValues)('test %j', ({input, expected }) => {
+      test.each(testValues)('test %j', ({ input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector32Bit, input))).toEqual(expected)
       })
     })
@@ -53,7 +53,7 @@ describe('bufferToSerializedFormat', () => {
         expected: JSON.stringify(v),
       }))
 
-      test.each(testValues)('test %j', ({input, expected }) => {
+      test.each(testValues)('test %j', ({ input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector64Bit, input))).toEqual(expected)
       })
     })
@@ -64,7 +64,7 @@ describe('bufferToSerializedFormat', () => {
         expected: JSON.stringify(v),
       }))
 
-      test.each(testValues)('test %j', ({input, expected }) => {
+      test.each(testValues)('test %j', ({ input, expected }) => {
         expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.Vector64Bit, input))).toEqual(expected)
       })
     })

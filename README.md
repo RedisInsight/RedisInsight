@@ -1,14 +1,13 @@
 [![Release](https://img.shields.io/github/v/release/RedisInsight/RedisInsight.svg?sort=semver)](https://github.com/RedisInsight/RedisInsight/releases)
 [![CircleCI](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main.svg?style=svg)](https://circleci.com/gh/RedisInsight/RedisInsight/tree/main)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisInsight/RedisInsight.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisInsight/RedisInsight/alerts/)
 
-# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis. 
+# <img src="https://redis.com/wp-content/uploads/2019/11/ico-redisinsight.svg" alt="logo" width="25"/>  Redis Insight - Developer GUI for Redis, by Redis.
 [![Forum](https://img.shields.io/badge/Forum-RedisInsight-red)](https://forum.redis.com/c/redisinsight/65)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/QUkjSsk)
 
 
 Redis Insight is a visual tool that provides capabilities to design, develop, and optimize your Redis application.
-Query, analyse and interact with your Redis data. [Download it here](https://redis.com/redis-enterprise/redis-insight/#insight-form)!
+Query, analyse and interact with your Redis data. [Download it here](https://redis.io/insight/#insight-form)!
 
 ![Redis Insight Browser screenshot](/.github/redisinsight_browser.png)
 
@@ -22,27 +21,27 @@ Redis Insight is an intuitive and efficient GUI for Redis, allowing you to inter
 
 * Browse, filter, visualise your key-value Redis data structures and see key values in different formats (including JSON, Hex, ASCII, etc.)
 * CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets, and Streams
-* CRUD support for [RedisJSON](https://oss.redis.com/redisjson/)
+* CRUD support for [RedisJSON](https://redis.io/json/)
 * Interactive tutorials to learn easily, among other things, how to leverage the native JSON data structure supporting structured querying and full-text search, including vector similarity search for your AI use cases
 * Contextualised recommendations to optimize performance and memory usage. The list of recommendations gets updated as you interact with your database
 * Profiler - analyze every command sent to Redis in real-time
 * SlowLog - analyze slow operations in Redis instances based on the [Slowlog](https://github.com/RedisInsight/RedisInsight/releases#:~:text=results%20of%20the-,Slowlog,-command%20to%20analyze) command
-* Pub/Sub - support for [Redis pub/sub](https://redis.io/docs/manual/pubsub/), enabling subscription to channels and posting messages to channels
+* Pub/Sub - support for [Redis pub/sub](https://redis.io/docs/latest/develop/interact/pubsub/), enabling subscription to channels and posting messages to channels
 * Bulk actions - Delete the keys in bulk based on the filters set in Browser or Tree view
 * Workbench - advanced command line interface with intelligent command auto-complete, complex data visualizations and support for the raw mode
-* Command auto-complete support for [RediSearch](https://oss.redis.com/redisearch/), [RedisJSON](https://oss.redis.com/redisjson/), [RedisGraph](https://oss.redis.com/redisgraph/), [RedisTimeSeries](https://oss.redis.com/redistimeseries/), [RedisAI](https://oss.redis.com/redisai/)
-* Visualizations of your [RediSearch](https://oss.redis.com/redisearch/) index, queries, and aggregations. Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
-* Officially supported for Redis OSS, [Redis Cloud](https://redis.com/try-free/). Works with Microsoft Azure Cache for Redis (official support upcoming)
+* Command auto-complete support for [RediSearch](https://redis.io/search/), [RedisJSON](https://redis.io/json/), [RedisTimeSeries](https://redis.io/timeseries/)
+* Visualizations of your [RediSearch](https://redis.io/search/) index, queries, and aggregations. Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
+* Officially supported for Redis OSS, [Redis Cloud](https://redis.io/cloud/). Works with Microsoft Azure Cache for Redis (official support upcoming)
 
-Check out the [release notes](https://docs.redis.com/latest/ri/release-notes/). 
+Check out the [release notes](https://github.com/RedisInsight/RedisInsight/releases). 
 
 ## Get started with Redis Insight
 
 This repository includes the code for Redis Insight. Check out the [blogpost](https://redis.com/blog/introducing-redisinsight-2/) announcing it. 
 
 ### Installable 
-Available to download for free from [here](https://redis.com/redis-enterprise/redis-insight/#insight-form).
-Supports Windows, macOS (including M1), and Linux.
+Available to download for free from [here](https://redis.io/insight/#insight-form).
+Redis Insight is also available on Microsoft Store, Apple Store, Snapcraft, Flathub and [Docker](https://hub.docker.com/r/redis/redisinsight).
 
 ### Build 
 Alternatively you can also build from source. See our wiki for instructions.

@@ -11,9 +11,10 @@ import UploadDialog from './components/upload-dialog/UploadDialog'
 
 export interface Props {
   children: React.ReactElement
+  onUploadedPipeline?: () => void
 }
 
-const UploadModal = ({ children }: Props) => {
+const UploadModal = ({ children, onUploadedPipeline }: Props) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [file, setFile] = useState<File>()
   const [isUploaded, setIsUploaded] = useState(false)
@@ -83,6 +84,7 @@ const UploadModal = ({ children }: Props) => {
       })
 
       setIsUploaded(true)
+      onUploadedPipeline?.()
     } catch (err) {
       const errorMessage = (err as Error).message
 

@@ -3,8 +3,7 @@ import { cloneDeep } from 'lodash'
 
 import reactRouterDom, { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
-import { act, render, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
-import { getPipeline } from 'uiSrc/slices/rdi/pipeline'
+import { render, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import {
   appContextPipelineManagement,
   setLastPageContext,

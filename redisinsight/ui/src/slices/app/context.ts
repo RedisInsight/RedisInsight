@@ -23,6 +23,7 @@ import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalys
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
+import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { SearchMode } from '../interfaces/keys'
 import { AppWorkspace, RedisResponseBuffer, StateAppContext } from '../interfaces'
@@ -89,6 +90,7 @@ export const initialState: StateAppContext = {
   },
   pipelineManagement: {
     lastViewedPage: '',
+    isOpenDialog: true,
   },
 }
 
@@ -222,8 +224,12 @@ const appContextSlice = createSlice({
     setLastPipelineManagementPage: (state, { payload }: { payload: string }) => {
       state.pipelineManagement.lastViewedPage = payload
     },
+    setPipelineDialogState: (state, { payload }: { payload: boolean }) => {
+      state.pipelineManagement.isOpenDialog = payload
+    },
     resetPipelineManagement: (state) => {
       state.pipelineManagement.lastViewedPage = ''
+      state.pipelineManagement.isOpenDialog = true
     }
   },
 })
@@ -260,6 +266,7 @@ export const {
   setBrowserTreeSort,
   setCapability,
   setLastPipelineManagementPage,
+  setPipelineDialogState,
   resetPipelineManagement,
 } = appContextSlice.actions
 
@@ -329,6 +336,7 @@ export function resetDatabaseContext() {
 export function resetRdiContext() {
   return async (dispatch: AppDispatch) => {
     dispatch(setAppContextConnectedRdiInstanceId(''))
+    dispatch(setPipelineInitialState())
     dispatch(resetPipelineManagement())
   }
 }

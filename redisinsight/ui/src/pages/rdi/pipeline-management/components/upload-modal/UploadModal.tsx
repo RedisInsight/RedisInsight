@@ -10,12 +10,19 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import UploadDialog from './components/upload-dialog/UploadDialog'
 
 export interface Props {
-  children: React.ReactElement
+  children?: React.ReactElement
   onUploadedPipeline?: () => void
+  visible?: boolean
 }
 
-const UploadModal = ({ children, onUploadedPipeline }: Props) => {
-  const [isModalVisible, setIsModalVisible] = useState(false)
+const UploadModal = (props: Props) => {
+  const {
+    children,
+    onUploadedPipeline,
+    visible
+  } = props
+
+  const [isModalVisible, setIsModalVisible] = useState(visible)
   const [file, setFile] = useState<File>()
   const [isUploaded, setIsUploaded] = useState(false)
   const [error, setError] = useState<string>()
@@ -110,7 +117,9 @@ const UploadModal = ({ children, onUploadedPipeline }: Props) => {
     setFile(file)
   }
 
-  const button = React.cloneElement(children, { disabled: loading, onClick: handleUploadClick })
+  const button = children
+    ? React.cloneElement(children, { disabled: loading, onClick: handleUploadClick })
+    : null
 
   return (
     <>

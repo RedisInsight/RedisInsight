@@ -14,6 +14,7 @@ import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { testConnectionsAction, rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
+import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
 
 import styles from './styles.module.scss'
 
@@ -23,6 +24,7 @@ const Config = () => {
 
   const { loading: pipelineLoading, schema } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
+  const { isOpenDialog } = useSelector(appContextPipelineManagement)
 
   const { values: { config = '' }, setFieldValue } = useFormikContext<IPipeline>()
 
@@ -33,11 +35,13 @@ const Config = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_CONFIG,
     })
+  }, [])
 
-    if (!config) {
+  useEffect(() => {
+    if (!config && !isOpenDialog) {
       setIsPopoverOpen(true)
     }
-  }, [])
+  }, [isOpenDialog, config])
 
   const testConnections = () => {
     setIsPanelOpen(true)
@@ -56,7 +60,7 @@ const Config = () => {
         <div className="rdi__content-header">
           <EuiText className="rdi__title">Target database configuration</EuiText>
           <TemplatePopover
-            isPopoverOpen={isPopoverOpen}
+            isPopoverOpen={isPopoverOpen && !isOpenDialog}
             setIsPopoverOpen={setIsPopoverOpen}
             value={config}
             setFieldValue={(template) => setFieldValue('config', template)}

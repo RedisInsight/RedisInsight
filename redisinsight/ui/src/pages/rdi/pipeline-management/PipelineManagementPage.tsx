@@ -24,7 +24,6 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastViewedPage } = useSelector(appContextPipelineManagement)
   const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
-  const { isOpenDialog } = useSelector(appContextPipelineManagement)
 
   const pathnameRef = useRef<string>('')
 
@@ -65,7 +64,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
 
   return (
     <RdiPipelinePageTemplate>
-      {isOpenDialog && <SourcePipelineDialog />}
+      <SourcePipelineDialog />
       <PipelinePageRouter routes={routes} />
     </RdiPipelinePageTemplate>
   )

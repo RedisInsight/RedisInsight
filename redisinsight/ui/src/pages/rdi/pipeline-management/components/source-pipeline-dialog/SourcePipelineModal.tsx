@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   EuiButtonEmpty,
   EuiIcon,
@@ -7,12 +7,12 @@ import {
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, setPipeline } from 'uiSrc/slices/rdi/pipeline'
-import { setPipelineDialogState } from 'uiSrc/slices/app/context'
+import { appContextPipelineManagement, setPipelineDialogState } from 'uiSrc/slices/app/context'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import { ReactComponent as UploadIcon } from 'uiSrc/assets/img/rdi/upload_from_server.svg'
 
@@ -30,7 +30,10 @@ export enum PipelineSourceOptions {
 }
 
 const SourcePipelineDialog = () => {
+  const [isShowDownloadDialog, setIsShowDownloadDialog] = useState(false)
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
+  const { isOpenDialog } = useSelector(appContextPipelineManagement)
 
   const dispatch = useDispatch()
 
@@ -55,8 +58,31 @@ const SourcePipelineDialog = () => {
     onSelect(PipelineSourceOptions.NEW)
   }
 
+  const handleCloseDialog = () => {
+    dispatch(setPipeline(EMPTY_PIPELINE))
+    dispatch(setPipelineDialogState(false))
+  }
+
+  const onUploadClick = () => {
+    setIsShowDownloadDialog(true)
+    handleCloseDialog()
+  }
+
+  if (isShowDownloadDialog) {
+    return (
+      <UploadModal
+        onUploadedPipeline={() => onSelect(PipelineSourceOptions.FILE)}
+        visible={isShowDownloadDialog}
+      />
+    )
+  }
+
+  if (!isOpenDialog) {
+    return null
+  }
+
   return (
-    <EuiModal className={styles.container} onClose={() => {}} data-testid="rdi-pipeline-source-dialog">
+    <EuiModal className={styles.container} onClose={handleCloseDialog} data-testid="rdi-pipeline-source-dialog">
       <EuiModalBody>
         <div className={styles.content}>
           <EuiTitle size="s">
@@ -77,14 +103,24 @@ const SourcePipelineDialog = () => {
             <div className={styles.action}>
               <EuiIcon type="exportAction" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Upload from file</EuiText>
-              <UploadModal onUploadedPipeline={() => onSelect(PipelineSourceOptions.FILE)}>
-                <EuiButtonEmpty className={styles.btn} data-testid="file-source-pipeline-dialog">Upload</EuiButtonEmpty>
-              </UploadModal>
+              <EuiButtonEmpty
+                onClick={onUploadClick}
+                className={styles.btn}
+                data-testid="file-source-pipeline-dialog"
+              >
+                Upload
+              </EuiButtonEmpty>
             </div>
             <div className={styles.action}>
               <EuiIcon type="document" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Start new pipeline</EuiText>
-              <EuiButtonEmpty onClick={onStartNewPipeline} className={styles.btn} data-testid="empty-source-pipeline-dialog">Start</EuiButtonEmpty>
+              <EuiButtonEmpty
+                onClick={onStartNewPipeline}
+                className={styles.btn}
+                data-testid="empty-source-pipeline-dialog"
+              >
+                Start
+              </EuiButtonEmpty>
             </div>
           </div>
         </div>

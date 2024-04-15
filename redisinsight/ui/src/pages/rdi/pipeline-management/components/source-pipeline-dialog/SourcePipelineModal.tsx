@@ -13,8 +13,9 @@ import { useParams } from 'react-router-dom'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, setPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { setPipelineDialogState } from 'uiSrc/slices/app/context'
-
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
+import { ReactComponent as UploadIcon } from 'uiSrc/assets/img/rdi/upload_from_server.svg'
+
 import styles from './styles.module.scss'
 
 export const EMPTY_PIPELINE = {
@@ -63,21 +64,27 @@ const SourcePipelineDialog = () => {
           </EuiTitle>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <EuiIcon type="logstashInput" size="xl" className={styles.icon} />
+              <EuiIcon type={UploadIcon} size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Upload from server</EuiText>
-              <EuiButtonEmpty data-testid="server-source-pipeline-dialog" onClick={onLoadPipeline} className={styles.btn}>Sync</EuiButtonEmpty>
+              <EuiButtonEmpty
+                onClick={onLoadPipeline}
+                className={styles.btn}
+                data-testid="server-source-pipeline-dialog"
+              >
+                Sync
+              </EuiButtonEmpty>
             </div>
             <div className={styles.action}>
               <EuiIcon type="exportAction" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Upload from file</EuiText>
               <UploadModal onUploadedPipeline={() => onSelect(PipelineSourceOptions.FILE)}>
-                <EuiButtonEmpty data-testid="file-source-pipeline-dialog" className={styles.btn}>Upload</EuiButtonEmpty>
+                <EuiButtonEmpty className={styles.btn} data-testid="file-source-pipeline-dialog">Upload</EuiButtonEmpty>
               </UploadModal>
             </div>
             <div className={styles.action}>
               <EuiIcon type="document" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Start new pipeline</EuiText>
-              <EuiButtonEmpty onClick={onStartNewPipeline} data-testid="empty-source-pipeline-dialog" className={styles.btn}>Start</EuiButtonEmpty>
+              <EuiButtonEmpty onClick={onStartNewPipeline} className={styles.btn} data-testid="empty-source-pipeline-dialog">Start</EuiButtonEmpty>
             </div>
           </div>
         </div>

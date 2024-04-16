@@ -5,11 +5,10 @@ import {
     ossStandaloneBigConfig,
     ossStandaloneConfig,
     ossStandaloneConfigEmpty,
-    ossStandaloneRedisearch, ossStandaloneRedisGears
+    ossStandaloneRedisGears
 } from '../../../../helpers/conf';
 import { ExploreTabs, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 import { Common } from '../../../../helpers/common';
 import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
 
@@ -17,7 +16,6 @@ const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
-const apiKeyRequests = new APIKeyRequests();
 
 let keyNames: string[] = [];
 
@@ -28,7 +26,7 @@ fixture `Tree view verifications`
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .afterEach(async() => {
-        // Delete database
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
@@ -36,7 +34,7 @@ test
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
     })
     .after(async() => {
-        // Delete database
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
     })('Verify that user has load sample data button when there are no keys in the database', async t => {
         const message = 'Let\'sstartworkingLoadsampledata+Addkeymanually';
@@ -147,10 +145,7 @@ test
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
     })
     .after(async() => {
-        // Clear and delete database
-        for(const name of keyNames) {
-            await apiKeyRequests.deleteKeyByNameApi(name, ossStandaloneConfigEmpty.databaseName);
-        }
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
     })('Verify that if there are keys without namespaces, they are displayed in the root directory after all folders by default in the Tree view', async t => {
         keyNames = [
@@ -238,4 +233,3 @@ test
         await browserPage.searchByKeyName(`${name}*`);
         await verifyKeysDisplayingInTheList([keyName1, keyName2], false);
     });
-

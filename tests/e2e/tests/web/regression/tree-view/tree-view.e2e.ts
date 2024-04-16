@@ -5,7 +5,7 @@ import {
     ossStandaloneBigConfig,
     ossStandaloneConfig,
     ossStandaloneConfigEmpty,
-    ossStandaloneRedisearch, ossStandaloneRedisGears
+    ossStandaloneRedisGears
 } from '../../../../helpers/conf';
 import { ExploreTabs, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -34,10 +34,12 @@ fixture `Tree view verifications`
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
+        await browserPage.Cli.sendCommandInCli('flushdb');
     })
     .after(async() => {
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
+        await browserPage.Cli.sendCommandInCli('flushdb');
     })('Verify that user has load sample data button when there are no keys in the database', async t => {
         const message = 'Let\'sstartworkingLoadsampledata+Addkeymanually';
         const actualMessage = await browserPage.keyListMessage.innerText;
@@ -63,6 +65,7 @@ test
             tutorial: 'Probabilistic'
         }];
 
+        await t.click(browserPage.refreshKeysButton);
         await t.expect(browserPage.guideLinksBtn.count).gte(5);
         for (const capability of capabilities) {
             await browserPage.clickGuideLinksByName(capability.name);
@@ -79,10 +82,10 @@ test
         // Verify that user can see the same tutorial opened as on the list of databases when clicking on capabilities
         await t.click(browserPage.loadSampleDataBtn);
         await t.click(browserPage.executeBulkKeyLoadBtn);
-        await t.expect(browserPage.Toast.toastCloseButton.exists).ok('the info message after upload does not appear');
+        await t.expect(browserPage.Toast.toastBody.textContent).contains('0Errors', 'the info message after upload does not appear');
         const totalKeysValue = Number(await browserPage.totalKeysNumber.textContent);
-        // the number should be updated after real prod data will bw load
-        await t.expect(totalKeysValue).eql(2, 'the info message after upload does not appear');
+        // the number should be updated after real prod data will be loaded
+        await t.expect(totalKeysValue).gte(100, 'the info message after upload does not appear');
     });
 
 test
@@ -96,14 +99,14 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisGears);
     })('Verify that user can load sample data if database does not have modules', async t => {
         // Verify the message
-        await t.click(browserPage.treeViewButton);
+        await t.click(browserPage.refreshKeysButton);
         await t.click(browserPage.loadSampleDataBtn);
         await t.click(browserPage.executeBulkKeyLoadBtn);
         //verify that there is no errors if some modules are not added
         await t.expect(browserPage.Toast.toastBody.textContent).contains('0Errors', 'the info message after upload does not appear');
         const totalKeysValue = Number(await browserPage.totalKeysNumber.textContent);
         // the number should be updated after real prod data will bw load
-        await t.expect(totalKeysValue).eql(1, 'the info message after upload does not appear');
+        await t.expect(totalKeysValue).gte(10, 'the info message after upload does not appear');
     });
 
 test('Verify that user can see the total number of keys, the number of keys scanned, the “Scan more” control displayed at the top of Tree view and Browser view', async t => {

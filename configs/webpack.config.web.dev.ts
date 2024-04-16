@@ -11,6 +11,7 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { toString } from 'lodash'
 import commonConfig from './webpack.config.web.common';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 function employCache(loaders) {
   return ['cache-loader'].concat(loaders);
@@ -198,7 +199,10 @@ const configuration: webpack.Configuration = {
     new webpack.HotModuleReplacementPlugin({
       multiStep: true,
     }),
-
+    new HtmlWebpackPlugin({
+      inject: 'head',
+      template: 'index.html.ejs',
+    }),
     new webpack.NoEmitOnErrorsPlugin(),
 
     /**

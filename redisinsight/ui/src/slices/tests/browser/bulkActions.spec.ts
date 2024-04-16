@@ -19,11 +19,17 @@ import reducer, {
   bulkUpload,
   bulkUploadSuccess,
   bulkUploadFailed,
-  bulkUploadDataAction, setDeleteOverviewStatus,
+  bulkUploadDataAction,
+  setDeleteOverviewStatus,
+  bulkImportDefaultData,
+  bulkImportDefaultDataSuccess,
+  bulkImportDefaultDataFailed, bulkImportDefaultDataAction,
 } from 'uiSrc/slices/browser/bulkActions'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
+import { IBulkActionOverview } from 'uiSrc/slices/interfaces'
 
 let store: typeof mockedStore
 
@@ -428,52 +434,167 @@ describe('bulkActions slice', () => {
       })
     })
 
-    describe('bulkUploadDataAction', () => {
-      it('should call proper actions on success', async () => {
+    describe('bulkImportDefaultData', () => {
+      it('should properly set state', () => {
         // Arrange
-        const formData = new FormData()
-        formData.append('file', '')
-        const data = {}
-
-        const responsePayload = { data, status: 200 }
-
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }))
-
-        // Assert
-        const expectedActions = [
-          bulkUpload(),
-          bulkUploadSuccess({ data: responsePayload.data, fileName: 'text.txt' })
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-
-      it('should call proper actions on fail', async () => {
-        // Arrange
-        const formData = new FormData()
-        const errorMessage = 'Some error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
+        const state = {
+          ...initialState,
+          loading: true
         }
 
-        apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
-
         // Act
-        await store.dispatch<any>(bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }))
+        const nextState = reducer(initialState, bulkImportDefaultData())
 
         // Assert
-        const expectedActions = [
-          bulkUpload(),
-          addErrorNotification(responsePayload as AxiosError),
-          bulkUploadFailed(errorMessage),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
+        const rootState = Object.assign(initialStateDefault, {
+          browser: { bulkActions: nextState },
+        })
+        expect(bulkActionsSelector(rootState)).toEqual(state)
       })
+
+      describe('bulkImportDefaultDataSuccess', () => {
+        it('should properly set state', () => {
+          // Arrange
+          const currentState = {
+            ...initialState,
+            loading: true
+          }
+
+          const state = {
+            ...initialState,
+            loading: false
+          }
+
+          // Act
+          const nextState = reducer(currentState, bulkImportDefaultDataSuccess())
+
+          // Assert
+          const rootState = Object.assign(initialStateDefault, {
+            browser: { bulkActions: nextState },
+          })
+          expect(bulkActionsSelector(rootState)).toEqual(state)
+        })
+      })
+
+      describe('bulkImportDefaultDataFailed', () => {
+        it('should properly set state', () => {
+          // Arrange
+          const currentState = {
+            ...initialState,
+            loading: true
+          }
+
+          const state = {
+            ...initialState,
+            loading: false
+          }
+
+          // Act
+          const nextState = reducer(currentState, bulkImportDefaultDataFailed())
+
+          // Assert
+          const rootState = Object.assign(initialStateDefault, {
+            browser: { bulkActions: nextState },
+          })
+          expect(bulkActionsSelector(rootState)).toEqual(state)
+        })
+      })
+    })
+  })
+
+  // thunks
+  describe('bulkUploadDataAction', () => {
+    it('should call proper actions on success', async () => {
+      // Arrange
+      const formData = new FormData()
+      formData.append('file', '')
+      const data = {}
+
+      const responsePayload = { data, status: 200 }
+
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }))
+
+      // Assert
+      const expectedActions = [
+        bulkUpload(),
+        bulkUploadSuccess({ data: responsePayload.data, fileName: 'text.txt' })
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('should call proper actions on fail', async () => {
+      // Arrange
+      const formData = new FormData()
+      const errorMessage = 'Some error'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+      // Act
+      await store.dispatch<any>(bulkUploadDataAction('id', { file: formData, fileName: 'text.txt' }))
+
+      // Assert
+      const expectedActions = [
+        bulkUpload(),
+        addErrorNotification(responsePayload as AxiosError),
+        bulkUploadFailed(errorMessage),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+  })
+
+  // thunks
+  describe('bulkImportDefaultDataAction', () => {
+    it('should call proper actions on success', async () => {
+      const data = {}
+      const responsePayload = { data, status: 200 }
+
+      apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+      // Act
+      await store.dispatch<any>(bulkImportDefaultDataAction('id'))
+
+      // Assert
+      const expectedActions = [
+        bulkImportDefaultData(),
+        bulkImportDefaultDataSuccess(),
+        addMessageNotification(
+          successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview)
+        )
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('should call proper actions on fail', async () => {
+      // Arrange
+      const errorMessage = 'Some error'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
+
+      // Act
+      await store.dispatch<any>(bulkImportDefaultDataAction('id'))
+
+      // Assert
+      const expectedActions = [
+        bulkImportDefaultData(),
+        addErrorNotification(responsePayload as AxiosError),
+        bulkImportDefaultDataFailed(),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
     })
   })
 })

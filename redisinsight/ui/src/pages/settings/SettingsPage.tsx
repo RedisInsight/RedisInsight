@@ -83,7 +83,7 @@ const SettingsPage = () => {
           <h4>Color Theme</h4>
         </EuiTitle>
         <EuiSpacer size="m" />
-        <EuiFormRow label="Specifies the color theme to be used in RedisInsight:">
+        <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
             valueOfSelected={theme}

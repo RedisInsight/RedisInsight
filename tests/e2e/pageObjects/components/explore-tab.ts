@@ -115,7 +115,7 @@ export class ExploreTab {
     async waitUntilImageRendered(selector: Selector): Promise<void> {
         const searchTimeout = 5 * 1000; // 5 sec maximum wait
         const startTime = Date.now();
-        let imageHeight = await selector.getStyleProperty('height');
+        let imageHeight;
 
         do {
             imageHeight = await selector.getStyleProperty('height');

@@ -5,6 +5,7 @@ import {
   ICommandArg,
   ICommandArgGenerated
 } from 'uiSrc/constants'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 
 enum ArgumentType {
   INTEGER = 'integer',
@@ -190,7 +191,12 @@ export const generateArgsNames = (
 
 export const getDocUrlForCommand = (commandName: string): string => {
   const command = commandName.replace(/\s+/g, '-').toLowerCase()
-  return `https://redis.io/commands/${command}`
+  return getUtmExternalLink(
+    `https://redis.io/docs/latest/commands/${command}`,
+    {
+      campaign: 'redisinsight_command_helper'
+    }
+  )
 }
 
 export const getCommandRepeat = (command = ''): [string, number] => {

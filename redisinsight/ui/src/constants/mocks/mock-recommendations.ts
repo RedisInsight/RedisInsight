@@ -1254,7 +1254,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     content: [
       {
         type: 'paragraph',
-        value: 'Try RedisInsight Workbench, our advanced command-line interface with syntax highlighting, intelligent auto-complete, and the ability to work with commands in an editor mode.'
+        value: 'Try Redis Insight Workbench, our advanced command-line interface with syntax highlighting, intelligent auto-complete, and the ability to work with commands in an editor mode.'
       },
       {
         type: 'spacer',
@@ -1444,6 +1444,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'luaToFunctions',
     title: 'Consider using triggers and functions',
     tutorialId: 'tf-intro',
+    deprecated: true,
     content: [
       {
         type: 'paragraph',
@@ -1505,6 +1506,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'functionsWithStreams',
     title: 'Consider using triggers and functions to react in real-time to stream entries',
     tutorialId: 'tf-intro',
+    deprecated: true,
     content: [
       {
         type: 'paragraph',
@@ -1582,6 +1584,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
     id: 'functionsWithKeyspace',
     title: 'Consider using triggers and functions to react in real-time to database changes',
     tutorialId: 'tf-intro',
+    deprecated: true,
     content: [
       {
         type: 'paragraph',

@@ -85,7 +85,7 @@ const RejsonDetailsWrapper = (props: Props) => {
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>
           <div
             data-testid="json-details"
-            className={`${[styles.container].join(' ')}`}
+            className={styles.container}
           >
             {loading && (
               <EuiProgress

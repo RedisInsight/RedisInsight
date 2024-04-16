@@ -29,6 +29,15 @@ export const generatePath = (parentPath: string, keyName: string | number) => {
   return parentPath ? `${parentPath}[${currentPath}]` : `[${currentPath}]`
 }
 
+export const wrapPath = (key: string, path: string = '') => {
+  try {
+    const unescapedKey = JSON.parse(key!)
+    return unescapedKey.includes('"') ? `${path}['${unescapedKey}']` : `${path}["${unescapedKey}"]`
+  } catch {
+    return null
+  }
+}
+
 export const validateRejsonValue = (value: any) => {
   try {
     JSON.parse(value as string)

@@ -44,7 +44,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
   }
 
   const onApplyValue = (value: JSONScalarValue) => {
-    const error: null | string = validateRejsonValue(value)
+    const error = validateRejsonValue(value)
     if (error) {
       setError(error)
       return

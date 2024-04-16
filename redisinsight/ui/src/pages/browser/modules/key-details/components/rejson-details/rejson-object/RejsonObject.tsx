@@ -4,7 +4,7 @@ import cx from 'classnames'
 
 import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { JSONObjectProps, ObjectTypes, REJSONResponse } from '../interfaces'
-import { generatePath, getBrackets } from '../utils'
+import { generatePath, getBrackets, wrapPath } from '../utils'
 
 import { AddItem, AddItemFieldAction, EditEntireItemAction, EditItemFieldAction } from '../components'
 
@@ -63,12 +63,9 @@ const RejsonObject = (props: JSONObjectProps) => {
       return
     }
 
-    try {
-      const unescapedKey = JSON.parse(key as string)
-      const updatedPath = unescapedKey.includes('"') ? `${path}['${unescapedKey}']` : `${path}["${unescapedKey}"]`
+    const updatedPath = wrapPath(key as string, path)
+    if (updatedPath) {
       handleSetRejsonDataAction(selectedKey, updatedPath, value)
-    } catch {
-      //
     }
   }
 

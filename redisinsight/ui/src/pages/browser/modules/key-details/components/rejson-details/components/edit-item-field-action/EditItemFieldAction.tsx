@@ -41,7 +41,7 @@ const EditItemFieldAction = ({
         deleting={deleting}
         closePopover={() => setDeleting('')}
         updateLoading={false}
-        showPopover={(item) => { setDeleting(item) }}
+        showPopover={setDeleting}
         handleDeleteItem={() => handleSubmitRemoveKey(path, keyName)}
         testid="remove-json-field"
       />

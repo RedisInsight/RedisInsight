@@ -9,7 +9,7 @@ import {
 } from 'uiSrc/slices/browser/rejson'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
-import { getBrackets, isRealArray, isRealObject } from '../utils'
+import { getBrackets, isRealArray, isRealObject, wrapPath } from '../utils'
 import { BaseProps, ObjectTypes } from '../interfaces'
 import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { AddItem } from '../components'
@@ -49,12 +49,9 @@ const RejsonDetails = (props: BaseProps) => {
       return
     }
 
-    try {
-      const unescapedKey = JSON.parse(key!)
-      const updatedPath = unescapedKey.includes('"') ? `['${unescapedKey}']` : `["${unescapedKey}"]`
+    const updatedPath = wrapPath(key as string)
+    if (updatedPath) {
       handleSetRejsonDataAction(selectedKey, updatedPath, value)
-    } catch {
-      //
     }
   }
 

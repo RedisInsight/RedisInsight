@@ -1,4 +1,4 @@
-import { generatePath, getBrackets, isRealArray, isRealObject, isScalar, isValidKey } from './utils'
+import { generatePath, getBrackets, isRealArray, isRealObject, isScalar, isValidKey, wrapPath } from './utils'
 import { ObjectTypes } from '../interfaces'
 
 describe('JSONUtils', () => {
@@ -9,6 +9,15 @@ describe('JSONUtils', () => {
       const children = 'children'
       const result = generatePath(parentPath, children)
       expect(expectPath).toEqual(result)
+    })
+  })
+
+  describe('wrapPath', () => {
+    it('should properly wrap path', () => {
+      expect(wrapPath('"key"')).toEqual('["key"]')
+      expect(wrapPath('"ke\\"y"')).toEqual("['ke\"y']")
+      expect(wrapPath('"key"', 'path')).toEqual('path["key"]')
+      expect(wrapPath('"key\\""', 'path')).toEqual("path['key\"']")
     })
   })
 

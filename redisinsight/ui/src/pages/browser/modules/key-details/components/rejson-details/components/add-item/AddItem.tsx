@@ -7,7 +7,8 @@ import {
   EuiFocusTrap,
   EuiForm,
   EuiOutsideClickDetector,
-  EuiWindowEvent
+  EuiWindowEvent,
+  keys
 } from '@elastic/eui'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
@@ -41,7 +42,7 @@ const AddItem = (props: Props) => {
   }, [key, value])
 
   const handleOnEsc = (e: KeyboardEvent) => {
-    if (e.code?.toLowerCase() === 'escape') {
+    if (e.code?.toLowerCase() === keys.ESCAPE) {
       e.stopPropagation()
       onCancel?.()
     }

@@ -6,7 +6,8 @@ import {
   EuiForm,
   EuiOutsideClickDetector,
   EuiTextArea,
-  EuiWindowEvent
+  EuiWindowEvent,
+  keys
 } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -32,7 +33,7 @@ const EditEntireItemAction = (props: Props) => {
   const [error, setError] = useState<Nullable<string>>(null)
 
   const handleOnEsc = (e: KeyboardEvent) => {
-    if (e.code?.toLowerCase() === 'escape') {
+    if (e.code?.toLowerCase() === keys.ESCAPE) {
       e.stopPropagation()
       onCancel?.()
     }
@@ -41,7 +42,7 @@ const EditEntireItemAction = (props: Props) => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const error: null | string = validateRejsonValue(value)
+    const error = validateRejsonValue(value)
     if (error) {
       setError(error)
       return

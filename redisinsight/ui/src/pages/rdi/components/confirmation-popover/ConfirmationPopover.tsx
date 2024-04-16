@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -17,22 +16,22 @@ import styles from './styles.module.scss'
 interface Props {
   title: string
   body: JSX.Element
-  confirmButtonText: string
   onConfirm: () => void
   button: JSX.Element
+  submitBtn: JSX.Element
   onButtonClick: () => void
-  secondAction?: JSX.Element
+  appendAction?: JSX.Element
 }
 
 const ConfirmationPopover = (props: Props) => {
   const {
     title,
     body,
-    confirmButtonText,
+    submitBtn,
     onConfirm,
     button,
     onButtonClick,
-    secondAction,
+    appendAction,
   } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
@@ -51,6 +50,7 @@ const ConfirmationPopover = (props: Props) => {
   }
 
   const popoverButton = React.cloneElement(button, { onClick: handleButtonClick })
+  const confirmBtn = React.cloneElement(submitBtn, { onClick: handleConfirm })
 
   return (
     <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
@@ -76,21 +76,12 @@ const ConfirmationPopover = (props: Props) => {
         <EuiSpacer size="xs" />
         {body}
         <EuiSpacer size="m" />
-        <EuiFlexGroup gutterSize="none" justifyContent={secondAction ? 'spaceBetween' : 'flexEnd'} alignItems="center">
+        <EuiFlexGroup gutterSize="none" justifyContent={appendAction ? 'spaceBetween' : 'flexEnd'} alignItems="center">
           <EuiFlexItem grow={false}>
-            {!!secondAction && secondAction}
+            {!!appendAction && appendAction}
           </EuiFlexItem>
           <EuiFlexItem grow={false}>
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              className={styles.popoverConfirmBtn}
-              onClick={handleConfirm}
-              data-testid="confirm-btn"
-            >
-              {confirmButtonText}
-            </EuiButton>
+            {confirmBtn}
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiPopover>

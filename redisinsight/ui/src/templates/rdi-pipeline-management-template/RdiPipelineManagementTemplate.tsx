@@ -1,5 +1,4 @@
 import React from 'react'
-import { Form } from 'formik'
 
 import RdiInstanceHeader from 'uiSrc/components/rdi-instance-header'
 import RdiPipelineManagementHeader from 'uiSrc/pages/rdi/pipeline-management/components/header'
@@ -17,7 +16,7 @@ const RdiPipelineManagementTemplate = (props: Props) => {
 
   // TODO add side panel logs
   return (
-    <Form className={styles.form}>
+    <div className={styles.page}>
       <div>
         <RdiInstanceHeader />
         <RdiPipelineManagementHeader />
@@ -30,7 +29,7 @@ const RdiPipelineManagementTemplate = (props: Props) => {
           </div>
         </ExplorePanelTemplate>
       </div>
-    </Form>
+    </div>
   )
 }
 

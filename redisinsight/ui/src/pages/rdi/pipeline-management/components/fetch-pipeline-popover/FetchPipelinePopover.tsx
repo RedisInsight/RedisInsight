@@ -1,4 +1,5 @@
 import {
+  EuiButton,
   EuiButtonEmpty,
   EuiText
 } from '@elastic/eui'
@@ -58,7 +59,16 @@ const FetchPipelinePopover = () => {
           </EuiText>
         </>
       )}
-      confirmButtonText="Upload"
+      submitBtn={(
+        <EuiButton
+          fill
+          size="s"
+          color="secondary"
+          data-testid="upload-confirm-btn"
+        >
+          Upload
+        </EuiButton>
+      )}
       onConfirm={handleRefreshClick}
       button={(
         <EuiButtonEmpty
@@ -73,7 +83,7 @@ const FetchPipelinePopover = () => {
         </EuiButtonEmpty>
       )}
       onButtonClick={handleRefreshWarning}
-      secondAction={<Download />}
+      appendAction={<Download />}
     />
   )
 }

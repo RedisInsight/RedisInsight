@@ -37,7 +37,6 @@ import { setCapability } from 'uiSrc/slices/app/context'
 
 import favicon from 'uiSrc/assets/favicon.svg'
 import { fetchProfile } from 'uiSrc/slices/oauth/cloud'
-import { fetchProfile } from 'uiSrc/slices/oauth/cloud'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {

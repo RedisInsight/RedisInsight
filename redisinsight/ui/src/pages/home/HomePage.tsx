@@ -60,14 +60,6 @@ const HomePage = () => {
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
 
-  const { features } = useSelector(appFeatureHighlightingSelector)
-  const { aiChatbot: aiChatbotHighlighting } = getHighlightingFeatures(features)
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = some([databaseChatFeature, documentationChatFeature], (feature) => feature?.flag)
-
   const {
     loading,
     data: instances,

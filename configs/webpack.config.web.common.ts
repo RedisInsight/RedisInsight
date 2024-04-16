@@ -3,7 +3,6 @@
  */
 import path from 'path';
 import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import webpackPaths from './webpack.paths';
@@ -67,8 +66,6 @@ export default {
     new webpack.DefinePlugin({
       'window.app.config.apiPort': JSON.stringify('5540'),
     }),
-
-    new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
 
     new MonacoWebpackPlugin({
       languages: ['yaml', 'typescript', 'javascript', 'json', 'sql'],

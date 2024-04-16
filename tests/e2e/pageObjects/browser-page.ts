@@ -99,7 +99,8 @@ export class BrowserPage extends InstancePage {
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
     showFilterHistoryBtn = Selector('[data-testid=show-suggestions-btn]');
     clearFilterHistoryBtn = Selector('[data-testid=clear-history-btn]');
-    guideLinksBtn = Selector('[data-testid^=guide-button-]');
+    loadSampleDataBtn = Selector('[data-testid=load-sample-data-btn]');
+    executeBulkKeyLoadBtn = Selector('[data-testid=load-sample-data-btn-confirm]');
     backToBrowserBtn = Selector('[data-testid=back-right-panel-btn]');
     loadAllBtn = Selector('[data-testid=load-all-value-btn]');
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
@@ -118,6 +119,7 @@ export class BrowserPage extends InstancePage {
     internalLinkToWorkbench = Selector('[data-testid=internal-workbench-link]');
     userSurveyLink = Selector('[data-testid=user-survey-link]');
     redisearchFreeLink = Selector('[data-testid=get-started-link]');
+    guideLinksBtn = Selector('[data-testid^=guide-button-]');
     //OPTION ELEMENTS
     stringOption = Selector('#string');
     jsonOption = Selector('#ReJSON-RL');
@@ -211,7 +213,6 @@ export class BrowserPage extends InstancePage {
     noResultsFoundOnly = Selector('[data-testid=no-result-found-only]');
     searchAdvices = Selector('[data-test-subj=search-advices]');
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
-    keysTotalNumber = Selector('[data-testid=keys-total]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
     totalKeysNumber = Selector('[data-testid=keys-total]');
     databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
@@ -965,9 +966,9 @@ export class BrowserPage extends InstancePage {
     }
 
     /**
-    * Open Guide link by name
-    * @param guide The guide name
-    */
+     * Open Guide link by name
+     * @param guide The guide name
+     */
     async clickGuideLinksByName(guide: string): Promise<void> {
         const linkGuide = Selector(`[data-testid^="guide-button-"]`).withExactText(guide);
         await t.click(linkGuide);

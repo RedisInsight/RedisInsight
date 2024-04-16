@@ -8,6 +8,7 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import commonConfig from './webpack.config.web.common';
 import DeleteDistWeb from '../scripts/DeleteDistWeb';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 DeleteDistWeb();
 
@@ -71,6 +72,11 @@ const configuration: webpack.Configuration = {
     new MiniCssExtractPlugin({
       filename: '[name].[fullhash].css',
       chunkFilename: '[id].[fullhash].css',
+    }),
+    new HtmlWebpackPlugin({
+      inject: 'head',
+      template: 'index.html.ejs',
+      publicPath: '{{ RIPROXYPATH }}',
     }),
 
     new webpack.EnvironmentPlugin({

@@ -7,7 +7,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { throttle } from 'lodash'
+import { some, throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
@@ -59,6 +59,14 @@ const HomePage = () => {
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
+
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { aiChatbot: aiChatbotHighlighting } = getHighlightingFeatures(features)
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = some([databaseChatFeature, documentationChatFeature], (feature) => feature?.flag)
 
   const {
     loading,

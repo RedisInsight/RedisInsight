@@ -18,6 +18,7 @@ const WelcomeAiAssistant = () => {
       eventData: {
         accountOption,
         action: OAuthSocialAction.SignIn,
+        source: OAuthSocialSource.AiChat
       }
     })
   }

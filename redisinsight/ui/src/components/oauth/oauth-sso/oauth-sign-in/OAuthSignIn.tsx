@@ -30,6 +30,7 @@ const OAuthSignIn = (props: Props) => {
       eventData: {
         accountOption,
         action,
+        source
       }
     })
   }

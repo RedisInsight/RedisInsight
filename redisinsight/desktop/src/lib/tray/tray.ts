@@ -15,7 +15,6 @@ export class TrayBuilder {
     const iconFullPath = path.join(__dirname, iconPath, iconName)
     const icon = nativeImage.createFromPath(iconFullPath)
     const iconTray = icon.resize({ height: 16, width: 16 })
-    iconTray.setTemplateImage(true)
 
     this.tray = new Tray(iconTray)
   }
@@ -23,7 +22,7 @@ export class TrayBuilder {
   buildOpenAppSubMenu() {
     if (getWindows()?.size > 1) {
       return {
-        label: 'Open RedisInsight',
+        label: 'Open Redis Insight',
         type: 'submenu',
         submenu: [
           {
@@ -46,7 +45,7 @@ export class TrayBuilder {
     }
 
     return {
-      label: 'Open RedisInsight',
+      label: 'Open Redis Insight',
       click: () => {
         this.openApp()
       }

@@ -1,4 +1,7 @@
 export default {
+  dir_path: {
+    dataDir: process.env.RI_DATA_DIR || '.test_run/data',
+  },
   server: {
     env: 'test',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 1000,

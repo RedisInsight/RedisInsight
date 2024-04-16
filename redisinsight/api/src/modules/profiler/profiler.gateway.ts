@@ -16,7 +16,7 @@ import config from 'src/utils/config';
 
 const SOCKETS_CONFIG = config.get('sockets');
 
-@WebSocketGateway({ namespace: 'monitor', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({ path: SOCKETS_CONFIG.path, namespace: 'monitor', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
 export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 

@@ -350,6 +350,7 @@ const keysSlice = createSlice({
 
     changeKeyViewType: (state, { payload }:{ payload: KeyViewType }) => {
       state.viewType = payload
+      localStorageService?.set(BrowserStorageItem.browserViewType, payload)
     },
 
     changeSearchMode: (state, { payload }:{ payload: SearchMode }) => {

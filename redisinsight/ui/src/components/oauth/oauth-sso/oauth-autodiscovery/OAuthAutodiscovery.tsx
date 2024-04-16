@@ -89,6 +89,7 @@ const OAuthAutodiscovery = (props: Props) => {
       eventData: {
         accountOption,
         action: OAuthSocialAction.Import,
+        source
       }
     })
   }

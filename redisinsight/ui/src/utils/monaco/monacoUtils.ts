@@ -221,3 +221,16 @@ const removeParams = (commandInit: string = '') => {
 
 export const getMonacoLines = (command: string = '') =>
   command.split(/\n(?=[^\s])/g)
+
+export const getCommandsFromQuery = (query: string, commandsArray: string[] = []) => {
+  const commands = getCommandsForExecution(query)
+  const [commandLine, ...rest] = commands.map((command = '') => {
+    const matchedCommand = commandsArray?.find((commandName) =>
+      command.toUpperCase().startsWith(commandName))
+    return matchedCommand ?? command.split(' ')?.[0]
+  })
+
+  const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
+  const listOfCommands = [commandLine, multiCommands].filter(Boolean)
+  return listOfCommands.length ? listOfCommands.join(';') : null
+}

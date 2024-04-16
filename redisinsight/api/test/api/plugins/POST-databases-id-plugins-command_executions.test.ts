@@ -195,7 +195,7 @@ describe('POST /databases/:instanceId/plugins/command-executions', () => {
         checkFn: async ({ body }) => {
           expect(body.result.length).to.eql(1);
           expect(body.result[0].status).to.eql('fail');
-          expect(body.result[0].response).to.include('command is not allowed by the RedisInsight Plugins');
+          expect(body.result[0].response).to.include('command is not allowed by the Redis Insight Plugins');
         },
         ...testCase,
       }));

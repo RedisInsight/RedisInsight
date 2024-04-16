@@ -35,7 +35,6 @@ describe('DatabaseListHeader', () => {
   it('should render', () => {
     expect(render(<DatabaseListHeader {...instance(mockedProps)} />)).toBeTruthy()
   })
-
   it('should open import dbs dialog', () => {
     render(<DatabaseListHeader {...instance(mockedProps)} />)
 

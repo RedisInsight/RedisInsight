@@ -1,14 +1,11 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
-import TelescopeDarkImg from 'uiSrc/assets/img/telescope-dark.svg'
-import TelescopeLightImg from 'uiSrc/assets/img/telescope-light.svg'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
-import { Theme } from 'uiSrc/constants'
 import { ExternalLink, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
@@ -26,8 +23,6 @@ export interface Props {
 const ModuleNotLoadedMinimalized = (props: Props) => {
   const { moduleName, source, onClose } = props
   const freeInstances = useSelector(freeInstancesSelector) || []
-
-  const { theme } = useContext(ThemeContext)
 
   const sourceTutorial = getSourceTutorialByCapability(moduleName)
   const moduleText = MODULE_CAPABILITY_TEXT_NOT_AVAILABLE[moduleName]
@@ -87,7 +82,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
         )}
       </div>
       <img
-        src={theme === Theme.Dark ? TelescopeDarkImg : TelescopeLightImg}
+        src={TelescopeImg}
         className={styles.img}
         alt="telescope"
         loading="lazy"

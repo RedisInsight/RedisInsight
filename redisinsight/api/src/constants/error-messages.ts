@@ -63,11 +63,11 @@ export default {
   SCAN_PER_KEY_TYPE_NOT_SUPPORT: () => 'Filtering per Key types is available for Redis databases v. 6.0 or later.',
   WRONG_DISCOVERY_TOOL: () => 'Selected discovery tool is incorrect, please add this database manually using Host and Port.',
   COMMAND_NOT_SUPPORTED: (command: string) => `Redis does not support '${command}' command.`,
-  PLUGIN_COMMAND_NOT_SUPPORTED: (command: string) => `Plugin ERROR: The '${command}' command is not allowed by the RedisInsight Plugins.`,
+  PLUGIN_COMMAND_NOT_SUPPORTED: (command: string) => `Plugin ERROR: The '${command}' command is not allowed by the Redis Insight Plugins.`,
   PLUGIN_STATE_MAX_SIZE: (size: number) => `State should be less then ${size} bytes.`,
-  WORKBENCH_COMMAND_NOT_SUPPORTED: (command) => `Workbench ERROR: The '${command}' command is not supported by the RedisInsight Workbench.`,
+  WORKBENCH_COMMAND_NOT_SUPPORTED: (command) => `Workbench ERROR: The '${command}' command is not supported by the Redis Insight Workbench.`,
   WORKBENCH_RESPONSE_TOO_BIG: () => 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
-  CLI_COMMAND_NOT_SUPPORTED: (command: string) => `CLI ERROR: The '${command}' command is not supported by the RedisInsight CLI.`,
+  CLI_COMMAND_NOT_SUPPORTED: (command: string) => `CLI ERROR: The '${command}' command is not supported by the Redis Insight CLI.`,
   CLI_UNTERMINATED_QUOTES: () => 'Invalid argument(s): Unterminated quotes.',
   CLI_INVALID_QUOTES_CLOSING: () => 'Invalid argument(s): Closing quote must be followed by a space or nothing at all.',
   CLUSTER_NODE_NOT_FOUND: (node: string) => `Node ${node} not exist in OSS Cluster.`,
@@ -102,6 +102,7 @@ export default {
   CLOUD_DATABASE_ALREADY_EXISTS_FREE: 'Free database already exists',
   CLOUD_PLAN_NOT_FOUND_FREE: 'Unable to find free cloud plan',
   CLOUD_SUBSCRIPTION_ALREADY_EXISTS_FREE: 'Free subscription already exists',
+  COMMON_DEFAULT_IMPORT_ERROR: 'Unable to import default data',
 
   RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
 };

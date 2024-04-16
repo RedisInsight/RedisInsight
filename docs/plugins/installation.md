@@ -1,6 +1,6 @@
 # Plugin installation & Usage
 
-This document describes the guides to add `plugins` for the Workbench to RedisInsight.
+This document describes the guides to add `plugins` for the Workbench to Redis Insight.
 
 ## Installation guide
 
@@ -9,9 +9,9 @@ authors to avoid automatic execution of malicious code.
 
 1. Download the plugin for the Workbench.
 2. Open the `plugins` folder with the following path
-   * For MacOs: `<usersHomeDir>/.redisinsight-app/plugins`
-   * For Windows: `C:/Users/{Username}/.redisinsight-app/plugins`
-   * For Linux: `<usersHomeDir>/.redisinsight-app/plugins`
+   * For MacOs: `<usersHomeDir>/.redis-insight/plugins`
+   * For Windows: `C:/Users/{Username}/.redis-insight/plugins`
+   * For Linux: `<usersHomeDir>/.redis-insight/plugins`
 3. Add the folder with plugin to the `plugins` folder
 
 To see the uploaded plugin visualizations in the command results, reload the Workbench 
@@ -23,7 +23,7 @@ page and run Redis command relevant for this visualization.
 The plugin may contain different visualizations for any Redis commands. 
 Below you can find a guide to see command results in the uploaded plugin visualization:
 
-1. Open RedisInsight
+1. Open Redis Insight
 2. Open a database added
 3. Open the Workbench
 4. Run the Redis command relevant for the plugin visualization

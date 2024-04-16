@@ -4,6 +4,7 @@ import { EuiSpacer } from '@elastic/eui'
 import { AxiosError } from 'axios'
 import { parseCustomError } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 const responseData = { response: { data: { }, status: 500 } }
 
@@ -20,7 +21,7 @@ const parseCustomErrorTests = [
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -38,9 +39,9 @@ const parseCustomErrorTests = [
       title: 'Server error',
       message: (
         <>
-          Try restarting RedisInsight.
+          Try restarting Redis Insight.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -53,7 +54,7 @@ const parseCustomErrorTests = [
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -66,7 +67,7 @@ const parseCustomErrorTests = [
           <EuiSpacer size="xs" />
           Try again later.
           <EuiSpacer size="s" />
-          If the issue persists, <a href="https://github.com/RedisInsight/RedisInsight/issues" target="_blank" rel="noreferrer">report the issue.</a>
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>
       )
     })],
@@ -93,7 +94,7 @@ const parseCustomErrorTests = [
         <>
           Your Redis Cloud authorization failed.
           <EuiSpacer size="xs" />
-          Remove the invalid API key from RedisInsight and try again.
+          Remove the invalid API key from Redis Insight and try again.
           <EuiSpacer size="s" />
           Open the Settings page to manage Redis Cloud API keys.
         </>

@@ -17,7 +17,7 @@ Absolute path button:
 
 External:
 
-![RedisInsight screen external](https://github.com/RedisInsight/RedisInsight/blob/main/.github/redisinsight_browser.png?raw=true)
+![Redis Insight screen external](https://github.com/RedisInsight/RedisInsight/blob/main/.github/redisinsight_browser.png?raw=true)
 
 Invalid absolute path button:
 

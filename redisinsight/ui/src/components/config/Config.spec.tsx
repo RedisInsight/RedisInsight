@@ -88,7 +88,7 @@ describe('Config', () => {
             required: true,
             editable: false,
             since: '1.0.0',
-            title: 'EULA: RedisInsight License Terms',
+            title: 'EULA: Redis Insight License Terms',
             label: 'Label',
           },
         },

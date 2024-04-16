@@ -155,7 +155,7 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
         const noRedisearchMessage = 'RediSearch is not available for this database';
-        // const externalPageLinkFirst = 'https://redis.com/try-free';
+        // const externalPageLinkFirst = 'https://redis.io/try-free';
         // const externalPageLinkSecond = '?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search'
 
         await t.click(browserPage.redisearchModeBtn);
@@ -175,7 +175,7 @@ test
         await browserPage.Cli.sendCommandInCli(`FT.DROPINDEX ${indexName}`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     })('Index creation', async t => {
-        const createIndexLink = 'https://redis.io/commands/ft.create/';
+        const createIndexLink = 'https://redis.io/docs/latest/commands/ft.create/?utm_source=redisinsight&utm_medium=app&utm_campaign=browser_search';
 
         // Verify that user can cancel index creation
         await t.click(browserPage.redisearchModeBtn);

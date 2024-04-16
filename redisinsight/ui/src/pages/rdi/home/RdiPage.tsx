@@ -125,7 +125,6 @@ const RdiPage = () => {
                   paddingSize="none"
                   wrapperProps={{
                     className: cx('home__resizePanelLeft', {
-                      hidden: !data.length && !loading,
                       fullWidth: !isConnectionFormOpen,
                       openedRightPanel: isConnectionFormOpen,
                     })

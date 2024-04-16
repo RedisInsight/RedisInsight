@@ -21,9 +21,19 @@ interface Props {
   onConfirm: () => void
   button: JSX.Element
   onButtonClick: () => void
+  secondAction?: JSX.Element
 }
 
-const ConfirmationPopover = ({ title, body, confirmButtonText, onConfirm, button, onButtonClick }: Props) => {
+const ConfirmationPopover = (props: Props) => {
+  const {
+    title,
+    body,
+    confirmButtonText,
+    onConfirm,
+    button,
+    onButtonClick,
+    secondAction,
+  } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
   const handleClosePopover = () => {
@@ -66,16 +76,23 @@ const ConfirmationPopover = ({ title, body, confirmButtonText, onConfirm, button
         <EuiSpacer size="xs" />
         {body}
         <EuiSpacer size="m" />
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          className={styles.popoverConfirmBtn}
-          onClick={handleConfirm}
-          data-testid="confirm-btn"
-        >
-          {confirmButtonText}
-        </EuiButton>
+        <EuiFlexGroup gutterSize="none" justifyContent={secondAction ? 'spaceBetween' : 'flexEnd'} alignItems="center">
+          <EuiFlexItem grow={false}>
+            {!!secondAction && secondAction}
+          </EuiFlexItem>
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill
+              size="s"
+              color="secondary"
+              className={styles.popoverConfirmBtn}
+              onClick={handleConfirm}
+              data-testid="confirm-btn"
+            >
+              {confirmButtonText}
+            </EuiButton>
+          </EuiFlexItem>
+        </EuiFlexGroup>
       </EuiPopover>
     </EuiOutsideClickDetector>
   )

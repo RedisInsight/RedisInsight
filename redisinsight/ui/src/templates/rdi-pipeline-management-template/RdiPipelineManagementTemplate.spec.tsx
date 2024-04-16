@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { render } from 'uiSrc/utils/test-utils'
-import RdiPipelinePageTemplate from './RdiPipelinePageTemplate'
+import RdiPipelinePageTemplate from './RdiPipelineManagementTemplate'
 
 const child = <div />
 

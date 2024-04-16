@@ -75,7 +75,7 @@ describe('UploadModal', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.RDI_PIPELINE_UPLOAD_CLICKED,
+      event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_FILE_CLICKED,
       eventData: {
         id: 'rdiInstanceId'
       }

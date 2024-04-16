@@ -1,6 +1,5 @@
 import {
-  EuiButtonIcon,
-  EuiSpacer,
+  EuiButtonEmpty,
   EuiText
 } from '@elastic/eui'
 import { useFormikContext } from 'formik'
@@ -13,8 +12,10 @@ import { IPipeline } from 'uiSrc/slices/interfaces'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
+import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
+import { ReactComponent as UploadIcon } from 'uiSrc/assets/img/rdi/upload_from_server.svg'
 
-const RefreshPipelinePopover = () => {
+const FetchPipelinePopover = () => {
   const { loading, data } = useSelector(rdiPipelineSelector)
 
   const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
@@ -35,7 +36,7 @@ const RefreshPipelinePopover = () => {
 
   const handleRefreshWarning = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
+      event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_SERVER_CLICKED,
       eventData: {
         id: rdiInstanceId,
         jobsNumber: data?.jobs?.length || 'none'
@@ -45,32 +46,36 @@ const RefreshPipelinePopover = () => {
 
   return (
     <ConfirmationPopover
-      title="Refresh a pipeline"
+      title="Upload a pipeline from the server"
       body={(
         <>
           <EuiText size="s">
-            A new pipeline will be uploaded from the RDI instance, which may result in overwriting details displayed in
-            RedisInsight.
+            When downloading a new pipeline from the server,
+            it will overwrite the existing one displayed in RedisInsight.
           </EuiText>
-          <EuiSpacer size="s" />
-          <EuiText size="s">You can download the pipeline displayed to save it locally.</EuiText>
+          <EuiText size="s">
+            Download the current pipeline to save the changes locally.
+          </EuiText>
         </>
       )}
-      confirmButtonText="Refresh"
+      confirmButtonText="Upload"
       onConfirm={handleRefreshClick}
       button={(
-        <EuiButtonIcon
+        <EuiButtonEmpty
+          color="text"
           size="xs"
-          iconSize="s"
-          iconType="refresh"
+          iconType={UploadIcon}
           disabled={loading}
-          aria-labelledby="Refresh pipeline button"
-          data-testid="refresh-pipeline-btn"
-        />
+          aria-labelledby="Upload pipeline button"
+          data-testid="upload-pipeline-btn"
+        >
+          Upload from server
+        </EuiButtonEmpty>
       )}
       onButtonClick={handleRefreshWarning}
+      secondAction={<Download />}
     />
   )
 }
 
-export default RefreshPipelinePopover
+export default FetchPipelinePopover

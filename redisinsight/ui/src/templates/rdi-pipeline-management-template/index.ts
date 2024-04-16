@@ -1,0 +1,3 @@
+import RdiPipelineManagementTemplate from './RdiPipelineManagementTemplate'
+
+export default RdiPipelineManagementTemplate

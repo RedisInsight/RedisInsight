@@ -1,0 +1,65 @@
+.container {
+  padding: 32px;
+}
+
+.icon {
+  padding: 4px;
+  margin-bottom: 4px;
+  fill: var(--inputPlaceholderColor) !important;
+}
+
+.title {
+  text-align: center;
+  margin: 24px 0;
+  font-size: 28px;
+}
+
+.text {
+  color: var(--euiColorPrimaryText);
+  font: normal normal normal 14px/17px Graphik, sans-serif !important;
+  margin-bottom: 16px;
+}
+
+.actions {
+  display: flex;
+  margin-bottom: 32px;
+
+  .action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 170px;
+    padding: 24px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--separatorColor);
+
+    &:not(:last-child) {
+      margin-right: 24px;
+    }
+
+    .btn {
+      height: auto;
+
+      &:hover,
+      &:focus {
+        background-color: transparent !important;
+      }
+
+      :global {
+        .euiButtonContent {
+          padding: 0 12px;
+        }
+
+        .euiButtonContent.euiButtonEmpty__content .euiButtonEmpty__text {
+          color: var(--euiColorPrimary) !important;
+          text-decoration: underline;
+
+          &:hover,
+          &:focus {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+}

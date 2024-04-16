@@ -3,7 +3,7 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import Header from './Header'
+import RdiInstanceHeader from './RdiInstanceHeader'
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/instances'),
@@ -19,10 +19,6 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
-const mockedProps = {
-  actions: <div>actions</div>
-}
-
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
@@ -30,16 +26,16 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('Header', () => {
+describe('RdiInstanceHeader', () => {
   it('should render', () => {
-    expect(render(<Header {...mockedProps} />)).toBeTruthy()
+    expect(render(<RdiInstanceHeader />)).toBeTruthy()
   })
 
   it('should call history push with proper path', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
 
-    render(<Header {...mockedProps} />)
+    render(<RdiInstanceHeader />)
 
     fireEvent.click(screen.getByTestId('my-rdi-instances-btn'))
 
@@ -48,7 +44,7 @@ describe('Header', () => {
   })
 
   it('should render proper instance name', () => {
-    expect(render(<Header {...mockedProps} />)).toBeTruthy()
+    expect(render(<RdiInstanceHeader />)).toBeTruthy()
 
     expect(screen.getByTestId('rdi-instance-name')).toHaveTextContent('name')
   })

@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { getPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import RefreshPipelinePopover from './RefreshPipelinePopover'
+import FetchPipelinePopover from './FetchPipelinePopover'
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
@@ -40,28 +40,28 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('RefreshPipelinePopover', () => {
+describe('FetchPipelinePopover', () => {
   it('should render', () => {
-    expect(render(<RefreshPipelinePopover />)).toBeTruthy()
+    expect(render(<FetchPipelinePopover />)).toBeTruthy()
   })
 
   it('should open confirmation message', async () => {
-    render(<RefreshPipelinePopover />)
+    render(<FetchPipelinePopover />)
 
     expect(screen.queryByTestId('confirm-btn')).not.toBeInTheDocument()
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('refresh-pipeline-btn'))
+      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
     })
 
     expect(screen.queryByTestId('confirm-btn')).toBeInTheDocument()
   })
 
   it('should call proper actions', async () => {
-    render(<RefreshPipelinePopover />)
+    render(<FetchPipelinePopover />)
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('refresh-pipeline-btn'))
+      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
     })
 
     await act(() => {
@@ -76,14 +76,14 @@ describe('RefreshPipelinePopover', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    render(<RefreshPipelinePopover />)
+    render(<FetchPipelinePopover />)
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('refresh-pipeline-btn'))
+      fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.RDI_PIPELINE_REFRESH_CLICKED,
+      event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_SERVER_CLICKED,
       eventData: {
         id: 'rdiInstanceId',
         jobsNumber: 1
@@ -96,8 +96,8 @@ describe('RefreshPipelinePopover', () => {
       loading: true
     }))
 
-    render(<RefreshPipelinePopover />)
+    render(<FetchPipelinePopover />)
 
-    expect(screen.getByTestId('refresh-pipeline-btn')).toBeDisabled()
+    expect(screen.getByTestId('upload-pipeline-btn')).toBeDisabled()
   })
 })

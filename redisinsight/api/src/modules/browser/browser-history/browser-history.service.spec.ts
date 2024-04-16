@@ -5,7 +5,6 @@ import {
   MockType,
   mockDatabaseId,
   mockBrowserHistoryRepository,
-  mockBrowserHistoryEntity,
   mockBrowserHistory,
   mockClientMetadata,
   mockSessionMetadata,

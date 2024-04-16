@@ -1,5 +1,5 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { catchAclError, classToClass } from 'src/utils';
+import { catchAclError } from 'src/utils';
 import { sum } from 'lodash';
 import { plainToClass } from 'class-transformer';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
@@ -60,8 +60,7 @@ export class BrowserHistoryService {
     databaseId: string,
     mode: BrowserHistoryMode,
   ): Promise<BrowserHistory[]> {
-    const records = await this.browserHistoryRepository.list(_sessionMetadata, databaseId, mode);
-    return records;
+    return this.browserHistoryRepository.list(_sessionMetadata, databaseId, mode);
   }
 
   /**

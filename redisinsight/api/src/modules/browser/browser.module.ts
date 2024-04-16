@@ -17,7 +17,7 @@ const route = '/databases/:dbInstance';
 @Module({})
 export class BrowserModule {
   static register(
-    browserHistoryRepository: Type<BrowserHistoryRepository> = LocalBrowserHistoryRepository
+    browserHistoryRepository: Type<BrowserHistoryRepository> = LocalBrowserHistoryRepository,
   ): DynamicModule {
     return {
       module: BrowserModule,

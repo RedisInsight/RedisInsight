@@ -1,4 +1,4 @@
-import { EuiButtonIcon } from '@elastic/eui'
+import { EuiButtonEmpty } from '@elastic/eui'
 import { saveAs } from 'file-saver'
 import { useFormikContext } from 'formik'
 import JSZip from 'jszip'
@@ -38,15 +38,17 @@ const Download = () => {
   }
 
   return (
-    <EuiButtonIcon
+    <EuiButtonEmpty
+      color="text"
       size="xs"
-      iconSize="s"
       iconType="exportAction"
       disabled={loading}
       onClick={handleDownloadClick}
       aria-labelledby="Download pipeline button"
       data-testid="download-pipeline-btn"
-    />
+    >
+      Download
+    </EuiButtonEmpty>
   )
 }
 

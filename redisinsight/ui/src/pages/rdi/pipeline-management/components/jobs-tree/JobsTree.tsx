@@ -1,5 +1,5 @@
 import {
-  EuiAccordion,
+  EuiAccordion, EuiButton,
   EuiButtonIcon,
   EuiFieldText,
   EuiFlexGroup,
@@ -151,7 +151,16 @@ const JobsTree = (props: IProps) => {
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={<EuiText size="s">Changes will not be applied until the pipeline is deployed.</EuiText>}
-            confirmButtonText="Delete"
+            submitBtn={(
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                data-testid="delete-confirm-btn"
+              >
+                Delete
+              </EuiButton>
+            )}
             onConfirm={handleDeleteClick}
             button={<EuiButtonIcon iconType="trash" aria-label="delete job" data-testid={`delete-job-${name}`} />}
             onButtonClick={() => {

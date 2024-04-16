@@ -28,6 +28,7 @@ import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
 import AutoRefresh from './auto-refresh'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
+import RdiInstanceHeader from './rdi-instance-header'
 
 export { FullScreen } from './full-screen'
 
@@ -69,4 +70,5 @@ export {
   ModuleNotLoaded,
   FilterNotAvailable,
   AutoRefresh,
+  RdiInstanceHeader,
 }

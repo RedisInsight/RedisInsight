@@ -112,6 +112,7 @@ export interface StateAppContext {
   }
   pipelineManagement: {
     lastViewedPage: string
+    isOpenDialog: boolean
   }
 }
 

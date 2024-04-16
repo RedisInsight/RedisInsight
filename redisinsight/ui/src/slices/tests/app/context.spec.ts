@@ -40,6 +40,10 @@ import reducer, {
   setRecommendationsShowHidden,
   appContextCapability,
   setCapability,
+  setPipelineDialogState,
+  setLastPipelineManagementPage,
+  resetPipelineManagement,
+  appContextPipelineManagement,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -658,6 +662,74 @@ describe('slices', () => {
       })
 
       expect(appContextCapability(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setPipelineDialogState', () => {
+    it('should properly set pipeline dialog state', () => {
+      // Arrange
+      const state = {
+        ...initialState.pipelineManagement,
+        isOpenDialog: false,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setPipelineDialogState(false))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextPipelineManagement(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setLastPipelineManagementPage', () => {
+    it('should properly set last viewed page', () => {
+      // Arrange
+      const mockLastPage = 'name'
+      const state = {
+        ...initialState.pipelineManagement,
+        lastViewedPage: mockLastPage,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setLastPipelineManagementPage(mockLastPage))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextPipelineManagement(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetPipelineManagement', () => {
+    it('should properly set last page', () => {
+      // Arrange
+      const prevState = {
+        ...initialState,
+        pipelineManagement: {
+          lastViewedPage: 'some value',
+          isOpenDialog: false,
+        },
+      }
+      const state = {
+        lastViewedPage: '',
+        isOpenDialog: true,
+      }
+
+      // Act
+      const nextState = reducer(prevState, resetPipelineManagement())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextPipelineManagement(rootState)).toEqual(state)
     })
   })
 })

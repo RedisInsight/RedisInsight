@@ -49,7 +49,6 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
-import appRDIReducer from './rdi/rdi'
 
 export const history = createBrowserHistory()
 

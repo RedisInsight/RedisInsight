@@ -2,6 +2,7 @@ import { EuiPage, EuiPageBody, EuiPanel, EuiResizableContainer, EuiResizeObserve
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import cx from 'classnames'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   createInstanceAction,
@@ -96,7 +97,7 @@ const RdiPage = () => {
     ) : (
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (
-          <div key="homePage" className="homePage" data-testid="rdi-instance-list" ref={resizeRef}>
+          <div data-testid="rdi-instance-list" className={styles.fullHeight} ref={resizeRef}>
             <RdiInstancesListWrapper
               width={width}
               editedInstance={editInstance}
@@ -110,39 +111,55 @@ const RdiPage = () => {
 
   return (
     <HomePageTemplate>
-      <EuiPage className={styles.page}>
+      <EuiPage className={cx(styles.page, 'homePage')}>
         <EuiPageBody component="div">
-          <div className={styles.header}>
-            <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
-          </div>
-          {!isConnectionFormOpen ? (
-            <InstanceList />
-          ) : (
-            <EuiResizableContainer style={{ height: '100%' }}>
-              {(EuiResizablePanel, EuiResizableButton) => (
-                <>
-                  <EuiResizablePanel scrollable={false} initialSize={65} id="instances" minSize="50%" paddingSize="none">
-                    <InstanceList />
-                  </EuiResizablePanel>
-                  <EuiResizableButton style={{ margin: 0 }} />
-                  <EuiResizablePanel
-                    scrollable={false}
-                    initialSize={35}
-                    id="connection-form"
-                    paddingSize="none"
-                    minSize="400px"
-                  >
-                    <ConnectionForm
-                      onAddInstance={handleAddInstance}
-                      onCancel={handleCloseConnectionForm}
-                      editInstance={editInstance}
-                      isLoading={loading || loadingChanging}
-                    />
-                  </EuiResizablePanel>
-                </>
-              )}
-            </EuiResizableContainer>
-          )}
+          <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
+          <EuiResizableContainer style={{ height: 'calc(100% - 60px)' }}>
+            {(EuiResizablePanel, EuiResizableButton) => (
+              <>
+                <EuiResizablePanel
+                  scrollable={false}
+                  initialSize={65}
+                  id="instances"
+                  minSize="50%"
+                  paddingSize="none"
+                  wrapperProps={{
+                    className: cx('home__resizePanelLeft', {
+                      fullWidth: !isConnectionFormOpen,
+                      openedRightPanel: isConnectionFormOpen,
+                    })
+                  }}
+                >
+                  <InstanceList />
+                </EuiResizablePanel>
+                <EuiResizableButton
+                  style={{ margin: 0 }}
+                  className={cx('home__resizableButton', {
+                    hidden: !isConnectionFormOpen,
+                  })}
+                />
+                <EuiResizablePanel
+                  scrollable={false}
+                  initialSize={35}
+                  id="connection-form"
+                  paddingSize="none"
+                  style={{ minWidth: '474px' }}
+                  wrapperProps={{
+                    className: cx('home__resizePanelRight', {
+                      hidden: !isConnectionFormOpen
+                    })
+                  }}
+                >
+                  <ConnectionForm
+                    onAddInstance={handleAddInstance}
+                    onCancel={handleCloseConnectionForm}
+                    editInstance={editInstance}
+                    isLoading={loading || loadingChanging}
+                  />
+                </EuiResizablePanel>
+              </>
+            )}
+          </EuiResizableContainer>
         </EuiPageBody>
       </EuiPage>
     </HomePageTemplate>

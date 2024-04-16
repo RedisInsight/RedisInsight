@@ -5,6 +5,7 @@ import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import {
+    RdiPopoverOptions,
     RdiTemplateDatabaseType,
     RdiTemplatePipelineType,
     RedisOverviewPage,
@@ -39,7 +40,6 @@ fixture.skip `Pipeline`
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
         await t.click(rdiInstancePage.PipelineManagementPanel.configurationTab);
-        await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
 
     })
     .afterEach(async() => {
@@ -47,6 +47,7 @@ fixture.skip `Pipeline`
     });
 
 test('Verify that user can test connection', async() => {
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
     //TODO do sth to get failed and success connection
     await t.click(rdiInstancePage.textConnectionBtn);
 
@@ -66,6 +67,7 @@ test('Verify that link on configuration is valid', async() => {
 
     const link = 'https://docs.redis.com/latest/rdi/quickstart/';
     // Verify the link
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
     await t.click(rdiInstancePage.configurationLink);
     await t.expect(getPageUrl()).eql(link, 'Build from homebrew page is not valid');
     await goBackHistory();
@@ -76,6 +78,7 @@ test('Verify that user can insert template', async() => {
     const defaultValue = 'Ingest';
     const templateWords = 'type: redis';
     // should be empty config
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
     await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
     const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');
     await t.expect(buttonClass).notContains(disabledAttribute, 'Apply button is disabled');

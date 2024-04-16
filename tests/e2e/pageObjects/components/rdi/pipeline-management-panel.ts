@@ -24,7 +24,6 @@ export class PipelineManagementPanel {
      */
     async uploadPipeline(filePath: string): Promise<void> {
         await t
-            .click(this.importPipelineIcon)
             .setFilesToUpload(this.importInput, filePath)
             .click(this.uploadPipelineBtn);
     }

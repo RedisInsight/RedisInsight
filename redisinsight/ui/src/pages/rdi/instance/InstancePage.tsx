@@ -14,7 +14,7 @@ import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
-import { deployPipelineAction, fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { deployPipelineAction, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
 
@@ -64,7 +64,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       history.push(Pages.rdiPipelineManagement(rdiInstanceId))
     }
 
-    dispatch(fetchRdiPipeline(rdiInstanceId))
     dispatch(fetchConnectedInstanceAction(rdiInstanceId))
   }, [])
 

@@ -10,7 +10,7 @@ import { fileDownloadPath, commonUrl } from '../../../../helpers/conf';
 import { DatabasesActions } from '../../../../common-actions/databases-actions';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
-import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -43,7 +43,6 @@ fixture.skip `Pipeline`
         await rdiApiRequests.addNewRdiApi(rdiInstance);
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
         await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-        await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
 
     })
     .afterEach(async() => {
@@ -53,6 +52,7 @@ test('Verify that user can refresh pipeline', async() => {
     const text = 'text';
     const expectedText = 'connections:';
 
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, text);
     const enteredText = await MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).eql(text, 'config text was not changed');
@@ -69,6 +69,7 @@ test('Verify that user can deploy pipeline', async() => {
     const successMessage = 'Deployment completed successfully!';
     const errorMessage = 'Unfortunately we’ve found some errors in your pipeline.';
 
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
     await t.click(rdiInstancePage.deployPipelineBtn);
     // Verify that user can see message when request to deploy the pipeline
     await browserActions.verifyDialogContainsText(messageText, true);
@@ -93,6 +94,7 @@ test
         fs.unlinkSync(joinPath(fileDownloadPath, foundExportedFiles[0]));
         await rdiApiRequests.deleteAllRdiApi();
     })('Verify that user can download pipeline', async() => {
+        await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
         await t
             .click(rdiInstancePage.PipelineManagementPanel.exportPipelineIcon)
             .wait(2000);
@@ -107,6 +109,7 @@ test
 test('Verify that user can import pipeline', async() => {
     const expectedText = 'Uploaded';
     // check success uploading
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
     await rdiInstancePage.PipelineManagementPanel.uploadPipeline(filePathes.successful);
     await t.click(rdiInstancePage.okUploadPipelineBtn);
     const updatedText = await MonacoEditor.getTextFromMonaco();
@@ -116,4 +119,6 @@ test('Verify that user can import pipeline', async() => {
     const failedText = await rdiInstancePage.failedUploadingPipelineNotification.textContent;
     await t.expect(failedText).contains('There was a problem with the .zip file');
     await t.click(rdiInstancePage.closeNotification);
+    await t.click(rdiInstancePage.importPipelineIcon);
+    await t.expect(rdiInstancePage.uploadPipelineBtn.exists).ok('the upload dialog is not opened');
 });

@@ -1,18 +1,20 @@
 import React, { useEffect, useRef } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { Form } from 'formik'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
-import RdiPipelinePageTemplate from 'uiSrc/templates/rdi-pipeline-page-template'
 import {
   appContextPipelineManagement,
   setLastPageContext,
   setLastPipelineManagementPage,
 } from 'uiSrc/slices/app/context'
-
 import { formatLongName, setTitle } from 'uiSrc/utils'
+import SourcePipelineDialog from 'uiSrc/pages/rdi/pipeline-management/components/source-pipeline-dialog'
+import { RdiPipelineManagementTemplate } from 'uiSrc/templates'
+
 import PipelinePageRouter from './PipelineManagementPageRouter'
 
 export interface Props {
@@ -62,9 +64,12 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   }, [pathname, lastViewedPage])
 
   return (
-    <RdiPipelinePageTemplate>
-      <PipelinePageRouter routes={routes} />
-    </RdiPipelinePageTemplate>
+    <Form style={{ height: '100%' }}>
+      <RdiPipelineManagementTemplate>
+        <SourcePipelineDialog />
+        <PipelinePageRouter routes={routes} />
+      </RdiPipelineManagementTemplate>
+    </Form>
   )
 }
 

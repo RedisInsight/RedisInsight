@@ -1,13 +1,3 @@
-.popoverConfirmBtn {
-  float: right;
-  padding: 4px 12px !important;
-  height: 24px !important;
-
-  :global(.euiButtonContent) {
-    padding: 0 !important;
-  }
-}
-
 .popoverTitle {
   color: var(--htmlColor) !important;
   font-size: 14px !important;

@@ -1,12 +1,13 @@
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiFlexGroup,
   EuiFlexItem,
   EuiOutsideClickDetector,
   EuiPopover,
   EuiSpacer,
   EuiText,
-  EuiTitle
+  EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useFormikContext } from 'formik'
@@ -16,9 +17,11 @@ import { useParams } from 'react-router-dom'
 
 import { RdiPipeline } from 'src/modules/rdi/models'
 import RocketIcon from 'uiSrc/assets/img/rdi/rocket.svg'
-import Header from 'uiSrc/pages/rdi/components/header'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import FetchPipelinePopover from 'uiSrc/pages/rdi/pipeline-management/components/fetch-pipeline-popover'
+import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
+import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
 
 import styles from './styles.module.scss'
 
@@ -52,8 +55,30 @@ const RdiPipelineHeader = () => {
   }
 
   return (
-    <Header
-      actions={(
+    <EuiFlexGroup className={styles.wrapper} gutterSize="none" alignItems="center" responsive={false}>
+      <EuiFlexItem style={{ overflow: 'hidden' }}>
+        <EuiTitle size="xxs">
+          <span>Pipeline Management</span>
+        </EuiTitle>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <div className={styles.actions}>
+          <FetchPipelinePopover />
+          <UploadModal>
+            <EuiButtonEmpty
+              color="text"
+              size="xs"
+              iconType="importAction"
+              aria-labelledby="Upload pipeline button"
+              data-testid="upload-pipeline-btn"
+            >
+              Upload from file
+            </EuiButtonEmpty>
+          </UploadModal>
+          <Download />
+        </div>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
         <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
           <EuiPopover
             closePopover={handleClosePopover}
@@ -105,8 +130,8 @@ const RdiPipelineHeader = () => {
             </EuiFlexGroup>
           </EuiPopover>
         </EuiOutsideClickDetector>
-      )}
-    />
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 }
 

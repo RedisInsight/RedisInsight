@@ -1,6 +1,9 @@
 .search {
   &:global(.euiFieldSearch) {
-    border: none !important;
-    background-color: var(--rdiSecondaryBgColor) !important;
+    position: relative;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    background-color: transparent !important;
   }
 }

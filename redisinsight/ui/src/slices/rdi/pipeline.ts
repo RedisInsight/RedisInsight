@@ -10,7 +10,7 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: IStateRdiPipeline = {
-  loading: true,
+  loading: false,
   error: '',
   data: null,
   schema: null,
@@ -26,6 +26,10 @@ const rdiPipelineSlice = createSlice({
   name: 'rdiPipeline',
   initialState,
   reducers: {
+    setPipelineInitialState: () => initialState,
+    setPipeline: (state, { payload }: PayloadAction<IPipeline>) => {
+      state.data = payload
+    },
     getPipeline: (state) => {
       state.loading = true
     },
@@ -86,6 +90,8 @@ export const {
   getPipelineStrategies,
   getPipelineStrategiesSuccess,
   getPipelineStrategiesFailure,
+  setPipeline,
+  setPipelineInitialState,
 } = rdiPipelineSlice.actions
 
 // The reducer

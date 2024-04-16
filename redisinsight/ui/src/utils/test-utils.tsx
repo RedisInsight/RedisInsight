@@ -56,7 +56,6 @@ import { initialState as initialStateRdiDryRunJob } from 'uiSrc/slices/rdi/dryRu
 import { initialState as initialStateRdiStatistics } from 'uiSrc/slices/rdi/statistics'
 import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi/testConnections'
 import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
-import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/rdi'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 

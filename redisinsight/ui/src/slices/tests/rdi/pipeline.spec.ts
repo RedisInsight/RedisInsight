@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { AnyAction } from '@reduxjs/toolkit'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import reducer, {
   initialState,
   getPipeline,
@@ -14,6 +15,7 @@ import reducer, {
   getPipelineStrategiesSuccess,
   getPipelineStrategiesFailure,
   setPipelineSchema,
+  setPipeline,
   fetchRdiPipeline,
   deployPipelineAction,
   rdiPipelineSelector,
@@ -68,17 +70,37 @@ describe('rdi pipe slice', () => {
     })
   })
 
+  describe('setPipeline', () => {
+    it('should properly set state', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        data: MOCK_RDI_PIPELINE_DATA,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setPipeline(MOCK_RDI_PIPELINE_DATA))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
   describe('getPipelineSuccess', () => {
     it('should properly set state', () => {
       // Arrange
-      const pipeline = { config: 'string', jobs: [] }
       const state = {
         ...initialState,
         loading: false,
-        data: pipeline,
+        data: MOCK_RDI_PIPELINE_DATA,
       }
       // Act
-      const nextState = reducer(initialState, getPipelineSuccess(pipeline))
+      const nextState = reducer(initialState, getPipelineSuccess(MOCK_RDI_PIPELINE_DATA))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

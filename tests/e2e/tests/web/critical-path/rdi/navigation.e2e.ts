@@ -4,7 +4,7 @@ import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { RedisOverviewPage } from '../../../../helpers/constants';
+import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -47,7 +47,7 @@ test.before(async() => {
     await t.expect(count).eql(3, 'dataBase buttons are displayed');
 
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    await t.click(rdiInstancesListPage.NavigationPanel.managementPageButton);
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
 
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await t.click(rdiInstancePage.NavigationPanel.managementPageButton);
@@ -65,7 +65,7 @@ test.before(async() => {
 test('Verify that context is saved after navigation panel', async() => {
     // check that tab is not highlighted
     let classes = await rdiInstancePage.PipelineManagementPanel.configurationTab.getAttribute('class');
-    await t.expect(classes?.split(' ').length).eql(1, 'the tab is  selected');
+    await t.expect(classes?.split(' ').length).eql(1, 'the tab is selected');
     await t.click(rdiInstancePage.PipelineManagementPanel.configurationTab);
 
     await t.click(rdiInstancePage.breadcrumbsLink);

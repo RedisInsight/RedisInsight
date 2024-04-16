@@ -92,47 +92,45 @@ describe('RdiPage', () => {
       loading: false,
       data: []
     })
-    render(<RdiPage />)
+    const { container } = render(<RdiPage />)
 
     fireEvent.click(screen.getByTestId('empty-rdi-instance-button'))
-    const form = await screen.findByTestId('connection-form')
-
-    expect(form).toBeInTheDocument()
+    expect(container.getElementsByClassName('hidden').length).toBe(1)
   })
 
   it('should open connection form when using edit button', async () => {
-    render(<RdiPage />)
+    const { container } = render(<RdiPage />)
 
     fireEvent.click(screen.getByTestId('edit-instance-1'))
-    const form = await screen.findByTestId('connection-form')
-
-    expect(form).toBeInTheDocument()
+    expect(container.getElementsByClassName('hidden').length).toBe(0)
   })
 
   it('should close connection form when using cancel button', async () => {
-    render(<RdiPage />)
+    const { container } = render(<RdiPage />)
 
     // open form
     fireEvent.click(screen.getByTestId('rdi-instance'))
-    await screen.findByTestId('connection-form')
+
+    expect(container.getElementsByClassName('hidden').length).toBe(0)
 
     // close form
     fireEvent.click(screen.getByTestId('connection-form-cancel-button'))
-    expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument()
+
+    expect(container.getElementsByClassName('hidden').length).toBe(2)
   })
 
   it('should close connection form when using delete button', async () => {
-    render(<RdiPage />)
+    const { container } = render(<RdiPage />)
 
     // open form
     fireEvent.click(screen.getByTestId('rdi-instance'))
-    await screen.findByTestId('connection-form')
+    expect(container.getElementsByClassName('hidden').length).toBe(0)
 
     // close form
     fireEvent.click(screen.getByTestId('delete-instance-1-icon'))
     fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
 
-    await waitFor(() => expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument(), {
+    await waitFor(() => expect(container.getElementsByClassName('hidden').length).toBe(2), {
       timeout: 1000
     })
   })
@@ -167,7 +165,7 @@ describe('RdiPage', () => {
   it('should clear password input when focused for an edited instance', async () => {
     render(<RdiPage />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Edit instance' }))
+    fireEvent.click(screen.getByTestId(/edit-instance-/))
     await screen.findByTestId('connection-form')
 
     await act(() => {

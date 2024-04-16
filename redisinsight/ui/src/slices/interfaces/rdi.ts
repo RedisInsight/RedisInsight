@@ -178,4 +178,5 @@ export interface InitialStateRdiInstances {
   loadingChanging: boolean
   errorChanging: string
   changedSuccessfully: boolean
+  isPipelineLoaded: boolean
 }

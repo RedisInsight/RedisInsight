@@ -24,7 +24,7 @@ const rdiInstance: AddNewRdiParameters = {
 };
 
 //skip the tests until rdi integration is added
-fixture `Add job`
+fixture.skip `Add job`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -38,7 +38,7 @@ fixture `Add job`
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
-test.only('Verify that user can add, edit and delete job', async() => {
+test('Verify that user can add, edit and delete job', async() => {
     const jobName = 'testJob';
     const jobName2 = 'testJob2';
 

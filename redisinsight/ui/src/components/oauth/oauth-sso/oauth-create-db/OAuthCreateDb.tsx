@@ -49,7 +49,8 @@ const OAuthCreateDb = (props: Props) => {
       eventData: {
         accountOption,
         action: OAuthSocialAction.Create,
-        cloudRecommendedSettings
+        cloudRecommendedSettings,
+        source
       }
     })
   }

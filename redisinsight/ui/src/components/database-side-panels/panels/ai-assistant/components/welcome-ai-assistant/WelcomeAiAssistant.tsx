@@ -3,7 +3,7 @@ import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { OAuthAgreement, OAuthSocialButtons } from 'uiSrc/components/oauth/shared'
 
-import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import styles from './styles.module.scss'
@@ -18,6 +18,7 @@ const WelcomeAiAssistant = () => {
       eventData: {
         accountOption,
         action: OAuthSocialAction.SignIn,
+        source: OAuthSocialSource.AiChat
       }
     })
   }

@@ -14,6 +14,7 @@ export interface CodeProps {
 }
 
 export interface Props {
+  onRunCommand?: (query: string) => void
   modules?: AdditionalRedisModule[]
   children: string
   onMessageRendered?: () => void
@@ -23,13 +24,14 @@ const MarkdownMessage = (props: Props) => {
   const {
     modules,
     children,
-    onMessageRendered
+    onMessageRendered,
+    onRunCommand,
   } = props
 
   const [content, setContent] = useState('')
 
   const ChatCodeBlock = useCallback((codeProps: CodeProps) =>
-    (<CodeBlock {...codeProps} modules={modules} />), [modules])
+    (<CodeBlock {...codeProps} modules={modules} onRunCommand={onRunCommand} />), [modules])
   const components: any = { Code: ChatCodeBlock, CloudLink, ExternalLink: ChatExternalLink }
 
   useEffect(() => {

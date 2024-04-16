@@ -10,14 +10,16 @@ export interface Props {
   modules?: AdditionalRedisModule[]
   children: string
   lang?: string
+  onRunCommand?: (query: string) => void
 }
 
 const CodeBlock = (props: Props) => {
-  const { children, lang, modules } = props
+  const { children, lang, modules, onRunCommand } = props
 
   const dispatch = useDispatch()
 
   const handleApply = (params?: CodeButtonParams, onFinish?: () => void) => {
+    onRunCommand?.(children)
     dispatch(sendWbQueryAction(children, null, params, { afterAll: onFinish }, onFinish))
   }
 

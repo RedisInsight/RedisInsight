@@ -1,12 +1,24 @@
 import React from 'react'
 
 import { render } from 'uiSrc/utils/test-utils'
-import RdiPipelinePageTemplate from './RdiPipelineManagementTemplate'
+import RdiPipelineManagementTemplate from './RdiPipelineManagementTemplate'
 
 const child = <div />
 
-describe('RdiPipelinePageTemplate', () => {
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      jobs: [
+        { name: 'job1', value: 'value' }
+      ]
+    },
+    setFieldValue: jest.fn()
+  })
+}))
+
+describe('RdiPipelineManagementTemplate', () => {
   it('should render', () => {
-    expect(render(<RdiPipelinePageTemplate>{child}</RdiPipelinePageTemplate>)).toBeTruthy()
+    expect(render(<RdiPipelineManagementTemplate>{child}</RdiPipelineManagementTemplate>)).toBeTruthy()
   })
 })

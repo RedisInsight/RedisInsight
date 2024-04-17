@@ -10,6 +10,6 @@
 :global(.euiButtonEmpty--text) {
   &:focus,
   &:hover {
-    background-color: transparent;
+    background-color: transparent !important;
   }
 }

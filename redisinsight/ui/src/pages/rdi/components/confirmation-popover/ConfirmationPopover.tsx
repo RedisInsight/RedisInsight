@@ -57,6 +57,7 @@ const ConfirmationPopover = (props: Props) => {
       <EuiPopover
         id="confirmation-popover"
         initialFocus={false}
+        ownFocus
         anchorPosition="downCenter"
         isOpen={isPopoverOpen}
         closePopover={handleClosePopover}

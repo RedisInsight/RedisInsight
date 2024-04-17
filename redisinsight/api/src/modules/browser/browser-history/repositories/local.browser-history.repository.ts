@@ -37,13 +37,13 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * Should always throw and error in case when unable to encrypt for some reason
    * @param history
    */
-  async create(_sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
+  async create(sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
     const encryptedDto = await this.modelEncryptor.encryptEntity(plainToClass(BrowserHistoryEntity, history));
     const entity = await this.repository.save(encryptedDto);
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(_sessionMetadata, entity.databaseId, entity.mode);
+      await this.cleanupDatabaseHistory(sessionMetadata, entity.databaseId, entity.mode);
     } catch (e) {
       this.logger.error('Error when trying to cleanup history after insert', e);
     }

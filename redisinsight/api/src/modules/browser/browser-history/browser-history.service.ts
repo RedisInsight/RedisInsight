@@ -46,8 +46,8 @@ export class BrowserHistoryService {
    * Get browser history with all fields by id
    * @param id
    */
-  async get(_sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
-    return this.browserHistoryRepository.get(_sessionMetadata, id);
+  async get(sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
+    return this.browserHistoryRepository.get(sessionMetadata, id);
   }
 
   /**
@@ -56,11 +56,11 @@ export class BrowserHistoryService {
    * @param mode
    */
   async list(
-    _sessionMetadata: SessionMetadata,
+    sessionMetadata: SessionMetadata,
     databaseId: string,
     mode: BrowserHistoryMode,
   ): Promise<BrowserHistory[]> {
-    return this.browserHistoryRepository.list(_sessionMetadata, databaseId, mode);
+    return this.browserHistoryRepository.list(sessionMetadata, databaseId, mode);
   }
 
   /**
@@ -68,8 +68,8 @@ export class BrowserHistoryService {
    * @param databaseId
    * @param id
    */
-  async delete(_sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
-    return this.browserHistoryRepository.delete(_sessionMetadata, databaseId, id);
+  async delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
+    return this.browserHistoryRepository.delete(sessionMetadata, databaseId, id);
   }
 
   /**
@@ -79,7 +79,7 @@ export class BrowserHistoryService {
    * @param ids
    */
   async bulkDelete(
-    _sessionMetadata: SessionMetadata,
+    sessionMetadata: SessionMetadata,
     databaseId: string, ids: string[],
   ): Promise<DeleteBrowserHistoryItemsResponse> {
     this.logger.log(`Deleting many browser history items: ${ids}`);
@@ -87,7 +87,7 @@ export class BrowserHistoryService {
     return {
       affected: sum(await Promise.all(ids.map(async (id) => {
         try {
-          await this.delete(_sessionMetadata, databaseId, id);
+          await this.delete(sessionMetadata, databaseId, id);
           return 1;
         } catch (e) {
           return 0;

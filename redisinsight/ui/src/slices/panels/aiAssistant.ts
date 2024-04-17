@@ -245,7 +245,7 @@ export function getExpertChatHistoryAction(
       const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_EXPERT}/${instanceId}/messages`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(getExpertChatHistorySuccess(data.messages))
+        dispatch(getExpertChatHistorySuccess(data))
         onSuccess?.()
       }
     } catch (e) {

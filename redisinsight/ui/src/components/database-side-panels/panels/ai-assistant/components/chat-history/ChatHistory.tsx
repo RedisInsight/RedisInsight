@@ -13,6 +13,7 @@ import { AiChatSuggestion } from '../../constants'
 import styles from './styles.module.scss'
 
 export interface Props {
+  isLoading?: boolean
   suggestions?: AiChatSuggestion[]
   welcomeText?: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
@@ -27,6 +28,7 @@ export interface Props {
 
 const ChatHistory = (props: Props) => {
   const {
+    isLoading,
     suggestions,
     welcomeText,
     progressingMessage,
@@ -57,6 +59,10 @@ const ChatHistory = (props: Props) => {
       </MarkdownMessage>
     </div>
   ) : null), [modules])
+
+  if (isLoading) {
+    return <EmptyHistoryScreen isLoading />
+  }
 
   if (history.length === 0) {
     return (

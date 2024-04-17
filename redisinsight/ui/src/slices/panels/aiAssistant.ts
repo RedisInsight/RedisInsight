@@ -23,6 +23,7 @@ export const initialState: StateAiAssistant = {
   },
   expert: {
     loading: false,
+    loadingAnswer: false,
     messages: []
   }
 }
@@ -80,7 +81,18 @@ const aiAssistantSlice = createSlice({
     sendAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
     },
-    sendExpertQuestion: (state, { payload }: PayloadAction<string>) => {
+    getExpertChatHistory: (state) => {
+      state.expert.loading = true
+    },
+    getExpertChatHistorySuccess: (state, { payload }: PayloadAction<Array<AiChatMessage>>) => {
+      state.expert.loading = false
+      state.expert.messages = payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
+    },
+    getExpertChatHistoryFailed: (state) => {
+      state.expert.loading = false
+    },
+    askExpertChatbot: (state, { payload }: PayloadAction<string>) => {
+      state.expert.loadingAnswer = true
       state.expert.messages.push({
         id: `ai_${uuidv4()}`,
         type: AiChatMessageType.HumanMessage,
@@ -88,7 +100,8 @@ const aiAssistantSlice = createSlice({
         context: {}
       })
     },
-    sendExpertAnswer: (state, { payload }: PayloadAction<string>) => {
+    askExpertChatbotSuccess: (state, { payload }: PayloadAction<string>) => {
+      state.expert.loadingAnswer = false
       state.expert.messages.push(
         {
           id: `ai_${uuidv4()}`,
@@ -97,6 +110,9 @@ const aiAssistantSlice = createSlice({
           context: {}
         }
       )
+    },
+    askExpertChatbotFailed: (state) => {
+      state.expert.loadingAnswer = false
     },
     clearExpertChatHistory: (state) => {
       state.expert.messages = []
@@ -123,8 +139,12 @@ export const {
   removeAssistantChatHistoryFailed,
   sendQuestion,
   sendAnswer,
-  sendExpertAnswer,
-  sendExpertQuestion,
+  getExpertChatHistory,
+  getExpertChatHistorySuccess,
+  getExpertChatHistoryFailed,
+  askExpertChatbot,
+  askExpertChatbotSuccess,
+  askExpertChatbotFailed,
   clearExpertChatHistory,
 } = aiAssistantSlice.actions
 
@@ -242,14 +262,34 @@ export function removeAssistantChatAction(id: string) {
   }
 }
 
-export function askExpertChatbot(
+export function getExpertChatHistoryAction(
+  instanceId: string,
+  onSuccess?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getExpertChatHistory())
+
+    try {
+      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_EXPERT}/${instanceId}/messages`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getExpertChatHistorySuccess(data.messages))
+        onSuccess?.()
+      }
+    } catch (e) {
+      dispatch(getExpertChatHistoryFailed())
+    }
+  }
+}
+
+export function askExpertChatbotAction(
   databaseId: string,
   message: string,
-  onSuccess?: (chatId: string) => void,
+  onSuccess?: () => void,
   onFail?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
-    dispatch(sendExpertQuestion(message))
+    dispatch(askExpertChatbot(message))
 
     try {
       const { status, data } = await apiService.post<any>(
@@ -262,20 +302,36 @@ export function askExpertChatbot(
 
       if (isStatusSuccessful(status)) {
         if (data.error) {
-          dispatch(sendExpertAnswer(data.error))
+          dispatch(askExpertChatbotSuccess(data.error))
         } else {
           const markdownQuery = toRedisCodeBlock(arrayCommandToString(data.query))
-
-          if (markdownQuery) {
-            dispatch(sendExpertAnswer(markdownQuery))
-          }
+          dispatch(askExpertChatbotSuccess(markdownQuery || '*Cannot parse answer, please try again*'))
         }
-
-        onSuccess?.(data)
+        onSuccess?.()
       }
     } catch (e) {
-      // dispatch(createAssistantFailed())
+      dispatch(askExpertChatbotFailed())
       onFail?.()
+    }
+  }
+}
+
+export function removeExpertChatHistoryAction(
+  instanceId: string,
+  onSuccess?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    // dispatch(getExpertChatHistory())
+
+    try {
+      const { status } = await apiService.delete<any>(`${ApiEndpoints.AI_EXPERT}/${instanceId}/messages`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(clearExpertChatHistory())
+        onSuccess?.()
+      }
+    } catch (e) {
+      // dispatch(getExpertChatHistoryFailed())
     }
   }
 }

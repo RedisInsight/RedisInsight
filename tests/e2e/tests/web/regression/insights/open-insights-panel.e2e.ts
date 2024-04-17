@@ -79,12 +79,12 @@ test
     });
 test('Verify that user can open Explore tab into Insights panel by clicking on Explore Redis button', async t => {
     await t.click(browserPage.NavigationPanel.myRedisDBButton);
-    await t.click(browserPage.exploreRedisBtn);
+    await t.click(myRedisDatabasePage.exploreRedisBtn);
     await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
     await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
     await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await browserPage.InsightsPanel.togglePanel(false);
-    await t.click(browserPage.exploreRedisBtn);
+    await t.click(myRedisDatabasePage.exploreRedisBtn);
     await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
     await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
 });

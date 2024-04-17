@@ -70,7 +70,7 @@ const RdiPipelineHeader = () => {
               size="xs"
               iconType="importAction"
               aria-labelledby="Upload pipeline button"
-              data-testid="upload-pipeline-btn"
+              data-testid="upload-file-btn"
             >
               Upload from file
             </EuiButtonEmpty>

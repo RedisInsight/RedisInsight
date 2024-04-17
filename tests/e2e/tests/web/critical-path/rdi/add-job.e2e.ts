@@ -5,7 +5,6 @@ import { commonUrl } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiPopoverOptions, RdiTemplatePipelineType, RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
-import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { DatabaseHelper } from '../../../../helpers';
 import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 
@@ -13,7 +12,6 @@ const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
-const browserActions = new BrowserActions();
 const databaseHelper = new DatabaseHelper();
 
 const rdiInstance: AddNewRdiParameters = {

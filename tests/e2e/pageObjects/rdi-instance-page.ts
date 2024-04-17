@@ -3,6 +3,7 @@ import { RdiPopoverOptions, RdiTemplateDatabaseType, RdiTemplatePipelineType } f
 import { BaseOverviewPage } from './base-overview-page';
 import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel';
 import { TestConnectionPanel } from './components/rdi/test-connection-panel';
+import { RdiHeader } from './components/rdi/rdi-header';
 import { PipelineManagementPanel } from './components/rdi/pipeline-management-panel';
 
 export class RdiInstancePage extends BaseOverviewPage {
@@ -10,6 +11,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     NavigationPanel = new RdiNavigationPanel();
     TestConnectionPanel = new TestConnectionPanel();
     PipelineManagementPanel = new PipelineManagementPanel();
+    RdiHeader = new RdiHeader();
 
     dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');
@@ -20,11 +22,6 @@ export class RdiInstancePage extends BaseOverviewPage {
     transformationResults = Selector('[data-testid=wrapper-transformations-output]');
     commandsOutput = Selector('[data-testid=commands-output]');
     outputTab = Selector('[data-testid=output-tab]');
-    refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
-    exportPipelineIcon = Selector('[data-testid=download-pipeline-btn]');
-    importPipelineIcon = Selector('[data-testid=upload-pipeline-btn]');
-    deployPipelineBtn = Selector('[data-testid=deploy-rdi-pipeline]');
-    deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');
     uploadPipelineBtn = Selector('[data-testid=submit-btn]');
     okUploadPipelineBtn = Selector('[data-testid=ok-btn]');
     closeImportModelBtn = Selector('[data-testid=import-file-modal] button');
@@ -42,9 +39,6 @@ export class RdiInstancePage extends BaseOverviewPage {
     closeNotification =  Selector('[class*=euiModal__closeIcon]');
     noPipelineText = Selector('[data-testid=no-pipeline]');
 
-    breadcrumbsLink = Selector('[data-testid=my-rdi-instances-btn]');
-    rdiNameLinkBreadcrumbs = Selector('[data-testid=rdi-instance-name]');
-
     // Test Connection
     textConnectionBtn = Selector('[data-testid=rdi-test-connection-btn]');
 
@@ -54,6 +48,9 @@ export class RdiInstancePage extends BaseOverviewPage {
     templateCancelButton = Selector('[data-testid=template-apply-btn]');
     pipelineDropdown =  Selector('[data-testid=strategy-type-select]');
     databaseDropdown =  Selector('[data-testid=db-type-select]');
+
+    //dialog
+    selectOptionDialog = Selector('[data-testid=rdi-pipeline-source-dialog]', { timeout: 100 });
 
     tooltip = Selector('[role=tooltip]', { timeout: 500 });
     /**

@@ -152,12 +152,12 @@ const RdiPage = () => {
                   }}
                 >
                   {isConnectionFormOpen && (
-                  <ConnectionForm
-                    onAddInstance={handleAddInstance}
-                    onCancel={handleCloseConnectionForm}
-                    editInstance={editInstance}
-                    isLoading={loading || loadingChanging}
-                  />
+                    <ConnectionForm
+                      onAddInstance={handleAddInstance}
+                      onCancel={handleCloseConnectionForm}
+                      editInstance={editInstance}
+                      isLoading={loading || loadingChanging}
+                    />
                   )}
                 </EuiResizablePanel>
               </>

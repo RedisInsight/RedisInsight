@@ -78,4 +78,20 @@ describe('SourcePipelineDialog', () => {
       }
     })
   })
+
+  it('should call proper telemetry event after select empty pipeline  option', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    render(<SourcePipelineDialog />)
+
+    fireEvent.click(screen.getByTestId('file-source-pipeline-dialog'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_START_OPTION_SELECTED,
+      eventData: {
+        id: 'rdiInstanceId',
+        option: PipelineSourceOptions.FILE
+      }
+    })
+  })
 })

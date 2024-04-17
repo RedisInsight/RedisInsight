@@ -66,12 +66,12 @@ const SourcePipelineDialog = () => {
 
   const onUploadClick = () => {
     setIsShowDownloadDialog(true)
+    onSelect(PipelineSourceOptions.FILE)
   }
 
   if (isShowDownloadDialog) {
     return (
       <UploadModal
-        onUploadedPipeline={() => onSelect(PipelineSourceOptions.FILE)}
         onClose={() => dispatch(setPipelineDialogState(false))}
         visible={isShowDownloadDialog}
       />

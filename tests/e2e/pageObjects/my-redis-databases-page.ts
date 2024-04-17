@@ -44,6 +44,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
     exportBtn = Selector('[data-testid=export-btn]');
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
+    exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });

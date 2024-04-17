@@ -98,7 +98,7 @@ test('Verify that sorting on the list of rdi saved when rdi opened', async t => 
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.alias);
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
-    await t.click(rdiInstancePage.breadcrumbsLink);
+    await t.click(rdiInstancePage.RdiHeader.breadcrumbsLink);
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
     await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
 });

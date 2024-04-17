@@ -260,9 +260,9 @@ export default {
   },
   ai: {
     convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://staging.learn.redis.com/convai/api',
-    convAiToken: process.env.RI_AI_CONVAI_TOKEN,
+    convAiToken: process.env.RI_AI_CONVAI_TOKEN || 'f107c9e10d8f32c0cda796df998467cc18e618ac',
     queryApiUrl: process.env.RI_AI_QUERY_URL || 'https://rsgpt.ostability.com/api/v1',
-    queryApiUser: process.env.RI_AI_QUERY_USER,
-    queryApiPass: process.env.RI_AI_QUERY_PASS,
+    queryApiUser: process.env.RI_AI_QUERY_USER || 'viktar',
+    queryApiPass: process.env.RI_AI_QUERY_PASS || 'redisinsight',
   },
 };

@@ -56,8 +56,8 @@ test('Verify that user can refresh pipeline', async() => {
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, text);
     const enteredText = await MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).eql(text, 'config text was not changed');
-    await t.click(rdiInstancePage.PipelineManagementPanel.refreshPipelineIcon);
-    await t.click(rdiInstancePage.PipelineManagementPanel.confirmBtn);
+    await t.click(rdiInstancePage.RdiHeader.uploadPipelineButton);
+    await t.click(rdiInstancePage.RdiHeader.confirmUploadingPipelineBatton);
     const updatedText = await MonacoEditor.getTextFromMonaco();
     await t.expect(updatedText).contains(expectedText, 'config text was not updated');
     await t.expect(updatedText).notContains(text, 'config text was not updated');
@@ -70,19 +70,19 @@ test('Verify that user can deploy pipeline', async() => {
     const errorMessage = 'Unfortunately we’ve found some errors in your pipeline.';
 
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
-    await t.click(rdiInstancePage.deployPipelineBtn);
+    await t.click(rdiInstancePage.RdiHeader.deployPipelineBtn);
     // Verify that user can see message when request to deploy the pipeline
     await browserActions.verifyDialogContainsText(messageText, true);
 
     // Verify that user the successful  message when the pipeline has been deployed
-    await t.click(rdiInstancePage.deployConfirmBtn);
+    await t.click(rdiInstancePage.RdiHeader.deployConfirmBtn);
     await t.expect(rdiInstancePage.successDeployNotification.textContent).contains(successMessage, 'Pipeline deployment is unsuccessful');
 
     await t.click(rdiInstancePage.Toast.toastCloseButton);
     // Verify that user the error message when the pipeline deployment failed
     // TODO need to add - Modify deploy.js to receive an error
-    await t.click(rdiInstancePage.deployPipelineBtn);
-    await t.click(rdiInstancePage.deployConfirmBtn);
+    await t.click(rdiInstancePage.RdiHeader.deployPipelineBtn);
+    await t.click(rdiInstancePage.RdiHeader.deployConfirmBtn);
     await t.expect(rdiInstancePage.errorDeployNotification.textContent).contains(errorMessage, 'Pipeline deployment is successful');
 
     await t.click(rdiInstancePage.Toast.toastCloseButton);
@@ -96,7 +96,7 @@ test
     })('Verify that user can download pipeline', async() => {
         await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
         await t
-            .click(rdiInstancePage.PipelineManagementPanel.exportPipelineIcon)
+            .click(rdiInstancePage.RdiHeader.downloadPipelineButton)
             .wait(2000);
 
         // Verify that user can see “RDI_pipeline” as the default file name
@@ -110,15 +110,16 @@ test('Verify that user can import pipeline', async() => {
     const expectedText = 'Uploaded';
     // check success uploading
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
-    await rdiInstancePage.PipelineManagementPanel.uploadPipeline(filePathes.successful);
+    await rdiInstancePage.RdiHeader.uploadPipeline(filePathes.successful);
     await t.click(rdiInstancePage.okUploadPipelineBtn);
     const updatedText = await MonacoEditor.getTextFromMonaco();
     await t.expect(updatedText).contains(expectedText, 'config text was not updated');
     // check unsuccessful uploading
-    await rdiInstancePage.PipelineManagementPanel.uploadPipeline(filePathes.unsuccessful);
+    await t.click(rdiInstancePage.RdiHeader.uploadFromFileButton);
+    await rdiInstancePage.RdiHeader.uploadPipeline(filePathes.unsuccessful);
     const failedText = await rdiInstancePage.failedUploadingPipelineNotification.textContent;
     await t.expect(failedText).contains('There was a problem with the .zip file');
     await t.click(rdiInstancePage.closeNotification);
-    await t.click(rdiInstancePage.importPipelineIcon);
+    await t.click(rdiInstancePage.RdiHeader.uploadFromFileButton);
     await t.expect(rdiInstancePage.uploadPipelineBtn.exists).ok('the upload dialog is not opened');
 });

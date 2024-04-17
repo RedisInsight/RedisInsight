@@ -104,8 +104,6 @@ export class BrowserPage extends InstancePage {
     backToBrowserBtn = Selector('[data-testid=back-right-panel-btn]');
     loadAllBtn = Selector('[data-testid=load-all-value-btn]');
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
-    openTutorialsBtn = Selector('[data-testid=explore-msg-btn]');
-    exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');

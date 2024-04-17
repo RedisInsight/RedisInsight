@@ -5,28 +5,14 @@ export class PipelineManagementPanel {
     EditorButton = new EditorButton();
     configurationTab = Selector('[data-testid=rdi-nav-btn-config] div');
 
-    refreshPipelineIcon = Selector('[data-testid=refresh-pipeline-btn]');
-    exportPipelineIcon = Selector('[data-testid=download-pipeline-btn]');
-    importPipelineIcon = Selector('[data-testid=upload-pipeline-btn]');
-    importInput = Selector('[data-testid=import-file-modal-filepicker]');
-    uploadPipelineBtn = Selector('[data-testid=submit-btn]');
-
     //Jobs
     addJobBtn = Selector('[data-testid=add-new-job]');
+
     jobNameInput = Selector('[data-testid^=job-name-input-]');
     jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
     confirmBtn  = Selector('[data-testid=confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');
 
-    /**
-     * Import pipeline
-     * @param filePath the name if the file
-     */
-    async uploadPipeline(filePath: string): Promise<void> {
-        await t
-            .setFilesToUpload(this.importInput, filePath)
-            .click(this.uploadPipelineBtn);
-    }
     /**
      * Add Job by name
      * @param name job name

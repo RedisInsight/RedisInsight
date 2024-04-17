@@ -38,12 +38,16 @@ const Config = () => {
   }, [])
 
   useEffect(() => {
-    if (isOpenDialog) return
+    if (isOpenDialog || pipelineLoading) return
 
     if (!config) {
       setIsPopoverOpen(true)
     }
-  }, [isOpenDialog, config])
+
+    if (config) {
+      setIsPopoverOpen(false)
+    }
+  }, [isOpenDialog, config, pipelineLoading])
 
   const testConnections = () => {
     setIsPanelOpen(true)

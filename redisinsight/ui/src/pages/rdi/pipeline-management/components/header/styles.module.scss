@@ -6,3 +6,10 @@
 .wrapper {
   padding: 0 16px 16px;
 }
+
+:global(.euiButtonEmpty--text) {
+  &:focus,
+  &:hover {
+    background-color: transparent !important;
+  }
+}

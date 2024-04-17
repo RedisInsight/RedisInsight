@@ -56,6 +56,7 @@ const ConfirmationPopover = (props: Props) => {
     <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
       <EuiPopover
         id="confirmation-popover"
+        initialFocus={false}
         ownFocus
         anchorPosition="downCenter"
         isOpen={isPopoverOpen}

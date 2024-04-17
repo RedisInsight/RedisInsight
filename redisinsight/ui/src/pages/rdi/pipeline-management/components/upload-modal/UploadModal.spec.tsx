@@ -142,6 +142,22 @@ describe('UploadModal', () => {
     expect(onUploadedPipelineMock).not.toBeCalled()
   })
 
+  it('should call onCLose when close button is clicked', async () => {
+    const onCloseMock = jest.fn()
+
+    render(<UploadModal onClose={onCloseMock}>{button}</UploadModal>)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('btn'))
+    })
+
+    await act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'Closes this modal window' }))
+    })
+
+    expect(onCloseMock).toBeCalled()
+  })
+
   it('should render disabled upload button when loading', () => {
     (rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
       loading: true

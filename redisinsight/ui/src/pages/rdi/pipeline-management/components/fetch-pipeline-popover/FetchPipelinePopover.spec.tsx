@@ -54,7 +54,7 @@ describe('FetchPipelinePopover', () => {
       fireEvent.click(screen.getByTestId('upload-pipeline-btn'))
     })
 
-    expect(screen.queryByTestId('confirm-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('upload-confirm-btn')).toBeInTheDocument()
   })
 
   it('should call proper actions', async () => {
@@ -65,7 +65,7 @@ describe('FetchPipelinePopover', () => {
     })
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('confirm-btn'))
+      fireEvent.click(screen.getByTestId('upload-confirm-btn'))
     })
 
     const expectedActions = [getPipeline()]

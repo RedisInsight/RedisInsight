@@ -38,7 +38,9 @@ const Config = () => {
   }, [])
 
   useEffect(() => {
-    if (!config && !isOpenDialog) {
+    if (isOpenDialog) return
+
+    if (!config) {
       setIsPopoverOpen(true)
     }
   }, [isOpenDialog, config])

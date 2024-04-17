@@ -25,7 +25,7 @@ const RdiInstanceHeader = () => {
   }
 
   return (
-    <EuiFlexGroup className={styles.container} style={{ height: '100%' }} gutterSize="none" alignItems="center" responsive={false}>
+    <EuiFlexGroup className={styles.container} gutterSize="none" alignItems="center" responsive={false}>
       <EuiFlexItem style={{ overflow: 'hidden' }}>
         <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
           <div>

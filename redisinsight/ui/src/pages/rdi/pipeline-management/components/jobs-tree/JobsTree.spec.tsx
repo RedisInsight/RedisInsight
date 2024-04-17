@@ -103,7 +103,7 @@ describe('JobsTree', () => {
     })
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('confirm-btn'))
+      fireEvent.click(screen.getByTestId('delete-confirm-btn'))
     })
 
     waitFor(() => {
@@ -190,7 +190,7 @@ describe('JobsTree', () => {
     })
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('confirm-btn'))
+      fireEvent.click(screen.getByTestId('delete-confirm-btn'))
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -212,7 +212,7 @@ describe('JobsTree', () => {
     })
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('confirm-btn'))
+      fireEvent.click(screen.getByTestId('delete-confirm-btn'))
     })
 
     expect(mockOnSelectedTab).toBeCalledWith('config')

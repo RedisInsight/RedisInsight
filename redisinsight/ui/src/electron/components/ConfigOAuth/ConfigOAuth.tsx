@@ -16,7 +16,7 @@ import { BrowserStorageItem, Pages } from 'uiSrc/constants'
 import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { CloudAuthResponse, CloudAuthStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { parseCloudOAuthError } from 'uiSrc/utils'
+import { parseCustomError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { localStorageService } from 'uiSrc/services'
 import { CustomError, OAuthSocialAction } from 'uiSrc/slices/interfaces'
@@ -100,7 +100,7 @@ const ConfigOAuth = () => {
     }
 
     if (status === CloudAuthStatus.Failed) {
-      const err = parseCloudOAuthError((error as CustomError) || message || '')
+      const err = parseCustomError((error as CustomError) || message || '')
       dispatch(setOAuthCloudSource(null))
       dispatch(signInFailure(err?.response?.data?.message || message))
       dispatch(addErrorNotification(err))

@@ -66,6 +66,7 @@ const RdiPage = () => {
 
   const handleOpenConnectionForm = () => {
     setIsConnectionFormOpen(true)
+    setEditInstance(null)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED
     })
@@ -150,12 +151,14 @@ const RdiPage = () => {
                     })
                   }}
                 >
-                  <ConnectionForm
-                    onAddInstance={handleAddInstance}
-                    onCancel={handleCloseConnectionForm}
-                    editInstance={editInstance}
-                    isLoading={loading || loadingChanging}
-                  />
+                  {isConnectionFormOpen && (
+                    <ConnectionForm
+                      onAddInstance={handleAddInstance}
+                      onCancel={handleCloseConnectionForm}
+                      editInstance={editInstance}
+                      isLoading={loading || loadingChanging}
+                    />
+                  )}
                 </EuiResizablePanel>
               </>
             )}

@@ -38,7 +38,6 @@ const SourcePipelineDialog = () => {
   const dispatch = useDispatch()
 
   const onSelect = (option: PipelineSourceOptions) => {
-    dispatch(setPipelineDialogState(false))
     sendEventTelemetry({
       event: TelemetryEvent.RDI_START_OPTION_SELECTED,
       eventData: {
@@ -51,11 +50,13 @@ const SourcePipelineDialog = () => {
   const onLoadPipeline = () => {
     dispatch(fetchRdiPipeline(rdiInstanceId))
     onSelect(PipelineSourceOptions.SERVER)
+    dispatch(setPipelineDialogState(false))
   }
 
   const onStartNewPipeline = () => {
     dispatch(setPipeline(EMPTY_PIPELINE))
     onSelect(PipelineSourceOptions.NEW)
+    dispatch(setPipelineDialogState(false))
   }
 
   const handleCloseDialog = () => {
@@ -65,13 +66,13 @@ const SourcePipelineDialog = () => {
 
   const onUploadClick = () => {
     setIsShowDownloadDialog(true)
-    handleCloseDialog()
+    onSelect(PipelineSourceOptions.FILE)
   }
 
   if (isShowDownloadDialog) {
     return (
       <UploadModal
-        onUploadedPipeline={() => onSelect(PipelineSourceOptions.FILE)}
+        onClose={() => dispatch(setPipelineDialogState(false))}
         visible={isShowDownloadDialog}
       />
     )

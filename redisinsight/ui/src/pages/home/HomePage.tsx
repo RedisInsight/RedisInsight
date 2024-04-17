@@ -7,7 +7,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { some, throttle } from 'lodash'
+import { throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
@@ -264,26 +264,26 @@ const HomePage = () => {
                           style={{ minWidth: '474px' }}
                         >
                           {!!openRightPanel && (
-                          <DatabasePanel
-                            editMode={openRightPanel === RightPanelName.EditDatabase}
-                            width={width}
-                            isResizablePanel
-                            urlHandlingAction={action}
-                            initialValues={dbConnection ?? null}
-                            editedInstance={
-                                  openRightPanel === RightPanelName.EditDatabase
-                                    ? editedInstance
-                                    : sentinelInstance ?? null
-                                }
-                            onClose={
-                                  openRightPanel === RightPanelName.EditDatabase
-                                    ? closeEditDialog
-                                    : handleClose
-                                }
-                            onDbEdited={onDbEdited}
-                            isFullWidth={!instances.length}
-                            initConnectionType={initialDbTypeRef.current}
-                          />
+                            <DatabasePanel
+                              editMode={openRightPanel === RightPanelName.EditDatabase}
+                              width={width}
+                              isResizablePanel
+                              urlHandlingAction={action}
+                              initialValues={dbConnection ?? null}
+                              editedInstance={
+                                openRightPanel === RightPanelName.EditDatabase
+                                  ? editedInstance
+                                  : sentinelInstance ?? null
+                              }
+                              onClose={
+                                openRightPanel === RightPanelName.EditDatabase
+                                  ? closeEditDialog
+                                  : handleClose
+                              }
+                              onDbEdited={onDbEdited}
+                              isFullWidth={!instances.length}
+                              initConnectionType={initialDbTypeRef.current}
+                            />
                           )}
                           <div id="footerDatabaseForm" />
                         </EuiResizablePanel>

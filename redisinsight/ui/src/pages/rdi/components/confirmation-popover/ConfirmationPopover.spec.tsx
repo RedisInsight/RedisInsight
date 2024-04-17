@@ -13,9 +13,13 @@ beforeEach(() => {
 const mockedProps = {
   title: 'title',
   body: <div>body</div>,
-  confirmButtonText: 'confirm',
   onConfirm: jest.fn(),
   onCancel: jest.fn(),
+  submitBtn: (
+    <button type="button" data-testid="confirm-btn">
+      Submit button
+    </button>
+  ),
   button: (
     <button type="button" data-testid="button">
       Button

@@ -13,13 +13,15 @@ export interface Props {
   children?: React.ReactElement
   onUploadedPipeline?: () => void
   visible?: boolean
+  onClose?: () => void
 }
 
 const UploadModal = (props: Props) => {
   const {
     children,
+    visible,
     onUploadedPipeline,
-    visible
+    onClose,
   } = props
 
   const [isModalVisible, setIsModalVisible] = useState(visible)
@@ -111,6 +113,7 @@ const UploadModal = (props: Props) => {
     setIsModalVisible(false)
     setIsUploaded(false)
     setError(undefined)
+    onClose?.()
   }
 
   const handleFileChangeModal = (file: File) => {

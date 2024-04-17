@@ -95,7 +95,7 @@ describe('RdiPage', () => {
     const { container } = render(<RdiPage />)
 
     fireEvent.click(screen.getByTestId('empty-rdi-instance-button'))
-    expect(container.getElementsByClassName('hidden').length).toBe(1)
+    expect(container.getElementsByClassName('hidden').length).toBe(0)
   })
 
   it('should open connection form when using edit button', async () => {
@@ -152,9 +152,11 @@ describe('RdiPage', () => {
   it('should open empty connection form with when using header button', async () => {
     render(<RdiPage />)
 
+    expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument()
     // open form
     fireEvent.click(screen.getByTestId('rdi-instance'))
     await screen.findByTestId('connection-form')
+    expect(screen.queryByTestId('connection-form')).toBeInTheDocument()
 
     expect(screen.getByTestId('connection-form-name-input')).toHaveValue('')
     expect(screen.getByTestId('connection-form-url-input')).toHaveValue('')

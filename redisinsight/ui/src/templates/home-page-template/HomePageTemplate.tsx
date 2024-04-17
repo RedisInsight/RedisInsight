@@ -13,6 +13,8 @@ import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/a
 import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
 import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
 import { FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
@@ -43,6 +45,11 @@ const HomePageTemplate = (props: Props) => {
         </HighlightedFeature>
         <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
         <InsightsTrigger source="home page" />
+        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+          <div grow={false} style={{ marginLeft: 16 }}>
+            <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+          </div>
+        </FeatureFlagComponent>
       </div>
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>

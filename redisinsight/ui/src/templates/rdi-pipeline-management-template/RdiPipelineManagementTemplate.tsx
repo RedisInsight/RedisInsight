@@ -17,12 +17,10 @@ const RdiPipelineManagementTemplate = (props: Props) => {
   // TODO add side panel logs
   return (
     <div className={styles.page}>
-      <div>
-        <RdiInstanceHeader />
-        <RdiPipelineManagementHeader />
-      </div>
+      <RdiInstanceHeader />
       <div className={styles.content}>
         <ExplorePanelTemplate>
+          <RdiPipelineManagementHeader />
           <div className={styles.wrapper}>
             <Navigation />
             {children}

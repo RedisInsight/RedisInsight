@@ -10,6 +10,8 @@ import { IPipeline } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import styles from './styles.modules.scss'
+
 const Download = () => {
   const { loading } = useSelector(rdiPipelineSelector)
 
@@ -43,6 +45,7 @@ const Download = () => {
       size="xs"
       iconType="exportAction"
       disabled={loading}
+      className={styles.btn}
       onClick={handleDownloadClick}
       aria-labelledby="Download pipeline button"
       data-testid="download-pipeline-btn"

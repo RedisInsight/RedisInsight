@@ -26,7 +26,7 @@ const Config = () => {
   const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
   const { isOpenDialog } = useSelector(appContextPipelineManagement)
 
-  const { values: { config = '' }, setFieldValue } = useFormikContext<IPipeline>()
+  const { values: { config = '' }, setFieldValue, } = useFormikContext<IPipeline>()
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const dispatch = useDispatch()
@@ -38,12 +38,16 @@ const Config = () => {
   }, [])
 
   useEffect(() => {
-    if (isOpenDialog) return
+    if (isOpenDialog || pipelineLoading) return
 
     if (!config) {
       setIsPopoverOpen(true)
     }
-  }, [isOpenDialog, config])
+
+    if (config) {
+      setIsPopoverOpen(false)
+    }
+  }, [isOpenDialog, config, pipelineLoading])
 
   const testConnections = () => {
     setIsPanelOpen(true)

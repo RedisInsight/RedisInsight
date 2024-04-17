@@ -51,13 +51,6 @@ const AssistanceChat = () => {
     }
 
     sendChatMessage(id, message)
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
-      eventData: {
-        chat: AiChatType.Assistance
-      }
-    })
   }, [id])
 
   const sendChatMessage = (chatId: string, message: string) => {
@@ -72,6 +65,13 @@ const AssistanceChat = () => {
         onFinish: () => setProgressingMessage(null)
       }
     ))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
+      eventData: {
+        chat: AiChatType.Assistance
+      }
+    })
   }
 
   const onClearSession = useCallback(() => {

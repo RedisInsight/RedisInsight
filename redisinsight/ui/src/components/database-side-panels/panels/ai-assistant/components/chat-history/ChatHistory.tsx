@@ -21,6 +21,7 @@ export interface Props {
   history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
   onMessageRendered?: () => void
+  onRunCommand?: (query: string) => void
   onSubmit: (value: string) => void
 }
 
@@ -34,6 +35,7 @@ const ChatHistory = (props: Props) => {
     history = [],
     scrollDivRef,
     onMessageRendered,
+    onRunCommand,
     onSubmit,
   } = props
 
@@ -47,6 +49,7 @@ const ChatHistory = (props: Props) => {
       data-testid={`ai-message-${messageType}_${id}`}
     >
       <MarkdownMessage
+        onRunCommand={onRunCommand}
         onMessageRendered={onMessageRendered}
         modules={modules}
       >
@@ -67,7 +70,7 @@ const ChatHistory = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.history}>
+      <div className={styles.history} data-testid="ai-chat-history">
         {history.map(getMessage)}
         {!!progressingMessage && getMessage(progressingMessage)}
         {isLoadingAnswer && (<div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>)}

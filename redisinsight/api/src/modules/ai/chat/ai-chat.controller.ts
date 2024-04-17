@@ -31,7 +31,7 @@ export class AiChatController {
     statusCode: 200,
     responses: [{ type: PickType(AiChat, ['id']) }],
   })
-  async create(@RequestSessionMetadata() sessionMetadata: SessionMetadata) {
+  async create(@RequestSessionMetadata() sessionMetadata: SessionMetadata): Promise<Partial<AiChat>> {
     return this.service.create(sessionMetadata);
   }
 

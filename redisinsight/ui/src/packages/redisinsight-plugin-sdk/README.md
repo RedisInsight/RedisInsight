@@ -1,7 +1,7 @@
 # RedisInsight-plugin-sdk
 
-The high-level API for communication between RedisInsight
-plugin and RedisInsight application.
+The high-level API for communication between Redis Insight
+plugin and Redis Insight application.
 
 ## Usage
 ```

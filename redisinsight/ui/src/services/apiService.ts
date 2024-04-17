@@ -8,7 +8,12 @@ import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 
 const { apiPort } = window.app.config
 const baseApiUrl = process.env.RI_BASE_API_URL
-const apiPrefix = process.env.RI_API_PREFIX
+let apiPrefix = process.env.RI_API_PREFIX
+
+if (window.__RIPROXYPATH__) {
+  apiPrefix = window.__RIPROXYPATH__ + '/' + apiPrefix
+}
+
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
 

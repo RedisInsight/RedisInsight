@@ -4,7 +4,7 @@
   "host": "localhost",
   "debug": false,
   "themeSource": "dark",
-  "appName": "RedisInsight",
+  "appName": "Redis Insight",
   "schema": "redisinsight",
   "mainWindow": {
     "show": false,
@@ -29,7 +29,7 @@
     "frame": false,
     "resizable": false,
     "alwaysOnTop": true,
-    "title": "RedisInsight",
+    "title": "Redis Insight",
     "webPreferences": {
       "nodeIntegration": false,
       "contextIsolation": true

@@ -1,4 +1,5 @@
 import { ICommandArgGenerated, ICommands, MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import {
   generateArgs,
   generateArgsNames,
@@ -170,31 +171,30 @@ describe('generateArgName', () => {
 })
 
 const getDocUrlForCommandTests: any[] = [
-  ['SET', 'https://redis.io/commands/set'],
-  ['ACL SETUSER', 'https://redis.io/commands/acl-setuser'],
-  ['JSON.GET', 'https://redis.io/commands/json.get'],
-  ['FT.CREATE', 'https://redis.io/commands/ft.create'],
-  ['FT.ALTER', 'https://redis.io/commands/ft.alter'],
-  ['TS.ADD', 'https://redis.io/commands/ts.add'],
-  ['TS.CREATE', 'https://redis.io/commands/ts.create'],
-  ['GRAPH.EXPLAIN', 'https://redis.io/commands/graph.explain'],
-  ['GRAPH.QUERY', 'https://redis.io/commands/graph.query'],
-  ['AI.MODELRUN', 'https://redis.io/commands/ai.modelrun'],
-  ['BF.INFO', 'https://redis.io/commands/bf.info'],
-  ['CMS.INITBYDIM', 'https://redis.io/commands/cms.initbydim'],
-  ['CF.INSERT', 'https://redis.io/commands/cf.insert'],
-  ['RG.CONFIGSET', 'https://redis.io/commands/rg.configset'],
-  ['TOPK.INFO', 'https://redis.io/commands/topk.info'],
-  ['AI.SCRIPTDEL', 'https://redis.io/commands/ai.scriptdel'],
-  ['NON EXIST COMMAND', 'https://redis.io/commands/non-exist-command'],
-  ['NON.EXIST COMMAND', 'https://redis.io/commands/non.exist-command'],
+  ['SET', 'https://redis.io/docs/latest/commands/set'],
+  ['ACL SETUSER', 'https://redis.io/docs/latest/commands/acl-setuser'],
+  ['JSON.GET', 'https://redis.io/docs/latest/commands/json.get'],
+  ['FT.CREATE', 'https://redis.io/docs/latest/commands/ft.create'],
+  ['FT.ALTER', 'https://redis.io/docs/latest/commands/ft.alter'],
+  ['TS.ADD', 'https://redis.io/docs/latest/commands/ts.add'],
+  ['TS.CREATE', 'https://redis.io/docs/latest/commands/ts.create'],
+  ['GRAPH.EXPLAIN', 'https://redis.io/docs/latest/commands/graph.explain'],
+  ['GRAPH.QUERY', 'https://redis.io/docs/latest/commands/graph.query'],
+  ['AI.MODELRUN', 'https://redis.io/docs/latest/commands/ai.modelrun'],
+  ['BF.INFO', 'https://redis.io/docs/latest/commands/bf.info'],
+  ['CMS.INITBYDIM', 'https://redis.io/docs/latest/commands/cms.initbydim'],
+  ['CF.INSERT', 'https://redis.io/docs/latest/commands/cf.insert'],
+  ['RG.CONFIGSET', 'https://redis.io/docs/latest/commands/rg.configset'],
+  ['TOPK.INFO', 'https://redis.io/docs/latest/commands/topk.info'],
+  ['AI.SCRIPTDEL', 'https://redis.io/docs/latest/commands/ai.scriptdel'],
+  ['NON.EXIST COMMAND', 'https://redis.io/docs/latest/commands/non.exist-command'],
 ]
 
 describe('getDocUrlForCommand', () => {
   it.each(getDocUrlForCommandTests)('for input: %s (command), should be output: %s',
     (command, expected) => {
       const result = getDocUrlForCommand(command)
-      expect(result).toBe(expected)
+      expect(result).toBe(getUtmExternalLink(expected, { campaign: 'redisinsight_command_helper' }))
     })
 })
 

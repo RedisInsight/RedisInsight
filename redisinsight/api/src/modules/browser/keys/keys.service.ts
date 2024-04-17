@@ -109,11 +109,6 @@ export class KeysService {
         RECOMMENDATION_NAMES.SEARCH_JSON,
         { keys: result, client, databaseId: clientMetadata.databaseId },
       );
-      this.recommendationService.check(
-        clientMetadata,
-        RECOMMENDATION_NAMES.FUNCTIONS_WITH_STREAMS,
-        { keys: result, client, databaseId: clientMetadata.databaseId },
-      );
 
       return plainToClass(GetKeyInfoResponse, result);
     } catch (error) {

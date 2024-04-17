@@ -1,6 +1,7 @@
 import React from 'react'
 import { EuiEmptyPrompt, EuiIcon, EuiLink } from '@elastic/eui'
 
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 const EmptyPrompt = () => (
@@ -18,7 +19,7 @@ const EmptyPrompt = () => (
             {' '}
             <EuiLink
               color="ghost"
-              href="https://github.com/RedisInsight/RedisInsight/issues"
+              href={EXTERNAL_LINKS.githubIssues}
               external={false}
               target="_blank"
               data-testid="contact-us"

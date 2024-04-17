@@ -7,9 +7,12 @@ import {
   askExpertChatbot,
   clearExpertChatHistory,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { scrollIntoView } from 'uiSrc/utils'
+import { getCommandsFromQuery, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
 import { ExpertEmptyHistoryText } from '../empty-history/texts'
@@ -18,7 +21,9 @@ import styles from './styles.module.scss'
 
 const ExpertChat = () => {
   const { messages } = useSelector(aiExpertChatSelector)
-  const { name: connectedInstanceName, modules } = useSelector(connectedInstanceSelector)
+  const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+
   const [isLoading, setIsLoading] = useState(false)
 
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
@@ -42,11 +47,38 @@ const ExpertChat = () => {
       },
       () => setIsLoading(false)
     ))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
+      eventData: {
+        chat: AiChatType.Query
+      }
+    })
   }, [instanceId])
 
   const onClearSession = () => {
     dispatch(clearExpertChatHistory())
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
+      eventData: {
+        chat: AiChatType.Query
+      }
+    })
   }
+
+  const onRunCommand = useCallback((query: string) => {
+    const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_BOT_COMMAND_RUN_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        chat: AiChatType.Query,
+        provider,
+        command
+      }
+    })
+  }, [instanceId, provider])
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     setTimeout(() => {
@@ -86,6 +118,7 @@ const ExpertChat = () => {
           isLoadingAnswer={isLoading}
           history={messages}
           scrollDivRef={scrollDivRef}
+          onRunCommand={onRunCommand}
           onSubmit={handleSubmit}
         />
       </div>

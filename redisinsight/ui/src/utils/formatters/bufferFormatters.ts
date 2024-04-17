@@ -108,18 +108,18 @@ const ASCIIToBuffer = (strInit: string) => {
 }
 
 const bufferToFloat32Array = (data: Uint8Array) => {
-  const buffer = new Uint8Array(data).buffer
+  const { buffer } = new Uint8Array(data)
   const dataView = new DataView(buffer)
-  let vector = []
+  const vector = []
 
-  for(let i = 0; i < dataView.byteLength; i += 4) {
+  for (let i = 0; i < dataView.byteLength; i += 4) {
     vector.push(dataView.getFloat32(i, true))
   }
   return new Float32Array(vector)
 }
 
 const bufferToFloat64Array = (data: Uint8Array) => {
-  const buffer = new Uint8Array(data).buffer
+  const { buffer } = new Uint8Array(data)
   const dataView = new DataView(buffer)
   const vector = []
 
@@ -128,7 +128,6 @@ const bufferToFloat64Array = (data: Uint8Array) => {
   }
   return new Float64Array(vector)
 }
-
 
 const bufferToUint8Array = (reply: RedisResponseBuffer): Uint8Array => new Uint8Array(reply.data)
 const bufferToUTF8 = (reply: RedisResponseBuffer): string => decoder.decode(bufferToUint8Array(reply))

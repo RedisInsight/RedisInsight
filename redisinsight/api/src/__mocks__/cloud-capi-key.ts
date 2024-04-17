@@ -43,6 +43,19 @@ export const mockCloudCapiKeyEntity = Object.assign(new CloudCapiKeyEntity(), {
   encryption: EncryptionStrategy.KEYTAR,
 });
 
+export const mockCloudCapiKeyRepository = jest.fn(() => ({
+  get: jest.fn(),
+  update: jest.fn().mockResolvedValue(mockCloudCapiKey),
+  getByUserAccount: jest.fn(),
+  create: jest.fn().mockResolvedValue({
+    ...mockCloudCapiKey,
+    capiSecret: undefined,
+  }),
+  list: jest.fn(),
+  delete: jest.fn(),
+  deleteAll: jest.fn(),
+}));
+
 export const mockCloudCapiKeyApiProvider = jest.fn(() => ({
   enableCapi: jest.fn().mockResolvedValue(mockCloudApiCapiAccessKey.accessKey),
   createCapiKey: jest.fn().mockResolvedValue(mockCloudApiCapiKey),

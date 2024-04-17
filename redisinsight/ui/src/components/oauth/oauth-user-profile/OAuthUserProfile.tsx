@@ -93,7 +93,7 @@ const OAuthUserProfile = (props: Props) => {
     dispatch(logoutUserAction(
       () => {
         sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_ACCOUNT_LOGOUT
+          event: TelemetryEvent.CLOUD_SIGN_OUT_CLICKED
         })
       }
     ))

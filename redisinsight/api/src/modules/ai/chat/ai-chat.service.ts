@@ -12,7 +12,7 @@ export class AiChatService {
   ) {
   }
 
-  async create(sessionMetadata: SessionMetadata) {
+  async create(sessionMetadata: SessionMetadata): Promise<Partial<AiChat>> {
     const id = await this.convAiProvider.auth(sessionMetadata);
     return plainToClass(AiChat, { id });
   }

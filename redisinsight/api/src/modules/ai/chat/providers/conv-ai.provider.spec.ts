@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import {
+  getMockedReadableStream,
   mockAiChatId,
-  mockAiChatUnauthorizedError,
+  mockAiChatUnauthorizedError, mockAiHistoryApiResponse, mockHumanMessage1Response,
   mockSessionMetadata,
 } from 'src/__mocks__';
 import { ConvAiProvider } from 'src/modules/ai/chat/providers/conv-ai.provider';
@@ -19,6 +20,8 @@ describe('ConvAiProvider', () => {
   let service: ConvAiProvider;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConvAiProvider,
@@ -58,7 +61,63 @@ describe('ConvAiProvider', () => {
       );
     });
   });
+  describe('getHistory', () => {
+    it('should get chat history chat history', async () => {
+      mockedAxios.get.mockResolvedValue({
+        status: 200,
+        data: JSON.stringify(mockAiHistoryApiResponse),
+      });
 
+      expect(await service.getHistory(mockSessionMetadata, mockAiChatId)).toEqual(mockAiHistoryApiResponse);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        '/history',
+        {
+          headers: {
+            'session-id': mockAiChatId,
+          },
+        },
+      );
+    });
+    it('throw ConvAiUnauthorized exception', async () => {
+      mockedAxios.get.mockRejectedValue(mockAiChatUnauthorizedError);
+
+      await expect(service.getHistory(mockSessionMetadata, mockAiChatId)).rejects.toThrow(
+        ConvAiUnauthorizedException,
+      );
+    });
+  });
+  describe('postMessage', () => {
+    it('should post send a message and get stream as result', async () => {
+      const mockStream = getMockedReadableStream();
+      mockedAxios.post.mockResolvedValue({
+        status: 200,
+        data: mockStream,
+      });
+
+      expect(await service.postMessage(mockSessionMetadata, mockAiChatId, mockHumanMessage1Response.content))
+        .toEqual(mockStream);
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        '/chat',
+        {},
+        {
+          params: {
+            q: mockHumanMessage1Response.content,
+          },
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'session-id': mockAiChatId,
+          },
+          responseType: 'stream',
+        },
+      );
+    });
+    it('throw ConvAiUnauthorized exception', async () => {
+      mockedAxios.post.mockRejectedValue(mockAiChatUnauthorizedError);
+
+      await expect(service.postMessage(mockSessionMetadata, mockAiChatId, mockHumanMessage1Response.content))
+        .rejects.toThrow(ConvAiUnauthorizedException);
+    });
+  });
   describe('reset', () => {
     it('reset chat history', async () => {
       mockedAxios.post.mockResolvedValue({

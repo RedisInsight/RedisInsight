@@ -1,17 +1,15 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import cx from 'classnames'
-import { Theme, Pages, FeatureFlags } from 'uiSrc/constants'
+import { Pages, FeatureFlags } from 'uiSrc/constants'
 import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
-import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
-import lightLogo from 'uiSrc/assets/img/light_logo.svg'
+import { ReactComponent as Logo } from 'uiSrc/assets/img/logo.svg'
 
 import InsightsTrigger from 'uiSrc/components/insights-trigger'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
@@ -30,7 +28,6 @@ const PageHeader = (props: Props) => {
   const { title, subtitle, showInsights, children, className } = props
   const history = useHistory()
   const dispatch = useDispatch()
-  const { theme } = useContext(ThemeContext)
 
   const resetConnections = () => {
     dispatch(resetDataRedisCluster())
@@ -60,7 +57,7 @@ const PageHeader = (props: Props) => {
             <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
             <FeatureFlagComponent name={FeatureFlags.cloudSso}>
               <EuiFlexItem style={{ marginLeft: 16 }}>
-                <OAuthUserProfile source={OAuthSocialSource.ListOfDatabases} />
+                <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
               </EuiFlexItem>
             </FeatureFlagComponent>
           </EuiFlexGroup>
@@ -72,7 +69,7 @@ const PageHeader = (props: Props) => {
               onKeyDown={goHome}
               className={styles.logo}
               tabIndex={0}
-              iconType={theme === Theme.Dark ? darkLogo : lightLogo}
+              iconType={Logo}
               data-testid="redis-logo-home"
             />
           </div>

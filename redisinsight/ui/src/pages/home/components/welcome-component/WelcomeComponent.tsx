@@ -9,8 +9,7 @@ import { setTitle } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
-import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
-import lightLogo from 'uiSrc/assets/img/light_logo.svg'
+import Logo from 'uiSrc/assets/img/logo.svg'
 import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
 import { ReactComponent as CloudIcon } from 'uiSrc/assets/img/oauth/cloud.svg'
 
@@ -41,7 +40,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
 
   const { theme } = useContext(ThemeContext)
 
-  setTitle('Welcome to RedisInsight')
+  setTitle('Welcome to Redis Insight')
 
   const CONNECT_BUTTONS = [
     {
@@ -76,7 +75,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
         },
         {
           title: 'Import database connections from a file',
-          description: (<>Migrate your database connections to <br />RedisInsight</>),
+          description: (<>Migrate your database connections to <br />Redis Insight</>),
           iconType: 'download',
           onClick: () => handleClickImportDbBtn(),
           testId: 'import-from-file-btn'
@@ -213,7 +212,7 @@ const WelcomeComponent = ({ onAddInstance }: Props) => {
           <img
             alt="logo"
             className={styles.logo}
-            src={theme === Theme.Dark ? darkLogo : lightLogo}
+            src={Logo}
           />
 
           <div className={styles.controls}>

@@ -1,7 +1,7 @@
 {
   "name": "redisinsight-api",
-  "version": "2.46.0",
-  "description": "RedisInsight API",
+  "version": "2.48.0",
+  "description": "Redis Insight API",
   "private": true,
   "author": {
     "name": "Redis Ltd.",
@@ -62,6 +62,7 @@
     "busboy": "^1.6.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.14.0",
+    "combined-stream": "^1.0.8",
     "connect-timeout": "^1.9.0",
     "date-fns": "^2.29.3",
     "detect-port": "^1.5.1",
@@ -77,6 +78,7 @@
     "nest-winston": "^1.4.0",
     "nestjs-form-data": "^1.8.7",
     "node-version-compare": "^1.0.3",
+    "quicktype-core": "^23.0.116",
     "redis": "^4.6.10",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.6",

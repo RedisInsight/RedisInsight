@@ -25,13 +25,15 @@
 
 .logo {
   transition: transform 0.1s linear;
+  padding-left: 6px;
+  margin-top: 14px;
 
   &:hover {
     transform: translateY(-1px) !important;
   }
 
-  img {
-    height: 28px !important;
-    width: 150px !important;
+  svg {
+    height: 50px;
+    width: 90px;
   }
 }

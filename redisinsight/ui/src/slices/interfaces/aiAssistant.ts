@@ -29,7 +29,6 @@ export interface StateAiAssistant {
   },
   expert: {
     loading: boolean
-    loadingAnswer: boolean
     messages: Array<AiChatMessage>
   }
 }

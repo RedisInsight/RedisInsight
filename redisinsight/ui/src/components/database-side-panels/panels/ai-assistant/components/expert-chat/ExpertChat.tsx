@@ -1,4 +1,4 @@
-import React, { Ref, useCallback, useEffect, useRef } from 'react'
+import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiButtonEmpty, EuiText, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
@@ -8,11 +8,11 @@ import {
   getExpertChatHistoryAction,
   removeExpertChatHistoryAction,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { getCommandsFromQuery, scrollIntoView } from 'uiSrc/utils'
+import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
@@ -21,9 +21,11 @@ import { ExpertEmptyHistoryText } from '../empty-history/texts'
 import styles from './styles.module.scss'
 
 const ExpertChat = () => {
-  const { messages, loading, loadingAnswer } = useSelector(aiExpertChatSelector)
+  const { messages, loading } = useSelector(aiExpertChatSelector)
   const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+
+  const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
 
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -43,7 +45,20 @@ const ExpertChat = () => {
 
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom()
-    dispatch(askExpertChatbotAction(instanceId, message, scrollToBottom))
+
+    dispatch(askExpertChatbotAction(
+      instanceId,
+      message,
+      {
+        onMessage: (message: AiChatMessage) => {
+          setProgressingMessage({ ...message })
+          scrollToBottom('auto')
+        },
+        onFinish: () => setProgressingMessage(null)
+      }
+    ))
+
+    // dispatch(askExpertChatbotAction(instanceId, message, scrollToBottom))
 
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
@@ -113,7 +128,7 @@ const ExpertChat = () => {
           isLoading={loading}
           modules={modules}
           welcomeText={ExpertEmptyHistoryText}
-          isLoadingAnswer={loadingAnswer}
+          progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
           onRunCommand={onRunCommand}
@@ -122,7 +137,7 @@ const ExpertChat = () => {
       </div>
       <div className={styles.chatForm}>
         <ChatForm
-          isDisabled={!instanceId || loadingAnswer}
+          isDisabled={!instanceId || !!progressingMessage}
           validationMessage={!instanceId ? 'Open a database' : undefined}
           placeholder="Type / for specialized expertise"
           onSubmit={handleSubmit}

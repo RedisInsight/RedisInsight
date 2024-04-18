@@ -84,7 +84,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
         fallthrough: false,
       },
     }),
-    StaticsManagementModule,
+    StaticsManagementModule.register(),
   ],
   controllers: [],
   providers: [],

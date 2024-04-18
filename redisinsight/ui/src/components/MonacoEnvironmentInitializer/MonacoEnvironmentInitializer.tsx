@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 const MonacoEnvironmentInitializer = () => {
   useEffect(() => {
     function getWorkerUrl(moduleId, label) {
-      if (['json', 'typescript', 'javascript'].includes(label)) {
+      if (['json', 'typescript', 'javascript', 'yaml'].includes(label)) {
         return `${label}.worker.js`
       }
 

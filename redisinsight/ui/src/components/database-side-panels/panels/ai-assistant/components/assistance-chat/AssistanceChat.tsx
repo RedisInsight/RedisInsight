@@ -128,7 +128,6 @@ const AssistanceChat = () => {
           modules={modules}
           suggestions={SUGGESTIONS}
           welcomeText={AssistanceEmptyHistoryText}
-          isLoadingAnswer={progressingMessage?.content === ''}
           progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}

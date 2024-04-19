@@ -5,6 +5,12 @@
 
   align-items: center;
 
+  .logo {
+    &.animated {
+      animation: bounceLogo 0.7s linear infinite;
+    }
+  }
+
   .welcomeText {
     flex-grow: 1;
 
@@ -13,7 +19,6 @@
 
     text-align: center;
     justify-content: center;
-
   }
 
   .suggestions {
@@ -37,5 +42,15 @@
 
       cursor: pointer;
     }
+  }
+}
+
+@keyframes bounceLogo {
+  0%, 100% {
+    transform: initial;
+  }
+
+  40% {
+    transform: translateY(-6px);
   }
 }

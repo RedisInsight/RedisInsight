@@ -13,10 +13,10 @@ import { AiChatSuggestion } from '../../constants'
 import styles from './styles.module.scss'
 
 export interface Props {
+  isLoading?: boolean
   suggestions?: AiChatSuggestion[]
   welcomeText?: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
-  isLoadingAnswer?: boolean
   modules?: AdditionalRedisModule[]
   history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
@@ -27,10 +27,10 @@ export interface Props {
 
 const ChatHistory = (props: Props) => {
   const {
+    isLoading,
     suggestions,
     welcomeText,
     progressingMessage,
-    isLoadingAnswer,
     modules,
     history = [],
     scrollDivRef,
@@ -58,6 +58,10 @@ const ChatHistory = (props: Props) => {
     </div>
   ) : null), [modules])
 
+  if (isLoading) {
+    return <EmptyHistoryScreen isLoading />
+  }
+
   if (history.length === 0) {
     return (
       <EmptyHistoryScreen
@@ -73,7 +77,9 @@ const ChatHistory = (props: Props) => {
       <div className={styles.history} data-testid="ai-chat-history">
         {history.map(getMessage)}
         {!!progressingMessage && getMessage(progressingMessage)}
-        {isLoadingAnswer && (<div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>)}
+        {progressingMessage?.content === '' && (
+          <div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>
+        )}
         <div ref={scrollDivRef} />
       </div>
     </div>

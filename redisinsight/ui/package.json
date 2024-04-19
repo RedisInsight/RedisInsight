@@ -1,0 +1,16 @@
+{
+  "name": "redisinsight",
+  "appName": "Redis Insight",
+  "productName": "RedisInsight",
+  "version": "2.48.0",
+  "description": "Redis Insight",
+  "author": {
+    "name": "Redis Ltd.",
+    "email": "support@redis.com",
+    "url": "https://redis.com/redis-enterprise/redis-insight"
+  },
+  "scripts": {
+    "dev": "vite dev --force",
+    "build": "vite build --logLevel=silent"
+  }
+}

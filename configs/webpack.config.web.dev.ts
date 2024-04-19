@@ -79,13 +79,24 @@ const configuration: webpack.Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
+              additionalData: `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+              `
             },
           },
         ],
       },
       {
+        test: /\/(dark|light)Theme.scss/,
+        use: [
+          'raw-loader',
+          'sass-loader',
+        ]
+      },
+      {
         test: /\.s(a|c)ss$/,
-        exclude: [/\.module.(s(a|c)ss)$/, /\.lazy\.s(a|c)ss$/i],
+        exclude: [/\.module.(s(a|c)ss)$/, /\.lazy\.s(a|c)ss$/i, /\/(dark|light)Theme.scss/],
         use: [
           {
             loader: 'style-loader',
@@ -97,25 +108,13 @@ const configuration: webpack.Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
+              additionalData: `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+              `
             },
           },
         ],
-      },
-      {
-        test: /\.lazy\.s(a|c)ss$/i,
-        use: employCache([
-          {
-            loader: 'style-loader',
-            options: { injectType: 'lazySingletonStyleTag' },
-          },
-          {
-            loader: 'css-loader',
-          },
-          {
-            loader: 'sass-loader',
-          },
-        ]),
-        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
@@ -231,6 +230,7 @@ const configuration: webpack.Configuration = {
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 'RI_CONNECTIONS_TIMEOUT_DEFAULT' in process.env
         ? process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT
         : toString(30 * 1000),
+      NODE_DEBUG: 'NODE_DEBUG' in process.env ? process.env.NODE_DEBUG : '',
     }),
 
     new webpack.LoaderOptionsPlugin({

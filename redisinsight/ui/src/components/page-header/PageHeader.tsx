@@ -9,7 +9,7 @@ import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
-import { ReactComponent as Logo } from 'uiSrc/assets/img/logo.svg'
+import Logo from 'uiSrc/assets/img/logo.svg?react'
 
 import styles from './PageHeader.module.scss'
 

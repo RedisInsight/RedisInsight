@@ -1,9 +1,4 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 .container {
-
   height: calc(100% - 34px);
   position: relative;
   width: 100%;
@@ -24,7 +19,7 @@
 }
 
 .outputWrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   display: flex;
   flex: 1;
   padding: 0 10px 10px 10px;
@@ -47,19 +42,25 @@
 }
 
 .summary {
-  font: normal normal normal 13px/18px Graphik, sans-serif !important;
+  font:
+    normal normal normal 13px/18px Graphik,
+    sans-serif !important;
   letter-spacing: -0.13px !important;
   padding: 10px 0 5px;
 }
 
 .field {
   padding-top: 12px;
-  font: normal normal normal 13px/17px Graphik, sans-serif !important;
+  font:
+    normal normal normal 13px/17px Graphik,
+    sans-serif !important;
   letter-spacing: -0.13px;
 }
 
 .fieldTitle {
-  font: normal normal 500 14px/17px Graphik, sans-serif !important;
+  font:
+    normal normal 500 14px/17px Graphik,
+    sans-serif !important;
   letter-spacing: -0.14px;
   color: var(--euiTextSubduedColorHover);
   padding-bottom: 3px;

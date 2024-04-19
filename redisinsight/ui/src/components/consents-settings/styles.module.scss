@@ -1,6 +1,3 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/global_styling/index';
-
 .redisIcon {
   width: 128px;
   height: 100%;
@@ -38,12 +35,12 @@
   padding-bottom: 4px;
 }
 
-.modalBody :global(.euiModalBody__overflow){
+.modalBody :global(.euiModalBody__overflow) {
   padding: 0 42px 30px !important;
 }
 
 .consentsWrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-x: hidden;
   overflow-y: auto;
   max-height: calc(100vh - 290px);

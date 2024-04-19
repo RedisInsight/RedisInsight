@@ -17,13 +17,16 @@ import ThemeComponent from './components/theme/ThemeComponent'
 import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitializer/MonacoEnvironmentInitializer'
 import GlobalDialogs from './components/global-dialogs'
 
-import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
-import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
-
 import './App.scss'
+import './elastic.scss'
 
-themeService.registerTheme(Theme.Dark, [themeDark])
-themeService.registerTheme(Theme.Light, [themeLight])
+// eslint-disable-next-line import/order
+import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
+// eslint-disable-next-line import/order
+import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
+
+themeService.registerTheme(Theme.Dark, themeDark)
+themeService.registerTheme(Theme.Light, themeLight)
 
 const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
   <Provider store={store}>

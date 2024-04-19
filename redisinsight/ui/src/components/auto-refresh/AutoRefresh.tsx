@@ -202,7 +202,6 @@ const AutoRefresh = ({
           <EuiButtonIcon
             disabled={disabled}
             iconType="arrowDown"
-            color="subdued"
             aria-label="Auto-refresh config popover"
             className={cx(styles.anchorBtn, { [styles.anchorBtnOpen]: isPopoverOpen })}
             onClick={onButtonClick}

@@ -32,6 +32,12 @@ describe('INFINITE_MESSAGES', () => {
       expect(screen.getByTestId('notification-details-region')).toHaveTextContent('us-us')
     })
   })
+  describe('AUTHENTICATING', () => {
+    it('should render message', () => {
+      const { Inner } = INFINITE_MESSAGES.AUTHENTICATING()
+      expect(render(<>{Inner}</>)).toBeTruthy()
+    })
+  })
   describe('PENDING_CREATE_DB', () => {
     it('should render message', () => {
       const { Inner } = INFINITE_MESSAGES.PENDING_CREATE_DB()

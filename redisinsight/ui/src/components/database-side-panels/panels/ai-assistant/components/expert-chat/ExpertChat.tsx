@@ -7,8 +7,8 @@ import {
   askExpertChatbot,
   clearExpertChatHistory,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { getCommandsFromQuery, scrollIntoView } from 'uiSrc/utils'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { getCommandsFromQuery, isRedisearchAvailable, scrollIntoView } from 'uiSrc/utils'
+import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -23,6 +23,7 @@ const ExpertChat = () => {
   const { messages } = useSelector(aiExpertChatSelector)
   const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+  const freeInstances = useSelector(freeInstancesSelector) || []
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -90,6 +91,26 @@ const ExpertChat = () => {
     }, 0)
   }
 
+  const getValidationMessage = () => {
+    if (!instanceId) {
+      return {
+        title: 'Open a database',
+        content: 'Open your Redis database with search & query, or create a new database to get started.'
+      }
+    }
+
+    if (!isRedisearchAvailable(modules)) {
+      return {
+        title: 'Search & query capability is not available',
+        content: freeInstances?.length
+          ? 'Use your free all-in-one Redis Cloud database to start exploring these capabilities.'
+          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.'
+      }
+    }
+
+    return undefined
+  }
+
   return (
     <div className={styles.wrapper} data-testid="ai-document-chat">
       <div className={styles.header}>
@@ -125,7 +146,7 @@ const ExpertChat = () => {
       <div className={styles.chatForm}>
         <ChatForm
           isDisabled={!instanceId || isLoading}
-          validationMessage={!instanceId ? 'Open a database' : undefined}
+          validation={getValidationMessage()}
           placeholder="Type / for specialized expertise"
           onSubmit={handleSubmit}
         />

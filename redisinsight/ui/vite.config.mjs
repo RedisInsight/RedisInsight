@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 import monacoEditorPlugin from 'vite-plugin-monaco-editor'
@@ -17,6 +17,7 @@ export default defineConfig({
       languages: ['json', 'javascript', 'typescript'],
       features: ['!rename'],
     }),
+    splitVendorChunkPlugin(),
   ],
   resolve: {
     alias: {
@@ -42,6 +43,26 @@ export default defineConfig({
     outDir: './dist',
     target: 'es2020',
     minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        // TODO chunks
+        // manualChunks(id) {
+        //   if (id.includes('react')) {
+        //     return 'react'
+        //   }
+        //   if (id.includes('elastic')) {
+        //     return 'elastic'
+        //   }
+        //   if (id.includes('lodash')) {
+        //     return 'lodash'
+        //   }
+        //   if (id.includes('monaco')) {
+        //     return 'monaco'
+        //   }
+        //   return 'index'
+        // },
+      },
+    },
     define: {
       'window.app.config.apiPort': '5540',
       this: 'window',
@@ -80,7 +101,6 @@ export default defineConfig({
       RI_PIPELINE_COUNT_DEFAULT: '5',
       RI_SCAN_COUNT_DEFAULT: '500',
       RI_SCAN_TREE_COUNT_DEFAULT: '10000',
-      RI_SEGMENT_WRITE_KEY: 'MWGOG146oPdLSWO5mZy3eM1NzcC3alRF',
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
     },
     // 'process.env.NODE_ENV': isProduction ? 'production' : undefined,

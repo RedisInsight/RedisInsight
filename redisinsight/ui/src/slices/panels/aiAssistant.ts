@@ -271,6 +271,8 @@ export function askExpertChatbotAction(
       content: '',
     }
 
+    onMessage?.(aiMessageProgressed)
+
     // general chat - `${baseUrl}${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}/messages`
     // id - chat id, not database id
 

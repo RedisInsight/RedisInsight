@@ -58,8 +58,6 @@ const ExpertChat = () => {
       }
     ))
 
-    // dispatch(askExpertChatbotAction(instanceId, message, scrollToBottom))
-
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
       eventData: {

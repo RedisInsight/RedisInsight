@@ -11,6 +11,7 @@ import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-use
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import config from 'src/utils/config';
+import { CloudSession } from 'src/modules/cloud/session/models/cloud-session';
 
 const cloudConfig = config.get('cloud');
 
@@ -167,6 +168,26 @@ export class CloudUserApiService {
       await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
       return await this.repository.get(sessionMetadata.sessionId);
+    } catch (e) {
+      throw wrapHttpError(e);
+    }
+  }
+
+  /**
+   * Get complete cloud user session
+   * @param sessionMetadata
+   * @param forceSync
+   * @param utm
+   */
+  async getUserSession(
+    sessionMetadata: SessionMetadata,
+    forceSync = false,
+    utm?: CloudRequestUtm,
+  ): Promise<CloudSession> {
+    try {
+      await this.ensureCloudUser(sessionMetadata, forceSync, utm);
+
+      return await this.sessionService.getSession(sessionMetadata.sessionId);
     } catch (e) {
       throw wrapHttpError(e);
     }

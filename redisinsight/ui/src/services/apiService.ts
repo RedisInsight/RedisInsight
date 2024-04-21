@@ -12,8 +12,8 @@ const isWebApp = process.env.RI_APP_TYPE === 'web'
 
 let apiPrefix = process.env.RI_API_PREFIX
 
-if (window.__RIPROXYPATH__) {
-  apiPrefix = `${window.__RIPROXYPATH__}/${apiPrefix}`
+if (window.__RI_PROXY_PATH__) {
+  apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
 }
 
 const axiosInstance = axios.create({

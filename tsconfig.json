@@ -28,6 +28,7 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "skipLibCheck": true,
+    "types": ["vite/client"],
     "paths": {
       "uiSrc/*": [
         "redisinsight/ui/src/*"

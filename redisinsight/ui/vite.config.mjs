@@ -1,23 +1,23 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
-import monacoEditorPlugin from 'vite-plugin-monaco-editor'
 import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
-import { fileURLToPath, URL } from 'node:url'
+// import { compression } from 'vite-plugin-compression2'
+import { fileURLToPath, URL } from 'url'
 import path from 'path'
 
 /**
  * @type {import('vite').UserConfig}
  */
 export default defineConfig({
+  base: process.env.NODE_ENV === 'development' ? '/' : '/__RIPROXYPATH__',
   plugins: [
     react(),
     svgr({ include: ['**/*.svg?react'] }),
-    monacoEditorPlugin.default({
-      languages: ['json', 'javascript', 'typescript'],
-      features: ['!rename'],
-    }),
-    splitVendorChunkPlugin(),
+    // compression({
+    //   include: [/\.(js)$/, /\.(css)$/],
+    //   deleteOriginalAssets: true
+    // }),
   ],
   resolve: {
     alias: {
@@ -32,6 +32,9 @@ export default defineConfig({
   },
   envPrefix: 'RI_',
   optimizeDeps: {
+    include: [
+      // 'monaco-yaml/yaml.worker',
+    ],
     esbuildOptions: {
       plugins: [fixReactVirtualized],
     },
@@ -46,25 +49,15 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // TODO chunks
-        // manualChunks(id) {
-        //   if (id.includes('react')) {
-        //     return 'react'
-        //   }
-        //   if (id.includes('elastic')) {
-        //     return 'elastic'
-        //   }
-        //   if (id.includes('lodash')) {
-        //     return 'lodash'
-        //   }
-        //   if (id.includes('monaco')) {
-        //     return 'monaco'
-        //   }
-        //   return 'index'
-        // },
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor'
+          }
+          return 'index'
+        },
       },
     },
     define: {
-      'window.app.config.apiPort': '5540',
       this: 'window',
     },
   },
@@ -103,6 +96,11 @@ export default defineConfig({
       RI_SCAN_TREE_COUNT_DEFAULT: '10000',
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
     },
-    // 'process.env.NODE_ENV': isProduction ? 'production' : undefined,
   },
+  // hack: apply proxy path to monaco webworker
+  experimental: {
+    renderBuiltUrl() {
+      return { relative: true }
+    },
+  }
 })

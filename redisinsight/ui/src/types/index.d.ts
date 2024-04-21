@@ -11,7 +11,7 @@ declare global {
     Buffer: typeof Buffer
     app: WindowApp
     windowId?: string
-    readonly __RIPROXYPATH__: string
+    readonly __RI_PROXY_PATH__: string
   }
 }
 

@@ -11,8 +11,8 @@ export const getBaseApiUrl = () => (!isDevelopment && isWebApp
   : `${baseApiUrl}:${apiPort}`)
 
 export const getProxyPath = () => {
-  if (window.__RIPROXYPATH__) {
-    return `/${window.__RIPROXYPATH__}/socket.io`
+  if (window.__RI_PROXY_PATH__) {
+    return `/${window.__RI_PROXY_PATH__}/socket.io`
   }
   return '/socket.io'
 }

@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader/root'
 import React, { ReactElement } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
@@ -17,13 +16,11 @@ import ThemeComponent from './components/theme/ThemeComponent'
 import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitializer/MonacoEnvironmentInitializer'
 import GlobalDialogs from './components/global-dialogs'
 
-import './App.scss'
-import './elastic.scss'
-
-// eslint-disable-next-line import/order
 import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
-// eslint-disable-next-line import/order
 import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
+
+import './styles/elastic.css'
+import './App.scss'
 
 themeService.registerTheme(Theme.Dark, themeDark)
 themeService.registerTheme(Theme.Light, themeLight)
@@ -65,4 +62,4 @@ const App = ({ children }: { children?: ReactElement[] }) => {
     </div>
   )
 }
-export default hot(AppWrapper)
+export default AppWrapper

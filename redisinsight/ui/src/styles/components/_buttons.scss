@@ -165,6 +165,21 @@ $euiBorderWidthThick: 2px !default;
   }
 }
 
+.euiButtonIcon.euiButtonIcon--primary {
+  color: var(--iconsDefaultColor);
+  &:hover {
+    color: var(--iconsDefaultHoverColor);
+  }
+  &[disabled] {
+    color: var(--controlsBorderColor);
+  }
+}
+
+.euiButtonIcon--text,
+.euiButtonEmpty--text {
+  color: var(--euiTextSubduedColorHover) !important;
+}
+
 .btnLikeLink {
   font: inherit !important;
 }

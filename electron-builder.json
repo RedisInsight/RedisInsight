@@ -21,9 +21,6 @@
   }
   ],
   "mac": {
-    "notarize": {
-      "tool": "notarytool"
-    },
     "target": [
       {
         "target": "dmg",

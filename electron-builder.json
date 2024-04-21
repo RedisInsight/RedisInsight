@@ -7,7 +7,6 @@
     "node_modules",
     "package.json"
   ],
-  "afterSign": "electron-builder-notarize",
   "artifactName": "${productName}-${os}-${arch}.${ext}",
   "compression": "normal",
   "asarUnpack": [
@@ -22,6 +21,9 @@
   }
   ],
   "mac": {
+    "notarize": {
+      "tool": "electron-builder-notarize"
+    },
     "target": [
       {
         "target": "dmg",

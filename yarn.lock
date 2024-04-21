@@ -14928,10 +14928,10 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite-bundle-visualizer@^1.0.1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vite-bundle-visualizer/-/vite-bundle-visualizer-1.1.0.tgz#2f9d3fe0a764104196c56a6e52dd98d95248dbb0"
-  integrity sha512-cmi5OuS7Eta5keTJmCTEbBBA7gOsUQ4K44W5dbsP+n/X0GIilIIFbJeXF120MQpTxdiZ/GIx4A9zkPEcKpPAog==
+vite-bundle-visualizer@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vite-bundle-visualizer/-/vite-bundle-visualizer-1.0.1.tgz#56dd88942c9415921213d47f0e78274325339c78"
+  integrity sha512-JdUu5viGyw7K1HMstqaAN7y1rnNz93srGeF7FJgFCzM7NL1nH/QlpywDA296qv/KjPPPsq60mOJhtXddikVKSA==
   dependencies:
     cac "^6.7.14"
     import-from-esm "^1.3.3"

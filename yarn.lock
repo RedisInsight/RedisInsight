@@ -14928,7 +14928,7 @@ vfile@^5.0.0:
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
 
-vite-bundle-visualizer@^1.1.0:
+vite-bundle-visualizer@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/vite-bundle-visualizer/-/vite-bundle-visualizer-1.1.0.tgz#2f9d3fe0a764104196c56a6e52dd98d95248dbb0"
   integrity sha512-cmi5OuS7Eta5keTJmCTEbBBA7gOsUQ4K44W5dbsP+n/X0GIilIIFbJeXF120MQpTxdiZ/GIx4A9zkPEcKpPAog==

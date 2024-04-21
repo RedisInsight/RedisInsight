@@ -232,7 +232,7 @@
     "typescript": "^4.0.5",
     "url-loader": "^4.1.0",
     "vite": "^5.2.8",
-    "vite-bundle-visualizer": "^1.1.0",
+    "vite-bundle-visualizer": "^1.0.1",
     "vite-plugin-compression2": "^1.1.0",
     "vite-plugin-svgr": "^4.2.0",
     "webpack": "^5.91.0",

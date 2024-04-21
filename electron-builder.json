@@ -22,7 +22,7 @@
   ],
   "mac": {
     "notarize": {
-      "tool": "electron-builder-notarize"
+      "tool": "notarytool"
     },
     "target": [
       {

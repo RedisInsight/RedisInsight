@@ -15,10 +15,9 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { AssistanceEmptyHistoryText } from '../empty-history/texts'
+import { AssistanceChatInitialMessage } from '../chat-history/texts'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
-import { SUGGESTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
 
@@ -126,15 +125,13 @@ const AssistanceChat = () => {
       <div className={styles.chatHistory}>
         <ChatHistory
           modules={modules}
-          suggestions={SUGGESTIONS}
-          welcomeText={AssistanceEmptyHistoryText}
+          initialMessage={AssistanceChatInitialMessage}
           isLoadingAnswer={progressingMessage?.content === ''}
           progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
           onMessageRendered={scrollToBottom}
           onRunCommand={onRunCommand}
-          onSubmit={handleSubmit}
         />
       </div>
       <div className={styles.chatForm}>

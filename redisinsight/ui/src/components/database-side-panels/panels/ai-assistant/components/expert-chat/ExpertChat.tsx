@@ -15,7 +15,7 @@ import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
-import { ExpertEmptyHistoryText } from '../empty-history/texts'
+import { ExpertChatInitialMessage } from '../chat-history/texts'
 
 import styles from './styles.module.scss'
 
@@ -114,12 +114,11 @@ const ExpertChat = () => {
       <div className={styles.chatHistory}>
         <ChatHistory
           modules={modules}
-          welcomeText={ExpertEmptyHistoryText}
+          initialMessage={ExpertChatInitialMessage}
           isLoadingAnswer={isLoading}
           history={messages}
           scrollDivRef={scrollDivRef}
           onRunCommand={onRunCommand}
-          onSubmit={handleSubmit}
         />
       </div>
       <div className={styles.chatForm}>

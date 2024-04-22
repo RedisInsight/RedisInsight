@@ -118,6 +118,7 @@ describe('InstancePage', () => {
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
       setTriggeredFunctionsInitialState(),
+      clearExpertChatHistory(),
     ]
 
     const expectedActions = [

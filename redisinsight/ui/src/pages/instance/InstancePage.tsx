@@ -22,7 +22,6 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
-import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import InstancePageRouter from './InstancePageRouter'
 

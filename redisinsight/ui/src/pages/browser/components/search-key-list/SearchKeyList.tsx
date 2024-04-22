@@ -23,7 +23,7 @@ import {
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
-import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
+import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
 import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'

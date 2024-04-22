@@ -1,9 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .table {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   max-height: 240px;
   overflow-y: auto;
 
@@ -63,7 +59,6 @@
   font-size: 13px !important;
   margin-right: 8px;
 }
-
 
 .copyBtnAnchor {
   display: inline !important;

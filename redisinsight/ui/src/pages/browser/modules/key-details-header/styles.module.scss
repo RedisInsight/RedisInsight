@@ -1,5 +1,3 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
 :global {
   .browserPage {
     .key-details-header {
@@ -21,14 +19,14 @@
           height: 29px !important;
           cursor: pointer;
           max-width: none;
-          font-family: 'Graphik', sans-serif !important;
+          font-family: "Graphik", sans-serif !important;
         }
       }
     }
   }
 }
 
-@include insights-open {
+@include global.insights-open {
   :global {
     .key-details-header {
       .euiText--small {
@@ -44,7 +42,6 @@
     }
   }
 }
-
 
 .container {
   min-height: 108px;
@@ -67,7 +64,6 @@
   margin-top: 4px !important;
 }
 
-
 .subtitleActionBtns {
   display: flex;
   justify-content: flex-end;
@@ -75,14 +71,13 @@
   right: 13px;
 }
 
-
 .actionBtn {
   margin-right: 12px;
   position: relative;
   z-index: 2;
 }
 
-@include insights-open {
+@include global.insights-open {
   .actionBtn {
     margin-right: 8px;
 
@@ -100,7 +95,7 @@
   }
 }
 
-@include insights-open(1024px) {
+@include global.insights-open(1024px) {
   .actionBtn {
     margin-right: 8px;
 

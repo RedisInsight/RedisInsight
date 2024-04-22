@@ -1,5 +1,3 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
 .wrapper {
   background-color: var(--euiColorLightestShade);
   border-radius: 16px;
@@ -63,7 +61,7 @@
   }
 }
 
-@include insights-open(1260px) {
+@include global.insights-open(1260px) {
   .wrapper {
     flex-direction: column;
   }

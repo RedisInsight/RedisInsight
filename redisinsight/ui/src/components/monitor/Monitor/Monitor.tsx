@@ -12,7 +12,7 @@ import {
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
-import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
+import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'

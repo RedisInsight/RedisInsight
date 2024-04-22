@@ -23,7 +23,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   appInfoSelector,
 } from 'uiSrc/slices/app/info'
-import { ReactComponent as LogoSVG } from 'uiSrc/assets/img/logo_small.svg'
+import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
 import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'

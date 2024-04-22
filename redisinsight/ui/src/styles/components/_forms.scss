@@ -1,5 +1,4 @@
-@import "../../../../../node_modules/@elastic/eui/src/global_styling/index";
-@import "../../../../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
+@use "../mixins/eui";
 
 .euiFormRow {
   .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
@@ -44,6 +43,10 @@
   }
 }
 
+.euiFormLabel.euiFormLabel-isFocused {
+  color: var(--euiColorPrimary);
+}
+
 .euiButton,
 .euiCollapsibleNav,
 .euiHeaderSectionItem__button {
@@ -67,7 +70,7 @@
   z-index: 2;
 
   max-height: 100%;
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-y: auto;
 
   &.contentActive {
@@ -81,27 +84,25 @@
   border-width: 2px !important;
 }
 
-body {
-  .euiFieldText,
-  .euiFieldNumber,
-  .euiFieldPassword,
-  .euiFieldSearch,
-  .euiSelect,
-  .euiSuperSelectControl,
-  .euiComboBox .euiComboBox__inputWrap,
-  .euiTextArea {
-    background-color: var(--euiColorEmptyShade) !important;
-    max-width: 100% !important;
-    border: 1px solid var(--controlsBorderColor) !important;
-    box-shadow: none !important;
-    font-size: 14px;
-    line-height: 24px;
-    letter-spacing: -0.14px;
-  }
+.euiFieldText,
+.euiFieldNumber,
+.euiFieldPassword,
+.euiFieldSearch,
+.euiSelect,
+.euiSuperSelectControl,
+.euiComboBox .euiComboBox__inputWrap,
+.euiTextArea {
+  background-color: var(--euiColorEmptyShade) !important;
+  max-width: 100% !important;
+  border: 1px solid var(--controlsBorderColor) !important;
+  box-shadow: none !important;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.14px;
+}
 
-  .euiFormHelpText {
-    padding-top: 2px;
-  }
+.euiFormHelpText {
+  padding-top: 2px;
 }
 
 .euiFormControlLayout--group {
@@ -118,7 +119,9 @@ body {
 .euiCheckbox .euiCheckbox__input + .euiCheckbox__square,
 .euiRadio .euiRadio__input + .euiRadio__circle {
   border-color: var(--iconsDefaultColor) !important;
+  background-color: var(--euiColorEmptyShade) !important;
   &:hover {
+    background-color: var(--euiColorEmptyShade) !important;
     border-color: var(--iconsDefaultHoverColor) !important;
   }
 }
@@ -153,6 +156,18 @@ body {
   background-color: var(--euiColorPrimary) !important;
 }
 
+.theme_DARK {
+  .euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M.375 2.625L3.375 5.625M3.375 5.625L8.625.375' fill='none' fill-rule='evenodd' stroke='rgb%2832, 32, 32%29' stroke-linecap='round' stroke-width='1.5' transform='translate(.5 1)'/%3E%3C/svg%3E") !important;
+  }
+}
+
+.theme_LIGHT {
+  .euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8' viewBox='0 0 10 8'%3E%3Cpath d='M.375 2.625L3.375 5.625M3.375 5.625L8.625.375' fill='none' fill-rule='evenodd' stroke='rgb%28255, 255, 255%29' stroke-linecap='round' stroke-width='1.5' transform='translate(.5 1)'/%3E%3C/svg%3E") !important;
+  }
+}
+
 .inlineFieldsNoSpace {
   .euiFlexGroup {
     .euiFlexItem:not(:first-child) {
@@ -173,7 +188,6 @@ body {
   }
 }
 
-
 .euiComboBox .euiComboBox__inputWrap {
   padding-top: 5px !important;
   padding-left: 8px !important;
@@ -191,4 +205,19 @@ body {
   .euiComboBoxPlaceholder {
     color: var(--inputPlaceholderColor) !important;
   }
+}
+
+.euiFieldSearch:focus,
+.euiFieldPassword:focus,
+.euiTextArea:focus,
+.euiSuperSelectControl:focus,
+.euiFieldNumber:focus,
+.euiFieldText:focus {
+  background-image: linear-gradient(
+    to top,
+    var(--euiColorPrimary),
+    var(--euiColorPrimary) 2px,
+    transparent 2px,
+    transparent 100%
+  ) !important;
 }

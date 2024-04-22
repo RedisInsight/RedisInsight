@@ -1,7 +1,3 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .cover {
   position: absolute;
   display: flex;
@@ -18,7 +14,9 @@
 
 .title {
   padding-bottom: 16px;
-  font: normal normal 500 24px/29px Graphik, sans-serif !important;
+  font:
+    normal normal 500 24px/29px Graphik,
+    sans-serif !important;
 }
 
 .accordion {
@@ -46,7 +44,7 @@
 }
 
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   position: relative;
   height: 100%;
   overflow: auto;
@@ -65,7 +63,7 @@
     }
     .euiAccordion-isOpen {
       .euiAccordion__triggerWrapper {
-        background-color: var(--tableRowSelectedColor);
+        background-color: var(--tableRowSelectedColor) !important;
         border-color: var(--euiColorPrimary);
         border-bottom: 0 !important;
       }
@@ -97,6 +95,8 @@
 }
 
 .smallText {
-  font: normal normal normal 14px/24px Graphik, sans-serif !important;
+  font:
+    normal normal normal 14px/24px Graphik,
+    sans-serif !important;
   letter-spacing: -0.14px;
 }

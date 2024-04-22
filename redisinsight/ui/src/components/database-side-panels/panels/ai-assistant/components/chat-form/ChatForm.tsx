@@ -4,7 +4,7 @@ import { EuiButton, EuiForm, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
 
-import { ReactComponent as SendIcon } from 'uiSrc/assets/img/icons/send.svg'
+import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 
 import styles from './styles.module.scss'
 

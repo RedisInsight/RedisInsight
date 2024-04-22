@@ -4,16 +4,17 @@ import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { CustomHeaders } from 'uiSrc/constants/api'
 
-const { apiPort } = window.app.config
+// eslint-disable-next-line prefer-destructuring
+const apiPort = window.app.config.apiPort
 const baseApiUrl = process.env.RI_BASE_API_URL
-let apiPrefix = process.env.RI_API_PREFIX
-
-if (window.__RIPROXYPATH__) {
-  apiPrefix = window.__RIPROXYPATH__ + '/' + apiPrefix
-}
-
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
+
+let apiPrefix = process.env.RI_API_PREFIX
+
+if (window.__RI_PROXY_PATH__) {
+  apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
+}
 
 export const getBaseUrl = () => (!isDevelopment && isWebApp
   ? `${window.location.origin}/${apiPrefix}/`

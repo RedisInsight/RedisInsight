@@ -44,6 +44,25 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: false,
+            },
+          },
+          {
+            loader: 'string-replace-loader',
+            options: {
+              search: /import (\w+) from '(.+?)\.svg\?react'/g,
+              replace: "import { ReactComponent as $1 } from '$2.svg'",
+            },
+          }
+        ],
+      },
+      {
         test: /\.module\.s(a|c)ss$/,
         use: [
           {
@@ -60,13 +79,24 @@ const configuration: webpack.Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: false,
+              additionalData: `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+              `
             },
           },
         ],
       },
       {
+        test: /\/(dark|light)Theme.scss/,
+        use: [
+          'raw-loader',
+          'sass-loader',
+        ]
+      },
+      {
         test: /\.s(a|c)ss$/,
-        exclude: [/\.module.(s(a|c)ss)$/, /\.lazy\.s(a|c)ss$/i],
+        exclude: [/\.module.(s(a|c)ss)$/, /\/(dark|light)Theme.scss/],
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
@@ -78,26 +108,13 @@ const configuration: webpack.Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: false,
+              additionalData: `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+              `
             },
           },
         ],
-      },
-      // SASS lazy support
-      {
-        test: /\.lazy\.s(a|c)ss$/i,
-        use: [
-          {
-            loader: 'style-loader',
-            options: { injectType: 'lazySingletonStyleTag' },
-          },
-          {
-            loader: 'css-loader',
-          },
-          {
-            loader: 'sass-loader',
-          },
-        ],
-        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
@@ -217,6 +234,9 @@ const configuration: webpack.Configuration = {
       'process.env.RI_SEGMENT_WRITE_KEY': 'RI_SEGMENT_WRITE_KEY' in process.env
         ? JSON.stringify(process.env.RI_SEGMENT_WRITE_KEY)
         : JSON.stringify('SOURCE_WRITE_KEY'),
+      'process.env.NODE_DEBUG': 'NODE_DEBUG' in process.env
+        ? JSON.stringify(process.env.NODE_DEBUG)
+        : JSON.stringify(''),
     }),
   ],
 };

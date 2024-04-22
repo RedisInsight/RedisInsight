@@ -6,8 +6,8 @@ import { ipcAuthGithub, ipcAuthGoogle } from 'uiSrc/electron/utils'
 import { oauthCloudPAgreementSelector, signIn } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
-import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google.svg'
-import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'
+import GoogleIcon from 'uiSrc/assets/img/oauth/google.svg?react'
+import GithubIcon from 'uiSrc/assets/img/oauth/github.svg?react'
 
 import styles from './styles.module.scss'
 

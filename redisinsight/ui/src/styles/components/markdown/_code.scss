@@ -1,5 +1,4 @@
-@import "../../../../../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
-
+@use "../../mixins/_eui";
 @import './variables';
 
 code {
@@ -9,7 +8,7 @@ code {
 }
 
 pre > code {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   display: flex;
   padding: 8px 16px;

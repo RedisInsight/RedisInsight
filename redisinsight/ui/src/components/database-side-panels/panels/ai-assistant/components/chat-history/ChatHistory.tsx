@@ -12,7 +12,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   isLoading?: boolean
-  initialMessage?: React.ReactNode
+  initialMessage: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
   modules?: AdditionalRedisModule[]
   history: AiChatMessage[]
@@ -57,7 +57,7 @@ const ChatHistory = (props: Props) => {
     return null
   }
 
-  if (history.length === 0 && initialMessage) {
+  if (history.length === 0) {
     return (
       <div className={styles.wrapper}>
         <div className={styles.history} data-testid="ai-chat-empty-history">

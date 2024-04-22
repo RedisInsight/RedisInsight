@@ -76,6 +76,13 @@ const configuration: webpack.Configuration = {
               plugins: [require.resolve('react-refresh/babel')].filter(Boolean),
             },
           },
+          {
+            loader: 'string-replace-loader',
+            options: {
+              search: /import (\w+) from '(.+?)\.svg\?react'/g,
+              replace: "import { ReactComponent as $1 } from '$2.svg'",
+            },
+          }
         ],
       },
       {
@@ -95,6 +102,10 @@ const configuration: webpack.Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
+              additionalData: `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+              `
             },
           },
         ],
@@ -113,6 +124,10 @@ const configuration: webpack.Configuration = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
+              additionalData: `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+              `
             },
           },
         ],

@@ -30,6 +30,8 @@ const unprintableBuf = Buffer.concat([
 
 const CERTS_FOLDER = process.env.CERTS_FOLDER || './coverage';
 
+const TEST_RUN_DIR = '.test_run';
+
 export const constants = {
   // api
   API,
@@ -596,5 +598,7 @@ export const constants = {
   TEST_ANALYTICS_EVENT: TelemetryEvents.RedisInstanceAdded,
   TEST_ANALYTICS_EVENT_DATA: { length: 5 },
   TEST_ANALYTICS_PAGE,
+
+  TEST_DATA_DIR: process.env.TEST_DATA_DIR || `${TEST_RUN_DIR}/data`,
   // etc...
 }

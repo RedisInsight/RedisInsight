@@ -29,6 +29,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -154,7 +155,12 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       <>
         <EuiLink
           external={false}
-          href="https://redis.io/commands/ft.create/#SCHEMA"
+          href={getUtmExternalLink(
+            'https://redis.io/commands/ft.create/#SCHEMA',
+            {
+              campaign: 'browser_search'
+            }
+          )}
           target="_blank"
         >
           Declares

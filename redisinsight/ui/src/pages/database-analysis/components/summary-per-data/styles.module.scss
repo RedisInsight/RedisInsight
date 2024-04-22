@@ -1,7 +1,4 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
 .wrapper {
-
   .chartsWrapper {
     display: flex;
     align-items: center;
@@ -57,7 +54,7 @@
   }
 }
 
-@include insights-open {
+@include global.insights-open {
   .wrapper {
     .chartsWrapper {
       flex-direction: column;

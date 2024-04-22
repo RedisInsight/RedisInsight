@@ -1,6 +1,7 @@
 import React from 'react'
 import { EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
 
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 const UnsupportedTypeDetails = () => (
@@ -15,7 +16,7 @@ const UnsupportedTypeDetails = () => (
           If you have any ideas or suggestions, please
           {' '}
           <a
-            href="https://github.com/RedisInsight/RedisInsight/issues"
+            href={EXTERNAL_LINKS.githubIssues}
             className={styles.link}
             target="_blank"
             rel="noreferrer"

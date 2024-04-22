@@ -40,9 +40,9 @@ import { FullScreen } from 'uiSrc/components'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
-import { ReactComponent as ExecutionTimeIcon } from 'uiSrc/assets/img/workbench/execution_time.svg'
-import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
-import { ReactComponent as SilentModeIcon } from 'uiSrc/assets/img/icons/silent_mode.svg'
+import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?react'
+import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
+import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
 import QueryCardTooltip from '../QueryCardTooltip'
 

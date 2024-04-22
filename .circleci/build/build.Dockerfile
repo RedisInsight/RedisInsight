@@ -1,7 +1,7 @@
 FROM node:18.18-alpine
 
 # runtime args and environment variables
-ARG DIST=RedisInsight.tar.gz
+ARG DIST=Redis-Insight.tar.gz
 ARG NODE_ENV=production
 ARG RI_SEGMENT_WRITE_KEY
 ENV RI_SEGMENT_WRITE_KEY=${RI_SEGMENT_WRITE_KEY}

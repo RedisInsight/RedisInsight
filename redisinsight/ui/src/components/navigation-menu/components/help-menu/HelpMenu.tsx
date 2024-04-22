@@ -22,8 +22,8 @@ import { setOnboarding } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
-import { ReactComponent as GithubHelpCenterSVG } from 'uiSrc/assets/img/github.svg'
-import { ReactComponent as BulbSVG } from 'uiSrc/assets/img/bulb.svg'
+import GithubHelpCenterSVG from 'uiSrc/assets/img/github.svg?react'
+import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'

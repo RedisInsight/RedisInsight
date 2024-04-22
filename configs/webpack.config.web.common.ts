@@ -3,7 +3,6 @@
  */
 import path from 'path';
 import webpack from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 import webpackPaths from './webpack.paths';
@@ -25,12 +24,21 @@ export default {
           webpackPaths.apiPath,
           webpackPaths.desktopPath,
         ],
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            },
           },
-        },
+          {
+            loader: 'string-replace-loader',
+            options: {
+              search: /import (\w+) from '(.+?)\.svg\?react'/g,
+              replace: "import { ReactComponent as $1 } from '$2.svg'",
+            },
+          },
+        ]
       },
       {
         test: /\.svg$/,
@@ -43,6 +51,18 @@ export default {
       },
     ],
   },
+
+  ignoreWarnings: [
+    {
+      module: /elastic.scss/,
+    },
+    {
+      module: /QueryCardHeader/,
+    },
+    {
+      module: /\/(dark|light)Theme.scss/,
+    },
+  ],
 
   context: webpackPaths.uiPath,
 
@@ -67,8 +87,6 @@ export default {
     new webpack.DefinePlugin({
       'window.app.config.apiPort': JSON.stringify('5540'),
     }),
-
-    new HtmlWebpackPlugin({ template: 'index.html.ejs' }),
 
     new MonacoWebpackPlugin({ languages: ['json', 'javascript', 'typescript'], features: ['!rename'] }),
 

@@ -89,16 +89,6 @@ body {
   color: var(--euiColorGhost) !important;
 }
 
-.euiButtonIcon.euiButtonIcon--primary {
-  color: var(--iconsDefaultColor);
-  &:hover {
-    color: var(--iconsDefaultHoverColor);
-  }
-  &[disabled] {
-    color: var(--controlsBorderColor);
-  }
-}
-
 .euiContextMenuItem,
 .euiSelect,
 .euiSuperSelectControl,

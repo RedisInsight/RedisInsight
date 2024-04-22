@@ -5,7 +5,7 @@ import cx from 'classnames'
 import React, { FC, Ref, SVGProps, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { ReactComponent as TreeViewIcon } from 'uiSrc/assets/img/icons/treeview.svg'
+import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -166,7 +166,6 @@ const KeysHeader = (props: Props) => {
 
     dispatch(resetBrowserTree())
     dispatch(resetKeysData(searchMode))
-    localStorageService.set(BrowserStorageItem.browserViewType, type)
 
     if (!(searchMode === SearchMode.Redisearch && !selectedIndex)) {
       loadKeys(type)

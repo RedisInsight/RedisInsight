@@ -24,7 +24,7 @@ import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { CloudCapiKey, OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 
-import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
+import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
 import styles from './styles.module.scss'
 
@@ -216,7 +216,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
               {(socialCloudHandlerClick) => (
                 <EuiButtonEmpty
                   size="s"
-                  color="text"
+                  color="ghost"
                   className={styles.autodiscoverBtn}
                   onClick={(e: React.MouseEvent) => socialCloudHandlerClick(e, {
                     source: OAuthSocialSource.SettingsPage,

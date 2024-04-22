@@ -13,6 +13,7 @@
 }
 
 .euiToast--success {
+  background-color: var(--euiToastBackgroundColor) !important;
   border-color: var(--euiToastSuccessBorderColor) !important;
 }
 

@@ -1,6 +1,6 @@
-import { ReactComponent as AzureIcon } from 'uiSrc/assets/img/oauth/azure_provider.svg'
-import { ReactComponent as AWSIcon } from 'uiSrc/assets/img/oauth/aws_provider.svg'
-import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google_provider.svg'
+import AzureIcon from 'uiSrc/assets/img/oauth/azure_provider.svg?react'
+import AWSIcon from 'uiSrc/assets/img/oauth/aws_provider.svg?react'
+import GoogleIcon from 'uiSrc/assets/img/oauth/google_provider.svg?react'
 
 import styles from './styles.module.scss'
 

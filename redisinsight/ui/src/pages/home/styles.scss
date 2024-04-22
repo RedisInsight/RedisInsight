@@ -1,10 +1,6 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .homePage {
   .databaseList {
-    @include euiScrollBar;
+    @include eui.scrollBar;
 
     height: 100%;
     overflow: auto;
@@ -48,7 +44,9 @@
       background-color: var(--euiColorEmptyShade);
       border-bottom: none !important;
 
-      box-shadow: inset 0 1px 0 var(--euiColorLightShade), inset 0 -1px 0 var(--euiColorLightShade);
+      box-shadow:
+        inset 0 1px 0 var(--euiColorLightShade),
+        inset 0 -1px 0 var(--euiColorLightShade);
     }
 
     .euiTableRow {
@@ -232,7 +230,6 @@
     select,
     textarea {
       max-width: 100% !important;
-      opacity: 0.9;
       font-size: 14px;
       line-height: 24px;
     }
@@ -284,7 +281,7 @@
   }
 
   .container {
-    @include euiScrollBar;
+    @include eui.scrollBar;
 
     overflow-y: auto;
     overflow-x: hidden;
@@ -387,10 +384,15 @@
     flex-basis: 100% !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    margin-bottom: 16px !important;
+    min-height: 20px;
 
     .euiFormRow {
       padding-top: 0px;
+      .euiCheckbox {
+        display: flex;
+        min-height: 24px;
+        align-items: center;
+      }
     }
   }
 

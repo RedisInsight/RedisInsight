@@ -1,7 +1,19 @@
+@use "../mixins/_eui";
 $sideBarSize: 60px;
 
 html {
   letter-spacing: normal !important;
+  background-color: var(--euiPageBackgroundColor);
+  color: var(--htmlColor);
+  // sass-lint:disable-block no-misspelled-properties
+  scrollbar-width: thin;
+
+  scrollbar-color: transparent(var(--euiColorDarkShade), 0.5) transparent; // Firefox support
+}
+
+body {
+  @include eui.scrollBar;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -72,3 +84,30 @@ main.euiPageBody {
 .euiSpacer--xl {
   height: 36px !important;
 }
+
+.euiProgress {
+  background-color: var(--euiColorLightShade);
+}
+.euiProgress--primary.euiProgress--indeterminate:before,
+.euiProgress--success.euiProgress--indeterminate:before {
+  background-color: var(--euiColorPrimary);
+}
+
+.euiLoadingContent__singleLineBackground {
+  background: linear-gradient(
+    137deg,
+    var(--loadingContentColor) 45%,
+    var(--euiColorLightestShade) 50%,
+    var(--loadingContentColor) 55%
+  );
+}
+
+.euiListGroupItem--subdued .euiListGroupItem__text:not(:disabled),
+.euiListGroupItem--subdued .euiListGroupItem__button:not(:disabled) {
+  color: var(--euiTextSubduedColor);
+}
+
+.euiTab:focus {
+  background-color: transparent !important;
+}
+

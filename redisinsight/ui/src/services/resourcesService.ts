@@ -1,15 +1,16 @@
 import axios from 'axios'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
-const { apiPort } = window.app.config
+// eslint-disable-next-line prefer-destructuring
+const apiPort = window.app.config.apiPort
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
 
 let BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
 
-if (window.__RIPROXYPATH__) {
-  BASE_URL = `${BASE_URL}${window.__RIPROXYPATH__}/`
+if (window.__RI_PROXY_PATH__) {
+  BASE_URL = `${BASE_URL}${window.__RI_PROXY_PATH__}/`
 }
 
 export const RESOURCES_BASE_URL = BASE_URL

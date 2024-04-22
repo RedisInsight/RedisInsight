@@ -29,7 +29,7 @@ COPY redisinsight ./redisinsight
 RUN yarn --cwd redisinsight/api install
 
 # build the frontend, static assets, and backend api
-RUN yarn build:web
+RUN yarn build:ui
 RUN yarn build:statics
 RUN yarn build:api
 

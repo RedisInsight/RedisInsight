@@ -1,7 +1,3 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 $breakpoint-table: 1232px;
 
 .wrapper {
@@ -29,7 +25,7 @@ $breakpoint-table: 1232px;
 }
 
 .tableWrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   overflow: auto;
   position: relative;
@@ -84,7 +80,9 @@ $breakpoint-table: 1232px;
         }
 
         .euiTableCellContent__text {
-          font: normal normal normal 12px/18px Graphik, sans-serif;
+          font:
+            normal normal normal 12px/18px Graphik,
+            sans-serif;
         }
       }
 
@@ -122,7 +120,8 @@ $breakpoint-table: 1232px;
     }
 
     .euiTableHeaderButton.euiTableHeaderButton-isSorted {
-      span, div {
+      span,
+      div {
         color: var(--htmlColor) !important;
       }
     }
@@ -142,7 +141,9 @@ $breakpoint-table: 1232px;
   }
 
   .valueUnit {
-    font: normal normal normal 12px/18px Graphik, sans-serif !important;
+    font:
+      normal normal normal 12px/18px Graphik,
+      sans-serif !important;
     margin-left: 4px;
     color: var(--euiColorMediumShade) !important;
   }
@@ -151,7 +152,9 @@ $breakpoint-table: 1232px;
     margin-right: 12px;
     display: block;
     min-width: 24px;
-    font: normal normal 500 13px/18px Graphik, sans-serif !important;
+    font:
+      normal normal 500 13px/18px Graphik,
+      sans-serif !important;
   }
 
   .headerCell {
@@ -170,7 +173,9 @@ $breakpoint-table: 1232px;
 
   .hostPort {
     display: inline-flex;
-    font: normal normal normal 13px/18px Graphik, sans-serif !important;
+    font:
+      normal normal normal 13px/18px Graphik,
+      sans-serif !important;
   }
 
   .nodeColor {

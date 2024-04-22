@@ -29,8 +29,8 @@ import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/inte
 
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import { ReactComponent as SnoozeIcon } from 'uiSrc/assets/img/icons/snooze.svg'
-import { ReactComponent as StarsIcon } from 'uiSrc/assets/img/icons/stars.svg'
+import SnoozeIcon from 'uiSrc/assets/img/icons/snooze.svg?react'
+import StarsIcon from 'uiSrc/assets/img/icons/stars.svg?react'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
 import styles from './styles.module.scss'

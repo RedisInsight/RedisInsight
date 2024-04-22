@@ -182,6 +182,10 @@ function DatabasesList({
         selection={selectionValue}
         onWheel={onWheel}
         onTableChange={onTableChange}
+        className={cx(
+          'stickyHeader',
+          styles.table
+        )}
         isSelectable
       />
 

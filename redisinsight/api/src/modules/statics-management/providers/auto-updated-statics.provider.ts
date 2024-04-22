@@ -23,7 +23,7 @@ export class AutoUpdatedStaticsProvider implements OnModuleInit {
    * Updates latest json on startup
    */
   async onModuleInit() {
-    if(this.options.shouldAutoUpdate) {
+    if (this.options.shouldAutoUpdate) {
       // wait for populating default data (should take milliseconds)
       await this.initDefaults().catch((e) => this.logger.warn('Unable to populate default data', e));
       // async operation to not wait for it and not block user in case when no internet connection

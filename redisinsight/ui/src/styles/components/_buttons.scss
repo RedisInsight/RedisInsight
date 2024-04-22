@@ -1,4 +1,4 @@
-@import "../../../../../node_modules/@elastic/eui/src/global_styling/index";
+$euiBorderWidthThick: 2px !default;
 
 .euiButton {
   text-decoration: none !important;
@@ -100,18 +100,24 @@
 }
 
 .euiButton__text {
-  font: normal normal 500 15px/20px Graphik, sans-serif !important;
+  font:
+    normal normal 500 15px/20px Graphik,
+    sans-serif !important;
 }
 
 .euiButtonEmpty__text {
-  font: normal normal 400 14px/18px Graphik, sans-serif;
+  font:
+    normal normal 400 14px/18px Graphik,
+    sans-serif;
 }
 
 .euiButton--small {
   height: 30px !important;
   line-height: 30px !important;
   .euiButton__text {
-    font: normal normal 500 13px/16px Graphik, sans-serif !important;
+    font:
+      normal normal 500 13px/16px Graphik,
+      sans-serif !important;
   }
 }
 
@@ -134,7 +140,9 @@
   border-radius: 4px;
   color: var(--euiTextSubduedColor);
   background-color: transparent;
-  transition: color ease 0.3s, background-color ease 0.3s;
+  transition:
+    color ease 0.3s,
+    background-color ease 0.3s;
 
   &:not([class*="isDisabled"]) {
     .euiButtonEmpty__text,
@@ -155,6 +163,21 @@
       }
     }
   }
+}
+
+.euiButtonIcon.euiButtonIcon--primary {
+  color: var(--iconsDefaultColor);
+  &:hover {
+    color: var(--iconsDefaultHoverColor);
+  }
+  &[disabled] {
+    color: var(--controlsBorderColor);
+  }
+}
+
+.euiButtonIcon--text,
+.euiButtonEmpty--text {
+  color: var(--euiTextSubduedColorHover) !important;
 }
 
 .btnLikeLink {

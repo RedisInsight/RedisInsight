@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { changeSelectedTab, insightsPanelSelector, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
 
-import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
+import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'

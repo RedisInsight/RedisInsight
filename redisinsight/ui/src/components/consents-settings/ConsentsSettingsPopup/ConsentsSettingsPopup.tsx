@@ -19,7 +19,7 @@ import { Pages, Theme } from 'uiSrc/constants'
 import { ConsentsSettings } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { ReactComponent as Logo } from 'uiSrc/assets/img/logo.svg'
+import Logo from 'uiSrc/assets/img/logo.svg'
 
 import styles from '../styles.module.scss'
 

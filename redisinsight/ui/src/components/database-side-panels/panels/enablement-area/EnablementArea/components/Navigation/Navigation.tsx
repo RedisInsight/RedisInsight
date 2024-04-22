@@ -22,7 +22,7 @@ import WelcomeMyTutorials from '../WelcomeMyTutorials'
 
 import styles from './styles.module.scss'
 
-const padding = parseInt(styles.paddingHorizontal)
+const padding = 16
 
 export interface Props {
   tutorials: IEnablementAreaItem[]

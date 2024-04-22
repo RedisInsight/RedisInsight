@@ -88,6 +88,11 @@ export enum Compatibility {
     TimeSeries = 'time-series'
 }
 
+export enum ChatBotTabs {
+    General  = 'General',
+    Database = 'Database',
+}
+
 export enum RedisOverviewPage {
     DataBase  = 'Redis Databases',
     Rdi = 'My RDI instances',

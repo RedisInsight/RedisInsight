@@ -15,10 +15,9 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { AssistanceEmptyHistoryText } from '../empty-history/texts'
+import { AssistanceChatInitialMessage } from '../chat-history/texts'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
-import { SUGGESTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
 
@@ -51,13 +50,6 @@ const AssistanceChat = () => {
     }
 
     sendChatMessage(id, message)
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
-      eventData: {
-        chat: AiChatType.Assistance
-      }
-    })
   }, [id])
 
   const sendChatMessage = (chatId: string, message: string) => {
@@ -72,6 +64,13 @@ const AssistanceChat = () => {
         onFinish: () => setProgressingMessage(null)
       }
     ))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
+      eventData: {
+        chat: AiChatType.Assistance
+      }
+    })
   }
 
   const onClearSession = useCallback(() => {
@@ -126,15 +125,12 @@ const AssistanceChat = () => {
       <div className={styles.chatHistory}>
         <ChatHistory
           modules={modules}
-          suggestions={SUGGESTIONS}
-          welcomeText={AssistanceEmptyHistoryText}
-          isLoadingAnswer={progressingMessage?.content === ''}
+          initialMessage={AssistanceChatInitialMessage}
           progressingMessage={progressingMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
           onMessageRendered={scrollToBottom}
           onRunCommand={onRunCommand}
-          onSubmit={handleSubmit}
         />
       </div>
       <div className={styles.chatForm}>

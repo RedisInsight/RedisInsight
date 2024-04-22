@@ -5,38 +5,32 @@ import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssi
 import { Nullable } from 'uiSrc/utils'
 
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
-import EmptyHistoryScreen from '../empty-history'
 import LoadingMessage from '../loading-message'
 import MarkdownMessage from '../markdown-message'
-import { AiChatSuggestion } from '../../constants'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  suggestions?: AiChatSuggestion[]
-  welcomeText?: React.ReactNode
+  isLoading?: boolean
+  initialMessage: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
-  isLoadingAnswer?: boolean
   modules?: AdditionalRedisModule[]
   history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
   onMessageRendered?: () => void
   onRunCommand?: (query: string) => void
-  onSubmit: (value: string) => void
 }
 
 const ChatHistory = (props: Props) => {
   const {
-    suggestions,
-    welcomeText,
+    isLoading,
+    initialMessage,
     progressingMessage,
-    isLoadingAnswer,
     modules,
     history = [],
     scrollDivRef,
     onMessageRendered,
     onRunCommand,
-    onSubmit,
   } = props
 
   const getMessage = useCallback(({ type: messageType, content, id }: AiChatMessage) => (content ? (
@@ -58,13 +52,23 @@ const ChatHistory = (props: Props) => {
     </div>
   ) : null), [modules])
 
+  if (isLoading) {
+    // TODO: add loader
+    return null
+  }
+
   if (history.length === 0) {
     return (
-      <EmptyHistoryScreen
-        welcomeText={welcomeText}
-        suggestions={suggestions}
-        onSubmit={onSubmit}
-      />
+      <div className={styles.wrapper}>
+        <div className={styles.history} data-testid="ai-chat-empty-history">
+          <div
+            className={cx('jsx-markdown', styles.answer)}
+            data-testid="ai-message-initial-message"
+          >
+            {initialMessage}
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -73,7 +77,9 @@ const ChatHistory = (props: Props) => {
       <div className={styles.history} data-testid="ai-chat-history">
         {history.map(getMessage)}
         {!!progressingMessage && getMessage(progressingMessage)}
-        {isLoadingAnswer && (<div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>)}
+        {progressingMessage?.content === '' && (
+          <div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>
+        )}
         <div ref={scrollDivRef} />
       </div>
     </div>

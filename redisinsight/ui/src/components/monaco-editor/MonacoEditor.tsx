@@ -10,7 +10,7 @@ import { DSL, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import DedicatedEditor from './components/dedicated-editor'
-import styles from './styles.modules.scss'
+import styles from './styles.module.scss'
 
 export interface CommonProps {
   value: string

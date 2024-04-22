@@ -1,5 +1,3 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
 .wrapper {
   padding: 32px 30px;
   display: flex;
@@ -30,7 +28,7 @@
   }
 
   .title {
-    font-family: 'Graphik', sans-serif;
+    font-family: "Graphik", sans-serif;
     font-size: 28px;
     font-weight: 500;
     word-break: break-word;
@@ -43,7 +41,7 @@
 
   .linksWrapper .text,
   .text {
-    font-family: 'Graphik', sans-serif;
+    font-family: "Graphik", sans-serif;
     font-size: 14px;
     line-height: 17px;
     word-break: break-word;
@@ -52,7 +50,7 @@
   }
 
   .additionalText {
-    font-family: 'Graphik', sans-serif;
+    font-family: "Graphik", sans-serif;
     font-size: 14px;
     line-height: 21px;
     word-break: break-word;
@@ -60,7 +58,7 @@
   }
 
   .bigText {
-    font-family: 'Graphik', sans-serif;
+    font-family: "Graphik", sans-serif;
     font-size: 18px;
     line-height: 27px;
     word-break: break-word;
@@ -106,7 +104,8 @@
 
   .btn {
     :global {
-      .euiButton__text, .euiButton__content {
+      .euiButton__text,
+      .euiButton__content {
         color: var(--euiColorPrimaryText) !important;
       }
     }
@@ -117,7 +116,7 @@
   }
 }
 
-@include insights-open {
+@include global.insights-open {
   .wrapper {
     .content {
       padding-right: 0;

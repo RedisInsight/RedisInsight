@@ -1,4 +1,4 @@
-import { ReactComponent as HandIcon } from 'uiSrc/assets/img/oauth/hand.svg'
+import HandIcon from 'uiSrc/assets/img/oauth/hand.svg?react'
 
 export const OAuthAdvantages = [
   {

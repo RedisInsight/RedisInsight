@@ -50,6 +50,7 @@ redisinsight/api/commands
 redisinsight/api/guides
 redisinsight/api/tutorials
 redisinsight/api/content
+redisinsight/ui/dist-stats.html
 dist
 distWeb
 dll
@@ -67,6 +68,7 @@ licenses
 /tests/e2e/remote
 /tests/e2e/.redisinsight-v2
 /tests/e2e/.redisinsight-app
+/tests/e2e/.redisinsight-insight
 
 # Parcel
 .parcel-cache

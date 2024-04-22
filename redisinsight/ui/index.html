@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Redis Insight</title>
+  <script>
+    var RIPROXYPATH = '__RIPROXYPATH__';
+    window.__RI_PROXY_PATH__ = RIPROXYPATH;
+
+    // If the RIPROXYPATH is not set, then we need to set it to undefined
+    if (RIPROXYPATH.startsWith('__') || RIPROXYPATH.endsWith('__')) {
+      window.__RI_PROXY_PATH__ = undefined;
+    }
+  </script>
+  <base href="/" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

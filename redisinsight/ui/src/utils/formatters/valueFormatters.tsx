@@ -106,7 +106,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Vector32Bit: {
       try {
-        const vector = Array.from(bufferToFloat32Array(reply.data))
+        const vector = Array.from(bufferToFloat32Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
@@ -115,7 +115,7 @@ const formattingBuffer = (
     }
     case KeyValueFormat.Vector64Bit: {
       try {
-        const vector = Array.from(bufferToFloat64Array(reply.data))
+        const vector = Array.from(bufferToFloat64Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
@@ -163,8 +163,8 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.HEX: return bufferToHex(value)
     case KeyValueFormat.Binary: return bufferToBinary(value)
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
-    case KeyValueFormat.Vector32Bit: return bufferToFloat32Array(value.data)
-    case KeyValueFormat.Vector64Bit: return bufferToFloat64Array(value.data)
+    case KeyValueFormat.Vector32Bit: return bufferToFloat32Array(value.data as Uint8Array)
+    case KeyValueFormat.Vector64Bit: return bufferToFloat64Array(value.data as Uint8Array)
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(Uint8Array.from(value.data))

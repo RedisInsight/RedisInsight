@@ -34,20 +34,35 @@ export const migrateHomeFolder = async () => {
         join(PATH_CONFIG.homedir, target),
       )));
     }
+
+    return true
   } catch (e) {
     // continue initialization even without migration
+    return false
   }
 };
 
 /**
- * Remove old guides folder
+ * Remove old folders
  */
-export const removeGuidesFolder = async () => {
+export const removeOldFolders = async () => {
   try {
-    if (await fs.pathExists(PATH_CONFIG.guides)) {
-      await fs.rm(PATH_CONFIG.guides, { recursive: true, force: true });
+    // remove old folders
+    await PATH_CONFIG.oldFolders?.map(removeFolder)
+  } catch (e) {
+    // continue initialization even without removing
+  }
+};
+
+/**
+ * Remove a folder
+ */
+export const removeFolder = async (path: string) => {
+  try {
+    if (await fs.pathExists(path)) {
+      await fs.rm(path, { recursive: true, force: true });
     }
   } catch (e) {
-    // continue initialization even without migration
+    // continue initialization even without removing
   }
 };

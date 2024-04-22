@@ -4,7 +4,6 @@ const developmentEnv = ['development', 'test'];
 
 const developmentPlugins = [
   require('@babel/plugin-transform-runtime'),
-  require('react-hot-loader/babel'),
 ];
 
 const productionPlugins = [

@@ -1,3 +1,4 @@
+import { posix } from 'path';
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
@@ -7,7 +8,7 @@ import * as bodyParser from 'body-parser';
 import { WinstonModule } from 'nest-winston';
 import { GlobalExceptionFilter } from 'src/exceptions/global-exception.filter';
 import { get, Config } from 'src/utils';
-import { migrateHomeFolder, removeGuidesFolder } from 'src/init-helper';
+import { migrateHomeFolder, removeOldFolders } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppModule } from './app.module';
@@ -23,8 +24,7 @@ interface IApp {
 }
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
-  await migrateHomeFolder();
-  await removeGuidesFolder();
+  await migrateHomeFolder() && await removeOldFolders();
 
   const { port, host } = serverConfig;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
@@ -42,9 +42,15 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
   app.enableCors();
-  app.setGlobalPrefix(serverConfig.globalPrefix);
 
   if (process.env.RI_APP_TYPE !== 'electron') {
+    let prefix = serverConfig.globalPrefix;
+    if (serverConfig.proxyPath) {
+      prefix = posix.join(serverConfig.proxyPath, prefix);
+    }
+
+    app.setGlobalPrefix(prefix, { exclude: ['/'] });
+
     SwaggerModule.setup(
       serverConfig.docPrefix,
       app,
@@ -58,6 +64,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
       },
     );
   } else {
+    app.setGlobalPrefix(serverConfig.globalPrefix);
     app.useWebSocketAdapter(new WindowsAuthAdapter(app));
   }
 

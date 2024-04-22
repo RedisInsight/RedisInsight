@@ -7,7 +7,7 @@ const spec = {
       required: true,
       editable: false,
       since: '1.0.2',
-      title: 'EULA: RedisInsight License Terms',
+      title: 'EULA: Redis Insight License Terms',
       label: 'Label'
     }
   }

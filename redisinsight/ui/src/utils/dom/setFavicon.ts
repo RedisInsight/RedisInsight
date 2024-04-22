@@ -1,4 +1,4 @@
-import favicon from 'uiSrc/assets/favicon.ico'
+import favicon from 'uiSrc/assets/favicon.svg'
 
 const setFavicon = (icon: string = favicon) => {
   const link: HTMLLinkElement = document.querySelector("link[rel*='icon']")

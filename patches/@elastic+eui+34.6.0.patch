@@ -1,0 +1,472 @@
+diff --git a/node_modules/@elastic/eui/es/components/.DS_Store b/node_modules/@elastic/eui/es/components/.DS_Store
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/@elastic/eui/es/components/icon/icon.js b/node_modules/@elastic/eui/es/components/icon/icon.js
+index a90c191..940715b 100644
+--- a/node_modules/@elastic/eui/es/components/icon/icon.js
++++ b/node_modules/@elastic/eui/es/components/icon/icon.js
+@@ -55,6 +55,7 @@ import { keysOf } from '../common'; // @ts-ignore not generating typescript file
+ // to generate & git track a TS module definition for each icon component
+ 
+ import { icon as empty } from './assets/empty.js';
++import { typeToModuleMap } from './icon_imports';
+ import { enqueueStateChange } from '../../services/react';
+ import { htmlIdGenerator } from '../../services';
+ var typeToPathMap = {
+@@ -579,12 +580,13 @@ export var EuiIcon = /*#__PURE__*/function (_PureComponent) {
+         return;
+       }
+ 
+-      import(
+-      /* webpackChunkName: "icon.[request]" */
+-      // It's important that we don't use a template string here, it
+-      // stops webpack from building a dynamic require context.
+-      // eslint-disable-next-line prefer-template
+-      './assets/' + typeToPathMap[iconType] + '.js').then(function (_ref) {
++      // import(
++      // /* webpackChunkName: "icon.[request]" */
++      // // It's important that we don't use a template string here, it
++      // // stops webpack from building a dynamic require context.
++      // // eslint-disable-next-line prefer-template
++      // './assets/' + typeToPathMap[iconType] + '.js').then(function (_ref) {
++      typeToModuleMap[iconType]().then(function (_ref) {
+         var icon = _ref.icon;
+         iconComponentCache[iconType] = icon;
+         enqueueStateChange(function () {
+diff --git a/node_modules/@elastic/eui/es/components/icon/icon_imports.js b/node_modules/@elastic/eui/es/components/icon/icon_imports.js
+new file mode 100644
+index 0000000..90036bb
+--- /dev/null
++++ b/node_modules/@elastic/eui/es/components/icon/icon_imports.js
+@@ -0,0 +1,375 @@
++export var typeToModuleMap = {
++  accessibility: () => import('./assets/accessibility.js'),
++  addDataApp: () => import('./assets/app_add_data.js'),
++  advancedSettingsApp: () => import('./assets/app_advanced_settings.js'),
++  aggregate: () => import('./assets/aggregate.js'),
++  alert: () => import('./assets/alert.js'),
++  annotation: () => import('./assets/annotation.js'),
++  apmApp: () => import('./assets/app_apm.js'),
++  apmTrace: () => import('./assets/apm_trace.js'),
++  appSearchApp: () => import('./assets/app_app_search.js'),
++  apps: () => import('./assets/apps.js'),
++  arrowDown: () => import('./assets/arrow_down.js'),
++  arrowLeft: () => import('./assets/arrow_left.js'),
++  arrowRight: () => import('./assets/arrow_right.js'),
++  arrowUp: () => import('./assets/arrow_up.js'),
++  asterisk: () => import('./assets/asterisk.js'),
++  auditbeatApp: () => import('./assets/app_auditbeat.js'),
++  beaker: () => import('./assets/beaker.js'),
++  bell: () => import('./assets/bell.js'),
++  bellSlash: () => import('./assets/bellSlash.js'),
++  bolt: () => import('./assets/bolt.js'),
++  boxesHorizontal: () => import('./assets/boxes_horizontal.js'),
++  boxesVertical: () => import('./assets/boxes_vertical.js'),
++  branch: () => import('./assets/branch.js'),
++  broom: () => import('./assets/broom.js'),
++  brush: () => import('./assets/brush.js'),
++  bug: () => import('./assets/bug.js'),
++  bullseye: () => import('./assets/bullseye.js'),
++  calendar: () => import('./assets/calendar.js'),
++  canvasApp: () => import('./assets/app_canvas.js'),
++  check: () => import('./assets/check.js'),
++  checkInCircleFilled: () => import('./assets/checkInCircleFilled.js'),
++  cheer: () => import('./assets/cheer.js'),
++  classificationJob: () => import('./assets/ml_classification_job.js'),
++  clock: () => import('./assets/clock.js'),
++  cloudDrizzle: () => import('./assets/cloudDrizzle.js'),
++  cloudStormy: () => import('./assets/cloudStormy.js'),
++  cloudSunny: () => import('./assets/cloudSunny.js'),
++  codeApp: () => import('./assets/app_code.js'),
++  color: () => import('./assets/color.js'),
++  compute: () => import('./assets/compute.js'),
++  console: () => import('./assets/console.js'),
++  consoleApp: () => import('./assets/app_console.js'),
++  continuityAbove: () => import('./assets/continuityAbove.js'),
++  continuityAboveBelow: () => import('./assets/continuityAboveBelow.js'),
++  continuityBelow: () => import('./assets/continuityBelow.js'),
++  continuityWithin: () => import('./assets/continuityWithin.js'),
++  controlsHorizontal: () => import('./assets/controls_horizontal.js'),
++  controlsVertical: () => import('./assets/controls_vertical.js'),
++  copy: () => import('./assets/copy.js'),
++  copyClipboard: () => import('./assets/copy_clipboard.js'),
++  createAdvancedJob: () => import('./assets/ml_create_advanced_job.js'),
++  createMultiMetricJob: () => import('./assets/ml_create_multi_metric_job.js'),
++  createPopulationJob: () => import('./assets/ml_create_population_job.js'),
++  createSingleMetricJob: () => import('./assets/ml_create_single_metric_job.js'),
++  cross: () => import('./assets/cross.js'),
++  crossClusterReplicationApp: () => import('./assets/app_cross_cluster_replication.js'),
++  crossInACircleFilled: () => import('./assets/crossInACircleFilled.js'),
++  crosshairs: () => import('./assets/crosshairs.js'),
++  currency: () => import('./assets/currency.js'),
++  cut: () => import('./assets/cut.js'),
++  dashboardApp: () => import('./assets/app_dashboard.js'),
++  dataVisualizer: () => import('./assets/ml_data_visualizer.js'),
++  database: () => import('./assets/database.js'),
++  devToolsApp: () => import('./assets/app_devtools.js'),
++  discoverApp: () => import('./assets/app_discover.js'),
++  document: () => import('./assets/document.js'),
++  documentEdit: () => import('./assets/documentEdit.js'),
++  documentation: () => import('./assets/documentation.js'),
++  documents: () => import('./assets/documents.js'),
++  dot: () => import('./assets/dot.js'),
++  download: () => import('./assets/download.js'),
++  editorAlignCenter: () => import('./assets/editor_align_center.js'),
++  editorAlignLeft: () => import('./assets/editor_align_left.js'),
++  editorAlignRight: () => import('./assets/editor_align_right.js'),
++  editorBold: () => import('./assets/editor_bold.js'),
++  editorCodeBlock: () => import('./assets/editor_code_block.js'),
++  editorComment: () => import('./assets/editor_comment.js'),
++  editorDistributeHorizontal: () => import('./assets/editorDistributeHorizontal.js'),
++  editorDistributeVertical: () => import('./assets/editorDistributeVertical.js'),
++  editorHeading: () => import('./assets/editor_heading.js'),
++  editorItalic: () => import('./assets/editor_italic.js'),
++  editorItemAlignBottom: () => import('./assets/editorItemAlignBottom.js'),
++  editorItemAlignCenter: () => import('./assets/editorItemAlignCenter.js'),
++  editorItemAlignLeft: () => import('./assets/editorItemAlignLeft.js'),
++  editorItemAlignMiddle: () => import('./assets/editorItemAlignMiddle.js'),
++  editorItemAlignRight: () => import('./assets/editorItemAlignRight.js'),
++  editorItemAlignTop: () => import('./assets/editorItemAlignTop.js'),
++  editorLink: () => import('./assets/editor_link.js'),
++  editorOrderedList: () => import('./assets/editor_ordered_list.js'),
++  editorPositionBottomLeft: () => import('./assets/editorPositionBottomLeft.js'),
++  editorPositionBottomRight: () => import('./assets/editorPositionBottomRight.js'),
++  editorPositionTopLeft: () => import('./assets/editorPositionTopLeft.js'),
++  editorPositionTopRight: () => import('./assets/editorPositionTopRight.js'),
++  editorRedo: () => import('./assets/editor_redo.js'),
++  editorStrike: () => import('./assets/editor_strike.js'),
++  editorTable: () => import('./assets/editor_table.js'),
++  editorUnderline: () => import('./assets/editor_underline.js'),
++  editorUndo: () => import('./assets/editor_undo.js'),
++  editorUnorderedList: () => import('./assets/editor_unordered_list.js'),
++  email: () => import('./assets/email.js'),
++  empty: () => import('./assets/empty.js'),
++  emsApp: () => import('./assets/app_ems.js'),
++  eql: () => import('./assets/eql.js'),
++  eraser: () => import('./assets/eraser.js'),
++  exit: () => import('./assets/exit.js'),
++  expand: () => import('./assets/expand.js'),
++  expandMini: () => import('./assets/expandMini.js'),
++  exportAction: () => import('./assets/export.js'),
++  eye: () => import('./assets/eye.js'),
++  eyeClosed: () => import('./assets/eye_closed.js'),
++  faceHappy: () => import('./assets/face_happy.js'),
++  faceNeutral: () => import('./assets/face_neutral.js'),
++  faceSad: () => import('./assets/face_sad.js'),
++  filebeatApp: () => import('./assets/app_filebeat.js'),
++  filter: () => import('./assets/filter.js'),
++  flag: () => import('./assets/flag.js'),
++  fold: () => import('./assets/fold.js'),
++  folderCheck: () => import('./assets/folder_check.js'),
++  folderClosed: () => import('./assets/folder_closed.js'),
++  folderExclamation: () => import('./assets/folder_exclamation.js'),
++  folderOpen: () => import('./assets/folder_open.js'),
++  frameNext: () => import('./assets/frameNext.js'),
++  framePrevious: () => import('./assets/framePrevious.js'),
++  fullScreen: () => import('./assets/full_screen.js'),
++  fullScreenExit: () => import('./assets/fullScreenExit.js'),
++  function: () => import('./assets/function.js'),
++  gear: () => import('./assets/gear.js'),
++  gisApp: () => import('./assets/app_gis.js'),
++  glasses: () => import('./assets/glasses.js'),
++  globe: () => import('./assets/globe.js'),
++  grab: () => import('./assets/grab.js'),
++  grabHorizontal: () => import('./assets/grab_horizontal.js'),
++  graphApp: () => import('./assets/app_graph.js'),
++  grid: () => import('./assets/grid.js'),
++  grokApp: () => import('./assets/app_grok.js'),
++  heart: () => import('./assets/heart.js'),
++  heartbeatApp: () => import('./assets/app_heartbeat.js'),
++  heatmap: () => import('./assets/heatmap.js'),
++  help: () => import('./assets/help.js'),
++  home: () => import('./assets/home.js'),
++  iInCircle: () => import('./assets/iInCircle.js'),
++  image: () => import('./assets/image.js'),
++  importAction: () => import('./assets/import.js'),
++  indexClose: () => import('./assets/index_close.js'),
++  indexEdit: () => import('./assets/index_edit.js'),
++  indexFlush: () => import('./assets/index_flush.js'),
++  indexManagementApp: () => import('./assets/app_index_management.js'),
++  indexMapping: () => import('./assets/index_mapping.js'),
++  indexOpen: () => import('./assets/index_open.js'),
++  indexPatternApp: () => import('./assets/app_index_pattern.js'),
++  indexRollupApp: () => import('./assets/app_index_rollup.js'),
++  indexRuntime: () => import('./assets/index_runtime.js'),
++  indexSettings: () => import('./assets/index_settings.js'),
++  inputOutput: () => import('./assets/inputOutput.js'),
++  inspect: () => import('./assets/inspect.js'),
++  invert: () => import('./assets/invert.js'),
++  ip: () => import('./assets/ip.js'),
++  keyboardShortcut: () => import('./assets/keyboard_shortcut.js'),
++  kqlField: () => import('./assets/kql_field.js'),
++  kqlFunction: () => import('./assets/kql_function.js'),
++  kqlOperand: () => import('./assets/kql_operand.js'),
++  kqlSelector: () => import('./assets/kql_selector.js'),
++  kqlValue: () => import('./assets/kql_value.js'),
++  layers: () => import('./assets/layers.js'),
++  lensApp: () => import('./assets/app_lens.js'),
++  link: () => import('./assets/link.js'),
++  list: () => import('./assets/list.js'),
++  listAdd: () => import('./assets/list_add.js'),
++  lock: () => import('./assets/lock.js'),
++  lockOpen: () => import('./assets/lockOpen.js'),
++  logoAWS: () => import('./assets/logo_aws.js'),
++  logoAWSMono: () => import('./assets/logo_aws_mono.js'),
++  logoAerospike: () => import('./assets/logo_aerospike.js'),
++  logoApache: () => import('./assets/logo_apache.js'),
++  logoAppSearch: () => import('./assets/logo_app_search.js'),
++  logoAzure: () => import('./assets/logo_azure.js'),
++  logoAzureMono: () => import('./assets/logo_azure_mono.js'),
++  logoBeats: () => import('./assets/logo_beats.js'),
++  logoBusinessAnalytics: () => import('./assets/logo_business_analytics.js'),
++  logoCeph: () => import('./assets/logo_ceph.js'),
++  logoCloud: () => import('./assets/logo_cloud.js'),
++  logoCloudEnterprise: () => import('./assets/logo_cloud_ece.js'),
++  logoCode: () => import('./assets/logo_code.js'),
++  logoCodesandbox: () => import('./assets/logo_codesandbox.js'),
++  logoCouchbase: () => import('./assets/logo_couchbase.js'),
++  logoDocker: () => import('./assets/logo_docker.js'),
++  logoDropwizard: () => import('./assets/logo_dropwizard.js'),
++  logoElastic: () => import('./assets/logo_elastic.js'),
++  logoElasticStack: () => import('./assets/logo_elastic_stack.js'),
++  logoElasticsearch: () => import('./assets/logo_elasticsearch.js'),
++  logoEnterpriseSearch: () => import('./assets/logo_enterprise_search.js'),
++  logoEtcd: () => import('./assets/logo_etcd.js'),
++  logoGCP: () => import('./assets/logo_gcp.js'),
++  logoGCPMono: () => import('./assets/logo_gcp_mono.js'),
++  logoGithub: () => import('./assets/logo_github.js'),
++  logoGmail: () => import('./assets/logo_gmail.js'),
++  logoGolang: () => import('./assets/logo_golang.js'),
++  logoGoogleG: () => import('./assets/logo_google_g.js'),
++  logoHAproxy: () => import('./assets/logo_haproxy.js'),
++  logoIBM: () => import('./assets/logo_ibm.js'),
++  logoIBMMono: () => import('./assets/logo_ibm_mono.js'),
++  logoKafka: () => import('./assets/logo_kafka.js'),
++  logoKibana: () => import('./assets/logo_kibana.js'),
++  logoKubernetes: () => import('./assets/logo_kubernetes.js'),
++  logoLogging: () => import('./assets/logo_logging.js'),
++  logoLogstash: () => import('./assets/logo_logstash.js'),
++  logoMaps: () => import('./assets/logo_maps.js'),
++  logoMemcached: () => import('./assets/logo_memcached.js'),
++  logoMetrics: () => import('./assets/logo_metrics.js'),
++  logoMongodb: () => import('./assets/logo_mongodb.js'),
++  logoMySQL: () => import('./assets/logo_mysql.js'),
++  logoNginx: () => import('./assets/logo_nginx.js'),
++  logoObservability: () => import('./assets/logo_observability.js'),
++  logoOsquery: () => import('./assets/logo_osquery.js'),
++  logoPhp: () => import('./assets/logo_php.js'),
++  logoPostgres: () => import('./assets/logo_postgres.js'),
++  logoPrometheus: () => import('./assets/logo_prometheus.js'),
++  logoRabbitmq: () => import('./assets/logo_rabbitmq.js'),
++  logoRedis: () => import('./assets/logo_redis.js'),
++  logoSecurity: () => import('./assets/logo_security.js'),
++  logoSiteSearch: () => import('./assets/logo_site_search.js'),
++  logoSketch: () => import('./assets/logo_sketch.js'),
++  logoSlack: () => import('./assets/logo_slack.js'),
++  logoUptime: () => import('./assets/logo_uptime.js'),
++  logoWebhook: () => import('./assets/logo_webhook.js'),
++  logoWindows: () => import('./assets/logo_windows.js'),
++  logoWorkplaceSearch: () => import('./assets/logo_workplace_search.js'),
++  logsApp: () => import('./assets/app_logs.js'),
++  logstashFilter: () => import('./assets/logstash_filter.js'),
++  logstashIf: () => import('./assets/logstash_if.js'),
++  logstashInput: () => import('./assets/logstash_input.js'),
++  logstashOutput: () => import('./assets/logstash_output.js'),
++  logstashQueue: () => import('./assets/logstash_queue.js'),
++  machineLearningApp: () => import('./assets/app_ml.js'),
++  magnet: () => import('./assets/magnet.js'),
++  magnifyWithMinus: () => import('./assets/magnifyWithMinus.js'),
++  magnifyWithPlus: () => import('./assets/magnifyWithPlus.js'),
++  managementApp: () => import('./assets/app_management.js'),
++  mapMarker: () => import('./assets/map_marker.js'),
++  memory: () => import('./assets/memory.js'),
++  menu: () => import('./assets/menu.js'),
++  menuDown: () => import('./assets/menuDown.js'),
++  menuLeft: () => import('./assets/menuLeft.js'),
++  menuRight: () => import('./assets/menuRight.js'),
++  menuUp: () => import('./assets/menuUp.js'),
++  merge: () => import('./assets/merge.js'),
++  metricbeatApp: () => import('./assets/app_metricbeat.js'),
++  metricsApp: () => import('./assets/app_metrics.js'),
++  minimize: () => import('./assets/minimize.js'),
++  minus: () => import('./assets/minus.js'),
++  minusInCircle: () => import('./assets/minus_in_circle.js'),
++  minusInCircleFilled: () => import('./assets/minus_in_circle_filled.js'),
++  mobile: () => import('./assets/mobile.js'),
++  monitoringApp: () => import('./assets/app_monitoring.js'),
++  moon: () => import('./assets/moon.js'),
++  nested: () => import('./assets/nested.js'),
++  node: () => import('./assets/node.js'),
++  notebookApp: () => import('./assets/app_notebook.js'),
++  number: () => import('./assets/number.js'),
++  offline: () => import('./assets/offline.js'),
++  online: () => import('./assets/online.js'),
++  outlierDetectionJob: () => import('./assets/ml_outlier_detection_job.js'),
++  package: () => import('./assets/package.js'),
++  packetbeatApp: () => import('./assets/app_packetbeat.js'),
++  pageSelect: () => import('./assets/pageSelect.js'),
++  pagesSelect: () => import('./assets/pagesSelect.js'),
++  paperClip: () => import('./assets/paper_clip.js'),
++  partial: () => import('./assets/partial.js'),
++  pause: () => import('./assets/pause.js'),
++  pencil: () => import('./assets/pencil.js'),
++  percent: () => import('./assets/percent.js'),
++  pin: () => import('./assets/pin.js'),
++  pinFilled: () => import('./assets/pin_filled.js'),
++  pipelineApp: () => import('./assets/app_pipeline.js'),
++  play: () => import('./assets/play.js'),
++  playFilled: () => import('./assets/playFilled.js'),
++  plus: () => import('./assets/plus.js'),
++  plusInCircle: () => import('./assets/plus_in_circle.js'),
++  plusInCircleFilled: () => import('./assets/plus_in_circle_filled.js'),
++  popout: () => import('./assets/popout.js'),
++  push: () => import('./assets/push.js'),
++  questionInCircle: () => import('./assets/question_in_circle.js'),
++  quote: () => import('./assets/quote.js'),
++  recentlyViewedApp: () => import('./assets/app_recently_viewed.js'),
++  refresh: () => import('./assets/refresh.js'),
++  regressionJob: () => import('./assets/ml_regression_job.js'),
++  reporter: () => import('./assets/reporter.js'),
++  reportingApp: () => import('./assets/app_reporting.js'),
++  returnKey: () => import('./assets/return_key.js'),
++  save: () => import('./assets/save.js'),
++  savedObjectsApp: () => import('./assets/app_saved_objects.js'),
++  scale: () => import('./assets/scale.js'),
++  search: () => import('./assets/search.js'),
++  searchProfilerApp: () => import('./assets/app_search_profiler.js'),
++  securityAnalyticsApp: () => import('./assets/app_security_analytics.js'),
++  securityApp: () => import('./assets/app_security.js'),
++  securitySignal: () => import('./assets/securitySignal.js'),
++  securitySignalDetected: () => import('./assets/securitySignalDetected.js'),
++  securitySignalResolved: () => import('./assets/securitySignalResolved.js'),
++  shard: () => import('./assets/shard.js'),
++  share: () => import('./assets/share.js'),
++  snowflake: () => import('./assets/snowflake.js'),
++  sortDown: () => import('./assets/sort_down.js'),
++  sortLeft: () => import('./assets/sortLeft.js'),
++  sortRight: () => import('./assets/sortRight.js'),
++  sortUp: () => import('./assets/sort_up.js'),
++  sortable: () => import('./assets/sortable.js'),
++  spacesApp: () => import('./assets/app_spaces.js'),
++  sqlApp: () => import('./assets/app_sql.js'),
++  starEmpty: () => import('./assets/star_empty.js'),
++  starEmptySpace: () => import('./assets/star_empty_space.js'),
++  starFilled: () => import('./assets/star_filled.js'),
++  starFilledSpace: () => import('./assets/star_filled_space.js'),
++  starMinusEmpty: () => import('./assets/star_minus_empty.js'),
++  starMinusFilled: () => import('./assets/star_minus_filled.js'),
++  starPlusEmpty: () => import('./assets/starPlusEmpty.js'),
++  starPlusFilled: () => import('./assets/starPlusFilled.js'),
++  stats: () => import('./assets/stats.js'),
++  stop: () => import('./assets/stop.js'),
++  stopFilled: () => import('./assets/stop_filled.js'),
++  stopSlash: () => import('./assets/stop_slash.js'),
++  storage: () => import('./assets/storage.js'),
++  string: () => import('./assets/string.js'),
++  submodule: () => import('./assets/submodule.js'),
++  swatchInput: () => import('./assets/swatch_input.js'),
++  // Undocumented on purpose. Has an extra stroke for EuiColorPicker
++  symlink: () => import('./assets/symlink.js'),
++  tableDensityCompact: () => import('./assets/table_density_compact.js'),
++  tableDensityExpanded: () => import('./assets/table_density_expanded.js'),
++  tableDensityNormal: () => import('./assets/table_density_normal.js'),
++  tableOfContents: () => import('./assets/tableOfContents.js'),
++  tag: () => import('./assets/tag.js'),
++  tear: () => import('./assets/tear.js'),
++  temperature: () => import('./assets/temperature.js'),
++  timeline: () => import('./assets/timeline.js'),
++  timelionApp: () => import('./assets/app_timelion.js'),
++  timeslider: () => import('./assets/timeslider.js'),
++  training: () => import('./assets/training.js'),
++  trash: () => import('./assets/trash.js'),
++  unfold: () => import('./assets/unfold.js'),
++  unlink: () => import('./assets/unlink.js'),
++  upgradeAssistantApp: () => import('./assets/app_upgrade_assistant.js'),
++  uptimeApp: () => import('./assets/app_uptime.js'),
++  user: () => import('./assets/user.js'),
++  users: () => import('./assets/users.js'),
++  usersRolesApp: () => import('./assets/app_users_roles.js'),
++  vector: () => import('./assets/vector.js'),
++  videoPlayer: () => import('./assets/videoPlayer.js'),
++  visArea: () => import('./assets/vis_area.js'),
++  visAreaStacked: () => import('./assets/vis_area_stacked.js'),
++  visBarHorizontal: () => import('./assets/vis_bar_horizontal.js'),
++  visBarHorizontalStacked: () => import('./assets/vis_bar_horizontal_stacked.js'),
++  visBarVertical: () => import('./assets/vis_bar_vertical.js'),
++  visBarVerticalStacked: () => import('./assets/vis_bar_vertical_stacked.js'),
++  visGauge: () => import('./assets/vis_gauge.js'),
++  visGoal: () => import('./assets/vis_goal.js'),
++  visLine: () => import('./assets/vis_line.js'),
++  visMapCoordinate: () => import('./assets/vis_map_coordinate.js'),
++  visMapRegion: () => import('./assets/vis_map_region.js'),
++  visMetric: () => import('./assets/vis_metric.js'),
++  visPie: () => import('./assets/vis_pie.js'),
++  visTable: () => import('./assets/vis_table.js'),
++  visTagCloud: () => import('./assets/vis_tag_cloud.js'),
++  visText: () => import('./assets/vis_text.js'),
++  visTimelion: () => import('./assets/vis_timelion.js'),
++  visVega: () => import('./assets/vis_vega.js'),
++  visVisualBuilder: () => import('./assets/vis_visual_builder.js'),
++  visualizeApp: () => import('./assets/app_visualize.js'),
++  watchesApp: () => import('./assets/app_watches.js'),
++  wordWrap: () => import('./assets/wordWrap.js'),
++  wordWrapDisabled: () => import('./assets/wordWrapDisabled.js'),
++  workplaceSearchApp: () => import('./assets/app_workplace_search.js'),
++  wrench: () => import('./assets/wrench.js'),
++};
+diff --git a/node_modules/@elastic/eui/src/global_styling/mixins/_loading.scss b/node_modules/@elastic/eui/src/global_styling/mixins/_loading.scss
+index 0f72a84..69b3450 100644
+--- a/node_modules/@elastic/eui/src/global_styling/mixins/_loading.scss
++++ b/node_modules/@elastic/eui/src/global_styling/mixins/_loading.scss
+@@ -1,6 +1,6 @@
+ @function euiLoadingSpinnerBorderColors(
+-  $main: $euiColorLightShade,
+-  $highlight: $euiColorPrimary
++  $main: var(--euiColorLightShade),
++  $highlight: var(--euiColorPrimary)
+ ) {
+   @return $highlight $main $main $main;
+ }
+diff --git a/node_modules/@elastic/eui/src/global_styling/reset/_reset.scss b/node_modules/@elastic/eui/src/global_styling/reset/_reset.scss
+index e4f8104..0f96065 100644
+--- a/node_modules/@elastic/eui/src/global_styling/reset/_reset.scss
++++ b/node_modules/@elastic/eui/src/global_styling/reset/_reset.scss
+@@ -62,7 +62,7 @@ html {
+   font-size: $euiFontSize;
+   color: $euiTextColor;
+   height: 100%;
+-  background-color: $euiPageBackgroundColor;
++  background-color: var(--euiPageBackgroundColor);
+ }
+ 
+ body {
+@@ -85,7 +85,7 @@ body {
+ 
+ a {
+   text-decoration: none;
+-  color: $euiColorPrimary;
++  color: var(--euiColorPrimary);
+ 
+   &:hover {
+     text-decoration: none;
+diff --git a/node_modules/@elastic/eui/src/global_styling/reset/_scrollbar.scss b/node_modules/@elastic/eui/src/global_styling/reset/_scrollbar.scss
+index 18c12b1..b5db47e 100644
+--- a/node_modules/@elastic/eui/src/global_styling/reset/_scrollbar.scss
++++ b/node_modules/@elastic/eui/src/global_styling/reset/_scrollbar.scss
+@@ -1,8 +1,15 @@
+ // Firefox's scrollbar coloring cascades throughout which is why it's set at the html level
+ // However, the width sizing is not, but this has been added to the euiScrollBar mixin as well
+ 
++
++@mixin transparent($color, $factor) {
++  $alpha: 1 - $factor;
++  color: rgba($color, $alpha);
++}
++
++
+ html {
+   // sass-lint:disable-block no-misspelled-properties
+   scrollbar-width: thin;
+-  scrollbar-color: transparentize($euiColorDarkShade, .5) transparent; // Firefox support
++  scrollbar-color: transparent(var(--euiColorDarkShade), 0.5) transparent; // Firefox support
+ }

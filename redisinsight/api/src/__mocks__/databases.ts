@@ -41,6 +41,43 @@ export const mockDatabase = Object.assign(new Database(), {
   version: '7.0',
 });
 
+export const mockDatabaseModules = [
+  {
+    name: 'rg',
+    version: 10204,
+    semanticVersion: '1.2.4',
+  },
+  {
+    name: 'bf',
+    version: 20209,
+    semanticVersion: '2.2.9',
+  },
+  {
+    name: 'timeseries',
+    version: 10616,
+    semanticVersion: '1.6.16',
+  },
+  {
+    name: 'search',
+    version: 999999,
+    semanticVersion: '99.99.99',
+  },
+  {
+    name: 'graph',
+    version: 20815,
+    semanticVersion: '2.8.15',
+  },
+  {
+    name: 'ReJSON',
+    version: 20011,
+    semanticVersion: '2.0.11',
+  },
+  {
+    name: 'ai',
+    version: 10205,
+    semanticVersion: '1.2.5',
+  },
+];
 export const mockDatabaseWithCloudDetails = Object.assign(new Database(), {
   ...mockDatabase,
   cloudDetails: mockCloudDatabaseDetails,

@@ -30,7 +30,7 @@ import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { ReactComponent as GithubSVG } from 'uiSrc/assets/img/github.svg'
+import GithubSVG from 'uiSrc/assets/img/github.svg?react'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'

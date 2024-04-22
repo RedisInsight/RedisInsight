@@ -1,0 +1,1 @@
+FT.CREATE idx:bicycle ON JSON PREFIX 1 bicycle: SCHEMA $.brand AS brand TEXT WEIGHT 1.0 $.model AS model TEXT WEIGHT 1.0 $.description AS description TEXT WEIGHT 1.0 $.price AS price NUMERIC $.condition AS condition TAG SEPARATOR , $.type AS type TAG $.helmet_included AS helmet_included TAG $.specs.material AS material TAG $.specs.weight AS weight NUMERIC

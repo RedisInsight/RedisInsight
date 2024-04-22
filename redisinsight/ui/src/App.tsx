@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader/root'
 import React, { ReactElement } from 'react'
 import { Provider, useSelector } from 'react-redux'
 import { EuiPage, EuiPageBody } from '@elastic/eui'
@@ -14,15 +13,17 @@ import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFl
 import { ThemeProvider } from './contexts/themeContext'
 import MainComponent from './components/main/MainComponent'
 import ThemeComponent from './components/theme/ThemeComponent'
+import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitializer/MonacoEnvironmentInitializer'
 import GlobalDialogs from './components/global-dialogs'
 
-import themeDark from './styles/themes/dark_theme/_dark_theme.lazy.scss'
-import themeLight from './styles/themes/light_theme/_light_theme.lazy.scss'
+import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
+import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
 
+import './styles/elastic.css'
 import './App.scss'
 
-themeService.registerTheme(Theme.Dark, [themeDark])
-themeService.registerTheme(Theme.Light, [themeLight])
+themeService.registerTheme(Theme.Dark, themeDark)
+themeService.registerTheme(Theme.Light, themeLight)
 
 const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
   <Provider store={store}>
@@ -40,6 +41,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
   return (
     <div className="main-container">
       <ThemeComponent />
+      <MonacoEnvironmentInitializer />
       { serverLoading
         ? <PagePlaceholder />
         : (
@@ -60,4 +62,4 @@ const App = ({ children }: { children?: ReactElement[] }) => {
     </div>
   )
 }
-export default hot(AppWrapper)
+export default AppWrapper

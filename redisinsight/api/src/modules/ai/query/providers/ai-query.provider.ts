@@ -1,42 +1,34 @@
-import { SessionMetadata } from 'src/common/models';
+import { io, Socket } from 'socket.io-client';
 import config, { Config } from 'src/utils/config';
-import axios from 'axios';
-import { wrapAiQueryError } from 'src/modules/ai/query/exceptions';
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { AiQueryAuthData } from 'src/modules/ai/query/models/ai-query.auth-data';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
+@Injectable()
 export class AiQueryProvider {
   private readonly logger = new Logger('AiQueryProvider');
 
-  protected api = axios.create({
-    baseURL: aiConfig.queryApiUrl,
-  });
-
-  async generateQuery(sessionMetadata: SessionMetadata, question: string, context: object): Promise<object> {
-    try {
-      const { data } = await this.api.post(
-        '/generate_query',
-        {
-          question,
-          context,
+  async getSocket(auth: AiQueryAuthData): Promise<Socket> {
+    return new Promise((resolve, reject) => {
+      const socket = io(aiConfig.querySocketUrl, {
+        path: aiConfig.querySocketPath,
+        reconnection: false,
+        extraHeaders: {
+          csrf: auth.csrf,
+          cookie: `JSESSIONID=${auth.sessionId}`,
         },
-        {
-          auth: {
-            username: aiConfig.queryApiUser,
-            password: aiConfig.queryApiPass,
-          },
-        },
-      );
+      });
 
-      if (data.error) {
-        this.logger.error(data.error, data);
-        return Promise.reject(new Error('AI return an error'));
-      }
+      socket.on('connect_error', (e) => {
+        this.logger.error('Unable to establish AI socket connection', e);
+        reject(e);
+      });
 
-      return data;
-    } catch (e) {
-      throw wrapAiQueryError(e);
-    }
+      socket.on('connect', async () => {
+        this.logger.debug('AI socket connection established');
+        resolve(socket);
+      });
+    });
   }
 }

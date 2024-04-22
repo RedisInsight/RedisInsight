@@ -5,16 +5,13 @@ import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssi
 import { Nullable } from 'uiSrc/utils'
 
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
-import EmptyHistoryScreen from '../empty-history'
 import LoadingMessage from '../loading-message'
 import MarkdownMessage from '../markdown-message'
-import { AiChatSuggestion } from '../../constants'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  suggestions?: AiChatSuggestion[]
-  welcomeText?: React.ReactNode
+  initialMessage?: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
   isLoadingAnswer?: boolean
   modules?: AdditionalRedisModule[]
@@ -22,13 +19,11 @@ export interface Props {
   scrollDivRef: React.Ref<HTMLDivElement>
   onMessageRendered?: () => void
   onRunCommand?: (query: string) => void
-  onSubmit: (value: string) => void
 }
 
 const ChatHistory = (props: Props) => {
   const {
-    suggestions,
-    welcomeText,
+    initialMessage,
     progressingMessage,
     isLoadingAnswer,
     modules,
@@ -36,7 +31,6 @@ const ChatHistory = (props: Props) => {
     scrollDivRef,
     onMessageRendered,
     onRunCommand,
-    onSubmit,
   } = props
 
   const getMessage = useCallback(({ type: messageType, content, id }: AiChatMessage) => (content ? (
@@ -58,13 +52,18 @@ const ChatHistory = (props: Props) => {
     </div>
   ) : null), [modules])
 
-  if (history.length === 0) {
+  if (history.length === 0 && initialMessage) {
     return (
-      <EmptyHistoryScreen
-        welcomeText={welcomeText}
-        suggestions={suggestions}
-        onSubmit={onSubmit}
-      />
+      <div className={styles.wrapper}>
+        <div className={styles.history} data-testid="ai-chat-empty-history">
+          <div
+            className={cx('jsx-markdown', styles.answer)}
+            data-testid="ai-message-initial-message"
+          >
+            {initialMessage}
+          </div>
+        </div>
+      </div>
     )
   }
 

@@ -1,6 +1,3 @@
-@import "@elastic/eui/src/global_styling/index";
-@import "uiSrc/styles/mixins/_global.scss";
-
 .page {
   padding: 1px 16px 16px !important;
 
@@ -34,7 +31,7 @@
 }
 
 .emptyPanel {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   overflow: auto;
   position: relative;
@@ -52,7 +49,7 @@
   height: 100%;
 }
 
-@include insights-open {
+@include global.insights-open {
   :global {
     .home {
       &__resizePanelLeft {

@@ -33,7 +33,7 @@ export default defineConfig({
   envPrefix: 'RI_',
   optimizeDeps: {
     include: [
-      // 'monaco-yaml/yaml.worker',
+      'monaco-yaml/yaml.worker',
     ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722

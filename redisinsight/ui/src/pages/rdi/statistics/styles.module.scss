@@ -1,7 +1,5 @@
-@import "@elastic/eui/src/global_styling/index";
-
 .pageContainer {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   overflow: auto;
   position: relative;

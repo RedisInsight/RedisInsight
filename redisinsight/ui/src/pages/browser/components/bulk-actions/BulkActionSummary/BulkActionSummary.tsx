@@ -4,7 +4,7 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { BulkActionsType } from 'uiSrc/constants'
 
-import styles from './styles.modules.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   type?: BulkActionsType

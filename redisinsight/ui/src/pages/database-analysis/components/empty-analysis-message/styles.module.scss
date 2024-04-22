@@ -1,9 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   display: flex;
   justify-content: center;
   overflow: auto;
@@ -18,7 +14,9 @@
   margin: auto;
 
   .title {
-    font: normal normal 500 18px/24px Graphik, sans-serif !important;
+    font:
+      normal normal 500 18px/24px Graphik,
+      sans-serif !important;
     padding-bottom: 12px;
   }
 

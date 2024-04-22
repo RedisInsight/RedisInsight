@@ -1,9 +1,3 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 .wrapper {
   border-radius: 8px;
   height: 48px;
@@ -52,7 +46,8 @@
     cursor: pointer;
     text-decoration: none;
 
-    &:focus, &:hover {
+    &:focus,
+    &:hover {
       text-decoration: underline;
     }
 
@@ -68,13 +63,13 @@
   }
 }
 
-@include welcome-page-header(650px) {
+@include global.welcome-page-header(650px) {
   .guideItem:nth-child(3) {
     display: none;
   }
 }
 
-@include welcome-page-header(850px) {
+@include global.welcome-page-header(850px) {
   .guideItem:nth-child(4) {
     display: none;
   }

@@ -12,9 +12,9 @@ import FilterKeyType from 'uiSrc/pages/browser/components/filter-key-type'
 import RediSearchIndexesList from 'uiSrc/pages/browser/components/redisearch-key-list'
 import SearchKeyList from 'uiSrc/pages/browser/components/search-key-list'
 
-import { ReactComponent as BulkActionsIcon } from 'uiSrc/assets/img/icons/bulk_actions.svg'
-import { ReactComponent as VectorIcon } from 'uiSrc/assets/img/icons/vector.svg'
-import { ReactComponent as RediSearchIcon } from 'uiSrc/assets/img/modules/RedisSearchLight.svg'
+import BulkActionsIcon from 'uiSrc/assets/img/icons/bulk_actions.svg?react'
+import VectorIcon from 'uiSrc/assets/img/icons/vector.svg?react'
+import RediSearchIcon from 'uiSrc/assets/img/modules/RedisSearchLight.svg?react'
 
 import { changeSearchMode, keysSelector } from 'uiSrc/slices/browser/keys'
 import { isRedisearchAvailable } from 'uiSrc/utils'

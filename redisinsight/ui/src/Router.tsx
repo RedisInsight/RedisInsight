@@ -6,14 +6,13 @@ interface Props {
   children: React.ReactElement;
 }
 
-const RIPROXYPATH = window.__RIPROXYPATH__ || ''
+const RIPROXYPATH = window.__RI_PROXY_PATH__ || ''
 
 let MOUNT_PATH = '/'
 
-if (RIPROXYPATH != '') {
+if (RIPROXYPATH !== '') {
   MOUNT_PATH = RIPROXYPATH
 }
-
 
 const Router = ({ children }: Props) =>
   (process.env.RI_APP_TYPE !== AppEnv.ELECTRON ? (

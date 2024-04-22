@@ -12,7 +12,7 @@ import {
   setBrowserTreeDelimiter,
   setBrowserTreeSort,
 } from 'uiSrc/slices/app/context'
-import { ReactComponent as TreeViewSort } from 'uiSrc/assets/img/browser/treeViewSort.svg'
+import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
 
 import styles from './styles.module.scss'
 

@@ -12,10 +12,10 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
-import { ReactComponent as GoogleIcon } from 'uiSrc/assets/img/oauth/google.svg'
-import { ReactComponent as GithubIcon } from 'uiSrc/assets/img/oauth/github.svg'
-import { ReactComponent as GoogleSmallIcon } from 'uiSrc/assets/img/oauth/google_small.svg'
-import { ReactComponent as GithubSmallIcon } from 'uiSrc/assets/img/oauth/github_small.svg'
+import GoogleIcon from 'uiSrc/assets/img/oauth/google.svg?react'
+import GithubIcon from 'uiSrc/assets/img/oauth/github.svg?react'
+import GoogleSmallIcon from 'uiSrc/assets/img/oauth/google_small.svg?react'
+import GithubSmallIcon from 'uiSrc/assets/img/oauth/github_small.svg?react'
 
 import styles from './styles.module.scss'
 

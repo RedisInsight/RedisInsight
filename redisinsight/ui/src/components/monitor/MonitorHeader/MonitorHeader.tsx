@@ -19,7 +19,7 @@ import {
   toggleMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { ReactComponent as BanIcon } from 'uiSrc/assets/img/monitor/ban.svg'
+import BanIcon from 'uiSrc/assets/img/monitor/ban.svg'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 

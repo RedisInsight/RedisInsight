@@ -1,7 +1,3 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 :global {
   .homePage {
     .column_status_alert {
@@ -40,7 +36,7 @@
 }
 
 .table {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow: auto;
   max-height: calc(100vh - 370px) !important;
 
@@ -166,7 +162,7 @@
   .dot::before {
     font-size: 8px;
     padding: 0 14px;
-    content: ' \25CF';
+    content: " \25CF";
     vertical-align: middle;
   }
 }

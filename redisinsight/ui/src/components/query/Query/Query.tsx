@@ -38,8 +38,8 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/query/DedicatedEditor/DedicatedEditor'
-import { ReactComponent as RawModeIcon } from 'uiSrc/assets/img/icons/raw_mode.svg'
-import { ReactComponent as GroupModeIcon } from 'uiSrc/assets/img/icons/group_mode.svg'
+import RawModeIcon from 'uiSrc/assets/img/icons/raw_mode.svg?react'
+import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 
 import styles from './styles.module.scss'
 

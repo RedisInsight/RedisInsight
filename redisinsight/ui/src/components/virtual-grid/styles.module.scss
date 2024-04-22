@@ -1,15 +1,11 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 $paddingCell: 12px;
 
 .customScroll {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 }
 
 .grid {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   position: relative;
 }
 

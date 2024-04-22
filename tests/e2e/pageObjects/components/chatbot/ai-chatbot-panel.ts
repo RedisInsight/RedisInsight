@@ -3,7 +3,7 @@ import { ChatBotTabs } from '../../../helpers/constants';
 import { DatabaseChatBotTab } from './database-chatbot-tab';
 import { GeneralChatBotTab } from './general-chatbot-tab';
 
-export class InsightsPanel {
+export class AiChatBotPanel {
     // CONTAINERS
     sidePanel = Selector('[data-testid=redis-copilot]');
     copilotButton = Selector('[data-testid=]');

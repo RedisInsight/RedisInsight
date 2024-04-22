@@ -11,9 +11,9 @@ import MarkdownMessage from '../markdown-message'
 import styles from './styles.module.scss'
 
 export interface Props {
-  initialMessage?: React.ReactNode
+  isLoading?: boolean
+  initialMessage: React.ReactNode
   progressingMessage?: Nullable<AiChatMessage>
-  isLoadingAnswer?: boolean
   modules?: AdditionalRedisModule[]
   history: AiChatMessage[]
   scrollDivRef: React.Ref<HTMLDivElement>
@@ -23,9 +23,9 @@ export interface Props {
 
 const ChatHistory = (props: Props) => {
   const {
+    isLoading,
     initialMessage,
     progressingMessage,
-    isLoadingAnswer,
     modules,
     history = [],
     scrollDivRef,
@@ -52,7 +52,12 @@ const ChatHistory = (props: Props) => {
     </div>
   ) : null), [modules])
 
-  if (history.length === 0 && initialMessage) {
+  if (isLoading) {
+    // TODO: add loader
+    return null
+  }
+
+  if (history.length === 0) {
     return (
       <div className={styles.wrapper}>
         <div className={styles.history} data-testid="ai-chat-empty-history">
@@ -72,7 +77,9 @@ const ChatHistory = (props: Props) => {
       <div className={styles.history} data-testid="ai-chat-history">
         {history.map(getMessage)}
         {!!progressingMessage && getMessage(progressingMessage)}
-        {isLoadingAnswer && (<div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>)}
+        {progressingMessage?.content === '' && (
+          <div className={styles.answer} data-testid="ai-loading-answer"><LoadingMessage /></div>
+        )}
         <div ref={scrollDivRef} />
       </div>
     </div>

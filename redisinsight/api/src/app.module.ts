@@ -64,7 +64,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     TriggeredFunctionsModule,
     CloudModule.register(),
     AiChatModule,
-    AiQueryModule,
+    AiQueryModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({

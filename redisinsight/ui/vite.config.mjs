@@ -36,6 +36,7 @@ export default defineConfig({
       // 'monaco-yaml/yaml.worker',
     ],
     esbuildOptions: {
+      // fix for https://github.com/bvaughn/react-virtualized/issues/1722
       plugins: [fixReactVirtualized],
     },
   },

@@ -25,7 +25,7 @@ export default defineConfig({
   plugins: [
     react(),
     svgr({ include: ['**/*.svg?react'] }),
-    // compression({
+    // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true
     // }),

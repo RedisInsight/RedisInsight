@@ -15,12 +15,11 @@ if (window.__RI_PROXY_PATH__) {
   apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
 }
 
-export const getBaseUrl = () => (!isDevelopment && isWebApp
-  ? `${window.location.origin}/${apiPrefix}/`
-  : `${baseApiUrl}:${apiPort}/${apiPrefix}/`)
-
 const axiosInstance = axios.create({
-  baseURL: getBaseUrl(),
+  baseURL:
+    !isDevelopment && isWebApp
+      ? `${window.location.origin}/${apiPrefix}/`
+      : `${baseApiUrl}:${apiPort}/${apiPrefix}/`,
 })
 
 export const requestInterceptor = (config: AxiosRequestConfig) => {

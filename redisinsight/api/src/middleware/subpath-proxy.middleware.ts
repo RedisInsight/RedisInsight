@@ -11,7 +11,7 @@ export default class SubpathProxyMiddleware implements NestMiddleware {
     res.sendFile = function (this: Response, path: string, options: any, callback?: (err?: Error) => void) {
       if (path.endsWith('.html')) {
         let content = fs.readFileSync(path, 'utf8');
-        const regex = /\/?__RIPROXYPATH__/g;
+        const regex = /__RIPROXYPATH__/g;
         content = content.replace(regex, proxyPath);
         res.send(content);
         return;

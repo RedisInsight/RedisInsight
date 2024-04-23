@@ -13,12 +13,24 @@ const configuration: webpack.Configuration =  {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              compilerOptions: {
+                module: 'esnext',
+              },
+            },
           },
-        },
+          {
+            loader: 'string-replace-loader',
+            options: {
+              search: /import (\w+) from '(.+?)\.svg\?react'/g,
+              replace: "import { ReactComponent as $1 } from '$2.svg'",
+            },
+          }
+        ]
       },
     ],
   },

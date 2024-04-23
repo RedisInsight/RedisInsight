@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
-// eslint-disable-next-line prefer-destructuring
-const apiPort = window.app.config.apiPort
+const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'

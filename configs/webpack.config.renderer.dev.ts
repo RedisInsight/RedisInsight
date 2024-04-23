@@ -67,25 +67,6 @@ const configuration: webpack.Configuration = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: require.resolve('babel-loader'),
-            options: {
-              plugins: [require.resolve('react-refresh/babel')].filter(Boolean),
-            },
-          },
-          {
-            loader: 'string-replace-loader',
-            options: {
-              search: /import (\w+) from '(.+?)\.svg\?react'/g,
-              replace: "import { ReactComponent as $1 } from '$2.svg'",
-            },
-          }
-        ],
-      },
-      {
         test: /\.module\.s(a|c)ss$/,
         use: [
           {

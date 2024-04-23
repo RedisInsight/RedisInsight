@@ -23,13 +23,6 @@ const configuration: webpack.Configuration =  {
               },
             },
           },
-          // {
-          //   loader: 'string-replace-loader',
-          //   options: {
-          //     search: /import (\w+) from '(.+?)\.svg\?react'/g,
-          //     replace: "import { ReactComponent as $1 } from '$2.svg'",
-          //   },
-          // }
         ]
       },
     ],

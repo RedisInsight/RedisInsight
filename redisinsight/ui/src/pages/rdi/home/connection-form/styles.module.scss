@@ -1,10 +1,8 @@
-@import '@elastic/eui/src/global_styling/index';
-
 .form {
   height: 100%;
 }
 .connectionFormPanel {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   overflow: auto;
   position: relative;

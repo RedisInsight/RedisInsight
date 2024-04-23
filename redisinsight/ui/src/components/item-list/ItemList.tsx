@@ -189,6 +189,10 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         selection={selectionValue}
         onWheel={onWheel}
         onTableChange={onTableChange}
+        className={cx(
+          'stickyHeader',
+          styles.table
+        )}
         isSelectable
       />
 

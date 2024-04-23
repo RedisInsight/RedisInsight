@@ -1,16 +1,5 @@
-@import "../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_light";
 @import "theme_color";
 
-// Global styling
-@import "../../../../../../node_modules/@elastic/eui/src/global_styling/index";
-
-// Components
-@import "../../../../../../node_modules/@elastic/eui/src/components/index";
-
-// Packages
-@import "../../../../../../node_modules/@elastic/eui/packages/index";
-
-// TODO[artyom.podymov]: Maybe there is a better approach for dynamically switching themes
 :root {
   // Core
   --navBackgroundColor: #{$navBackgroundColor};
@@ -20,16 +9,18 @@
   --euiColorPrimaryRGB: #{$euiColorPrimaryRGB};
   --euiColorSecondary: #{$euiColorSecondary};
   --euiColorSuccess: #{$euiColorSuccess};
-  --euiColorSecondaryText: #{$euiColorSecondaryText};
   --euiColorAccent: #{$euiColorAccent};
   --euiColorHighlight: #{$euiColorHighlight};
+  --euiColorDisabled: #{$euiColorDisabled};
+  --euiColorAccentText: #{$euiColorAccentText};
+  --euiColorDisabledText: #{$euiColorDisabledText};
 
   // Status
   --euiColorColorSuccess: #{$euiColorSuccess};
   --euiColorColorWarning: #{$euiColorWarning};
   --euiColorColorDanger: #{$euiColorDanger};
 
-  --euiColorWarningLight: #{$euiColorWarning};
+  --euiColorWarningLight: #{$euiColorWarningLight};
 
   // Grays
   --euiColorEmptyShade: #{$euiColorEmptyShade};
@@ -39,7 +30,7 @@
   --euiColorDarkShade: #{$euiColorDarkShade};
   --euiColorDarkestShade: #{$euiColorDarkestShade};
   --euiColorFullShade: #{$euiColorFullShade};
-  --euiColorGhost: #{$euiColorSecondary};
+  --euiColorGhost: #{$euiColorGhost};
 
   // Variations from core
   --euiTextColor: #{$htmlColor};
@@ -54,10 +45,11 @@
 
   // Contrasty text variants
   --euiColorPrimaryText: #{$euiColorPrimaryText};
+  --euiColorSecondaryText: #{$euiColorSecondaryText};
+  --euiColorSuccessText: #{$euiColorSuccessText};
   --euiColorAccentText: #{$euiColorAccentText};
   --euiColorWarningText: #{$euiColorWarningText};
   --euiColorDangerText: #{$euiColorDangerText};
-  --euiColorSuccessText: #{$euiColorSuccessText};
 
   // Charts
   --euiColorChartLines: #{$euiColorChartLines};
@@ -74,7 +66,7 @@
   --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
   --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
   --euiToastDangerBorderColor: #{$euiToastDangerBorderColor};
-  --euiToastLightColor: #{$euiColorLightestShade};
+  --euiToastLightColor: #{$euiColorDarkShade};
 
   // Custom
   --htmlColor: #{$htmlColor};
@@ -89,10 +81,9 @@
   --controlsBoxShadowColor: #{$controlsBoxShadowColor};
   --controlsBorderColor: #{$controlsBorderColor};
   --controlsLabelColor: #{$controlsLabelColor};
-  --controlsLabelHoverColor: #{$controlsLabelHoverColor};
   --hoverInListColor: #{$hoverInListColor};
-  --hoverInListColorLight: #{$hoverInListColor};
-  --hoverInListColorDarken: #{$hoverInListColorLight};
+  --hoverInListColorLight: #{$hoverInListColorLight};
+  --hoverInListColorDarken: #{$hoverInListColorDarken};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
   --linkToastColor: #{$linkToastColor};
@@ -123,6 +114,7 @@
   --buttonSuccessColor: #{$buttonSuccessColor};
 
   --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
+  --loadingContentColor: #{$loadingContentColor};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
@@ -130,8 +122,8 @@
   --badgeBackgroundColor: #{$badgeBackgroundColor};
   --commandGroupBadgeColor: #{$commandGroupBadgeColor};
 
-  --moduleBackgroundColor: #{$typeHashColor};
-  --callOutBackgroundColor: #{$callOutBackgroundColor};
+  --moduleBackgroundColor: #{$commandGroupBadgeColor};
+  --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
   --tooltipLightBgColor: #{$tooltipLightBgColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
@@ -198,11 +190,11 @@
 
   // Recommendations
   --recommendationsBgColor: #{$recommendationsBgColor};
-  --recommendationColor: #{$recommendationColor};
   --recommendationBgColor: #{$recommendationBgColor};
   --recommendationLiveBorderColor: #{$recommendationLiveBorderColor};
+  --recommendationColor: #{$recommendationColor};
   --triggerIconActiveColor: #{$triggerIconActiveColor};
-  --liveRecommendationVoteBgColor: #{$separatorColor};
+  --liveRecommendationVoteBgColor: #{$controlsBorderColor};
   --triggerIconTextColor: #{$triggerIconTextColor};
   --recommendationsCountBgColor: #{$recommendationsCountBgColor};
 
@@ -211,6 +203,6 @@
   --cloudSsoGithub: #{$cloudSsoGithub};
   --cloudSsoAdvantagesBgColor: #{$cloudSsoAdvantagesBgColor};
 
-  // RDI
+  // rdi
   --rdiSecondaryBgColor: #{$rdiSecondaryBgColor};
 }

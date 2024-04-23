@@ -1,8 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/global_styling/index";
-
 .wrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-y: auto;
   padding: 16px 0;
   border-bottom: 1px solid var(--separatorColor);

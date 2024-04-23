@@ -41,7 +41,7 @@ describe('AssistanceChat', () => {
     render(<AssistanceChat />)
 
     expect(screen.getByTestId('ai-general-restart-session-btn')).toBeInTheDocument()
-    expect(screen.getByTestId('empty-chat-container')).toBeInTheDocument()
+    expect(screen.getByTestId('ai-chat-empty-history')).toBeInTheDocument()
     expect(screen.getByTestId('ai-submit-message-btn')).toBeInTheDocument()
   })
 

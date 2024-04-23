@@ -8,6 +8,7 @@ module.exports = {
       '<rootDir>/redisinsight/__mocks__/fileMock.js',
     '\\.svg': '<rootDir>/redisinsight/__mocks__/svg.js',
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+    '\\.scss\\?inline$': '<rootDir>/redisinsight/__mocks__/scssRaw.js',
     'uiSrc/(.*)': '<rootDir>/redisinsight/ui/src/$1',
     'monaco-editor': '<rootDir>/redisinsight/__mocks__/monacoMock.js',
     'monaco-yaml': '<rootDir>/redisinsight/__mocks__/monacoYamlMock.js',
@@ -23,6 +24,7 @@ module.exports = {
     msgpackr: require.resolve('msgpackr'),
   },
   setupFiles: [
+    'construct-style-sheets-polyfill',
     '<rootDir>/redisinsight/ui/src/setup-env.ts',
   ],
   setupFilesAfterEnv: [

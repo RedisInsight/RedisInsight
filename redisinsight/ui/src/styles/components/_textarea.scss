@@ -1,8 +1,7 @@
-@import '../../../../../node_modules/@elastic/eui/src/global_styling/index';
+@use "../mixins/eui";
 
 .euiTextArea {
-  @include euiScrollBar;
-  min-height: 50px;
+  @include eui.scrollBar;
   //&::-webkit-resizer{
   //  background-image: url("uiSrc/assets/img/resize-corner.svg");
   //}

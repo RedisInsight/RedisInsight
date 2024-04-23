@@ -1,9 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   position: relative;
   background-color: var(--tableLightBorderColor);
   border-radius: 4px;

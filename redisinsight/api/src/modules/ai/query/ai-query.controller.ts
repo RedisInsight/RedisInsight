@@ -1,8 +1,8 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Logger,
-  Post,
+  Controller, Delete, Get, Logger, Param,
+  Post, Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -13,10 +13,11 @@ import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 import { AiQueryService } from 'src/modules/ai/query/ai-query.service';
 import { SendAiQueryMessageDto } from 'src/modules/ai/query/dto/send.ai-query.message.dto';
+import { Response } from 'express';
 
 @ApiTags('AI')
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('ai/expert/queries')
+@Controller('ai/expert/:id/messages')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class AiQueryController {
   private readonly logger = new Logger('AiQueryController');
@@ -25,23 +26,44 @@ export class AiQueryController {
     private readonly service: AiQueryService,
   ) {}
 
-  @Post('/')
+  @Post()
   @ApiEndpoint({
     description: 'Generate new query',
     statusCode: 200,
     responses: [{ type: String }],
   })
-  async generateQuery(
+  async streamQuestion(
   @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @Param('id') databaseId: string,
     @Body() dto: SendAiQueryMessageDto,
+    @Res() res: Response,
   ) {
-    try {
-      return await this.service.generateQuery(sessionMetadata, dto);
-    } catch (e) {
-      this.logger.error(e.message, e);
-      return {
-        error: '*It seems you’re trying to initiate a search query, but I need a bit more context to assist you accurately. Could you please provide more details or clarify what specific information or action you are looking for?*',
-      };
-    }
+    await this.service.stream(sessionMetadata, databaseId, dto, res);
+  }
+
+  @Get()
+  @ApiEndpoint({
+    description: 'Generate new query',
+    statusCode: 200,
+    responses: [{ type: String }],
+  })
+  async getHistory(
+  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @Param('id') databaseId: string,
+  ) {
+    return this.service.getHistory(sessionMetadata, databaseId);
+  }
+
+  @Delete()
+  @ApiEndpoint({
+    description: 'Generate new query',
+    statusCode: 200,
+    responses: [{ type: String }],
+  })
+  async clearHistory(
+  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @Param('id') databaseId: string,
+  ) {
+    return this.service.clearHistory(sessionMetadata, databaseId);
   }
 }

@@ -18,7 +18,7 @@ import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 
-import { ReactComponent as RocketIcon } from 'uiSrc/assets/img/icons/rocket.svg'
+import RocketIcon from 'uiSrc/assets/img/icons/rocket.svg?react'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
 import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'

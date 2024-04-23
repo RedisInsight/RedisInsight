@@ -12,6 +12,7 @@ import {
   SortOrder,
 } from 'uiSrc/constants'
 import { localStorageService, setCapabilityStorageField, setDBConfigStorageField } from 'uiSrc/services'
+import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
@@ -327,6 +328,7 @@ export function resetDatabaseContext() {
     dispatch(setRedisearchInitialState())
     dispatch(setInitialRecommendationsState())
     dispatch(setTriggeredFunctionsInitialState())
+    dispatch(clearExpertChatHistory())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

@@ -11,7 +11,7 @@ export const EXTERNAL_LINKS = {
   redisStack: 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/',
   cloudConsole: 'https://app.redislabs.com/#/databases',
   tryFree: 'https://redis.com/try-free',
-  docker: 'https://redis.io/docs/getting-started/install-stack/docker',
+  docker: 'https://redis.io/docs/install/install-stack/docker',
   rdiQuickStart: 'https://docs.redis.com/latest/rdi/quickstart/',
   rdiTransformation: 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/',
 }

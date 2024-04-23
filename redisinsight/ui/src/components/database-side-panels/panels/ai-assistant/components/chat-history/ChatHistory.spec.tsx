@@ -35,14 +35,14 @@ describe('ChatHistory', () => {
     expect(render(<ChatHistory {...mockedProps} />)).toBeTruthy()
   })
 
-  it('should render empty screen message', () => {
-    render(<ChatHistory {...mockedProps} history={[]} />)
+  it('should render intial chat message', () => {
+    render(<ChatHistory {...mockedProps} history={[]} initialMessage={(<div data-testid="initial-message" />)} />)
 
-    expect(screen.getByTestId('empty-chat-container')).toBeInTheDocument()
+    expect(screen.getByTestId('initial-message')).toBeInTheDocument()
   })
 
   it('should render loading answer indicator', () => {
-    render(<ChatHistory {...mockedProps} history={history} isLoadingAnswer />)
+    render(<ChatHistory {...mockedProps} history={history} progressingMessage={{ content: '' } as any} />)
 
     expect(screen.getByTestId('ai-loading-answer')).toBeInTheDocument()
   })

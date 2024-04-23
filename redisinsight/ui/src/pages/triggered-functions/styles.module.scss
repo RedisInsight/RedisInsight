@@ -1,9 +1,3 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
-@import "uiSrc/styles/mixins/_global.scss";
-
 $breakpoint-to-hide-resize-panel: 1124px;
 
 .main {
@@ -17,7 +11,8 @@ $breakpoint-to-hide-resize-panel: 1124px;
     .euiTableRow {
       border-left: 3px solid transparent;
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background-color: var(--tableRowSelectedColor) !important;
       }
       &.selected {
@@ -139,7 +134,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
       }
 
       &__table {
-        @include euiScrollBar;
+        @include eui.scrollBar;
         overflow: auto;
         position: relative;
         max-height: calc(100% - 42px);
@@ -168,7 +163,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
 
         .euiTableRow:hover,
         .euiTableRow:focus {
-          background-color: inherit !important;
+          background-color: var(--euiColorEmptyShade) !important;
         }
       }
 
@@ -195,7 +190,7 @@ $breakpoint-to-hide-resize-panel: 1124px;
       }
 
       .euiAccordion__childWrapper {
-        background: transparent;
+        background-color: var(--euiColorEmptyShade) !important;
         border: 1px solid var(--controlsBorderColor) !important;
         border-top-width: 0 !important;
         border-radius: 0 0 4px 4px;
@@ -210,13 +205,13 @@ $breakpoint-to-hide-resize-panel: 1124px;
       .euiCollapsibleNavGroup__children {
         max-height: 200px;
         overflow-y: auto;
-        @include euiScrollBar;
+        @include eui.scrollBar;
       }
     }
   }
 }
 
-@include insights-open {
+@include global.insights-open {
   .main {
     :global {
       .triggeredFunctions {
@@ -238,7 +233,6 @@ $breakpoint-to-hide-resize-panel: 1124px;
     }
   }
 }
-
 
 .onboardAnchor {
   position: fixed;

@@ -20,7 +20,7 @@ $marginIcon: 12px;
   }
 
   :global(.euiFlexGroup--gutterLarge > .euiFlexItem) {
-    margin: $marginIcon $marginIcon/2 !important;
+    margin: $marginIcon calc($marginIcon/2) !important;
 
     @media (min-width: $breakpoint-m) {
       margin: $marginIcon !important;
@@ -277,11 +277,11 @@ $marginIcon: 12px;
 .container :global(.euiFlexItem).viewTypeIcon {
   width: 54px;
   min-width: 54px;
-  margin: 0 $marginIcon/3 !important;
+  margin: 0 calc($marginIcon/3) !important;
 }
 
 .container :global(.euiFlexItem).playIcon {
-  margin-right: $marginIcon/3 !important;
+  margin-right: calc($marginIcon/3) !important;
 }
 
 .tooltipAnchor {

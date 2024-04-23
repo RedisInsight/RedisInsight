@@ -1,7 +1,5 @@
-@import "@elastic/eui/src/global_styling/index";
-
 .itemList {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   height: 100%;
   overflow: auto;

@@ -9,7 +9,7 @@ import { PUB_SUB_DEFAULT_CHANNEL } from 'uiSrc/pages/pub-sub/PubSubPage'
 import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { ReactComponent as UserInCircle } from 'uiSrc/assets/img/icons/user_in_circle.svg'
+import UserInCircle from 'uiSrc/assets/img/icons/user_in_circle.svg?react'
 import SubscribedIconDark from 'uiSrc/assets/img/pub-sub/subscribed.svg'
 import SubscribedIconLight from 'uiSrc/assets/img/pub-sub/subscribed-lt.svg'
 import NotSubscribedIconDark from 'uiSrc/assets/img/pub-sub/not-subscribed.svg'

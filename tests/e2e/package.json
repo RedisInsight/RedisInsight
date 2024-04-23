@@ -10,7 +10,7 @@
     "build:api": "yarn --cwd ../../redisinsight/api build:prod",
     "build:statics": "cross-env E2E=true yarn --cwd ../../ build:statics",
     "build:statics:win": "cross-env E2E=true yarn --cwd ../../ build:statics:win",
-    "build:web": "yarn --cwd ../../ build:web",
+    "build:ui": "yarn --cwd ../../ build:ui",
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env yarn start:api",
     "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --disable-multiple-windows --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots/,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",

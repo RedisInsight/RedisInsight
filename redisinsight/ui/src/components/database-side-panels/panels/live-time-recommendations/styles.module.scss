@@ -1,7 +1,3 @@
-@import "@elastic/eui/src/global_styling/variables";
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-
 $animation-duration: 300ms;
 
 .content {
@@ -40,11 +36,13 @@ $animation-duration: 300ms;
     margin-left: 16px;
     background-color: var(--recommendationLiveBorderColor) !important;
     border: 1px solid var(--triggerIconActiveColor) !important;
-    color: #FFF7EA !important;
+    color: #fff7ea !important;
   }
 
   .title {
-    font: normal normal 500 18px/22px Graphik, sans-serif;
+    font:
+      normal normal 500 18px/22px Graphik,
+      sans-serif;
   }
 
   .actions {
@@ -57,7 +55,7 @@ $animation-duration: 300ms;
   padding: 8px 15px 24px !important;
   flex-grow: 1;
 
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-y: auto;
 }
 
@@ -76,7 +74,9 @@ $animation-duration: 300ms;
 
   .text,
   .link {
-    font: normal normal 400 12px/14px Graphik, sans-serif !important;
+    font:
+      normal normal 400 12px/14px Graphik,
+      sans-serif !important;
     color: var(--recommendationColor) !important;
   }
 
@@ -94,7 +94,9 @@ $animation-duration: 300ms;
   justify-content: space-between;
 
   .boldText {
-    font: normal normal 600 14px/17px Graphik, sans-serif !important;
+    font:
+      normal normal 600 14px/17px Graphik,
+      sans-serif !important;
   }
 
   .githubIcon {
@@ -126,4 +128,3 @@ $animation-duration: 300ms;
 .hideBtn {
   margin-bottom: 3px;
 }
-

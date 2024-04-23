@@ -200,6 +200,10 @@ const waitForEuiPopoverVisible = async () => {
   )
 }
 
+export const waitForStack = async (timeout = 0) => {
+  await waitFor(() => {}, { timeout })
+}
+
 // mock useHistory
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

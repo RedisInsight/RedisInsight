@@ -1,4 +1,4 @@
-# RedisInsight Testcafe e2e tests
+# Redis Insight Testcafe e2e tests
 
 ### Before run tests run next commands
 

@@ -1,13 +1,9 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .wrapper {
   height: 100%;
 }
 
 .recommendationsContainer {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(100% - 70px);
@@ -54,7 +50,9 @@
 }
 
 .bigText {
-  font: normal normal 600 18px/22px Graphik, sans-serif !important;
+  font:
+    normal normal 600 18px/22px Graphik,
+    sans-serif !important;
   margin: 16px 0 12px;
 }
 
@@ -69,7 +67,7 @@
 .recommendation {
   border-radius: 8px;
   border: 1px solid var(--recommendationBorderColor);
-  background-color: var(--euiColorLightestShade);
+  background-color: var(--euiColorLightestShade) !important;
   margin-bottom: 6px;
   padding: 30px 18px 11px;
 
@@ -105,6 +103,8 @@
   }
 
   .accordionBtn {
-    font: normal normal 500 16px/19px Graphik, sans-serif;
+    font:
+      normal normal 500 16px/19px Graphik,
+      sans-serif;
   }
 }

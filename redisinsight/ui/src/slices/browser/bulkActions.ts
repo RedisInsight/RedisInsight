@@ -5,7 +5,8 @@ import { ApiEndpoints, BulkActionsType, MAX_BULK_ACTION_ERRORS_LENGTH } from 'ui
 import { apiService } from 'uiSrc/services'
 import { getApiErrorMessage, getUrl, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
 
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 import { AppDispatch, RootState } from '../store'
 import { StateBulkActions, IBulkActionOverview } from '../interfaces'
 
@@ -38,41 +39,32 @@ const bulkActionsSlice = createSlice({
   initialState,
   reducers: {
     setBulkActionsInitialState: () => initialState,
-
     setBulkDeleteStartAgain: (state) => {
       state.bulkDelete = initialState.bulkDelete
       state.isConnected = false
     },
-
     setBulkUploadStartAgain: (state) => {
       state.bulkUpload = initialState.bulkUpload
       state.isConnected = false
     },
-
     toggleBulkActions: (state) => {
       state.isShowBulkActions = !state.isShowBulkActions
     },
-
     setBulkActionConnected: (state, { payload }: PayloadAction<boolean>) => {
       state.isConnected = payload
     },
-
     setLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.loading = payload
     },
-
     setBulkDeleteLoading: (state, { payload }: PayloadAction<boolean>) => {
       state.bulkDelete.loading = payload
     },
-
     setBulkActionType: (state, { payload }: PayloadAction<BulkActionsType>) => {
       state.selectedBulkAction.type = payload
     },
-
     toggleBulkDeleteActionTriggered: (state) => {
       state.bulkDelete.isActionTriggered = !state.bulkDelete.isActionTriggered
     },
-
     setDeleteOverview: (state, { payload }: PayloadAction<IBulkActionOverview>) => {
       let errors = state.bulkDelete.overview?.summary?.errors || []
 
@@ -85,35 +77,29 @@ const bulkActionsSlice = createSlice({
         }
       }
     },
-
     setDeleteOverviewStatus: (state, { payload }) => {
       if (state.bulkDelete.overview) {
         state.bulkDelete.overview.status = payload
       }
     },
-
     disconnectBulkDeleteAction: (state) => {
       state.bulkDelete.loading = false
       state.bulkDelete.isActionTriggered = false
       state.isConnected = false
     },
-
     // bulk delete
     bulkDeleteSuccess: (state) => {
       state.bulkDelete.loading = false
     },
-
     bulkUpload: (state) => {
       state.bulkUpload.loading = true
       state.bulkUpload.error = ''
     },
-
     bulkUploadSuccess: (state, { payload }: PayloadAction<{ data: IBulkActionOverview, fileName?: string }>) => {
       state.bulkUpload.loading = false
       state.bulkUpload.overview = payload.data
       state.bulkUpload.fileName = payload.fileName
     },
-
     bulkUploadFailed: (state, { payload }: PayloadAction<Maybe<string>>) => {
       state.bulkUpload.loading = false
 
@@ -121,6 +107,15 @@ const bulkActionsSlice = createSlice({
         state.bulkUpload.error = payload
       }
     },
+    bulkImportDefaultData: (state) => {
+      state.loading = true
+    },
+    bulkImportDefaultDataSuccess: (state) => {
+      state.loading = false
+    },
+    bulkImportDefaultDataFailed: (state) => {
+      state.loading = false
+    }
   },
 })
 
@@ -142,6 +137,9 @@ export const {
   bulkUpload,
   bulkUploadFailed,
   bulkUploadSuccess,
+  bulkImportDefaultData,
+  bulkImportDefaultDataSuccess,
+  bulkImportDefaultDataFailed,
 } = bulkActionsSlice.actions
 
 // Selectors
@@ -209,6 +207,39 @@ export function bulkUploadDataAction(
       } else {
         dispatch(bulkUploadFailed())
       }
+    }
+  }
+}
+
+export function bulkImportDefaultDataAction(
+  id: string,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(bulkImportDefaultData())
+
+    try {
+      const { status, data } = await apiService.post(
+        getUrl(
+          id,
+          ApiEndpoints.BULK_ACTIONS_IMPORT_DEFAULT_DATA
+        )
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(bulkImportDefaultDataSuccess())
+        dispatch(
+          addMessageNotification(
+            successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview)
+          )
+        )
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      dispatch(addErrorNotification(error as AxiosError))
+      dispatch(bulkImportDefaultDataFailed())
+      onFailAction?.()
     }
   }
 }

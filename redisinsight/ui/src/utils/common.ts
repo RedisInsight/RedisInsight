@@ -3,11 +3,19 @@ import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
-const { apiPort } = window.app.config
+// eslint-disable-next-line prefer-destructuring
+const apiPort = window.app.config.apiPort
 
 export const getBaseApiUrl = () => (!isDevelopment && isWebApp
   ? window.location.origin
   : `${baseApiUrl}:${apiPort}`)
+
+export const getProxyPath = () => {
+  if (window.__RI_PROXY_PATH__) {
+    return `/${window.__RI_PROXY_PATH__}/socket.io`
+  }
+  return '/socket.io'
+}
 
 type Node = number | string | JSX.Element
 

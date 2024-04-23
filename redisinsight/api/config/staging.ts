@@ -2,9 +2,9 @@ import { join } from 'path';
 import * as os from 'os';
 
 const homedir = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redisinsight-app-stage'));
+  || (join(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight-stage'));
 
-const prevHomedir = join(os.homedir(), '.redisinsight-v2-stage');
+const prevHomedir = join(os.homedir(), '.redisinsight-app-stage');
 
 export default {
   dir_path: {
@@ -14,11 +14,15 @@ export default {
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),
-    guides: process.env.RI_GUIDES_PATH || join(homedir, 'guides'),
     tutorials: process.env.RI_TUTORIALS_PATH || join(homedir, 'tutorials'),
     content: process.env.RI_CONTENT_PATH || join(homedir, 'content'),
     caCertificates: join(homedir, 'ca_certificates'),
     clientCertificates: join(homedir, 'client_certificates'),
+    oldFolders: [
+      process.env.RI_GUIDES_PATH || join(homedir, 'guides'),
+      join(os.homedir(), '.redisinsight-preview-stage'),
+      join(os.homedir(), '.redisinsight-v2-stage'),
+    ]
   },
   server: {
     env: 'staging',

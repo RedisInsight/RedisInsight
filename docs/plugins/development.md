@@ -1,6 +1,6 @@
 # Plugin development
 
-This document describes the guides to develop your own plugin for the RedisInsight Workbench.
+This document describes the guides to develop your own plugin for the Redis Insight Workbench.
 
 ## How it works
 
@@ -118,7 +118,7 @@ const renderVisualization = (props: Props) => {
 export default { renderVisualization }
 ```
 
-Each plugin iframe has basic styles of RedisInsight application, including fonts and color schemes.
+Each plugin iframe has basic styles of Redis Insight application, including fonts and color schemes.
 
 It is recommended to use the React & [Elastic UI library](https://elastic.github.io/eui/#/) for 
 consistency with plugin visualisations and the entire application.
@@ -139,7 +139,7 @@ const { baseUrl, appVersion } = config
 
 // modules - the list of modules of the current database
 // baseUrl - url for your plugin folder - can be used to include your assets
-// appVersion - version of the RedisInsight application
+// appVersion - version of the Redis Insight application
 ```
 
 ### Plugin rendering

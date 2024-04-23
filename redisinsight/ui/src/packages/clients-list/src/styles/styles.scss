@@ -1,6 +1,5 @@
 @charset "UTF-8";
-@import "../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
-@import "../../node_modules/@elastic/eui/src/global_styling/index";
+@use "../../../../styles/mixins/eui";
 
 * div,
 * span {
@@ -12,7 +11,7 @@ html {
 }
 
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   flex: auto;
   overflow: auto;
   max-height: 810px;
@@ -20,7 +19,9 @@ html {
   word-break: break-all;
   padding: 16px 20px;
 
-  font: normal normal normal 13px/17px Graphik, sans-serif;
+  font:
+    normal normal normal 13px/17px Graphik,
+    sans-serif;
   text-align: left;
   letter-spacing: 0;
   color: var(--textColorShade);
@@ -97,7 +98,9 @@ html {
 }
 
 .jsonViewer {
-  font: normal normal normal 13px/18px Inconsolata, monospace;
+  font:
+    normal normal normal 13px/18px Inconsolata,
+    monospace;
   letter-spacing: 0.15px;
   padding: 0;
   background: transparent;
@@ -132,4 +135,3 @@ html {
     color: var(--jsonBooleanColor);
   }
 }
-

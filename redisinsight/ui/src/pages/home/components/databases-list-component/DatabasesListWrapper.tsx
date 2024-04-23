@@ -38,7 +38,7 @@ import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-m
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
-import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
+import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import DatabasesList from './databases-list'
@@ -386,7 +386,7 @@ const DatabasesListWrapper = ({
             />
             <PopoverDelete
               header={formatLongName(instance.name, 50, 10, '...')}
-              text="will be deleted from RedisInsight."
+              text="will be deleted from Redis Insight."
               item={instance.id}
               suffix={suffix}
               deleting={deleting.id}

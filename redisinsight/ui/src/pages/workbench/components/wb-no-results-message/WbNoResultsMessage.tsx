@@ -9,8 +9,8 @@ import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import BulbImg from 'uiSrc/assets/img/workbench/bulb.svg'
-import { ReactComponent as ArrowToGuidesIcon } from 'uiSrc/assets/img/workbench/arrow-to-guides.svg'
-import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
+import ArrowToGuidesIcon from 'uiSrc/assets/img/workbench/arrow-to-guides.svg?react'
+import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import styles from './styles.module.scss'
 

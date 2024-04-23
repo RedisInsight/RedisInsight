@@ -18,7 +18,7 @@ import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import TriggeredFunctionsPageRouter from './TriggeredFunctionsPageRouter'
 import TriggeredFunctionsTabs from './components/TriggeredFunctionsTabs'
 
-import styles from './styles.modules.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   routes: any[]

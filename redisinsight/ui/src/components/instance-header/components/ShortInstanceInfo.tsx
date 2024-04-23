@@ -6,9 +6,9 @@ import cx from 'classnames'
 import { CONNECTION_TYPE_DISPLAY, ConnectionType, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
 import { getModule, Nullable, truncateText } from 'uiSrc/utils'
 
-import { ReactComponent as ConnectionIcon } from 'uiSrc/assets/img/icons/connection.svg'
-import { ReactComponent as UserIcon } from 'uiSrc/assets/img/icons/user.svg'
-import { ReactComponent as VersionIcon } from 'uiSrc/assets/img/icons/version.svg'
+import ConnectionIcon from 'uiSrc/assets/img/icons/connection.svg?react'
+import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
+import VersionIcon from 'uiSrc/assets/img/icons/version.svg?react'
 import MessageInfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'

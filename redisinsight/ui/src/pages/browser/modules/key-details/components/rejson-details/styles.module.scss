@@ -1,9 +1,5 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   display: flex;
   flex: 1;
@@ -16,7 +12,7 @@
   position: relative;
 
   input {
-    font-family: 'Graphik', sans-serif !important;
+    font-family: "Graphik", sans-serif !important;
   }
 
   :global {
@@ -59,7 +55,7 @@
 .jsonData {
   font-size: 14px;
   line-height: 25px;
-  font-family: 'Inconsolata', monospace !important;
+  font-family: "Inconsolata", monospace !important;
   letter-spacing: 0.15px;
   flex-grow: 1;
 
@@ -67,6 +63,10 @@
     width: 100%;
     min-width: 140px;
   }
+}
+
+.defaultFont {
+  font-family: "Graphik", sans-serif !important;
 }
 
 .errorMessage {
@@ -110,7 +110,7 @@
   align-items: flex-end;
 
   &:before {
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     height: 100%;
@@ -176,7 +176,7 @@
 .jsonValue {
   font-size: 14px;
   line-height: 25px;
-  font-family: 'Inconsolata', monospace;
+  font-family: "Inconsolata", monospace;
   letter-spacing: 0.15px;
   padding: 0 8px;
   max-width: 1000px;

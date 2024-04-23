@@ -232,7 +232,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             </EuiTitle>
             <EuiSpacer size="m" />
             <EuiText className={styles.smallText} size="s" color="subdued">
-              To optimize your experience, RedisInsight uses third-party tools.
+              To optimize your experience, Redis Insight uses third-party tools.
               All data collected is anonymized and will not be used for any purpose without your consent.
             </EuiText>
             <EuiSpacer size="l" />
@@ -275,7 +275,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           <EuiHorizontalRule margin="l" className={styles.requiredHR} />
           <EuiSpacer size="m" />
           <EuiText color="subdued" size="s" className={styles.smallText}>
-            To use RedisInsight, please accept the terms and conditions:{' '}
+            To use Redis Insight, please accept the terms and conditions:{' '}
             <EuiLink
               external={false}
               target="_blank"

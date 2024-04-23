@@ -1,6 +1,8 @@
 import { join } from 'path';
 import * as fs from 'fs-extra';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException, Injectable, InternalServerErrorException, Logger,
+} from '@nestjs/common';
 import { Readable } from 'stream';
 import * as readline from 'readline';
 import { wrapHttpError } from 'src/common/utils';
@@ -12,9 +14,11 @@ import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-ac
 import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-import-file-by-path.dto';
-import { MemoryStoredFile } from 'nestjs-form-data';
 import { RedisClient, RedisClientCommand, RedisClientConnectionType } from 'src/modules/redis/client';
 import config, { Config } from 'src/utils/config';
+import * as CombinedStream from 'combined-stream';
+import { DatabaseService } from 'src/modules/database/database.service';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 const BATCH_LIMIT = 10_000;
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -25,6 +29,7 @@ export class BulkImportService {
   private logger = new Logger('BulkImportService');
 
   constructor(
+    private readonly databaseService: DatabaseService,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly analytics: BulkActionsAnalytics,
   ) {}
@@ -177,6 +182,40 @@ export class BulkImportService {
     } catch (e) {
       this.logger.error('Unable to process an import file path from tutorial', e);
       throw wrapHttpError(e);
+    }
+  }
+
+  /**
+   * Upload data from predefined files
+   * @param clientMetadata
+   */
+  public async importDefaultData(
+    clientMetadata: ClientMetadata,
+  ): Promise<IBulkActionOverview> {
+    try {
+      const database = await this.databaseService.get(clientMetadata.databaseId);
+      const databaseModules = database.modules?.map((module) => module.name.toLowerCase()) || [];
+
+      const manifest = JSON.parse(fs.readFileSync(join(PATH_CONFIG.dataDir, 'manifest.json')).toString());
+
+      const commandsStream = CombinedStream.create();
+
+      manifest.files.forEach((file) => {
+        if (file.modules) {
+          const hasModule = file.modules.find((module) => databaseModules.includes(module));
+
+          if (!hasModule) {
+            return;
+          }
+        }
+        commandsStream.append(fs.createReadStream(join(PATH_CONFIG.dataDir, file.path)));
+        commandsStream.append('\r\n');
+      });
+
+      return this.import(clientMetadata, commandsStream);
+    } catch (e) {
+      this.logger.error('Unable to process an import file path from tutorial', e);
+      throw new InternalServerErrorException(ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR);
     }
   }
 }

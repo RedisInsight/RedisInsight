@@ -14,7 +14,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { fetchRdiPipeline, setPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { appContextPipelineManagement, setPipelineDialogState } from 'uiSrc/slices/app/context'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
-import { ReactComponent as UploadIcon } from 'uiSrc/assets/img/rdi/upload_from_server.svg'
+import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
 
 import styles from './styles.module.scss'
 

@@ -107,3 +107,9 @@ $breakpoint-l: 1400px;
     }
   }
 }
+
+.table {
+  :global(.euiTableRow) {
+    border-color: var(--euiColorLightShade) !important;
+  }
+}

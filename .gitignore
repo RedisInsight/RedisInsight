@@ -50,6 +50,7 @@ redisinsight/api/commands
 redisinsight/api/guides
 redisinsight/api/tutorials
 redisinsight/api/content
+redisinsight/ui/dist-stats.html
 dist
 distWeb
 dll

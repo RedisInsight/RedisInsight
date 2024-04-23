@@ -13,7 +13,7 @@ import { IPipeline } from 'uiSrc/slices/interfaces'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
-import { ReactComponent as UploadIcon } from 'uiSrc/assets/img/rdi/upload_from_server.svg'
+import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
 
 const FetchPipelinePopover = () => {
   const { loading, data } = useSelector(rdiPipelineSelector)

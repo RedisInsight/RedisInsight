@@ -6,7 +6,7 @@ import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import RedisLogo from 'uiSrc/assets/img/logo.svg'
 
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import styles from './styles.modules.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   source: OAuthSocialSource

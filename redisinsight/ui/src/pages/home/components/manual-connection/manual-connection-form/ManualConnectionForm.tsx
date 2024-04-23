@@ -7,6 +7,7 @@ import {
   EuiSpacer,
   EuiToolTip,
   keys,
+  EuiButtonEmpty,
 } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
@@ -225,7 +226,7 @@ const ManualConnectionForm = (props: Props) => {
               }
               content={getSubmitButtonContent(errors, submitIsDisable())}
             >
-              <EuiButton
+              <EuiButtonEmpty
                 className="empty-btn"
                 onClick={handleTestConnectionDatabase}
                 disabled={submitIsDisable()}
@@ -234,7 +235,7 @@ const ManualConnectionForm = (props: Props) => {
                 data-testid="btn-test-connection"
               >
                 Test Connection
-              </EuiButton>
+              </EuiButtonEmpty>
             </EuiToolTip>
           </EuiFlexItem>
 

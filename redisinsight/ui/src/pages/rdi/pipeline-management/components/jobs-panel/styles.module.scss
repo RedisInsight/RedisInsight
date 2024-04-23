@@ -1,6 +1,3 @@
-@import '@elastic/eui/src/global_styling/variables';
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-
 $animation-duration: 300ms;
 
 .panel {
@@ -19,7 +16,7 @@ $animation-duration: 300ms;
 }
 
 .panelInner {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   display: flex;
   flex-direction: column;
   background-color: var(--euiColorEmptyShade);
@@ -175,7 +172,7 @@ $animation-duration: 300ms;
 :global {
   .rdi-dry-run {
     &__codeBlock {
-      @include euiScrollBar;
+      @include eui.scrollBar;
       border: 1px solid var(--separatorColorLight);
       background: var(--rdiSecondaryBgColor);
       height: 350px;

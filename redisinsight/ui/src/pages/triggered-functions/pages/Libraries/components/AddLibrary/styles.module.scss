@@ -1,6 +1,3 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/global_styling/index";
-
 .main {
   position: relative;
   height: 100%;
@@ -20,7 +17,7 @@
     position: relative;
     padding: 16px 30px 40px;
 
-    @include euiScrollBar;
+    @include eui.scrollBar;
     overflow: auto;
     height: 100%;
     max-height: calc(100% - 104px);
@@ -50,6 +47,6 @@
   }
 
   .cancelBtn {
-    margin-right: 10px
+    margin-right: 10px;
   }
 }

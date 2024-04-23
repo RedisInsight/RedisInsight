@@ -61,7 +61,6 @@
 
 <script>
   const bootstrap = async () => {
-
     const appVersion = await window.app.ipc.invoke('app:get:version') || ''
     const copyrightEl = document.getElementById('copyright') || null
 

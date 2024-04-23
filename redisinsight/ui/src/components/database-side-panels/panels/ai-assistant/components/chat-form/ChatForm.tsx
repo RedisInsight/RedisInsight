@@ -1,15 +1,18 @@
 import React, { Ref, useRef, useState } from 'react'
 import { EuiButton, EuiForm, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
 
-import { Maybe } from 'uiSrc/utils'
+import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
 
-import { ReactComponent as SendIcon } from 'uiSrc/assets/img/icons/send.svg'
+import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  validationMessage?: Maybe<string>
+  validation?: {
+    title?: React.ReactNode
+    content?: React.ReactNode
+  }
   isDisabled?: boolean
   placeholder?: string
   onSubmit: (value: string) => void
@@ -18,7 +21,12 @@ export interface Props {
 const INDENT_TEXTAREA_SPACE = 2
 
 const ChatForm = (props: Props) => {
-  const { validationMessage, isDisabled, placeholder, onSubmit } = props
+  const {
+    validation,
+    isDisabled,
+    placeholder,
+    onSubmit
+  } = props
   const [value, setValue] = useState('')
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
 
@@ -60,19 +68,26 @@ const ChatForm = (props: Props) => {
   }
 
   return (
-    <EuiForm className={styles.wrapper} component="form" onSubmit={handleSubmitForm} onKeyDown={handleKeyDown}>
-      <EuiTextArea
-        inputRef={textAreaRef}
-        placeholder={placeholder || 'Ask me about Redis'}
-        className={styles.textarea}
-        value={value}
-        onChange={handleChange}
-        data-testid="ai-message-textarea"
-      />
-      <EuiToolTip
-        content={validationMessage}
-        anchorClassName={styles.submitBtnTooltip}
+    <EuiToolTip
+      title={validation?.title}
+      content={validation?.content}
+      anchorClassName={styles.validationTooltip}
+    >
+      <EuiForm
+        className={cx(styles.wrapper, { [styles.isFormDisabled]: validation })}
+        component="form"
+        onSubmit={handleSubmitForm}
+        onKeyDown={handleKeyDown}
       >
+        <EuiTextArea
+          inputRef={textAreaRef}
+          placeholder={placeholder || 'Ask me about Redis'}
+          className={styles.textarea}
+          value={value}
+          onChange={handleChange}
+          disabled={!!validation}
+          data-testid="ai-message-textarea"
+        />
         <EuiButton
           fill
           size="s"
@@ -84,8 +99,8 @@ const ChatForm = (props: Props) => {
           aria-label="submit"
           data-testid="ai-submit-message-btn"
         />
-      </EuiToolTip>
-    </EuiForm>
+      </EuiForm>
+    </EuiToolTip>
   )
 }
 

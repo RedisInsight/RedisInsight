@@ -1,27 +1,32 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
+import JSONWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
+import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
+// https://github.com/remcohaszing/monaco-yaml?tab=readme-ov-file#why-doesnt-it-work-with-vite
+import YamlWorker from './yaml.worker?worker'
 
 const MonacoEnvironmentInitializer = () => {
   useEffect(() => {
-    function getWorkerUrl(moduleId, label) {
-      if (['json', 'typescript', 'javascript', 'yaml'].includes(label)) {
-        return `${label}.worker.js`
-      }
-
-      return 'editor.worker.js'
-    }
     window.MonacoEnvironment = {
-      getWorkerUrl: (moduleId, label) => {
-        let workerUrl = getWorkerUrl(moduleId, label)
-        const proxyPath = window.__RIPROXYPATH__ || ''
-        if (proxyPath) {
-          workerUrl = `${proxyPath}/${workerUrl}`
+      getWorker: (_workerId, label) => {
+        switch (label) {
+          case 'editorWorkerService':
+            return new EditorWorker()
+          case 'yaml':
+            return new YamlWorker()
+          case 'json':
+            return new JSONWorker()
+          case 'javascript':
+          case 'typescript':
+            return new TypeScriptWorker()
+          default:
+            throw new Error(`MonacoWorker: Unknown label ${label}`)
         }
-        return workerUrl
-      }
+      },
     }
   }, [])
 
-  return <></>
+  return null
 }
 
 export default MonacoEnvironmentInitializer

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CloudSessionModule } from 'src/modules/cloud/session/cloud-session.module';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
 import { InSessionCloudUserRepository } from 'src/modules/cloud/user/repositories/in-session.cloud-user.repository';
@@ -9,6 +9,7 @@ import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-use
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
 
+@Global()
 @Module({
   imports: [CloudSessionModule, CloudAuthModule],
   providers: [

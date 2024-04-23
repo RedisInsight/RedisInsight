@@ -21,7 +21,7 @@ import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-m
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
-import { ReactComponent as CloudLinkIcon } from 'uiSrc/assets/img/oauth/cloud_link.svg'
+import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import { ShowChildByCondition } from 'uiSrc/components'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'

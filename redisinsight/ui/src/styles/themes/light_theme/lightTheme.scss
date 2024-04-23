@@ -1,14 +1,5 @@
-@import "../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_dark";
+@import "../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_light";
 @import "theme_color";
-
-// Global styling
-@import "../../../../../../node_modules/@elastic/eui/src/global_styling/index";
-
-// Components
-@import "../../../../../../node_modules/@elastic/eui/src/components/index";
-
-// Packages
-@import "../../../../../../node_modules/@elastic/eui/packages/index";
 
 :root {
   // Core
@@ -19,15 +10,14 @@
   --euiColorPrimaryRGB: #{$euiColorPrimaryRGB};
   --euiColorSecondary: #{$euiColorSecondary};
   --euiColorSuccess: #{$euiColorSuccess};
-  --euiColorAccent: #{$euiColorAccent};
-  --euiColorHighlight: #{$euiColorHighlight};
+  --euiColorSecondaryText: #{$euiColorSecondaryText};
 
   // Status
   --euiColorColorSuccess: #{$euiColorSuccess};
   --euiColorColorWarning: #{$euiColorWarning};
   --euiColorColorDanger: #{$euiColorDanger};
 
-  --euiColorWarningLight: #{$euiColorWarningLight};
+  --euiColorWarningLight: #{$euiColorWarning};
 
   // Grays
   --euiColorEmptyShade: #{$euiColorEmptyShade};
@@ -35,32 +25,30 @@
   --euiColorLightShade: #{$euiColorLightShade};
   --euiColorMediumShade: #{$euiColorMediumShade};
   --euiColorDarkShade: #{$euiColorDarkShade};
-  --euiColorDarkestShade: #{$euiColorDarkestShade};
+  // --euiColorDarkestShade: #{$euiColorDarkestShade};
   --euiColorFullShade: #{$euiColorFullShade};
-  --euiColorGhost: #{$euiColorGhost};
+  --euiColorGhost: #{$euiColorSecondary};
 
   // Variations from core
   --euiTextColor: #{$htmlColor};
-  --euiLinkColor: #{$euiLinkColor};
-  --euiShadowColor: #{$euiShadowColor};
-  --euiShadowColorLarge: #{$euiShadowColorLarge};
+  // --euiLinkColor: #{$euiLinkColor};
+  // --euiShadowColor: #{$euiShadowColor};
+  // --euiShadowColorLarge: #{$euiShadowColorLarge};
   --euiPageBackgroundColor: #{$euiPageBackgroundColor};
   --euiTextSubduedColor: #{$euiTextSubduedColor};
   --euiTextSubduedColorHover: #{$euiTextSubduedColorHover};
-  --euiTitleColor: #{$euiTitleColor};
+  // --euiTitleColor: #{$euiTitleColor};
   --euiBreadcrumbActive: #{$euiBreadcrumbActive};
 
   // Contrasty text variants
   --euiColorPrimaryText: #{$euiColorPrimaryText};
-  --euiColorSecondaryText: #{$euiColorSecondaryText};
-  --euiColorSuccessText: #{$euiColorSuccessText};
-  --euiColorAccentText: #{$euiColorAccentText};
   --euiColorWarningText: #{$euiColorWarningText};
   --euiColorDangerText: #{$euiColorDangerText};
+  --euiColorSuccessText: #{$euiColorSuccessText};
 
   // Charts
-  --euiColorChartLines: #{$euiColorChartLines};
-  --euiColorChartBand: #{$euiColorChartBand};
+  // --euiColorChartLines: #{$euiColorChartLines};
+  // --euiColorChartBand: #{$euiColorChartBand};
 
   // Tooltip
   --euiTooltipBackgroundColor: #{$euiTooltipBackgroundColor};
@@ -73,7 +61,7 @@
   --euiToastSuccessBorderColor: #{$euiToastSuccessBorderColor};
   --euiToastDangerBtnColor: #{$euiToastDangerBtnColor};
   --euiToastDangerBorderColor: #{$euiToastDangerBorderColor};
-  --euiToastLightColor: #{$euiColorDarkShade};
+  --euiToastLightColor: #{$euiColorLightestShade};
 
   // Custom
   --htmlColor: #{$htmlColor};
@@ -88,9 +76,10 @@
   --controlsBoxShadowColor: #{$controlsBoxShadowColor};
   --controlsBorderColor: #{$controlsBorderColor};
   --controlsLabelColor: #{$controlsLabelColor};
+  --controlsLabelHoverColor: #{$controlsLabelHoverColor};
   --hoverInListColor: #{$hoverInListColor};
-  --hoverInListColorLight: #{$hoverInListColorLight};
-  --hoverInListColorDarken: #{$hoverInListColorDarken};
+  --hoverInListColorLight: #{$hoverInListColor};
+  --hoverInListColorDarken: #{$hoverInListColorLight};
   --externalLinkColor: #{$externalLinkColor};
   --externalLinkTooltipColor: #{$externalLinkTooltipColor};
   --linkToastColor: #{$linkToastColor};
@@ -121,6 +110,7 @@
   --buttonSuccessColor: #{$buttonSuccessColor};
 
   --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
+  --loadingContentColor: #{$loadingContentColor};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};
@@ -128,8 +118,8 @@
   --badgeBackgroundColor: #{$badgeBackgroundColor};
   --commandGroupBadgeColor: #{$commandGroupBadgeColor};
 
-  --moduleBackgroundColor: #{$commandGroupBadgeColor};
-  --callOutBackgroundColor: #{$euiTooltipBackgroundColor};
+  --moduleBackgroundColor: #{$typeHashColor};
+  --callOutBackgroundColor: #{$callOutBackgroundColor};
   --tooltipLightBgColor: #{$tooltipLightBgColor};
 
   --overlayPromoNYColor: #{$overlayPromoNYColor};
@@ -196,11 +186,11 @@
 
   // Recommendations
   --recommendationsBgColor: #{$recommendationsBgColor};
+  --recommendationColor: #{$recommendationColor};
   --recommendationBgColor: #{$recommendationBgColor};
   --recommendationLiveBorderColor: #{$recommendationLiveBorderColor};
-  --recommendationColor: #{$recommendationColor};
   --triggerIconActiveColor: #{$triggerIconActiveColor};
-  --liveRecommendationVoteBgColor: #{$controlsBorderColor};
+  --liveRecommendationVoteBgColor: #{$separatorColor};
   --triggerIconTextColor: #{$triggerIconTextColor};
   --recommendationsCountBgColor: #{$recommendationsCountBgColor};
 
@@ -209,6 +199,6 @@
   --cloudSsoGithub: #{$cloudSsoGithub};
   --cloudSsoAdvantagesBgColor: #{$cloudSsoAdvantagesBgColor};
 
-  // RDI
+  // rdi
   --rdiSecondaryBgColor: #{$rdiSecondaryBgColor};
 }

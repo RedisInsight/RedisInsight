@@ -1,10 +1,6 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .tableWrapper {
   max-height: calc(100vh - 282px);
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow: auto;
 
   .table {
@@ -24,5 +20,4 @@
       }
     }
   }
-
 }

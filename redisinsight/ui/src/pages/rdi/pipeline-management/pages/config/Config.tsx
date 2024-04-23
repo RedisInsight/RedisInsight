@@ -69,11 +69,11 @@ const Config = () => {
     }
 
     if (isEqualPipelineFile(value, data?.config)) {
-      dispatch(setChangedFile({ name: 'config', flag: 'updated' }))
+      dispatch(deleteChangedFile('config'))
       return
     }
 
-    dispatch(deleteChangedFile('config'))
+    dispatch(setChangedFile({ name: 'config', flag: 'updated' }))
   }
 
   return (

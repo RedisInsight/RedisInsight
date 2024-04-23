@@ -238,6 +238,7 @@ const JobsTree = (props: IProps) => {
         alignItems="center"
         justifyContent="spaceBetween"
         gutterSize="none"
+        data-testid={`job-file-${name}${changes[name] ? '-updated' : name}`}
       >
         <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
           <EuiFlexItem grow={false}>

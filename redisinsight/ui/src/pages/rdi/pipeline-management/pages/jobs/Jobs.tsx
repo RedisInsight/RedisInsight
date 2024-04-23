@@ -75,16 +75,16 @@ const Jobs = () => {
 
   const handleChange = (value: string) => {
     setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
-    if (!data?.jobs.find((el) => el.name === decodedJobName)) {
+    const editedJob = data?.jobs.find((el) => el.name === previousJobNameRef.current)
+    if (!editedJob) {
       return
     }
-    const editedJob = data?.jobs.find((el) => el.name === decodedJobName)
 
     if (isEqualPipelineFile(value, editedJob?.value)) {
-      dispatch(deleteChangedFile(decodedJobName))
+      dispatch(deleteChangedFile(editedJob.name))
       return
     }
-    dispatch(setChangedFile({ name: decodedJobName, flag: 'new' }))
+    dispatch(setChangedFile({ name: editedJob.name, flag: 'updated' }))
   }
 
   return (

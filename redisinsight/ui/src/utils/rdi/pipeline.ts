@@ -3,7 +3,7 @@ import { load } from 'js-yaml'
 
 const isEqualPipelineFile = (cur: string, prev: string = '') => {
   try {
-    return !isEqual(load(cur), load(prev))
+    return isEqual(load(cur), load(prev))
   } catch (e) {
     return false
   }

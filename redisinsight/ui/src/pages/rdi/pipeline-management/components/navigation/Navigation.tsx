@@ -54,7 +54,7 @@ const Navigation = () => {
         onKeyDown={() => {}}
         onClick={() => onSelectedTabChanged(RdiPipelineTabs.Config)}
         className={cx(styles.tab, { [styles.updated]: !!changes.config })}
-        data-testid={`rdi-nav-btn-${RdiPipelineTabs.Config}`}
+        data-testid={`rdi-nav-btn-${RdiPipelineTabs.Config}${changes.config ? '-updated' : ''}`}
       >
         <Tab
           title="Configure pipeline"

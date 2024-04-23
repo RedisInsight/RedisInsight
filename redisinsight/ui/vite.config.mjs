@@ -6,15 +6,26 @@ import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
 
+const isElectron = process.env.RI_APP_TYPE === 'electron'
+// set path to index.tsx in the index.html
+process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
+const outDir = isElectron ? '../dist/renderer' : './dist'
+
+const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
+  ? 'https://localhost'
+  : 'http://localhost'
+
+const base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+
 /**
  * @type {import('vite').UserConfig}
  */
 export default defineConfig({
-  base: process.env.NODE_ENV === 'development' ? '/' : '/__RIPROXYPATH__',
+  base,
   plugins: [
     react(),
     svgr({ include: ['**/*.svg?react'] }),
-    // compression({
+    // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true
     // }),
@@ -33,6 +44,7 @@ export default defineConfig({
   envPrefix: 'RI_',
   optimizeDeps: {
     include: [
+      'monaco-editor'
       // 'monaco-yaml/yaml.worker',
     ],
     esbuildOptions: {
@@ -44,7 +56,7 @@ export default defineConfig({
     commonjsOptions: {
       exclude: ['./packages'],
     },
-    outDir: './dist',
+    outDir,
     target: 'es2020',
     minify: 'esbuild',
     rollupOptions: {
@@ -85,16 +97,15 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
-    'window.app.config.apiPort': '5540',
     'process.env': {
-      RI_NODE_ENV: 'development',
-      RI_APP_TYPE: 'web',
       RI_API_PREFIX: 'api',
-      RI_BASE_API_URL: 'http://localhost',
-      RI_RESOURCES_BASE_URL: 'http://localhost',
+      RI_APP_PORT: '5540',
+      RI_BASE_API_URL: apiUrl,
+      RI_RESOURCES_BASE_URL: apiUrl,
       RI_PIPELINE_COUNT_DEFAULT: '5',
       RI_SCAN_COUNT_DEFAULT: '500',
       RI_SCAN_TREE_COUNT_DEFAULT: '10000',
+      RI_APP_TYPE: process.env.RI_APP_TYPE,
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
     },
   },

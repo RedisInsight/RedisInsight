@@ -6,7 +6,6 @@ import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PagePlaceholder } from 'uiSrc/components'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
-import Router from './Router'
 import { Theme } from './constants'
 import { themeService } from './services'
 import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
@@ -28,11 +27,9 @@ themeService.registerTheme(Theme.Light, themeLight)
 const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
   <Provider store={store}>
     <ThemeProvider>
-      <Router>
-        <App>
-          {children}
-        </App>
-      </Router>
+      <App>
+        {children}
+      </App>
     </ThemeProvider>
   </Provider>
 )

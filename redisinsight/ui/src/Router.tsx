@@ -1,6 +1,5 @@
 import React from 'react'
-import { BrowserRouter, HashRouter } from 'react-router-dom'
-import { AppEnv } from './constants/env'
+import { BrowserRouter } from 'react-router-dom'
 
 interface Props {
   children: React.ReactElement;
@@ -15,10 +14,6 @@ if (RIPROXYPATH !== '') {
 }
 
 const Router = ({ children }: Props) =>
-  (process.env.RI_APP_TYPE !== AppEnv.ELECTRON ? (
-    <BrowserRouter basename={MOUNT_PATH}>{children}</BrowserRouter>
-  ) : (
-    <HashRouter>{children}</HashRouter>
-  ))
+  <BrowserRouter basename={MOUNT_PATH}>{children}</BrowserRouter>
 
 export default Router

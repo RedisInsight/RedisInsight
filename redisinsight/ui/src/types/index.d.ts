@@ -1,3 +1,4 @@
+import { Environment } from 'monaco-editor/esm/vs/editor/editor.api'
 import { Buffer } from 'buffer'
 // eslint-disable-next-line import/order
 import { Nullable } from 'uiSrc/utils'
@@ -11,6 +12,7 @@ declare global {
     Buffer: typeof Buffer
     app: WindowApp
     windowId?: string
+    MonacoEnvironment: Environment;
     readonly __RI_PROXY_PATH__: string
   }
 }

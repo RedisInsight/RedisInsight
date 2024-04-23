@@ -4,8 +4,7 @@ import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { CustomHeaders } from 'uiSrc/constants/api'
 
-// eslint-disable-next-line prefer-destructuring
-const apiPort = window.app.config.apiPort
+const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'

@@ -18,7 +18,7 @@ RUN apk update && apk add --no-cache --virtual .gyp \
 WORKDIR /usr/src/app
 
 # restore node_modules for front-end
-COPY package.json yarn.lock babel.config.cjs tsconfig.json ./
+COPY package.json yarn.lock tsconfig.json ./
 RUN SKIP_POSTINSTALL=1 yarn install
 
 # prepare backend by copying scripts/configs and installing node modules

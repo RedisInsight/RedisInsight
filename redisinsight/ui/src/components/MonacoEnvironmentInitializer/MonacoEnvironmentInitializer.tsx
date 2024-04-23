@@ -3,7 +3,7 @@ import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import JSONWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 // https://github.com/remcohaszing/monaco-yaml?tab=readme-ov-file#why-doesnt-it-work-with-vite
-// import YamlWorker from './yaml.worker?worker'
+import YamlWorker from './yaml.worker?worker'
 
 const MonacoEnvironmentInitializer = () => {
   useEffect(() => {
@@ -12,8 +12,8 @@ const MonacoEnvironmentInitializer = () => {
         switch (label) {
           case 'editorWorkerService':
             return new EditorWorker()
-          // case 'yaml':
-          //   return new YamlWorker()
+          case 'yaml':
+            return new YamlWorker()
           case 'json':
             return new JSONWorker()
           case 'javascript':

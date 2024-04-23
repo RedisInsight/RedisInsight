@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import axios, { CancelTokenSource } from 'axios'
+import axios, { AxiosError, CancelTokenSource } from 'axios'
 import * as jsonpath from 'jsonpath'
 
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -155,7 +155,7 @@ export function fetchReJSON(key: RedisResponseBuffer, path = '.', resetData?: bo
       }
     } catch (error) {
       if (!axios.isCancel(error)) {
-        const errorMessage = getApiErrorMessage(error)
+        const errorMessage = getApiErrorMessage(error as AxiosError)
         dispatch(loadRejsonBranchFailure(errorMessage))
         dispatch(addErrorNotification(error))
       }
@@ -165,7 +165,7 @@ export function fetchReJSON(key: RedisResponseBuffer, path = '.', resetData?: bo
 
 // Asynchronous thunk action
 export function setReJSONDataAction(
-  key: string,
+  key: RedisResponseBuffer,
   path: string,
   data: string,
   onSuccessAction?: () => void,
@@ -222,7 +222,7 @@ export function setReJSONDataAction(
 
 // Asynchronous thunk action
 export function appendReJSONArrayItemAction(
-  key: string,
+  key: RedisResponseBuffer,
   path: string,
   data: string
 ) {
@@ -270,7 +270,7 @@ export function appendReJSONArrayItemAction(
 
 // Asynchronous thunk action
 export function removeReJSONKeyAction(
-  key: string | RedisResponseBuffer,
+  key: RedisResponseBuffer,
   path = '.',
   jsonKeyName = ''
 ) {
@@ -314,9 +314,9 @@ export function removeReJSONKeyAction(
         )
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(removeRejsonKeyFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as AxiosError))
     }
   }
 }
@@ -325,11 +325,6 @@ export function removeReJSONKeyAction(
 export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
-      sourceRejson?.cancel()
-
-      const { CancelToken } = axios
-      sourceRejson = CancelToken.source()
-
       const state = stateInit()
       const { encoding } = state.app.info
       const key = state.browser.keys?.selectedKey?.data?.name
@@ -343,11 +338,9 @@ export function fetchVisualisationResults(path = '.', forceRetrieve = false) {
           path,
           forceRetrieve,
           encoding,
-        },
-        { cancelToken: sourceRejson.token }
+        }
       )
 
-      sourceRejson = null
       if (isStatusSuccessful(status)) {
         return data
       }

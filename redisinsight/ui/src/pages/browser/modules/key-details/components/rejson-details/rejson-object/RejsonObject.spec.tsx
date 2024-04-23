@@ -2,10 +2,8 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen, act } from 'uiSrc/utils/test-utils'
 
-import JSONObject from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-object/RejsonObject'
-import {
-  JSONObjectProps
-} from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import JSONObject from './RejsonObject'
+import { JSONObjectProps, ObjectTypes } from '../interfaces'
 
 const EXPAND_OBJECT = 'expand-object'
 const JSON_VALUE = 'json-value'
@@ -46,7 +44,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -60,9 +58,10 @@ describe.skip('JSONObject', () => {
   it('should render and expand downloaded JSON with objects', async () => {
     const { container } = render(<JSONObject
       {...instance(mockedProps)}
-      keyName="keyName"
       value={mockedDownloadedObjectWithObjects}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
+      keyName=""
+      type={ObjectTypes.Object}
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -81,7 +80,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedDownloadedObjectWithArray}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -104,7 +103,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded
+      isDownloaded={false}
       onJsonKeyExpandAndCollapse={jest.fn()}
       handleFetchVisualisationResults={fetchVisualisationResults}
     />)
@@ -150,7 +149,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded
+      isDownloaded={false}
       onJsonKeyExpandAndCollapse={jest.fn()}
       handleFetchVisualisationResults={fetchVisualisationResults}
     />)
@@ -167,7 +166,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -188,7 +187,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -218,7 +217,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
       handleSubmitJsonUpdateValue={jest.fn()}
     />)
@@ -251,7 +250,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -267,7 +266,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -288,7 +287,7 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
     />)
 
@@ -310,9 +309,8 @@ describe.skip('JSONObject', () => {
       {...instance(mockedProps)}
       keyName="keyName"
       value={mockedSimpleJSONObject}
-      shouldRejsonDataBeDownloaded={false}
+      isDownloaded
       onJsonKeyExpandAndCollapse={jest.fn()}
-      handleSubmitJsonUpdateValue={jest.fn()}
     />)
 
     await act(async () => {

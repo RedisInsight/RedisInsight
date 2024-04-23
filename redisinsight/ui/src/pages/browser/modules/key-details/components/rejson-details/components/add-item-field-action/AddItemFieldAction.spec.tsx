@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { AddItemFieldAction, Props } from './AddItemFieldAction'
+import AddItemFieldAction, { Props } from './AddItemFieldAction'
 
 const mockedProps = mock<Props>()
 

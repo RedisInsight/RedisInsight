@@ -1,17 +1,18 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
-import { EditEntireItemAction, Props } from './EditEntireItemAction'
+import { JSONErrors } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/constants'
+import EditEntireItemAction, { Props } from './EditEntireItemAction'
 
 const mockedProps = mock<Props>()
 
-const valueOfEntireItem = 'Sample JSON'
+const valueOfEntireItem = '"Sample string"'
 
 describe('EditEntireItemAction', () => {
   it('renders correctly with provided props', () => {
     render(<EditEntireItemAction
       {...instance(mockedProps)}
-      valueOfEntireItem={valueOfEntireItem}
+      initialValue={valueOfEntireItem}
     />)
 
     expect(screen.getByTestId('json-value')).toBeInTheDocument()
@@ -22,24 +23,24 @@ describe('EditEntireItemAction', () => {
     const handleUpdateValueFormSubmit = jest.fn()
     render(<EditEntireItemAction
       {...instance(mockedProps)}
-      handleUpdateValueFormSubmit={handleUpdateValueFormSubmit}
+      initialValue={valueOfEntireItem}
+      onSubmit={handleUpdateValueFormSubmit}
     />)
 
     fireEvent.submit(screen.getByTestId('json-entire-form'))
     expect(handleUpdateValueFormSubmit).toHaveBeenCalled()
   })
 
-  it('triggers setEditEntireItem and setError when the cancel button is clicked', () => {
-    const setEditEntireItem = jest.fn()
-    const setError = jest.fn()
-    const { getByLabelText } = render(<EditEntireItemAction
+  it('shouuld show error and do not submit', () => {
+    const handleUpdateValueFormSubmit = jest.fn()
+    render(<EditEntireItemAction
       {...instance(mockedProps)}
-      setEditEntireItem={setEditEntireItem}
-      setError={setError}
+      initialValue="xxxx"
+      onSubmit={handleUpdateValueFormSubmit}
     />)
-    fireEvent.click(getByLabelText('Cancel add'))
 
-    expect(setEditEntireItem).toHaveBeenCalledWith(false)
-    expect(setError).toHaveBeenCalledWith(null)
+    fireEvent.submit(screen.getByTestId('json-entire-form'))
+    expect(screen.getByTestId('edit-json-error')).toHaveTextContent(JSONErrors.valueJSONFormat)
+    expect(handleUpdateValueFormSubmit).not.toHaveBeenCalled()
   })
 })

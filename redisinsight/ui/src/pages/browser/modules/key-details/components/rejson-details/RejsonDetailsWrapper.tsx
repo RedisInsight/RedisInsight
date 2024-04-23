@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
 
+import { isUndefined } from 'lodash'
 import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -9,7 +10,9 @@ import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiS
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 
 import { KeyTypes } from 'uiSrc/constants'
-import RejsonDetails from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/rejson-details/RejsonDetails'
+import { stringToBuffer } from 'uiSrc/utils'
+import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import RejsonDetails from './rejson-details/RejsonDetails'
 
 import styles from './styles.module.scss'
 
@@ -19,13 +22,11 @@ const RejsonDetailsWrapper = (props: Props) => {
   const keyType = KeyTypes.ReJSON
   const { loading } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
-  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) || {}
+  const { name: selectedKey } = useSelector(selectedKeyDataSelector) || {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
-  const handleSubmitJsonUpdateValue = async () => {}
-
-  const handleEditValueUpdate = () => {}
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({
@@ -63,6 +64,14 @@ const RejsonDetailsWrapper = (props: Props) => {
     } else {
       reportJSONKeyCollapsed(levelFromPath)
     }
+
+    setExpandedRows((rows) => {
+      const copyOfSet = new Set(rows)
+      if (isExpanded) copyOfSet.add(path)
+      else copyOfSet.delete(path)
+
+      return copyOfSet
+    })
   }
 
   return (
@@ -73,35 +82,32 @@ const RejsonDetailsWrapper = (props: Props) => {
         keyType={keyType}
       />
       <div className="key-details-body" key="key-details-body">
-        {!loading && (
-          <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <div
-              data-testid="json-details"
-              className={`${[styles.container].join(' ')}`}
-            >
-              {loading && (
-                <EuiProgress
-                  color="primary"
-                  size="xs"
-                  position="absolute"
-                  data-testid="progress-key-json"
-                />
-              )}
-              {!(loading && data === undefined) && (
-                <RejsonDetails
-                  selectedKey={selectedKey}
-                  dataType={type || ''}
-                  data={data}
-                  parentPath={path}
-                  onJsonKeyExpandAndCollapse={reportJsonKeyExpandAndCollapse}
-                  shouldRejsonDataBeDownloaded={!downloaded}
-                  handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-                  handleSubmitUpdateValue={handleEditValueUpdate}
-                />
-              )}
-            </div>
+        <div className="flex-column" style={{ flex: '1', height: '100%' }}>
+          <div
+            data-testid="json-details"
+            className={styles.container}
+          >
+            {loading && (
+              <EuiProgress
+                color="primary"
+                size="xs"
+                position="absolute"
+                data-testid="progress-key-json"
+              />
+            )}
+            {!isUndefined(data) && (
+              <RejsonDetails
+                selectedKey={selectedKey || stringToBuffer('')}
+                dataType={type || ''}
+                data={data as IJSONData}
+                parentPath={path}
+                expadedRows={expandedRows}
+                onJsonKeyExpandAndCollapse={reportJsonKeyExpandAndCollapse}
+                isDownloaded={downloaded}
+              />
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

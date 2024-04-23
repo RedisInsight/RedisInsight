@@ -60,7 +60,7 @@ const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, 
 }
 
 const JobsTree = (props: IProps) => {
-  const { onSelectedTab, path, rdiInstanceId, changes } = props
+  const { onSelectedTab, path, rdiInstanceId, changes = {} } = props
 
   const [accordionState, setAccordionState] = useState<'closed' | 'open'>('open')
   const [editJobName, setEditJobName] = useState<Nullable<string>>(null)
@@ -76,13 +76,21 @@ const JobsTree = (props: IProps) => {
 
   const isEditing = (index: number) => editJobIndex === index
 
-  const deleteJob = (index: Nullable<number>) =>
+  const deleteJob = (index: Nullable<number>) => {
     setFieldValue(
       'jobs',
       values.jobs.filter((_, i) => i !== index)
     )
+  }
 
   const handleDeleteClick = () => {
+    const deleteJobName = deleteJobIndex !== null ? values.jobs[deleteJobIndex]?.name : null
+    if (data?.jobs && deleteJobName && !data.jobs.find((el) => el.name === deleteJobName)) {
+      dispatch(setChangedFile({ name: deleteJobName, status: FileChangeType.Removed }))
+    } else {
+      dispatch(deleteChangedFile(deleteJobName || ''))
+    }
+
     deleteJob(deleteJobIndex)
     setDeleteJobIndex(null)
 
@@ -90,7 +98,7 @@ const JobsTree = (props: IProps) => {
       event: TelemetryEvent.RDI_PIPELINE_JOB_DELETED,
       eventData: {
         rdiInstanceId,
-        jobName: deleteJobIndex !== null ? values.jobs[deleteJobIndex]?.name : null
+        jobName: deleteJobName,
       }
     })
 
@@ -102,9 +110,9 @@ const JobsTree = (props: IProps) => {
   const handleApplyJobName = () => {
     setFieldValue(`jobs.${editJobIndex}.name`, editJobName)
     if (!data?.jobs.find((el) => el.name === editJobName)) {
-      dispatch(setChangedFile({ name: editJobName, flag: 'new' }))
+      dispatch(setChangedFile({ name: editJobName!, status: FileChangeType.Added }))
     } else {
-      dispatch(deleteChangedFile(editJobName))
+      dispatch(deleteChangedFile(editJobName!))
     }
 
     setEditJobIndex(null)

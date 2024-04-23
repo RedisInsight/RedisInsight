@@ -1,10 +1,10 @@
 import yaml from 'js-yaml'
-import { IPipeline } from 'uiSrc/slices/interfaces'
+import { IPipelineJSON } from 'uiSrc/slices/interfaces'
 
-export const pipelineToYaml = (pipeline: IPipeline) => ({
+export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   config: yaml.dump(pipeline.config),
-  jobs: Object.keys(pipeline.jobs)?.map((key: string) => ({
+  jobs: Object.entries(pipeline.jobs)?.map(([key, value]) => ({
     name: key,
-    value: yaml.dump(pipeline.jobs[key])
+    value: yaml.dump(value)
   }))
 })

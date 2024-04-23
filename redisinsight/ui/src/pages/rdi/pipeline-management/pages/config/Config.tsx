@@ -9,7 +9,7 @@ import { get } from 'lodash'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
-import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
@@ -64,7 +64,7 @@ const Config = () => {
   const handleChange = (value: string) => {
     setFieldValue('config', value)
     if (!data) {
-      dispatch(setChangedFile({ name: 'config', flag: 'new' }))
+      dispatch(setChangedFile({ name: 'config', status: FileChangeType.Added }))
       return
     }
 
@@ -73,7 +73,7 @@ const Config = () => {
       return
     }
 
-    dispatch(setChangedFile({ name: 'config', flag: 'updated' }))
+    dispatch(setChangedFile({ name: 'config', status: FileChangeType.Modified }))
   }
 
   return (

@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { AnyAction } from '@reduxjs/toolkit'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
+import { MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JSON_DATA } from 'uiSrc/mocks/data/rdi'
 import reducer, {
   initialState,
   getPipeline,
@@ -16,6 +16,9 @@ import reducer, {
   getPipelineStrategiesFailure,
   setPipelineSchema,
   setPipeline,
+  setChangedFile,
+  setChangedFiles,
+  deleteChangedFile,
   fetchRdiPipeline,
   deployPipelineAction,
   rdiPipelineSelector,
@@ -26,6 +29,7 @@ import reducer, {
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 
 let store: typeof mockedStore
 
@@ -273,11 +277,83 @@ describe('rdi pipe slice', () => {
     })
   })
 
+  describe('setChangedFile', () => {
+    it('should set change file', () => {
+      const mockChangedFile = { name: 'name', status: FileChangeType.Added }
+      // Arrange
+      const state = {
+        ...initialState,
+        changes: {
+          name: FileChangeType.Added,
+        },
+      }
+
+      // Act
+      const nextState = reducer(initialState, setChangedFile(mockChangedFile))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('deleteChangedFile', () => {
+    it('should remove changed file', () => {
+      const mockChangedFile = { name: 'name', status: FileChangeType.Added }
+      // Arrange
+      const state = {
+        ...initialState,
+        changes: {
+          name: FileChangeType.Added,
+        },
+      }
+
+      // Act
+      const nextState = reducer(state, deleteChangedFile(mockChangedFile.name))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(initialState)
+    })
+  })
+
+  describe('setChangedFiles', () => {
+    it('should replace changed files', () => {
+      const mockChangedFiles1 = { name: FileChangeType.Modified }
+      const mockChangedFiles2 = { name: FileChangeType.Removed }
+
+      // Arrange
+      const state = {
+        ...initialState,
+        changes: mockChangedFiles2,
+      }
+
+      // Act
+      const nextState = reducer({ ...initialState, changes: mockChangedFiles1 }, setChangedFiles(mockChangedFiles2))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('thunks', () => {
     describe('fetchRdiPipeline', () => {
       it('succeed to fetch data', async () => {
-        const data = { config: 'string', jobs: [] }
+        const data = MOCK_RDI_PIPELINE_JSON_DATA
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
@@ -290,7 +366,8 @@ describe('rdi pipe slice', () => {
         // Assert
         const expectedActions = [
           getPipeline(),
-          getPipelineSuccess(data),
+          getPipelineSuccess(MOCK_RDI_PIPELINE_DATA),
+          setChangedFiles({})
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -417,79 +494,79 @@ describe('rdi pipe slice', () => {
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
-  })
 
-  describe('fetchPipelineStrategies', () => {
-    it('succeed to fetch data', async () => {
-      const data = { 'db-type': [], 'strategy-type': [] }
-      const responsePayload = { data, status: 200 }
+    describe('fetchPipelineStrategies', () => {
+      it('succeed to fetch data', async () => {
+        const data = { 'db-type': [], 'strategy-type': [] }
+        const responsePayload = { data, status: 200 }
 
-      apiService.get = jest.fn().mockResolvedValue(responsePayload)
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
-      // Act
-      await store.dispatch<any>(
-        fetchPipelineStrategies('123')
-      )
+        // Act
+        await store.dispatch<any>(
+          fetchPipelineStrategies('123')
+        )
 
-      // Assert
-      const expectedActions = [
-        getPipelineStrategies(),
-        getPipelineStrategiesSuccess(data),
-      ]
+        // Assert
+        const expectedActions = [
+          getPipelineStrategies(),
+          getPipelineStrategiesSuccess(data),
+        ]
 
-      expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchPipelineStrategies('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          getPipelineStrategies(),
+          getPipelineStrategiesFailure(errorMessage),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
     })
 
-    it('failed to fetch data', async () => {
-      const errorMessage = 'Something was wrong!'
-      const responsePayload = {
-        response: {
-          status: 500,
-          data: { message: errorMessage },
-        },
-      }
+    describe('fetchPipelineTemplate', () => {
+      it('failed to fetch data', async () => {
+        const mockOptions = { dbType: 'db type' }
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
 
-      apiService.get = jest.fn().mockRejectedValue(responsePayload)
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
-      // Act
-      await store.dispatch<any>(
-        fetchPipelineStrategies('123')
-      )
+        // Act
+        await store.dispatch<any>(
+          fetchPipelineTemplate('123', mockOptions)
+        )
 
-      // Assert
-      const expectedActions = [
-        getPipelineStrategies(),
-        getPipelineStrategiesFailure(errorMessage),
-      ]
+        // Assert
+        const expectedActions = [
+          addErrorNotification(responsePayload as AxiosError),
+        ]
 
-      expect(store.getActions()).toEqual(expectedActions)
-    })
-  })
-
-  describe('fetchPipelineTemplate', () => {
-    it('failed to fetch data', async () => {
-      const mockOptions = { dbType: 'db type' }
-      const errorMessage = 'Something was wrong!'
-      const responsePayload = {
-        response: {
-          status: 500,
-          data: { message: errorMessage },
-        },
-      }
-
-      apiService.get = jest.fn().mockRejectedValue(responsePayload)
-
-      // Act
-      await store.dispatch<any>(
-        fetchPipelineTemplate('123', mockOptions)
-      )
-
-      // Assert
-      const expectedActions = [
-        addErrorNotification(responsePayload as AxiosError),
-      ]
-
-      expect(store.getActions()).toEqual(expectedActions)
+        expect(store.getActions()).toEqual(expectedActions)
+      })
     })
   })
 })

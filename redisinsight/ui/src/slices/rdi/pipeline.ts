@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { IStateRdiPipeline, IPipeline } from 'uiSrc/slices/interfaces/rdi'
+import { IStateRdiPipeline, IPipeline, FileChangeType, IPipelineJSON } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
@@ -73,13 +73,13 @@ const rdiPipelineSlice = createSlice({
         strategyType: [],
       }
     },
-    setChangedFile: (state, { payload }) => {
-      state.changes[payload.name] = payload.flag
+    setChangedFile: (state, { payload }: PayloadAction<{ name: string, status: FileChangeType }>) => {
+      state.changes[payload.name] = payload.status
     },
-    setChangedFiles: (state, { payload }) => {
+    setChangedFiles: (state, { payload }: PayloadAction<Record<string, FileChangeType>>) => {
       state.changes = payload
     },
-    deleteChangedFile: (state, { payload }) => {
+    deleteChangedFile: (state, { payload }: PayloadAction<string>) => {
       delete state.changes[payload]
     }
   },
@@ -119,7 +119,7 @@ export function fetchRdiPipeline(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipeline())
-      const { data, status } = await apiService.get<IPipeline>(
+      const { data, status } = await apiService.get<IPipelineJSON>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE),
       )
       if (isStatusSuccessful(status)) {

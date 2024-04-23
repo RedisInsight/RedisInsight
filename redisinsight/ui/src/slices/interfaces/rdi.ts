@@ -29,6 +29,11 @@ export interface IPipeline {
   jobs: IRdiPipelineJob[]
 }
 
+export interface IPipelineJSON {
+  config: object
+  jobs: object
+}
+
 export interface IDryRunJobResults {
   transformations: {
     status: DryRunJobResultStatus

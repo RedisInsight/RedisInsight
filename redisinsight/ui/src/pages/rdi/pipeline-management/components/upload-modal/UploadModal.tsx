@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { IPipeline } from 'uiSrc/slices/interfaces'
+import { FileChangeType, IPipeline } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector, setChangedFiles } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import UploadDialog from './components/upload-dialog/UploadDialog'
@@ -82,11 +82,12 @@ const UploadModal = (props: Props) => {
           }))
       )
 
-      const uploadFiles = { config: 'new',
+      const uploadFiles = {
+        config: FileChangeType.Added,
         ...jobs.reduce((acc, { name }) => {
-          acc[name] = 'new'
+          acc[name] = FileChangeType.Added
           return acc
-        }, {}) }
+        }, {} as Record<string, FileChangeType>) }
 
       dispatch(setChangedFiles(uploadFiles))
 

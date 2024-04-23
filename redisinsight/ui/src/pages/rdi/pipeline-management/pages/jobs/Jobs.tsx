@@ -9,7 +9,7 @@ import cx from 'classnames'
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
-import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { DSL, Pages } from 'uiSrc/constants'
@@ -84,7 +84,7 @@ const Jobs = () => {
       dispatch(deleteChangedFile(editedJob.name))
       return
     }
-    dispatch(setChangedFile({ name: editedJob.name, flag: 'updated' }))
+    dispatch(setChangedFile({ name: editedJob.name, status: FileChangeType.Modified }))
   }
 
   return (

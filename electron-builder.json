@@ -21,6 +21,7 @@
   }
   ],
   "mac": {
+    "notarize": true,
     "target": [
       {
         "target": "dmg",

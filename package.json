@@ -34,7 +34,7 @@
     "package:mac": "yarn build:prod && electron-builder build --mac -p never",
     "package:mac:arm": "yarn build:prod && electron-builder build --mac --arm64 -p never",
     "package:linux": "yarn build:prod && electron-builder build --linux -p never",
-    "postinstall": "patch-package && skip-postinstall || (electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./configs/webpack.config.renderer.dev.dll.ts && opencollective-postinstall && yarn-deduplicate yarn.lock)",
+    "postinstall": "patch-package && vite optimize && skip-postinstall || (electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./configs/webpack.config.renderer.dev.dll.ts && opencollective-postinstall && yarn-deduplicate yarn.lock)",
     "start": "ts-node ./scripts/check-port-in-use.js && yarn start:renderer",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./configs/webpack.config.renderer.dev.ts",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./configs/webpack.config.preload.dev.ts",

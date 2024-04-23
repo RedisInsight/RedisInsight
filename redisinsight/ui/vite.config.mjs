@@ -8,14 +8,14 @@ import path from 'path'
 
 const isElectron = process.env.RI_APP_TYPE === 'electron'
 // set path to index.tsx in the index.html
-process.env.RI_INDEX_NAME = !isElectron ? 'index.tsx' : 'indexElectron.tsx'
+process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
 const outDir = isElectron ? '../dist/renderer' : './dist'
 
 const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
   ? 'https://localhost'
   : 'http://localhost'
 
-const base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '__RIPROXYPATH__')
+const base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 
 /**
  * @type {import('vite').UserConfig}
@@ -44,6 +44,7 @@ export default defineConfig({
   envPrefix: 'RI_',
   optimizeDeps: {
     include: [
+      'monaco-editor'
       // 'monaco-yaml/yaml.worker',
     ],
     esbuildOptions: {

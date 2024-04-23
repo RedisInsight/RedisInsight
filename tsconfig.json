@@ -4,7 +4,8 @@
     "module": "CommonJS",
     "lib": [
       "dom",
-      "esnext"
+      "esnext",
+      "WebWorker",
     ],
     "declaration": true,
     "declarationMap": true,

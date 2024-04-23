@@ -12,14 +12,13 @@ import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { Nullable } from 'uiSrc/utils'
 import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
 import { ReactComponent as UploadIcon } from 'uiSrc/assets/img/rdi/upload_from_server.svg'
 
 const FetchPipelinePopover = () => {
   const { loading, data } = useSelector(rdiPipelineSelector)
 
-  const { setFieldValue, resetForm } = useFormikContext<IPipeline>()
+  const { resetForm } = useFormikContext<IPipeline>()
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
@@ -27,10 +26,8 @@ const FetchPipelinePopover = () => {
 
   const handleRefreshClick = () => {
     dispatch(
-      fetchRdiPipeline(rdiInstanceId, (pipeline: Nullable<IPipeline>) => {
+      fetchRdiPipeline(rdiInstanceId, () => {
         resetForm()
-        setFieldValue('config', pipeline?.config)
-        setFieldValue('jobs', pipeline?.jobs)
       })
     )
   }

@@ -14,13 +14,13 @@ import {
 import cx from 'classnames'
 import { useFormikContext } from 'formik'
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { PageNames } from 'uiSrc/constants'
 import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
-import { IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { FileChangeType, IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
+import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable } from 'uiSrc/utils'
 
@@ -30,6 +30,7 @@ export interface IProps {
   onSelectedTab: (id: string) => void
   path: string
   rdiInstanceId: string
+  changes: Record<string, FileChangeType>
 }
 
 const buildValidationMessage = (text: string) => ({
@@ -59,7 +60,7 @@ const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, 
 }
 
 const JobsTree = (props: IProps) => {
-  const { onSelectedTab, path, rdiInstanceId } = props
+  const { onSelectedTab, path, rdiInstanceId, changes } = props
 
   const [accordionState, setAccordionState] = useState<'closed' | 'open'>('open')
   const [editJobName, setEditJobName] = useState<Nullable<string>>(null)
@@ -68,9 +69,10 @@ const JobsTree = (props: IProps) => {
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
-  const { loading } = useSelector(rdiPipelineSelector)
+  const { loading, data } = useSelector(rdiPipelineSelector)
 
   const { values, setFieldValue } = useFormikContext<IPipeline>()
+  const dispatch = useDispatch()
 
   const isEditing = (index: number) => editJobIndex === index
 
@@ -99,6 +101,12 @@ const JobsTree = (props: IProps) => {
 
   const handleApplyJobName = () => {
     setFieldValue(`jobs.${editJobIndex}.name`, editJobName)
+    if (!data?.jobs.find((el) => el.name === editJobName)) {
+      dispatch(setChangedFile({ name: editJobName, flag: 'new' }))
+    } else {
+      dispatch(deleteChangedFile(editJobName))
+    }
+
     setEditJobIndex(null)
     setEditJobName(null)
     setIsNewJob(false)
@@ -218,7 +226,14 @@ const JobsTree = (props: IProps) => {
     jobs.map(({ name }, index) => (
       <EuiFlexGroup
         key={name}
-        className={cx(styles.fullWidth, styles.job, { [styles.active]: path === name })}
+        className={cx(
+          styles.fullWidth,
+          styles.job,
+          {
+            [styles.updated]: !!changes[name],
+            [styles.active]: path === name,
+          }
+        )}
         responsive={false}
         alignItems="center"
         justifyContent="spaceBetween"

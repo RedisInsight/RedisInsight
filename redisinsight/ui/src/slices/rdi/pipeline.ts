@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { IStateRdiPipeline, IPipeline } from 'uiSrc/slices/interfaces/rdi'
-import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful } from 'uiSrc/utils'
+import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -20,6 +20,7 @@ export const initialState: IStateRdiPipeline = {
     dbType: [],
     strategyType: [],
   },
+  changes: {},
 }
 
 const rdiPipelineSlice = createSlice({
@@ -37,7 +38,7 @@ const rdiPipelineSlice = createSlice({
       state.loading = false
       state.data = payload
     },
-    getPipelineFailure: (state, { payload }) => {
+    getPipelineFailure: (state, { payload }: PayloadAction<string>) => {
       state.loading = false
       state.error = payload
     },
@@ -50,7 +51,7 @@ const rdiPipelineSlice = createSlice({
     deployPipelineFailure: (state) => {
       state.loading = false
     },
-    setPipelineSchema: (state, { payload }) => {
+    setPipelineSchema: (state, { payload }: PayloadAction<Nullable<object>>) => {
       state.schema = payload
     },
     getPipelineStrategies: (state) => {
@@ -72,6 +73,15 @@ const rdiPipelineSlice = createSlice({
         strategyType: [],
       }
     },
+    setChangedFile: (state, { payload }) => {
+      state.changes[payload.name] = payload.flag
+    },
+    setChangedFiles: (state, { payload }) => {
+      state.changes = payload
+    },
+    deleteChangedFile: (state, { payload }) => {
+      delete state.changes[payload]
+    }
   },
 })
 
@@ -92,6 +102,9 @@ export const {
   getPipelineStrategiesFailure,
   setPipeline,
   setPipelineInitialState,
+  setChangedFile,
+  setChangedFiles,
+  deleteChangedFile,
 } = rdiPipelineSlice.actions
 
 // The reducer
@@ -109,9 +122,9 @@ export function fetchRdiPipeline(
       const { data, status } = await apiService.get<IPipeline>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE),
       )
-
       if (isStatusSuccessful(status)) {
-        dispatch(getPipelineSuccess(data))
+        dispatch(getPipelineSuccess(pipelineToYaml(data)))
+        dispatch(setChangedFiles({}))
 
         onSuccessAction?.(data)
       }
@@ -222,7 +235,6 @@ export function fetchRdiPipelineSchema(
 
       if (isStatusSuccessful(status)) {
         dispatch(setPipelineSchema(data))
-
         onSuccessAction?.(data)
       }
     } catch (_err) {

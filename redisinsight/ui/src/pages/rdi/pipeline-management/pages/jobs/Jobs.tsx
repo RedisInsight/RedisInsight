@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
@@ -8,12 +8,13 @@ import cx from 'classnames'
 
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { DSL, Pages } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
+import { isEqualPipelineFile } from 'uiSrc/utils'
 
 const Jobs = () => {
   const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
@@ -22,12 +23,14 @@ const Jobs = () => {
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
   const [editorValue, setEditorValue] = useState<string>('')
 
+  const dispatch = useDispatch()
+
   const jobIndexRef = useRef<number>()
   const previousJobNameRef = useRef<string>()
 
   const history = useHistory()
 
-  const { loading, schema } = useSelector(rdiPipelineSelector)
+  const { loading, schema, data } = useSelector(rdiPipelineSelector)
 
   const { values, setFieldValue } = useFormikContext<IPipeline>()
 
@@ -70,6 +73,20 @@ const Jobs = () => {
     })
   }
 
+  const handleChange = (value: string) => {
+    setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
+    if (!data?.jobs.find((el) => el.name === decodedJobName)) {
+      return
+    }
+    const editedJob = data?.jobs.find((el) => el.name === decodedJobName)
+
+    if (isEqualPipelineFile(value, editedJob?.value)) {
+      dispatch(deleteChangedFile(decodedJobName))
+      return
+    }
+    dispatch(setChangedFile({ name: decodedJobName, flag: 'new' }))
+  }
+
   return (
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
@@ -105,7 +122,8 @@ const Jobs = () => {
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
             value={editorValue}
-            onChange={(value) => setFieldValue(`jobs.${jobIndexRef.current}.value`, value)}
+            // onChange={(value) => setFieldValue(`jobs.${jobIndexRef.current}.value`, value)}
+            onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
             wrapperClassName="rdi__editorWrapper"

@@ -144,12 +144,18 @@ export interface IRdiStatistics {
   }
 }
 
+export enum FileChangeType {
+  Added = 'added',
+  Modified = 'modified',
+  Removed = 'removed',
+}
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies
+  changes: Record<string, FileChangeType>
 }
 
 export interface IStateRdiDryRunJob {

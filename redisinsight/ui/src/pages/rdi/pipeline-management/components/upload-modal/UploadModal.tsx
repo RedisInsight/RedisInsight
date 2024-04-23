@@ -1,11 +1,11 @@
 import { useFormikContext } from 'formik'
 import JSZip from 'jszip'
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineSelector, setChangedFiles } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import UploadDialog from './components/upload-dialog/UploadDialog'
 
@@ -32,6 +32,8 @@ const UploadModal = (props: Props) => {
   const { loading } = useSelector(rdiPipelineSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
+  const dispatch = useDispatch()
 
   const { values, setFieldValue, resetForm } = useFormikContext<IPipeline>()
 
@@ -79,6 +81,14 @@ const UploadModal = (props: Props) => {
             value: await zip.files[filename].async('string')
           }))
       )
+
+      const uploadFiles = { config: 'new',
+        ...jobs.reduce((acc, { name }) => {
+          acc[name] = 'new'
+          return acc
+        }, {}) }
+
+      dispatch(setChangedFiles(uploadFiles))
 
       resetForm()
       setFieldValue('config', config)

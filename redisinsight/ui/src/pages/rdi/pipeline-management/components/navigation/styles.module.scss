@@ -19,11 +19,27 @@
     max-height: calc(100% - 50px);
   }
 
-  .tab:hover {
-    :global(.rdi-pipeline-nav__text) {
-      text-decoration: underline;
+  .tab {
+    position: relative;
+
+    &:hover {
+      :global(.rdi-pipeline-nav__text) {
+        text-decoration: underline;
+      }
+    }
+
+    &.updated:before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      bottom: 26px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--externalLinkColor);
     }
   }
+
 
   .actions {
     :global(.euiIcon) {

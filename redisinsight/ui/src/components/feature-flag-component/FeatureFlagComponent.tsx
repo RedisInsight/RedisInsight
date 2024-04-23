@@ -1,19 +1,20 @@
 import React from 'react'
 import { isArray } from 'lodash'
 import { useSelector } from 'react-redux'
-import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 export interface Props {
-  name: FeatureFlags
+  name: string
   children: JSX.Element | JSX.Element[]
   otherwise?: React.ReactElement
+  flagDefault?: boolean
 }
 
 const FeatureFlagComponent = (props: Props) => {
-  const { children, name, otherwise } = props
+  const { children, name, otherwise, flagDefault = false } = props
   const { [name]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
-  const { flag, variant } = feature ?? { flag: false }
+  const { flag, variant } = feature ?? { flag: flagDefault }
+
   if (!flag) {
     return otherwise ?? null
   }

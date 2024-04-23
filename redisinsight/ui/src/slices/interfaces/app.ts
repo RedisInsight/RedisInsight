@@ -172,7 +172,7 @@ export interface StateAppFeatures {
   featureFlags: {
     loading: boolean
     features: {
-      [key in FeatureFlags]?: FeatureFlagComponent
+      [key: string]: FeatureFlagComponent
     }
   }
 }

@@ -45,15 +45,95 @@ describe('FeatureFlagComponent', () => {
   })
 
   it('should render otherwise component if the feature flag not enabled', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      name: {
-        flag: false
-      }
-    })
-
     const { queryByTestId } = render(
       <FeatureFlagComponent
         name={'name' as FeatureFlags}
+        otherwise={<OtherwiseComponent />}
+      >
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(queryByTestId('inner-component')).not.toBeInTheDocument()
+    expect(queryByTestId('otherwise-component')).toBeInTheDocument()
+  })
+
+  it('should not render when default is true and feature flag is false', () => {
+    render(
+      <FeatureFlagComponent name={'name' as FeatureFlags} flagDefault>
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(screen.queryByTestId('inner-component')).not.toBeInTheDocument()
+  })
+
+  it('should render when default is true and feature flag is true', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      name: {
+        flag: true
+      }
+    })
+
+    render(
+      <FeatureFlagComponent name={'name' as FeatureFlags} flagDefault>
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(screen.queryByTestId('inner-component')).toBeInTheDocument()
+  })
+
+  it('should render when default is true and feature flag is not found', () => {
+    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      name: {
+        flag: true
+      }
+    })
+
+    render(
+      <FeatureFlagComponent name={'not-found' as FeatureFlags} flagDefault>
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(screen.queryByTestId('inner-component')).toBeInTheDocument()
+  })
+
+  it('should render otherwise component when default is true and feature flag is found', () => {
+    const { queryByTestId } = render(
+      <FeatureFlagComponent
+        name={'name' as FeatureFlags}
+        flagDefault
+        otherwise={<OtherwiseComponent />}
+      >
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(queryByTestId('inner-component')).not.toBeInTheDocument()
+    expect(queryByTestId('otherwise-component')).toBeInTheDocument()
+  })
+
+  it('should not render otherwise component when default is true and feature flag is not found', () => {
+    const { queryByTestId } = render(
+      <FeatureFlagComponent
+        name={'not-found' as FeatureFlags}
+        flagDefault
+        otherwise={<OtherwiseComponent />}
+      >
+        <InnerComponent />
+      </FeatureFlagComponent>
+    )
+
+    expect(queryByTestId('inner-component')).toBeInTheDocument()
+    expect(queryByTestId('otherwise-component')).not.toBeInTheDocument()
+  })
+
+  it('should render otherwise component when default is false and feature flag is not found', () => {
+    const { queryByTestId } = render(
+      <FeatureFlagComponent
+        name={'not-found' as FeatureFlags}
         otherwise={<OtherwiseComponent />}
       >
         <InnerComponent />

@@ -15,7 +15,7 @@ import {
 import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
-import { PageNames, Pages } from 'uiSrc/constants'
+import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
@@ -42,6 +42,7 @@ import { BuildType } from 'uiSrc/constants/env'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import { FeatureFlagComponent } from 'uiSrc/components'
 
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -255,22 +256,23 @@ const NavigationMenu = () => {
         <NotificationMenu />
         <HelpMenu />
         {publicRoutes.map((nav) => (
-          <HighlightedFeature
-            key={nav.tooltipText}
-            isHighlight={!!highlightedPages[nav.pageName]?.length}
-            dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
-            transformOnHover
-          >
-            <EuiToolTip content={nav.tooltipText} position="right">
-              <EuiButtonIcon
-                className={nav.getClassName()}
-                iconType={nav.getIconType()}
-                aria-label={nav.ariaLabel}
-                onClick={nav.onClick}
-                data-testid={nav.dataTestId}
-              />
-            </EuiToolTip>
-          </HighlightedFeature>
+          <FeatureFlagComponent name="settings" flagDefault key={nav.tooltipText}>
+            <HighlightedFeature
+              isHighlight={!!highlightedPages[nav.pageName]?.length}
+              dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+              transformOnHover
+            >
+              <EuiToolTip content={nav.tooltipText} position="right">
+                <EuiButtonIcon
+                  className={nav.getClassName()}
+                  iconType={nav.getIconType()}
+                  aria-label={nav.ariaLabel}
+                  onClick={nav.onClick}
+                  data-testid={nav.dataTestId}
+                />
+              </EuiToolTip>
+            </HighlightedFeature>
+          </FeatureFlagComponent>
         ))}
         <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         <Divider

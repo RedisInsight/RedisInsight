@@ -134,7 +134,8 @@ describe('UploadModal', () => {
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_SUCCEEDED,
       eventData: {
         id: 'rdiInstanceId',
-        jobsNumber: 2
+        jobsNumber: 2,
+        source: 'file',
       }
     })
     expect(onUploadedPipelineMock).toBeCalled()
@@ -166,7 +167,8 @@ describe('UploadModal', () => {
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FAILED,
       eventData: {
         id: 'rdiInstanceId',
-        errorMessage: 'error'
+        errorMessage: 'error',
+        source: 'file'
       }
     })
     expect(onUploadedPipelineMock).not.toBeCalled()

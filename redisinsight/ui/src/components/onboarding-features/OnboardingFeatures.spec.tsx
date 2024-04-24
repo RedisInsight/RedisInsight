@@ -19,11 +19,11 @@ import { stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   changeSelectedTab,
+  changeSidePanel,
   resetExplorePanelSearch,
-  setExplorePanelIsPageOpen,
-  toggleInsightsPanel
-} from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+  setExplorePanelIsPageOpen
+} from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { ONBOARDING_FEATURES } from './OnboardingFeatures'
 
 jest.mock('uiSrc/slices/app/features', () => ({
@@ -459,7 +459,7 @@ describe('ONBOARDING_FEATURES', () => {
 
       const expectedActions = [
         changeSelectedTab(InsightsPanelTabs.Explore),
-        toggleInsightsPanel(true),
+        changeSidePanel(SidePanels.Insights),
         setOnboardNextStep()
       ]
       expect(clearStoreActions(store.getActions().slice(-3)))
@@ -504,7 +504,7 @@ describe('ONBOARDING_FEATURES', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.EXPLORE_REDIS}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('back-btn'))
 
-      const expectedActions = [toggleInsightsPanel(false), setOnboardPrevStep()]
+      const expectedActions = [changeSidePanel(null), setOnboardPrevStep()]
       expect(clearStoreActions(store.getActions().slice(-2)))
         .toEqual(clearStoreActions(expectedActions))
     })
@@ -551,7 +551,7 @@ describe('ONBOARDING_FEATURES', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.EXPLORE_CUSTOM_TUTORIALS}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('next-btn'))
 
-      const expectedActions = [toggleInsightsPanel(false), setOnboardNextStep()]
+      const expectedActions = [changeSidePanel(null), setOnboardNextStep()]
       expect(clearStoreActions(store.getActions().slice(-2)))
         .toEqual(clearStoreActions(expectedActions))
     })

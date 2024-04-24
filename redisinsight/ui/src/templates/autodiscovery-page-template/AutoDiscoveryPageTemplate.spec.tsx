@@ -3,10 +3,10 @@ import { render, screen } from 'uiSrc/utils/test-utils'
 
 import AutodiscoveryPageTemplate from './AutodiscoveryPageTemplate'
 
-jest.mock('uiSrc/slices/panels/insights', () => ({
-  ...jest.requireActual('uiSrc/slices/panels/insights'),
-  insightsPanelSelector: jest.fn().mockReturnValue({
-    isOpen: true
+jest.mock('uiSrc/slices/panels/sidePanels', () => ({
+  ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
+  sidePanelsSelector: jest.fn().mockReturnValue({
+    openedPanel: 'insights'
   }),
 }))
 
@@ -15,10 +15,10 @@ describe('AutoDiscoveryPageTemplate', () => {
     expect(render(<AutodiscoveryPageTemplate>1</AutodiscoveryPageTemplate>)).toBeTruthy()
   })
 
-  it('should render children and insights panel', () => {
+  it('should render children and side panel', () => {
     render(<AutodiscoveryPageTemplate><div data-testid="children" /></AutodiscoveryPageTemplate>)
 
     expect(screen.getByTestId('children')).toBeInTheDocument()
-    expect(screen.getByTestId('insights-panel')).toBeInTheDocument()
+    expect(screen.getByTestId('side-panels-insights')).toBeInTheDocument()
   })
 })

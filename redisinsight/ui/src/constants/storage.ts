@@ -29,6 +29,7 @@ enum BrowserStorageItem {
   OAuthJobId = 'OAuthJobId',
   OAuthAgreement = 'OAuthAgreement',
   insightsPanel = 'insightsPanel',
+  sidePanel = 'sidePanel',
   capability = 'capability',
   aiChatSession = 'aiChatSession',
   selectedAiChat = 'selectedAiChat'

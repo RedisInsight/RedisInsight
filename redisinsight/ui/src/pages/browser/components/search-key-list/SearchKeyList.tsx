@@ -15,20 +15,17 @@ import {
   setFilter,
   setSearchMatch
 } from 'uiSrc/slices/browser/keys'
-import { SearchMode, KeyViewType, SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
-import {
-  redisearchHistorySelector,
-  redisearchSelector
-} from 'uiSrc/slices/browser/redisearch'
+import { KeyViewType, SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { redisearchHistorySelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
@@ -129,9 +126,8 @@ const SearchKeyList = () => {
   }
 
   const handleClickAskCopilot = () => {
-    dispatch(changeSelectedTab(InsightsPanelTabs.AiAssistant))
     dispatch(setSelectedTab(AiChatType.Query))
-    dispatch(toggleInsightsPanel(true))
+    dispatch(changeSidePanel(SidePanels.AiAssistant))
   }
 
   return (

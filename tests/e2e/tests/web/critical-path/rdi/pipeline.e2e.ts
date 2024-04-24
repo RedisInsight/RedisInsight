@@ -50,12 +50,19 @@ fixture.skip `Pipeline`
     });
 test('Verify that user can refresh pipeline', async() => {
     const text = 'text';
-    const expectedText = 'connections:';
+    const expectedText = 'sources:';
 
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
+    await t.click(rdiInstancePage.templateCancelButton);
+    let testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
+    await t.expect(testId).notContains('updated', 'config text was not changed');
+
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, text);
     const enteredText = await MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).eql(text, 'config text was not changed');
+    testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
+    await t.expect(testId).contains('updated', 'config text was not changed');
+
     await t.click(rdiInstancePage.RdiHeader.uploadPipelineButton);
     await t.click(rdiInstancePage.RdiHeader.confirmUploadingPipelineBatton);
     const updatedText = await MonacoEditor.getTextFromMonaco();

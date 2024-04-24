@@ -4,6 +4,7 @@ import { EditorButton } from '../common/editorButton';
 export class PipelineManagementPanel {
     EditorButton = new EditorButton();
     configurationTab = Selector('[data-testid=rdi-nav-btn-config] div');
+    configurationTabLink = Selector('[data-testid^=rdi-nav-btn-config]');
 
     //Jobs
     addJobBtn = Selector('[data-testid=add-new-job]');

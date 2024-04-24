@@ -228,14 +228,13 @@ describe('rdi pipe slice', () => {
 
   describe('getPipelineStrategiesSuccess', () => {
     it('should set loading = false', () => {
-      const mockData = { 'db-type': [], 'strategy-type': [] }
+      const mockData = [{ strategy: 'ingest', databases: ['oracle'] }]
       // Arrange
       const state = {
         ...initialState,
         strategies: {
           ...initialState.strategies,
-          dbType: mockData['db-type'],
-          strategyType: mockData['strategy-type'],
+          data: mockData,
         },
       }
 
@@ -497,7 +496,8 @@ describe('rdi pipe slice', () => {
 
     describe('fetchPipelineStrategies', () => {
       it('succeed to fetch data', async () => {
-        const data = { 'db-type': [], 'strategy-type': [] }
+        const data = { strategies: [{ strategy: 'ingest', databases: ['oracle'] }] }
+
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
@@ -510,7 +510,7 @@ describe('rdi pipe slice', () => {
         // Assert
         const expectedActions = [
           getPipelineStrategies(),
-          getPipelineStrategiesSuccess(data),
+          getPipelineStrategiesSuccess(data.strategies),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

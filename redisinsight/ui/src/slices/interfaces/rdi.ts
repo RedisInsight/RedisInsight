@@ -70,15 +70,14 @@ export interface IStateRdiTestConnections {
 }
 
 export interface IRdiPipelineStrategy {
-  label: string
-  value: string
+  strategy: string
+  databases: string[]
 }
 
 export interface IRdiPipelineStrategies {
   loading: boolean
   error: string
-  dbType: IRdiPipelineStrategy[]
-  strategyType: IRdiPipelineStrategy[]
+  data: IRdiPipelineStrategy[]
 }
 
 export interface IConnections {

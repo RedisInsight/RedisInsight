@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { IStateRdiPipeline, IPipeline, FileChangeType, IPipelineJSON } from 'uiSrc/slices/interfaces/rdi'
+import {
+  IStateRdiPipeline,
+  IPipeline,
+  FileChangeType,
+  IPipelineJSON,
+  IRdiPipelineStrategy
+} from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
@@ -17,8 +23,7 @@ export const initialState: IStateRdiPipeline = {
   strategies: {
     loading: false,
     error: '',
-    dbType: [],
-    strategyType: [],
+    data: [],
   },
   changes: {},
 }
@@ -57,20 +62,18 @@ const rdiPipelineSlice = createSlice({
     getPipelineStrategies: (state) => {
       state.strategies.loading = true
     },
-    getPipelineStrategiesSuccess: (state, { payload }) => {
+    getPipelineStrategiesSuccess: (state, { payload }: PayloadAction<IRdiPipelineStrategy[]>) => {
       state.strategies = {
         loading: false,
         error: '',
-        dbType: payload['db-type'],
-        strategyType: payload['strategy-type'],
+        data: payload,
       }
     },
     getPipelineStrategiesFailure: (state, { payload }) => {
       state.strategies = {
         loading: false,
         error: payload,
-        dbType: [],
-        strategyType: [],
+        data: []
       }
     },
     setChangedFile: (state, { payload }: PayloadAction<{ name: string, status: FileChangeType }>) => {
@@ -182,8 +185,8 @@ export function fetchPipelineStrategies(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getPipelineStrategiesSuccess(data))
-        onSuccessAction?.(data)
+        dispatch(getPipelineStrategiesSuccess(data?.strategies))
+        onSuccessAction?.(data?.strategies)
       }
     } catch (_err) {
       const error = _err as AxiosError

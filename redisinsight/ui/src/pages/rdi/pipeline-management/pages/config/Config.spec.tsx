@@ -1,11 +1,13 @@
 import React from 'react'
 import { useFormikContext } from 'formik'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { cloneDeep } from 'lodash'
+import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
-import { fireEvent, cleanup, render, screen, act } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import Config from './Config'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -18,6 +20,7 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
     schema: { config: { test: {} } },
+    data: null,
   }),
 }))
 
@@ -30,8 +33,11 @@ jest.mock('uiSrc/slices/rdi/testConnections', () => ({
 
 jest.mock('formik')
 
+let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
 })
 
 describe('Config', () => {
@@ -68,6 +74,67 @@ describe('Config', () => {
     )
 
     expect(mockSetFieldValue).toBeCalledWith('config', '123')
+  })
+
+  it('should call proper actions', () => {
+    render(<Config />)
+    const fieldName = screen.getByTestId('rdi-monaco-config')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    const expectedActions = [
+      setChangedFile({ name: 'config', status: FileChangeType.Added })
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should call proper actions when value equal to deployed pipeline', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { config: { test: {} } },
+      data: { config: '123' },
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    render(<Config />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-config')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    const expectedActions = [
+      deleteChangedFile('config')
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should call proper actions when value not equal to deployed pipeline', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { config: { test: {} } },
+      data: { config: '11' },
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    render(<Config />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-config')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    const expectedActions = [
+      setChangedFile({ name: 'config', status: FileChangeType.Modified })
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should open right panel', async () => {

@@ -1,9 +1,11 @@
 import React from 'react'
 import { loadAsync } from 'jszip'
+import { cloneDeep } from 'lodash'
 
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineSelector, setChangedFiles } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import UploadModal from './UploadModal'
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
@@ -59,6 +61,13 @@ const button = (
   </button>
 )
 
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
+
 describe('UploadModal', () => {
   it('should render', () => {
     expect(render(<UploadModal>{button}</UploadModal>)).toBeTruthy()
@@ -80,6 +89,27 @@ describe('UploadModal', () => {
         id: 'rdiInstanceId'
       }
     })
+  })
+
+  it('should call proper telemetry event when file upload is successful', async () => {
+    render(<UploadModal>{button}</UploadModal>)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('btn'))
+    })
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
+        target: { files: ['file'] }
+      })
+      fireEvent.click(screen.getByTestId('submit-btn'))
+    })
+
+    const expectedActions = [
+      setChangedFiles({ config: FileChangeType.Added, job1: FileChangeType.Added, job2: FileChangeType.Added })
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should call proper telemetry event when file upload is successful', async () => {

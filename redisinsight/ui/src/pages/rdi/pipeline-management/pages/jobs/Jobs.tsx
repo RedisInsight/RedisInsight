@@ -75,6 +75,7 @@ const Jobs = () => {
 
   const handleChange = (value: string) => {
     setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
+
     const editedJob = data?.jobs.find((el) => el.name === previousJobNameRef.current)
     if (!editedJob) {
       return
@@ -122,7 +123,6 @@ const Jobs = () => {
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
             value={editorValue}
-            // onChange={(value) => setFieldValue(`jobs.${jobIndexRef.current}.value`, value)}
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}

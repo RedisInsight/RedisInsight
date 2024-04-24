@@ -1,11 +1,13 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { useFormikContext } from 'formik'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { cleanup, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { cloneDeep } from 'lodash'
+import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import Jobs from './Jobs'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -18,13 +20,17 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
+    schema: { jobs: { test: {} } },
   }),
 }))
 
 jest.mock('formik')
 
+let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
 })
 
 describe('Jobs', () => {
@@ -124,5 +130,70 @@ describe('Jobs', () => {
 
     expect(screen.getByTestId('rdi-jobs-dry-run')).toBeDisabled()
     expect(queryByTestId('dry-run-panel')).toBeInTheDocument()
+  })
+
+  it('should not call any actions when job is new', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { jobs: { test: {} } },
+      data: { jobs: [] }
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    render(<Jobs />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-jobs')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    expect(store.getActions()).toEqual([])
+  })
+
+  it('should call proper actions when change monaco editor', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { jobs: { test: {} } },
+      data: { jobs: [{ name: 'jobName', value: 'value' }] }
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    render(<Jobs />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-jobs')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    const expectedActions = [
+      setChangedFile({ name: 'jobName', status: FileChangeType.Modified })
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should call proper actions when value is equal with deployed job', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { jobs: { test: {} } },
+      data: { jobs: [{ name: 'jobName', value: '123' }] }
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    render(<Jobs />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-jobs')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    const expectedActions = [
+      deleteChangedFile('jobName')
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
   })
 })

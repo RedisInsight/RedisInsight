@@ -15,7 +15,7 @@ import {
 import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
-import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
+import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
@@ -65,6 +65,7 @@ interface INavigations {
   getClassName: () => string
   getIconType: () => string
   onboard?: any
+  featureFlagName?: string
 }
 
 const NavigationMenu = () => {
@@ -145,6 +146,7 @@ const NavigationMenu = () => {
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
+      featureFlagName: 'dbAnalysis',
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -177,6 +179,7 @@ const NavigationMenu = () => {
       connectedInstanceId,
       isActivePage: isTriggeredFunctionsPath(activePage),
       isBeta: true,
+      featureFlagName: 'triggersAndFunctions',
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -195,6 +198,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
+      featureFlagName: 'settings',
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -220,7 +224,7 @@ const NavigationMenu = () => {
 
         {connectedInstanceId && (
           privateRoutes.map((nav) => (
-            <React.Fragment key={nav.tooltipText}>
+            <FeatureFlagComponent name={nav.featureFlagName || ''} flagDefault key={nav.tooltipText}>
               {renderOnboardingTourWithChild(
                 (
                   <HighlightedFeature
@@ -248,15 +252,17 @@ const NavigationMenu = () => {
                 { options: nav.onboard },
                 nav.isActivePage
               )}
-            </React.Fragment>
+            </FeatureFlagComponent>
           ))
         )}
       </div>
       <div className={styles.bottomContainer}>
-        <NotificationMenu />
+        <FeatureFlagComponent name="notifications" flagDefault>
+          <NotificationMenu />
+        </FeatureFlagComponent>
         <HelpMenu />
         {publicRoutes.map((nav) => (
-          <FeatureFlagComponent name="settings" flagDefault key={nav.tooltipText}>
+          <FeatureFlagComponent name={nav.featureFlagName || ''} flagDefault key={nav.tooltipText}>
             <HighlightedFeature
               isHighlight={!!highlightedPages[nav.pageName]?.length}
               dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}

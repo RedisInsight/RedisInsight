@@ -1,8 +1,5 @@
 // Global styling
-@import "../../../../node_modules/@elastic/eui/src/global_styling/index";
-
-// Components
-@import "../../../../node_modules/@elastic/eui/src/components/index";
+@import "./elastic";
 
 @import "base/react_virtualized";
 @import "base/base";

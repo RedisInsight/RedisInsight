@@ -16,21 +16,9 @@ import cx from 'classnames'
 import { fetchPipelineStrategies, fetchPipelineTemplate, rdiPipelineStrategiesSelector } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
-
-export const NO_TEMPLATE_LABEL = 'No template'
-
-const NO_TEMPLATE_VALUE = 'no_template'
-
-const NO_OPTIONS: EuiSuperSelectOption<string>[] = [
-  {
-    value: NO_TEMPLATE_VALUE,
-    inputDisplay: NO_TEMPLATE_LABEL,
-  }
-]
-
-export const INGEST_OPTION = 'ingest'
 
 export interface Props {
   setTemplate: (template: string) => void
@@ -123,7 +111,6 @@ const TemplateForm = (props: Props) => {
   }, [data, selectedPipelineType])
 
   useEffect(() => {
-    console.log(data)
     const newPipelineTypeOptions = data.map((strategy) => ({
       value: strategy.strategy,
       inputDisplay: strategy.strategy,

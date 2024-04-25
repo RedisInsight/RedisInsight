@@ -5,7 +5,8 @@ import { instance, mock } from 'ts-mockito'
 import { fireEvent, render, cleanup, mockedStore, screen, act } from 'uiSrc/utils/test-utils'
 import { getPipelineStrategies, rdiPipelineStrategiesSelector } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
-import TemplateForm, { Props, NO_TEMPLATE_LABEL, INGEST_OPTION } from './TemplateForm'
+import { NO_TEMPLATE_LABEL, INGEST_OPTION } from './constants'
+import TemplateForm, { Props } from './TemplateForm'
 
 const mockedProps = mock<Props>()
 

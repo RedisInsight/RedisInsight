@@ -7,7 +7,7 @@ import {
   IPipeline,
   FileChangeType,
   IPipelineJSON,
-  IRdiPipelineStrategy
+  IRdiPipelineStrategy,
 } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
@@ -173,20 +173,19 @@ export function deployPipelineAction(
 
 export function fetchPipelineStrategies(
   rdiInstanceId: string,
-  // TODO update after confirm response with RDI team
-  onSuccessAction?: (data: unknown) => void,
+  onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipelineStrategies())
-      const { status, data } = await apiService.get(
+      const { status, data } = await apiService.get<{ strategies: IRdiPipelineStrategy[] }>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STRATEGIES),
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getPipelineStrategiesSuccess(data?.strategies))
-        onSuccessAction?.(data?.strategies)
+        dispatch(getPipelineStrategiesSuccess(data.strategies))
+        onSuccessAction?.()
       }
     } catch (_err) {
       const error = _err as AxiosError

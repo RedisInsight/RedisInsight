@@ -25,7 +25,7 @@ import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
-const JSON_LENGHT_TO_FORCE_RETRIEVE = 200
+const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
 
 export const initialState: InitialStateRejson = {
   loading: false,
@@ -151,7 +151,7 @@ export function fetchReJSON(
         {
           keyName: key,
           path,
-          forceRetrieve: isNumber(length) && length > JSON_LENGHT_TO_FORCE_RETRIEVE,
+          forceRetrieve: isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE,
           encoding,
         },
         { cancelToken: sourceRejson.token }

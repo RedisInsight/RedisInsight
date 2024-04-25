@@ -15,7 +15,7 @@ import { Client } from 'src/modules/pub-sub/decorators/client.decorator';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
 import { AckWsExceptionFilter } from 'src/modules/pub-sub/filters/ack-ws-exception.filter';
-import { WSSessionMetadata } from 'src/modules/auth/session-metadata/decorators/auth.session-metadata.decorator';
+import { WSSessionMetadata } from 'src/modules/auth/session-metadata/decorators/ws-session-metadata.decorator';
 import { SessionMetadata } from 'src/common/models';
 import { PubSubClientEvents } from './constants';
 

@@ -42,7 +42,7 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
       @WSSessionMetadata() sessionMetadata: SessionMetadata,
       @Body() dto: SubscribeDto,
   ): Promise<any> {
-    await this.service.subscribe(client, dto);
+    await this.service.subscribe(sessionMetadata, client, dto);
     return { status: 'ok' };
   }
 
@@ -52,7 +52,7 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
       @Client() client: UserClient,
       @Body() dto: SubscribeDto,
   ): Promise<any> {
-    await this.service.unsubscribe(client, dto);
+    await this.service.unsubscribe(sessionMetadata, client, dto);
     return { status: 'ok' };
   }
 

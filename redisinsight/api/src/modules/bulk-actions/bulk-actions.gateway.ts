@@ -46,7 +46,7 @@ export class BulkActionsGateway implements OnGatewayConnection, OnGatewayDisconn
     @Body() dto: CreateBulkActionDto,
   ) {
     this.logger.log('Creating new bulk action.');
-    return this.service.create(dto, socket);
+    return this.service.create(sessionMetadata, dto, socket);
   }
 
   @SubscribeMessage(BulkActionsServerEvents.Get)

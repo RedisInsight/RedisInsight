@@ -15,13 +15,20 @@ import { Client } from 'src/modules/pub-sub/decorators/client.decorator';
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { SubscribeDto } from 'src/modules/pub-sub/dto';
 import { AckWsExceptionFilter } from 'src/modules/pub-sub/filters/ack-ws-exception.filter';
+import { WSSessionMetadata } from 'src/modules/auth/session-metadata/decorators/auth.session-metadata.decorator';
+import { SessionMetadata } from 'src/common/models';
 import { PubSubClientEvents } from './constants';
 
 const SOCKETS_CONFIG = config.get('sockets');
 
 @UsePipes(new ValidationPipe())
 @UseFilters(AckWsExceptionFilter)
-@WebSocketGateway({ path: SOCKETS_CONFIG.path, namespace: 'pub-sub', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({
+  path: SOCKETS_CONFIG.path,
+  namespace: 'pub-sub',
+  cors: SOCKETS_CONFIG.cors,
+  serveClient: SOCKETS_CONFIG.serveClient,
+})
 export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 
@@ -30,13 +37,21 @@ export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(private service: PubSubService) {}
 
   @SubscribeMessage(PubSubClientEvents.Subscribe)
-  async subscribe(@Client() client: UserClient, @Body() dto: SubscribeDto): Promise<any> {
+  async subscribe(
+    @Client() client: UserClient,
+      @WSSessionMetadata() sessionMetadata: SessionMetadata,
+      @Body() dto: SubscribeDto,
+  ): Promise<any> {
     await this.service.subscribe(client, dto);
     return { status: 'ok' };
   }
 
   @SubscribeMessage(PubSubClientEvents.Unsubscribe)
-  async unsubscribe(@Client() client: UserClient, @Body() dto: SubscribeDto): Promise<any> {
+  async unsubscribe(
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+      @Client() client: UserClient,
+      @Body() dto: SubscribeDto,
+  ): Promise<any> {
     await this.service.unsubscribe(client, dto);
     return { status: 'ok' };
   }

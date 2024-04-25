@@ -21,7 +21,7 @@ import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { findTutorialPath, getDbWithModuleLoaded } from 'uiSrc/utils'
-import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import styles from './styles.module.scss'
 
 export interface IProps {

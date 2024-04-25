@@ -22,11 +22,11 @@ import { CodeBlock } from 'uiSrc/components'
 
 import {
   changeSelectedTab,
+  changeSidePanel,
   resetExplorePanelSearch,
-  setExplorePanelIsPageOpen,
-  toggleInsightsPanel
-} from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+  setExplorePanelIsPageOpen
+} from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
@@ -263,7 +263,7 @@ const ONBOARDING_FEATURES = {
         },
         onNext: () => {
           dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-          dispatch(toggleInsightsPanel(true))
+          dispatch(changeSidePanel(SidePanels.Insights))
           sendNextTelemetryEvent(...telemetryArgs)
         },
       }
@@ -284,7 +284,7 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
           history.push(Pages.workbench(connectedInstanceId))
-          dispatch(toggleInsightsPanel(false))
+          dispatch(changeSidePanel(null))
           sendBackTelemetryEvent(...telemetryArgs)
         },
         onNext: () => {
@@ -317,7 +317,7 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {
-          dispatch(toggleInsightsPanel(false))
+          dispatch(changeSidePanel(null))
           history.push(Pages.clusterDetails(connectedInstanceId))
           sendNextTelemetryEvent(...telemetryArgs)
         }
@@ -343,7 +343,7 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => {
           dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-          dispatch(toggleInsightsPanel(true))
+          dispatch(changeSidePanel(SidePanels.Insights))
           history.push(Pages.workbench(connectedInstanceId))
           sendBackTelemetryEvent(...telemetryArgs)
         },
@@ -378,7 +378,7 @@ const ONBOARDING_FEATURES = {
         onBack: () => {
           if (connectionType !== ConnectionType.Cluster) {
             dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-            dispatch(toggleInsightsPanel(true))
+            dispatch(changeSidePanel(SidePanels.Insights))
             dispatch(setOnboardPrevStep())
             history.push(Pages.workbench(connectedInstanceId))
           }

@@ -25,10 +25,10 @@ jest.mock('uiSrc/slices/content/guide-links', () => ({
   })
 }))
 
-jest.mock('uiSrc/slices/panels/insights', () => ({
-  ...jest.requireActual('uiSrc/slices/panels/insights'),
-  insightsPanelSelector: jest.fn().mockReturnValue({
-    isOpen: true
+jest.mock('uiSrc/slices/panels/sidePanels', () => ({
+  ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
+  sidePanelsSelector: jest.fn().mockReturnValue({
+    openedPanel: 'insights'
   }),
 }))
 
@@ -56,11 +56,11 @@ describe('HomePage', () => {
     expect(screen.getByTestId('insights-trigger')).toBeInTheDocument()
   })
 
-  it('should render insights panel', async () => {
+  it('should render side panel', async () => {
     localStorageService.get = jest.fn().mockReturnValue(10)
 
     await render(<HomePage />)
 
-    expect(screen.getByTestId('insights-panel')).toBeInTheDocument()
+    expect(screen.getByTestId('side-panels-insights')).toBeInTheDocument()
   })
 })

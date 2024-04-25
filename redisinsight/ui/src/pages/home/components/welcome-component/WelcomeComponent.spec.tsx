@@ -22,8 +22,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({}),
 }))
 
-jest.mock('uiSrc/slices/panels/insights', () => ({
-  ...jest.requireActual('uiSrc/slices/panels/insights'),
+jest.mock('uiSrc/slices/panels/sidePanels', () => ({
+  ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
   insightsPanelSelector: jest.fn().mockReturnValue({
     isOpen: true
   }),
@@ -117,11 +117,5 @@ describe('WelcomeComponent', () => {
     render(<WelcomeComponent {...instance(mockedProps)} />)
 
     expect(screen.queryByTestId('capability-promotion')).toBeInTheDocument()
-  })
-
-  it('should render insights panel', () => {
-    render(<WelcomeComponent {...instance(mockedProps)} />)
-
-    expect(screen.queryByTestId('insights-panel')).toBeInTheDocument()
   })
 })

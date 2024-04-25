@@ -7,7 +7,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { some, throttle } from 'lodash'
+import { throttle } from 'lodash'
 import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
@@ -37,7 +37,7 @@ import { AddDbType } from 'uiSrc/pages/home/constants'
 
 import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
-import { getHighlightingFeatures } from 'uiSrc/utils/highlighting'
+import { getHighlightingFeatures, isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/ai-chatbot-message'
 
@@ -77,7 +77,7 @@ const HomePage = () => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = some([databaseChatFeature, documentationChatFeature], (feature) => feature?.flag)
+  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
   const {
     loading,

@@ -20,12 +20,14 @@ import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } fro
 
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
-import InsightsTrigger from 'uiSrc/components/insights-trigger'
+import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
 import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -48,6 +50,12 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+
   const history = useHistory()
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
   const [isDbIndexEditing, setIsDbIndexEditing] = useState<boolean>(false)
@@ -191,6 +199,12 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem grow={false}>
           <DatabaseOverviewWrapper />
         </EuiFlexItem>
+
+        {isAnyChatAvailable && (
+          <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+            <CopilotTrigger />
+          </EuiFlexItem>
+        )}
 
         <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
           <InsightsTrigger />

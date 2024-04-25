@@ -1,16 +1,5 @@
-@import "../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_light";
 @import "theme_color";
 
-// Global styling
-@import "../../../../../../node_modules/@elastic/eui/src/global_styling/index";
-
-// Components
-@import "../../../../../../node_modules/@elastic/eui/src/components/index";
-
-// Packages
-@import "../../../../../../node_modules/@elastic/eui/packages/index";
-
-// TODO[artyom.podymov]: Maybe there is a better approach for dynamically switching themes
 :root {
   // Core
   --navBackgroundColor: #{$navBackgroundColor};
@@ -21,8 +10,6 @@
   --euiColorSecondary: #{$euiColorSecondary};
   --euiColorSuccess: #{$euiColorSuccess};
   --euiColorSecondaryText: #{$euiColorSecondaryText};
-  --euiColorAccent: #{$euiColorAccent};
-  --euiColorHighlight: #{$euiColorHighlight};
 
   // Status
   --euiColorColorSuccess: #{$euiColorSuccess};
@@ -37,31 +24,30 @@
   --euiColorLightShade: #{$euiColorLightShade};
   --euiColorMediumShade: #{$euiColorMediumShade};
   --euiColorDarkShade: #{$euiColorDarkShade};
-  --euiColorDarkestShade: #{$euiColorDarkestShade};
+  // --euiColorDarkestShade: #{$euiColorDarkestShade};
   --euiColorFullShade: #{$euiColorFullShade};
   --euiColorGhost: #{$euiColorSecondary};
 
   // Variations from core
   --euiTextColor: #{$htmlColor};
-  --euiLinkColor: #{$euiLinkColor};
-  --euiShadowColor: #{$euiShadowColor};
-  --euiShadowColorLarge: #{$euiShadowColorLarge};
+  // --euiLinkColor: #{$euiLinkColor};
+  // --euiShadowColor: #{$euiShadowColor};
+  // --euiShadowColorLarge: #{$euiShadowColorLarge};
   --euiPageBackgroundColor: #{$euiPageBackgroundColor};
   --euiTextSubduedColor: #{$euiTextSubduedColor};
   --euiTextSubduedColorHover: #{$euiTextSubduedColorHover};
-  --euiTitleColor: #{$euiTitleColor};
+  // --euiTitleColor: #{$euiTitleColor};
   --euiBreadcrumbActive: #{$euiBreadcrumbActive};
 
   // Contrasty text variants
   --euiColorPrimaryText: #{$euiColorPrimaryText};
-  --euiColorAccentText: #{$euiColorAccentText};
   --euiColorWarningText: #{$euiColorWarningText};
   --euiColorDangerText: #{$euiColorDangerText};
   --euiColorSuccessText: #{$euiColorSuccessText};
 
   // Charts
-  --euiColorChartLines: #{$euiColorChartLines};
-  --euiColorChartBand: #{$euiColorChartBand};
+  // --euiColorChartLines: #{$euiColorChartLines};
+  // --euiColorChartBand: #{$euiColorChartBand};
 
   // Tooltip
   --euiTooltipBackgroundColor: #{$euiTooltipBackgroundColor};
@@ -123,6 +109,7 @@
   --buttonSuccessColor: #{$buttonSuccessColor};
 
   --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
+  --loadingContentColor: #{$loadingContentColor};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};

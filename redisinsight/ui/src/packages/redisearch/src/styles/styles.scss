@@ -1,9 +1,8 @@
-@import '../../node_modules/@elastic/eui/src/global_styling/mixins/helpers';
-@import '../../node_modules/@elastic/eui/src/global_styling/index';
+@use "../../../../styles/mixins/eui";
 
 * div,
 * span {
-  font-family: 'Graphik', sans-serif !important;
+  font-family: "Graphik", sans-serif !important;
 }
 
 html {
@@ -11,7 +10,7 @@ html {
 }
 
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   flex: auto;
   overflow: auto;
   max-height: 810px;
@@ -19,7 +18,9 @@ html {
   word-break: break-all;
   padding: 16px 20px;
 
-  font: normal normal normal 13px/18px Graphik, sans-serif;
+  font:
+    normal normal normal 13px/18px Graphik,
+    sans-serif;
   text-align: left;
   letter-spacing: 0;
   color: var(--textColorShade);
@@ -27,7 +28,6 @@ html {
   background-color: var(--euiPageBackgroundColor);
 
   z-index: 10;
-
 }
 .responseFail {
   display: inline-block;
@@ -50,7 +50,7 @@ html {
 
     // hide <PerPageComponent/>  option {hidePerPageOptions} doesn't work
     // with dynamic changing prop "pagination" for In-memory table
-    .euiFlexItem:first-child{
+    .euiFlexItem:first-child {
       display: none;
     }
   }

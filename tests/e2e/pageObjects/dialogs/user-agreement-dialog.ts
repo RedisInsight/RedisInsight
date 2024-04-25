@@ -16,7 +16,7 @@ export class UserAgreementDialog {
     pluginSectionWithText = Selector('[data-testid=plugin-section]');
     recommendedSwitcher = Selector('[data-testid=switch-option-recommended]');
 
-    //Accept RedisInsight License Terms
+    //Accept Redis Insight License Terms
     async acceptLicenseTerms(): Promise<void> {
         if (await this.switchOptionEula.exists) {
             await t

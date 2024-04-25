@@ -43,11 +43,11 @@ const OnboardingStartPopover = () => {
       data-testid="onboarding-start-popover"
     >
       <EuiTitle size="xs">
-        <h5>Take a quick tour of RedisInsight?</h5>
+        <h5>Take a quick tour of Redis Insight?</h5>
       </EuiTitle>
       <EuiSpacer size="s" />
       <EuiText data-testid="onboarding-start-content">
-        Hi! RedisInsight has many tools that can help you to optimize the development process.
+        Hi! Redis Insight has many tools that can help you to optimize the development process.
         <br />
         Would you like us to show them to you?
       </EuiText>

@@ -1,5 +1,5 @@
 {
-  "productName": "RedisInsight",
+  "productName": "Redis Insight",
   "appId": "org.RedisLabs.RedisInsight-V2",
   "copyright": "Copyright © 2024 Redis Ltd.",
   "files": [
@@ -8,7 +8,7 @@
     "package.json"
   ],
   "afterSign": "electron-builder-notarize",
-  "artifactName": "${productName}-${os}-${arch}.${ext}",
+  "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
   "asarUnpack": [
     "node_modules/keytar",
@@ -35,8 +35,8 @@
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,
-    "icon": "resources/icon.icns",
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
+    "icon": "resources/icons/1024x1024.png",
+    "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
     "entitlements": "resources/entitlements.mac.plist",
     "entitlementsInherit": "resources/entitlements.mac.plist",
     "gatekeeperAssess": false
@@ -59,7 +59,7 @@
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node",
       "Contents/Resources/app-x64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node"
     ],
-    "artifactName": "${productName}-${os}-${arch}-mas.${ext}"
+    "artifactName": "Redis-Insight-${os}-${arch}-mas.${ext}"
   },
   "masDev": {
     "mergeASARs": false,
@@ -79,7 +79,7 @@
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node",
       "Contents/Resources/app-x64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node"
     ],
-    "artifactName": "${productName}-${os}-${arch}-masDev.${ext}"
+    "artifactName": "Redis-Insight-${os}-${arch}-masDev.${ext}"
   },
   "dmg": {
     "contents": [
@@ -97,7 +97,7 @@
   },
   "win": {
     "target": ["nsis"],
-    "artifactName": "${productName}-${os}-installer.${ext}",
+    "artifactName": "Redis-Insight-${os}-installer.${ext}",
     "icon": "resources/icon.ico",
     "publisherName": [
       "Redis Inc.",
@@ -131,9 +131,9 @@
     ],
     "synopsis": "Redis GUI by Redis Ltd.",
     "category": "Development",
-    "artifactName": "${productName}-${os}-${arch}.${ext}",
+    "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
     "desktop": {
-      "Name": "RedisInsight",
+      "Name": "Redis Insight",
       "Type": "Application",
       "Comment": "Redis GUI by Redis Ltd"
     }
@@ -196,6 +196,11 @@
     {
       "from": "./redisinsight/api/defaults",
       "to": "defaults",
+      "filter": ["**/*"]
+    },
+    {
+      "from": "./redisinsight/api/data",
+      "to": "data",
       "filter": ["**/*"]
     },
     {

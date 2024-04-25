@@ -54,7 +54,7 @@ const ExportAction = (props: Props) => {
           {selection.length}
           {' '}
           databases will be exported from
-          RedisInsight Databases:
+          Redis Insight Databases:
         </p>
       </EuiText>
       <div

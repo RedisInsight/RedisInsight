@@ -1,7 +1,3 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .wrapper {
   .textBtn {
     border: none;
@@ -15,7 +11,8 @@
     &:global(.euiButton.euiButton--secondary) {
       color: var(--wbHoverIconColor) !important;
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         color: var(--wbHoverIconColor) !important;
       }
     }
@@ -25,7 +22,9 @@
     }
 
     :global(.euiButton__text) {
-      font: normal normal normal 13px/17px Graphik, sans-serif !important;
+      font:
+        normal normal normal 13px/17px Graphik,
+        sans-serif !important;
     }
 
     &.activeBtn:global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary),
@@ -51,7 +50,6 @@
 }
 
 .wrapper {
-
   .wrapper .link {
     width: max-content;
 
@@ -71,7 +69,9 @@
     }
 
     :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
-      font: normal normal normal 13px/17px Graphik, sans-serif;
+      font:
+        normal normal normal 13px/17px Graphik,
+        sans-serif;
       color: var(--buttonSecondaryTextColor) !important;
     }
 
@@ -84,7 +84,7 @@
       padding: 0 20px 0 12px;
     }
 
-    &.expanded :global(.euiButtonEmpty__content.euiButtonContent  .euiButtonEmpty__text) {
+    &.expanded :global(.euiButtonEmpty__content.euiButtonContent .euiButtonEmpty__text) {
       color: var(--euiTextSubduedColor) !important;
 
       &:hover,
@@ -96,7 +96,7 @@
 }
 
 .tableWrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   overflow: auto;
   position: relative;
@@ -126,7 +126,7 @@
       padding-left: 12px;
     }
 
-    .euiTableRowCell:last-child  {
+    .euiTableRowCell:last-child {
       padding-right: 12px;
     }
 
@@ -168,7 +168,9 @@
         }
 
         .euiTableCellContent__text {
-          font: normal normal normal 12px/17px Graphik, sans-serif;
+          font:
+            normal normal normal 12px/17px Graphik,
+            sans-serif;
         }
       }
 
@@ -184,7 +186,9 @@
 
     .euiTableCellContent {
       padding: 10px;
-      font: normal normal normal 14px/24px Graphik, sans-serif;
+      font:
+        normal normal normal 14px/24px Graphik,
+        sans-serif;
 
       &:global(.dataType) {
         padding: 10px 6px 2px;
@@ -192,7 +196,8 @@
     }
 
     .euiTableHeaderButton.euiTableHeaderButton-isSorted {
-      span, div {
+      span,
+      div {
         color: var(--htmlColor) !important;
       }
     }
@@ -203,7 +208,9 @@
   }
 
   .valueUnit {
-    font: normal normal normal 12px/17px Graphik, sans-serif !important;
+    font:
+      normal normal normal 12px/17px Graphik,
+      sans-serif !important;
     margin-left: 4px;
     color: var(--euiColorMediumShade) !important;
   }
@@ -249,7 +256,9 @@
 :global(.euiTableCellContent) .delimiter span {
   cursor: pointer;
   color: var(--buttonSecondaryTextColor);
-  font: normal normal normal 13px/17px Graphik, sans-serif;
+  font:
+    normal normal normal 13px/17px Graphik,
+    sans-serif;
 
   &:hover {
     text-decoration: underline;
@@ -270,11 +279,13 @@
   }
 
   & .badge + .badge {
-    margin-left: 6px!important;
+    margin-left: 6px !important;
   }
 
   :global(.euiBadge) span {
-    font: normal normal normal 12px/16px Graphik, sans-serif;
+    font:
+      normal normal normal 12px/16px Graphik,
+      sans-serif;
     padding-top: 0 !important;
   }
 }

@@ -16,7 +16,7 @@ import { appContextPubSub, setPubSubFieldsContext } from 'uiSrc/slices/app/conte
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
-import { ReactComponent as UserIcon } from 'uiSrc/assets/img/icons/user.svg'
+import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
 
 import styles from './styles.module.scss'
 

@@ -4,7 +4,7 @@
 
 Redis can hold a range of different data types. Visualizing these in a 
 format that’s convenient to you for validation and debugging is paramount. 
-You can now easily extend the core functionality of RedisInsight independently by 
+You can now easily extend the core functionality of Redis Insight independently by 
 building your own custom visualization plugin.
 
 Data visualization provided by the plugin is rendered within the 

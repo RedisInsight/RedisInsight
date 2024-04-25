@@ -1,5 +1,3 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
 .container {
   margin-right: 12px;
   height: 30px;
@@ -43,7 +41,7 @@
   }
 }
 
-@include insights-open {
+@include global.insights-open {
   .container {
     margin-right: 8px;
   }
@@ -96,7 +94,7 @@
   height: 20px !important;
 }
 
-@include insights-open {
+@include global.insights-open {
   .controlsIcon {
     width: 18px !important;
     height: 18px !important;

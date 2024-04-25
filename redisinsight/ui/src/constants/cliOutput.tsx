@@ -51,7 +51,7 @@ export const ConnectionSuccessOutputText = [
   '\n\n',
 ]
 
-const unsupportedCommandTextCli = ' is not supported by the RedisInsight CLI. The list of all unsupported commands: '
+const unsupportedCommandTextCli = ' is not supported by the Redis Insight CLI. The list of all unsupported commands: '
 const unsupportedCommandTextWorkbench = ' is not supported by the Workbench. The list of all unsupported commands: '
 export const cliTexts = {
   CLI_UNSUPPORTED_COMMANDS: (commandLine: string, commands: string) =>
@@ -108,7 +108,7 @@ export const cliTexts = {
   ),
   HELLO3_COMMAND: () => (
     <EuiTextColor color="danger" key={Date.now()}>
-      {'RedisInsight does not support '}
+      {'Redis Insight does not support '}
       <EuiLink
         href="https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md"
         className="btnLikeLink"

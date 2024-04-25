@@ -60,7 +60,7 @@ const DeleteAction = (props: Props) => {
           {selection.length}
           {' '}
           databases will be deleted from
-          RedisInsight Databases:
+          Redis Insight Databases:
         </p>
       </EuiText>
       <div

@@ -1,14 +1,4 @@
-@import "../../../../../../node_modules/@elastic/eui/src/themes/eui/eui_colors_dark";
 @import "theme_color";
-
-// Global styling
-@import "../../../../../../node_modules/@elastic/eui/src/global_styling/index";
-
-// Components
-@import "../../../../../../node_modules/@elastic/eui/src/components/index";
-
-// Packages
-@import "../../../../../../node_modules/@elastic/eui/packages/index";
 
 :root {
   // Core
@@ -21,6 +11,9 @@
   --euiColorSuccess: #{$euiColorSuccess};
   --euiColorAccent: #{$euiColorAccent};
   --euiColorHighlight: #{$euiColorHighlight};
+  --euiColorDisabled: #{$euiColorDisabled};
+  --euiColorAccentText: #{$euiColorAccentText};
+  --euiColorDisabledText: #{$euiColorDisabledText};
 
   // Status
   --euiColorColorSuccess: #{$euiColorSuccess};
@@ -121,6 +114,7 @@
   --buttonSuccessColor: #{$buttonSuccessColor};
 
   --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
+  --loadingContentColor: #{$loadingContentColor};
 
   --cliOutputResponseColor: #{$cliOutputResponseColor};
   --cliOutputResponseFailColor: #{$cliOutputResponseFailColor};

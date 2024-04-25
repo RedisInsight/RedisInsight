@@ -16,7 +16,7 @@ import {
   setLoading,
   setPubSubConnected,
 } from 'uiSrc/slices/pubsub/pubsub'
-import { getBaseApiUrl, Nullable } from 'uiSrc/utils'
+import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
 
 interface IProps {
   retryDelay?: number;
@@ -36,6 +36,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
     let retryTimer: NodeJS.Timer
 
     socketRef.current = io(`${getBaseApiUrl()}/pub-sub`, {
+      path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
       extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },

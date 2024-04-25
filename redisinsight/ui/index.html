@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Redis Insight</title>
+  <script>
+    var RIPROXYPATH = '__RIPROXYPATH__';
+    // for vite RIPROXYPATH is a "base" field in the config
+    // in the vite base must starts with '/', for app we should remove the first '/'
+    window.__RI_PROXY_PATH__ = RIPROXYPATH.startsWith('/') ? RIPROXYPATH.slice(1) : RIPROXYPATH;
+
+    // If the RIPROXYPATH is not set, then we need to set it to undefined
+    if (RIPROXYPATH.startsWith('__') || RIPROXYPATH.endsWith('__')) {
+      window.__RI_PROXY_PATH__ = undefined;
+    }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/%RI_INDEX_NAME%"></script>
+</body>
+</html>

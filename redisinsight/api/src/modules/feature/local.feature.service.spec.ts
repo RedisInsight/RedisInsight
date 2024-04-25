@@ -11,7 +11,7 @@ import { FeaturesConfigRepository } from 'src/modules/feature/repositories/featu
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { KnownFeatures } from 'src/modules/feature/constants';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
-import { FeatureService } from 'src/modules/feature/feature.service';
+import { LocalFeatureService } from 'src/modules/feature/local.feature.service';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
@@ -20,7 +20,7 @@ jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('FeatureService', () => {
-  let service: FeatureService;
+  let service: LocalFeatureService;
   let repository: MockType<FeatureRepository>;
   let configsRepository: MockType<FeaturesConfigRepository>;
   let analytics: MockType<FeatureAnalytics>;
@@ -29,7 +29,7 @@ describe('FeatureService', () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        FeatureService,
+        LocalFeatureService,
         {
           provide: EventEmitter2,
           useFactory: () => ({
@@ -55,7 +55,7 @@ describe('FeatureService', () => {
       ],
     }).compile();
 
-    service = module.get(FeatureService);
+    service = module.get(LocalFeatureService);
     repository = module.get(FeatureRepository);
     configsRepository = module.get(FeaturesConfigRepository);
     analytics = module.get(FeatureAnalytics);

@@ -40,20 +40,22 @@ const RejsonObject = (props: JSONObjectProps) => {
   const [valueOfEntireObject, setValueOfEntireObject] = useState<any>('')
   const [addNewKeyValuePair, setAddNewKeyValuePair] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [isExpanded, setIsExpanded] = useState<boolean>(expadedRows?.has(path) || false)
+  const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!isExpanded) {
+    if (!expadedRows?.has(path)) {
       setValue(defaultValue)
       return
     }
 
     if (isDownloaded) {
       setValue(currentValue)
-    } else {
-      fetchObject()
+      setIsExpanded(expadedRows?.has(path))
+      return
     }
-  }, [isExpanded, isDownloaded])
+
+    fetchObject()
+  }, [])
 
   const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {
     setAddNewKeyValuePair(false)
@@ -82,8 +84,23 @@ const RejsonObject = (props: JSONObjectProps) => {
   }
 
   const onClickExpandCollapse = (path: string) => {
-    onJsonKeyExpandAndCollapse(!isExpanded, path)
-    setIsExpanded((v) => !v)
+    if (isExpanded) {
+      onJsonKeyExpandAndCollapse(false, path)
+      setIsExpanded(false)
+      setValue(defaultValue)
+
+      return
+    }
+
+    if (isDownloaded) {
+      onJsonKeyExpandAndCollapse(true, path)
+      setIsExpanded(true)
+      setValue(currentValue)
+
+      return
+    }
+
+    fetchObject()
   }
 
   const fetchObject = async () => {
@@ -96,6 +113,7 @@ const RejsonObject = (props: JSONObjectProps) => {
       setDownloaded(downloaded)
       clearTimeout(spinnerDelay)
       setLoading(false)
+      setIsExpanded(true)
     } catch {
       clearTimeout(spinnerDelay)
       setIsExpanded(false)
@@ -188,4 +206,4 @@ const RejsonObject = (props: JSONObjectProps) => {
   )
 }
 
-export default RejsonObject
+export default React.memo(RejsonObject)

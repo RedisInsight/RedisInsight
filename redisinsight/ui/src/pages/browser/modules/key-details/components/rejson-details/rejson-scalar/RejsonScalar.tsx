@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
-import { isString } from 'lodash'
+import { isNull, isString } from 'lodash'
 import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
@@ -35,7 +35,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setChangedValue(isString(value) ? `"${value}"` : value)
+    setChangedValue(isString(value) ? `"${value}"` : isNull(value) ? 'null' : value)
   }, [value])
 
   const onDeclineChanges = () => {

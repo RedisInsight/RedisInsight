@@ -36,6 +36,7 @@ interface UpdateValueBody {
 export type IJSONData = IJSONValue | IJSONDocument | IJSONDocument[]
 
 export interface BaseProps {
+  length?: number
   data: IJSONData
   dataType: string
   parentPath?: string

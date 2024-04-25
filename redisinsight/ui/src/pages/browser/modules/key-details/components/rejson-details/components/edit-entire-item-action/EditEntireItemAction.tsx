@@ -55,7 +55,7 @@ const EditEntireItemAction = (props: Props) => {
     <div className={styles.row}>
       <div className={styles.fullWidthContainer}>
         <EuiOutsideClickDetector onOutsideClick={() => onCancel?.()}>
-          <div style={{ marginBottom: '34px' }}>
+          <div>
             <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
             <EuiFocusTrap>
               <EuiForm

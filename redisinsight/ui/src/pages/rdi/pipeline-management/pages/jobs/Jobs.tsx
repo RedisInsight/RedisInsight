@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { findIndex, get } from 'lodash'
+import { findIndex, get, throttle } from 'lodash'
 import cx from 'classnames'
 
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -73,9 +73,7 @@ const Jobs = () => {
     })
   }
 
-  const handleChange = (value: string) => {
-    setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
-
+  const checkIsFileUpdated = useCallback(throttle((value) => {
     const editedJob = data?.jobs.find((el) => el.name === previousJobNameRef.current)
     if (!editedJob) {
       return
@@ -86,6 +84,11 @@ const Jobs = () => {
       return
     }
     dispatch(setChangedFile({ name: editedJob.name, status: FileChangeType.Modified }))
+  }, 2000), [data, previousJobNameRef])
+
+  const handleChange = (value: string) => {
+    setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
+    checkIsFileUpdated(value)
   }
 
   return (

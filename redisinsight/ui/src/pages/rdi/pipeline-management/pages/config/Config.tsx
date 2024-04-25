@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { get } from 'lodash'
+import { get, throttle } from 'lodash'
 
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -61,8 +61,7 @@ const Config = () => {
     })
   }
 
-  const handleChange = (value: string) => {
-    setFieldValue('config', value)
+  const checkIsFileUpdated = useCallback(throttle((value) => {
     if (!data) {
       dispatch(setChangedFile({ name: 'config', status: FileChangeType.Added }))
       return
@@ -74,6 +73,11 @@ const Config = () => {
     }
 
     dispatch(setChangedFile({ name: 'config', status: FileChangeType.Modified }))
+  }, 2000), [data])
+
+  const handleChange = (value: string) => {
+    setFieldValue('config', value)
+    checkIsFileUpdated(value)
   }
 
   return (

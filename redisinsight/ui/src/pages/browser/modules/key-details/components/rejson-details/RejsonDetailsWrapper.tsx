@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
 
@@ -22,11 +22,15 @@ const RejsonDetailsWrapper = (props: Props) => {
   const keyType = KeyTypes.ReJSON
   const { loading } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
-  const { name: selectedKey } = useSelector(selectedKeyDataSelector) || {}
+  const { name: selectedKey, nameString, length } = useSelector(selectedKeyDataSelector) || {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    setExpandedRows(new Set())
+  }, [nameString])
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({
@@ -56,7 +60,7 @@ const RejsonDetailsWrapper = (props: Props) => {
     })
   }
 
-  const reportJsonKeyExpandAndCollapse = (isExpanded: boolean, path: string) => {
+  const handleJsonKeyExpandAndCollapse = (isExpanded: boolean, path: string) => {
     const matchedPath = path.match(/\[.+?\]/g)
     const levelFromPath = matchedPath ? matchedPath.length - 1 : 0
     if (isExpanded) {
@@ -100,9 +104,10 @@ const RejsonDetailsWrapper = (props: Props) => {
                 selectedKey={selectedKey || stringToBuffer('')}
                 dataType={type || ''}
                 data={data as IJSONData}
+                length={length}
                 parentPath={path}
                 expadedRows={expandedRows}
-                onJsonKeyExpandAndCollapse={reportJsonKeyExpandAndCollapse}
+                onJsonKeyExpandAndCollapse={handleJsonKeyExpandAndCollapse}
                 isDownloaded={downloaded}
               />
             )}

@@ -20,6 +20,7 @@ const RejsonDetails = (props: BaseProps) => {
   const {
     data,
     selectedKey,
+    length,
     dataType,
     parentPath,
     isDownloaded,
@@ -35,11 +36,11 @@ const RejsonDetails = (props: BaseProps) => {
     dispatch<any>(fetchVisualisationResults(path, forceRetrieve))
 
   const handleAppendRejsonArrayItemAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
-    dispatch(appendReJSONArrayItemAction(keyName, path, data))
+    dispatch(appendReJSONArrayItemAction(keyName, path, data, length))
   }
 
   const handleSetRejsonDataAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
-    dispatch(setReJSONDataAction(keyName, path, data))
+    dispatch(setReJSONDataAction(keyName, path, data, length))
   }
 
   const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {
@@ -56,7 +57,7 @@ const RejsonDetails = (props: BaseProps) => {
   }
 
   const onClickRemoveKey = (path: string, keyName: string) => {
-    dispatch(removeReJSONKeyAction(selectedKey, path || '.', keyName))
+    dispatch(removeReJSONKeyAction(selectedKey, path || '.', keyName, length))
   }
 
   const onClickSetRootKVPair = () => {

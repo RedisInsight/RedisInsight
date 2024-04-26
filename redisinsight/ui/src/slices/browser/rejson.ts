@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 import * as jsonpath from 'jsonpath'
 
+import { isNumber } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent, getJsonPathLevel } from 'uiSrc/telemetry'
@@ -23,6 +24,8 @@ import { refreshKeyInfoAction } from './keys'
 import { InitialStateRejson, RedisResponseBuffer } from '../interfaces'
 import { addErrorNotification, addMessageNotification } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
+
+const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
 
 export const initialState: InitialStateRejson = {
   loading: false,
@@ -123,7 +126,12 @@ export default rejsonSlice.reducer
 export let sourceRejson: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
-export function fetchReJSON(key: RedisResponseBuffer, path = '.', resetData?: boolean) {
+export function fetchReJSON(
+  key: RedisResponseBuffer,
+  path = '.',
+  length?: number,
+  resetData?: boolean,
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadRejsonBranch(resetData))
 
@@ -143,7 +151,7 @@ export function fetchReJSON(key: RedisResponseBuffer, path = '.', resetData?: bo
         {
           keyName: key,
           path,
-          forceRetrieve: false,
+          forceRetrieve: isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE,
           encoding,
         },
         { cancelToken: sourceRejson.token }
@@ -168,6 +176,7 @@ export function setReJSONDataAction(
   key: RedisResponseBuffer,
   path: string,
   data: string,
+  length?: number,
   onSuccessAction?: () => void,
   onFailAction?: () => void
 ) {
@@ -207,7 +216,7 @@ export function setReJSONDataAction(
         }
 
         dispatch(setReJSONDataSuccess())
-        dispatch<any>(fetchReJSON(key, '.'))
+        dispatch<any>(fetchReJSON(key, '.', length))
         dispatch<any>(refreshKeyInfoAction(key))
         onSuccessAction?.()
       }
@@ -224,7 +233,8 @@ export function setReJSONDataAction(
 export function appendReJSONArrayItemAction(
   key: RedisResponseBuffer,
   path: string,
-  data: string
+  data: string,
+  length?: number
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(appendReJSONArrayItem())
@@ -257,7 +267,7 @@ export function appendReJSONArrayItemAction(
           }
         })
         dispatch(appendReJSONArrayItemSuccess())
-        dispatch<any>(fetchReJSON(key, '.'))
+        dispatch<any>(fetchReJSON(key, '.', length))
         dispatch<any>(refreshKeyInfoAction(key))
       }
     } catch (error) {
@@ -272,7 +282,8 @@ export function appendReJSONArrayItemAction(
 export function removeReJSONKeyAction(
   key: RedisResponseBuffer,
   path = '.',
-  jsonKeyName = ''
+  jsonKeyName = '',
+  length?: number
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(removeRejsonKey())
@@ -305,7 +316,7 @@ export function removeReJSONKeyAction(
           }
         })
         dispatch(removeRejsonKeySuccess())
-        dispatch<any>(fetchReJSON(key, '.'))
+        dispatch<any>(fetchReJSON(key, '.', length))
         dispatch<any>(refreshKeyInfoAction(key))
         dispatch(
           addMessageNotification(

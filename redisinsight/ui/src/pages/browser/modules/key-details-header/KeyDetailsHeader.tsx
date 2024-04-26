@@ -72,7 +72,7 @@ const KeyDetailsHeader = ({
   const dispatch = useDispatch()
 
   const handleRefreshKey = () => {
-    dispatch(refreshKey(keyBuffer!, type))
+    dispatch(refreshKey(keyBuffer!, type, undefined, length))
   }
 
   const handleEditTTL = (key: RedisResponseBuffer, ttl: number) => {

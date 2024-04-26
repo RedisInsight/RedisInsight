@@ -78,7 +78,7 @@ test('Verify that user can add, edit and delete job', async() => {
 
     await t.expect(rdiInstancePage.PipelineManagementPanel.jobsPipelineTitle.textContent).eql(jobName2);
 });
-test.only('Verify that user insert template for jobs', async() => {
+test('Verify that user insert template for jobs', async() => {
     const jobName = 'testJob';
     const disabledAttribute = 'isDisabled';
     const defaultValue = 'ingest';

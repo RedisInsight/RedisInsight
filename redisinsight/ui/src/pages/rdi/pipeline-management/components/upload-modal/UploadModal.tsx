@@ -99,7 +99,8 @@ const UploadModal = (props: Props) => {
         event: TelemetryEvent.RDI_PIPELINE_UPLOAD_SUCCEEDED,
         eventData: {
           id: rdiInstanceId,
-          jobsNumber: jobs.length
+          jobsNumber: jobs.length,
+          source: 'file',
         }
       })
 
@@ -112,7 +113,8 @@ const UploadModal = (props: Props) => {
         event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FAILED,
         eventData: {
           id: rdiInstanceId,
-          errorMessage
+          errorMessage,
+          source: 'file',
         }
       })
 

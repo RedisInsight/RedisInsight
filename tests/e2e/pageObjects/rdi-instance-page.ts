@@ -46,7 +46,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     templateButton = Selector('[data-testid^=template-trigger-]');
     templateApplyButton = Selector('[data-testid=template-apply-btn]');
     templateCancelButton = Selector('[data-testid=template-cancel-btn]');
-    pipelineDropdown =  Selector('[data-testid=strategy-type-select]');
+    pipelineDropdown =  Selector('[data-testid=pipeline-type-select]');
     databaseDropdown =  Selector('[data-testid=db-type-select]');
 
     //dialog

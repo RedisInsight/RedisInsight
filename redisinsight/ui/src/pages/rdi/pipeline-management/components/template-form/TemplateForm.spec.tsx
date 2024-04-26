@@ -3,8 +3,9 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 
 import { fireEvent, render, cleanup, mockedStore, screen, act } from 'uiSrc/utils/test-utils'
-import { getPipelineStrategies } from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStrategies, rdiPipelineStrategiesSelector } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { NO_TEMPLATE_LABEL, INGEST_OPTION } from './constants'
 import TemplateForm, { Props } from './TemplateForm'
 
 const mockedProps = mock<Props>()
@@ -24,8 +25,9 @@ jest.mock('uiSrc/telemetry', () => ({
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
-  rdiPipelineSelector: jest.fn().mockReturnValue({
+  rdiPipelineStrategiesSelector: jest.fn().mockReturnValue({
     loading: false,
+    data: [],
   }),
 }))
 
@@ -77,27 +79,66 @@ describe('TemplateForm', () => {
   it('should display db type select when source is "config"', () => {
     render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Config} />)
 
-    expect(screen.getByTestId('strategy-type-select')).toBeInTheDocument()
+    expect(screen.getByTestId('pipeline-type-select')).toBeInTheDocument()
     expect(screen.getByTestId('db-type-select')).toBeInTheDocument()
   })
 
   it('should not render db type select when source is "jobs"', () => {
     render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Jobs} />)
 
-    expect(screen.getByTestId('strategy-type-select')).toBeInTheDocument()
+    expect(screen.getByTestId('pipeline-type-select')).toBeInTheDocument()
 
     const dbTypeSelect = screen.queryByTestId('db-type-select')
 
     expect(dbTypeSelect).toBeNull()
   })
 
-  it('should not render db type select when source is "jobs"', () => {
-    render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Jobs} />)
+  it('should select "No template" value', () => {
+    render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Config} />)
 
-    expect(screen.getByTestId('strategy-type-select')).toBeInTheDocument()
+    expect(screen.getByTestId('pipeline-type-select')).toHaveTextContent(NO_TEMPLATE_LABEL)
+    expect(screen.getByTestId('db-type-select')).toHaveTextContent(NO_TEMPLATE_LABEL)
+  })
 
-    const dbTypeSelect = screen.queryByTestId('db-type-select')
+  it('should select ingest option and first db option', async () => {
+    (rdiPipelineStrategiesSelector as jest.Mock).mockImplementation(() => ({
+      loading: false,
+      data: [
+        {
+          strategy: 'any',
+          databases: ['any']
+        },
+        {
+          strategy: INGEST_OPTION,
+          databases: ['first_db_option', 'second_db_option']
+        },
+      ]
+    }))
 
-    expect(dbTypeSelect).toBeNull()
+    await act(() => render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Config} />))
+
+    expect(screen.getByTestId('pipeline-type-select')).toHaveTextContent(INGEST_OPTION)
+    expect(screen.getByTestId('db-type-select')).toHaveTextContent('first_db_option')
+  })
+
+  it('should select first db and pipeline options', async () => {
+    (rdiPipelineStrategiesSelector as jest.Mock).mockImplementation(() => ({
+      loading: false,
+      data: [
+        {
+          strategy: 'foo',
+          databases: ['any']
+        },
+        {
+          strategy: 'bar',
+          databases: ['first_db_option', 'second_db_option']
+        },
+      ]
+    }))
+
+    await act(() => render(<TemplateForm {...instance(mockedProps)} source={RdiPipelineTabs.Config} />))
+
+    expect(screen.getByTestId('pipeline-type-select')).toHaveTextContent('foo')
+    expect(screen.getByTestId('db-type-select')).toHaveTextContent('any')
   })
 })

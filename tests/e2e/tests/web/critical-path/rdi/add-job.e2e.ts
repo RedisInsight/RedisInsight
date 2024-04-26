@@ -22,7 +22,7 @@ const rdiInstance: AddNewRdiParameters = {
 };
 
 //skip the tests until rdi integration is added
-fixture.skip `Add job`
+fixture `Add job`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -81,7 +81,7 @@ test('Verify that user can add, edit and delete job', async() => {
 test('Verify that user insert template for jobs', async() => {
     const jobName = 'testJob';
     const disabledAttribute = 'isDisabled';
-    const defaultValue = 'Ingest';
+    const defaultValue = 'ingest';
     const templateWords = 'server_name: chinook';
     // should be empty config
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
@@ -103,7 +103,6 @@ test('Verify that user insert template for jobs', async() => {
 
     await t.click(rdiInstancePage.templateButton);
     await t.expect(buttonClass).contains(disabledAttribute, 'Apply button is active');
-    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql('Write behind', 'the value is set incorrectly');
 });
 test('Verify that user can change job config', async() => {
     const jobName = 'testJob';

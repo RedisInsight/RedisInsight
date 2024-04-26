@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { IStateRdiPipeline, IPipeline, FileChangeType, IPipelineJSON } from 'uiSrc/slices/interfaces/rdi'
+import {
+  IStateRdiPipeline,
+  IPipeline,
+  FileChangeType,
+  IPipelineJSON,
+  IRdiPipelineStrategy,
+} from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
@@ -17,8 +23,7 @@ export const initialState: IStateRdiPipeline = {
   strategies: {
     loading: false,
     error: '',
-    dbType: [],
-    strategyType: [],
+    data: [],
   },
   changes: {},
 }
@@ -57,20 +62,18 @@ const rdiPipelineSlice = createSlice({
     getPipelineStrategies: (state) => {
       state.strategies.loading = true
     },
-    getPipelineStrategiesSuccess: (state, { payload }) => {
+    getPipelineStrategiesSuccess: (state, { payload }: PayloadAction<IRdiPipelineStrategy[]>) => {
       state.strategies = {
         loading: false,
         error: '',
-        dbType: payload['db-type'],
-        strategyType: payload['strategy-type'],
+        data: payload,
       }
     },
     getPipelineStrategiesFailure: (state, { payload }) => {
       state.strategies = {
         loading: false,
         error: payload,
-        dbType: [],
-        strategyType: [],
+        data: []
       }
     },
     setChangedFile: (state, { payload }: PayloadAction<{ name: string, status: FileChangeType }>) => {
@@ -170,20 +173,19 @@ export function deployPipelineAction(
 
 export function fetchPipelineStrategies(
   rdiInstanceId: string,
-  // TODO update after confirm response with RDI team
-  onSuccessAction?: (data: unknown) => void,
+  onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipelineStrategies())
-      const { status, data } = await apiService.get(
+      const { status, data } = await apiService.get<{ strategies: IRdiPipelineStrategy[] }>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STRATEGIES),
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(getPipelineStrategiesSuccess(data))
-        onSuccessAction?.(data)
+        dispatch(getPipelineStrategiesSuccess(data.strategies))
+        onSuccessAction?.()
       }
     } catch (_err) {
       const error = _err as AxiosError

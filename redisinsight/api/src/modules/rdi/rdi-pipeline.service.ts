@@ -25,9 +25,21 @@ export class RdiPipelineService {
   async getPipeline(rdiClientMetadata: RdiClientMetadata): Promise<object> {
     this.logger.log('Getting RDI pipeline');
 
-    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+    try {
+      const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-    return await client.getPipeline();
+      const response = await client.getPipeline();
+
+      this.analytics.sendRdiPipelineFetched(rdiClientMetadata.id, response);
+
+      this.logger.log('Succeed to get RDI pipeline');
+      return response;
+    } catch (e) {
+      this.logger.error('Failed to get RDI pipeline', e);
+
+      this.analytics.sendRdiPipelineFetchFailed(e, rdiClientMetadata.id);
+    }
+
   }
 
   async dryRunJob(rdiClientMetadata: RdiClientMetadata, dto: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {

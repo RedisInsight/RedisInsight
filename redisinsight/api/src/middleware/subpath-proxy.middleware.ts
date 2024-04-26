@@ -12,7 +12,9 @@ export default class SubpathProxyMiddleware implements NestMiddleware {
       if (path.endsWith('.html')) {
         let content = fs.readFileSync(path, 'utf8');
         const regex = /\/?__RIPROXYPATH__/g;
-        content = content.replace(regex, proxyPath);
+
+        // for vite build proxyPath if exists should starts with '/'
+        content = content.replace(regex, proxyPath ? '/'+proxyPath : '');
         res.send(content);
         return;
       }

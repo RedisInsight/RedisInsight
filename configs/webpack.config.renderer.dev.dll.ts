@@ -24,7 +24,90 @@ export default merge(baseConfig, {
   /**
    * Use `module` from `webpack.config.renderer.dev.js`
    */
-  module: require('./webpack.config.renderer.dev').default.module,
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+
+      // TTF Font
+      {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        exclude: /codicon\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[hash]-[name].[ext]',
+              outputPath: 'fonts',
+              publicPath: 'fonts',
+            },
+          },
+        ],
+      },
+      // TTF codicon font
+      {
+        test: /codicon\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        use: 'url-loader',
+      },
+
+      // TODO remove after regression
+      // // WOFF Font
+      // {
+      //   test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: {
+      //     loader: 'url-loader',
+      //     options: {
+      //       limit: 10000,
+      //       mimetype: 'application/font-woff',
+      //     },
+      //   },
+      // },
+      // // WOFF2 Font
+      // {
+      //   test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: [
+      //     {
+      //       loader: 'file-loader',
+      //       options: {
+      //         name: '[hash]-[name].[ext]',
+      //         outputPath: 'fonts',
+      //         publicPath: 'fonts',
+      //       },
+      //     },
+      //   ],
+      // },
+      // // OTF Font
+      // {
+      //   test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: [
+      //     {
+      //       loader: 'file-loader',
+      //       options: {
+      //         name: '[hash]-[name].[ext]',
+      //         outputPath: 'fonts',
+      //         publicPath: 'fonts',
+      //       },
+      //     },
+      //   ],
+      // },
+      // // EOT Font
+      // {
+      //   test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+      //   use: 'file-loader',
+      // },
+      // {
+      //   test: /\.svg$/,
+      //   use: ['@svgr/webpack', 'url-loader'],
+      // },
+      // // Common Image Formats
+      // {
+      //   test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
+      //   use: 'url-loader',
+      // },
+    ],
+  },
 
   entry: {
     renderer: [...Object.keys(dependencies || {}), ...Object.keys(dependenciesApi || {})],

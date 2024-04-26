@@ -9,8 +9,8 @@ PLUGINS_VENDOR_DIR="./redisinsight/api/static/resources/plugins"
 
 # Default plugins assets
 sass "./redisinsight/ui/src/styles/main_plugin.scss" "./vendor/global_styles.css" --style=compressed --no-source-map;
-sass "./redisinsight/ui/src/styles/themes/dark_theme/_dark_theme.lazy.scss" "./vendor/dark_theme.css" --style=compressed --no-source-map;
-sass "./redisinsight/ui/src/styles/themes/light_theme/_light_theme.lazy.scss" "./vendor/light_theme.css" --style=compressed --no-source-map;
+sass "./redisinsight/ui/src/styles/themes/dark_theme/darkTheme.scss" "./vendor/dark_theme.css" --style=compressed --no-source-map;
+sass "./redisinsight/ui/src/styles/themes/light_theme/lightTheme.scss" "./vendor/light_theme.css" --style=compressed --no-source-map;
 cp -R "./redisinsight/ui/src/assets/fonts/graphik/" "./vendor/fonts"
 cp -R "./redisinsight/ui/src/assets/fonts/inconsolata/" "./vendor/fonts"
 mkdir -p "${PLUGINS_VENDOR_DIR}"

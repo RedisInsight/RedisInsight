@@ -9,7 +9,7 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Body, Logger } from '@nestjs/common';
 import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
 import { ProfilerClientEvents } from 'src/modules/profiler/constants';
 import { ProfilerService } from 'src/modules/profiler/profiler.service';
@@ -36,7 +36,9 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage(ProfilerClientEvents.Monitor)
   async monitor(
-    @WSSessionMetadata() sessionMetadata: SessionMetadata, client: Socket, settings: MonitorSettings = null,
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+      @ConnectedSocket() client: Socket,
+      @Body() settings: MonitorSettings = null,
   ): Promise<any> {
     try {
       await this.service.addListenerForInstance(

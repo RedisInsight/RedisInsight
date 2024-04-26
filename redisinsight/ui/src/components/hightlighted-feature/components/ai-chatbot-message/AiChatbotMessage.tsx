@@ -6,8 +6,8 @@ import { removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import AiRobot from 'uiSrc/assets/img/ai/ai-robot.svg'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import styles from './styles.module.scss'
@@ -22,9 +22,8 @@ const AiChatbotMessage = () => {
   }, [])
 
   const handleClickShowMe = () => {
-    dispatch(changeSelectedTab(InsightsPanelTabs.AiAssistant))
     dispatch(setSelectedTab(AiChatType.Assistance))
-    dispatch(toggleInsightsPanel(true))
+    dispatch(changeSidePanel(SidePanels.AiAssistant))
 
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_BOT_MESSAGE_CLICKED

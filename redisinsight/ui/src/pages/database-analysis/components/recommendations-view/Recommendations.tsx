@@ -35,7 +35,7 @@ import {
   renderRecommendationContent,
 } from 'uiSrc/utils/recommendation/utils'
 
-import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 

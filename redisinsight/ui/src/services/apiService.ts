@@ -6,16 +6,16 @@ import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
 import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 
-const { apiPort } = window.app.config
+const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
-let apiPrefix = process.env.RI_API_PREFIX
-
-if (window.__RIPROXYPATH__) {
-  apiPrefix = window.__RIPROXYPATH__ + '/' + apiPrefix
-}
-
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
+
+let apiPrefix = process.env.RI_API_PREFIX
+
+if (window.__RI_PROXY_PATH__) {
+  apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
+}
 
 export const getBaseUrl = () => (!isDevelopment && isWebApp
   ? `${window.location.origin}/${apiPrefix}/`

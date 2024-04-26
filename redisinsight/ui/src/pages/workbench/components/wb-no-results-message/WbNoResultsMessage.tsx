@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import BulbImg from 'uiSrc/assets/img/workbench/bulb.svg'
-import { ReactComponent as ArrowToGuidesIcon } from 'uiSrc/assets/img/workbench/arrow-to-guides.svg'
-import { ReactComponent as TriggerIcon } from 'uiSrc/assets/img/bulb.svg'
+import ArrowToGuidesIcon from 'uiSrc/assets/img/workbench/arrow-to-guides.svg?react'
+import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import styles from './styles.module.scss'
 
@@ -22,7 +22,7 @@ const WbNoResultsMessage = () => {
 
   const handleOpenInsights = () => {
     dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-    dispatch(toggleInsightsPanel(true))
+    dispatch(changeSidePanel(SidePanels.Insights))
 
     sendEventTelemetry({
       event: TelemetryEvent.INSIGHTS_PANEL_OPENED,

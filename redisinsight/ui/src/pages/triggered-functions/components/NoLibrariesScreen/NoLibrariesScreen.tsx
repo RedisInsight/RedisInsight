@@ -13,15 +13,15 @@ import {
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
-import { ReactComponent as TriggersAndFunctionsImageDark } from 'uiSrc/assets/img/triggers_and_functions_dark.svg'
-import { ReactComponent as TriggersAndFunctionsImageLight } from 'uiSrc/assets/img/triggers_and_functions_light.svg'
+import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
+import TriggersAndFunctionsImageDark from 'uiSrc/assets/img/triggers_and_functions_dark.svg?react'
+import TriggersAndFunctionsImageLight from 'uiSrc/assets/img/triggers_and_functions_light.svg?react'
 import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { findTutorialPath, getDbWithModuleLoaded } from 'uiSrc/utils'
-import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import styles from './styles.module.scss'
 
 export interface IProps {

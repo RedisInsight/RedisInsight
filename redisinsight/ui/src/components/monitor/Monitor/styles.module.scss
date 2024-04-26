@@ -1,9 +1,5 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   height: calc(100% - 34px);
   position: relative;
   width: 100%;
@@ -30,7 +26,7 @@
 }
 
 .listWrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   flex: 1;
 
   width: 100%;
@@ -47,7 +43,7 @@
   overflow: hidden;
   padding: 12px 4px 12px 12px;
 
-  //@include euiScrollBar;
+  //@include eui.scrollBar;
   //
   //width: 100%;
   //height: 100%;
@@ -85,7 +81,9 @@
   max-width: 264px;
   flex-direction: column;
 
-  font: normal normal normal 12px/18px Graphik, sans-serif;
+  font:
+    normal normal normal 12px/18px Graphik,
+    sans-serif;
 }
 
 .monitorStoppedText {
@@ -94,7 +92,9 @@
 }
 
 .saveLogContainer {
-  font: normal normal normal 13px/18px Graphik, sans-serif;
+  font:
+    normal normal normal 13px/18px Graphik,
+    sans-serif;
   letter-spacing: -0.13px;
   margin-bottom: 18px;
   :global(.euiSwitch__label) {
@@ -110,7 +110,7 @@
 .autoScrollContainer {
   :global {
     .react-auto-scroll__scroll-container {
-      @include euiScrollBar;
+      @include eui.scrollBar;
     }
 
     .react-auto-scroll__option {

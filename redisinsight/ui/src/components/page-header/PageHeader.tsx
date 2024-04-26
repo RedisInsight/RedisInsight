@@ -1,6 +1,6 @@
 import React from 'react'
 import { EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiTitle } from '@elastic/eui'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import cx from 'classnames'
@@ -9,11 +9,13 @@ import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
-import { ReactComponent as Logo } from 'uiSrc/assets/img/logo.svg'
+import Logo from 'uiSrc/assets/img/logo.svg?react'
 
-import InsightsTrigger from 'uiSrc/components/insights-trigger'
+import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import styles from './PageHeader.module.scss'
 
 interface Props {
@@ -26,6 +28,13 @@ interface Props {
 
 const PageHeader = (props: Props) => {
   const { title, subtitle, showInsights, children, className } = props
+
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -54,6 +63,11 @@ const PageHeader = (props: Props) => {
         {children ? <>{children}</> : ''}
         {showInsights ? (
           <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
+            {isAnyChatAvailable && (
+              <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
+                <CopilotTrigger />
+              </EuiFlexItem>
+            )}
             <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
             <FeatureFlagComponent name={FeatureFlags.cloudSso}>
               <EuiFlexItem style={{ marginLeft: 16 }}>

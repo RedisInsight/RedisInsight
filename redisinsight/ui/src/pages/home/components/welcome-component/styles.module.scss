@@ -1,9 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .welcome {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   background-size: cover;
   height: 100%;

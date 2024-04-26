@@ -1,8 +1,8 @@
-@import "../../../../../node_modules/@elastic/eui/src/global_styling/index";
-@import "../../../../../node_modules/@elastic/eui/src/global_styling/mixins/helpers";
+@use "../mixins/eui";
 
 .cli-container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
+
   flex: auto;
   border-top: inherit;
   padding: 9px 18px;
@@ -26,7 +26,6 @@
   font: normal normal bold 14px/15px Inconsolata !important;
   white-space: pre-line;
 }
-
 
 .cli-output-response-success {
   color: var(--cliOutputResponseColor) !important;

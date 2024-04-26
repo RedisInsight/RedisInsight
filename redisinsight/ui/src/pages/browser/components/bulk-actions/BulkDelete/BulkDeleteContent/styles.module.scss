@@ -1,9 +1,5 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 
   display: flex;
   flex-grow: 1;
@@ -67,5 +63,5 @@
 }
 
 .listContent {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 }

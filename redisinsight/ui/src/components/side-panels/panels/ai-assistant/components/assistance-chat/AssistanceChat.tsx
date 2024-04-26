@@ -39,7 +39,7 @@ const AssistanceChat = () => {
     }
 
     dispatch(getAssistantChatHistoryAction(id, () => scrollToBottom('auto')))
-  }, [])
+  }, [id])
 
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom('smooth')

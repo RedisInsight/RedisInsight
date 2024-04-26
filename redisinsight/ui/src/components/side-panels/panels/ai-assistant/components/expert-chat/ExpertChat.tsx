@@ -14,6 +14,7 @@ import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/i
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import ChatHistory from '../chat-history'
 import ChatForm from '../chat-form'
 import { ExpertChatInitialMessage } from '../chat-history/texts'
@@ -24,16 +25,25 @@ const ExpertChat = () => {
   const { messages, loading } = useSelector(aiExpertChatSelector)
   const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
+  const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
   const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
 
+  const currentAccountIdRef = useRef(userOAuthProfile?.id)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const dispatch = useDispatch()
 
   useEffect(() => {
+    // changed account
+    if (instanceId && currentAccountIdRef.current !== userOAuthProfile?.id) {
+      currentAccountIdRef.current = userOAuthProfile?.id
+      dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
+      return
+    }
+
     if (messages.length) {
       scrollToBottom('auto')
       return
@@ -42,7 +52,7 @@ const ExpertChat = () => {
     if (instanceId) {
       dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
     }
-  }, [instanceId])
+  }, [instanceId, userOAuthProfile])
 
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom()

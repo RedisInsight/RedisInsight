@@ -25,21 +25,23 @@ const WelcomeAiAssistant = () => {
 
   return (
     <div className={styles.wrapper} data-testid="copilot-welcome">
-      <EuiText style={{ lineHeight: '1.35' }}>
-        Hi! I am your Redis Copilot, here to help you be more productive.
-      </EuiText>
-      <EuiSpacer size="s" />
-      <EuiText style={{ lineHeight: '1.35' }}>
-        Ask me questions about Redis or get specialized expertise in the context of your database.
-      </EuiText>
-      <EuiSpacer size="xl" />
-      <EuiTitle size="xs"><h5>Sign in to start asking questions.</h5></EuiTitle>
+      <div className={styles.container}>
+        <EuiText style={{ lineHeight: '1.35' }}>
+          Hi! I am your Redis Copilot, here to help you be more productive.
+        </EuiText>
+        <EuiSpacer size="s" />
+        <EuiText style={{ lineHeight: '1.35' }}>
+          Ask me questions about Redis or get specialized expertise in the context of your database.
+        </EuiText>
+        <EuiSpacer size="xl" />
+        <EuiTitle size="xs"><h5>Sign in to start asking questions.</h5></EuiTitle>
 
-      <EuiSpacer size="l" />
-      <OAuthSocialButtons action={OAuthSocialAction.SignIn} onClick={handleSsoClick} />
-      <EuiSpacer />
-      <div className={styles.agreement}>
-        <OAuthAgreement />
+        <EuiSpacer size="l" />
+        <OAuthSocialButtons action={OAuthSocialAction.SignIn} onClick={handleSsoClick} />
+        <EuiSpacer />
+        <div className={styles.agreement}>
+          <OAuthAgreement />
+        </div>
       </div>
     </div>
   )

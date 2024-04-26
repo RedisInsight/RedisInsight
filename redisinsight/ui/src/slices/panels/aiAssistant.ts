@@ -64,6 +64,7 @@ const aiAssistantSlice = createSlice({
     removeAssistantChatHistorySuccess: (state) => {
       state.assistant.loading = false
       state.assistant.messages = []
+      state.assistant.id = ''
       sessionStorageService.remove(BrowserStorageItem.aiChatSession)
     },
     removeAssistantChatHistoryFailed: (state) => {

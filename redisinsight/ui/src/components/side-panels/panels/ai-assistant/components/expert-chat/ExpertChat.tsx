@@ -148,6 +148,7 @@ const ExpertChat = () => {
           size="xs"
           onClick={onClearSession}
           className={styles.startSessionBtn}
+          data-testid="ai-expert-restart-session-btn"
         >
           Clear
         </EuiButtonEmpty>

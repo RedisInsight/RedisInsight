@@ -44,14 +44,14 @@ export const mockCloudCapiKeyEntity = Object.assign(new CloudCapiKeyEntity(), {
 });
 
 export const mockCloudCapiKeyRepository = jest.fn(() => ({
-  get: jest.fn(),
+  get: jest.fn().mockResolvedValue(mockCloudCapiKey),
   update: jest.fn().mockResolvedValue(mockCloudCapiKey),
-  getByUserAccount: jest.fn(),
+  getByUserAccount: jest.fn().mockResolvedValue(mockCloudCapiKey),
   create: jest.fn().mockResolvedValue({
     ...mockCloudCapiKey,
     capiSecret: undefined,
   }),
-  list: jest.fn(),
+  list: jest.fn().mockResolvedValue([mockCloudCapiKey]),
   delete: jest.fn(),
   deleteAll: jest.fn(),
 }));

@@ -5,6 +5,13 @@ export const mockCapiUnauthorizedError = {
   },
 };
 
+export const mockApiInternalServerError = {
+  message: 'Something wrong',
+  response: {
+    status: 500,
+  },
+};
+
 export const mockUtm = {
   source: 'redisinsight',
   medium: 'sso',

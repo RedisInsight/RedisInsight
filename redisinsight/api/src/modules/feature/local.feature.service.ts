@@ -8,9 +8,10 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { knownFeatures } from 'src/modules/feature/constants/known-features';
 import { Feature } from 'src/modules/feature/model/feature';
+import { FeatureService } from 'src/modules/feature/feature.service';
 
 @Injectable()
-export class LocalFeatureService {
+export class LocalFeatureService extends FeatureService {
   private logger = new Logger('FeaturesConfigService');
 
   constructor(
@@ -19,7 +20,9 @@ export class LocalFeatureService {
     private readonly featureFlagProvider: FeatureFlagProvider,
     private readonly eventEmitter: EventEmitter2,
     private readonly analytics: FeatureAnalytics,
-  ) {}
+  ) {
+    super();
+  }
 
   async getByName(name: string): Promise<Feature> {
     try {

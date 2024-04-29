@@ -41,11 +41,8 @@ export class FeatureModule {
         },
       ],
       exports: [
+        FeatureService,
         FeaturesConfigService,
-        {
-          provide: FeatureService,
-          useClass: featureService,
-        },
       ],
       imports: [
         NotificationModule,

@@ -471,7 +471,7 @@ export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {
 
 export interface InitialStateRejson {
   loading: boolean
-  error: string
+  error: Nullable<string>
   data: GetRejsonRlResponse
 }
 

@@ -122,7 +122,7 @@ const SourcePipelineDialog = () => {
               onKeyDown={(event) => onKeyDown(event, onStartNewPipeline)}
               onClick={onStartNewPipeline}
               className={styles.action}
-              data-testid="new-source-pipeline-dialog"
+              data-testid="empty-source-pipeline-dialog"
             >
               <EuiIcon type="document" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Create new pipeline</EuiText>

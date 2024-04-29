@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import {
-  EuiButtonEmpty,
   EuiIcon,
   EuiModal,
   EuiModalBody,
   EuiText,
   EuiTitle,
+  keys,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -69,6 +69,10 @@ const SourcePipelineDialog = () => {
     onSelect(PipelineSourceOptions.FILE)
   }
 
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, callback: () => void) => {
+    if (event.key === keys.ENTER) callback()
+  }
+
   if (isShowDownloadDialog) {
     return (
       <UploadModal
@@ -87,41 +91,41 @@ const SourcePipelineDialog = () => {
       <EuiModalBody>
         <div className={styles.content}>
           <EuiTitle size="s">
-            <h3 className={styles.title}>Select an option<br /> to start with your pipeline</h3>
+            <h3 className={styles.title}>Start with your pipeline</h3>
           </EuiTitle>
           <div className={styles.actions}>
-            <div className={styles.action}>
+            <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => onKeyDown(event, onLoadPipeline)}
+              onClick={onLoadPipeline}
+              className={styles.action}
+              data-testid="server-source-pipeline-dialog"
+            >
               <EuiIcon type={UploadIcon} size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Upload from server</EuiText>
-              <EuiButtonEmpty
-                onClick={onLoadPipeline}
-                className={styles.btn}
-                data-testid="server-source-pipeline-dialog"
-              >
-                Sync
-              </EuiButtonEmpty>
             </div>
-            <div className={styles.action}>
+            <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => onKeyDown(event, onUploadClick)}
+              onClick={onUploadClick}
+              className={styles.action}
+              data-testid="file-source-pipeline-dialog"
+            >
               <EuiIcon type="exportAction" size="xl" className={styles.icon} />
               <EuiText className={styles.text}>Upload from file</EuiText>
-              <EuiButtonEmpty
-                onClick={onUploadClick}
-                className={styles.btn}
-                data-testid="file-source-pipeline-dialog"
-              >
-                Upload
-              </EuiButtonEmpty>
             </div>
-            <div className={styles.action}>
+            <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => onKeyDown(event, onStartNewPipeline)}
+              onClick={onStartNewPipeline}
+              className={styles.action}
+              data-testid="new-source-pipeline-dialog"
+            >
               <EuiIcon type="document" size="xl" className={styles.icon} />
-              <EuiText className={styles.text}>Start new pipeline</EuiText>
-              <EuiButtonEmpty
-                onClick={onStartNewPipeline}
-                className={styles.btn}
-                data-testid="empty-source-pipeline-dialog"
-              >
-                Start
-              </EuiButtonEmpty>
+              <EuiText className={styles.text}>Create new pipeline</EuiText>
             </div>
           </div>
         </div>

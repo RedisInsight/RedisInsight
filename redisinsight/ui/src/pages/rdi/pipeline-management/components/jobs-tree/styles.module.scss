@@ -84,7 +84,7 @@
     .euiAccordion__triggerWrapper,
     .euiAccordion__childWrapper {
       min-height: 24px;
-      background-color: transparent;
+      background-color: transparent !important;
     }
 
     .euiIEFlexWrapFix {

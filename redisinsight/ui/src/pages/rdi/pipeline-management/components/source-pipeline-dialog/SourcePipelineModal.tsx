@@ -69,7 +69,7 @@ const SourcePipelineDialog = () => {
     onSelect(PipelineSourceOptions.FILE)
   }
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, callback: () => void) => {
+  const onEnter = (event: React.KeyboardEvent<HTMLDivElement>, callback: () => void) => {
     if (event.key === keys.ENTER) callback()
   }
 
@@ -97,7 +97,7 @@ const SourcePipelineDialog = () => {
             <div
               role="button"
               tabIndex={0}
-              onKeyDown={(event) => onKeyDown(event, onLoadPipeline)}
+              onKeyDown={(event) => onEnter(event, onLoadPipeline)}
               onClick={onLoadPipeline}
               className={styles.action}
               data-testid="server-source-pipeline-dialog"
@@ -108,7 +108,7 @@ const SourcePipelineDialog = () => {
             <div
               role="button"
               tabIndex={0}
-              onKeyDown={(event) => onKeyDown(event, onUploadClick)}
+              onKeyDown={(event) => onEnter(event, onUploadClick)}
               onClick={onUploadClick}
               className={styles.action}
               data-testid="file-source-pipeline-dialog"
@@ -119,7 +119,7 @@ const SourcePipelineDialog = () => {
             <div
               role="button"
               tabIndex={0}
-              onKeyDown={(event) => onKeyDown(event, onStartNewPipeline)}
+              onKeyDown={(event) => onEnter(event, onStartNewPipeline)}
               onClick={onStartNewPipeline}
               className={styles.action}
               data-testid="empty-source-pipeline-dialog"

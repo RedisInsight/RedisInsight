@@ -22,6 +22,7 @@ import {
 import {
   cloudSelector,
   fetchInstancesRedisCloud,
+  fetchSubscriptionsRedisCloud,
   resetDataRedisCloud,
   resetLoadedRedisCloud,
 } from 'uiSrc/slices/instances/cloud'
@@ -59,8 +60,13 @@ const RedisCloudSubscriptionsPage = () => {
   useEffect(() => {
     if (ssoFlow !== OAuthSocialAction.Import) return
 
-    if (!userOAuthProfile || currentAccountIdRef.current !== userOAuthProfile?.id) {
+    if (!userOAuthProfile) {
       history.push(Pages.home)
+    }
+
+    if (currentAccountIdRef.current !== userOAuthProfile?.id) {
+      dispatch(fetchSubscriptionsRedisCloud(null, true))
+      currentAccountIdRef.current = userOAuthProfile?.id
     }
   }, [ssoFlow, userOAuthProfile])
 
@@ -119,7 +125,7 @@ const RedisCloudSubscriptionsPage = () => {
       width: '20px',
       align: 'center',
       dataType: 'auto',
-      render: function AlertIcon(alert: any, { status, numberOfDatabases }) {
+      render: function AlertIcon(_, { status, numberOfDatabases }) {
         return status !== RedisCloudSubscriptionStatus.Active
           || numberOfDatabases === 0 ? (
             <EuiToolTip

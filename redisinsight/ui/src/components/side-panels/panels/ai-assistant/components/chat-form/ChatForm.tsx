@@ -72,6 +72,7 @@ const ChatForm = (props: Props) => {
       title={validation?.title}
       content={validation?.content}
       anchorClassName={styles.validationTooltip}
+      display="block"
     >
       <EuiForm
         className={cx(styles.wrapper, { [styles.isFormDisabled]: validation })}

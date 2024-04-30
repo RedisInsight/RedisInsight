@@ -8,7 +8,7 @@ import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/tes
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
-import Jobs from './Jobs'
+import Job from './Job'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -33,7 +33,7 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('Jobs', () => {
+describe('Job', () => {
   beforeEach(() => {
     const mockUseFormikContext = {
       setFieldValue: jest.fn,
@@ -43,14 +43,14 @@ describe('Jobs', () => {
   })
 
   it('should render', () => {
-    expect(render(<Jobs />)).toBeTruthy()
+    expect(render(<Job />)).toBeTruthy()
   })
 
   it('should call proper sendPageViewTelemetry', () => {
     const sendPageViewTelemetryMock = jest.fn();
     (sendPageViewTelemetry as jest.Mock).mockImplementation(() => sendPageViewTelemetryMock)
 
-    render(<Jobs />)
+    render(<Job />)
 
     expect(sendPageViewTelemetry).toBeCalledWith({
       name: TelemetryPageView.RDI_JOBS,
@@ -63,9 +63,9 @@ describe('Jobs', () => {
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
-    render(<Jobs />)
+    render(<Job />)
 
-    expect(screen.getByTestId('rdi-jobs-loading')).toBeInTheDocument()
+    expect(screen.getByTestId('rdi-job-loading')).toBeInTheDocument()
   })
 
   it('should push to config page', () => {
@@ -82,7 +82,7 @@ describe('Jobs', () => {
     };
     (useFormikContext as jest.Mock).mockReturnValueOnce(mockUseFormikContext)
 
-    render(<Jobs />)
+    render(<Job />)
 
     expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/config')
   })
@@ -96,21 +96,21 @@ describe('Jobs', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
 
-    render(<Jobs />)
+    render(<Job />)
 
     expect(pushMock).not.toBeCalled()
   })
 
   it('should render proper link', () => {
-    render(<Jobs />)
+    render(<Job />)
 
     expect(screen.getByTestId('rdi-pipeline-transformation-link')).toHaveAttribute('href', 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/')
   })
 
   it('should send telemetry event with proper data', () => {
-    render(<Jobs />)
+    render(<Job />)
 
-    fireEvent.click(screen.getByTestId('rdi-jobs-dry-run'))
+    fireEvent.click(screen.getByTestId('rdi-job-dry-run'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_TEST_JOB_OPENED,
@@ -121,14 +121,14 @@ describe('Jobs', () => {
   })
 
   it('should render Panel and disable dry run btn', () => {
-    const { queryByTestId } = render(<Jobs />)
+    const { queryByTestId } = render(<Job />)
 
-    expect(screen.getByTestId('rdi-jobs-dry-run')).not.toBeDisabled()
+    expect(screen.getByTestId('rdi-job-dry-run')).not.toBeDisabled()
     expect(queryByTestId('dry-run-panel')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('rdi-jobs-dry-run'))
+    fireEvent.click(screen.getByTestId('rdi-job-dry-run'))
 
-    expect(screen.getByTestId('rdi-jobs-dry-run')).toBeDisabled()
+    expect(screen.getByTestId('rdi-job-dry-run')).toBeDisabled()
     expect(queryByTestId('dry-run-panel')).toBeInTheDocument()
   })
 
@@ -140,9 +140,9 @@ describe('Jobs', () => {
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
-    render(<Jobs />)
+    render(<Job />)
 
-    const fieldName = screen.getByTestId('rdi-monaco-jobs')
+    const fieldName = screen.getByTestId('rdi-monaco-job')
     fireEvent.change(
       fieldName,
       { target: { value: '123' } }
@@ -159,9 +159,9 @@ describe('Jobs', () => {
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
-    render(<Jobs />)
+    render(<Job />)
 
-    const fieldName = screen.getByTestId('rdi-monaco-jobs')
+    const fieldName = screen.getByTestId('rdi-monaco-job')
     fireEvent.change(
       fieldName,
       { target: { value: '123' } }
@@ -182,9 +182,9 @@ describe('Jobs', () => {
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
-    render(<Jobs />)
+    render(<Job />)
 
-    const fieldName = screen.getByTestId('rdi-monaco-jobs')
+    const fieldName = screen.getByTestId('rdi-monaco-job')
     fireEvent.change(
       fieldName,
       { target: { value: '123' } }

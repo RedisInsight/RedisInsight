@@ -1,7 +1,6 @@
 import {
   EuiAccordion, EuiButton,
   EuiButtonIcon,
-  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -9,12 +8,12 @@ import {
   EuiText,
   EuiTextColor,
   EuiToolTip,
-  keys
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useFormikContext } from 'formik'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { findIndex } from 'lodash'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { PageNames } from 'uiSrc/constants'
@@ -22,7 +21,7 @@ import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover
 import { FileChangeType, IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
 import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { Nullable } from 'uiSrc/utils'
+import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -45,14 +44,12 @@ const buildValidationMessage = (text: string) => ({
   )
 })
 
-const validateJobName = (jobName: Nullable<string>, jobIndex: Nullable<number>, jobs: IRdiPipelineJob[]) => {
-  const currentJobName = jobs[jobIndex ?? 0]?.name
-
+const validateJobName = (jobName: string, prevJobName: Nullable<string>, jobs: IRdiPipelineJob[]) => {
   if (!jobName) {
     return buildValidationMessage('Job name is required')
   }
 
-  if (jobs.filter((job) => job.name !== currentJobName).some((job) => job.name === jobName)) {
+  if (jobs.filter((job) => job.name !== prevJobName).some((job) => job.name === jobName)) {
     return buildValidationMessage('Job name is already in use')
   }
 
@@ -63,9 +60,7 @@ const JobsTree = (props: IProps) => {
   const { onSelectedTab, path, rdiInstanceId, changes = {} } = props
 
   const [accordionState, setAccordionState] = useState<'closed' | 'open'>('open')
-  const [editJobName, setEditJobName] = useState<Nullable<string>>(null)
-  const [editJobIndex, setEditJobIndex] = useState<Nullable<number>>(null)
-  const [deleteJobIndex, setDeleteJobIndex] = useState<Nullable<number>>(null)
+  const [prevJobName, setPrevJobName] = useState<Nullable<string>>(null)
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
@@ -74,67 +69,72 @@ const JobsTree = (props: IProps) => {
   const { values, setFieldValue } = useFormikContext<IPipeline>()
   const dispatch = useDispatch()
 
-  const isEditing = (index: number) => editJobIndex === index
-
-  const deleteJob = (index: Nullable<number>) => {
-    setFieldValue(
-      'jobs',
-      values.jobs.filter((_, i) => i !== index)
-    )
-  }
-
-  const handleDeleteClick = () => {
-    const deleteJobName = deleteJobIndex !== null ? values.jobs[deleteJobIndex]?.name : null
-    if (data?.jobs && deleteJobName && !data.jobs.find((el) => el.name === deleteJobName)) {
-      dispatch(setChangedFile({ name: deleteJobName, status: FileChangeType.Removed }))
+  const handleDeleteClick = (name: string) => {
+    if (data?.jobs && !data.jobs.find((el) => el.name === name)) {
+      dispatch(setChangedFile({ name, status: FileChangeType.Removed }))
     } else {
-      dispatch(deleteChangedFile(deleteJobName || ''))
+      dispatch(deleteChangedFile(name))
     }
 
-    deleteJob(deleteJobIndex)
-    setDeleteJobIndex(null)
+    const newJobs = values.jobs.filter((el) => el.name !== name)
+    setFieldValue('jobs', newJobs)
 
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_JOB_DELETED,
       eventData: {
         rdiInstanceId,
-        jobName: deleteJobName,
+        jobName: name,
       }
     })
 
     // if the last job is deleted, select the pipeline config tab
-    const jobs = values.jobs.filter((_, i) => i !== deleteJobIndex)
-    onSelectedTab(jobs.length <= 0 ? PageNames.rdiPipelineConfig : jobs[0].name)
+    if (path === name) {
+      onSelectedTab(newJobs.length <= 0 ? PageNames.rdiPipelineConfig : newJobs[0].name)
+    }
   }
 
-  const handleApplyJobName = () => {
-    setFieldValue(`jobs.${editJobIndex}.name`, editJobName)
-    if (!data?.jobs.find((el) => el.name === editJobName)) {
-      dispatch(setChangedFile({ name: editJobName!, status: FileChangeType.Added }))
+  const handleApplyJobName = (value: string) => {
+    const editingJobIndex = findIndex(values.jobs, (el) => el.name === prevJobName)
+
+    if (editingJobIndex > -1) {
+      setFieldValue(`jobs.${editingJobIndex}.name`, value)
     } else {
-      dispatch(deleteChangedFile(editJobName!))
+      setFieldValue('jobs', [...values.jobs, { name: value, value: '' }])
     }
 
-    setEditJobIndex(null)
-    setEditJobName(null)
+    const deployedJob = data?.jobs.find((el) => el.name === value)
+
+    if (!deployedJob) {
+      dispatch(setChangedFile({ name: value, status: FileChangeType.Added }))
+    }
+
+    if (
+      deployedJob
+      && editingJobIndex > -1
+      && isEqualPipelineFile(values.jobs[editingJobIndex].value, deployedJob.value)
+    ) {
+      dispatch(deleteChangedFile(value))
+    }
+
+    setPrevJobName(null)
     setIsNewJob(false)
 
     sendEventTelemetry({
       event: TelemetryEvent.RDI_PIPELINE_JOB_CREATED,
       eventData: {
         rdiInstanceId,
-        jobName: editJobName
+        jobName: value
       }
     })
 
-    if (editJobName) {
-      onSelectedTab(editJobName)
+    if (path === prevJobName) {
+      onSelectedTab(value)
     }
   }
 
   const handleToggleAccordion = (isOpen: boolean) => setAccordionState(isOpen ? 'open' : 'closed')
 
-  const jobName = (name: string, index: number) => (
+  const jobName = (name: string) => (
     <>
       <EuiFlexItem
         grow
@@ -149,9 +149,7 @@ const JobsTree = (props: IProps) => {
           <EuiButtonIcon
             iconType="pencil"
             onClick={() => {
-              onSelectedTab(name)
-              setEditJobIndex(index)
-              setEditJobName(name)
+              setPrevJobName(name)
               setIsNewJob(false)
             }}
             aria-label="edit job file name"
@@ -159,7 +157,7 @@ const JobsTree = (props: IProps) => {
           />
         </EuiToolTip>
         <EuiToolTip
-          content={deleteJobIndex === null ? 'Delete job' : null}
+          content="Delete job"
           position="top"
           display="inlineBlock"
           anchorClassName="flex-row"
@@ -177,68 +175,50 @@ const JobsTree = (props: IProps) => {
                 Delete
               </EuiButton>
             )}
-            onConfirm={handleDeleteClick}
+            onConfirm={() => handleDeleteClick(name)}
             button={<EuiButtonIcon iconType="trash" aria-label="delete job" data-testid={`delete-job-${name}`} />}
-            onButtonClick={() => {
-              setDeleteJobIndex(index)
-            }}
           />
         </EuiToolTip>
       </EuiFlexItem>
     </>
   )
 
-  const jobNameEditor = (name: string, index: number) => (
+  const jobNameEditor = (name: string) => (
     <EuiFlexItem className={styles.inputContainer} data-testid={`rdi-nav-job-edit-${name}`}>
       <InlineItemEditor
         controlsPosition="right"
         onApply={handleApplyJobName}
         onDecline={() => {
-          setEditJobIndex(null)
-          setEditJobName(null)
+          setPrevJobName(null)
 
           if (isNewJob) {
-            deleteJob(index)
             setIsNewJob(false)
           }
         }}
-        isDisabled={!!validateJobName(editJobName, editJobIndex, values.jobs)}
-        disabledTooltipText={validateJobName(editJobName, editJobIndex, values.jobs)}
+        disableByValidation={(value) => !!validateJobName(value, prevJobName, values.jobs)}
+        getError={(value) => validateJobName(value, prevJobName, values.jobs)}
         isLoading={loading}
         declineOnUnmount={false}
         controlsClassName={styles.inputControls}
-        formComponentType="div"
-      >
-        <EuiFieldText
-          data-testid={`job-name-input-${index}`}
-          className={styles.input}
-          maxLength={250}
-          isLoading={loading}
-          autoComplete="off"
-          value={editJobName ?? ''}
-          placeholder="Enter job name"
-          onKeyDown={(e) => {
-            if (e.key === keys.ENTER && !validateJobName(editJobName, editJobIndex, values.jobs)) {
-              handleApplyJobName()
-            }
-          }}
-          onChange={(e) => {
-            setEditJobName(e.target.value)
-          }}
-        />
-      </InlineItemEditor>
+        initialValue={prevJobName || ''}
+        placeholder="Enter job name"
+        maxLength={250}
+        textFiledClassName={styles.input}
+        viewChildrenMode={false}
+        disableEmpty
+        data-testid={`job-name-input-${name}`}
+      />
     </EuiFlexItem>
   )
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) =>
-    jobs.map(({ name }, index) => (
+    jobs.map(({ name }) => (
       <EuiFlexGroup
         key={name}
         className={cx(
           styles.fullWidth,
           styles.job,
           {
-            [styles.updated]: !!changes[name],
             [styles.active]: path === name,
           }
         )}
@@ -246,13 +226,25 @@ const JobsTree = (props: IProps) => {
         alignItems="center"
         justifyContent="spaceBetween"
         gutterSize="none"
-        data-testid={`job-file-${name}${changes[name] ? '-updated' : name}`}
+        data-testid={`job-file-${name}`}
       >
+        <div className={styles.dotWrapper}>
+          {!!changes[name] && (
+            <EuiToolTip
+              content="This file contains undeployed changes."
+              position="top"
+              display="inlineBlock"
+              anchorClassName={styles.dotWrapper}
+            >
+              <span className={styles.dot} data-testid={`updated-file-${name}-highlight`} />
+            </EuiToolTip>
+          )}
+        </div>
         <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
           <EuiFlexItem grow={false}>
             <EuiIcon type="document" className={styles.fileIcon} data-test-subj="jobs-folder-icon-close" />
           </EuiFlexItem>
-          {isEditing(index) ? jobNameEditor(name, index) : jobName(name, index)}
+          {prevJobName === name ? jobNameEditor(name) : jobName(name)}
         </EuiFlexGroup>
       </EuiFlexGroup>
     ))
@@ -304,8 +296,6 @@ const JobsTree = (props: IProps) => {
             iconType="plus"
             onClick={() => {
               setAccordionState('open')
-              setFieldValue('jobs', [{ name: '', value: '' }, ...values.jobs])
-              setEditJobIndex(0)
               setIsNewJob(true)
             }}
             onMouseEnter={() => {
@@ -322,6 +312,26 @@ const JobsTree = (props: IProps) => {
       )}
     >
       {/* // TODO confirm with RDI team and put sort in separate component */}
+      {isNewJob && (
+        <EuiFlexGroup
+          className={cx(
+            styles.fullWidth,
+            styles.job,
+          )}
+          responsive={false}
+          alignItems="center"
+          justifyContent="spaceBetween"
+          gutterSize="none"
+          data-testid="new-job-file"
+        >
+          <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
+            <EuiFlexItem grow={false}>
+              <EuiIcon type="document" className={styles.fileIcon} data-test-subj="jobs-file-icon" />
+            </EuiFlexItem>
+            {jobNameEditor('')}
+          </EuiFlexGroup>
+        </EuiFlexGroup>
+      )}
       {renderJobsList(values?.jobs ?? [])}
     </EuiAccordion>
   )

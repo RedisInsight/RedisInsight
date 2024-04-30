@@ -28,11 +28,14 @@
       }
     }
 
-    &.updated:before {
-      content: '';
+    .dotWrapper {
       position: absolute;
-      left: 8px;
-      bottom: 26px;
+      left: 13px;
+      bottom: 16px;
+    }
+
+    .dot {
+      position: absolute;
       width: 5px;
       height: 5px;
       border-radius: 50%;

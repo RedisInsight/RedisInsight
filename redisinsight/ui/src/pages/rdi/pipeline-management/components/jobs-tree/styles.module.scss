@@ -43,16 +43,18 @@
       }
     }
 
-    &.updated {
-      &::before {
-        content: '';
-        position: absolute;
-        left: 26px;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background-color: var(--externalLinkColor);
-      }
+    .dotWrapper {
+      position: absolute;
+      left: 13px;
+    }
+
+    .dot {
+      cursor: pointer;
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: var(--externalLinkColor);
     }
 
     .inputContainer {

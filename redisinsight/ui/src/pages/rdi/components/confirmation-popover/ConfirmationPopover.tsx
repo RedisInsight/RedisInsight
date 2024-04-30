@@ -19,7 +19,7 @@ interface Props {
   onConfirm: () => void
   button: JSX.Element
   submitBtn: JSX.Element
-  onButtonClick: () => void
+  onButtonClick?: () => void
   appendAction?: JSX.Element
 }
 
@@ -46,7 +46,7 @@ const ConfirmationPopover = (props: Props) => {
 
   const handleButtonClick = () => {
     setIsPopoverOpen(true)
-    onButtonClick()
+    onButtonClick?.()
   }
 
   const popoverButton = React.cloneElement(button, { onClick: handleButtonClick })

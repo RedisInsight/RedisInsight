@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Form } from 'formik'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
@@ -64,12 +63,10 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   }, [pathname, lastViewedPage])
 
   return (
-    <Form style={{ height: '100%' }}>
-      <RdiPipelineManagementTemplate>
-        <SourcePipelineDialog />
-        <PipelinePageRouter routes={routes} />
-      </RdiPipelineManagementTemplate>
-    </Form>
+    <RdiPipelineManagementTemplate>
+      <SourcePipelineDialog />
+      <PipelinePageRouter routes={routes} />
+    </RdiPipelineManagementTemplate>
   )
 }
 

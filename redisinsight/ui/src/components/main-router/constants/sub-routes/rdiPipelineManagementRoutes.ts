@@ -1,6 +1,6 @@
 import { IRoute, Pages } from 'uiSrc/constants'
 import ConfigPage from 'uiSrc/pages/rdi/pipeline-management/pages/config'
-import JobsPage from 'uiSrc/pages/rdi/pipeline-management/pages/jobs'
+import JobPage from 'uiSrc/pages/rdi/pipeline-management/pages/job'
 
 export const RDI_PIPELINE_MANAGEMENT_ROUTES: IRoute[] = [
   {
@@ -9,6 +9,6 @@ export const RDI_PIPELINE_MANAGEMENT_ROUTES: IRoute[] = [
   },
   {
     path: Pages.rdiPipelineJobs(':rdiInstanceId', ':jobName'),
-    component: JobsPage
+    component: JobPage
   },
 ]

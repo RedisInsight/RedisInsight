@@ -1,67 +1,59 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory, useParams } from 'react-router-dom'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { findIndex, get, throttle } from 'lodash'
+import { get, throttle } from 'lodash'
 import cx from 'classnames'
 
-import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
-import { DSL, Pages } from 'uiSrc/constants'
+import { DSL } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
-import { isEqualPipelineFile } from 'uiSrc/utils'
+import { isEqualPipelineFile, Maybe } from 'uiSrc/utils'
 
-const Jobs = () => {
-  const { rdiInstanceId, jobName } = useParams<{ rdiInstanceId: string, jobName: string }>()
-  const [decodedJobName, setDecodedJobName] = useState<string>(decodeURIComponent(jobName))
+export interface Props {
+  name: string
+  value: string
+  deployedJobValue: Maybe<string>
+  jobIndex: number
+  rdiInstanceId: string
+}
+
+const Job = (props: Props) => {
+  const { name, value, deployedJobValue, jobIndex, rdiInstanceId } = props
+
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
-  const [editorValue, setEditorValue] = useState<string>('')
 
   const dispatch = useDispatch()
 
-  const jobIndexRef = useRef<number>()
-  const previousJobNameRef = useRef<string>()
+  const jobIndexRef = useRef<number>(jobIndex)
+  const deployedJobValueRef = useRef<Maybe<string>>(deployedJobValue)
+  const jobNameRef = useRef<string>(name)
 
-  const history = useHistory()
+  const { loading, schema } = useSelector(rdiPipelineSelector)
 
-  const { loading, schema, data } = useSelector(rdiPipelineSelector)
-
-  const { values, setFieldValue } = useFormikContext<IPipeline>()
-
-  useEffect(() => {
-    const jobIndex = findIndex(values?.jobs, (({ name }) => name === decodedJobName))
-
-    jobIndexRef.current = jobIndex
-    setEditorValue(values.jobs?.[jobIndexRef.current ?? -1]?.value)
-
-    if (jobIndex === -1 && previousJobNameRef.current !== decodedJobName) {
-      history.push(Pages.rdiPipelineConfig(rdiInstanceId))
-    }
-
-    if (jobIndex > -1 && !values.jobs?.[jobIndexRef.current ?? -1]?.value) {
-      setIsPopoverOpen(true)
-    }
-
-    // previous job name is tracked to prevent redirecting when changing job name
-    previousJobNameRef.current = decodedJobName
-  }, [values, decodedJobName, rdiInstanceId, history])
+  const { setFieldValue } = useFormikContext<IPipeline>()
 
   useEffect(() => {
-    setDecodedJobName(decodeURIComponent(jobName))
     setIsPanelOpen(false)
-  }, [jobName])
+  }, [name])
 
   useEffect(() => {
-    sendPageViewTelemetry({
-      name: TelemetryPageView.RDI_JOBS,
-    })
-  }, [])
+    deployedJobValueRef.current = deployedJobValue
+  }, [deployedJobValue])
+
+  useEffect(() => {
+    jobIndexRef.current = jobIndex
+  }, [jobIndex])
+
+  useEffect(() => {
+    jobNameRef.current = name
+  }, [name])
 
   const handleDryRunJob = () => {
     setIsPanelOpen(true)
@@ -74,17 +66,16 @@ const Jobs = () => {
   }
 
   const checkIsFileUpdated = useCallback(throttle((value) => {
-    const editedJob = data?.jobs.find((el) => el.name === previousJobNameRef.current)
-    if (!editedJob) {
+    if (!deployedJobValueRef.current) {
       return
     }
 
-    if (isEqualPipelineFile(value, editedJob?.value)) {
-      dispatch(deleteChangedFile(editedJob.name))
+    if (isEqualPipelineFile(value, deployedJobValueRef.current)) {
+      dispatch(deleteChangedFile(jobNameRef.current))
       return
     }
-    dispatch(setChangedFile({ name: editedJob.name, status: FileChangeType.Modified }))
-  }, 2000), [data, previousJobNameRef])
+    dispatch(setChangedFile({ name: jobNameRef.current, status: FileChangeType.Modified }))
+  }, 2000), [deployedJobValue, jobNameRef.current])
 
   const handleChange = (value: string) => {
     setFieldValue(`jobs.${jobIndexRef.current}.value`, value)
@@ -95,11 +86,11 @@ const Jobs = () => {
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
         <div className="rdi__content-header">
-          <EuiText className={cx('rdi__title', 'line-clamp-2')}>{decodedJobName}</EuiText>
+          <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
           <TemplatePopover
             isPopoverOpen={isPopoverOpen}
             setIsPopoverOpen={setIsPopoverOpen}
-            value={values.jobs?.[jobIndexRef.current ?? -1]?.value ?? ''}
+            value={value}
             setFieldValue={(template) => setFieldValue(`jobs.${jobIndexRef.current ?? -1}.value`, template)}
             loading={loading}
             source={RdiPipelineTabs.Jobs}
@@ -118,19 +109,19 @@ const Jobs = () => {
           {' to perform on data from a single source'}
         </EuiText>
         {loading ? (
-          <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-jobs-loading">
+          <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-job-loading">
             <EuiText color="subdued" style={{ marginBottom: 12 }}>Loading data...</EuiText>
             <EuiLoadingSpinner color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
-            value={editorValue}
+            value={value}
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
             wrapperClassName="rdi__editorWrapper"
-            data-testid="rdi-monaco-jobs"
+            data-testid="rdi-monaco-job"
           />
         )}
 
@@ -141,7 +132,7 @@ const Jobs = () => {
             size="s"
             onClick={handleDryRunJob}
             isDisabled={isPanelOpen}
-            data-testid="rdi-jobs-dry-run"
+            data-testid="rdi-job-dry-run"
           >
             Dry Run
           </EuiButton>
@@ -150,7 +141,7 @@ const Jobs = () => {
       {isPanelOpen && (
         <DryRunJobPanel
           onClose={() => setIsPanelOpen(false)}
-          job={values.jobs?.[jobIndexRef.current ?? -1]?.value ?? ''}
+          job={value}
         />
       )}
     </>
@@ -158,4 +149,4 @@ const Jobs = () => {
   )
 }
 
-export default Jobs
+export default Job

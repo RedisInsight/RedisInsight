@@ -5,8 +5,10 @@ import {
   mockCloudApiHeaders,
   mockCloudApiCloudRegions,
   mockCloudSession,
+  mockCloudSessionService,
 } from 'src/__mocks__';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import { CloudSubscriptionApiProvider } from './cloud-subscription.api.provider';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -20,6 +22,10 @@ describe('CloudSubscriptionApiProvider', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudSubscriptionApiProvider,
+        {
+          provide: CloudSessionService,
+          useFactory: mockCloudSessionService,
+        },
       ],
     }).compile();
 

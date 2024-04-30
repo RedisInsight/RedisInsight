@@ -21,4 +21,5 @@ export const mockCloudSessionService = jest.fn(() => ({
   getSession: jest.fn().mockResolvedValue(mockCloudSession),
   updateSessionData: jest.fn().mockResolvedValue(mockCloudSession),
   deleteSessionData: jest.fn(),
+  invalidateApiSession: jest.fn().mockResolvedValue(undefined),
 }));

@@ -65,6 +65,7 @@ const RedisCloudDatabasesPage = () => {
     if (!userOAuthProfile) {
       dispatch(resetDataRedisCloud())
       history.push(Pages.home)
+      return
     }
 
     if (currentAccountIdRef.current !== userOAuthProfile?.id) {

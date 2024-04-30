@@ -1,21 +1,13 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { keys } from '@elastic/eui'
-import {
-  cleanup,
-  clearStoreActions,
-  fireEvent,
-  mockedStore,
-  render,
-  screen,
-  act,
-} from 'uiSrc/utils/test-utils'
+import { act, cleanup, clearStoreActions, fireEvent, mockedStore, render, screen, } from 'uiSrc/utils/test-utils'
 import { keysSelector, loadKeys, loadSearchHistory, setFilter, setPatternSearchMatch } from 'uiSrc/slices/browser/keys'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -163,9 +155,8 @@ describe('SearchKeyList', () => {
     fireEvent.click(screen.getByTestId('ask-redis-copilot-btn'))
 
     const expectedActions = [
-      changeSelectedTab(InsightsPanelTabs.AiAssistant),
       setSelectedTab(AiChatType.Query),
-      toggleInsightsPanel(true),
+      changeSidePanel(SidePanels.AiAssistant),
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions([...expectedActions]))

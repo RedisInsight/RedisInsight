@@ -2,8 +2,8 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
@@ -32,9 +32,8 @@ describe('AiChatbotMessage', () => {
     fireEvent.click(screen.getByTestId('ai-chat-message-btn'))
 
     expect(store.getActions()).toEqual([
-      changeSelectedTab(InsightsPanelTabs.AiAssistant),
       setSelectedTab(AiChatType.Assistance),
-      toggleInsightsPanel(true),
+      changeSidePanel(SidePanels.AiAssistant),
       removeFeatureFromHighlighting('aiChatbot'),
     ])
   })

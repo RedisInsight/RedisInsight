@@ -3,14 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
-import {
-  getMonacoLines,
-  getParsedParamsInQuery,
-  isGroupMode,
-  Maybe,
-  Nullable,
-  scrollIntoView,
-} from 'uiSrc/utils'
+import { getMonacoLines, getParsedParamsInQuery, isGroupMode, Maybe, Nullable, scrollIntoView, } from 'uiSrc/utils'
 import {
   changeActiveRunQueryMode,
   changeResultsMode,
@@ -36,8 +29,8 @@ import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import WBView from './WBView'
 
 interface IState {
@@ -149,7 +142,7 @@ const WBViewWrapper = () => {
       undefined,
       () => {
         dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-        dispatch(toggleInsightsPanel(true))
+        dispatch(changeSidePanel(SidePanels.Insights))
         sendEventTelemetry({
           event: TelemetryEvent.ONBOARDING_TOUR_ACTION_MADE,
           eventData: {

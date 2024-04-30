@@ -42,7 +42,7 @@ import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
-import insightsPanelReducer from './panels/insights'
+import sidePanelsReducer from './panels/sidePanels'
 import rdiInstancesReducer from './rdi/instances'
 import rdiPipelineReducer from './rdi/pipeline'
 import rdiDryRunJobReducer from './rdi/dryRun'
@@ -113,7 +113,7 @@ export const rootReducer = combineReducers({
     cloud: appOauthReducer,
   }),
   panels: combineReducers({
-    insights: insightsPanelReducer,
+    sidePanels: sidePanelsReducer,
     aiAssistant: aiAssistantReducer,
   }),
   rdi: combineReducers({

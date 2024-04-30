@@ -59,6 +59,11 @@ export class CloudUserApiService {
     }
   }
 
+  /**
+   * Renew jwt tokens if needed
+   * @param sessionMetadata
+   * @private
+   */
   private async ensureAccessToken(sessionMetadata: SessionMetadata): Promise<void> {
     try {
       const session = await this.sessionService.getSession(sessionMetadata.sessionId);
@@ -135,18 +140,18 @@ export class CloudUserApiService {
       const userData = await this.api.getCurrentUser(session);
 
       const user: CloudUser = {
-        id: +userData?.id,
-        name: userData?.name,
-        currentAccountId: +userData?.current_account_id,
+        id: +userData.id,
+        name: userData.name,
+        currentAccountId: +userData.current_account_id,
       };
 
       const accounts = await this.api.getAccounts(session);
 
       // todo: remember existing CApi key?
-      user.accounts = accounts?.map?.((account) => ({
+      user.accounts = accounts.map((account) => ({
         id: account.id,
         name: account.name,
-        capiKey: account?.api_access_key,
+        capiKey: account.api_access_key,
       }));
 
       await this.repository.update(sessionMetadata.sessionId, user);
@@ -164,13 +169,15 @@ export class CloudUserApiService {
    * @param utm
    */
   async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
-    try {
-      await this.ensureCloudUser(sessionMetadata, forceSync, utm);
+    return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
+      try {
+        await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
-      return await this.repository.get(sessionMetadata.sessionId);
-    } catch (e) {
-      throw wrapHttpError(e);
-    }
+        return await this.repository.get(sessionMetadata.sessionId);
+      } catch (e) {
+        throw wrapHttpError(e);
+      }
+    });
   }
 
   /**
@@ -184,13 +191,15 @@ export class CloudUserApiService {
     forceSync = false,
     utm?: CloudRequestUtm,
   ): Promise<CloudSession> {
-    try {
-      await this.ensureCloudUser(sessionMetadata, forceSync, utm);
+    return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
+      try {
+        await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
-      return await this.sessionService.getSession(sessionMetadata.sessionId);
-    } catch (e) {
-      throw wrapHttpError(e);
-    }
+        return await this.sessionService.getSession(sessionMetadata.sessionId);
+      } catch (e) {
+        throw wrapHttpError(e);
+      }
+    });
   }
 
   /**
@@ -199,18 +208,20 @@ export class CloudUserApiService {
    * @param accountId
    */
   async setCurrentAccount(sessionMetadata: SessionMetadata, accountId: string | number): Promise<CloudUser> {
-    try {
-      this.logger.log('Switching user account');
+    return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
+      try {
+        this.logger.log('Switching user account');
 
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+        const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
-      await this.api.setCurrentAccount(session, +accountId);
+        await this.api.setCurrentAccount(session, +accountId);
 
-      return this.me(sessionMetadata, true);
-    } catch (e) {
-      this.logger.error('Unable to switch current account', e);
-      throw wrapHttpError(e);
-    }
+        return this.me(sessionMetadata, true);
+      } catch (e) {
+        this.logger.error('Unable to switch current account', e);
+        throw wrapHttpError(e);
+      }
+    });
   }
 
   /**

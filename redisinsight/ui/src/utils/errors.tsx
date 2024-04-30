@@ -113,12 +113,10 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
 
     case CustomErrorCodes.CloudCapiUnauthorized:
     case CustomErrorCodes.CloudApiUnauthorized:
-      title = 'Unauthorized'
+      title = 'Session expired'
       message = (
         <>
-          Your Redis Cloud authorization failed.
-          <EuiSpacer size="xs" />
-          Try again later.
+          Sign in again to continue working with Redis Cloud.
           <EuiSpacer size="s" />
           If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
         </>

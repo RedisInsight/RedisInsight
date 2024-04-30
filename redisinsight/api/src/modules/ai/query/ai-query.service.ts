@@ -118,7 +118,7 @@ export class AiQueryService {
     }
   }
 
-  async clearHistory(sessionMetadata: SessionMetadata, databaseId): Promise<void> {
+  async clearHistory(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
     try {
       const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
       return this.aiQueryMessageRepository.clearHistory(sessionMetadata, databaseId, auth.accountId);

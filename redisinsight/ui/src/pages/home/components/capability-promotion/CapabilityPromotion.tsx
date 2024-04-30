@@ -5,12 +5,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { filter } from 'lodash'
 
-import { changeSelectedTab, insightsPanelSelector, openTutorialByPath, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
+import {
+  changeSelectedTab,
+  changeSidePanel,
+  openTutorialByPath,
+  sidePanelsSelector,
+} from 'uiSrc/slices/panels/sidePanels'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
 import GUIDE_ICONS from 'uiSrc/components/explore-guides/icons'
 import { findTutorialPath } from 'uiSrc/utils'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -24,7 +29,8 @@ const displayedCapabilityIds = ['sq-intro', 'ds-json-intro']
 const CapabilityPromotion = (props: Props) => {
   const { mode = 'wide', wrapperClassName, capabilityIds = displayedCapabilityIds } = props
   const { data: dataInit } = useSelector(guideLinksSelector)
-  const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
+  const { openedPanel } = useSelector(sidePanelsSelector)
+  const isInsightsOpen = openedPanel === SidePanels.Insights
 
   const dispatch = useDispatch()
   const history = useHistory()
@@ -54,7 +60,7 @@ const CapabilityPromotion = (props: Props) => {
   const onClickExplore = () => {
     sendTelemetry()
     dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-    dispatch(toggleInsightsPanel())
+    dispatch(changeSidePanel(SidePanels.Insights))
   }
 
   if (!data?.length) {

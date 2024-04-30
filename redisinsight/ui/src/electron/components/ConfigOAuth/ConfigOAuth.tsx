@@ -32,9 +32,6 @@ const ConfigOAuth = () => {
 
   useEffect(() => {
     window.app?.cloudOauthCallback?.(cloudOauthCallback)
-
-    // delete
-    // dispatch(fetchUserInfo(fetchUserInfoSuccess))
   }, [])
 
   useEffect(() => {
@@ -52,6 +49,8 @@ const ConfigOAuth = () => {
       closeInfinityNotification()
       return
     }
+
+    dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
 
     if (ssoFlowRef.current === OAuthSocialAction.Import) {
       dispatch(fetchSubscriptionsRedisCloud(
@@ -94,7 +93,7 @@ const ConfigOAuth = () => {
       dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
       localStorageService.remove(BrowserStorageItem.OAuthJobId)
       dispatch(showOAuthProgress(true))
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()))
       dispatch(setSocialDialogState(null))
       dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
     }

@@ -49,7 +49,7 @@ import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/red
 import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
-import { initialState as initialStateInsightsPanel } from 'uiSrc/slices/panels/insights'
+import { initialState as initialStateSidePanels } from 'uiSrc/slices/panels/sidePanels'
 import { initialState as initialStateRdiPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/instances'
 import { initialState as initialStateRdiDryRunJob } from 'uiSrc/slices/rdi/dryRun'
@@ -128,7 +128,7 @@ const initialStateDefault: RootState = {
     cloud: cloneDeep(initialStateOAuth),
   },
   panels: {
-    insights: cloneDeep(initialStateInsightsPanel),
+    sidePanels: cloneDeep(initialStateSidePanels),
     aiAssistant: cloneDeep(initialStateAiAssistant),
   },
   rdi: {

@@ -83,6 +83,14 @@ const rdiPipelineSlice = createSlice({
       state.changes = payload
     },
     deleteChangedFile: (state, { payload }: PayloadAction<string>) => {
+      // config file can not be removed
+      const isJobExist = state.data?.jobs?.find((el) => el.name === payload)
+
+      if (isJobExist) {
+        state.changes[payload] = FileChangeType.Removed
+        return
+      }
+
       delete state.changes[payload]
     }
   },

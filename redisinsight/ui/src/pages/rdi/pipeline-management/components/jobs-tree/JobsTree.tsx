@@ -70,11 +70,7 @@ const JobsTree = (props: IProps) => {
   const dispatch = useDispatch()
 
   const handleDeleteClick = (name: string) => {
-    if (data?.jobs && !data.jobs.find((el) => el.name === name)) {
-      dispatch(setChangedFile({ name, status: FileChangeType.Removed }))
-    } else {
-      dispatch(deleteChangedFile(name))
-    }
+    dispatch(deleteChangedFile(name))
 
     const newJobs = values.jobs.filter((el) => el.name !== name)
     setFieldValue('jobs', newJobs)

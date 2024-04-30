@@ -47,7 +47,7 @@
     .dotWrapper {
       position: absolute;
       left: 13px;
-      bottom: 8px;
+      top: 50%;
     }
 
     .dot {
@@ -56,6 +56,7 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
+      transform: translateY(-50%);
       background-color: var(--externalLinkColor);
     }
 

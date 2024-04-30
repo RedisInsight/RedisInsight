@@ -24,7 +24,7 @@ export class LocalAiQueryMessageRepository extends AiQueryMessageRepository {
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(encryptionService, ['content']);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, ['content', 'steps']);
   }
 
   /**

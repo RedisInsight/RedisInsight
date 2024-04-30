@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { get } from 'lodash'
+import { get, throttle } from 'lodash'
 
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { testConnectionsAction, rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
+import { isEqualPipelineFile } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -22,7 +23,7 @@ const Config = () => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
-  const { loading: pipelineLoading, schema } = useSelector(rdiPipelineSelector)
+  const { loading: pipelineLoading, schema, data } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(rdiTestConnectionsSelector)
   const { isOpenDialog } = useSelector(appContextPipelineManagement)
 
@@ -60,6 +61,25 @@ const Config = () => {
     })
   }
 
+  const checkIsFileUpdated = useCallback(throttle((value) => {
+    if (!data) {
+      dispatch(setChangedFile({ name: 'config', status: FileChangeType.Added }))
+      return
+    }
+
+    if (isEqualPipelineFile(value, data?.config)) {
+      dispatch(deleteChangedFile('config'))
+      return
+    }
+
+    dispatch(setChangedFile({ name: 'config', status: FileChangeType.Modified }))
+  }, 2000), [data])
+
+  const handleChange = (value: string) => {
+    setFieldValue('config', value)
+    checkIsFileUpdated(value)
+  }
+
   return (
     <>
       <div className={cx('content', 'rdi__wrapper', { [styles.isPanelOpen]: isPanelOpen })}>
@@ -95,7 +115,7 @@ const Config = () => {
           <MonacoYaml
             schema={get(schema, 'config', null)}
             value={config}
-            onChange={(value) => setFieldValue('config', value)}
+            onChange={handleChange}
             disabled={pipelineLoading}
             wrapperClassName="rdi__editorWrapper"
             data-testid="rdi-monaco-config"

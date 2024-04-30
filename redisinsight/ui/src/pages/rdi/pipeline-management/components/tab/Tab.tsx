@@ -38,6 +38,7 @@ const Tab = (props: IProps) => {
           <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
           <EuiText className="rdi-pipeline-nav__text">{fileName}</EuiText>
           {isLoading && <EuiLoadingSpinner data-testid="rdi-nav-config-loader" className={styles.loader} />}
+          {children}
         </div>
       ) : children}
     </div>

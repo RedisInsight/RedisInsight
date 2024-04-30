@@ -29,6 +29,11 @@ export interface IPipeline {
   jobs: IRdiPipelineJob[]
 }
 
+export interface IPipelineJSON {
+  config: object
+  jobs: object
+}
+
 export interface IDryRunJobResults {
   transformations: {
     status: DryRunJobResultStatus
@@ -65,15 +70,14 @@ export interface IStateRdiTestConnections {
 }
 
 export interface IRdiPipelineStrategy {
-  label: string
-  value: string
+  strategy: string
+  databases: string[]
 }
 
 export interface IRdiPipelineStrategies {
   loading: boolean
   error: string
-  dbType: IRdiPipelineStrategy[]
-  strategyType: IRdiPipelineStrategy[]
+  data: IRdiPipelineStrategy[]
 }
 
 export interface IConnections {
@@ -144,12 +148,18 @@ export interface IRdiStatistics {
   }
 }
 
+export enum FileChangeType {
+  Added = 'added',
+  Modified = 'modified',
+  Removed = 'removed',
+}
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies
+  changes: Record<string, FileChangeType>
 }
 
 export interface IStateRdiDryRunJob {

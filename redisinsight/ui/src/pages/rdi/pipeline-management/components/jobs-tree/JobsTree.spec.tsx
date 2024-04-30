@@ -48,16 +48,16 @@ describe('JobsTree', () => {
 
     render(<JobsTree {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('rdi-nav-jobs-loader')).toBeInTheDocument()
+    expect(screen.getByTestId('rdi-nav-job-loader')).toBeInTheDocument()
   })
 
-  it('should render proper count of jobs', () => {
+  it('should render proper count of job', () => {
     render(<JobsTree {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('1')
+    expect(screen.getByTestId('rdi-job-count')).toHaveTextContent('1')
   })
 
-  it('should not render count of jobs if it is "0"', () => {
+  it('should not render count of job if it is "0"', () => {
     const useFormikContextMock = jest.fn().mockReturnValue({
       values: { jobs: [] }
     });
@@ -65,7 +65,7 @@ describe('JobsTree', () => {
 
     render(<JobsTree {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('')
+    expect(screen.getByTestId('rdi-job-count')).toHaveTextContent('')
   })
 
   it('should call selected tab', () => {

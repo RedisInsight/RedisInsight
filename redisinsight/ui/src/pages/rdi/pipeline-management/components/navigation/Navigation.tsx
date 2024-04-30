@@ -1,8 +1,9 @@
-import { EuiTextColor } from '@elastic/eui'
+import { EuiTextColor, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
+import cx from 'classnames'
 import { PageNames, Pages } from 'uiSrc/constants'
 import JobsTree from 'uiSrc/pages/rdi/pipeline-management/components/jobs-tree'
 import Tab from 'uiSrc/pages/rdi/pipeline-management/components/tab'
@@ -24,8 +25,7 @@ const getSelectedTab = (path: string, rdiInstanceId: string) => {
 const Navigation = () => {
   const [selectedTab, setSelectedTab] = useState<Nullable<RdiPipelineTabs>>(null)
 
-  const { loading } = useSelector(rdiPipelineSelector)
-
+  const { loading, changes } = useSelector(rdiPipelineSelector)
   const history = useHistory()
   const { pathname } = useLocation()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -53,7 +53,7 @@ const Navigation = () => {
         tabIndex={0}
         onKeyDown={() => {}}
         onClick={() => onSelectedTabChanged(RdiPipelineTabs.Config)}
-        className={styles.tab}
+        className={cx(styles.tab)}
         data-testid={`rdi-nav-btn-${RdiPipelineTabs.Config}`}
       >
         <Tab
@@ -62,14 +62,32 @@ const Navigation = () => {
           isSelected={selectedTab === RdiPipelineTabs.Config}
           data-testid={`rdi-pipeline-tab-${RdiPipelineTabs.Config}`}
           isLoading={loading}
-        />
+        >
+          <div className={styles.dotWrapper}>
+            {!!changes.config && (
+              <EuiToolTip
+                content="This file contains undeployed changes."
+                position="top"
+                display="inlineBlock"
+                anchorClassName={styles.dotWrapper}
+              >
+                <span className={styles.dot} data-testid="updated-file-config-highlight" />
+              </EuiToolTip>
+            )}
+          </div>
+        </Tab>
       </div>
       <Tab
         title="Add transformation jobs"
         isSelected={selectedTab === RdiPipelineTabs.Jobs}
         data-testid="rdi-pipeline-tab-jobs"
       >
-        <JobsTree onSelectedTab={onSelectedTabChanged} path={decodeURIComponent(path)} rdiInstanceId={rdiInstanceId} />
+        <JobsTree
+          onSelectedTab={onSelectedTabChanged}
+          path={decodeURIComponent(path)}
+          rdiInstanceId={rdiInstanceId}
+          changes={changes}
+        />
       </Tab>
     </>
   )

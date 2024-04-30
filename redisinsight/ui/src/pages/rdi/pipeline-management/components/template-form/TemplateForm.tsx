@@ -1,4 +1,13 @@
-import { EuiButton, EuiForm, EuiFormRow, EuiSpacer, EuiSuperSelect, EuiText, EuiToolTip, } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiForm,
+  EuiFormRow,
+  EuiSpacer,
+  EuiSuperSelect,
+  EuiText,
+  EuiToolTip,
+  EuiSuperSelectOption,
+} from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,19 +16,9 @@ import cx from 'classnames'
 import { fetchPipelineStrategies, fetchPipelineTemplate, rdiPipelineStrategiesSelector } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
-
-const NO_TEMPLATE = 'No template'
-
-const NO_OPTIONS = [
-  {
-    value: 'no_template',
-    inputDisplay: NO_TEMPLATE,
-  }
-]
-
-const INGEST_OPTION = 'ingest'
 
 export interface Props {
   setTemplate: (template: string) => void
@@ -49,15 +48,14 @@ const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
 const TemplateForm = (props: Props) => {
   const { closePopover, setTemplate, source, value } = props
 
-  const { loading, dbType, strategyType } = useSelector(rdiPipelineStrategiesSelector)
-
-  const dbTypeOptions = dbType.map(({ value, label }) => ({ value, inputDisplay: label, }))
-  const strategyTypeOptions = strategyType.map(({ value, label }) => ({ value, inputDisplay: label, }))
+  const { loading, data } = useSelector(rdiPipelineStrategiesSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
+  const [pipelineTypeOptions, setPipelineTypeOptions] = useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
+  const [dbTypeOptions, setDbTypeOptions] = useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
   const [selectedDbType, setSelectedDbType] = useState<string>('')
-  const [selectedStrategy, setSelectedStrategy] = useState<string>('')
+  const [selectedPipelineType, setSelectedPipelineType] = useState<string>('')
 
   const dispatch = useDispatch()
 
@@ -72,8 +70,8 @@ const TemplateForm = (props: Props) => {
 
   const handleApply = () => {
     const values = source === RdiPipelineTabs.Config
-      ? { dbType: selectedDbType, strategyType: selectedStrategy }
-      : { strategyType: selectedStrategy }
+      ? { dbType: selectedDbType, pipelineType: selectedPipelineType }
+      : { pipelineType: selectedPipelineType }
 
     dispatch(fetchPipelineTemplate(rdiInstanceId, values, onSuccess))
     sendEventTelemetry({
@@ -81,31 +79,54 @@ const TemplateForm = (props: Props) => {
       eventData: {
         id: rdiInstanceId,
         page: source,
-        mode: selectedStrategy,
+        mode: selectedPipelineType,
       }
     })
   }
 
   const isNoTemplateOptions = source === RdiPipelineTabs.Config
-    ? !dbType.length || !strategyType.length
-    : !strategyType.length
+    ? selectedDbType === NO_TEMPLATE_VALUE || selectedPipelineType === NO_TEMPLATE_VALUE
+    : selectedPipelineType === NO_TEMPLATE_VALUE
 
   useEffect(() => {
-    if (dbTypeOptions.length) {
-      const initialSelectedOption = dbTypeOptions
-        .find((option) => option.value === INGEST_OPTION)
-        || dbTypeOptions[0]
-      setSelectedDbType(initialSelectedOption.value)
-    } else {
+    if (!selectedPipelineType || !data.length) {
+      setDbTypeOptions(NO_OPTIONS)
       setSelectedDbType(NO_OPTIONS[0].value)
+
+      return
     }
 
-    if (strategyTypeOptions.length) {
-      setSelectedStrategy(strategyTypeOptions[0].value)
+    const selectedStrategy = data
+      .find(({ strategy }) => strategy === selectedPipelineType)
+
+    const newDbTypeOptions = selectedStrategy?.databases?.map((db) => ({ value: db, inputDisplay: db }))
+
+    if (newDbTypeOptions?.length) {
+      setDbTypeOptions(newDbTypeOptions)
+      setSelectedDbType(newDbTypeOptions[0].value)
     } else {
-      setSelectedStrategy(NO_OPTIONS[0].value)
+      setDbTypeOptions(NO_OPTIONS)
+      setSelectedDbType(NO_OPTIONS[0].value)
     }
-  }, [dbType, strategyType])
+  }, [data, selectedPipelineType])
+
+  useEffect(() => {
+    const newPipelineTypeOptions = data.map((strategy) => ({
+      value: strategy.strategy,
+      inputDisplay: strategy.strategy,
+    }))
+
+    setPipelineTypeOptions(newPipelineTypeOptions.length ? newPipelineTypeOptions : NO_OPTIONS)
+
+    if (data?.length) {
+      const initialSelectedOption = newPipelineTypeOptions
+        .find((strategy) => strategy.value === INGEST_OPTION)
+          || newPipelineTypeOptions[0]
+      setSelectedPipelineType(initialSelectedOption.value)
+    } else {
+      setSelectedPipelineType(NO_OPTIONS[0].value)
+    }
+  }, [data])
 
   useEffect(() => {
     dispatch(fetchPipelineStrategies(rdiInstanceId))
@@ -121,11 +142,11 @@ const TemplateForm = (props: Props) => {
           <>
             <div className={styles.rowLabel}>Pipeline type</div>
             <EuiSuperSelect
-              options={strategyTypeOptions.length ? strategyTypeOptions : NO_OPTIONS}
-              valueOfSelected={selectedStrategy}
-              onChange={(value) => setSelectedStrategy(value)}
+              options={pipelineTypeOptions}
+              valueOfSelected={selectedPipelineType}
+              onChange={(value) => setSelectedPipelineType(value)}
               popoverClassName={styles.selectWrapper}
-              data-testid="strategy-type-select"
+              data-testid="pipeline-type-select"
             />
           </>
         </EuiFormRow>
@@ -134,7 +155,7 @@ const TemplateForm = (props: Props) => {
             <>
               <div className={styles.rowLabel}>Database type</div>
               <EuiSuperSelect
-                options={dbTypeOptions.length ? dbTypeOptions : NO_OPTIONS}
+                options={dbTypeOptions}
                 valueOfSelected={selectedDbType}
                 onChange={(value) => setSelectedDbType(value)}
                 popoverClassName={styles.selectWrapper}

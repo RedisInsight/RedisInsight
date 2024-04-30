@@ -37,29 +37,9 @@
       margin-right: 24px;
     }
 
-    .btn {
-      height: auto;
-
-      &:hover,
-      &:focus {
-        background-color: transparent !important;
-      }
-
-      :global {
-        .euiButtonContent {
-          padding: 0 12px;
-        }
-
-        .euiButtonContent.euiButtonEmpty__content .euiButtonEmpty__text {
-          color: var(--euiColorPrimary) !important;
-          text-decoration: underline;
-
-          &:hover,
-          &:focus {
-            text-decoration: none;
-          }
-        }
-      }
+    &:hover,
+    &:focus {
+      border: 1px solid var(--euiColorPrimary);
     }
   }
 }

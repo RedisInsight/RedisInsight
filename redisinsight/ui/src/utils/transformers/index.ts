@@ -10,6 +10,7 @@ export * from './formatDate'
 export * from './extrapolation'
 export * from './transformQueryParams'
 export * from './getTruncatedName'
+export * from './transformRdiPipeline'
 
 export {
   replaceSpaces,

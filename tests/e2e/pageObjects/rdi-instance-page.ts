@@ -26,7 +26,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     okUploadPipelineBtn = Selector('[data-testid=ok-btn]');
     closeImportModelBtn = Selector('[data-testid=import-file-modal] button');
 
-    configurationInput = Selector('[data-testid=wrapper-rdi-config]');
+    configurationInput = Selector('[data-testid=wrapper-rdi-monaco-config]');
     configurationLink = Selector('[data-testid=rdi-pipeline-config-link]');
 
     jobsInput = Selector('[data-testid=wrapper-rdi-monaco-jobs]');
@@ -45,8 +45,8 @@ export class RdiInstancePage extends BaseOverviewPage {
     //template
     templateButton = Selector('[data-testid^=template-trigger-]');
     templateApplyButton = Selector('[data-testid=template-apply-btn]');
-    templateCancelButton = Selector('[data-testid=template-apply-btn]');
-    pipelineDropdown =  Selector('[data-testid=strategy-type-select]');
+    templateCancelButton = Selector('[data-testid=template-cancel-btn]');
+    pipelineDropdown =  Selector('[data-testid=pipeline-type-select]');
     databaseDropdown =  Selector('[data-testid=db-type-select]');
 
     //dialog

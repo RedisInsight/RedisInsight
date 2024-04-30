@@ -1,13 +1,11 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButtonEmpty } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import {
   aiAssistantChatSelector,
   askAssistantChatbot,
   createAssistantChatAction,
   getAssistantChatHistoryAction,
-  removeAssistantChatAction
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -15,9 +13,9 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { AssistanceChatInitialMessage } from '../chat-history/texts'
-import ChatHistory from '../chat-history'
-import ChatForm from '../chat-form'
+
+import AssistanceHeader from './components/assistance-header'
+import { AssistanceChatInitialMessage, ChatHistory, ChatForm } from '../shared'
 
 import styles from './styles.module.scss'
 
@@ -73,17 +71,6 @@ const AssistanceChat = () => {
     })
   }
 
-  const onClearSession = useCallback(() => {
-    dispatch(removeAssistantChatAction(id))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Assistance
-      }
-    })
-  }, [id])
-
   const onRunCommand = useCallback((query: string) => {
     const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
     sendEventTelemetry({
@@ -109,19 +96,11 @@ const AssistanceChat = () => {
 
   return (
     <div className={styles.wrapper} data-testid="ai-general-chat">
-      <div className={styles.header}>
-        <span />
-        <EuiButtonEmpty
-          disabled={!!progressingMessage || !messages?.length}
-          iconType="eraser"
-          size="xs"
-          onClick={onClearSession}
-          className={styles.startSessionBtn}
-          data-testid="ai-general-restart-session-btn"
-        >
-          Restart Session
-        </EuiButtonEmpty>
-      </div>
+      <AssistanceHeader
+        databaseId={instanceId}
+        chatId={id}
+        isClearDisabled={!!progressingMessage || !messages?.length}
+      />
       <div className={styles.chatHistory}>
         <ChatHistory
           modules={modules}

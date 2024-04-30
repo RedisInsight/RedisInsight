@@ -5,17 +5,6 @@
   display: flex;
   flex-direction: column;
 
-  .header {
-    background-color: var(--browserTableRowEven);
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 6px 12px;
-  }
-
   .chatHistory {
     flex-grow: 1;
     overflow: hidden;
@@ -28,14 +17,5 @@
   .chatForm {
     flex-shrink: 0;
     padding: 0 12px 12px;
-  }
-
-  .startSessionBtn {
-    :global {
-      .euiButtonEmpty__text {
-        font-size: 12px;
-        line-height: 14px;
-      }
-    }
   }
 }

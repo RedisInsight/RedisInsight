@@ -21,7 +21,7 @@
     margin-right: 16px;
 
     :global(.euiText) {
-      color: var(--euiTextSubduedColor) !important;
+      font-weight: 500;
     }
   }
 
@@ -40,6 +40,12 @@
   }
 
   .startSessionBtn {
+    width: 24px;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+
     :global {
       .euiButtonEmpty__text {
         font-size: 12px;

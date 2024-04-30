@@ -6,7 +6,7 @@ export const AssistanceChatInitialMessage = (
     <EuiText size="xs">Hi!</EuiText>
     <EuiText size="xs">Feel free to engage in a general conversation with me about Redis.</EuiText>
     <EuiText size="xs">Or go to the <b>Database</b> tab data for help to query your indexed data.</EuiText>
-    <EuiText size="xs">Type /help for more info.</EuiText>
+    <EuiText size="xs">Type <b>/help</b> for more info.</EuiText>
     <EuiSpacer />
     <EuiText size="xs">With <span style={{ color: 'red' }}>&hearts;</span>, your Redis Copilot!</EuiText>
   </>

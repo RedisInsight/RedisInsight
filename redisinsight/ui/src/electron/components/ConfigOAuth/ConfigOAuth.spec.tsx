@@ -55,7 +55,7 @@ describe('ConfigOAuth', () => {
     const expectedActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
       getUserInfo()
     ]
@@ -88,7 +88,7 @@ describe('ConfigOAuth', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should fetch plans by defaul', () => {
+  it('should fetch plans by default', () => {
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());
     (fetchUserInfo as jest.Mock).mockImplementation(fetchUserInfoMock)
 
@@ -98,8 +98,9 @@ describe('ConfigOAuth', () => {
     const afterCallbackActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
     ]
 
     const expectedActions = [
@@ -122,8 +123,9 @@ describe('ConfigOAuth', () => {
     const afterCallbackActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
     ]
 
     const expectedActions = [
@@ -146,8 +148,9 @@ describe('ConfigOAuth', () => {
     const afterCallbackActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
     ]
 
     const expectedActions = [

@@ -12,6 +12,7 @@ import { Pages } from 'uiSrc/constants'
 import {
   addInstancesRedisCloud,
   cloudSelector,
+  fetchSubscriptionsRedisCloud,
   resetDataRedisCloud,
   resetLoadedRedisCloud,
 } from 'uiSrc/slices/instances/cloud'
@@ -61,9 +62,15 @@ const RedisCloudDatabasesPage = () => {
   useEffect(() => {
     if (ssoFlow !== OAuthSocialAction.Import) return
 
-    if (!userOAuthProfile || currentAccountIdRef.current !== userOAuthProfile?.id) {
+    if (!userOAuthProfile) {
       dispatch(resetDataRedisCloud())
       history.push(Pages.home)
+    }
+
+    if (currentAccountIdRef.current !== userOAuthProfile?.id) {
+      dispatch(fetchSubscriptionsRedisCloud(null, true, () => {
+        history.push(Pages.redisCloudSubscriptions)
+      }))
     }
   }, [ssoFlow, userOAuthProfile])
 
@@ -218,7 +225,7 @@ const RedisCloudDatabasesPage = () => {
       align: 'left',
       width: '200px',
       sortable: true,
-      render: function Modules(modules: any[], instance: InstanceRedisCloud) {
+      render: function Modules(_, instance: InstanceRedisCloud) {
         return <DatabaseListModules modules={instance.modules.map((name) => ({ name }))} />
       },
     },
@@ -230,7 +237,7 @@ const RedisCloudDatabasesPage = () => {
       align: 'left',
       width: '180px',
       sortable: true,
-      render: function Opitions(opts: any[], instance: InstanceRedisCloud) {
+      render: function Opitions(_, instance: InstanceRedisCloud) {
         const options = parseInstanceOptionsCloud(
           instance.databaseId,
           instances || []

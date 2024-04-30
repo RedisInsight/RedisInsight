@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { useHistory } from 'react-router-dom'
 import { Nullable } from 'uiSrc/utils'
 import { SidePanelsState, InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
@@ -39,7 +39,7 @@ const insightsPanelSlice = createSlice({
       state.openedPanel = payload === state.openedPanel ? null : payload
       sessionStorageService.set(BrowserStorageItem.sidePanel, state.openedPanel)
     },
-    changeSelectedTab: (state, { payload }) => {
+    changeSelectedTab: (state, { payload }: PayloadAction<InsightsPanelTabs>) => {
       state.insights.tabSelected = payload
       sessionStorageService.set(BrowserStorageItem.insightsPanel, payload)
     },

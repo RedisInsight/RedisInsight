@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react'
 import cx from 'classnames'
 
+import { EuiLoadingSpinner } from '@elastic/eui'
 import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable } from 'uiSrc/utils'
 
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+
 import LoadingMessage from '../loading-message'
 import MarkdownMessage from '../markdown-message'
 
@@ -53,8 +55,11 @@ const ChatHistory = (props: Props) => {
   ) : null), [modules])
 
   if (isLoading) {
-    // TODO: add loader
-    return null
+    return (
+      <div className={cx(styles.wrapper, styles.loader)}>
+        <EuiLoadingSpinner size="xl" data-testid="ai-loading-spinner" />
+      </div>
+    )
   }
 
   if (history.length === 0) {

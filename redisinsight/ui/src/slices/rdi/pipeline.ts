@@ -83,14 +83,6 @@ const rdiPipelineSlice = createSlice({
       state.changes = payload
     },
     deleteChangedFile: (state, { payload }: PayloadAction<string>) => {
-      // config file can not be removed
-      const isJobExist = state.data?.jobs?.find((el) => el.name === payload)
-
-      if (isJobExist) {
-        state.changes[payload] = FileChangeType.Removed
-        return
-      }
-
       delete state.changes[payload]
     }
   },
@@ -250,6 +242,20 @@ export function fetchRdiPipelineSchema(
     } catch (_err) {
       dispatch(setPipelineSchema(null))
       onFailAction?.()
+    }
+  }
+}
+
+export function deletePipelineJob(
+  name: string
+) {
+  return (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const { data } = state.rdi.pipeline
+    if (data?.jobs?.find((el) => el.name === name)) {
+      dispatch(setChangedFile({ name, status: FileChangeType.Removed }))
+    } else {
+      dispatch(deleteChangedFile(name))
     }
   }
 }

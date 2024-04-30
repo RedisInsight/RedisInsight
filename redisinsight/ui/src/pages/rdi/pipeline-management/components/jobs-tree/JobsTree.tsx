@@ -13,13 +13,13 @@ import cx from 'classnames'
 import { useFormikContext } from 'formik'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { findIndex } from 'lodash'
+import { isNumber } from 'lodash'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { PageNames } from 'uiSrc/constants'
 import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
 import { FileChangeType, IPipeline, IRdiPipelineJob } from 'uiSrc/slices/interfaces'
-import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { deleteChangedFile, deletePipelineJob, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 
@@ -44,12 +44,14 @@ const buildValidationMessage = (text: string) => ({
   )
 })
 
-const validateJobName = (jobName: string, prevJobName: Nullable<string>, jobs: IRdiPipelineJob[]) => {
+const validateJobName = (jobName: string, currentJobName: Nullable<string>, jobs: IRdiPipelineJob[]) => {
   if (!jobName) {
     return buildValidationMessage('Job name is required')
   }
 
-  if (jobs.filter((job) => job.name !== prevJobName).some((job) => job.name === jobName)) {
+  if (jobName === currentJobName) return undefined
+
+  if (jobs.some((job) => job.name === jobName)) {
     return buildValidationMessage('Job name is already in use')
   }
 
@@ -60,7 +62,7 @@ const JobsTree = (props: IProps) => {
   const { onSelectedTab, path, rdiInstanceId, changes = {} } = props
 
   const [accordionState, setAccordionState] = useState<'closed' | 'open'>('open')
-  const [prevJobName, setPrevJobName] = useState<Nullable<string>>(null)
+  const [currentJobName, setCurrentJobName] = useState<Nullable<string>>(null)
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
@@ -70,7 +72,7 @@ const JobsTree = (props: IProps) => {
   const dispatch = useDispatch()
 
   const handleDeleteClick = (name: string) => {
-    dispatch(deleteChangedFile(name))
+    dispatch(deletePipelineJob(name))
 
     const newJobs = values.jobs.filter((el) => el.name !== name)
     setFieldValue('jobs', newJobs)
@@ -85,18 +87,23 @@ const JobsTree = (props: IProps) => {
 
     // if the last job is deleted, select the pipeline config tab
     if (path === name) {
-      onSelectedTab(newJobs.length <= 0 ? PageNames.rdiPipelineConfig : newJobs[0].name)
+      onSelectedTab(newJobs.length ? newJobs[0].name : PageNames.rdiPipelineConfig)
     }
   }
 
-  const handleApplyJobName = (value: string) => {
-    const editingJobIndex = findIndex(values.jobs, (el) => el.name === prevJobName)
+  const handleDeclineJobName = () => {
+    setCurrentJobName(null)
 
-    if (editingJobIndex > -1) {
-      setFieldValue(`jobs.${editingJobIndex}.name`, value)
-    } else {
-      setFieldValue('jobs', [...values.jobs, { name: value, value: '' }])
+    if (isNewJob) {
+      setIsNewJob(false)
     }
+  }
+
+  const handleApplyJobName = (value: string, idx?: number) => {
+    const isJobExists = isNumber(idx)
+    const editJobIndex = isJobExists ? idx : values.jobs.length
+
+    setFieldValue(`jobs.${editJobIndex}.name`, value)
 
     const deployedJob = data?.jobs.find((el) => el.name === value)
 
@@ -106,13 +113,13 @@ const JobsTree = (props: IProps) => {
 
     if (
       deployedJob
-      && editingJobIndex > -1
-      && isEqualPipelineFile(values.jobs[editingJobIndex].value, deployedJob.value)
+      && isJobExists
+      && isEqualPipelineFile(values.jobs[idx].value, deployedJob.value)
     ) {
-      dispatch(deleteChangedFile(value))
+      dispatch(deleteChangedFile(deployedJob.value))
     }
 
-    setPrevJobName(null)
+    setCurrentJobName(null)
     setIsNewJob(false)
 
     sendEventTelemetry({
@@ -123,7 +130,7 @@ const JobsTree = (props: IProps) => {
       }
     })
 
-    if (path === prevJobName) {
+    if (path === currentJobName) {
       onSelectedTab(value)
     }
   }
@@ -145,7 +152,7 @@ const JobsTree = (props: IProps) => {
           <EuiButtonIcon
             iconType="pencil"
             onClick={() => {
-              setPrevJobName(name)
+              setCurrentJobName(name)
               setIsNewJob(false)
             }}
             aria-label="edit job file name"
@@ -179,24 +186,18 @@ const JobsTree = (props: IProps) => {
     </>
   )
 
-  const jobNameEditor = (name: string) => (
+  const jobNameEditor = (name: string, idx?: number) => (
     <EuiFlexItem className={styles.inputContainer} data-testid={`rdi-nav-job-edit-${name}`}>
       <InlineItemEditor
         controlsPosition="right"
-        onApply={handleApplyJobName}
-        onDecline={() => {
-          setPrevJobName(null)
-
-          if (isNewJob) {
-            setIsNewJob(false)
-          }
-        }}
-        disableByValidation={(value) => !!validateJobName(value, prevJobName, values.jobs)}
-        getError={(value) => validateJobName(value, prevJobName, values.jobs)}
+        onApply={(value: string) => handleApplyJobName(value, idx)}
+        onDecline={handleDeclineJobName}
+        disableByValidation={(value) => !!validateJobName(value, currentJobName, values.jobs)}
+        getError={(value) => validateJobName(value, currentJobName, values.jobs)}
         isLoading={loading}
         declineOnUnmount={false}
         controlsClassName={styles.inputControls}
-        initialValue={prevJobName || ''}
+        initialValue={currentJobName || ''}
         placeholder="Enter job name"
         maxLength={250}
         textFiledClassName={styles.input}
@@ -208,7 +209,7 @@ const JobsTree = (props: IProps) => {
   )
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) =>
-    jobs.map(({ name }) => (
+    jobs.map(({ name }, idx) => (
       <EuiFlexGroup
         key={name}
         className={cx(
@@ -240,7 +241,7 @@ const JobsTree = (props: IProps) => {
           <EuiFlexItem grow={false}>
             <EuiIcon type="document" className={styles.fileIcon} data-test-subj="jobs-folder-icon-close" />
           </EuiFlexItem>
-          {prevJobName === name ? jobNameEditor(name) : jobName(name)}
+          {currentJobName === name ? jobNameEditor(name, idx) : jobName(name)}
         </EuiFlexGroup>
       </EuiFlexGroup>
     ))

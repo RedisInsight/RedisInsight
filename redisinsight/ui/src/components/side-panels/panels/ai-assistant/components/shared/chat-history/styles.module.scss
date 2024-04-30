@@ -15,6 +15,12 @@ $delay: .13s;
   }
 }
 
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .history {
   height: 100%;
   display: flex;

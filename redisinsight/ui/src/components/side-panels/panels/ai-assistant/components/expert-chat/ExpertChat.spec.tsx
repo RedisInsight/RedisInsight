@@ -1,16 +1,26 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  mockedStoreFn,
+  render,
+  screen,
+  waitForEuiPopoverVisible
+} from 'uiSrc/utils/test-utils'
 
 import {
-  aiAssistantChatSelector,
-  createAssistantChat,
-  getAssistantChatHistory, removeAssistantChatHistory,
-  sendQuestion
+  aiExpertChatSelector,
+  clearExpertChatHistory,
+  getExpertChatHistory,
+  sendExpertQuestion,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
-import AssistanceChat from './AssistanceChat'
+import { apiService } from 'uiSrc/services'
+import ExpertChat from './ExpertChat'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -19,8 +29,8 @@ jest.mock('uiSrc/telemetry', () => ({
 
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   ...jest.requireActual('uiSrc/slices/panels/aiAssistant'),
-  aiAssistantChatSelector: jest.fn().mockReturnValue({
-    id: '',
+  aiExpertChatSelector: jest.fn().mockReturnValue({
+    loading: false,
     messages: []
   })
 }))
@@ -28,67 +38,49 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
-  store = cloneDeep(mockedStore)
+  store = cloneDeep(mockedStoreFn())
   store.clearActions()
 })
 
-describe('AssistanceChat', () => {
+describe('ExpertChat', () => {
   it('should render', () => {
-    expect(render(<AssistanceChat />)).toBeTruthy()
+    expect(render(<ExpertChat />)).toBeTruthy()
   })
 
   it('should proper components render by default', () => {
-    render(<AssistanceChat />)
+    render(<ExpertChat />)
 
-    expect(screen.getByTestId('ai-general-restart-session-btn')).toBeInTheDocument()
+    expect(screen.getByTestId('ai-expert-restart-session-btn')).toBeInTheDocument()
     expect(screen.getByTestId('ai-chat-empty-history')).toBeInTheDocument()
     expect(screen.getByTestId('ai-submit-message-btn')).toBeInTheDocument()
   })
 
+  it('should show loading', () => {
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: true,
+      messages: []
+    })
+    render(<ExpertChat />)
+
+    expect(screen.getByTestId('ai-loading-spinner')).toBeInTheDocument()
+    expect(screen.queryByTestId('ai-chat-empty-history')).not.toBeInTheDocument()
+  })
+
   it('should call proper actions by default', () => {
-    render(<AssistanceChat />)
+    render(<ExpertChat />, { store })
 
-    expect(store.getActions()).toEqual([])
-  })
-
-  it('should get history', () => {
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
-      id: '1',
-      messages: []
-    })
-    render(<AssistanceChat />)
-
-    expect(store.getActions()).toEqual([getAssistantChatHistory()])
-  })
-
-  it('should call action to create an id after submit first message', () => {
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
-      id: '',
-      messages: []
-    })
-    render(<AssistanceChat />)
-
-    act(() => {
-      fireEvent.change(
-        screen.getByTestId('ai-message-textarea'),
-        { target: { value: 'test' } }
-      )
-    })
-
-    fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
-
-    expect(store.getActions()).toEqual([createAssistantChat()])
+    expect(store.getActions()).toEqual([getExpertChatHistory()])
   })
 
   it('should call action after submit message', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
-      id: '1',
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: false,
       messages: []
     })
-    render(<AssistanceChat />)
+    render(<ExpertChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
@@ -103,13 +95,13 @@ describe('AssistanceChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      sendQuestion('test')
+      sendExpertQuestion('test')
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
       eventData: {
-        chat: AiChatType.Assistance
+        chat: AiChatType.Query
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()
@@ -117,32 +109,34 @@ describe('AssistanceChat', () => {
 
   it('should call action after click on restart session', async () => {
     const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 });
 
-    (aiAssistantChatSelector as jest.Mock).mockReturnValue({
-      id: '1',
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: false,
       messages: [{}]
     })
 
-    render(<AssistanceChat />)
+    render(<ExpertChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('ai-general-restart-session-btn'))
+    fireEvent.click(screen.getByTestId('ai-expert-restart-session-btn'))
 
     await waitForEuiPopoverVisible()
-
-    fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
+    })
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      removeAssistantChatHistory()
+      clearExpertChatHistory()
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
-        chat: AiChatType.Assistance
+        chat: AiChatType.Query
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

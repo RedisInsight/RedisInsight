@@ -86,7 +86,7 @@ const ChatsWrapper = () => {
                 onClick={() => selectTab(AiChatType.Query)}
                 data-testid="ai-database-chat_tab"
               >
-                Database
+                My Data
               </EuiTab>
             )}
           </EuiTabs>

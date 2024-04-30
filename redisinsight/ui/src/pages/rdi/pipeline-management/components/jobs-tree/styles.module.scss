@@ -29,6 +29,7 @@
   }
 
   .job {
+    position: relative;
     padding: 3px 16px 3px 42px;
 
     &.active {
@@ -46,6 +47,7 @@
     .dotWrapper {
       position: absolute;
       left: 13px;
+      bottom: 8px;
     }
 
     .dot {

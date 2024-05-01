@@ -59,7 +59,8 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
 });
-test('Verify that user can sign in using SSO via Google authorization', async t => {
+// skip until adding linux support
+test.skip('Verify that user can sign in using SSO via Google authorization', async t => {
     const logsFilename = 'chrome_logs.txt';
     const logsFilePath = path.join('test-data', logsFilename);
 

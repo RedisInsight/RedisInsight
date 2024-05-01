@@ -10,7 +10,7 @@ import {
   setLastPipelineManagementPage,
 } from 'uiSrc/slices/app/context'
 import { PageNames, Pages } from 'uiSrc/constants'
-import PipelinePage, { Props } from './PipelineManagementPage'
+import PipelineManagementPage, { Props } from './PipelineManagementPage'
 
 const mockedProps = mock<Props>()
 
@@ -21,7 +21,18 @@ jest.mock('uiSrc/slices/app/context', () => ({
   }),
 }))
 
-jest.mock('formik')
+jest.mock('formik', () => ({
+  ...jest.requireActual('formik'),
+  useFormikContext: jest.fn().mockReturnValue({
+    values: {
+      config: 'value',
+      jobs: [
+        { name: 'job1', value: 'value' },
+        { name: 'job2', value: 'value' }
+      ]
+    }
+  })
+}))
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -30,12 +41,12 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('PipelinePage', () => {
+describe('PipelineManagementPage', () => {
   it('should render', () => {
     expect(
       render(
         <BrowserRouter>
-          <PipelinePage {...instance(mockedProps)} />
+          <PipelineManagementPage {...instance(mockedProps)} />
         </BrowserRouter>
       )
     ).toBeTruthy()
@@ -48,7 +59,7 @@ describe('PipelinePage', () => {
 
     render(
       <BrowserRouter>
-        <PipelinePage {...instance(mockedProps)} />
+        <PipelineManagementPage {...instance(mockedProps)} />
       </BrowserRouter>
     )
 
@@ -65,7 +76,7 @@ describe('PipelinePage', () => {
 
     render(
       <BrowserRouter>
-        <PipelinePage {...instance(mockedProps)} />
+        <PipelineManagementPage {...instance(mockedProps)} />
       </BrowserRouter>
     )
 
@@ -77,7 +88,7 @@ describe('PipelinePage', () => {
 
     const { unmount } = render(
       <BrowserRouter>
-        <PipelinePage {...instance(mockedProps)} />
+        <PipelineManagementPage {...instance(mockedProps)} />
       </BrowserRouter>
     )
 

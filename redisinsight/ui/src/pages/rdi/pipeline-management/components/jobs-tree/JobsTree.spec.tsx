@@ -48,13 +48,13 @@ describe('JobsTree', () => {
 
     render(<JobsTree {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('rdi-nav-job-loader')).toBeInTheDocument()
+    expect(screen.getByTestId('rdi-nav-jobs-loader')).toBeInTheDocument()
   })
 
   it('should render proper count of job', () => {
     render(<JobsTree {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('rdi-job-count')).toHaveTextContent('1')
+    expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('1')
   })
 
   it('should not render count of job if it is "0"', () => {
@@ -65,7 +65,7 @@ describe('JobsTree', () => {
 
     render(<JobsTree {...instance(mockedProps)} />)
 
-    expect(screen.getByTestId('rdi-job-count')).toHaveTextContent('')
+    expect(screen.getByTestId('rdi-jobs-count')).toHaveTextContent('')
   })
 
   it('should call selected tab', () => {
@@ -166,7 +166,7 @@ describe('JobsTree', () => {
     })
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('job-name-input-0'), { target: { value: 'job3' } })
+      fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: 'job3' } })
       fireEvent.click(screen.getByTestId('apply-btn'))
     })
 
@@ -205,7 +205,7 @@ describe('JobsTree', () => {
   it('should push to config tab when deleting last job', async () => {
     const mockOnSelectedTab = jest.fn()
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} />)
+    render(<JobsTree {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} path="job1" />)
 
     await act(() => {
       fireEvent.click(screen.getByTestId('delete-job-job1'))

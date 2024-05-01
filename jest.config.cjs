@@ -56,6 +56,7 @@ module.exports = {
     '<rootDir>/redisinsight/api',
     '<rootDir>/redisinsight/ui/src/packages',
   ],
+  resolver: '<rootDir>/jest-resolver.js',
   coverageThreshold: {
     global: {
       statements: 80,

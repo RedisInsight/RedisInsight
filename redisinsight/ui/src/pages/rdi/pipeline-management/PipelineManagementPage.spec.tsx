@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 
 import reactRouterDom, { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
+import { useFormikContext } from 'formik'
 import { render, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import {
   appContextPipelineManagement,
@@ -10,6 +11,7 @@ import {
   setLastPipelineManagementPage,
 } from 'uiSrc/slices/app/context'
 import { PageNames, Pages } from 'uiSrc/constants'
+import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import PipelineManagementPage, { Props } from './PipelineManagementPage'
 
 const mockedProps = mock<Props>()
@@ -21,18 +23,7 @@ jest.mock('uiSrc/slices/app/context', () => ({
   }),
 }))
 
-jest.mock('formik', () => ({
-  ...jest.requireActual('formik'),
-  useFormikContext: jest.fn().mockReturnValue({
-    values: {
-      config: 'value',
-      jobs: [
-        { name: 'job1', value: 'value' },
-        { name: 'job2', value: 'value' }
-      ]
-    }
-  })
-}))
+jest.mock('formik')
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -42,6 +33,14 @@ beforeEach(() => {
 })
 
 describe('PipelineManagementPage', () => {
+  beforeEach(() => {
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: MOCK_RDI_PIPELINE_DATA,
+    };
+    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+  })
+
   it('should render', () => {
     expect(
       render(

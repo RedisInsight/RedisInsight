@@ -10,7 +10,7 @@ import {
   EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { Form, useFormikContext } from 'formik'
+import { useFormikContext } from 'formik'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -55,7 +55,7 @@ const RdiPipelineHeader = () => {
   }
 
   return (
-    <Form>
+    <div>
       <EuiFlexGroup className={styles.wrapper} gutterSize="none" alignItems="center" responsive={false}>
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <EuiTitle size="xxs">
@@ -133,7 +133,7 @@ const RdiPipelineHeader = () => {
           </EuiOutsideClickDetector>
         </EuiFlexItem>
       </EuiFlexGroup>
-    </Form>
+    </div>
   )
 }
 

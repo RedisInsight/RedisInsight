@@ -12,6 +12,7 @@ export class InsightsPanel {
 
     recommendationsTab = Selector('[data-testid=recommendations-tab]');
     exploreTab = Selector('[data-testid=explore-tab]');
+    copilotTab = Selector('[data-testid=ai-assistant-tab]');
 
     existsCompatibilityPopover = Selector('[data-testid=explore-capability-popover]');
 

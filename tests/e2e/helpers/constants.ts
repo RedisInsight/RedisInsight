@@ -80,6 +80,7 @@ export enum ResourcePath {
 export enum ExploreTabs {
     Explore  = 'Explore',
     Tips = 'Tips',
+    RedisCopilot = 'Redis Copilot'
 }
 
 export enum Compatibility {

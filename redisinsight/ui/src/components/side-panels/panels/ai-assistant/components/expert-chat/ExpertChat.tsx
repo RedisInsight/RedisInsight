@@ -168,7 +168,7 @@ const ExpertChat = () => {
         <ChatForm
           isDisabled={!instanceId || !!progressingMessage}
           validation={getValidationMessage()}
-          placeholder="Type / for specialized expertise"
+          placeholder="Ask me to query your data (eg. How many road bikes?)"
           onSubmit={handleSubmit}
         />
       </div>

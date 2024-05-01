@@ -67,7 +67,7 @@ const ChatHistory = (props: Props) => {
       <div className={styles.wrapper}>
         <div className={styles.history} data-testid="ai-chat-empty-history">
           <div
-            className={cx('jsx-markdown', styles.answer)}
+            className={styles.answer}
             data-testid="ai-message-initial-message"
           >
             {initialMessage}

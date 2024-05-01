@@ -24,6 +24,17 @@
 
     transition: border-color ease .3s;
 
+    &::placeholder {
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:placeholder-shown {
+      text-overflow: ellipsis;
+    }
+
     &:focus {
       border-color: var(--euiColorPrimary) !important;
     }

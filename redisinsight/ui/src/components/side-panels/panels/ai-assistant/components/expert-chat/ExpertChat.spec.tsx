@@ -1,6 +1,15 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  mockedStoreFn,
+  render,
+  screen,
+  waitForEuiPopoverVisible
+} from 'uiSrc/utils/test-utils'
 
 import {
   aiExpertChatSelector,
@@ -29,7 +38,7 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
-  store = cloneDeep(mockedStore)
+  store = cloneDeep(mockedStoreFn())
   store.clearActions()
 })
 
@@ -58,7 +67,7 @@ describe('ExpertChat', () => {
   })
 
   it('should call proper actions by default', () => {
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     expect(store.getActions()).toEqual([getExpertChatHistory()])
   })
@@ -71,7 +80,7 @@ describe('ExpertChat', () => {
       loading: false,
       messages: []
     })
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
@@ -108,12 +117,15 @@ describe('ExpertChat', () => {
       messages: [{}]
     })
 
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
+    fireEvent.click(screen.getByTestId('ai-expert-restart-session-btn'))
+
+    await waitForEuiPopoverVisible()
     await act(async () => {
-      fireEvent.click(screen.getByTestId('ai-expert-restart-session-btn'))
+      fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
     })
 
     expect(store.getActions()).toEqual([

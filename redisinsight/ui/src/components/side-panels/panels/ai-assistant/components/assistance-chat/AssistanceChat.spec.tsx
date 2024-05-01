@@ -1,6 +1,6 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 
 import {
   aiAssistantChatSelector,
@@ -115,7 +115,7 @@ describe('AssistanceChat', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
-  it('should call action after click on restart session', () => {
+  it('should call action after click on restart session', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
@@ -129,6 +129,10 @@ describe('AssistanceChat', () => {
     const afterRenderActions = [...store.getActions()]
 
     fireEvent.click(screen.getByTestId('ai-general-restart-session-btn'))
+
+    await waitForEuiPopoverVisible()
+
+    fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,

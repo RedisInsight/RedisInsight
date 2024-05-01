@@ -15,9 +15,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
-import ChatHistory from '../chat-history'
-import ChatForm from '../chat-form'
-import { ExpertChatInitialMessage } from '../chat-history/texts'
+import { ChatHistory, ChatForm, ExpertChatInitialMessage, RestartChat } from '../shared'
 
 import styles from './styles.module.scss'
 
@@ -139,19 +137,21 @@ const ExpertChat = () => {
             content={connectedInstanceName}
             anchorClassName={styles.dbName}
           >
-            <EuiText size="xs" className="truncateText">db: {connectedInstanceName}</EuiText>
+            <EuiText size="xs" className="truncateText">{connectedInstanceName}</EuiText>
           </EuiToolTip>
         ) : (<span />)}
-        <EuiButtonEmpty
-          disabled={!messages?.length}
-          iconType="eraser"
-          size="xs"
-          onClick={onClearSession}
-          className={styles.startSessionBtn}
-          data-testid="ai-expert-restart-session-btn"
-        >
-          Clear
-        </EuiButtonEmpty>
+        <RestartChat
+          button={(
+            <EuiButtonEmpty
+              disabled={!messages?.length}
+              iconType="eraser"
+              size="xs"
+              className={styles.startSessionBtn}
+              data-testid="ai-expert-restart-session-btn"
+            />
+          )}
+          onConfirm={onClearSession}
+        />
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory

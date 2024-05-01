@@ -6,6 +6,7 @@ import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssi
 import { Nullable } from 'uiSrc/utils'
 
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+
 import LoadingMessage from '../loading-message'
 import MarkdownMessage from '../markdown-message'
 

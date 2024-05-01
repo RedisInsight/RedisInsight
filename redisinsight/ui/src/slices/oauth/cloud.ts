@@ -378,10 +378,11 @@ export function createFreeDbJob({
         ))
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+
+      dispatch(addErrorNotification(err))
       dispatch(addFreeDbFailure(errorMessage))
       dispatch(setOAuthCloudSource(null))
       onFailAction?.()
@@ -411,10 +412,11 @@ export function activateAccount(
         dispatch(getUserInfoSuccess(data))
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+
+      dispatch(addErrorNotification(err))
       dispatch(getUserInfoFailure(errorMessage))
       dispatch(setOAuthCloudSource(null))
       onFailAction?.(errorMessage)
@@ -545,9 +547,10 @@ export function logoutUserAction(
         dispatch(logoutUserSuccess())
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+
+      dispatch(addErrorNotification(err))
       dispatch(logoutUserFailure())
       onFailAction?.()
     }

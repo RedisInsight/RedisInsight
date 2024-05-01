@@ -2,6 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import config, { Config } from 'src/utils/config';
 import { Injectable, Logger } from '@nestjs/common';
 import { AiQueryAuthData } from 'src/modules/ai/query/models/ai-query.auth-data';
+import { AiQueryWsEvents } from 'src/modules/ai/query/models';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -15,17 +16,17 @@ export class AiQueryProvider {
         path: aiConfig.querySocketPath,
         reconnection: false,
         extraHeaders: {
-          csrf: auth.csrf,
-          cookie: `JSESSIONID=${auth.sessionId}`,
+          'X-Csrf-Token': auth.csrf,
+          Cookie: `JSESSIONID=${auth.sessionId}`,
         },
       });
 
-      socket.on('connect_error', (e) => {
+      socket.on(AiQueryWsEvents.CONNECT_ERROR, (e) => {
         this.logger.error('Unable to establish AI socket connection', e);
         reject(e);
       });
 
-      socket.on('connect', async () => {
+      socket.on(AiQueryWsEvents.CONNECT, async () => {
         this.logger.debug('AI socket connection established');
         resolve(socket);
       });

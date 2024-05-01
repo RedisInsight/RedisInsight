@@ -7,11 +7,18 @@ import { wrapAiQueryError } from 'src/modules/ai/query/exceptions';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { getFullDbContext, getIndexContext } from 'src/modules/ai/query/utils/context.util';
 import { Response } from 'express';
-import { AiQueryMessage } from 'src/modules/ai/query/models';
+import {
+  AiQueryMessage,
+  AiQueryMessageType,
+  AiQueryMessageRole,
+  AiQueryWsEvents,
+  AiQueryIntermediateStepType,
+  AiQueryIntermediateStep,
+} from 'src/modules/ai/query/models';
 import { AiQueryMessageRepository } from 'src/modules/ai/query/repositories/ai-query.message.repository';
 import { AiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/ai-query-auth.provider';
 import { classToClass } from 'src/utils';
-import { AiQueryMessageType } from 'src/modules/ai/query/entities/ai-query.message.entity';
+import { plainToClass } from 'class-transformer';
 
 const COMMANDS_WHITELIST = {
   'ft.search': true,
@@ -29,8 +36,43 @@ export class AiQueryService {
     private readonly aiQueryAuthProvider: AiQueryAuthProvider,
   ) {}
 
-  static prepareHistory(messages: AiQueryMessage[]): string[] {
-    return messages.map((message) => message.content);
+  static prepareHistoryIntermediateSteps(message: AiQueryMessage): [AiQueryMessageRole, string][] {
+    const steps = [];
+    message.steps.forEach((step) => {
+      switch (step.type) {
+        case AiQueryIntermediateStepType.TOOL:
+          steps.push([AiQueryMessageRole.TOOL, step.data]);
+          break;
+        case AiQueryIntermediateStepType.TOOL_CALL:
+          steps.push([AiQueryMessageRole.TOOL_CALL, step.data]);
+          break;
+        default:
+          // ignore
+      }
+    });
+
+    return steps;
+  }
+
+  static prepareHistory(messages: AiQueryMessage[]): string[][] {
+    const history = [];
+    messages.forEach((message) => {
+      switch (message.type) {
+        case AiQueryMessageType.AiMessage:
+          history.push([AiQueryMessageRole.AI, message.content]);
+          if (message.steps.length) {
+            history.push(...AiQueryService.prepareHistoryIntermediateSteps(message));
+          }
+          break;
+        case AiQueryMessageType.HumanMessage:
+          history.push([AiQueryMessageRole.HUMAN, message.content]);
+          break;
+        default:
+          // ignore
+      }
+    });
+
+    return history;
   }
 
   async stream(
@@ -70,12 +112,12 @@ export class AiQueryService {
 
       socket = await this.aiQueryProvider.getSocket(auth);
 
-      socket.on('chunk', (chunk) => {
+      socket.on(AiQueryWsEvents.REPLY_CHUNK, (chunk) => {
         answer.content += chunk;
         res.write(chunk);
       });
 
-      socket.on('get_index_context', async (index, cb) => {
+      socket.on(AiQueryWsEvents.GET_INDEX, async (index, cb) => {
         try {
           const indexContext = await getIndexContext(client, index);
           cb(indexContext);
@@ -85,7 +127,7 @@ export class AiQueryService {
         }
       });
 
-      socket.on('execute_query', async (data, cb) => {
+      socket.on(AiQueryWsEvents.RUN_QUERY, async (data, cb) => {
         try {
           if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()]) {
             return cb('-ERR: This command is not allowed');
@@ -96,6 +138,30 @@ export class AiQueryService {
           this.logger.warn('Query execution error', e);
           return cb(e.message);
         }
+      });
+
+      socket.on(AiQueryWsEvents.GET_INDEX, async (index, cb) => {
+        try {
+          const indexContext = await getIndexContext(client, index);
+          return cb(indexContext);
+        } catch (e) {
+          this.logger.warn('Unable to create index content', e);
+          return cb(e.message);
+        }
+      });
+
+      socket.on(AiQueryWsEvents.TOOL_CALL, async (data) => {
+        answer.steps.push(plainToClass(AiQueryIntermediateStep, {
+          type: AiQueryIntermediateStepType.TOOL_CALL,
+          data,
+        }));
+      });
+
+      socket.on(AiQueryWsEvents.TOOL_REPLY, async (data) => {
+        answer.steps.push(plainToClass(AiQueryIntermediateStep, {
+          type: AiQueryIntermediateStepType.TOOL,
+          data,
+        }));
       });
 
       await socket.emitWithAck('stream', dto.content, context, AiQueryService.prepareHistory(history));

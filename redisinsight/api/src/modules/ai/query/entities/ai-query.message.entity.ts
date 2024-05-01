@@ -2,11 +2,7 @@ import { Expose } from 'class-transformer';
 import {
   Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn,
 } from 'typeorm';
-
-export enum AiQueryMessageType {
-  HumanMessage = 'HumanMessage',
-  AiMessage = 'AIMessage',
-}
+import { DataAsJsonString } from 'src/common/decorators';
 
 @Entity('ai_query_message')
 export class AiQueryMessageEntity {
@@ -31,6 +27,11 @@ export class AiQueryMessageEntity {
   @Column({ nullable: false, type: 'blob' })
   @Expose()
   content: string;
+
+  @Column({ nullable: true, type: 'blob' })
+  @DataAsJsonString()
+  @Expose()
+  steps: string;
 
   @CreateDateColumn()
   @Index()

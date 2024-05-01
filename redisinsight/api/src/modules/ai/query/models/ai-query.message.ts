@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { AiQueryMessageType } from 'src/modules/ai/query/entities/ai-query.message.entity';
+import { Expose, Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { AiQueryIntermediateStep } from 'src/modules/ai/query/models/ai-query.intermediate-step';
+import { Default } from 'src/common/decorators';
+
+export enum AiQueryMessageType {
+  HumanMessage = 'HumanMessage',
+  AiMessage = 'AIMessage',
+}
 
 export class AiQueryMessage {
   @ApiProperty({
@@ -40,6 +46,15 @@ export class AiQueryMessage {
   @Expose()
   @IsString()
   content: string = '';
+
+  @ApiProperty({
+    type: String,
+    isArray: true,
+  })
+  @Expose()
+  @Type(() => AiQueryIntermediateStep)
+  @Default([])
+  steps?: AiQueryIntermediateStep[] = [];
 
   @ApiProperty({
     type: Date,

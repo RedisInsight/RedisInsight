@@ -259,10 +259,10 @@ export default {
     },
   },
   ai: {
-    convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://staging.learn.redis.com/convai/api',
+    convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://redis.io/convai/api',
     convAiToken: process.env.RI_AI_CONVAI_TOKEN,
-    querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'http://localhost:8081',
-    querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/socket.io/socket.io.js',
+    querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
+    querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',
     queryHistoryLimit: parseInt(process.env.RI_AI_QUERY_HISTORY_LIMIT, 10) || 20,
   },
 };

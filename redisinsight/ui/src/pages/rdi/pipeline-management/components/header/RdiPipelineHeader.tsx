@@ -55,7 +55,7 @@ const RdiPipelineHeader = () => {
   }
 
   return (
-    <Form id="pipeline-form">
+    <Form>
       <EuiFlexGroup className={styles.wrapper} gutterSize="none" alignItems="center" responsive={false}>
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <EuiTitle size="xxs">

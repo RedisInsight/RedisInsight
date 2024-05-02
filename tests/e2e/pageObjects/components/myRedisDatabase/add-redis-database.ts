@@ -65,6 +65,8 @@ export class AddRedisDatabase {
     sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });
     // LABELS
     dataCompressorLabel = Selector('[data-testid=showCompressor] ~ label', { timeout: 1000 });
+    aiChatMessage = Selector('[data-testid=ai-chat-message-btn]');
+    aiCloseMessage = Selector('[aria-label="Closes this modal window"]');
 
     /**
      * Adding a new redis database

@@ -45,6 +45,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     exportBtn = Selector('[data-testid=export-btn]');
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
+    userProfileBtn = Selector('[data-testid=user-profile-btn]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
@@ -75,6 +76,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     successImportMessage = Selector('[data-testid=result-success]');
     importDialogTitle = Selector('[data-testid=import-file-modal-title]');
     importResult = Selector('[data-testid^=table-result-]');
+    userProfileAccountInfo = Selector('[data-testid^=profile-account-]');
     // DIALOG
     importDbDialog = Selector('[data-testid=import-file-modal]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');
@@ -83,6 +85,9 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     // CONTAINERS
     databaseContainer = Selector('.databaseContainer');
     connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
+    signInAgreement = Selector('[class="euiCheckbox__square"]');
+    googleAuth = Selector('[data-testid=google-oauth]');
+    authDialog = Selector('[data-testid=social-oauth-dialog]');
 
     /**
      * Click on the database by name

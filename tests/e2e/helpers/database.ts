@@ -345,6 +345,10 @@ export class DatabaseHelper {
     async acceptLicenseTerms(): Promise<void> {
         await t.maximizeWindow();
         await userAgreementDialog.acceptLicenseTerms();
+        // TODO delete after releasing chatbot
+        if (await myRedisDatabasePage.AddRedisDatabase.aiChatMessage.exists) {
+            await t.click(myRedisDatabasePage.AddRedisDatabase.aiCloseMessage)
+        }
     }
 
     // Accept License terms and connect to the RedisStack database

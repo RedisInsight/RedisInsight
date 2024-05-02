@@ -9,7 +9,12 @@ import { setMonitorInitialState, showMonitor } from 'uiSrc/slices/cli/monitor'
 import { Pages } from 'uiSrc/constants/pages'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { dbAnalysisSelector, setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
-import { incrementOnboardStepAction, setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
+import {
+  appFeatureFlagsFeaturesSelector,
+  incrementOnboardStepAction,
+  setOnboardNextStep,
+  setOnboardPrevStep
+} from 'uiSrc/slices/app/features'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg'
@@ -28,6 +33,9 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { FeatureFlags } from 'uiSrc/constants'
+import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+
 import styles from './styles.module.scss'
 
 const sendTelemetry = (databaseId: string, step: string, action: string) => sendEventTelemetry({
@@ -93,6 +101,12 @@ const ONBOARDING_FEATURES = {
     title: 'Filter and search',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const {
+        [FeatureFlags.databaseChat]: databaseChatFeature,
+        [FeatureFlags.documentationChat]: documentationChatFeature,
+      } = useSelector(appFeatureFlagsFeaturesSelector)
+      const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+
       const dispatch = useDispatch()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserFilters]
 
@@ -101,7 +115,36 @@ const ONBOARDING_FEATURES = {
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
         onBack: () => sendBackTelemetryEvent(...telemetryArgs),
         onNext: () => {
+          if (isAnyChatAvailable) {
+            dispatch(changeSidePanel(SidePanels.AiAssistant))
+            sendNextTelemetryEvent(...telemetryArgs)
+            return
+          }
+
+          dispatch(setOnboardNextStep())
           dispatch(openCli())
+
+          sendNextTelemetryEvent(...telemetryArgs)
+        }
+      }
+    }
+  },
+  BROWSER_COPILOT: {
+    step: OnboardingSteps.BrowserCopilot,
+    title: 'Try Redis Copilot',
+    Inner: () => {
+      const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+
+      const dispatch = useDispatch()
+      const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserCopilot]
+
+      return {
+        content: 'Redis Copilot is an AI-powered companion that lets you learn about Redis and explore your data, in a conversational manner, while also providing context-aware assistance to build search queries.',
+        onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
+        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
+        onNext: () => {
+          dispatch(openCli())
+          dispatch(changeSidePanel(null))
           sendNextTelemetryEvent(...telemetryArgs)
         }
       }
@@ -112,13 +155,28 @@ const ONBOARDING_FEATURES = {
     title: 'CLI',
     Inner: () => {
       const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+      const {
+        [FeatureFlags.databaseChat]: databaseChatFeature,
+        [FeatureFlags.documentationChat]: documentationChatFeature,
+      } = useSelector(appFeatureFlagsFeaturesSelector)
+      const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+
       const dispatch = useDispatch()
       const telemetryArgs: TelemetryArgs = [connectedInstanceId, OnboardingStepName.BrowserCLI]
 
       return {
         content: 'Use CLI to run Redis commands.',
         onSkip: () => sendClosedTelemetryEvent(...telemetryArgs),
-        onBack: () => sendBackTelemetryEvent(...telemetryArgs),
+        onBack: () => {
+          if (isAnyChatAvailable) {
+            dispatch(changeSidePanel(SidePanels.AiAssistant))
+            sendNextTelemetryEvent(...telemetryArgs)
+            return
+          }
+
+          dispatch(setOnboardPrevStep())
+          sendBackTelemetryEvent(...telemetryArgs)
+        },
         onNext: () => {
           dispatch(openCliHelper())
           sendNextTelemetryEvent(...telemetryArgs)

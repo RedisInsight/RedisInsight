@@ -5,7 +5,12 @@ import reactRouterDom from 'react-router-dom'
 import { cleanup, clearStoreActions, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { OnboardingTour } from 'uiSrc/components'
-import { appFeatureOnboardingSelector, setOnboardNextStep, setOnboardPrevStep } from 'uiSrc/slices/app/features'
+import {
+  appFeatureFlagsFeaturesSelector,
+  appFeatureOnboardingSelector,
+  setOnboardNextStep,
+  setOnboardPrevStep
+} from 'uiSrc/slices/app/features'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
@@ -32,7 +37,12 @@ jest.mock('uiSrc/slices/app/features', () => ({
     currentStep: 0,
     isActive: true,
     totalSteps: 14
-  })
+  }),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    databaseChat: {
+      flag: false,
+    }
+  }),
 }))
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
@@ -198,7 +208,54 @@ describe('ONBOARDING_FEATURES', () => {
       render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_FILTER_SEARCH}><span /></OnboardingTour>)
       fireEvent.click(screen.getByTestId('next-btn'))
 
-      const expectedActions = [openCli(), setOnboardNextStep()]
+      const expectedActions = [setOnboardNextStep(), openCli(), setOnboardNextStep()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should call proper actions with enabled chat', () => {
+      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+        databaseChat: {
+          flag: true,
+        }
+      })
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_FILTER_SEARCH}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('next-btn'))
+
+      const expectedActions = [changeSidePanel(SidePanels.AiAssistant), setOnboardNextStep()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+  })
+
+  describe('BROWSER_COPILOT', () => {
+    beforeEach(() => {
+      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
+        currentStep: OnboardingSteps.BrowserCopilot,
+        isActive: true,
+        totalSteps: Object.keys(ONBOARDING_FEATURES).length
+      })
+    })
+
+    it('should render', () => {
+      expect(
+        render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_COPILOT}><span /></OnboardingTour>)
+      ).toBeTruthy()
+      expect(screen.getByTestId('step-content')).toHaveTextContent('Redis Copilot is an AI-powered companion that lets you learn about')
+    })
+
+    it('should call proper telemetry events', () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_COPILOT}><span /></OnboardingTour>)
+      checkAllTelemetryButtons(OnboardingStepName.BrowserCopilot, sendEventTelemetry as jest.Mock)
+    })
+
+    it('should call proper actions', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_COPILOT}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('next-btn'))
+
+      const expectedActions = [openCli(), changeSidePanel(null), setOnboardNextStep()]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
   })
@@ -232,6 +289,28 @@ describe('ONBOARDING_FEATURES', () => {
       fireEvent.click(screen.getByTestId('next-btn'))
 
       const expectedActions = [openCliHelper(), setOnboardNextStep()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should call proper actions on back', () => {
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_CLI}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('back-btn'))
+
+      const expectedActions = [setOnboardPrevStep(), setOnboardPrevStep()]
+      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+    })
+
+    it('should call proper actions on back when chat available', () => {
+      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+        databaseChat: {
+          flag: true,
+        }
+      })
+
+      render(<OnboardingTour options={ONBOARDING_FEATURES.BROWSER_CLI}><span /></OnboardingTour>)
+      fireEvent.click(screen.getByTestId('back-btn'))
+
+      const expectedActions = [changeSidePanel(SidePanels.AiAssistant), setOnboardPrevStep()]
       expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     })
   })

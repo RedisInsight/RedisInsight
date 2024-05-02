@@ -198,4 +198,9 @@ $animation-duration: 300ms;
 
 .onboardingAnchorWrapper {
   display: flex;
+
+  :global(.euiPopover__anchor) {
+    display: flex;
+    align-items: center;
+  }
 }

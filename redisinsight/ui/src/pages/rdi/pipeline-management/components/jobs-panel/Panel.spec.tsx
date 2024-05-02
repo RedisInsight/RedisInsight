@@ -1,10 +1,10 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { dryRunJob } from 'uiSrc/slices/rdi/dryRun'
+import { dryRunJob, rdiDryRunJobSelector } from 'uiSrc/slices/rdi/dryRun'
 import JobsPanel, { Props } from './Panel'
 
 const mockedProps = mock<Props>()
@@ -12,6 +12,14 @@ const mockedProps = mock<Props>()
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
+}))
+
+jest.mock('uiSrc/slices/rdi/dryRun', () => ({
+  ...jest.requireActual('uiSrc/slices/rdi/dryRun'),
+  rdiDryRunJobSelector: jest.fn().mockReturnValue({
+    loading: false,
+    results: null
+  })
 }))
 
 let store: typeof mockedStore
@@ -92,5 +100,36 @@ describe('JobsPanel', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should not render target select if there is no results', async () => {
+    const { queryByTestId } = render(<JobsPanel {...instance(mockedProps)} />)
+
+    expect(queryByTestId('target-select')).not.toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('output-tab'))
+    })
+
+    expect(queryByTestId('target-select')).not.toBeInTheDocument()
+  })
+
+  it('should render target select if there is results', async () => {
+    (rdiDryRunJobSelector as jest.Mock).mockImplementation(() => ({
+      loading: false,
+      results: {
+        transformation: {},
+        output: [{ connection: 'target', commands: ['some command'] }]
+      }
+    }))
+    const { queryByTestId } = render(<JobsPanel {...instance(mockedProps)} />)
+
+    expect(queryByTestId('target-select')).not.toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('output-tab'))
+    })
+
+    expect(queryByTestId('target-select')).toBeInTheDocument()
   })
 })

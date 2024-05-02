@@ -143,7 +143,7 @@ export function fetchRdiPipeline(
 
 export function deployPipelineAction(
   rdiInstanceId: string,
-  pipeline: IPipeline,
+  pipeline: IPipelineJSON,
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {

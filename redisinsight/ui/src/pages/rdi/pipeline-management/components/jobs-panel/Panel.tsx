@@ -8,7 +8,8 @@ import {
   EuiText,
   EuiFlexGroup,
   EuiFlexItem,
-  keys,
+  EuiSuperSelect,
+  keys, EuiSuperSelectOption,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -29,12 +30,14 @@ export interface Props {
 
 const DryRunJobPanel = (props: Props) => {
   const { job, onClose } = props
-  const { loading: isDryRunning } = useSelector(rdiDryRunJobSelector)
+  const { loading: isDryRunning, results } = useSelector(rdiDryRunJobSelector)
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
   const [selectedTab, changeSelectedTab] = useState<PipelineJobsTabs>(PipelineJobsTabs.Transformations)
   const [input, setInput] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
+  const [targetOptions, setTargetOptions] = useState<EuiSuperSelectOption<string>[]>([])
+  const [selectedTarget, setSelectedTarget] = useState<string>()
 
   const dispatch = useDispatch()
 
@@ -60,6 +63,14 @@ const DryRunJobPanel = (props: Props) => {
   useEffect(() => () => {
     dispatch(setInitialDryRunJob())
   }, [])
+
+  useEffect(() => {
+    const targets = results?.output?.map(({ connection }) => ({ value: connection, inputDisplay: connection }))
+    if (targets) {
+      setTargetOptions(targets)
+      setSelectedTarget(targets[0]?.value)
+    }
+  }, [results])
 
   const handleEscFullScreen = (event: KeyboardEvent) => {
     if (event.key === keys.ESCAPE && isFullScreen) {
@@ -170,10 +181,19 @@ const DryRunJobPanel = (props: Props) => {
           </EuiFlexGroup>
           <div className={cx(styles.tabsWrapper, styles.codeLabel)}>
             <EuiText>Results</EuiText>
+            {selectedTab === PipelineJobsTabs.Output && !!results && (
+              <EuiSuperSelect
+                options={targetOptions}
+                valueOfSelected={selectedTarget}
+                onChange={(value) => setSelectedTarget(value)}
+                popoverClassName={styles.selectWrapper}
+                data-testid="target-select"
+              />
+            )}
             <Tabs />
           </div>
           {selectedTab === PipelineJobsTabs.Transformations && (<DryRunJobTransformations />)}
-          {selectedTab === PipelineJobsTabs.Output && (<DryRunJobCommands />)}
+          {selectedTab === PipelineJobsTabs.Output && (<DryRunJobCommands target={selectedTarget} />)}
         </div>
       </div>
     </div>

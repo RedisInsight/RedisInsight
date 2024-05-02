@@ -65,11 +65,11 @@ const DryRunJobPanel = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    const targets = results?.output?.map(({ connection }) => ({ value: connection, inputDisplay: connection }))
-    if (targets) {
-      setTargetOptions(targets)
-      setSelectedTarget(targets[0]?.value)
-    }
+    if (!results?.output) return
+
+    const targets = results.output.map(({ connection }) => ({ value: connection, inputDisplay: connection }))
+    setTargetOptions(targets)
+    setSelectedTarget(targets[0]?.value)
   }, [results])
 
   const handleEscFullScreen = (event: KeyboardEvent) => {

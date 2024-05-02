@@ -108,12 +108,12 @@ describe('rdi dry run slice', () => {
       it('succeed to fetch data', async () => {
         const mockData = {
           output: [
-						{
+            {
               connection: 'target',
-							commands: ['HSET 1 1'],
-						}
+              commands: ['HSET 1 1'],
+            }
           ],
-          transformations: { name: 'John' },
+          transformation: { name: 'John' },
         }
         const responsePayload = { data: mockData, status: 200 }
 

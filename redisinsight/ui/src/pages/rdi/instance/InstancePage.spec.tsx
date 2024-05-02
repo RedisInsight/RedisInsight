@@ -26,7 +26,7 @@ import {
 import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
-import {clearExpertChatHistory} from "uiSrc/slices/panels/aiAssistant";
+import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 
 import InstancePage, { Props } from './InstancePage'
 

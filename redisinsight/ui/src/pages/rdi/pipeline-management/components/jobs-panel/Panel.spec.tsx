@@ -114,12 +114,34 @@ describe('JobsPanel', () => {
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
 
-  it('should render target select if there is results', async () => {
+  it('should not render target select if there is one target', async () => {
     (rdiDryRunJobSelector as jest.Mock).mockImplementation(() => ({
       loading: false,
       results: {
         transformation: {},
         output: [{ connection: 'target', commands: ['some command'] }]
+      }
+    }))
+    const { queryByTestId } = render(<JobsPanel {...instance(mockedProps)} />)
+
+    expect(queryByTestId('target-select')).not.toBeInTheDocument()
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('output-tab'))
+    })
+
+    expect(queryByTestId('target-select')).not.toBeInTheDocument()
+  })
+
+  it('should render target select if there is more then one target', async () => {
+    (rdiDryRunJobSelector as jest.Mock).mockImplementation(() => ({
+      loading: false,
+      results: {
+        transformation: {},
+        output: [
+          { connection: 'target', commands: ['some command'] },
+          { connection: 'target2', commands: ['some command'] },
+        ]
       }
     }))
     const { queryByTestId } = render(<JobsPanel {...instance(mockedProps)} />)

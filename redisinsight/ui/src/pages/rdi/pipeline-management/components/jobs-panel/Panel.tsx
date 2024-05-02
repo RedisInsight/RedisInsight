@@ -20,12 +20,24 @@ import { rdiDryRunJobSelector, rdiDryRunJob, setInitialDryRunJob } from 'uiSrc/s
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
 import DryRunJobCommands from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-commands'
 import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-transformations'
+import { formatLongName } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   job: string
   onClose: () => void
+}
+
+const getTargetOption = (value: string) => {
+  const formattedValue = formatLongName(value)
+
+  return {
+    value,
+    inputDisplay: formattedValue,
+    dropdownDisplay: formattedValue,
+    'data-test-subj': `target-option-${value}`,
+  }
 }
 
 const DryRunJobPanel = (props: Props) => {
@@ -67,7 +79,7 @@ const DryRunJobPanel = (props: Props) => {
   useEffect(() => {
     if (!results?.output) return
 
-    const targets = results.output.map(({ connection }) => ({ value: connection, inputDisplay: connection }))
+    const targets = results.output.map(({ connection }) => getTargetOption(connection))
     setTargetOptions(targets)
     setSelectedTarget(targets[0]?.value)
   }, [results])
@@ -97,6 +109,8 @@ const DryRunJobPanel = (props: Props) => {
     })
     dispatch(rdiDryRunJob(rdiInstanceId, input, job))
   }
+
+  const isSelectAvailable = selectedTab === PipelineJobsTabs.Output && !!results?.output && (results?.output?.length > 1)
 
   const Tabs = useCallback(() => (
     <EuiTabs className={styles.tabs}>
@@ -181,7 +195,7 @@ const DryRunJobPanel = (props: Props) => {
           </EuiFlexGroup>
           <div className={cx(styles.tabsWrapper, styles.codeLabel)}>
             <EuiText>Results</EuiText>
-            {selectedTab === PipelineJobsTabs.Output && !!results && (
+            {isSelectAvailable && (
               <EuiSuperSelect
                 options={targetOptions}
                 valueOfSelected={selectedTarget}

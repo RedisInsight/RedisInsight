@@ -26,6 +26,7 @@ export async function processGoogleSSO(urlToUse: string): Promise<void> {
         const modifiedUrl = parts.length > 1 ? parts[1] : currentUrl;
         const redirectUrl = `${protocol + callbackUrl  }?${  modifiedUrl}`;
 
+        // Open Redis Insight electron app using deeplink
         await open(redirectUrl, { app: { name: 'Redis Insight' } });
     }
     catch (error) {

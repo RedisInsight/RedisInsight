@@ -114,7 +114,7 @@ describe('JobsPanel', () => {
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
 
-  it('should render target select if there is one target', async () => {
+  it('should not render target select if there is one target', async () => {
     (rdiDryRunJobSelector as jest.Mock).mockImplementation(() => ({
       loading: false,
       results: {

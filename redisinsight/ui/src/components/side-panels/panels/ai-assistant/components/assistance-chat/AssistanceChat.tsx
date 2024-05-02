@@ -113,7 +113,11 @@ const AssistanceChat = () => {
         />
       </div>
       <div className={styles.chatForm}>
-        <ChatForm isDisabled={!!progressingMessage} onSubmit={handleSubmit} />
+        <ChatForm
+          placeholder="Ask me about Redis"
+          isDisabled={!!progressingMessage}
+          onSubmit={handleSubmit}
+        />
       </div>
     </div>
   )

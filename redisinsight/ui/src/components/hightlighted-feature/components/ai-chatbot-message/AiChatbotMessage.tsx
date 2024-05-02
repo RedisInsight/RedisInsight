@@ -44,9 +44,10 @@ const AiChatbotMessage = () => {
         <div className={styles.container}>
           <EuiImage src={AiRobot} alt="" />
           <EuiSpacer />
-          <EuiTitle size="s"><h4>New! AI is here</h4></EuiTitle>
+          <EuiTitle size="s"><h4>Introducing Redis Copilot!</h4></EuiTitle>
           <EuiText color="subdued" textAlign="center">
-            Ask anything about Redis or search and query Redis data using your natural language.
+            Your new AI-powered companion that lets you learn about Redis and explore your data,
+            in a conversational manner, while also providing context-aware assistance to build search queries.
           </EuiText>
           <EuiSpacer size="l" />
           <EuiButton

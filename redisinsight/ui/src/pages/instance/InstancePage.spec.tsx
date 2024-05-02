@@ -128,7 +128,6 @@ describe('InstancePage', () => {
       setConnectedInfoInstance(),
       getRecommendations(),
       ...resetContextActions,
-      clearExpertChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
       resetRdiConnectedInstance(),

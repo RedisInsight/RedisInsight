@@ -62,8 +62,8 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
-    const response = await Promise.all([this.getDryRunJobTransformations(data), this.getDryRunJobCommands(data)]);
-    return { transformations: response[0], commands: response[1] };
+    const response = await this.client.post(RdiUrl.DryRunJob, data);
+    return response.data;
   }
 
   async getDryRunJobTransformations(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {

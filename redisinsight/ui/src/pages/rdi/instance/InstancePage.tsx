@@ -16,7 +16,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { deployPipelineAction, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { Nullable } from 'uiSrc/utils'
+import { Nullable, pipelineToJson } from 'uiSrc/utils'
 
 import InstancePageRouter from './InstancePageRouter'
 
@@ -73,7 +73,8 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [data])
 
   const onSubmit = (values: IPipeline) => {
-    dispatch(deployPipelineAction(rdiInstanceId, values))
+    const JSONValues = pipelineToJson(values)
+    dispatch(deployPipelineAction(rdiInstanceId, JSONValues))
   }
 
   return (

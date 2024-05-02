@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 
 import reactRouterDom, { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
+import { useFormikContext } from 'formik'
 import { render, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import {
   appContextPipelineManagement,
@@ -10,7 +11,8 @@ import {
   setLastPipelineManagementPage,
 } from 'uiSrc/slices/app/context'
 import { PageNames, Pages } from 'uiSrc/constants'
-import PipelinePage, { Props } from './PipelineManagementPage'
+import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
+import PipelineManagementPage, { Props } from './PipelineManagementPage'
 
 const mockedProps = mock<Props>()
 
@@ -30,12 +32,20 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('PipelinePage', () => {
+describe('PipelineManagementPage', () => {
+  beforeEach(() => {
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: MOCK_RDI_PIPELINE_DATA,
+    };
+    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+  })
+
   it('should render', () => {
     expect(
       render(
         <BrowserRouter>
-          <PipelinePage {...instance(mockedProps)} />
+          <PipelineManagementPage {...instance(mockedProps)} />
         </BrowserRouter>
       )
     ).toBeTruthy()
@@ -48,7 +58,7 @@ describe('PipelinePage', () => {
 
     render(
       <BrowserRouter>
-        <PipelinePage {...instance(mockedProps)} />
+        <PipelineManagementPage {...instance(mockedProps)} />
       </BrowserRouter>
     )
 
@@ -65,7 +75,7 @@ describe('PipelinePage', () => {
 
     render(
       <BrowserRouter>
-        <PipelinePage {...instance(mockedProps)} />
+        <PipelineManagementPage {...instance(mockedProps)} />
       </BrowserRouter>
     )
 
@@ -77,7 +87,7 @@ describe('PipelinePage', () => {
 
     const { unmount } = render(
       <BrowserRouter>
-        <PipelinePage {...instance(mockedProps)} />
+        <PipelineManagementPage {...instance(mockedProps)} />
       </BrowserRouter>
     )
 

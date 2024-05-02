@@ -3,7 +3,7 @@ export enum RdiUrl {
   GetPipeline = '/pipeline',
   GetStrategies = 'pipelines/strategies',
   GetTemplate = 'deployments/templates',
-  DryRunJob = '/dry-run',
+  DryRunJob = '/api/v1/pipelines/jobs/dry-run',
   Deploy = '/deploy',
   TestConnections = '/test-connections',
   GetStatistics = '/statistics',

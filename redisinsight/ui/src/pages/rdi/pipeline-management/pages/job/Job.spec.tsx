@@ -2,17 +2,17 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
-import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { instance, mock } from 'ts-mockito'
+import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
-import { FileChangeType } from 'uiSrc/slices/interfaces'
-import Job from './Job'
+import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
+import Job, { Props } from './Job'
+
+const mockedProps = mock<Props>()
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendPageViewTelemetry: jest.fn(),
   sendEventTelemetry: jest.fn(),
 }))
 
@@ -43,18 +43,7 @@ describe('Job', () => {
   })
 
   it('should render', () => {
-    expect(render(<Job />)).toBeTruthy()
-  })
-
-  it('should call proper sendPageViewTelemetry', () => {
-    const sendPageViewTelemetryMock = jest.fn();
-    (sendPageViewTelemetry as jest.Mock).mockImplementation(() => sendPageViewTelemetryMock)
-
-    render(<Job />)
-
-    expect(sendPageViewTelemetry).toBeCalledWith({
-      name: TelemetryPageView.RDI_JOBS,
-    })
+    expect(render(<Job {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should render loading spinner', () => {
@@ -63,28 +52,9 @@ describe('Job', () => {
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
-    render(<Job />)
+    render(<Job {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-job-loading')).toBeInTheDocument()
-  })
-
-  it('should push to config page', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: false,
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-    const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
-
-    const mockUseFormikContext = {
-      setFieldValue: jest.fn,
-      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [MOCK_RDI_PIPELINE_JOB2] },
-    };
-    (useFormikContext as jest.Mock).mockReturnValueOnce(mockUseFormikContext)
-
-    render(<Job />)
-
-    expect(pushMock).toBeCalledWith('/integrate/rdiInstanceId/pipeline-management/config')
   })
 
   it('should not push to config page', () => {
@@ -96,32 +66,19 @@ describe('Job', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
 
-    render(<Job />)
+    render(<Job {...instance(mockedProps)} />)
 
     expect(pushMock).not.toBeCalled()
   })
 
   it('should render proper link', () => {
-    render(<Job />)
+    render(<Job {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-pipeline-transformation-link')).toHaveAttribute('href', 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/')
   })
 
-  it('should send telemetry event with proper data', () => {
-    render(<Job />)
-
-    fireEvent.click(screen.getByTestId('rdi-job-dry-run'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.RDI_TEST_JOB_OPENED,
-      eventData: {
-        id: 'rdiInstanceId',
-      }
-    })
-  })
-
   it('should render Panel and disable dry run btn', () => {
-    const { queryByTestId } = render(<Job />)
+    const { queryByTestId } = render(<Job {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-job-dry-run')).not.toBeDisabled()
     expect(queryByTestId('dry-run-panel')).not.toBeInTheDocument()
@@ -140,7 +97,7 @@ describe('Job', () => {
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
 
-    render(<Job />)
+    render(<Job {...instance(mockedProps)} />)
 
     const fieldName = screen.getByTestId('rdi-monaco-job')
     fireEvent.change(
@@ -149,51 +106,5 @@ describe('Job', () => {
     )
 
     expect(store.getActions()).toEqual([])
-  })
-
-  it('should call proper actions when change monaco editor', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: false,
-      schema: { jobs: { test: {} } },
-      data: { jobs: [{ name: 'jobName', value: 'value' }] }
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    render(<Job />)
-
-    const fieldName = screen.getByTestId('rdi-monaco-job')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
-
-    const expectedActions = [
-      setChangedFile({ name: 'jobName', status: FileChangeType.Modified })
-    ]
-
-    expect(store.getActions()).toEqual(expectedActions)
-  })
-
-  it('should call proper actions when value is equal with deployed job', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: false,
-      schema: { jobs: { test: {} } },
-      data: { jobs: [{ name: 'jobName', value: '123' }] }
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    render(<Job />)
-
-    const fieldName = screen.getByTestId('rdi-monaco-job')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
-
-    const expectedActions = [
-      deleteChangedFile('jobName')
-    ]
-
-    expect(store.getActions()).toEqual(expectedActions)
   })
 })

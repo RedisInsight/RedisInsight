@@ -10,7 +10,7 @@ import {
   EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { Form, useFormikContext } from 'formik'
+import { useFormikContext } from 'formik'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -55,85 +55,83 @@ const RdiPipelineHeader = () => {
   }
 
   return (
-    <Form>
-      <EuiFlexGroup className={styles.wrapper} gutterSize="none" alignItems="center" responsive={false}>
-        <EuiFlexItem style={{ overflow: 'hidden' }}>
-          <EuiTitle size="xxs">
-            <span>Pipeline Management</span>
-          </EuiTitle>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <div className={styles.actions}>
-            <FetchPipelinePopover />
-            <UploadModal>
-              <EuiButtonEmpty
-                color="text"
-                size="xs"
-                iconType="importAction"
-                aria-labelledby="Upload pipeline button"
-                data-testid="upload-file-btn"
+    <EuiFlexGroup className={styles.wrapper} gutterSize="none" alignItems="center" responsive={false}>
+      <EuiFlexItem style={{ overflow: 'hidden' }}>
+        <EuiTitle size="xxs">
+          <span>Pipeline Management</span>
+        </EuiTitle>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false}>
+        <div className={styles.actions}>
+          <FetchPipelinePopover />
+          <UploadModal>
+            <EuiButtonEmpty
+              color="text"
+              size="xs"
+              iconType="importAction"
+              aria-labelledby="Upload pipeline button"
+              data-testid="upload-file-btn"
+            >
+              Upload from file
+            </EuiButtonEmpty>
+          </UploadModal>
+          <Download />
+        </div>
+      </EuiFlexItem>
+      <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+        <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
+          <EuiPopover
+            closePopover={handleClosePopover}
+            ownFocus
+            initialFocus={false}
+            className={styles.popoverAnchor}
+            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            anchorClassName={styles.popoverAnchor}
+            anchorPosition="upLeft"
+            isOpen={isPopoverOpen}
+            panelPaddingSize="m"
+            focusTrapProps={{
+              scrollLock: true
+            }}
+            button={(
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                onClick={handleClickDeploy}
+                iconType={RocketIcon}
+                disabled={loading}
+                isLoading={loading}
+                data-testid="deploy-rdi-pipeline"
               >
-                Upload from file
-              </EuiButtonEmpty>
-            </UploadModal>
-            <Download />
-          </div>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-          <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
-            <EuiPopover
-              closePopover={handleClosePopover}
-              ownFocus
-              initialFocus={false}
-              className={styles.popoverAnchor}
-              panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-              anchorClassName={styles.popoverAnchor}
-              anchorPosition="upLeft"
-              isOpen={isPopoverOpen}
-              panelPaddingSize="m"
-              focusTrapProps={{
-                scrollLock: true
-              }}
-              button={(
+                Deploy Pipeline
+              </EuiButton>
+              )}
+          >
+            <EuiTitle size="xxs">
+              <span>Are you sure you want to deploy the pipeline?</span>
+            </EuiTitle>
+            <EuiSpacer size="s" />
+            <EuiText size="s">When deployed, this local configuration will overwrite any existing pipeline.</EuiText>
+            <EuiSpacer size="s" />
+            <EuiFlexGroup justifyContent="flexEnd">
+              <EuiFlexItem grow={false}>
                 <EuiButton
                   fill
                   size="s"
                   color="secondary"
-                  onClick={handleClickDeploy}
-                  iconType={RocketIcon}
-                  disabled={loading}
-                  isLoading={loading}
-                  data-testid="deploy-rdi-pipeline"
+                  className={styles.popoverBtn}
+                  onClick={handleDeployPipeline}
+                  data-testid="deploy-confirm-btn"
                 >
-                  Deploy Pipeline
+                  Deploy
                 </EuiButton>
-              )}
-            >
-              <EuiTitle size="xxs">
-                <span>Are you sure you want to deploy the pipeline?</span>
-              </EuiTitle>
-              <EuiSpacer size="s" />
-              <EuiText size="s">When deployed, this local configuration will overwrite any existing pipeline.</EuiText>
-              <EuiSpacer size="s" />
-              <EuiFlexGroup justifyContent="flexEnd">
-                <EuiFlexItem grow={false}>
-                  <EuiButton
-                    fill
-                    size="s"
-                    color="secondary"
-                    className={styles.popoverBtn}
-                    onClick={handleDeployPipeline}
-                    data-testid="deploy-confirm-btn"
-                  >
-                    Deploy
-                  </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiPopover>
-          </EuiOutsideClickDetector>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </Form>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiPopover>
+        </EuiOutsideClickDetector>
+      </EuiFlexItem>
+    </EuiFlexGroup>
   )
 }
 

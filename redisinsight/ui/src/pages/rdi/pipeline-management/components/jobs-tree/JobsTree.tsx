@@ -203,7 +203,6 @@ const JobsTree = (props: IProps) => {
         textFiledClassName={styles.input}
         viewChildrenMode={false}
         disableEmpty
-        data-testid={`job-name-input-${name}`}
       />
     </EuiFlexItem>
   )

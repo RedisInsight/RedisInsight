@@ -14,11 +14,6 @@ export enum RdiPipelineTabs {
   Jobs = PageNames.rdiPipelineJobs
 }
 
-export enum DryRunJobResultStatus {
-  Success = 'success',
-  Failed = 'failed'
-}
-
 export interface IRdiPipelineJob {
   name: string
   value: string
@@ -31,21 +26,19 @@ export interface IPipeline {
 
 export interface IPipelineJSON {
   config: object
-  jobs: object
+  jobs: { [key: string]: any }
+}
+
+interface IDryRunJobOutput {
+  connection: string
+  commands: string[]
 }
 
 export interface IDryRunJobResults {
-  transformations: {
-    status: DryRunJobResultStatus
-    error?: string
-    data?: any
-  }
-  commands: {
-    status: DryRunJobResultStatus
-    error?: string
-    data?: string[]
-  }
+  transformation: object
+  output: IDryRunJobOutput[]
 }
+
 export enum TestConnectionStatus {
   Fail = 'fail',
   Success = 'success',

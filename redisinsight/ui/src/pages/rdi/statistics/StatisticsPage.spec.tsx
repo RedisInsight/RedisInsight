@@ -1,10 +1,13 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
+import reactRouterDom from 'react-router-dom'
 
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
+import { getStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { PageNames, Pages } from 'uiSrc/constants'
+import { setLastPageContext } from 'uiSrc/slices/app/context'
 import StatisticsPage from './StatisticsPage'
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
@@ -288,5 +291,28 @@ describe('StatisticsPage', () => {
         refreshRate: '5.0'
       }
     })
+  })
+
+  it('should get statistics on mount', () => {
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineConfig('rdiInstanceId') })
+
+    render(<StatisticsPage />)
+
+    const expectedActions = [
+      getStatistics(),
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+  })
+
+  it('should save proper page on unmount', () => {
+    const { unmount } = render(<StatisticsPage />)
+
+    unmount()
+    const expectedActions = [
+      setLastPageContext(PageNames.rdiStatistics),
+    ]
+
+    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
   })
 })

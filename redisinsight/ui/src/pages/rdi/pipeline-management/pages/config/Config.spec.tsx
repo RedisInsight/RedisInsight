@@ -149,6 +149,24 @@ describe('Config', () => {
     expect(queryByTestId('test-connection-panel')).toBeInTheDocument()
   })
 
+  it('should open right panel', async () => {
+    const { queryByTestId } = render(<Config />)
+
+    expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('rdi-test-connection-btn'))
+    })
+
+    expect(queryByTestId('test-connection-panel')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('close-test-connections-btn'))
+    })
+
+    expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
+  })
+
   it('should render loading spinner', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,

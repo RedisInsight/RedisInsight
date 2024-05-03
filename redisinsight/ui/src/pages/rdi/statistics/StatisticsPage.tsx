@@ -9,6 +9,8 @@ import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/stat
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import RdiInstancePageTemplate from 'uiSrc/templates/rdi-instance-page-template'
 import { formatLongName, setTitle } from 'uiSrc/utils'
+import { setLastPageContext } from 'uiSrc/slices/app/context'
+import { PageNames } from 'uiSrc/constants'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -64,6 +66,11 @@ const StatisticsPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_STATUS
     })
+  }, [])
+
+  useEffect(() => () => {
+    // unmount
+    dispatch(setLastPageContext(PageNames.rdiStatistics))
   }, [])
 
   if (!statisticsResults) {

@@ -3,10 +3,16 @@ import reactRouterDom from 'react-router-dom'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import {
+  getPipelineStrategies,
+  rdiPipelineSelector,
+  setChangedFile,
+  deleteChangedFile,
+} from 'uiSrc/slices/rdi/pipeline'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import Job, { Props } from './Job'
 
 const mockedProps = mock<Props>()
@@ -46,20 +52,10 @@ describe('Job', () => {
     expect(render(<Job {...instance(mockedProps)} />)).toBeTruthy()
   })
 
-  it('should render loading spinner', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: true,
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    render(<Job {...instance(mockedProps)} />)
-
-    expect(screen.getByTestId('rdi-job-loading')).toBeInTheDocument()
-  })
-
   it('should not push to config page', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
+      schema: { jobs: { test: {} } },
       error: '',
     });
     (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
@@ -89,15 +85,8 @@ describe('Job', () => {
     expect(queryByTestId('dry-run-panel')).toBeInTheDocument()
   })
 
-  it('should not call any actions when job is new', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: false,
-      schema: { jobs: { test: {} } },
-      data: { jobs: [] }
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    render(<Job {...instance(mockedProps)} />)
+  it('should not call any updated file action if there is no deployed job', () => {
+    render(<Job {...instance(mockedProps)} name="jobName" />)
 
     const fieldName = screen.getByTestId('rdi-monaco-job')
     fireEvent.change(
@@ -105,6 +94,55 @@ describe('Job', () => {
       { target: { value: '123' } }
     )
 
-    expect(store.getActions()).toEqual([])
+    const expectedActions = [
+      getPipelineStrategies(),
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should set modified file', () => {
+    render(<Job {...instance(mockedProps)} deployedJobValue="value" name="jobName" />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-job')
+    fireEvent.change(
+      fieldName,
+      { target: { value: '123' } }
+    )
+
+    const expectedActions = [
+      getPipelineStrategies(),
+      setChangedFile({ name: 'jobName', status: FileChangeType.Modified }),
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should remove job from modified files', () => {
+    render(<Job {...instance(mockedProps)} deployedJobValue="value" name="jobName" />)
+
+    const fieldName = screen.getByTestId('rdi-monaco-job')
+    fireEvent.change(
+      fieldName,
+      { target: { value: 'value' } }
+    )
+
+    const expectedActions = [
+      getPipelineStrategies(),
+      deleteChangedFile('jobName')
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should render loading spinner', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: true,
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    render(<Job {...instance(mockedProps)} />)
+
+    expect(screen.getByTestId('rdi-job-loading')).toBeInTheDocument()
   })
 })

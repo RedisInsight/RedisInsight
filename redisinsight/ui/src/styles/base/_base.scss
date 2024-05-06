@@ -66,6 +66,10 @@ main.euiPageBody {
 .link-underline {
   color: currentColor;
   text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
 }
 
 .color-shade {

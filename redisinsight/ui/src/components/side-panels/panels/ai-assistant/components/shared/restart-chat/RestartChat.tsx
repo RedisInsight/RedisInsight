@@ -7,10 +7,11 @@ import styles from './styles.module.scss'
 export interface Props {
   button: NonNullable<React.ReactElement>
   onConfirm: () => void
+  anchorClassName?: string
 }
 
 const RestartChat = (props: Props) => {
-  const { button, onConfirm } = props
+  const { button, onConfirm, anchorClassName = '' } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
   const handleConfirm = () => {
@@ -30,7 +31,7 @@ const RestartChat = (props: Props) => {
       initialFocus={false}
       className={styles.popoverAnchor}
       panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-      anchorClassName={styles.popoverAnchor}
+      anchorClassName={cx(styles.popoverAnchor, anchorClassName)}
       anchorPosition="downLeft"
       isOpen={isPopoverOpen}
       panelPaddingSize="m"

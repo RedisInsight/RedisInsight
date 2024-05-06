@@ -12,6 +12,10 @@ export interface AiChatMessage {
   id: string
   type: AiChatMessageType
   content: string
+  error?: {
+    statusCode: number
+    errorCode?: number
+  }
   context?: {
     [key: string]: {
       title: string

@@ -138,7 +138,6 @@ enum ApiEndpoints {
 
   AI_ASSISTANT_CHATS = 'ai/assistant/chats',
   AI_EXPERT = 'ai/expert',
-  AI_EXPERT_QUERIES = 'ai/expert/queries',
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',
@@ -172,7 +171,6 @@ export const CLOUD_AUTH_API_ENDPOINTS = [
   ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES,
   ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES,
   ApiEndpoints.CLOUD_CAPI_KEYS,
-  ApiEndpoints.AI_EXPERT_QUERIES,
 ]
 
 export default ApiEndpoints

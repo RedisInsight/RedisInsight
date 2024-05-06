@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -8,19 +8,28 @@ const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
+const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
 
-let apiPrefix = process.env.RI_API_PREFIX
+let mutableAxiosInstance: AxiosInstance
 
-if (window.__RI_PROXY_PATH__) {
-  apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
+if (hostedApiBaseUrl) {
+  mutableAxiosInstance = axios.create({
+    baseURL: hostedApiBaseUrl,
+  })
+} else {
+  let apiPrefix = process.env.RI_API_PREFIX
+
+  if (window.__RI_PROXY_PATH__) {
+    apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
+  }
+
+  mutableAxiosInstance = axios.create({
+    baseURL:
+      !isDevelopment && isWebApp
+        ? `${window.location.origin}/${apiPrefix}/`
+        : `${baseApiUrl}:${apiPort}/${apiPrefix}/`,
+  })
 }
-
-const axiosInstance = axios.create({
-  baseURL:
-    !isDevelopment && isWebApp
-      ? `${window.location.origin}/${apiPrefix}/`
-      : `${baseApiUrl}:${apiPort}/${apiPrefix}/`,
-})
 
 export const requestInterceptor = (config: AxiosRequestConfig) => {
   if (config?.headers) {
@@ -47,9 +56,11 @@ export const requestInterceptor = (config: AxiosRequestConfig) => {
   return config
 }
 
-axiosInstance.interceptors.request.use(
+mutableAxiosInstance.interceptors.request.use(
   requestInterceptor,
   (error) => Promise.reject(error)
 )
+
+const axiosInstance = mutableAxiosInstance
 
 export default axiosInstance

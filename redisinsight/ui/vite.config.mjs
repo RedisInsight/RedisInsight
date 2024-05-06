@@ -6,6 +6,7 @@ import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
 
+const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
 const isElectron = process.env.RI_APP_TYPE === 'electron'
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
@@ -15,7 +16,12 @@ const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
   ? 'https://localhost'
   : 'http://localhost'
 
-const base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+let base
+if (hostedApiBaseUrl) {
+  base = ''
+} else {
+  base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+}
 
 /**
  * @type {import('vite').UserConfig}

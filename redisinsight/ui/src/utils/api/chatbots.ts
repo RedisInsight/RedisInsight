@@ -54,7 +54,6 @@ export const getStreamedAnswer = async (
       onMessage?.(value)
     }
   } catch (error: any) {
-    console.log(error.message)
     onError?.(error?.name === 'AbortError' ? { status: ApiStatusCode.Timeout, statusText: 'ERRTIMEOUT' } : error)
   }
 }

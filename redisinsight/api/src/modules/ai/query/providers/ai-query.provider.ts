@@ -15,6 +15,7 @@ export class AiQueryProvider {
       const socket = io(aiConfig.querySocketUrl, {
         path: aiConfig.querySocketPath,
         reconnection: false,
+        transports: ['websocket'],
         extraHeaders: {
           'X-Csrf-Token': auth.csrf,
           Cookie: `JSESSIONID=${auth.sessionId}`,

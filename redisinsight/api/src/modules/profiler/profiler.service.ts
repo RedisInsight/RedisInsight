@@ -22,6 +22,7 @@ export class ProfilerService {
    * Create or use existing user client to send monitor data from redis client to the user
    * We are storing user clients to have a possibility to "pause" logs without disconnecting
    *
+   * @param sessionMetadata
    * @param instanceId
    * @param client
    * @param settings
@@ -40,7 +41,7 @@ export class ProfilerService {
       client,
       settings,
     );
-    const monitorObserver = await this.redisObserverProvider.getOrCreateObserver(instanceId);
+    const monitorObserver = await this.redisObserverProvider.getOrCreateObserver(sessionMetadata, instanceId);
     await monitorObserver.subscribe(profilerClient);
   }
 

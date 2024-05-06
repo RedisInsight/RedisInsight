@@ -1,6 +1,5 @@
 import { Socket, Server } from 'socket.io';
 import {
-  ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketGateway,

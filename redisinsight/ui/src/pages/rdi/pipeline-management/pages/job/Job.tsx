@@ -45,7 +45,7 @@ const Job = (props: Props) => {
 
   useEffect(() => {
     setIsPopoverOpen(!value)
-  }, [value])
+  }, [value, name])
 
   useEffect(() => {
     deployedJobValueRef.current = deployedJobValue

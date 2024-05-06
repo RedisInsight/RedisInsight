@@ -683,7 +683,7 @@ export function fetchKeyInfo(key: RedisResponseBuffer, resetData?: boolean) {
         dispatch<any>(fetchSetMembers(key, 0, SCAN_COUNT_DEFAULT, '*', resetData))
       }
       if (data.type === KeyTypes.ReJSON) {
-        dispatch<any>(fetchReJSON(key, '.', resetData))
+        dispatch<any>(fetchReJSON(key, '.', data.length, resetData))
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream
@@ -1255,7 +1255,12 @@ export function editKeyTTLFromList(data: [RedisResponseBuffer, number]) {
   }
 }
 
-export function refreshKey(key: RedisResponseBuffer, type: KeyTypes | ModulesKeyTypes, args?: IFetchKeyArgs) {
+export function refreshKey(
+  key: RedisResponseBuffer,
+  type: KeyTypes | ModulesKeyTypes,
+  args?: IFetchKeyArgs,
+  length?: number
+) {
   return async (dispatch: AppDispatch) => {
     const resetData = false
     dispatch(refreshKeyInfoAction(key))
@@ -1281,7 +1286,7 @@ export function refreshKey(key: RedisResponseBuffer, type: KeyTypes | ModulesKey
         break
       }
       case KeyTypes.ReJSON: {
-        dispatch(fetchReJSON(key, '.', true))
+        dispatch(fetchReJSON(key, '.', length, true))
         break
       }
       case KeyTypes.Stream: {

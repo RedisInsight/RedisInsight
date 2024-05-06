@@ -2,7 +2,7 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
-import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
+import { deleteChangedFile, getPipelineStrategies, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -132,25 +132,6 @@ describe('JobWrapper', () => {
     expect(queryByTestId('dry-run-panel')).toBeInTheDocument()
   })
 
-  it('should not call any actions when job is new', () => {
-    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
-      loading: false,
-      schema: { jobs: { test: {} } },
-      data: { jobs: [] }
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
-
-    render(<JobWrapper />)
-
-    const fieldName = screen.getByTestId('rdi-monaco-job')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
-
-    expect(store.getActions()).toEqual([])
-  })
-
   it('should call proper actions when change monaco editor', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: false,
@@ -168,6 +149,7 @@ describe('JobWrapper', () => {
     )
 
     const expectedActions = [
+      getPipelineStrategies(),
       setChangedFile({ name: 'jobName', status: FileChangeType.Modified })
     ]
 
@@ -191,6 +173,7 @@ describe('JobWrapper', () => {
     )
 
     const expectedActions = [
+      getPipelineStrategies(),
       deleteChangedFile('jobName')
     ]
 

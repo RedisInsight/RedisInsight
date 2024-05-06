@@ -31,7 +31,7 @@ const JobWrapper = () => {
     if (jobIndex === -1) {
       history.push(Pages.rdiPipelineConfig(rdiInstanceId))
     }
-  }, [decodedJobName, rdiInstanceId])
+  }, [decodedJobName, rdiInstanceId, values?.jobs?.length])
 
   useEffect(() => {
     setDecodedJobName(decodeURIComponent(jobName))

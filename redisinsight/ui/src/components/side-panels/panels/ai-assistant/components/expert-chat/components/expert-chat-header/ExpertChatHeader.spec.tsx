@@ -11,7 +11,7 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import AssistanceHeader from './AssistanceHeader'
+import ExpertChatHeader from './ExpertChatHeader'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -25,15 +25,15 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('AssistanceHeader', () => {
+describe('ExpertChatHeader', () => {
   it('should render', () => {
-    expect(render(<AssistanceHeader />)).toBeTruthy()
+    expect(render(<ExpertChatHeader databaseId="1" />)).toBeTruthy()
   })
 
   it('should render disabled restart session button', () => {
-    render(<AssistanceHeader isClearDisabled />)
+    render(<ExpertChatHeader databaseId="1" isClearDisabled />)
 
-    expect(screen.getByTestId('ai-general-restart-session-btn')).toBeDisabled()
+    expect(screen.getByTestId('ai-expert-restart-session-btn')).toBeDisabled()
   })
 
   it('should call proper actions after click on tutorial button', async () => {
@@ -42,13 +42,13 @@ describe('AssistanceHeader', () => {
 
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-    render(<AssistanceHeader databaseId="1" />)
+    render(<ExpertChatHeader databaseId="1" />)
 
-    fireEvent.click(screen.getByTestId('ai-general-tutorial-btn'))
+    fireEvent.click(screen.getByTestId('ai-expert-tutorial-btn'))
 
     await waitForEuiPopoverVisible()
 
-    fireEvent.click(screen.getByTestId('ai-general-open-tutorials'))
+    fireEvent.click(screen.getByTestId('ai-expert-open-tutorials'))
 
     expect(store.getActions()).toEqual([
       resetExplorePanelSearch(),

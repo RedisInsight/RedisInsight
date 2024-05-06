@@ -1,12 +1,10 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButtonEmpty, EuiText, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import {
   aiExpertChatSelector,
   askExpertChatbotAction,
   getExpertChatHistoryAction,
-  removeExpertChatHistoryAction,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
@@ -15,7 +13,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
-import { ChatHistory, ChatForm, ExpertChatInitialMessage, RestartChat } from '../shared'
+import ExpertChatHeader from './components/expert-chat-header'
+import { ChatHistory, ChatForm, ExpertChatInitialMessage } from '../shared'
 
 import styles from './styles.module.scss'
 
@@ -75,17 +74,6 @@ const ExpertChat = () => {
     })
   }, [instanceId])
 
-  const onClearSession = () => {
-    dispatch(removeExpertChatHistoryAction(instanceId))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Query
-      }
-    })
-  }
-
   const onRunCommand = useCallback((query: string) => {
     const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
     sendEventTelemetry({
@@ -131,28 +119,11 @@ const ExpertChat = () => {
 
   return (
     <div className={styles.wrapper} data-testid="ai-document-chat">
-      <div className={styles.header}>
-        {instanceId ? (
-          <EuiToolTip
-            content={connectedInstanceName}
-            anchorClassName={styles.dbName}
-          >
-            <EuiText size="xs" className="truncateText">{connectedInstanceName}</EuiText>
-          </EuiToolTip>
-        ) : (<span />)}
-        <RestartChat
-          button={(
-            <EuiButtonEmpty
-              disabled={!messages?.length}
-              iconType="eraser"
-              size="xs"
-              className={styles.startSessionBtn}
-              data-testid="ai-expert-restart-session-btn"
-            />
-          )}
-          onConfirm={onClearSession}
-        />
-      </div>
+      <ExpertChatHeader
+        connectedInstanceName={connectedInstanceName}
+        databaseId={instanceId}
+        isClearDisabled={!messages?.length || !instanceId}
+      />
       <div className={styles.chatHistory}>
         <ChatHistory
           isLoading={loading}

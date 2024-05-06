@@ -44,12 +44,7 @@ const Job = (props: Props) => {
   }, [name])
 
   useEffect(() => {
-    if (value) {
-      setIsPopoverOpen(false)
-      return
-    }
-    // open template popover
-    setIsPopoverOpen(true)
+    setIsPopoverOpen(!value)
   }, [value])
 
   useEffect(() => {

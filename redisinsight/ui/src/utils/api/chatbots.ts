@@ -1,5 +1,8 @@
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { isStatusSuccessful } from 'uiSrc/utils'
+import ApiStatusCode from '../../constants/apiStatusCode'
+
+const TIMEOUT_FOR_MESSAGE_REQUEST = 50_000
 
 export const getStreamedAnswer = async (
   url: string,
@@ -11,6 +14,11 @@ export const getStreamedAnswer = async (
   }
 ) => {
   try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => {
+      controller.abort()
+    }, TIMEOUT_FOR_MESSAGE_REQUEST)
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -18,12 +26,21 @@ export const getStreamedAnswer = async (
         Accept: 'text/event-stream',
         [CustomHeaders.WindowId]: window.windowId || '',
       },
-      body: JSON.stringify({ content: message })
+      body: JSON.stringify({ content: message }),
+      signal: controller.signal
     })
+
+    clearTimeout(timeoutId)
 
     const reader = response.body!.pipeThrough(new TextDecoderStream()).getReader()
     if (!isStatusSuccessful(response.status)) {
-      throw new Error(response.statusText)
+      const { value } = await reader.read()
+      const extendedResponseError = {
+        errorCode: value ? JSON.parse(value).errorCode : ''
+      }
+      const error = Object.assign(response, extendedResponseError)
+      onError?.(error)
+      return
     }
 
     // eslint-disable-next-line no-constant-condition
@@ -36,7 +53,8 @@ export const getStreamedAnswer = async (
       }
       onMessage?.(value)
     }
-  } catch (error: unknown) {
-    onError?.(error)
+  } catch (error: any) {
+    console.log(error.message)
+    onError?.(error?.name === 'AbortError' ? { status: ApiStatusCode.Timeout, statusText: 'ERRTIMEOUT' } : error)
   }
 }

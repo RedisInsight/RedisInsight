@@ -5,7 +5,7 @@ import {
   aiAssistantChatSelector,
   askAssistantChatbot,
   createAssistantChatAction,
-  getAssistantChatHistoryAction,
+  getAssistantChatHistoryAction, removeAssistantChatAction,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -24,7 +24,7 @@ const AssistanceChat = () => {
   const { modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
 
-  const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
+  const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -56,10 +56,10 @@ const AssistanceChat = () => {
       message,
       {
         onMessage: (message: AiChatMessage) => {
-          setProgressingMessage({ ...message })
+          setinProgressMessage({ ...message })
           scrollToBottom('auto')
         },
-        onFinish: () => setProgressingMessage(null)
+        onFinish: () => setinProgressMessage(null)
       }
     ))
 
@@ -70,6 +70,19 @@ const AssistanceChat = () => {
       }
     })
   }
+
+  const onClearSession = useCallback(() => {
+    if (!id) return
+
+    dispatch(removeAssistantChatAction(id))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
+      eventData: {
+        chat: AiChatType.Assistance
+      }
+    })
+  }, [id])
 
   const onRunCommand = useCallback((query: string) => {
     const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
@@ -98,24 +111,25 @@ const AssistanceChat = () => {
     <div className={styles.wrapper} data-testid="ai-general-chat">
       <AssistanceHeader
         databaseId={instanceId}
-        chatId={id}
-        isClearDisabled={!!progressingMessage || !messages?.length}
+        isClearDisabled={!!inProgressMessage || !messages?.length}
+        onRestart={onClearSession}
       />
       <div className={styles.chatHistory}>
         <ChatHistory
           modules={modules}
           initialMessage={AssistanceChatInitialMessage}
-          progressingMessage={progressingMessage}
+          inProgressMessage={inProgressMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
           onMessageRendered={scrollToBottom}
           onRunCommand={onRunCommand}
+          onRestart={onClearSession}
         />
       </div>
       <div className={styles.chatForm}>
         <ChatForm
           placeholder="Ask me about Redis"
-          isDisabled={!!progressingMessage}
+          isDisabled={!!inProgressMessage}
           onSubmit={handleSubmit}
         />
       </div>

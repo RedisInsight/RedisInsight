@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { EuiButton, EuiButtonEmpty, EuiPopover, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -6,9 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
-import { removeAssistantChatAction } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import {
   changeSelectedTab,
@@ -22,12 +20,12 @@ import styles from './styles.module.scss'
 
 export interface Props {
   databaseId?: string
-  chatId?: string
   isClearDisabled?: boolean
+  onRestart: () => void
 }
 
 const AssistanceHeader = (props: Props) => {
-  const { databaseId, chatId, isClearDisabled } = props
+  const { databaseId, onRestart, isClearDisabled } = props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
 
   const dispatch = useDispatch()
@@ -51,19 +49,6 @@ const AssistanceHeader = (props: Props) => {
       }
     })
   }
-
-  const onClearSession = useCallback(() => {
-    if (!chatId) return
-
-    dispatch(removeAssistantChatAction(chatId))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Assistance
-      }
-    })
-  }, [chatId])
 
   return (
     <div className={styles.header}>
@@ -122,7 +107,7 @@ const AssistanceHeader = (props: Props) => {
               data-testid="ai-general-restart-session-btn"
             />
           )}
-          onConfirm={onClearSession}
+          onConfirm={onRestart}
         />
       </div>
     </div>

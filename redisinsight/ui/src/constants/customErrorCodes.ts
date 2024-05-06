@@ -34,4 +34,11 @@ export enum CustomErrorCodes {
 
   // General database errors [11200, 11299]
   DatabaseAlreadyExists = 11_200,
+
+  // General database errors [11300, 11399]
+  ConvAiInternalServerError = 11_300,
+  ConvAiUnauthorized = 11_301,
+  ConvAiForbidden = 11_302,
+  ConvAiBadRequest = 11_303,
+  ConvAiNotFound = 11_304,
 }

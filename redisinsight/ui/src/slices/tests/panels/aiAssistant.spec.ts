@@ -259,18 +259,19 @@ describe('ai assistant slice', () => {
     describe('sendQuestion', () => {
       it('should properly set state', () => {
         // Arrange
+        const humanMessage = {
+          id: '1',
+          type: AiChatMessageType.HumanMessage,
+          content: 'message',
+          context: {}
+        }
         const state = {
           ...initialState.assistant,
-          messages: [{
-            id: expect.any(String),
-            type: AiChatMessageType.HumanMessage,
-            content: 'message',
-            context: {}
-          }]
+          messages: [humanMessage]
         }
 
         // Act
-        const nextState = reducer(initialState, sendQuestion('message'))
+        const nextState = reducer(initialState, sendQuestion(humanMessage))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

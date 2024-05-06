@@ -36,22 +36,43 @@ $delay: .13s;
     margin-top: auto;
   }
 }
+.answerWrapper, .questionWrapper {
+  max-width: 90%;
+  margin: 8px 0;
+}
 
 .answer, .question {
   overflow-wrap: break-word;
-  max-width: 90%;
-  margin: 8px 0;
   padding: 8px 16px;
   border-radius: 8px;
+
+  &.error {
+    opacity: .66;
+    display: flex;
+
+    .errorIcon {
+      width: 12px;
+      height: 12px;
+      color: var(--euiColorDangerText);
+      margin-top: 2px;
+      margin-right: 6px;
+    }
+  }
+}
+
+.answerWrapper {
+  align-self: flex-start;
 }
 
 .answer {
-  align-self: flex-start;
   background-color: var(--euiColorLightestShade);
 }
 
-.question {
+.questionWrapper {
   align-self: flex-end;
+}
+
+.question {
   background-color: var(--insightsTriggerBgColor);
 }
 

@@ -33,10 +33,10 @@ export const initialState: StateAppFeatures = {
         flag: false
       },
       [FeatureFlags.documentationChat]: {
-        flag: true
+        flag: false
       },
       [FeatureFlags.databaseChat]: {
-        flag: true
+        flag: false
       },
     }
   }
@@ -107,7 +107,7 @@ const appFeaturesSlice = createSlice({
     },
     getFeatureFlagsSuccess: (state, { payload }) => {
       state.featureFlags.loading = false
-      // state.featureFlags.features = payload.features
+      state.featureFlags.features = payload.features
     },
     getFeatureFlagsFailure: (state) => {
       state.featureFlags.loading = false

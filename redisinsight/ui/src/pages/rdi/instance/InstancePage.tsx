@@ -8,13 +8,14 @@ import {
   resetDatabaseContext,
   resetRdiContext,
   setAppContextConnectedRdiInstanceId,
+  setPipelineDialogState,
 } from 'uiSrc/slices/app/context'
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { fetchConnectedInstanceAction } from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
-import { deployPipelineAction, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { deployPipelineAction, rdiPipelineSelector, setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { Nullable, pipelineToJson } from 'uiSrc/utils'
 
@@ -71,6 +72,12 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
     setInitialFormValues(getInitialValues(data))
     formikRef.current?.resetForm()
   }, [data])
+
+  // set initial values
+  useEffect(() => () => {
+    dispatch(setPipelineInitialState())
+    dispatch(setPipelineDialogState(true))
+  }, [])
 
   const onSubmit = (values: IPipeline) => {
     const JSONValues = pipelineToJson(values)

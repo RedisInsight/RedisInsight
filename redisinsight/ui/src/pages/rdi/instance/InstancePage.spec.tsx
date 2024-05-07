@@ -9,9 +9,11 @@ import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
 import { setBulkActionsInitialState } from 'uiSrc/slices/browser/bulkActions'
 import {
-  appContextSelector, resetPipelineManagement,
+  appContextSelector,
+  resetPipelineManagement,
   setAppContextConnectedRdiInstanceId,
   setAppContextInitialState,
+  setPipelineDialogState,
 } from 'uiSrc/slices/app/context'
 import { resetCliHelperSettings } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
@@ -167,5 +169,21 @@ describe('InstancePage', () => {
     })
 
     expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
+  })
+
+  it('should save proper page on unmount', () => {
+    const { unmount } = render(
+      <BrowserRouter>
+        <InstancePage {...instance(mockedProps)} />
+      </BrowserRouter>
+    )
+
+    unmount()
+    const expectedActions = [
+      setPipelineInitialState(),
+      setPipelineDialogState(true)
+    ]
+
+    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
   })
 })

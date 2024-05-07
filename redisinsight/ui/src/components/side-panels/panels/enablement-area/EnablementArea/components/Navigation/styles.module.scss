@@ -1,5 +1,5 @@
 .baseGroup {
-  background-color: var(--tableLightBorderColor);
+  background-color: var(--browserTableRowEven);
 
   :global {
     .group-header {
@@ -10,7 +10,6 @@
 
 .innerContainer {
   @include eui.scrollBar;
-  padding: 8px 0 !important;
   overflow: auto;
   height: 100%;
   text-align: left;

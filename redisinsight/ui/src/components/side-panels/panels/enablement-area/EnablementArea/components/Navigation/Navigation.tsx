@@ -105,6 +105,7 @@ const Navigation = (props: Props) => {
             id={id}
             label={label}
             actions={actions}
+            isShowFolder={level !== 0}
             isShowActions={currentSourcePath.startsWith(ApiEndpoints.CUSTOM_TUTORIALS_PATH)}
             onCreate={() => setIsCreateOpen((v) => !v)}
             onDelete={onDeleteCustomTutorial}
@@ -140,7 +141,6 @@ const Navigation = (props: Props) => {
             testId={id || label}
             label={label}
             summary={summary}
-            iconType="document"
             {...args}
           >
             {args?.content || label}

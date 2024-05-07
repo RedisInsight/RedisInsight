@@ -18,6 +18,7 @@ export interface Props {
   label: string
   actions?: string[]
   isShowActions?: boolean
+  isShowFolder?: boolean
   onCreate?: () => void
   onDelete?: (id: string) => void
   children: React.ReactNode
@@ -41,6 +42,7 @@ const Group = (props: Props) => {
     forceState,
     withBorder = false,
     arrowDisplay = 'right',
+    isShowFolder = true,
     initialIsOpen = false,
     onToggle,
     onCreate,
@@ -108,7 +110,7 @@ const Group = (props: Props) => {
   const buttonContent = (
     <div className="group-header-wrapper">
       <EuiText className="group-header" size="m">
-        <EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />
+        {isShowFolder && (<EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />)}
         {label}
       </EuiText>
       {isShowActions && actionsContent}

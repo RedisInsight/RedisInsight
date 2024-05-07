@@ -24,10 +24,10 @@ const CopilotPanel = (props: Props) => {
           anchorWrapperClassName={styles.onboardingAnchorWrapper}
           fullSize
         >
-          <>
-            <span className={styles.tabName}>Redis Copilot</span>
+          <div className={styles.titleWrapper}>
+            <span className={styles.title}>Redis Copilot</span>
             <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
-          </>
+          </div>
         </OnboardingTour>
       </div>
     </div>

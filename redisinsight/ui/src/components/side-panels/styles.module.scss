@@ -24,9 +24,22 @@ $animation-duration: 300ms;
   flex-direction: column;
 }
 
+.titleWrapper {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.title {
+  font-size: 16px;
+}
+
 
 .body {
   height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 12px;
 }
 
 .trigger {
@@ -101,53 +114,15 @@ $animation-duration: 300ms;
 .tabs {
   display: flex;
   flex: 1;
+  flex-shrink: 0 !important;
+  overflow: initial !important;
   margin-right: 12px;
+  border-bottom: 1px solid var(--separatorColor);
+  align-items: center;
+  padding: 0 12px;
 
   .tab {
-    flex-basis: 33%;
-
-    background-color: transparent;
-    color: var(--euiTextSubduedColor);
-    margin: 0 !important;
-
-    padding: 6px 8px !important;
-    border-radius: 0;
-
-    &:first-child {
-      border-radius: 4px 0 0 4px;
-    }
-
-    &:global {
-      &.euiTab {
-        &:after {
-          display: none !important;
-          visibility: hidden;
-        }
-
-        &:last-child {
-          border-radius: 0 4px 4px 0;
-        }
-      }
-    }
-
-    &:global(.euiTab-isSelected) {
-      color: var(--euiColorPrimary);
-      &:hover {
-        text-decoration: none;
-      }
-
-      .tabTotalUnread {
-        background-color: var(--recommendationsCountBgColor);
-      }
-    }
-
-    &:global:not(.euiTab-isSelected) {
-      &:hover {
-        .tabName {
-          text-decoration: underline;
-        }
-      }
-    }
+    margin-bottom: -1px;
 
     :global {
       .euiTab__content {

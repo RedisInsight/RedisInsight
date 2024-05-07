@@ -138,7 +138,7 @@ export const mockCustomTutorialManifest2 = {
 export const globalCustomTutorialManifest = {
   type: CustomTutorialManifestType.Group,
   id: 'custom-tutorials',
-  label: 'MY TUTORIALS',
+  label: 'My tutorials',
   _actions: [CustomTutorialActions.CREATE],
   args: {
     withBorder: true,

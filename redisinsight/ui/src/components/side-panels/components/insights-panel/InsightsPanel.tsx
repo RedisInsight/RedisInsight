@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
+import cx from 'classnames'
 import { Header } from 'uiSrc/components/side-panels/components'
 import styles from 'uiSrc/components/side-panels/styles.module.scss'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
@@ -43,7 +44,7 @@ const InsightsPanel = (props: Props) => {
   }
 
   const Tabs = useCallback(() => (
-    <EuiTabs className={styles.tabs}>
+    <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
       <EuiTab
         isSelected={tabSelected === InsightsPanelTabs.Explore}
         onClick={() => handleChangeTab(InsightsPanelTabs.Explore)}
@@ -56,7 +57,7 @@ const InsightsPanel = (props: Props) => {
           anchorWrapperClassName={styles.onboardingAnchorWrapper}
           fullSize
         >
-          <span className={styles.tabName}>Explore</span>
+          <span className={styles.tabName}>Tutorials</span>
         </OnboardingTour>
       </EuiTab>
       <EuiTab
@@ -88,9 +89,12 @@ const InsightsPanel = (props: Props) => {
         onClose={onClose}
         panelName="insights"
       >
-        <Tabs />
+        <div className={styles.titleWrapper}>
+          <span className={styles.title}>Insights</span>
+        </div>
       </Header>
       <div className={styles.body}>
+        <Tabs />
         {tabSelected === InsightsPanelTabs.Explore && (<EnablementAreaWrapper />)}
         {tabSelected === InsightsPanelTabs.Recommendations && (<LiveTimeRecommendations />)}
       </div>

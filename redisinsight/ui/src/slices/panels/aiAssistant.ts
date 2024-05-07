@@ -190,8 +190,9 @@ export function createAssistantChatAction(onSuccess?: (chatId: string) => void, 
 export function askAssistantChatbot(
   id: string,
   message: string,
-  { onMessage, onFinish }: {
+  { onMessage, onFinish, onError }: {
     onMessage?: (message: AiChatMessage) => void,
+    onError?: (errorCode: number) => void,
     onFinish?: () => void
   }
 ) {
@@ -236,6 +237,7 @@ export function askAssistantChatbot(
               errorCode: error?.errorCode
             }
           }))
+          onError?.(error?.status ?? 500)
           onFinish?.()
         }
       }
@@ -306,8 +308,9 @@ export function getExpertChatHistoryAction(
 export function askExpertChatbotAction(
   databaseId: string,
   message: string,
-  { onMessage, onFinish }: {
+  { onMessage, onError, onFinish }: {
     onMessage?: (message: AiChatMessage) => void,
+    onError?: (errorCode: number) => void,
     onFinish?: () => void
   }
 ) {
@@ -352,6 +355,7 @@ export function askExpertChatbotAction(
               errorCode: error?.errorCode
             }
           }))
+          onError?.(error?.status ?? 500)
           onFinish?.()
         }
       }

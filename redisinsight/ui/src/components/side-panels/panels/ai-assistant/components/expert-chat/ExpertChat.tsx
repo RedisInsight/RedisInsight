@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom'
 import {
   aiExpertChatSelector,
   askExpertChatbotAction,
-  getExpertChatHistoryAction, removeExpertChatHistoryAction,
+  getExpertChatHistoryAction,
+  removeExpertChatHistoryAction,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
@@ -14,7 +15,7 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import ExpertChatHeader from './components/expert-chat-header'
-import { ChatHistory, ChatForm, ExpertChatInitialMessage } from '../shared'
+import { ChatForm, ChatHistory, ExpertChatInitialMessage } from '../shared'
 
 import styles from './styles.module.scss'
 
@@ -61,6 +62,15 @@ const ExpertChat = () => {
         onMessage: (message: AiChatMessage) => {
           setinProgressMessage({ ...message })
           scrollToBottom('auto')
+        },
+        onError: (errorCode: number) => {
+          sendEventTelemetry({
+            event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
+            eventData: {
+              chat: AiChatType.Query,
+              errorCode
+            }
+          })
         },
         onFinish: () => setinProgressMessage(null)
       }
@@ -152,7 +162,7 @@ const ExpertChat = () => {
         <ChatForm
           isDisabled={!instanceId || !!inProgressMessage}
           validation={getValidationMessage()}
-          placeholder="Ask me to query your data (eg. How many road bikes?)"
+          placeholder="Ask me to query your data (e.g. How many road bikes?)"
           onSubmit={handleSubmit}
         />
       </div>

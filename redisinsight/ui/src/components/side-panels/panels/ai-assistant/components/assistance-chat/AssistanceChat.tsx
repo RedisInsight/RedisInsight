@@ -60,6 +60,15 @@ const AssistanceChat = () => {
           setinProgressMessage({ ...message })
           scrollToBottom('auto')
         },
+        onError: (errorCode: number) => {
+          sendEventTelemetry({
+            event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
+            eventData: {
+              chat: AiChatType.Assistance,
+              errorCode
+            }
+          })
+        },
         onFinish: () => setinProgressMessage(null)
       }
     ))

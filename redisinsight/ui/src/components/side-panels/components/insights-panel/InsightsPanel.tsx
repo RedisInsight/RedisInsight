@@ -27,7 +27,7 @@ const InsightsPanel = (props: Props) => {
   const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const handleChangeTab = (name: string) => {
+  const handleChangeTab = (name: InsightsPanelTabs) => {
     if (tabSelected === name) return
 
     dispatch(changeSelectedTab(name))

@@ -8,6 +8,15 @@
 
   padding: 6px 12px;
 
+  .dbName {
+    overflow: hidden;
+    margin-right: 16px;
+
+    :global(.euiText) {
+      font-weight: 500;
+    }
+  }
+
   .headerActions {
     display: flex;
     align-items: center;

@@ -17,6 +17,7 @@
 
     @include eui.scrollBar;
     overflow: auto;
+    max-height: 100%;
   }
 }
 

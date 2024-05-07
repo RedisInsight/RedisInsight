@@ -59,4 +59,4 @@ const RestartChat = (props: Props) => {
   )
 }
 
-export default RestartChat
+export default React.memo(RestartChat)

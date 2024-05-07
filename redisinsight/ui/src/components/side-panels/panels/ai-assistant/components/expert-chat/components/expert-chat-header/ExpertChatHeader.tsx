@@ -19,13 +19,14 @@ import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/co
 import styles from './styles.module.scss'
 
 export interface Props {
-  databaseId?: string
+  connectedInstanceName?: string
+  databaseId: string
   isClearDisabled?: boolean
   onRestart: () => void
 }
 
-const AssistanceHeader = (props: Props) => {
-  const { databaseId, onRestart, isClearDisabled } = props
+const ExpertChatHeader = (props: Props) => {
+  const { databaseId, connectedInstanceName, isClearDisabled, onRestart } = props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
 
   const dispatch = useDispatch()
@@ -52,7 +53,14 @@ const AssistanceHeader = (props: Props) => {
 
   return (
     <div className={styles.header}>
-      <span />
+      {connectedInstanceName ? (
+        <EuiToolTip
+          content={connectedInstanceName}
+          anchorClassName={styles.dbName}
+        >
+          <EuiText size="xs" className="truncateText">{connectedInstanceName}</EuiText>
+        </EuiToolTip>
+      ) : (<span />)}
       <div className={styles.headerActions}>
         <EuiToolTip
           content={isTutorialsPopoverOpen ? undefined : 'Open relevant tutorials to learn more'}
@@ -77,7 +85,7 @@ const AssistanceHeader = (props: Props) => {
                 size="xs"
                 onClick={() => setIsTutorialsPopoverOpen(true)}
                 className={cx(styles.headerBtn)}
-                data-testid="ai-general-tutorial-btn"
+                data-testid="ai-expert-tutorial-btn"
               />
             )}
           >
@@ -90,7 +98,7 @@ const AssistanceHeader = (props: Props) => {
                 color="secondary"
                 onClick={handleOpenTutorials}
                 className={styles.openTutorialsBtn}
-                data-testid="ai-general-open-tutorials"
+                data-testid="ai-expert-open-tutorials"
               >
                 Open tutorials
               </EuiButton>
@@ -103,8 +111,8 @@ const AssistanceHeader = (props: Props) => {
               disabled={isClearDisabled}
               iconType="eraser"
               size="xs"
-              className={cx(styles.headerBtn, styles.headerBtnAnchor)}
-              data-testid="ai-general-restart-session-btn"
+              className={styles.headerBtn}
+              data-testid="ai-expert-restart-session-btn"
             />
           )}
           onConfirm={onRestart}
@@ -114,4 +122,4 @@ const AssistanceHeader = (props: Props) => {
   )
 }
 
-export default AssistanceHeader
+export default ExpertChatHeader

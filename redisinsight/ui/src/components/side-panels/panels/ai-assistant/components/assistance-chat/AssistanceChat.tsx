@@ -1,11 +1,13 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { EuiButtonEmpty } from '@elastic/eui'
 import {
   aiAssistantChatSelector,
   askAssistantChatbot,
   createAssistantChatAction,
-  getAssistantChatHistoryAction, removeAssistantChatAction,
+  getAssistantChatHistoryAction,
+  removeAssistantChatAction,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -14,7 +16,6 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
-import AssistanceHeader from './components/assistance-header'
 import { AssistanceChatInitialMessage, ChatHistory, ChatForm } from '../shared'
 
 import styles from './styles.module.scss'
@@ -109,11 +110,17 @@ const AssistanceChat = () => {
 
   return (
     <div className={styles.wrapper} data-testid="ai-general-chat">
-      <AssistanceHeader
-        databaseId={instanceId}
-        isClearDisabled={!!inProgressMessage || !messages?.length}
-        onRestart={onClearSession}
-      />
+      <div className={styles.header}>
+        <span />
+        <EuiButtonEmpty
+          disabled={!!inProgressMessage || !messages?.length}
+          iconType="eraser"
+          size="xs"
+          onClick={onClearSession}
+          className={styles.headerBtn}
+          data-testid="ai-general-restart-session-btn"
+        />
+      </div>
       <div className={styles.chatHistory}>
         <ChatHistory
           modules={modules}

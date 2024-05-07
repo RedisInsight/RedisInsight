@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
+import { fetchRdiPipelineJobFunctions, fetchRdiPipelineSchema } from 'uiSrc/slices/rdi/pipeline'
 import {
   appContextPipelineManagement,
   setLastPageContext,
@@ -36,6 +36,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
 
   useEffect(() => {
     dispatch(fetchRdiPipelineSchema(rdiInstanceId))
+    dispatch(fetchRdiPipelineJobFunctions(rdiInstanceId))
   }, [])
 
   useEffect(() => () => {

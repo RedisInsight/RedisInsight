@@ -1,37 +1,51 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { getCypherCompletionProvider } from 'uiSrc/utils/monaco/cypher/completionProvider'
-import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/cypher/monarchTokensProvider'
-import { cypherLanguageConfiguration } from './cypher'
+import { LanguageIdEnum } from 'monaco-sql-languages'
+import { getCompletionProvider } from 'uiSrc/utils/monaco/completionProvider'
+import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/cypherTokens'
+import { getJmespathMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/jmespathTokens'
+import {
+  cypherLanguageConfiguration,
+  KEYWORDS as cypherKeywords,
+  FUNCTIONS as cypherFunctions,
+} from './cypher'
+import {
+  jmespathLanguageConfiguration,
+} from './jmespath'
 import { DSL, DSLNaming } from '../commands'
 
 export interface MonacoSyntaxLang {
-  [key: string]: {
-    name: string
-    id: string
-    language: string
-    config?: monacoEditor.languages.LanguageConfiguration,
-    completionProvider?: () => monacoEditor.languages.CompletionItemProvider,
-    tokensProvider?: () => monacoEditor.languages.IMonarchLanguage
-  }
+  name: string
+  id: string
+  language: string
+  config?: monacoEditor.languages.LanguageConfiguration,
+  completionProvider?: (keywords?: any[], functions?: any[]) => monacoEditor.languages.CompletionItemProvider,
+  tokensProvider?: (keywords?: any[], functions?: any[]) => monacoEditor.languages.IMonarchLanguage
+}
+
+export interface MonacoSyntaxObject {
+  [key: string]: MonacoSyntaxLang
 }
 
 export enum MonacoLanguage {
   Redis = 'redisLanguage',
   Cypher = 'cypherLanguage',
-  SQL = 'sql',
+  JMESPath = 'jmespathLanguage',
+  SQL = LanguageIdEnum?.MYSQL,
   Text = 'text',
 }
 
 export const DEFAULT_MONACO_YAML_URI = 'http://example.com/schema-name.json'
 export const DEFAULT_MONACO_FILE_MATCH = '*'
 
-export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxLang = {
+export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxObject = {
   [DSL.cypher]: {
     name: DSLNaming[DSL.cypher],
     id: MonacoLanguage.Cypher,
     language: MonacoLanguage.Cypher,
     config: cypherLanguageConfiguration,
-    completionProvider: getCypherCompletionProvider,
+    completionProvider: () => ({
+      ...getCompletionProvider(cypherKeywords, cypherFunctions),
+    }),
     tokensProvider: getCypherMonarchTokensProvider,
   },
   [DSL.sql]: {
@@ -42,7 +56,21 @@ export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxLang = {
   [DSL.jmespath]: {
     name: DSLNaming[DSL.jmespath],
     id: DSL.jmespath,
-    language: MonacoLanguage.Text,
+    language: MonacoLanguage.JMESPath,
+    config: jmespathLanguageConfiguration,
+    completionProvider: (
+      keywords: string[] = [],
+      functions: monacoEditor.languages.CompletionItem[] = [],
+    ) => ({
+      ...getCompletionProvider(keywords, functions)
+    }),
+    tokensProvider: (
+      _,
+      functions: monacoEditor.languages.CompletionItem[] = [],
+    ) => (
+      { ...getJmespathMonarchTokensProvider(
+        functions.map(({ label }) => (label.toString()))
+      ) }),
   },
 }
 

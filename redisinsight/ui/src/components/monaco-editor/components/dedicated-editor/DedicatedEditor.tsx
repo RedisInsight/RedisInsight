@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { compact, findIndex, first } from 'lodash'
+import { compact, findIndex, first, merge } from 'lodash'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { Rnd } from 'react-rnd'
@@ -13,7 +13,7 @@ import {
   Nullable,
   toModelDeltaDecoration
 } from 'uiSrc/utils'
-import { DEDICATED_EDITOR_LANGUAGES, DSL, MonacoLanguage, Theme } from 'uiSrc/constants'
+import { DEDICATED_EDITOR_LANGUAGES, DSL, MonacoLanguage, MonacoSyntaxLang, Theme } from 'uiSrc/constants'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
@@ -23,9 +23,13 @@ export interface Props {
   query?: string
   langId?: DSL
   langs?: DSL[]
+  onChangeLanguage?: (langId: DSL) => void
   onSubmit: (query?: string) => void
   onCancel: () => void
   initialHeight: number
+  customOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
+  keywords?: monacoEditor.languages.CompletionItem[]
+  functions?: monacoEditor.languages.CompletionItem[]
 }
 
 // paddings of main editor
@@ -36,7 +40,18 @@ const notCommandRegEx = /^\s|\/\//
 let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollection> = null
 
 const DedicatedEditor = (props: Props) => {
-  const { initialHeight, query = '', langId, langs = [], onCancel, onSubmit } = props
+  const {
+    initialHeight,
+    query = '',
+    langId,
+    langs = [],
+    onChangeLanguage,
+    onCancel,
+    onSubmit,
+    customOptions = {},
+    keywords,
+    functions,
+  } = props
 
   const [value, setValue] = useState<string>(query)
   const [height, setHeight] = useState(initialHeight)
@@ -115,7 +130,7 @@ const DedicatedEditor = (props: Props) => {
 
     setTimeout(() => editor.focus(), 0)
 
-    setupMonacoLang(monaco)
+    setupMonacoLang(monaco, selectedLang)
     editor.addAction(
       getMonacoAction(MonacoAction.Submit, () => handleSubmit(), monaco)
     )
@@ -123,7 +138,7 @@ const DedicatedEditor = (props: Props) => {
     decorationCollection = editor.createDecorationsCollection()
   }
 
-  const setupMonacoLang = (monaco: typeof monacoEditor) => {
+  const setupMonacoLang = (monaco: typeof monacoEditor, selectedLang: MonacoSyntaxLang) => {
     const languages = monaco.languages.getLanguages()
 
     if (!selectedLang) return
@@ -138,16 +153,25 @@ const DedicatedEditor = (props: Props) => {
 
     disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(
       selectedLang.language,
-      selectedLang.completionProvider?.()!
+      selectedLang.completionProvider?.(keywords, functions)!
     ).dispose
 
     monaco.languages.setMonarchTokensProvider(
       selectedLang.language,
-      selectedLang.tokensProvider?.()!
+      selectedLang.tokensProvider?.(keywords, functions)!
     )
   }
 
-  const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
+  const onChangeLanguageSelect = (id: string) => {
+    const selectedLang = DEDICATED_EDITOR_LANGUAGES[id]
+    setSelectedLang(selectedLang)
+
+    setupMonacoLang(monacoObjects.current?.monaco!, selectedLang)
+
+    onChangeLanguage?.(id as DSL)
+  }
+
+  const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = merge({
     tabCompletion: 'on',
     wordWrap: 'on',
     padding: { top: 10 },
@@ -165,7 +189,8 @@ const DedicatedEditor = (props: Props) => {
     hideCursorInOverviewRuler: true,
     overviewRulerBorder: false,
     lineNumbersMinChars: 4
-  }
+  },
+  customOptions)
 
   return (
     <AutoSizer onResize={onResize}>
@@ -222,7 +247,7 @@ const DedicatedEditor = (props: Props) => {
                     valueOfSelected={selectedLang.id}
                     options={optionsLangs}
                     className={styles.selectLanguage}
-                    onChange={(id) => setSelectedLang(DEDICATED_EDITOR_LANGUAGES[id])}
+                    onChange={onChangeLanguageSelect}
                     data-testid="dedicated-editor-language-select"
                   />
                 )}

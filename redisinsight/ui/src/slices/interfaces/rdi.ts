@@ -153,6 +153,7 @@ export interface IStateRdiPipeline {
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies
   changes: Record<string, FileChangeType>
+  jobFunctions: IStateJobFunction[]
 }
 
 export interface IStateRdiDryRunJob {
@@ -182,4 +183,17 @@ export interface InitialStateRdiInstances {
   errorChanging: string
   changedSuccessfully: boolean
   isPipelineLoaded: boolean
+}
+
+export interface IJobFunctionResponse {
+  function: string
+  description: string
+  example: string
+  comments: string
+}
+
+export interface IStateJobFunction {
+  label: string
+  detail: string
+  documentation: string
 }

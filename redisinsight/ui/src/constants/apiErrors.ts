@@ -13,4 +13,10 @@ export const ApiEncryptionErrors: string[] = [
   ApiErrors.KeytarDecryption,
 ]
 
+export enum AiChatErrors {
+  Default = 'An error occurred. Try again or restart the session.',
+  Timeout = 'Timeout occurred. Try again later.',
+  CloudAuthorization = 'Session expired. Login and try again'
+}
+
 export default ApiErrors

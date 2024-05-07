@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
 
+import { AxiosError } from 'axios'
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { AiChatType, AiChatMessage, AiChatMessageType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
-import { isStatusSuccessful } from 'uiSrc/utils'
+import { AiChatMessage, AiChatMessageType, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
 import { getStreamedAnswer } from 'uiSrc/utils/api'
+import ApiStatusCode from 'uiSrc/constants/apiStatusCode'
 import { AppDispatch, RootState } from '../store'
 
 const getTabSelected = (tab?: string): AiChatType => {
@@ -38,12 +40,18 @@ const aiAssistantSlice = createSlice({
     },
     createAssistantChat: (state) => {
       state.assistant.loading = true
+      state.assistant.id = ''
+      sessionStorageService.remove(BrowserStorageItem.aiChatSession)
     },
     createAssistantSuccess: (state, { payload }: PayloadAction<string>) => {
       state.assistant.id = payload
       state.assistant.loading = false
 
       sessionStorageService.set(BrowserStorageItem.aiChatSession, payload)
+    },
+    clearAssistantChatId: (state) => {
+      state.assistant.id = ''
+      sessionStorageService.remove(BrowserStorageItem.aiChatSession)
     },
     createAssistantFailed: (state) => {
       state.assistant.loading = false
@@ -70,13 +78,23 @@ const aiAssistantSlice = createSlice({
     removeAssistantChatHistoryFailed: (state) => {
       state.assistant.loading = false
     },
-    sendQuestion: (state, { payload }: PayloadAction<string>) => {
-      state.assistant.messages.push({
-        id: `ai_${uuidv4()}`,
-        type: AiChatMessageType.HumanMessage,
-        content: payload,
-        context: {}
-      })
+    sendQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.assistant.messages.push(payload)
+    },
+    setQuestionError: (
+      state,
+      { payload }: PayloadAction<{
+        id: string,
+        error: Maybe<{
+          statusCode: number
+          errorCode?: number
+        }>
+      }>
+    ) => {
+      state.assistant.messages = state.assistant.messages.map((item) => (item.id === payload.id ? {
+        ...item,
+        error: payload.error
+      } : item))
     },
     sendAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
@@ -91,13 +109,23 @@ const aiAssistantSlice = createSlice({
     getExpertChatHistoryFailed: (state) => {
       state.expert.loading = false
     },
-    sendExpertQuestion: (state, { payload }: PayloadAction<string>) => {
-      state.expert.messages.push({
-        id: `ai_${uuidv4()}`,
-        type: AiChatMessageType.HumanMessage,
-        content: payload,
-        context: {}
-      })
+    sendExpertQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.expert.messages.push(payload)
+    },
+    setExpertQuestionError: (
+      state,
+      { payload }: PayloadAction<{
+        id: string,
+        error: Maybe<{
+          statusCode: number
+          errorCode?: number
+        }>
+      }>
+    ) => {
+      state.expert.messages = state.expert.messages.map((item) => (item.id === payload.id ? {
+        ...item,
+        error: payload.error
+      } : item))
     },
     sendExpertAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.expert.messages.push(payload)
@@ -116,6 +144,7 @@ export const aiExpertChatSelector = (state: RootState) => state.panels.aiAssista
 // Actions generated from the slice
 export const {
   createAssistantChat,
+  clearAssistantChatId,
   setSelectedTab,
   createAssistantSuccess,
   createAssistantFailed,
@@ -126,11 +155,13 @@ export const {
   removeAssistantChatHistorySuccess,
   removeAssistantChatHistoryFailed,
   sendQuestion,
+  setQuestionError,
   sendAnswer,
   getExpertChatHistory,
   getExpertChatHistorySuccess,
   getExpertChatHistoryFailed,
   sendExpertQuestion,
+  setExpertQuestionError,
   sendExpertAnswer,
   clearExpertChatHistory,
 } = aiAssistantSlice.actions
@@ -165,7 +196,14 @@ export function askAssistantChatbot(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    dispatch(sendQuestion(message))
+    const humanMessage = {
+      id: `ai_${uuidv4()}`,
+      type: AiChatMessageType.HumanMessage,
+      content: message,
+      context: {}
+    }
+
+    dispatch(sendQuestion(humanMessage))
 
     const aiMessageProgressed: AiChatMessage = {
       id: `ai_${uuidv4()}`,
@@ -190,8 +228,14 @@ export function askAssistantChatbot(
           dispatch(sendAnswer(aiMessageProgressed))
           onFinish?.()
         },
-        onError: (error) => {
-          console.error(error)
+        onError: (error: any) => {
+          dispatch(setQuestionError({
+            id: humanMessage.id,
+            error: {
+              statusCode: error?.status ?? 500,
+              errorCode: error?.errorCode
+            }
+          }))
           onFinish?.()
         }
       }
@@ -215,6 +259,10 @@ export function getAssistantChatHistoryAction(
       }
     } catch (e) {
       dispatch(getAssistantChatHistoryFailed())
+      const error = e as AxiosError
+      if (error?.response?.status === ApiStatusCode.Unauthorized) {
+        dispatch(clearAssistantChatId())
+      }
     }
   }
 }
@@ -264,7 +312,14 @@ export function askExpertChatbotAction(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    dispatch(sendExpertQuestion(message))
+    const humanMessage = {
+      id: `ai_${uuidv4()}`,
+      type: AiChatMessageType.HumanMessage,
+      content: message,
+      context: {}
+    }
+
+    dispatch(sendExpertQuestion(humanMessage))
 
     const aiMessageProgressed: AiChatMessage = {
       id: `ai_${uuidv4()}`,
@@ -273,9 +328,6 @@ export function askExpertChatbotAction(
     }
 
     onMessage?.(aiMessageProgressed)
-
-    // general chat - `${baseUrl}${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}/messages`
-    // id - chat id, not database id
 
     const baseUrl = getBaseUrl()
     const url = `${baseUrl}${ApiEndpoints.AI_EXPERT}/${databaseId}/messages`
@@ -292,8 +344,14 @@ export function askExpertChatbotAction(
           dispatch(sendExpertAnswer(aiMessageProgressed))
           onFinish?.()
         },
-        onError: (error) => {
-          console.error(error)
+        onError: (error: any) => {
+          dispatch(setExpertQuestionError({
+            id: humanMessage.id,
+            error: {
+              statusCode: error?.status ?? 500,
+              errorCode: error?.errorCode
+            }
+          }))
           onFinish?.()
         }
       }

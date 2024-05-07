@@ -8,8 +8,8 @@ import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import { removeExpertChatHistoryAction } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
+import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   changeSelectedTab,
   changeSidePanel,

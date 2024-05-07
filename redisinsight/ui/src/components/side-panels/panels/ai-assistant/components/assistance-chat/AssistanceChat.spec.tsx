@@ -103,7 +103,7 @@ describe('AssistanceChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      sendQuestion('test')
+      sendQuestion(expect.objectContaining({ content: 'test' }))
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({

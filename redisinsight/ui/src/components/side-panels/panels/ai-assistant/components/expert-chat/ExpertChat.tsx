@@ -25,7 +25,7 @@ const ExpertChat = () => {
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
-  const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
+  const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
 
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
@@ -59,10 +59,10 @@ const ExpertChat = () => {
       message,
       {
         onMessage: (message: AiChatMessage) => {
-          setProgressingMessage({ ...message })
+          setinProgressMessage({ ...message })
           scrollToBottom('auto')
         },
-        onFinish: () => setProgressingMessage(null)
+        onFinish: () => setinProgressMessage(null)
       }
     ))
 
@@ -129,15 +129,16 @@ const ExpertChat = () => {
           isLoading={loading}
           modules={modules}
           initialMessage={ExpertChatInitialMessage}
-          progressingMessage={progressingMessage}
+          inProgressMessage={inProgressMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
           onRunCommand={onRunCommand}
+          onRestart={onClearSession}
         />
       </div>
       <div className={styles.chatForm}>
         <ChatForm
-          isDisabled={!instanceId || !!progressingMessage}
+          isDisabled={!instanceId || !!inProgressMessage}
           validation={getValidationMessage()}
           placeholder="Ask me to query your data (eg. How many road bikes?)"
           onSubmit={handleSubmit}

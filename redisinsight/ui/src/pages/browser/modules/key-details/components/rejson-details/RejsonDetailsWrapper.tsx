@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
 
+import { isUndefined } from 'lodash'
 import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -9,7 +10,9 @@ import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiS
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 
 import { KeyTypes } from 'uiSrc/constants'
-import RejsonDetails from './RejsonDetails/RejsonDetails'
+import { stringToBuffer } from 'uiSrc/utils'
+import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
+import RejsonDetails from './rejson-details/RejsonDetails'
 
 import styles from './styles.module.scss'
 
@@ -18,14 +21,16 @@ export interface Props extends KeyDetailsHeaderProps {}
 const RejsonDetailsWrapper = (props: Props) => {
   const keyType = KeyTypes.ReJSON
   const { loading } = useSelector(rejsonSelector)
-  const { data, downloaded, type } = useSelector(rejsonDataSelector)
-  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) || {}
+  const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
+  const { name: selectedKey, nameString, length } = useSelector(selectedKeyDataSelector) || {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
-  const handleSubmitJsonUpdateValue = async () => {}
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
-  const handleEditValueUpdate = () => {}
+  useEffect(() => {
+    setExpandedRows(new Set())
+  }, [nameString])
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({
@@ -55,7 +60,7 @@ const RejsonDetailsWrapper = (props: Props) => {
     })
   }
 
-  const reportJSONKeyExpandAndCollapse = (isExpanded: boolean, path: string) => {
+  const handleJsonKeyExpandAndCollapse = (isExpanded: boolean, path: string) => {
     const matchedPath = path.match(/\[.+?\]/g)
     const levelFromPath = matchedPath ? matchedPath.length - 1 : 0
     if (isExpanded) {
@@ -63,13 +68,15 @@ const RejsonDetailsWrapper = (props: Props) => {
     } else {
       reportJSONKeyCollapsed(levelFromPath)
     }
+
+    setExpandedRows((rows) => {
+      const copyOfSet = new Set(rows)
+      if (isExpanded) copyOfSet.add(path)
+      else copyOfSet.delete(path)
+
+      return copyOfSet
+    })
   }
-
-  const reportJSONPropertyEdited = () => {}
-
-  const reportJSONPropertyDeleted = () => {}
-
-  const reportJSONPropertyAdded = () => {}
 
   return (
     <div className="fluid flex-column relative">
@@ -79,11 +86,10 @@ const RejsonDetailsWrapper = (props: Props) => {
         keyType={keyType}
       />
       <div className="key-details-body" key="key-details-body">
-        {!loading && (
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>
           <div
             data-testid="json-details"
-            className={`${[styles.container].join(' ')}`}
+            className={styles.container}
           >
             {loading && (
               <EuiProgress
@@ -93,30 +99,20 @@ const RejsonDetailsWrapper = (props: Props) => {
                 data-testid="progress-key-json"
               />
             )}
-            {!(loading && data === undefined) && (
+            {!isUndefined(data) && (
               <RejsonDetails
-                selectedKey={selectedKey}
-                dbNumber={0}
+                selectedKey={selectedKey || stringToBuffer('')}
                 dataType={type || ''}
-                deleteMsg=""
-                instanceId={123}
-                resultTableKeyMap={{}}
-                handleSubmitJsonUpdateValue={handleSubmitJsonUpdateValue}
-                onJSONPropertyDeleted={reportJSONPropertyDeleted}
-                data={data}
-                onJSONKeyExpandAndCollapse={reportJSONKeyExpandAndCollapse}
-                onJSONPropertyAdded={reportJSONPropertyAdded}
-                onJSONPropertyEdited={reportJSONPropertyEdited}
-                shouldRejsonDataBeDownloaded={!downloaded}
-                handleSubmitUpdateValue={handleEditValueUpdate}
-                handleDeleteKeyDialogOpen={() => {}}
-                handleOpenExpiryDialog={() => {}}
-                keyProperty={{}}
+                data={data as IJSONData}
+                length={length}
+                parentPath={path}
+                expadedRows={expandedRows}
+                onJsonKeyExpandAndCollapse={handleJsonKeyExpandAndCollapse}
+                isDownloaded={downloaded}
               />
             )}
           </div>
         </div>
-        )}
       </div>
     </div>
   )

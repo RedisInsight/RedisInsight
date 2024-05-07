@@ -95,7 +95,7 @@ describe('ExpertChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      sendExpertQuestion('test')
+      sendExpertQuestion(expect.objectContaining({ content: 'test' }))
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({

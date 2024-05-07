@@ -19,6 +19,7 @@ import { AiQueryMessageRepository } from 'src/modules/ai/query/repositories/ai-q
 import { AiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/ai-query-auth.provider';
 import { classToClass } from 'src/utils';
 import { plainToClass } from 'class-transformer';
+import { AiQueryContextRepository } from 'src/modules/ai/query/repositories/ai-query.context.repository';
 
 const COMMANDS_WHITELIST = {
   'ft.search': true,
@@ -34,6 +35,7 @@ export class AiQueryService {
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly aiQueryMessageRepository: AiQueryMessageRepository,
     private readonly aiQueryAuthProvider: AiQueryAuthProvider,
+    private readonly aiQueryContextRepository: AiQueryContextRepository,
   ) {}
 
   static prepareHistoryIntermediateSteps(message: AiQueryMessage): [AiQueryMessageRole, string][] {
@@ -93,7 +95,16 @@ export class AiQueryService {
         context: ClientContext.AI,
       });
 
-      const context = await getFullDbContext(client);
+      let context = await this.aiQueryContextRepository.getFullDbContext(sessionMetadata, databaseId, auth.accountId);
+
+      if (!context) {
+        context = await this.aiQueryContextRepository.setFullDbContext(
+          sessionMetadata,
+          databaseId,
+          auth.accountId,
+          await getFullDbContext(client),
+        );
+      }
 
       const question = classToClass(AiQueryMessage, {
         type: AiQueryMessageType.HumanMessage,
@@ -119,11 +130,27 @@ export class AiQueryService {
 
       socket.on(AiQueryWsEvents.GET_INDEX, async (index, cb) => {
         try {
-          const indexContext = await getIndexContext(client, index);
-          cb(indexContext);
+          const indexContext = await this.aiQueryContextRepository.getIndexContext(
+            sessionMetadata,
+            databaseId,
+            auth.accountId,
+            index,
+          );
+
+          if (!context) {
+            return cb(await this.aiQueryContextRepository.setIndexContext(
+              sessionMetadata,
+              databaseId,
+              auth.accountId,
+              index,
+              await getIndexContext(client, index),
+            ));
+          }
+
+          return cb(indexContext);
         } catch (e) {
           this.logger.warn('Unable to create index content', e);
-          cb(e.message);
+          return cb(e.message);
         }
       });
 
@@ -136,16 +163,6 @@ export class AiQueryService {
           return cb(await client.sendCommand(data, { replyEncoding: 'utf8' }));
         } catch (e) {
           this.logger.warn('Query execution error', e);
-          return cb(e.message);
-        }
-      });
-
-      socket.on(AiQueryWsEvents.GET_INDEX, async (index, cb) => {
-        try {
-          const indexContext = await getIndexContext(client, index);
-          return cb(indexContext);
-        } catch (e) {
-          this.logger.warn('Unable to create index content', e);
           return cb(e.message);
         }
       });
@@ -187,6 +204,9 @@ export class AiQueryService {
   async clearHistory(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
     try {
       const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
+
+      await this.aiQueryContextRepository.reset(sessionMetadata, databaseId, auth.accountId);
+
       return this.aiQueryMessageRepository.clearHistory(sessionMetadata, databaseId, auth.accountId);
     } catch (e) {
       throw wrapAiQueryError(e, 'Unable to clear history');

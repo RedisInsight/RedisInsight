@@ -41,7 +41,7 @@ export class ConvAiProvider {
         },
       );
 
-      return JSON.parse(data);
+      return data;
     } catch (e) {
       throw wrapConvAiError(e);
     }

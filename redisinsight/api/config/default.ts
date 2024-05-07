@@ -40,6 +40,7 @@ export default {
     staticDir,
     defaultsDir,
     logs: join(homedir, 'logs'),
+    customConfig: join(homedir, 'config.json'),
     defaultPlugins: join(staticDir, 'plugins'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),

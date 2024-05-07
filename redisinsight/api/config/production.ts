@@ -11,6 +11,7 @@ export default {
     homedir,
     prevHomedir,
     logs: join(homedir, 'logs'),
+    customConfig: join(homedir, 'config.json'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { EuiButton, EuiButtonEmpty, EuiPopover, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -6,10 +6,8 @@ import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
-import { removeExpertChatHistoryAction } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   changeSelectedTab,
   changeSidePanel,
@@ -24,10 +22,11 @@ export interface Props {
   connectedInstanceName?: string
   databaseId: string
   isClearDisabled?: boolean
+  onRestart: () => void
 }
 
 const ExpertChatHeader = (props: Props) => {
-  const { databaseId, connectedInstanceName, isClearDisabled } = props
+  const { databaseId, connectedInstanceName, isClearDisabled, onRestart } = props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
 
   const dispatch = useDispatch()
@@ -51,17 +50,6 @@ const ExpertChatHeader = (props: Props) => {
       }
     })
   }
-
-  const onClearSession = useCallback(() => {
-    dispatch(removeExpertChatHistoryAction(databaseId))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Query
-      }
-    })
-  }, [])
 
   return (
     <div className={styles.header}>
@@ -127,7 +115,7 @@ const ExpertChatHeader = (props: Props) => {
               data-testid="ai-expert-restart-session-btn"
             />
           )}
-          onConfirm={onClearSession}
+          onConfirm={onRestart}
         />
       </div>
     </div>

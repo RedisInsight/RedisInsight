@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import {
   aiExpertChatSelector,
   askExpertChatbotAction,
-  getExpertChatHistoryAction,
+  getExpertChatHistoryAction, removeExpertChatHistoryAction,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
@@ -87,6 +87,17 @@ const ExpertChat = () => {
     })
   }, [instanceId, provider])
 
+  const onClearSession = useCallback(() => {
+    dispatch(removeExpertChatHistoryAction(instanceId))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
+      eventData: {
+        chat: AiChatType.Query
+      }
+    })
+  }, [])
+
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     setTimeout(() => {
       scrollIntoView(scrollDivRef?.current, {
@@ -123,6 +134,7 @@ const ExpertChat = () => {
         connectedInstanceName={connectedInstanceName}
         databaseId={instanceId}
         isClearDisabled={!messages?.length || !instanceId}
+        onRestart={onClearSession}
       />
       <div className={styles.chatHistory}>
         <ChatHistory

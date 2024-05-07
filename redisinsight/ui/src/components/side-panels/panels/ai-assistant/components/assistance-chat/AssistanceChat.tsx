@@ -108,17 +108,6 @@ const AssistanceChat = () => {
     })
   }, [])
 
-  const onClearSession = useCallback(() => {
-    dispatch(removeAssistantChatAction(id))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Assistance
-      }
-    })
-  }, [id])
-
   return (
     <div className={styles.wrapper} data-testid="ai-general-chat">
       <div className={styles.header}>

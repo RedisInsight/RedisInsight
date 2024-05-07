@@ -91,4 +91,11 @@ export class RdiPipelineService {
 
     return await client.getTemplate(options);
   }
+
+  async getJobFunctions(rdiClientMetadata: RdiClientMetadata): Promise<object> {
+    this.logger.log('Getting RDI job functions');
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.getJobFunctions();
+  }
 }

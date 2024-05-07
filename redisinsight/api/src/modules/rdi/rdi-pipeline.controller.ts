@@ -100,4 +100,15 @@ export class RdiPipelineController {
   ): Promise<unknown> {
     return this.rdiPipelineService.getTemplate(rdiClientMetadata, options);
   }
+
+  @Get('/job-functions')
+  @ApiEndpoint({
+    description: 'Get job functions',
+    responses: [{ status: 200, type: Rdi }],
+  })
+  async getJobFunctions(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<object> {
+    return this.rdiPipelineService.getJobFunctions(rdiClientMetadata);
+  }
 }

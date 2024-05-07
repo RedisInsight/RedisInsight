@@ -109,6 +109,11 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
+  async getJobFunctions(): Promise<object> {
+    const response = await this.client.post(RdiUrl.JobFunctions);
+    return response.data;
+  }
+
   async disconnect(): Promise<void> {
     return undefined;
   }

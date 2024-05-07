@@ -45,6 +45,8 @@ export abstract class RdiClient {
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 
+  abstract getJobFunctions(): Promise<object>;
+
   abstract disconnect(): Promise<void>;
 
   public setLastUsed(): void {

@@ -11,7 +11,7 @@ import testcafe from 'testcafe';
                         experimentalDecorators: true
                     } })
                 .src((process.env.TEST_FILES || 'tests/web/**/*.e2e.ts').split('\n'))
-                .browsers(['chromium:headless --cache --allow-insecure-localhost --ignore-certificate-errors'])
+                .browsers(['chromium --headless=new --cache --allow-insecure-localhost --ignore-certificate-errors'])
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,
@@ -38,7 +38,7 @@ import testcafe from 'testcafe';
                     selectorTimeout: 5000,
                     assertionTimeout: 5000,
                     speed: 1,
-                    quarantineMode: { successThreshold: 1, attemptLimit: 3 },
+                    // quarantineMode: { successThreshold: 1, attemptLimit: 3 },
                     pageRequestTimeout: 8000,
                     disableMultipleWindows: true
                 });

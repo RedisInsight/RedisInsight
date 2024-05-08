@@ -70,7 +70,7 @@ describe('LoadSampleData', () => {
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.BROWSER_IMPORT_SAMPLES_CLICKED,
+      event: TelemetryEvent.IMPORT_SAMPLES_CLICKED,
       eventData: { databaseId: '1' }
     })
   })

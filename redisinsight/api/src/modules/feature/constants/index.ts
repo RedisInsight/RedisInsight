@@ -32,5 +32,5 @@ export enum KnownFeatures {
 export interface IFeatureFlag {
   name: string;
   storage: string;
-  factory?: () => Feature;
+  factory?: () => Partial<Feature>;
 }

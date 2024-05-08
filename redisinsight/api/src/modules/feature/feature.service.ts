@@ -1,4 +1,4 @@
-import { find, forEach } from 'lodash';
+import { find, forEach, isBoolean } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureServerEvents, FeatureStorage } from 'src/modules/feature/constants';
@@ -8,6 +8,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { knownFeatures } from 'src/modules/feature/constants/known-features';
 import { Feature } from 'src/modules/feature/model/feature';
+import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 
 @Injectable()
 export class FeatureService {
@@ -126,12 +127,33 @@ export class FeatureService {
         this.analytics.sendFeatureFlagRecalculated({
           configVersion: (await this.featuresConfigRepository.getOrCreate())?.data?.version,
           features: list.features,
+          force: await this.listOfForceFlags(),
         });
       } catch (e) {
         // ignore telemetry error
       }
     } catch (e) {
       this.logger.error('Unable to recalculate features flags', e);
+    }
+  }
+
+  /**
+   * Find forced flags values from custom config using only known features list
+   */
+  async listOfForceFlags(): Promise<Record<string, boolean>> {
+    try {
+      const features = {};
+      const forceFeatures = (await FeatureFlagStrategy.getCustomConfig());
+
+      forEach(knownFeatures, (known) => {
+        if (isBoolean(forceFeatures[known.name])) {
+          features[known.name] = forceFeatures[known.name];
+        }
+      });
+
+      return features;
+    } catch (e) {
+      return {};
     }
   }
 }

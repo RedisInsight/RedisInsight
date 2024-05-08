@@ -64,7 +64,7 @@ export class BrowserPage extends InstancePage {
     expandJsonObject = Selector('[data-testid=expand-object]');
     scoreButton = Selector('[data-testid=score-button]');
     sortingButton = Selector('[data-testid=header-sorting-button]');
-    editJsonObjectButton = Selector('[data-testid=edit-object-btn]');
+    editJsonObjectButton = Selector('[data-testid=edit-json-field]');
     applyEditButton = Selector('[data-testid=apply-edit-btn]');
     scanMoreButton = Selector('[data-testid=scan-more]');
     resizeBtnKeyList = Selector('[data-test-subj=resize-btn-keyList-keyDetails]');
@@ -864,7 +864,9 @@ export class BrowserPage extends InstancePage {
      * @param jsonStructure The structure of the json key
      */
     async addJsonStructure(jsonStructure: string): Promise<void> {
-        await t.click(this.expandJsonObject);
+        if (await this.expandJsonObject.exists) {
+            await t.click(this.expandJsonObject);
+        }
         await t.click(this.editJsonObjectButton);
         await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
         await t.click(this.applyEditButton);
@@ -970,7 +972,7 @@ export class BrowserPage extends InstancePage {
      * @param guide The guide name
      */
     async clickGuideLinksByName(guide: string): Promise<void> {
-        const linkGuide = Selector(`[data-testid^="guide-button-"]`).withExactText(guide);
+        const linkGuide = Selector('[data-testid^="guide-button-"]').withExactText(guide);
         await t.click(linkGuide);
     }
 }

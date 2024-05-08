@@ -346,6 +346,60 @@ describe('BulkImportService', () => {
       expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
     });
 
+    it('should import default data for search module', async () => {
+      mockedFs.readFileSync.mockImplementationOnce(() => Buffer.from(JSON.stringify({
+        files: [
+          {
+            path: 'some-path',
+            modules: ['search', 'searchlight', 'ft', 'ftl'],
+          },
+        ],
+      })));
+
+      mockedFs.createReadStream.mockImplementationOnce(() => new fs.ReadStream());
+      deviceService.get.mockResolvedValue({
+        ...mockDatabase,
+        modules: [{
+          name: 'search',
+          version: 999999,
+          semanticVersion: '99.99.99',
+        }],
+      });
+
+      await service.importDefaultData(mockClientMetadata);
+
+      expect(mockCombinedStream.append).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
+    });
+
+    it('should import default data for searchlight module', async () => {
+      mockedFs.readFileSync.mockImplementationOnce(() => Buffer.from(JSON.stringify({
+        files: [
+          {
+            path: 'some-path',
+            modules: ['search', 'searchlight', 'ft', 'ftl'],
+          },
+        ],
+      })));
+
+      mockedFs.createReadStream.mockImplementationOnce(() => new fs.ReadStream());
+      deviceService.get.mockResolvedValue({
+        ...mockDatabase,
+        modules: [{
+          name: 'searchlight',
+          version: 999999,
+          semanticVersion: '99.99.99',
+        }],
+      });
+
+      await service.importDefaultData(mockClientMetadata);
+
+      expect(mockCombinedStream.append).toHaveBeenCalledTimes(2);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(mockClientMetadata, mockCombinedStream);
+    });
+
     it('should import default data for core module only', async () => {
       mockedFs.readFileSync.mockImplementationOnce(() => Buffer.from(JSON.stringify(mockDefaultDataManifest)));
       mockedFs.createReadStream.mockImplementationOnce(() => new fs.ReadStream());

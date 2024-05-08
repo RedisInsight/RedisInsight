@@ -22,7 +22,7 @@ const responseSchema = Joi.object().keys({
 
 const aiAssistantNock = nock(serverConfig.get('ai').convAiApiUrl)
   .get('/history')
-  .reply(200, JSON.stringify(JSON.stringify(mockAiHistoryApiResponse)))
+  .reply(200, JSON.stringify(mockAiHistoryApiResponse))
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -36,7 +36,7 @@ describe('GET /ai/assistant/chats/:id', () => {
     {
       name: 'Should return empty history and not fail',
       before: () => {
-        aiAssistantNock.get('/history').reply(200, JSON.stringify(JSON.stringify([])))
+        aiAssistantNock.get('/history').reply(200, JSON.stringify([]))
       },
       responseSchema,
       responseBody: {

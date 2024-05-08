@@ -26,9 +26,7 @@ const isPipelineDeployed = (data: Nullable<IPipelineStatus>) => {
     return false
   }
 
-  const pipelineStatus = get(data, 'pipelines.default.status')
-
-  return pipelineStatus === PipelineStatus.Ready
+  return get(data, 'pipelines.default.status') === PipelineStatus.Ready
 }
 
 const StatisticsPage = () => {

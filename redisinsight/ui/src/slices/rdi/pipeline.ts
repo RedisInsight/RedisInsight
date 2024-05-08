@@ -291,7 +291,7 @@ export function getPipelineStatusAction(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipelineStatus())
-      const { data, status } = await apiService.get<any>(
+      const { data, status } = await apiService.get<IPipelineStatus>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STATUS),
       )
 

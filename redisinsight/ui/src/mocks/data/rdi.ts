@@ -1,3 +1,5 @@
+import { PipelineStatus } from 'uiSrc/slices/interfaces'
+
 export const MOCK_RDI_PIPELINE_CONFIG = `connections:
   target:
     type: redis
@@ -46,6 +48,17 @@ export const MOCK_RDI_PIPELINE_JSON_DATA = {
           type: 'redis'
         }
       }
+    }
+  }
+}
+
+export const MOCK_RDI_PIPELINE_STATUS_DATA = {
+  components: { processor: 'ready' },
+  pipelines: {
+    default: {
+      status: PipelineStatus.Starting,
+      state: 'some',
+      tasks: 'none',
     }
   }
 }

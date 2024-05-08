@@ -11,7 +11,7 @@ import testcafe from 'testcafe';
                         experimentalDecorators: true
                     } })
                 .src((process.env.TEST_FILES || 'tests/web/**/*.e2e.ts').split('\n'))
-                .browsers(['chromium --headless=new --cache --allow-insecure-localhost --ignore-certificate-errors'])
+                .browsers(['chromium:headless --cache --allow-insecure-localhost --ignore-certificate-errors'])
                 .screenshots({
                     path: 'report/screenshots/',
                     takeOnFails: true,

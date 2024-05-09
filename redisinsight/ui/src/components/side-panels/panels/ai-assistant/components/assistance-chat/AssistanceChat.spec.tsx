@@ -131,8 +131,9 @@ describe('AssistanceChat', () => {
     fireEvent.click(screen.getByTestId('ai-general-restart-session-btn'))
 
     await waitForEuiPopoverVisible()
-
-    fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
+    })
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,

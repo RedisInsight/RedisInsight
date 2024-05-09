@@ -2,7 +2,7 @@ import { CustomHeaders } from 'uiSrc/constants/api'
 import { isStatusSuccessful } from 'uiSrc/utils'
 import ApiStatusCode from '../../constants/apiStatusCode'
 
-const TIMEOUT_FOR_MESSAGE_REQUEST = 50_000
+const TIMEOUT_FOR_MESSAGE_REQUEST = 30_000
 
 export const getStreamedAnswer = async (
   url: string,

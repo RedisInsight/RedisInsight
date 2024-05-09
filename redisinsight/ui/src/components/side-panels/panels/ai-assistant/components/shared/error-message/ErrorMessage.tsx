@@ -54,7 +54,7 @@ const ErrorMessage = (props: Props) => {
               color="secondary"
               iconType="eraser"
               className={styles.restartSessionBtn}
-              data-testid="ai-general-restart-session-btn"
+              data-testid="ai-chat-error-restart-session-btn"
             >
               Restart session
             </EuiButton>

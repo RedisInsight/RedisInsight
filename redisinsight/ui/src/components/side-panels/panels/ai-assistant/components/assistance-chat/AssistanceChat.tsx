@@ -16,7 +16,7 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
-import { AssistanceChatInitialMessage, ChatHistory, ChatForm } from '../shared'
+import { AssistanceChatInitialMessage, ChatHistory, ChatForm, RestartChat } from '../shared'
 
 import styles from './styles.module.scss'
 
@@ -121,13 +121,17 @@ const AssistanceChat = () => {
     <div className={styles.wrapper} data-testid="ai-general-chat">
       <div className={styles.header}>
         <span />
-        <EuiButtonEmpty
-          disabled={!!inProgressMessage || !messages?.length}
-          iconType="eraser"
-          size="xs"
-          onClick={onClearSession}
-          className={styles.headerBtn}
-          data-testid="ai-general-restart-session-btn"
+        <RestartChat
+          button={(
+            <EuiButtonEmpty
+              disabled={!!inProgressMessage || !messages?.length}
+              iconType="eraser"
+              size="xs"
+              className={styles.headerBtn}
+              data-testid="ai-general-restart-session-btn"
+            />
+          )}
+          onConfirm={onClearSession}
         />
       </div>
       <div className={styles.chatHistory}>

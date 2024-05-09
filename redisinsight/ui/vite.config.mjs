@@ -113,6 +113,7 @@ export default defineConfig({
       RI_SCAN_TREE_COUNT_DEFAULT: '10000',
       RI_APP_TYPE: process.env.RI_APP_TYPE,
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
+      RI_HOSTED_API_BASE_URL: hostedApiBaseUrl,
     },
   },
   // hack: apply proxy path to monaco webworker

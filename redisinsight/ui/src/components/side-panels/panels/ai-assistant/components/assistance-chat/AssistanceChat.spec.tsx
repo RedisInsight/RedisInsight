@@ -1,6 +1,15 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  mockedStoreFn,
+  render,
+  screen,
+  waitForEuiPopoverVisible
+} from 'uiSrc/utils/test-utils'
 
 import {
   aiAssistantChatSelector,
@@ -28,17 +37,17 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
-  store = cloneDeep(mockedStore)
+  store = cloneDeep(mockedStoreFn())
   store.clearActions()
 })
 
 describe('AssistanceChat', () => {
   it('should render', () => {
-    expect(render(<AssistanceChat />)).toBeTruthy()
+    expect(render(<AssistanceChat />, { store })).toBeTruthy()
   })
 
   it('should proper components render by default', () => {
-    render(<AssistanceChat />)
+    render(<AssistanceChat />, { store })
 
     expect(screen.getByTestId('ai-general-restart-session-btn')).toBeInTheDocument()
     expect(screen.getByTestId('ai-chat-empty-history')).toBeInTheDocument()
@@ -46,7 +55,7 @@ describe('AssistanceChat', () => {
   })
 
   it('should call proper actions by default', () => {
-    render(<AssistanceChat />)
+    render(<AssistanceChat />, { store })
 
     expect(store.getActions()).toEqual([])
   })
@@ -56,7 +65,7 @@ describe('AssistanceChat', () => {
       id: '1',
       messages: []
     })
-    render(<AssistanceChat />)
+    render(<AssistanceChat />, { store })
 
     expect(store.getActions()).toEqual([getAssistantChatHistory()])
   })
@@ -66,7 +75,7 @@ describe('AssistanceChat', () => {
       id: '',
       messages: []
     })
-    render(<AssistanceChat />)
+    render(<AssistanceChat />, { store })
 
     act(() => {
       fireEvent.change(
@@ -88,7 +97,7 @@ describe('AssistanceChat', () => {
       id: '1',
       messages: []
     })
-    render(<AssistanceChat />)
+    render(<AssistanceChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 
@@ -124,7 +133,7 @@ describe('AssistanceChat', () => {
       messages: [{}]
     })
 
-    render(<AssistanceChat />)
+    render(<AssistanceChat />, { store })
 
     const afterRenderActions = [...store.getActions()]
 

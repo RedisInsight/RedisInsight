@@ -44,7 +44,7 @@ test('Verify that user can access the bulk actions screen in the Browser', async
     // Verify that user can hover over info icon in Bulk Delete preview and see info about accuracy of the calculation
     const tooltipText = 'Expected amount is estimated based on the number of keys scanned and the scan percentage. The final number may be different.';
     await t.hover(browserPage.BulkActions.bulkDeleteTooltipIcon);
-    await t.expect(browserPage.tooltip.textContent).eql(tooltipText, 'Tooltip is not displayed or text is invalid');
+    await t.expect(browserPage.tooltip.innerText).eql(tooltipText, 'Tooltip is not displayed or text is invalid');
     // Verify that user can see warning message clicking on Delete button for Bulk Deletion
     const warningTooltipTitle = 'Are you sure you want to perform this action?';
     const warningTooltipMessage = 'All keys with HASH key type and selected pattern will be deleted.';

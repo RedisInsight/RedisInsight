@@ -100,4 +100,14 @@ export class RdiPipelineController {
   ): Promise<unknown> {
     return this.rdiPipelineService.getTemplate(rdiClientMetadata, options);
   }
+
+  @Get('/status')
+  @ApiEndpoint({
+    description: 'Get pipeline status',
+  })
+  async getPipelineStatus(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<unknown> {
+    return this.rdiPipelineService.getPipelineStatus(rdiClientMetadata);
+  }
 }

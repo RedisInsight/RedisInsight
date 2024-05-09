@@ -54,9 +54,7 @@ test
         await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
         // Verify that user can see total number of keys and number of keys in current logical database
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-        await browserActions.verifyTooltipContainsText(`${keysAmount + 1}`, true);
-        await browserActions.verifyTooltipContainsText(`Total Keys`, true);
-        await browserActions.verifyTooltipContainsText(`db1:${keysAmount}Keys`, true);
+        await browserActions.verifyTooltipContainsText(`${keysAmount + 1}\nTotal Keys\ndb1:\n${keysAmount}\nKeys`, true);
 
         // Open Database
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
@@ -64,8 +62,7 @@ test
         await t.hover(workbenchPage.OverviewPanel.overviewTotalKeys);
         // Verify that user can see total number of keys and not it current logical database (if there are no any keys in other logical DBs)
         await t.expect(browserPage.tooltip.visible).ok('Total keys tooltip not displayed');
-        await browserActions.verifyTooltipContainsText(`${keysAmount + 1}`, true);
-        await browserActions.verifyTooltipContainsText(`Total Keys`, true);
+        await browserActions.verifyTooltipContainsText(`${keysAmount + 1}\nTotal Keys`, true);
         await browserActions.verifyTooltipContainsText('db1', false);
     });
 test

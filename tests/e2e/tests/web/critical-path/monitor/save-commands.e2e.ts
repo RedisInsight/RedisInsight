@@ -41,7 +41,7 @@ test('Verify that user can see a tooltip and toggle that allows to save Profiler
     await t.hover(browserPage.Profiler.saveLogSwitchButton);
     for (const message of toolTip) {
         await t.click(browserPage.Profiler.saveLogSwitchButton);
-        await t.expect(browserPage.Profiler.saveLogToolTip.textContent).contains(message, 'The toolTip for save log in Profiler is not displayed');
+        await t.expect(browserPage.Profiler.saveLogToolTip.innerText).contains(message, 'The toolTip for save log in Profiler is not displayed');
     }
     // Check toggle state
     await t.expect(browserPage.Profiler.saveLogSwitchButton.getAttribute('aria-checked')).eql('false', 'The toggle state is not OFF when Profiler opened');

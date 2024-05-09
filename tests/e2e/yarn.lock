@@ -1086,6 +1086,13 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@babel/runtime@^7.24.1":
+  version "7.24.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.24.5.tgz#230946857c053a36ccc66e1dd03b17dd0c4ed02c"
+  integrity sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
 "@babel/template@^7.22.15", "@babel/template@^7.23.9":
   version "7.23.9"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.23.9.tgz#f881d0487cba2828d3259dcb9ef5005a9731011a"
@@ -1775,14 +1782,6 @@ babel-plugin-syntax-trailing-function-commas@^6.22.0:
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-6.22.0.tgz#ba0360937f8d06e40180a43fe0d5616fff532cf3"
   integrity sha512-Gx9CH3Q/3GKbhs07Bszw5fPTlU+ygrOGfAhEt7W2JICwufpC4SuO0mG0+4NykPBSYPMJhqvVlDBU17qB1D+hMQ==
 
-babel-runtime@^6.25.0:
-  version "6.26.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
-  integrity sha512-ITKNuq2wKlW1fJg9sSW52eepoYgZBggvOAHC0u/CYu/qxQ9EVzThCgR69BnSXLHjy2f7SY5zaQ4yt7H9ZVxY2g==
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.11.0"
-
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
@@ -2097,11 +2096,6 @@ core-js-compat@^3.31.0, core-js-compat@^3.33.1, core-js-compat@^3.34.0:
   integrity sha512-iV9Pd/PsgjNWBXeq8XRtWVSgz2tKAfhfvBs7qxYty+RlRd+OCksaWmOnc4JKrTc1cToXL1N0s3l/vwlxPtdElw==
   dependencies:
     browserslist "^4.22.3"
-
-core-js@^2.4.0:
-  version "2.6.12"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
-  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 core-util-is@~1.0.0:
   version "1.0.3"
@@ -2620,13 +2614,6 @@ eslint@7.32.0:
     table "^6.0.9"
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
-
-esotope-hammerhead@0.6.7:
-  version "0.6.7"
-  resolved "https://registry.yarnpkg.com/esotope-hammerhead/-/esotope-hammerhead-0.6.7.tgz#0ef43e8bb3e14b7ddc51ac0f46f213fda88807a3"
-  integrity sha512-nejJRHWvdoymlWnAXJGm8qfaK1hQ7NiMnTQzMSHPUzBrY7Nogu8O0Q6/HcY8AvY58pkkq2loto7oDDZ0zXYQcg==
-  dependencies:
-    "@types/estree" "0.0.46"
 
 esotope-hammerhead@0.6.8:
   version "0.6.8"
@@ -3484,11 +3471,6 @@ is-glob@^4.0.0, is-glob@^4.0.1:
   integrity sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==
   dependencies:
     is-extglob "^2.1.1"
-
-is-jquery-obj@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/is-jquery-obj/-/is-jquery-obj-0.1.1.tgz#e8d9cc9737b1ab0733b50303e33a38ed7cc2f60b"
-  integrity sha512-18toSebUVF7y717dgw/Dzn6djOCqrkiDp3MhB8P6TdKyCVkbD1ZwE7Uz8Hwx6hUPTvKjbyYH9ncXT4ts4qLaSA==
 
 is-lambda@^1.0.1:
   version "1.0.1"
@@ -4725,11 +4707,6 @@ regenerate@^1.4.2:
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
 
-regenerator-runtime@^0.11.0:
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.11.1.tgz#be05ad7f9bf7d22e056f9726cee5017fbf19e2e9"
-  integrity sha512-MguG95oij0fC3QV3URf4V2SDYGJhJnJGqvIIgdECeODCT98wSWDAJ94SSuVpYQUoTcGUIL6L4yNB7j1DFFHSBg==
-
 regenerator-runtime@^0.14.0:
   version "0.14.1"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.14.1.tgz#356ade10263f685dda125100cd862c1db895327f"
@@ -5254,12 +5231,12 @@ tar@^6.0.2, tar@^6.1.11, tar@^6.1.2:
     mkdirp "^1.0.3"
     yallist "^4.0.0"
 
-testcafe-browser-provider-electron@0.0.20:
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/testcafe-browser-provider-electron/-/testcafe-browser-provider-electron-0.0.20.tgz#3600b38f4f558159aa454eec005ed67f94dc456b"
-  integrity sha512-UN9HLZg5zPeHpJC8iuq7M0q1XpQ9uLl7+6fmYtpZoSpsK8evc1eCSWQmsOK3I193sYho4rW+OBRlwo2ql6JqaA==
+testcafe-browser-provider-electron@0.0.21:
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/testcafe-browser-provider-electron/-/testcafe-browser-provider-electron-0.0.21.tgz#9a85322b638347aa2c99364fb3b45103b1537436"
+  integrity sha512-HL1NuyfZX+KGUuU1E8g96AXpUzTRJcfgwGEC8DO+xzK3xW4ROqp+zbOiSXexbSzXwtDbpiSwn7818BP2QoBX9Q==
   dependencies:
-    babel-runtime "^6.25.0"
+    "@babel/runtime" "^7.24.1"
     chrome-remote-interface "^0.31.3"
     debug "4.3.1"
     dedent "^0.7.0"
@@ -5296,38 +5273,7 @@ testcafe-browser-tools@2.0.26:
     read-file-relative "^1.2.0"
     which-promise "^1.0.0"
 
-testcafe-hammerhead@31.7.0:
-  version "31.7.0"
-  resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.7.0.tgz#59b6172d3446233b4be7ef10e19e3bebddce52b7"
-  integrity sha512-80pF5RweoJKbsTgzroXXJAFbR2kkxa5SYVIOZyMICXdgI/JQz7GBcF7mEb4Uwq1+M9Pa9k8QDaO1v5xyDse9BQ==
-  dependencies:
-    "@adobe/css-tools" "^4.3.0-rc.1"
-    "@electron/asar" "^3.2.3"
-    acorn-hammerhead "0.6.2"
-    bowser "1.6.0"
-    crypto-md5 "^1.0.0"
-    debug "4.3.1"
-    esotope-hammerhead "0.6.7"
-    http-cache-semantics "^4.1.0"
-    httpntlm "^1.8.10"
-    iconv-lite "0.5.1"
-    lodash "^4.17.21"
-    lru-cache "2.6.3"
-    match-url-wildcard "0.0.4"
-    merge-stream "^1.0.1"
-    mime "~1.4.1"
-    mustache "^2.1.1"
-    nanoid "^3.1.12"
-    os-family "^1.0.0"
-    parse5 "^7.1.2"
-    pinkie "2.0.4"
-    read-file-relative "^1.2.0"
-    semver "7.5.3"
-    tough-cookie "4.1.3"
-    tunnel-agent "0.6.0"
-    ws "^7.4.6"
-
-testcafe-hammerhead@>=19.4.0:
+testcafe-hammerhead@31.7.1, testcafe-hammerhead@>=19.4.0:
   version "31.7.1"
   resolved "https://registry.yarnpkg.com/testcafe-hammerhead/-/testcafe-hammerhead-31.7.1.tgz#08e52d16d1cbdbe9dc38069e0315f654b828fc00"
   integrity sha512-H162ruxCc0wIAkoVky7aQyEntiA6Np8OcWzOx0/2cSPY6BARFdFNd3spu2TB2j3qcpFIZ233IpEx+2sY+VFbjg==
@@ -5358,15 +5304,14 @@ testcafe-hammerhead@>=19.4.0:
     tunnel-agent "0.6.0"
     ws "^7.4.6"
 
-testcafe-legacy-api@5.1.6:
-  version "5.1.6"
-  resolved "https://registry.yarnpkg.com/testcafe-legacy-api/-/testcafe-legacy-api-5.1.6.tgz#157b29902153cc086649f91960a4e45694481f50"
-  integrity sha512-Q451IdSUX1NmRfE8kzIcEeoqbUlLaMv2fwVNgQOBEFmA5E57c3jsIpLDTDqv6FPcNwdNMYIZMiB6tzlXB5wf1g==
+testcafe-legacy-api@5.1.8:
+  version "5.1.8"
+  resolved "https://registry.yarnpkg.com/testcafe-legacy-api/-/testcafe-legacy-api-5.1.8.tgz#fc02eaa45293eb69c036c0e7af5a0b9a51640fcb"
+  integrity sha512-Jp/8xPQ+tjr2iS569Og8fFRaSx/7h/N/t6DVzhWpVNO3D5AtPkGmSjCAABh7tHkUwrKfBI7sLuVaxekiT5PWTA==
   dependencies:
     async "3.2.3"
     dedent "^0.6.0"
     highlight-es "^1.0.0"
-    is-jquery-obj "^0.1.0"
     lodash "^4.14.0"
     moment "^2.14.1"
     mustache "^2.2.1"
@@ -5418,10 +5363,10 @@ testcafe-selector-generator@^0.1.0:
   resolved "https://registry.yarnpkg.com/testcafe-selector-generator/-/testcafe-selector-generator-0.1.0.tgz#852c86f71565e5d9320da625c2260d040cbed786"
   integrity sha512-MTw+RigHsEYmFgzUFNErDxui1nTYUk6nm2bmfacQiKPdhJ9AHW/wue4J/l44mhN8x3E8NgOUkHHOI+1TDFXiLQ==
 
-testcafe@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-3.5.0.tgz#0dd656215e917871f2e7f3b9548a9a297b0f46eb"
-  integrity sha512-EFy3mMMPpmWzkY35X3JDnQw/GNkw2sW90957t3eMj5zmspwu5FBlkEHRNm2SkmcQWHQTcpp0VZ5HXzVSEHvr6w==
+testcafe@3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-3.6.0.tgz#c1e63883d1d920330174996202bad8d93569b038"
+  integrity sha512-GrCw4udtrTpAUokzasI2FCRDCXiB6uhBs8BGpRffNrVUvlRFYeF9zjIShuDGf8vvRsOsv3+ZXvq5CGvVAmiuzQ==
   dependencies:
     "@babel/core" "^7.23.2"
     "@babel/plugin-proposal-async-generator-functions" "^7.20.7"
@@ -5504,8 +5449,8 @@ testcafe@3.5.0:
     source-map-support "^0.5.16"
     strip-bom "^2.0.0"
     testcafe-browser-tools "2.0.26"
-    testcafe-hammerhead "31.7.0"
-    testcafe-legacy-api "5.1.6"
+    testcafe-hammerhead "31.7.1"
+    testcafe-legacy-api "5.1.8"
     testcafe-reporter-json "^2.1.0"
     testcafe-reporter-list "^2.2.0"
     testcafe-reporter-minimal "^2.2.0"

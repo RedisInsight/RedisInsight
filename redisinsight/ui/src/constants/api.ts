@@ -151,6 +151,7 @@ enum ApiEndpoints {
   RDI_PIPELINE_STRATEGIES = 'pipeline/strategies',
   RDI_PIPELINE_TEMPLATE = 'pipeline/template',
   RDI_STATISTICS = 'statistics',
+  RDI_PIPELINE_STATUS = 'pipeline/status',
 }
 
 export enum CustomHeaders {

@@ -38,8 +38,8 @@ export class RdiPipelineService {
       this.logger.error('Failed to get RDI pipeline', e);
 
       this.analytics.sendRdiPipelineFetchFailed(e, rdiClientMetadata.id);
+      throw wrapHttpError(e);
     }
-
   }
 
   async dryRunJob(rdiClientMetadata: RdiClientMetadata, dto: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
@@ -90,5 +90,13 @@ export class RdiPipelineService {
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
     return await client.getTemplate(options);
+  }
+
+  async getPipelineStatus(rdiClientMetadata: RdiClientMetadata): Promise<unknown> {
+    this.logger.log('Getting RDI pipeline status');
+
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.getPipelineStatus();
   }
 }

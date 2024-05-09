@@ -1,5 +1,5 @@
 import { isString } from 'lodash'
-import { EuiToolTip } from '@elastic/eui'
+import { EuiBadge, EuiToolTip } from '@elastic/eui'
 import { ToolTipPositions } from '@elastic/eui/src/components/tool_tip/tool_tip'
 import cx from 'classnames'
 import React from 'react'
@@ -39,6 +39,13 @@ const HighlightedFeature = (props: Props) => {
 
   const innerContent = hideFirstChild && !isString(children) ? children.props.children : children
 
+  const BadgeHighlighting = () => (
+    <>
+      {innerContent}
+      <EuiBadge className={styles.badge} data-testid="badge-highlighting">New!</EuiBadge>
+    </>
+  )
+
   const DotHighlighting = () => (
     <>
       {innerContent}
@@ -59,6 +66,19 @@ const HighlightedFeature = (props: Props) => {
     </EuiToolTip>
   )
 
+  const TooltipBadgeHighlighting = () => (
+    <EuiToolTip
+      title={title}
+      content={content}
+      position={tooltipPosition || 'bottom'}
+      data-testid="tooltip-badge-highlighting"
+    >
+      <div className={styles.badgeContainer} data-testid="tooltip-badge-highlighting-inner">
+        <BadgeHighlighting />
+      </div>
+    </EuiToolTip>
+  )
+
   if (type === 'dialog') {
     return !isHighlight ? null : (<>{children}</>)
   }
@@ -75,6 +95,7 @@ const HighlightedFeature = (props: Props) => {
       {type === 'plain' && (<DotHighlighting />)}
       {type === 'tooltip' && (<TooltipHighlighting />)}
       {type === 'popover' && (<DotHighlighting />)}
+      {type === 'tooltip-badge' && (<TooltipBadgeHighlighting />)}
     </div>
   )
 }

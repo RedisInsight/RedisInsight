@@ -12,7 +12,13 @@ import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
-const LoadSampleData = () => {
+export interface Props {
+  anchorClassName?: string
+  onSuccess?: () => void
+}
+
+const LoadSampleData = (props: Props) => {
+  const { anchorClassName, onSuccess } = props
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
 
   const { id } = useSelector(connectedInstanceSelector)
@@ -21,26 +27,29 @@ const LoadSampleData = () => {
 
   const dispatch = useDispatch()
 
+  const onSuccessImport = () => {
+    if (onSuccess) {
+      onSuccess()
+      return
+    }
+
+    if (viewType === KeyViewType.Browser) {
+      dispatch(changeKeyViewType(KeyViewType.Tree))
+    }
+
+    dispatch(fetchKeys({
+      searchMode: SearchMode.Pattern,
+      cursor: '0',
+      count: SCAN_TREE_COUNT_DEFAULT
+    }))
+  }
+
   const handleSampleData = () => {
     setIsConfirmationOpen(false)
-    dispatch(
-      bulkImportDefaultDataAction(
-        id,
-        () => {
-          if (viewType === KeyViewType.Browser) {
-            dispatch(changeKeyViewType(KeyViewType.Tree))
-          }
-          dispatch(fetchKeys({
-            searchMode: SearchMode.Pattern,
-            cursor: '0',
-            count: SCAN_TREE_COUNT_DEFAULT
-          }))
-        }
-      )
-    )
+    dispatch(bulkImportDefaultDataAction(id, onSuccessImport))
 
     sendEventTelemetry({
-      event: TelemetryEvent.BROWSER_IMPORT_SAMPLES_CLICKED,
+      event: TelemetryEvent.IMPORT_SAMPLES_CLICKED,
       eventData: {
         databaseId: id
       }
@@ -57,7 +66,7 @@ const LoadSampleData = () => {
       closePopover={() => setIsConfirmationOpen(false)}
       panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
       panelPaddingSize="none"
-      anchorClassName={styles.buttonWrapper}
+      anchorClassName={cx(styles.buttonWrapper, anchorClassName)}
       button={(
         <EuiButton
           fill

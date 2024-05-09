@@ -14,6 +14,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
+import NoIndexesInitialMessage from './components/no-indexes-initial-message'
 import ExpertChatHeader from './components/expert-chat-header'
 import { ChatForm, ChatHistory, ExpertChatInitialMessage } from '../shared'
 
@@ -26,6 +28,8 @@ const ExpertChat = () => {
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
+  const [isNoIndexes, setIsNoIndexes] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
 
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
@@ -35,8 +39,12 @@ const ExpertChat = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    if (!instanceId) {
+      return
+    }
+
     // changed account
-    if (instanceId && currentAccountIdRef.current !== userOAuthProfile?.id) {
+    if (currentAccountIdRef.current !== userOAuthProfile?.id) {
       currentAccountIdRef.current = userOAuthProfile?.id
       dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
       return
@@ -47,10 +55,30 @@ const ExpertChat = () => {
       return
     }
 
-    if (instanceId) {
-      dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
-    }
+    dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
   }, [instanceId, userOAuthProfile])
+
+  useEffect(() => {
+    if (!instanceId) return
+    if (!isRedisearchAvailable(modules)) return
+    if (messages.length) return
+
+    getIndexes()
+  }, [instanceId, modules])
+
+  const getIndexes = () => {
+    setIsLoading(true)
+    dispatch(
+      fetchRedisearchListAction(
+        (indexes) => {
+          setIsLoading(false)
+          setIsNoIndexes(!indexes.length)
+        },
+        () => setIsLoading(false),
+        false
+      )
+    )
+  }
 
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom()
@@ -148,9 +176,11 @@ const ExpertChat = () => {
       />
       <div className={styles.chatHistory}>
         <ChatHistory
-          isLoading={loading}
+          isLoading={loading || isLoading}
           modules={modules}
-          initialMessage={ExpertChatInitialMessage}
+          initialMessage={isNoIndexes
+            ? <NoIndexesInitialMessage onSuccess={getIndexes} />
+            : ExpertChatInitialMessage}
           inProgressMessage={inProgressMessage}
           history={messages}
           scrollDivRef={scrollDivRef}

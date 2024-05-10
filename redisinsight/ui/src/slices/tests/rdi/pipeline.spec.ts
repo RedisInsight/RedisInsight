@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { AnyAction } from '@reduxjs/toolkit'
 import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JSON_DATA } from 'uiSrc/mocks/data/rdi'
+import { MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JSON_DATA, MOCK_RDI_PIPELINE_STATUS_DATA } from 'uiSrc/mocks/data/rdi'
 import reducer, {
   initialState,
   getPipeline,
@@ -19,14 +19,19 @@ import reducer, {
   setChangedFile,
   setChangedFiles,
   deleteChangedFile,
+  getPipelineStatus,
+  getPipelineStatusSuccess,
+  getPipelineStatusFailure,
   fetchRdiPipeline,
   deployPipelineAction,
-  rdiPipelineSelector,
   fetchRdiPipelineSchema,
   fetchPipelineStrategies,
   fetchPipelineTemplate,
   setJobFunctions,
   fetchRdiPipelineJobFunctions,
+  getPipelineStatusAction,
+  rdiPipelineSelector,
+  rdiPipelineStatusSelector,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
@@ -382,6 +387,74 @@ describe('rdi pipe slice', () => {
     })
   })
 
+
+  describe('getPipelineStatus', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.status,
+        loading: true,
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPipelineStatus())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStatusSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPipelineStatusSuccess', () => {
+    it('should proper data', () => {
+      const data = MOCK_RDI_PIPELINE_STATUS_DATA
+      // Arrange
+      const state = {
+        ...initialState.status,
+        loading: false,
+        data,
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPipelineStatusSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStatusSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('getPipelineStatusFailure', () => {
+    it('should set error', () => {
+      const error = 'some error'
+      // Arrange
+      const state = {
+        ...initialState.status,
+        loading: false,
+        error,
+      }
+
+      // Act
+      const nextState = reducer(initialState, getPipelineStatusFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStatusSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('thunks', () => {
     describe('fetchRdiPipeline', () => {
@@ -435,7 +508,7 @@ describe('rdi pipe slice', () => {
 
     describe('deployPipelineAction', () => {
       it('succeed to post data', async () => {
-        const mockData = { config: 'string', jobs: [] }
+        const mockData = { config: {}, jobs: [] }
         const responsePayload = { status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -456,7 +529,7 @@ describe('rdi pipe slice', () => {
       })
 
       it('failed to post data', async () => {
-        const mockData = { config: 'string', jobs: [] }
+        const mockData = { config: {}, jobs: [] }
         const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
@@ -637,6 +710,53 @@ describe('rdi pipe slice', () => {
         // Assert
         const expectedActions = [
           addErrorNotification(responsePayload as AxiosError),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('getPipelineStatusAction', () => {
+      it('succeed to fetch data', async () => {
+        const data = MOCK_RDI_PIPELINE_STATUS_DATA
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          getPipelineStatusAction('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          getPipelineStatus(),
+          getPipelineStatusSuccess(MOCK_RDI_PIPELINE_STATUS_DATA),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          getPipelineStatusAction('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          getPipelineStatus(),
+          getPipelineStatusFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

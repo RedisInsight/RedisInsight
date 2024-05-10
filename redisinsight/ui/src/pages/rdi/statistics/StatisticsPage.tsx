@@ -1,16 +1,17 @@
-import { isEmpty } from 'lodash'
+import { get } from 'lodash'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
 import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import RdiInstancePageTemplate from 'uiSrc/templates/rdi-instance-page-template'
-import { formatLongName, setTitle } from 'uiSrc/utils'
+import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
+import { IPipelineStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -20,15 +21,22 @@ import TargetConnections from './target-connections'
 
 import styles from './styles.module.scss'
 
+const isPipelineDeployed = (data: Nullable<IPipelineStatus>) => {
+  if (!data) {
+    return false
+  }
+
+  return get(data, 'pipelines.default.status') === PipelineStatus.Ready
+}
+
 const StatisticsPage = () => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
 
-  const { data: pipelineData } = useSelector(rdiPipelineSelector)
   const { loading: isStatisticsLoading, results: statisticsResults } = useSelector(rdiStatisticsSelector)
   const { name: connectedRdiInstanceName } = useSelector(connectedInstanceSelector)
-
+  const { data: statusData } = useSelector(rdiPipelineStatusSelector)
   const rdiInstanceName = formatLongName(connectedRdiInstanceName, 33, 0, '...')
   setTitle(`${rdiInstanceName} - Pipeline Status`)
 
@@ -83,7 +91,8 @@ const StatisticsPage = () => {
     <RdiInstancePageTemplate>
       <div className={styles.pageContainer}>
         <div className={styles.bodyContainer}>
-          {isEmpty(pipelineData) ? ( // TODO: Check with RDI team on what an empty pipeline looks like
+          {!isPipelineDeployed(statusData) ? (
+            // TODO add loader
             <Empty rdiInstanceId={rdiInstanceId} />
           ) : (
             <>

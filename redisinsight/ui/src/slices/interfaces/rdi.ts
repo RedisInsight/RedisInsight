@@ -146,6 +146,28 @@ export enum FileChangeType {
   Modified = 'modified',
   Removed = 'removed',
 }
+
+export enum PipelineStatus {
+  Validating = 'validating',
+  Starting = 'starting',
+  Stopping = 'stopping',
+  Resetting = 'resetting',
+  Ready = 'ready',
+  NotReady = 'not-ready',
+  Stopped = 'stopped',
+}
+
+export interface IPipelineStatus {
+  components: Record<string, unknown>
+  pipelines: {
+    defaults: {
+      status: PipelineStatus
+      state: unknown
+      tasks: unknown
+    }
+  }
+}
+
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
@@ -154,6 +176,11 @@ export interface IStateRdiPipeline {
   strategies: IRdiPipelineStrategies
   changes: Record<string, FileChangeType>
   jobFunctions: IStateJobFunction[]
+  status: {
+    loading: boolean
+    error: string
+    data: Nullable<IPipelineStatus>
+  }
 }
 
 export interface IStateRdiDryRunJob {

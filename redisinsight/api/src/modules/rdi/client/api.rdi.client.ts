@@ -66,34 +66,15 @@ export class ApiRdiClient extends RdiClient {
     return response.data;
   }
 
-  async getDryRunJobTransformations(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
-    try {
-      const transformations = await this.client.post(RdiUrl.DryRunJob, {
-        input: data.input,
-        job: data.job,
-        test_output: false,
-      });
-      return { status: RdiDyRunJobStatus.Success, data: transformations.data };
-    } catch (e) {
-      return { status: RdiDyRunJobStatus.Fail, error: e.message };
-    }
-  }
-
-  async getDryRunJobCommands(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult> {
-    try {
-      const commands = await this.client.post(RdiUrl.DryRunJob, {
-        input: data.input,
-        job: data.job,
-        test_output: true,
-      });
-      return { status: RdiDyRunJobStatus.Success, data: commands.data };
-    } catch (e) {
-      return { status: RdiDyRunJobStatus.Fail, error: e.message };
-    }
-  }
-
   async testConnections(config: string): Promise<RdiTestConnectionResult> {
-    const response = await this.client.post(RdiUrl.TestConnections, { config });
+    const response = await this.client.post(RdiUrl.TestConnections, config);
+
+    return response.data;
+  }
+
+  async getPipelineStatus(): Promise<any> {
+    const response = await this.client.get(RdiUrl.GetPipelineStatus);
+
     return response.data;
   }
 

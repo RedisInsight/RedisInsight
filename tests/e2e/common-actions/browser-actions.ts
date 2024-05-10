@@ -37,8 +37,8 @@ export class BrowserActions {
      */
     async verifyTooltipContainsText(expectedText: string, contains: boolean): Promise<void> {
         contains
-            ? await t.expect(browserPage.tooltip.textContent).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`)
-            : await t.expect(browserPage.tooltip.textContent).notContains(expectedText, `Tooltip still contains text "${expectedText}"`);
+            ? await t.expect(browserPage.tooltip.innerText).contains(expectedText, `"${expectedText}" Text is incorrect in tooltip`)
+            : await t.expect(browserPage.tooltip.innerText).notContains(expectedText, `Tooltip still contains text "${expectedText}"`);
     }
 
     /**

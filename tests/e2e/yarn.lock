@@ -1169,10 +1169,17 @@
   resolved "https://registry.npmjs.org/@babel/regjsgen/-/regjsgen-0.8.0.tgz"
   integrity sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==
 
-"@babel/runtime@^7.23.2", "@babel/runtime@^7.24.1":
+"@babel/runtime@^7.23.2":
   version "7.24.4"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.24.4.tgz"
   integrity sha512-dkxf7+hn8mFBwKjs9bvBlArzLVxVbS8usaPUDd5p2a9JCL9tB8OaOVN1isD4+Xyk4ns89/xeOmbQvgdK7IIVdA==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
+"@babel/runtime@^7.24.1":
+  version "7.24.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.24.5.tgz#230946857c053a36ccc66e1dd03b17dd0c4ed02c"
+  integrity sha512-Nms86NXrsaeU9vbBJKni6gXiEXZ4CVpYVzEjDH9Sb8vmZ3UljyA1GSOJl/6LGPO8EHLuSF9H+IxNXHPX8QHJ4g==
   dependencies:
     regenerator-runtime "^0.14.0"
 
@@ -2866,13 +2873,6 @@ eslint@7.32.0:
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
 
-esotope-hammerhead@0.6.7:
-  version "0.6.7"
-  resolved "https://registry.npmjs.org/esotope-hammerhead/-/esotope-hammerhead-0.6.7.tgz"
-  integrity sha512-nejJRHWvdoymlWnAXJGm8qfaK1hQ7NiMnTQzMSHPUzBrY7Nogu8O0Q6/HcY8AvY58pkkq2loto7oDDZ0zXYQcg==
-  dependencies:
-    "@types/estree" "0.0.46"
-
 esotope-hammerhead@0.6.8:
   version "0.6.8"
   resolved "https://registry.npmjs.org/esotope-hammerhead/-/esotope-hammerhead-0.6.8.tgz"
@@ -3796,11 +3796,6 @@ is-glob@^4.0.0, is-glob@^4.0.1:
   integrity sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==
   dependencies:
     is-extglob "^2.1.1"
-
-is-jquery-obj@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.npmjs.org/is-jquery-obj/-/is-jquery-obj-0.1.1.tgz"
-  integrity sha512-18toSebUVF7y717dgw/Dzn6djOCqrkiDp3MhB8P6TdKyCVkbD1ZwE7Uz8Hwx6hUPTvKjbyYH9ncXT4ts4qLaSA==
 
 is-lambda@^1.0.1:
   version "1.0.1"
@@ -5775,38 +5770,7 @@ testcafe-browser-tools@2.0.26:
     read-file-relative "^1.2.0"
     which-promise "^1.0.0"
 
-testcafe-hammerhead@31.7.0:
-  version "31.7.0"
-  resolved "https://registry.npmjs.org/testcafe-hammerhead/-/testcafe-hammerhead-31.7.0.tgz"
-  integrity sha512-80pF5RweoJKbsTgzroXXJAFbR2kkxa5SYVIOZyMICXdgI/JQz7GBcF7mEb4Uwq1+M9Pa9k8QDaO1v5xyDse9BQ==
-  dependencies:
-    "@adobe/css-tools" "^4.3.0-rc.1"
-    "@electron/asar" "^3.2.3"
-    acorn-hammerhead "0.6.2"
-    bowser "1.6.0"
-    crypto-md5 "^1.0.0"
-    debug "4.3.1"
-    esotope-hammerhead "0.6.7"
-    http-cache-semantics "^4.1.0"
-    httpntlm "^1.8.10"
-    iconv-lite "0.5.1"
-    lodash "^4.17.21"
-    lru-cache "2.6.3"
-    match-url-wildcard "0.0.4"
-    merge-stream "^1.0.1"
-    mime "~1.4.1"
-    mustache "^2.1.1"
-    nanoid "^3.1.12"
-    os-family "^1.0.0"
-    parse5 "^7.1.2"
-    pinkie "2.0.4"
-    read-file-relative "^1.2.0"
-    semver "7.5.3"
-    tough-cookie "4.1.3"
-    tunnel-agent "0.6.0"
-    ws "^7.4.6"
-
-testcafe-hammerhead@>=19.4.0:
+testcafe-hammerhead@31.7.1, testcafe-hammerhead@>=19.4.0:
   version "31.7.1"
   resolved "https://registry.npmjs.org/testcafe-hammerhead/-/testcafe-hammerhead-31.7.1.tgz"
   integrity sha512-H162ruxCc0wIAkoVky7aQyEntiA6Np8OcWzOx0/2cSPY6BARFdFNd3spu2TB2j3qcpFIZ233IpEx+2sY+VFbjg==
@@ -5837,15 +5801,14 @@ testcafe-hammerhead@>=19.4.0:
     tunnel-agent "0.6.0"
     ws "^7.4.6"
 
-testcafe-legacy-api@5.1.6:
-  version "5.1.6"
-  resolved "https://registry.npmjs.org/testcafe-legacy-api/-/testcafe-legacy-api-5.1.6.tgz"
-  integrity sha512-Q451IdSUX1NmRfE8kzIcEeoqbUlLaMv2fwVNgQOBEFmA5E57c3jsIpLDTDqv6FPcNwdNMYIZMiB6tzlXB5wf1g==
+testcafe-legacy-api@5.1.8:
+  version "5.1.8"
+  resolved "https://registry.yarnpkg.com/testcafe-legacy-api/-/testcafe-legacy-api-5.1.8.tgz#fc02eaa45293eb69c036c0e7af5a0b9a51640fcb"
+  integrity sha512-Jp/8xPQ+tjr2iS569Og8fFRaSx/7h/N/t6DVzhWpVNO3D5AtPkGmSjCAABh7tHkUwrKfBI7sLuVaxekiT5PWTA==
   dependencies:
     async "3.2.3"
     dedent "^0.6.0"
     highlight-es "^1.0.0"
-    is-jquery-obj "^0.1.0"
     lodash "^4.14.0"
     moment "^2.14.1"
     mustache "^2.2.1"
@@ -5897,10 +5860,10 @@ testcafe-selector-generator@^0.1.0:
   resolved "https://registry.npmjs.org/testcafe-selector-generator/-/testcafe-selector-generator-0.1.0.tgz"
   integrity sha512-MTw+RigHsEYmFgzUFNErDxui1nTYUk6nm2bmfacQiKPdhJ9AHW/wue4J/l44mhN8x3E8NgOUkHHOI+1TDFXiLQ==
 
-testcafe@3.5.0:
-  version "3.5.0"
-  resolved "https://registry.npmjs.org/testcafe/-/testcafe-3.5.0.tgz"
-  integrity sha512-EFy3mMMPpmWzkY35X3JDnQw/GNkw2sW90957t3eMj5zmspwu5FBlkEHRNm2SkmcQWHQTcpp0VZ5HXzVSEHvr6w==
+testcafe@3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/testcafe/-/testcafe-3.6.0.tgz#c1e63883d1d920330174996202bad8d93569b038"
+  integrity sha512-GrCw4udtrTpAUokzasI2FCRDCXiB6uhBs8BGpRffNrVUvlRFYeF9zjIShuDGf8vvRsOsv3+ZXvq5CGvVAmiuzQ==
   dependencies:
     "@babel/core" "^7.23.2"
     "@babel/plugin-proposal-async-generator-functions" "^7.20.7"
@@ -5983,8 +5946,8 @@ testcafe@3.5.0:
     source-map-support "^0.5.16"
     strip-bom "^2.0.0"
     testcafe-browser-tools "2.0.26"
-    testcafe-hammerhead "31.7.0"
-    testcafe-legacy-api "5.1.6"
+    testcafe-hammerhead "31.7.1"
+    testcafe-legacy-api "5.1.8"
     testcafe-reporter-json "^2.1.0"
     testcafe-reporter-list "^2.2.0"
     testcafe-reporter-minimal "^2.2.0"

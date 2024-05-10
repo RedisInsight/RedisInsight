@@ -20,8 +20,8 @@ Redis Insight is an intuitive and efficient GUI for Redis, allowing you to inter
 ### Redis Insight Highlights:
 
 * Browse, filter, visualise your key-value Redis data structures and see key values in different formats (including JSON, Hex, ASCII, etc.)
-* CRUD support for Lists, Hashes, Strings, Sets, Sorted Sets, and Streams
-* CRUD support for [RedisJSON](https://redis.io/json/)
+* CRUD support for lists, hashes, strings, sets, sorted sets, and streams
+* CRUD support for [JSON](https://redis.io/json/) data structure
 * Interactive tutorials to learn easily, among other things, how to leverage the native JSON data structure supporting structured querying and full-text search, including vector similarity search for your AI use cases
 * Contextualised recommendations to optimize performance and memory usage. The list of recommendations gets updated as you interact with your database
 * Profiler - analyze every command sent to Redis in real-time
@@ -29,9 +29,9 @@ Redis Insight is an intuitive and efficient GUI for Redis, allowing you to inter
 * Pub/Sub - support for [Redis pub/sub](https://redis.io/docs/latest/develop/interact/pubsub/), enabling subscription to channels and posting messages to channels
 * Bulk actions - Delete the keys in bulk based on the filters set in Browser or Tree view
 * Workbench - advanced command line interface with intelligent command auto-complete, complex data visualizations and support for the raw mode
-* Command auto-complete support for [RediSearch](https://redis.io/search/), [RedisJSON](https://redis.io/json/), [RedisTimeSeries](https://redis.io/timeseries/)
-* Visualizations of your [RediSearch](https://redis.io/search/) index, queries, and aggregations. Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
-* Officially supported for Redis OSS, [Redis Cloud](https://redis.io/cloud/). Works with Microsoft Azure Cache for Redis (official support upcoming)
+* Command auto-complete support for [search and query](https://redis.io/search/) capability, [JSON](https://redis.io/json/) and [time series](https://redis.io/timeseries/) data structures
+* Visualizations of your [search and query](https://redis.io/search/) indexes and results. Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
+* Officially supported for Redis OSS, [Redis Cloud](https://redis.io/cloud/). Works with Microsoft Azure Cache for Redis
 
 Check out the [release notes](https://github.com/RedisInsight/RedisInsight/releases). 
 

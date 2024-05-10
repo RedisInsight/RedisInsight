@@ -2,12 +2,13 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
-import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
 import { getStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
+
 import StatisticsPage from './StatisticsPage'
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
@@ -19,12 +20,18 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
-  rdiPipelineSelector: jest.fn().mockReturnValue({
+  rdiPipelineStatusSelector: jest.fn().mockReturnValue({
     loading: false,
     data: {
-      config: 'config',
-      jobs: []
-    }
+      components: { processor: 'ready' },
+      pipelines: {
+        default: {
+          status: 'ready',
+          state: 'some',
+          tasks: 'none',
+        }
+      }
+    },
   })
 }))
 
@@ -119,8 +126,17 @@ describe('StatisticsPage', () => {
   })
 
   it('renders the empty state when pipeline data is empty', () => {
-    (rdiPipelineSelector as jest.Mock).mockReturnValueOnce({
-      data: {}
+    (rdiPipelineStatusSelector as jest.Mock).mockReturnValueOnce({
+      data: {
+        components: { processor: 'ready' },
+        pipelines: {
+          default: {
+            status: 'not ready',
+            state: 'some',
+            tasks: 'none',
+          }
+        }
+      }
     })
     const { getByText } = render(<StatisticsPage />)
     expect(getByText('No pipeline deployed yet')).toBeInTheDocument()

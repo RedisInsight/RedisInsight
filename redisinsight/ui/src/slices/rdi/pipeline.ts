@@ -7,7 +7,7 @@ import {
   IPipeline,
   FileChangeType,
   IPipelineJSON,
-  IRdiPipelineStrategy,
+  IRdiPipelineStrategy, IPipelineStatus,
 } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
@@ -26,6 +26,11 @@ export const initialState: IStateRdiPipeline = {
     data: [],
   },
   changes: {},
+  status: {
+    loading: false,
+    data: null,
+    error: '',
+  },
 }
 
 const rdiPipelineSlice = createSlice({
@@ -84,13 +89,30 @@ const rdiPipelineSlice = createSlice({
     },
     deleteChangedFile: (state, { payload }: PayloadAction<string>) => {
       delete state.changes[payload]
-    }
+    },
+    getPipelineStatus: (state) => {
+      state.status.loading = true
+    },
+    getPipelineStatusSuccess: (state, { payload }: PayloadAction<IPipelineStatus>) => {
+      state.status = {
+        loading: false,
+        error: '',
+        data: payload,
+      }
+    },
+    getPipelineStatusFailure: (state, { payload }: PayloadAction<string>) => {
+      state.status = {
+        loading: false,
+        error: payload,
+        data: null
+      }
+    },
   },
 })
 
 export const rdiPipelineSelector = (state: RootState) => state.rdi.pipeline
-
 export const rdiPipelineStrategiesSelector = (state: RootState) => state.rdi.pipeline.strategies
+export const rdiPipelineStatusSelector = (state: RootState) => state.rdi.pipeline.status
 
 export const {
   getPipeline,
@@ -108,6 +130,9 @@ export const {
   setChangedFile,
   setChangedFiles,
   deleteChangedFile,
+  getPipelineStatus,
+  getPipelineStatusSuccess,
+  getPipelineStatusFailure,
 } = rdiPipelineSlice.actions
 
 // The reducer
@@ -256,6 +281,27 @@ export function deletePipelineJob(
       dispatch(setChangedFile({ name, status: FileChangeType.Removed }))
     } else {
       dispatch(deleteChangedFile(name))
+    }
+  }
+}
+
+export function getPipelineStatusAction(
+  rdiInstanceId: string,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      dispatch(getPipelineStatus())
+      const { data, status } = await apiService.get<IPipelineStatus>(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STATUS),
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getPipelineStatusSuccess(data))
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(getPipelineStatusFailure(errorMessage))
     }
   }
 }

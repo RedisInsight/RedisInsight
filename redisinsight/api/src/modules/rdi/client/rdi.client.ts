@@ -28,22 +28,19 @@ export abstract class RdiClient {
   // TODO validate options and response
   abstract getTemplate(options: object): Promise<unknown>;
 
-  // TODO validate response schema
   abstract getStrategies(): Promise<object>;
 
   abstract deploy(pipeline: RdiPipeline): Promise<void>;
 
   abstract deployJob(job: RdiJob): Promise<RdiJob>;
 
-  abstract getDryRunJobTransformations(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult>;
-
-  abstract getDryRunJobCommands(data: RdiDryRunJobDto): Promise<RdiDryRunJobResult>;
-
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
   abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
+
+  abstract getPipelineStatus(): Promise<any>;
 
   abstract getJobFunctions(): Promise<object>;
 

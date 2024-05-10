@@ -9,7 +9,7 @@ export interface Props {
   text: JSX.Element | string
   item: string
   itemRaw?: RedisString
-  suffix: string
+  suffix?: string
   deleting: string
   closePopover: () => void
   showPopover: (item: string) => void
@@ -26,7 +26,7 @@ const PopoverDelete = (props: Props) => {
     text,
     item,
     itemRaw,
-    suffix,
+    suffix = '',
     deleting,
     closePopover,
     updateLoading,

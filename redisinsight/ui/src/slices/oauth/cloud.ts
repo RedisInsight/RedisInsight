@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorCode, getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
@@ -34,6 +34,7 @@ import {
   removeInfiniteNotification
 } from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
+import ApiStatusCode from '../../constants/apiStatusCode'
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -415,6 +416,11 @@ export function activateAccount(
     } catch (error) {
       const err = getAxiosError(error as EnhancedAxiosError)
       const errorMessage = getApiErrorMessage(error as AxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
 
       dispatch(addErrorNotification(err))
       dispatch(getUserInfoFailure(errorMessage))

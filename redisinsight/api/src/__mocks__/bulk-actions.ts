@@ -92,4 +92,5 @@ export const mockBulkActionsAnalytics = () => ({
   sendActionStopped: jest.fn(),
   sendActionSucceed: jest.fn(),
   sendActionFailed: jest.fn(),
+  sendImportSamplesUploaded: jest.fn(),
 });

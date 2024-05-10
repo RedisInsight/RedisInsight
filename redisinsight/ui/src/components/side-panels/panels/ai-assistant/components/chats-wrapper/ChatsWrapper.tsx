@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react'
 
-import { EuiImage, EuiTab, EuiTabs } from '@elastic/eui'
+import { EuiTab, EuiTabs } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { filter } from 'lodash'
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
-import AiChatImg from 'uiSrc/assets/img/ai/ai-chat-small.svg'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -69,7 +68,6 @@ const ChatsWrapper = () => {
     <div className={styles.wrapper} data-testid="chat-wrapper">
       {chats.length > 1 && (
         <div className={styles.tabsWrapper}>
-          <EuiImage className={styles.chatImg} src={AiChatImg} alt="chat" />
           <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
             {documentationChatFeature?.flag && (
               <EuiTab

@@ -155,7 +155,6 @@ const SearchKeyList = () => {
               data-testid="ask-redis-copilot-btn"
             >
               <EuiIcon className={styles.cloudIcon} type={CloudStars} />
-              <span>Ask Redis Copilot</span>
             </EuiButtonEmpty>
           </FeatureFlagComponent>
         ) : undefined}

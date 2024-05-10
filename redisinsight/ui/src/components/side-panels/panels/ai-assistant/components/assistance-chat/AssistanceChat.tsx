@@ -8,6 +8,7 @@ import {
   createAssistantChatAction,
   getAssistantChatHistoryAction,
   removeAssistantChatAction,
+  sendQuestion,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -16,6 +17,7 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
+import { generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 import { AssistanceChatInitialMessage, ChatHistory, ChatForm, RestartChat } from '../shared'
 
 import styles from './styles.module.scss'
@@ -44,7 +46,18 @@ const AssistanceChat = () => {
     scrollToBottom('smooth')
 
     if (!id) {
-      dispatch(createAssistantChatAction((chatId) => sendChatMessage(chatId, message)))
+      dispatch(
+        createAssistantChatAction(
+          (chatId) => sendChatMessage(chatId, message),
+          // if cannot create a chat - just put message with error
+          () => dispatch(
+            sendQuestion({
+              ...generateHumanMessage(message),
+              error: { statusCode: 500 },
+            })
+          )
+        )
+      )
       return
     }
 

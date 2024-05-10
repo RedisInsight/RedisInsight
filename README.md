@@ -30,7 +30,8 @@ Redis Insight is an intuitive and efficient GUI for Redis, allowing you to inter
 * Bulk actions - Delete the keys in bulk based on the filters set in Browser or Tree view
 * Workbench - advanced command line interface with intelligent command auto-complete, complex data visualizations and support for the raw mode
 * Command auto-complete support for [search and query](https://redis.io/search/) capability, [JSON](https://redis.io/json/) and [time series](https://redis.io/timeseries/) data structures
-* Visualizations of your [search and query](https://redis.io/search/) indexes and results. Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
+* Visualizations of your [search and query](https://redis.io/search/) indexes and results.
+* Ability to build [your own data visualization plugins](https://github.com/RedisInsight/Packages)
 * Officially supported for Redis OSS, [Redis Cloud](https://redis.io/cloud/). Works with Microsoft Azure Cache for Redis
 
 Check out the [release notes](https://github.com/RedisInsight/RedisInsight/releases). 

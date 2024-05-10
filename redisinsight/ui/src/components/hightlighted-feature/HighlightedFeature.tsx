@@ -32,7 +32,7 @@ const HighlightedFeature = (props: Props) => {
     onClick,
     wrapperClassName,
     dotClassName,
-    tooltipPosition,
+    tooltipPosition = 'bottom',
     hideFirstChild,
     dataTestPostfix = ''
   } = props
@@ -57,7 +57,7 @@ const HighlightedFeature = (props: Props) => {
     <EuiToolTip
       title={title}
       content={content}
-      position={tooltipPosition || 'bottom'}
+      position={tooltipPosition}
       data-testid="tooltip-highlighting"
     >
       <div data-testid="tooltip-highlighting-inner">
@@ -70,7 +70,7 @@ const HighlightedFeature = (props: Props) => {
     <EuiToolTip
       title={title}
       content={content}
-      position={tooltipPosition || 'bottom'}
+      position={tooltipPosition}
       data-testid="tooltip-badge-highlighting"
     >
       <div className={styles.badgeContainer} data-testid="tooltip-badge-highlighting-inner">

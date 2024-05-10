@@ -1,8 +1,8 @@
-import { getCypherCompletionProvider } from 'uiSrc/utils/monaco/cypher/completionProvider'
+import { getCompletionProvider } from 'uiSrc/utils/monaco/completionProvider'
 
 describe('getCypherCompletionProvider', () => {
   it('should call getWordUntilPosition and getValueInRange', () => {
-    const provider = getCypherCompletionProvider()
+    const provider = getCompletionProvider()
 
     const positionMock = {}
     const contextMock = {}

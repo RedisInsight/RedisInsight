@@ -4,6 +4,7 @@ import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -35,7 +36,7 @@ const Job = (props: Props) => {
   const deployedJobValueRef = useRef<Maybe<string>>(deployedJobValue)
   const jobNameRef = useRef<string>(name)
 
-  const { loading, schema } = useSelector(rdiPipelineSelector)
+  const { loading, schema, jobFunctions } = useSelector(rdiPipelineSelector)
 
   const { setFieldValue } = useFormikContext<IPipeline>()
 
@@ -86,6 +87,16 @@ const Job = (props: Props) => {
     checkIsFileUpdated(value)
   }
 
+  const handleChangeLanguage = (langId: DSL) => {
+    sendEventTelemetry({
+      event: TelemetryEvent.RDI_DEDICATED_EDITOR_LANGUAGE_CHANGED,
+      eventData: {
+        rdiInstanceId,
+        selectedLanguageSyntax: langId,
+      }
+    })
+  }
+
   return (
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
@@ -124,6 +135,11 @@ const Job = (props: Props) => {
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
+            dedicatedEditorFunctions={jobFunctions as monacoEditor.languages.CompletionItem[]}
+            dedicatedEditorOptions={{
+              suggest: { preview: false, showIcons: true, showStatusBar: true }
+            }}
+            onChangeLanguage={handleChangeLanguage}
             wrapperClassName="rdi__editorWrapper"
             data-testid="rdi-monaco-job"
           />

@@ -32,6 +32,7 @@ import { StaticsManagementModule } from './modules/statics-management/statics-ma
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import { routes } from './app.routes';
+import { RedisConnectionModule } from './modules/redis-connection/redis-connection.module';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -46,6 +47,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     CloudModule.register(),
     RedisSentinelModule,
     BrowserModule.register(),
+    RedisConnectionModule,
     CliModule,
     WorkbenchModule.register(),
     PluginModule,

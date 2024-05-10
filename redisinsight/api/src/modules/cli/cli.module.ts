@@ -1,6 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
-import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
+import { Module } from '@nestjs/common';
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { CommandsService } from 'src/modules/commands/commands.service';
 import { CommandsJsonProvider } from 'src/modules/commands/commands-json.provider';
@@ -29,10 +27,4 @@ const COMMANDS_CONFIGS = config.get('commands');
     DatabaseAnalytics,
   ],
 })
-export class CliModule implements NestModule {
-  configure(consumer: MiddlewareConsumer): any {
-    consumer
-      .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(CliController));
-  }
-}
+export class CliModule {}

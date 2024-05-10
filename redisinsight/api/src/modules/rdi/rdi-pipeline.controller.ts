@@ -104,7 +104,7 @@ export class RdiPipelineController {
   @Get('/job-functions')
   @ApiEndpoint({
     description: 'Get job functions',
-    responses: [{ status: 200, type: Rdi }],
+    responses: [{ status: 200 }],
   })
   async getJobFunctions(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,

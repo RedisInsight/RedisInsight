@@ -5,7 +5,7 @@ import { render, screen, fireEvent, act, cleanup, mockedStore } from 'uiSrc/util
 
 import { Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { appFeatureFlagsFeaturesSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import HomeTabs from './HomeTabs'
 
 let store: typeof mockedStore
@@ -81,6 +81,15 @@ describe('HomeTabs', () => {
         tab: 'Redis Data Integration'
       }
     })
+  })
+
+  it('should dispatch proper actions after click on rdi tab', () => {
+    render(<HomeTabs />)
+
+    fireEvent.click(screen.getByTestId('home-tab-rdi-instances'))
+
+    const expectedActions = [removeFeatureFromHighlighting('rdi')]
+    expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should not render rdi tab', () => {

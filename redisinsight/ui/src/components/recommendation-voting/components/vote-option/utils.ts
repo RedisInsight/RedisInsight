@@ -1,7 +1,7 @@
 import { Vote } from 'uiSrc/constants/recommendations'
 import { Nullable } from 'uiSrc/utils'
-import { ReactComponent as LikeIcon } from 'uiSrc/assets/img/icons/like.svg'
-import { ReactComponent as DislikeIcon } from 'uiSrc/assets/img/icons/dislike.svg'
+import LikeIcon from 'uiSrc/assets/img/icons/like.svg?react'
+import DislikeIcon from 'uiSrc/assets/img/icons/dislike.svg?react'
 
 export const getVotedText = (vote: Nullable<Vote>) => (vote === Vote.Like
   ? 'Share your ideas with us.'

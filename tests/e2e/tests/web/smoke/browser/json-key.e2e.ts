@@ -47,6 +47,5 @@ test('Verify that user can add key with value to any level of JSON structure', a
     await browserPage.addJsonKeyOnTheSameLevel('"key2"', '{}');
     await browserPage.addJsonKeyInsideStructure('"key2222"', '12345');
     // Check the added key contains json object with added key
-    await t.click(browserPage.expandJsonObject);
     await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"key2:{key2222:12345}}', 'The json object value not found');
 });

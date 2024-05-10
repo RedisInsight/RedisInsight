@@ -62,7 +62,7 @@ export class ThemeProvider extends React.Component<Props> {
           changeTheme: this.changeTheme,
         }}
       >
-        <div className={`theme_${theme}`}>{children}</div>
+        {children}
       </ThemeContext.Provider>
     )
   }

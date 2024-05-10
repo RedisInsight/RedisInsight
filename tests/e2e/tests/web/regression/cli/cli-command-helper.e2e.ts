@@ -81,7 +81,7 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
     filteringGroup = 'JSON';
     commandToCheck = 'JSON.SET';
     commandArgumentsToCheck = 'JSON.SET key path value [condition]';
-    externalPageLink = 'https://redis.io/commands/json.set/';
+    externalPageLink = 'https://redis.io/docs/latest/commands/json.set/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -99,7 +99,7 @@ test('Verify that user can see in Command helper and click on new group "Search"
     filteringGroup = 'Search';
     commandToCheck = 'FT.EXPLAIN';
     commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
-    externalPageLink = 'https://redis.io/commands/ft.explain/';
+    externalPageLink = 'https://redis.io/docs/latest/commands/ft.explain/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -117,7 +117,7 @@ test('Verify that user can see HyperLogLog title in Command Helper for this comm
     filteringGroup = 'HyperLogLog';
     commandToCheck = 'PFCOUNT';
     commandArgumentsToCheck = 'PFCOUNT key [key ...]';
-    externalPageLink = 'https://redis.io/commands/pfcount/';
+    externalPageLink = 'https://redis.io/docs/latest/commands/pfcount/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -145,12 +145,12 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         'AI.SCRIPTEXECUTE key function [KEYS key_count key [key ...]] [INPUTS input_count input [input ...]] [ARGS arg_count arg [arg ...]] [OUTPUTS output_count output [output ...]] [TIMEOUT timeout]',
         'AI.TENSORSET key FLOAT|DOUBLE|INT8|INT16|INT32|INT64|UINT8|UINT16|STRING|BOOL shape [shape ...] [BLOB blob] [VALUES value [VALUES value ...]]'
     ];
-    externalPageLinks = [
-        'https://redis.io/commands/ai.modeldel',
-        'https://redis.io/commands/ai.scriptstore',
-        'https://redis.io/commands/ai.scriptexecute',
-        'https://redis.io/commands/ai.tensorset'
-    ];
+    // externalPageLinks = [
+    //     'https://redis.io/commands/ai.modeldel',
+    //     'https://redis.io/commands/ai.scriptstore',
+    //     'https://redis.io/commands/ai.scriptexecute',
+    //     'https://redis.io/commands/ai.tensorset'
+    // ];
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -162,13 +162,14 @@ test('Verify that user can see all separated groups for AI json file (model, ten
         await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandsToCheck[i]));
         // Verify results of opened command
         await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandsArgumentsToCheck[i], 'Selected command title not correct');
+        // Currently these links are deleted from redis.io
         // Click on Read More link for selected command
-        await t.click(browserPage.CommandHelper.readMoreButton);
+        // await t.click(browserPage.CommandHelper.readMoreButton);
         // Check new opened window page with the correct URL
-        await Common.checkURL(externalPageLinks[i]);
+        // await Common.checkURL(externalPageLinks[i]);
         // Close the window with external link to switch to the application window
-        await goBackHistory();
-        await t.click(browserPage.CommandHelper.expandCommandHelperButton);
+        // await goBackHistory();
+        // await t.click(browserPage.CommandHelper.expandCommandHelperButton);
         i++;
     }
 });
@@ -176,7 +177,7 @@ test('Verify that user can work with Gears group in Command Helper (RedisGears m
     filteringGroup = 'Gears';
     commandToCheck = 'RG.GETEXECUTION';
     commandArgumentsToCheck = 'RG.GETEXECUTION id [SHARD|CLUSTER]';
-    externalPageLink = 'https://redis.io/commands/rg.getexecution';
+    // externalPageLink = 'https://redis.io/commands/rg.getexecution';
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -187,9 +188,10 @@ test('Verify that user can work with Gears group in Command Helper (RedisGears m
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
     // Verify that user can use Read More link for Gears group in Command Helper (RedisGears module)
-    await t.click(browserPage.CommandHelper.readMoreButton);
+    // Currently these links are deleted from redis.io
+    // await t.click(browserPage.CommandHelper.readMoreButton);
     // Check new opened window page with the correct URL
-    await Common.checkURL(externalPageLink);
+    // await Common.checkURL(externalPageLink);
 });
 test('Verify that user can work with Bloom groups in Command Helper (RedisBloom module)', async t => {
     filteringGroups = ['Bloom Filter', 'CMS', 'TDigest', 'TopK', 'Cuckoo Filter'];
@@ -208,11 +210,11 @@ test('Verify that user can work with Bloom groups in Command Helper (RedisBloom 
         'CF.ADD key item'
     ];
     externalPageLinks = [
-        'https://redis.io/commands/bf.mexists/',
-        'https://redis.io/commands/cms.query/',
-        'https://redis.io/commands/tdigest.reset/',
-        'https://redis.io/commands/topk.list/',
-        'https://redis.io/commands/cf.add/'
+        'https://redis.io/docs/latest/commands/bf.mexists/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/cms.query/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/tdigest.reset/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/topk.list/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/cf.add/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper'
     ];
 
     // Open Command Helper

@@ -23,6 +23,8 @@ services:
       TEST_REDIS_HOST: "redis"
       NODE_ENV: "test"
       RI_REQUEST_TIMEOUT: "25000"
+      RI_DATA_DIR: "/usr/src/app/coverage/data"
+      TEST_DATA_DIR: "/usr/src/app/coverage/data"
 
   # dummy service to prevent docker validation errors
   app:

@@ -4,8 +4,8 @@ set -e
 PLATFORM=${PLATFORM:-'linux'}
 ARCH=${ARCH:-'x64'}
 LIBC=${LIBC:-''}
-#FILENAME="RedisInsight-$PLATFORM.$VERSION.$ARCH.zip"
-FILENAME="RedisInsight-web-$PLATFORM"
+#FILENAME="Redis-Insight-$PLATFORM.$VERSION.$ARCH.zip"
+FILENAME="Redis-Insight-web-$PLATFORM"
 if [ ! -z $LIBC ]
 then
   FILENAME="$FILENAME-$LIBC.$ARCH.tar.gz"

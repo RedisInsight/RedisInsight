@@ -1,6 +1,3 @@
-@import "@elastic/eui/src/global_styling/index";
-@import "uiSrc/styles/mixins/_global.scss";
-
 .pageHeader {
   min-height: 56px;
 }
@@ -43,7 +40,7 @@
   padding-bottom: 16px;
 }
 
-@include insights-open {
+@include global.insights-open {
   .page {
     :global {
       .home {

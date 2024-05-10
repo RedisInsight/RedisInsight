@@ -1,9 +1,6 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/global_styling/index';
-
 .redisIcon {
   width: 128px;
-  height: auto;
+  height: 100%;
 }
 
 .consentsPopup.consentsPopup {
@@ -38,12 +35,12 @@
   padding-bottom: 4px;
 }
 
-.modalBody :global(.euiModalBody__overflow){
+.modalBody :global(.euiModalBody__overflow) {
   padding: 0 42px 30px !important;
 }
 
 .consentsWrapper {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-x: hidden;
   overflow-y: auto;
   max-height: calc(100vh - 290px);
@@ -88,10 +85,10 @@
 
 .overlay {
   &.overlay_dark {
-    background-image: url('uiSrc/assets/img/welcome_bg_dark.jpg') !important;
+    background-image: url("uiSrc/assets/img/welcome_bg_dark.png") !important;
   }
 
   &.overlay_light {
-    background-image: url('uiSrc/assets/img/welcome_bg_light.jpg') !important;
+    background-image: url("uiSrc/assets/img/welcome_bg_light.png") !important;
   }
 }

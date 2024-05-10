@@ -792,7 +792,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
         {
@@ -803,7 +803,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
         {
@@ -814,7 +814,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
         {
@@ -825,7 +825,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
         {
@@ -836,7 +836,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
         {
@@ -847,7 +847,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
         {
@@ -858,7 +858,7 @@ describe('POST /databases/:instanceId/cli/:uuid/send-command', () => {
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.status).to.eql('fail');
-            expect(body.response).to.include('command is not supported by the RedisInsight CLI');
+            expect(body.response).to.include('command is not supported by the Redis Insight CLI');
           }
         },
       ].map(mainCheckFn);

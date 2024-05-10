@@ -30,3 +30,12 @@
     }
   }
 }
+.euiPanel.euiPanel--plain {
+  border-color: var(--euiColorLightShade);
+  background-color: var(--euiColorEmptyShade);
+}
+
+.euiResizableButton:focus:not(:disabled):after,
+.euiResizableButton:focus:not(:disabled):before {
+  background-color: var(--euiColorPrimary);
+}

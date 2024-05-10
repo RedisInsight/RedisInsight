@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "path": "common"
+    },
+    {
+      "path": "json",
+      "modules": ["rejson"]
+    },
+    {
+      "path": "search",
+      "modules": ["search"]
+    }
+  ]
+}

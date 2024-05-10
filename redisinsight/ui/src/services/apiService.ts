@@ -4,11 +4,16 @@ import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { CustomHeaders } from 'uiSrc/constants/api'
 
-const { apiPort } = window.app.config
+const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
-const apiPrefix = process.env.RI_API_PREFIX
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
+
+let apiPrefix = process.env.RI_API_PREFIX
+
+if (window.__RI_PROXY_PATH__) {
+  apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
+}
 
 const axiosInstance = axios.create({
   baseURL:

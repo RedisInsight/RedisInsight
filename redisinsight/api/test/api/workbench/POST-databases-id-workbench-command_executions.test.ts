@@ -919,7 +919,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
         checkFn: async ({ body }) => {
           expect(body[0].result.length).to.eql(1);
           expect(body[0].result[0].status).to.eql('fail');
-          expect(body[0].result[0].response).to.include('command is not supported by the RedisInsight Workbench');
+          expect(body[0].result[0].response).to.include('command is not supported by the Redis Insight Workbench');
         },
         ...testCase,
       }));

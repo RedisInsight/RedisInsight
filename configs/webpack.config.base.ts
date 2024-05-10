@@ -13,12 +13,17 @@ const configuration: webpack.Configuration =  {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              compilerOptions: {
+                module: 'esnext',
+              },
+            },
           },
-        },
+        ]
       },
     ],
   },

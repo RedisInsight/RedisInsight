@@ -1,12 +1,8 @@
-@import "@elastic/eui/src/global_styling/mixins/helpers";
-@import "@elastic/eui/src/components/table/mixins";
-@import "@elastic/eui/src/global_styling/index";
-
 $headerHeight: 44px;
 $footerHeight: 38px;
 
 .customScroll {
-  @include euiScrollBar;
+  @include eui.scrollBar;
 }
 
 .grid {
@@ -38,7 +34,7 @@ $footerHeight: 38px;
 }
 
 .table {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow-x: auto;
   overflow-y: hidden;
 

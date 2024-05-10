@@ -9,6 +9,7 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import cx from 'classnames'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -55,7 +56,12 @@ const CreateRedisearchIndexWrapper = ({ arePanelsCollapsed, onClosePanel, onCrea
             {' '}
             <EuiLink
               color="text"
-              href="https://redis.io/commands/ft.create/"
+              href={getUtmExternalLink(
+                'https://redis.io/commands/ft.create/',
+                {
+                  campaign: 'browser_search'
+                }
+              )}
               className={styles.link}
               external={false}
               target="_blank"

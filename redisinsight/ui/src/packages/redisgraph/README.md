@@ -1,4 +1,4 @@
-# RedisGraph Plugin for RedisInsight v2
+# RedisGraph Plugin for Redis Insight v2
 
 The example has been created using React, TypeScript, and [Elastic UI](https://elastic.github.io/eui/#/). 
 [Parcel](https://parceljs.org/) is used to build the plugin.
@@ -24,7 +24,7 @@ yarn build:statics:win - for Windows
 
 ## Build plugin
 
-The following commands will build plugins to be used in RedisInsight:
+The following commands will build plugins to be used in Redis Insight:
 ```
 yarn
 yarn build

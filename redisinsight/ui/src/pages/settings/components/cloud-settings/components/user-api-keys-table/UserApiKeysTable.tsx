@@ -24,7 +24,7 @@ import { OAuthSocialHandlerDialog, OAuthSsoHandlerDialog } from 'uiSrc/component
 import { CloudCapiKey, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 
-import { ReactComponent as CloudStars } from 'uiSrc/assets/img/oauth/stars.svg'
+import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
 import styles from './styles.module.scss'
 
@@ -97,7 +97,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           <div className={styles.nameField}>
             {!valid && (
               <EuiToolTip
-                content="This API key is invalid. Remove it from RedisInsight and Redis Cloud and create a new one instead."
+                content="This API key is invalid. Remove it from   and Redis Cloud and create a new one instead."
                 anchorClassName={styles.invalidIconAnchor}
               >
                 <EuiIcon className={styles.invalidIcon} type="alert" color="danger" />
@@ -162,7 +162,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             />
           </EuiToolTip>
           <PopoverDelete
-            header={(<>{formatLongName(name)} <br /> will be removed from RedisInsight.</>)}
+            header={(<>{formatLongName(name)} <br /> will be removed from Redis Insight.</>)}
             text={(
               <>
                 {'To delete this API key from Redis Cloud, '}
@@ -216,7 +216,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
               {(socialCloudHandlerClick) => (
                 <EuiButtonEmpty
                   size="s"
-                  color="text"
+                  color="ghost"
                   className={styles.autodiscoverBtn}
                   onClick={(e: React.MouseEvent) => socialCloudHandlerClick(e, OAuthSocialSource.SettingsPage)}
                   data-testid="autodiscover-btn"

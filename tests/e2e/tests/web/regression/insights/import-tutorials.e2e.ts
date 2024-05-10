@@ -64,7 +64,7 @@ test
     })('Verify that user can upload tutorial with local zip file without manifest.json', async t => {
         // Verify that user can upload custom tutorials on docker version
         internalLinkName1 = 'probably-1';
-        const imageExternalPath = 'RedisInsight screen external';
+        const imageExternalPath = 'Redis Insight screen external';
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
         await workbenchPage.InsightsPanel.togglePanel(true);

@@ -1,11 +1,8 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/global_styling/index';
-
 .wrapper {
   position: relative;
   display: flex;
 
-  @include euiBreakpoint("xs", "s") {
+  @include eui.euiBreakpoint("xs", "s") {
     flex-direction: column;
   }
 
@@ -53,7 +50,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
       }
-
     }
 
     :global(.euiIcon) {
@@ -105,7 +101,7 @@
 .notificationsList {
   margin-top: 18px;
   max-height: 70vh;
-  @include euiScrollBar;
+  @include eui.scrollBar;
   overflow: auto;
   padding: 0 15px 0;
   margin-bottom: 12px;
@@ -167,7 +163,9 @@
     display: block;
     margin-right: 30px;
     margin-bottom: 12px;
-    font: normal normal 500 18px/24px Graphik, sans-serif;
+    font:
+      normal normal 500 18px/24px Graphik,
+      sans-serif;
   }
 
   .notificationDate {

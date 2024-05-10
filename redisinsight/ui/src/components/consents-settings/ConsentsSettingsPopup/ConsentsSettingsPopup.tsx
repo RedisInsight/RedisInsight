@@ -19,9 +19,7 @@ import { Pages, Theme } from 'uiSrc/constants'
 import { ConsentsSettings } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
-import darkLogo from 'uiSrc/assets/img/dark_logo.svg'
-import lightLogo from 'uiSrc/assets/img/light_logo.svg'
+import Logo from 'uiSrc/assets/img/logo.svg'
 
 import styles from '../styles.module.scss'
 
@@ -63,7 +61,7 @@ const ConsentsSettingsPopup = () => {
               <EuiIcon
                 className={styles.redisIcon}
                 size="original"
-                type={theme === Theme.Dark ? darkLogo : lightLogo}
+                type={Logo}
               />
             </EuiFlexItem>
           </EuiFlexGroup>

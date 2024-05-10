@@ -1,9 +1,5 @@
-@import '@elastic/eui/src/global_styling/mixins/helpers';
-@import '@elastic/eui/src/components/table/mixins';
-@import '@elastic/eui/src/global_styling/index';
-
 .container {
-  @include euiScrollBar;
+  @include eui.scrollBar;
   flex: auto;
   padding: 9px 20px;
   overflow: auto;
@@ -41,7 +37,7 @@
 .pluginWrapperResult {
   max-height: 600px;
   overflow: auto;
-  @include euiScrollBar;
+  @include eui.scrollBar;
 }
 
 .alertIconWrapper {

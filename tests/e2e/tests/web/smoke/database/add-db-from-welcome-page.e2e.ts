@@ -13,10 +13,10 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 const welcomePage = new WelcomePage();
 
 const getPageUrl = ClientFunction(() => window.location.href);
-const linuxPage = 'https://redis.io/docs/install/install-stack/linux/?utm_source=redisinsight&utm_medium=main&utm_campaign=linux';
-const dockerPage = 'https://redis.io/docs/install/install-stack/docker/?utm_source=redisinsight&utm_medium=main&utm_campaign=docker';
-const homebrewPage = 'https://redis.io/docs/install/install-stack/mac-os/?utm_source=redisinsight&utm_medium=main&utm_campaign=homebrew';
-const promoPage = 'https://redis.com/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main';
+const linuxPage = 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/linux/?utm_source=redisinsight&utm_medium=main&utm_campaign=linux';
+const dockerPage = 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/docker/?utm_source=redisinsight&utm_medium=main&utm_campaign=docker';
+const homebrewPage = 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/mac-os/?utm_source=redisinsight&utm_medium=main&utm_campaign=homebrew';
+const promoPage = 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main';
 
 fixture `Add database from welcome page`
     .meta({ type: 'smoke', rte: rte.standalone })

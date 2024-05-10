@@ -28,8 +28,8 @@ export interface CommonProps {
   options?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   dedicatedEditorOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   dedicatedEditorLanguages?: DSL[]
-  dedicatedEditorKeywords?: any[]
-  dedicatedEditorFunctions?: any[]
+  dedicatedEditorKeywords?: string[]
+  dedicatedEditorFunctions?: monacoEditor.languages.CompletionItem[]
   onChangeLanguage?: (langId: DSL) => void
   'data-testid'?: string
 }

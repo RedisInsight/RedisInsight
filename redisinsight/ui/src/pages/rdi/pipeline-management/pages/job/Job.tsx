@@ -4,6 +4,7 @@ import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import { useFormikContext } from 'formik'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -134,7 +135,7 @@ const Job = (props: Props) => {
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
-            dedicatedEditorFunctions={jobFunctions}
+            dedicatedEditorFunctions={jobFunctions as monacoEditor.languages.CompletionItem[]}
             dedicatedEditorOptions={{
               suggest: { preview: false, showIcons: true, showStatusBar: true }
             }}

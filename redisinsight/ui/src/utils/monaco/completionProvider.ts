@@ -28,13 +28,11 @@ export const getCompletionProvider = (
         }
       ))
 
-      const functionsSuggestions: monacoEditor.languages.CompletionItem[] = functions.map((item: any) => (
+      const functionsSuggestions: monacoEditor.languages.CompletionItem[] = functions.map((item) => (
         {
-          label: item.label,
-          detail: item.detail,
+          ...item,
+          insertText: `${item.label}`,
           kind: monacoEditor.languages.CompletionItemKind.Function,
-          documentation: item.documentation,
-          insertText: item.label,
           range,
           sortText: `b${item.label}`,
           insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet

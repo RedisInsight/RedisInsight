@@ -28,7 +28,7 @@ export interface Props {
   onCancel: () => void
   initialHeight: number
   customOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
-  keywords?: monacoEditor.languages.CompletionItem[]
+  keywords?: string[]
   functions?: monacoEditor.languages.CompletionItem[]
 }
 

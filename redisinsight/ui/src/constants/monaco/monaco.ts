@@ -18,8 +18,14 @@ export interface MonacoSyntaxLang {
   id: string
   language: string
   config?: monacoEditor.languages.LanguageConfiguration,
-  completionProvider?: (keywords?: any[], functions?: any[]) => monacoEditor.languages.CompletionItemProvider,
-  tokensProvider?: (keywords?: any[], functions?: any[]) => monacoEditor.languages.IMonarchLanguage
+  completionProvider?: (
+    keywords?: string[],
+    functions?: monacoEditor.languages.CompletionItem[],
+  ) => monacoEditor.languages.CompletionItemProvider,
+  tokensProvider?: (
+    keywords?: string[],
+    functions?: monacoEditor.languages.CompletionItem[],
+  ) => monacoEditor.languages.IMonarchLanguage
 }
 
 export interface MonacoSyntaxObject {

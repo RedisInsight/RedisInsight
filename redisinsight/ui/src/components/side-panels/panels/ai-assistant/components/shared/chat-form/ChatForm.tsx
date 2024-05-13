@@ -1,5 +1,5 @@
 import React, { Ref, useRef, useState } from 'react'
-import { EuiButton, EuiForm, EuiTextArea, EuiToolTip, keys } from '@elastic/eui'
+import { EuiButton, EuiForm, EuiSpacer, EuiText, EuiTextArea, EuiTitle, EuiToolTip, keys } from '@elastic/eui'
 
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
@@ -12,6 +12,7 @@ export interface Props {
   validation?: {
     title?: React.ReactNode
     content?: React.ReactNode
+    icon?: React.ReactNode
   }
   isDisabled?: boolean
   placeholder?: string
@@ -69,9 +70,21 @@ const ChatForm = (props: Props) => {
 
   return (
     <EuiToolTip
-      title={validation?.title}
-      content={validation?.content}
-      anchorClassName={styles.validationTooltip}
+      content={validation ? (
+        <div className={styles.tooltipContent}>
+          <div>
+            {validation.title && (
+              <>
+                <EuiTitle size="xxs"><span>{validation.title}</span></EuiTitle>
+                <EuiSpacer size="s" />
+              </>
+            )}
+            {validation.content && (<EuiText size="xs">{validation.content}</EuiText>)}
+          </div>
+          {validation.icon}
+        </div>
+      ) : undefined}
+      className={styles.validationTooltip}
       display="block"
     >
       <EuiForm

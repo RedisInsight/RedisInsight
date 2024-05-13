@@ -4,11 +4,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { AxiosError } from 'axios'
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { AiChatMessage, AiChatMessageType, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatMessage, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
 import { getStreamedAnswer } from 'uiSrc/utils/api'
 import ApiStatusCode from 'uiSrc/constants/apiStatusCode'
+import { generateAiMessage, generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 import { AppDispatch, RootState } from '../store'
 
 const getTabSelected = (tab?: string): AiChatType => {
@@ -197,20 +198,10 @@ export function askAssistantChatbot(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    const humanMessage = {
-      id: `ai_${uuidv4()}`,
-      type: AiChatMessageType.HumanMessage,
-      content: message,
-      context: {}
-    }
+    const humanMessage = generateHumanMessage(message)
+    const aiMessageProgressed = generateAiMessage()
 
     dispatch(sendQuestion(humanMessage))
-
-    const aiMessageProgressed: AiChatMessage = {
-      id: `ai_${uuidv4()}`,
-      type: AiChatMessageType.AIMessage,
-      content: '',
-    }
 
     onMessage?.(aiMessageProgressed)
 
@@ -315,20 +306,10 @@ export function askExpertChatbotAction(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    const humanMessage = {
-      id: `ai_${uuidv4()}`,
-      type: AiChatMessageType.HumanMessage,
-      content: message,
-      context: {}
-    }
+    const humanMessage = generateHumanMessage(message)
+    const aiMessageProgressed: AiChatMessage = generateAiMessage()
 
     dispatch(sendExpertQuestion(humanMessage))
-
-    const aiMessageProgressed: AiChatMessage = {
-      id: `ai_${uuidv4()}`,
-      type: AiChatMessageType.AIMessage,
-      content: '',
-    }
 
     onMessage?.(aiMessageProgressed)
 

@@ -61,3 +61,12 @@
     }
   }
 }
+
+.validationTooltip {
+  max-width: 340px !important;
+}
+
+.tooltipContent {
+  display: flex;
+  align-items: center;
+}

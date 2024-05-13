@@ -1,6 +1,7 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { EuiIcon } from '@elastic/eui'
 import {
   aiExpertChatSelector,
   askExpertChatbotAction,
@@ -15,6 +16,7 @@ import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
+import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import NoIndexesInitialMessage from './components/no-indexes-initial-message'
 import ExpertChatHeader from './components/expert-chat-header'
 import { ChatForm, ChatHistory, ExpertChatInitialMessage } from '../shared'
@@ -159,7 +161,13 @@ const ExpertChat = () => {
         title: 'Search & query capability is not available',
         content: freeInstances?.length
           ? 'Use your free all-in-one Redis Cloud database to start exploring these capabilities.'
-          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.'
+          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.',
+        icon: (
+          <EuiIcon
+            className={styles.iconTelescope}
+            type={TelescopeImg}
+          />
+        )
       }
     }
 

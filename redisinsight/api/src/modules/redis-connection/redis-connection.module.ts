@@ -1,13 +1,14 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { RouterModule } from 'nest-router';
 
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
-import redisConnectionRoutes from './redis-connection-routes';
+import redisConnectionControllers from './redis-connection-controllers';
 
 @Module({})
 export class RedisConnectionModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(...redisConnectionRoutes);
+      .forRoutes(...redisConnectionControllers.map((controller) => RouterModule.resolvePath(controller)));
   }
 }

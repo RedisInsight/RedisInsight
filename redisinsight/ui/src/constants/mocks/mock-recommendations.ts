@@ -121,7 +121,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/try-free/',
+          href: 'https://redis.io/try-free/',
           name: 'Redis Cloud'
         }
       },
@@ -414,7 +414,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -425,7 +425,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -528,7 +528,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/probabilistic/bloom-filter/',
+          href: 'https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/',
           name: 'probabilistic data structures'
         }
       },
@@ -558,7 +558,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -569,7 +569,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -673,7 +673,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/timeseries/',
+          href: 'https://redis.io/docs/latest/develop/data-types/timeseries/',
           name: 'time series capabilities'
         }
       },
@@ -719,7 +719,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -730,7 +730,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -809,7 +809,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/try-free/',
+          href: 'https://redis.io/try-free/',
           name: 'Redis Cloud'
         }
       },
@@ -831,7 +831,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/json/',
+          href: 'https://redis.io/docs/latest/develop/data-types/json/',
           name: 'JSON'
         }
       },
@@ -842,7 +842,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/probabilistic/bloom-filter/',
+          href: 'https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/',
           name: 'probabilistic data structures'
         }
       },
@@ -853,7 +853,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/timeseries/',
+          href: 'https://redis.io/docs/latest/develop/data-types/timeseries/',
           name: 'Time Series'
         }
       },
@@ -904,7 +904,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/try-free/',
+          href: 'https://redis.io/try-free/',
           name: 'free Redis Stack database'
         }
       },
@@ -997,7 +997,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1008,7 +1008,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -1089,7 +1089,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1100,7 +1100,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -1164,7 +1164,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
             {
               type: 'link',
               value: {
-                href: 'https://redis.io/docs/data-types/json/path/',
+                href: 'https://redis.io/docs/latest/develop/data-types/json/path/',
                 name: 'JSONPath'
               }
             },
@@ -1218,7 +1218,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1229,7 +1229,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -1278,7 +1278,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/json/',
+          href: 'https://redis.io/docs/latest/develop/data-types/json/',
           name: 'JSON'
         }
       },
@@ -1300,7 +1300,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.io/docs/data-types/timeseries/',
+          href: 'https://redis.io/docs/latest/develop/data-types/timeseries/',
           name: 'Time Series'
         }
       },
@@ -1399,7 +1399,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1410,7 +1410,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -1480,7 +1480,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1491,7 +1491,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -1550,7 +1550,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1561,7 +1561,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },
@@ -1628,7 +1628,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-cloud/overview/',
+          href: 'https://redis.io/redis-enterprise-cloud/overview/',
           name: 'Redis Cloud'
         }
       },
@@ -1639,7 +1639,7 @@ export const MOCK_RECOMMENDATIONS: IRecommendationsStatic = {
       {
         type: 'link',
         value: {
-          href: 'https://redis.com/redis-enterprise-software/overview/',
+          href: 'https://redis.io/redis-enterprise-software/overview/',
           name: 'Redis Enterprise Software'
         }
       },

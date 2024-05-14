@@ -12,7 +12,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
       'Perform cross-time-series range and aggregation queries',
       'Define compaction rules for economical retention of historical data'
     ],
-    link: 'https://redis.io/docs/data-types/timeseries/'
+    link: 'https://redis.io/docs/latest/develop/data-types/timeseries/'
   },
   [RedisDefaultModules.Search]: {
     text: ['RediSearch adds the capability to:'],
@@ -32,7 +32,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
       'Retrieve JSON documents'
     ],
     additionalText: ['RedisJSON also works seamlessly with RediSearch to let you index and query JSON documents.'],
-    link: 'https://redis.io/docs/data-types/json/'
+    link: 'https://redis.io/docs/latest/develop/data-types/json/'
   },
   [RedisDefaultModules.Bloom]: {
     text: ['RedisBloom adds a set of probabilistic data structures to Redis, including:'],
@@ -44,7 +44,7 @@ export const MODULE_NOT_LOADED_CONTENT: { [key in RedisDefaultModules]?: any } =
       'T-digest'
     ],
     additionalText: ['With this capability you can query streaming data without needing to store all the elements of the stream.'],
-    link: 'https://redis.io/docs/data-types/probabilistic/bloom-filter/'
+    link: 'https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/'
   },
   [RedisDefaultModules.RedisGears]: {
     text: ['Triggers and functions add the capability to execute server-side functions that are triggered by events or data operations to:'],

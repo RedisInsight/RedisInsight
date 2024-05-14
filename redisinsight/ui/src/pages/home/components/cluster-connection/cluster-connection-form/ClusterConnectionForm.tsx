@@ -74,7 +74,7 @@ const Message = () => (
     . &nbsp;
     <EuiLink
       color="text"
-      href="https://redis.com/redis-enterprise-software/overview/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
+      href="https://redis.io/redis-enterprise-software/overview/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight"
       className={styles.link}
       external={false}
       target="_blank"

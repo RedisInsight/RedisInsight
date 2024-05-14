@@ -167,20 +167,20 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                     meta: FieldMetaProps<string>
                   }) => (
                     <EuiFieldPassword
-                        data-testid="connection-form-password-input"
-                        className={styles.passwordField}
-                        fullWidth
-                        placeholder="Enter Password"
-                        maxLength={500}
-                        {...field}
-                        onFocus={() => {
-                          if (field.value === SECURITY_FIELD && !meta.touched) {
-                            form.setFieldValue('password', '')
-                          }
+                      data-testid="connection-form-password-input"
+                      className={styles.passwordField}
+                      fullWidth
+                      placeholder="Enter Password"
+                      maxLength={500}
+                      {...field}
+                      onFocus={() => {
+                        if (field.value === SECURITY_FIELD && !meta.touched) {
+                          form.setFieldValue('password', '')
+                        }
 
-                          setPasswordChanged(true)
-                        }}
-                      />
+                        setPasswordChanged(true)
+                      }}
+                    />
                   )}
                 </Field>
               </EuiFormRow>
@@ -196,7 +196,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                       isLoading={isLoading}
                       disabled={!isValid}
                     >
-                        Test Connection
+                      Test Connection
                     </EuiButton>
                   </ValidationTooltip>
                 </EuiFlexItem>
@@ -204,23 +204,23 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                   <EuiFlexGroup gutterSize="s">
                     <EuiFlexItem grow={false}>
                       <EuiButton color="secondary" data-testid="connection-form-cancel-button" onClick={onCancel}>
-                          Cancel
-                        </EuiButton>
+                        Cancel
+                      </EuiButton>
                     </EuiFlexItem>
                     <EuiFlexItem grow={false}>
                       <ValidationTooltip isValid={isValid} errors={errors}>
-                          <EuiButton
-                            data-testid="connection-form-add-button"
-                            type="submit"
-                            fill
-                            color="secondary"
-                            iconType={!isValid ? 'iInCircle' : undefined}
-                            isLoading={isLoading}
-                            disabled={!isValid}
-                          >
-                              Add Instance
-                          </EuiButton>
-                        </ValidationTooltip>
+                        <EuiButton
+                          data-testid="connection-form-add-button"
+                          type="submit"
+                          fill
+                          color="secondary"
+                          iconType={!isValid ? 'iInCircle' : undefined}
+                          isLoading={isLoading}
+                          disabled={!isValid}
+                        >
+                          Add Endpoint
+                        </EuiButton>
+                      </ValidationTooltip>
                     </EuiFlexItem>
                   </EuiFlexGroup>
                 </EuiFlexItem>

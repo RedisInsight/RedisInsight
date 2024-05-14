@@ -88,6 +88,8 @@ export enum OAuthSocialSource {
   'triggers and functions' = 'workbench triggers_and_functions',
   Workbench = 'workbench',
   Tutorials = 'tutorials',
+  EmptyDatabasesList = 'empty_db_list',
+  DatabasesList = 'db_list',
   DiscoveryForm = 'discovery form',
   UserProfile = 'user profile',
   AiChat = 'ai chat'

@@ -6,20 +6,22 @@ import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 
 import styles from './styles.module.scss'
 
+const subTitleText = "Redis Data Integration (RDI) synchronizes data from your existing database into Redis in near-real-time. We've done the heavy lifting so you can turn slow data into fast data without coding."
+
 export interface Props {
   onAddInstanceClick: () => void
 }
 
 const EmptyMessage = ({ onAddInstanceClick }: Props) => (
   <div className={styles.noResultsContainer} data-testid="empty-rdi-instance-list">
-    <EuiImage src={EmptyListIcon} alt="empty" size="m" />
     <EuiSpacer size="xl" />
-    <EuiText>No RDI instances added</EuiText>
-    <EuiText className={styles.subTitle}>Add your first RDI instance to get started!</EuiText>
+    <EuiText className={styles.title}>Redis Data Integration</EuiText>
+    <EuiImage src={EmptyListIcon} className={styles.icon} alt="empty" />
+    <EuiText className={styles.subTitle}>{subTitleText}</EuiText>
     <EuiFlexGroup alignItems="center">
       <EuiFlexItem>
         <EuiButton data-testid="empty-rdi-instance-button" color="secondary" fill size="s" onClick={onAddInstanceClick}>
-          + RDI INSTANCE
+          + Add RDI Endpoint
         </EuiButton>
       </EuiFlexItem>
       or

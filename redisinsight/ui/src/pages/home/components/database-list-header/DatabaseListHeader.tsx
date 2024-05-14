@@ -52,6 +52,9 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   const handleOnAddDatabase = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_CLICKED,
+      eventData: {
+        source: OAuthSocialSource.DatabasesList,
+      }
     })
     onAddInstance()
   }

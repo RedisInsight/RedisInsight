@@ -33,13 +33,13 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
   }
 }
 
-const sendPageViewTelemetry = async ({ name }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name, eventData }: ITelemetrySendPageView) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name })
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData, })
   } catch (e) {
     // continue regardless of error
   }

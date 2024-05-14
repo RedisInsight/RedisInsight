@@ -89,7 +89,7 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     })}
     >
       <div className={styles.flex}>
-        <div>welcome-page-header
+        <div>
           {type !== 'browser' && (
             width > MAX_ELEMENT_WIDTH
               ? <DesktopIcon className={styles.bigIcon} />

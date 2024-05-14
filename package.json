@@ -82,8 +82,7 @@
     "word-wrap": "1.2.4",
     "electron-builder/app-builder-lib/@electron/universal/dir-compare/minimatch": "^3.0.5",
     "**/semver": "^7.5.2",
-    "rawproto/protobufjs": "^7.2.5",
-    "**/follow-redirects": "^1.15.4"
+    "rawproto/protobufjs": "^7.2.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.2",

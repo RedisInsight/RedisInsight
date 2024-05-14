@@ -42,6 +42,8 @@ export abstract class RdiClient {
 
   abstract getPipelineStatus(): Promise<any>;
 
+  abstract getJobFunctions(): Promise<object>;
+
   abstract disconnect(): Promise<void>;
 
   public setLastUsed(): void {

@@ -7,7 +7,9 @@ import {
   IPipeline,
   FileChangeType,
   IPipelineJSON,
-  IRdiPipelineStrategy, IPipelineStatus,
+  IRdiPipelineStrategy,
+  IJobFunctionResponse,
+  IPipelineStatus,
 } from 'uiSrc/slices/interfaces/rdi'
 import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
@@ -26,6 +28,7 @@ export const initialState: IStateRdiPipeline = {
     data: [],
   },
   changes: {},
+  jobFunctions: [],
   status: {
     loading: false,
     data: null,
@@ -107,6 +110,12 @@ const rdiPipelineSlice = createSlice({
         data: null
       }
     },
+    setJobFunctions: (state, { payload }: PayloadAction<IJobFunctionResponse[]>) => {
+      state.jobFunctions = payload.map(
+        ({ function: label, description: documentation, example: detail }) =>
+          ({ label, documentation, detail })
+      )
+    },
   },
 })
 
@@ -130,6 +139,7 @@ export const {
   setChangedFile,
   setChangedFiles,
   deleteChangedFile,
+  setJobFunctions,
   getPipelineStatus,
   getPipelineStatusSuccess,
   getPipelineStatusFailure,
@@ -266,6 +276,27 @@ export function fetchRdiPipelineSchema(
       }
     } catch (_err) {
       dispatch(setPipelineSchema(null))
+      onFailAction?.()
+    }
+  }
+}
+
+export function fetchRdiPipelineJobFunctions(
+  rdiInstanceId: string,
+  onSuccessAction?: (data: any) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { data, status } = await apiService.get<IJobFunctionResponse[]>(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_JOB_FUNCTIONS),
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setJobFunctions(data))
+        onSuccessAction?.(data)
+      }
+    } catch (_err) {
       onFailAction?.()
     }
   }

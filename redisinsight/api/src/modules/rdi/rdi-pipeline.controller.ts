@@ -110,4 +110,15 @@ export class RdiPipelineController {
   ): Promise<unknown> {
     return this.rdiPipelineService.getPipelineStatus(rdiClientMetadata);
   }
+
+  @Get('/job-functions')
+  @ApiEndpoint({
+    description: 'Get job functions',
+    responses: [{ status: 200 }],
+  })
+  async getJobFunctions(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<object> {
+    return this.rdiPipelineService.getJobFunctions(rdiClientMetadata);
+  }
 }

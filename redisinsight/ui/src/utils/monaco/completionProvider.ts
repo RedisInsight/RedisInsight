@@ -1,7 +1,9 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { FUNCTIONS, KEYWORDS } from 'uiSrc/constants/monaco/cypher/monacoCypher'
 
-export const getCypherCompletionProvider = (): monacoEditor.languages.CompletionItemProvider => ({
+export const getCompletionProvider = (
+  keywords: string[] = [],
+  functions: monacoEditor.languages.CompletionItem[] = [],
+): monacoEditor.languages.CompletionItemProvider => ({
   provideCompletionItems: (
     model: monacoEditor.editor.IModel,
     position: monacoEditor.Position
@@ -16,7 +18,7 @@ export const getCypherCompletionProvider = (): monacoEditor.languages.Completion
 
     // display suggestions only for words that don't belong to a folding area
     if (!model.getValueInRange(range).startsWith(' ')) {
-      const keywordsSuggestions = KEYWORDS.map((item: string) => (
+      const keywordsSuggestions: monacoEditor.languages.CompletionItem[] = keywords.map((item: string) => (
         {
           label: item,
           kind: monacoEditor.languages.CompletionItemKind.Keyword,
@@ -26,15 +28,13 @@ export const getCypherCompletionProvider = (): monacoEditor.languages.Completion
         }
       ))
 
-      const functionsSuggestions = FUNCTIONS.map((item: any) => (
+      const functionsSuggestions: monacoEditor.languages.CompletionItem[] = functions.map((item) => (
         {
-          label: item.name,
-          detail: item.signature,
+          ...item,
+          insertText: `${item.label}`,
           kind: monacoEditor.languages.CompletionItemKind.Function,
-          documentation: item.description,
-          insertText: item.name,
           range,
-          sortText: `b${item.name}`,
+          sortText: `b${item.label}`,
           insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet
         }
       ))

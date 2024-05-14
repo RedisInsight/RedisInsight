@@ -1,4 +1,4 @@
-import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/cypher/monarchTokensProvider'
+import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/cypherTokens'
 
 describe('getCypherMonarchTokensProvider', () => {
   it('should be truthy', () => {

@@ -3702,6 +3702,18 @@ ansi-styles@^6.1.0:
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-6.2.1.tgz#0e62320cf99c21afff3b3012192546aacbfb05c5"
   integrity sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==
 
+antlr4-c3@3.3.7:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/antlr4-c3/-/antlr4-c3-3.3.7.tgz#f459fd3cfddfa8811a1f944bd7567df455f8ad27"
+  integrity sha512-F3ndE38wwA6z6AjUbL3heSdEGl4TxulGDPf9xB0/IY4dbRHWBh6XNaqFwur8vHKQk9FS5yNABHeg2wqlqIYO0w==
+  dependencies:
+    antlr4ng "2.0.11"
+
+antlr4ng@2.0.11:
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/antlr4ng/-/antlr4ng-2.0.11.tgz#daa000ee6a50fa90d5391d53de2579c6e1d80211"
+  integrity sha512-9jM91VVtHSqHkAHQsXHaoaiewFETMvUTI1/tXvwTiFw4f7zke3IGlwEyoKN9NS0FqIwDKFvUNW2e1cKPniTkVQ==
+
 anymatch@^3.0.3, anymatch@~3.1.2:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-3.1.3.tgz#790c58b19ba1720a84205b57c618d5ad8524973e"
@@ -5979,6 +5991,14 @@ dotenv@^9.0.2:
   version "9.0.2"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-9.0.2.tgz#dacc20160935a37dea6364aa1bef819fb9b6ab05"
   integrity sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==
+
+dt-sql-parser@4.0.0-beta.4.16:
+  version "4.0.0-beta.4.16"
+  resolved "https://registry.yarnpkg.com/dt-sql-parser/-/dt-sql-parser-4.0.0-beta.4.16.tgz#293345da65a15a521d3a3d3916f0a0b2cee8dc7d"
+  integrity sha512-Kvf6thiOjKcjs8YwKU+QDYUOpsNyr5HvMMCx2C1UbyAdRJtIsekaDPLO6BhYNIc0Mgiy9dp3vmq4TmYHDoPK9g==
+  dependencies:
+    antlr4-c3 "3.3.7"
+    antlr4ng "2.0.11"
 
 duplexer@^0.1.2:
   version "0.1.2"
@@ -9609,7 +9629,7 @@ loader-utils@^1.4.2:
     emojis-list "^3.0.0"
     json5 "^1.0.1"
 
-loader-utils@^2.0.0, loader-utils@^2.0.2, loader-utils@^2.0.4:
+loader-utils@^2.0.0, loader-utils@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-2.0.4.tgz#8b5cb38b5c34a9a018ee1fc0e6a066d1dfcc528c"
   integrity sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==
@@ -10504,17 +10524,10 @@ moment@^2.29.3:
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
   integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
-monaco-editor-webpack-plugin@^7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor-webpack-plugin/-/monaco-editor-webpack-plugin-7.1.0.tgz#16f265c2b5dbb5fe08681b6b3b7d00d3c5b2ee97"
-  integrity sha512-ZjnGINHN963JQkFqjjcBtn1XBtUATDZBMgNQhDQwd78w2ukRhFXAPNgWuacaQiDZsUr4h1rWv5Mv6eriKuOSzA==
-  dependencies:
-    loader-utils "^2.0.2"
-
-monaco-editor@^0.45.0:
-  version "0.45.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.45.0.tgz#6939123a6254aea9fea2d647697f846306dd4448"
-  integrity sha512-mjv1G1ZzfEE3k9HZN0dQ2olMdwIfaeAAjFiwNprLfYNRSz7ctv9XuCT7gPtBGrMUeV1/iZzYKj17Khu1hxoHOA==
+monaco-editor@^0.48.0:
+  version "0.48.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.48.0.tgz#9e54541bbe0ba3f2bb238477d5b981a282205ea0"
+  integrity sha512-goSDElNqFfw7iDHMg8WDATkfcyeLTNpBHQpO8incK6p5qZt5G/1j41X0xdGzpIkGojGXM+QiRQyLjnfDVvrpwA==
 
 monaco-languageserver-types@^0.3.0:
   version "0.3.2"
@@ -10529,6 +10542,13 @@ monaco-marker-data-provider@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/monaco-marker-data-provider/-/monaco-marker-data-provider-1.1.1.tgz#0ca69f367152f5aa12cec2bda95f32b7403e876f"
   integrity sha512-PGB7TJSZE5tmHzkxv/OEwK2RGNC2A7dcq4JRJnnj31CUAsfmw0Gl+1QTrH0W0deKhcQmQM0YVPaqgQ+0wCt8Mg==
+
+monaco-sql-languages@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/monaco-sql-languages/-/monaco-sql-languages-0.12.0.tgz#8be5d79a70b5e827e0a52fd44ab0ccb18b6cfedf"
+  integrity sha512-tCAoTnn6g84cAYVcAAZetTphO+lEihFLhfFXqCgqsuAgAaaXEAwmYBBjQ1hN9bCYpt1TCvjNluCK+PO7VgCbVQ==
+  dependencies:
+    dt-sql-parser "4.0.0-beta.4.16"
 
 monaco-types@^0.1.0:
   version "0.1.0"
@@ -14655,6 +14675,11 @@ vite-plugin-electron@^0.28.6:
   version "0.28.6"
   resolved "https://registry.yarnpkg.com/vite-plugin-electron/-/vite-plugin-electron-0.28.6.tgz#98bcf291179dfbdfef407f881cbb1e1d58249c57"
   integrity sha512-DANntooA/XcUQuaOG7tQ0nnWh8iP5yKur2e9GDafjslOPAVZehRyrbi2UEI6rlIhN6hHwcqAjY+/Zz8+thAL5g==
+
+vite-plugin-react-click-to-component@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-react-click-to-component/-/vite-plugin-react-click-to-component-3.0.0.tgz#bd22d0210ca245bf00b513ad4f6f28065cc98880"
+  integrity sha512-ErVBJDIpq2WfjIrBKwIvGVN7QlsXb2MEqO+IBy15akoVpL4J0b7hBNQzPS74ZrJAmtNkvmE0lHyaQk7Whj1YGQ==
 
 vite-plugin-svgr@^4.2.0:
   version "4.2.0"

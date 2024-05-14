@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import cx from 'classnames'
 import { EuiButton, EuiIcon } from '@elastic/eui'
-import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
+import { merge } from 'lodash'
 
+import { MonacoThemes, darkTheme, lightTheme } from 'uiSrc/constants/monaco'
 import { Nullable } from 'uiSrc/utils'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { DSL, Theme } from 'uiSrc/constants'
@@ -25,6 +26,11 @@ export interface CommonProps {
   isEditable?: boolean
   wrapperClassName?: string
   options?: monacoEditor.editor.IStandaloneEditorConstructionOptions
+  dedicatedEditorOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
+  dedicatedEditorLanguages?: DSL[]
+  dedicatedEditorKeywords?: string[]
+  dedicatedEditorFunctions?: monacoEditor.languages.CompletionItem[]
+  onChangeLanguage?: (langId: DSL) => void
   'data-testid'?: string
 }
 
@@ -33,7 +39,6 @@ export interface Props extends CommonProps {
   onEditorWillMount?: (monaco: typeof monacoEditor) => void
   className?: string
   language: string
-  dedicatedEditorLanguages?: DSL[]
 }
 const MonacoEditor = (props: Props) => {
   const {
@@ -43,6 +48,7 @@ const MonacoEditor = (props: Props) => {
     onDecline,
     onEditorDidMount,
     onEditorWillMount,
+    onChangeLanguage,
     disabled,
     readOnly,
     isEditable,
@@ -50,7 +56,10 @@ const MonacoEditor = (props: Props) => {
     wrapperClassName,
     className,
     options = {},
+    dedicatedEditorOptions = {},
     dedicatedEditorLanguages = [],
+    dedicatedEditorKeywords = [],
+    dedicatedEditorFunctions = [],
     'data-testid': dataTestId = 'monaco-editor'
   } = props
 
@@ -170,7 +179,7 @@ const MonacoEditor = (props: Props) => {
     monacoEditor.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
-  const monacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
+  const monacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = merge({
     wordWrap: 'on',
     automaticLayout: true,
     formatOnPaste: false,
@@ -189,8 +198,7 @@ const MonacoEditor = (props: Props) => {
     hideCursorInOverviewRuler: true,
     overviewRulerBorder: false,
     lineNumbersMinChars: 4,
-    ...options
-  }
+  }, options)
 
   const handleApply = (_value: string, event: React.MouseEvent) => {
     onApply?.(event, () => setIsEditing(false))
@@ -228,6 +236,10 @@ const MonacoEditor = (props: Props) => {
         <DedicatedEditor
           initialHeight={input?.current?.scrollHeight || 0}
           langs={dedicatedEditorLanguages}
+          customOptions={dedicatedEditorOptions}
+          keywords={dedicatedEditorKeywords}
+          functions={dedicatedEditorFunctions}
+          onChangeLanguage={onChangeLanguage}
           onSubmit={updateArgFromDedicatedEditor}
           onCancel={onCancelDedicatedEditor}
         />

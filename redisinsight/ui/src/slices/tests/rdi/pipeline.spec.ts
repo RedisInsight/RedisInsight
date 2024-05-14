@@ -27,6 +27,8 @@ import reducer, {
   fetchRdiPipelineSchema,
   fetchPipelineStrategies,
   fetchPipelineTemplate,
+  setJobFunctions,
+  fetchRdiPipelineJobFunctions,
   getPipelineStatusAction,
   rdiPipelineSelector,
   rdiPipelineStatusSelector,
@@ -353,6 +355,39 @@ describe('rdi pipe slice', () => {
     })
   })
 
+  describe('setJobFunctions', () => {
+    it('should set job functions as monaco compilation items', () => {
+      const functionValue = 'function'
+      const descriptionValue = 'description'
+      const exampleValue = 'example'
+      const commentsValue = 'comments'
+      const mockData = [{
+        function: functionValue,
+        description: descriptionValue,
+        example: exampleValue,
+        comments: commentsValue,
+      }]
+
+      // Arrange
+      const state = {
+        ...initialState,
+        jobFunctions: [{ label: functionValue, detail: exampleValue, documentation: descriptionValue }]
+      }
+
+      // Act
+      const nextState = reducer(initialState, setJobFunctions(mockData))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineSelector(rootState)).toEqual(state)
+    })
+  })
+
+
   describe('getPipelineStatus', () => {
     it('should set loading = true', () => {
       // Arrange
@@ -563,6 +598,46 @@ describe('rdi pipe slice', () => {
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchRdiPipelineJobFunctions', () => {
+      it('succeed to fetch data', async () => {
+        const data = [{ function: 'func', comments: '123', description: 'desc', example: 'ex' }]
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchRdiPipelineJobFunctions('123')
+        )
+
+        // Assert
+        const expectedActions = [
+          setJobFunctions(data),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchRdiPipelineJobFunctions('123')
+        )
+
+        expect(store.getActions().length).toEqual(0)
       })
     })
 

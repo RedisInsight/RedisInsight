@@ -150,6 +150,7 @@ enum ApiEndpoints {
   RDI_TEST_CONNECTIONS = 'pipeline/test-connections',
   RDI_PIPELINE_STRATEGIES = 'pipeline/strategies',
   RDI_PIPELINE_TEMPLATE = 'pipeline/template',
+  RDI_PIPELINE_JOB_FUNCTIONS = 'pipeline/job-functions',
   RDI_STATISTICS = 'statistics',
   RDI_PIPELINE_STATUS = 'pipeline/status',
 }

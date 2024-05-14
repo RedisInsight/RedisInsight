@@ -7,6 +7,7 @@ import {
   askExpertChatbotAction,
   getExpertChatHistoryAction,
   removeExpertChatHistoryAction,
+  updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
@@ -19,12 +20,14 @@ import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
 import NoIndexesInitialMessage from './components/no-indexes-initial-message'
 import ExpertChatHeader from './components/expert-chat-header'
+
+import { EXPERT_CHAT_AGREEMENTS } from '../texts'
 import { ChatForm, ChatHistory, ExpertChatInitialMessage } from '../shared'
 
 import styles from './styles.module.scss'
 
 const ExpertChat = () => {
-  const { messages, loading } = useSelector(aiExpertChatSelector)
+  const { messages, agreements, loading } = useSelector(aiExpertChatSelector)
   const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
@@ -37,6 +40,8 @@ const ExpertChat = () => {
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
+
+  const isAgreementsAccepted = agreements.includes(instanceId) || messages.length > 0
 
   const dispatch = useDispatch()
 
@@ -85,6 +90,18 @@ const ExpertChat = () => {
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom()
 
+    if (!isAgreementsAccepted) {
+      dispatch(updateExpertChatAgreements(instanceId))
+
+      sendEventTelemetry({
+        event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_ACCEPTED,
+        eventData: {
+          databaseId: instanceId,
+          chat: AiChatType.Query,
+        }
+      })
+    }
+
     dispatch(askExpertChatbotAction(
       instanceId,
       message,
@@ -112,7 +129,7 @@ const ExpertChat = () => {
         chat: AiChatType.Query
       }
     })
-  }, [instanceId])
+  }, [instanceId, isAgreementsAccepted])
 
   const onRunCommand = useCallback((query: string) => {
     const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
@@ -134,6 +151,15 @@ const ExpertChat = () => {
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
         chat: AiChatType.Query
+      }
+    })
+  }, [])
+
+  const handleAgreementsDisplay = useCallback(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_DISPLAYED,
+      eventData: {
+        chat: AiChatType.Query,
       }
     })
   }, [])
@@ -198,6 +224,8 @@ const ExpertChat = () => {
       </div>
       <div className={styles.chatForm}>
         <ChatForm
+          onAgreementsDisplayed={handleAgreementsDisplay}
+          agreements={!isAgreementsAccepted ? EXPERT_CHAT_AGREEMENTS : undefined}
           isDisabled={!instanceId || !!inProgressMessage}
           validation={getValidationMessage()}
           placeholder="Ask me to query your data (e.g. How many road bikes?)"

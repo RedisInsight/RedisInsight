@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
 
 import { AxiosError } from 'axios'
-import { apiService, sessionStorageService } from 'uiSrc/services'
+import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { AiChatMessage, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
@@ -21,11 +21,13 @@ export const initialState: StateAiAssistant = {
   activeTab: getTabSelected(sessionStorageService.get(BrowserStorageItem.selectedAiChat)),
   assistant: {
     loading: false,
+    agreements: localStorageService.get(BrowserStorageItem.generalChatAgreements) ?? false,
     id: sessionStorageService.get(BrowserStorageItem.aiChatSession) ?? '',
     messages: []
   },
   expert: {
     loading: false,
+    agreements: [],
     messages: []
   }
 }
@@ -38,6 +40,13 @@ const aiAssistantSlice = createSlice({
     setSelectedTab: (state, { payload }: PayloadAction<AiChatType>) => {
       state.activeTab = payload
       sessionStorageService.set(BrowserStorageItem.selectedAiChat, payload)
+    },
+    updateAssistantChatAgreements: (state, { payload }: PayloadAction<boolean>) => {
+      state.assistant.agreements = payload
+      localStorageService.set(BrowserStorageItem.generalChatAgreements, payload)
+    },
+    updateExpertChatAgreements: (state, { payload }: PayloadAction<string>) => {
+      state.expert.agreements.push(payload)
     },
     createAssistantChat: (state) => {
       state.assistant.loading = true
@@ -133,7 +142,7 @@ const aiAssistantSlice = createSlice({
     },
     clearExpertChatHistory: (state) => {
       state.expert.messages = []
-    }
+    },
   }
 })
 
@@ -145,6 +154,8 @@ export const aiExpertChatSelector = (state: RootState) => state.panels.aiAssista
 // Actions generated from the slice
 export const {
   createAssistantChat,
+  updateAssistantChatAgreements,
+  updateExpertChatAgreements,
   clearAssistantChatId,
   setSelectedTab,
   createAssistantSuccess,

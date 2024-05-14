@@ -28,11 +28,13 @@ export interface StateAiAssistant {
   activeTab: AiChatType
   assistant: {
     loading: boolean
+    agreements: boolean
     id: string
     messages: Array<AiChatMessage>
   },
   expert: {
     loading: boolean
+    agreements: string[]
     messages: Array<AiChatMessage>
   }
 }

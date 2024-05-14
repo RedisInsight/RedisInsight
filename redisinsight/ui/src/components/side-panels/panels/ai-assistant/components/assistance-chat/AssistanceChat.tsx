@@ -7,8 +7,9 @@ import {
   askAssistantChatbot,
   createAssistantChatAction,
   getAssistantChatHistoryAction,
-  removeAssistantChatAction,
+  removeAssistantChatAction, removeAssistantChatHistorySuccess,
   sendQuestion,
+  updateAssistantChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -18,12 +19,15 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import { generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
-import { AssistanceChatInitialMessage, ChatHistory, ChatForm, RestartChat } from '../shared'
+
+import { CustomErrorCodes } from 'uiSrc/constants'
+import { ASSISTANCE_CHAT_AGREEMENTS } from '../texts'
+import { AssistanceChatInitialMessage, ChatForm, ChatHistory, RestartChat } from '../shared'
 
 import styles from './styles.module.scss'
 
 const AssistanceChat = () => {
-  const { id, messages } = useSelector(aiAssistantChatSelector)
+  const { id, messages, agreements, loading } = useSelector(aiAssistantChatSelector)
   const { modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
 
@@ -45,24 +49,44 @@ const AssistanceChat = () => {
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom('smooth')
 
+    if (!agreements) {
+      dispatch(updateAssistantChatAgreements(true))
+      sendEventTelemetry({
+        event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_ACCEPTED,
+        eventData: {
+          chat: AiChatType.Assistance,
+        }
+      })
+    }
+
     if (!id) {
       dispatch(
         createAssistantChatAction(
           (chatId) => sendChatMessage(chatId, message),
           // if cannot create a chat - just put message with error
-          () => dispatch(
-            sendQuestion({
-              ...generateHumanMessage(message),
-              error: { statusCode: 500 },
+          () => {
+            dispatch(
+              sendQuestion({
+                ...generateHumanMessage(message),
+                error: { statusCode: 500, errorCode: CustomErrorCodes.GeneralAiUnexpectedError },
+              })
+            )
+
+            sendEventTelemetry({
+              event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
+              eventData: {
+                chat: AiChatType.Assistance,
+                errorCode: 500
+              }
             })
-          )
+          }
         )
       )
       return
     }
 
     sendChatMessage(id, message)
-  }, [id])
+  }, [id, agreements])
 
   const sendChatMessage = (chatId: string, message: string) => {
     dispatch(askAssistantChatbot(
@@ -95,7 +119,10 @@ const AssistanceChat = () => {
   }
 
   const onClearSession = useCallback(() => {
-    if (!id) return
+    if (!id) {
+      dispatch(removeAssistantChatHistorySuccess())
+      return
+    }
 
     dispatch(removeAssistantChatAction(id))
 
@@ -119,6 +146,15 @@ const AssistanceChat = () => {
       }
     })
   }, [instanceId, provider])
+
+  const handleAgreementsDisplay = useCallback(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_DISPLAYED,
+      eventData: {
+        chat: AiChatType.Assistance,
+      }
+    })
+  }, [])
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
     requestAnimationFrame(() => {
@@ -149,6 +185,7 @@ const AssistanceChat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          isLoading={loading}
           modules={modules}
           initialMessage={AssistanceChatInitialMessage}
           inProgressMessage={inProgressMessage}
@@ -161,6 +198,8 @@ const AssistanceChat = () => {
       </div>
       <div className={styles.chatForm}>
         <ChatForm
+          onAgreementsDisplayed={handleAgreementsDisplay}
+          agreements={!agreements ? ASSISTANCE_CHAT_AGREEMENTS : undefined}
           placeholder="Ask me about Redis"
           isDisabled={!!inProgressMessage}
           onSubmit={handleSubmit}

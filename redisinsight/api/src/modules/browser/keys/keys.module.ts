@@ -3,7 +3,7 @@ import {
   MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { KeysController } from 'src/modules/browser/keys/keys.controller';
 import { StandaloneScannerStrategy } from 'src/modules/browser/keys/scanner/strategies/standalone.scanner.strategy';
@@ -30,7 +30,7 @@ export class KeysModule {
     return {
       module: KeysModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: KeysModule,
         }]),
@@ -63,6 +63,6 @@ export class KeysModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(KeysController));
+      .forRoutes(KeysController);
   }
 }

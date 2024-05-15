@@ -40,7 +40,7 @@ const OAuthAgreement = (props: Props) => {
           {'to our '}
           <EuiLink
             color="subdued"
-            href="https://redis.com/legal/cloud-tos/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
+            href="https://redis.io/legal/cloud-tos/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
             className={styles.link}
             external={false}
             target="_blank"
@@ -51,7 +51,7 @@ const OAuthAgreement = (props: Props) => {
           {' and '}
           <EuiLink
             color="subdued"
-            href="https://redis.com/legal/privacy-policy/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
+            href="https://redis.io/legal/privacy-policy/?utm_source=redisinsight&utm_medium=main&utm_campaign=main"
             className={styles.link}
             external={false}
             target="_blank"

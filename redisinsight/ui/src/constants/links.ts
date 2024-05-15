@@ -10,7 +10,7 @@ export const EXTERNAL_LINKS = {
   guidesRepo: 'https://github.com/RedisInsight/Tutorials',
   redisStack: 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/',
   cloudConsole: 'https://app.redislabs.com/#/databases',
-  tryFree: 'https://redis.com/try-free',
+  tryFree: 'https://redis.io/try-free',
   docker: 'https://redis.io/docs/install/install-stack/docker',
 }
 

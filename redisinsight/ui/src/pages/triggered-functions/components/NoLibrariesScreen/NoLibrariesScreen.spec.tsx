@@ -84,6 +84,6 @@ describe('NoLibrariesScreen', () => {
     render(<NoLibrariesScreen {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('triggers and functions are not available for this database')
-    expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.')
+    expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of your Redis and try the interactive tutorial to learn how to work with triggers and functions.')
   })
 })

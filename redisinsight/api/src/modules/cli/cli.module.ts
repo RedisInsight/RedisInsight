@@ -1,5 +1,5 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { CommandsModule } from 'src/modules/commands/commands.module';
 import { CommandsService } from 'src/modules/commands/commands.service';
@@ -33,6 +33,6 @@ export class CliModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(CliController));
+      .forRoutes(CliController);
   }
 }

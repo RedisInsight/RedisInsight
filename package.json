@@ -40,7 +40,7 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./configs/webpack.config.preload.dev.ts",
     "test": "jest ./redisinsight/ui -w 1",
     "test:watch": "jest ./redisinsight/ui --watch -w 1",
-    "test:cov": "jest ./redisinsight/ui --silent --coverage --no-cache --forceExit -w 3",
+    "test:cov": "cross-env NODE_OPTIONS='' jest ./redisinsight/ui --silent --coverage --no-cache --forceExit -w 3",
     "test:cov:unit": "jest ./redisinsight/ui --group=-component --coverage -w 1",
     "test:cov:component": "jest ./redisinsight/ui --group=component --coverage -w 1",
     "type-check:ui": "tsc --project redisinsight/ui --noEmit"
@@ -82,8 +82,7 @@
     "word-wrap": "1.2.4",
     "electron-builder/app-builder-lib/@electron/universal/dir-compare/minimatch": "^3.0.5",
     "**/semver": "^7.5.2",
-    "rawproto/protobufjs": "^7.2.4",
-    "**/follow-redirects": "^1.15.4"
+    "rawproto/protobufjs": "^7.2.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.23.2",

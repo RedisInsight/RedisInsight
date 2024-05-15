@@ -8,6 +8,9 @@ export class RdiInstancesListPage extends BaseOverviewPage {
     AddRdiInstance = new AddRdiInstance();
 
     rdiInstanceButton = Selector('[data-testid=rdi-instance]');
+    addRdiFromEmptyListBtn = Selector('[data-testid=empty-rdi-instance-button]');
+
+    quickstartBtn = Selector('[data-testid=empty-rdi-quickstart-button]');
 
     rdiInstanceRow = Selector('[class*=euiTableRow-isSelectable]');
     emptyRdiList = Selector('[data-testid=empty-rdi-instance-list]', { timeout: 1000 });

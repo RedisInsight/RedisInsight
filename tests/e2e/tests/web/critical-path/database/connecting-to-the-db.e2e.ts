@@ -187,10 +187,10 @@ test
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
     })('Verify that user can see the No databases message on the empty databases list', async t => {
-        const notDatabasesMessage = 'No databases yet, let\'s add one!';
+        const noDatabasesMessage = 'No databases yet, let\'s add one!';
         // const externalPageLink = 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
 
-        await t.expect(myRedisDatabasePage.emptyListMessage.withText(notDatabasesMessage).exists).ok('Empty databases list message not displayed');
+        await t.expect(myRedisDatabasePage.emptyListMessage.withText(noDatabasesMessage).exists).ok('Empty databases list message not displayed');
 
         await t.click(myRedisDatabasePage.addDbFromEmptyListBtn);
         await t.expect(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn.exists).ok('Add database form not opened');

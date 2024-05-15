@@ -5,20 +5,17 @@ import {
   createFreeDbJob,
   fetchPlans,
   oauthCloudUserSelector,
-  setJob,
-  setSocialDialogState,
   showOAuthProgress
 } from 'uiSrc/slices/oauth/cloud'
 
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { localStorageService } from 'uiSrc/services'
 import { Nullable } from 'uiSrc/utils'
 import { OAuthAdvantages, OAuthAgreement, OAuthRecommendedSettings, OAuthSocialButtons } from '../../shared'
 import styles from './styles.module.scss'
@@ -61,9 +58,6 @@ const OAuthCreateDb = (props: Props) => {
 
   const handleClickCreate = () => {
     dispatch(setSSOFlow(OAuthSocialAction.Create))
-    dispatch(setSocialDialogState(null))
-    dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
-    localStorageService.remove(BrowserStorageItem.OAuthJobId)
     dispatch(showOAuthProgress(true))
     dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
 
@@ -72,9 +66,6 @@ const OAuthCreateDb = (props: Props) => {
         name: CloudJobName.CreateFreeSubscriptionAndDatabase,
         resources: {
           isRecommendedSettings: isRecommended
-        },
-        onSuccessAction: () => {
-          dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
         },
         onFailAction: () => {
           dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))

@@ -9,7 +9,7 @@ export class PipelineManagementPanel {
     //Jobs
     addJobBtn = Selector('[data-testid=add-new-job]');
 
-    jobNameInput = Selector('[data-testid^=job-name-input-]');
+    jobNameInput = Selector('[data-testid=inline-item-editor]');
     jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
     confirmBtn  = Selector('[data-testid=confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');

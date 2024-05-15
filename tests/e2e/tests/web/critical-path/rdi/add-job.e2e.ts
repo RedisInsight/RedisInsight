@@ -118,12 +118,16 @@ test('Verify that user can change job config', async() => {
 test('Verify that user can open an additional editor to work with SQL and JMESPath expressions', async() => {
     const jobName = 'testJob';
     const sqlText = 'SELECT test FROM test1';
+    const JMESPathText = 'ba';
+    const JMESPathAutoCompleteText = 'base64_decode';
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
-    await t.click(rdiInstancePage.jobsInput);
+    await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
+    await t.click(rdiInstancePage.templateCancelButton);
     // Verify that editor is not displayed by default
     await t.expect(rdiInstancePage.draggableArea.exists).notOk('SQL/JMESPath editor is displayed by default');
 
+    await t.click(rdiInstancePage.jobsInput);
     await t.pressKey('shift+space');
     // Verify that user can open an additional editor to work with SQL and JMESPath expressions
     await t.expect(rdiInstancePage.draggableArea.exists).ok('SQL/JMESPath editor is not displayed');
@@ -141,4 +145,13 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
     await t.click(rdiInstancePage.EditorButton.applyBtn);
     await t.expect(await MonacoEditor.getTextFromMonaco()).eql(sqlText, 'Text from SQL editor not applied');
+
+    //verify that autocomplete works for JMESPath
+    await t.pressKey('shift+space');
+    await t.click(rdiInstancePage.languageDropdown);
+    await t.click(rdiInstancePage.jmesPathOption);
+    await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, JMESPathText);
+    await t.pressKey('tab');
+    await t.click(rdiInstancePage.EditorButton.applyBtn);
+    await t.expect(await MonacoEditor.getTextFromMonaco()).contains(JMESPathAutoCompleteText, 'Text from SQL editor not applied');
 });

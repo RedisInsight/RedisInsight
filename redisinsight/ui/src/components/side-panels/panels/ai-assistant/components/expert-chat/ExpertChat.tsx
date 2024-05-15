@@ -94,7 +94,7 @@ const ExpertChat = () => {
       dispatch(updateExpertChatAgreements(instanceId))
 
       sendEventTelemetry({
-        event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_ACCEPTED,
+        event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
         eventData: {
           databaseId: instanceId,
           chat: AiChatType.Query,
@@ -157,7 +157,7 @@ const ExpertChat = () => {
 
   const handleAgreementsDisplay = useCallback(() => {
     sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_DISPLAYED,
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
       eventData: {
         chat: AiChatType.Query,
       }

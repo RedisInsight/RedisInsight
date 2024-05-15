@@ -154,7 +154,7 @@ describe('AssistanceChat', () => {
     await waitForEuiPopoverVisible()
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_DISPLAYED,
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
       eventData: {
         chat: AiChatType.Assistance
       }
@@ -166,7 +166,7 @@ describe('AssistanceChat', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_ACCEPTED,
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
       eventData: {
         chat: AiChatType.Assistance,
       }

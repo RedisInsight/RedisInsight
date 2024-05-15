@@ -52,7 +52,7 @@ const AssistanceChat = () => {
     if (!agreements) {
       dispatch(updateAssistantChatAgreements(true))
       sendEventTelemetry({
-        event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_ACCEPTED,
+        event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
         eventData: {
           chat: AiChatType.Assistance,
         }
@@ -149,7 +149,7 @@ const AssistanceChat = () => {
 
   const handleAgreementsDisplay = useCallback(() => {
     sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_BOT_DATABASE_TERMS_DISPLAYED,
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
       eventData: {
         chat: AiChatType.Assistance,
       }

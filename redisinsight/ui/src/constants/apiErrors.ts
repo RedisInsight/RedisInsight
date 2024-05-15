@@ -15,6 +15,7 @@ export const ApiEncryptionErrors: string[] = [
 
 export enum AiChatErrors {
   Default = 'An error occurred. Try again or restart the session.',
+  DefaultUnexpected = 'An unexpected error occurred. Try again later.',
   Timeout = 'Timeout occurred. Try again later.',
   CloudAuthorization = 'Session expired. Login and try again'
 }

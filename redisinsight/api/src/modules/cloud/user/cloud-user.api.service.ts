@@ -168,16 +168,27 @@ export class CloudUserApiService {
    * @param forceSync
    * @param utm
    */
-  async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
-    return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
-      try {
-        await this.ensureCloudUser(sessionMetadata, forceSync, utm);
+  async getCloudUser(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
+    try {
+      await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
-        return await this.repository.get(sessionMetadata.sessionId);
-      } catch (e) {
-        throw wrapHttpError(e);
-      }
-    });
+      return await this.repository.get(sessionMetadata.sessionId);
+    } catch (e) {
+      throw wrapHttpError(e);
+    }
+  }
+
+  /**
+   * Get cloud user profile
+   * @param sessionMetadata
+   * @param forceSync
+   * @param utm
+   */
+  async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
+    return this.api.callWithAuthRetry(
+      sessionMetadata.sessionId,
+      async () => this.getCloudUser(sessionMetadata, forceSync, utm),
+    );
   }
 
   /**
@@ -210,13 +221,15 @@ export class CloudUserApiService {
   async setCurrentAccount(sessionMetadata: SessionMetadata, accountId: string | number): Promise<CloudUser> {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
+        await this.ensureCloudUser(sessionMetadata);
+
         this.logger.log('Switching user account');
 
         const session = await this.sessionService.getSession(sessionMetadata.sessionId);
 
         await this.api.setCurrentAccount(session, +accountId);
 
-        return this.me(sessionMetadata, true);
+        return this.getCloudUser(sessionMetadata, true);
       } catch (e) {
         this.logger.error('Unable to switch current account', e);
         throw wrapHttpError(e);

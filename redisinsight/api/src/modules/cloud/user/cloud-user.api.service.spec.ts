@@ -397,7 +397,8 @@ describe('CloudUserApiService', () => {
     let response;
 
     beforeEach(async () => {
-      spy = jest.spyOn(service, 'me');
+      jest.spyOn(service as any, 'ensureCloudUser').mockResolvedValue(undefined);
+      spy = jest.spyOn(service, 'getCloudUser');
       spy.mockResolvedValue(mockCloudUser);
     });
 

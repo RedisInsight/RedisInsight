@@ -85,6 +85,7 @@ const instancesSlice = createSlice({
     },
     setDefaultInstanceSuccess: (state) => {
       state.loading = false
+      state.error = ''
     },
     setDefaultInstanceFailure: (state, { payload }) => {
       state.loading = false
@@ -272,6 +273,7 @@ export function deleteInstancesAction(instances: RdiInstance[], onSuccess?: () =
   }
 }
 
+// Asynchronous thunk action
 export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(setConnectedInstance())
@@ -288,6 +290,33 @@ export function fetchConnectedInstanceAction(id: string, onSuccess?: () => void)
       const errorMessage = getApiErrorMessage(error)
       dispatch(setConnectedInstanceFailure(errorMessage))
       dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function checkConnectToRdiInstanceAction(
+  id: string = '',
+  onSuccessAction?: (id: string) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(setDefaultInstance())
+    dispatch(resetConnectedInstance())
+    try {
+      const { status } = await apiService.get(`${ApiEndpoints.RDI_INSTANCES}/${id}/connect`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(setDefaultInstanceSuccess())
+        onSuccessAction?.(id)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const errorMessage = getApiErrorMessage(error)
+
+      dispatch(setDefaultInstanceFailure(errorMessage))
+      dispatch(addErrorNotification({ ...error, instanceId: id }))
+      onFailAction?.()
     }
   }
 }

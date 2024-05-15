@@ -1,12 +1,14 @@
 import { EuiInMemoryTable } from '@elastic/eui'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import { cloneDeep } from 'lodash'
 
 import ItemList, { Props as ItemListProps } from 'uiSrc/components/item-list/ItemList'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
+import { resetConnectedInstance, setDefaultInstance } from 'uiSrc/slices/rdi/instances'
 import RdiInstancesListWrapper, { Props } from './RdiInstancesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -93,6 +95,13 @@ const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
   )
 }
 
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
+
 describe('RdiInstancesListWrapper', () => {
   beforeAll(() => {
     (ItemList as jest.Mock).mockImplementation(mockRdiInstancesList)
@@ -118,6 +127,21 @@ describe('RdiInstancesListWrapper', () => {
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper action on rdi alias click', async () => {
+    render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('rdi-alias-1'))
+    })
+
+    const expectedActions = [
+      setDefaultInstance(),
+      resetConnectedInstance()
+    ]
+
+    expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should call proper telemetry on copy url', async () => {

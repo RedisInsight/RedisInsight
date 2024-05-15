@@ -59,10 +59,10 @@ export const constructKeysToTree = (props: Props): any[] => {
 
       // Regular sorting
       if (sorting === 'ASC') {
-        return a.localeCompare(b, 'en', { numeric: true })
+        return a.localeCompare(b, 'en')
       }
       if (sorting === 'DESC') {
-        return b.localeCompare(a, 'en', { numeric: true })
+        return b.localeCompare(a, 'en')
       }
 
       return 0

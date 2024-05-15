@@ -32,7 +32,19 @@ import { StaticsManagementModule } from './modules/statics-management/statics-ma
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import { routes } from './app.routes';
-import { RedisConnectionModule } from './modules/redis-connection/redis-connection.module';
+import { RedisConnectionMiddleware } from './middleware/redis-connection.middleware';
+import { HashController } from './modules/browser/hash/hash.controller';
+import { KeysController } from './modules/browser/keys/keys.controller';
+import { ListController } from './modules/browser/list/list.controller';
+import { RejsonRlController } from './modules/browser/rejson-rl/rejson-rl.controller';
+import { SetController } from './modules/browser/set/set.controller';
+import { StreamController } from './modules/browser/stream/controllers/stream.controller';
+import { ConsumerGroupController } from './modules/browser/stream/controllers/consumer-group.controller';
+import { ConsumerController } from './modules/browser/stream/controllers/consumer.controller';
+import { StringController } from './modules/browser/string/string.controller';
+import { ZSetController } from './modules/browser/z-set/z-set.controller';
+import { CliController } from './modules/cli/controllers/cli.controller';
+import { WorkbenchController } from './modules/workbench/workbench.controller';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -47,7 +59,6 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     CloudModule.register(),
     RedisSentinelModule,
     BrowserModule.register(),
-    RedisConnectionModule,
     CliModule,
     WorkbenchModule.register(),
     PluginModule,
@@ -125,6 +136,23 @@ export class AppModule implements OnModuleInit, NestModule {
       .apply(ExcludeRouteMiddleware)
       .forRoutes(
         ...SERVER_CONFIG.excludeRoutes,
+      );
+
+    consumer
+      .apply(RedisConnectionMiddleware)
+      .forRoutes(
+        RouterModule.resolvePath(HashController),
+        RouterModule.resolvePath(KeysController),
+        RouterModule.resolvePath(ListController),
+        RouterModule.resolvePath(RejsonRlController),
+        RouterModule.resolvePath(SetController),
+        RouterModule.resolvePath(StreamController),
+        RouterModule.resolvePath(ConsumerGroupController),
+        RouterModule.resolvePath(ConsumerController),
+        RouterModule.resolvePath(StringController),
+        RouterModule.resolvePath(ZSetController),
+        RouterModule.resolvePath(CliController),
+        RouterModule.resolvePath(WorkbenchController),
       );
   }
 }

@@ -290,26 +290,26 @@ const HomePage = () => {
                       style={{ minWidth: '474px' }}
                     >
                       {!!openRightPanel && (
-                      <DatabasePanel
-                        editMode={openRightPanel === RightPanelName.EditDatabase}
-                        width={width}
-                        isResizablePanel
-                        urlHandlingAction={action}
-                        initialValues={dbConnection ?? null}
-                        editedInstance={
-                                  openRightPanel === RightPanelName.EditDatabase
-                                    ? editedInstance
-                                    : sentinelInstance ?? null
-                                }
-                        onClose={
-                                  openRightPanel === RightPanelName.EditDatabase
-                                    ? closeEditDialog
-                                    : handleClose
-                                }
-                        onDbEdited={onDbEdited}
-                        isFullWidth={!instances.length}
-                        initConnectionType={initialDbTypeRef.current}
-                      />
+                        <DatabasePanel
+                          editMode={openRightPanel === RightPanelName.EditDatabase}
+                          width={width}
+                          isResizablePanel
+                          urlHandlingAction={action}
+                          initialValues={dbConnection ?? null}
+                          editedInstance={
+                            openRightPanel === RightPanelName.EditDatabase
+                              ? editedInstance
+                              : sentinelInstance ?? null
+                          }
+                          onClose={
+                            openRightPanel === RightPanelName.EditDatabase
+                              ? closeEditDialog
+                              : handleClose
+                          }
+                          onDbEdited={onDbEdited}
+                          isFullWidth={!instances.length}
+                          initConnectionType={initialDbTypeRef.current}
+                        />
                       )}
                       <div id="footerDatabaseForm" />
                     </EuiResizablePanel>

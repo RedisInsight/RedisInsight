@@ -65,7 +65,7 @@ const bufferToJSON = (
   reply: RedisResponseBuffer,
   props: FormattingProps
 ): { value: JSX.Element | string, isValid: boolean } =>
-  JSONViewer({ value: bufferToUTF8(reply), ...props })
+  JSONViewer({ value: bufferToUTF8(reply), fallbackToNonBigInt: true, ...props })
 
 const formattingBuffer = (
   reply: RedisResponseBuffer,

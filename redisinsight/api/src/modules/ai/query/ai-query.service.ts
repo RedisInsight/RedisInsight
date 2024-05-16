@@ -121,7 +121,7 @@ export class AiQueryService {
         accountId: auth.accountId,
       });
 
-      socket = await this.aiQueryProvider.getSocket(auth);
+      socket = await this.aiQueryProvider.getSocket(sessionMetadata, auth);
 
       socket.on(AiQueryWsEvents.REPLY_CHUNK, (chunk) => {
         answer.content += chunk;

@@ -214,6 +214,16 @@ export class CloudUserApiService {
   }
 
   /**
+   * Invalidate user SM API session
+   * @param sessionMetadata
+   */
+  async invalidateApiSession(
+    sessionMetadata: SessionMetadata,
+  ): Promise<void> {
+    await this.sessionService.invalidateApiSession(sessionMetadata.sessionId);
+  }
+
+  /**
    * Select current account to work with
    * @param sessionMetadata
    * @param accountId

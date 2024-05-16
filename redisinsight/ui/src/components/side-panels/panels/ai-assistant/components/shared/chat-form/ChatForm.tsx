@@ -86,80 +86,86 @@ const ChatForm = (props: Props) => {
   }
 
   return (
-    <EuiToolTip
-      content={validation ? (
-        <div className={styles.tooltipContent}>
-          <div>
-            {validation.title && (
-              <>
-                <EuiTitle size="xxs"><span>{validation.title}</span></EuiTitle>
-                <EuiSpacer size="s" />
-              </>
-            )}
-            {validation.content && (<EuiText size="xs">{validation.content}</EuiText>)}
+    <div>
+      <EuiToolTip
+        content={validation ? (
+          <div className={styles.tooltipContent}>
+            <div>
+              {validation.title && (
+                <>
+                  <EuiTitle size="xxs"><span>{validation.title}</span></EuiTitle>
+                  <EuiSpacer size="s" />
+                </>
+              )}
+              {validation.content && (<EuiText size="xs">{validation.content}</EuiText>)}
+            </div>
+            {validation.icon}
           </div>
-          {validation.icon}
-        </div>
-      ) : undefined}
-      className={styles.validationTooltip}
-      display="block"
-    >
-      <EuiForm
-        className={cx(styles.wrapper, { [styles.isFormDisabled]: validation })}
-        component="form"
-        onSubmit={handleSubmitForm}
-        onKeyDown={handleKeyDown}
+        ) : undefined}
+        className={styles.validationTooltip}
+        display="block"
       >
-        <EuiTextArea
-          inputRef={textAreaRef}
-          placeholder={placeholder || 'Ask me about Redis'}
-          className={styles.textarea}
-          value={value}
-          onChange={handleChange}
-          disabled={!!validation}
-          data-testid="ai-message-textarea"
-        />
-        <EuiPopover
-          ownFocus
-          initialFocus={false}
-          isOpen={isAgreementsPopoverOpen}
-          anchorPosition="downRight"
-          closePopover={() => setIsAgreementsPopoverOpen(false)}
-          panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-          anchorClassName={styles.popoverAnchor}
-          button={(
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              disabled={!value.length || isDisabled}
-              className={styles.submitBtn}
-              iconType={SendIcon}
-              type="submit"
-              aria-label="submit"
-              data-testid="ai-submit-message-btn"
-            />
-          )}
+        <EuiForm
+          className={cx(styles.wrapper, { [styles.isFormDisabled]: validation })}
+          component="form"
+          onSubmit={handleSubmitForm}
+          onKeyDown={handleKeyDown}
         >
-          <>
-            {agreements}
-            <EuiSpacer size="m" />
-            <EuiButton
-              fill
-              color="secondary"
-              size="s"
-              className={styles.agreementsAccept}
-              onClick={submitMessage}
-              onKeyDown={(e: React.KeyboardEvent) => e.stopPropagation()}
-              type="button"
-              data-testid="ai-accept-agreements"
-            >
-              I accept
-            </EuiButton>
-          </>
-        </EuiPopover>
-      </EuiForm>
-    </EuiToolTip>
+          <EuiTextArea
+            inputRef={textAreaRef}
+            placeholder={placeholder || 'Ask me about Redis'}
+            className={styles.textarea}
+            value={value}
+            onChange={handleChange}
+            disabled={!!validation}
+            data-testid="ai-message-textarea"
+          />
+          <EuiPopover
+            ownFocus
+            initialFocus={false}
+            isOpen={isAgreementsPopoverOpen}
+            anchorPosition="downRight"
+            closePopover={() => setIsAgreementsPopoverOpen(false)}
+            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            anchorClassName={styles.popoverAnchor}
+            button={(
+              <EuiButton
+                fill
+                size="s"
+                color="secondary"
+                disabled={!value.length || isDisabled}
+                className={styles.submitBtn}
+                iconType={SendIcon}
+                type="submit"
+                aria-label="submit"
+                data-testid="ai-submit-message-btn"
+              />
+            )}
+          >
+            <>
+              {agreements}
+              <EuiSpacer size="m" />
+              <EuiButton
+                fill
+                color="secondary"
+                size="s"
+                className={styles.agreementsAccept}
+                onClick={submitMessage}
+                onKeyDown={(e: React.KeyboardEvent) => e.stopPropagation()}
+                type="button"
+                data-testid="ai-accept-agreements"
+              >
+                I accept
+              </EuiButton>
+            </>
+          </EuiPopover>
+        </EuiForm>
+      </EuiToolTip>
+      <EuiText textAlign="center" size="xs" className={styles.agreementText}>
+        Verify the accuracy of any information provided by Redis Copilot before using it
+      </EuiText>
+    </div>
+
   )
 }
 

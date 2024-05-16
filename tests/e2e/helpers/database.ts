@@ -12,6 +12,8 @@ import {
 } from '../pageObjects';
 import { UserAgreementDialog } from '../pageObjects/dialogs';
 import { DatabaseAPIRequests } from './api/api-database';
+import { RedisOverviewPage } from './constants';
+import { RdiInstancesListPage } from '../pageObjects/rdi-instances-list-page';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
@@ -19,6 +21,7 @@ const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
 const userAgreementDialog = new UserAgreementDialog();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const rdiInstancesListPage = new RdiInstancesListPage();
 
 export class DatabaseHelper {
     /**
@@ -345,6 +348,10 @@ export class DatabaseHelper {
     async acceptLicenseTerms(): Promise<void> {
         await t.maximizeWindow();
         await userAgreementDialog.acceptLicenseTerms();
+        // Open default databases list tab if RDI opened
+        if (await rdiInstancesListPage.rdiInstanceButton.exists) {
+            await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
+        }
         // TODO delete after releasing chatbot
         if (await myRedisDatabasePage.AddRedisDatabase.aiChatMessage.exists) {
             await t.click(myRedisDatabasePage.AddRedisDatabase.aiCloseMessage)

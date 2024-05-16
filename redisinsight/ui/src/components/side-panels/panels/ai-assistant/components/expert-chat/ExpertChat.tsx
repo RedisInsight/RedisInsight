@@ -226,7 +226,7 @@ const ExpertChat = () => {
         <ChatForm
           onAgreementsDisplayed={handleAgreementsDisplay}
           agreements={!isAgreementsAccepted ? EXPERT_CHAT_AGREEMENTS : undefined}
-          isDisabled={!instanceId || !!inProgressMessage}
+          isDisabled={!instanceId || inProgressMessage?.content === ''}
           validation={getValidationMessage()}
           placeholder="Ask me to query your data (e.g. How many road bikes?)"
           onSubmit={handleSubmit}

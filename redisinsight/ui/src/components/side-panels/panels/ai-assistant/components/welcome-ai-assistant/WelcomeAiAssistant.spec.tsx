@@ -5,7 +5,7 @@ import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/util
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
-import { signIn } from 'uiSrc/slices/oauth/cloud'
+import { setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
 import WelcomeAiAssistant from './WelcomeAiAssistant'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -49,7 +49,7 @@ describe('WelcomeAiAssistant', () => {
       fireEvent.click(screen.getByTestId('google-oauth'))
     })
 
-    expect(store.getActions()).toEqual([signIn(), setSSOFlow(OAuthSocialAction.SignIn)])
+    expect(store.getActions()).toEqual([signIn(), setOAuthCloudSource(OAuthSocialSource.AiChat)])
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,

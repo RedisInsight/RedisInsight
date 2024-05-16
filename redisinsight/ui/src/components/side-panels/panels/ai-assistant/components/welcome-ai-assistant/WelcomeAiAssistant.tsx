@@ -6,7 +6,7 @@ import { OAuthAgreement, OAuthSocialButtons } from 'uiSrc/components/oauth/share
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import { setOAuthCloudSource } from 'uiSrc/slices/oauth/cloud'
 import styles from './styles.module.scss'
 
 const WelcomeAiAssistant = () => {
@@ -14,7 +14,7 @@ const WelcomeAiAssistant = () => {
 
   const handleSsoClick = (accountOption: string) => {
     dispatch(setSSOFlow(OAuthSocialAction.SignIn))
-    dispatch(setSocialDialogState(OAuthSocialSource.AiChat))
+    dispatch(setOAuthCloudSource(OAuthSocialSource.AiChat))
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,

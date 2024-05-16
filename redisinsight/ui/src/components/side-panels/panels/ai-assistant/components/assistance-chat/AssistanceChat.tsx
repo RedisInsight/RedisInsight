@@ -201,7 +201,7 @@ const AssistanceChat = () => {
           onAgreementsDisplayed={handleAgreementsDisplay}
           agreements={!agreements ? ASSISTANCE_CHAT_AGREEMENTS : undefined}
           placeholder="Ask me about Redis"
-          isDisabled={!!inProgressMessage}
+          isDisabled={inProgressMessage?.content === ''}
           onSubmit={handleSubmit}
         />
       </div>

@@ -10,6 +10,7 @@ import { RootState } from 'uiSrc/slices/store'
 import { loadInstances } from 'uiSrc/slices/instances/instances'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { CustomErrorCodes } from 'uiSrc/constants'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import OAuthJobs from './OAuthJobs'
 
 jest.mock('react-redux', () => ({
@@ -130,6 +131,7 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       addErrorNotification({ response: { data: error } } as AxiosError),
+      setSSOFlow(),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -160,6 +162,7 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      setSSOFlow(),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -190,6 +193,7 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      setSSOFlow(),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(

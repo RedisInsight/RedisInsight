@@ -9,6 +9,9 @@ export class AddRdiInstance {
 
     //BUTTONS
     addInstanceButton = Selector('[data-testid=connection-form-add-button]');
+    cancelInstanceBtn = Selector('[data-testid=connection-form-cancel-button]');
+
+    connectToRdiForm = Selector('[data-testid=connection-form]');
 }
 
 /**

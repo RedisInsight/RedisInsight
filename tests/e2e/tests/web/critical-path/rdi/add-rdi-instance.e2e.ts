@@ -70,7 +70,7 @@ test('Verify that user can add and remove RDI', async() => {
     notification = rdiInstancesListPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Instance has been deleted', 'The notification not displayed');
 
-    await t.expect(rdiInstancesListPage.emptyRdiList.textContent).contains('No RDI instances added', 'the instance is not removed');
+    await t.expect(rdiInstancesListPage.emptyRdiList.textContent).contains('Redis Data Integration', 'The instance is not removed');
 });
 test
     .after(async() => {
@@ -139,4 +139,19 @@ test('Verify that button is displayed if user does not enter all mandatory infor
     for (const text of tooltipText) {
         await browserActions.verifyTooltipContainsText(text, true);
     }
+});
+test('Verify that user can see the Redis Data Integration message on the empty RDI list', async t => {
+    const noInstancesMessage = 'Redis Data Integration (RDI) synchronizes data from your existing database into Redis in near-real-time. We\'ve done the heavy lifting so you can turn slow data into fast data without coding.';
+    // const externalPageLink = 'https://docs.redis.com/rdi-preview/rdi/quickstart/'
+
+    await t.expect(rdiInstancesListPage.emptyRdiList.withText(noInstancesMessage).exists).ok('Empty RDI page message not displayed');
+
+    await t.click(rdiInstancesListPage.addRdiFromEmptyListBtn);
+    await t.expect(rdiInstancesListPage.AddRdiInstance.connectToRdiForm.exists).ok('Add rdi form not opened');
+    await t.click(rdiInstancesListPage.AddRdiInstance.cancelInstanceBtn);
+
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // await t.click(rdiInstancesListPage.quickstartBtn);
+    // await Common.checkURL(externalPageLink);
+    // await goBackHistory();
 });

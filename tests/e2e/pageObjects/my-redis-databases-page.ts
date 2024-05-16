@@ -46,6 +46,8 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
     exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
     userProfileBtn = Selector('[data-testid=user-profile-btn]');
+    addDbFromEmptyListBtn = Selector('[data-testid=empty-rdi-instance-button]');
+    emptyDbCloudBtn = Selector('[data-testid=empty-database-cloud-button]');
     //CHECKBOXES
     selectAllCheckbox = Selector('[data-test-subj=checkboxSelectAll]');
     exportPasswordsCheckbox = Selector('[data-testid=export-passwords]~div', { timeout: 500 });
@@ -77,6 +79,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     importDialogTitle = Selector('[data-testid=import-file-modal-title]');
     importResult = Selector('[data-testid^=table-result-]');
     userProfileAccountInfo = Selector('[data-testid^=profile-account-]');
+    emptyListMessage = Selector('[data-testid=empty-database-instance-list]');
     // DIALOG
     importDbDialog = Selector('[data-testid=import-file-modal]');
     successResultsAccordion = Selector('[data-testid^=success-results-]');

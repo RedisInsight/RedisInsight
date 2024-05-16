@@ -162,7 +162,7 @@ export const connectedInstanceSelector = (state: RootState) =>
 export default instancesSlice.reducer
 
 // Asynchronous thunk action
-export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) => void) {
+export function fetchInstancesAction(onSuccess?: (data: RdiInstance[]) => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadInstances())
 
@@ -170,7 +170,7 @@ export function fetchInstancesAction(onSuccess?: (data?: RdiInstanceResponse[]) 
       const { data, status } = await apiService.get<RdiInstanceResponse[]>(ApiEndpoints.RDI_INSTANCES)
 
       if (isStatusSuccessful(status)) {
-        onSuccess?.(data)
+        onSuccess?.(data as RdiInstance[])
         dispatch(loadInstancesSuccess(data))
       }
     } catch (_err) {

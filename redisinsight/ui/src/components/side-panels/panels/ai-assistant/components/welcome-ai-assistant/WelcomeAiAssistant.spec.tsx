@@ -49,7 +49,11 @@ describe('WelcomeAiAssistant', () => {
       fireEvent.click(screen.getByTestId('google-oauth'))
     })
 
-    expect(store.getActions()).toEqual([signIn(), setOAuthCloudSource(OAuthSocialSource.AiChat)])
+    expect(store.getActions()).toEqual([
+      signIn(),
+      setSSOFlow(OAuthSocialAction.SignIn),
+      setOAuthCloudSource(OAuthSocialSource.AiChat)
+    ])
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,

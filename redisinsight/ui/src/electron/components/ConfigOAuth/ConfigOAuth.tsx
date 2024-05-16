@@ -26,7 +26,7 @@ const ConfigOAuth = () => {
 
   const ssoFlowRef = useRef(ssoFlow)
   const isRecommendedSettingsRef = useRef(isRecommendedSettings)
-  const isFlowStarted = useRef(false)
+  const isFlowStarted = useRef(!!ssoFlow)
 
   const history = useHistory()
   const dispatch = useDispatch()

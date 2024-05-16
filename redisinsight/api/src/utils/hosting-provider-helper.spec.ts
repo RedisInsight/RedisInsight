@@ -18,10 +18,19 @@ const getHostingProviderTests = [
     output: HostingProvider.RE_CLOUD,
   },
   {
+    input: 'redis-16781.c273.us-east-1-2.ec2.cloud.redis-cloud.com',
+    output: HostingProvider.RE_CLOUD,
+  },
+  {
+    input: 'redis-16781.c273.us-east-1-2.ec2.cloud.rlrcp.com',
+    output: HostingProvider.RE_CLOUD,
+  },
+  {
     input: 'askubuntu.mki5tz.0001.use1.cache.amazonaws.com',
     output: HostingProvider.AWS_ELASTICACHE,
   },
-  { input: 'contoso5.redis.cache.windows.net', output: HostingProvider.AZURE },
+  { input: 'contoso5.redis.cache.windows.net', output: HostingProvider.AZURE_CACHE },
+  { input: 'contoso5.redisenterprise.cache.azure.net', output: HostingProvider.AZURE_CACHE_REDIS_ENTERPRISE },
   { input: 'demo-redis-provider.unknown.com', output: HostingProvider.UNKNOWN },
   {
     input: 'localhost',

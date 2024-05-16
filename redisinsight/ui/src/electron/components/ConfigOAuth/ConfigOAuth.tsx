@@ -26,6 +26,7 @@ const ConfigOAuth = () => {
 
   const ssoFlowRef = useRef(ssoFlow)
   const isRecommendedSettingsRef = useRef(isRecommendedSettings)
+  const isFlowStarted = useRef(false)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -36,6 +37,7 @@ const ConfigOAuth = () => {
 
   useEffect(() => {
     ssoFlowRef.current = ssoFlow
+    isFlowStarted.current = !!ssoFlow
   }, [ssoFlow])
 
   useEffect(() => {
@@ -89,6 +91,8 @@ const ConfigOAuth = () => {
   }
 
   const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
+    if (!isFlowStarted.current) return
+
     if (status === CloudAuthStatus.Succeed) {
       dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
       localStorageService.remove(BrowserStorageItem.OAuthJobId)

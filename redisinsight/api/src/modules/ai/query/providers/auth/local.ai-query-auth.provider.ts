@@ -14,7 +14,6 @@ export class LocalAiQueryAuthProvider extends AiQueryAuthProvider {
     super();
   }
 
-  // TODO: do not forget pass utm parameters here
   async getAuthData(sessionMetadata: SessionMetadata): Promise<AiQueryAuthData> {
     const session = await this.cloudUserApiService.getUserSession(sessionMetadata);
 

@@ -31,6 +31,8 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
       return CloudSsoUtmCampaign.Copilot
     case OAuthSocialSource.UserProfile:
       return CloudSsoUtmCampaign.UserProfile
+    case OAuthSocialSource.SettingsPage:
+      return CloudSsoUtmCampaign.Settings
     default:
       return CloudSsoUtmCampaign.Unknown
   }

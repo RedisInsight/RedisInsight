@@ -1,2 +1,2 @@
 export * from './redis-connection.middleware';
-export * from './routes';
+export * from './route-controllers';

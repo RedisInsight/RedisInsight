@@ -23,7 +23,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
       <EuiText className={styles.title}>Redis Data Integration</EuiText>
       <EuiImage src={theme === Theme.Dark ? EmptyListDarkIcon : EmptyListLightIcon} className={styles.icon} alt="empty" />
       <EuiText className={styles.subTitle}>{subTitleText}</EuiText>
-      <EuiFlexGroup alignItems="center">
+      <EuiFlexGroup alignItems="center" style={{ lineHeight: '20px' }}>
         <EuiFlexItem>
           <EuiButton data-testid="empty-rdi-instance-button" color="secondary" fill size="s" onClick={onAddInstanceClick}>
             + Add RDI Endpoint

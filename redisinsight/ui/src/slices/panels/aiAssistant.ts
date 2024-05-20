@@ -5,11 +5,13 @@ import { AxiosError } from 'axios'
 import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { AiChatMessage, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
-import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { isStatusSuccessful, Maybe, parseCloudOAuthError } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
 import { getStreamedAnswer } from 'uiSrc/utils/api'
 import ApiStatusCode from 'uiSrc/constants/apiStatusCode'
 import { generateAiMessage, generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
+import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { AppDispatch, RootState } from '../store'
 
 const getTabSelected = (tab?: string): AiChatType => {
@@ -340,13 +342,20 @@ export function askExpertChatbotAction(
           onFinish?.()
         },
         onError: (error: any) => {
-          dispatch(setExpertQuestionError({
-            id: humanMessage.id,
-            error: {
-              statusCode: error?.status ?? 500,
-              errorCode: error?.errorCode
-            }
-          }))
+          if (error?.status === ApiStatusCode.Unauthorized) {
+            const err = parseCloudOAuthError(error)
+            dispatch(addErrorNotification(err))
+            dispatch(logoutUserAction())
+          } else {
+            dispatch(setExpertQuestionError({
+              id: humanMessage.id,
+              error: {
+                statusCode: error?.status ?? 500,
+                errorCode: error?.errorCode
+              }
+            }))
+          }
+
           onError?.(error?.status ?? 500)
           onFinish?.()
         }

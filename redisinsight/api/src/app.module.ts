@@ -32,6 +32,7 @@ import { StaticsManagementModule } from './modules/statics-management/statics-ma
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import { routes } from './app.routes';
+import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -124,5 +125,9 @@ export class AppModule implements OnModuleInit, NestModule {
       .forRoutes(
         ...SERVER_CONFIG.excludeRoutes,
       );
+
+    consumer
+      .apply(RedisConnectionMiddleware)
+      .forRoutes(...redisConnectionControllers.map((controller) => RouterModule.resolvePath(controller)));
   }
 }

@@ -137,7 +137,7 @@ export class AiQueryService {
             index,
           );
 
-          if (!context) {
+          if (!indexContext) {
             return cb(await this.aiQueryContextRepository.setIndexContext(
               sessionMetadata,
               databaseId,
@@ -193,23 +193,27 @@ export class AiQueryService {
   }
 
   async getHistory(sessionMetadata: SessionMetadata, databaseId: string): Promise<AiQueryMessage[]> {
-    try {
-      const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
-      return await this.aiQueryMessageRepository.list(sessionMetadata, databaseId, auth.accountId);
-    } catch (e) {
-      throw wrapAiQueryError(e, 'Unable to get history');
-    }
+    return this.aiQueryAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
+      try {
+        const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
+        return await this.aiQueryMessageRepository.list(sessionMetadata, databaseId, auth.accountId);
+      } catch (e) {
+        throw wrapAiQueryError(e, 'Unable to get history');
+      }
+    });
   }
 
   async clearHistory(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
-    try {
-      const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
+    return this.aiQueryAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
+      try {
+        const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
 
-      await this.aiQueryContextRepository.reset(sessionMetadata, databaseId, auth.accountId);
+        await this.aiQueryContextRepository.reset(sessionMetadata, databaseId, auth.accountId);
 
-      return this.aiQueryMessageRepository.clearHistory(sessionMetadata, databaseId, auth.accountId);
-    } catch (e) {
-      throw wrapAiQueryError(e, 'Unable to clear history');
-    }
+        return this.aiQueryMessageRepository.clearHistory(sessionMetadata, databaseId, auth.accountId);
+      } catch (e) {
+        throw wrapAiQueryError(e, 'Unable to clear history');
+      }
+    });
   }
 }

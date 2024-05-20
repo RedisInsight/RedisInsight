@@ -1,5 +1,5 @@
 {
-  "version": 2.4602,
+  "version": 2.4603,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -46,28 +46,6 @@
           }
         }
       }
-    },
-    "documentationChat": {
-      "flag": true,
-      "perc": [[0,100]],
-      "filters": [
-        {
-          "name": "config.server.buildType",
-          "value": "ELECTRON",
-          "cond": "eq"
-        }
-      ]
-    },
-    "databaseChat": {
-      "flag": true,
-      "perc": [[0,100]],
-      "filters": [
-        {
-          "name": "config.server.buildType",
-          "value": "ELECTRON",
-          "cond": "eq"
-        }
-      ]
     },
     "cloudSsoRecommendedSettings": {
       "flag": true,

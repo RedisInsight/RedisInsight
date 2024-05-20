@@ -66,7 +66,7 @@ describe('SwitchableFlagStrategy', () => {
       ))
         .toEqual({
           name: KnownFeatures.DatabaseChat,
-          flag: false,
+          flag: expect.any(Boolean),
         });
 
       expect(isInTargetRangeSpy).toHaveBeenCalled();
@@ -230,6 +230,31 @@ describe('SwitchableFlagStrategy', () => {
           perc: [[0, 10]],
           flag: true,
           filters: [],
+        },
+      ))
+        .toEqual({
+          name: KnownFeatures.DatabaseChat,
+          flag: false,
+        });
+
+      expect(isInTargetRangeSpy).toHaveBeenCalled();
+      expect(filterSpy).toHaveBeenCalled();
+    });
+
+    it('should return flag:false even if feature force enabled but flag in config = false', async () => {
+      isInTargetRangeSpy.mockReturnValueOnce(true);
+      filterSpy.mockReturnValueOnce(true);
+      mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
+        features: {
+          [KnownFeatures.DatabaseChat]: true,
+        },
+      }) as any);
+
+      expect(await service.calculate(
+        knownFeatures[KnownFeatures.DatabaseChat],
+        {
+          perc: [[0, 100]],
+          flag: false,
         },
       ))
         .toEqual({

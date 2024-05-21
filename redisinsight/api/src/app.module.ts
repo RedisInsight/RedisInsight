@@ -128,6 +128,6 @@ export class AppModule implements OnModuleInit, NestModule {
 
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(...redisConnectionControllers.map((controller) => RouterModule.resolvePath(controller)));
+      .forRoutes(...redisConnectionControllers);
   }
 }

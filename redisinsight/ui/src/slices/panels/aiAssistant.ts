@@ -5,13 +5,21 @@ import { AxiosError } from 'axios'
 import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { AiChatMessage, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
-import { isStatusSuccessful, Maybe, parseCloudOAuthError } from 'uiSrc/utils'
+import {
+  getApiErrorCode,
+  getApiErrorMessage,
+  getAxiosError,
+  isStatusSuccessful,
+  Maybe,
+  parseCloudOAuthError
+} from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
 import { getStreamedAnswer } from 'uiSrc/utils/api'
 import ApiStatusCode from 'uiSrc/constants/apiStatusCode'
 import { generateAiMessage, generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { AppDispatch, RootState } from '../store'
 
 const getTabSelected = (tab?: string): AiChatType => {
@@ -303,7 +311,15 @@ export function getExpertChatHistoryAction(
         dispatch(getExpertChatHistorySuccess(data))
         onSuccess?.()
       }
-    } catch (e) {
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
       dispatch(getExpertChatHistoryFailed())
     }
   }
@@ -378,8 +394,15 @@ export function removeExpertChatHistoryAction(
         dispatch(clearExpertChatHistory())
         onSuccess?.()
       }
-    } catch (e) {
-      // dispatch(getExpertChatHistoryFailed())
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
     }
   }
 }

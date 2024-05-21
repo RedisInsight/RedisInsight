@@ -248,7 +248,7 @@ describe('DatabaseService', () => {
           port: 6380,
           password: 'password',
           connectionType: 'STANDALONE',
-            new: false,
+          new: false,
           version: '7.0',
           ssh: true,
           sshOptions: {

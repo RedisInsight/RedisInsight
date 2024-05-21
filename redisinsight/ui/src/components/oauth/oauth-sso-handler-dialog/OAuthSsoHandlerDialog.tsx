@@ -46,8 +46,6 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
     }
     e?.preventDefault()
 
-    dispatch(setSSOFlow(action))
-
     if (action === OAuthSocialAction.Import && data) {
       // if user logged in - do not show dialog, just redirect to subscriptions page
       dispatch(fetchSubscriptionsRedisCloud(null, true, () => {
@@ -69,6 +67,7 @@ const OAuthSsoHandlerDialog = ({ children }: Props) => {
       })
     }
 
+    dispatch(setSSOFlow(action))
     dispatch(setSocialDialogState(source))
   }
 

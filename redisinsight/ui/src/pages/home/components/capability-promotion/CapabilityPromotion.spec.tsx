@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { changeSelectedTab, changeSidePanel, toggleSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
@@ -97,7 +97,7 @@ describe('CapabilityPromotion', () => {
 
     const expectedActions = [
       changeSelectedTab(InsightsPanelTabs.Explore),
-      changeSidePanel(SidePanels.Insights)
+      toggleSidePanel(SidePanels.Insights)
     ]
 
     expect(store.getActions()).toEqual(expectedActions)

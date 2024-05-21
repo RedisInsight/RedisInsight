@@ -107,8 +107,6 @@ describe('OAuthCreateDb', () => {
 
     const expectedActions = [
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(null),
-      setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
       addFreeDb()
@@ -128,8 +126,6 @@ describe('OAuthCreateDb', () => {
 
     const expectedActions = [
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(null),
-      setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
       getPlans()

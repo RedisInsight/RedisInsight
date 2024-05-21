@@ -26,6 +26,7 @@ const ConfigOAuth = () => {
 
   const ssoFlowRef = useRef(ssoFlow)
   const isRecommendedSettingsRef = useRef(isRecommendedSettings)
+  const isFlowInProgress = useRef(false)
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -36,6 +37,10 @@ const ConfigOAuth = () => {
 
   useEffect(() => {
     ssoFlowRef.current = ssoFlow
+
+    if (!ssoFlow) {
+      isFlowInProgress.current = false
+    }
   }, [ssoFlow])
 
   useEffect(() => {
@@ -96,9 +101,16 @@ const ConfigOAuth = () => {
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()))
       dispatch(setSocialDialogState(null))
       dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
+      isFlowInProgress.current = true
     }
 
     if (status === CloudAuthStatus.Failed) {
+      // don't do anything, because we are processing something
+      // covers situation when were made several clicks on the same time
+      if (isFlowInProgress.current) {
+        return
+      }
+
       const err = parseCloudOAuthError((error as CustomError) || message || '')
       dispatch(setOAuthCloudSource(null))
       dispatch(signInFailure(err?.response?.data?.message || message))

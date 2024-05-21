@@ -4,18 +4,7 @@ import React from 'react'
 export const ASSISTANCE_CHAT_AGREEMENTS = (
   <>
     <EuiText size="xs">
-      Redis Copilot is powered by
-      {' '}
-      <EuiLink
-        color="subdued"
-        external={false}
-        target="_blank"
-        href="https://chat.openai.com/"
-      >
-        OpenAI ChatGPT
-      </EuiLink>
-      {' '}
-      and is designed for general information only.
+      Redis Copilot is powered by OpenAI API and is designed for general information only.
     </EuiText>
     <EuiSpacer size="xs" />
     <EuiText size="xs">
@@ -23,15 +12,15 @@ export const ASSISTANCE_CHAT_AGREEMENTS = (
     </EuiText>
     <EuiSpacer size="xs" />
     <EuiText size="xs">
-      By accessing and/or using Redis Copilot, you acknowledge that you agree to our
+      By accessing and/or using Redis Copilot, you acknowledge that you agree to the
       {' '}
       <EuiLink
         color="subdued"
         external={false}
         target="_blank"
-        href="https://redis.com/legal/redis-website-terms-of-use/"
+        href="https://redis.io/legal/redis-copilot-terms-of-use/"
       >
-        Terms of Use
+        REDIS COPILOT TERMS
       </EuiLink>
       {' '}
       and
@@ -52,27 +41,31 @@ export const ASSISTANCE_CHAT_AGREEMENTS = (
 export const EXPERT_CHAT_AGREEMENTS = (
   <>
     <EuiText size="xs">
-      Redis Copilot is powered by
+      Redis Copilot is powered by OpenAI API.
+    </EuiText>
+    <EuiSpacer size="xs" />
+    <EuiText size="xs">
+      Please do not include any personal
+      data (except as expressly required for the use of Redis Copilot) or confidential information.
+    </EuiText>
+    <EuiText size="xs">
+      Redis Copilot needs access to the information in your database to provide you context-aware assistance.
+    </EuiText>
+    <EuiSpacer size="xs" />
+    <EuiText size="xs">
+      By accepting these terms, you consent to the processing of any information included in your database,
+      and you agree to the
       {' '}
       <EuiLink
         color="subdued"
         external={false}
         target="_blank"
-        href="https://chat.openai.com/"
+        href="https://redis.io/legal/redis-copilot-terms-of-use/"
       >
-        OpenAI ChatGPT
+        REDIS COPILOT TERMS
       </EuiLink>
-      .
-    </EuiText>
-    <EuiSpacer size="xs" />
-    <EuiText size="xs">
-      Please do not include any personal data (except as expressly required for the use of Redis Copilot)
-      or confidential information.
-    </EuiText>
-    <EuiSpacer size="xs" />
-    <EuiText size="xs">
-      By accepting these terms, you consent to the processing of any information included in your database,
-      and you agree to the REDIS COPILOT TERMS and
+      {' '}
+      and
       {' '}
       <EuiLink
         color="subdued"

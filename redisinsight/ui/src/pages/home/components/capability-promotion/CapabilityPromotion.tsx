@@ -7,9 +7,8 @@ import { filter } from 'lodash'
 
 import {
   changeSelectedTab,
-  changeSidePanel,
   openTutorialByPath,
-  sidePanelsSelector,
+  sidePanelsSelector, toggleSidePanel,
 } from 'uiSrc/slices/panels/sidePanels'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
@@ -54,13 +53,17 @@ const CapabilityPromotion = (props: Props) => {
     const tutorialPath = findTutorialPath({ id: id ?? '' })
     dispatch(openTutorialByPath(tutorialPath ?? '', history))
 
+    if (isInsightsOpen) {
+      return
+    }
+
     sendTelemetry(id)
   }
 
   const onClickExplore = () => {
     sendTelemetry()
     dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
-    dispatch(changeSidePanel(SidePanels.Insights))
+    dispatch(toggleSidePanel(SidePanels.Insights))
   }
 
   if (!data?.length) {

@@ -2,7 +2,7 @@ import {
   DynamicModule,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { StringService } from 'src/modules/browser/string/string.service';
 import { StringController } from 'src/modules/browser/string/string.controller';
 
@@ -12,7 +12,7 @@ export class StringModule {
     return {
       module: StringModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: StringModule,
         }]),

@@ -1,8 +1,9 @@
 import { isString } from 'lodash';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { HttpException } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { AppAnalyticsEvents } from 'src/constants';
 
+@Injectable()
 export abstract class TelemetryBaseService {
   constructor(
     protected readonly eventEmitter: EventEmitter2,

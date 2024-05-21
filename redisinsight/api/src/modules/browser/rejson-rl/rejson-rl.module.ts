@@ -2,7 +2,7 @@ import {
   DynamicModule,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { RejsonRlController } from 'src/modules/browser/rejson-rl/rejson-rl.controller';
 import { RejsonRlService } from 'src/modules/browser/rejson-rl/rejson-rl.service';
 
@@ -12,7 +12,7 @@ export class RejsonRlModule {
     return {
       module: RejsonRlModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: RejsonRlModule,
         }]),

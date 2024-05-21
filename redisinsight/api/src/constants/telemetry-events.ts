@@ -78,6 +78,7 @@ export enum TelemetryEvents {
   BulkActionsStopped = 'BULK_ACTIONS_STOPPED',
   BulkActionsSucceed = 'BULK_ACTIONS_SUCCEED',
   BulkActionsFailed = 'BULK_ACTIONS_FAILED',
+  ImportSamplesUploaded = 'IMPORT_SAMPLES_UPLOADED',
 
   // Feature
   FeatureFlagConfigUpdated = 'FEATURE_FLAG_CONFIG_UPDATED',

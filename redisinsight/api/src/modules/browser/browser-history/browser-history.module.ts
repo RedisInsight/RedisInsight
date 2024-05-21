@@ -1,7 +1,5 @@
-import {
-  DynamicModule, Global, Module, Type,
-} from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { DynamicModule, Global, Module, Type } from '@nestjs/common';
+import { RouterModule } from '@nestjs/core';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
 import { BrowserHistoryController } from 'src/modules/browser/browser-history/browser-history.controller';
 import { BrowserHistoryRepository } from './repositories/browser-history.repository';
@@ -13,7 +11,7 @@ export class BrowserHistoryModule {
     return {
       module: BrowserHistoryModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: BrowserHistoryModule,
         }]),

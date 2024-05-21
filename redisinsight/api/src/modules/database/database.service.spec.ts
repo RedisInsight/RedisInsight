@@ -168,7 +168,6 @@ describe('DatabaseService', () => {
         ...mockDatabase,
         port: 6380,
         password: 'password',
-        provider: 'LOCALHOST',
       });
 
       expect(await service.update(
@@ -249,7 +248,6 @@ describe('DatabaseService', () => {
           port: 6380,
           password: 'password',
           connectionType: 'STANDALONE',
-          provider: 'LOCALHOST',
           new: false,
           version: '7.0',
           ssh: true,

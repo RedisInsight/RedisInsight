@@ -9,7 +9,7 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import {
-  catchRedisConnectionError, classToClass, getHostingProvider, getRedisConnectionException,
+  catchRedisConnectionError, classToClass, getRedisConnectionException,
 } from 'src/utils';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -55,6 +55,11 @@ export class DatabaseService {
     'clientCert',
   ];
 
+  static endpointFields: string[] = [
+    'host',
+    'port',
+  ];
+
   constructor(
     private repository: DatabaseRepository,
     private redisClientStorage: RedisClientStorage,
@@ -67,6 +72,10 @@ export class DatabaseService {
 
   static isConnectionAffected(dto: object) {
     return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
+  }
+
+  static isEndpointAffected(dto: object) {
+    return Object.keys(omitBy(dto, isUndefined)).some((field) => this.endpointFields.includes(field));
   }
 
   private async merge(database: Database, dto: UpdateDatabaseDto): Promise<Database> {
@@ -204,12 +213,11 @@ export class DatabaseService {
       database = await this.merge(oldDatabase, dto);
 
       if (DatabaseService.isConnectionAffected(dto)) {
-        database = await this.databaseFactory.createDatabaseModel(sessionMetadata, database);
-
-        // todo: investigate manual update flag
-        if (manualUpdate) {
-          database.provider = getHostingProvider(database.host);
+        if (DatabaseService.isEndpointAffected(dto)) {
+          database.provider = undefined;
         }
+
+        database = await this.databaseFactory.createDatabaseModel(sessionMetadata, database);
 
         await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       }

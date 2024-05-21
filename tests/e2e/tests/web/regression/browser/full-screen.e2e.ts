@@ -1,7 +1,7 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
 import { rte } from '../../../../helpers/constants';
-import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneConfigEmpty } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
@@ -48,21 +48,25 @@ test
         const widthAfterExitFullScreen = await browserPage.keyDetailsTable.clientWidth;
         await t.expect(widthAfterExitFullScreen).lt(widthAfterFullScreen, 'Width after switching from full screen not less then before');
     });
-test.before(async() => {
-    await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-    await browserPage.Cli.sendCommandInCli('flushdb');
-})('Verify that when no keys are selected user can click on "Close" control for right table and see key list in full screen', async t => {
+test
+    .before(async() => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfigEmpty);
+        await browserPage.Cli.sendCommandInCli('flushdb');
+    })
+    .after(async() => {
+        await browserPage.Cli.sendCommandInCli('flushdb');
+    })('Verify that when no keys are selected user can click on "Close" control for right table and see key list in full screen', async t => {
     // Verify that user sees two panels(key list and empty details panel) opening Browser page for the first time
-    await t.expect(browserPage.noKeysToDisplayText.visible).ok('No keys selected panel not displayed');
-    // Save key table size before switching to full screen
-    const widthKeysBeforeFullScreen = await browserPage.keyListTable.clientWidth;
-    // Close right panel with key details
-    await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).notOk('Key Details Table not displayed');
-    await t.click(browserPage.closeRightPanel);
-    // Check that table is in full screen
-    const widthTableAfterFullScreen = await browserPage.keyListTable.clientWidth;
-    await t.expect(widthTableAfterFullScreen).gt(widthKeysBeforeFullScreen, 'Width after switching to full screen not greater then before');
-});
+        await t.expect(browserPage.noKeysToDisplayText.visible).ok('No keys selected panel not displayed');
+        // Save key table size before switching to full screen
+        const widthKeysBeforeFullScreen = await browserPage.keyListTable.clientWidth;
+        // Close right panel with key details
+        await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).notOk('Key Details Table not displayed');
+        await t.click(browserPage.closeRightPanel);
+        // Check that table is in full screen
+        const widthTableAfterFullScreen = await browserPage.keyListTable.clientWidth;
+        await t.expect(widthTableAfterFullScreen).gt(widthKeysBeforeFullScreen, 'Width after switching to full screen not greater then before');
+    });
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);

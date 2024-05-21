@@ -212,7 +212,11 @@ export class BulkImportService {
         commandsStream.append('\r\n');
       });
 
-      return this.import(clientMetadata, commandsStream);
+      const result = await this.import(clientMetadata, commandsStream);
+
+      this.analytics.sendImportSamplesUploaded(result);
+
+      return result;
     } catch (e) {
       this.logger.error('Unable to process an import file path from tutorial', e);
       throw new InternalServerErrorException(ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR);

@@ -47,7 +47,7 @@ const FilterNotAvailable = ({ onClose } : { onClose?: () => void }) => {
         <>
           <EuiText color="subdued">
             Create a free Redis Stack database that supports filtering and extends
-            the core capabilities of open-source Redis.
+            the core capabilities of your Redis.
           </EuiText>
           <EuiSpacer size="l" />
           <div className={styles.linksWrapper}>

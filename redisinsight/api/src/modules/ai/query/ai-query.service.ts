@@ -83,113 +83,115 @@ export class AiQueryService {
     dto: SendAiQueryMessageDto,
     res: Response,
   ) {
-    let socket: Socket;
+    return this.aiQueryAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
+      let socket: Socket;
 
-    try {
-      const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
-      const history = await this.aiQueryMessageRepository.list(sessionMetadata, databaseId, auth.accountId);
+      try {
+        const auth = await this.aiQueryAuthProvider.getAuthData(sessionMetadata);
+        const history = await this.aiQueryMessageRepository.list(sessionMetadata, databaseId, auth.accountId);
 
-      const client = await this.databaseClientFactory.getOrCreateClient({
-        sessionMetadata,
-        databaseId,
-        context: ClientContext.AI,
-      });
-
-      let context = await this.aiQueryContextRepository.getFullDbContext(sessionMetadata, databaseId, auth.accountId);
-
-      if (!context) {
-        context = await this.aiQueryContextRepository.setFullDbContext(
+        const client = await this.databaseClientFactory.getOrCreateClient({
           sessionMetadata,
           databaseId,
-          auth.accountId,
-          await getFullDbContext(client),
-        );
-      }
+          context: ClientContext.AI,
+        });
 
-      const question = classToClass(AiQueryMessage, {
-        type: AiQueryMessageType.HumanMessage,
-        content: dto.content,
-        databaseId,
-        accountId: auth.accountId,
-        createdAt: new Date(),
-      });
+        let context = await this.aiQueryContextRepository.getFullDbContext(sessionMetadata, databaseId, auth.accountId);
 
-      const answer = classToClass(AiQueryMessage, {
-        type: AiQueryMessageType.AiMessage,
-        content: '',
-        databaseId,
-        accountId: auth.accountId,
-      });
-
-      socket = await this.aiQueryProvider.getSocket(sessionMetadata, auth);
-
-      socket.on(AiQueryWsEvents.REPLY_CHUNK, (chunk) => {
-        answer.content += chunk;
-        res.write(chunk);
-      });
-
-      socket.on(AiQueryWsEvents.GET_INDEX, async (index, cb) => {
-        try {
-          const indexContext = await this.aiQueryContextRepository.getIndexContext(
+        if (!context) {
+          context = await this.aiQueryContextRepository.setFullDbContext(
             sessionMetadata,
             databaseId,
             auth.accountId,
-            index,
+            await getFullDbContext(client),
           );
+        }
 
-          if (!indexContext) {
-            return cb(await this.aiQueryContextRepository.setIndexContext(
+        const question = classToClass(AiQueryMessage, {
+          type: AiQueryMessageType.HumanMessage,
+          content: dto.content,
+          databaseId,
+          accountId: auth.accountId,
+          createdAt: new Date(),
+        });
+
+        const answer = classToClass(AiQueryMessage, {
+          type: AiQueryMessageType.AiMessage,
+          content: '',
+          databaseId,
+          accountId: auth.accountId,
+        });
+
+        socket = await this.aiQueryProvider.getSocket(sessionMetadata, auth);
+
+        socket.on(AiQueryWsEvents.REPLY_CHUNK, (chunk) => {
+          answer.content += chunk;
+          res.write(chunk);
+        });
+
+        socket.on(AiQueryWsEvents.GET_INDEX, async (index, cb) => {
+          try {
+            const indexContext = await this.aiQueryContextRepository.getIndexContext(
               sessionMetadata,
               databaseId,
               auth.accountId,
               index,
-              await getIndexContext(client, index),
-            ));
+            );
+
+            if (!indexContext) {
+              return cb(await this.aiQueryContextRepository.setIndexContext(
+                sessionMetadata,
+                databaseId,
+                auth.accountId,
+                index,
+                await getIndexContext(client, index),
+              ));
+            }
+
+            return cb(indexContext);
+          } catch (e) {
+            this.logger.warn('Unable to create index content', e);
+            return cb(e.message);
           }
+        });
 
-          return cb(indexContext);
-        } catch (e) {
-          this.logger.warn('Unable to create index content', e);
-          return cb(e.message);
-        }
-      });
+        socket.on(AiQueryWsEvents.RUN_QUERY, async (data, cb) => {
+          try {
+            if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()]) {
+              return cb('-ERR: This command is not allowed');
+            }
 
-      socket.on(AiQueryWsEvents.RUN_QUERY, async (data, cb) => {
-        try {
-          if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()]) {
-            return cb('-ERR: This command is not allowed');
+            return cb(await client.sendCommand(data, { replyEncoding: 'utf8' }));
+          } catch (e) {
+            this.logger.warn('Query execution error', e);
+            return cb(e.message);
           }
+        });
 
-          return cb(await client.sendCommand(data, { replyEncoding: 'utf8' }));
-        } catch (e) {
-          this.logger.warn('Query execution error', e);
-          return cb(e.message);
-        }
-      });
+        socket.on(AiQueryWsEvents.TOOL_CALL, async (data) => {
+          answer.steps.push(plainToClass(AiQueryIntermediateStep, {
+            type: AiQueryIntermediateStepType.TOOL_CALL,
+            data,
+          }));
+        });
 
-      socket.on(AiQueryWsEvents.TOOL_CALL, async (data) => {
-        answer.steps.push(plainToClass(AiQueryIntermediateStep, {
-          type: AiQueryIntermediateStepType.TOOL_CALL,
-          data,
-        }));
-      });
+        socket.on(AiQueryWsEvents.TOOL_REPLY, async (data) => {
+          answer.steps.push(plainToClass(AiQueryIntermediateStep, {
+            type: AiQueryIntermediateStepType.TOOL,
+            data,
+          }));
+        });
 
-      socket.on(AiQueryWsEvents.TOOL_REPLY, async (data) => {
-        answer.steps.push(plainToClass(AiQueryIntermediateStep, {
-          type: AiQueryIntermediateStepType.TOOL,
-          data,
-        }));
-      });
+        await socket.emitWithAck('stream', dto.content, context, AiQueryService.prepareHistory(history));
+        socket.close();
+        await this.aiQueryMessageRepository.createMany(sessionMetadata, [question, answer]);
 
-      await socket.emitWithAck('stream', dto.content, context, AiQueryService.prepareHistory(history));
-      socket.close();
-      await this.aiQueryMessageRepository.createMany(sessionMetadata, [question, answer]);
-
-      return res.end();
-    } catch (e) {
-      socket?.close?.();
-      throw wrapAiQueryError(e, 'Unable to send the question');
-    }
+        return res.end();
+      } catch (e) {
+        socket?.close?.();
+        throw wrapAiQueryError(e, 'Unable to send the question');
+      }
+    });
   }
 
   async getHistory(sessionMetadata: SessionMetadata, databaseId: string): Promise<AiQueryMessage[]> {

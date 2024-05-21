@@ -18,32 +18,30 @@ export class AiQueryProvider {
   ) {}
 
   async getSocket(sessionMetadata: SessionMetadata, auth: AiQueryAuthData): Promise<Socket> {
-    return this.aiQueryAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
-      try {
-        return await new Promise((resolve, reject) => {
-          const socket = io(aiConfig.querySocketUrl, {
-            path: aiConfig.querySocketPath,
-            reconnection: false,
-            transports: ['websocket'],
-            extraHeaders: {
-              'X-Csrf-Token': auth.csrf,
-              Cookie: `JSESSIONID=${auth.sessionId}`,
-            },
-          });
-
-          socket.on(AiQueryWsEvents.CONNECT_ERROR, (e) => {
-            this.logger.error('Unable to establish AI socket connection', e);
-            reject(e);
-          });
-
-          socket.on(AiQueryWsEvents.CONNECT, async () => {
-            this.logger.debug('AI socket connection established');
-            resolve(socket);
-          });
+    try {
+      return await new Promise((resolve, reject) => {
+        const socket = io(aiConfig.querySocketUrl, {
+          path: aiConfig.querySocketPath,
+          reconnection: false,
+          transports: ['websocket'],
+          extraHeaders: {
+            'X-Csrf-Token': auth.csrf,
+            Cookie: `JSESSIONID=${auth.sessionId}`,
+          },
         });
-      } catch (e) {
-        throw wrapAiQueryError(e, 'Unable to establish connection');
-      }
-    });
+
+        socket.on(AiQueryWsEvents.CONNECT_ERROR, (e) => {
+          this.logger.error('Unable to establish AI socket connection', e);
+          reject(e);
+        });
+
+        socket.on(AiQueryWsEvents.CONNECT, async () => {
+          this.logger.debug('AI socket connection established');
+          resolve(socket);
+        });
+      });
+    } catch (e) {
+      throw wrapAiQueryError(e, 'Unable to establish connection');
+    }
   }
 }

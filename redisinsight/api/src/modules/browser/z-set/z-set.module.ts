@@ -2,7 +2,7 @@ import {
   DynamicModule,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { ZSetService } from 'src/modules/browser/z-set/z-set.service';
 import { ZSetController } from 'src/modules/browser/z-set/z-set.controller';
 
@@ -12,7 +12,7 @@ export class ZSetModule {
     return {
       module: ZSetModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: ZSetModule,
         }]),

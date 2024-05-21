@@ -2,7 +2,7 @@ import {
   DynamicModule,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { StreamController } from 'src/modules/browser/stream/controllers/stream.controller';
 import { ConsumerController } from 'src/modules/browser/stream/controllers/consumer.controller';
 import { ConsumerGroupController } from 'src/modules/browser/stream/controllers/consumer-group.controller';
@@ -16,7 +16,7 @@ export class StreamModule {
     return {
       module: StreamModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: StreamModule,
         }]),

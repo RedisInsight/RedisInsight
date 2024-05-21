@@ -3,7 +3,7 @@ import {
   MiddlewareConsumer, Module, NestModule, OnModuleInit,
 } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { join } from 'path';
 import config, { Config } from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
@@ -41,7 +41,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
   imports: [
     LocalDatabaseModule,
     CoreModule,
-    RouterModule.forRoutes(routes),
+    RouterModule.register(routes),
     AutodiscoveryModule,
     RedisEnterpriseModule,
     CloudModule.register(),

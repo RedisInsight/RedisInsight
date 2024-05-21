@@ -2,7 +2,7 @@ import {
   DynamicModule,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { HashService } from 'src/modules/browser/hash/hash.service';
 import { HashController } from 'src/modules/browser/hash/hash.controller';
 
@@ -12,7 +12,7 @@ export class HashModule {
     return {
       module: HashModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: HashModule,
         }]),

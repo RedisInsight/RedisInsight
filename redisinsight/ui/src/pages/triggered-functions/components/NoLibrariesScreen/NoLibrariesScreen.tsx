@@ -89,7 +89,7 @@ const NoLibrariesScreen = (props: IProps) => {
           <EuiText className={cx(styles.additionalText, styles.row)} data-testid="no-libraries-action-text">
             {isModuleLoaded
               ? 'Upload a new library to start working with triggers and functions or try the interactive tutorial to learn more.'
-              : 'Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.'}
+              : 'Create a free Redis Stack database which extends the core capabilities of your Redis and try the interactive tutorial to learn how to work with triggers and functions.'}
           </EuiText>
         </div>
         <div className={styles.linksWrapper}>
@@ -130,7 +130,7 @@ const NoLibrariesScreen = (props: IProps) => {
                         className={styles.link}
                         external={false}
                         target="_blank"
-                        href="https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions"
+                        href="https://redis.io/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions"
                         data-testid="get-started-link"
                         onClick={(e) => {
                           ssoCloudHandlerClick(e, OAuthSocialSource.TriggersAndFunctions)

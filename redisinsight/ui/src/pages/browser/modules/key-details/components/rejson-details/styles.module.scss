@@ -38,6 +38,11 @@
   }
 }
 
+.fullWidthContainer {
+  width: 100%;
+  padding: 10px 0;
+}
+
 .placeholder {
   display: flex;
   justify-content: center;
@@ -52,27 +57,16 @@
   line-height: 25px;
   font-family: "Inconsolata", monospace !important;
   letter-spacing: 0.15px;
+  flex-grow: 1;
+
+  input {
+    width: 100%;
+    min-width: 140px;
+  }
 }
 
 .defaultFont {
   font-family: "Graphik", sans-serif !important;
-}
-
-.jsonData {
-  flex-grow: 1;
-}
-
-.jsonData input {
-  width: 100%;
-  min-width: 140px;
-}
-
-.jsonButtonStyle {
-  height: 17px;
-  width: 17px;
-  &:hover {
-    cursor: pointer;
-  }
 }
 
 .errorMessage {
@@ -81,39 +75,33 @@
   width: 100%;
 }
 
-.errorMessageForTextArea {
-  width: calc(100% - 84px);
-}
-
-.controls {
-  position: absolute;
+.controls,
+.controlsBottom {
   background-color: var(--euiColorLightestShade);
-  width: 80px;
   height: 24px !important;
-
+  margin-bottom: 4px !important;
   z-index: 2;
-
-  top: 0;
-  left: 100%;
-  border-radius: 0 10px 10px 0;
-
   display: flex;
   align-items: center;
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
 
-  :global(.euiButtonIcon) {
-    width: 50% !important;
-    height: 100% !important;
+  &.controls {
+    width: 80px;
+    border-radius: 0 10px 10px 0;
+
+    :global(.euiButtonIcon) {
+      width: 50% !important;
+      height: 100% !important;
+    }
   }
-}
 
-.controlsBottom {
-  height: 34px;
-
-  top: 100%;
-  right: 0;
-  left: auto;
-  border-radius: 0 0 10px 10px;
+  &.controlsBottom {
+    height: 34px;
+    top: 100%;
+    right: 0;
+    left: auto;
+    border-radius: 0 0 10px 10px;
+  }
 }
 
 .row {
@@ -121,6 +109,7 @@
   position: relative;
   display: flex;
   align-items: flex-end;
+
   &:before {
     content: "";
     display: block;
@@ -132,19 +121,16 @@
     margin: 0 -16px;
     z-index: 0;
   }
-  &:nth-child(2n) {
-    &:before {
-      background: var(--browserTableRowEven);
-    }
+
+  &:nth-child(2n):before {
+    background: var(--browserTableRowEven);
   }
-  &:hover {
-    &:before {
-      background: var(--hoverInListColor);
-    }
+
+  &:hover:before {
+    background: var(--hoverInListColor);
   }
-  > div,
-  span,
-  button {
+
+  > div, span, button {
     z-index: 1;
   }
 
@@ -153,12 +139,39 @@
   }
 }
 
+.rowContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .keyName {
   color: var(--jsonKeyNameColor) !important;
   width: max-content;
   word-break: break-all;
   max-width: 300px;
   box-sizing: content-box;
+  flex-shrink: 0;
+}
+
+.quotedKeyName {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 1em;
+}
+
+.defaultFontExpandArray {
+  display: inline-block;
+  cursor: pointer;
+  padding-left: 8px;
+}
+
+.defaultFontOpenIndex {
+  display: inline-block;
+  cursor: pointer;
+  padding-left: 8px;
 }
 
 .jsonValue {
@@ -167,7 +180,6 @@
   font-family: "Inconsolata", monospace;
   letter-spacing: 0.15px;
   padding: 0 8px;
-
   max-width: 1000px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -216,19 +228,11 @@
   }
 }
 
-.actionButtons {
+.actionButtons, .deleteBtn {
   margin-left: 1em;
   display: flex;
   align-items: center;
-  min-width: 48px;
-}
-
-.deleteBtn {
-  margin-left: 1em;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  min-width: 48px;
+  min-width: 24px;
 }
 
 .declineBtn:hover {
@@ -244,4 +248,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.fullWidthTextArea {
+  height: 150px;
+  width: 100%;
+  max-width: none;
 }

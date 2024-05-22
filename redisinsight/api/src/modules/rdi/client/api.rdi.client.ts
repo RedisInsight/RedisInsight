@@ -1,81 +1,115 @@
-import { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
+import { decode } from 'jsonwebtoken';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
-import { RdiUrl } from 'src/modules/rdi/constants';
+import { RDI_TIMEOUT, RdiUrl, TOKEN_TRESHOLD } from 'src/modules/rdi/constants';
 import { RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
-import { RdiPipelineDeployFailedException } from 'src/modules/rdi/exceptions';
+import { RdiPipelineDeployFailedException, wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
 import {
   RdiJob,
   RdiPipeline,
   RdiStatisticsResult,
-  RdiType,
-  RdiDryRunJobResult,
-  RdiDyRunJobStatus,
   RdiStatisticsStatus,
-  RdiStatisticsData,
+  RdiStatisticsData, RdiClientMetadata, Rdi,
 } from 'src/modules/rdi/models';
 import { convertKeysToCamelCase } from 'src/utils/base.helper';
 
 const RDI_DEPLOY_FAILED_STATUS = 'failed';
 
 export class ApiRdiClient extends RdiClient {
-  public type = RdiType.API;
-
   protected readonly client: AxiosInstance;
 
-  async isConnected(): Promise<boolean> {
-    // todo: check if needed and possible
-    return true;
+  private auth: { jwt: string, exp: number };
+
+  constructor(clientMetadata: RdiClientMetadata, rdi: Rdi) {
+    super(clientMetadata, rdi);
+    this.client = axios.create({
+      baseURL: rdi.url,
+      timeout: RDI_TIMEOUT,
+    });
   }
 
   async getSchema(): Promise<object> {
-    const response = await this.client.get(RdiUrl.GetSchema);
-    return response.data;
+    try {
+      const response = await this.client.get(RdiUrl.GetSchema);
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
   async getPipeline(): Promise<RdiPipeline> {
-    const response = await this.client.get(RdiUrl.GetPipeline);
-    return response.data;
+    try {
+      const response = await this.client.get(RdiUrl.GetPipeline);
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
   async getStrategies(): Promise<object> {
-    const response = await this.client.get(RdiUrl.GetStrategies);
-    return response.data;
+    try {
+      const response = await this.client.get(RdiUrl.GetStrategies);
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
   async getTemplate(options: object): Promise<object> {
-    const response = await this.client.get(RdiUrl.GetTemplate, { params: options });
-    return response.data;
+    try {
+      const response = await this.client.get(RdiUrl.GetTemplate, { params: options });
+      return response.data;
+    } catch (error) {
+      throw wrapRdiPipelineError(error);
+    }
   }
 
   async deploy(pipeline: RdiPipeline): Promise<void> {
-    const response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
+    let response;
+    try {
+      response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
+    } catch (error) {
+      throw wrapRdiPipelineError(error, error.response.data.message);
+    }
 
     if (response.data?.status === RDI_DEPLOY_FAILED_STATUS) {
       throw new RdiPipelineDeployFailedException(undefined, { error: response.data?.error });
     }
   }
 
-  async deployJob(job: RdiJob): Promise<RdiJob> {
+  async deployJob(): Promise<RdiJob> {
     return null;
   }
 
   async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
-    const response = await this.client.post(RdiUrl.DryRunJob, data);
-    return response.data;
+    try {
+      const response = await this.client.post(RdiUrl.DryRunJob, data);
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
   async testConnections(config: string): Promise<RdiTestConnectionResult> {
-    const response = await this.client.post(RdiUrl.TestConnections, config);
+    try {
+      const response = await this.client.post(RdiUrl.TestConnections, config);
 
-    return response.data;
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
   async getPipelineStatus(): Promise<any> {
-    const response = await this.client.get(RdiUrl.GetPipelineStatus);
+    try {
+      const response = await this.client.get(RdiUrl.GetPipelineStatus);
 
-    return response.data;
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
   async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
@@ -91,11 +125,32 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async getJobFunctions(): Promise<object> {
-    const response = await this.client.post(RdiUrl.JobFunctions);
-    return response.data;
+    try {
+      const response = await this.client.post(RdiUrl.JobFunctions);
+      return response.data;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
   }
 
-  async disconnect(): Promise<void> {
-    return undefined;
+  async connect(): Promise<void> {
+    try {
+      const response = await this.client.post(RdiUrl.Login, { username: this.rdi.username, password: this.rdi.password });
+      const accessToken = response.data.access_token;
+      const decodedJwt = decode(accessToken);
+
+      this.auth = { jwt: accessToken, exp: decodedJwt.exp };
+      this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
+  }
+
+  async ensureAuth(): Promise<void> {
+    const expiresIn = this.auth.exp * 1_000 - Date.now();
+
+    if (expiresIn < TOKEN_TRESHOLD) {
+      await this.connect();
+    }
   }
 }

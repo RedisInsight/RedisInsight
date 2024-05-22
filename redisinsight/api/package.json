@@ -33,8 +33,9 @@
     "test:api": "cross-env NODE_ENV=test ts-mocha --paths -p test/api/api.tsconfig.json --config ./test/api/.mocharc.yml",
     "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
     "test:api:ci:cov": "cross-env nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
-    "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
-    "typeorm:run": "yarn typeorm migration:run"
+    "typeorm:migrate": " yarncross-env NODE_ENV=staging typeorm migration:generate ./migration/migration",
+    "typeorm:run": "yarn typeorm migration:run",
+    "typeorm:stage:run": "cross-env NODE_ENV=staging yarn typeorm migration:run"
   },
   "resolutions": {
     "nanoid": "^3.1.31",

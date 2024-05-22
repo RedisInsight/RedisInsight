@@ -18,6 +18,7 @@ describe('ErrorMessage', () => {
     expect(screen.getByTestId('ai-chat-error-report-link')).toBeInTheDocument()
 
     expect(screen.getByTestId('ai-chat-error-restart-session-btn')).toBeInTheDocument()
+    expect(screen.getByTestId('ai-chat-error-report-link')).toBeInTheDocument()
   })
 
   it('should render rate limit error', () => {
@@ -31,6 +32,7 @@ describe('ErrorMessage', () => {
     expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.rateLimit(100))
 
     expect(screen.queryByTestId('ai-chat-error-restart-session-btn')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('ai-chat-error-report-link')).not.toBeInTheDocument()
   })
 
   it('should render tokens limit error', () => {
@@ -43,7 +45,8 @@ describe('ErrorMessage', () => {
 
     expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.tokenLimit())
 
-    expect(screen.queryByTestId('ai-chat-error-restart-session-btn')).not.toBeInTheDocument()
+    expect(screen.getByTestId('ai-chat-error-restart-session-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('ai-chat-error-report-link')).not.toBeInTheDocument()
   })
 
   it('should not render restart button with timeout error', () => {

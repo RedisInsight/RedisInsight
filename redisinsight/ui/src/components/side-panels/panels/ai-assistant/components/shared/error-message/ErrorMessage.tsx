@@ -26,6 +26,12 @@ const ERROR_CODES_WITHOUT_RESTART = [
   CustomErrorCodes.AiQueryRateLimitToken,
 ]
 
+const ERROR_CODES_WITHOUT_REPORT_ISSUE = [
+  CustomErrorCodes.AiQueryRateLimitRequest,
+  CustomErrorCodes.AiQueryRateLimitToken,
+  CustomErrorCodes.AiQueryRateLimitMaxTokens,
+]
+
 const ErrorMessage = (props: Props) => {
   const { error, onRestart } = props
 
@@ -51,21 +57,26 @@ const ErrorMessage = (props: Props) => {
 
   const isShowRestart = !(error.errorCode && ERROR_CODES_WITHOUT_RESTART.includes(error.errorCode))
     && error.statusCode !== ApiStatusCode.Timeout
+  const isShowReportIssue = !(error.errorCode && ERROR_CODES_WITHOUT_REPORT_ISSUE.includes(error.errorCode))
 
   return (
     <>
       <div className={styles.errorMessage} data-testid="ai-chat-error-message">
         {getErrorMessage(error)}
-        {' '}
-        <a
-          className="link-underline"
-          href={EXTERNAL_LINKS.githubIssues}
-          data-testid="ai-chat-error-report-link"
-          target="_blank"
-          rel="noreferrer"
-        >
-          report the issue
-        </a>
+        {isShowReportIssue && (
+          <>
+            {' '}
+            <a
+              className="link-underline"
+              href={EXTERNAL_LINKS.githubIssues}
+              data-testid="ai-chat-error-report-link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              report the issue
+            </a>
+          </>
+        )}
       </div>
       {isShowRestart && (
         <RestartChat

@@ -5,7 +5,7 @@ import { ExploreTab } from './explore-tab';
 
 export class InsightsPanel {
     // CONTAINERS
-    sidePanel = Selector('[data-testid=insights-panel]');
+    sidePanel = Selector('[data-testid=side-panels-insights]');
     explorePanelButton = Selector('[data-testid=insights-trigger]');
     closeButton = Selector('[data-testid=close-insights-btn]');
     activeTab = Selector('[class*=euiTab-isSelected]');

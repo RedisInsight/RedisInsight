@@ -1,0 +1,23 @@
+@import './variables';
+
+.jsx-markdown {
+  @import './typography';
+  @import './code';
+  @import './list';
+  @import './table';
+  @import './blockquote';
+
+  font: normal normal normal 12px/15px Graphik, sans-serif;
+
+  hr {
+    border: none;
+    height: 1px;
+    width: 100%;
+    background-color: var(--separatorColor);
+    margin: ($margin-size-pace * 3 + px) 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}

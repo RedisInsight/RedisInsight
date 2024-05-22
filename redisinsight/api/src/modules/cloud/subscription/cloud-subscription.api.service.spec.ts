@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockCloudApiAuthDto, mockCloudCapiKeyService,
+  mockCapiUnauthorizedError,
+  mockCloudApiAuthDto, mockCloudApiCloudRegions, mockCloudApiCsrfToken, mockCloudCapiKeyService,
   mockCloudSessionService,
   mockCloudSubscriptionApiProvider,
   mockCloudSubscriptionCapiService,
@@ -10,13 +11,19 @@ import {
   mockSubscriptionPlanResponse,
   MockType,
 } from 'src/__mocks__';
+import { when, resetAllWhenMocks } from 'jest-when';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { FeatureService } from 'src/modules/feature/feature.service';
+import axios from 'axios';
 import { CloudSubscriptionApiService } from './cloud-subscription.api.service';
 import { CloudSessionService } from '../session/cloud-session.service';
 import { CloudSubscriptionCapiService } from './cloud-subscription.capi.service';
 import { CloudSubscriptionApiProvider } from './providers/cloud-subscription.api.provider';
+
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+jest.mock('axios');
+mockedAxios.create = jest.fn(() => mockedAxios);
 
 describe('CloudSubscriptionApiService', () => {
   let service: CloudSubscriptionApiService;
@@ -25,13 +32,13 @@ describe('CloudSubscriptionApiService', () => {
   let featureService: MockType<FeatureService>;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+    resetAllWhenMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CloudSubscriptionApiService,
-        {
-          provide: CloudSubscriptionApiProvider,
-          useFactory: mockCloudSubscriptionApiProvider,
-        },
+        CloudSubscriptionApiProvider,
         {
           provide: CloudSessionService,
           useFactory: mockCloudSessionService,
@@ -55,14 +62,27 @@ describe('CloudSubscriptionApiService', () => {
     api = module.get(CloudSubscriptionApiProvider);
     capi = module.get(CloudSubscriptionCapiService);
     featureService = module.get(FeatureService);
+
+    when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+      .mockResolvedValue({
+        status: 200,
+        data: mockCloudApiCloudRegions,
+      });
   });
 
   describe('getSubscriptionPlans', () => {
     it('successfully get plans and cloud regions', async () => {
       expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(mockSubscriptionPlanResponse);
     });
+    it('successfully get plans and cloud regions from 2nd attempt', async () => {
+      when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+        .mockRejectedValueOnce(mockCapiUnauthorizedError);
+      expect(await service.getSubscriptionPlans(mockSessionMetadata)).toEqual(mockSubscriptionPlanResponse);
+    });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      api.getCloudRegions.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+        .mockRejectedValue(mockCapiUnauthorizedError);
+
       await expect(service.getSubscriptionPlans(mockSessionMetadata)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
@@ -120,11 +140,13 @@ describe('CloudSubscriptionApiService', () => {
 
   describe('getCloudRegions', () => {
     it('successfully get cloud regions', async () => {
-      expect(await service.getCloudRegions(mockCloudApiAuthDto)).toEqual(mockCloudSubscriptionRegions);
+      expect(await service['getCloudRegions'](mockCloudApiAuthDto)).toEqual(mockCloudSubscriptionRegions);
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      api.getCloudRegions.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.getCloudRegions(mockCloudApiAuthDto)).rejects.toThrow(
+      when(mockedAxios.get).calledWith('/plans/cloud_regions', expect.anything())
+        .mockRejectedValue(mockCapiUnauthorizedError);
+
+      await expect(service['getCloudRegions'](mockCloudApiAuthDto)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
     });

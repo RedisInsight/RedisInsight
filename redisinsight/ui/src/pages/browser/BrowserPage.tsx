@@ -41,7 +41,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
-import { insightsPanelSelector } from 'uiSrc/slices/panels/insights'
+import { sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -69,10 +69,10 @@ const BrowserPage = () => {
   const { isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
   const { viewType, searchMode } = useSelector(keysSelector)
-  const { isOpen: isInsightsOpen } = useSelector(insightsPanelSelector)
+  const { openedPanel: openedSidePanel } = useSelector(sidePanelsSelector)
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
-  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(isInsightsOpen))
+  const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(!!openedSidePanel))
   const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
@@ -84,7 +84,7 @@ const BrowserPage = () => {
   const prevDbIndex = useRef(db)
   const selectedKeyRef = useRef<Nullable<RedisResponseBuffer>>(selectedKey)
   const isBulkActionsPanelOpenRef = useRef<boolean>(isBulkActionsPanelOpen)
-  const isInsightsOpenRef = useRef<boolean>(isInsightsOpen)
+  const isSidePanelOpenRef = useRef<boolean>(!!openedSidePanel)
 
   const dispatch = useDispatch()
 
@@ -126,9 +126,9 @@ const BrowserPage = () => {
   }, [selectedKey])
 
   useEffect(() => {
-    setArePanelsCollapsed(() => isOneSideMode(isInsightsOpen))
-    isInsightsOpenRef.current = isInsightsOpen
-  }, [isInsightsOpen])
+    setArePanelsCollapsed(() => isOneSideMode(!!openedSidePanel))
+    isSidePanelOpenRef.current = !!openedSidePanel
+  }, [openedSidePanel])
 
   useEffect(() => {
     if (connectedInstanceName && !isPageViewSent) {
@@ -137,7 +137,7 @@ const BrowserPage = () => {
   }, [connectedInstanceName, isPageViewSent])
 
   const updateWindowDimensions = () => {
-    setArePanelsCollapsed(isOneSideMode(isInsightsOpenRef.current))
+    setArePanelsCollapsed(isOneSideMode(isSidePanelOpenRef.current))
   }
 
   const onPanelWidthChange = useCallback((newSizes: any) => {

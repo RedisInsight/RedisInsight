@@ -25,10 +25,12 @@ export enum KnownFeatures {
   CloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   RedisModuleFilter = 'redisModuleFilter',
   RedisClient = 'redisClient',
+  DocumentationChat = 'documentationChat',
+  DatabaseChat = 'databaseChat',
 }
 
 export interface IFeatureFlag {
   name: string;
   storage: string;
-  factory?: () => Feature;
+  factory?: () => Partial<Feature>;
 }

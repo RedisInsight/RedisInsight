@@ -16,12 +16,12 @@ import { Theme, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'u
 import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
 import TriggersAndFunctionsImageDark from 'uiSrc/assets/img/triggers_and_functions_dark.svg?react'
 import TriggersAndFunctionsImageLight from 'uiSrc/assets/img/triggers_and_functions_light.svg?react'
-import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { findTutorialPath, getDbWithModuleLoaded } from 'uiSrc/utils'
-import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -133,7 +133,10 @@ const NoLibrariesScreen = (props: IProps) => {
                         href="https://redis.io/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions"
                         data-testid="get-started-link"
                         onClick={(e) => {
-                          ssoCloudHandlerClick(e, OAuthSocialSource.TriggersAndFunctions)
+                          ssoCloudHandlerClick(e, {
+                            source: OAuthSocialSource.TriggersAndFunctions,
+                            action: OAuthSocialAction.Create
+                          })
                         }}
                       >
                         <EuiButton

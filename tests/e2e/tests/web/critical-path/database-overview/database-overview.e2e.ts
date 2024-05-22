@@ -151,16 +151,16 @@ test
     })('Verify that user can see additional information in Overview: Connected Clients, Commands/Sec, CPU (%) using Standalone DB connection type', async t => {
         const commandsSecBeforeEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;
         await browserPage.OverviewPanel.waitForCpuIsCalculated();
-        const cpuBeforeEdit = (await browserPage.OverviewPanel.overviewCpu.textContent).split(' ')[0];
         //Verify that additional information in Overview: Connected Clients, Commands/Sec, CPU (%) is displayed
         await t.expect(browserPage.OverviewPanel.overviewConnectedClients.exists).ok('Connected Clients is dispalyed in the Overview');
         await t.expect(browserPage.OverviewPanel.overviewCommandsSec.exists).ok('Commands/Sec is dispalyed in the Overview');
         await t.expect(browserPage.OverviewPanel.overviewCpu.exists).ok('CPU (%) is dispalyed in the Overview');
         //Run Create hash index command
         await browserPage.InsightsPanel.togglePanel(true);
-        const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);
+        const cpuBeforeEdit = (await browserPage.OverviewPanel.overviewCpu.textContent).split(' ')[0];
         await tutorials.runBlockCode('Create a hash');
         //Verify that CPU and commands per second parameters are changed
         const commandsSecAfterEdit = await browserPage.OverviewPanel.overviewCommandsSec.textContent;

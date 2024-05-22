@@ -10,18 +10,16 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiPage,
-  EuiPageBody,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { map } from 'lodash'
 import { useSelector } from 'react-redux'
 import { Maybe } from 'uiSrc/utils'
-import { PageHeader } from 'uiSrc/components'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import styles from './styles.module.scss'
 
@@ -128,99 +126,91 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
   )
 
   return (
-    <>
-      <PageHeader title="My Redis databases" />
-      <div />
-      <EuiPage>
-        <EuiPageBody component="div">
-          <div className="homePage">
-            <div className="databaseContainer">
-              <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>
-                  Auto-Discover Redis Enterprise Databases
-                </h1>
-              </EuiTitle>
+    <AutodiscoveryPageTemplate>
+      <div className="databaseContainer">
+        <EuiTitle size="s" className={styles.title} data-testid="title">
+          <h1>
+            Auto-Discover Redis Enterprise Databases
+          </h1>
+        </EuiTitle>
 
-              {!!items.length && (
-                <EuiText color="subdued" className={styles.subTitle}>
-                  <span>
-                    These are the
-                    {' '}
-                    {items.length > 1 ? 'databases ' : 'database '}
-                    in your Redis Enterprise Cluster. Select the
-                    {items.length > 1 ? ' databases ' : ' database '}
-                    {' '}
-                    that you want to add.
-                  </span>
-                </EuiText>
-              )}
-              <EuiFormRow className={styles.searchForm}>
-                <EuiFieldSearch
-                  placeholder="Search..."
-                  className={styles.search}
-                  onChange={onQueryChange}
-                  isClearable
-                  aria-label="Search"
-                  data-testid="search"
-                />
-              </EuiFormRow>
-              <br />
+        {!!items.length && (
+        <EuiText color="subdued" className={styles.subTitle}>
+          <span>
+            These are the
+            {' '}
+            {items.length > 1 ? 'databases ' : 'database '}
+            in your Redis Enterprise Cluster. Select the
+            {items.length > 1 ? ' databases ' : ' database '}
+            {' '}
+            that you want to add.
+          </span>
+        </EuiText>
+        )}
+        <EuiFormRow className={styles.searchForm}>
+          <EuiFieldSearch
+            placeholder="Search..."
+            className={styles.search}
+            onChange={onQueryChange}
+            isClearable
+            aria-label="Search"
+            data-testid="search"
+          />
+        </EuiFormRow>
+        <br />
 
-              <div className={cx('databaseList clusterDatabaseList', styles.databaseListWrapper)}>
-                <EuiInMemoryTable
-                  items={items}
-                  itemId="uid"
-                  loading={loading}
-                  message={message}
-                  columns={columns}
-                  sorting={{ sort }}
-                  selection={selectionValue}
-                  className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
-                  isSelectable
-                />
-                {!items.length && <EuiText className={styles.noDatabases}>{message}</EuiText>}
-              </div>
-            </div>
-            <div className={cx(styles.footer, 'footerAddDatabase', styles.footerClusterDatabases)}>
-              <EuiButton
-                onClick={onBack}
-                color="secondary"
-                className="btn-cancel btn-back"
-                data-testid="btn-back-to-adding"
-              >
-                Back to adding databases
-              </EuiButton>
-              <div className={styles.footerButtonsGroup}>
-                <CancelButton isPopoverOpen={isPopoverOpen} />
-                <EuiToolTip
-                  position="top"
-                  anchorClassName="euiToolTip__btn-disabled"
-                  title={isSubmitDisabled() ? validationErrors.SELECT_AT_LEAST_ONE('database') : null}
-                  content={
-                    isSubmitDisabled() ? (
-                      <span className="euiToolTip__content">{validationErrors.NO_DBS_SELECTED}</span>
-                    ) : null
-                  }
-                >
-                  <EuiButton
-                    fill
-                    size="m"
-                    disabled={isSubmitDisabled()}
-                    onClick={handleSubmit}
-                    isLoading={loading}
-                    color="secondary"
-                    iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
-                    data-testid="btn-add-databases"
-                  >
-                    Add selected Databases
-                  </EuiButton>
-                </EuiToolTip>
-              </div>
-            </div>
-          </div>
-        </EuiPageBody>
-      </EuiPage>
-    </>
+        <div className={cx('databaseList clusterDatabaseList', styles.databaseListWrapper)}>
+          <EuiInMemoryTable
+            items={items}
+            itemId="uid"
+            loading={loading}
+            message={message}
+            columns={columns}
+            sorting={{ sort }}
+            selection={selectionValue}
+            className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
+            isSelectable
+          />
+          {!items.length && <EuiText className={styles.noDatabases}>{message}</EuiText>}
+        </div>
+      </div>
+      <div className={cx(styles.footer, 'footerAddDatabase', styles.footerClusterDatabases)}>
+        <EuiButton
+          onClick={onBack}
+          color="secondary"
+          className="btn-cancel btn-back"
+          data-testid="btn-back-to-adding"
+        >
+          Back to adding databases
+        </EuiButton>
+        <div className={styles.footerButtonsGroup}>
+          <CancelButton isPopoverOpen={isPopoverOpen} />
+          <EuiToolTip
+            position="top"
+            anchorClassName="euiToolTip__btn-disabled"
+            title={isSubmitDisabled() ? validationErrors.SELECT_AT_LEAST_ONE('database') : null}
+            content={
+            isSubmitDisabled() ? (
+              <span className="euiToolTip__content">{validationErrors.NO_DBS_SELECTED}</span>
+            ) : null
+          }
+          >
+            <EuiButton
+              fill
+              size="m"
+              disabled={isSubmitDisabled()}
+              onClick={handleSubmit}
+              isLoading={loading}
+              color="secondary"
+              iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
+              data-testid="btn-add-databases"
+            >
+              Add selected Databases
+            </EuiButton>
+          </EuiToolTip>
+        </div>
+      </div>
+    </AutodiscoveryPageTemplate>
   )
 }
 

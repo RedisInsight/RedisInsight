@@ -32,7 +32,7 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
 jest.mock('uiSrc/slices/instances/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/instances/cloud'),
   cloudSelector: jest.fn().mockReturnValue({
-    isAutodiscoverySSO: true,
+    ssoFlow: 'import',
   }),
 }))
 
@@ -78,8 +78,8 @@ describe('OAuthSelectAccountDialog', () => {
       eventData: {
         accountsCount: 2,
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('click on submit btn should call getUserInfo', async () => {
@@ -109,8 +109,8 @@ describe('OAuthSelectAccountDialog', () => {
         accountsCount: 2,
         action: 'import'
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
   it('on error in activeAccount telemetry should be sent', async () => {
     const sendEventTelemetryMock = jest.fn();
@@ -141,7 +141,7 @@ describe('OAuthSelectAccountDialog', () => {
         error: errorMessage,
         accountsCount: 2,
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

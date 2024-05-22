@@ -3,7 +3,7 @@ import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export class CloudCapiUnauthorizedException extends HttpException {
-  constructor(message = ERROR_MESSAGES.CLOUD_CAPI_UNAUTHORIZED, options?: HttpExceptionOptions) {
+  constructor(message = ERROR_MESSAGES.UNAUTHORIZED, options?: HttpExceptionOptions) {
     const response = {
       message,
       statusCode: HttpStatus.UNAUTHORIZED,

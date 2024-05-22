@@ -4,8 +4,8 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, clearStoreActions, render, fireEvent, screen, mockedStore } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { findTutorialPath } from 'uiSrc/utils'
 import NoLibrariesScreen, { IProps } from './NoLibrariesScreen'
 
@@ -65,7 +65,7 @@ describe('NoLibrariesScreen', () => {
 
     const expectedActions = [
       changeSelectedTab(InsightsPanelTabs.Explore),
-      toggleInsightsPanel(true)
+      changeSidePanel(SidePanels.Insights)
     ]
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     expect(pushMock).toBeCalledWith({

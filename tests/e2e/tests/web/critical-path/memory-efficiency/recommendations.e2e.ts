@@ -190,8 +190,8 @@ test.skip
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
         await workbenchPage.InsightsPanel.togglePanel(true);
-        await t.expect(await workbenchPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
-        const tutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.expect(await workbenchPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Tutorials);
+        const tutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tutorial.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded
         await t.expect(tutorial.getTutorialByName('INTRODUCTION').visible).ok('INTRODUCTION tutorial is not expanded');

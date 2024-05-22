@@ -1,4 +1,9 @@
-import { EuiPage, EuiPageBody, EuiResizableContainer, EuiResizeObserver } from '@elastic/eui'
+import {
+  EuiPage,
+  EuiPageBody,
+  EuiResizableContainer,
+  EuiResizeObserver
+} from '@elastic/eui'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -8,7 +13,7 @@ import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } f
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { PageHeader } from 'uiSrc/components'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
@@ -29,7 +34,13 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import InsightsTrigger from 'uiSrc/components/insights-trigger'
+
+import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
+import { getHighlightingFeatures, isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/ai-chatbot-message'
+
 import DatabasesList from './components/databases-list-component'
 import WelcomeComponent from './components/welcome-component'
 import HomeHeader from './components/home-header'
@@ -59,6 +70,14 @@ const HomePage = () => {
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
   const { instance: sentinelInstance } = useSelector(sentinelSelector)
   const { action, dbConnection } = useSelector(appRedirectionSelector)
+
+  const { features } = useSelector(appFeatureHighlightingSelector)
+  const { aiChatbot: aiChatbotHighlighting } = getHighlightingFeatures(features)
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
   const {
     loading,
@@ -220,16 +239,19 @@ const HomePage = () => {
 
   return (
     <>
+      <HighlightedFeature
+        isHighlight={isAnyChatAvailable && aiChatbotHighlighting}
+        {...(BUILD_FEATURES.aiChatbot || {})}
+      >
+        <AiChatbotMessage />
+      </HighlightedFeature>
       <PageHeader
         title="My Redis databases"
         className={styles.pageHeader}
-        logo={(
-          <>
-            <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
-            <InsightsTrigger source="home page" />
-          </>
-        )}
-      />
+        showInsights
+      >
+        <CapabilityPromotion wrapperClassName={cx(styles.section, styles.capabilityPromotion)} />
+      </PageHeader>
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>
           <EuiResizeObserver onResize={onResizeTrottled}>

@@ -42,12 +42,7 @@ export class CloudCapiKeyService {
    */
   private async ensureCapiKeys(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiKey> {
     try {
-      let user = await this.cloudUserApiService.me(sessionMetadata, false, utm);
-
-      // nothing is needed since we have capi key
-      if (user?.capiKey?.id) {
-        return user.capiKey;
-      }
+      let user = await this.cloudUserApiService.getCloudUser(sessionMetadata, false, utm);
 
       let currentAccount = CloudUserApiService.getCurrentAccount(user);
 
@@ -66,14 +61,14 @@ export class CloudCapiKeyService {
           const session = await this.cloudSessionService.getSession(sessionMetadata.sessionId);
 
           // enable capi if needed
-          if (!currentAccount?.capiKey) {
+          if (!currentAccount.capiKey) {
             this.logger.log('Trying to enable capi');
 
             await this.api.enableCapi(session);
 
             this.logger.log('Successfully enabled capi');
 
-            user = await this.cloudUserApiService.me(sessionMetadata, true, utm);
+            user = await this.cloudUserApiService.getCloudUser(sessionMetadata, true, utm);
             currentAccount = CloudUserApiService.getCurrentAccount(user);
           }
 
@@ -83,32 +78,46 @@ export class CloudCapiKeyService {
             userId: sessionMetadata.userId,
             cloudUserId: user.id,
             cloudAccountId: user.currentAccountId,
-            capiKey: currentAccount?.capiKey,
+            capiKey: currentAccount.capiKey,
             createdAt: new Date(),
           } as CloudCapiKey;
           capiKey.name = await this.generateName(capiKey);
 
           capiKey = await this.repository.create(plainToClass(CloudCapiKey, capiKey));
 
-          const capiSecret = await this.api.createCapiKey(session, user.id, capiKey.name);
-          capiKey = await this.repository.update(capiKey.id, { capiSecret: capiSecret.secret_key });
-
           this.analytics.sendCloudAccountKeyGenerated();
         } catch (e) {
           this.analytics.sendCloudAccountKeyGenerationFailed(e);
           throw e;
         }
-      } else if (capiKey.valid === false) {
+      }
+
+      // Throw an error. User action required in this case
+      if (capiKey.valid === false) {
         return Promise.reject(new CloudCapiKeyUnauthorizedException(
           undefined,
           { resourceId: capiKey.id },
         ));
       }
 
-      await this.cloudUserApiService.updateUser(sessionMetadata, {
-        capiKey,
-        accounts: user.accounts,
-      });
+      if (!capiKey.capiSecret) {
+        try {
+          const session = await this.cloudSessionService.getSession(sessionMetadata.sessionId);
+
+          const capiSecret = await this.api.createCapiKey(session, user.id, capiKey.name);
+          capiKey = await this.repository.update(capiKey.id, { capiSecret: capiSecret.secret_key });
+
+          await this.cloudUserApiService.updateUser(sessionMetadata, {
+            capiKey,
+            accounts: user.accounts,
+          });
+
+          this.analytics.sendCloudAccountSecretGenerated();
+        } catch (e) {
+          this.analytics.sendCloudAccountSecretGenerationFailed(e);
+          throw e;
+        }
+      }
 
       return capiKey;
     } catch (e) {
@@ -117,6 +126,11 @@ export class CloudCapiKeyService {
     }
   }
 
+  /**
+   * Returns CAPI credentials and ensures CAPI keys and updates last usage time
+   * @param sessionMetadata
+   * @param utm
+   */
   async getCapiCredentials(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<CloudCapiKey> {
     const capiKey = await this.ensureCapiKeys(sessionMetadata, utm);
 
@@ -125,6 +139,10 @@ export class CloudCapiKeyService {
     return capiKey;
   }
 
+  /**
+   * Get CAPI key by id
+   * @param id
+   */
   async get(id: string): Promise<CloudCapiKey> {
     try {
       this.logger.log('Getting capi key by id');
@@ -235,7 +253,7 @@ export class CloudCapiKeyService {
 
           return new CloudCapiKeyUnauthorizedException(
             undefined, // default message
-            { resourceId: cloudSession.user?.capiKey?.id },
+            { resourceId: cloudSession.user.capiKey.id },
           );
         }
       }

@@ -1,8 +1,10 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { CustomHeaders } from 'uiSrc/constants/api'
+import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
+import { store } from 'uiSrc/slices/store'
+import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 
 const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
@@ -15,14 +17,15 @@ if (window.__RI_PROXY_PATH__) {
   apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
 }
 
+export const getBaseUrl = () => (!isDevelopment && isWebApp
+  ? `${window.location.origin}/${apiPrefix}/`
+  : `${baseApiUrl}:${apiPort}/${apiPrefix}/`)
+
 const axiosInstance = axios.create({
-  baseURL:
-    !isDevelopment && isWebApp
-      ? `${window.location.origin}/${apiPrefix}/`
-      : `${baseApiUrl}:${apiPort}/${apiPrefix}/`,
+  baseURL: getBaseUrl(),
 })
 
-export const requestInterceptor = (config: AxiosRequestConfig) => {
+export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
   if (config?.headers) {
     const instanceId = /databases\/([\w-]+)\/?.*/.exec(config.url || '')?.[1]
 
@@ -42,9 +45,23 @@ export const requestInterceptor = (config: AxiosRequestConfig) => {
   return config
 }
 
+export const cloudAuthInterceptor = (error: AxiosError) => {
+  const { response, config } = error
+  if (response?.status === 401 && config?.url && CLOUD_AUTH_API_ENDPOINTS.includes(config.url as any)) {
+    store?.dispatch<any>(logoutUserAction?.())
+  }
+
+  return Promise.reject(error)
+}
+
 axiosInstance.interceptors.request.use(
   requestInterceptor,
   (error) => Promise.reject(error)
+)
+
+axiosInstance.interceptors.response.use(
+  undefined,
+  cloudAuthInterceptor
 )
 
 export default axiosInstance

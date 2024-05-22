@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
-import { useFormik, FormikErrors } from 'formik'
+import { FormikErrors, useFormik } from 'formik'
 import { isEmpty } from 'lodash'
 import {
   EuiButton,
@@ -19,8 +19,10 @@ import {
 
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { FeatureFlagComponent, OAuthSocial, OAuthSocialType } from 'uiSrc/components'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
+import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
+import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -236,7 +238,7 @@ const CloudConnectionForm = (props: Props) => {
             initialIsOpen={false}
             data-testid="use-cloud-account-accordion"
           >
-            <OAuthSocial type={OAuthSocialType.Autodiscovery} hideTitle />
+            <OAuthAutodiscovery inline source={OAuthSocialSource.DiscoveryForm} />
           </EuiCollapsibleNavGroup>
         </FeatureFlagComponent>
         <FeatureFlagComponent name={FeatureFlags.cloudSso} otherwise={CloudApiForm}>

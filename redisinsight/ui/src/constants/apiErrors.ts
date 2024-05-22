@@ -13,4 +13,12 @@ export const ApiEncryptionErrors: string[] = [
   ApiErrors.KeytarDecryption,
 ]
 
+export const AI_CHAT_ERRORS = {
+  default: () => 'An error occurred. Try again or restart the session.',
+  unexpected: () => 'An unexpected error occurred. Try again later.',
+  timeout: () => 'Timeout occurred. Try again later.',
+  rateLimit: (limit = 5000) => `Exceeded rate limit. Try again in ${limit} seconds.`,
+  tokenLimit: () => 'Conversation is too long. Restart the session.'
+}
+
 export default ApiErrors

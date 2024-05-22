@@ -5,14 +5,16 @@ import { IFeatureFlag } from 'src/modules/feature/constants';
 export class SwitchableFlagStrategy extends FeatureFlagStrategy {
   async calculate(knownFeature: IFeatureFlag, featureConfig: any): Promise<Feature> {
     const isInRange = await this.isInTargetRange(featureConfig?.perc);
-    const isInFilter = await this.filter(featureConfig?.filters) ? !!featureConfig.flag : !featureConfig?.flag;
+    const isInFilter = await this.filter(featureConfig?.filters);
+    const originalFlag = !!featureConfig?.flag;
+
+    let flag = (isInRange && isInFilter) ? originalFlag : !originalFlag;
+
     const force = (await FeatureFlagStrategy.getCustomConfig())?.[knownFeature.name];
 
-    let flag = isInRange && isInFilter;
-
-    if (isInFilter && force === true) {
+    if (isInFilter && originalFlag && force === true) {
       flag = true;
-    } else if (isInFilter && force === false) {
+    } else if (isInFilter && originalFlag && force === false) {
       flag = false;
     }
 

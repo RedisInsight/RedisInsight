@@ -136,6 +136,7 @@ export const mockCloudUserRepository = jest.fn(() => ({
 export const mockCloudUserApiService = jest.fn(() => ({
   getCapiKeys: jest.fn().mockResolvedValue(mockCloudCapiAuthDto),
   me: jest.fn().mockResolvedValue(mockCloudUser),
+  getCloudUser: jest.fn().mockResolvedValue(mockCloudUser),
   setCurrentAccount: jest.fn(),
   updateUser: jest.fn(),
 }));

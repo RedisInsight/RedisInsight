@@ -108,7 +108,7 @@ describe('FeatureService', () => {
       await service.recalculateFeatureFlags();
 
       expect(repository.delete)
-        .toHaveBeenCalledWith(mockUnknownFeature);
+        .toHaveBeenCalledWith(mockUnknownFeature.name);
       expect(repository.upsert)
         .toHaveBeenCalledWith({
           name: KnownFeatures.InsightsRecommendations,

@@ -21,7 +21,6 @@ const ErrorMessage = (props: Props) => {
   const getErrorMessage = (error?: { statusCode: number, errorCode?: number }): string => {
     if (error?.statusCode === ApiStatusCode.Timeout) return AiChatErrors.Timeout
     if (error?.errorCode === CustomErrorCodes.GeneralAiUnexpectedError) return AiChatErrors.DefaultUnexpected
-    if (error?.errorCode === CustomErrorCodes.CloudApiUnauthorized) return AiChatErrors.CloudAuthorization
 
     return AiChatErrors.Default
   }

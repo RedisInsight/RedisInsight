@@ -314,6 +314,8 @@ describe('CloudAuthService', () => {
         {
           accessToken: mockCloudAccessTokenNew,
           refreshToken: mockCloudRefreshTokenNew,
+          csrf: null,
+          apiSessionId: null,
         },
       );
     });

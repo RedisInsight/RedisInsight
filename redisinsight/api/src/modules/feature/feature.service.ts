@@ -112,7 +112,7 @@ export class FeatureService {
       actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.data?.features?.has?.(feature.name));
 
       // delete features
-      await Promise.all(actions.toDelete.map((feature) => this.repository.delete(feature)));
+      await Promise.all(actions.toDelete.map((feature) => this.repository.delete(feature.name)));
       // upsert modified features
       await Promise.all(actions.toUpsert.map((feature) => this.repository.upsert(feature)));
 

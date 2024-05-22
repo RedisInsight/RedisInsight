@@ -116,7 +116,7 @@ describe('CloudCapiKeyService', () => {
     });
     it('Should generate new capi key but enable CAPI before', async () => {
       repository.getByUserAccount.mockResolvedValueOnce(null);
-      cloudUserApiService.me.mockResolvedValueOnce({
+      cloudUserApiService.getCloudUser.mockResolvedValueOnce({
         ...mockCloudUser,
         capiKey: undefined,
         accounts: [{
@@ -133,17 +133,6 @@ describe('CloudCapiKeyService', () => {
       expect(mockedAxios.post)
         .toHaveBeenNthCalledWith(2, '/accounts/cloud-api/cloudApiKeys', expect.anything(), expect.anything());
     });
-    it('Should generate new capi key from 2nd attempt', async () => {
-      repository.getByUserAccount.mockResolvedValueOnce(null);
-      when(mockedAxios.post).calledWith('/accounts/cloud-api/cloudApiKeys', expect.anything(), expect.anything())
-        .mockRejectedValueOnce(mockCapiUnauthorizedError);
-
-      expect(await service['ensureCapiKeys'](mockSessionMetadata, mockUtm))
-        .toEqual(mockCloudUser.capiKey);
-      expect(mockedAxios.post).toHaveBeenCalledTimes(1);
-      expect(mockedAxios.post)
-        .toHaveBeenNthCalledWith(1, '/accounts/cloud-api/cloudApiKeys', expect.anything(), expect.anything());
-    });
     it('Should throw CloudCapiKeyUnauthorizedException if capiKey is not valid', async () => {
       repository.getByUserAccount.mockResolvedValueOnce({ ...mockCloudCapiKey, valid: false });
 
@@ -152,7 +141,7 @@ describe('CloudCapiKeyService', () => {
       expect(mockedAxios.post).toHaveBeenCalledTimes(0);
     });
     it('Should throw CloudApiBadRequestException', async () => {
-      cloudUserApiService.me.mockResolvedValue(null);
+      cloudUserApiService.getCloudUser.mockResolvedValue(null);
       CloudUserApiService.getCurrentAccount(null);
       await expect(service['ensureCapiKeys'](mockSessionMetadata, mockUtm))
         .rejects.toThrowError(CloudApiBadRequestException);

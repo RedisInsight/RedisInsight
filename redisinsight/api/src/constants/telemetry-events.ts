@@ -39,6 +39,8 @@ export enum TelemetryEvents {
   // Event for cloud CAPI keys
   CloudAccountKeyGenerated = 'CLOUD_ACCOUNT_KEY_GENERATED',
   CloudAccountKeyGenerationFailed = 'CLOUD_ACCOUNT_KEY_GENERATION_FAILED',
+  CloudAccountSecretGenerated = 'CLOUD_ACCOUNT_SECRET_GENERATED',
+  CloudAccountSecretGenerationFailed = 'CLOUD_ACCOUNT_SECRET_GENERATION_FAILED',
 
   // Events for cli tool
   CliClientCreated = 'CLI_CLIENT_CREATED',

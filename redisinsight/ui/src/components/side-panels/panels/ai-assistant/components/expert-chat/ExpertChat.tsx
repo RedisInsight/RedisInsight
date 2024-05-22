@@ -1,6 +1,6 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { EuiIcon } from '@elastic/eui'
 import {
   aiExpertChatSelector,
@@ -9,20 +9,23 @@ import {
   removeExpertChatHistoryAction,
   updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
+import { findTutorialPath, getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
+import { SAMPLE_DATA_TUTORIAL } from 'uiSrc/constants'
 import NoIndexesInitialMessage from './components/no-indexes-initial-message'
 import ExpertChatHeader from './components/expert-chat-header'
+import InitialMessage from './components/initial-message'
 
 import { EXPERT_CHAT_AGREEMENTS } from '../texts'
-import { ChatForm, ChatHistory, ExpertChatInitialMessage } from '../shared'
+import { ChatForm, ChatHistory } from '../shared'
 
 import styles from './styles.module.scss'
 
@@ -44,6 +47,7 @@ const ExpertChat = () => {
   const isAgreementsAccepted = agreements.includes(instanceId) || messages.length > 0
 
   const dispatch = useDispatch()
+  const history = useHistory()
 
   useEffect(() => {
     if (!instanceId) {
@@ -164,6 +168,19 @@ const ExpertChat = () => {
     })
   }, [])
 
+  const handleClickTutorial = () => {
+    const tutorialPath = findTutorialPath({ id: SAMPLE_DATA_TUTORIAL })
+    dispatch(openTutorialByPath(tutorialPath, history, true))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
+      eventData: {
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
+        source: 'sample_data',
+      }
+    })
+  }
+
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     setTimeout(() => {
       scrollIntoView(scrollDivRef?.current, {
@@ -213,8 +230,8 @@ const ExpertChat = () => {
           isLoading={loading || isLoading}
           modules={modules}
           initialMessage={isNoIndexes
-            ? <NoIndexesInitialMessage onSuccess={getIndexes} />
-            : ExpertChatInitialMessage}
+            ? <NoIndexesInitialMessage onClickTutorial={handleClickTutorial} onSuccess={getIndexes} />
+            : <InitialMessage onClickTutorial={handleClickTutorial} />}
           inProgressMessage={inProgressMessage}
           history={messages}
           scrollDivRef={scrollDivRef}

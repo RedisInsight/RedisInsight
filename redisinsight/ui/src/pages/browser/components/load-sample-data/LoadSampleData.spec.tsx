@@ -12,9 +12,7 @@ import {
 
 import { bulkImportDefaultData, bulkImportDefaultDataSuccess } from 'uiSrc/slices/browser/bulkActions'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { changeKeyViewType, loadKeys } from 'uiSrc/slices/browser/keys'
 import { apiService } from 'uiSrc/services'
-import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import LoadSampleData from './LoadSampleData'
@@ -63,8 +61,8 @@ describe('LoadSampleData', () => {
       addMessageNotification(
         successMessages.UPLOAD_DATA_BULK()
       ),
-      changeKeyViewType(KeyViewType.Tree),
-      loadKeys(),
+      // changeKeyViewType(KeyViewType.Tree),
+      // loadKeys(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

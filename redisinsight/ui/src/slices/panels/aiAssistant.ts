@@ -7,7 +7,6 @@ import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { AiChatMessage, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
-  getApiErrorMessage,
   getAxiosError,
   isStatusSuccessful,
   Maybe,
@@ -139,6 +138,7 @@ const aiAssistantSlice = createSlice({
         error: Maybe<{
           statusCode: number
           errorCode?: number
+          details?: Record<string, any>
         }>
       }>
     ) => {
@@ -367,7 +367,8 @@ export function askExpertChatbotAction(
               id: humanMessage.id,
               error: {
                 statusCode: error?.status ?? 500,
-                errorCode: error?.errorCode
+                errorCode: error?.errorCode,
+                details: error?.details
               }
             }))
           }

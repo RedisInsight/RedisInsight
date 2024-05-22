@@ -24,6 +24,8 @@ import { apiService } from 'uiSrc/services'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { loadList } from 'uiSrc/slices/browser/redisearch'
+import { changeSelectedTab, changeSidePanel, resetExplorePanelSearch } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import ExpertChat from './ExpertChat'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -226,6 +228,39 @@ describe('ExpertChat', () => {
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
         chat: AiChatType.Query
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper actions after click tutorial in the initial message', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      messages: [],
+      agreements: ['instanceId']
+    })
+
+    render(<ExpertChat />, { store })
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('tutorial-initial-message-link'))
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      changeSelectedTab(InsightsPanelTabs.Explore),
+      changeSidePanel(SidePanels.Insights),
+      resetExplorePanelSearch()
+    ])
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
+      eventData: {
+        databaseId: 'instanceId',
+        source: 'sample_data'
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

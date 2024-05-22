@@ -33,6 +33,12 @@
       }
     }
   }
+
+  :global {
+    .defaultLink {
+      color: var(--externalLinkColor) !important;
+    }
+  }
 }
 
 .iconTelescope {

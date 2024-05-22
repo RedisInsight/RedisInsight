@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react'
-import { EuiSpacer, EuiText } from '@elastic/eui'
-import LoadSampleData from 'uiSrc/pages/browser/components/load-sample-data'
+import { EuiLink, EuiSpacer, EuiText } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import LoadSampleData from 'uiSrc/pages/browser/components/load-sample-data'
 import styles from './styles.module.scss'
 
 export interface Props {
   onSuccess?: () => void
+  onClickTutorial: () => void
 }
 
 const NoIndexesInitialMessage = (props: Props) => {
-  const { onSuccess } = props
+  const { onSuccess, onClickTutorial } = props
 
   useEffect(() => {
     sendEventTelemetry({
@@ -21,13 +22,26 @@ const NoIndexesInitialMessage = (props: Props) => {
   return (
     <div data-testid="no-indexes-chat-message">
       <EuiText size="xs">Hi!</EuiText>
-      <EuiText size="xs">I am here to help you get started with data querying.</EuiText>
-      <EuiText size="xs">I noticed that you have no indexes created.</EuiText>
+      <EuiText size="xs">I am here to help you get started with data querying. I noticed that you have no indexes created.</EuiText>
       <EuiSpacer />
       <EuiText size="xs">Would you like to load the sample data to see what Redis Copilot can help you do?</EuiText>
       <EuiSpacer />
       <LoadSampleData anchorClassName={styles.anchorClassName} onSuccess={onSuccess} />
-      <EuiSpacer size="xs" />
+      <EuiSpacer />
+      <EuiText size="xs">
+        Explore several common Redis use cases with our
+        {' '}
+        <EuiLink
+          color="subdued"
+          external={false}
+          className="defaultLink"
+          onClick={onClickTutorial}
+          data-testid="tutorial-initial-message-link"
+        >
+          tutorial
+        </EuiLink>
+        , utilizing the provided sample data.
+      </EuiText>
     </div>
   )
 }

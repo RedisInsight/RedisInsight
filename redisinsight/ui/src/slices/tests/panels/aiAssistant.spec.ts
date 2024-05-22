@@ -1,4 +1,5 @@
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
 import reducer, {
   initialState,
   getAssistantChatHistoryFailed,
@@ -36,6 +37,7 @@ import reducer, {
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { apiService } from 'uiSrc/services'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 let store: typeof mockedStore
 
@@ -777,6 +779,7 @@ describe('ai assistant slice', () => {
         // Assert
         const expectedActions = [
           getExpertChatHistory(),
+          addErrorNotification(responsePayload as AxiosError),
           getExpertChatHistoryFailed(),
         ]
         expect(store.getActions()).toEqual(expectedActions)

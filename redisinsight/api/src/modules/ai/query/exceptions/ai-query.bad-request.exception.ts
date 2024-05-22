@@ -8,7 +8,7 @@ export class AiQueryBadRequestException extends HttpException {
       message,
       statusCode: HttpStatus.BAD_REQUEST,
       error: 'AiQueryBadRequest',
-      errorCode: CustomErrorCodes.QueryAiInternalServerError,
+      errorCode: CustomErrorCodes.QueryAiBadRequest,
     };
 
     super(response, response.statusCode, options);

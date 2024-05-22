@@ -11,7 +11,7 @@ import {
   mockCloudSession,
   mockCloudCapiAccount,
   mockCloudApiUser,
-  mockCloudApiCsrfToken,
+  mockCloudApiCsrfToken, mockServerService,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
 import { CloudApiInternalServerErrorException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
@@ -22,6 +22,7 @@ import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.ser
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { mockCloudAuthService } from 'src/__mocks__/cloud-auth';
 import axios from 'axios';
+import { ServerService } from 'src/modules/server/server.service';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -51,6 +52,10 @@ describe('CloudUserApiService', () => {
         {
           provide: CloudAuthService,
           useFactory: mockCloudAuthService,
+        },
+        {
+          provide: ServerService,
+          useFactory: mockServerService,
         },
       ],
     }).compile();
@@ -397,7 +402,8 @@ describe('CloudUserApiService', () => {
     let response;
 
     beforeEach(async () => {
-      spy = jest.spyOn(service, 'me');
+      jest.spyOn(service as any, 'ensureCloudUser').mockResolvedValue(undefined);
+      spy = jest.spyOn(service, 'getCloudUser');
       spy.mockResolvedValue(mockCloudUser);
     });
 

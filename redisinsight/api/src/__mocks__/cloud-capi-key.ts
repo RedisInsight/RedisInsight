@@ -69,4 +69,6 @@ export const mockCloudCapiKeyService = jest.fn(() => ({
 export const mockCloudCapiKeyAnalytics = jest.fn(() => ({
   sendCloudAccountKeyGenerated: jest.fn(),
   sendCloudAccountKeyGenerationFailed: jest.fn(),
+  sendCloudAccountSecretGenerated: jest.fn(),
+  sendCloudAccountSecretGenerationFailed: jest.fn(),
 }));

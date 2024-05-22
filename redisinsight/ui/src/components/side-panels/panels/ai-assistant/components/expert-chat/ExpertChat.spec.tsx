@@ -100,7 +100,7 @@ describe('ExpertChat', () => {
       messages: [],
       agreements: []
     });
-    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+    (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
       modules: [{ name: RedisDefaultModules.FT }, { name: RedisDefaultModules.ReJSON }]
     }))
 
@@ -113,7 +113,7 @@ describe('ExpertChat', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
-    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+    (aiExpertChatSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
       messages: [],
       agreements: ['instanceId']

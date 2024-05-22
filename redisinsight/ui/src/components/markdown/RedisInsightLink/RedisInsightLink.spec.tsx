@@ -10,8 +10,7 @@ jest.mock('uiSrc/utils/routing', () => ({
 
 Object.defineProperty(window, 'location', {
   value: {
-    origin: 'http://localhost',
-    pathname: 'instanceId/workbench'
+    origin: 'http://localhost'
   },
   writable: true
 })

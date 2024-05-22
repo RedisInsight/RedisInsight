@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { EuiLink, EuiPopover } from '@elastic/eui'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
@@ -19,11 +19,12 @@ const RedisInsightLink = (props: Props) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
   const { instanceId } = useParams<{ instanceId: string }>()
   const history = useHistory()
+  const location = useLocation()
 
   const handleLinkClick = (e: React.MouseEvent) => {
     e.preventDefault()
 
-    const href = getRedirectionPage(url, instanceId)
+    const href = getRedirectionPage(url, instanceId, location.pathname)
     if (href) {
       history.push(href)
       return

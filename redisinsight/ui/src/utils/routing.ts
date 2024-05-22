@@ -26,14 +26,17 @@ export const findRouteByPathname = (routes: IRoute[], pathname: string): Maybe<I
 
 // undefined - route was not found
 // null - route found but private
-export const getRedirectionPage = (pageInput: string, databaseId?: string): Nullable<Maybe<string>> => {
+export const getRedirectionPage = (
+  pageInput: string,
+  databaseId?: string,
+  currentPathname?: string
+): Nullable<Maybe<string>> => {
   let page = pageInput.replace(/^\//, '')
   try {
-    const pageUrl = new URL(page, window.location.origin)
-    const { pathname, searchParams } = pageUrl
+    const { pathname, searchParams } = new URL(page, window.location.origin)
 
-    if (pathname === CURRENT_PAGE_URL_SYNTAX) {
-      return `${window.location.pathname}?${searchParams.toString()}`
+    if (currentPathname && pathname === CURRENT_PAGE_URL_SYNTAX) {
+      return `${currentPathname}?${searchParams.toString()}`
     }
 
     if (searchParams.has('guidePath') || searchParams.has('tutorialId')) {

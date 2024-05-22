@@ -6,8 +6,7 @@ jest.mock('uiSrc/utils/routing', () => ({
 
 Object.defineProperty(window, 'location', {
   value: {
-    origin: 'http://localhost',
-    pathname: 'instanceId/workbench'
+    origin: 'http://localhost'
   },
   writable: true
 })
@@ -24,7 +23,8 @@ const getRedirectionPageTests = [
   { input: ['/analytics'], expected: null },
   { input: ['some-page'], expected: undefined },
   { input: ['/workbench?guidePath=introduction.md', databaseId], expected: '/1/workbench?guidePath=introduction.md&insights=open' },
-  { input: ['/_?tutorialId=tutorial'], expected: 'instanceId/workbench?tutorialId=tutorial' },
+  { input: ['/_?tutorialId=tutorial'], expected: undefined },
+  { input: ['/_?tutorialId=tutorial', databaseId, `/${databaseId}/workbench`], expected: '/1/workbench?tutorialId=tutorial' },
 ]
 
 describe('getRedirectionPage', () => {

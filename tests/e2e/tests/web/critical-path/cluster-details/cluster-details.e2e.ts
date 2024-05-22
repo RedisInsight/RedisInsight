@@ -76,7 +76,7 @@ test
         }
         //Run Create hash index command to load network and memory
         await clusterDetailsPage.InsightsPanel.togglePanel(true);
-        const tutorials = await clusterDetailsPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await clusterDetailsPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);

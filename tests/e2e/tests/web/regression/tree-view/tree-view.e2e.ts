@@ -66,7 +66,7 @@ test
         for (const capability of capabilities) {
             await browserPage.clickGuideLinksByName(capability.name);
             await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel not opened');
-            const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+            const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
             await t.expect(tutorials.closeEnablementPage.textContent)
                 .contains(capability.tutorial, `${capability.tutorial} tutorial not opened from No Keys page`);
             await t.click(browserPage.InsightsPanel.closeButton);

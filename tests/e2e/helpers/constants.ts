@@ -77,7 +77,7 @@ export enum ResourcePath {
 }
 
 export enum ExploreTabs {
-    Explore  = 'Explore',
+    Tutorials  = 'Tutorials',
     Tips = 'Tips',
 }
 

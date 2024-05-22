@@ -51,7 +51,7 @@ test('Verify that user can see options on what can be done to work with capabili
     // Verify change screens when capability not available - 'Search'
     await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
         .ok('Missing RedisSearch title is not visible');
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.triggersFunctionsAccordionTutorialButton);
     await t.click(tutorials.internalTriggersAndFunctionsLink);
     await tutorials.runBlockCode('Upload library');

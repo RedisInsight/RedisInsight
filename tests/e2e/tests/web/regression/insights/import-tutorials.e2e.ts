@@ -68,7 +68,7 @@ test
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
         await t.click(tutorials.tutorialOpenUploadButton);
@@ -123,7 +123,7 @@ test
 test.skip
     .after(async() => {
         tutorialName = 'Tutorials with manifest';
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         if(await tutorials.tutorialAccordionButton.withText(tutorialName).exists) {
             await tutorials.deleteTutorialByName(tutorialName);
         }
@@ -136,7 +136,7 @@ test.skip
         const summary = 'Summary for JSON';
 
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.tutorialOpenUploadButton);
         // Verify that user can upload tutorials using a URL
         await t.typeText(tutorials.tutorialLinkField, link);
@@ -180,7 +180,7 @@ test
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await tutorials.deleteTutorialByName(tutorialName);
         await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
             .notOk(`${tutorialName} tutorial is not deleted`);
@@ -195,7 +195,7 @@ test
 
         // Upload custom tutorial
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t
             .click(tutorials.tutorialOpenUploadButton)
             .setFilesToUpload(tutorials.tutorialImport, [zipFilePath])

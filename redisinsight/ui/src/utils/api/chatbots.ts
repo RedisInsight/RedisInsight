@@ -35,8 +35,11 @@ export const getStreamedAnswer = async (
     const reader = response.body!.pipeThrough(new TextDecoderStream()).getReader()
     if (!isStatusSuccessful(response.status)) {
       const { value } = await reader.read()
+
+      const errorResponse = value ? JSON.parse(value) : {}
       const extendedResponseError = {
-        errorCode: value ? JSON.parse(value).errorCode : ''
+        errorCode: errorResponse.errorCode ?? '',
+        details: errorResponse.details ?? {}
       }
       const error = Object.assign(response, extendedResponseError)
       onError?.(error)

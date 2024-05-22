@@ -1,7 +1,8 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import { AiChatErrors } from 'uiSrc/constants/apiErrors'
+import { AI_CHAT_ERRORS } from 'uiSrc/constants/apiErrors'
+import { CustomErrorCodes } from 'uiSrc/constants'
 import ErrorMessage from './ErrorMessage'
 
 describe('ErrorMessage', () => {
@@ -13,17 +14,43 @@ describe('ErrorMessage', () => {
     const onRestart = jest.fn()
     render(<ErrorMessage onRestart={onRestart} error={{ statusCode: 404 }} />)
 
-    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AiChatErrors.Default)
+    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.default())
     expect(screen.getByTestId('ai-chat-error-report-link')).toBeInTheDocument()
 
     expect(screen.getByTestId('ai-chat-error-restart-session-btn')).toBeInTheDocument()
+  })
+
+  it('should render rate limit error', () => {
+    const error = {
+      errorCode: CustomErrorCodes.AiQueryRateLimitRequest,
+      statusCode: 429,
+      details: { limiterType: 'request', limiterKind: 'user', limiterSeconds: 100 }
+    }
+    render(<ErrorMessage onRestart={jest.fn} error={error} />)
+
+    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.rateLimit(100))
+
+    expect(screen.queryByTestId('ai-chat-error-restart-session-btn')).not.toBeInTheDocument()
+  })
+
+  it('should render tokens limit error', () => {
+    const error = {
+      errorCode: CustomErrorCodes.AiQueryRateLimitMaxTokens,
+      statusCode: 413,
+      details: { tokenLimit: 20000, tokenCount: 575 }
+    }
+    render(<ErrorMessage onRestart={jest.fn} error={error} />)
+
+    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.tokenLimit())
+
+    expect(screen.queryByTestId('ai-chat-error-restart-session-btn')).not.toBeInTheDocument()
   })
 
   it('should not render restart button with timeout error', () => {
     const onRestart = jest.fn()
     render(<ErrorMessage onRestart={onRestart} error={{ statusCode: 408 }} />)
 
-    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AiChatErrors.Timeout)
+    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.timeout())
     expect(screen.getByTestId('ai-chat-error-report-link')).toBeInTheDocument()
 
     expect(screen.queryByTestId('ai-chat-error-restart-session-btn')).not.toBeInTheDocument()

@@ -5,9 +5,6 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { bulkActionsSelector, bulkImportDefaultDataAction } from 'uiSrc/slices/browser/bulkActions'
-import { changeKeyViewType, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
-import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
@@ -23,30 +20,12 @@ const LoadSampleData = (props: Props) => {
 
   const { id } = useSelector(connectedInstanceSelector)
   const { loading } = useSelector(bulkActionsSelector)
-  const { viewType } = useSelector(keysSelector)
 
   const dispatch = useDispatch()
 
-  const onSuccessImport = () => {
-    if (onSuccess) {
-      onSuccess()
-      return
-    }
-
-    if (viewType === KeyViewType.Browser) {
-      dispatch(changeKeyViewType(KeyViewType.Tree))
-    }
-
-    dispatch(fetchKeys({
-      searchMode: SearchMode.Pattern,
-      cursor: '0',
-      count: SCAN_TREE_COUNT_DEFAULT
-    }))
-  }
-
   const handleSampleData = () => {
     setIsConfirmationOpen(false)
-    dispatch(bulkImportDefaultDataAction(id, onSuccessImport))
+    dispatch(bulkImportDefaultDataAction(id, onSuccess))
 
     sendEventTelemetry({
       event: TelemetryEvent.IMPORT_SAMPLES_CLICKED,

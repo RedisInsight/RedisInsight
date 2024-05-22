@@ -1,4 +1,5 @@
 export enum AiQueryWsEvents {
+  ERROR = 'error',
   CONNECT = 'connect',
   CONNECT_ERROR = 'connect_error',
   TOOL_CALL = 'tool_call', // non-ackable, signals a tool invocation by the agent, client should record in history
@@ -14,4 +15,10 @@ export enum AiQueryMessageRole {
   AI = 'ai',
   TOOL = 'tool',
   TOOL_CALL = 'tool_call',
+}
+
+export enum AiQueryServerErrors {
+  RateLimitRequest = 'RateLimitRequest',
+  RateLimitToken = 'RateLimitToken',
+  MaxTokens = 'MaxTokens',
 }

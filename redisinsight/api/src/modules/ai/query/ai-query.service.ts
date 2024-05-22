@@ -182,7 +182,21 @@ export class AiQueryService {
           }));
         });
 
-        await socket.emitWithAck('stream', dto.content, context, AiQueryService.prepareHistory(history));
+        await new Promise((resolve, reject) => {
+          socket.on(AiQueryWsEvents.ERROR, async (error) => {
+            reject(error);
+          });
+
+          socket.emitWithAck('stream', dto.content, context, AiQueryService.prepareHistory(history))
+            .then((ack) => {
+              if (ack?.error) {
+                return reject(ack.error);
+              }
+
+              return resolve(ack);
+            })
+            .catch(reject);
+        });
         socket.close();
         await this.aiQueryMessageRepository.createMany(sessionMetadata, [question, answer]);
 

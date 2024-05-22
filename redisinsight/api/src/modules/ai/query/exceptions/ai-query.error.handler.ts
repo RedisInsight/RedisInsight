@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import { get } from 'lodash';
 import { HttpException } from '@nestjs/common';
 import {
@@ -7,11 +6,27 @@ import {
   AiQueryBadRequestException,
   AiQueryNotFoundException,
   AiQueryInternalServerErrorException,
+  AiQueryRateLimitRequestException, AiQueryRateLimitTokenException, AiQueryRateLimitMaxTokensException,
 } from 'src/modules/ai/query/exceptions';
+import { AiQueryServerErrors } from 'src/modules/ai/query/models';
 
-export const wrapAiQueryError = (error: AxiosError, message?: string): HttpException => {
+export const wrapAiQueryError = (error: any, message?: string): HttpException => {
   if (error instanceof HttpException) {
     return error;
+  }
+
+  // ai errors to handle
+  if (error.error) {
+    switch (error.error) {
+      case AiQueryServerErrors.RateLimitRequest:
+        return new AiQueryRateLimitRequestException(error.message, { details: error.data });
+      case AiQueryServerErrors.RateLimitToken:
+        return new AiQueryRateLimitTokenException(error.message, { details: error.data });
+      case AiQueryServerErrors.MaxTokens:
+        return new AiQueryRateLimitMaxTokensException(error.message, { details: error.data });
+      default:
+        // go further
+    }
   }
 
   // TransportError or Axios error

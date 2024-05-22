@@ -49,4 +49,7 @@ export enum CustomErrorCodes {
   QueryAiForbidden = 11_352,
   QueryAiBadRequest = 11_353,
   QueryAiNotFound = 11_354,
+  QueryAiRateLimitRequest = 11_360,
+  QueryAiRateLimitToken = 11_361,
+  QueryAiRateLimitMaxTokens = 11_362,
 }

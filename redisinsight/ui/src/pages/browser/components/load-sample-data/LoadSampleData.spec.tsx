@@ -61,8 +61,6 @@ describe('LoadSampleData', () => {
       addMessageNotification(
         successMessages.UPLOAD_DATA_BULK()
       ),
-      // changeKeyViewType(KeyViewType.Tree),
-      // loadKeys(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

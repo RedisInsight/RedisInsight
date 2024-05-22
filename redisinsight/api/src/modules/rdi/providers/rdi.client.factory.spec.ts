@@ -47,7 +47,6 @@ describe('RdiClientFactory', () => {
           username: mockRdi.username,
         },
       );
-      // expect(client).toEqual(mockRdiClient);
     });
     it('should not create client if auth request will failed', async () => {
       mockedAxios.post.mockRejectedValue(mockRdiUnauthorizedError);

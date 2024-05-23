@@ -149,7 +149,7 @@
 .snoozeBtn {
   svg {
     fill: var(--recommendationBgColor) !important;
-    g {
+    g, circle, path {
       stroke: currentColor !important;
     }
   }

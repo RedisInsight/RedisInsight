@@ -18,7 +18,7 @@ import {
 import {
   RdiPipelineDeployFailedException,
   RdiPipelineInternalServerErrorException,
-  wrapRdiPipelineError
+  wrapRdiPipelineError,
 } from 'src/modules/rdi/exceptions';
 import {
   RdiJob,

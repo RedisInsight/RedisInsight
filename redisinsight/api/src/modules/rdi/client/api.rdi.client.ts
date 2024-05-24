@@ -181,8 +181,6 @@ export class ApiRdiClient extends RdiClient {
         throw new RdiPipelineTimeoutException();
       }
 
-      await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));
-
       try {
         const response = await this.client.get(`${RdiUrl.Action}/${actionId}`);
         const { status, data, error } = response.data;
@@ -197,6 +195,8 @@ export class ApiRdiClient extends RdiClient {
       } catch (e) {
         throw wrapRdiPipelineError(e);
       }
+
+      await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));
     }
   }
 }

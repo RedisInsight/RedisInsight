@@ -105,4 +105,5 @@ export default {
   COMMON_DEFAULT_IMPORT_ERROR: 'Unable to import default data',
 
   RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
+  RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',
 };

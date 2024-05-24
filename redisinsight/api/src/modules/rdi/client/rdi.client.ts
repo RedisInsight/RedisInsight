@@ -3,7 +3,7 @@ import {
   RdiClientMetadata, RdiJob, RdiPipeline, RdiStatisticsResult,
 } from 'src/modules/rdi/models';
 import {
-  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult,
+  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
 
@@ -38,7 +38,7 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-  abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
+  abstract testConnections(config: string): Promise<RdiTestConnectionsResponseDto>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 

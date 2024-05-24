@@ -9,7 +9,7 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
 import { RequestSessionMetadata } from 'src/common/decorators';
-import {SessionMetadata} from "src/common/models";
+import { SessionMetadata } from 'src/common/models';
 
 @ApiTags('RDI')
 @UsePipes(new ValidationPipe({ transform: true }))

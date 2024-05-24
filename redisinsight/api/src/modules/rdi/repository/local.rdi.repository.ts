@@ -61,7 +61,9 @@ export class LocalRdiRepository extends RdiRepository {
 
     return classToClass(
       Rdi,
-      await this.repository.save(await this.modelEncryptor.encryptEntity(entity)),
+      await this.modelEncryptor.decryptEntity(
+        await this.repository.save(await this.modelEncryptor.encryptEntity(entity)),
+      ),
     );
   }
 

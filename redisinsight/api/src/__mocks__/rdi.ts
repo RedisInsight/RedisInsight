@@ -1,4 +1,3 @@
-import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
   Rdi,
   RdiClientMetadata,

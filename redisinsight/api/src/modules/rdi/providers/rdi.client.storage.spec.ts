@@ -1,7 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { generateMockRdiClient } from 'src/__mocks__';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
+import { SessionMetadata } from 'src/common/models';
 
 const mockClientMetadata1 = {
   sessionMetadata: {
@@ -137,6 +139,33 @@ describe('RdiClientStorage', () => {
         expect(result).not.toEqual(existingClient);
         expect(result).toEqual(newClient);
         expect(service['clients'].size).toEqual(1);
+      });
+
+      it('should throw BadRequestException when metadata is invalid', async () => {
+        await expect(service.set(generateMockRdiClient({
+          sessionMetadata: {} as SessionMetadata,
+          id: 'id',
+        }))).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
+
+        await expect(service.set(generateMockRdiClient({
+          sessionMetadata: {
+            userId: 'u2', sessionId: undefined,
+          } as SessionMetadata,
+          id: 'id',
+        }))).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
+
+        await expect(service.set(generateMockRdiClient({
+          sessionMetadata: {
+            userId: undefined, sessionId: 's2',
+          } as SessionMetadata,
+          id: 'id',
+        }))).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
       });
     });
 

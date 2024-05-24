@@ -38,7 +38,7 @@ describe('RdiClientFactory', () => {
           access_token: mockedAccessToken,
         },
       });
-      const client = await service.createClient(mockRdiClientMetadata, mockRdi);
+      await service.createClient(mockRdiClientMetadata, mockRdi);
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
         RdiUrl.Login,

@@ -71,7 +71,7 @@ export class RdiService {
       throw wrapRdiPipelineError(error);
     }
 
-    this.logger.log(`Succeed to create rdi instance`);
+    this.logger.log('Succeed to create rdi instance');
     return await this.repository.create(model);
   }
 
@@ -93,7 +93,7 @@ export class RdiService {
   }
 
   /**
-   * Connect to rdi instance last connected time
+   * Connect to rdi instance
    * @param rdiClientMetadata
    */
   async connect(rdiClientMetadata: RdiClientMetadata): Promise<void> {

@@ -1,4 +1,4 @@
-import { pipelineToYaml, pipelineToJson } from 'uiSrc/utils'
+import { pipelineToYaml, pipelineToJson, transformConnectionResults } from 'uiSrc/utils'
 
 const pipelineToJsonTests: any[] = [
   [
@@ -125,6 +125,59 @@ describe('pipelineToYaml', () => {
   it.each(pipelineToYamlTests)('for input: %s (input), should be output: %s',
     (input, expected) => {
       const result = pipelineToYaml(input)
+      expect(result).toEqual(expected)
+    })
+})
+
+const transformConnectionResultsTests: any[] = [
+  [
+    null,
+    { success: [], fail: [] }
+  ],
+  [
+    {
+      target1: {
+        status: 'success',
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
+        }
+      },
+      target2: {
+        status: 'fail',
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
+        }
+      },
+      target3: {
+        status: 'wrong status',
+      },
+      target4: {
+        status: 'wrong status',
+        error: {
+          code: 'INVALID_CREDENTIALS',
+          message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
+        }
+      },
+      target5: {
+        status: 'success',
+      },
+      target6: {
+        unknownProperty: 'foo bar'
+      },
+    },
+    {
+      success: [{ target: 'target1' }, { target: 'target5' }],
+      fail: [{ target: 'target2', error: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided' }],
+    }
+  ]
+]
+
+describe('transformConnectionResults', () => {
+  it.each(transformConnectionResultsTests)('for input: %s (input), should be output: %s',
+    (input, expected) => {
+      const result = transformConnectionResults(input)
       expect(result).toEqual(expected)
     })
 })

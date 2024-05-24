@@ -1,10 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
+import yaml from 'js-yaml'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { getApiErrorMessage, getRdiUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { IStateRdiTestConnections, ITestConnection } from 'uiSrc/slices/interfaces'
-
+import { getApiErrorMessage, getRdiUrl, isStatusSuccessful, transformConnectionResults } from 'uiSrc/utils'
+import {
+  IStateRdiTestConnections,
+  TestConnectionsResponse,
+  TransformResult
+} from 'uiSrc/slices/interfaces'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { AppDispatch, RootState } from '../store'
 
@@ -23,7 +27,7 @@ const rdiTestConnectionsSlice = createSlice({
       state.loading = true
       state.results = null
     },
-    testConnectionsSuccess: (state, { payload }: PayloadAction<ITestConnection>) => {
+    testConnectionsSuccess: (state, { payload }: PayloadAction<TransformResult>) => {
       state.loading = false
       state.results = payload
       state.error = ''
@@ -57,13 +61,13 @@ export function testConnectionsAction(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(testConnections())
-      const { status, data } = await apiService.post(
+      const { status, data } = await apiService.post<TestConnectionsResponse>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_TEST_CONNECTIONS),
-        config,
+        yaml.load(config),
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(testConnectionsSuccess(data))
+        dispatch(testConnectionsSuccess(transformConnectionResults(data?.sources)))
         onSuccessAction?.()
       }
     } catch (_err) {

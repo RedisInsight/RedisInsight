@@ -1,5 +1,5 @@
 import yaml from 'js-yaml'
-import { IPipeline, IPipelineJSON } from 'uiSrc/slices/interfaces'
+import { IPipeline, IPipelineJSON, ISources, TestConnectionStatus, TransformResult } from 'uiSrc/slices/interfaces'
 
 export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   config: yaml.dump(pipeline.config),
@@ -9,10 +9,33 @@ export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   }))
 })
 
-export const pipelineToJson = ({ config, jobs }: IPipeline): IPipelineJSON => ({
+export const pipelineToJson = ({ config, jobs }: IPipeline): IPipelineJSON => <IPipelineJSON>({
   config: yaml.load(config) || {},
-  jobs: jobs.reduce((acc, job) => {
+  jobs: jobs.reduce<{ [key: string]: unknown }>((acc, job) => {
     acc[job.name] = yaml.load(job.value)
     return acc
   }, {})
 })
+
+export const transformConnectionResults = (sources: ISources): TransformResult => {
+  const result: TransformResult = { success: [], fail: [] }
+
+  if (!sources) {
+    return result
+  }
+
+  try {
+    Object.entries(sources).forEach(([source, details]) => {
+      if (details.status === TestConnectionStatus.Success) {
+        result.success.push({ target: source })
+      } else if (details.status === TestConnectionStatus.Fail) {
+        const errorMessage = details.error?.message
+        result.fail.push({ target: source, error: errorMessage })
+      }
+    })
+  } catch (error) {
+    // ignore
+  }
+
+  return result
+}

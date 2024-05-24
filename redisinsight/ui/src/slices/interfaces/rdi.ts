@@ -39,29 +39,6 @@ export interface IDryRunJobResults {
   output: IDryRunJobOutput[]
 }
 
-export enum TestConnectionStatus {
-  Fail = 'fail',
-  Success = 'success',
-}
-
-export interface ITestConnection {
-  fail: TestConnectionResult[]
-  success: TestConnectionResult[]
-}
-
-export interface TestConnectionResult {
-  endpoint: string
-  index: number
-  error?: string
-  status: TestConnectionStatus
-}
-
-export interface IStateRdiTestConnections {
-  loading: boolean
-  error: string
-  results: Nullable<ITestConnection>
-}
-
 export interface IRdiPipelineStrategy {
   strategy: string
   databases: string[]
@@ -223,4 +200,44 @@ export interface IStateJobFunction {
   label: string
   detail: string
   documentation: string
+}
+
+// Rdi test target connections
+export enum TestConnectionStatus {
+  Fail = 'fail',
+  Success = 'success',
+}
+
+interface IErrorDetail {
+  code: string;
+  message: string;
+}
+
+interface ISourceDetail {
+  status: TestConnectionStatus;
+  error?: IErrorDetail;
+}
+
+export interface ISources {
+  [key: string]: ISourceDetail;
+}
+
+export interface TestConnectionsResponse {
+  sources: ISources
+}
+
+interface Result {
+  target: string;
+  error?: string;
+}
+
+export interface TransformResult {
+  success: Result[];
+  fail: Result[];
+}
+
+export interface IStateRdiTestConnections {
+  loading: boolean
+  error: string
+  results: Nullable<TransformResult>
 }

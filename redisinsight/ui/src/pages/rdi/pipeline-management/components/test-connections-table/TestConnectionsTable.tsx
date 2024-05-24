@@ -16,22 +16,16 @@ const TestConnectionsTable = (props: Props) => {
 
   const columns: EuiBasicTableColumn<any>[] = [
     {
-      name: '#',
-      field: 'index',
-      width: '4%',
-      render: (index: number) => (<span data-testid={`table-index-${index}`}>({index})</span>)
-    },
-    {
-      name: 'Endpoint',
-      field: 'endpoint',
-      width: '48%',
+      name: 'Name',
+      field: 'target',
+      width: '50%',
       truncateText: true,
       render: (endpoint: string, { index }) => (<div data-testid={`table-endpoint-${index}`}>{endpoint}</div>)
     },
     {
       name: 'Result',
       field: 'error',
-      width: '48%',
+      width: '50%',
       truncateText: true,
       render: (error: Maybe<string>, { status, index }) => (
         <div data-testid={`table-result-${index}`}>

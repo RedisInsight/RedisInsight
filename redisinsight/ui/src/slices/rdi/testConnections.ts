@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import yaml from 'js-yaml'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getRdiUrl, isStatusSuccessful, transformConnectionResults } from 'uiSrc/utils'
@@ -54,7 +53,7 @@ export default rdiTestConnectionsSlice.reducer
 // Asynchronous thunk action
 export function testConnectionsAction(
   rdiInstanceId: string,
-  config: string,
+  config: unknown,
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
@@ -63,7 +62,7 @@ export function testConnectionsAction(
       dispatch(testConnections())
       const { status, data } = await apiService.post<TestConnectionsResponse>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_TEST_CONNECTIONS),
-        yaml.load(config),
+        config,
       )
 
       if (isStatusSuccessful(status)) {

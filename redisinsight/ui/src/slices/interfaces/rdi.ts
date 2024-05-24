@@ -226,14 +226,14 @@ export interface TestConnectionsResponse {
   sources: ISources
 }
 
-interface Result {
+export interface IRdiConnectionResult {
   target: string;
   error?: string;
 }
 
 export interface TransformResult {
-  success: Result[];
-  fail: Result[];
+  success: IRdiConnectionResult[];
+  fail: IRdiConnectionResult[];
 }
 
 export interface IStateRdiTestConnections {

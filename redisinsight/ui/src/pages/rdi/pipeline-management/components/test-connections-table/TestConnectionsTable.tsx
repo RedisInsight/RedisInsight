@@ -3,33 +3,33 @@ import cx from 'classnames'
 import React from 'react'
 
 import { Maybe } from 'uiSrc/utils'
-import { TestConnectionResult, TestConnectionStatus } from 'uiSrc/slices/interfaces'
+import { IRdiConnectionResult } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  data: Array<TestConnectionResult>
+  data: Array<IRdiConnectionResult>
 }
 
 const TestConnectionsTable = (props: Props) => {
   const { data } = props
 
-  const columns: EuiBasicTableColumn<any>[] = [
+  const columns: EuiBasicTableColumn<IRdiConnectionResult>[] = [
     {
       name: 'Name',
       field: 'target',
       width: '50%',
       truncateText: true,
-      render: (endpoint: string, { index }) => (<div data-testid={`table-endpoint-${index}`}>{endpoint}</div>)
+      render: (target: string) => <div data-testid={`table-target-${target}`}>{target}</div>
     },
     {
       name: 'Result',
       field: 'error',
       width: '50%',
       truncateText: true,
-      render: (error: Maybe<string>, { status, index }) => (
-        <div data-testid={`table-result-${index}`}>
-          {status === TestConnectionStatus.Fail ? error || 'Error' : 'Successful'}
+      render: (error: Maybe<string>, { target }) => (
+        <div data-testid={`table-result-${target}`}>
+          {error || 'Successful'}
         </div>
       )
     }

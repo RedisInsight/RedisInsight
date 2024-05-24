@@ -29,7 +29,7 @@ export const transformConnectionResults = (sources: ISources): TransformResult =
       if (details.status === TestConnectionStatus.Success) {
         result.success.push({ target: source })
       } else if (details.status === TestConnectionStatus.Fail) {
-        const errorMessage = details.error?.message
+        const errorMessage = details.error?.message || 'Error'
         result.fail.push({ target: source, error: errorMessage })
       }
     })

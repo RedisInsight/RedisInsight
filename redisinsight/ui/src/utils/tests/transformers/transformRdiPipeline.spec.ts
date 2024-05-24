@@ -166,10 +166,16 @@ const transformConnectionResultsTests: any[] = [
       target6: {
         unknownProperty: 'foo bar'
       },
+      target7: {
+        status: 'fail',
+      },
     },
     {
       success: [{ target: 'target1' }, { target: 'target5' }],
-      fail: [{ target: 'target2', error: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided' }],
+      fail: [
+        { target: 'target2', error: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided' },
+        { target: 'target7', error: 'Error' }
+      ],
     }
   ]
 ]

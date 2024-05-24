@@ -3,29 +3,38 @@ import { generateMockRdiClient } from 'src/__mocks__';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
 
+const mockClientMetadata1 = {
+  sessionMetadata: {
+    userId: 'u1',
+    sessionId: 's1',
+  },
+  id: 'id1',
+};
+
+const mockNotExistClientMetadata = {
+  sessionMetadata: {
+    userId: 'not exist',
+    sessionId: 'not exist',
+  },
+  id: 'not exist',
+};
+
+const mockRdiClient1 = generateMockRdiClient(mockClientMetadata1);
+const mockRdiClient2 = generateMockRdiClient({
+  ...mockClientMetadata1,
+  sessionMetadata: { userId: 'u2', sessionId: 's1' },
+});
+const mockRdiClient3 = generateMockRdiClient({
+  ...mockClientMetadata1,
+  sessionMetadata: { userId: 'u2', sessionId: 's3' },
+});
+const mockRdiClient4 = generateMockRdiClient({
+  ...mockClientMetadata1,
+  id: 'id2',
+});
+
 describe('RdiClientStorage', () => {
   let service: RdiClientStorage;
-  const mockClientMetadata1 = {
-    sessionMetadata: {
-      userId: 'u1',
-      sessionId: 's1',
-    },
-    id: 'id1',
-  };
-
-  const mockRdiClient1 = generateMockRdiClient(mockClientMetadata1);
-  const mockRdiClient2 = generateMockRdiClient({
-    ...mockClientMetadata1,
-    sessionMetadata: { userId: 'u2', sessionId: 's1' },
-  });
-  const mockRdiClient3 = generateMockRdiClient({
-    ...mockClientMetadata1,
-    sessionMetadata: { userId: 'u2', sessionId: 's3' },
-  });
-  const mockRdiClient4 = generateMockRdiClient({
-    ...mockClientMetadata1,
-    id: 'id2',
-  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -64,6 +73,7 @@ describe('RdiClientStorage', () => {
       expect(service['clients'].size).toEqual(3);
       expect(service['clients'].get(mockRdiClient1.id)).toEqual(undefined);
     });
+
     describe('get', () => {
       it('should correctly get client instance and update last used time', async () => {
         // eslint-disable-next-line prefer-destructuring
@@ -90,6 +100,12 @@ describe('RdiClientStorage', () => {
 
         expect(result).toEqual(service['clients'].get(mockRdiClient1.id));
         expect(result['lastUsed']).toBeGreaterThan(lastUsed);
+      });
+
+      it('should not fail when there is no client', async () => {
+        const result = await service.getByMetadata(mockNotExistClientMetadata);
+
+        expect(result).toBeUndefined();
       });
     });
 

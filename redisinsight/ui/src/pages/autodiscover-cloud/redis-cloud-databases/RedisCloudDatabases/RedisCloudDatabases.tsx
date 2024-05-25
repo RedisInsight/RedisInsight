@@ -10,8 +10,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiPage,
-  EuiPageBody,
   EuiToolTip,
 } from '@elastic/eui'
 import { map, pick } from 'lodash'
@@ -22,8 +20,8 @@ import cx from 'classnames'
 import { Pages } from 'uiSrc/constants'
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
-import { PageHeader } from 'uiSrc/components'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import styles from '../styles.module.scss'
 
@@ -177,73 +175,65 @@ const RedisCloudDatabasesPage = ({
   )
 
   return (
-    <>
-      <PageHeader title="My Redis databases" />
-      <div />
-      <EuiPage>
-        <EuiPageBody component="div">
-          <div className="homePage">
-            <div className="databaseContainer">
-              <EuiTitle size="s" className={styles.title} data-testid="title">
-                <h1>
-                  Redis Cloud Databases
-                </h1>
-              </EuiTitle>
+    <AutodiscoveryPageTemplate>
+      <div className="databaseContainer">
+        <EuiTitle size="s" className={styles.title} data-testid="title">
+          <h1>
+            Redis Cloud Databases
+          </h1>
+        </EuiTitle>
 
-              <EuiText color="subdued" className={styles.subTitle}>
-                <span>
-                  These are
-                  {' '}
-                  {items.length > 1 ? 'databases ' : 'database '}
-                  in your Redis Cloud. Select the
-                  {items.length > 1 ? ' databases ' : ' database '}
-                  {' '}
-                  that you
-                  want to add.
-                </span>
-              </EuiText>
-              <EuiFormRow className={styles.searchForm}>
-                <EuiFieldSearch
-                  placeholder="Search..."
-                  className={styles.search}
-                  onChange={onQueryChange}
-                  isClearable
-                  aria-label="Search"
-                  data-testid="search"
-                />
-              </EuiFormRow>
-              <br />
+        <EuiText color="subdued" className={styles.subTitle}>
+          <span>
+            These are
+            {' '}
+            {items.length > 1 ? 'databases ' : 'database '}
+            in your Redis Cloud. Select the
+            {items.length > 1 ? ' databases ' : ' database '}
+            {' '}
+            that you
+            want to add.
+          </span>
+        </EuiText>
+        <EuiFormRow className={styles.searchForm}>
+          <EuiFieldSearch
+            placeholder="Search..."
+            className={styles.search}
+            onChange={onQueryChange}
+            isClearable
+            aria-label="Search"
+            data-testid="search"
+          />
+        </EuiFormRow>
+        <br />
 
-              <div className="databaseList cloudDatabaseList">
-                <EuiInMemoryTable
-                  items={items}
-                  itemId="databaseId"
-                  loading={loading}
-                  message={message}
-                  columns={columns}
-                  sorting={{ sort }}
-                  selection={selectionValue}
-                  className={styles.table}
-                  isSelectable
-                />
-              </div>
-            </div>
-            <div className={cx(styles.footer, 'footerAddDatabase')}>
-              <EuiButton
-                onClick={onBack}
-                color="secondary"
-                className="btn-cancel btn-back"
-                data-testid="btn-back-to-adding"
-              >
-                Back to adding databases
-              </EuiButton>
-              <CancelButton isPopoverOpen={isPopoverOpen} />
-              <SubmitButton isDisabled={selection.length < 1} />
-            </div>
-          </div>
-        </EuiPageBody>
-      </EuiPage>
-    </>
+        <div className="databaseList cloudDatabaseList">
+          <EuiInMemoryTable
+            items={items}
+            itemId="databaseId"
+            loading={loading}
+            message={message}
+            columns={columns}
+            sorting={{ sort }}
+            selection={selectionValue}
+            className={styles.table}
+            isSelectable
+          />
+        </div>
+      </div>
+      <div className={cx(styles.footer, 'footerAddDatabase')}>
+        <EuiButton
+          onClick={onBack}
+          color="secondary"
+          className="btn-cancel btn-back"
+          data-testid="btn-back-to-adding"
+        >
+          Back to adding databases
+        </EuiButton>
+        <CancelButton isPopoverOpen={isPopoverOpen} />
+        <SubmitButton isDisabled={selection.length < 1} />
+      </div>
+    </AutodiscoveryPageTemplate>
   )
 }
 

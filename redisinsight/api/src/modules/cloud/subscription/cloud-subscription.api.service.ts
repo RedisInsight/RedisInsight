@@ -34,49 +34,51 @@ export class CloudSubscriptionApiService {
     sessionMetadata: SessionMetadata,
     utm?: CloudRequestUtm,
   ): Promise<CloudSubscriptionPlanResponse[]> {
-    try {
-      const [fixedPlans, regions] = await Promise.all([
-        this.cloudSubscriptionCapiService.getSubscriptionsPlans(
-          await this.cloudCapiKeyService.getCapiCredentials(sessionMetadata, utm),
-          CloudSubscriptionType.Fixed,
-        ),
-        this.getCloudRegions(
-          await this.sessionService.getSession(sessionMetadata.sessionId),
-        ),
-      ]);
+    return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
+      try {
+        const [fixedPlans, regions] = await Promise.all([
+          this.cloudSubscriptionCapiService.getSubscriptionsPlans(
+            await this.cloudCapiKeyService.getCapiCredentials(sessionMetadata, utm),
+            CloudSubscriptionType.Fixed,
+          ),
+          this.getCloudRegions(
+            await this.sessionService.getSession(sessionMetadata.sessionId),
+          ),
+        ]);
 
-      const cloudSsoFeature = await this.featureService.getByName(KnownFeatures.CloudSso);
+        const cloudSsoFeature = await this.featureService.getByName(KnownFeatures.CloudSso);
 
-      const freePlans = filter(
-        fixedPlans,
-        (plan) => {
-          if (plan.price !== 0) {
-            return false;
-          }
+        const freePlans = filter(
+          fixedPlans,
+          (plan) => {
+            if (plan.price !== 0) {
+              return false;
+            }
 
-          if (!cloudSsoFeature?.data?.filterFreePlan?.length) {
-            return true;
-          }
+            if (!cloudSsoFeature?.data?.filterFreePlan?.length) {
+              return true;
+            }
 
-          return !!((cloudSsoFeature?.data?.filterFreePlan).find((f) => f.expression
-            && (new RegExp(f.expression, f.options)).test(plan[f?.field])));
-        },
-      );
+            return !!((cloudSsoFeature.data.filterFreePlan).find((f) => f.expression
+              && (new RegExp(f.expression, f.options)).test(plan[f?.field])));
+          },
+        );
 
-      return freePlans.map((plan) => ({
-        ...plan,
-        details: find(regions, { regionId: plan.regionId }),
-      }));
-    } catch (e) {
-      throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
-    }
+        return freePlans.map((plan) => ({
+          ...plan,
+          details: find(regions, { regionId: plan.regionId }),
+        }));
+      } catch (e) {
+        throw wrapHttpError(await this.cloudCapiKeyService.handleCapiKeyUnauthorizedError(e, sessionMetadata));
+      }
+    });
   }
 
   /**
    * Get list of cloud regions
    * @param credentials
    */
-  async getCloudRegions(
+  private async getCloudRegions(
     credentials: ICloudApiCredentials,
   ): Promise<CloudSubscriptionRegion[]> {
     this.logger.log('Getting cloud regions.');

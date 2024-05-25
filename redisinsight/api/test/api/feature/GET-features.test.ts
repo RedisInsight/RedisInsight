@@ -75,7 +75,7 @@ describe('GET /features', () => {
               name: 'insightsRecommendations',
             },
             cloudSso: {
-              flag: false,
+              flag: true,
               name: 'cloudSso',
             },
           },
@@ -89,7 +89,7 @@ describe('GET /features', () => {
             name: 'insightsRecommendations',
           },
           cloudSso: {
-            flag: false,
+            flag: true,
             name: 'cloudSso',
           },
         }
@@ -124,7 +124,7 @@ describe('GET /features', () => {
               name: 'insightsRecommendations',
             },
             cloudSso: {
-              flag: false,
+              flag: true,
               name: 'cloudSso',
             },
           },
@@ -138,7 +138,7 @@ describe('GET /features', () => {
             name: 'insightsRecommendations',
           },
           cloudSso: {
-            flag: false,
+            flag: true,
             name: 'cloudSso',
           },
         }
@@ -176,7 +176,7 @@ describe('GET /features', () => {
               name: 'insightsRecommendations',
             },
             cloudSso: {
-              flag: false,
+              flag: true,
               name: 'cloudSso',
             },
           },
@@ -190,7 +190,7 @@ describe('GET /features', () => {
             name: 'insightsRecommendations',
           },
           cloudSso: {
-            flag: false,
+            flag: true,
             name: 'cloudSso',
           },
         }
@@ -207,7 +207,7 @@ describe('GET /features', () => {
                 name: 'insightsRecommendations',
               },
               cloudSso: {
-                flag: false,
+                flag: true,
                 name: 'cloudSso',
               },
             },
@@ -228,7 +228,7 @@ describe('GET /features', () => {
             name: 'insightsRecommendations',
           },
           cloudSso: {
-            flag: false,
+            flag: true,
             name: 'cloudSso',
           },
         }

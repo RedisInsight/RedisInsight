@@ -77,7 +77,7 @@ export enum ResourcePath {
 }
 
 export enum ExploreTabs {
-    Explore  = 'Explore',
+    Tutorials  = 'Tutorials',
     Tips = 'Tips',
 }
 
@@ -85,5 +85,10 @@ export enum Compatibility {
     SearchAndQuery  = 'search',
     Json = 'json',
     TimeSeries = 'time-series'
+}
+
+export enum ChatBotTabs {
+    General  = 'General',
+    Database = 'Database',
 }
 

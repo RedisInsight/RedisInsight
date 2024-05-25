@@ -2,7 +2,6 @@
 
 .euiTextArea {
   @include eui.scrollBar;
-  min-height: 50px;
   //&::-webkit-resizer{
   //  background-image: url("uiSrc/assets/img/resize-corner.svg");
   //}

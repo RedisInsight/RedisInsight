@@ -8,6 +8,8 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CloudUser } from 'src/modules/cloud/user/models';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
+import { SessionMetadata } from 'src/common/models';
+import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 
 @ApiTags('Cloud User')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -16,6 +18,7 @@ import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 export class CloudUserController {
   constructor(
     private readonly service: CloudUserApiService,
+    private readonly cloudAuthService: CloudAuthService,
   ) {}
 
   @Get('')
@@ -25,7 +28,7 @@ export class CloudUserController {
     responses: [{ type: CloudUser }],
   })
   async me(
-    @RequestSessionMetadata() sessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Query() utm: CloudRequestUtm,
   ): Promise<CloudUser> {
     return this.service.me(sessionMetadata, false, utm);
@@ -39,9 +42,18 @@ export class CloudUserController {
   })
   @ApiParam({ name: 'id', type: String })
   async setCurrentAccount(
-    @Param('id') id,
-      @RequestSessionMetadata() sessionMetadata,
+    @Param('id') id: string,
+      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<CloudUser> {
     return this.service.setCurrentAccount(sessionMetadata, id);
+  }
+
+  @Get('logout')
+  @ApiEndpoint({
+    description: 'Logout user',
+    statusCode: 200,
+  })
+  async logout(@RequestSessionMetadata() sessionMetadata: SessionMetadata): Promise<void> {
+    return this.cloudAuthService.logout(sessionMetadata);
   }
 }

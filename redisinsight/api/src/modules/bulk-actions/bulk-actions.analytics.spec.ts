@@ -223,4 +223,48 @@ describe('BulkActionsAnalytics', () => {
       expect(sendFailedEventSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe('sendImportSamplesUploaded', () => {
+    it('should emit event when action succeed (without progress)', () => {
+      service.sendImportSamplesUploaded(mockBulkActionOverview);
+
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        TelemetryEvents.ImportSamplesUploaded,
+        {
+          databaseId: mockBulkActionOverview.databaseId,
+          action: mockBulkActionOverview.type,
+          duration: mockBulkActionOverview.duration,
+          summary: {
+            processed: mockBulkActionOverview.summary.processed,
+            processedRange: '0 - 5 000',
+            succeed: mockBulkActionOverview.summary.succeed,
+            succeedRange: '0 - 5 000',
+            failed: mockBulkActionOverview.summary.failed,
+            failedRange: '0 - 5 000',
+          },
+        },
+      );
+    });
+    it('should emit event when action succeed without filter and summary', () => {
+      service.sendImportSamplesUploaded({
+        ...mockBulkActionOverview,
+        filter: undefined,
+        summary: undefined,
+      });
+
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        TelemetryEvents.ImportSamplesUploaded,
+        {
+          databaseId: mockBulkActionOverview.databaseId,
+          action: mockBulkActionOverview.type,
+          duration: mockBulkActionOverview.duration,
+          summary: {},
+        },
+      );
+    });
+    it('should not emit event in case of an error and should not fail', () => {
+      service.sendImportSamplesUploaded(undefined);
+      expect(sendEventSpy).not.toHaveBeenCalled();
+    });
+  });
 });

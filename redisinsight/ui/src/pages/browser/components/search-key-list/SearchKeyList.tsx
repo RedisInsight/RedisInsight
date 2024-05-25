@@ -1,4 +1,4 @@
-import { keys } from '@elastic/eui'
+import { EuiButtonEmpty, EuiIcon, keys } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -15,14 +15,20 @@ import {
   setFilter,
   setSearchMatch
 } from 'uiSrc/slices/browser/keys'
-import { SearchMode, KeyViewType, SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
-import {
-  redisearchHistorySelector,
-  redisearchSelector
-} from 'uiSrc/slices/browser/redisearch'
+import { KeyViewType, SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import { redisearchHistorySelector, redisearchSelector } from 'uiSrc/slices/browser/redisearch'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
+import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
+
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
+
+import { FeatureFlags } from 'uiSrc/constants'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -119,6 +125,11 @@ const SearchKeyList = () => {
     handleApply('')
   }
 
+  const handleClickAskCopilot = () => {
+    dispatch(setSelectedTab(AiChatType.Query))
+    dispatch(changeSidePanel(SidePanels.AiAssistant))
+  }
+
   return (
     <div className={cx(styles.container, { [styles.redisearchMode]: searchMode === SearchMode.Redisearch })}>
       <MultiSearch
@@ -135,6 +146,18 @@ const SearchKeyList = () => {
           onApply: handleApplySuggestion,
           onDelete: handleDeleteSuggestions,
         }}
+        appendRight={searchMode === SearchMode.Redisearch ? (
+          <FeatureFlagComponent name={FeatureFlags.databaseChat}>
+            <EuiButtonEmpty
+              className={styles.askCopilotBtn}
+              size="xs"
+              onClick={handleClickAskCopilot}
+              data-testid="ask-redis-copilot-btn"
+            >
+              <EuiIcon className={styles.cloudIcon} type={CloudStars} />
+            </EuiButtonEmpty>
+          </FeatureFlagComponent>
+        ) : undefined}
         disableSubmit={disableSubmit}
         placeholder={placeholders[searchMode]}
         className={styles.input}

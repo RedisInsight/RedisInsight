@@ -28,7 +28,6 @@ export interface StateAppOAuth {
     loading: boolean
   }
   isOpenSocialDialog: boolean
-  isOpenSignInDialog: boolean
   isOpenSelectAccountDialog: boolean
   showProgress: boolean
   capiKeys: {
@@ -71,6 +70,7 @@ export interface CloudSuccessResult {
 }
 
 export enum OAuthSocialSource {
+  Browser = 'browser',
   ListOfDatabases = 'list of databases',
   WelcomeScreen = 'welcome screen',
   BrowserContentMenu = 'browser content menu',
@@ -88,6 +88,15 @@ export enum OAuthSocialSource {
   'triggers and functions' = 'workbench triggers_and_functions',
   Workbench = 'workbench',
   Tutorials = 'tutorials',
+  DiscoveryForm = 'discovery form',
+  UserProfile = 'user profile',
+  AiChat = 'ai chat'
+}
+
+export enum OAuthSocialAction {
+  Create = 'create',
+  Import = 'import',
+  SignIn = 'signIn'
 }
 
 export enum CloudSsoUtmCampaign {
@@ -100,5 +109,8 @@ export enum CloudSsoUtmCampaign {
   Tutorial = 'tutorial',
   TriggersAndFunctions = 'redisinsight_triggers_and_functions',
   AutoDiscovery = 'auto_discovery',
+  Copilot = 'copilot',
+  UserProfile = 'user_account',
+  Settings = 'settings',
   Unknown = 'other',
 }

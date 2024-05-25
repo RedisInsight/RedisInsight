@@ -3,7 +3,7 @@ import {
   MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { HashService } from 'src/modules/browser/hash/hash.service';
 import { HashController } from 'src/modules/browser/hash/hash.controller';
@@ -14,7 +14,7 @@ export class HashModule {
     return {
       module: HashModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: HashModule,
         }]),
@@ -27,6 +27,6 @@ export class HashModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(HashController));
+      .forRoutes(HashController);
   }
 }

@@ -18,6 +18,9 @@ const resourcesService = axios.create({
   baseURL: RESOURCES_BASE_URL,
 })
 
+// TODO: it seems it's shoudn't be location.origin
+// TODO: check all cases and rename this to getResourcesUrl
+// TODO: also might be helpful create function which returns origin url
 export const getOriginUrl = () => (IS_ABSOLUTE_PATH.test(RESOURCES_BASE_URL)
   ? RESOURCES_BASE_URL
   : (window?.location?.origin || RESOURCES_BASE_URL))

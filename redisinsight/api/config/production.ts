@@ -11,6 +11,7 @@ export default {
     homedir,
     prevHomedir,
     logs: join(homedir, 'logs'),
+    customConfig: join(homedir, 'config.json'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),
@@ -36,5 +37,8 @@ export default {
   },
   cloud: {
     cApiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api.redislabs.com/v1',
+  },
+  ai: {
+    convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://redis.io/convai/api',
   },
 };

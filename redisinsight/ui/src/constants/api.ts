@@ -125,6 +125,7 @@ enum ApiEndpoints {
   CLOUD_ME = 'cloud/me',
   CLOUD_ME_JOBS = 'cloud/me/jobs',
   CLOUD_ME_ACCOUNTS = 'cloud/me/accounts',
+  CLOUD_ME_LOGOUT = 'cloud/me/logout',
   CLOUD_CURRENT = 'current',
 
   CLOUD_SUBSCRIPTION_PLANS = 'cloud/me/subscription/plans',
@@ -134,6 +135,9 @@ enum ApiEndpoints {
   CLOUD_ME_AUTODISCOVERY_GET_DATABASES = 'cloud/me/autodiscovery/get-databases',
   CLOUD_ME_AUTODISCOVERY_DATABASES = 'cloud/me/autodiscovery/databases',
   CLOUD_CAPI_KEYS = 'cloud/me/capi-keys',
+
+  AI_ASSISTANT_CHATS = 'ai/assistant/chats',
+  AI_EXPERT = 'ai/expert',
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',
@@ -155,5 +159,17 @@ export const PIPELINE_COUNT_DEFAULT = parseInt(PIPELINE_COUNT_DEFAULT_ENV, 10)
 export const SCAN_TREE_COUNT_DEFAULT = parseInt(SCAN_TREE_COUNT_DEFAULT_ENV, 10)
 export const SCAN_STREAM_START_DEFAULT = '-'
 export const SCAN_STREAM_END_DEFAULT = '+'
+
+export const CLOUD_AUTH_API_ENDPOINTS = [
+  ApiEndpoints.CLOUD_ME,
+  ApiEndpoints.CLOUD_ME_JOBS,
+  ApiEndpoints.CLOUD_ME_ACCOUNTS,
+  ApiEndpoints.CLOUD_SUBSCRIPTION_PLANS,
+  ApiEndpoints.CLOUD_ME_AUTODISCOVERY_ACCOUNT,
+  ApiEndpoints.CLOUD_ME_AUTODISCOVERY_SUBSCRIPTIONS,
+  ApiEndpoints.CLOUD_ME_AUTODISCOVERY_GET_DATABASES,
+  ApiEndpoints.CLOUD_ME_AUTODISCOVERY_DATABASES,
+  ApiEndpoints.CLOUD_CAPI_KEYS,
+]
 
 export default ApiEndpoints

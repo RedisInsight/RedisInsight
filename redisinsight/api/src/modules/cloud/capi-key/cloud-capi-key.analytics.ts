@@ -25,4 +25,21 @@ export class CloudCapiKeyAnalytics extends TelemetryBaseService {
       exception,
     );
   }
+
+  sendCloudAccountSecretGenerated() {
+    try {
+      this.sendEvent(
+        TelemetryEvents.CloudAccountSecretGenerated,
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
+
+  sendCloudAccountSecretGenerationFailed(exception: HttpException) {
+    this.sendFailedEvent(
+      TelemetryEvents.CloudAccountSecretGenerationFailed,
+      exception,
+    );
+  }
 }

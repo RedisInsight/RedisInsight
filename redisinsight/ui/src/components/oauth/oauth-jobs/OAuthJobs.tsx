@@ -13,6 +13,7 @@ import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notific
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 
 const OAuthJobs = () => {
   const {
@@ -70,6 +71,7 @@ const OAuthJobs = () => {
             break
         }
 
+        dispatch(setSSOFlow())
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         break
 
@@ -110,6 +112,7 @@ const OAuthJobs = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE_FORM_CLOSED,
     })
+    dispatch(setSSOFlow())
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.databaseExists))
   }
 
@@ -117,6 +120,7 @@ const OAuthJobs = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_CREATE_DATABASE_IN_SUBSCRIPTION_FORM_CLOSED,
     })
+    dispatch(setSSOFlow())
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.subscriptionExists))
   }
 

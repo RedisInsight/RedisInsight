@@ -65,7 +65,7 @@ const bufferToJSON = (
   reply: RedisResponseBuffer,
   props: FormattingProps
 ): { value: JSX.Element | string, isValid: boolean } =>
-  JSONViewer({ value: bufferToUTF8(reply), fallbackToNonBigInt: true, ...props })
+  JSONViewer({ value: bufferToUTF8(reply), useNativeBigInt: false, ...props })
 
 const formattingBuffer = (
   reply: RedisResponseBuffer,
@@ -108,7 +108,7 @@ const formattingBuffer = (
       try {
         const vector = Array.from(bufferToFloat32Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
-        return JSONViewer({ value, fallbackToNonBigInt: true, ...props })
+        return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
       }
@@ -117,7 +117,7 @@ const formattingBuffer = (
       try {
         const vector = Array.from(bufferToFloat64Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
-        return JSONViewer({ value, fallbackToNonBigInt: true, ...props })
+        return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
       }

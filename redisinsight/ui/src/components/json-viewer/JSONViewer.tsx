@@ -9,7 +9,6 @@ interface Props {
   expanded?: boolean
   space?: number
   useNativeBigInt?: boolean
-  fallbackToNonBigInt?: boolean
 }
 
 const JSONViewer = (props: Props) => {
@@ -17,6 +16,7 @@ const JSONViewer = (props: Props) => {
 
   try {
     const data = JSONBigInt({ useNativeBigInt }).parse(value)
+
     return {
       value: (
         <div className={cx('jsonViewer', { 'jsonViewer-collapsed': !expanded })} data-testid="value-as-json">

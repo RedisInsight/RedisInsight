@@ -16,7 +16,7 @@
 
   &:global(.inMemoryTableDefault) {
     :global {
-      .euiTableCellContent span {
+      .euiTableCellContent .euiTableCellContent__text {
         padding-top: 0 !important;
         white-space: normal !important;
       }
@@ -29,6 +29,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 0 !important;
 
     :global(.euiText) {
       font-weight: 500;

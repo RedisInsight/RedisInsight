@@ -27,7 +27,7 @@ describe('JsonPretty', () => {
   })
 
   it('should render json primitive component with big number', () => {
-    const json = JSONBigInt({ useNativeBigInt: true }).parse('1234567890123456789012345678901234567890}')
+    const json = JSONBigInt({ useNativeBigInt: true }).parse('1234567890123456789012345678901234567890')
     render(<JsonPretty data={json} />)
     expect(screen.getByTestId('json-primitive-component')).toBeInTheDocument()
   })

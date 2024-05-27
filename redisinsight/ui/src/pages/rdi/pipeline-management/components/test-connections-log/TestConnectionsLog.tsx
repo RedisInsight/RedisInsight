@@ -3,7 +3,7 @@ import cx from 'classnames'
 import React, { useState } from 'react'
 
 import { Nullable } from 'uiSrc/utils'
-import { ITestConnection } from 'uiSrc/slices/interfaces'
+import { TransformResult } from 'uiSrc/slices/interfaces'
 import TestConnectionsTable from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-table'
 
 import styles from './styles.module.scss'
@@ -14,7 +14,7 @@ enum ResultsStatus {
 }
 
 export interface Props {
-  data: Nullable<ITestConnection>
+  data: Nullable<TransformResult>
 }
 
 const TestConnectionsLog = (props: Props) => {

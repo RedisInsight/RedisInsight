@@ -2,11 +2,14 @@ import {
   Body,
   ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, UseInterceptors, UsePipes, ValidationPipe,
 } from '@nestjs/common';
-import { Rdi } from 'src/modules/rdi/models';
+import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
 import { RdiService } from 'src/modules/rdi/rdi.service';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
+import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
+import { RequestSessionMetadata } from 'src/common/decorators';
+import { SessionMetadata } from 'src/common/models';
 
 @ApiTags('RDI')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -41,8 +44,11 @@ export class RdiController {
     statusCode: 201,
     responses: [{ status: 201, type: Rdi }],
   })
-  async create(@Body() dto: CreateRdiDto): Promise<Rdi> {
-    return this.rdiService.create(dto);
+  async create(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+      @Body() dto: CreateRdiDto,
+  ): Promise<Rdi> {
+    return this.rdiService.create(sessionMetadata, dto);
   }
 
   @Patch('/:id')
@@ -51,10 +57,10 @@ export class RdiController {
     responses: [{ status: 200, type: Rdi }],
   })
   async update(
-    @Param('id') id: string,
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
       @Body() dto: UpdateRdiDto,
   ): Promise<Rdi> {
-    return this.rdiService.update(id, dto);
+    return this.rdiService.update(rdiClientMetadata, dto);
   }
 
   @Delete()
@@ -62,7 +68,26 @@ export class RdiController {
     description: 'Delete RDI',
     responses: [{ status: 200 }],
   })
-  async delete(@Body() body: { ids: string[] }): Promise<void> {
+  async delete(
+    @Body() body: { ids: string[] },
+  ): Promise<void> {
     return this.rdiService.delete(body.ids);
+  }
+
+  @Get(':id/connect')
+  @ApiEndpoint({
+    description: 'Connect to RDI',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Successfully connected to rdi instance',
+      },
+    ],
+  })
+  async connect(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+  ): Promise<void> {
+    return this.rdiService.connect(rdiClientMetadata);
   }
 }

@@ -44,10 +44,7 @@ export class LocalRdiRepository extends RdiRepository {
       .select([
         'r.id',
         'r.name',
-        'r.host',
-        'r.port',
         'r.url',
-        'r.type',
         'r.version',
         'r.username',
         'r.lastConnection',

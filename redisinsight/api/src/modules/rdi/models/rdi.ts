@@ -1,11 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
-
-export enum RdiType {
-  API = 'api',
-  GEARS = 'gears',
-}
+import {
+  IsNotEmpty, IsOptional, IsString, MaxLength,
+} from 'class-validator';
 
 export class Rdi {
   @ApiProperty({
@@ -15,48 +12,15 @@ export class Rdi {
   @Expose()
   id: string;
 
-  @ApiProperty({
-    description: 'RDI type',
-    enum: RdiType,
-  })
-  @Expose()
-  @IsEnum(RdiType, {
-    message: `Type must be a valid enum value from: ${Object.values(RdiType)}.`,
-  })
-  @IsOptional()
-  type?: RdiType;
-
   @ApiPropertyOptional({
     description: 'Base url of API to connect to (for API type only)',
     example: 'https://example.com',
     type: String,
   })
-  @IsOptional()
   @Expose()
   @IsNotEmpty()
   @IsString()
-  url?: string;
-
-  @ApiPropertyOptional({
-    description: 'The hostname of RDI database, for example redis.acme.com. (for GEARS type only)',
-    type: String,
-  })
-  @IsOptional()
-  @Expose()
-  @IsNotEmpty()
-  @IsString()
-  host?: string;
-
-  @ApiPropertyOptional({
-    description: 'The port RDI database is available on. (for GEARS type only)',
-    type: Number,
-    default: 6379,
-  })
-  @IsOptional()
-  @Expose()
-  @IsNotEmpty()
-  @IsInt()
-  port?: number;
+  url: string;
 
   @ApiProperty({
     description: 'A name to associate with RDI',
@@ -74,9 +38,7 @@ export class Rdi {
   })
   @Expose()
   @IsString()
-  @IsNotEmpty()
-  @IsOptional()
-  username?: string;
+  username: string;
 
   @ApiPropertyOptional({
     description: 'RDI or API password',
@@ -85,8 +47,7 @@ export class Rdi {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  @IsOptional()
-  password?: string;
+  password: string;
 
   @ApiProperty({
     description: 'Time of the last connection to RDI.',
@@ -106,14 +67,4 @@ export class Rdi {
   @IsNotEmpty()
   @IsString()
   version?: string;
-
-  @ApiPropertyOptional({
-    description: 'A newly created connection',
-    type: Boolean,
-    default: false,
-  })
-  @Expose()
-  @IsOptional()
-  @IsBoolean({ always: true })
-  new?: boolean;
 }

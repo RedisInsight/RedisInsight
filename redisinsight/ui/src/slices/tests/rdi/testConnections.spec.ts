@@ -13,8 +13,11 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 const mockData = {
-  success: [{ index: 0, status: 'success', endpoint: 'redis-13386.c278.us-east-1-4.ec2.cloud.redislabs.com:13386' }],
-  fail: [],
+  sources: {
+    target: {
+      status: 'success',
+    }
+  }
 }
 
 let store: typeof mockedStore
@@ -109,7 +112,7 @@ describe('rdi test connections slice', () => {
         // Assert
         const expectedActions = [
           testConnections(),
-          testConnectionsSuccess(mockData),
+          testConnectionsSuccess({ success: [{ target: 'target' }], fail: [] }),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

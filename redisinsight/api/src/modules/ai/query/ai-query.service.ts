@@ -1,3 +1,4 @@
+import { isArray } from 'lodash';
 import { Socket } from 'socket.io-client';
 import { Injectable, Logger } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
@@ -5,7 +6,7 @@ import { AiQueryProvider } from 'src/modules/ai/query/providers/ai-query.provide
 import { SendAiQueryMessageDto } from 'src/modules/ai/query/dto/send.ai-query.message.dto';
 import { wrapAiQueryError } from 'src/modules/ai/query/exceptions';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { getFullDbContext, getIndexContext } from 'src/modules/ai/query/utils/context.util';
+import { getFullDbContext, getIndexContext, quotesIfNeeded } from 'src/modules/ai/query/utils/context.util';
 import { Response } from 'express';
 import {
   AiQueryMessage,
@@ -54,6 +55,24 @@ export class AiQueryService {
     });
 
     return steps;
+  }
+
+  static prepareToolReply(toolReply: any) {
+    try {
+      const prepared = JSON.parse(toolReply);
+
+      if (prepared?.name === 'query' && prepared.content) {
+        const query = JSON.parse(prepared.content);
+        if (isArray(query)) {
+          prepared.content.query = JSON.stringify(query.map(quotesIfNeeded));
+        }
+        return JSON.stringify(prepared);
+      }
+    } catch (e) {
+      // ignore error
+    }
+
+    return toolReply;
   }
 
   static prepareHistory(messages: AiQueryMessage[]): string[][] {
@@ -178,7 +197,7 @@ export class AiQueryService {
         socket.on(AiQueryWsEvents.TOOL_REPLY, async (data) => {
           answer.steps.push(plainToClass(AiQueryIntermediateStep, {
             type: AiQueryIntermediateStepType.TOOL,
-            data,
+            data: AiQueryService.prepareToolReply(data),
           }));
         });
 

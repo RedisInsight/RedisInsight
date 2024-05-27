@@ -9,7 +9,7 @@ type RedisClient = { sendCommand: (args: any, options: any) => Promise<any> };
 const DOCUMENT_SAMPLES_PER_PREFIX = 5;
 const HSCAN_COUNT = 500;
 
-const quotesIfNeeded = (str: string) => (str.indexOf(' ') > -1 ? JSON.stringify(str) : str);
+export const quotesIfNeeded = (str: string) => (str.indexOf(' ') > -1 ? JSON.stringify(str) : str);
 
 // ====================================================================
 // Reply converter

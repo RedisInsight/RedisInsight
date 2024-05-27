@@ -10,6 +10,7 @@ import { localStorageService } from 'uiSrc/services'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   deleteInstancesAction,
+  checkConnectToRdiInstanceAction,
   instancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -66,9 +67,8 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
     closePopover()
   }, [width])
 
-  const handleConnect = (id: string) => {
-    // TODO: update connect function (check connection first?)
-    history.push(Pages.rdiPipeline(id))
+  const handleCheckConnectToInstance = (id: string) => {
+    dispatch(checkConnectToRdiInstanceAction(id, (id: string) => history.push(Pages.rdiPipeline(id))))
   }
 
   const handleCopy = (text = '', id: string) => {
@@ -120,7 +120,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
       render: (_, { name, id }) => (
-        <EuiText onClick={() => handleConnect(id)}>{name}</EuiText>
+        <EuiText data-testid={`rdi-alias-${id}`} onClick={() => handleCheckConnectToInstance(id)}>{name}</EuiText>
       )
     },
     {

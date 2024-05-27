@@ -8,31 +8,19 @@ export class RdiEntity {
   id: string;
 
   @Expose()
-  @Column({ nullable: false })
-  type: string;
-
-  @Expose()
   @Column({ nullable: true })
   url: string;
-
-  @Expose()
-  @Column({ nullable: true })
-  host?: string;
-
-  @Expose()
-  @Column({ nullable: true })
-  port?: number;
 
   @Expose()
   @Column({ nullable: false })
   name: string;
 
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   username: string;
 
   @Expose()
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   password: string;
 
   @Expose()

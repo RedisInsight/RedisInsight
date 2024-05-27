@@ -1,7 +1,8 @@
 import { Session, SessionMetadata } from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
-  IsNotEmpty, IsString,
+  IsNotEmpty,
+  IsString,
 } from 'class-validator';
 
 export class RdiClientMetadata {

@@ -6,13 +6,23 @@ export enum RdiTestConnectionStatus {
   Fail = 'fail',
 }
 
-export class RdiTestConnectionResult {
+class ErrorDetails {
   @ApiProperty({
-    type: Number,
+    description: 'Error code',
+    type: String,
   })
   @Expose()
-  index: number;
+  code: string;
 
+  @ApiProperty({
+    description: 'Error message',
+    type: String,
+  })
+  @Expose()
+  message: string;
+}
+
+export class RdiTestConnectionResult {
   @ApiProperty({
     description: 'Connection status',
     enum: RdiTestConnectionStatus,
@@ -21,34 +31,19 @@ export class RdiTestConnectionResult {
   status: RdiTestConnectionStatus;
 
   @ApiPropertyOptional({
-    description: 'Rdi target endpoint',
-    type: String,
+    description: 'Error details if any',
+    type: ErrorDetails,
   })
   @Expose()
-  endpoint: string;
-
-  @ApiPropertyOptional({
-    description: 'Error message if any',
-    type: String,
-  })
-  @Expose()
-  error?: string;
+  @Type(() => ErrorDetails)
+  error?: ErrorDetails;
 }
 
 export class RdiTestConnectionsResponseDto {
   @ApiProperty({
-    description: 'Successfully connected targets',
-    type: RdiTestConnectionResult,
+    description: 'Sources connection results',
   })
   @Expose()
   @Type(() => RdiTestConnectionResult)
-  success: RdiTestConnectionResult;
-
-  @ApiProperty({
-    description: 'Failed connected targets',
-    type: RdiTestConnectionResult,
-  })
-  @Expose()
-  @Type(() => RdiTestConnectionResult)
-  fail: RdiTestConnectionResult;
+  sources: Record<string, RdiTestConnectionResult>;
 }

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RdiClientMetadata, RdiPipeline } from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
-import { RdiDryRunJobDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
+import { RdiDryRunJobDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
@@ -69,7 +69,7 @@ export class RdiPipelineService {
     }
   }
 
-  async testConnections(rdiClientMetadata: RdiClientMetadata, config: string): Promise<RdiTestConnectionResult> {
+  async testConnections(rdiClientMetadata: RdiClientMetadata, config: string): Promise<RdiTestConnectionsResponseDto> {
     this.logger.log('Trying to test connections');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);

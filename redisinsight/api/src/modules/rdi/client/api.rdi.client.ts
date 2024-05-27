@@ -3,9 +3,23 @@ import { plainToClass } from 'class-transformer';
 import { decode } from 'jsonwebtoken';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
-import { RDI_TIMEOUT, RdiUrl, TOKEN_TRESHOLD } from 'src/modules/rdi/constants';
-import { RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
-import { RdiPipelineDeployFailedException, wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
+import {
+  RdiUrl,
+  RDI_TIMEOUT,
+  TOKEN_TRESHOLD,
+  POLLING_INTERVAL,
+  MAX_POLLING_TIME,
+} from 'src/modules/rdi/constants';
+import {
+  RdiDryRunJobDto,
+  RdiDryRunJobResponseDto,
+  RdiTestConnectionsResponseDto,
+} from 'src/modules/rdi/dto';
+import {
+  RdiPipelineDeployFailedException,
+  RdiPipelineInternalServerErrorException,
+  wrapRdiPipelineError,
+} from 'src/modules/rdi/exceptions';
 import {
   RdiPipeline,
   RdiStatisticsResult,
@@ -13,6 +27,7 @@ import {
   RdiStatisticsData, RdiClientMetadata, Rdi,
 } from 'src/modules/rdi/models';
 import { convertKeysToCamelCase } from 'src/utils/base.helper';
+import { RdiPipelineTimeoutException } from 'src/modules/rdi/exceptions/rdi-pipeline.timeout-error.exception';
 
 const RDI_DEPLOY_FAILED_STATUS = 'failed';
 
@@ -87,11 +102,13 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async testConnections(config: string): Promise<RdiTestConnectionResult> {
+  async testConnections(config: string): Promise<RdiTestConnectionsResponseDto> {
     try {
       const response = await this.client.post(RdiUrl.TestConnections, config);
 
-      return response.data;
+      const actionId = response.data.action_id;
+
+      return this.pollActionStatus(actionId);
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -130,7 +147,10 @@ export class ApiRdiClient extends RdiClient {
 
   async connect(): Promise<void> {
     try {
-      const response = await this.client.post(RdiUrl.Login, { username: this.rdi.username, password: this.rdi.password });
+      const response = await this.client.post(
+        RdiUrl.Login,
+        { username: this.rdi.username, password: this.rdi.password },
+      );
       const accessToken = response.data.access_token;
       const decodedJwt = decode(accessToken);
 
@@ -146,6 +166,32 @@ export class ApiRdiClient extends RdiClient {
 
     if (expiresIn < TOKEN_TRESHOLD) {
       await this.connect();
+    }
+  }
+
+  private async pollActionStatus(actionId: string): Promise<any> {
+    const startTime = Date.now();
+    while (true) {
+      if (Date.now() - startTime > MAX_POLLING_TIME) {
+        throw new RdiPipelineTimeoutException();
+      }
+
+      try {
+        const response = await this.client.get(`${RdiUrl.Action}/${actionId}`);
+        const { status, data, error } = response.data;
+
+        if (status === 'failed') {
+          throw new RdiPipelineInternalServerErrorException(error);
+        }
+
+        if (status === 'completed') {
+          return data;
+        }
+      } catch (e) {
+        throw wrapRdiPipelineError(e);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));
     }
   }
 }

@@ -8,7 +8,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
-import { RdiDryRunJobDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
+import { RdiDryRunJobDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 
 @ApiTags('RDI')
@@ -69,12 +69,12 @@ export class RdiPipelineController {
   @Post('/test-connections')
   @ApiEndpoint({
     description: 'Test target connections',
-    responses: [{ status: 200, type: RdiTestConnectionResult }],
+    responses: [{ status: 200, type: RdiTestConnectionsResponseDto }],
   })
   async testConnections(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
       @Body() config: string,
-  ): Promise<RdiTestConnectionResult> {
+  ): Promise<RdiTestConnectionsResponseDto> {
     return this.rdiPipelineService.testConnections(rdiClientMetadata, config);
   }
 

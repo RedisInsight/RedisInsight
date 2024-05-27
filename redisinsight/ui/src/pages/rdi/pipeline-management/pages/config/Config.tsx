@@ -6,6 +6,7 @@ import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
 
+import yaml from 'js-yaml'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
@@ -52,7 +53,7 @@ const Config = () => {
 
   const testConnections = () => {
     setIsPanelOpen(true)
-    dispatch(testConnectionsAction(rdiInstanceId, config))
+    dispatch(testConnectionsAction(rdiInstanceId, yaml.load(config)))
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEST_TARGET_CONNECTIONS_CLICKED,
       eventData: {

@@ -42,6 +42,13 @@ export class RdiClientStorage {
   }
 
   async getByMetadata(rdiClientMetadata: RdiClientMetadata): Promise<RdiClient> {
+    if (
+      !rdiClientMetadata.id
+      || !rdiClientMetadata.sessionMetadata?.sessionId
+      || !rdiClientMetadata.sessionMetadata.userId
+    ) {
+      throw new BadRequestException('Client metadata missed required properties');
+    }
     return this.get(RdiClient.generateId(rdiClientMetadata));
   }
 
@@ -87,6 +94,7 @@ export class RdiClientStorage {
       !client.id
       || !client.metadata.sessionMetadata?.sessionId
       || !client.metadata.sessionMetadata.userId
+      || !client.metadata.id
     ) {
       throw new BadRequestException('Client metadata missed required properties');
     }

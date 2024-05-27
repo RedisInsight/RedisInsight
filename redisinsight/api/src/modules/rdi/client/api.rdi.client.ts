@@ -7,7 +7,6 @@ import { RDI_TIMEOUT, RdiUrl, TOKEN_TRESHOLD } from 'src/modules/rdi/constants';
 import { RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult } from 'src/modules/rdi/dto';
 import { RdiPipelineDeployFailedException, wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
 import {
-  RdiJob,
   RdiPipeline,
   RdiStatisticsResult,
   RdiStatisticsStatus,
@@ -77,10 +76,6 @@ export class ApiRdiClient extends RdiClient {
     if (response.data?.status === RDI_DEPLOY_FAILED_STATUS) {
       throw new RdiPipelineDeployFailedException(undefined, { error: response.data?.error });
     }
-  }
-
-  async deployJob(): Promise<RdiJob> {
-    return null;
   }
 
   async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {

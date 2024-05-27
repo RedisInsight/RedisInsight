@@ -1,7 +1,8 @@
-import { Session, SessionMetadata } from 'src/common/models/session';
+import {Session, SessionMetadata} from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
-  IsNotEmpty, IsOptional, IsString,
+  IsNotEmpty,
+  IsString,
 } from 'class-validator';
 
 export class RdiClientMetadata {
@@ -10,7 +11,6 @@ export class RdiClientMetadata {
   sessionMetadata: SessionMetadata;
 
   @IsNotEmpty()
-  @IsOptional()
   @IsString()
-  id?: string;
+  id: string;
 }

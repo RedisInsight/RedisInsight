@@ -109,6 +109,35 @@ describe('RdiClientStorage', () => {
 
         expect(result).toBeUndefined();
       });
+
+      it('should throw BadRequestException when metadata is invalid', async () => {
+        await expect(service.getByMetadata({
+          ...mockNotExistClientMetadata,
+          id: undefined,
+        })).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
+
+        await expect(service.getByMetadata({
+          ...mockNotExistClientMetadata,
+          sessionMetadata: {
+            ...mockNotExistClientMetadata.sessionMetadata,
+            sessionId: undefined,
+          },
+        })).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
+
+        await expect(service.getByMetadata({
+          ...mockNotExistClientMetadata,
+          sessionMetadata: {
+            ...mockNotExistClientMetadata.sessionMetadata,
+            userId: undefined,
+          },
+        })).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
+      });
     });
 
     describe('set', () => {
@@ -119,7 +148,6 @@ describe('RdiClientStorage', () => {
 
       it('should add new client', async () => {
         expect(service['clients'].size).toEqual(0);
-
         const result = await service.set(mockRdiClient1);
 
         expect(result).toEqual(mockRdiClient1);
@@ -145,6 +173,15 @@ describe('RdiClientStorage', () => {
         await expect(service.set(generateMockRdiClient({
           sessionMetadata: {} as SessionMetadata,
           id: 'id',
+        }))).rejects.toThrow(
+          new BadRequestException('Client metadata missed required properties'),
+        );
+
+        await expect(service.set(generateMockRdiClient({
+          sessionMetadata: {
+            userId: 'u2', sessionId: 's1',
+          } as SessionMetadata,
+          id: undefined,
         }))).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );

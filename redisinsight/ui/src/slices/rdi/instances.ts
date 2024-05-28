@@ -209,7 +209,8 @@ export function createInstanceAction(payload: Partial<RdiInstance>, onSuccess?: 
 
 // Asynchronous thunk action
 export function editInstanceAction(
-  { id, ...payload }: Partial<RdiInstance>,
+  id: string,
+  payload: Partial<RdiInstance>,
   onSuccess?: (data: RdiInstanceResponse) => void
 ) {
   return async (dispatch: AppDispatch) => {

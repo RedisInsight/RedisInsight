@@ -13,11 +13,18 @@ import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { SessionMetadata } from 'src/common/models';
 import { wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
+import { isUndefined, omitBy } from 'lodash';
+import { deepMerge } from 'src/common/utils';
 import { RdiAnalytics } from './rdi.analytics';
 
 @Injectable()
 export class RdiService {
   private logger = new Logger('RdiService');
+
+  static connectionFields: string[] = [
+    'username',
+    'password',
+  ];
 
   constructor(
     private readonly repository: RdiRepository,
@@ -25,6 +32,10 @@ export class RdiService {
     private readonly rdiClientProvider: RdiClientProvider,
     private readonly rdiClientFactory: RdiClientFactory,
   ) {}
+
+  static isConnectionAffected(dto: UpdateRdiDto) {
+    return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
+  }
 
   async list(): Promise<Rdi[]> {
     return await this.repository.list();
@@ -41,17 +52,20 @@ export class RdiService {
   }
 
   async update(rdiClientMetadata: RdiClientMetadata, dto: UpdateRdiDto): Promise<Rdi> {
-    // TODO update dto to get only updated fields
-    const model = classToClass(Rdi, dto);
-
-    await this.rdiClientProvider.delete(rdiClientMetadata);
+    const oldRdiInstance = await this.get(rdiClientMetadata.id);
+    const newRdiInstance = await deepMerge(oldRdiInstance, dto);
 
     try {
-      await this.rdiClientFactory.createClient(rdiClientMetadata, model);
+      if (RdiService.isConnectionAffected(dto)) {
+        await this.rdiClientFactory.createClient(rdiClientMetadata, newRdiInstance);
+        await this.rdiClientProvider.deleteManyByRdiId(rdiClientMetadata.id);
+      }
+
+      return await this.repository.update(rdiClientMetadata.id, newRdiInstance);
     } catch (error) {
+      this.logger.error(`Failed to update rdi instance ${rdiClientMetadata.id}`, error);
       throw wrapRdiPipelineError(error);
     }
-    return await this.repository.update(rdiClientMetadata.id, model);
   }
 
   async create(sessionMetadata: SessionMetadata, dto: CreateRdiDto): Promise<Rdi> {

@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException, Logger, OnApplicationBootstrap } from '@nestjs/common';
+import {
+  Injectable, InternalServerErrorException, Logger, OnApplicationBootstrap,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import config, { Config } from 'src/utils/config';
 import { AppAnalyticsEvents } from 'src/constants/app-events';
@@ -6,7 +8,7 @@ import { TelemetryEvents } from 'src/constants/telemetry-events';
 import { ServerInfoNotFoundException } from 'src/constants/exceptions';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
-import { AppType, BuildType } from 'src/modules/server/models/server';
+import { AppType, BuildType, PackageType } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
@@ -88,6 +90,7 @@ export class ServerService implements OnApplicationBootstrap {
         appType: ServerService.getAppType(SERVER_CONFIG.buildType),
         encryptionStrategies: await this.encryptionService.getAvailableEncryptionStrategies(),
         fixedDatabaseId: REDIS_STACK_CONFIG?.id,
+        packageType: ServerService.getPackageType(SERVER_CONFIG.buildType),
         ...(await this.featuresConfigService.getControlInfo()),
       };
       this.logger.log('Succeed to get server info.');
@@ -109,5 +112,48 @@ export class ServerService implements OnApplicationBootstrap {
       default:
         return AppType.Unknown;
     }
+  }
+
+  static getPackageType(buildType: string): PackageType {
+    if (buildType === BuildType.Electron) {
+      // Darwin
+      if (process.platform === 'darwin') {
+        if (process.env.mas || process['mas']) {
+          return PackageType.Mas;
+        }
+
+        return PackageType.UnknownDarwin;
+      }
+
+      // Linux
+      if (process.platform === 'linux') {
+        if (process.env.APPIMAGE) {
+          return PackageType.AppImage;
+        }
+
+        if (process.env.SNAP_INSTANCE_NAME || process.env.SNAP_DATA) {
+          return PackageType.Snap;
+        }
+
+        if (process.env.container) {
+          return PackageType.Flatpak;
+        }
+
+        return PackageType.UnknownLinux;
+      }
+
+      // Windows
+      if (process.platform === 'win32') {
+        if (process.env.windowsStore || process['windowsStore']) {
+          return PackageType.WindowsStore;
+        }
+
+        return PackageType.UnknownWindows;
+      }
+
+      return PackageType.Unknown;
+    }
+
+    return undefined;
   }
 }

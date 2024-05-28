@@ -35,13 +35,13 @@ describe('ConnectionForm', () => {
   })
 
   // TODO update when add test connection endpoint
-  // it('should disable test connection button when form is invalid', async () => {
-  //   render(<ConnectionForm {...mockedProps} />)
-  //
-  //   await waitFor(() => {
-  //     expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
-  //   })
-  // })
+  it.skip('should disable test connection button when form is invalid', async () => {
+    render(<ConnectionForm {...mockedProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
+    })
+  })
 
   it('should not disable submit button when form is valid', async () => {
     render(<ConnectionForm {...mockedProps} />)
@@ -92,15 +92,15 @@ describe('ConnectionForm', () => {
     expect(tooltip).toBeInTheDocument()
   })
 
-  // it('should show validation tooltip when test connection button is disabled', async () => {
-  //   render(<ConnectionForm {...mockedProps} />)
-  //
-  //   fireEvent.mouseOver(screen.getByTestId('connection-form-test-button'))
-  //
-  //   const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
-  //
-  //   expect(tooltip).toBeInTheDocument()
-  // })
+  it.skip('should show validation tooltip when test connection button is disabled', async () => {
+    render(<ConnectionForm {...mockedProps} />)
+
+    fireEvent.mouseOver(screen.getByTestId('connection-form-test-button'))
+
+    const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
+
+    expect(tooltip).toBeInTheDocument()
+  })
 
   it('should disable submit button when isLoading = true', async () => {
     render(<ConnectionForm {...mockedProps} isLoading />)
@@ -108,9 +108,9 @@ describe('ConnectionForm', () => {
     expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
   })
 
-  // it('should disable test connection button when isLoading = true', async () => {
-  //   render(<ConnectionForm {...mockedProps} isLoading />)
-  //
-  //   expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
-  // })
+  it.skip('should disable test connection button when isLoading = true', async () => {
+    render(<ConnectionForm {...mockedProps} isLoading />)
+
+    expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()
+  })
 })

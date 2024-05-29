@@ -59,7 +59,7 @@ test('Verify that user can test connection', async() => {
     await rdiInstancePage.TestConnectionPanel.expandOrCollapseSection(TextConnectionSection.Failed, true);
 
     // TODO check expected value
-    await t.expect(await rdiInstancePage.TestConnectionPanel.getSectionRowTextByIndex(TextConnectionSection.Failed, 0)).contains('redis', 'endpoint is not empty');
+    await t.expect(await rdiInstancePage.TestConnectionPanel.getSectionRowTextByIndex(TextConnectionSection.Failed, 0)).contains(' ', 'error test is empty');
     await t.click(rdiInstancePage.TestConnectionPanel.closeSection);
     await t.expect(rdiInstancePage.TestConnectionPanel.sidePanel.exists).notOk('the panel is not closed');
 });

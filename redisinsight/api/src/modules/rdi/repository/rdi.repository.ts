@@ -31,7 +31,7 @@ export abstract class RdiRepository {
 
   /**
    * Delete RDI by id
-   * @param id
+   * @param ids
    */
   abstract delete(ids: string[]): Promise<void>;
 }

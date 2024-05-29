@@ -12,10 +12,12 @@ import {
 } from '@elastic/eui'
 import { Field, FieldInputProps, FieldMetaProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
 import React, { useEffect, useState } from 'react'
-
 import cx from 'classnames'
+import { isNull } from 'lodash'
+
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
+import { getFormUpdates, Nullable } from 'uiSrc/utils'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -24,7 +26,7 @@ export interface ConnectionFormValues {
   name: string
   url: string
   username: string
-  password: string
+  password: Nullable<string>
 }
 
 export interface Props {
@@ -38,7 +40,7 @@ const getInitialValues = (values: RdiInstance | null): ConnectionFormValues => (
   name: values?.name || '',
   url: values?.url || '',
   username: values?.username || '',
-  password: !values ? '' : SECURITY_FIELD
+  password: values ? null : ''
 })
 
 const UrlTooltip = () => (
@@ -89,11 +91,17 @@ const ConnectionForm = (props: Props) => {
     if (!values.username) {
       errors.username = 'Username'
     }
-    if (!values.password) {
+    // password is security field we did not received it from BE
+    if (!values.password && !isNull(values.password)) {
       errors.password = 'Password'
     }
 
     return errors
+  }
+
+  const handleSubmit = (values: ConnectionFormValues) => {
+    const updates = getFormUpdates(values, editInstance || {})
+    onSubmit(updates)
   }
 
   return (
@@ -102,7 +110,7 @@ const ConnectionForm = (props: Props) => {
       initialValues={initialFormValues}
       validateOnMount
       validate={validate}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
     >
       {({ isValid, errors }) => (
         <Form className={styles.form}>
@@ -169,8 +177,9 @@ const ConnectionForm = (props: Props) => {
                       placeholder="Enter Password"
                       maxLength={500}
                       {...field}
+                      value={isNull(field.value) ? SECURITY_FIELD : field.value}
                       onFocus={() => {
-                        if (field.value === SECURITY_FIELD && !meta.touched) {
+                        if (isNull(field.value) && !meta.touched) {
                           form.setFieldValue('password', '')
                         }
                       }}

@@ -104,10 +104,11 @@ export class CloudUserApiService {
 
         const preparedUtm = utm;
 
-        if (preparedUtm && !preparedUtm.amp) {
+        if (preparedUtm && (!preparedUtm.amp || !preparedUtm.package)) {
           await this.serverService.getInfo()
-            .then(({ id }) => {
-              preparedUtm.amp = id;
+            .then(({ id, packageType }) => {
+              preparedUtm.amp = preparedUtm.amp || id;
+              preparedUtm.package = preparedUtm.package || packageType;
             })
             .catch(() => {
               this.logger.warn('Unable to get server id for utm parameters');

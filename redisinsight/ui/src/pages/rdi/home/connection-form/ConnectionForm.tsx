@@ -11,7 +11,6 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import { Field, FieldInputProps, FieldMetaProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
-import { omit } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import cx from 'classnames'
@@ -29,7 +28,7 @@ export interface ConnectionFormValues {
 }
 
 export interface Props {
-  onAddInstance: (instance: Partial<RdiInstance>) => void
+  onSubmit: (instance: Partial<RdiInstance>) => void
   onCancel: () => void
   editInstance: RdiInstance | null
   isLoading: boolean
@@ -69,17 +68,14 @@ const UrlTooltip = () => (
   </EuiToolTip>
 )
 
-const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Props) => {
+const ConnectionForm = (props: Props) => {
+  const { onSubmit, onCancel, editInstance, isLoading } = props
+
   const [initialFormValues, setInitialFormValues] = useState(getInitialValues(editInstance))
-  const [passwordChanged, setPasswordChanged] = useState(false)
 
   useEffect(() => {
     setInitialFormValues(getInitialValues(editInstance))
   }, [editInstance])
-
-  const onSubmit = (formValues: ConnectionFormValues) => {
-    onAddInstance({ ...omit(formValues, !passwordChanged ? 'password' : '') })
-  }
 
   const validate = (values: ConnectionFormValues) => {
     const errors: FormikErrors<ConnectionFormValues> = {}
@@ -177,8 +173,6 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                         if (field.value === SECURITY_FIELD && !meta.touched) {
                           form.setFieldValue('password', '')
                         }
-
-                        setPasswordChanged(true)
                       }}
                     />
                   )}
@@ -188,17 +182,17 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
             <div>
               <EuiFlexGroup className="footerAddDatabase" gutterSize="none" justifyContent="spaceBetween">
                 <EuiFlexItem grow={false}>
-                  <ValidationTooltip isValid={isValid} errors={errors}>
-                    <EuiButton
-                      data-testid="connection-form-test-button"
-                      className={styles.testConnectionBtn}
-                      iconType={!isValid ? 'iInCircle' : undefined}
-                      isLoading={isLoading}
-                      disabled={!isValid}
-                    >
-                      Test Connection
-                    </EuiButton>
-                  </ValidationTooltip>
+                  {/* <ValidationTooltip isValid={isValid} errors={errors}> */}
+                  {/*  <EuiButton */}
+                  {/*    data-testid="connection-form-test-button" */}
+                  {/*    className={styles.testConnectionBtn} */}
+                  {/*    iconType={!isValid ? 'iInCircle' : undefined} */}
+                  {/*    isLoading={isLoading} */}
+                  {/*    disabled={!isValid} */}
+                  {/*  > */}
+                  {/*      Test Connection */}
+                  {/*  </EuiButton> */}
+                  {/* </ValidationTooltip> */}
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   <EuiFlexGroup gutterSize="s">
@@ -218,7 +212,7 @@ const ConnectionForm = ({ onAddInstance, onCancel, editInstance, isLoading }: Pr
                           isLoading={isLoading}
                           disabled={!isValid}
                         >
-                          Add Endpoint
+                          {editInstance ? 'Apply Changes' : 'Add Endpoint'}
                         </EuiButton>
                       </ValidationTooltip>
                     </EuiFlexItem>

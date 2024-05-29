@@ -1,25 +1,27 @@
 import {
-  RdiClientMetadata, RdiJob, RdiPipeline, RdiType, RdiDryRunJobResult, RdiStatisticsResult,
+  Rdi,
+  RdiClientMetadata, RdiJob, RdiPipeline, RdiStatisticsResult,
 } from 'src/modules/rdi/models';
 import {
-  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionResult,
+  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
+import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
 
 export abstract class RdiClient {
-  abstract type: RdiType;
-
   public readonly id: string;
 
   public lastUsed: number = Date.now();
 
-  constructor(
-    protected readonly metadata: RdiClientMetadata,
-    protected readonly client: unknown,
+  protected constructor(
+    public readonly metadata: RdiClientMetadata,
+    protected readonly rdi: Rdi,
   ) {
     this.id = RdiClient.generateId(this.metadata);
   }
 
-  abstract isConnected(): Promise<boolean>;
+  public isIdle(): boolean {
+    return Date.now() - this.lastUsed > IDLE_TRESHOLD;
+  }
 
   abstract getSchema(): Promise<object>;
 
@@ -32,11 +34,9 @@ export abstract class RdiClient {
 
   abstract deploy(pipeline: RdiPipeline): Promise<void>;
 
-  abstract deployJob(job: RdiJob): Promise<RdiJob>;
-
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-  abstract testConnections(config: string): Promise<RdiTestConnectionResult>;
+  abstract testConnections(config: string): Promise<RdiTestConnectionsResponseDto>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 
@@ -44,7 +44,9 @@ export abstract class RdiClient {
 
   abstract getJobFunctions(): Promise<object>;
 
-  abstract disconnect(): Promise<void>;
+  abstract ensureAuth(): Promise<void>;
+
+  abstract connect(): Promise<void>;
 
   public setLastUsed(): void {
     this.lastUsed = Date.now();

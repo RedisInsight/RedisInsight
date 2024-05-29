@@ -52,4 +52,6 @@ export enum CustomErrorCodes {
 
   // RDI errors [11400, 11599]
   RdiDeployPipelineFailure = 11_401,
+  RdiUnauthorized = 11_402,
+  RdiInternalServerError = 11_403,
 }

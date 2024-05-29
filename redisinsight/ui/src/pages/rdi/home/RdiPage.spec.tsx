@@ -179,7 +179,7 @@ describe('RdiPage', () => {
     expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
   })
 
-  it('should call edit instance when editInstance is provided', async () => {
+  it('should call edit instance with proper data when editInstance is provided', async () => {
     render(<RdiPage />)
 
     fireEvent.click(screen.getByTestId('edit-instance-1'))
@@ -197,16 +197,10 @@ describe('RdiPage', () => {
     })
 
     expect(editInstanceAction).toBeCalledWith(
+      '1',
       {
-        id: '1',
-        lastConnection: new Date('1/1/2024'),
         name: 'name',
         password: 'password2',
-        url: 'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
-        username: 'user',
-        version: '1.2',
-        visible: true,
-        error: ''
       },
       expect.any(Function)
     )

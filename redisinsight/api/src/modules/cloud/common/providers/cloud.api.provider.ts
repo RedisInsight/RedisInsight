@@ -41,6 +41,7 @@ export class CloudApiProvider {
       utm_medium: utm?.medium,
       utm_campaign: utm?.campaign,
       utm_amp: utm?.amp,
+      utm_package: utm?.package,
     };
   }
 

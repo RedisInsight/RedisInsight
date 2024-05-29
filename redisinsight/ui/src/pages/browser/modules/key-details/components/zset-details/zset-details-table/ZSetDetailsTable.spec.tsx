@@ -3,7 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { zsetDataSelector } from 'uiSrc/slices/browser/zset'
 import { anyToBuffer } from 'uiSrc/utils'
-import { render, screen, fireEvent, act, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, act, mockedStore, cleanup, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { ZSetDetailsTable, Props } from './ZSetDetailsTable'
@@ -59,26 +59,43 @@ describe('ZSetDetailsTable', () => {
     expect(searchInput).toHaveValue('*')
   })
 
-  it('should render delete popup after click remove button', () => {
+  it('should render delete popup after click remove button', async () => {
     render(<ZSetDetailsTable {...instance(mockedProps)} />)
-    fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
-    expect(screen.getByTestId(/zset-edit-button-1/)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('zset-remove-button-1-icon'))
+    await waitForEuiPopoverVisible()
+    expect(screen.getByTestId('zset-remove-button-1')).toBeInTheDocument()
   })
 
   it('should render disabled edit button', () => {
     render(<ZSetDetailsTable {...instance(mockedProps)} />)
-    expect(screen.getByTestId(/zset-edit-button-4/)).toBeDisabled()
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('zset_content-value-3'))
+    })
+
+    expect(screen.getByTestId('zset_edit-btn-3')).toBeDisabled()
   })
 
   it('should render enabled edit button', () => {
     render(<ZSetDetailsTable {...instance(mockedProps)} />)
-    expect(screen.getByTestId(/zset-edit-button-3/)).not.toBeDisabled()
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('zset_content-value-2'))
+    })
+
+    expect(screen.getByTestId('zset_edit-btn-2')).not.toBeDisabled()
   })
 
   it('should render editor after click edit button and able to change value', () => {
     render(<ZSetDetailsTable {...instance(mockedProps)} />)
-    fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
-    expect(screen.getByTestId('inline-item-editor')).toBeInTheDocument()
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('zset_content-value-2'))
+    })
+
+    fireEvent.click(screen.getByTestId('zset_edit-btn-2'))
+
     fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: '123' } })
     expect(screen.getByTestId('inline-item-editor')).toHaveValue('123')
   })
@@ -86,6 +103,23 @@ describe('ZSetDetailsTable', () => {
   it('should render resize trigger for name column', () => {
     render(<ZSetDetailsTable {...instance(mockedProps)} />)
     expect(screen.getByTestId('resize-trigger-name')).toBeInTheDocument()
+  })
+
+  it('should disable refresh when editing', async () => {
+    render(<ZSetDetailsTable {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('zset_content-value-2'))
+    })
+
+    fireEvent.click(screen.getByTestId('zset_edit-btn-2'))
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 
   describe('decompressed  data', () => {
@@ -105,20 +139,5 @@ describe('ZSetDetailsTable', () => {
 
       expect(memberEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
-  })
-
-  it('should disable refresh when editing', async () => {
-    render(<ZSetDetailsTable {...instance(mockedProps)} />)
-
-    const afterRenderActions = [...store.getActions()]
-
-    await act(() => {
-      fireEvent.click(screen.getAllByTestId(/zset-edit-button/)[0])
-    })
-
-    expect(store.getActions()).toEqual([
-      ...afterRenderActions,
-      setSelectedKeyRefreshDisabled(true)
-    ])
   })
 })

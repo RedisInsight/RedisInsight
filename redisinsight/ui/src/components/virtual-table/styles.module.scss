@@ -21,7 +21,6 @@ $footerHeight: 38px;
   position: relative;
   height: 100%;
   width: 100%;
-  padding-bottom: $footerHeight;
 
   &.isResizing {
     user-select: none;
@@ -38,6 +37,25 @@ $footerHeight: 38px;
   overflow-x: auto;
   overflow-y: hidden;
 
+  &.autoHeight {
+    max-height: 100% !important;
+    height: auto !important;
+
+    display: flex;
+    flex-direction: column;
+
+    :global {
+      .ReactVirtualized__Table__headerRow {
+        flex-shrink: 0;
+      }
+
+      .ReactVirtualized__Table__Grid {
+        flex-grow: 1;
+        height: auto !important;
+      }
+    }
+  }
+
   :global {
     .ReactVirtualized__Table__headerRow {
       cursor: initial !important;
@@ -52,6 +70,12 @@ $footerHeight: 38px;
 
   .tableRowColumn {
     margin: 0 !important;
+
+    &:global(.noPadding) {
+      .tableRowCell {
+        padding: 0 !important;
+      }
+    }
   }
 
   .tableRowCell {
@@ -176,21 +200,23 @@ $footerHeight: 38px;
     align-items: normal;
   }
   :global(.ReactVirtualized__Table__headerRow) {
-    border: 1px solid var(--tableLightestBorderColor) !important;
+    border: 1px solid var(--separatorColorLight) !important;
   }
   :global(.ReactVirtualized__Table__rowColumn) {
     overflow: visible !important;
+    // fix border alignment, need to investigate why this happens
+    margin-right: 1px !important;
   }
 
   :global(.ReactVirtualized__Table__Grid) {
-    border: 1px solid var(--tableDarkestBorderColor);
+    border: 1px solid var(--separatorColor);
     border-top: none;
   }
 
   &:not(&:global(.set-members-container)) {
     .tableRow {
-      & > div:first-of-type {
-        border-right: 1px solid var(--tableDarkestBorderColor);
+      & > div:not(:last-of-type) {
+        border-right: 1px solid var(--separatorColor);
       }
     }
   }
@@ -199,9 +225,19 @@ $footerHeight: 38px;
     padding: 18px 4px 18px 20px;
   }
 
+  .tableRowColumn {
+    min-height: 100%;
+  }
+
   .tableRowCell {
     padding: 8px 6px 8px 20px !important;
     min-height: 42px;
+
+    :global(.innerCellAsCell) {
+      display: flex;
+      max-width: 100%;
+      padding: 8px 6px 8px 20px !important;
+    }
   }
 
   .tableFooter {
@@ -218,7 +254,7 @@ $footerHeight: 38px;
     }
 
     .value-table-separate-border {
-      border-right-color: var(--tableLightestBorderColor) !important;
+      // border-right-color: var(--tableLightestBorderColor) !important;
       box-sizing: content-box;
     }
 

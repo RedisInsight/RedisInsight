@@ -21,4 +21,5 @@ export const UTM_CAMPAINGS: Record<any, string> = {
   [OAuthSocialSource.BrowserSearch]: 'redisinsight_browser_search',
   [OAuthSocialSource.Workbench]: 'redisinsight_workbench',
   [CloudSsoUtmCampaign.BrowserFilter]: 'browser_filter',
+  [OAuthSocialSource.EmptyDatabasesList]: 'empty_db_list',
 }

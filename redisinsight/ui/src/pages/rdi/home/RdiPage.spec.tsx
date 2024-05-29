@@ -3,8 +3,9 @@ import React from 'react'
 
 import { createInstanceAction, editInstanceAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor, waitForStack } from 'uiSrc/utils/test-utils'
 
+import { apiService } from 'uiSrc/services'
 import RdiPage from './RdiPage'
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
@@ -274,11 +275,17 @@ describe('RdiPage', () => {
     })
   })
 
-  it('should call proper sendPageViewTelemetry', () => {
+  it('should call proper sendPageViewTelemetry', async () => {
+    apiService.get = jest.fn().mockResolvedValue({ data: [''], status: 200 })
     render(<RdiPage />)
 
+    await waitForStack()
+
     expect(sendPageViewTelemetry).toBeCalledWith({
-      name: TelemetryPageView.RDI_INSTANCES_PAGE
+      name: TelemetryPageView.RDI_INSTANCES_PAGE,
+      eventData: {
+        instancesCount: 1
+      }
     })
   })
 })

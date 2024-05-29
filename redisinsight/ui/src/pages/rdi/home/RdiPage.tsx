@@ -35,13 +35,19 @@ const RdiPage = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(fetchInstancesAction())
+    dispatch(fetchInstancesAction(handleOpenPage))
 
     setTitle('Redis Data Integration')
+  }, [])
+
+  const handleOpenPage = (data: RdiInstance[]) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_INSTANCES_PAGE,
+      eventData: {
+        instancesCount: data.length
+      }
     })
-  }, [])
+  }
 
   const onResize = ({ width: innerWidth }: { width: number }) => {
     setWidth(innerWidth)

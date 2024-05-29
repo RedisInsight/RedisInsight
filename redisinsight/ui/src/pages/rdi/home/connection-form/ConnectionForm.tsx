@@ -212,7 +212,7 @@ const ConnectionForm = (props: Props) => {
                           isLoading={isLoading}
                           disabled={!isValid}
                         >
-                          {editInstance ? 'Apply Changes' : 'Add Instance'}
+                          {editInstance ? 'Apply Changes' : 'Add Endpoint'}
                         </EuiButton>
                       </ValidationTooltip>
                     </EuiFlexItem>

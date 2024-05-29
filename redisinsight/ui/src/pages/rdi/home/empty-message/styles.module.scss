@@ -2,11 +2,21 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+
+  max-width: 624px;
+}
+
+.title {
+  font-size: 28px !important;
+  margin-bottom: 8px;
 }
 
 .subTitle {
-  font-size: 18px !important;
-  font-weight: 500 !important;
-  margin-top: 6px;
-  margin-bottom: 35px;
+  font-size: 14px !important;
+  margin-top: 34px;
+  margin-bottom: 34px;
+}
+
+.icon {
+  width: 100%;
 }

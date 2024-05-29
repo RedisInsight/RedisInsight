@@ -81,7 +81,7 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
     filteringGroup = 'JSON';
     commandToCheck = 'JSON.SET';
     commandArgumentsToCheck = 'JSON.SET key path value [condition]';
-    externalPageLink = 'https://redis.io/latest/commands/json.set/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
+    externalPageLink = 'https://redis.io/docs/latest/commands/json.set/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -99,7 +99,7 @@ test('Verify that user can see in Command helper and click on new group "Search"
     filteringGroup = 'Search';
     commandToCheck = 'FT.EXPLAIN';
     commandArgumentsToCheck = 'FT.EXPLAIN index query [dialect]';
-    externalPageLink = 'https://redis.io/latest/commands/ft.explain/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
+    externalPageLink = 'https://redis.io/docs/latest/commands/ft.explain/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper';
 
     // Open Command Helper
     await t.click(browserPage.CommandHelper.expandCommandHelperButton);
@@ -210,11 +210,11 @@ test('Verify that user can work with Bloom groups in Command Helper (RedisBloom 
         'CF.ADD key item'
     ];
     externalPageLinks = [
-        'https://redis.io/latest/commands/bf.mexists/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
-        'https://redis.io/latest/commands/cms.query/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
-        'https://redis.io/latest/commands/tdigest.reset/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
-        'https://redis.io/latest/commands/topk.list/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
-        'https://redis.io/latest/commands/cf.add/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper'
+        'https://redis.io/docs/latest/commands/bf.mexists/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/cms.query/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/tdigest.reset/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/topk.list/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper',
+        'https://redis.io/docs/latest/commands/cf.add/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper'
     ];
 
     // Open Command Helper

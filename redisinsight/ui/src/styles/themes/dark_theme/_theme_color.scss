@@ -1,6 +1,38 @@
+// elastic eui colors
+$euiColorGhost: #fff;
+$euiColorInk: #000;
+
+// Core
+$euiColorAccent: #f990c0;
+
+// Grays
+$euiColorDarkestShade: #d4dae5;
+$euiColorFullShade: #fff;
+
+// Backgrounds
+$euiColorHighlight: #2e2d25;
+
+// Variations from core
+$euiTextColor: #dfe5ef;
+$euiTitleColor: $euiTextColor;
+
+// Shadows
+$euiShadowColor: #000;
+$euiShadowColorLarge: #000;
+$euiColorDisabled: #434548;
+
+// Contrasty text variants
+$euiColorAccentText: #f990c0;
+$euiColorDisabledText: #4c4e51;
+
+//Charts
+$euiColorChartLines: #343741;
+$euiColorChartBand: #2a2b33;
+
 $euiColorPrimary: #8ba2ff;
 $euiColorPrimaryRGB: 139, 162, 255;
 $euiColorPrimaryText: #ffffff;
+$euiLinkColor: $euiColorPrimaryText;
 $euiColorSecondary: #465282;
 $euiColorSecondaryText: #ffffff;
 $euiColorSuccess: #8ba2ff;
@@ -40,7 +72,8 @@ $externalLinkColor: #8ba2ff;
 $externalLinkTooltipColor: $externalLinkColor;
 $linkToastColor: $externalLinkColor;
 $defaultGreenColor: #608b4e;
-$insightsTriggerBgColor: #292F47;
+$insightsTriggerBgColor: #292f47;
+$scrollBackgroundColor: rgba(105, 112, 125, 0.5);
 
 $tableRowHoverColor: #070707;
 $tableRowSelectedColor: #212536;
@@ -76,9 +109,10 @@ $buttonWarningHoverColor: #b00c03;
 $buttonDangerToastColor: #e8524a;
 $buttonDangerToastHoverColor: #bf3932;
 $buttonGuideBgColor: #2b2b2b;
-$buttonSuccessColor: #5BC69B;
+$buttonSuccessColor: #5bc69b;
 
 $comboBoxBadgeBgColor: #363636;
+$loadingContentColor: #313131;
 
 $hoverInListColor: #070707;
 $hoverInListColorLight: #465282;
@@ -94,12 +128,12 @@ $tooltipLightBgColor: #455064;
 $overlayPromoNYColor: #0000001a;
 
 $monacoBgColor: #111;
-$highlightDotColor: #2BBBB2;
-$monacoParamsColor: #EC85AA;
+$highlightDotColor: #2bbbb2;
+$monacoParamsColor: #ec85aa;
 
-$successBorderColor: #13A450;
-$warningBorderColor: #9D6901;
-$errorBorderColor: #AD0017;
+$successBorderColor: #13a450;
+$warningBorderColor: #9d6901;
+$errorBorderColor: #ad0017;
 
 $overlayMaskBgColor: rgba(56, 56, 56, 0.66);
 
@@ -150,19 +184,19 @@ $wbTextColor: #dfe5ef;
 $pubSubClientsBadge: #008000;
 
 // Database analysis
-$badgeIconColor : #D8AB52;
+$badgeIconColor: #d8ab52;
 $recommendationBorderColor: #363636;
 
 // Recommendations
-$recommendationsBgColor: #3D3D3D;
-$recommendationBgColor: #2B2B2B;
-$recommendationLiveBorderColor: #B37A1E;
+$recommendationsBgColor: #3d3d3d;
+$recommendationBgColor: #2b2b2b;
+$recommendationLiveBorderColor: #b37a1e;
 $recommendationColor: #ffffff;
-$triggerIconActiveColor: #FFAF2B;
-$triggerIconTextColor: #3D3D3D;
-$recommendationsCountBgColor: #8BA2FF;
+$triggerIconActiveColor: #ffaf2b;
+$triggerIconTextColor: #3d3d3d;
+$recommendationsCountBgColor: #8ba2ff;
 
 // cloud sso
 $cloudSsoGoogle: #465282;
 $cloudSsoGithub: #393939;
-$cloudSsoAdvantagesBgColor: #333D4F;
+$cloudSsoAdvantagesBgColor: #333d4f;

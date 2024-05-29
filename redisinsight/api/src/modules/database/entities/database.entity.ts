@@ -10,13 +10,23 @@ import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 
 export enum HostingProvider {
-  UNKNOWN = 'UNKNOWN',
-  LOCALHOST = 'LOCALHOST',
   RE_CLUSTER = 'RE_CLUSTER',
   RE_CLOUD = 'RE_CLOUD',
-  AZURE = 'AZURE',
-  AWS = 'AWS',
-  GOOGLE = 'GOOGLE',
+  REDIS_MANAGED = 'REDIS_MANAGED',
+  AZURE_CACHE = 'AZURE_CACHE',
+  AZURE_CACHE_REDIS_ENTERPRISE = 'AZURE_CACHE_REDIS_ENTERPRISE',
+  COMMUNITY_EDITION = 'COMMUNITY_EDITION',
+  AWS_ELASTICACHE = 'AWS_ELASTICACHE',
+  AWS_MEMORYDB = 'AWS_MEMORYDB',
+  VALKEY = 'VALKEY',
+  MEMORYSTORE = 'MEMORYSTORE',
+  DRAGONFLY = 'DRAGONFLY',
+  KEYDB = 'KEYDB',
+  GARNET = 'GARNET',
+  KVROCKS = 'KVROCKS',
+  REDICT = 'REDICT',
+  UPSTASH = 'UPSTASH',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum ConnectionType {

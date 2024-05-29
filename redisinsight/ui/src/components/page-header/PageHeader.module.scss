@@ -1,8 +1,8 @@
-@import "@elastic/eui/src/global_styling/index";
-
 .pageHeader {
   display: flex;
   align-items: center;
+
+  min-height: 56px;
 }
 
 .pageHeaderTop {
@@ -16,7 +16,7 @@
 
 .title {
   font-size: 24px;
-  @include euiBreakpoint("m", "l", "xl") {
+  @include eui.euiBreakpoint("m", "l", "xl") {
     padding-left: 12px;
   }
 }

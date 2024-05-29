@@ -3,7 +3,7 @@ import {
 } from '@nestjs/common';
 import { WorkbenchController } from 'src/modules/workbench/workbench.controller';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
 import { CommandExecutionRepository } from 'src/modules/workbench/repositories/command-execution.repository';
@@ -64,6 +64,6 @@ export class WorkbenchModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(WorkbenchController));
+      .forRoutes(WorkbenchController);
   }
 }

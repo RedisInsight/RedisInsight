@@ -2,26 +2,34 @@
   font-size: 18px;
   font-weight: 600 !important;
 }
+
 .table {
   :global(thead) {
     display: none;
   }
+
   :global {
     td, tr {
       border-color: var(--tableLightBorderColor) !important;
     }
   }
-  &:global(.inMemoryTableDefault .euiTableCellContent span) {
-    padding-top: 0 !important;
-    white-space: normal;
 
+  &:global(.inMemoryTableDefault) {
+    :global {
+      .euiTableCellContent .euiTableCellContent__text {
+        padding-top: 0 !important;
+        white-space: normal !important;
+      }
+    }
   }
+
   :global(.euiBadge) {
     height: 22px;
     min-width: 34px !important;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 0 !important;
 
     :global(.euiText) {
       font-weight: 500;

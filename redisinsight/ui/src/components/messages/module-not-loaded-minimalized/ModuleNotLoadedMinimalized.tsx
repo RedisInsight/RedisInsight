@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
-import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { ExternalLink, OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -49,7 +49,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                   iconSize="s"
                   href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: UTM_CAMPAINGS[source] ?? source })}
                   onClick={(e: React.MouseEvent) => {
-                    ssoCloudHandlerClick(e, source, `${moduleName}_${source}`)
+                    ssoCloudHandlerClick(e, { source, action: OAuthSocialAction.Create }, `${moduleName}_${source}`)
                     onClose?.()
                   }}
                   data-testid="tutorials-get-started-link"

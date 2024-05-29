@@ -8,7 +8,15 @@ export enum BuildType {
 }
 
 export enum PackageType {
-  AppImage = 'appimage',
+  Flatpak = 'flatpak',
+  Snap = 'snap',
+  UnknownLinux = 'unknown-linux',
+  AppImage = 'app-image',
+  Mas = 'mas',
+  UnknownDarwin = 'unknown-darwin',
+  WindowsStore = 'windows-store',
+  UnknownWindows = 'unknown-windows',
+  Unknown = 'unknown',
 }
 
 export enum AppType {

@@ -4,8 +4,8 @@ import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 import { cleanup, clearStoreActions, render, fireEvent, screen, mockedStore } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { findTutorialPath } from 'uiSrc/utils'
 import NoLibrariesScreen, { IProps } from './NoLibrariesScreen'
 
@@ -65,7 +65,7 @@ describe('NoLibrariesScreen', () => {
 
     const expectedActions = [
       changeSelectedTab(InsightsPanelTabs.Explore),
-      toggleInsightsPanel(true)
+      changeSidePanel(SidePanels.Insights)
     ]
     expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
     expect(pushMock).toBeCalledWith({
@@ -84,6 +84,6 @@ describe('NoLibrariesScreen', () => {
     render(<NoLibrariesScreen {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('no-libraries-title')).toHaveTextContent('triggers and functions are not available for this database')
-    expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.')
+    expect(screen.getByTestId('no-libraries-action-text')).toHaveTextContent('Create a free Redis Stack database which extends the core capabilities of your Redis and try the interactive tutorial to learn how to work with triggers and functions.')
   })
 })

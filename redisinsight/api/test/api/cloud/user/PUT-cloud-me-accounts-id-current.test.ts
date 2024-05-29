@@ -1,6 +1,7 @@
 import {
+  mockCapiUnauthorizedError, mockCloudApiBadRequestExceptionResponse, mockCloudApiUnauthorizedExceptionResponse,
   mockCloudUserAccount,
-  mockCloudUserSafe
+  mockCloudUserSafe, mockSmApiBadRequestError
 } from 'src/__mocks__';
 import {
   describe,
@@ -9,8 +10,9 @@ import {
   Joi,
   getMainCheckFn,
   expect,
+  nock,
 } from '../../deps';
-import { initApiUserProfileNockScope } from '../constants';
+import {initApiUserProfileNockScope, initSMApiNockScope} from '../constants';
 
 const { request, server } = deps;
 
@@ -28,23 +30,66 @@ const responseSchema = Joi.object().keys({
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-const apiNockScope = initApiUserProfileNockScope();
-
 describe('PUT /cloud/me/accounts/:id/current', () => {
   requirements('rte.serverType=local');
+
+  beforeEach(async () => {
+    nock.cleanAll();
+    initApiUserProfileNockScope();
+  });
 
   describe('Common', () => {
     [
       {
+        name: 'Should switch account',
         before: () => {
-          apiNockScope
+          initSMApiNockScope()
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
             .reply(200, {})
         },
-        name: 'Should get user profile',
         responseSchema,
         checkFn: ({ body }) => {
           expect(body).to.deep.eq(mockCloudUserSafe);
+        },
+      },
+      {
+        name: 'Should switch account from 2nd attempt',
+        before: () => {
+          initSMApiNockScope()
+            .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
+            .reply(401, mockCapiUnauthorizedError)
+            .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
+            .reply(200, {})
+        },
+        responseSchema,
+        checkFn: ({ body }) => {
+          expect(body).to.deep.eq(mockCloudUserSafe);
+        },
+      },
+      {
+        name: 'Should throw 401 error',
+        before: () => {
+          initSMApiNockScope()
+            .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
+            .reply(401, mockCapiUnauthorizedError)
+            .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
+            .reply(401, mockCapiUnauthorizedError)
+        },
+        statusCode: 401,
+        checkFn: ({ body }) => {
+          expect(body).to.deep.eq(mockCloudApiUnauthorizedExceptionResponse);
+        },
+      },
+      {
+        name: 'Should throw 400 error without retry',
+        before: () => {
+          initSMApiNockScope()
+            .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
+            .reply(400, mockSmApiBadRequestError)
+        },
+        statusCode: 400,
+        checkFn: ({ body }) => {
+          expect(body).to.deep.eq(mockCloudApiBadRequestExceptionResponse);
         },
       },
     ].map(mainCheckFn);

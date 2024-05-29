@@ -52,8 +52,12 @@ describe('PageHeader', () => {
     pushMock.mockRestore()
   })
 
-  it('should render custom component instead of logo', () => {
-    render(<PageHeader title="Page" logo={(<div data-testid="custom-logo" />)} />)
+  it('should render custom component', () => {
+    render((
+      <PageHeader title="Page" showInsights>
+        <div data-testid="custom-logo" />
+      </PageHeader>
+    ))
 
     expect(screen.getByTestId('custom-logo')).toBeInTheDocument()
     expect(screen.queryByTestId('redis-logo-home')).not.toBeInTheDocument()

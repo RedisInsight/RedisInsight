@@ -2,11 +2,16 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { localStorageService } from 'uiSrc/services'
-import { fetchFeatureFlags, setFeaturesToHighlight, setOnboarding } from 'uiSrc/slices/app/features'
+import {
+  appFeatureFlagsFeaturesSelector,
+  fetchFeatureFlags,
+  setFeaturesToHighlight,
+  setOnboarding
+} from 'uiSrc/slices/app/features'
 import { fetchNotificationsAction } from 'uiSrc/slices/app/notifications'
 
 import {
@@ -31,11 +36,13 @@ import { fetchGuideLinksAction } from 'uiSrc/slices/content/guide-links'
 import { setCapability } from 'uiSrc/slices/app/context'
 
 import favicon from 'uiSrc/assets/favicon.svg'
+import { fetchProfile } from 'uiSrc/slices/oauth/cloud'
 
 const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
   const { config, spec } = useSelector(userSettingsSelector)
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
   const { pathname } = useLocation()
 
   const dispatch = useDispatch()
@@ -68,6 +75,12 @@ const Config = () => {
       checkSettingsToShowPopup()
     }
   }, [spec])
+
+  useEffect(() => {
+    if (cloudSsoFeature?.flag) {
+      dispatch(fetchProfile())
+    }
+  }, [cloudSsoFeature])
 
   useEffect(() => {
     featuresHighlight()

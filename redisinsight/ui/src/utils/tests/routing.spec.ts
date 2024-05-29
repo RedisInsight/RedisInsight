@@ -4,6 +4,13 @@ jest.mock('uiSrc/utils/routing', () => ({
   ...jest.requireActual('uiSrc/utils/routing')
 }))
 
+Object.defineProperty(window, 'location', {
+  value: {
+    origin: 'http://localhost'
+  },
+  writable: true
+})
+
 const databaseId = '1'
 const getRedirectionPageTests = [
   { input: ['settings'], expected: '/settings' },
@@ -12,8 +19,12 @@ const getRedirectionPageTests = [
   { input: ['/analytics/slowlog', databaseId], expected: '/1/analytics/slowlog' },
   { input: ['/analytics/slowlog'], expected: null },
   { input: ['/analytics', databaseId], expected: '/1/analytics' },
-  { input: ['/analytics/page', databaseId], expected: null },
+  { input: ['/analytics/page', databaseId], expected: undefined },
+  { input: ['/analytics'], expected: null },
+  { input: ['some-page'], expected: undefined },
   { input: ['/workbench?guidePath=introduction.md', databaseId], expected: '/1/workbench?guidePath=introduction.md&insights=open' },
+  { input: ['/_?tutorialId=tutorial'], expected: undefined },
+  { input: ['/_?tutorialId=tutorial', databaseId, `/${databaseId}/workbench`], expected: '/1/workbench?tutorialId=tutorial' },
 ]
 
 describe('getRedirectionPage', () => {

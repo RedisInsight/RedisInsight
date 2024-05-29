@@ -3,13 +3,14 @@ import { cloneDeep } from 'lodash'
 import { useSelector } from 'react-redux'
 import { AxiosError } from 'axios'
 import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { oauthCloudJobSelector, setJob, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { RootState } from 'uiSrc/slices/store'
 import { loadInstances } from 'uiSrc/slices/instances/instances'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { CustomErrorCodes } from 'uiSrc/constants'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import OAuthJobs from './OAuthJobs'
 
 jest.mock('react-redux', () => ({
@@ -130,6 +131,8 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       addErrorNotification({ response: { data: error } } as AxiosError),
+      setSSOFlow(),
+      setSocialDialogState(null),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -160,6 +163,8 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      setSSOFlow(),
+      setSocialDialogState(null),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -190,6 +195,8 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      setSSOFlow(),
+      setSocialDialogState(null),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(

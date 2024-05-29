@@ -80,6 +80,7 @@ export class FeatureAnalytics extends TelemetryBaseService {
   sendFeatureFlagRecalculated(data: {
     configVersion: number,
     features: Record<string, { flag: boolean }>
+    force?: Record<string, boolean>
   }): void {
     try {
       const features = {};
@@ -92,6 +93,7 @@ export class FeatureAnalytics extends TelemetryBaseService {
         {
           configVersion: data.configVersion,
           features,
+          force: data.force,
         },
       );
     } catch (e) {

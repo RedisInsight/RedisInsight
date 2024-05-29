@@ -29,7 +29,7 @@ fixture `Redis Stack command in Workbench`
 test.skip('Verify that user can switches between Graph and Text for GRAPH command and see results corresponding to their views', async t => {
     // Send Graph command
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.redisStackTutorialsButton);
     await t.click(tutorials.tutorialsWorkingWithGraphLink);
     await tutorials.runBlockCode('Create a bike node');
@@ -46,7 +46,7 @@ test.skip('Verify that user can switches between Graph and Text for GRAPH comman
 test.skip('Verify that user can see "No data to visualize" message for Graph command', async t => {
     // Send Graph command
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.redisStackTutorialsButton);
     await tutorials.runBlockCode('Show all sales per region');
     await t.click(workbenchPage.submitCommandButton);

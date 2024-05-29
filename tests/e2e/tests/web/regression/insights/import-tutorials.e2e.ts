@@ -4,7 +4,7 @@ import { join as joinPath } from 'path';
 import { t } from 'testcafe';
 import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
+import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch, fileDownloadPath } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
@@ -17,6 +17,7 @@ const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const databasesActions = new DatabasesActions();
+const memoryEfficiencyPage = new MemoryEfficiencyPage();
 
 const zipFolderName = 'customTutorials';
 const folderPath = path.join('..', 'test-data', 'upload-tutorials', zipFolderName);
@@ -68,7 +69,7 @@ test
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
         await t.click(tutorials.tutorialOpenUploadButton);
@@ -123,7 +124,7 @@ test
 test.skip
     .after(async() => {
         tutorialName = 'Tutorials with manifest';
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         if(await tutorials.tutorialAccordionButton.withText(tutorialName).exists) {
             await tutorials.deleteTutorialByName(tutorialName);
         }
@@ -136,7 +137,7 @@ test.skip
         const summary = 'Summary for JSON';
 
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.tutorialOpenUploadButton);
         // Verify that user can upload tutorials using a URL
         await t.typeText(tutorials.tutorialLinkField, link);
@@ -180,7 +181,7 @@ test
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await tutorials.deleteTutorialByName(tutorialName);
         await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
             .notOk(`${tutorialName} tutorial is not deleted`);
@@ -195,7 +196,7 @@ test
 
         // Upload custom tutorial
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t
             .click(tutorials.tutorialOpenUploadButton)
             .setFilesToUpload(tutorials.tutorialImport, [zipFilePath])
@@ -242,4 +243,65 @@ test
         await browserPage.searchByKeyName('*key1*');
         await verifyKeysDisplayingInTheList(keyNames, true);
     });
+test
+    .before(async() => {
+        await databaseHelper.acceptLicenseTerms();
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(
+            ossStandaloneRedisearch
+        );
+        await myRedisDatabasePage.reloadPage();
+        tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
+        zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
+        // Create zip file for uploading
+        await Common.createZipFromFolder(folderPath, zipFilePath);
+    })
+    .after(async() => {
+        await Common.deleteFileFromFolder(zipFilePath);
+        // Clear and delete database
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await tutorials.deleteTutorialByName(tutorialName);
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
+            .notOk(`${tutorialName} tutorial is not deleted`);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
+    })('Verify that user can open tutorial from links in other tutorials', async t => {
+        // Upload custom tutorial
+        await workbenchPage.InsightsPanel.togglePanel(true);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await t
+            .click(tutorials.tutorialOpenUploadButton)
+            .setFilesToUpload(tutorials.tutorialImport, [zipFilePath])
+            .click(tutorials.tutorialSubmitButton);
+        await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).visible).ok(`${tutorialName} tutorial is not uploaded`);
+        // Open tutorial
+        await t
+            .click(tutorials.tutorialAccordionButton.withText(tutorialName))
+            .click(tutorials.getAccordionButtonWithName(folder2))
+            .click(tutorials.getInternalLinkWithManifest(internalLinkName2));
+        await t.expect(tutorials.scrolledEnablementArea.visible).ok('Enablement area is not visible after clicked');
 
+        // Verify that user do not see the standard popover when open a tutorial page via the link
+        await t.click(tutorials.tutorialLink.withText('linkTheSamePage'));
+        await t.expect(tutorials.getTutorialByName('CREATE DOCUMENTS').exists).ok('Tutorial not opened by link');
+
+        // Verify that user can see a standard popover to open a database when clicking a link where page is inside of the database which is not opened
+        await t.click(tutorials.closeEnablementPage);
+        await t.click(tutorials.getInternalLinkWithManifest(internalLinkName2));
+        await t.click(tutorials.tutorialLink.withText('link2AnalyticsPageWithTutorial'));
+        await t.expect(tutorials.openDatabasePopover.exists).ok('Open a database popover is not displayed');
+
+        // Verify that user not redirected anywhere and do not see an error when clicking on the broken link
+        await t.click(tutorials.tutorialLink.withText('link3InvalidPage'));
+        await t.expect(tutorials.getTutorialByName('VECTOR 2').exists).ok('Tutorial page is changed');
+        // await t.expect(tutorials.openDatabasePopover.exists).notOk('Open a database popover is still displayed');
+        await t.click(tutorials.tutorialLink.withText('link4InvalidTutorial'));
+        await t.expect(tutorials.getTutorialByName('VECTOR 2').exists).ok('Tutorial page is changed');
+        // await t.expect(tutorials.openDatabasePopover.exists).notOk('Open a database popover is still displayed');
+
+        // Open existing database
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneRedisearch.databaseName);
+
+        // Verify that user can use '[link](redisinsight:_?tutorialId={tutorialId})' syntax to cross-reference tutorials
+        await t.click(tutorials.tutorialLink.withText('link2AnalyticsPageWithTutorial'));
+        await t.expect(tutorials.getTutorialByName('INTRODUCTION').exists).ok('Tutorial not opened by link');
+        await t.expect(memoryEfficiencyPage.analysisPage.visible).ok('Analysis page is not opened by link');
+    });

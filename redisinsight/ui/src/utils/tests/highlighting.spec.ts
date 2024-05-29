@@ -1,4 +1,4 @@
-import { getHighlightingFeatures, getPagesForFeatures } from 'uiSrc/utils/highlighting'
+import { getHighlightingFeatures, getPagesForFeatures } from 'uiSrc/utils/features'
 import { MOCKED_HIGHLIGHTING_FEATURES } from 'uiSrc/utils/test-utils'
 
 describe('getPagesForFeatures', () => {

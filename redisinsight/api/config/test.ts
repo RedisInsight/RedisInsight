@@ -21,4 +21,37 @@ export default {
     url: process.env.RI_FEATURES_CONFIG_URL
       || 'http://localhost:5551/remote/features-config.json',
   },
+  cloud: {
+    apiUrl: process.env.RI_CLOUD_API_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com/api/v1',
+    apiToken: process.env.RI_CLOUD_API_TOKEN || 'token',
+    capiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api-k8s-cloudapi.qa.redislabs.com/v1',
+    capiKeyName: process.env.RI_CLOUD_CAPI_KEY_NAME || 'RedisInsight',
+    freeSubscriptionName: process.env.RI_CLOUD_FREE_SUBSCRIPTION_NAME || 'My free subscription',
+    freeDatabaseName: process.env.RI_CLOUD_FREE_DATABASE_NAME || 'Redis-Stack-in-Redis-Enterprise-Cloud',
+    defaultPlanRegion: process.env.RI_CLOUD_DEFAULT_PLAN_REGION || 'eu-west-1',
+    jobIterationInterval: parseInt(process.env.RI_CLOUD_JOB_ITERATION_INTERVAL, 10) || 10_000, // 10 sec
+    discoveryTimeout: parseInt(process.env.RI_CLOUD_DISCOVERY_TIMEOUT, 10) || 60 * 1000, // 1 min
+    databaseConnectionTimeout: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 30 * 1000,
+    renewTokensBeforeExpire: parseInt(process.env.RI_CLOUD_DATABASE_CONNECTION_TIMEOUT, 10) || 2 * 60_000, // 2min
+    idp: {
+      google: {
+        authorizeUrl: 'oauth2/authorize',
+        tokenUrl: 'oauth2/token',
+        revokeTokenUrl: 'oauth2/revoke',
+        issuer: 'https://authorization.server.com',
+        clientId: 'cid_p6vA6A5tF36Jf6twH2cBOqtt7n',
+        redirectUri: 'redisinsight:/cloud/oauth/callback',
+        idp: 'test-google-idp',
+      },
+      github: {
+        authorizeUrl: 'oauth2/authorize',
+        tokenUrl: 'oauth2/token',
+        revokeTokenUrl: 'oauth2/revoke',
+        issuer: 'https://authorization.server.com',
+        clientId: 'cid_p6vA6A5tF36Jf6twH2cBOqtt7n',
+        redirectUri: 'redisinsight:/cloud/oauth/callback',
+        idp: 'test-github-idp',
+      },
+    },
+  },
 };

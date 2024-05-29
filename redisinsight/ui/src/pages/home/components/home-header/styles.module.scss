@@ -1,6 +1,3 @@
-@import "@elastic/eui/src/global_styling/index";
-@import "uiSrc/styles/mixins/_global.scss";
-
 .addInstanceBtn {
   padding-left: 10px;
   padding-right: 10px;
@@ -66,7 +63,7 @@
 }
 
 .contentDL {
-  @include euiBreakpoint("xs", "s") {
+  @include eui.euiBreakpoint("xs", "s") {
     & > div:first-of-type {
       margin-left: 0 !important;
     }
@@ -77,10 +74,10 @@
 }
 
 .spacerDl {
-  @include euiBreakpoint("xs", "s") {
+  @include eui.euiBreakpoint("xs", "s") {
     height: 6px !important;
   }
-  @include euiBreakpoint("m", "l", "xl") {
+  @include eui.euiBreakpoint("m", "l", "xl") {
     height: 18px !important;
   }
 }
@@ -95,7 +92,7 @@
 
 .promo {
   display: flex !important;
-  @media only screen and(max-width: 800px) {
+  @media only screen and (max-width: 800px) {
     display: none !important;
   }
 }
@@ -112,9 +109,8 @@
   margin-right: 8px;
 }
 
-@include insights-open(1350px) {
+@include global.insights-open(1350px) {
   .promo {
     display: none !important;
   }
 }
-

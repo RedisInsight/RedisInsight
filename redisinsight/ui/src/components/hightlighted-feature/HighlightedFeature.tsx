@@ -5,7 +5,7 @@ import cx from 'classnames'
 import React from 'react'
 import { FeaturesHighlightingType } from 'uiSrc/constants/featuresHighlighting'
 
-import styles from './styles.modules.scss'
+import styles from './styles.module.scss'
 
 export interface Props {
   isHighlight?: boolean
@@ -58,6 +58,10 @@ const HighlightedFeature = (props: Props) => {
       </div>
     </EuiToolTip>
   )
+
+  if (type === 'dialog') {
+    return !isHighlight ? null : (<>{children}</>)
+  }
 
   if (!isHighlight) return (<>{children}</>)
 

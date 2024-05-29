@@ -13,15 +13,15 @@ import {
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme, MODULE_NOT_LOADED_CONTENT as CONTENT, MODULE_TEXT_VIEW } from 'uiSrc/constants'
-import { ReactComponent as CheerIcon } from 'uiSrc/assets/img/icons/cheer.svg'
-import { ReactComponent as TriggersAndFunctionsImageDark } from 'uiSrc/assets/img/triggers_and_functions_dark.svg'
-import { ReactComponent as TriggersAndFunctionsImageLight } from 'uiSrc/assets/img/triggers_and_functions_light.svg'
-import { OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import CheerIcon from 'uiSrc/assets/img/icons/cheer.svg?react'
+import TriggersAndFunctionsImageDark from 'uiSrc/assets/img/triggers_and_functions_dark.svg?react'
+import TriggersAndFunctionsImageLight from 'uiSrc/assets/img/triggers_and_functions_light.svg?react'
+import { OAuthSocialAction, OAuthSocialSource, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { findTutorialPath, getDbWithModuleLoaded } from 'uiSrc/utils'
-import { openTutorialByPath } from 'uiSrc/slices/panels/insights'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -89,7 +89,7 @@ const NoLibrariesScreen = (props: IProps) => {
           <EuiText className={cx(styles.additionalText, styles.row)} data-testid="no-libraries-action-text">
             {isModuleLoaded
               ? 'Upload a new library to start working with triggers and functions or try the interactive tutorial to learn more.'
-              : 'Create a free Redis Stack database which extends the core capabilities of open-source Redis and try the interactive tutorial to learn how to work with triggers and functions.'}
+              : 'Create a free Redis Stack database which extends the core capabilities of your Redis and try the interactive tutorial to learn how to work with triggers and functions.'}
           </EuiText>
         </div>
         <div className={styles.linksWrapper}>
@@ -130,10 +130,13 @@ const NoLibrariesScreen = (props: IProps) => {
                         className={styles.link}
                         external={false}
                         target="_blank"
-                        href="https://redis.com/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions"
+                        href="https://redis.io/try-free/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_triggers_and_functions"
                         data-testid="get-started-link"
                         onClick={(e) => {
-                          ssoCloudHandlerClick(e, OAuthSocialSource.TriggersAndFunctions)
+                          ssoCloudHandlerClick(e, {
+                            source: OAuthSocialSource.TriggersAndFunctions,
+                            action: OAuthSocialAction.Create
+                          })
                         }}
                       >
                         <EuiButton

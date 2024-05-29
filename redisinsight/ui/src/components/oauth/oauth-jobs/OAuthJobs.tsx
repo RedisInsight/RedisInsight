@@ -5,7 +5,14 @@ import { get } from 'lodash'
 
 import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
-import { createFreeDbJob, createFreeDbSuccess, oauthCloudJobSelector, oauthCloudSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import {
+  createFreeDbJob,
+  createFreeDbSuccess,
+  oauthCloudJobSelector,
+  oauthCloudSelector,
+  setJob,
+  setSocialDialogState
+} from 'uiSrc/slices/oauth/cloud'
 import { CloudImportDatabaseResources } from 'uiSrc/slices/interfaces/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
@@ -13,6 +20,7 @@ import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notific
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 
 const OAuthJobs = () => {
   const {
@@ -70,6 +78,8 @@ const OAuthJobs = () => {
             break
         }
 
+        dispatch(setSSOFlow())
+        dispatch(setSocialDialogState(null))
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         break
 
@@ -110,6 +120,7 @@ const OAuthJobs = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE_FORM_CLOSED,
     })
+    dispatch(setSSOFlow())
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.databaseExists))
   }
 
@@ -117,6 +128,7 @@ const OAuthJobs = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_CREATE_DATABASE_IN_SUBSCRIPTION_FORM_CLOSED,
     })
+    dispatch(setSSOFlow())
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.subscriptionExists))
   }
 

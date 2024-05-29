@@ -1,6 +1,4 @@
-@import "uiSrc/styles/mixins/_global.scss";
-
-@include insights-open(1200px) {
+@include global.insights-open(1200px) {
   .actions {
     width: auto !important;
   }
@@ -12,7 +10,6 @@
   @media only screen and (max-width: 870px) {
     width: 300px;
   }
-
 
   .icon {
     color: var(--iconsDefaultColor);
@@ -48,7 +45,9 @@
   }
 
   .popoverTitle {
-    font: normal normal 500 13px/22px Graphik, sans-serif;
+    font:
+      normal normal 500 13px/22px Graphik,
+      sans-serif;
     color: var(--euiColorFullShade) !important;
   }
 

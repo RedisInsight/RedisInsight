@@ -95,7 +95,7 @@ const testManifest = {
 
 const globalManifest = {
   id: 'custom-tutorials',
-  label: 'MY TUTORIALS',
+  label: 'My tutorials',
   type: 'group',
   _actions: [
     'create',

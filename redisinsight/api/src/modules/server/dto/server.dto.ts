@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PackageType } from 'src/modules/server/models/server';
 
 export class GetServerInfoResponse {
   @ApiProperty({
@@ -35,6 +36,13 @@ export class GetServerInfoResponse {
     example: 'ELECTRON',
   })
   buildType: string;
+
+  @ApiProperty({
+    description: 'Application package type.',
+    enum: PackageType,
+    example: 'app-image',
+  })
+  packageType: PackageType;
 
   @ApiPropertyOptional({
     description: 'Fixed Redis database id.',

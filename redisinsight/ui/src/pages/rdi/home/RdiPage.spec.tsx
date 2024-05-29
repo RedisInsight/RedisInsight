@@ -206,7 +206,7 @@ describe('RdiPage', () => {
     )
   })
 
-  it('should pass password when password did not changed', async () => {
+  it('should not pass password when password did not changed', async () => {
     render(<RdiPage />)
 
     fireEvent.click(screen.getByTestId('edit-instance-1'))

@@ -515,7 +515,6 @@ const VirtualTable = (props: IProps) => {
           >
             {({ onRowsRendered, registerChild }) => (
               <Table
-                // autoHeight={autoHeight}
                 onRowClick={onRowSelect}
                 onRowDoubleClick={() => clearSelectTimeout()}
                 estimatedRowSize={rowHeight}

@@ -53,6 +53,7 @@ export class ServerService implements OnApplicationBootstrap {
       sessionId: this.sessionId,
       appType: ServerService.getAppType(SERVER_CONFIG.buildType),
       appVersion: SERVER_CONFIG.appVersion,
+      packageType: ServerService.getPackageType(SERVER_CONFIG.buildType),
       ...(await this.featuresConfigService.getControlInfo()),
     });
 
@@ -65,6 +66,7 @@ export class ServerService implements OnApplicationBootstrap {
           osPlatform: process.platform,
           buildType: SERVER_CONFIG.buildType,
           port: SERVER_CONFIG.port,
+          packageType: ServerService.getPackageType(SERVER_CONFIG.buildType),
         },
         nonTracking: true,
       });

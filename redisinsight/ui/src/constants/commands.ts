@@ -118,7 +118,7 @@ export enum CommandRSSearchArgument {
 export enum DSL {
   cypher = 'cypher',
   lua = 'lua',
-  sql = 'sql',
+  sqliteFunctions = 'sqliteFunctions',
   jmespath = 'jmespath',
 }
 
@@ -129,6 +129,6 @@ export interface IDSLNaming {
 export const DSLNaming: IDSLNaming = {
   [DSL.cypher]: 'Cypher',
   [DSL.lua]: 'Lua',
-  [DSL.sql]: 'SQL',
+  [DSL.sqliteFunctions]: 'SQLite functions',
   [DSL.jmespath]: 'JMESPath',
 }

@@ -28,12 +28,12 @@ describe('DedicatedEditor', () => {
     expect(render(<DedicatedEditor {...instance(mockedProps)} />)).toBeTruthy()
   })
   it('should not render select languages if langs.length < 2', () => {
-    const { queryByTestId } = render(<DedicatedEditor {...instance(mockedProps)} langs={[DSL.sql]} />)
+    const { queryByTestId } = render(<DedicatedEditor {...instance(mockedProps)} langs={[DSL.sqliteFunctions]} />)
 
     expect(queryByTestId(SELECT_LANGUAGES_TEST_ID!)).not.toBeInTheDocument()
   })
   it('should render select languages if langs.length >= 2', () => {
-    const { queryByTestId } = render(<DedicatedEditor {...instance(mockedProps)} langs={[DSL.sql, DSL.jmespath]} />)
+    const { queryByTestId } = render(<DedicatedEditor {...instance(mockedProps)} langs={[DSL.sqliteFunctions, DSL.jmespath]} />)
 
     expect(queryByTestId(SELECT_LANGUAGES_TEST_ID!)).toBeInTheDocument()
   })

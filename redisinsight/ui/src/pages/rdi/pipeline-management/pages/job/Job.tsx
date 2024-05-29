@@ -134,7 +134,7 @@ const Job = (props: Props) => {
             value={value}
             onChange={handleChange}
             disabled={loading}
-            dedicatedEditorLanguages={[DSL.sql, DSL.jmespath]}
+            dedicatedEditorLanguages={[DSL.sqliteFunctions, DSL.jmespath]}
             dedicatedEditorFunctions={jobFunctions as monacoEditor.languages.CompletionItem[]}
             dedicatedEditorOptions={{
               suggest: { preview: false, showIcons: true, showStatusBar: true }

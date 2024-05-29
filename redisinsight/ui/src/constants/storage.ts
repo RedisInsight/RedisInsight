@@ -31,7 +31,6 @@ enum BrowserStorageItem {
   OAuthAgreement = 'OAuthAgreement',
   insightsPanel = 'insightsPanel',
   capability = 'capability',
-  session = 'session', // TODO: [USER_CONTEXT] add session to browser storage?
 }
 
 export default BrowserStorageItem

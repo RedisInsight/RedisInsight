@@ -70,7 +70,7 @@ export class LocalRdiRepository extends RdiRepository {
   /**
    * @inheritDoc
    */
-  public async update(id: string, rdi: Partial<Rdi>): Promise<Rdi> {
+  public async update(id: string, rdi: Rdi): Promise<Rdi> {
     const oldEntity = await this.modelEncryptor.decryptEntity((await this.repository.findOneBy({ id })), true);
     const newEntity = classToClass(RdiEntity, rdi);
 

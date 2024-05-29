@@ -5,7 +5,7 @@ import { act, fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import ConnectionForm, { Props } from './ConnectionForm'
 
 const mockedProps: Props = {
-  onAddInstance: jest.fn(),
+  onSubmit: jest.fn(),
   onCancel: jest.fn(),
   isLoading: false,
   editInstance: null
@@ -34,7 +34,8 @@ describe('ConnectionForm', () => {
     })
   })
 
-  it('should disable test connection button when form is invalid', async () => {
+  // TODO update when add test connection endpoint
+  it.skip('should disable test connection button when form is invalid', async () => {
     render(<ConnectionForm {...mockedProps} />)
 
     await waitFor(() => {
@@ -91,7 +92,7 @@ describe('ConnectionForm', () => {
     expect(tooltip).toBeInTheDocument()
   })
 
-  it('should show validation tooltip when test connection button is disabled', async () => {
+  it.skip('should show validation tooltip when test connection button is disabled', async () => {
     render(<ConnectionForm {...mockedProps} />)
 
     fireEvent.mouseOver(screen.getByTestId('connection-form-test-button'))
@@ -107,7 +108,7 @@ describe('ConnectionForm', () => {
     expect(screen.getByTestId('connection-form-add-button')).toBeDisabled()
   })
 
-  it('should disable test connection button when isLoading = true', async () => {
+  it.skip('should disable test connection button when isLoading = true', async () => {
     render(<ConnectionForm {...mockedProps} isLoading />)
 
     expect(screen.getByTestId('connection-form-test-button')).toBeDisabled()

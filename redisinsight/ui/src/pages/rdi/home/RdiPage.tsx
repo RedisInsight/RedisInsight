@@ -17,7 +17,7 @@ import {
   sendPageViewTelemetry
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
-import { setTitle } from 'uiSrc/utils'
+import { getFormUpdates, setTitle } from 'uiSrc/utils'
 import EmptyMessage from './empty-message/EmptyMessage'
 import ConnectionForm from './connection-form/ConnectionForm'
 import RdiHeader from './header/RdiHeader'
@@ -47,14 +47,15 @@ const RdiPage = () => {
     setWidth(innerWidth)
   }
 
-  const handleAddInstance = (instance: Partial<RdiInstance>) => {
+  const handleFormSubmit = (instance: Partial<RdiInstance>) => {
     const onSuccess = () => {
       setIsConnectionFormOpen(false)
       setEditInstance(null)
     }
 
     if (editInstance) {
-      dispatch(editInstanceAction({ ...editInstance, ...instance }, onSuccess))
+      const payload = getFormUpdates(instance, editInstance)
+      dispatch(editInstanceAction(editInstance.id, payload, onSuccess))
     } else {
       dispatch(createInstanceAction({ ...instance }, onSuccess))
     }
@@ -153,7 +154,7 @@ const RdiPage = () => {
                 >
                   {isConnectionFormOpen && (
                     <ConnectionForm
-                      onAddInstance={handleAddInstance}
+                      onSubmit={handleFormSubmit}
                       onCancel={handleCloseConnectionForm}
                       editInstance={editInstance}
                       isLoading={loading || loadingChanging}

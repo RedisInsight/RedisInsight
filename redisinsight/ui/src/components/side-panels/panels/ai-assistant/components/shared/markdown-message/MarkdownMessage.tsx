@@ -29,6 +29,7 @@ const MarkdownMessage = (props: Props) => {
   } = props
 
   const [content, setContent] = useState('')
+  const [parseAsIs, setParseAsIs] = useState(false)
 
   const ChatCodeBlock = useCallback((codeProps: CodeProps) =>
     (<CodeBlock {...codeProps} modules={modules} onRunCommand={onRunCommand} />), [modules])
@@ -43,7 +44,7 @@ const MarkdownMessage = (props: Props) => {
         })
         setContent(formated)
       } catch {
-        // ignore
+        setParseAsIs(true)
       }
     }
 
@@ -56,6 +57,10 @@ const MarkdownMessage = (props: Props) => {
     }
   }, [content])
 
+  if (parseAsIs) {
+    return <>{children}</>
+  }
+
   return (
     // @ts-ignore
     <JsxParser
@@ -63,7 +68,7 @@ const MarkdownMessage = (props: Props) => {
       blacklistedTags={['iframe', 'script']}
       autoCloseVoidElements
       jsx={content}
-      onError={(e) => console.error(e)}
+      onError={() => setParseAsIs(true)}
     />
   )
 }

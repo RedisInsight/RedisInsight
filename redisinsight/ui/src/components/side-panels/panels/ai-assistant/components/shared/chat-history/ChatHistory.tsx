@@ -60,13 +60,17 @@ const ChatHistory = (props: Props) => {
             data-testid={`ai-message-${messageType}_${id}`}
           >
             {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
-            <MarkdownMessage
-              onRunCommand={onRunCommand}
-              onMessageRendered={onMessageRendered}
-              modules={modules}
-            >
-              {content}
-            </MarkdownMessage>
+            {messageType === AiChatMessageType.HumanMessage
+              ? content
+              : (
+                <MarkdownMessage
+                  onRunCommand={onRunCommand}
+                  onMessageRendered={onMessageRendered}
+                  modules={modules}
+                >
+                  {content}
+                </MarkdownMessage>
+              )}
           </div>
         </div>
         <ErrorMessage error={error} onRestart={onRestart} />

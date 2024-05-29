@@ -77,7 +77,7 @@ export const getAttributeTopValues = async (client: RedisClient, index: string, 
 
         return {
           distinct_count: parseInt(distinct, 10),
-          top_values: top?.map(([, value, , count]) => ({ value, count })),
+          top_values: top?.map(([, value]) => ({ value })),
         };
       default:
         return {};

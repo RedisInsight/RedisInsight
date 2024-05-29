@@ -31,6 +31,10 @@ export interface CommonProps {
   dedicatedEditorKeywords?: string[]
   dedicatedEditorFunctions?: monacoEditor.languages.CompletionItem[]
   onChangeLanguage?: (langId: DSL) => void
+  shouldOpenDedicatedEditor?: boolean
+  onOpenDedicatedEditor?: () => void
+  onSubmitDedicatedEditor?: (langId: DSL) => void
+  onCloseDedicatedEditor?: (langId: DSL) => void
   'data-testid'?: string
 }
 
@@ -60,6 +64,10 @@ const MonacoEditor = (props: Props) => {
     dedicatedEditorLanguages = [],
     dedicatedEditorKeywords = [],
     dedicatedEditorFunctions = [],
+    shouldOpenDedicatedEditor,
+    onOpenDedicatedEditor,
+    onSubmitDedicatedEditor,
+    onCloseDedicatedEditor,
     'data-testid': dataTestId = 'monaco-editor'
   } = props
 
@@ -81,6 +89,13 @@ const MonacoEditor = (props: Props) => {
   useEffect(() => {
     monacoObjects.current?.editor.updateOptions({ readOnly: !isEditing && (disabled || readOnly) })
   }, [disabled, readOnly, isEditing])
+
+  useEffect(() => {
+    if (shouldOpenDedicatedEditor) {
+      setIsDedicatedEditorOpen(true)
+      onOpenDedicatedEditor?.()
+    }
+  }, [shouldOpenDedicatedEditor])
 
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
@@ -130,6 +145,7 @@ const MonacoEditor = (props: Props) => {
     const { editor } = monacoObjects?.current
 
     setIsDedicatedEditorOpen(true)
+    onOpenDedicatedEditor?.()
     editor.updateOptions({ readOnly: true })
   }
 
@@ -140,13 +156,12 @@ const MonacoEditor = (props: Props) => {
     editor.focus()
   }
 
-  const updateArgFromDedicatedEditor = (value: string = '') => {
+  const updateArgFromDedicatedEditor = (value: string, selectedLang: DSL) => {
     if (!monacoObjects.current) return
     const { editor } = monacoObjects?.current
 
     const model = editor.getModel()
     if (!model) return
-
     const position = editor.getPosition()
 
     editor.updateOptions({ readOnly: false })
@@ -163,15 +178,17 @@ const MonacoEditor = (props: Props) => {
     ])
     setIsDedicatedEditorOpen(false)
     triggerUpdateCursorPosition(editor)
+    onSubmitDedicatedEditor?.(selectedLang)
   }
 
-  const onCancelDedicatedEditor = () => {
+  const onCancelDedicatedEditor = (selectedLang: DSL) => {
     setIsDedicatedEditorOpen(false)
     if (!monacoObjects.current) return
     const { editor } = monacoObjects?.current
 
     editor.updateOptions({ readOnly: false })
     triggerUpdateCursorPosition(editor)
+    onCloseDedicatedEditor?.(selectedLang)
   }
 
   if (monacoEditor?.editor) {

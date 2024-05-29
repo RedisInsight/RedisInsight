@@ -16,10 +16,19 @@ const editor = {
   updateOptions: jest.fn(),
   setSelection: jest.fn(),
   createDecorationsCollection: jest.fn(),
+  getValue: jest.fn().mockReturnValue(''),
+  getModel: jest.fn().mockReturnValue({}),
+  getPosition: jest.fn(),
+  trigger: jest.fn(),
 }
 
 const monacoEditor = {
-  Range: jest.fn().mockImplementation(() => ({})),
+  Range: jest.fn().mockImplementation((startLineNumber, startColumn, endLineNumber, endColumn) => ({
+    startLineNumber,
+    startColumn,
+    endLineNumber,
+    endColumn,
+  })),
   languages: {
     getLanguages: jest.fn(),
     register: jest.fn(),
@@ -71,5 +80,6 @@ export const monaco = {
     colorize: jest.fn().mockImplementation((data) => Promise.resolve(data)),
     defineTheme: jest.fn(),
     setTheme: jest.fn()
-  }
+  },
+  Range: monacoEditor.Range
 }

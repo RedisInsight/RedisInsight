@@ -9,10 +9,11 @@ import {
   setChangedFile,
   deleteChangedFile,
 } from 'uiSrc/slices/rdi/pipeline'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Job, { Props } from './Job'
 
 const mockedProps = mock<Props>()
@@ -133,6 +134,73 @@ describe('Job', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should open dedicated editor', () => {
+    render(<Job {...instance(mockedProps)} deployedJobValue="value" name="jobName" />)
+
+    expect(screen.queryByTestId('draggable-area')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('open-dedicated-editor-btn'))
+
+    expect(screen.getByTestId('draggable-area')).toBeInTheDocument()
+  })
+
+  it('should call proper telemetry events on open dedicated editor', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<Job {...instance(mockedProps)} value="value" rdiInstanceId="id" />)
+
+    fireEvent.click(screen.getByTestId('open-dedicated-editor-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_DEDICATED_EDITOR_OPENED,
+      eventData: {
+        rdiInstanceId: 'id'
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper telemetry events on cancel dedicated editor', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<Job {...instance(mockedProps)} value="value" rdiInstanceId="id" />)
+
+    fireEvent.click(screen.getByTestId('open-dedicated-editor-btn'))
+    fireEvent.click(screen.getByTestId('cancel-btn'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_DEDICATED_EDITOR_CANCELLED,
+      eventData: {
+        rdiInstanceId: 'id',
+        selectedLanguageSyntax: 'sql',
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper telemetry events on submit dedicated editor', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<Job {...instance(mockedProps)} value="value" rdiInstanceId="id" />)
+
+    fireEvent.click(screen.getByTestId('open-dedicated-editor-btn'))
+    await act(() => {
+      fireEvent.click(screen.getByTestId('apply-btn'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.RDI_DEDICATED_EDITOR_SAVED,
+      eventData: {
+        rdiInstanceId: 'id',
+        selectedLanguageSyntax: 'sql',
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should render loading spinner', () => {

@@ -61,9 +61,9 @@ const OAuthCreateDb = (props: Props) => {
     dispatch(setSSOFlow(OAuthSocialAction.Create))
     dispatch(showOAuthProgress(true))
     dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
+    dispatch(setSocialDialogState(null))
 
     if (isRecommended) {
-      dispatch(setSocialDialogState(null))
       dispatch(createFreeDbJob({
         name: CloudJobName.CreateFreeSubscriptionAndDatabase,
         resources: {

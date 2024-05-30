@@ -55,12 +55,6 @@ const CommonAppSubscription = () => {
 
     socketRef.current.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
       const jobName = data.name as unknown
-      const statusCode = get(data, 'error.statusCode')
-
-      if (statusCode === ApiStatusCode.Unauthorized) {
-        dispatch(logoutUser())
-        return
-      }
 
       if (
         jobName === CloudJobName.CreateFreeDatabase

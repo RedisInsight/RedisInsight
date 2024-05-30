@@ -103,7 +103,7 @@ const SourcePipelineDialog = () => {
               data-testid="server-source-pipeline-dialog"
             >
               <EuiIcon type={UploadIcon} size="xl" className={styles.icon} />
-              <EuiText className={styles.text}>Upload from server</EuiText>
+              <EuiText className={styles.text}>Download from server</EuiText>
             </div>
             <div
               role="button"

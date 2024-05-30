@@ -1,20 +1,22 @@
 import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Validator } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import { Validator } from 'class-validator';
+import { Request } from 'express';
 import { SessionMetadata } from 'src/common/models';
 
 const validator = new Validator();
 
-export const sessionMetadataFromRequest = (request): SessionMetadata => {
-  // TODO: [USER_CONTEXT] What if request session is undefined?
+export const sessionMetadataFromRequest = (request: Request): SessionMetadata => {
+  // TODO: make sure this doesn't break local build
+  const userId = request.res?.locals?.session?.account?.userId.toString();
+
   const requestSession = {
-    sessionId: request.headers['session-id'],
-    userId: request.headers['user-id'],
-    uniqueId: request.headers['unique-id'],
+    userId,
+    sessionId: userId, // TODO: check if cookie can be referenced for jsessionid
   };
 
   // todo: do not forget to deal with session vs sessionMetadata property
-  const session = plainToClass(SessionMetadata, request.session || requestSession);
+  const session = plainToClass(SessionMetadata, requestSession);
 
   const errors = validator.validateSync(session, {
     whitelist: false, // we need this to allow additional fields if needed for flexibility

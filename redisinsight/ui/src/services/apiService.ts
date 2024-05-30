@@ -46,11 +46,6 @@ export const requestInterceptor = (config: AxiosRequestConfig) => {
     if (window.windowId) {
       config.headers[CustomHeaders.WindowId] = window.windowId
     }
-
-    // TODO: [USER_CONTEXT] Where should these come from?
-    config.headers['session-id'] = 'session-id'
-    config.headers['user-id'] = 'user-id'
-    config.headers['unique-id'] = 'unique-id'
   }
 
   return config

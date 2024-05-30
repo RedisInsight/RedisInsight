@@ -28,7 +28,7 @@ export class SingleUserAuthMiddleware implements NestMiddleware {
     }
 
     res.locals.session = {
-      account: <ISessionMetadata>Object.freeze(plainToClass(SessionMetadata, {
+      data: <ISessionMetadata>Object.freeze(plainToClass(SessionMetadata, {
         userId: DEFAULT_USER_ID,
         sessionId: DEFAULT_SESSION_ID,
       })),

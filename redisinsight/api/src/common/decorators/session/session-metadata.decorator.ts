@@ -8,7 +8,7 @@ const validator = new Validator();
 
 export const sessionMetadataFromRequest = (request: Request): SessionMetadata => {
   // TODO: make sure this doesn't break local build
-  const userId = request.res?.locals?.session?.account?.userId.toString();
+  const userId = request.res?.locals?.session?.data?.userId.toString();
 
   const requestSession = {
     userId,

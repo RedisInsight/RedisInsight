@@ -8,33 +8,35 @@ import { commonUrl } from '../../../../helpers/conf';
 import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { DatabaseHelper } from '../../../../helpers';
+import { RdiApiRequests } from '../../../../helpers/api/api-rdi';
 
 const rdiInstancesListPage = new RdiInstancesListPage();
 const browserActions = new BrowserActions();
 const rdiInstancePage = new RdiInstancePage();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
+const rdiApiRequests = new RdiApiRequests();
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
-    url: 'url',
+    url: 'http://localhost:4000',
     username: 'username',
-    password: 'password',
+    password: 'passwordPassword',
     version: '1.2'
 };
 const rdiInstance2: RdiInstance = {
     alias: 'test',
-    url: 'http://test',
+    url: 'http://localhost:4000',
     username: 'name',
-    password: 'pass',
+    password: 'pass2024',
     version: '1.2'
 };
 
 const rdiInstance3: RdiInstance = {
     alias: 'first',
-    url: 'http://localhost:8080/',
+    url: 'http://localhost:4000',
     username: 'name',
-    password: 'pass',
+    password: 'passPassword2024',
     version: '1.2'
 };
 //skip the tests until rdi integration is added
@@ -44,6 +46,7 @@ fixture.skip `Rdi instance`
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
+        await rdiApiRequests.deleteAllRdiApi();
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
 
     })
@@ -120,6 +123,12 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     await t.click(rdiInstancesListPage.AddRdiInstance.addInstanceButton);
 
     rdiInstance.alias = newAliasName;
+    const addRdiInstance = await rdiInstancesListPage.getRdiInstanceValuesByIndex(1);
+
+    await t.expect(addRdiInstance.alias).eql(rdiInstance.alias, 'added alias is not corrected');
+    await t.expect(addRdiInstance.lastConnection?.length).gt(1, 'last connection is not displayed');
+    await t.expect(addRdiInstance.url).eql(rdiInstance.url, 'added alias is not corrected');
+    await t.expect(addRdiInstance.version).eql(rdiInstance.version, 'added alias is not corrected');
 
     const sortedByAliasTypeUpdated = [rdiInstance3.alias, rdiInstance.alias, rdiInstance2.alias];
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();

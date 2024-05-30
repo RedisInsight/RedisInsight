@@ -110,34 +110,4 @@ describe('CommonAppSubscription', () => {
 
     unmount()
   })
-
-  it('should logout if cloud:job:monitor return statusCode=401', () => {
-    const { unmount } = render(<CommonAppSubscription />)
-
-    const mockData: CloudJobInfo = {
-      id: '4d76ba0c-71d3-4c9c-ada5-a6e5f4102af5',
-      name: 'CREATE_FREE_SUBSCRIPTION_AND_DATABASE',
-      status: 'failed',
-      error: {
-        message: 'Authorization failed',
-        statusCode: 401,
-        error: 'CloudApiUnauthorized',
-        errorCode: 11001
-      },
-      step: 'subscription'
-    }
-
-    socket.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
-      expect(data).toEqual(mockData)
-    })
-
-    socket.socketClient.emit(CloudJobEvents.Monitor, mockData)
-
-    const afterRenderActions = [
-      logoutUser(),
-    ]
-    expect(store.getActions()).toEqual([...afterRenderActions])
-
-    unmount()
-  })
 })

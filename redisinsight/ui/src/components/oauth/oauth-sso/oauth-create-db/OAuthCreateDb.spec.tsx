@@ -129,6 +129,7 @@ describe('OAuthCreateDb', () => {
       setSSOFlow(OAuthSocialAction.Create),
       showOAuthProgress(true),
       addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
+      setSocialDialogState(null),
       getPlans()
     ]
     expect(store.getActions()).toEqual(expectedActions)

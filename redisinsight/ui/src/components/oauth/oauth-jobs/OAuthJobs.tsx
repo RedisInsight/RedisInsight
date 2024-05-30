@@ -8,7 +8,7 @@ import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
 import {
   createFreeDbJob,
   createFreeDbSuccess,
-  logoutUser,
+  logoutUserAction,
   oauthCloudJobSelector,
   oauthCloudSelector,
   setJob,
@@ -56,7 +56,7 @@ const OAuthJobs = () => {
         const statusCode = get(error, 'statusCode', 0) as number
 
         if (statusCode === ApiStatusCode.Unauthorized) {
-          dispatch(logoutUser())
+          dispatch(logoutUserAction())
         }
 
         // eslint-disable-next-line sonarjs/no-nested-switch

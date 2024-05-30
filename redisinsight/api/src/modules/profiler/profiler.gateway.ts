@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import { Socket, Server } from 'socket.io';
 import {
+  ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
@@ -8,16 +9,22 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Body, Logger } from '@nestjs/common';
 import { MonitorSettings } from 'src/modules/profiler/models/monitor-settings';
 import { ProfilerClientEvents } from 'src/modules/profiler/constants';
 import { ProfilerService } from 'src/modules/profiler/profiler.service';
-import config from 'src/utils/config';
-import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { WSSessionMetadata } from 'src/modules/auth/session-metadata/decorators/ws-session-metadata.decorator';
+import config, { Config } from 'src/utils/config';
+import { SessionMetadata } from 'src/common/models';
 
-const SOCKETS_CONFIG = config.get('sockets');
+const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
 
-@WebSocketGateway({ path: SOCKETS_CONFIG.path, namespace: 'monitor', cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({
+  path: SOCKETS_CONFIG.path,
+  namespace: 'monitor',
+  cors: SOCKETS_CONFIG.cors,
+  serveClient: SOCKETS_CONFIG.serveClient,
+})
 export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 
@@ -25,14 +32,15 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   constructor(
     private service: ProfilerService,
-    private readonly constantsProvider: ConstantsProvider,
   ) {}
 
   @SubscribeMessage(ProfilerClientEvents.Monitor)
-  async monitor(client: Socket, settings: MonitorSettings = null): Promise<any> {
+  async monitor(
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+      @ConnectedSocket() client: Socket,
+      @Body() settings: MonitorSettings = null,
+  ): Promise<any> {
     try {
-      const sessionMetadata = this.constantsProvider.getSystemSessionMetadata(); // todo: [USER_CONTEXT]
-
       await this.service.addListenerForInstance(
         sessionMetadata,
         ProfilerGateway.getInstanceId(client),
@@ -47,7 +55,7 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(ProfilerClientEvents.Pause)
-  async pause(client: Socket): Promise<any> {
+  async pause(@WSSessionMetadata() sessionMetadata: SessionMetadata, @ConnectedSocket() client: Socket): Promise<any> {
     try {
       await this.service.removeListenerFromInstance(ProfilerGateway.getInstanceId(client), client.id);
       return { status: 'ok' };
@@ -58,7 +66,9 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(ProfilerClientEvents.FlushLogs)
-  async flushLogs(client: Socket): Promise<any> {
+  async flushLogs(
+    @WSSessionMetadata() sessionMetadata: SessionMetadata, @ConnectedSocket() client: Socket,
+  ): Promise<any> {
     try {
       await this.service.flushLogs(client.id);
       return { status: 'ok' };

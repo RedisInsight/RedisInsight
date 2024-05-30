@@ -5,6 +5,7 @@ import {
   createFreeDbJob,
   fetchPlans,
   oauthCloudUserSelector,
+  setSocialDialogState,
   showOAuthProgress
 } from 'uiSrc/slices/oauth/cloud'
 
@@ -62,6 +63,7 @@ const OAuthCreateDb = (props: Props) => {
     dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
 
     if (isRecommended) {
+      dispatch(setSocialDialogState(null))
       dispatch(createFreeDbJob({
         name: CloudJobName.CreateFreeSubscriptionAndDatabase,
         resources: {

@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
-import { remove } from 'lodash'
-import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import { get, remove } from 'lodash'
+import { ApiStatusCode, CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -13,7 +13,7 @@ import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommend
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { CustomHeaders } from 'uiSrc/constants/api'
-import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { logoutUser, oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobName } from 'uiSrc/electron/constants'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 
@@ -55,6 +55,13 @@ const CommonAppSubscription = () => {
 
     socketRef.current.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
       const jobName = data.name as unknown
+      const statusCode = get(data, 'error.statusCode')
+
+      if (statusCode === ApiStatusCode.Unauthorized) {
+        dispatch(logoutUser())
+        return
+      }
+
       if (
         jobName === CloudJobName.CreateFreeDatabase
         || jobName === CloudJobName.CreateFreeSubscriptionAndDatabase

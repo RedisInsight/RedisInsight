@@ -8,12 +8,14 @@ import { setNewNotificationReceived, setLastReceivedNotification } from 'uiSrc/s
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { NotificationType } from 'uiSrc/slices/interfaces'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { SocketEvent } from 'uiSrc/constants'
+import { CloudJobEvents, SocketEvent } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
+import { logoutUser } from 'uiSrc/slices/oauth/cloud'
 import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 
+import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import CommonAppSubscription from './CommonAppSubscription'
 
 let store: typeof mockedStore
@@ -103,6 +105,36 @@ describe('CommonAppSubscription', () => {
     const afterRenderActions = [
       addUnreadRecommendations({ totalUnread: 10 }),
       addUnreadRecommendations({ totalUnread: 20 }),
+    ]
+    expect(store.getActions()).toEqual([...afterRenderActions])
+
+    unmount()
+  })
+
+  it('should logout if cloud:job:monitor return statusCode=401', () => {
+    const { unmount } = render(<CommonAppSubscription />)
+
+    const mockData: CloudJobInfo = {
+      id: '4d76ba0c-71d3-4c9c-ada5-a6e5f4102af5',
+      name: 'CREATE_FREE_SUBSCRIPTION_AND_DATABASE',
+      status: 'failed',
+      error: {
+        message: 'Authorization failed',
+        statusCode: 401,
+        error: 'CloudApiUnauthorized',
+        errorCode: 11001
+      },
+      step: 'subscription'
+    }
+
+    socket.on(CloudJobEvents.Monitor, (data: CloudJobInfo) => {
+      expect(data).toEqual(mockData)
+    })
+
+    socket.socketClient.emit(CloudJobEvents.Monitor, mockData)
+
+    const afterRenderActions = [
+      logoutUser(),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
 

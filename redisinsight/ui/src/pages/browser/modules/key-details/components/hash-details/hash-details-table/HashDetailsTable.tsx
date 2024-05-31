@@ -1,10 +1,10 @@
-import { EuiButtonIcon, EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
-import React, { ChangeEvent, Ref, useCallback, useEffect, useRef, useState } from 'react'
+import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
+
+import { isNumber } from 'lodash'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
@@ -62,6 +62,7 @@ import {
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
+import { EditableTextArea } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/hash/dto'
 
 import styles from './styles.module.scss'
@@ -79,12 +80,12 @@ const cellCache = new CellMeasurerCache({
 interface IHashField extends HashFieldDto {}
 
 export interface Props {
-  isFooterOpen: boolean
+  isFooterOpen?: boolean
   onRemoveKey: () => void
 }
 
 const HashDetailsTable = (props: Props) => {
-  const { isFooterOpen, onRemoveKey } = props
+  const { onRemoveKey } = props
 
   const {
     total,
@@ -106,11 +107,9 @@ const HashDetailsTable = (props: Props) => {
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
-  const [areaValue, setAreaValue] = useState<string>('')
-  const [, forceUpdate] = useState({})
 
   const formattedLastIndexRef = useRef(OVER_RENDER_BUFFER_COUNT)
-  const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
+  const tableRef: Ref<any> = useRef(null)
 
   const dispatch = useDispatch()
 
@@ -139,10 +138,15 @@ const HashDetailsTable = (props: Props) => {
     clearCache()
   }
 
-  const clearCache = () => setTimeout(() => {
+  const clearCache = (rowIndex?: number) => {
+    if (isNumber(rowIndex)) {
+      cellCache.clear(rowIndex, 1)
+      tableRef.current?.recomputeRowHeights(rowIndex)
+      return
+    }
+
     cellCache.clearAll()
-    forceUpdate({})
-  }, 0)
+  }
 
   const closePopover = useCallback(() => {
     setDeleting('')
@@ -174,39 +178,22 @@ const HashDetailsTable = (props: Props) => {
   }
 
   const handleEditField = useCallback((
-    rowIndex: Nullable<number> = null,
+    rowIndex: number,
     editing: boolean,
-    valueItem?: RedisResponseBuffer
   ) => {
     setEditingIndex(editing ? rowIndex : null)
     dispatch(setSelectedKeyRefreshDisabled(editing))
 
-    if (editing) {
-      const value = bufferToSerializedFormat(viewFormat, valueItem, 4)
-      setAreaValue(value)
-
-      setTimeout(() => {
-        textAreaRef?.current?.focus()
-      }, 0)
-    }
-
-    // hack to update scrollbar padding
-    clearCache()
-    setTimeout(() => {
-      clearCache()
-    }, 0)
+    clearCache(rowIndex)
   }, [viewFormat])
 
-  const handleApplyEditField = (field = '') => {
+  const handleApplyEditField = (field = '', value: string, rowIndex: number) => {
     const data: AddFieldsToHashDto = {
       keyName: key,
-      fields: [{ field, value: stringToSerializedBufferFormat(viewFormat, areaValue) }],
+      fields: [{ field, value: stringToSerializedBufferFormat(viewFormat, value) }],
     }
-    dispatch(updateHashFieldsAction(data, () => onHashEditedSuccess(field)))
-  }
 
-  const onHashEditedSuccess = (fieldName = '') => {
-    handleEditField(fieldName, false)
+    dispatch(updateHashFieldsAction(data, () => handleEditField(rowIndex, false)))
   }
 
   const handleRemoveIconClick = () => {
@@ -281,13 +268,6 @@ const HashDetailsTable = (props: Props) => {
     }
   }
 
-  const updateTextAreaHeight = () => {
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = '0px'
-      textAreaRef.current.style.height = `${textAreaRef.current?.scrollHeight || 0}px`
-    }
-  }
-
   const onColResizeEnd = (sizes: RelativeWidthSizes) => {
     dispatch(updateKeyDetailsSizes({
       type: KeyTypes.Hash,
@@ -342,6 +322,7 @@ const HashDetailsTable = (props: Props) => {
       minWidth: 120,
       truncateText: true,
       alignment: TableCellAlignment.Left,
+      className: 'noPadding',
       render: function Value(
         _name: string,
         { field: fieldItem, value: valueItem }: IHashField,
@@ -349,80 +330,40 @@ const HashDetailsTable = (props: Props) => {
         rowIndex = 0
       ) {
         const { value: decompressedFieldItem } = decompressingBuffer(fieldItem, compressor)
-        const { value: decompressedValueItem } = decompressingBuffer(valueItem, compressor)
+        const { value: decompressedValueItem, isCompressed } = decompressingBuffer(valueItem, compressor)
         const value = bufferToString(valueItem)
         const field = bufferToString(decompressedFieldItem)
         // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(decompressedValueItem, viewFormatProp, { expanded })
+        const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
+          && !isEqualBuffers(valueItem, stringToBuffer(value))
+        const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
 
-        if (rowIndex === editingIndex) {
-          const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
-            && !isEqualBuffers(valueItem, stringToBuffer(value))
-
-          setTimeout(() => cellCache.clear(rowIndex, 1), 0)
-          updateTextAreaHeight()
-
-          return (
-            <AutoSizer disableHeight onResize={() => setTimeout(updateTextAreaHeight, 0)}>
-              {({ width }) => (
-                <div style={{ width }}>
-                  <StopPropagation>
-                    <InlineItemEditor
-                      expandable
-                      preventOutsideClick
-                      disableFocusTrap
-                      declineOnUnmount={false}
-                      initialValue={value}
-                      controlsPosition="inside"
-                      controlsDesign="separate"
-                      placeholder="Enter Value"
-                      fieldName="fieldValue"
-                      isLoading={updateLoading}
-                      isDisabled={disabled}
-                      disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
-                      controlsClassName={styles.textAreaControls}
-                      onDecline={() => handleEditField(rowIndex, false)}
-                      onApply={() => handleApplyEditField(fieldItem)}
-                      approveText={TEXT_INVALID_VALUE}
-                      approveByValidation={() =>
-                        formattingBuffer(
-                          stringToSerializedBufferFormat(viewFormat, areaValue),
-                          viewFormat
-                        )?.isValid}
-                    >
-                      <EuiTextArea
-                        fullWidth
-                        name="value"
-                        id="value"
-                        resize="none"
-                        placeholder="Enter Value"
-                        value={areaValue}
-                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                          cellCache.clearAll()
-                          setAreaValue(e.target.value)
-                          updateTextAreaHeight()
-                        }}
-                        disabled={updateLoading}
-                        inputRef={textAreaRef}
-                        className={cx(styles.textArea, { [styles.areaWarning]: disabled })}
-                        spellCheck={false}
-                        data-testid="hash-value-editor"
-                        style={{ height: textAreaRef.current?.scrollHeight || 0 }}
-                      />
-                    </InlineItemEditor>
-                  </StopPropagation>
-                </div>
-              )}
-            </AutoSizer>
-          )
-        }
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
-            <div
-              style={{ display: 'flex' }}
-              data-testid={`hash-field-value-${field}`}
-            >
+          <EditableTextArea
+            initialValue={bufferToSerializedFormat(viewFormat, valueItem, 4)}
+            isLoading={updateLoading}
+            isDisabled={disabled}
+            isEditing={rowIndex === editingIndex}
+            isEditDisabled={!isEditable || updateLoading}
+            disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
+            onDecline={() => handleEditField(rowIndex, false)}
+            onApply={(value) => handleApplyEditField(fieldItem, value, rowIndex)}
+            approveText={TEXT_INVALID_VALUE}
+            approveByValidation={(value) =>
+              formattingBuffer(
+                stringToSerializedBufferFormat(viewFormat, value),
+                viewFormat
+              )?.isValid}
+            onEdit={(isEditing) => handleEditField(rowIndex, isEditing)}
+            editToolTipContent={!isEditable ? editTooltipContent : null}
+            onUpdateTextAreaHeight={() => clearCache(rowIndex)}
+            field={field}
+            testIdPrefix="hash"
+          >
+            <div className="innerCellAsCell">
               {!expanded && (
                 <EuiToolTip
                   title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
@@ -431,12 +372,12 @@ const HashDetailsTable = (props: Props) => {
                   content={tooltipContent}
                   anchorClassName="truncateText"
                 >
-                  <>{formattedValue?.substring?.(0, 200) ?? formattedValue}</>
+                  <>{(formattedValue as any)?.substring?.(0, 200) ?? formattedValue}</>
                 </EuiToolTip>
               )}
               {expanded && formattedValue}
             </div>
-          </EuiText>
+          </EditableTextArea>
         )
       },
     },
@@ -445,28 +386,14 @@ const HashDetailsTable = (props: Props) => {
       label: '',
       headerClassName: 'value-table-header-actions',
       className: 'actions',
-      absoluteWidth: 95,
-      minWidth: 95,
-      maxWidth: 95,
-      render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _, rowIndex?: number) {
+      absoluteWidth: 64,
+      minWidth: 64,
+      maxWidth: 64,
+      render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _) {
         const field = bufferToString(fieldItem, viewFormat)
-        const { isCompressed } = decompressingBuffer(valueItem, compressor)
-        const isEditable = !isCompressed && isFormatEditable(viewFormat)
-        const tooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
         return (
           <StopPropagation>
             <div className="value-table-actions">
-              <EuiToolTip content={!isEditable ? tooltipContent : null} data-testid="hash-edit-tooltip">
-                <EuiButtonIcon
-                  iconType="pencil"
-                  aria-label="Edit field"
-                  className="editFieldBtn"
-                  color="primary"
-                  disabled={updateLoading || !isEditable}
-                  onClick={() => handleEditField(rowIndex, true, valueItem)}
-                  data-testid={`edit-hash-button-${field}`}
-                />
-              </EuiToolTip>
               <PopoverDelete
                 header={createDeleteFieldHeader(fieldItem as RedisString)}
                 text={createDeleteFieldMessage(key ?? '')}
@@ -497,7 +424,6 @@ const HashDetailsTable = (props: Props) => {
           'key-details-table',
           'hash-fields-container',
           styles.container,
-          { footerOpened: isFooterOpen }
         )}
       >
         {loading && (
@@ -511,6 +437,8 @@ const HashDetailsTable = (props: Props) => {
         <VirtualTable
           hideProgress
           expandable
+          autoHeight
+          tableRef={tableRef}
           keyName={key as RedisResponseBuffer}
           headerHeight={headerHeight}
           rowHeight={rowHeight}

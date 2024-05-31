@@ -48,6 +48,8 @@ export interface ITableColumn {
 }
 
 export interface IProps {
+  autoHeight?: boolean
+  tableRef?: React.Ref<any>
   loading: boolean
   scanned?: number
   columns: ITableColumn[]

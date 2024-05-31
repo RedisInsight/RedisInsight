@@ -251,10 +251,14 @@ describe('KeyDetailsWrapper', () => {
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId(/edit-hash-button-1/))
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId(/hash_content-value-1/))
+    })
 
-    expect(screen.getByTestId(/hash-value-editor/)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(/hash-value-editor/), { target: { value: 'val123' } })
+    fireEvent.click(screen.getByTestId(/hash_edit-btn-1/))
+
+    expect(screen.getByTestId(/hash_value-editor-1/)).toBeInTheDocument()
+    fireEvent.change(screen.getByTestId(/hash_value-editor-1/), { target: { value: 'val123' } })
 
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()
@@ -305,10 +309,14 @@ describe('KeyDetailsWrapper', () => {
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId(/edit-list-button-0/))
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId(/list_content-value-0/))
+    })
 
-    expect(screen.getByTestId(/element-value-editor/)).toBeInTheDocument()
-    fireEvent.change(screen.getByTestId(/element-value-editor/), { target: { value: 'val123' } })
+    fireEvent.click(screen.getByTestId(/list_edit-btn-0/))
+
+    expect(screen.getByTestId(/list_value-editor-0/)).toBeInTheDocument()
+    fireEvent.change(screen.getByTestId(/list_value-editor-0/), { target: { value: 'val123' } })
 
     expect(queryByTestId('apply-btn')).toBeInTheDocument()
     expect(queryByTestId('apply-btn')).toBeDisabled()

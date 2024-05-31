@@ -59,32 +59,15 @@ export abstract class RedisConnectionStrategy {
    * @param clientMetadata
    */
   static generateRedisConnectionName(clientMetadata: ClientMetadata) {
-    try {
-      const items = [
-        CONNECTION_NAME_GLOBAL_PREFIX,
-        clientMetadata?.context || 'custom',
-        clientMetadata?.databaseId?.substring(0, 8),
-      ];
-
-      if (clientMetadata?.uniqueId) {
-        items.push(clientMetadata?.uniqueId?.substring(0, 4));
-      }
-
-      return items.join('-').toLowerCase();
-
-      // todo: enhance client name generation based on code below
-      // return [
-      //   CONNECTION_NAME_GLOBAL_PREFIX,
-      //   clientMetadata?.context || 'custom',
-      //   clientMetadata?.databaseId?.substring(0, 8),
-      //   clientMetadata?.db >= 0 ? clientMetadata.db : '',
-      //   clientMetadata?.uniqueId?.substring(0, 4) || '',
-      //   clientMetadata?.sessionMetadata?.userId?.substring(0, 4) || '',
-      //   clientMetadata?.sessionMetadata?.sessionId?.substring(0, 4) || '',
-      //   clientMetadata?.sessionMetadata?.uniqueId?.substring(0, 4) || '',
-      // ].join('-').toLowerCase();
-    } catch (e) {
-      return CONNECTION_NAME_GLOBAL_PREFIX;
-    }
+    return [
+      CONNECTION_NAME_GLOBAL_PREFIX,
+      clientMetadata?.context || 'custom',
+      clientMetadata?.databaseId?.substring(0, 8) || '',
+      clientMetadata?.db >= 0 ? clientMetadata.db : '',
+      clientMetadata?.uniqueId?.substring(0, 4) || '',
+      clientMetadata?.sessionMetadata?.userId?.substring(0, 4) || '',
+      clientMetadata?.sessionMetadata?.sessionId?.substring(0, 4) || '',
+      clientMetadata?.sessionMetadata?.uniqueId?.substring(0, 4) || '',
+    ].join('-').toLowerCase();
   }
 }

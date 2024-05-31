@@ -14,7 +14,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
     selectedKey,
     parentPath = '',
     isDownloaded,
-    expadedRows,
+    expandedRows,
     leftPadding = 0,
     onClickRemoveKey,
     onJsonKeyExpandAndCollapse,
@@ -42,7 +42,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
   const renderJSONObject = (data: any, type: string) => (
     <RejsonObject
-      expadedRows={expadedRows}
+      expandedRows={expandedRows}
       type={type as ObjectTypes}
       isDownloaded={isDownloaded}
       leftPadding={nextLeftPadding}

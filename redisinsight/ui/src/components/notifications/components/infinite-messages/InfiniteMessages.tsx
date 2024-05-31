@@ -10,6 +10,7 @@ import {
   EuiTitle
 } from '@elastic/eui'
 import { find } from 'lodash'
+import cx from 'classnames'
 import { CloudJobStep } from 'uiSrc/electron/constants'
 import ExternalLink from 'uiSrc/components/base/external-link'
 import ChampagneIcon from 'uiSrc/assets/img/icons/champagne.svg'
@@ -42,7 +43,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
           <EuiFlexItem grow={false}>
-            <EuiLoadingSpinner className="infiniteMessage__icon" />
+            <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} />
           </EuiFlexItem>
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">
@@ -67,7 +68,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
           <EuiFlexItem grow={false}>
-            <EuiLoadingSpinner className="infiniteMessage__icon" />
+            <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} />
           </EuiFlexItem>
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">
@@ -259,7 +260,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
           <EuiFlexItem grow={false}>
-            <EuiLoadingSpinner className="infiniteMessage__icon" />
+            <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} />
           </EuiFlexItem>
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">

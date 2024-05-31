@@ -29,7 +29,7 @@ describe('ErrorMessage', () => {
     }
     render(<ErrorMessage onRestart={jest.fn} error={error} />)
 
-    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent(AI_CHAT_ERRORS.rateLimit(100))
+    expect(screen.getByTestId('ai-chat-error-message')).toHaveTextContent('Exceeded rate limit. Try again in 1 minute.')
 
     expect(screen.queryByTestId('ai-chat-error-restart-session-btn')).not.toBeInTheDocument()
     expect(screen.queryByTestId('ai-chat-error-report-link')).not.toBeInTheDocument()

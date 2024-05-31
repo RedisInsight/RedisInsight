@@ -24,12 +24,7 @@ const NoIndexesInitialMessage = (props: Props) => {
       <EuiText size="xs">Hi!</EuiText>
       <EuiText size="xs">I am here to help you get started with data querying. I noticed that you have no indexes created.</EuiText>
       <EuiSpacer />
-      <EuiText size="xs">Would you like to load the sample data to see what Redis Copilot can help you do?</EuiText>
-      <EuiSpacer />
-      <LoadSampleData anchorClassName={styles.anchorClassName} onSuccess={onSuccess} />
-      <EuiSpacer />
-      <EuiText size="xs">
-        Explore several common Redis use cases with our
+      <EuiText size="xs">Would you like to load the sample data and indexes (from this
         {' '}
         <EuiLink
           color="subdued"
@@ -40,8 +35,11 @@ const NoIndexesInitialMessage = (props: Props) => {
         >
           tutorial
         </EuiLink>
-        , utilizing the provided sample data.
+        ) to see what Redis Copilot can help you do?
       </EuiText>
+      <EuiSpacer />
+      <LoadSampleData anchorClassName={styles.anchorClassName} onSuccess={onSuccess} />
+      <EuiSpacer />
     </div>
   )
 }

@@ -22,9 +22,8 @@ import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { SAMPLE_DATA_TUTORIAL } from 'uiSrc/constants'
 import NoIndexesInitialMessage from './components/no-indexes-initial-message'
 import ExpertChatHeader from './components/expert-chat-header'
-import InitialMessage from './components/initial-message'
 
-import { EXPERT_CHAT_AGREEMENTS } from '../texts'
+import { EXPERT_CHAT_AGREEMENTS, EXPERT_CHAT_INITIAL_MESSAGE } from '../texts'
 import { ChatForm, ChatHistory } from '../shared'
 
 import styles from './styles.module.scss'
@@ -231,7 +230,7 @@ const ExpertChat = () => {
           modules={modules}
           initialMessage={isNoIndexes
             ? <NoIndexesInitialMessage onClickTutorial={handleClickTutorial} onSuccess={getIndexes} />
-            : <InitialMessage onClickTutorial={handleClickTutorial} />}
+            : EXPERT_CHAT_INITIAL_MESSAGE}
           inProgressMessage={inProgressMessage}
           history={messages}
           scrollDivRef={scrollDivRef}

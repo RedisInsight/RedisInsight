@@ -3,7 +3,7 @@ import { cloneDeep } from 'lodash'
 import { useSelector } from 'react-redux'
 import { AxiosError } from 'axios'
 import { cleanup, clearStoreActions, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { logoutUser, oauthCloudJobSelector, setJob, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { RootState } from 'uiSrc/slices/store'
@@ -132,6 +132,7 @@ describe('OAuthJobs', () => {
     const expectedActions = [
       addErrorNotification({ response: { data: error } } as AxiosError),
       setSSOFlow(),
+      setSocialDialogState(null),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -163,6 +164,7 @@ describe('OAuthJobs', () => {
     const expectedActions = [
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
       setSSOFlow(),
+      setSocialDialogState(null),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -194,6 +196,41 @@ describe('OAuthJobs', () => {
     const expectedActions = [
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
       setSSOFlow(),
+      setSocialDialogState(null),
+      removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+    ]
+    expect(clearStoreActions(store.getActions())).toEqual(
+      clearStoreActions(expectedActions)
+    )
+  })
+
+  it('should call logoutUser when statusCode is 401', async () => {
+    const mockDatabaseId = '123'
+    const error = {
+      statusCode: 401,
+      errorCode: CustomErrorCodes.CloudSubscriptionAlreadyExistsFree,
+      resource: {
+        databaseId: mockDatabaseId
+      }
+    };
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: ''
+    }))
+
+    const { rerender } = render(<OAuthJobs />);
+
+    (oauthCloudJobSelector as jest.Mock).mockImplementation(() => ({
+      status: CloudJobStatus.Failed,
+      error,
+    }))
+
+    rerender(<OAuthJobs />)
+
+    const expectedActions = [
+      logoutUser(),
+      addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
+      setSSOFlow(),
+      setSocialDialogState(null),
       removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
     ]
     expect(clearStoreActions(store.getActions())).toEqual(

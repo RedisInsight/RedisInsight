@@ -199,6 +199,10 @@ $footerHeight: 38px;
     padding: 18px 4px 18px 20px;
   }
 
+  .tableRowColumn {
+    min-height: 100%;
+  }
+
   .tableRowCell {
     padding: 8px 6px 8px 20px !important;
     min-height: 42px;

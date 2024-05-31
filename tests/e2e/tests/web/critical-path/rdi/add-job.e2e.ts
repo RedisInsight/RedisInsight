@@ -147,7 +147,9 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     await t.expect(await MonacoEditor.getTextFromMonaco()).eql(sqlText, 'Text from SQL editor not applied');
 
     //verify that autocomplete works for JMESPath
-    await t.pressKey('shift+space');
+    await t.hover(rdiInstancePage.sqlEditorButton);
+    await rdiInstancePage.verifyTooltipContainsText('Open a dedicated SQL or JMESPath editor:');
+    await t.click(rdiInstancePage.sqlEditorButton);
     await t.click(rdiInstancePage.languageDropdown);
     await t.click(rdiInstancePage.jmesPathOption);
     await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, JMESPathText);

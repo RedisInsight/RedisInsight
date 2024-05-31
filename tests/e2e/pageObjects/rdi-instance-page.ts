@@ -34,6 +34,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     dedicatedLanguageSelect = Selector('[data-testid=dedicated-editor-language-select]');
     languageDropdown = Selector('[class*=_selectLanguage]');
     jmesPathOption = Selector('[id=jmespath]');
+    sqlEditorButton = Selector('[data-testid=open-dedicated-editor-btn]');
 
     successDeployNotification = Selector('[data-testid=success-deploy-pipeline-notification]');
     errorDeployNotification = Selector('[data-test-subj=toast-error-deploy]');

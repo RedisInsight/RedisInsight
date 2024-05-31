@@ -37,4 +37,12 @@ export class CloudRequestUtm {
   @IsString()
   @IsNotEmpty()
   amp?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  package?: string;
 }

@@ -5,13 +5,21 @@ import { get } from 'lodash'
 
 import { CloudJobStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { fetchInstancesAction } from 'uiSrc/slices/instances/instances'
-import { createFreeDbJob, createFreeDbSuccess, oauthCloudJobSelector, oauthCloudSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import {
+  createFreeDbJob,
+  createFreeDbSuccess,
+  logoutUserAction,
+  oauthCloudJobSelector,
+  oauthCloudSelector,
+  setJob,
+  setSocialDialogState
+} from 'uiSrc/slices/oauth/cloud'
 import { CloudImportDatabaseResources } from 'uiSrc/slices/interfaces/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
+import { ApiStatusCode, BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
 import { localStorageService } from 'uiSrc/services'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 
@@ -42,10 +50,15 @@ const OAuthJobs = () => {
         break
 
       case CloudJobStatus.Failed:
-
         const errorCode = get(error, 'errorCode', 0) as CustomErrorCodes
         const subscriptionId = get(error, 'resource.subscriptionId', 0)
         const resources = get(error, 'resource', {}) as CloudImportDatabaseResources
+        const statusCode = get(error, 'statusCode', 0) as number
+
+        if (statusCode === ApiStatusCode.Unauthorized) {
+          dispatch(logoutUserAction())
+        }
+
         // eslint-disable-next-line sonarjs/no-nested-switch
         switch (errorCode) {
           case CustomErrorCodes.CloudDatabaseAlreadyExistsFree:
@@ -72,6 +85,7 @@ const OAuthJobs = () => {
         }
 
         dispatch(setSSOFlow())
+        dispatch(setSocialDialogState(null))
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         break
 

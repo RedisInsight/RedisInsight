@@ -30,7 +30,7 @@
   :global(.euiButton.euiButton-isDisabled.euiButton--fill.euiButton--secondary) {
     background: var(--browserComponentActive) !important;
     color: var(--wbActiveIconColor) !important;
-    opacity: 1;
+    opacity: 1 !important;
   }
 }
 

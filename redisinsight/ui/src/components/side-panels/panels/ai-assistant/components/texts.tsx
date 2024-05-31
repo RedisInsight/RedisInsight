@@ -79,3 +79,13 @@ export const EXPERT_CHAT_AGREEMENTS = (
     </EuiText>
   </>
 )
+
+export const EXPERT_CHAT_INITIAL_MESSAGE = (
+  <>
+    <EuiText size="xs">Hi!</EuiText>
+    <EuiText size="xs">I am here to help you get started with data querying.</EuiText>
+    <EuiText size="xs">Type <b>/help</b> to get more info on what questions I can answer.</EuiText>
+    <EuiSpacer />
+    <EuiText size="xs">With <span style={{ color: 'red' }}>&hearts;</span>, your Redis Copilot!</EuiText>
+  </>
+)

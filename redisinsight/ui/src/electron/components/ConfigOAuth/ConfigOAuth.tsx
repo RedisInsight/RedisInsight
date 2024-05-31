@@ -51,6 +51,7 @@ const ConfigOAuth = () => {
     if (isSelectAccout) return
 
     if (ssoFlowRef.current === OAuthSocialAction.SignIn) {
+      dispatch(setSSOFlow(undefined))
       closeInfinityNotification()
       return
     }
@@ -90,7 +91,6 @@ const ConfigOAuth = () => {
 
   const closeInfinityNotification = () => {
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-    dispatch(setSSOFlow(undefined))
   }
 
   const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {

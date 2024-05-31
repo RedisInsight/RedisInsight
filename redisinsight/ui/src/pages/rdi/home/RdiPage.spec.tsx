@@ -206,6 +206,28 @@ describe('RdiPage', () => {
     )
   })
 
+  it('should not pass password when password did not changed', async () => {
+    render(<RdiPage />)
+
+    fireEvent.click(screen.getByTestId('edit-instance-1'))
+    await screen.findByTestId('connection-form')
+
+    await act(() => {
+      fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
+
+      // submit form
+      fireEvent.click(screen.getByTestId('connection-form-add-button'))
+    })
+
+    expect(editInstanceAction).toBeCalledWith(
+      '1',
+      {
+        name: 'name',
+      },
+      expect.any(Function)
+    )
+  })
+
   it('should call create instance when editInstance is not provided', async () => {
     render(<RdiPage />)
 

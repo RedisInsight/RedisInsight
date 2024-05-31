@@ -24,8 +24,8 @@ export interface Props {
   langId?: DSL
   langs?: DSL[]
   onChangeLanguage?: (langId: DSL) => void
-  onSubmit: (query?: string) => void
-  onCancel: () => void
+  onSubmit: (query: string, langId: DSL) => void
+  onCancel: (langId: DSL) => void
   initialHeight: number
   customOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   keywords?: string[]
@@ -109,7 +109,7 @@ const DedicatedEditor = (props: Props) => {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-      onCancel()
+      onCancel(selectedLang.id as DSL)
     }
   }
 
@@ -119,7 +119,7 @@ const DedicatedEditor = (props: Props) => {
       .split('\n')
       .map((line: string, i: number) => ((i > 0 && !notCommandRegEx.test(line)) ? `\t${line}` : line))
       .join('\n')
-    onSubmit(val || '')
+    onSubmit(val || '', selectedLang.id as DSL)
   }
 
   const editorDidMount = (
@@ -258,7 +258,7 @@ const DedicatedEditor = (props: Props) => {
                     color="primary"
                     aria-label="Cancel editing"
                     className={styles.declineBtn}
-                    onClick={onCancel}
+                    onClick={() => onCancel(selectedLang.id as DSL)}
                     data-testid="cancel-btn"
                   />
                   <EuiButtonIcon

@@ -17,7 +17,7 @@ import {
   sendPageViewTelemetry
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
-import { getFormUpdates, setTitle } from 'uiSrc/utils'
+import { setTitle } from 'uiSrc/utils'
 import EmptyMessage from './empty-message/EmptyMessage'
 import ConnectionForm from './connection-form/ConnectionForm'
 import RdiHeader from './header/RdiHeader'
@@ -60,8 +60,7 @@ const RdiPage = () => {
     }
 
     if (editInstance) {
-      const payload = getFormUpdates(instance, editInstance)
-      dispatch(editInstanceAction(editInstance.id, payload, onSuccess))
+      dispatch(editInstanceAction(editInstance.id, instance, onSuccess))
     } else {
       dispatch(createInstanceAction({ ...instance }, onSuccess))
     }

@@ -76,7 +76,7 @@ const FetchPipelinePopover = () => {
           aria-labelledby="Upload pipeline button"
           data-testid="upload-pipeline-btn"
         >
-          Upload from server
+          Download from server
         </EuiButtonEmpty>
       )}
       onButtonClick={handleRefreshWarning}

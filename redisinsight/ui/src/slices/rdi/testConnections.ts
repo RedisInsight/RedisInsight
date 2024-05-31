@@ -1,8 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { getApiErrorMessage, getRdiUrl, isStatusSuccessful, transformConnectionResults } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  getRdiUrl,
+  isStatusSuccessful,
+  Maybe,
+  Nullable,
+  transformConnectionResults
+} from 'uiSrc/utils'
 import {
   IStateRdiTestConnections,
   TestConnectionsResponse,
@@ -31,10 +38,13 @@ const rdiTestConnectionsSlice = createSlice({
       state.results = payload
       state.error = ''
     },
-    testConnectionsFailure: (state, { payload }) => {
+    testConnectionsFailure: (state, { payload }: PayloadAction<Maybe<string>>) => {
       state.loading = false
-      state.error = payload
       state.results = null
+
+      if (payload) {
+        state.error = payload
+      }
     },
   }
 })
@@ -50,6 +60,9 @@ export const {
 // The reducer
 export default rdiTestConnectionsSlice.reducer
 
+// eslint-disable-next-line import/no-mutable-exports
+export let testConnectionsController: Nullable<AbortController> = null
+
 // Asynchronous thunk action
 export function testConnectionsAction(
   rdiInstanceId: string,
@@ -58,23 +71,36 @@ export function testConnectionsAction(
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
+    dispatch(testConnections())
+
     try {
-      dispatch(testConnections())
+      testConnectionsController?.abort()
+      testConnectionsController = new AbortController()
+
       const { status, data } = await apiService.post<TestConnectionsResponse>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_TEST_CONNECTIONS),
         config,
+        {
+          signal: testConnectionsController.signal
+        }
       )
+
+      testConnectionsController = null
 
       if (isStatusSuccessful(status)) {
         dispatch(testConnectionsSuccess(transformConnectionResults(data?.sources)))
         onSuccessAction?.()
       }
     } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
-      dispatch(testConnectionsFailure(errorMessage))
-      onFailAction?.()
+      if (!axios.isCancel(_err)) {
+        const error = _err as AxiosError
+        const errorMessage = getApiErrorMessage(error)
+        dispatch(addErrorNotification(error))
+        dispatch(testConnectionsFailure(errorMessage))
+        onFailAction?.()
+      } else {
+        dispatch(testConnectionsFailure())
+      }
     }
   }
 }

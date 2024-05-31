@@ -466,7 +466,7 @@ const Query = (props: Props) => {
       >
         <div className={styles.input} data-testid="query-input-container" ref={input}>
           <MonacoEditor
-            language={MonacoLanguage.Redis}
+            language={MonacoLanguage.Redis as string}
             theme={theme === Theme.Dark ? 'dark' : 'light'}
             value={query}
             options={options}

@@ -5,6 +5,7 @@ import { RdiNavigationPanel } from './components/navigation/rdi-navigation-panel
 import { TestConnectionPanel } from './components/rdi/test-connection-panel';
 import { RdiHeader } from './components/rdi/rdi-header';
 import { PipelineManagementPanel } from './components/rdi/pipeline-management-panel';
+import { MonacoEditor } from './components/monaco-editor';
 
 export class RdiInstancePage extends BaseOverviewPage {
 
@@ -12,6 +13,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     TestConnectionPanel = new TestConnectionPanel();
     PipelineManagementPanel = new PipelineManagementPanel();
     RdiHeader = new RdiHeader();
+    MonacoEditor = new MonacoEditor();
 
     dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');

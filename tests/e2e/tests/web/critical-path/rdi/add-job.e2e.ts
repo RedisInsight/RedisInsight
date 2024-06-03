@@ -6,7 +6,6 @@ import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { RdiPopoverOptions, RdiTemplatePipelineType, RedisOverviewPage } from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { DatabaseHelper } from '../../../../helpers';
-import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 
 const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
@@ -98,7 +97,7 @@ test('Verify that user insert template for jobs', async() => {
     await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.WriteBehind);
 
     //verify uniq templates words - should be undated when templates are added
-    const enteredText = await MonacoEditor.getTextFromMonaco();
+    const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).contains(templateWords, 'template is incorrect');
 
     await t.click(rdiInstancePage.templateButton);
@@ -109,17 +108,20 @@ test('Verify that user can change job config', async() => {
     const textForMonaco = 'here should be a job';
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
-    let text = await MonacoEditor.getTextFromMonaco();
+    let text = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(text).eql('', 'monacoEditor for the job is not empty');
-    await MonacoEditor.sendTextToMonaco(rdiInstancePage.jobsInput, textForMonaco, false);
-    text = await MonacoEditor.getTextFromMonaco();
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.jobsInput, textForMonaco, false);
+    text = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(text).eql(textForMonaco, 'user can not enter a text');
 });
+// https://redislabs.atlassian.net/browse/RI-5770
 test('Verify that user can open an additional editor to work with SQL and JMESPath expressions', async() => {
     const jobName = 'testJob';
     const sqlText = 'SELECT test FROM test1';
-    const JMESPathText = 'ba';
-    const JMESPathAutoCompleteText = 'base64_decode';
+    const SQLiteText = 's';
+    const SQLiteAutoCompleteText = 'STRFTIME(format, time_value)';
+    const JMESPathText = 'r';
+    const JMESPathAutoCompleteText = 'regex_replace';
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
     await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
@@ -136,15 +138,15 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     await t.expect(rdiInstancePage.dedicatedLanguageSelect.textContent).eql('SQL', 'SQL is not set by default');
 
     // Verify that user can close the additional editor
-    await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
     await t.click(rdiInstancePage.EditorButton.cancelBtn);
     await t.expect(rdiInstancePage.draggableArea.exists).notOk('SQL/JMESPath editor is displayed after closing');
-    await t.expect(await MonacoEditor.getTextFromMonaco()).eql('', 'Text from canceled SQL editor applied');
+    await t.expect(await rdiInstancePage.MonacoEditor.getTextFromMonaco()).eql('', 'Text from canceled SQL editor applied');
 
     await t.pressKey('shift+space');
-    await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
     await t.click(rdiInstancePage.EditorButton.applyBtn);
-    await t.expect(await MonacoEditor.getTextFromMonaco()).eql(sqlText, 'Text from SQL editor not applied');
+    await t.expect(await rdiInstancePage.MonacoEditor.getTextFromMonaco()).eql(sqlText, 'Text from SQL editor not applied');
 
     //verify that autocomplete works for JMESPath
     await t.hover(rdiInstancePage.sqlEditorButton);
@@ -152,8 +154,21 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     await t.click(rdiInstancePage.sqlEditorButton);
     await t.click(rdiInstancePage.languageDropdown);
     await t.click(rdiInstancePage.jmesPathOption);
-    await MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, JMESPathText);
+    // Start type characters and select command
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, JMESPathText);
+    // Verify that the list with auto-suggestions is displayed
+    await t.expect(rdiInstancePage.MonacoEditor.monacoSuggestion.count).eql(3, 'Auto-suggestions are not displayed');
     await t.pressKey('tab');
     await t.click(rdiInstancePage.EditorButton.applyBtn);
-    await t.expect(await MonacoEditor.getTextFromMonaco()).contains(JMESPathAutoCompleteText, 'Text from SQL editor not applied');
+    await t.expect(await rdiInstancePage.MonacoEditor.getTextFromMonaco()).contains(JMESPathAutoCompleteText, 'Text from JMESPath editor not applied');
+
+    // Verify that autocomplete works for SQLite functions
+    await t.click(rdiInstancePage.sqlEditorButton);
+    // Start type characters and select command
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, SQLiteText);
+    // Verify that the list with auto-suggestions is displayed
+    await t.expect(rdiInstancePage.MonacoEditor.monacoSuggestion.count).eql(3, 'Auto-suggestions are not displayed');
+    await t.pressKey('tab');
+    await t.click(rdiInstancePage.EditorButton.applyBtn);
+    await t.expect(await rdiInstancePage.MonacoEditor.getTextFromMonaco()).contains(SQLiteAutoCompleteText, 'Text from SQLite editor not applied');
 });

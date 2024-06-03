@@ -12,7 +12,7 @@ export class BrowserPage extends InstancePage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssJsonValue = '[data-testid=value-as-json]';
+    cssJsonValue = '[data-testid=json-primitive-value]';
     cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
     cssKeyBadge = '[data-testid^=badge-]';
@@ -199,13 +199,13 @@ export class BrowserPage extends InstancePage {
     keyLengthDetails = Selector('[data-testid=key-length-text]');
     keyNameInTheList = Selector(this.cssSelectorKey);
     hashFieldsList = Selector('[data-testid^=hash-field-] span');
-    hashValuesList = Selector('[data-testid^=hash-field-value-] span');
+    hashValuesList = Selector('[data-testid^=hash_content-value-] span');
     hashField = Selector('[data-testid^=hash-field-]').nth(0);
-    hashFieldValue = Selector('[data-testid^=hash-field-value-]');
+    hashFieldValue = Selector('[data-testid^=hash_content-value-]');
     setMembersList = Selector('[data-testid^=set-member-value-]');
     zsetMembersList = Selector('[data-testid^=zset-member-value-]');
-    zsetScoresList = Selector('[data-testid^=zset-score-value-]');
-    listElementsList = Selector('[data-testid^=list-element-value-]');
+    zsetScoresList = Selector('[data-testid^=zset_content-value-]');
+    listElementsList = Selector('[data-testid^=list_content-value-]');
     jsonKeyValue = Selector('[data-testid=json-data]');
     jsonError = Selector('[data-testid=edit-json-error]');
     tooltip = Selector('[role=tooltip]', { timeout: 500 });
@@ -645,11 +645,12 @@ export class BrowserPage extends InstancePage {
     }
 
     /**
-     * Edit Hash key value from details
-     * @param value The value of the key
+     * Edit Hash key the first value from details
+     * @param value The  new value of the key
      */
     async editHashKeyValue(value: string): Promise<void> {
         await t
+            .hover(this.hashFieldValue)
             .click(this.editHashButton)
             .typeText(this.hashFieldValueEditor, value, { replace: true, paste: true })
             .click(this.applyButton);

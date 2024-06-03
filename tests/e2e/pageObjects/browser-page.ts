@@ -160,8 +160,7 @@ export class BrowserPage extends InstancePage {
     ttlText = Selector('[data-testid=key-ttl-text] span');
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
-    hashFieldValueEditor = Selector('[data-testid=hash-value-editor]');
-    listElementEditor = Selector('[data-testid=hash-value-editor]');
+    hashFieldValueEditor = Selector('[data-testid^=hash_value-editor]');
     listKeyElementInput = Selector('[data-testid=element]');
     listKeyElementEditorInput = Selector('[data-testid=element-value-editor]');
     stringKeyValueInput = Selector('[data-testid=string-value]');

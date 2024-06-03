@@ -116,7 +116,7 @@ formattersWithTooltipSet.forEach(formatter => {
         // Verify for JSON, Msgpack, Protobuf, PHP serialized, Java serialized object, Pickle, Vector 32-bit, Vector 64-bit formatters
         const failedMessage = `Failed to convert to ${formatter.format}`;
         for (let i = 0; i < keysData.length; i++) {
-            const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}-][data-testid*=${keysData[i].data}]`);
+            const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}][data-testid*=${keysData[i].data}]`);
             // Open key details and select formatter
             await browserPage.openKeyDetailsByKeyName(keysData[i].keyName);
             await browserPage.selectFormatter(formatter.format);
@@ -138,7 +138,7 @@ binaryFormattersSet.forEach(formatter => {
             // Verify for ASCII, HEX, Binary formatters
             // Verify for Hash, List, Set, ZSet, String, Stream keys
             for (let i = 0; i < keysData.length; i++) {
-                const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}-][data-testid*=${keysData[i].data}]`);
+                const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}][data-testid*=${keysData[i].data}]`);
                 await browserPage.openKeyDetailsByKeyName(keysData[i].keyName);
                 // Verify that value not formatted with default formatter
                 await browserPage.selectFormatter(defaultFormatter);

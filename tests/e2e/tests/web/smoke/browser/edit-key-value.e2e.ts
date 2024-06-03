@@ -57,7 +57,9 @@ test('Verify that user can edit Zset Key member', async t => {
     let zsetScore = await browserPage.getZsetKeyScore();
     await t.expect(zsetScore).eql(scoreBefore, 'Zset Score is incorrect');
     // Edit Zset key score
-    await browserPage.editZsetKeyScore(scoreAfter);
+    await t.hover(browserPage.zsetScoresList);
+    await t.click(browserPage.editZsetButton);
+    await t.typeText(browserPage.inlineItemEditor, scoreAfter, { replace: true, paste: true });
     // Verify that refresh is disabled for Zset key when editing member
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 
@@ -76,7 +78,9 @@ test('Verify that user can edit Hash Key field', async t => {
     let keyValue = await browserPage.getHashKeyValue();
     await t.expect(keyValue).eql(keyValueBefore, 'The Hash value is incorrect');
     // Edit Hash key value
-    await browserPage.editHashKeyValue(keyValueAfter);
+    await t.hover(browserPage.hashFieldValue);
+    await t.click(browserPage.editHashButton);
+    await t.typeText(browserPage.hashFieldValueEditor, keyValueAfter, { replace: true, paste: true });
     // Verify that refresh is disabled for Hash key when editing field
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 
@@ -94,7 +98,9 @@ test('Verify that user can edit List Key element', async t => {
     let keyValue = await browserPage.getListKeyValue();
     await t.expect(keyValue).eql(keyValueBefore, 'The List value is incorrect');
     // Edit List key value
-    await browserPage.editListKeyValue(keyValueAfter);
+    await t.hover(browserPage.listElementsList);
+    await t.click(browserPage.editListButton);
+    await t.typeText(browserPage.listKeyElementEditorInput, keyValueAfter, { replace: true, paste: true });
     // Verify that refresh is disabled for List key when editing element
     await t.expect(browserPage.refreshKeyButton.hasAttribute('disabled')).ok('Refresh button not disabled');
 

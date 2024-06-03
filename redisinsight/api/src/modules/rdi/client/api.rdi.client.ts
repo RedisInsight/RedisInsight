@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
 import { decode } from 'jsonwebtoken';
+import { Request } from 'express';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -102,13 +103,21 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async testConnections(config: string): Promise<RdiTestConnectionsResponseDto> {
+  async testConnections(config: string, req: Request): Promise<RdiTestConnectionsResponseDto> {
     try {
-      const response = await this.client.post(RdiUrl.TestConnections, config);
+      const abortController = new AbortController();
+      req.socket.on('close', () => {
+        abortController.abort();
+      });
+      const response = await this.client.post(
+        RdiUrl.TestConnections,
+        config,
+        { signal: abortController.signal },
+      );
 
       const actionId = response.data.action_id;
 
-      return this.pollActionStatus(actionId);
+      return this.pollActionStatus(actionId, abortController.signal);
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -169,15 +178,21 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  private async pollActionStatus(actionId: string): Promise<any> {
+  private async pollActionStatus(actionId: string, abortSignal: AbortSignal): Promise<any> {
     const startTime = Date.now();
     while (true) {
+      if (abortSignal.aborted) {
+        throw new RdiPipelineInternalServerErrorException();
+      }
       if (Date.now() - startTime > MAX_POLLING_TIME) {
         throw new RdiPipelineTimeoutException();
       }
 
       try {
-        const response = await this.client.get(`${RdiUrl.Action}/${actionId}`);
+        const response = await this.client.get(
+          `${RdiUrl.Action}/${actionId}`,
+          { signal: abortSignal },
+        );
         const { status, data, error } = response.data;
 
         if (status === 'failed') {

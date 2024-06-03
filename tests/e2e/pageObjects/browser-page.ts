@@ -12,7 +12,8 @@ export class BrowserPage extends InstancePage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssJsonValue = '[data-testid=json-primitive-value]';
+    cssPrimitiveJsonValue = '[data-testid=json-primitive-value]';
+    cssJsonValue = '[data-testid=value-as-json]';
     cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
     cssKeyBadge = '[data-testid^=badge-]';
@@ -92,9 +93,9 @@ export class BrowserPage extends InstancePage {
     editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
     saveButton = Selector('[data-testid=save-btn]');
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
-    editHashButton = Selector('[data-testid^=edit-hash-button-]');
-    editZsetButton = Selector('[data-testid^=zset-edit-button-]');
-    editListButton = Selector('[data-testid^=edit-list-button-]');
+    editHashButton = Selector('[data-testid^=hash_edit-btn-]');
+    editZsetButton = Selector('[data-testid^=zset_edit-btn-]');
+    editListButton = Selector('[data-testid^=edit_list-btn-]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');
@@ -614,11 +615,12 @@ export class BrowserPage extends InstancePage {
     }
 
     /**
-     * Edit Zset key score from details
-     * @param value The value of the key
+     * Edit Zset key  the firstscore from details
+     * @param value The new value of the key
      */
     async editZsetKeyScore(value: string): Promise<void> {
         await t
+            .hover(this.zsetScoresList)
             .click(this.editZsetButton)
             .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
             .click(this.applyButton);
@@ -667,6 +669,7 @@ export class BrowserPage extends InstancePage {
      */
     async editListKeyValue(value: string): Promise<void> {
         await t
+            .hover(this.listElementsList)
             .click(this.editListButton)
             .typeText(this.listKeyElementEditorInput, value, { replace: true, paste: true })
             .click(this.applyButton);

@@ -48,7 +48,7 @@ formattersHighlightedSet.forEach(formatter => {
             // Verify for JSON and PHP serialized
             // Verify for Hash, List, Set, ZSet, String, Stream keys
             for (const key of keysData) {
-                const valueSelector = Selector(`[data-testid^=${key.keyName.split('-')[0]}-][data-testid*=${key.data}]`);
+                const valueSelector = Selector(`[data-testid^=${key.keyName.split('-')[0]}][data-testid*=${key.data}]`);
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 // Verify that value not formatted with default formatter
                 await browserPage.selectFormatter(defaultFormatter);

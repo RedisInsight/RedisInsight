@@ -7,12 +7,12 @@ import { SessionMetadata } from 'src/common/models';
 const validator = new Validator();
 
 export const sessionMetadataFromRequest = (request: Request): SessionMetadata => {
-  // TODO: make sure this doesn't break local build
   const userId = request.res?.locals?.session?.data?.userId.toString();
+  const sessionId = request.res?.locals?.session?.data?.sessionId.toString();
 
   const requestSession = {
     userId,
-    sessionId: userId, // TODO: check if cookie can be referenced for jsessionid
+    sessionId,
   };
 
   // todo: do not forget to deal with session vs sessionMetadata property

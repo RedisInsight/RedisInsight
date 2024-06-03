@@ -17,7 +17,7 @@ describe('RedisConnectionStrategy', () => {
 
     const result = RedisConnectionStrategy.generateRedisConnectionName(clientMetadata);
 
-    expect(result).toBe('redisinsight-browser-db123-2-uniq-user-sess-uniq');
+    expect(result).toBe('redisinsight-browser-db123-2-uniquecm-usersm-sessionsm-uniquesm');
   });
 
   // type system should prevent this from ever happening,

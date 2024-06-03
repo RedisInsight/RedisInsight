@@ -29,7 +29,7 @@ export function getRandomParagraph(sentences: number): string {
 
 export const keyTypes = [
     { textType: KeyTypesTexts.Hash, keyName: 'hash', data: 'value' },
-    { textType: KeyTypesTexts.List, keyName: 'list', data: 'value' },
+    { textType: KeyTypesTexts.List, keyName: 'list_', data: 'value' },
     { textType: KeyTypesTexts.Set, keyName: 'set', data: 'member' },
     { textType: KeyTypesTexts.ZSet, keyName: 'zset', data: 'member' },
     { textType: KeyTypesTexts.String, keyName: 'string', data: 'value' },

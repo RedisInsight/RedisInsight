@@ -95,7 +95,7 @@ export class BrowserPage extends InstancePage {
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     editHashButton = Selector('[data-testid^=hash_edit-btn-]');
     editZsetButton = Selector('[data-testid^=zset_edit-btn-]');
-    editListButton = Selector('[data-testid^=edit_list-btn-]');
+    editListButton = Selector('[data-testid^=lust_edit-btn-]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
     patternModeBtn = Selector('[data-testid=search-mode-pattern-btn]');
     redisearchModeBtn = Selector('[data-testid=search-mode-redisearch-btn]');

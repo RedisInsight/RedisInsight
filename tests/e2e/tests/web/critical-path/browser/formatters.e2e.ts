@@ -1,5 +1,5 @@
 import { Selector } from 'testcafe';
-import { keyLength, rte } from '../../../../helpers/constants';
+import { keyLength, KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../../helpers/keys';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
@@ -117,12 +117,19 @@ formattersWithTooltipSet.forEach(formatter => {
         const failedMessage = `Failed to convert to ${formatter.format}`;
         for (let i = 0; i < keysData.length; i++) {
             const valueSelector = Selector(`[data-testid^=${keysData[i].keyName.split('-')[0]}][data-testid*=${keysData[i].data}]`);
+            let innerValueSelector = Selector('');
+            if(keysData[i].keyName.split('-')[0] !== 'string'){
+                innerValueSelector  = valueSelector.find('span');
+            }
+            else{
+                innerValueSelector = valueSelector;
+            }
             // Open key details and select formatter
             await browserPage.openKeyDetailsByKeyName(keysData[i].keyName);
             await browserPage.selectFormatter(formatter.format);
             // Verify that not valid value is not formatted
             await t.expect(valueSelector.find(browserPage.cssJsonValue).exists).notOk(`${keysData[i].textType} Value is formatted to ${formatter.format}`);
-            await t.hover(valueSelector, { offsetX: 5 });
+            await t.hover(innerValueSelector);
             // Verify that tooltip with convertion failed message displayed
             await t.expect(browserPage.tooltip.textContent).contains(failedMessage, `"${failedMessage}" is not displayed in tooltip`);
         }
@@ -192,14 +199,21 @@ notEditableFormattersSet.forEach(formatter => {
     test(`Verify that user see edit icon disabled for all keys when ${formatter.format} selected`, async t => {
         // Verify for Protobuf, Java serialized, Pickle, Vector 32-bit, Vector 64-bit
         // Verify for Hash, List, ZSet, String keys
+        const editableValueKeyTypes = [
+            KeyTypesTexts.Hash,
+            KeyTypesTexts.List,
+            KeyTypesTexts.String
+        ];
         for (const key of keysData) {
-            if (key.textType === 'Hash' || key.textType === 'List' || key.textType === 'String') {
+            if (editableValueKeyTypes.includes(key.textType)) {
                 const editBtn = (key.textType === 'String')
                     ? browserPage.editKeyValueButton
-                    : Selector(`[data-testid*=edit-][data-testid*=${key.keyName.split('-')[0]}]`, { timeout: 500 });
+                    : Selector(`[data-testid*=${key.keyName.split('-')[0]}][data-testid*=edit-]`, { timeout: 500 });
+                const valueSelector = Selector(`[data-testid^=${key.keyName.split('-')[0]}][data-testid*=${key.data}]`);
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that edit button disabled
+                await t.hover(valueSelector);
                 await t.expect(editBtn.hasAttribute('disabled')).ok(`Key ${key.textType} is enabled for ${formatter.format} formatter`);
                 // Hover on disabled button
                 await t.hover(editBtn);

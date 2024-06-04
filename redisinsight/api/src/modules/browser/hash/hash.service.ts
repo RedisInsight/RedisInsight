@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import * as semverCompare from 'node-version-compare';
 import { chunk, flatMap, isNull } from 'lodash';
 import {
   catchAclError, catchMultiTransactionError, isRedisGlob, unescapeRedisGlob,
@@ -16,7 +17,6 @@ import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { RedisString } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
@@ -27,10 +27,10 @@ import {
   GetHashFieldsDto,
   GetHashFieldsResponse,
   HashFieldDto,
-  HashScanResponse,
+  HashScanResponse, UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { RedisClient } from 'src/modules/redis/client';
+import { RedisClient, RedisClientCommand } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
@@ -56,16 +56,31 @@ export class HashService {
       await checkIfKeyExists(keyName, client);
 
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
+
+      const commands = [
+        [BrowserToolHashCommands.HSet, keyName, ...args] as RedisClientCommand,
+      ];
+
       if (expire) {
-        await this.createHashWithExpiration(
-          client,
-          keyName,
-          args,
-          expire,
-        );
-      } else {
-        await this.createSimpleHash(client, keyName, args);
+        commands.push([BrowserToolKeysCommands.Expire, keyName, expire] as RedisClientCommand)
       }
+
+      fields.forEach((field) => {
+        if (field.expire) {
+          commands.push([
+            BrowserToolHashCommands.HExpire,
+            keyName,
+            field.expire,
+            'fields',
+            '1',
+            field.field,
+          ] as RedisClientCommand);
+        }
+      });
+
+      const transactionResults = await client.sendPipeline(commands);
+      // todo: rethink
+      catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to create Hash data type.');
       return null;
@@ -107,6 +122,26 @@ export class HashService {
         result = { ...result, ...scanResult };
       }
 
+      try {
+        const info = await client.getInfo();
+        if (info?.['server']?.['redis_version'] && semverCompare('7.4', info['server']['redis_version']) < 1) {
+          const ttls = await client.sendCommand([
+            BrowserToolHashCommands.HTtl,
+            result.keyName,
+            'fields',
+            result.fields.length,
+            ...result.fields.map(({ field }) => field),
+          ]) as string[];
+
+          ttls.forEach((ttl, index) => {
+            result.fields[index].expire = +ttl;
+          });
+        }
+      } catch (e) {
+        this.logger.warn('Unable to get ttl for hash fields');
+        // ignore error
+      }
+
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.BIG_HASHES,
@@ -136,12 +171,71 @@ export class HashService {
       await checkIfKeyNotExists(keyName, client);
 
       const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
-      await client.sendCommand([BrowserToolHashCommands.HSet, keyName, ...args]);
+
+      const commands = [
+        [BrowserToolHashCommands.HSet, keyName, ...args] as RedisClientCommand,
+      ];
+
+      fields.forEach((field) => {
+        if (field.expire) {
+          commands.push([
+            BrowserToolHashCommands.HExpire,
+            keyName,
+            field.expire,
+            'fields',
+            '1',
+            field.field,
+          ] as RedisClientCommand);
+        }
+      });
+
+      const transactionResults = await client.sendPipeline(commands);
+      // todo: rethink
+      catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to add fields to Hash data type.');
       return null;
     } catch (error) {
       this.logger.error('Failed to add fields to Hash data type.', error);
+      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+        throw new BadRequestException(error.message);
+      }
+      throw catchAclError(error);
+    }
+  }
+
+  public async updateTtl(
+    clientMetadata: ClientMetadata,
+    dto: UpdateHashFieldsTtlDto,
+  ): Promise<void> {
+    try {
+      this.logger.log('Updating hash fields ttl.');
+      const { keyName, fields } = dto;
+
+      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+      await checkIfKeyNotExists(keyName, client);
+
+      const commands = [];
+
+      fields.forEach(({ field, expire }) => {
+        if (expire === -1) {
+          commands.push([BrowserToolHashCommands.HPersist, keyName, 'fields', '1', field]);
+        } else {
+          commands.push([BrowserToolHashCommands.HExpire, keyName, expire, 'fields', '1', field]);
+        }
+      });
+
+      if (commands.length) {
+        const transactionResults = await client.sendPipeline(commands);
+        // todo: rethink
+        catchMultiTransactionError(transactionResults);
+      }
+
+      this.logger.log('Successfully updated hash fields ttl');
+      return null;
+    } catch (error) {
+      this.logger.error('Failed to update hash fields ttl.', error);
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -171,27 +265,6 @@ export class HashService {
       }
       throw catchAclError(error);
     }
-  }
-
-  public async createSimpleHash(
-    client: RedisClient,
-    key: RedisString,
-    args: RedisString[],
-  ): Promise<void> {
-    await client.sendCommand([BrowserToolHashCommands.HSet, key, ...args]);
-  }
-
-  public async createHashWithExpiration(
-    client: RedisClient,
-    key: RedisString,
-    args: RedisString[],
-    expire,
-  ): Promise<void> {
-    const transactionResults = await client.sendPipeline([
-      [BrowserToolHashCommands.HSet, key, ...args],
-      [BrowserToolKeysCommands.Expire, key, expire],
-    ]);
-    catchMultiTransactionError(transactionResults);
   }
 
   public async scanHash(

@@ -3,6 +3,7 @@ import { isNumber } from 'lodash';
 import { RedisString } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { convertRedisInfoReplyToObject } from 'src/utils';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -39,6 +40,8 @@ export type RedisClientCommandReply = string | number | Buffer | null | undefine
 
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
+
+  protected info: object;
 
   protected lastTimeUsed: number;
 
@@ -124,6 +127,22 @@ export abstract class RedisClient extends EventEmitter2 {
   abstract pUnsubscribe(channel: string): Promise<void>;
 
   abstract getCurrentDbIndex(): Promise<number>;
+
+  /**
+   * Get redis database info
+   * Uses cache by default
+   * @param force
+   */
+  public async getInfo(force = false): Promise<object> {
+    if (force || !this.info) {
+      this.info = convertRedisInfoReplyToObject(await this.call(
+        ['info'],
+        { replyEncoding: 'utf8' },
+      ) as string);
+    }
+
+    return this.info;
+  }
 
   /**
    * Prepare clientMetadata to be used for generating id and other operations with clients

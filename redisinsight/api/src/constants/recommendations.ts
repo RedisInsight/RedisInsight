@@ -15,11 +15,13 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   SET_PASSWORD: 'setPassword',
   RTS: 'RTS',
   REDIS_VERSION: 'redisVersion',
+  TRY_RDI: 'tryRDI',
   SEARCH_INDEXES: 'searchIndexes',
   SEARCH_JSON: 'searchJSON',
   STRING_TO_JSON: 'stringToJson',
   SEARCH_VISUALIZATION: 'searchVisualization',
   SEARCH_HASH: 'searchHash',
+
 });
 
 export const ONE_NODE_RECOMMENDATIONS = [

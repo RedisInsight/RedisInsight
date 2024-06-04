@@ -8,6 +8,8 @@ import { Database } from 'src/modules/database/models/database';
 import { ClientMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import { FeatureService } from 'src/modules/feature/feature.service';
+import { KnownFeatures } from 'src/modules/feature/constants';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -18,6 +20,7 @@ export class DatabaseConnectionService {
     private readonly databaseInfoProvider: DatabaseInfoProvider,
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
+    private readonly featureService: FeatureService,
     private recommendationService: DatabaseRecommendationService,
   ) {}
 
@@ -27,7 +30,6 @@ export class DatabaseConnectionService {
    */
   async connect(clientMetadata: ClientMetadata): Promise<void> {
     const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
-
     // refresh modules list and last connected time
     // mark database as not a new
     // will be refreshed after user navigate to particular database from the databases list
@@ -39,8 +41,9 @@ export class DatabaseConnectionService {
       version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };
 
+    const connectionType = client?.getConnectionType();
     // Update cluster nodes db record
-    if (client?.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+    if (connectionType === RedisClientConnectionType.CLUSTER) {
       toUpdate.nodes = (await client.nodes()).map(({ options }) => ({
         host: options.host,
         port: options.port,
@@ -66,6 +69,17 @@ export class DatabaseConnectionService {
       RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
       generalInfo,
     );
+
+    const rdiFeature = await this.featureService.getByName(KnownFeatures.Rdi);
+
+    if (rdiFeature.flag) {
+      const database = await this.repository.get(clientMetadata.databaseId);
+      this.recommendationService.check(
+        clientMetadata,
+        RECOMMENDATION_NAMES.TRY_RDI,
+        { connectionType, provider: database.provider },
+      );
+    }
 
     this.collectClientInfo(clientMetadata, client, generalInfo?.version);
 

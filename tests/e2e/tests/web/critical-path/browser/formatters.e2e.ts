@@ -206,11 +206,11 @@ notEditableFormattersSet.forEach(formatter => {
             KeyTypesTexts.String
         ];
         for (const key of keysData) {
-            const valueSelector = Selector(`[data-testid^=${key.keyName.split('-')[0]}][data-testid*=${key.data}]`);
             if (editableValueKeyTypes.includes(key.textType)) {
                 const editBtn = (key.textType === 'String')
                     ? browserPage.editKeyValueButton
                     : Selector(`[data-testid*=${key.keyName.split('-')[0]}][data-testid*=edit-]`, { timeout: 500 });
+                const valueSelector = Selector(`[data-testid^=${key.keyName.split('-')[0]}][data-testid*=${key.data}]`);
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that edit button disabled
@@ -223,6 +223,7 @@ notEditableFormattersSet.forEach(formatter => {
             }
             if (key.textType === 'Sorted Set') {
                 const editBtn = Selector(`[data-testid*=${key.keyName.split('-')[0]}][data-testid*=edit-]`, { timeout: 500 });
+                const valueSelector = Selector('[data-testid*=zset_content-value]');
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that edit button enabled for ZSet

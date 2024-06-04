@@ -4,7 +4,6 @@ import * as path from 'path';
 import { t } from 'testcafe';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
-import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
 import { fileDownloadPath, commonUrl } from '../../../../helpers/conf';
 import { DatabasesActions } from '../../../../common-actions/databases-actions';
@@ -57,15 +56,15 @@ test('Verify that user can refresh pipeline', async() => {
     let testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
     await t.expect(testId).notContains('updated', 'config text was not changed');
 
-    await MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, text);
-    const enteredText = await MonacoEditor.getTextFromMonaco();
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, text);
+    const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).eql(text, 'config text was not changed');
     testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
     await t.expect(testId).contains('updated', 'config text was not changed');
 
     await t.click(rdiInstancePage.RdiHeader.uploadPipelineButton);
     await t.click(rdiInstancePage.RdiHeader.confirmUploadingPipelineBatton);
-    const updatedText = await MonacoEditor.getTextFromMonaco();
+    const updatedText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(updatedText).contains(expectedText, 'config text was not updated');
     await t.expect(updatedText).notContains(text, 'config text was not updated');
 
@@ -119,7 +118,7 @@ test('Verify that user can import pipeline', async() => {
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
     await rdiInstancePage.RdiHeader.uploadPipeline(filePathes.successful);
     await t.click(rdiInstancePage.okUploadPipelineBtn);
-    const updatedText = await MonacoEditor.getTextFromMonaco();
+    const updatedText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(updatedText).contains(expectedText, 'config text was not updated');
     // check unsuccessful uploading
     await t.click(rdiInstancePage.RdiHeader.uploadFromFileButton);

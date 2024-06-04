@@ -1,7 +1,6 @@
 import { Selector, t } from 'testcafe';
 import { TriggersAndFunctionLibrary } from '../interfaces/triggers-and-functions';
 import { LibrariesSections, MonacoEditorInputs } from '../helpers/constants';
-import { MonacoEditor } from '../common-actions/monaco-editor';
 import { InstancePage } from './instance-page';
 
 export class TriggersAndFunctionsLibrariesPage extends InstancePage {
@@ -71,10 +70,10 @@ export class TriggersAndFunctionsLibrariesPage extends InstancePage {
      */
     async sendTextToMonaco(input: MonacoEditorInputs, commandPart1: string, commandPart2?: string): Promise<void> {
         const inputSelector = Selector(this.inputMonaco.replace(/\$name/g, input));
-        await MonacoEditor.sendTextToMonaco(inputSelector, commandPart1);
+        await this.MonacoEditor.sendTextToMonaco(inputSelector, commandPart1);
         if (commandPart2) {
             await t.pressKey('enter');
-            await MonacoEditor.sendTextToMonaco(inputSelector, commandPart2, false);
+            await this.MonacoEditor.sendTextToMonaco(inputSelector, commandPart2, false);
         }
     }
 

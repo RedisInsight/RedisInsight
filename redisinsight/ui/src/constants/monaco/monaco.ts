@@ -1,8 +1,8 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { LanguageIdEnum } from 'monaco-sql-languages'
 import { getCompletionProvider } from 'uiSrc/utils/monaco/completionProvider'
 import { getCypherMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/cypherTokens'
 import { getJmespathMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/jmespathTokens'
+import { getSqliteFunctionsMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/sqliteFunctionsTokens'
 import {
   cypherLanguageConfiguration,
   KEYWORDS as cypherKeywords,
@@ -11,6 +11,7 @@ import {
 import {
   jmespathLanguageConfiguration,
 } from './jmespath'
+import { sqliteFunctionsLanguageConfiguration, SQLITE_FUNCTIONS } from './sqliteFunctions'
 import { DSL, DSLNaming } from '../commands'
 
 export interface MonacoSyntaxLang {
@@ -36,7 +37,7 @@ export enum MonacoLanguage {
   Redis = 'redisLanguage',
   Cypher = 'cypherLanguage',
   JMESPath = 'jmespathLanguage',
-  SQL = LanguageIdEnum?.MYSQL,
+  SQLiteFunctions = 'sqliteFunctions',
   Text = 'text',
 }
 
@@ -54,10 +55,18 @@ export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxObject = {
     }),
     tokensProvider: getCypherMonarchTokensProvider,
   },
-  [DSL.sql]: {
-    name: DSLNaming[DSL.sql],
-    id: DSL.sql,
-    language: MonacoLanguage.SQL,
+  [DSL.sqliteFunctions]: {
+    name: DSLNaming[DSL.sqliteFunctions],
+    id: DSL.sqliteFunctions,
+    language: MonacoLanguage.SQLiteFunctions,
+    config: sqliteFunctionsLanguageConfiguration,
+    completionProvider: () => ({
+      ...getCompletionProvider([], SQLITE_FUNCTIONS)
+    }),
+    tokensProvider: () => (
+      { ...getSqliteFunctionsMonarchTokensProvider(
+        SQLITE_FUNCTIONS.map(({ label }) => label.toString())
+      ) }),
   },
   [DSL.jmespath]: {
     name: DSLNaming[DSL.jmespath],
@@ -75,7 +84,7 @@ export const DEDICATED_EDITOR_LANGUAGES: MonacoSyntaxObject = {
       functions: monacoEditor.languages.CompletionItem[] = [],
     ) => (
       { ...getJmespathMonarchTokensProvider(
-        functions.map(({ label }) => (label.toString()))
+        functions.map(({ label }) => label.toString())
       ) }),
   },
 }

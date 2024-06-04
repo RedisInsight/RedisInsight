@@ -84,17 +84,6 @@ export class WorkbenchPage extends InstancePage {
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
     executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
     queryResult = Selector('[data-testid=query-common-result]');
-    //MONACO ELEMENTS
-    monacoCommandDetails = Selector('div.suggest-details-container');
-    monacoSuggestion = Selector('span.monaco-icon-name-container');
-    monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
-    monacoShortcutInput = Selector('input.input');
-    monacoSuggestionOption = Selector('div.monaco-list-row');
-    monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
-    monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
-    monacoWidget = Selector('[data-testid=monaco-widget]');
-    nonRedisEditorResizeBottom = Selector('.t_resize-bottom');
-    nonRedisEditorResizeTop = Selector('.t_resize-top');
     //OPTIONS
     selectViewType = Selector('[data-testid=select-view-type]');
     textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');

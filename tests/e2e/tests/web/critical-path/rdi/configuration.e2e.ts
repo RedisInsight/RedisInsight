@@ -12,7 +12,6 @@ import {
     TextConnectionSection
 } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers';
-import { MonacoEditor } from '../../../../common-actions/monaco-editor';
 import { goBackHistory } from '../../../../helpers/utils';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
@@ -91,7 +90,7 @@ test('Verify that user can insert template', async() => {
     await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MyQal);
 
     //verify uniq templates words - should be undated when templates are added
-    const enteredText = await MonacoEditor.getTextFromMonaco();
+    const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).contains(templateWords, 'template is incorrect');
 
     await t.click(rdiInstancePage.templateButton);

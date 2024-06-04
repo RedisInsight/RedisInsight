@@ -26,7 +26,7 @@ fixture `Redisearch module not available`
     });
 // Skipped as outdated after implementing RI-4230
 test.skip('Verify that user can see the "Create your free Redis database with RediSearch on Redis Cloud" button and click on it in Workbench when module in not loaded', async t => {
-    const link = 'https://redis.com/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redisearch';
+    const link = 'https://redis.io/try-free/?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redisearch';
 
     // Send command with 'FT.'
     await workbenchPage.sendCommandInWorkbench(commandForSend);
@@ -51,7 +51,7 @@ test('Verify that user can see options on what can be done to work with capabili
     // Verify change screens when capability not available - 'Search'
     await t.expect(await workbenchPage.commandExecutionResult.withText('RediSearch is not available').visible)
         .ok('Missing RedisSearch title is not visible');
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.triggersFunctionsAccordionTutorialButton);
     await t.click(tutorials.internalTriggersAndFunctionsLink);
     await tutorials.runBlockCode('Upload library');

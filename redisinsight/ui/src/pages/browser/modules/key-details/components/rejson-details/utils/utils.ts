@@ -1,5 +1,4 @@
 import { isArray } from 'lodash'
-import { JSONErrors } from '../constants'
 import { JSONScalarValue, ObjectTypes } from '../interfaces'
 import styles from '../styles.module.scss'
 
@@ -35,15 +34,6 @@ export const wrapPath = (key: string, path: string = '') => {
     return unescapedKey.includes('"') ? `${path}['${unescapedKey}']` : `${path}["${unescapedKey}"]`
   } catch {
     return null
-  }
-}
-
-export const validateRejsonValue = (value: any) => {
-  try {
-    JSON.parse(value as string)
-    return null
-  } catch (e) {
-    return JSONErrors.valueJSONFormat
   }
 }
 

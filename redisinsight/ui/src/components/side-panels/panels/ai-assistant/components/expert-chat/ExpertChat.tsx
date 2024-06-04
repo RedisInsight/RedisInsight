@@ -1,42 +1,60 @@
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButtonEmpty, EuiText, EuiToolTip } from '@elastic/eui'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import { EuiIcon } from '@elastic/eui'
 import {
   aiExpertChatSelector,
   askExpertChatbotAction,
   getExpertChatHistoryAction,
   removeExpertChatHistoryAction,
+  updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
+import { findTutorialPath, getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
-import { ChatHistory, ChatForm, ExpertChatInitialMessage, RestartChat } from '../shared'
+import { fetchRedisearchListAction } from 'uiSrc/slices/browser/redisearch'
+import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
+import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
+import { SAMPLE_DATA_TUTORIAL } from 'uiSrc/constants'
+import NoIndexesInitialMessage from './components/no-indexes-initial-message'
+import ExpertChatHeader from './components/expert-chat-header'
+
+import { EXPERT_CHAT_AGREEMENTS, EXPERT_CHAT_INITIAL_MESSAGE } from '../texts'
+import { ChatForm, ChatHistory } from '../shared'
 
 import styles from './styles.module.scss'
 
 const ExpertChat = () => {
-  const { messages, loading } = useSelector(aiExpertChatSelector)
+  const { messages, agreements, loading } = useSelector(aiExpertChatSelector)
   const { name: connectedInstanceName, modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const freeInstances = useSelector(freeInstancesSelector) || []
 
-  const [progressingMessage, setProgressingMessage] = useState<Nullable<AiChatMessage>>(null)
+  const [isNoIndexes, setIsNoIndexes] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
 
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
   const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
 
+  const isAgreementsAccepted = agreements.includes(instanceId) || messages.length > 0
+
   const dispatch = useDispatch()
+  const history = useHistory()
 
   useEffect(() => {
+    if (!instanceId) {
+      return
+    }
+
     // changed account
-    if (instanceId && currentAccountIdRef.current !== userOAuthProfile?.id) {
+    if (currentAccountIdRef.current !== userOAuthProfile?.id) {
       currentAccountIdRef.current = userOAuthProfile?.id
       dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
       return
@@ -47,23 +65,64 @@ const ExpertChat = () => {
       return
     }
 
-    if (instanceId) {
-      dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
-    }
+    dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
   }, [instanceId, userOAuthProfile])
+
+  useEffect(() => {
+    if (!instanceId) return
+    if (!isRedisearchAvailable(modules)) return
+    if (messages.length) return
+
+    getIndexes()
+  }, [instanceId, modules])
+
+  const getIndexes = () => {
+    setIsLoading(true)
+    dispatch(
+      fetchRedisearchListAction(
+        (indexes) => {
+          setIsLoading(false)
+          setIsNoIndexes(!indexes.length)
+        },
+        () => setIsLoading(false),
+        false
+      )
+    )
+  }
 
   const handleSubmit = useCallback((message: string) => {
     scrollToBottom()
+
+    if (!isAgreementsAccepted) {
+      dispatch(updateExpertChatAgreements(instanceId))
+
+      sendEventTelemetry({
+        event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
+        eventData: {
+          databaseId: instanceId,
+          chat: AiChatType.Query,
+        }
+      })
+    }
 
     dispatch(askExpertChatbotAction(
       instanceId,
       message,
       {
         onMessage: (message: AiChatMessage) => {
-          setProgressingMessage({ ...message })
+          setinProgressMessage({ ...message })
           scrollToBottom('auto')
         },
-        onFinish: () => setProgressingMessage(null)
+        onError: (errorCode: number) => {
+          sendEventTelemetry({
+            event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
+            eventData: {
+              chat: AiChatType.Query,
+              errorCode
+            }
+          })
+        },
+        onFinish: () => setinProgressMessage(null)
       }
     ))
 
@@ -73,18 +132,7 @@ const ExpertChat = () => {
         chat: AiChatType.Query
       }
     })
-  }, [instanceId])
-
-  const onClearSession = () => {
-    dispatch(removeExpertChatHistoryAction(instanceId))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Query
-      }
-    })
-  }
+  }, [instanceId, isAgreementsAccepted])
 
   const onRunCommand = useCallback((query: string) => {
     const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''
@@ -98,6 +146,39 @@ const ExpertChat = () => {
       }
     })
   }, [instanceId, provider])
+
+  const onClearSession = useCallback(() => {
+    dispatch(removeExpertChatHistoryAction(instanceId))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
+      eventData: {
+        chat: AiChatType.Query
+      }
+    })
+  }, [])
+
+  const handleAgreementsDisplay = useCallback(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
+      eventData: {
+        chat: AiChatType.Query,
+      }
+    })
+  }, [])
+
+  const handleClickTutorial = () => {
+    const tutorialPath = findTutorialPath({ id: SAMPLE_DATA_TUTORIAL })
+    dispatch(openTutorialByPath(tutorialPath, history, true))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
+      eventData: {
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
+        source: 'sample_data',
+      }
+    })
+  }
 
   const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
     setTimeout(() => {
@@ -122,7 +203,13 @@ const ExpertChat = () => {
         title: 'Search & query capability is not available',
         content: freeInstances?.length
           ? 'Use your free all-in-one Redis Cloud database to start exploring these capabilities.'
-          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.'
+          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.',
+        icon: (
+          <EuiIcon
+            className={styles.iconTelescope}
+            type={TelescopeImg}
+          />
+        )
       }
     }
 
@@ -131,44 +218,33 @@ const ExpertChat = () => {
 
   return (
     <div className={styles.wrapper} data-testid="ai-document-chat">
-      <div className={styles.header}>
-        {instanceId ? (
-          <EuiToolTip
-            content={connectedInstanceName}
-            anchorClassName={styles.dbName}
-          >
-            <EuiText size="xs" className="truncateText">{connectedInstanceName}</EuiText>
-          </EuiToolTip>
-        ) : (<span />)}
-        <RestartChat
-          button={(
-            <EuiButtonEmpty
-              disabled={!messages?.length}
-              iconType="eraser"
-              size="xs"
-              className={styles.startSessionBtn}
-              data-testid="ai-expert-restart-session-btn"
-            />
-          )}
-          onConfirm={onClearSession}
-        />
-      </div>
+      <ExpertChatHeader
+        connectedInstanceName={connectedInstanceName}
+        databaseId={instanceId}
+        isClearDisabled={!messages?.length || !instanceId}
+        onRestart={onClearSession}
+      />
       <div className={styles.chatHistory}>
         <ChatHistory
-          isLoading={loading}
+          isLoading={loading || isLoading}
           modules={modules}
-          initialMessage={ExpertChatInitialMessage}
-          progressingMessage={progressingMessage}
+          initialMessage={isNoIndexes
+            ? <NoIndexesInitialMessage onClickTutorial={handleClickTutorial} onSuccess={getIndexes} />
+            : EXPERT_CHAT_INITIAL_MESSAGE}
+          inProgressMessage={inProgressMessage}
           history={messages}
           scrollDivRef={scrollDivRef}
           onRunCommand={onRunCommand}
+          onRestart={onClearSession}
         />
       </div>
       <div className={styles.chatForm}>
         <ChatForm
-          isDisabled={!instanceId || !!progressingMessage}
+          onAgreementsDisplayed={handleAgreementsDisplay}
+          agreements={!isAgreementsAccepted ? EXPERT_CHAT_AGREEMENTS : undefined}
+          isDisabled={!instanceId || inProgressMessage?.content === ''}
           validation={getValidationMessage()}
-          placeholder="Type / for specialized expertise"
+          placeholder="Ask me to query your data (e.g. How many road bikes?)"
           onSubmit={handleSubmit}
         />
       </div>

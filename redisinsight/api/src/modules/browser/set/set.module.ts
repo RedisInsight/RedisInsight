@@ -3,7 +3,7 @@ import {
   MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import { RouterModule } from '@nestjs/core';
 import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
 import { SetService } from 'src/modules/browser/set/set.service';
 import { SetController } from 'src/modules/browser/set/set.controller';
@@ -14,7 +14,7 @@ export class SetModule {
     return {
       module: SetModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: SetModule,
         }]),
@@ -27,6 +27,6 @@ export class SetModule {
   configure(consumer: MiddlewareConsumer): any {
     consumer
       .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(SetController));
+      .forRoutes(SetController);
   }
 }

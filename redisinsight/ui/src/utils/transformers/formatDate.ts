@@ -20,3 +20,11 @@ export const truncateMilliseconds = (milliseconds: number): string => {
 
   return truncateNumberToFirstUnit(milliseconds / 1000)
 }
+
+export const secondsToMinutes = (time: number) => {
+  if (time < 60) {
+    return `${time} second${time === 1 ? '' : 's'}`
+  }
+  const minutes = Math.floor(time / 60)
+  return `${minutes} minute${minutes === 1 ? '' : 's'}`
+}

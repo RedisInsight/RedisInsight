@@ -16,10 +16,16 @@ import {
   clearExpertChatHistory,
   getExpertChatHistory,
   sendExpertQuestion,
+  updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { apiService } from 'uiSrc/services'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import { loadList } from 'uiSrc/slices/browser/redisearch'
+import { changeSelectedTab, changeSidePanel, resetExplorePanelSearch } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import ExpertChat from './ExpertChat'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -31,8 +37,23 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   ...jest.requireActual('uiSrc/slices/panels/aiAssistant'),
   aiExpertChatSelector: jest.fn().mockReturnValue({
     loading: false,
-    messages: []
+    messages: [],
+    agreements: []
   })
+}))
+
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceSelector: jest.fn().mockReturnValue({
+    modules: []
+  }),
+}))
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useParams: () => ({
+    instanceId: 'instanceId',
+  }),
 }))
 
 let store: typeof mockedStore
@@ -58,7 +79,8 @@ describe('ExpertChat', () => {
   it('should show loading', () => {
     (aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: true,
-      messages: []
+      messages: [],
+      agreements: []
     })
     render(<ExpertChat />)
 
@@ -72,13 +94,29 @@ describe('ExpertChat', () => {
     expect(store.getActions()).toEqual([getExpertChatHistory()])
   })
 
+  it('should call fetch indexes', () => {
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: true,
+      messages: [],
+      agreements: []
+    });
+    (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
+      modules: [{ name: RedisDefaultModules.FT }, { name: RedisDefaultModules.ReJSON }]
+    }))
+
+    render(<ExpertChat />, { store })
+
+    expect(store.getActions()).toEqual([getExpertChatHistory(), loadList()])
+  })
+
   it('should call action after submit message', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
 
-    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+    (aiExpertChatSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
-      messages: []
+      messages: [],
+      agreements: ['instanceId']
     })
     render(<ExpertChat />, { store })
 
@@ -95,7 +133,7 @@ describe('ExpertChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      sendExpertQuestion('test')
+      sendExpertQuestion(expect.objectContaining({ content: 'test' }))
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -107,6 +145,58 @@ describe('ExpertChat', () => {
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
+  it('should show agreements after click submit', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      messages: [],
+      agreements: []
+    })
+    render(<ExpertChat />, { store })
+
+    const afterRenderActions = [...store.getActions()]
+
+    act(() => {
+      fireEvent.change(
+        screen.getByTestId('ai-message-textarea'),
+        { target: { value: 'test' } }
+      )
+    })
+
+    fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
+
+    await waitForEuiPopoverVisible()
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
+      eventData: {
+        chat: AiChatType.Query
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('ai-accept-agreements'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
+      eventData: {
+        chat: AiChatType.Query,
+        databaseId: 'instanceId'
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      updateExpertChatAgreements('instanceId'),
+      sendExpertQuestion(expect.objectContaining({ content: 'test' }))
+    ])
+  })
+
   it('should call action after click on restart session', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
@@ -114,7 +204,8 @@ describe('ExpertChat', () => {
 
     (aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
-      messages: [{}]
+      messages: [{}],
+      agreements: ['instanceId']
     })
 
     render(<ExpertChat />, { store })
@@ -137,6 +228,39 @@ describe('ExpertChat', () => {
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
         chat: AiChatType.Query
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it.skip('should call proper actions after click tutorial in the initial message', async () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
+
+    (aiExpertChatSelector as jest.Mock).mockReturnValue({
+      loading: false,
+      messages: [],
+      agreements: ['instanceId']
+    })
+
+    render(<ExpertChat />, { store })
+
+    const afterRenderActions = [...store.getActions()]
+
+    fireEvent.click(screen.getByTestId('tutorial-initial-message-link'))
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      changeSelectedTab(InsightsPanelTabs.Explore),
+      changeSidePanel(SidePanels.Insights),
+      resetExplorePanelSearch()
+    ])
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
+      eventData: {
+        databaseId: 'instanceId',
+        source: 'sample_data'
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

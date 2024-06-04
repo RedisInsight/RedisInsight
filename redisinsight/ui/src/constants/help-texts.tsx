@@ -1,16 +1,15 @@
 import React from 'react'
 import { EuiIcon, EuiText } from '@elastic/eui'
+import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 import styles from 'uiSrc/pages/browser/components/popover-delete/styles.module.scss'
-
-const tryFreeHref = 'https://redis.com/try-free/'
 
 export default {
   REJSON_SHOULD_BE_LOADED: (
     <>
       RedisJSON module should be loaded to add this key. Find&nbsp;
       <a
-        href="https://oss.redis.com/redisjson/"
+        href="https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/json/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_tutorials"
         className="link-underline"
         target="_blank"
         rel="noreferrer"
@@ -19,7 +18,7 @@ export default {
       </a>
       &nbsp;
       about RedisJSON or create your&nbsp;
-      <a href={`${tryFreeHref}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redisjson`} className="link-underline" target="_blank" rel="noreferrer">
+      <a href={`${EXTERNAL_LINKS.tryFree}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redisjson`} className="link-underline" target="_blank" rel="noreferrer">
         free Redis database
       </a>
       &nbsp;
@@ -42,7 +41,7 @@ export default {
       Removing multiple elements is available for Redis databases v. 6.2 or
       later. Update your Redis database or create a new&nbsp;
       <a
-        href={`${tryFreeHref}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redis_latest`}
+        href={`${EXTERNAL_LINKS.tryFree}?utm_source=redis&utm_medium=app&utm_campaign=redisinsight_redis_latest`}
         target="_blank"
         className="link-underline"
         rel="noreferrer"

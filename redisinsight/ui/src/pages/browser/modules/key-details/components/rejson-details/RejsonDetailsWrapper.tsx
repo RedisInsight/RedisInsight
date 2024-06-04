@@ -106,7 +106,7 @@ const RejsonDetailsWrapper = (props: Props) => {
                 data={data as IJSONData}
                 length={length}
                 parentPath={path}
-                expadedRows={expandedRows}
+                expandedRows={expandedRows}
                 onJsonKeyExpandAndCollapse={handleJsonKeyExpandAndCollapse}
                 isDownloaded={downloaded}
               />

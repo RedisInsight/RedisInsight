@@ -78,8 +78,8 @@ export enum ResourcePath {
 }
 
 export enum ExploreTabs {
-    Explore  = 'Explore',
-    Tips = 'Tips'
+    Tutorials  = 'Tutorials',
+    Tips = 'Tips',
 }
 
 export enum Compatibility {

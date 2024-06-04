@@ -29,4 +29,20 @@ export class CloudRequestUtm {
   @IsString()
   @IsNotEmpty()
   campaign?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  amp?: string;
+
+  @ApiPropertyOptional({
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  package?: string;
 }

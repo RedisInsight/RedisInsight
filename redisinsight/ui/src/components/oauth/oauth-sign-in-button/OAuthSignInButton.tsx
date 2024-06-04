@@ -3,7 +3,7 @@ import { EuiButton, EuiImage } from '@elastic/eui'
 
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
-import RedisLogo from 'uiSrc/assets/img/logo.svg'
+import RedisLogo from 'uiSrc/assets/img/logo_small.svg'
 
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'

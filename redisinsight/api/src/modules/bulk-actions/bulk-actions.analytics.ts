@@ -105,4 +105,27 @@ export class BulkActionsAnalytics extends TelemetryBaseService {
       // continue regardless of error
     }
   }
+
+  sendImportSamplesUploaded(overview: IBulkActionOverview): void {
+    try {
+      this.sendEvent(
+        TelemetryEvents.ImportSamplesUploaded,
+        {
+          databaseId: overview.databaseId,
+          action: overview.type,
+          duration: overview.duration,
+          summary: {
+            processed: overview.summary?.processed,
+            processedRange: getRangeForNumber(overview.summary?.processed, BULK_ACTIONS_BREAKPOINTS),
+            succeed: overview.summary?.succeed,
+            succeedRange: getRangeForNumber(overview.summary?.succeed, BULK_ACTIONS_BREAKPOINTS),
+            failed: overview.summary?.failed,
+            failedRange: getRangeForNumber(overview.summary?.failed, BULK_ACTIONS_BREAKPOINTS),
+          },
+        },
+      );
+    } catch (e) {
+      // continue regardless of error
+    }
+  }
 }

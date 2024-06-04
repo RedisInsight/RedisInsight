@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { act, fireEvent, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
 
 import ChatForm from './ChatForm'
 
@@ -39,6 +39,33 @@ describe('ChatForm', () => {
 
     fireEvent.keyDown(screen.getByTestId('ai-message-textarea'), {
       key: 'Enter',
+    })
+
+    expect(onSubmit).toBeCalledWith('test')
+  })
+
+  it('should show agreements popover', async () => {
+    const onSubmit = jest.fn()
+    render(<ChatForm onSubmit={onSubmit} agreements={(<div data-testid="agreements" />)} />)
+
+    act(() => {
+      fireEvent.change(
+        screen.getByTestId('ai-message-textarea'),
+        { target: { value: 'test' } }
+      )
+    })
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
+    })
+    await waitForEuiPopoverVisible()
+
+    expect(onSubmit).not.toBeCalled()
+
+    expect(screen.getByTestId('ai-submit-message-btn')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('ai-accept-agreements'))
     })
 
     expect(onSubmit).toBeCalledWith('test')

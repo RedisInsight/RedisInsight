@@ -113,6 +113,7 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
 
     case CustomErrorCodes.CloudCapiUnauthorized:
     case CustomErrorCodes.CloudApiUnauthorized:
+    case CustomErrorCodes.QueryAiUnauthorized:
       title = 'Session expired'
       message = (
         <>

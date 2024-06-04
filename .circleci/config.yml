@@ -187,6 +187,15 @@ executors:
     machine:
       image: ubuntu-2004:2023.04.2
       docker_layer_caching: true
+  docker-node:
+    docker:
+      - image: cimg/node:18.15.0
+  docker:
+    docker:
+      - image: cibuilds/docker:19.03.5
+  macos:
+    macos:
+      xcode: 14.2.0
 
 parameters:
   linux:
@@ -208,8 +217,7 @@ parameters:
 jobs:
   # Test jobs
   unit-tests-ui:
-    docker:
-      - image: cimg/node:18.15.0
+    executor: docker-node
     steps:
       - checkout
       - restore_cache:
@@ -252,8 +260,7 @@ jobs:
           paths:
             - ./node_modules
   unit-tests-api:
-    docker:
-      - image: cimg/node:18.15.0
+    executor: docker-node
     steps:
       - checkout
       - restore_cache:
@@ -530,6 +537,7 @@ jobs:
 
   # Build jobs
   manual-build-validate:
+    executor: docker-node
     parameters:
       os:
         type: string
@@ -537,8 +545,6 @@ jobs:
       target:
         type: string
         default: ""
-    docker:
-      - image: cimg/node:18.15.0
     steps:
       - checkout
       - run:
@@ -560,14 +566,13 @@ jobs:
           paths:
             - certs
   setup-build:
+    executor: docker
     parameters:
       env:
         description: Build environment (stage || prod)
         type: enum
         default: stage
         enum: [ 'dev', 'stage', 'prod' ]
-    docker:
-      - image: cibuilds/docker:19.03.5
     steps:
       - checkout
       - run:
@@ -585,8 +590,7 @@ jobs:
           paths:
             - electron
   linux:
-    machine:
-      image: ubuntu-2004:202101-01
+    executor: linux-executor
     resource_class: large
     parameters:
       env:
@@ -660,8 +664,7 @@ jobs:
             - release/Redis-Insight*.snap
             - release/*-linux.yml
   macosx:
-    macos:
-      xcode: 14.2.0
+    executor: macos
     resource_class: macos.x86.medium.gen2
     parameters:
       env:
@@ -1026,6 +1029,13 @@ jobs:
             ./.circleci/build/release-docker.sh \
             -d redisinsight \
             -r $DOCKER_REPO \
+            -v $appVersion
+
+            docker login -u $DOCKER_V1_USER -p $DOCKER_V1_PASS
+
+            ./.circleci/build/release-docker.sh \
+            -d redisinsight \
+            -r $DOCKER_V1_REPO \
             -v $appVersion
 
   publish-prod-aws:

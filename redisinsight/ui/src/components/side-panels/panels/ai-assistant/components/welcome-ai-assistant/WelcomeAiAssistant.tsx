@@ -6,6 +6,7 @@ import { OAuthAgreement, OAuthSocialButtons } from 'uiSrc/components/oauth/share
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { setOAuthCloudSource } from 'uiSrc/slices/oauth/cloud'
 import styles from './styles.module.scss'
 
 const WelcomeAiAssistant = () => {
@@ -13,6 +14,8 @@ const WelcomeAiAssistant = () => {
 
   const handleSsoClick = (accountOption: string) => {
     dispatch(setSSOFlow(OAuthSocialAction.SignIn))
+    dispatch(setOAuthCloudSource(OAuthSocialSource.AiChat))
+
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
@@ -26,15 +29,13 @@ const WelcomeAiAssistant = () => {
   return (
     <div className={styles.wrapper} data-testid="copilot-welcome">
       <div className={styles.container}>
-        <EuiText style={{ lineHeight: '1.35' }}>
-          Hi! I am your Redis Copilot, here to help you be more productive.
-        </EuiText>
+        <EuiText style={{ lineHeight: '1.35' }}>Welcome to Redis Copilot.</EuiText>
         <EuiSpacer size="s" />
-        <EuiText style={{ lineHeight: '1.35' }}>
-          Ask me questions about Redis or get specialized expertise in the context of your database.
-        </EuiText>
+        <EuiText style={{ lineHeight: '1.35' }}>Learn about Redis and explore your data, in a conversational manner.</EuiText>
+        <EuiSpacer size="s" />
+        <EuiText style={{ lineHeight: '1.35' }}>Build faster with Redis Copilot.</EuiText>
         <EuiSpacer size="xl" />
-        <EuiTitle size="xs"><h5>Sign in to start asking questions.</h5></EuiTitle>
+        <EuiTitle size="xs"><h5>Sign in to get started.</h5></EuiTitle>
 
         <EuiSpacer size="l" />
         <OAuthSocialButtons action={OAuthSocialAction.SignIn} onClick={handleSsoClick} />

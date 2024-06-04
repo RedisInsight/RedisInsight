@@ -62,6 +62,7 @@ const RedisCloudSubscriptionsPage = () => {
 
     if (!userOAuthProfile) {
       history.push(Pages.home)
+      return
     }
 
     if (currentAccountIdRef.current !== userOAuthProfile?.id) {

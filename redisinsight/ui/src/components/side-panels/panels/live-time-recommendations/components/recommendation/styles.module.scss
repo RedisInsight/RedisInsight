@@ -134,6 +134,11 @@
       width: 28px !important;
       height: 28px !important;
     }
+
+    .euiIcon {
+      width: 28px !important;
+      height: 28px !important;
+    }
   }
 }
 
@@ -144,7 +149,7 @@
 .snoozeBtn {
   svg {
     fill: var(--recommendationBgColor) !important;
-    g {
+    g, circle, path {
       stroke: currentColor !important;
     }
   }

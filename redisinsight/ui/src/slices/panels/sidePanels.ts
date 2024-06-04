@@ -88,7 +88,11 @@ export const {
   setExplorePanelManifest,
 } = insightsPanelSlice.actions
 
-export function openTutorialByPath(path: string, history: ReturnType<typeof useHistory>) {
+export function openTutorialByPath(
+  path: Nullable<string>,
+  history: ReturnType<typeof useHistory>,
+  openList = false
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(changeSelectedTab(InsightsPanelTabs.Explore))
     dispatch(changeSidePanel(SidePanels.Insights))
@@ -96,6 +100,14 @@ export function openTutorialByPath(path: string, history: ReturnType<typeof useH
     if (path) {
       history.push({
         search: `path=${EAManifestFirstKey.TUTORIALS}/${path}`
+      })
+      return
+    }
+
+    if (openList) {
+      dispatch(resetExplorePanelSearch())
+      history.push({
+        search: ''
       })
     }
   }

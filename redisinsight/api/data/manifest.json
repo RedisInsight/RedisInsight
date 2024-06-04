@@ -9,7 +9,7 @@
     },
     {
       "path": "search",
-      "modules": ["search"]
+      "modules": ["search", "searchlight", "ft", "ftl"]
     }
   ]
 }

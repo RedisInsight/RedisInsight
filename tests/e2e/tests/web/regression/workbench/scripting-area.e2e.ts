@@ -84,7 +84,7 @@ test
     })('Verify that user can see an indication (green triangle) of commands from the left side of the line numbers', async t => {
         // Open Working with Hashes page
         await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
         await t.click(tutorials.internalLinkWorkingWithHashes);

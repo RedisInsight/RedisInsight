@@ -28,7 +28,7 @@ fixture `Redis Stack command in Workbench`
 test('Verify that user can switches between Chart and Text for TimeSeries command and see results corresponding to their views', async t => {
     // Send TimeSeries command
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.timeSeriesLink);
     await t.click(tutorials.internalTimeSeriesLink);

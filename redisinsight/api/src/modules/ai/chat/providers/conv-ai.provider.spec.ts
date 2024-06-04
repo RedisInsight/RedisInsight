@@ -65,7 +65,7 @@ describe('ConvAiProvider', () => {
     it('should get chat history chat history', async () => {
       mockedAxios.get.mockResolvedValue({
         status: 200,
-        data: JSON.stringify(mockAiHistoryApiResponse),
+        data: mockAiHistoryApiResponse,
       });
 
       expect(await service.getHistory(mockSessionMetadata, mockAiChatId)).toEqual(mockAiHistoryApiResponse);

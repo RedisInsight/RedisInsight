@@ -12,6 +12,8 @@ export const getAxiosError = (error: EnhancedAxiosError): AxiosError => {
   return error
 }
 
+export const getApiErrorCode = (error: AxiosError) => error?.response?.status
+
 export function getApiErrorMessage(error: AxiosError): string {
   const errorMessage = error?.response?.data?.message
   if (!error || !error.response) {

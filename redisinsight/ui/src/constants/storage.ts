@@ -34,7 +34,8 @@ enum BrowserStorageItem {
   sidePanel = 'sidePanel',
   capability = 'capability',
   aiChatSession = 'aiChatSession',
-  selectedAiChat = 'selectedAiChat'
+  selectedAiChat = 'selectedAiChat',
+  generalChatAgreements = 'generalChatAgreements'
 }
 
 export default BrowserStorageItem

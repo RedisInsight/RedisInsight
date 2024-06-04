@@ -25,7 +25,7 @@ const RejsonDetails = (props: BaseProps) => {
     parentPath,
     isDownloaded,
     onJsonKeyExpandAndCollapse,
-    expadedRows
+    expandedRows
   } = props
 
   const [addRootKVPair, setAddRootKVPair] = useState<boolean>(false)
@@ -80,7 +80,7 @@ const RejsonDetails = (props: BaseProps) => {
           parentPath={parentPath}
           selectedKey={selectedKey}
           isDownloaded={isDownloaded}
-          expadedRows={expadedRows}
+          expandedRows={expandedRows}
           onClickRemoveKey={onClickRemoveKey}
           onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
           handleAppendRejsonObjectItemAction={handleAppendRejsonArrayItemAction}

@@ -6,6 +6,7 @@ $animation-duration: 300ms;
 
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .loading {
@@ -46,8 +47,8 @@ $animation-duration: 300ms;
   }
 
   .actions {
-    min-height: 40px;
-    margin: 8px -15px 0;
+    min-height: 36px;
+    margin: 0 -15px;
   }
 }
 
@@ -89,13 +90,13 @@ $animation-duration: 300ms;
 .actions {
   display: flex;
   align-items: center;
-  background: var(--recommendationBgColor);
-  padding: 8px 24px;
+  background: var(--browserTableRowEven);
+  padding: 8px 16px;
   justify-content: space-between;
 
   .boldText {
     font:
-      normal normal 600 14px/17px Graphik,
+      normal normal 500 14px/17px Graphik,
       sans-serif !important;
   }
 

@@ -49,6 +49,10 @@ describe('ConfigOAuth', () => {
   })
 
   it('should call proper actions on success', () => {
+    (cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: 'signIn'
+    })
+
     window.app?.cloudOauthCallback.mockImplementation((cb: any) => cb(undefined, { status: CloudAuthStatus.Succeed }))
     render(<ConfigOAuth />)
 
@@ -63,6 +67,10 @@ describe('ConfigOAuth', () => {
   })
 
   it('should call proper actions on failed', () => {
+    (cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: 'signIn'
+    })
+
     window.app?.cloudOauthCallback.mockImplementation((cb: any) =>
       cb(
         undefined, {
@@ -88,7 +96,11 @@ describe('ConfigOAuth', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should fetch plans by default', () => {
+  it('should fetch plans with create flow', () => {
+    (cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: 'create'
+    })
+
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());
     (fetchUserInfo as jest.Mock).mockImplementation(fetchUserInfoMock)
 
@@ -136,7 +148,8 @@ describe('ConfigOAuth', () => {
 
   it('should call create free job after success with recommended settings', () => {
     (cloudSelector as jest.Mock).mockReturnValue({
-      isRecommendedSettings: true
+      isRecommendedSettings: true,
+      ssoFlow: 'create'
     })
 
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());

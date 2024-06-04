@@ -30,6 +30,7 @@ fixture `Cloud SSO`
 test('Verify that user can not see the promo Cloud databases for docker build', async t => {
     //TODO should be updated when AI or sth other will be added
 
+    // Deprecated after https://redislabs.atlassian.net/browse/RI-5649, can be updated to test force changing config
     // Update remote config .json to config with buildType filter excluding current app build
     // await modifyFeaturesConfigJson(pathes.dockerConfig);
     // await updateControlNumber(48.2);

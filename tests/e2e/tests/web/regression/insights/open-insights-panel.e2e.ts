@@ -42,7 +42,7 @@ test
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
         await t.expect(await browserPage.InsightsPanel.existsCompatibilityPopover.textContent).contains('Search and query capability', 'popover is not displayed');
-        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tab.preselectArea.textContent).contains('How To Query Your Data', 'the tutorial is incorrect');
 
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
@@ -69,8 +69,8 @@ test
 
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.CompatibilityPromotion.clickOnLinkByName(Compatibility.SearchAndQuery);
-        await t.expect(await myRedisDatabasePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
-        const tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        await t.expect(await myRedisDatabasePage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Tutorials);
+        let tab = await myRedisDatabasePage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tab.preselectArea.textContent).contains(myRedisTutorial, 'the tutorial is incorrect');
         await t.click(tab.nextPageButton);
         await tab.runBlockCode('Create the bike shop idx:bicycle');
@@ -81,10 +81,10 @@ test('Verify that user can open Explore tab into Insights panel by clicking on E
     await t.click(browserPage.NavigationPanel.myRedisDBButton);
     await t.click(myRedisDatabasePage.exploreRedisBtn);
     await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
-    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
+    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Tutorials);
     await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await browserPage.InsightsPanel.togglePanel(false);
     await t.click(myRedisDatabasePage.exploreRedisBtn);
     await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');
-    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Explore);
+    await t.expect(await browserPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Tutorials);
 });

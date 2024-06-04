@@ -103,6 +103,9 @@ export default {
   CLOUD_PLAN_NOT_FOUND_FREE: 'Unable to find free cloud plan',
   CLOUD_SUBSCRIPTION_ALREADY_EXISTS_FREE: 'Free subscription already exists',
   COMMON_DEFAULT_IMPORT_ERROR: 'Unable to import default data',
+  AI_QUERY_REQUEST_RATE_LIMIT: 'Exceeded limit for requests',
+  AI_QUERY_TOKEN_RATE_LIMIT: 'Exceeded limit for characters in the conversation',
+  AI_QUERY_MAX_TOKENS_RATE_LIMIT: 'Token count exceeds the conversation limit',
 
   RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
   RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',

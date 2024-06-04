@@ -42,7 +42,7 @@ describe('ChatHistory', () => {
   })
 
   it('should render loading answer indicator', () => {
-    render(<ChatHistory {...mockedProps} history={history} progressingMessage={{ content: '' } as any} />)
+    render(<ChatHistory {...mockedProps} history={history} inProgressMessage={{ content: '' } as any} />)
 
     expect(screen.getByTestId('ai-loading-answer')).toBeInTheDocument()
   })

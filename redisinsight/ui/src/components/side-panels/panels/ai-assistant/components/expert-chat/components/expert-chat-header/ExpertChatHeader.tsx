@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { EuiButton, EuiButtonEmpty, EuiPopover, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
@@ -6,9 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
-import { removeAssistantChatAction } from 'uiSrc/slices/panels/aiAssistant'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import {
   changeSelectedTab,
@@ -21,13 +19,14 @@ import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/co
 import styles from './styles.module.scss'
 
 export interface Props {
-  databaseId?: string
-  chatId?: string
+  connectedInstanceName?: string
+  databaseId: string
   isClearDisabled?: boolean
+  onRestart: () => void
 }
 
-const AssistanceHeader = (props: Props) => {
-  const { databaseId, chatId, isClearDisabled } = props
+const ExpertChatHeader = (props: Props) => {
+  const { databaseId, connectedInstanceName, isClearDisabled, onRestart } = props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
 
   const dispatch = useDispatch()
@@ -52,22 +51,16 @@ const AssistanceHeader = (props: Props) => {
     })
   }
 
-  const onClearSession = useCallback(() => {
-    if (!chatId) return
-
-    dispatch(removeAssistantChatAction(chatId))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
-      eventData: {
-        chat: AiChatType.Assistance
-      }
-    })
-  }, [chatId])
-
   return (
     <div className={styles.header}>
-      <span />
+      {connectedInstanceName ? (
+        <EuiToolTip
+          content={connectedInstanceName}
+          anchorClassName={styles.dbName}
+        >
+          <EuiText size="xs" className="truncateText">{connectedInstanceName}</EuiText>
+        </EuiToolTip>
+      ) : (<span />)}
       <div className={styles.headerActions}>
         <EuiToolTip
           content={isTutorialsPopoverOpen ? undefined : 'Open relevant tutorials to learn more'}
@@ -92,7 +85,7 @@ const AssistanceHeader = (props: Props) => {
                 size="xs"
                 onClick={() => setIsTutorialsPopoverOpen(true)}
                 className={cx(styles.headerBtn)}
-                data-testid="ai-general-tutorial-btn"
+                data-testid="ai-expert-tutorial-btn"
               />
             )}
           >
@@ -105,7 +98,7 @@ const AssistanceHeader = (props: Props) => {
                 color="secondary"
                 onClick={handleOpenTutorials}
                 className={styles.openTutorialsBtn}
-                data-testid="ai-general-open-tutorials"
+                data-testid="ai-expert-open-tutorials"
               >
                 Open tutorials
               </EuiButton>
@@ -118,15 +111,15 @@ const AssistanceHeader = (props: Props) => {
               disabled={isClearDisabled}
               iconType="eraser"
               size="xs"
-              className={cx(styles.headerBtn, styles.headerBtnAnchor)}
-              data-testid="ai-general-restart-session-btn"
+              className={styles.headerBtn}
+              data-testid="ai-expert-restart-session-btn"
             />
           )}
-          onConfirm={onClearSession}
+          onConfirm={onRestart}
         />
       </div>
     </div>
   )
 }
 
-export default AssistanceHeader
+export default ExpertChatHeader

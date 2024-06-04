@@ -9,8 +9,9 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 import { bufferToString, createDeleteFieldHeader, createDeleteFieldMessage, Nullable } from 'uiSrc/utils'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 
-import { JSONScalarValue, JSONScalarProps } from '../interfaces'
-import { generatePath, getClassNameByValue, validateRejsonValue } from '../utils'
+import { JSONScalarProps } from '../interfaces'
+import { generatePath, getClassNameByValue, isValidJSON } from '../utils'
+import { JSONErrors } from '../constants'
 
 import styles from '../styles.module.scss'
 import '../styles.scss'
@@ -43,10 +44,9 @@ const RejsonScalar = (props: JSONScalarProps) => {
     setError(null)
   }
 
-  const onApplyValue = (value: JSONScalarValue) => {
-    const error = validateRejsonValue(value)
-    if (error) {
-      setError(error)
+  const onApplyValue = (value: string) => {
+    if (!isValidJSON(value)) {
+      setError(JSONErrors.valueJSONFormat)
       return
     }
 

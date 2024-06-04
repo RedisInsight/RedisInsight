@@ -111,5 +111,8 @@ export enum CloudSsoUtmCampaign {
   Tutorial = 'tutorial',
   TriggersAndFunctions = 'redisinsight_triggers_and_functions',
   AutoDiscovery = 'auto_discovery',
+  Copilot = 'copilot',
+  UserProfile = 'user_account',
+  Settings = 'settings',
   Unknown = 'other',
 }

@@ -239,6 +239,8 @@ export class CloudAuthService {
       await this.sessionService.updateSessionData(sessionMetadata.sessionId, {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
+        csrf: null,
+        apiSessionId: null,
       });
     } catch (e) {
       throw new CloudApiUnauthorizedException();

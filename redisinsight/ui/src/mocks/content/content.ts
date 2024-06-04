@@ -5,7 +5,7 @@ export const MOCKED_CREATE_REDIS_BTN_CONTENT = {
     links: {
       main: {
         altText: 'Try Redis Cloud.',
-        url: 'https://redis.com/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
+        url: 'https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
       }
     }
   },

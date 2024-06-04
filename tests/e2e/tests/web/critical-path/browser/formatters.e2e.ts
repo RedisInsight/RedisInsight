@@ -1,25 +1,26 @@
 import { Selector } from 'testcafe';
 import { keyLength, KeyTypesTexts, rte } from '../../../../helpers/constants';
-import { addKeysViaCli, deleteKeysViaCli, keyTypes } from '../../../../helpers/keys';
-import { DatabaseHelper } from '../../../../helpers/database';
+import { addKeysViaCli, deleteKeysViaCli, formattersKeyTypes } from '../../../../helpers/keys';
+import { Common, DatabaseHelper } from '../../../../helpers';
 import { BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
-import { Common } from '../../../../helpers/common';
-import { formatters, phpData } from '../../../../test-data/formatters-data';
+import {
+    binaryFormattersSet,
+    formattersForEditSet,
+    formattersHighlightedSet,
+    formattersWithTooltipSet,
+    fromBinaryFormattersSet,
+    notEditableFormattersSet
+} from '../../../../test-data/formatters-data';
+import { phpData } from '../../../../test-data/formatters';
 
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 
-const keysData = keyTypes.map(object => ({ ...object })).filter((v, i) => i <= 6 && i !== 5);
-keysData.forEach(key => key.keyName = `${key.keyName}` + '-' + `${Common.generateWord(keyLength)}`);
-const binaryFormattersSet = [formatters[5], formatters[6], formatters[7]];
-const formattersHighlightedSet = [formatters[0], formatters[3]];
-const fromBinaryFormattersSet = [formatters[1], formatters[2], formatters[4], formatters[8], formatters[9], formatters[10]];
-const formattersForEditSet = [formatters[0], formatters[1], formatters[3]];
-const formattersWithTooltipSet = [formatters[0], formatters[1], formatters[2], formatters[3], formatters[4], formatters[8], formatters[9], formatters[10]];
-const notEditableFormattersSet = [formatters[2], formatters[4], formatters[8], formatters[9], formatters[10]];
+const keysData = formattersKeyTypes.map(item =>
+    ({ ...item, keyName: `${item.keyName}` + '-' + `${Common.generateWord(keyLength)}` }));
 const defaultFormatter = 'Unicode';
 
 fixture `Formatters`
@@ -221,7 +222,7 @@ notEditableFormattersSet.forEach(formatter => {
                 await t.expect(browserPage.tooltip.textContent).contains('Cannot edit the value in this format', 'Tooltip has wrong text');
             }
             if (key.textType === 'Sorted Set') {
-                const editBtn = Selector(`[data-testid*=edit-][data-testid*=${key.keyName.split('-')[0]}]`, { timeout: 500 });
+                const editBtn = Selector(`[data-testid*=${key.keyName.split('-')[0]}][data-testid*=edit-]`, { timeout: 500 });
                 await browserPage.openKeyDetailsByKeyName(key.keyName);
                 await browserPage.selectFormatter(formatter.format);
                 // Verify that edit button enabled for ZSet

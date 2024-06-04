@@ -39,6 +39,15 @@ export const keyTypes = [
     { textType: KeyTypesTexts.TimeSeries, keyName: 'timeSeries' }
 ];
 
+export const formattersKeyTypes = [
+    { textType: KeyTypesTexts.Hash, keyName: 'hash', data: 'value' },
+    { textType: KeyTypesTexts.List, keyName: 'list_', data: 'value' },
+    { textType: KeyTypesTexts.Set, keyName: 'set', data: 'member' },
+    { textType: KeyTypesTexts.ZSet, keyName: 'zset', data: 'member' },
+    { textType: KeyTypesTexts.String, keyName: 'string', data: 'value' },
+    { textType: KeyTypesTexts.Stream, keyName: 'stream', data: 'field' }
+];
+
 /**
  * Adding keys of each type through the cli
  * @param keyData The key data

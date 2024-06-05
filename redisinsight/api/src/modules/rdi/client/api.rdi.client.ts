@@ -146,20 +146,17 @@ export class ApiRdiClient extends RdiClient {
   }
 
   async connect(): Promise<void> {
-    console.log('conenct')
     try {
       const response = await this.client.post(
         RdiUrl.Login,
         { username: this.rdi.username, password: this.rdi.password },
       );
-      console.log(response, 'response');
       const accessToken = response.data.access_token;
       const decodedJwt = decode(accessToken);
 
       this.auth = { jwt: accessToken, exp: decodedJwt.exp };
       this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (e) {
-      console.log(e);
       throw wrapRdiPipelineError(e);
     }
   }

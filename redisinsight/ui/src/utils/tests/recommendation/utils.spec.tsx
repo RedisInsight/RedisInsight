@@ -105,6 +105,13 @@ const mockContent: IRecommendationContent[] = [
     type: 'link-sso',
     value: 'link-sso',
   },
+  {
+    type: 'internal-link',
+    value: {
+      path: '/some-path',
+      name: 'name',
+    },
+  },
 ]
 
 describe('renderRecommendationBadgesLegend', () => {
@@ -183,6 +190,7 @@ describe('replaceVariables', () => {
 describe('renderRecommendationContent', () => {
   it('should render content', () => {
     const renderedContent = renderRecommendationContent(mockContent, undefined, { telemetryName: mockTelemetryName })
+    // @ts-ignore
     render(renderedContent)
 
     expect(screen.queryByTestId(`paragraph-${mockTelemetryName}-0`)).toBeInTheDocument()
@@ -192,6 +200,7 @@ describe('renderRecommendationContent', () => {
     expect(screen.queryByTestId(`list-${mockTelemetryName}-4`)).toBeInTheDocument()
     expect(screen.queryByTestId(`link-${mockTelemetryName}-6`)).toBeInTheDocument()
     expect(screen.queryByTestId(`code-link-${mockTelemetryName}-7`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`internal-link-${mockTelemetryName}-9`)).toBeInTheDocument()
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 
@@ -202,9 +211,10 @@ describe('renderRecommendationContent', () => {
       null,
       { telemetryName: mockTelemetryName, onClickLink: onClickMock },
     )
+    // @ts-ignore
     const { queryByTestId } = render(renderedContent)
 
-    fireEvent.click(queryByTestId(`link-${mockTelemetryName}-6`))
+    fireEvent.click(queryByTestId(`link-${mockTelemetryName}-6`) as HTMLElement)
 
     expect(onClickMock).toBeCalled()
   })

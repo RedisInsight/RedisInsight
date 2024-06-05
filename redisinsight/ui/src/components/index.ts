@@ -29,6 +29,7 @@ import FeatureFlagComponent from './feature-flag-component'
 import AutoRefresh from './auto-refresh'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 import RdiInstanceHeader from './rdi-instance-header'
+import InternalLink from './internal-link'
 
 export { FullScreen } from './full-screen'
 
@@ -71,4 +72,5 @@ export {
   FilterNotAvailable,
   AutoRefresh,
   RdiInstanceHeader,
+  InternalLink,
 }

@@ -11,7 +11,7 @@ import {
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
-import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthConnectFreeDb, OAuthSsoHandlerDialog, InternalLink } from 'uiSrc/components'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CodeIcon from 'uiSrc/assets/img/code-changes.svg?react'
 import ConfigurationIcon from 'uiSrc/assets/img/configuration-changes.svg?react'
@@ -127,11 +127,20 @@ const renderContentElement = (
           external={false}
           data-testid={`link-${telemetry.telemetryName}-${idx}`}
           target="_blank"
-          href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetry.telemetryName })}
+          href={replaceVariables(value.href)}
           onClick={() => telemetry.onClickLink?.()}
         >
           {value.name}
         </EuiLink>
+      )
+    case 'internal-link':
+      return (
+        <InternalLink
+          key={`${telemetry.telemetryName}-${idx}`}
+          dataTestid={`internal-link-${telemetry.telemetryName}-${idx}`}
+          path={value.path}
+          text={value.name}
+        />
       )
     case 'link-sso':
       return (

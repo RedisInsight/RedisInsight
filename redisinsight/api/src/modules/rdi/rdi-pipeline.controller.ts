@@ -1,10 +1,11 @@
 import {
   Body,
   ClassSerializerInterceptor, Controller, Get, Post, UseInterceptors, UsePipes, ValidationPipe,
-  Query,
+  Query, Req,
 } from '@nestjs/common';
 import { Rdi, RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
@@ -72,10 +73,11 @@ export class RdiPipelineController {
     responses: [{ status: 200, type: RdiTestConnectionsResponseDto }],
   })
   async testConnections(
-    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+    @Req() req: Request,
+      @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
       @Body() config: string,
   ): Promise<RdiTestConnectionsResponseDto> {
-    return this.rdiPipelineService.testConnections(rdiClientMetadata, config);
+    return this.rdiPipelineService.testConnections(rdiClientMetadata, config, req);
   }
 
   @Get('/strategies')

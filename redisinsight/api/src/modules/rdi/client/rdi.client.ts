@@ -37,7 +37,7 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-  abstract testConnections(config: string, signal: Request): Promise<RdiTestConnectionsResponseDto>;
+  abstract testConnections(config: string, req: Request): Promise<RdiTestConnectionsResponseDto>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 

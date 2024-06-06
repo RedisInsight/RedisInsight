@@ -34,6 +34,7 @@ import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices
 import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
+import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import InstancePageRouter from './InstancePageRouter'
 
 export interface Props {
@@ -99,6 +100,7 @@ const InstancePage = ({ routes = [] }: Props) => {
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)
+    dispatch(clearExpertChatHistory())
   }
 
   if (isShouldChildrenRerender) {

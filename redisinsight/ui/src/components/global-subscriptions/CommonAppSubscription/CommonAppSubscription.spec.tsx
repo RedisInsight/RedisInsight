@@ -8,12 +8,14 @@ import { setNewNotificationReceived, setLastReceivedNotification } from 'uiSrc/s
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { NotificationType } from 'uiSrc/slices/interfaces'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { SocketEvent } from 'uiSrc/constants'
+import { CloudJobEvents, SocketEvent } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
+import { logoutUser } from 'uiSrc/slices/oauth/cloud'
 import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 
+import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import CommonAppSubscription from './CommonAppSubscription'
 
 let store: typeof mockedStore

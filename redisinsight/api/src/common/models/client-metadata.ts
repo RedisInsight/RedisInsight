@@ -10,6 +10,7 @@ export enum ClientContext {
   CLI = 'CLI',
   Workbench = 'Workbench',
   Profiler = 'Profiler',
+  AI = 'AI',
 }
 
 export class ClientMetadata {

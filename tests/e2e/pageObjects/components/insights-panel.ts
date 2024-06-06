@@ -5,7 +5,7 @@ import { ExploreTab } from './explore-tab';
 
 export class InsightsPanel {
     // CONTAINERS
-    sidePanel = Selector('[data-testid=insights-panel]');
+    sidePanel = Selector('[data-testid=side-panels-insights]');
     explorePanelButton = Selector('[data-testid=insights-trigger]');
     closeButton = Selector('[data-testid=close-insights-btn]');
     activeTab = Selector('[class*=euiTab-isSelected]');
@@ -37,11 +37,11 @@ export class InsightsPanel {
      * Click on Panel tab
      * @param type of the tab
      */
-    async setActiveTab(type: ExploreTabs.Explore): Promise<ExploreTab>
+    async setActiveTab(type: ExploreTabs.Tutorials): Promise<ExploreTab>
     async setActiveTab(type: ExploreTabs.Tips): Promise<RecommendationsTab>
     async setActiveTab(type: ExploreTabs): Promise<ExploreTab | RecommendationsTab> {
         const activeTabName  = await this.getActiveTabName();
-        if(type === ExploreTabs.Explore) {
+        if(type === ExploreTabs.Tutorials) {
             if(type !== activeTabName) {
                 await t.click(this.exploreTab);
             }

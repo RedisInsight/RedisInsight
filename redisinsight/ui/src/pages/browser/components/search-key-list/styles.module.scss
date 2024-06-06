@@ -30,3 +30,18 @@
   margin-right: 50px;
   word-break: break-all;
 }
+
+.askCopilotBtn {
+  margin-left: 4px;
+
+  .cloudIcon {
+    width: 14px;
+    height: 14px;
+
+    :global {
+      path {
+        fill: var(--triggerIconActiveColor) !important;
+      }
+    }
+  }
+}

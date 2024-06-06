@@ -5,7 +5,7 @@ import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { StateAppFeatures } from 'uiSrc/slices/interfaces'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
-import { getPagesForFeatures } from 'uiSrc/utils/highlighting'
+import { getPagesForFeatures } from 'uiSrc/utils/features'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
 
@@ -30,6 +30,12 @@ export const initialState: StateAppFeatures = {
         flag: false
       },
       [FeatureFlags.cloudSsoRecommendedSettings]: {
+        flag: false
+      },
+      [FeatureFlags.documentationChat]: {
+        flag: false
+      },
+      [FeatureFlags.databaseChat]: {
         flag: false
       },
       [FeatureFlags.appSettings]: {

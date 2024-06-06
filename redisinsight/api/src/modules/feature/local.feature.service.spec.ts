@@ -5,7 +5,7 @@ import {
   mockFeaturesConfig,
   mockFeaturesConfigJson,
   mockFeaturesConfigRepository, mockFeatureSso,
-  MockType, mockUnknownFeature
+  MockType, mockUnknownFeature,
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -14,7 +14,10 @@ import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { LocalFeatureService } from 'src/modules/feature/local.feature.service';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureFlagProvider } from 'src/modules/feature/providers/feature-flag/feature-flag.provider';
-import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
+import * as fs from 'fs-extra';
+
+jest.mock('fs-extra');
+const mockedFs = fs as jest.Mocked<typeof fs>;
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -27,6 +30,13 @@ describe('FeatureService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    jest.mock('fs-extra', () => mockedFs);
+    mockedFs.readFile.mockResolvedValueOnce(JSON.stringify({
+      features: {
+        [KnownFeatures.CloudSso]: false,
+      },
+    }) as any);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LocalFeatureService,
@@ -98,7 +108,7 @@ describe('FeatureService', () => {
       await service.recalculateFeatureFlags();
 
       expect(repository.delete)
-        .toHaveBeenCalledWith(mockUnknownFeature);
+        .toHaveBeenCalledWith(mockUnknownFeature.name);
       expect(repository.upsert)
         .toHaveBeenCalledWith({
           name: KnownFeatures.InsightsRecommendations,
@@ -109,6 +119,9 @@ describe('FeatureService', () => {
         features: {
           [KnownFeatures.InsightsRecommendations]: mockFeature,
           [KnownFeatures.CloudSso]: mockFeatureSso,
+        },
+        force: {
+          [KnownFeatures.CloudSso]: false,
         },
       });
     });

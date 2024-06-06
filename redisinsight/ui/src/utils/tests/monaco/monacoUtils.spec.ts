@@ -4,7 +4,7 @@ import {
   splitMonacoValuePerLines,
   findArgIndexByCursor,
   isParamsLine,
-  getMonacoLines
+  getMonacoLines, getCommandsFromQuery
 } from 'uiSrc/utils'
 
 describe('removeMonacoComments', () => {
@@ -185,6 +185,26 @@ describe('getMonacoLines', () => {
     'given %p as argument, returns %p',
     (arg: string, expectedResult) => {
       const result = getMonacoLines(arg)
+      expect(result).toEqual(expectedResult)
+    }
+  )
+})
+
+describe('getCommandsFromQuery', () => {
+  const commandsArray = [
+    'FT.INFO',
+    'INFO'
+  ]
+  const cases = [
+    ['ft.info a b \ninfo\nany command', 'FT.INFO;INFO;any'],
+    ['a b \nset a b', 'a;set'],
+    ['\n\ninfo \n\nany command', 'INFO;any'],
+    ['info', 'INFO'],
+  ]
+  test.each(cases)(
+    'given %p as argument, returns %p',
+    (query: string, expectedResult) => {
+      const result = getCommandsFromQuery(query, commandsArray)
       expect(result).toEqual(expectedResult)
     }
   )

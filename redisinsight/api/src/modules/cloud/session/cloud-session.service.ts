@@ -29,4 +29,12 @@ export class CloudSessionService {
   async deleteSessionData(id: string): Promise<void> {
     await this.sessionService.updateSessionData(id, { cloud: null });
   }
+
+  async invalidateApiSession(id: string): Promise<void> {
+    await this.updateSessionData(id, {
+      csrf: null,
+      apiSessionId: null,
+      user: null,
+    });
+  }
 }

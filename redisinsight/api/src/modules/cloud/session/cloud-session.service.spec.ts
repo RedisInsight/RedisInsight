@@ -98,4 +98,17 @@ describe('CloudSessionService', () => {
       expect(sessionService.updateSessionData).toHaveBeenCalledWith(mockInitSession.id, { cloud: null });
     });
   });
+
+  describe('invalidateApiSession', () => {
+    it('should invalidate cloud api session data by id', async () => {
+      const spy = jest.spyOn(service, 'updateSessionData');
+
+      await service.invalidateApiSession(mockInitSession.id);
+      expect(spy).toHaveBeenCalledWith(mockInitSession.id, {
+        csrf: null,
+        apiSessionId: null,
+        user: null,
+      });
+    });
+  });
 });

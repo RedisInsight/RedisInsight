@@ -66,7 +66,7 @@ test('Verify that user can see all the information removed when reloads the page
 test('Verify that user can see saved state of the Enablement area when navigates back to the Workbench from other page', async t => {
     // Collapse the Enablement area and open Settings
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await workbenchPage.InsightsPanel.togglePanel(false);
     await t.expect(tutorials.preselectArea.exists).notOk('the panel is not closed');
     await workbenchPage.InsightsPanel.togglePanel(true);

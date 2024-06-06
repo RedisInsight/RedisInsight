@@ -18,7 +18,7 @@ const RejsonObject = (props: JSONObjectProps) => {
     parentPath,
     keyName,
     isDownloaded,
-    expadedRows,
+    expandedRows,
     leftPadding,
     selectedKey,
     cardinality = 0,
@@ -43,14 +43,14 @@ const RejsonObject = (props: JSONObjectProps) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!expadedRows?.has(path)) {
+    if (!expandedRows?.has(path)) {
       setValue(defaultValue)
       return
     }
 
     if (isDownloaded) {
       setValue(currentValue)
-      setIsExpanded(expadedRows?.has(path))
+      setIsExpanded(expandedRows?.has(path))
       return
     }
 
@@ -173,7 +173,7 @@ const RejsonObject = (props: JSONObjectProps) => {
         />
       ) : (
         <RejsonDynamicTypes
-          expadedRows={expadedRows}
+          expandedRows={expandedRows}
           leftPadding={leftPadding}
           data={value}
           parentPath={path}

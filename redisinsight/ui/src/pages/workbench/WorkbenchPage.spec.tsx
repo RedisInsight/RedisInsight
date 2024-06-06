@@ -116,9 +116,8 @@ describe('Telemetry', () => {
   })
 
   it('should send proper eventData after changing Raw mode', async () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<WorkbenchPage />)
 
@@ -132,14 +131,13 @@ describe('Telemetry', () => {
         changedFromMode: RunQueryMode.ASCII,
         changedToMode: RunQueryMode.Raw,
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should send proper eventData without Raw mode', async () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<WorkbenchPage />)
 
@@ -149,22 +147,20 @@ describe('Telemetry', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
       eventData: {
-        command: 'info;'.toUpperCase(),
+        command: 'INFO',
         databaseId: INSTANCE_ID_MOCK,
         results: 'single',
         multiple: 'Single',
         pipeline: true,
         rawMode: false,
       }
-    })
-
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should send proper eventData with Raw mode', async () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<WorkbenchPage />)
 
@@ -174,22 +170,20 @@ describe('Telemetry', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.WORKBENCH_COMMAND_SUBMITTED,
       eventData: {
-        command: 'info;'.toUpperCase(),
+        command: 'INFO',
         databaseId: INSTANCE_ID_MOCK,
         results: 'single',
         multiple: 'Single',
         pipeline: true,
         rawMode: false,
       }
-    })
-
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('Results: Raw mode', async () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<WorkbenchPage />)
 
@@ -200,21 +194,19 @@ describe('Telemetry', () => {
       eventData: {
         auto: undefined,
         pipeline: undefined,
-        command: 'INFO;',
+        command: 'INFO',
         databaseId: INSTANCE_ID_MOCK,
         multiple: 'Single',
         results: 'single',
         rawMode: true,
       }
-    })
-
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on delete', async () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<WorkbenchPage />)
 
@@ -226,9 +218,8 @@ describe('Telemetry', () => {
         databaseId: 'instanceId',
         command: 'info'
       }
-    })
-
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('clear-history-btn'))
 
@@ -237,9 +228,8 @@ describe('Telemetry', () => {
       eventData: {
         databaseId: 'instanceId'
       }
-    })
-
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })
 describe('Raw mode', () => {

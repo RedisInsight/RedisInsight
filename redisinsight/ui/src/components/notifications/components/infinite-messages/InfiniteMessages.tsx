@@ -10,6 +10,7 @@ import {
   EuiTitle
 } from '@elastic/eui'
 import { find } from 'lodash'
+import cx from 'classnames'
 import { CloudJobStep } from 'uiSrc/electron/constants'
 import ExternalLink from 'uiSrc/components/base/external-link'
 import ChampagneIcon from 'uiSrc/assets/img/icons/champagne.svg'
@@ -33,6 +34,31 @@ export enum InfiniteMessagesIds {
 const MANAGE_DB_LINK = 'https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
 
 export const INFINITE_MESSAGES = {
+  AUTHENTICATING: () => ({
+    id: InfiniteMessagesIds.oAuthProgress,
+    Inner: (
+      <div
+        role="presentation"
+        data-testid="authenticating-notification"
+      >
+        <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
+          <EuiFlexItem grow={false}>
+            <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} />
+          </EuiFlexItem>
+          <EuiFlexItem grow>
+            <EuiTitle className="infiniteMessage__title">
+              <span>
+                Authenticating…
+              </span>
+            </EuiTitle>
+            <EuiText size="xs">
+              This may take several seconds, but it is totally worth it!
+            </EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </div>
+    )
+  }),
   PENDING_CREATE_DB: (step?: CloudJobStep) => ({
     id: InfiniteMessagesIds.oAuthProgress,
     Inner: (
@@ -42,7 +68,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
           <EuiFlexItem grow={false}>
-            <EuiLoadingSpinner className="infiniteMessage__icon" />
+            <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} />
           </EuiFlexItem>
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">
@@ -234,7 +260,7 @@ export const INFINITE_MESSAGES = {
       >
         <EuiFlexGroup justifyContent="flexEnd" direction="row" gutterSize="none">
           <EuiFlexItem grow={false}>
-            <EuiLoadingSpinner className="infiniteMessage__icon" />
+            <EuiLoadingSpinner className={cx('infiniteMessage__icon', styles.loading)} />
           </EuiFlexItem>
           <EuiFlexItem grow>
             <EuiTitle className="infiniteMessage__title">

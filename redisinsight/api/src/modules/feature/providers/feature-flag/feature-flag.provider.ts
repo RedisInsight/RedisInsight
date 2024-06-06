@@ -52,8 +52,12 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
+    this.strategies.set(KnownFeatures.HashFieldExpiration, new WithDataFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
   }
-
+a
   getStrategy(name: string): FeatureFlagStrategy {
     return this.strategies.get(name) || this.getStrategy('default');
   }

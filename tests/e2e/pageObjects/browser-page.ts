@@ -162,7 +162,7 @@ export class BrowserPage extends InstancePage {
     hashFieldNameInput = Selector('[data-testid=field-name]');
     hashFieldValueEditor = Selector('[data-testid^=hash_value-editor]');
     listKeyElementInput = Selector('[data-testid=element]');
-    listKeyElementEditorInput = Selector('[data-testid^=list_value-editor-0]');
+    listKeyElementEditorInput = Selector('[data-testid^=list_value-editor-]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-mode-id=json]');
     jsonUploadInput = Selector('[data-testid=upload-input-file]');

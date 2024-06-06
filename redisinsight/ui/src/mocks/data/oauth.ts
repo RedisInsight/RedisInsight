@@ -7,3 +7,13 @@ export const OAUTH_CLOUD_CAPI_KEYS_DATA = [
     valid: true,
   }
 ]
+
+export const MOCK_OAUTH_USER_PROFILE = {
+  id: 1,
+  name: 'Bill Russell',
+  accounts: [
+    { id: 1, name: 'Bill R' },
+    { id: 2, name: 'Bill R 2' },
+  ],
+  currentAccountId: 1,
+}

@@ -1,10 +1,10 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSelectedTab, changeSidePanel, toggleSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_EXPLORE_GUIDES } from 'uiSrc/constants/mocks/mock-explore-guides'
 import { findTutorialPath } from 'uiSrc/utils'
@@ -60,7 +60,7 @@ describe('CapabilityPromotion', () => {
 
     const expectedActions = [
       changeSelectedTab(InsightsPanelTabs.Explore),
-      toggleInsightsPanel(true)
+      changeSidePanel(SidePanels.Insights)
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
@@ -97,7 +97,7 @@ describe('CapabilityPromotion', () => {
 
     const expectedActions = [
       changeSelectedTab(InsightsPanelTabs.Explore),
-      toggleInsightsPanel()
+      toggleSidePanel(SidePanels.Insights)
     ]
 
     expect(store.getActions()).toEqual(expectedActions)

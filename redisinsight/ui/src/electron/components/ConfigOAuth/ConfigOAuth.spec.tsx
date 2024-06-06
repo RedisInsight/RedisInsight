@@ -10,12 +10,11 @@ import {
   getUserInfo,
   setJob,
   setOAuthCloudSource,
-  setSignInDialogState,
   setSocialDialogState,
   showOAuthProgress,
   signInFailure
 } from 'uiSrc/slices/oauth/cloud'
-import { cloudSelector, loadSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import ConfigOAuth from './ConfigOAuth'
@@ -50,14 +49,17 @@ describe('ConfigOAuth', () => {
   })
 
   it('should call proper actions on success', () => {
+    (cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: 'signIn'
+    })
+
     window.app?.cloudOauthCallback.mockImplementation((cb: any) => cb(undefined, { status: CloudAuthStatus.Succeed }))
     render(<ConfigOAuth />)
 
     const expectedActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
       getUserInfo()
     ]
@@ -65,6 +67,10 @@ describe('ConfigOAuth', () => {
   })
 
   it('should call proper actions on failed', () => {
+    (cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: 'signIn'
+    })
+
     window.app?.cloudOauthCallback.mockImplementation((cb: any) =>
       cb(
         undefined, {
@@ -85,12 +91,16 @@ describe('ConfigOAuth', () => {
           status: 500
         }
       } as any),
-      setIsAutodiscoverySSO(false)
+      setSSOFlow(undefined)
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should fetch plans by defaul', () => {
+  it('should fetch plans with create flow', () => {
+    (cloudSelector as jest.Mock).mockReturnValue({
+      ssoFlow: 'create'
+    })
+
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());
     (fetchUserInfo as jest.Mock).mockImplementation(fetchUserInfoMock)
 
@@ -100,9 +110,9 @@ describe('ConfigOAuth', () => {
     const afterCallbackActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
     ]
 
     const expectedActions = [
@@ -113,7 +123,7 @@ describe('ConfigOAuth', () => {
 
   it('should call fetch subscriptions with autodiscovery flow', () => {
     (cloudSelector as jest.Mock).mockReturnValue({
-      isAutodiscoverySSO: true
+      ssoFlow: 'import'
     })
 
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());
@@ -125,9 +135,9 @@ describe('ConfigOAuth', () => {
     const afterCallbackActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
     ]
 
     const expectedActions = [
@@ -138,7 +148,8 @@ describe('ConfigOAuth', () => {
 
   it('should call create free job after success with recommended settings', () => {
     (cloudSelector as jest.Mock).mockReturnValue({
-      isRecommendedSettings: true
+      isRecommendedSettings: true,
+      ssoFlow: 'create'
     })
 
     const fetchUserInfoMock = jest.fn().mockImplementation((onSuccessAction: () => void) => () => onSuccessAction());
@@ -150,9 +161,9 @@ describe('ConfigOAuth', () => {
     const afterCallbackActions = [
       setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }),
       showOAuthProgress(true),
-      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
-      setSignInDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()),
       setSocialDialogState(null),
+      addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)),
     ]
 
     const expectedActions = [

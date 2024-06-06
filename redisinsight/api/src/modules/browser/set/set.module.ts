@@ -1,10 +1,8 @@
 import {
   DynamicModule,
-  MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
-import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
+import { RouterModule } from '@nestjs/core';
 import { SetService } from 'src/modules/browser/set/set.service';
 import { SetController } from 'src/modules/browser/set/set.controller';
 
@@ -14,7 +12,7 @@ export class SetModule {
     return {
       module: SetModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: SetModule,
         }]),
@@ -22,11 +20,5 @@ export class SetModule {
       controllers: [SetController],
       providers: [SetService],
     };
-  }
-
-  configure(consumer: MiddlewareConsumer): any {
-    consumer
-      .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(SetController));
   }
 }

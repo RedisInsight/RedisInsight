@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
+import { getApiErrorCode, getApiErrorMessage, getAxiosError, isStatusSuccessful, Nullable } from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
@@ -23,6 +23,7 @@ import {
   CloudSuccessResult,
   EnhancedAxiosError,
   Instance,
+  OAuthSocialAction,
   OAuthSocialSource,
   StateAppOAuth
 } from '../interfaces'
@@ -33,6 +34,7 @@ import {
   removeInfiniteNotification
 } from '../app/notifications'
 import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
+import ApiStatusCode from '../../constants/apiStatusCode'
 
 export const initialState: StateAppOAuth = {
   loading: false,
@@ -46,7 +48,6 @@ export const initialState: StateAppOAuth = {
   source: null,
   agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSocialDialog: false,
-  isOpenSignInDialog: false,
   isOpenSelectAccountDialog: false,
   showProgress: true,
   user: {
@@ -117,12 +118,6 @@ const oauthCloudSlice = createSlice({
       }
       state.isOpenSocialDialog = !!payload
     },
-    setSignInDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
-      if (payload) {
-        state.source = payload
-      }
-      state.isOpenSignInDialog = !!payload
-    },
     setOAuthCloudSource: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
       state.source = payload
     },
@@ -185,6 +180,17 @@ const oauthCloudSlice = createSlice({
     removeAllCapiKeysFailure: (state) => {
       state.capiKeys.loading = false
     },
+    logoutUser: (state) => {
+      state.user.loading = true
+    },
+    logoutUserSuccess: (state) => {
+      state.user.loading = false
+      state.user.data = null
+    },
+    logoutUserFailure: (state) => {
+      state.user.loading = false
+      state.user.data = null
+    }
   },
 })
 
@@ -201,7 +207,6 @@ export const {
   addFreeDbSuccess,
   addFreeDbFailure,
   setSocialDialogState,
-  setSignInDialogState,
   setOAuthCloudSource,
   setSelectAccountDialogState,
   setJob,
@@ -220,6 +225,9 @@ export const {
   removeAllCapiKeys,
   removeAllCapiKeysSuccess,
   removeAllCapiKeysFailure,
+  logoutUser,
+  logoutUserSuccess,
+  logoutUserFailure
 } = oauthCloudSlice.actions
 
 // A selector
@@ -267,7 +275,34 @@ export function createFreeDbSuccess(result: CloudSuccessResult, history: any) {
 }
 
 // Asynchronous thunk action
-export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => void, onFailAction?: () => void) {
+export function fetchProfile(onSuccessAction?: (isMultiAccount?: boolean) => void, onFailAction?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getUserInfo())
+
+    try {
+      const { data, status } = await apiService.get<CloudUser>(
+        ApiEndpoints.CLOUD_ME,
+        {
+          // params: getCloudSsoUtmParams(getState().oauth?.cloud?.source),
+        },
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getUserInfoSuccess(data))
+
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+      dispatch(getUserInfoFailure(errorMessage))
+
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function fetchUserInfo(onSuccessAction?: (isSelectAccout: boolean) => void, onFailAction?: () => void) {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(getUserInfo())
 
@@ -280,16 +315,18 @@ export function fetchUserInfo(onSuccessAction?: (isMultiAccount: boolean) => voi
       )
 
       if (isStatusSuccessful(status)) {
-        const isMultiAccount = (data?.accounts?.length ?? 0) > 1
-        if (isMultiAccount) {
+        const isSignInFlow = getState().connections?.cloud.ssoFlow === OAuthSocialAction.SignIn
+        const isSelectAccout = !isSignInFlow && (data?.accounts?.length ?? 0) > 1
+
+        if (isSelectAccout) {
           dispatch(setSelectAccountDialogState(true))
           dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
         }
 
         dispatch(getUserInfoSuccess(data))
-        dispatch(setSignInDialogState(null))
+        dispatch(setSocialDialogState(null))
 
-        onSuccessAction?.(isMultiAccount)
+        onSuccessAction?.(isSelectAccout)
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -342,10 +379,11 @@ export function createFreeDbJob({
         ))
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+
+      dispatch(addErrorNotification(err))
       dispatch(addFreeDbFailure(errorMessage))
       dispatch(setOAuthCloudSource(null))
       onFailAction?.()
@@ -375,10 +413,16 @@ export function activateAccount(
         dispatch(getUserInfoSuccess(data))
         onSuccessAction?.()
       }
-    } catch (_err) {
-      const error = _err as AxiosError
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
       dispatch(getUserInfoFailure(errorMessage))
       dispatch(setOAuthCloudSource(null))
       onFailAction?.(errorMessage)
@@ -399,7 +443,7 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
       if (isStatusSuccessful(status)) {
         dispatch(getPlansSuccess(data))
         dispatch(setIsOpenSelectPlanDialog(true))
-        dispatch(setSignInDialogState(null))
+        dispatch(setSocialDialogState(null))
         dispatch(setSelectAccountDialogState(false))
         dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
 
@@ -487,6 +531,33 @@ export function removeCapiKeyAction(
       const error = _err as AxiosError
       dispatch(addErrorNotification(error))
       dispatch(removeCapiKeyFailure())
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function logoutUserAction(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(logoutUser())
+
+    try {
+      const { status } = await apiService.get(
+        ApiEndpoints.CLOUD_ME_LOGOUT
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(logoutUserSuccess())
+        onSuccessAction?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+
+      dispatch(addErrorNotification(err))
+      dispatch(logoutUserFailure())
       onFailAction?.()
     }
   }

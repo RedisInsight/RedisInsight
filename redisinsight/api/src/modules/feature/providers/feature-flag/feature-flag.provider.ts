@@ -10,6 +10,7 @@ import { IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants';
 import { CloudSsoFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/cloud-sso.flag.strategy';
 import { Feature } from 'src/modules/feature/model/feature';
 import { WithDataFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/with-data.flag.strategy';
+import { SwitchableFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/switchable.flag.strategy';
 
 @Injectable()
 export class FeatureFlagProvider {
@@ -40,6 +41,34 @@ export class FeatureFlagProvider {
       this.settingsService,
     ));
     this.strategies.set(KnownFeatures.RedisClient, new WithDataFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.DocumentationChat, new SwitchableFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.DatabaseChat, new SwitchableFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.appSettings, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.profiler, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.dbAnalysis, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.appNotifications, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
+    this.strategies.set(KnownFeatures.triggersAndFunctions, new CommonFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

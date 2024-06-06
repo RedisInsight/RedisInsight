@@ -1,10 +1,8 @@
 import {
   DynamicModule,
-  MiddlewareConsumer,
   Module,
 } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
-import { RedisConnectionMiddleware } from 'src/middleware/redis-connection.middleware';
+import { RouterModule } from '@nestjs/core';
 import { RejsonRlController } from 'src/modules/browser/rejson-rl/rejson-rl.controller';
 import { RejsonRlService } from 'src/modules/browser/rejson-rl/rejson-rl.service';
 
@@ -14,7 +12,7 @@ export class RejsonRlModule {
     return {
       module: RejsonRlModule,
       imports: [
-        RouterModule.forRoutes([{
+        RouterModule.register([{
           path: route,
           module: RejsonRlModule,
         }]),
@@ -22,11 +20,5 @@ export class RejsonRlModule {
       controllers: [RejsonRlController],
       providers: [RejsonRlService],
     };
-  }
-
-  configure(consumer: MiddlewareConsumer): any {
-    consumer
-      .apply(RedisConnectionMiddleware)
-      .forRoutes(RouterModule.resolvePath(RejsonRlController));
   }
 }

@@ -23,6 +23,26 @@ export abstract class CloudAuthStrategy {
     });
   }
 
+  generateRenewTokensUrl(refreshToken: string): URL {
+    const url = new URL(this.config.tokenUrl, this.config.issuer);
+    url.searchParams.append('client_id', this.config.clientId);
+    url.searchParams.append('grant_type', 'refresh_token');
+    url.searchParams.append('redirect_uri', this.config.redirectUri);
+    url.searchParams.append('scope', this.config.scopes.join(' '));
+    url.searchParams.append('refresh_token', refreshToken);
+
+    return url;
+  }
+
+  generateRevokeTokensUrl(token: string, hint: string): URL {
+    const url = new URL(this.config.revokeTokenUrl, this.config.issuer);
+    url.searchParams.append('client_id', this.config.clientId);
+    url.searchParams.append('token_type_hint', hint);
+    url.searchParams.append('token', token);
+
+    return url;
+  }
+
   static generateAuthUrl(authRequest: any): URL {
     const url = new URL(authRequest.authorizeUrl, authRequest.issuer);
     url.searchParams.append('client_id', authRequest.clientId);
@@ -35,6 +55,7 @@ export abstract class CloudAuthStrategy {
     url.searchParams.append('code_challenge_method', authRequest.codeChallengeMethod);
     url.searchParams.append('code_challenge', authRequest.codeChallenge);
     url.searchParams.append('scope', authRequest.scopes.join(' '));
+    url.searchParams.append('prompt', 'login');
 
     return url;
   }

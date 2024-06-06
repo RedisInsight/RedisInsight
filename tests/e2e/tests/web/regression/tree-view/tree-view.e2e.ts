@@ -26,7 +26,6 @@ fixture `Tree view verifications`
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneBigConfig);
     })
     .afterEach(async() => {
-        await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneBigConfig);
     });
 test
@@ -37,7 +36,6 @@ test
     .after(async() => {
         await browserPage.Cli.sendCommandInCli('flushdb');
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfigEmpty);
-        await browserPage.Cli.sendCommandInCli('flushdb');
     })('Verify that user has load sample data button when there are no keys in the database', async t => {
         const message = 'Let\'sstartworkingLoadsampledata+Addkeymanually';
         const actualMessage = await browserPage.keyListMessage.innerText;
@@ -68,7 +66,7 @@ test
         for (const capability of capabilities) {
             await browserPage.clickGuideLinksByName(capability.name);
             await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel not opened');
-            const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+            const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
             await t.expect(tutorials.closeEnablementPage.textContent)
                 .contains(capability.tutorial, `${capability.tutorial} tutorial not opened from No Keys page`);
             await t.click(browserPage.InsightsPanel.closeButton);

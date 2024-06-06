@@ -231,3 +231,11 @@ export const generateRedisCommand = (
 
   return commandToSend.replace(/\s\s+/g, ' ')
 }
+
+export const arrayCommandToString = (command: string[] | null) => {
+  if (isArray(command)) {
+    return command.map((arg) => (arg.includes(' ') ? `"${arg}"` : arg)).join(' ')
+  }
+
+  return null
+}

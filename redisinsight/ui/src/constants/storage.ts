@@ -11,7 +11,6 @@ enum BrowserStorageItem {
   segmentAnonymousId = 'ajs_anonymous_id',
   wbClientUuid = 'wbClientUuid',
   wbInputHistory = 'wbInputHistory',
-  isEnablementAreaMinimized = 'isEnablementAreaMinimized',
   treeViewDelimiter = 'treeViewDelimiter',
   treeViewSort = 'treeViewSort',
   autoRefreshRate = 'autoRefreshRate',
@@ -30,8 +29,11 @@ enum BrowserStorageItem {
   OAuthJobId = 'OAuthJobId',
   OAuthAgreement = 'OAuthAgreement',
   insightsPanel = 'insightsPanel',
+  sidePanel = 'sidePanel',
   capability = 'capability',
-  session = 'session', // TODO: [USER_CONTEXT] add session to browser storage?
+  aiChatSession = 'aiChatSession',
+  selectedAiChat = 'selectedAiChat',
+  generalChatAgreements = 'generalChatAgreements'
 }
 
 export default BrowserStorageItem

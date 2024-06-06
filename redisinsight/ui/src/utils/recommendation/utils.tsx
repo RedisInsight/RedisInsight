@@ -12,7 +12,7 @@ import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
 import { IRecommendationsStatic, IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthConnectFreeDb, OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CodeIcon from 'uiSrc/assets/img/code-changes.svg?react'
 import ConfigurationIcon from 'uiSrc/assets/img/configuration-changes.svg?react'
 import UpgradeIcon from 'uiSrc/assets/img/upgrade.svg?react'
@@ -143,7 +143,10 @@ const renderContentElement = (
               data-testid={`link-sso-${telemetry.telemetryName}-${idx}`}
               target="_blank"
               onClick={(e) => {
-                ssoCloudHandlerClick?.(e, telemetry.telemetryName as OAuthSocialSource)
+                ssoCloudHandlerClick?.(e, {
+                  source: telemetry.telemetryName as OAuthSocialSource,
+                  action: OAuthSocialAction.Create
+                })
               }}
               href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetry.telemetryName })}
             >

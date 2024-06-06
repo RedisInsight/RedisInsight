@@ -38,6 +38,8 @@ import { CloudDatabaseDetails1687166457712 } from './1687166457712-cloud-databas
 import { FreeCloudDatabase1688989337247 } from './1688989337247-freeCloudDatabase';
 import { CloudCapiKeys1691061058385 } from './1691061058385-cloud-capi-keys';
 import { FeatureSso1691476419592 } from './1691476419592-feature-sso';
+import { AiHistory1713515657364 } from './1713515657364-ai-history';
+import { AiHistorySteps1714501203616 } from './1714501203616-ai-history-steps';
 
 export default [
   initialMigration1614164490968,
@@ -80,4 +82,6 @@ export default [
   FreeCloudDatabase1688989337247,
   CloudCapiKeys1691061058385,
   FeatureSso1691476419592,
+  AiHistory1713515657364,
+  AiHistorySteps1714501203616,
 ];

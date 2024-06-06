@@ -3,10 +3,10 @@ import { render, screen } from 'uiSrc/utils/test-utils'
 
 import ExplorePanelTemplate from './ExplorePanelTemplate'
 
-jest.mock('uiSrc/slices/panels/insights', () => ({
-  ...jest.requireActual('uiSrc/slices/panels/insights'),
-  insightsPanelSelector: jest.fn().mockReturnValue({
-    isOpen: true
+jest.mock('uiSrc/slices/panels/sidePanels', () => ({
+  ...jest.requireActual('uiSrc/slices/panels/sidePanels'),
+  sidePanelsSelector: jest.fn().mockReturnValue({
+    openedPanel: 'insights'
   }),
 }))
 
@@ -19,6 +19,6 @@ describe('ExplorePanelTemplate', () => {
     render(<ExplorePanelTemplate><div data-testid="children" /></ExplorePanelTemplate>)
 
     expect(screen.getByTestId('children')).toBeInTheDocument()
-    expect(screen.getByTestId('insights-panel')).toBeInTheDocument()
+    expect(screen.getByTestId('side-panels-insights')).toBeInTheDocument()
   })
 })

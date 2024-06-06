@@ -22,16 +22,19 @@ export class SingleUserAuthMiddleware implements NestMiddleware {
         data: {
           cloud: {
             accessToken: process.env.MOCK_AKEY || undefined,
+            refreshToken: process.env.MOCK_RKEY || undefined,
+            idpType: process.env.MOCK_IDP_TYPE || undefined,
           },
         },
       }));
     }
 
-    // todo: pay attention on property name session vs sessionMetadata
-    req['session'] = <ISessionMetadata>Object.freeze(plainToClass(SessionMetadata, {
-      userId: DEFAULT_USER_ID,
-      sessionId: DEFAULT_SESSION_ID,
-    }));
+    res.locals.session = {
+      data: <ISessionMetadata>Object.freeze(plainToClass(SessionMetadata, {
+        userId: DEFAULT_USER_ID,
+        sessionId: DEFAULT_SESSION_ID,
+      })),
+    };
 
     next();
   }

@@ -1,4 +1,3 @@
-import { Routes } from 'nest-router';
 import { CliModule } from 'src/modules/cli/cli.module';
 import { WorkbenchModule } from 'src/modules/workbench/workbench.module';
 import { SlowLogModule } from 'src/modules/slow-log/slow-log.module';
@@ -9,7 +8,7 @@ import { TriggeredFunctionsModule } from 'src/modules/triggered-functions/trigge
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { DatabaseRecommendationModule } from 'src/modules/database-recommendation/database-recommendation.module';
 
-export const routes: Routes = [
+export const routes = [
   {
     path: '/databases',
     children: [

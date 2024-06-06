@@ -8,7 +8,7 @@ html {
   // sass-lint:disable-block no-misspelled-properties
   scrollbar-width: thin;
 
-  scrollbar-color: transparent(var(--euiColorDarkShade), 0.5) transparent; // Firefox support
+  scrollbar-color: var(--scrollBackgroundColor) transparent;
 }
 
 body {
@@ -60,12 +60,16 @@ main.euiPageBody {
 }
 
 .euiLoadingSpinner {
-  border-top-color: var(--euiColorDarkestShade) !important;
+  border-top-color: transparent;
 }
 
 .link-underline {
   color: currentColor;
   text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
 }
 
 .color-shade {

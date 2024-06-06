@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import { ClientContext, SessionMetadata } from 'src/common/models';
@@ -42,6 +42,10 @@ export class DatabaseFactory {
       { useRetry: true },
     );
 
+    if (!HostingProvider[model.provider]) {
+      model.provider = await getHostingProvider(client, model.host);
+    }
+
     if (await isSentinel(client)) {
       if (!database.sentinelMaster) {
         throw new Error(RedisErrorCodes.SentinelParamsRequired);
@@ -71,10 +75,6 @@ export class DatabaseFactory {
     const model = database;
 
     model.connectionType = ConnectionType.STANDALONE;
-
-    if (!model.provider) {
-      model.provider = getHostingProvider(model.host);
-    }
 
     // fetch ca cert if needed to be able to connect
     if (model.caCert?.id) {

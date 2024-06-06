@@ -31,10 +31,6 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.DatabaseChat,
     storage: FeatureStorage.Database,
   },
-  [KnownFeatures.DatabaseChat]: {
-    name: KnownFeatures.DatabaseChat,
-    storage: FeatureStorage.Database,
-  },
   [KnownFeatures.HashFieldExpiration]: {
     name: KnownFeatures.HashFieldExpiration,
     storage: FeatureStorage.Database,

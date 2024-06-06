@@ -46,6 +46,7 @@ export enum RecommendationIds {
     useSmallerKeys = 'useSmallerKeys',
     avoidLogicalDatabases = 'avoidLogicalDatabases',
     searchJson = 'searchJSON',
+    rdi = 'tryRDI'
 }
 
 export enum LibrariesSections {

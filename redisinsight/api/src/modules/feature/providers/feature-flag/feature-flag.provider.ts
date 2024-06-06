@@ -57,7 +57,7 @@ export class FeatureFlagProvider {
       this.settingsService,
     ));
   }
-a
+
   getStrategy(name: string): FeatureFlagStrategy {
     return this.strategies.get(name) || this.getStrategy('default');
   }

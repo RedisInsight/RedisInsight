@@ -1,22 +1,15 @@
 import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
+  BadRequestException, Injectable, Logger, NotFoundException,
 } from '@nestjs/common';
-import * as semverCompare from 'node-version-compare';
 import { chunk, flatMap, isNull } from 'lodash';
 import {
   catchAclError, catchMultiTransactionError, isRedisGlob, unescapeRedisGlob,
 } from 'src/utils';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { RECOMMENDATION_NAMES, RedisErrorCodes } from 'src/constants';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
-import {
-  BrowserToolHashCommands,
-  BrowserToolKeysCommands,
-} from 'src/modules/browser/constants/browser-tool-commands';
+import { BrowserToolHashCommands, BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { plainToClass } from 'class-transformer';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import {
@@ -27,13 +20,15 @@ import {
   GetHashFieldsDto,
   GetHashFieldsResponse,
   HashFieldDto,
-  HashScanResponse, UpdateHashFieldsTtlDto,
+  HashScanResponse,
+  UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { RedisClient, RedisClientCommand } from 'src/modules/redis/client';
+import { RedisClient, RedisClientCommand, RedisFeature } from 'src/modules/redis/client';
 import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { RedisString } from 'src/common/constants';
 
-const REDIS_SCAN_CONFIG = config.get('redis_scan');
+const REDIS_SCAN_CONFIG = config.get('redis_scan') as Config['redis_scan'];
 
 @Injectable()
 export class HashService {
@@ -43,6 +38,17 @@ export class HashService {
     private databaseClientFactory: DatabaseClientFactory,
     private recommendationService: DatabaseRecommendationService,
   ) {}
+
+  static getFieldExpireCommands(keyName: RedisString, fields: HashFieldDto[]) {
+    return fields.filter(({ expire }) => expire).map((field) => ([
+      BrowserToolHashCommands.HExpire,
+      keyName,
+      field.expire,
+      'fields',
+      '1',
+      field.field,
+    ] as RedisClientCommand));
+  }
 
   public async createHash(
     clientMetadata: ClientMetadata,
@@ -62,28 +68,18 @@ export class HashService {
       ];
 
       if (expire) {
-        commands.push([BrowserToolKeysCommands.Expire, keyName, expire] as RedisClientCommand)
+        commands.push([BrowserToolKeysCommands.Expire, keyName, expire] as RedisClientCommand);
       }
 
-      fields.forEach((field) => {
-        if (field.expire) {
-          commands.push([
-            BrowserToolHashCommands.HExpire,
-            keyName,
-            field.expire,
-            'fields',
-            '1',
-            field.field,
-          ] as RedisClientCommand);
-        }
-      });
+      if (await client.isFeatureSupported(RedisFeature.HashFieldsExpiration)) {
+        commands.push(...HashService.getFieldExpireCommands(keyName, fields));
+      }
 
       const transactionResults = await client.sendPipeline(commands);
       // todo: rethink
       catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to create Hash data type.');
-      return null;
     } catch (error) {
       this.logger.error('Failed to create Hash data type.', error);
       throw catchAclError(error);
@@ -123,8 +119,7 @@ export class HashService {
       }
 
       try {
-        const info = await client.getInfo();
-        if (info?.['server']?.['redis_version'] && semverCompare('7.4', info['server']['redis_version']) < 1) {
+        if (await client.isFeatureSupported(RedisFeature.HashFieldsExpiration)) {
           const ttls = await client.sendCommand([
             BrowserToolHashCommands.HTtl,
             result.keyName,
@@ -152,7 +147,7 @@ export class HashService {
       return plainToClass(GetHashFieldsResponse, result);
     } catch (error) {
       this.logger.error('Failed to get fields of the Hash data type.', error);
-      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+      if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
       throw catchAclError(error);
@@ -176,28 +171,18 @@ export class HashService {
         [BrowserToolHashCommands.HSet, keyName, ...args] as RedisClientCommand,
       ];
 
-      fields.forEach((field) => {
-        if (field.expire) {
-          commands.push([
-            BrowserToolHashCommands.HExpire,
-            keyName,
-            field.expire,
-            'fields',
-            '1',
-            field.field,
-          ] as RedisClientCommand);
-        }
-      });
+      if (await client.isFeatureSupported(RedisFeature.HashFieldsExpiration)) {
+        commands.push(...HashService.getFieldExpireCommands(keyName, fields));
+      }
 
       const transactionResults = await client.sendPipeline(commands);
       // todo: rethink
       catchMultiTransactionError(transactionResults);
 
       this.logger.log('Succeed to add fields to Hash data type.');
-      return null;
     } catch (error) {
       this.logger.error('Failed to add fields to Hash data type.', error);
-      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+      if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
       throw catchAclError(error);
@@ -233,10 +218,9 @@ export class HashService {
       }
 
       this.logger.log('Successfully updated hash fields ttl');
-      return null;
     } catch (error) {
       this.logger.error('Failed to update hash fields ttl.', error);
-      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+      if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
       throw catchAclError(error);
@@ -260,7 +244,7 @@ export class HashService {
       return { affected: result };
     } catch (error) {
       this.logger.error('Failed to delete fields from the Hash data type.', error);
-      if (error?.message.includes(RedisErrorCodes.WrongType)) {
+      if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
       throw catchAclError(error);

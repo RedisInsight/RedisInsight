@@ -4,6 +4,7 @@ import { RedisString } from 'src/common/constants';
 import apiConfig from 'src/utils/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { convertRedisInfoReplyToObject } from 'src/utils';
+import * as semverCompare from 'node-version-compare';
 
 const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
 
@@ -37,6 +38,10 @@ export type RedisClientCommandArgument = RedisString | number;
 export type RedisClientCommandArguments = RedisClientCommandArgument[];
 export type RedisClientCommand = [cmd: string, ...args: RedisClientCommandArguments];
 export type RedisClientCommandReply = string | number | Buffer | null | undefined | Array<RedisClientCommandReply>;
+
+export enum RedisFeature {
+  HashFieldsExpiration = 'HashFieldsExpiration',
+}
 
 export abstract class RedisClient extends EventEmitter2 {
   public readonly id: string;
@@ -127,6 +132,25 @@ export abstract class RedisClient extends EventEmitter2 {
   abstract pUnsubscribe(channel: string): Promise<void>;
 
   abstract getCurrentDbIndex(): Promise<number>;
+
+  /**
+   * Detects if feature is supported by redis database
+   * todo: move out from here when final requirements will be clear
+   * @param feature
+   */
+  public async isFeatureSupported(feature: RedisFeature): Promise<boolean> {
+    switch (feature) {
+      case RedisFeature.HashFieldsExpiration:
+        try {
+          const info = await this.getInfo();
+          return info?.['server']?.['redis_version'] && semverCompare('7.4', info['server']['redis_version']) < 1;
+        } catch (e) {
+          return false;
+        }
+      default:
+        return false;
+    }
+  }
 
   /**
    * Get redis database info

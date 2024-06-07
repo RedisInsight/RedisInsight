@@ -6,9 +6,7 @@ import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import {
   fetchConnectedInstanceAction,
   fetchConnectedInstanceInfoAction,
-  fetchInstancesAction,
   getDatabaseConfigInfoAction,
-  instancesSelector,
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchRecommendationsAction,
@@ -47,15 +45,12 @@ const InstancePage = ({ routes = [] }: Props) => {
   const { pathname } = useLocation()
 
   const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
-  const { data: modulesData } = useSelector(instancesSelector)
   const { contextInstanceId } = useSelector(appContextSelector)
 
   const lastPageRef = useRef<string>()
 
   useEffect(() => {
-    dispatch(fetchConnectedInstanceAction(connectionInstanceId, () => {
-      !modulesData.length && dispatch(fetchInstancesAction())
-    }))
+    dispatch(fetchConnectedInstanceAction(connectionInstanceId))
     dispatch(getDatabaseConfigInfoAction(connectionInstanceId))
     dispatch(fetchConnectedInstanceInfoAction(connectionInstanceId))
     dispatch(fetchRecommendationsAction(connectionInstanceId))

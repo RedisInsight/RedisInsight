@@ -40,7 +40,7 @@ describe('AddItemsActions', () => {
         index={1}
       />
     )
-    expect(screen.getByTestId('add-item')).toBeTruthy()
+    expect(screen.getByTestId('add-new-item')).toBeTruthy()
   })
 
   it('should call clear function', () => {

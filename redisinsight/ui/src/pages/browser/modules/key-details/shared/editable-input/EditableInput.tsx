@@ -85,16 +85,18 @@ const EditableInput = (props: Props) => {
         <InlineItemEditor
           initialValue={initialValue}
           controlsPosition="right"
+          controlsClassName={styles.controls}
           placeholder={placeholder}
           fieldName={field}
           expandable
+          iconSize="m"
           onDecline={(event) => {
             onDecline(event)
-            onEdit(false)
+            onEdit?.(false)
           }}
           onApply={(value, event) => {
             onApply(value, event)
-            onEdit(false)
+            onEdit?.(false)
           }}
           validation={validation}
         />

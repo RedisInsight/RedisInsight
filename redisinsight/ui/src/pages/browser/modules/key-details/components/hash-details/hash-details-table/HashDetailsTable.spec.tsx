@@ -11,10 +11,10 @@ import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { HashDetailsTable, Props } from './HashDetailsTable'
 
 const mockedProps = mock<Props>()
-const fields: Array<{ field: any, value: any }> = [
+const fields: Array<{ field: any, value: any, expire?: number }> = [
   { field: { type: 'Buffer', data: [49] }, value: { type: 'Buffer', data: [49, 65] } },
   { field: { type: 'Buffer', data: [49, 50, 51] }, value: { type: 'Buffer', data: [49, 11] } },
-  { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] } },
+  { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] }, expire: 300 },
 ]
 
 jest.mock('uiSrc/slices/browser/hash', () => {
@@ -106,6 +106,30 @@ describe('HashDetailsTable', () => {
 
     act(() => {
       fireEvent.click(screen.getByTestId('hash_edit-btn-1'))
+    })
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
+  })
+
+  it('should not render ttl column', async () => {
+    render(<HashDetailsTable {...instance(mockedProps)} />)
+    expect(screen.queryByTestId('hash-ttl_content-value-2')).not.toBeInTheDocument()
+  })
+
+  it('should render ttl column', async () => {
+    render(<HashDetailsTable {...instance(mockedProps)} isExpireFieldsAvailable />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('hash-ttl_content-value-2'))
+    })
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('hash-ttl_edit-btn-2'))
     })
 
     expect(store.getActions()).toEqual([

@@ -235,7 +235,6 @@ const BrowserPage = () => {
     <div className={`browserPage ${styles.container}`}>
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
         <EuiButton
-          fill
           color="secondary"
           iconType="arrowLeft"
           size="s"
@@ -243,7 +242,7 @@ const BrowserPage = () => {
           className={styles.backBtn}
           data-testid="back-right-panel-btn"
         >
-          Browser
+          Back
         </EuiButton>
       )}
       <div className={cx({

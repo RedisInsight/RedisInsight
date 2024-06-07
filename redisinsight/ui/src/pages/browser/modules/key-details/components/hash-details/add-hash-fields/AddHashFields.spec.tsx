@@ -35,12 +35,12 @@ describe('AddHashFields', () => {
 
   it('should render add button', () => {
     render(<AddHashFields {...instance(mockedProps)} />)
-    expect(screen.getByTestId('add-new-item')).toBeTruthy()
+    expect(screen.getByTestId('add-item')).toBeTruthy()
   })
 
   it('should render one more field name & value inputs after click add item', () => {
     render(<AddHashFields {...instance(mockedProps)} />)
-    fireEvent.click(screen.getByTestId('add-new-item'))
+    fireEvent.click(screen.getByTestId('add-item'))
 
     expect(screen.getAllByTestId(HASH_FIELD)).toHaveLength(2)
     expect(screen.getAllByTestId(HASH_VALUE)).toHaveLength(2)
@@ -58,7 +58,7 @@ describe('AddHashFields', () => {
       fieldValue,
       { target: { value: 'val' } }
     )
-    fireEvent.click(screen.getByLabelText(/clear item/i))
+    fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(fieldName).toHaveValue('')
     expect(fieldValue).toHaveValue('')

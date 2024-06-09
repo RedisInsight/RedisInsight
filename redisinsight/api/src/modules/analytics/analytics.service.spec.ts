@@ -17,7 +17,7 @@ import {
 let mockAnalyticsTrack;
 let mockAnalyticsPage;
 jest.mock(
-  'analytics-node',
+  '@segment/analytics-node',
   () => jest.fn()
     .mockImplementation(() => ({
       track: mockAnalyticsTrack,

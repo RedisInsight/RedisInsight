@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { get } from 'lodash';
-import * as Analytics from 'analytics-node';
+import { Analytics } from '@segment/analytics-node';
 import { AppAnalyticsEvents } from 'src/constants';
 import config from 'src/utils/config';
 import { SettingsService } from 'src/modules/settings/settings.service';
@@ -65,7 +65,8 @@ export class AnalyticsService {
     this.controlGroup = controlGroup;
     this.appVersion = appVersion;
     this.controlNumber = controlNumber;
-    this.analytics = new Analytics(ANALYTICS_CONFIG.writeKey, {
+    this.analytics = new Analytics({
+      writeKey: ANALYTICS_CONFIG.writeKey,
       flushInterval: ANALYTICS_CONFIG.flushInterval,
     });
   }

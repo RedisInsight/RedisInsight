@@ -138,7 +138,7 @@ const AddKeyHash = (props: Props) => {
           value: stringToBuffer(item.fieldValue),
         }
 
-        if (isTTLAvailable && item.fieldTTL !== undefined) {
+        if (isTTLAvailable && item.fieldTTL) {
           defaultFields.expire = toNumber(item.fieldTTL)
         }
 

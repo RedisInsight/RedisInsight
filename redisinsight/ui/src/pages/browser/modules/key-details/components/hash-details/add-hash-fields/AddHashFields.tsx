@@ -131,7 +131,7 @@ const AddHashFields = (props: Props) => {
           value: stringToBuffer(item.fieldValue),
         }
 
-        if (isExpireFieldsAvailable && item.fieldTTL !== undefined) {
+        if (isExpireFieldsAvailable && item.fieldTTL) {
           defaultFields.expire = toNumber(item.fieldTTL)
         }
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { isNumber } from 'lodash'
@@ -12,7 +12,7 @@ import {
 import { Pages } from 'uiSrc/constants'
 import {
   InstanceRedisCloud,
-  LoadedCloud,
+  LoadedCloud, OAuthSocialAction,
   RedisCloudSubscription,
   RedisCloudSubscriptionStatus,
   RedisCloudSubscriptionStatusText,
@@ -22,11 +22,13 @@ import {
 import {
   cloudSelector,
   fetchInstancesRedisCloud,
+  fetchSubscriptionsRedisCloud,
   resetDataRedisCloud,
   resetLoadedRedisCloud,
 } from 'uiSrc/slices/instances/cloud'
 import { formatLongName, Maybe, replaceSpaces, setTitle } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import RedisCloudSubscriptions from './RedisCloudSubscriptions/RedisCloudSubscriptions'
 
 import styles from './styles.module.scss'
@@ -36,6 +38,7 @@ const RedisCloudSubscriptionsPage = () => {
   const history = useHistory()
 
   const {
+    ssoFlow,
     credentials,
     subscriptions,
     loading,
@@ -43,6 +46,8 @@ const RedisCloudSubscriptionsPage = () => {
     loaded: { instances: instancesLoaded },
     account: { error: accountError, data: account },
   } = useSelector(cloudSelector)
+  const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
+  const currentAccountIdRef = useRef(userOAuthProfile?.id)
 
   setTitle('Redis Cloud Subscriptions')
 
@@ -51,6 +56,20 @@ const RedisCloudSubscriptionsPage = () => {
       history.push(Pages.home)
     }
   }, [])
+
+  useEffect(() => {
+    if (ssoFlow !== OAuthSocialAction.Import) return
+
+    if (!userOAuthProfile) {
+      history.push(Pages.home)
+      return
+    }
+
+    if (currentAccountIdRef.current !== userOAuthProfile?.id) {
+      dispatch(fetchSubscriptionsRedisCloud(null, true))
+      currentAccountIdRef.current = userOAuthProfile?.id
+    }
+  }, [ssoFlow, userOAuthProfile])
 
   useEffect(() => {
     if (instancesLoaded) {
@@ -79,7 +98,7 @@ const RedisCloudSubscriptionsPage = () => {
   const handleLoadInstances = (
     subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[]
   ) => {
-    dispatch(fetchInstancesRedisCloud({ subscriptions, credentials }))
+    dispatch(fetchInstancesRedisCloud({ subscriptions, credentials }, ssoFlow === OAuthSocialAction.Import))
   }
 
   const AlertStatusContent = () => (
@@ -107,7 +126,7 @@ const RedisCloudSubscriptionsPage = () => {
       width: '20px',
       align: 'center',
       dataType: 'auto',
-      render: function AlertIcon(alert: any, { status, numberOfDatabases }) {
+      render: function AlertIcon(_, { status, numberOfDatabases }) {
         return status !== RedisCloudSubscriptionStatus.Active
           || numberOfDatabases === 0 ? (
             <EuiToolTip

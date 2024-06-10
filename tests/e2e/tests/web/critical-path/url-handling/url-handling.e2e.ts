@@ -80,7 +80,7 @@ test
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(10_000);
         await t.expect(workbenchPage.submitCommandButton.exists).ok('Redirection to Workbench is not correct');
-        const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+        const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tab.preselectArea.textContent).contains('INTRODUCTION', 'the tutorial page is incorrect');
         await t.expect(tab.preselectArea.textContent).contains('JSON', 'the tutorial is incorrect');
 

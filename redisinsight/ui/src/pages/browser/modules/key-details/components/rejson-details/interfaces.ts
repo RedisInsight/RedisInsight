@@ -43,14 +43,14 @@ export interface BaseProps {
   selectedKey: RedisResponseBuffer
   isDownloaded: boolean
   onJsonKeyExpandAndCollapse: (isExpanded: boolean, path: string) => void
-  expadedRows: Set<string>
+  expandedRows: Set<string>
 }
 
 export interface DynamicTypesProps {
   data: IJSONData
   parentPath?: string
   leftPadding?: number
-  expadedRows: Set<string>
+  expandedRows: Set<string>
   selectedKey: RedisResponseBuffer
   isDownloaded: boolean
   onClickRemoveKey: (path: string, keyName: string) => void
@@ -80,7 +80,7 @@ export interface JSONScalarProps extends JSONCommonProps {
 export interface JSONObjectProps extends JSONCommonProps {
   type: ObjectTypes
   isDownloaded: boolean
-  expadedRows: Set<string>
+  expandedRows: Set<string>
   onJsonKeyExpandAndCollapse: (isExpanded: boolean, path: string) => void
   onClickRemoveKey: (path: string, keyName: string) => void
   handleSubmitUpdateValue?: (body: UpdateValueBody) => void

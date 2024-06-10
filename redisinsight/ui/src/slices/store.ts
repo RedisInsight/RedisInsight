@@ -42,7 +42,8 @@ import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
-import insightsPanelReducer from './panels/insights'
+import sidePanelsReducer from './panels/sidePanels'
+import aiAssistantReducer from './panels/aiAssistant'
 import appRDIReducer from './rdi/rdi'
 
 export const history = createBrowserHistory()
@@ -108,7 +109,8 @@ export const rootReducer = combineReducers({
     cloud: appOauthReducer,
   }),
   panels: combineReducers({
-    insights: insightsPanelReducer,
+    sidePanels: sidePanelsReducer,
+    aiAssistant: aiAssistantReducer,
   }),
   rdi: combineReducers({
     rdi: appRDIReducer

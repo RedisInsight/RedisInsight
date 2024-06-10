@@ -1,7 +1,7 @@
 import React from 'react'
 import { PageNames } from 'uiSrc/constants/pages'
 
-export type FeaturesHighlightingType = 'plain' | 'tooltip' | 'popover'
+export type FeaturesHighlightingType = 'plain' | 'tooltip' | 'popover' | 'dialog'
 
 interface BuildHighlightingFeature {
   type: FeaturesHighlightingType
@@ -12,5 +12,7 @@ interface BuildHighlightingFeature {
 }
 
 export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
-
+  aiChatbot: {
+    type: 'dialog'
+  }
 } as const

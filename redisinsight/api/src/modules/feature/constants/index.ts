@@ -30,10 +30,12 @@ export enum KnownFeatures {
   dbAnalysis = 'dbAnalysis',
   appNotifications = 'appNotifications',
   triggersAndFunctions = 'triggersAndFunctions',
+  DocumentationChat = 'documentationChat',
+  DatabaseChat = 'databaseChat',
 }
 
 export interface IFeatureFlag {
   name: string;
   storage: string;
-  factory?: () => Feature;
+  factory?: () => Partial<Feature>;
 }

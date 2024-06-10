@@ -4,7 +4,7 @@ import {
   mockCloudAutodiscoveryService,
   mockCloudCapiAuthDto, mockCloudCapiKeyService,
   mockCloudDatabase,
-  mockCloudDatabaseFixed,
+  mockCloudDatabaseFixed, mockCloudSessionService,
   mockCloudSubscription,
   mockCloudSubscriptionFixed,
   mockImportCloudDatabaseDto, mockImportCloudDatabaseDtoFixed,
@@ -22,6 +22,8 @@ import {
 } from 'src/modules/cloud/common/exceptions';
 import { MeCloudAutodiscoveryService } from 'src/modules/cloud/autodiscovery/me.cloud-autodiscovery.service';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
+import { CloudCapiKeyApiProvider } from 'src/modules/cloud/capi-key/cloud-capi-key.api.provider';
+import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 
 describe('MeCloudAutodiscoveryService', () => {
   let service: MeCloudAutodiscoveryService;
@@ -33,6 +35,7 @@ describe('MeCloudAutodiscoveryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MeCloudAutodiscoveryService,
+        CloudCapiKeyApiProvider,
         {
           provide: CloudAutodiscoveryService,
           useFactory: mockCloudAutodiscoveryService,
@@ -40,6 +43,10 @@ describe('MeCloudAutodiscoveryService', () => {
         {
           provide: CloudCapiKeyService,
           useFactory: mockCloudCapiKeyService,
+        },
+        {
+          provide: CloudSessionService,
+          useFactory: mockCloudSessionService,
         },
       ],
     }).compile();
@@ -53,7 +60,8 @@ describe('MeCloudAutodiscoveryService', () => {
     it('successfully get cloud account info', async () => {
       expect(await service.getAccount(mockSessionMetadata)).toEqual(mockCloudAccountInfo);
     });
-    it('should throw CloudApiUnauthorizedException exception', async () => {
+    it('should throw CloudApiUnauthorizedException exception if failed twice', async () => {
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.getAccount(mockSessionMetadata)).rejects.toThrow(
         CloudApiUnauthorizedException,
@@ -76,7 +84,8 @@ describe('MeCloudAutodiscoveryService', () => {
         CloudAutodiscoveryAuthType.Sso,
       );
     });
-    it('should throw CloudApiUnauthorizedException exception', async () => {
+    it('should throw CloudApiUnauthorizedException exception if failed twice', async () => {
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.discoverSubscriptions(mockSessionMetadata)).rejects.toThrow(
         CloudApiUnauthorizedException,
@@ -128,7 +137,8 @@ describe('MeCloudAutodiscoveryService', () => {
         CloudAutodiscoveryAuthType.Sso,
       );
     });
-    it('should throw CloudApiUnauthorizedException exception', async () => {
+    it('should throw CloudApiUnauthorizedException exception if failed twice', async () => {
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.discoverDatabases(
         mockSessionMetadata,
@@ -184,7 +194,8 @@ describe('MeCloudAutodiscoveryService', () => {
         ],
       );
     });
-    it('should throw CloudApiUnauthorizedException exception', async () => {
+    it('should throw CloudApiUnauthorizedException exception if failed twice', async () => {
+      cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       cloudCapiKeyService.getCapiCredentials.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       await expect(service.addRedisCloudDatabases(
         mockSessionMetadata,

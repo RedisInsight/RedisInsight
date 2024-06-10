@@ -9,9 +9,8 @@ import * as monacoEditor from 'monaco-editor/esm/vs/editor/editor.api'
 import {
   Maybe,
   Nullable,
-  getMultiCommands,
   getParsedParamsInQuery,
-  getCommandsForExecution
+  getCommandsFromQuery
 } from 'uiSrc/utils'
 import QueryWrapper from 'uiSrc/components/query'
 import {
@@ -133,25 +132,18 @@ const WBView = (props: Props) => {
       const parsedParams: Maybe<CodeButtonParams> = isEmpty(executeParams)
         ? getParsedParamsInQuery(commandInit)
         : executeParams
-      const commands = getCommandsForExecution(commandInit)
-      const [commandLine, ...rest] = commands.map((command = '') => {
-        const matchedCommand = REDIS_COMMANDS_ARRAY.find((commandName) =>
-          command.toUpperCase().startsWith(commandName))
-        return matchedCommand ?? command.split(' ')?.[0]
-      })
 
-      const multiCommands = getMultiCommands(rest).replaceAll('\n', ';')
-      const command = [commandLine, multiCommands].join('') ? [commandLine, multiCommands].join(';') : null
-
+      const command = getCommandsFromQuery(commandInit, REDIS_COMMANDS_ARRAY) || ''
       const pipeline = TelemetryEvent.WORKBENCH_COMMAND_RUN_AGAIN !== event
         ? (parsedParams?.pipeline || batchSize) > 1
         : undefined
+      const isMultiple = command.includes(';')
 
       return {
         command: command?.toUpperCase(),
         pipeline,
         databaseId: instanceId,
-        multiple: multiCommands ? 'Multiple' : 'Single',
+        multiple: isMultiple ? 'Multiple' : 'Single',
         rawMode: (parsedParams?.mode?.toUpperCase() || state.activeMode) === RunQueryMode.Raw,
         results:
           ResultsMode.GroupMode.startsWith?.(

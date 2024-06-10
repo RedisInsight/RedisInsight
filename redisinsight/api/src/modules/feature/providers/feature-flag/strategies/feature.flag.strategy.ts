@@ -1,3 +1,4 @@
+import * as fs from 'fs-extra';
 import { get } from 'lodash';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
@@ -6,9 +7,11 @@ import {
   FeatureConfigFilterCondition, FeatureConfigFilterOr,
   FeatureConfigFilterType,
 } from 'src/modules/feature/model/features-config';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { Feature } from 'src/modules/feature/model/feature';
 import { IFeatureFlag } from 'src/modules/feature/constants';
+
+const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
 
 export abstract class FeatureFlagStrategy {
   constructor(
@@ -17,6 +20,15 @@ export abstract class FeatureFlagStrategy {
   ) {}
 
   abstract calculate(knownFeature: IFeatureFlag, data: any): Promise<Feature>;
+
+  static async getCustomConfig(): Promise<object> {
+    try {
+      const customConfig = JSON.parse(await fs.readFile(PATH_CONFIG.customConfig, 'utf8'));
+      return customConfig?.features || {};
+    } catch (e) {
+      return {};
+    }
+  }
 
   /**
    * Check if controlNumber is in defined range

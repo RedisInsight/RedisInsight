@@ -23,6 +23,9 @@ import { CloudCapiKeyAnalytics } from 'src/modules/cloud/capi-key/cloud-capi-key
       useClass: LocalCloudCapiKeyRepository,
     },
   ],
-  exports: [CloudCapiKeyService],
+  exports: [
+    CloudCapiKeyService,
+    CloudCapiKeyApiProvider,
+  ],
 })
 export class CloudCapiKeyModule {}

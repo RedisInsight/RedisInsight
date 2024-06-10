@@ -141,7 +141,7 @@ export class CustomTutorialService {
     return {
       type: CustomTutorialManifestType.Group,
       id: 'custom-tutorials',
-      label: 'MY TUTORIALS',
+      label: 'My tutorials',
       _actions: [CustomTutorialActions.CREATE],
       args: {
         withBorder: true,

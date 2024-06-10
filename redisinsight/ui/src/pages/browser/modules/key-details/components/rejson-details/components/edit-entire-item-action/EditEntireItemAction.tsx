@@ -13,7 +13,8 @@ import cx from 'classnames'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
-import { validateRejsonValue } from '../../utils'
+import { isValidJSON } from '../../utils'
+import { JSONErrors } from '../../constants'
 
 import styles from '../../styles.module.scss'
 
@@ -42,9 +43,8 @@ const EditEntireItemAction = (props: Props) => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const error = validateRejsonValue(value)
-    if (error) {
-      setError(error)
+    if (!isValidJSON(value)) {
+      setError(JSONErrors.valueJSONFormat)
       return
     }
 

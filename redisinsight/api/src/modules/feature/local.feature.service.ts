@@ -1,4 +1,4 @@
-import { find, forEach } from 'lodash';
+import { find, forEach, isBoolean } from 'lodash';
 import { Injectable, Logger } from '@nestjs/common';
 import { FeatureRepository } from 'src/modules/feature/repositories/feature.repository';
 import { FeatureServerEvents, FeatureStorage } from 'src/modules/feature/constants';
@@ -9,6 +9,7 @@ import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { knownFeatures } from 'src/modules/feature/constants/known-features';
 import { Feature } from 'src/modules/feature/model/feature';
 import { FeatureService } from 'src/modules/feature/feature.service';
+import { FeatureFlagStrategy } from 'src/modules/feature/providers/feature-flag/strategies/feature.flag.strategy';
 
 @Injectable()
 export class LocalFeatureService extends FeatureService {
@@ -114,7 +115,7 @@ export class LocalFeatureService extends FeatureService {
       actions.toDelete = featuresFromDatabase.filter((feature) => !featuresConfig?.data?.features?.has?.(feature.name));
 
       // delete features
-      await Promise.all(actions.toDelete.map((feature) => this.repository.delete(feature)));
+      await Promise.all(actions.toDelete.map((feature) => this.repository.delete(feature.name)));
       // upsert modified features
       await Promise.all(actions.toUpsert.map((feature) => this.repository.upsert(feature)));
 
@@ -129,12 +130,33 @@ export class LocalFeatureService extends FeatureService {
         this.analytics.sendFeatureFlagRecalculated({
           configVersion: (await this.featuresConfigRepository.getOrCreate())?.data?.version,
           features: list.features,
+          force: await this.listOfForceFlags(),
         });
       } catch (e) {
         // ignore telemetry error
       }
     } catch (e) {
       this.logger.error('Unable to recalculate features flags', e);
+    }
+  }
+
+  /**
+   * Find forced flags values from custom config using only known features list
+   */
+  async listOfForceFlags(): Promise<Record<string, boolean>> {
+    try {
+      const features = {};
+      const forceFeatures = (await FeatureFlagStrategy.getCustomConfig());
+
+      forEach(knownFeatures, (known) => {
+        if (isBoolean(forceFeatures[known.name])) {
+          features[known.name] = forceFeatures[known.name];
+        }
+      });
+
+      return features;
+    } catch (e) {
+      return {};
     }
   }
 }

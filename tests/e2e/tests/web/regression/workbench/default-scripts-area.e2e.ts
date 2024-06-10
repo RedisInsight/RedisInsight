@@ -45,7 +45,7 @@ test('Verify that user can see the [Manual] option in the Enablement area', asyn
 test('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
     const tooltipText = 'Open Workbench in the left menu to see the command results.';
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
     // Open Working with Hashes section
@@ -86,7 +86,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
 test.skip('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
     // Open Working with Hashes section
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.internalLinkWorkingWithHashes);
     // Evaluate the last button in Enablement Area
@@ -120,7 +120,7 @@ test('Verify that user can see the siblings menu by clicking on page counter ele
 
     // Open Working with Hashes section and click on the on page counter
     await workbenchPage.InsightsPanel.togglePanel(true);
-    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Explore);
+    const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is not visible', { timeout: 5000 });
     await t.click(tutorials.internalLinkWorkingWithHashes);

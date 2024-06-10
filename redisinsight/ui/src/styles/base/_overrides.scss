@@ -56,3 +56,28 @@
 body .euiSuperSelect__listbox {
   max-height: 350px;
 }
+
+.euiPanel {
+  border-color: var(--euiColorLightShade);
+}
+
+.euiFormControlLayout--group .euiFormLabel {
+  background-color: var(--tableDarkestBorderColor);
+  color: var(--htmlColor)
+}
+
+.euiTab {
+  color: var(--euiTextColor);
+  &.euiTab-isSelected {
+    color: var(--euiColorPrimary);
+  }
+}
+
+.euiFilePicker-hasFiles .euiFilePicker__promptText {
+  color: var(--euiTextColor);
+}
+
+.euiFilePicker__showDrop .euiFilePicker__prompt, .euiFilePicker__input:focus+.euiFilePicker__prompt {
+  background-image:
+    linear-gradient(to top, var(--euiColorPrimary), var(--euiColorPrimary) 2px, transparent 2px, transparent 100%);
+}

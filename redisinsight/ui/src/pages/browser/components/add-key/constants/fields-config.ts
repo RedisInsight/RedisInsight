@@ -108,7 +108,7 @@ export const AddListFormConfig: IAddListFormConfig = {
     name: 'count',
     isRequire: true,
     label: 'Count',
-    placeholder: 'Enter Count'
+    placeholder: 'Enter Count*'
   }
 }
 

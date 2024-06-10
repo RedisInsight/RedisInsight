@@ -8,49 +8,60 @@ import {
   fetchUserInfo,
   setJob,
   setOAuthCloudSource,
-  setSignInDialogState,
   setSocialDialogState,
   showOAuthProgress,
   signInFailure,
 } from 'uiSrc/slices/oauth/cloud'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { cloudSelector, fetchSubscriptionsRedisCloud, setIsAutodiscoverySSO } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { CloudAuthResponse, CloudAuthStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { parseCloudOAuthError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { localStorageService } from 'uiSrc/services'
+import { CustomError, OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
 const ConfigOAuth = () => {
-  const { isAutodiscoverySSO, isRecommendedSettings } = useSelector(cloudSelector)
+  const { ssoFlow, isRecommendedSettings } = useSelector(cloudSelector)
 
-  const isAutodiscoverySSORef = useRef(isAutodiscoverySSO)
+  const ssoFlowRef = useRef(ssoFlow)
   const isRecommendedSettingsRef = useRef(isRecommendedSettings)
+  const isFlowInProgress = useRef(false)
 
   const history = useHistory()
   const dispatch = useDispatch()
 
   useEffect(() => {
     window.app?.cloudOauthCallback?.(cloudOauthCallback)
-
-    // delete
-    // dispatch(fetchUserInfo(fetchUserInfoSuccess))
   }, [])
 
   useEffect(() => {
-    isAutodiscoverySSORef.current = isAutodiscoverySSO
-  }, [isAutodiscoverySSO])
+    ssoFlowRef.current = ssoFlow
+
+    if (!ssoFlow) {
+      isFlowInProgress.current = false
+    }
+  }, [ssoFlow])
 
   useEffect(() => {
     isRecommendedSettingsRef.current = isRecommendedSettings
   }, [isRecommendedSettings])
 
-  const fetchUserInfoSuccess = (isMultiAccount: boolean) => {
-    if (isMultiAccount) return
+  const fetchUserInfoSuccess = (isSelectAccout: boolean) => {
+    if (isSelectAccout) return
 
-    if (isAutodiscoverySSORef.current) {
+    if (ssoFlowRef.current === OAuthSocialAction.SignIn) {
+      dispatch(setSSOFlow(undefined))
+      closeInfinityNotification()
+      return
+    }
+
+    dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
+
+    if (ssoFlowRef.current === OAuthSocialAction.Import) {
       dispatch(fetchSubscriptionsRedisCloud(
         null,
+        true,
         () => {
           closeInfinityNotification()
           history.push(Pages.redisCloudSubscriptions)
@@ -87,18 +98,24 @@ const ConfigOAuth = () => {
       dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
       localStorageService.remove(BrowserStorageItem.OAuthJobId)
       dispatch(showOAuthProgress(true))
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
-      dispatch(setSignInDialogState(null))
+      dispatch(addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()))
       dispatch(setSocialDialogState(null))
       dispatch(fetchUserInfo(fetchUserInfoSuccess, closeInfinityNotification))
+      isFlowInProgress.current = true
     }
 
     if (status === CloudAuthStatus.Failed) {
-      const err = parseCloudOAuthError(error || message || '')
+      // don't do anything, because we are processing something
+      // covers situation when were made several clicks on the same time
+      if (isFlowInProgress.current) {
+        return
+      }
+
+      const err = parseCloudOAuthError((error as CustomError) || message || '')
       dispatch(setOAuthCloudSource(null))
       dispatch(signInFailure(err?.response?.data?.message || message))
       dispatch(addErrorNotification(err))
-      dispatch(setIsAutodiscoverySSO(false))
+      dispatch(setSSOFlow(undefined))
     }
   }
 

@@ -2,19 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import {
-  EuiButtonEmpty,
-  EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiToolTip,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButtonEmpty, EuiFieldNumber, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip, } from '@elastic/eui'
 
-import { Pages } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
+import { selectOnFocus, validateNumber } from 'uiSrc/utils'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BuildType } from 'uiSrc/constants/env'
-import { ConnectionType } from 'uiSrc/slices/interfaces'
+import { ConnectionType, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import {
   checkDatabaseIndexAction,
   connectedInstanceInfoSelector,
@@ -22,17 +16,18 @@ import {
   connectedInstanceSelector,
 } from 'uiSrc/slices/instances/instances'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
+
+import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import InlineItemEditor from 'uiSrc/components/inline-item-editor'
+import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
 import DatabaseOverviewWrapper from 'uiSrc/components/database-overview/DatabaseOverviewWrapper'
 
-import { appContextDbIndex, clearBrowserKeyListData, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
-import InlineItemEditor from 'uiSrc/components/inline-item-editor'
-import InsightsTrigger from 'uiSrc/components/insights-trigger'
-import { selectOnFocus, validateNumber } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -55,6 +50,12 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { server } = useSelector(appInfoSelector)
   const { disabled: isDbIndexDisabled } = useSelector(appContextDbIndex)
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
+  const {
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+
   const history = useHistory()
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
   const [isDbIndexEditing, setIsDbIndexEditing] = useState<boolean>(false)
@@ -199,9 +200,21 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           <DatabaseOverviewWrapper />
         </EuiFlexItem>
 
-        <EuiFlexItem grow={false} style={{ marginLeft: 40 }}>
+        {isAnyChatAvailable && (
+          <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+            <CopilotTrigger />
+          </EuiFlexItem>
+        )}
+
+        <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
           <InsightsTrigger />
         </EuiFlexItem>
+
+        <FeatureFlagComponent name={FeatureFlags.cloudSso}>
+          <EuiFlexItem grow={false} style={{ marginLeft: 16 }}>
+            <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
+          </EuiFlexItem>
+        </FeatureFlagComponent>
       </EuiFlexGroup>
     </div>
   )

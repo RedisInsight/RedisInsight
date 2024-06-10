@@ -1,9 +1,9 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, toggleInsightsPanel } from 'uiSrc/slices/panels/insights'
-import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
+import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import WbNoResultsMessage from './WbNoResultsMessage'
 
@@ -38,14 +38,13 @@ describe('WbNoResultsMessage', () => {
 
     expect(store.getActions()).toEqual([
       changeSelectedTab(InsightsPanelTabs.Explore),
-      toggleInsightsPanel(true)
+      changeSidePanel(SidePanels.Insights)
     ])
   })
 
   it('should call proper telemetry events after click on insights', () => {
-    const sendEventTelemetryMock = jest.fn()
-
-    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
     render(<WbNoResultsMessage />)
 
@@ -58,7 +57,7 @@ describe('WbNoResultsMessage', () => {
         provider: 'RE_CLOUD',
         source: 'workbench',
       }
-    })
-    sendEventTelemetry.mockRestore()
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

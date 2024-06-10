@@ -1,0 +1,9 @@
+.euiFlyout {
+  border-left: 1px solid var(--euiColorLightShade);
+  box-shadow: none;
+  background: var(--euiColorEmptyShade);
+
+  &__closeButton:not(:hover) {
+    background-color: transparent;
+  }
+}

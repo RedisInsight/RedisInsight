@@ -176,7 +176,7 @@ describe('Job', () => {
       event: TelemetryEvent.RDI_DEDICATED_EDITOR_CANCELLED,
       eventData: {
         rdiInstanceId: 'id',
-        selectedLanguageSyntax: 'sql',
+        selectedLanguageSyntax: 'sqliteFunctions',
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()
@@ -197,7 +197,7 @@ describe('Job', () => {
       event: TelemetryEvent.RDI_DEDICATED_EDITOR_SAVED,
       eventData: {
         rdiInstanceId: 'id',
-        selectedLanguageSyntax: 'sql',
+        selectedLanguageSyntax: 'sqliteFunctions',
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

@@ -170,16 +170,16 @@ const LiveTimeRecommendations = () => {
       </div>
 
       {isShowHiddenDisplayed && (
-      <EuiCheckbox
-        id="showHidden"
-        name="showHidden"
-        label="Show hidden"
-        checked={isShowHidden}
-        className={styles.hideCheckbox}
-        onChange={(e) => onChangeShowHidden(e.target.checked)}
-        data-testid="checkbox-show-hidden"
-        aria-label="checkbox show hidden"
-      />
+        <EuiCheckbox
+          id="showHidden"
+          name="showHidden"
+          label="Show hidden"
+          checked={isShowHidden}
+          className={styles.hideCheckbox}
+          onChange={(e) => onChangeShowHidden(e.target.checked)}
+          data-testid="checkbox-show-hidden"
+          aria-label="checkbox show hidden"
+        />
       )}
     </div>
   )

@@ -23,12 +23,17 @@ import ImportDatabasesDialog from './import-databases-dialog'
 import OnboardingTour from './onboarding-tour'
 import CodeBlock from './code-block'
 import ShowChildByCondition from './show-child-by-condition'
-import RecommendationVoting from './recommendation-voting'
-import RecommendationCopyComponent from './recommendation-copy-component'
 import FeatureFlagComponent from './feature-flag-component'
 import AutoRefresh from './auto-refresh'
 import { ModuleNotLoaded, FilterNotAvailable } from './messages'
 import RdiInstanceHeader from './rdi-instance-header'
+import {
+  RecommendationBody,
+  RecommendationBadges,
+  RecommendationBadgesLegend,
+  RecommendationCopyComponent,
+  RecommendationVoting,
+} from './recommendation'
 
 export { FullScreen } from './full-screen'
 
@@ -71,4 +76,7 @@ export {
   FilterNotAvailable,
   AutoRefresh,
   RdiInstanceHeader,
+  RecommendationBody,
+  RecommendationBadges,
+  RecommendationBadgesLegend,
 }

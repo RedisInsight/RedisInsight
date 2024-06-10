@@ -17,9 +17,8 @@ import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
 import { Nullable, Maybe, findTutorialPath } from 'uiSrc/utils'
-import { renderRecommendationContent } from 'uiSrc/utils/recommendation/utils'
 import { Theme } from 'uiSrc/constants'
-import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
+import { RecommendationVoting, RecommendationCopyComponent, RecommendationBody } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -150,15 +149,14 @@ const Recommendation = ({
           { tutorialId ? 'Start Tutorial' : 'Workbench' }
         </EuiButton>
       )}
-      {renderRecommendationContent(
-        content,
-        params,
-        {
-          onClickLink: onRecommendationLinkClick,
-          telemetryName: recommendationsContent[name]?.telemetryEvent ?? name,
-        },
-        true
-      )}
+      <RecommendationBody
+        elements={content}
+        params={params}
+        onLinkClick={onRecommendationLinkClick}
+        telemetryName={recommendationsContent[name]?.telemetryEvent ?? name}
+        insights
+      />
+
       {!!params?.keys?.length && (
         <RecommendationCopyComponent
           keyName={params.keys[0]}

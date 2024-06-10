@@ -2,7 +2,7 @@ import React from 'react'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import ContentElement from '../content-element'
 
-interface Props {
+export interface Props {
   elements: IRecommendationContent[]
   telemetryName: string
   params?: any

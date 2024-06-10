@@ -5,7 +5,7 @@ import BadgeIcon from '../badge-icon'
 import { badgesContent } from '../constants'
 import styles from '../styles.module.scss'
 
-interface Props {
+export interface Props {
   badges?: string[]
 }
 

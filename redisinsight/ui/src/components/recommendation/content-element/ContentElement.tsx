@@ -14,7 +14,7 @@ import { utmMedium } from '../constants'
 
 import styles from '../styles.module.scss'
 
-interface Props {
+export interface Props {
   content: IRecommendationContent
   telemetryName: string
   params?: any
@@ -24,7 +24,7 @@ interface Props {
 }
 
 const ContentElement = (props: Props) => {
-  const { content, params, onLinkClick, telemetryName, insights, idx } = props
+  const { content = {}, params, onLinkClick, telemetryName, insights, idx } = props
   const { type, value, parameter } = content
 
   const replacedValue = replaceVariables(value, parameter, params)
@@ -142,8 +142,8 @@ const ContentElement = (props: Props) => {
           {isArray(value) && value.map((listElement: IRecommendationContent[], idx: number) => (
             <li
               className={cx(styles.listItem, { [styles.insights]: insights })}
-                    // eslint-disable-next-line react/no-array-index-key
-              key={`list-item-${listElement[0]}-${idx}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`list-item-${idx}`}
             >
               <RecommendationBody
                 elements={listElement}

@@ -53,7 +53,11 @@ const getRedisModulesSummaryTests = [
       RedisJSON: { loaded: true, version: 10000, semanticVersion: '1.0.0' },
       RediSearch: { loaded: true, version: 10000, semanticVersion: '1.0.0' },
       RedisTimeSeries: { loaded: true, version: 10000, semanticVersion: '1.0.0' },
-      customModules: [],
+      customModules: [{
+        name: 'redisgears_2',
+        semanticVersion: '1.0.0',
+        version: 10000,
+      }],
     },
   },
   { input: [], expected: DEFAULT_SUMMARY },

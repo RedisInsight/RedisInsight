@@ -12,6 +12,7 @@ export const getCloudSsoUtmCampaign = (source?: string | null): CloudSsoUtmCampa
     case OAuthSocialSource.RedisTimeSeries:
     case OAuthSocialSource.RedisGraph:
     case OAuthSocialSource.RedisBloom:
+      return CloudSsoUtmCampaign.Workbench
     case OAuthSocialSource.BrowserContentMenu:
       return CloudSsoUtmCampaign.BrowserOverview
     case OAuthSocialSource.BrowserFiltering:

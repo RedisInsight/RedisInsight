@@ -65,9 +65,6 @@ export const initialState: StateAppContext = {
   analytics: {
     lastViewedPage: ''
   },
-  triggeredFunctions: {
-    lastViewedPage: ''
-  },
   capability: {
     source: ''
   }
@@ -178,9 +175,6 @@ const appContextSlice = createSlice({
     setDbIndexState: (state, { payload }: { payload: boolean }) => {
       state.dbIndex.disabled = payload
     },
-    setLastTriggeredFunctionsPage: (state, { payload }: { payload: string }) => {
-      state.triggeredFunctions.lastViewedPage = payload
-    },
     setCapability: (state, { payload }: PayloadAction<Maybe<{ source: string, tutorialPopoverShown: boolean }>>) => {
       const source = payload?.source ?? ''
       const tutorialPopoverShown = !!payload?.tutorialPopoverShown
@@ -219,7 +213,6 @@ export const {
   clearBrowserKeyListData,
   setDbIndexState,
   setRecommendationsShowHidden,
-  setLastTriggeredFunctionsPage,
   setBrowserTreeSort,
   setCapability,
 } = appContextSlice.actions
@@ -245,8 +238,6 @@ export const appContextAnalytics = (state: RootState) =>
   state.app.context.analytics
 export const appContextDbIndex = (state: RootState) =>
   state.app.context.dbIndex
-export const appContextTriggeredFunctions = (state: RootState) =>
-  state.app.context.triggeredFunctions
 export const appContextCapability = (state: RootState) =>
   state.app.context.capability
 

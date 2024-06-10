@@ -155,9 +155,6 @@ const checkCommandModule = (command: string) => {
     case command.startsWith(ModuleCommandPrefix.TOPK): {
       return RedisDefaultModules.Bloom
     }
-    case command.startsWith(ModuleCommandPrefix.TriggersAndFunctions): {
-      return RedisDefaultModules.RedisGears
-    }
     default: {
       return null
     }

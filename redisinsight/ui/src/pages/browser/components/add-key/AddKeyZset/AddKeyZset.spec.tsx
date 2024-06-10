@@ -53,7 +53,7 @@ describe('AddKeyZset', () => {
       scoreInput,
       { target: { value: '100q' } }
     )
-    expect(screen.getByTestId('add-new-item')).toBeTruthy()
+    expect(screen.getByTestId('add-item')).toBeTruthy()
   })
 
   it('should render one more member & score inputs after click add item', () => {
@@ -63,7 +63,7 @@ describe('AddKeyZset', () => {
       scoreInput,
       { target: { value: '100q' } }
     )
-    fireEvent.click(screen.getByTestId('add-new-item'))
+    fireEvent.click(screen.getByTestId('add-item'))
 
     expect(screen.getAllByTestId(MEMBER_NAME)).toHaveLength(2)
     expect(screen.getAllByTestId(MEMBER_SCORE)).toHaveLength(2)
@@ -81,7 +81,7 @@ describe('AddKeyZset', () => {
       scoreInput,
       { target: { value: '100q' } }
     )
-    fireEvent.click(screen.getByLabelText(/clear item/i))
+    fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(memberInput).toHaveValue('')
     expect(scoreInput).toHaveValue('')

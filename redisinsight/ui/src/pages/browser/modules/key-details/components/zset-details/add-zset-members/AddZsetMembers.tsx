@@ -22,22 +22,17 @@ import {
 } from 'uiSrc/slices/browser/zset'
 
 import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
+import {
+  INITIAL_ZSET_MEMBER_STATE,
+  IZsetMemberState
+} from 'uiSrc/pages/browser/components/add-key/AddKeyZset/interfaces'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+import { ISetMemberState } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
+
+import styles from './styles.module.scss'
 
 export interface Props {
   closePanel: (isCancelled?: boolean) => void
-}
-
-export interface IZsetMemberState {
-  name: string
-  score: string
-  id: number
-}
-
-export const INITIAL_ZSET_MEMBER_STATE: IZsetMemberState = {
-  name: '',
-  score: '',
-  id: 0,
 }
 
 const AddZsetMembers = (props: Props) => {
@@ -103,6 +98,15 @@ const AddZsetMembers = (props: Props) => {
       }
       : item))
     setMembers(newState)
+  }
+
+  const onClickRemove = ({ id }: ISetMemberState) => {
+    if (members.length === 1) {
+      clearMemberValues(id)
+      return
+    }
+
+    removeMember(id)
   }
 
   const validateScore = (value: any) => {
@@ -172,64 +176,54 @@ const AddZsetMembers = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-zset-field-panel"
-        className={cx('eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
-        {members.map((item, index) => (
-          <EuiFlexItem style={{ marginBottom: '8px' }} grow key={item.id}>
-            <EuiFlexGroup gutterSize="m">
+        <AddMultipleFields
+          items={members}
+          isClearDisabled={isClearDisabled}
+          onClickRemove={onClickRemove}
+          onClickAdd={addMember}
+        >
+          {(item, index) => (
+            <EuiFlexGroup gutterSize="none" alignItems="center">
               <EuiFlexItem grow>
-                <EuiFlexGroup gutterSize="none" alignItems="center">
-                  <EuiFlexItem grow>
-                    <EuiFormRow fullWidth>
-                      <EuiFieldText
-                        fullWidth
-                        name={`member-${item.id}`}
-                        id={`member-${item.id}`}
-                        placeholder={config.member.placeholder}
-                        value={item.name}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleMemberChange('name', item.id, e.target.value)}
-                        inputRef={index === members.length - 1 ? lastAddedMemberName : null}
-                        disabled={loading}
-                        data-testid="member-name"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow>
-                    <EuiFormRow fullWidth>
-                      <EuiFieldText
-                        fullWidth
-                        name={`score-${item.id}`}
-                        id={`score-${item.id}`}
-                        maxLength={200}
-                        placeholder={config.score.placeholder}
-                        value={item.score}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleMemberChange('score', item.id, e.target.value)}
-                        onBlur={() => {
-                          handleScoreBlur(item)
-                        }}
-                        disabled={loading}
-                        data-testid="member-score"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                <EuiFormRow fullWidth>
+                  <EuiFieldText
+                    fullWidth
+                    name={`member-${item.id}`}
+                    id={`member-${item.id}`}
+                    placeholder={config.member.placeholder}
+                    value={item.name}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleMemberChange('name', item.id, e.target.value)}
+                    inputRef={index === members.length - 1 ? lastAddedMemberName : null}
+                    disabled={loading}
+                    data-testid="member-name"
+                  />
+                </EuiFormRow>
               </EuiFlexItem>
-              <AddItemsActions
-                id={item.id}
-                index={index}
-                length={members.length}
-                addItem={addMember}
-                removeItem={removeMember}
-                clearIsDisabled={isClearDisabled(item)}
-                addItemIsDisabled={members.some((item) => !item.score.length)}
-                clearItemValues={clearMemberValues}
-                loading={loading}
-              />
+              <EuiFlexItem grow>
+                <EuiFormRow fullWidth>
+                  <EuiFieldText
+                    fullWidth
+                    name={`score-${item.id}`}
+                    id={`score-${item.id}`}
+                    maxLength={200}
+                    placeholder={config.score.placeholder}
+                    value={item.score}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleMemberChange('score', item.id, e.target.value)}
+                    onBlur={() => {
+                      handleScoreBlur(item)
+                    }}
+                    disabled={loading}
+                    data-testid="member-score"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
             </EuiFlexGroup>
-          </EuiFlexItem>
-        ))}
+          )}
+        </AddMultipleFields>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}

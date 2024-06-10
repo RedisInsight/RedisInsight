@@ -183,18 +183,7 @@ $footerHeight: 38px;
 :global(.key-details-table) {
   height: calc(100% - 94px);
   position: relative;
-  &:global(.footerOpened) {
-    :global(.ReactVirtualized__Table__Grid) {
-      padding-bottom: 254px;
-      overflow-y: auto !important;
-    }
-    &:global(.footerOpened--short) {
-      :global(.ReactVirtualized__Table__Grid) {
-        padding-bottom: 134px;
-        overflow-y: auto !important;
-      }
-    }
-  }
+
   :global(.ReactVirtualized__Table__row) {
     font-size: 13px;
     align-items: normal;
@@ -206,6 +195,12 @@ $footerHeight: 38px;
     overflow: visible !important;
     // fix border alignment, need to investigate why this happens
     margin-right: 1px !important;
+
+    &:global(.actions.singleAction) {
+      .tableRowCell {
+        padding: 4px 8px !important;
+      }
+    }
   }
 
   :global(.ReactVirtualized__Table__Grid) {
@@ -246,8 +241,6 @@ $footerHeight: 38px;
 
   :global {
     .value-table-actions {
-      margin-right: 5px;
-
       .editFieldBtn {
         margin-right: 10px;
       }

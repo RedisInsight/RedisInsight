@@ -27,6 +27,14 @@
   }
 }
 
+.scrollContainer {
+  scroll-padding-bottom: 60px;
+
+  // move scrollbar outside
+  margin: 0 -16px;
+  padding: 0 16px;
+}
+
 .contentFields {
   max-width: 680px;
   margin: 0 auto;

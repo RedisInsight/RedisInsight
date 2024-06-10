@@ -21,7 +21,7 @@ export interface Props {
   editToolTipContent?: React.ReactNode
   approveByValidation?: (value: string) => boolean
   onEdit: (isEditing: boolean) => void
-  onUpdateTextAreaHeight: () => void
+  onUpdateTextAreaHeight?: () => void
   onChange?: (e: ChangeEvent<HTMLTextAreaElement>) => void
   onDecline: (event?: React.MouseEvent<HTMLElement>) => void
   onApply: (value: string, event: React.MouseEvent) => void
@@ -69,7 +69,7 @@ const EditableTextArea = (props: Props) => {
     if (textAreaRef.current) {
       textAreaRef.current.style.height = '0px'
       textAreaRef.current.style.height = `${textAreaRef.current?.scrollHeight || 0}px`
-      onUpdateTextAreaHeight()
+      onUpdateTextAreaHeight?.()
     }
   }
 

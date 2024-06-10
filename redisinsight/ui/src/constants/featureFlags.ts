@@ -4,4 +4,5 @@ export enum FeatureFlags {
   cloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   databaseChat = 'databaseChat',
   documentationChat = 'documentationChat',
+  hashFieldExpiration = 'hashFieldExpiration',
 }

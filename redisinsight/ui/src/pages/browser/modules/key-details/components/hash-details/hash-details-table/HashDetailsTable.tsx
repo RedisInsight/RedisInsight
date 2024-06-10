@@ -4,7 +4,7 @@ import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
 
-import { isNumber } from 'lodash'
+import { isNumber, toNumber } from 'lodash'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
@@ -34,7 +34,7 @@ import {
   fetchMoreHashFields,
   hashDataSelector,
   hashSelector,
-  updateHashFieldsAction,
+  updateHashFieldsAction, updateHashTTLAction,
   updateHashValueStateSelector,
 } from 'uiSrc/slices/browser/hash'
 import {
@@ -47,7 +47,6 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
-  bufferToSerializedFormat,
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
@@ -57,13 +56,20 @@ import {
   isFormatEditable,
   isNonUnicodeFormatter,
   Nullable,
-  stringToSerializedBufferFormat
+  stringToSerializedBufferFormat,
+  truncateNumberToDuration,
+  validateTTLNumber
 } from 'uiSrc/utils'
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { EditableTextArea } from 'uiSrc/pages/browser/modules/key-details/shared'
-import { AddFieldsToHashDto, GetHashFieldsResponse, HashFieldDto, } from 'apiSrc/modules/browser/hash/dto'
+import { EditableInput, EditableTextArea } from 'uiSrc/pages/browser/modules/key-details/shared'
+import {
+  AddFieldsToHashDto,
+  GetHashFieldsResponse,
+  HashFieldDto,
+  UpdateHashFieldsTtlDto,
+} from 'apiSrc/modules/browser/hash/dto'
 
 import styles from './styles.module.scss'
 
@@ -80,12 +86,12 @@ const cellCache = new CellMeasurerCache({
 interface IHashField extends HashFieldDto {}
 
 export interface Props {
-  isFooterOpen?: boolean
+  isExpireFieldsAvailable?: boolean
   onRemoveKey: () => void
 }
 
 const HashDetailsTable = (props: Props) => {
-  const { onRemoveKey } = props
+  const { isExpireFieldsAvailable, onRemoveKey } = props
 
   const {
     total,
@@ -103,7 +109,7 @@ const HashDetailsTable = (props: Props) => {
   const [match, setMatch] = useState<Nullable<string>>(matchAllValue)
   const [deleting, setDeleting] = useState('')
   const [fields, setFields] = useState<IHashField[]>([])
-  const [editingIndex, setEditingIndex] = useState<Nullable<number>>(null)
+  const [editingIndex, setEditingIndex] = useState<Nullable<{ index: number, field: string }>>(null)
   const [width, setWidth] = useState(100)
   const [expandedRows, setExpandedRows] = useState<number[]>([])
   const [viewFormat, setViewFormat] = useState(viewFormatProp)
@@ -178,22 +184,32 @@ const HashDetailsTable = (props: Props) => {
   }
 
   const handleEditField = useCallback((
-    rowIndex: number,
+    index: number,
     editing: boolean,
+    field: string
   ) => {
-    setEditingIndex(editing ? rowIndex : null)
+    setEditingIndex(editing ? { index, field } : null)
     dispatch(setSelectedKeyRefreshDisabled(editing))
 
-    clearCache(rowIndex)
+    clearCache(index)
   }, [viewFormat])
 
-  const handleApplyEditField = (field = '', value: string, rowIndex: number) => {
+  const handleApplyEditValue = (field = '', value: string, rowIndex: number) => {
     const data: AddFieldsToHashDto = {
       keyName: key,
       fields: [{ field, value: stringToSerializedBufferFormat(viewFormat, value) }],
     }
 
-    dispatch(updateHashFieldsAction(data, () => handleEditField(rowIndex, false)))
+    dispatch(updateHashFieldsAction(data, () => handleEditField(rowIndex, false, 'value')))
+  }
+
+  const handleApplyEditExpire = (field = '', expire: string, rowIndex: number) => {
+    const data: UpdateHashFieldsTtlDto = {
+      keyName: key,
+      fields: [{ field, expire: expire ? toNumber(expire) : -1 }]
+    }
+
+    dispatch(updateHashTTLAction(data, () => handleEditField(rowIndex, false, 'ttl')))
   }
 
   const handleRemoveIconClick = () => {
@@ -341,23 +357,25 @@ const HashDetailsTable = (props: Props) => {
         const isEditable = !isCompressed && isFormatEditable(viewFormat)
         const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
 
+        const isEditing = editingIndex?.field === 'value' && editingIndex?.index === rowIndex
+
         return (
           <EditableTextArea
-            initialValue={bufferToSerializedFormat(viewFormat, valueItem, 4)}
+            initialValue={value}
             isLoading={updateLoading}
             isDisabled={disabled}
-            isEditing={rowIndex === editingIndex}
+            isEditing={isEditing}
             isEditDisabled={!isEditable || updateLoading}
             disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
-            onDecline={() => handleEditField(rowIndex, false)}
-            onApply={(value) => handleApplyEditField(fieldItem, value, rowIndex)}
+            onDecline={() => handleEditField(rowIndex, false, 'value')}
+            onApply={(value) => handleApplyEditValue(fieldItem, value, rowIndex)}
             approveText={TEXT_INVALID_VALUE}
             approveByValidation={(value) =>
               formattingBuffer(
                 stringToSerializedBufferFormat(viewFormat, value),
                 viewFormat
               )?.isValid}
-            onEdit={(isEditing) => handleEditField(rowIndex, isEditing)}
+            onEdit={(isEditing) => handleEditField(rowIndex, isEditing, 'value')}
             editToolTipContent={!isEditable ? editTooltipContent : null}
             onUpdateTextAreaHeight={() => clearCache(rowIndex)}
             field={field}
@@ -384,37 +402,82 @@ const HashDetailsTable = (props: Props) => {
     {
       id: 'actions',
       label: '',
-      headerClassName: 'value-table-header-actions',
-      className: 'actions',
-      absoluteWidth: 64,
-      minWidth: 64,
-      maxWidth: 64,
+      className: 'actions singleAction',
+      absoluteWidth: 40,
+      minWidth: 40,
+      maxWidth: 40,
       render: function Actions(_act: any, { field: fieldItem, value: valueItem }: HashFieldDto, _) {
         const field = bufferToString(fieldItem, viewFormat)
         return (
           <StopPropagation>
-            <div className="value-table-actions">
-              <PopoverDelete
-                header={createDeleteFieldHeader(fieldItem as RedisString)}
-                text={createDeleteFieldMessage(key ?? '')}
-                item={field}
-                itemRaw={fieldItem as RedisString}
-                suffix={suffix}
-                deleting={deleting}
-                closePopover={closePopover}
-                updateLoading={updateLoading}
-                showPopover={showPopover}
-                testid={`remove-hash-button-${field}`}
-                handleDeleteItem={handleDeleteField}
-                handleButtonClick={handleRemoveIconClick}
-                appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Field') : null}
-              />
-            </div>
+            <PopoverDelete
+              header={createDeleteFieldHeader(fieldItem as RedisString)}
+              text={createDeleteFieldMessage(key ?? '')}
+              item={field}
+              itemRaw={fieldItem as RedisString}
+              suffix={suffix}
+              deleting={deleting}
+              closePopover={closePopover}
+              updateLoading={updateLoading}
+              showPopover={showPopover}
+              testid={`remove-hash-button-${field}`}
+              handleDeleteItem={handleDeleteField}
+              handleButtonClick={handleRemoveIconClick}
+              appendInfo={length === 1 ? HelpTexts.REMOVE_LAST_ELEMENT('Field') : null}
+            />
           </StopPropagation>
         )
       },
     },
   ]
+
+  if (isExpireFieldsAvailable) {
+    columns.splice(2, 0, {
+      id: 'ttl',
+      label: 'TTL',
+      absoluteWidth: 140,
+      minWidth: 140,
+      truncateText: true,
+      className: 'noPadding',
+      render: function TTL(
+        _name: string,
+        { field: fieldItem, expire }: IHashField,
+        _expanded?: boolean,
+        rowIndex = 0
+      ) {
+        const field = bufferToString(fieldItem, viewFormat)
+        const isEditing = editingIndex?.field === 'ttl' && editingIndex?.index === rowIndex
+
+        return (
+          <EditableInput
+            initialValue={expire === -1 ? '' : expire?.toString()}
+            placeholder="Enter TTL"
+            field={field}
+            isEditing={isEditing}
+            onEdit={(value: boolean) => handleEditField(rowIndex, value, 'ttl')}
+            onDecline={() => handleEditField(rowIndex, false, 'ttl')}
+            onApply={(value) => handleApplyEditExpire(fieldItem, value, 'ttl')}
+            testIdPrefix="hash-ttl"
+            validation={validateTTLNumber}
+          >
+            <div className="innerCellAsCell">
+              {expire === -1 ? 'No Limit' : (
+                <EuiToolTip
+                  title="Time to Live"
+                  className={styles.tooltip}
+                  anchorClassName="truncateText"
+                  position="right"
+                  content={truncateNumberToDuration(expire || 0)}
+                >
+                  <>{expire}</>
+                </EuiToolTip>
+              )}
+            </div>
+          </EditableInput>
+        )
+      }
+    })
+  }
 
   return (
     <>

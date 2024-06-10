@@ -38,6 +38,9 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.databaseChat]: {
         flag: false
       },
+      [FeatureFlags.hashFieldExpiration]: {
+        flag: false
+      },
     }
   }
 }

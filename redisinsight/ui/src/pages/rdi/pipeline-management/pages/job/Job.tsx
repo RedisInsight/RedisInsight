@@ -160,7 +160,7 @@ const Job = (props: Props) => {
                 onClick={() => setShouldOpenDedicatedEditor(true)}
                 data-testid="open-dedicated-editor-btn"
               >
-                SQL Editor
+                SQL and JMESPath Editor
               </EuiButton>
             </EuiToolTip>
             <TemplatePopover

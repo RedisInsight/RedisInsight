@@ -405,9 +405,8 @@ export class BrowserPage extends InstancePage {
      * @param TTL The Time to live value of the key
      * @param field The field name of the key
      * @param value The value of the key
-     * @param ttl The ttl of the field for Redis databases 7.4 and higher
-     */
-    async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' ', ttl = ''): Promise<void> {
+     * @param fieldTtl The ttl of the field for Redis databases 7.4 and higher*/
+    async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' ', fieldTtl = ''): Promise<void> {
         if (await this.Toast.toastCloseButton.exists) {
             await t.click(this.Toast.toastCloseButton);
         }
@@ -422,8 +421,8 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         await t.typeText(this.hashFieldNameInput, field, { replace: true, paste: true });
         await t.typeText(this.hashFieldValueInput, value, { replace: true, paste: true });
-        if(ttl !== ''){
-            await t.typeText(this.hashTtlFieldInput, ttl, { replace: true, paste: true });
+        if(fieldTtl !== ''){
+            await t.typeText(this.hashTtlFieldInput, fieldTtl, { replace: true, paste: true });
         }
         await t.click(this.addKeyButton);
     }
@@ -644,17 +643,17 @@ export class BrowserPage extends InstancePage {
      * Add field to hash key
      * @param keyFieldValue The value of the hash field
      * @param keyValue The hash value
-     * @param tll The hash field ttl value for Redis databases 7.4 and higher
+     * @param fieldTtl The hash field ttl value for Redis databases 7.4 and higher
      */
-    async addFieldToHash(keyFieldValue: string, keyValue: string, ttl = ''): Promise<void> {
+    async addFieldToHash(keyFieldValue: string, keyValue: string, fieldTtl = ''): Promise<void> {
         if (await this.Toast.toastCloseButton.exists) {
             await t.click(this.Toast.toastCloseButton);
         }
         await t.click(this.addKeyValueItemsButton);
         await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
         await t.typeText(this.hashValueInput, keyValue, { replace: true, paste: true });
-        if(ttl !== ' '){
-            await t.typeText(this.hashTtlFieldInput, ttl, { replace: true, paste: true });
+        if(fieldTtl !== ' '){
+            await t.typeText(this.hashTtlFieldInput, fieldTtl, { replace: true, paste: true });
         }
         await t.click(this.saveHashFieldButton);
     }
@@ -674,13 +673,13 @@ export class BrowserPage extends InstancePage {
     /**
      * Edit Hash field ttl value
      * @param fieldName The field name
-     * @param tll The hash field ttl value for Redis databases 7.4 and higher
+     * @param fieldTtl The hash field ttl value for Redis databases 7.4 and higher
      */
-    async editHashFieldTtlValue(fieldName: string, ttl: string): Promise<void> {
+    async editHashFieldTtlValue(fieldName: string, fieldTtl: string): Promise<void> {
         await t
             .hover(this.getHashTtlFieldInput(fieldName))
             .click(this.editHashFieldTtlButton)
-            .typeText(this.inlineItemEditor, ttl, { replace: true, paste: true })
+            .typeText(this.inlineItemEditor, fieldTtl, { replace: true, paste: true })
             .click(this.applyButton);
     }
 

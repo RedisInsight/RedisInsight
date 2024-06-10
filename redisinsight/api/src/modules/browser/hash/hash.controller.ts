@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  HttpCode,
+  HttpCode, Patch,
   Post,
   Put,
   UseInterceptors,
@@ -23,7 +23,7 @@ import {
   DeleteFieldsFromHashDto,
   DeleteFieldsFromHashResponse,
   GetHashFieldsDto,
-  GetHashFieldsResponse,
+  GetHashFieldsResponse, UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { HashService } from 'src/modules/browser/hash/hash.service';
 
@@ -78,6 +78,20 @@ export class HashController {
       @Body() dto: AddFieldsToHashDto,
   ): Promise<void> {
     return await this.hashService.addFields(clientMetadata, dto);
+  }
+
+  @Patch('/ttl')
+  @ApiOperation({
+    description: 'Update hash fields ttl',
+  })
+  @ApiRedisParams()
+  @ApiBody({ type: UpdateHashFieldsTtlDto })
+  @ApiQueryRedisStringEncoding()
+  async updateTtl(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: UpdateHashFieldsTtlDto,
+  ): Promise<void> {
+    return await this.hashService.updateTtl(clientMetadata, dto);
   }
 
   @Delete('/fields')

@@ -205,11 +205,6 @@ export default {
       url: process.env.RI_COMMANDS_REDISBLOOM_URL
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
-    {
-      name: 'triggers_and_functions',
-      url: process.env.RI_COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
-        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
-    },
   ],
   connections: {
     timeout: parseInt(process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec

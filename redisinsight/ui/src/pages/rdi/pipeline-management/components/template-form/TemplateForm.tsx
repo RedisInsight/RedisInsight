@@ -13,7 +13,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
 
-import { fetchPipelineStrategies, fetchPipelineTemplate, rdiPipelineStrategiesSelector } from 'uiSrc/slices/rdi/pipeline'
+import {
+  fetchPipelineStrategies,
+  fetchJobTemplate,
+  fetchConfigTemplate,
+  rdiPipelineStrategiesSelector,
+} from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
@@ -69,11 +74,12 @@ const TemplateForm = (props: Props) => {
   }
 
   const handleApply = () => {
-    const values = source === RdiPipelineTabs.Config
-      ? { dbType: selectedDbType, pipelineType: selectedPipelineType }
-      : { pipelineType: selectedPipelineType }
-
-    dispatch(fetchPipelineTemplate(rdiInstanceId, values, onSuccess))
+    if (source === RdiPipelineTabs.Config) {
+      dispatch(fetchConfigTemplate(rdiInstanceId, selectedPipelineType, selectedDbType, onSuccess))
+    }
+    if (source === RdiPipelineTabs.Jobs) {
+      dispatch(fetchJobTemplate(rdiInstanceId, selectedPipelineType, onSuccess))
+    }
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEMPLATE_CLICKED,
       eventData: {

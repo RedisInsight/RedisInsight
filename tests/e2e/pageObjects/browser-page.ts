@@ -94,6 +94,7 @@ export class BrowserPage extends InstancePage {
     saveButton = Selector('[data-testid=save-btn]');
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     editHashButton = Selector('[data-testid^=hash_edit-btn-]');
+    editHashFieldTtlButton = Selector('[data-testid^=hash-ttl_edit-btn-]', { timeout: 500 });
     editZsetButton = Selector('[data-testid^=zset_edit-btn-]');
     editListButton = Selector('[data-testid^=list_edit-btn-]');
     cancelStreamGroupBtn = Selector('[data-testid=cancel-stream-groups-btn]');
@@ -161,6 +162,7 @@ export class BrowserPage extends InstancePage {
     hashFieldValueInput = Selector('[data-testid=field-value]');
     hashFieldNameInput = Selector('[data-testid=field-name]');
     hashFieldValueEditor = Selector('[data-testid^=hash_value-editor]');
+    hashTtlFieldInput = Selector('[data-testid=hash-ttl]');
     listKeyElementInput = Selector('[data-testid=element]');
     listKeyElementEditorInput = Selector('[data-testid^=list_value-editor-]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
@@ -264,6 +266,10 @@ export class BrowserPage extends InstancePage {
     // Dialog
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
     closeDialogButton = Selector('[class*=euiModal__closeIcon]');
+
+    //Get Hash key field ttl value
+    //for Redis databases 7.4 and higher
+    getHashTtlFieldInput = (fieldName: string): Selector => (Selector(`[data-testid=hash-ttl_content-value-${fieldName}]`));
 
     /**
      * Common part for Add any new key
@@ -399,8 +405,8 @@ export class BrowserPage extends InstancePage {
      * @param TTL The Time to live value of the key
      * @param field The field name of the key
      * @param value The value of the key
-     */
-    async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' '): Promise<void> {
+     * @param fieldTtl The ttl of the field for Redis databases 7.4 and higher*/
+    async addHashKey(keyName: string, TTL = ' ', field = ' ', value = ' ', fieldTtl = ''): Promise<void> {
         if (await this.Toast.toastCloseButton.exists) {
             await t.click(this.Toast.toastCloseButton);
         }
@@ -415,6 +421,9 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
         await t.typeText(this.hashFieldNameInput, field, { replace: true, paste: true });
         await t.typeText(this.hashFieldValueInput, value, { replace: true, paste: true });
+        if(fieldTtl !== ''){
+            await t.typeText(this.hashTtlFieldInput, fieldTtl, { replace: true, paste: true });
+        }
         await t.click(this.addKeyButton);
     }
 
@@ -634,14 +643,18 @@ export class BrowserPage extends InstancePage {
      * Add field to hash key
      * @param keyFieldValue The value of the hash field
      * @param keyValue The hash value
+     * @param fieldTtl The hash field ttl value for Redis databases 7.4 and higher
      */
-    async addFieldToHash(keyFieldValue: string, keyValue: string): Promise<void> {
+    async addFieldToHash(keyFieldValue: string, keyValue: string, fieldTtl = ''): Promise<void> {
         if (await this.Toast.toastCloseButton.exists) {
             await t.click(this.Toast.toastCloseButton);
         }
         await t.click(this.addKeyValueItemsButton);
         await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
         await t.typeText(this.hashValueInput, keyValue, { replace: true, paste: true });
+        if(fieldTtl !== ' '){
+            await t.typeText(this.hashTtlFieldInput, fieldTtl, { replace: true, paste: true });
+        }
         await t.click(this.saveHashFieldButton);
     }
 
@@ -654,6 +667,19 @@ export class BrowserPage extends InstancePage {
             .hover(this.hashFieldValue)
             .click(this.editHashButton)
             .typeText(this.hashFieldValueEditor, value, { replace: true, paste: true })
+            .click(this.applyButton);
+    }
+
+    /**
+     * Edit Hash field ttl value
+     * @param fieldName The field name
+     * @param fieldTtl The hash field ttl value for Redis databases 7.4 and higher
+     */
+    async editHashFieldTtlValue(fieldName: string, fieldTtl: string): Promise<void> {
+        await t
+            .hover(this.getHashTtlFieldInput(fieldName))
+            .click(this.editHashFieldTtlButton)
+            .typeText(this.inlineItemEditor, fieldTtl, { replace: true, paste: true })
             .click(this.applyButton);
     }
 

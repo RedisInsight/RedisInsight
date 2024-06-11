@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Request } from 'express';
 import { RdiClientMetadata, RdiPipeline } from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
-import { RdiDryRunJobDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
+import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
@@ -85,12 +85,20 @@ export class RdiPipelineService {
     return await client.getStrategies();
   }
 
-  async getTemplate(rdiClientMetadata: RdiClientMetadata, options: object): Promise<unknown> {
-    this.logger.log('Getting RDI pipeline template');
+  async getConfigTemplate(rdiClientMetadata: RdiClientMetadata, pipelineType: string, dbType: string): Promise<RdiTemplateResponseDto> {
+    this.logger.log('Getting RDI config template');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-    return await client.getTemplate(options);
+    return await client.getConfigTemplate(pipelineType, dbType);
+  }
+
+  async getJobTemplate(rdiClientMetadata: RdiClientMetadata, pipelineType: string): Promise<RdiTemplateResponseDto> {
+    this.logger.log('Getting RDI job template');
+
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.getJobTemplate(pipelineType);
   }
 
   async getPipelineStatus(rdiClientMetadata: RdiClientMetadata): Promise<unknown> {

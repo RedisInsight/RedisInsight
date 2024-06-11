@@ -31,7 +31,6 @@ import { resetBulkActions } from 'uiSrc/slices/browser/bulkActions'
 import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDetails'
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { resetRedisearchKeysData, setRedisearchInitialState } from 'uiSrc/slices/browser/redisearch'
-import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { InstancePageTemplate } from 'uiSrc/templates'
 import { getPageName } from 'uiSrc/utils/routing'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
@@ -96,7 +95,6 @@ const InstancePage = ({ routes = [] }: Props) => {
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
     dispatch(setInitialRecommendationsState())
-    dispatch(setTriggeredFunctionsInitialState())
     setTimeout(() => {
       dispatch(resetOutput())
     }, 0)

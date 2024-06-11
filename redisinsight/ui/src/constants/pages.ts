@@ -17,9 +17,6 @@ export enum PageNames {
   clusterDetails = 'cluster-details',
   databaseAnalysis = 'database-analysis',
   settings = 'settings',
-  triggeredFunctions = 'triggered-functions',
-  triggeredFunctionsLibraries = 'libraries',
-  triggeredFunctionsFunctions = 'functions',
 }
 
 const redisCloud = '/redis-cloud'
@@ -44,11 +41,6 @@ export const Pages = {
   slowLog: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.slowLog}`,
   clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
   databaseAnalysis: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
-  triggeredFunctions: (instanceId: string) => `/${instanceId}/${PageNames.triggeredFunctions}`,
-  triggeredFunctionsLibraries: (instanceId: string) =>
-    `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsLibraries}`,
-  triggeredFunctionsFunctions: (instanceId: string) =>
-    `/${instanceId}/${PageNames.triggeredFunctions}/${PageNames.triggeredFunctionsFunctions}`,
   // rdi pages
   rdi: '/integrate',
 }

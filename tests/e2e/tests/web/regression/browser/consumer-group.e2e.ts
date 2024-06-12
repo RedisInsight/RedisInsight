@@ -140,6 +140,7 @@ test('Verify that user can see error message if enter invalid last delivered ID'
     // Change the ID set for the Consumer Group
     for(const id of invalidEntryIds){
         const idBefore = await browserPage.streamGroupId.textContent;
+        await t.hover(browserPage.streamGroupId);
         await t.click(browserPage.editStreamLastIdButton);
         await t.typeText(browserPage.lastIdInput, id, { replace: true, paste: true });
         await t.click(browserPage.saveButton);

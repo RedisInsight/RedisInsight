@@ -652,7 +652,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addKeyValueItemsButton);
         await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
         await t.typeText(this.hashValueInput, keyValue, { replace: true, paste: true });
-        if(fieldTtl !== ' '){
+        if(fieldTtl !== ''){
             await t.typeText(this.hashTtlFieldInput, fieldTtl, { replace: true, paste: true });
         }
         await t.click(this.saveHashFieldButton);

@@ -34,7 +34,6 @@ import {
   TEXT_FAILED_CONVENT_FORMATTER,
 } from 'uiSrc/constants'
 import {
-  bufferToSerializedFormat,
   bufferToString,
   formatLongName,
   formattingBuffer,
@@ -287,7 +286,7 @@ const ListDetailsTable = (props: Props) => {
 
         return (
           <EditableTextArea
-            initialValue={bufferToSerializedFormat(viewFormat, elementItem, 4)}
+            initialValue={element}
             isLoading={updateLoading}
             isDisabled={disabled}
             isEditing={index === editingIndex}

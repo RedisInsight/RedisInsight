@@ -90,7 +90,7 @@ export class BrowserPage extends InstancePage {
     removeConsumerGroupButton = Selector('[data-testid^=remove-groups-button]');
     optionalParametersSwitcher = Selector('[data-testid=optional-parameters-switcher]');
     forceClaimCheckbox = Selector('[data-testid=force-claim-checkbox]').sibling();
-    editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
+    editStreamLastIdButton = Selector('[data-testid^=stream-group_edit-btn]');
     saveButton = Selector('[data-testid=save-btn]');
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     editHashButton = Selector('[data-testid^=hash_edit-btn-]');

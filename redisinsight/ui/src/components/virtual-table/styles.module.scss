@@ -188,13 +188,15 @@ $footerHeight: 38px;
     font-size: 13px;
     align-items: normal;
   }
+
   :global(.ReactVirtualized__Table__headerRow) {
     border: 1px solid var(--separatorColorLight) !important;
+    // fix border alignment, need to investigate why this happens
+    padding: 0 !important;
   }
+
   :global(.ReactVirtualized__Table__rowColumn) {
     overflow: visible !important;
-    // fix border alignment, need to investigate why this happens
-    margin-right: 1px !important;
 
     &:global(.actions.singleAction) {
       .tableRowCell {
@@ -212,6 +214,10 @@ $footerHeight: 38px;
     .tableRow {
       & > div:not(:last-of-type) {
         border-right: 1px solid var(--separatorColor);
+      }
+
+      :global(.ReactVirtualized__Table__headerColumn) {
+        border-right-color: var(--separatorColorLight) !important;
       }
     }
   }

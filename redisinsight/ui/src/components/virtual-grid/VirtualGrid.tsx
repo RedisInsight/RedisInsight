@@ -37,6 +37,7 @@ const VirtualGrid = (props: IProps) => {
     scrollTopProp = 0,
     maxTableWidth = 0,
     hideProgress,
+    stickLastColumnHeaderCell,
   } = props
 
   const scrollTopRef = useRef<number>(0)
@@ -155,9 +156,10 @@ const VirtualGrid = (props: IProps) => {
     }, [setRowHeight, rowIndex, expanded])
 
     if (rowIndex === 0) {
+      const isLastColumn = columns.length - 1 === columnIndex
       return (
-        <div ref={cellRef} style={style}>
-          <div className={cx(styles.gridHeaderItem, 'truncateText')}>
+        <hgroup className={styles.gridHeaderCell} ref={cellRef} style={style}>
+          <div className={cx(styles.gridHeaderItem, 'truncateText', { [styles.lastHeaderItem]: isLastColumn })}>
             {isObject(content) && (
               <>
                 {!!content?.sortable && (
@@ -184,9 +186,10 @@ const VirtualGrid = (props: IProps) => {
             )}
             {!isObject(content) && renderNotEmptyContent(content)}
           </div>
-        </div>
+        </hgroup>
       )
     }
+
     if (columnIndex === 0) {
       const lastColumn = columns[columns.length - 1]
       const allDynamicRowsHeight: number[] = Object.values(rowHeightsMap.current)
@@ -233,7 +236,8 @@ const VirtualGrid = (props: IProps) => {
         className={cx(styles.gridItem,
           rowIndex % 2
             ? styles.gridItemOdd
-            : styles.gridItemEven)}
+            : styles.gridItemEven,
+          columnIndex === columns.length - 2 ? 'penult' : '')}
       >
         {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
         {!column?.render && content }
@@ -248,6 +252,7 @@ const VirtualGrid = (props: IProps) => {
     columns.length - 1,
     Math.max(maxTableWidth, width),
     columns,
+    { stickLastColumnHeaderCell }
   )
 
   return (

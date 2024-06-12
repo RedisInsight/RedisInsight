@@ -38,22 +38,16 @@ $cellPaddingWidth: 12px;
     .ReactVirtualized__Grid__innerScrollContainer {
       .ReactVirtualized__Table__rowColumn {
         padding-right: 6px !important;
-        border-right: 1px solid var(--tableDarkestBorderColor) !important;
         border-left: none !important;
 
         > div {
+          max-width: 100%;
           min-height: 54px !important;
           padding: $cellPaddingWidth !important;
-        }
-
-        &:last-of-type,
-        &:nth-last-of-type(2) {
-          border-right: none !important;
         }
       }
 
       .ReactVirtualized__Table__row {
-        border-bottom: 1px solid var(--tableDarkestBorderColor) !important;
         &:last-of-type {
           border-bottom: none !important;
         }
@@ -77,11 +71,8 @@ $cellPaddingWidth: 12px;
     }
 
     .ReactVirtualized__Table__headerRow {
-      border: none !important;
-
       .streamItemHeader {
         padding-right: 4px !important;
-        border: none !important;
 
         > div > div:first-of-type {
           padding: 18px 0 18px $cellPaddingWidth !important;
@@ -90,7 +81,8 @@ $cellPaddingWidth: 12px;
     }
 
     .ReactVirtualized__Table__Grid {
-      border: 1px solid var(--tableDarkestBorderColor) !important;
+      border: 1px solid var(--separatorColor) !important;
+      border-top: 0 !important;
     }
   }
 }

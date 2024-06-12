@@ -41,7 +41,7 @@ const VirtualGrid = (props: IProps) => {
   } = props
 
   const scrollTopRef = useRef<number>(0)
-  const [width, setWidth] = useState<number>(100)
+  const [width, setWidth] = useState<number>(200)
   const [height, setHeight] = useState<number>(100)
   const [forceScrollTop, setForceScrollTop] = useState<Maybe<number>>(scrollTopProp)
   const [expandedRows, setExpandedRows] = useState<number[]>([])

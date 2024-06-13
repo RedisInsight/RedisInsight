@@ -1,0 +1,42 @@
+.container {
+  width: 612px !important;
+  min-width: 612px !important;
+  padding: 40px;
+  background-color: var(--euiColorEmptyShade);
+}
+
+.title {
+  font-size: 28px !important;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 34px;
+  padding: 16px 0;
+}
+
+.text {
+  font: normal normal normal 14px/17px Graphik, sans-serif !important;
+  color: var(--euiTextSubduedColor) !important;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 1px;
+}
+
+.button {
+  height: 36px !important;
+
+  :global(.euiButtonContent.euiButton__content) {
+    padding: 0 16px;
+  }
+}
+
+:global {
+  .euiModal__closeIcon {
+    right: 35px;
+    top: 35px;
+  }
+}

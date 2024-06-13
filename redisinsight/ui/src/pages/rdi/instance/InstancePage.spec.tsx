@@ -42,18 +42,16 @@ jest.mock('uiSrc/slices/app/context', () => ({
   }),
 }))
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: jest.fn,
-  }),
-}))
-
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
   store.clearActions()
+
+  reactRouterDom.useHistory = jest.fn().mockReturnValue({
+    push: jest.fn(),
+    block: jest.fn(() => jest.fn())
+  })
 })
 
 /**
@@ -135,7 +133,10 @@ describe('InstancePage', () => {
 
   it('should redirect to rdi pipeline management page', async () => {
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({
+      push: pushMock,
+      block: jest.fn(() => jest.fn())
+    })
 
     reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
@@ -157,7 +158,10 @@ describe('InstancePage', () => {
     })
 
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
+    reactRouterDom.useHistory = jest.fn().mockReturnValue({
+      push: pushMock,
+      block: jest.fn(() => jest.fn())
+    })
 
     reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 

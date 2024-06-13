@@ -387,7 +387,6 @@ describe('rdi pipe slice', () => {
     })
   })
 
-
   describe('getPipelineStatus', () => {
     it('should set loading = true', () => {
       // Arrange
@@ -522,6 +521,7 @@ describe('rdi pipe slice', () => {
         const expectedActions = [
           deployPipeline(),
           deployPipelineSuccess(),
+          setChangedFiles({}),
           addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_DEPLOY_PIPELINE()),
         ]
 

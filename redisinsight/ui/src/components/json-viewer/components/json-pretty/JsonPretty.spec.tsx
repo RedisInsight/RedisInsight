@@ -1,4 +1,5 @@
 import React from 'react'
+import JSONBigInt from 'json-bigint'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
 import JsonPretty from './JsonPretty'
@@ -22,6 +23,18 @@ describe('JsonPretty', () => {
     const json = null
     render(<JsonPretty data={json} />)
 
+    expect(screen.getByTestId('json-primitive-component')).toBeInTheDocument()
+  })
+
+  it('should render json primitive component with big number', () => {
+    const json = JSONBigInt({ useNativeBigInt: true }).parse('1234567890123456789012345678901234567890')
+    render(<JsonPretty data={json} />)
+    expect(screen.getByTestId('json-primitive-component')).toBeInTheDocument()
+  })
+
+  it('should render json primitive component with big float', () => {
+    const json = JSONBigInt({ useNativeBigInt: false }).parse('1234567890123456789012345678901234567890.1234567890123456789012345678901234567890')
+    render(<JsonPretty data={json} />)
     expect(screen.getByTestId('json-primitive-component')).toBeInTheDocument()
   })
 })

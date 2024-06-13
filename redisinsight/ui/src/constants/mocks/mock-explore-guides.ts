@@ -10,11 +10,6 @@ export const MOCK_EXPLORE_GUIDES = [
     icon: 'json'
   },
   {
-    title: 'Triggers and functions',
-    tutorialId: 'tf-intro',
-    icon: 'triggers-and-functions'
-  },
-  {
     title: 'Time Series',
     tutorialId: 'ds-ts-intro',
     icon: 'time-series'

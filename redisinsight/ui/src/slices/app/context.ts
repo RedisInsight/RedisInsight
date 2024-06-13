@@ -23,7 +23,6 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
-import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
 import { resetOutput } from 'uiSrc/slices/cli/cli-output'
 import { SearchMode } from '../interfaces/keys'
@@ -81,9 +80,6 @@ export const initialState: StateAppContext = {
     message: ''
   },
   analytics: {
-    lastViewedPage: ''
-  },
-  triggeredFunctions: {
     lastViewedPage: ''
   },
   capability: {
@@ -210,9 +206,6 @@ const appContextSlice = createSlice({
     setDbIndexState: (state, { payload }: { payload: boolean }) => {
       state.dbIndex.disabled = payload
     },
-    setLastTriggeredFunctionsPage: (state, { payload }: { payload: string }) => {
-      state.triggeredFunctions.lastViewedPage = payload
-    },
     setCapability: (state, { payload }: PayloadAction<Maybe<{ source: string, tutorialPopoverShown: boolean }>>) => {
       const source = payload?.source ?? ''
       const tutorialPopoverShown = !!payload?.tutorialPopoverShown
@@ -263,7 +256,6 @@ export const {
   clearBrowserKeyListData,
   setDbIndexState,
   setRecommendationsShowHidden,
-  setLastTriggeredFunctionsPage,
   setBrowserTreeSort,
   setCapability,
   setLastPipelineManagementPage,
@@ -292,8 +284,6 @@ export const appContextAnalytics = (state: RootState) =>
   state.app.context.analytics
 export const appContextDbIndex = (state: RootState) =>
   state.app.context.dbIndex
-export const appContextTriggeredFunctions = (state: RootState) =>
-  state.app.context.triggeredFunctions
 export const appContextCapability = (state: RootState) =>
   state.app.context.capability
 export const appContextPipelineManagement = (state: RootState) =>
@@ -327,7 +317,6 @@ export function resetDatabaseContext() {
     dispatch(setInitialAnalyticsSettings())
     dispatch(setRedisearchInitialState())
     dispatch(setInitialRecommendationsState())
-    dispatch(setTriggeredFunctionsInitialState())
     dispatch(clearExpertChatHistory())
     setTimeout(() => {
       dispatch(resetOutput())

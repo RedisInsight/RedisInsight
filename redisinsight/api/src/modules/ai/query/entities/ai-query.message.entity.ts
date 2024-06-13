@@ -20,6 +20,10 @@ export class AiQueryMessageEntity {
   @Expose()
   accountId: string;
 
+  @Column({ nullable: true })
+  @Expose()
+  conversationId: string;
+
   @Column({ nullable: false })
   @Expose()
   type: string;

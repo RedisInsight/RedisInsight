@@ -12,12 +12,11 @@ import {
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import PubSubPage from 'uiSrc/pages/pub-sub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
-import TriggeredFunctionsPage from 'uiSrc/pages/triggered-functions'
 import RdiPage from 'uiSrc/pages/rdi/home'
 import RdiInstancePage from 'uiSrc/pages/rdi/instance'
 import RdiStatisticsPage from 'uiSrc/pages/rdi/statistics'
 import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
-import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from './sub-routes'
+import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -42,11 +41,6 @@ const INSTANCE_ROUTES: IRoute[] = [
     component: AnalyticsPage,
     routes: ANALYTICS_ROUTES,
   },
-  {
-    path: Pages.triggeredFunctions(':instanceId'),
-    component: TriggeredFunctionsPage,
-    routes: TRIGGERED_FUNCTIONS_ROUTES
-  }
 ]
 
 const RDI_INSTANCE_ROUTES: IRoute[] = [

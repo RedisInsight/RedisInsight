@@ -20,7 +20,6 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { getRecommendations, setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
-import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import {
   getDatabaseConfigInfo,
   setConnectedInfoInstance,
@@ -117,8 +116,6 @@ describe('InstancePage', () => {
       setInitialAnalyticsSettings(),
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
-      setTriggeredFunctionsInitialState(),
-      clearExpertChatHistory(),
     ]
 
     const expectedActions = [
@@ -128,6 +125,8 @@ describe('InstancePage', () => {
       setConnectedInfoInstance(),
       getRecommendations(),
       ...resetContextActions,
+			clearExpertChatHistory(),
+			clearExpertChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
       resetRdiConnectedInstance(),

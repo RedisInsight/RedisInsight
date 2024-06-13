@@ -1,12 +1,16 @@
 import { EuiTitle } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
-import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
+import { OnboardingTour } from 'uiSrc/components'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
+import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
+import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { MessagesListWrapper, PublishMessage, SubscriptionPanel } from './components'
 
 import styles from './styles.module.scss'
@@ -19,8 +23,27 @@ const PubSubPage = () => {
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
 
+  const dispatch = useDispatch()
+
   const dbName = `${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)}`
   setTitle(`${dbName} - Pub/Sub`)
+
+  useEffect(() => () => {
+    // as here is the last step of onboarding, we set next step when move from the page
+    // remove it when triggers&functions won't be the last page
+    dispatch(incrementOnboardStepAction(
+      OnboardingSteps.Finish,
+      0,
+      () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,
+          eventData: {
+            databaseId: instanceId
+          }
+        })
+      }
+    ))
+  }, [])
 
   useEffect(() => {
     if (connectedInstanceName && !isPageViewSent) {
@@ -51,6 +74,15 @@ const PubSubPage = () => {
       </div>
       <div className={styles.footerPanel}>
         <PublishMessage />
+      </div>
+      <div className={styles.onboardAnchor}>
+        <OnboardingTour
+          options={ONBOARDING_FEATURES.FINISH}
+          anchorPosition="downCenter"
+          panelClassName={styles.onboardPanel}
+        >
+          <span />
+        </OnboardingTour>
       </div>
     </div>
   )

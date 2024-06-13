@@ -4,6 +4,7 @@ import {
   EuiModalBody,
   EuiTitle, EuiText, EuiButton,
 } from '@elastic/eui'
+import { useParams } from 'react-router-dom'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
@@ -18,9 +19,14 @@ export interface Props {
 const ConfirmLeavePagePopup = (props: Props) => {
   const { onClose, onConfirm } = props
 
+  const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
   useEffect(() => {
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_UNSAVED_CHANGES_MESSAGE_DISPLAYED
+      event: TelemetryEvent.RDI_UNSAVED_CHANGES_MESSAGE_DISPLAYED,
+      eventData: {
+        id: rdiInstanceId,
+      }
     })
   }, [])
 

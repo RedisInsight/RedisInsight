@@ -354,10 +354,10 @@ const ZSetDetailsTable = (props: Props) => {
       id: 'actions',
       label: '',
       headerClassName: 'value-table-header-actions',
-      className: 'actions',
-      minWidth: 60,
-      maxWidth: 60,
-      absoluteWidth: 60,
+      className: 'actions singleAction',
+      minWidth: 40,
+      maxWidth: 40,
+      absoluteWidth: 40,
       render: function Actions(_act: any, { name: nameItem }: IZsetMember) {
         const name = bufferToString(nameItem, viewFormat)
         return (

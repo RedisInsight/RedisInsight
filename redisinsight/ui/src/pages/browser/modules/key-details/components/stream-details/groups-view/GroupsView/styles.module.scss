@@ -15,8 +15,8 @@
   min-width: 330px;
 }
 
-.editLastId {
-  margin-right: 4px;
+.editableCell {
+  padding: 12px 40px 12px 12px;
 }
 
 .idText, .error {
@@ -29,4 +29,16 @@
 
 .error {
   color: var(--euiColorDangerText);
+}
+
+.container {
+  :global(.ReactVirtualized__Table__rowColumn) {
+    display: flex;
+  }
+}
+
+.editBtn {
+  position: absolute;
+  top: 20px;
+  right: 0;
 }

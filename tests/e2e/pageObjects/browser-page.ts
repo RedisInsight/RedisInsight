@@ -90,7 +90,7 @@ export class BrowserPage extends InstancePage {
     removeConsumerGroupButton = Selector('[data-testid^=remove-groups-button]');
     optionalParametersSwitcher = Selector('[data-testid=optional-parameters-switcher]');
     forceClaimCheckbox = Selector('[data-testid=force-claim-checkbox]').sibling();
-    editStreamLastIdButton = Selector('[data-testid^=edit-stream-last-id]');
+    editStreamLastIdButton = Selector('[data-testid^=stream-group_edit-btn]');
     saveButton = Selector('[data-testid=save-btn]');
     bulkActionsButton = Selector('[data-testid=btn-bulk-actions]');
     editHashButton = Selector('[data-testid^=hash_edit-btn-]');
@@ -181,7 +181,7 @@ export class BrowserPage extends InstancePage {
     streamEntryId = Selector('[data-testid=entryId]');
     streamField = Selector('[data-testid=field-name]');
     streamValue = Selector('[data-testid=field-value]');
-    addStreamRow = Selector('[data-testid=add-new-item]');
+    addStreamRow = Selector('[data-testid=add-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
     streamEntryIDDateValue = Selector('[data-testid^=stream-entry-][data-testid$=date]');
     streamRangeEndInput = Selector('[data-testid=range-end-input]');
@@ -652,7 +652,7 @@ export class BrowserPage extends InstancePage {
         await t.click(this.addKeyValueItemsButton);
         await t.typeText(this.hashFieldInput, keyFieldValue, { replace: true, paste: true });
         await t.typeText(this.hashValueInput, keyValue, { replace: true, paste: true });
-        if(fieldTtl !== ' '){
+        if(fieldTtl !== ''){
             await t.typeText(this.hashTtlFieldInput, fieldTtl, { replace: true, paste: true });
         }
         await t.click(this.saveHashFieldButton);

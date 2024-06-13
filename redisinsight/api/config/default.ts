@@ -265,5 +265,7 @@ export default {
     querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
     querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',
     queryHistoryLimit: parseInt(process.env.RI_AI_QUERY_HISTORY_LIMIT, 10) || 20,
+    queryMaxResults: parseInt(process.env.RI_AI_QUERY_MAX_RESULTS, 10) || 50,
+    queryMaxNestedElements: parseInt(process.env.RI_AI_QUERY_MAX_NESTED_ELEMENTS, 10) || 25,
   },
 };

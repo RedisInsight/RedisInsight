@@ -3,7 +3,6 @@ import {
   AdditionalRedisModuleName,
   SUPPORTED_REDIS_MODULES,
   REDISEARCH_MODULES,
-  TRIGGERED_AND_FUNCTIONS_MODULES,
 } from 'src/constants';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 
@@ -24,17 +23,12 @@ export const DEFAULT_SUMMARY: IRedisModulesSummary = Object.freeze(
     RedisBloom: { loaded: false },
     RedisJSON: { loaded: false },
     RedisTimeSeries: { loaded: false },
-    'Triggers and Functions': { loaded: false },
     customModules: [],
   },
 );
 
 export const isRedisearchAvailable = (modules: AdditionalRedisModule[]): boolean => (
   modules?.some(({ name }) => REDISEARCH_MODULES.some((search) => name === search))
-);
-
-export const isTriggeredAndFunctionsAvailable = (modules: AdditionalRedisModule[]): boolean => (
-  modules?.some(({ name }) => TRIGGERED_AND_FUNCTIONS_MODULES.some((value) => name === value))
 );
 
 const getEnumKeyBValue = (myEnum: any, enumValue: number | string): string => {
@@ -63,15 +57,6 @@ export const getRedisModulesSummary = (modules: AdditionalRedisModule[] = []): I
       if (isRedisearchAvailable([module])) {
         const redisearchName = getEnumKeyBValue(AdditionalRedisModuleName, AdditionalRedisModuleName.RediSearch);
         summary[redisearchName] = getModuleSummaryToSent(module);
-        return;
-      }
-
-      if (isTriggeredAndFunctionsAvailable([module])) {
-        const triggeredAndFunctionsName = getEnumKeyBValue(
-          AdditionalRedisModuleName,
-          AdditionalRedisModuleName['Triggers and Functions'],
-        );
-        summary[triggeredAndFunctionsName] = getModuleSummaryToSent(module);
         return;
       }
 

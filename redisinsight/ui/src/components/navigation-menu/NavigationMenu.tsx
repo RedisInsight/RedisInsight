@@ -13,7 +13,7 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
+import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -34,8 +34,6 @@ import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
 import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
 import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
 import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
-import TriggeredFunctionsSVG from 'uiSrc/assets/img/sidebar/gears.svg'
-import TriggeredFunctionsActiveSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
@@ -84,10 +82,6 @@ const NavigationMenu = () => {
   const handleGoPage = (page: string) => history.push(page)
 
   const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
-    ({ path }) => (`/${last(path.split('/'))}` === activePage)
-  )
-
-  const isTriggeredFunctionsPath = (activePage: string) => !!TRIGGERED_FUNCTIONS_ROUTES.find(
     ({ path }) => (`/${last(path.split('/'))}` === activePage)
   )
 
@@ -166,23 +160,6 @@ const NavigationMenu = () => {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
-    },
-    {
-      tooltipText: 'Triggers and Functions',
-      pageName: PageNames.triggeredFunctions,
-      ariaLabel: 'Triggers and Functions',
-      onClick: () => handleGoPage(Pages.triggeredFunctions(connectedInstanceId)),
-      dataTestId: 'triggered-functions-page-btn',
-      connectedInstanceId,
-      isActivePage: isTriggeredFunctionsPath(activePage),
-      isBeta: true,
-      getClassName() {
-        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
-      },
-      getIconType() {
-        return this.isActivePage ? TriggeredFunctionsActiveSVG : TriggeredFunctionsSVG
-      },
-      onboard: ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE
     },
   ]
 

@@ -97,9 +97,6 @@ export interface StateAppContext {
   analytics: {
     lastViewedPage: string
   }
-  triggeredFunctions: {
-    lastViewedPage: string
-  }
   capability: {
     source: string
   }

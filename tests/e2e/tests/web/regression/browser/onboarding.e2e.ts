@@ -10,7 +10,7 @@ import {
     WorkbenchPage,
     PubSubPage,
     MyRedisDatabasePage,
-    BrowserPage, TriggersAndFunctionsFunctionsPage
+    BrowserPage
 } from '../../../../pageObjects';
 import { Telemetry } from '../../../../helpers/telemetry';
 import { OnboardingCardsDialog } from '../../../../pageObjects/dialogs';
@@ -22,7 +22,6 @@ const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const workBenchPage = new WorkbenchPage();
 const slowLogPage = new SlowLogPage();
 const pubSubPage = new PubSubPage();
-const functionsPage = new TriggersAndFunctionsFunctionsPage();
 const telemetry = new Telemetry();
 const databaseHelper = new DatabaseHelper();
 

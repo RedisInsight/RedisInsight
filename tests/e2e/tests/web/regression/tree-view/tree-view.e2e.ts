@@ -49,10 +49,6 @@ test
             tutorial: 'JSON'
         },
         {
-            name: 'Triggers and functions',
-            tutorial: 'Triggers And Functions Explained'
-        },
-        {
             name: 'Time Series',
             tutorial: 'Time Series'
         },

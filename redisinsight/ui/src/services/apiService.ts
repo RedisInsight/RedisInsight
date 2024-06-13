@@ -24,6 +24,7 @@ export const getBaseUrl = () => (!isDevelopment && isWebApp
 
 const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
+  withCredentials: true,
 })
 
 export const requestInterceptor = (config: InternalAxiosRequestConfig) => {

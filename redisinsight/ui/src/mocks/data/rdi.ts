@@ -1,4 +1,4 @@
-import { PipelineStatus } from 'uiSrc/slices/interfaces'
+import { IPipelineStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
 
 export const MOCK_RDI_PIPELINE_CONFIG = `connections:
   target:
@@ -52,10 +52,10 @@ export const MOCK_RDI_PIPELINE_JSON_DATA = {
   }
 }
 
-export const MOCK_RDI_PIPELINE_STATUS_DATA = {
+export const MOCK_RDI_PIPELINE_STATUS_DATA: IPipelineStatus = {
   components: { processor: 'ready' },
   pipelines: {
-    default: {
+    defaults: {
       status: PipelineStatus.Starting,
       state: 'some',
       tasks: 'none',

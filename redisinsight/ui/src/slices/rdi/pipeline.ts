@@ -192,6 +192,7 @@ export function deployPipelineAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(deployPipelineSuccess())
+        dispatch(setChangedFiles({}))
         dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_DEPLOY_PIPELINE()))
         onSuccessAction?.()
       }

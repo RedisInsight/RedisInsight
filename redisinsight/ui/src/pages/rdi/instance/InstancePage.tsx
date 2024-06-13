@@ -25,6 +25,8 @@ import { IPipeline } from 'uiSrc/slices/interfaces'
 import { Nullable, pipelineToJson } from 'uiSrc/utils'
 
 import InstancePageRouter from './InstancePageRouter'
+import { ConfirmLeavePagePopup } from './components'
+import { useUndeployedChangesPrompt } from './hooks'
 
 export interface Props {
   routes: IRoute[]
@@ -43,6 +45,7 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { lastPage, contextRdiInstanceId } = useSelector(appContextSelector)
   const { data } = useSelector(rdiPipelineSelector)
+  const { showModal, handleCloseModal, handleConfirmLeave } = useUndeployedChangesPrompt()
 
   const [initialFormValues, setInitialFormValues] = useState<IPipeline>(getInitialValues(data))
   const formikRef = useRef<FormikProps<IPipeline>>(null)
@@ -96,7 +99,10 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       onSubmit={onSubmit}
       innerRef={formikRef}
     >
-      <InstancePageRouter routes={routes} />
+      <>
+        <InstancePageRouter routes={routes} />
+        {showModal && <ConfirmLeavePagePopup onClose={handleCloseModal} onConfirm={handleConfirmLeave} />}
+      </>
     </Formik>
   )
 }

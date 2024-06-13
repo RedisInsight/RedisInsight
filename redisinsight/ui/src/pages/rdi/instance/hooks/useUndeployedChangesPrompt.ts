@@ -20,13 +20,14 @@ export const useUndeployedChangesPrompt = () => {
   }, [changes])
 
   useEffect(() => {
+    // @ts-ignore
     const unlistenBlockChecker = history.block((location: Location<unknown>) => {
       if (shouldBlockLeaving && !location?.pathname.startsWith(Pages.rdiPipeline(rdiInstanceId))) {
         setNextLocation(location)
         setShowModal(true)
         return false
       }
-      return ''
+      return true
     })
 
     return () => {

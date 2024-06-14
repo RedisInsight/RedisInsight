@@ -120,8 +120,7 @@ test
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4213, https://redislabs.atlassian.net/browse/RI-4302
-// skipped because need to move .zip tutorial to another github repository
-test.skip
+test
     .after(async() => {
         tutorialName = 'Tutorials with manifest';
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
@@ -130,8 +129,8 @@ test.skip
         }
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify that user can upload tutorial with URL with manifest.json', async t => {
-        const labelFromManifest = 'LabelFromManifest';
-        const link = 'https://github.com/RedisInsight/RedisInsight/raw/main/tests/e2e/test-data/upload-tutorials/TutorialsWithManifest.zip';
+        const labelFromManifest = 'Working with JSON label';
+        const link = 'https://github.com/RedisInsight/RedisInsight/raw/9155d0241f6937c213893a29fe24c2f560cd48f3/tests/e2e/test-data/upload-tutorials/TutorialsWithManifest.zip';
         internalLinkName1 = 'manifest-id';
         tutorialName = 'Tutorials with manifest';
         const summary = 'Summary for JSON';

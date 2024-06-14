@@ -3,6 +3,7 @@ import { ExploreTabs, RecommendationIds, rte } from '../../../../helpers/constan
 import { DatabaseHelper } from '../../../../helpers/database';
 import {
     commonUrl,
+    ossSentinelConfig,
     ossStandaloneBigConfig,
     ossStandaloneConfig,
     ossStandaloneV5Config
@@ -88,7 +89,19 @@ test
             .eql(expandedTextContaiterSize, 'Lua script recommendation not expanded');
     });
 // skipped due to inability to receive no recommendations for now
-test.skip('No recommendations message', async t => {
+test
+.before(async() => {
+    await databaseHelper.acceptLicenseTerms();
+    // Add Sentinel databases
+    await databaseAPIRequests.discoverSentinelDatabaseApi(ossSentinelConfig);
+    await myRedisDatabasePage.reloadPage();
+})
+.after(async() => {
+    // Delete all primary groups
+    await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('SENTINEL');
+    await myRedisDatabasePage.reloadPage();
+})
+.meta({ rte: rte.sentinel })('No recommendations message', async t => {
     keyName = `recomKey-${Common.generateWord(10)}`;
     const noRecommendationsMessage = 'No recommendations at the moment, run a new report later to keep up the good work!';
     const command = `HSET ${keyName} field value`;
@@ -159,7 +172,7 @@ test
         await recommendationsActions.voteForRecommendation(redisVersionRecommendation, usefulVoteOption);
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, usefulVoteOption);
     });
-test.skip
+test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         keyName = `recomKey-${Common.generateWord(10)}`;

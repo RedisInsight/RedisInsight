@@ -83,7 +83,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     await t.expect(selector.visible).ok('The end of the page is not visible');
 });
 //skipped due the issue RI-2384
-test.skip('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
+test('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
     // Open Working with Hashes section
     await workbenchPage.InsightsPanel.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);

@@ -87,7 +87,7 @@ test('Verify that user can insert template', async() => {
     await t.click(rdiInstancePage.templateButton);
     await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
     await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the default value is set incorrectly');
-    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MyQal);
+    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MySql);
 
     //verify uniq templates words - should be undated when templates are added
     const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();

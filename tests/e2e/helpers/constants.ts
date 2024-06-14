@@ -112,7 +112,7 @@ export enum RdiTemplatePipelineType {
 export enum RdiTemplateDatabaseType  {
     SqlServer  = 'sql',
     Oracle = 'oracle',
-    MyQal = 'my-sql',
+    MySql = 'mysql',
 }
 
 export enum RdiPopoverOptions  {

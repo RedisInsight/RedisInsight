@@ -36,6 +36,7 @@ export class WorkbenchPage extends InstancePage {
     preselectCreateHashIndex = Selector('[data-testid="preselect-Create a hash index"]');
     preselectGroupBy = Selector('[data-testid*=preselect-Group]');
     preselectButtons = Selector('[data-testid^=preselect-]');
+    copyBtn = Selector('[data-testid^=copy-btn-]');
     reRunCommandButton = Selector('[data-testid=re-run-command]');
     preselectManual = Selector('[data-testid=preselect-Manual]');
     fullScreenButton = Selector('[data-testid=toggle-full-screen]');

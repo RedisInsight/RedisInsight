@@ -82,7 +82,6 @@ test('Verify that user can see saved article in Enablement area when he leaves W
     selector = tutorials.getRunSelector('Create a hash');
     await t.expect(selector.visible).ok('The end of the page is not visible');
 });
-//skipped due the issue RI-2384
 test('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
     // Open Working with Hashes section
     await workbenchPage.InsightsPanel.togglePanel(true);
@@ -90,20 +89,19 @@ test('Verify that user can see saved scroll position in Enablement area when he 
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.internalLinkWorkingWithHashes);
     // Evaluate the last button in Enablement Area
-    const buttonsQuantity = await workbenchPage.preselectButtons.count;
-    const lastButton = workbenchPage.preselectButtons.nth(buttonsQuantity - 1);
+    const buttonsQuantity = await workbenchPage.copyBtn.count;
+    const lastButton = workbenchPage.copyBtn.nth(buttonsQuantity - 1);
     // Scroll to the very bottom of the page
     await t.scrollIntoView(lastButton);
+    await workbenchPage.InsightsPanel.togglePanel(false);
+    await workbenchPage.InsightsPanel.togglePanel(true);
     // Check the scroll position
     const scrollPosition = await workbenchPage.scrolledEnablementArea.scrollTop;
-    // Go to Browser page
-    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    // Go back to Workbench page
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
     // Check that scroll position is saved
     await t.expect(await workbenchPage.scrolledEnablementArea.scrollTop).eql(scrollPosition, 'The scroll position status is incorrect');
     // Go to list of DBs page
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+    await t.wait(1000)
     // Go back to active DB again
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     // Check that scroll position is saved

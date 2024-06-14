@@ -11,7 +11,8 @@ export const mockCustomTutorialId2 = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ct-id
 
 export const mockCustomTutorialTmpPath = '/tmp/path';
 
-export const mockCustomTutorialsHttpLink = 'https://somesime.com/archive.zip';
+export const mockCustomTutorialsHttpLink = 'https://github.com/archive.zip';
+export const mockCustomTutorialsHttpLink2 = 'https://raw.githubusercontent.com/archive.zip';
 
 export const mockCustomTutorial = Object.assign(new CustomTutorial(), {
   id: mockCustomTutorialId,

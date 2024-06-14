@@ -7,7 +7,7 @@ import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -15,6 +15,7 @@ import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { isEqualPipelineFile, Maybe } from 'uiSrc/utils'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
@@ -179,7 +180,13 @@ const Job = (props: Props) => {
             external={false}
             data-testid="rdi-pipeline-transformation-link"
             target="_blank"
-            href={EXTERNAL_LINKS.rdiTransformation}
+            href={getUtmExternalLink(
+              EXTERNAL_LINKS.rdiPipelineTransforms,
+              {
+                medium: UTM_MEDIUMS.Rdi,
+                campaign: 'job_file'
+              }
+            )}
           >
             transformation logic
           </EuiLink>

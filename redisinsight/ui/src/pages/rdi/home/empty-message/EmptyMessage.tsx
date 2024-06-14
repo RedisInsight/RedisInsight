@@ -1,6 +1,8 @@
 import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiImage, EuiLink, EuiSpacer, EuiText } from '@elastic/eui'
 import React, { useContext } from 'react'
 
+import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import EmptyListDarkIcon from 'uiSrc/assets/img/rdi/empty_list_dark.svg'
 import EmptyListLightIcon from 'uiSrc/assets/img/rdi/empty_list_light.svg'
 import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
@@ -35,7 +37,13 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
             data-testid="empty-rdi-quickstart-button"
             target="_blank"
             external={false}
-            href="https://docs.redis.com/rdi-preview/rdi/quickstart/"
+            href={getUtmExternalLink(
+              EXTERNAL_LINKS.rdiQuickStart,
+              {
+                medium: UTM_MEDIUMS.Rdi,
+                campaign: 'rdi_list '
+              }
+            )}
           >
             RDI Quickstart <EuiIcon type={NewTabIcon} />
           </EuiLink>

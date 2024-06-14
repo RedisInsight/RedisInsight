@@ -8,9 +8,9 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { replaceVariables } from 'uiSrc/utils/recommendation'
 import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { UTM_MEDIUMS } from 'uiSrc/constants/links'
 import InternalLink from '../internal-link'
 import RecommendationBody from '../recommendation-body'
-import { utmMedium } from '../constants'
 
 import styles from '../styles.module.scss'
 
@@ -73,7 +73,7 @@ const ContentElement = (props: Props) => {
           external={false}
           data-testid={`link-${telemetryName}-${idx}`}
           target="_blank"
-          href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetryName })}
+          href={getUtmExternalLink(value.href, { medium: UTM_MEDIUMS.Recommendation, campaign: telemetryName })}
           onClick={() => onLinkClick?.()}
         >
           {value.name}
@@ -94,7 +94,7 @@ const ContentElement = (props: Props) => {
                   action: OAuthSocialAction.Create
                 })
               }}
-              href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetryName })}
+              href={getUtmExternalLink(value.href, { medium: UTM_MEDIUMS.Recommendation, campaign: telemetryName })}
             >
               {value.name}
             </EuiLink>
@@ -112,7 +112,7 @@ const ContentElement = (props: Props) => {
           external={false}
           data-testid={`code-link-${telemetryName}-${idx}`}
           target="_blank"
-          href={getUtmExternalLink(value.href, { medium: utmMedium, campaign: telemetryName })}
+          href={getUtmExternalLink(value.href, { medium: UTM_MEDIUMS.Recommendation, campaign: telemetryName })}
         >
           <EuiTextColor
             className={cx(styles.code, { [styles.insights]: insights })}

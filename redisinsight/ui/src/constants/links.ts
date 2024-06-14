@@ -12,8 +12,9 @@ export const EXTERNAL_LINKS = {
   cloudConsole: 'https://app.redislabs.com/#/databases',
   tryFree: 'https://redis.io/try-free',
   docker: 'https://redis.io/docs/install/install-stack/docker',
-  rdiQuickStart: 'https://docs.redis.com/latest/rdi/quickstart/',
-  rdiTransformation: 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/',
+  rdiQuickStart: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/',
+  rdiPipeline: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/data-pipelines/',
+  rdiPipelineTransforms: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/transform-examples/',
 }
 
 export const UTM_CAMPAINGS: Record<any, string> = {
@@ -22,4 +23,10 @@ export const UTM_CAMPAINGS: Record<any, string> = {
   [OAuthSocialSource.Workbench]: 'redisinsight_workbench',
   [CloudSsoUtmCampaign.BrowserFilter]: 'browser_filter',
   [OAuthSocialSource.EmptyDatabasesList]: 'empty_db_list',
+}
+
+export const UTM_MEDIUMS = {
+  App: 'app',
+  Rdi: 'rdi',
+  Recommendation: 'recommendation',
 }

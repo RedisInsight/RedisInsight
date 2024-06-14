@@ -12,7 +12,8 @@ import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
   RE_CLOUD = 'RE_CLOUD',
-  REDIS_MANAGED = 'REDIS_MANAGED',
+  REDIS_STACK = 'REDIS_STACK',
+  REDIS_ENTERPRISE = 'REDIS_ENTERPRISE',
   AZURE_CACHE = 'AZURE_CACHE',
   AZURE_CACHE_REDIS_ENTERPRISE = 'AZURE_CACHE_REDIS_ENTERPRISE',
   COMMUNITY_EDITION = 'COMMUNITY_EDITION',
@@ -26,6 +27,7 @@ export enum HostingProvider {
   KVROCKS = 'KVROCKS',
   REDICT = 'REDICT',
   UPSTASH = 'UPSTASH',
+  UKNOWN_LOCALHOST = 'UKNOWN_LOCALHOST',
   UNKNOWN = 'UNKNOWN',
 }
 

@@ -100,6 +100,7 @@ export default {
     retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 3,
     retryDelay: parseInt(process.env.RI_CLIENTS_RETRY_DELAY, 10) || 500,
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
+    slotsRefreshTimeout: parseInt(process.env.RI_CLIENTS_SLOTS_REQUEST_TIMEOUT, 10) || 5000,
   },
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,

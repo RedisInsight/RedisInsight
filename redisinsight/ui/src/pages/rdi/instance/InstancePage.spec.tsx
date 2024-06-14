@@ -21,7 +21,6 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
-import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
@@ -93,7 +92,6 @@ describe('InstancePage', () => {
       setInitialAnalyticsSettings(),
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
-      setTriggeredFunctionsInitialState(),
       clearExpertChatHistory(),
       setConnectedInstance(),
     ]

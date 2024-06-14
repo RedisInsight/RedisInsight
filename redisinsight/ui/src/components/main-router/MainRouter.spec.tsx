@@ -59,7 +59,7 @@ describe('MainRouter', () => {
 
   it('should set Database workspace', () => {
     (appContextSelector as jest.Mock).mockReturnValueOnce({ workspace: AppWorkspace.RDI })
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.triggeredFunctions('1') })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.analytics('1') })
 
     render(<Router><MainRouter /></Router>)
 

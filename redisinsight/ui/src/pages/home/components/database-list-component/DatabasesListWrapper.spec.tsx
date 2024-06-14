@@ -275,9 +275,6 @@ describe('DatabasesListWrapper', () => {
         RedisTimeSeries: {
           loaded: false
         },
-        'Triggers and Functions': {
-          loaded: false
-        },
         customModules: []
       }
     });

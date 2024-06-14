@@ -23,7 +23,7 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 40px;
-  padding-bottom: 1px;
+  padding-bottom: 6px;
 }
 
 .button {
@@ -35,7 +35,7 @@
 }
 
 :global {
-  .euiModal__closeIcon {
+  .euiButtonIcon.euiModal__closeIcon {
     right: 35px;
     top: 35px;
   }

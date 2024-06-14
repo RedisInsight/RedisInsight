@@ -43,7 +43,7 @@ const ConfirmLeavePagePopup = (props: Props) => {
           </EuiText>
         </section>
         <div className={styles.footer}>
-          <Download />
+          <Download dataTestid="popup-download-pipeline-btn" />
           <EuiButton
             fill
             color="secondary"

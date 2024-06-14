@@ -10,7 +10,11 @@ import { IPipeline } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-const Download = () => {
+interface Props {
+  dataTestid?: string
+}
+
+const Download = ({ dataTestid }: Props) => {
   const { loading } = useSelector(rdiPipelineSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -45,7 +49,7 @@ const Download = () => {
       disabled={loading}
       onClick={handleDownloadClick}
       aria-labelledby="Download pipeline button"
-      data-testid="download-pipeline-btn"
+      data-testid={dataTestid || 'download-pipeline-btn'}
     >
       Download
     </EuiButtonEmpty>

@@ -205,11 +205,6 @@ export default {
       url: process.env.RI_COMMANDS_REDISBLOOM_URL
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
-    {
-      name: 'triggers_and_functions',
-      url: process.env.RI_COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
-        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
-    },
   ],
   connections: {
     timeout: parseInt(process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec
@@ -265,5 +260,7 @@ export default {
     querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
     querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',
     queryHistoryLimit: parseInt(process.env.RI_AI_QUERY_HISTORY_LIMIT, 10) || 20,
+    queryMaxResults: parseInt(process.env.RI_AI_QUERY_MAX_RESULTS, 10) || 50,
+    queryMaxNestedElements: parseInt(process.env.RI_AI_QUERY_MAX_NESTED_ELEMENTS, 10) || 25,
   },
 };

@@ -41,7 +41,6 @@ import clusterDetailsReducer from './analytics/clusterDetails'
 import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
-import triggeredFunctionsReducer from './triggeredFunctions/triggeredFunctions'
 import sidePanelsReducer from './panels/sidePanels'
 import aiAssistantReducer from './panels/aiAssistant'
 import appRDIReducer from './rdi/rdi'
@@ -104,7 +103,6 @@ export const rootReducer = combineReducers({
   }),
   pubsub: pubSubReducer,
   recommendations: recommendationsReducer,
-  triggeredFunctions: triggeredFunctionsReducer,
   oauth: combineReducers({
     cloud: appOauthReducer,
   }),

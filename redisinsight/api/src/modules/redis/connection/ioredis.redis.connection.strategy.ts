@@ -82,6 +82,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<ClusterOptions> {
     return {
       clusterRetryStrategy: options.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
+      slotsRefreshTimeout: 5000,
       redisOptions: await this.getRedisOptions(clientMetadata, database, options),
     };
   }

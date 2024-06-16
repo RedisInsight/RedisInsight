@@ -8,5 +8,4 @@ export enum TelemetryPageView {
   CLUSTER_DETAILS_PAGE = 'Overview',
   PUBSUB_PAGE = 'Pub/Sub',
   DATABASE_ANALYSIS = 'Database Analysis',
-  TRIGGERED_FUNCTIONS = 'Triggers and Functions'
 }

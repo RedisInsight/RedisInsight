@@ -32,7 +32,7 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
       ) as string[]).toLowerCase();
 
       if (hello.includes('/enterprise-managed')) {
-        return HostingProvider.REDIS_MANAGED;
+        return HostingProvider.REDIS_ENTERPRISE;
       }
 
       if (hello.includes('google')) {
@@ -83,17 +83,25 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
       if (info.includes('upstash_version')) {
         return HostingProvider.UPSTASH;
       }
+
+      if (info.includes('executable:/opt/redis/bin/redis-server')) {
+        return HostingProvider.REDIS_COMMUNITY_EDITION;
+      }
+
+      if (info.includes('executable:/opt/redis-stack/bin/redis-server')) {
+        return HostingProvider.REDIS_STACK;
+      }
     } catch (e) {
       // ignore error
     }
 
     if (host === '0.0.0.0' || host === 'localhost' || host === '127.0.0.1') {
-      return HostingProvider.COMMUNITY_EDITION;
+      return HostingProvider.UKNOWN_LOCALHOST;
     }
 
     // todo: investigate weather we need this
     if (IP_ADDRESS_REGEX.test(host) && PRIVATE_IP_ADDRESS_REGEX.test(host)) {
-      return HostingProvider.COMMUNITY_EDITION;
+      return HostingProvider.UKNOWN_LOCALHOST;
     }
   } catch (e) {
     // ignore any error

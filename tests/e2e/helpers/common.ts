@@ -1,9 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import archiver from 'archiver';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl, commonUrl } from './conf';
+const archiver = require('archiver');
 
 const chance = new Chance();
 
@@ -220,14 +220,6 @@ export class Common {
     static async getJsonPropertyValue(property: string, path: string): Promise<string | number> {
         const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
         return parsedJson[property];
-    }
-
-    /**
-     * Get json file value as a string
-     * @param filePath Path to json file
-     */
-    static getJsonFileAsString(filePath: string): string {
-        return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
     }
 
     /**

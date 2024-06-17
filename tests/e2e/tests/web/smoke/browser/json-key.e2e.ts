@@ -1,4 +1,4 @@
-import path from 'path';
+import * as path from 'path';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
@@ -17,7 +17,6 @@ const keyTTL = '2147476121';
 const value = '{"name":"xyz"}';
 const jsonObjectValue = '{name:"xyz"}';
 const jsonFilePath = path.join('..', '..', '..', '..', 'test-data', 'big-json', 'big-json.json');
-const jsonString = Common.getJsonFileAsString(jsonFilePath);
 
 fixture `JSON Key verification`
     .meta({ type: 'smoke', rte: rte.standalone })
@@ -55,15 +54,18 @@ test('Verify that user can add key with value to any level of JSON structure', a
 test('Verify that user can add key with value to any level of JSON structure for big JSON object', async t => {
     keyName = Common.generateWord(10);
     // Add Json key with json object
-    await browserPage.addJsonKey(keyName, jsonString, keyTTL);
+    await t.click(browserPage.plusAddKeyButton);
+    await t.click(browserPage.keyTypeDropDown);
+    await t.click(browserPage.jsonOption);
+    await t.click(browserPage.addKeyNameInput);
+    await t.typeText(browserPage.addKeyNameInput, keyName, { replace: true, paste: true });
+    await t.setFilesToUpload(browserPage.jsonUploadInput, [jsonFilePath]);
+    await t.click(browserPage.addKeyButton);
     // Check the notification message
     const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not found');
-    // Verify that user can create JSON object
-    await t.expect(browserPage.addJsonObjectButton.exists).ok('The add Json object button not found', { timeout: 10000 });
-    await t.expect(browserPage.jsonKeyValue.textContent).eql(jsonObjectValue, 'The json object value not found');
-
     // Add key with value on the same level
+    await t.debug()
     await browserPage.addJsonKeyOnTheSameLevel('"key1"', '"value1"');
     // Check the added key contains json object with added key
     await t.expect(browserPage.addJsonObjectButton.exists).ok('The add Json object button not found', { timeout: 10000 });

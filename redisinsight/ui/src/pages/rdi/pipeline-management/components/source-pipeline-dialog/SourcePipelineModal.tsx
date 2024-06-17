@@ -11,11 +11,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { fetchRdiPipeline, setPipeline } from 'uiSrc/slices/rdi/pipeline'
+import { fetchRdiPipeline, setChangedFile, setPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { appContextPipelineManagement, setPipelineDialogState } from 'uiSrc/slices/app/context'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
 
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
 
 export const EMPTY_PIPELINE = {
@@ -56,6 +57,7 @@ const SourcePipelineDialog = () => {
   const onStartNewPipeline = () => {
     dispatch(setPipeline(EMPTY_PIPELINE))
     onSelect(PipelineSourceOptions.NEW)
+    dispatch(setChangedFile({ name: 'config', status: FileChangeType.Added }))
     dispatch(setPipelineDialogState(false))
   }
 

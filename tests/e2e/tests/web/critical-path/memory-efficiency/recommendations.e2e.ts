@@ -101,7 +101,6 @@ test.skip('No recommendations message', async t => {
     await t.click(memoryEfficiencyPage.newReportBtn);
     // Go to Recommendations tab
     await t.click(memoryEfficiencyPage.recommendationsTab);
-    await t.debug()
     // No recommendations message
     await t.expect(memoryEfficiencyPage.noRecommendationsMessage.textContent).eql(noRecommendationsMessage, 'No recommendations message not displayed');
 });

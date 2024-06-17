@@ -1,5 +1,5 @@
 import React from 'react'
-import { isArray } from 'lodash'
+import { isArray, isString } from 'lodash'
 import { EuiTextColor, EuiLink, EuiSpacer } from '@elastic/eui'
 import { SpacerSize } from '@elastic/eui/src/components/spacer/spacer'
 import cx from 'classnames'
@@ -166,7 +166,7 @@ const ContentElement = (props: Props) => {
         />
       )
     default:
-      return value
+      return isString(value) ? <>{value}</> : <b>*Unknown format*</b>
   }
 }
 

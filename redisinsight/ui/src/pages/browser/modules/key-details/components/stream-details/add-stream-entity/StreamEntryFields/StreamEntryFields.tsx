@@ -9,29 +9,25 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import cx from 'classnames'
-import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
 import styles from '../styles.module.scss'
 
 export interface Props {
-  compressed?: boolean
   entryIdError?: string
-  clearEntryIdError?: () => void
   entryID: string
   setEntryID: React.Dispatch<React.SetStateAction<string>>
   fields: any[]
   setFields: React.Dispatch<React.SetStateAction<any[]>>
-  handleBlurEntryID?: () => void
 }
 
 const MIN_ENTRY_ID_VALUE = '0-1'
 
 const StreamEntryFields = (props: Props) => {
   const {
-    compressed,
     entryID,
     setEntryID,
     entryIdError,
@@ -79,6 +75,15 @@ const StreamEntryFields = (props: Props) => {
         value: ''
       } : item))
     setFields(newState)
+  }
+
+  const onClickRemove = ({ id }: any) => {
+    if (fields.length === 1) {
+      clearFieldsValues(id)
+      return
+    }
+
+    removeField(id)
   }
 
   const handleEntryIdChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -147,72 +152,57 @@ const StreamEntryFields = (props: Props) => {
 
       <div className={styles.fieldsWrapper}>
         <div className={cx(styles.fieldsContainer)}>
-          {
-            fields.map((item, index) => (
-              <EuiFlexItem
-                key={item.id}
-                className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace', styles.row, { [styles.compressed]: compressed })}
-                grow
-              >
-                <EuiFlexGroup gutterSize="none" responsive={false}>
-                  <EuiFlexItem grow>
-                    <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                      <EuiFlexItem className={styles.fieldItemWrapper} grow>
-                        <EuiFormRow fullWidth>
-                          <EuiFieldText
-                            fullWidth
-                            name={`fieldName-${item.id}`}
-                            id={`fieldName-${item.id}`}
-                            placeholder={config.name.placeholder}
-                            value={item.name}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                              handleFieldChange(
-                                'name',
-                                item.id,
-                                e.target.value
-                              )}
-                            inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
-                            autoComplete="off"
-                            data-testid="field-name"
-                          />
-                        </EuiFormRow>
-                      </EuiFlexItem>
-                      <EuiFlexItem className={styles.valueItemWrapper} grow>
-                        <EuiFormRow fullWidth>
-                          <EuiFieldText
-                            fullWidth
-                            className={styles.fieldValue}
-                            name={`fieldValue-${item.id}`}
-                            id={`fieldValue-${item.id}`}
-                            placeholder={config.value.placeholder}
-                            value={item.value}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                              handleFieldChange(
-                                'value',
-                                item.id,
-                                e.target.value
-                              )}
-                            autoComplete="off"
-                            data-testid="field-value"
-                          />
-                        </EuiFormRow>
-                      </EuiFlexItem>
-                      <AddItemsActions
-                        id={item.id}
-                        index={index}
-                        length={fields.length}
-                        addItem={addField}
-                        loading={false}
-                        removeItem={removeField}
-                        clearItemValues={clearFieldsValues}
-                        clearIsDisabled={isClearDisabled(item)}
-                      />
-                    </EuiFlexGroup>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiFlexItem>
-            ))
-          }
+          <AddMultipleFields
+            items={fields}
+            isClearDisabled={isClearDisabled}
+            onClickRemove={onClickRemove}
+            onClickAdd={addField}
+          >
+            {(item, index) => (
+              <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+                <EuiFlexItem className={styles.fieldItemWrapper} grow>
+                  <EuiFormRow fullWidth>
+                    <EuiFieldText
+                      fullWidth
+                      name={`fieldName-${item.id}`}
+                      id={`fieldName-${item.id}`}
+                      placeholder={config.name.placeholder}
+                      value={item.name}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleFieldChange(
+                          'name',
+                          item.id,
+                          e.target.value
+                        )}
+                      inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
+                      autoComplete="off"
+                      data-testid="field-name"
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+                <EuiFlexItem className={styles.valueItemWrapper} grow>
+                  <EuiFormRow fullWidth>
+                    <EuiFieldText
+                      fullWidth
+                      className={styles.fieldValue}
+                      name={`fieldValue-${item.id}`}
+                      id={`fieldValue-${item.id}`}
+                      placeholder={config.value.placeholder}
+                      value={item.value}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleFieldChange(
+                          'value',
+                          item.id,
+                          e.target.value
+                        )}
+                      autoComplete="off"
+                      data-testid="field-value"
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            )}
+          </AddMultipleFields>
         </div>
       </div>
     </div>

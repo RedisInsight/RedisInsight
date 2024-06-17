@@ -44,6 +44,7 @@ enum ApiEndpoints {
   HASH = 'hash',
   HASH_FIELDS = 'hash/fields',
   HASH_GET_FIELDS = 'hash/get-fields',
+  HASH_TTL = 'hash/ttl',
 
   LIST = 'list',
   LIST_GET_ELEMENTS = 'list/get-elements',

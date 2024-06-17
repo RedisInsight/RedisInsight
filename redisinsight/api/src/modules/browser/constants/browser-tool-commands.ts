@@ -24,6 +24,9 @@ export enum BrowserToolHashCommands {
   HLen = 'hlen',
   HScan = 'hscan',
   HDel = 'hdel',
+  HExpire = 'hexpire',
+  HPersist = 'hpersist',
+  HTtl = 'httl',
 }
 
 export enum BrowserToolListCommands {

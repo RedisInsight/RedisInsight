@@ -97,6 +97,7 @@ const StreamDataView = (props: Props) => {
         </div> */}
         <VirtualGrid
           hideProgress
+          stickLastColumnHeaderCell
           selectable={false}
           keyName={key}
           headerHeight={entries?.length ? headerHeight : 0}

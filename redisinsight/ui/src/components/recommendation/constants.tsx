@@ -10,5 +10,3 @@ export const badgesContent = [
   { id: 'configuration_changes', icon: <ConfigurationIcon className={styles.badgeIcon} />, name: 'Configuration Changes' },
   { id: 'upgrade', icon: <UpgradeIcon className={styles.badgeIcon} />, name: 'Upgrade' },
 ]
-
-export const utmMedium = 'recommendation'

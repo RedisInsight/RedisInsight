@@ -68,12 +68,6 @@ describe('Job', () => {
     expect(pushMock).not.toBeCalled()
   })
 
-  it('should render proper link', () => {
-    render(<Job {...instance(mockedProps)} />)
-
-    expect(screen.getByTestId('rdi-pipeline-transformation-link')).toHaveAttribute('href', 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/')
-  })
-
   it('should render Panel and disable dry run btn', () => {
     const { queryByTestId } = render(<Job {...instance(mockedProps)} />)
 

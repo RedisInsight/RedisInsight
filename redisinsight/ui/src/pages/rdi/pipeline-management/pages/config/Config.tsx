@@ -8,7 +8,8 @@ import { get, throttle } from 'lodash'
 
 import yaml from 'js-yaml'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
-import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -110,7 +111,13 @@ const Config = () => {
             external={false}
             data-testid="rdi-pipeline-config-link"
             target="_blank"
-            href={EXTERNAL_LINKS.rdiQuickStart}
+            href={getUtmExternalLink(
+              EXTERNAL_LINKS.rdiPipeline,
+              {
+                medium: UTM_MEDIUMS.Rdi,
+                campaign: 'config_file'
+              }
+            )}
           >
             connection details
           </EuiLink>

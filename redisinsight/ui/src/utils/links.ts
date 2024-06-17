@@ -1,3 +1,5 @@
+import { UTM_MEDIUMS } from 'uiSrc/constants/links'
+
 export interface UTMParams {
   source?: string
   medium?: string
@@ -5,7 +7,7 @@ export interface UTMParams {
 }
 
 export const getUtmExternalLink = (baseUrl: string, params: UTMParams) => {
-  const { source = 'redisinsight', medium = 'app', campaign } = params
+  const { source = 'redisinsight', medium = UTM_MEDIUMS.App, campaign } = params
   try {
     const url = new URL(baseUrl)
     url.searchParams.append('utm_source', source)

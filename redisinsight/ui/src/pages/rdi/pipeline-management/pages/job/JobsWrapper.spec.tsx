@@ -104,7 +104,7 @@ describe('JobWrapper', () => {
   it('should render proper link', () => {
     render(<JobWrapper />)
 
-    expect(screen.getByTestId('rdi-pipeline-transformation-link')).toHaveAttribute('href', 'https://docs.redis.com/latest/rdi/data-transformation/data-transformation-pipeline/')
+    expect(screen.getByTestId('rdi-pipeline-transformation-link')).toHaveAttribute('href', 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/transform-examples/?utm_source=redisinsight&utm_medium=rdi&utm_campaign=job_file')
   })
 
   it('should send telemetry event with proper data', () => {

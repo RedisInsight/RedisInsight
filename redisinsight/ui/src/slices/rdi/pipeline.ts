@@ -8,10 +8,18 @@ import {
   FileChangeType,
   IPipelineJSON,
   IRdiPipelineStrategy,
-  IJobFunctionResponse,
+  TJMESPathFunctions,
   IPipelineStatus,
 } from 'uiSrc/slices/interfaces/rdi'
-import { getApiErrorMessage, getAxiosError, getRdiUrl, isStatusSuccessful, Nullable, pipelineToYaml } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  getAxiosError,
+  getRdiUrl,
+  isStatusSuccessful,
+  Nullable,
+  parseJMESPathFunctions,
+  pipelineToYaml,
+} from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -110,11 +118,8 @@ const rdiPipelineSlice = createSlice({
         data: null
       }
     },
-    setJobFunctions: (state, { payload }: PayloadAction<IJobFunctionResponse[]>) => {
-      state.jobFunctions = payload.map(
-        ({ function: label, description: documentation, example: detail }) =>
-          ({ label, documentation, detail })
-      )
+    setJobFunctions: (state, { payload }: PayloadAction<TJMESPathFunctions>) => {
+      state.jobFunctions = parseJMESPathFunctions(payload)
     },
   },
 })
@@ -289,7 +294,7 @@ export function fetchRdiPipelineJobFunctions(
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      const { data, status } = await apiService.get<IJobFunctionResponse[]>(
+      const { data, status } = await apiService.get<TJMESPathFunctions>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_JOB_FUNCTIONS),
       )
 

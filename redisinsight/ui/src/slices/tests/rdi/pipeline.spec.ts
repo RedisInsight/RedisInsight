@@ -37,6 +37,7 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { parseJMESPathFunctions } from 'uiSrc/utils'
 
 let store: typeof mockedStore
 
@@ -357,21 +358,24 @@ describe('rdi pipe slice', () => {
 
   describe('setJobFunctions', () => {
     it('should set job functions as monaco compilation items', () => {
-      const functionValue = 'function'
-      const descriptionValue = 'description'
-      const exampleValue = 'example'
-      const commentsValue = 'comments'
-      const mockData = [{
-        function: functionValue,
-        description: descriptionValue,
-        example: exampleValue,
-        comments: commentsValue,
+      const summaryValue = 'summary'
+      const argumentsValue = [{
+        name: 'encoded',
+        type: 'string',
+        display_text: 'base64 encoded string',
+        optional: false
       }]
+      const mockData = {
+        function: {
+          summary: summaryValue,
+          arguments: argumentsValue,
+        }
+      }
 
       // Arrange
       const state = {
         ...initialState,
-        jobFunctions: [{ label: functionValue, detail: exampleValue, documentation: descriptionValue }]
+        jobFunctions: parseJMESPathFunctions(mockData)
       }
 
       // Act
@@ -603,7 +607,7 @@ describe('rdi pipe slice', () => {
 
     describe('fetchRdiPipelineJobFunctions', () => {
       it('succeed to fetch data', async () => {
-        const data = [{ function: 'func', comments: '123', description: 'desc', example: 'ex' }]
+        const data = { function: { summary: 'summary', arguments: [] } }
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)

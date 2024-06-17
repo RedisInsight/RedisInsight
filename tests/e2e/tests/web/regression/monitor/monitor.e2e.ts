@@ -115,8 +115,7 @@ test
             await t.expect(previousTimestamp).notEql(nextTimestamp, 'Monitor results not correct');
         }
     });
-// Skipped due to redis issue https://redislabs.atlassian.net/browse/RI-4111
-test.skip
+test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.Cli.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor -client');

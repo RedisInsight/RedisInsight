@@ -39,7 +39,7 @@ const getHostingProviderTests = [
     ],
     info: '#Server\r\n'
       + 'executable:/opt/redis/bin/redis-server',
-    output: HostingProvider.COMMUNITY_EDITION,
+    output: HostingProvider.REDIS_COMMUNITY_EDITION,
   },
   {
     input: 'localhost',

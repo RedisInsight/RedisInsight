@@ -85,7 +85,7 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
       }
 
       if (info.includes('executable:/opt/redis/bin/redis-server')) {
-        return HostingProvider.COMMUNITY_EDITION;
+        return HostingProvider.REDIS_COMMUNITY_EDITION;
       }
 
       if (info.includes('executable:/opt/redis-stack/bin/redis-server')) {

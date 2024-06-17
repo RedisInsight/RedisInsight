@@ -1,9 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import * as archiver from 'archiver';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
 import { apiUrl, commonUrl } from './conf';
+const archiver = require('archiver');
 
 const chance = new Chance();
 
@@ -221,6 +221,7 @@ export class Common {
         const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
         return parsedJson[property];
     }
+
     /**
      * Create Zip archive from folder
      * @param folderPath Path to folder to archive

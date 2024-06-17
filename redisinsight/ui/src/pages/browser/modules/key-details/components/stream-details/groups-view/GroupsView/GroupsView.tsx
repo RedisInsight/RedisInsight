@@ -60,11 +60,11 @@ const ConsumerGroups = (props: Props) => {
           'key-details-table',
           'stream-details-table',
           styles.container,
-          { footerOpened: isFooterOpen }
         )}
         data-testid="stream-groups-container"
       >
         <VirtualTable
+          autoHeight
           hideProgress
           onRowClick={onSelectGroup}
           selectable={false}

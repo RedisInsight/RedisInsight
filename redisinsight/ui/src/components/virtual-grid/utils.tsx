@@ -38,6 +38,7 @@ export const useInnerElementType = (
   columnCount: number,
   tableWidth: number,
   columns: ITableColumn[],
+  options: Record<string, any> = {}
 ) => React.useMemo(
   () =>
     React.forwardRef((props:ReactNode, ref) => {
@@ -129,7 +130,8 @@ export const useInnerElementType = (
         })
       )
 
-      const shownColumnsCount = shownIndecies.to.column - shownIndecies.from.column
+      const toColumnDelta = options?.stickLastColumnHeaderCell ? -1 : 0
+      const shownColumnsCount = shownIndecies.to.column + toColumnDelta - shownIndecies.from.column
 
       for (let i = 1; i <= shownColumnsCount; i += 1) {
         const columnIndex = i + shownIndecies.from.column
@@ -151,6 +153,27 @@ export const useInnerElementType = (
               height,
               position: 'sticky',
               top: 0,
+              zIndex: 3,
+            }
+          })
+        )
+      }
+
+      // last sticky column
+      if (options?.stickLastColumnHeaderCell) {
+        const columnIndex = columns.length - 1
+        children.push(
+          React.createElement(Cell, {
+            key: `0:${columnIndex}`,
+            rowIndex: 0,
+            columnIndex,
+            style: {
+              display: 'inline-flex',
+              width: columnWidth(columnIndex, tableWidth, columns),
+              height: rowHeight(0),
+              position: 'sticky',
+              top: 0,
+              right: 0,
               zIndex: 3,
             }
           })

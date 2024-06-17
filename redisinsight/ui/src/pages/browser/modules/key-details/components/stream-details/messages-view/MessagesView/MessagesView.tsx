@@ -39,11 +39,11 @@ const MessagesView = (props: Props) => {
           'key-details-table',
           'stream-details-table',
           styles.container,
-          { footerOpened: isFooterOpen }
         )}
         data-testid="stream-messages-container"
       >
         <VirtualTable
+          autoHeight
           hideProgress
           selectable={false}
           keyName={key}

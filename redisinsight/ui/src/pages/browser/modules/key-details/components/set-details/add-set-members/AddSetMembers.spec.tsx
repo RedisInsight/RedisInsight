@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { AddSetMembers, Props } from './AddSetMembers'
 
 const MEMBER_NAME = 'member-name'
-const ADD_NEW_ITEM = 'add-new-item'
+const ADD_NEW_ITEM = 'add-item'
 
 const mockedProps = mock<Props>()
 
@@ -54,7 +54,7 @@ describe('AddZsetMembers', () => {
       memberInput,
       { target: { value: 'member' } }
     )
-    fireEvent.click(screen.getByLabelText(/clear item/i))
+    fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(memberInput).toHaveValue('')
   })

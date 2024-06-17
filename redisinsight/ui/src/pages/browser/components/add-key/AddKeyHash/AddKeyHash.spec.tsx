@@ -1,6 +1,6 @@
 import React from 'react'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { instance, mock } from 'ts-mockito'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import AddKeyHash, { Props } from './AddKeyHash'
 
 const mockedProps = mock<Props>()
@@ -32,12 +32,12 @@ describe('AddKeyHash', () => {
 
   it('should render add button', () => {
     render(<AddKeyHash {...instance(mockedProps)} />)
-    expect(screen.getByTestId('add-new-item')).toBeTruthy()
+    expect(screen.getByTestId('add-item')).toBeTruthy()
   })
 
   it('should render one more field name & value inputs after click add item', () => {
     render(<AddKeyHash {...instance(mockedProps)} />)
-    fireEvent.click(screen.getByTestId('add-new-item'))
+    fireEvent.click(screen.getByTestId('add-item'))
 
     expect(screen.getAllByTestId('field-name')).toHaveLength(2)
     expect(screen.getAllByTestId('field-value')).toHaveLength(2)
@@ -55,7 +55,7 @@ describe('AddKeyHash', () => {
       fieldValue,
       { target: { value: 'val' } }
     )
-    fireEvent.click(screen.getByLabelText(/clear item/i))
+    fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(fieldName).toHaveValue('')
     expect(fieldValue).toHaveValue('')

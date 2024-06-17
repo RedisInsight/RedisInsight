@@ -1,15 +1,26 @@
 import { get, isNumber } from 'lodash';
 import Redis, { Cluster, Command } from 'ioredis';
 import {
-  IRedisClientCommandOptions,
+  IRedisClientCommandOptions, IRedisClientOptions,
   RedisClient,
   RedisClientCommand,
   RedisClientCommandReply,
 } from 'src/modules/redis/client';
 import { RedisString } from 'src/common/constants';
+import { ClientMetadata } from 'src/common/models';
+import { BrowserToolHashCommands } from 'src/modules/browser/constants/browser-tool-commands';
 
 export abstract class IoredisClient extends RedisClient {
-  protected readonly client: Redis | Cluster;
+  constructor(
+    public readonly clientMetadata: ClientMetadata,
+    protected readonly client: Redis | Cluster,
+    public readonly options: IRedisClientOptions,
+  ) {
+    super(clientMetadata, client, options);
+    client.addBuiltinCommand(BrowserToolHashCommands.HExpire);
+    client.addBuiltinCommand(BrowserToolHashCommands.HTtl);
+    client.addBuiltinCommand(BrowserToolHashCommands.HPersist);
+  }
 
   static prepareCommandOptions(options: IRedisClientCommandOptions): any {
     let replyEncoding = null;

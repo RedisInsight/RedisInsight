@@ -50,12 +50,12 @@ const cellCache = new CellMeasurerCache({
 })
 
 export interface Props {
-  isFooterOpen: boolean
+  isFooterOpen?: boolean
   onRemoveKey: () => void
 }
 
 const SetDetailsTable = (props: Props) => {
-  const { isFooterOpen, onRemoveKey } = props
+  const { onRemoveKey } = props
 
   const { loading } = useSelector(setSelector)
   const { members: loadedMembers, total, nextCursor } = useSelector(setDataSelector)
@@ -268,7 +268,6 @@ const SetDetailsTable = (props: Props) => {
           'key-details-table',
           'set-members-container',
           styles.container,
-          { footerOpened: isFooterOpen }
         )
       }
     >
@@ -282,6 +281,7 @@ const SetDetailsTable = (props: Props) => {
       )}
 
       <VirtualTable
+        autoHeight
         hideProgress
         expandable
         selectable={false}

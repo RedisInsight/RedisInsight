@@ -1,7 +1,7 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 import {
   deleteConsumerGroups,
   loadConsumerGroups,
@@ -116,7 +116,10 @@ describe('GroupsViewWrapper', () => {
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('edit-stream-last-id-123'))
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('stream-group_content-value-123'))
+    })
+    fireEvent.click(screen.getByTestId('stream-group_edit-btn-123'))
 
     expect(store.getActions()).toEqual([...afterRenderActions, setSelectedKeyRefreshDisabled(true)])
   })

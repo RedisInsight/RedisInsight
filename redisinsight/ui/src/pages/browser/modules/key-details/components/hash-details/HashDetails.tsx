@@ -5,11 +5,15 @@ import cx from 'classnames'
 import {
   selectedKeySelector,
 } from 'uiSrc/slices/browser/keys'
-import { KeyTypes } from 'uiSrc/constants'
+import { FeatureFlags, KeyTypes } from 'uiSrc/constants'
 
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
-import { HashDetailsTable } from './hash-details-table'
+import { isVersionHigherOrEquals } from 'uiSrc/utils'
+import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
+import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import AddHashFields from './add-hash-fields/AddHashFields'
+import { HashDetailsTable } from './hash-details-table'
 import { AddItemsAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {
@@ -23,8 +27,15 @@ const HashDetails = (props: Props) => {
   const { onRemoveKey, onOpenAddItemPanel, onCloseAddItemPanel } = props
 
   const { loading } = useSelector(selectedKeySelector)
+  const { version } = useSelector(connectedInstanceOverviewSelector)
+  const {
+    [FeatureFlags.hashFieldExpiration]: hashFieldExpirationFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
+
+  const isExpireFieldsAvailable = hashFieldExpirationFeature?.flag
+    && isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
 
   const openAddItemPanel = () => {
     setIsAddItemPanelOpen(true)
@@ -53,12 +64,12 @@ const HashDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <HashDetailsTable isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />
+            <HashDetailsTable isExpireFieldsAvailable={isExpireFieldsAvailable} onRemoveKey={onRemoveKey} />
           </div>
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddHashFields closePanel={closeAddItemPanel} />
+            <AddHashFields isExpireFieldsAvailable={isExpireFieldsAvailable} closePanel={closeAddItemPanel} />
           </div>
         )}
       </div>

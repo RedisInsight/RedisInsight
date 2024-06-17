@@ -115,6 +115,16 @@ describe('ContentElement', () => {
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
 
+  it('should not failed when value is not the string', () => {
+    const mockContent = {
+      type: 'unknown',
+      value: { custom: 'value' },
+    }
+    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+
+    expect(screen.getByText('*Unknown format*')).toBeInTheDocument()
+  })
+
   it('click on link should call onClick', () => {
     const onClickMock = jest.fn()
     const mockContent = {

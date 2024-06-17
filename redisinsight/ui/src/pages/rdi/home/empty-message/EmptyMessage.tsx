@@ -41,7 +41,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
               EXTERNAL_LINKS.rdiQuickStart,
               {
                 medium: UTM_MEDIUMS.Rdi,
-                campaign: 'rdi_list '
+                campaign: 'rdi_list'
               }
             )}
           >

@@ -3,10 +3,10 @@ import { mockStandaloneRedisClient } from 'src/__mocks__';
 import { getHostingProvider } from './hosting-provider-helper';
 
 const getHostingProviderTests = [
-  { input: '127.0.0.1', output: HostingProvider.COMMUNITY_EDITION },
-  { input: '0.0.0.0', output: HostingProvider.COMMUNITY_EDITION },
-  { input: 'localhost', output: HostingProvider.COMMUNITY_EDITION },
-  { input: '172.18.0.2', output: HostingProvider.COMMUNITY_EDITION },
+  { input: '127.0.0.1', output: HostingProvider.UKNOWN_LOCALHOST },
+  { input: '0.0.0.0', output: HostingProvider.UKNOWN_LOCALHOST },
+  { input: 'localhost', output: HostingProvider.UKNOWN_LOCALHOST },
+  { input: '172.18.0.2', output: HostingProvider.UKNOWN_LOCALHOST },
   { input: '176.87.56.244', output: HostingProvider.UNKNOWN },
   { input: '192.12.56.244', output: HostingProvider.UNKNOWN },
   { input: '255.255.56.244', output: HostingProvider.UNKNOWN },
@@ -36,6 +36,24 @@ const getHostingProviderTests = [
     input: 'localhost',
     hello: [
       'server', 'redis',
+    ],
+    info: '#Server\r\n'
+      + 'executable:/opt/redis/bin/redis-server',
+    output: HostingProvider.REDIS_COMMUNITY_EDITION,
+  },
+  {
+    input: 'localhost',
+    hello: [
+      'server', 'redis',
+    ],
+    info: '#Server\r\n'
+      + 'executable:/opt/redis-stack/bin/redis-server',
+    output: HostingProvider.REDIS_STACK,
+  },
+  {
+    input: 'localhost',
+    hello: [
+      'server', 'redis',
       'modules', [
         [
           'name', 'search',
@@ -45,7 +63,7 @@ const getHostingProviderTests = [
     ],
     info: '#Server\r\n'
       + 'redis_version: 7.2.0',
-    output: HostingProvider.REDIS_MANAGED,
+    output: HostingProvider.REDIS_ENTERPRISE,
   },
   {
     input: 'localhost',

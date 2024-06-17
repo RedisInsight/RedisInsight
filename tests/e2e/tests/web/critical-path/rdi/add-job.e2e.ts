@@ -108,6 +108,7 @@ test('Verify that user can change job config', async() => {
     const textForMonaco = 'here should be a job';
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
+    await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
     let text = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(text).eql('', 'monacoEditor for the job is not empty');
     await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.jobsInput, textForMonaco, false);

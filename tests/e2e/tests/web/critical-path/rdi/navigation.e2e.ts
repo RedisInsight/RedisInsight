@@ -4,7 +4,12 @@ import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
+import {
+    RdiPopoverOptions,
+    RdiTemplateDatabaseType,
+    RdiTemplatePipelineType,
+    RedisOverviewPage
+} from '../../../../helpers/constants';
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -23,7 +28,7 @@ const rdiInstance: AddNewRdiParameters = {
 };
 
 //skip the tests until rdi integration is added
-fixture.skip `Rdi Navigation`
+fixture `Rdi Navigation`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -55,6 +60,7 @@ test.before(async() => {
     const rdiName = rdiInstancePage.RdiHeader.rdiNameLinkBreadcrumbs.textContent;
     await t.expect(rdiName).eql(rdiInstance.name, 'instance name in breadcrumbs is not correct');
 
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
     count = await myRedisDatabasePage.NavigationPanel.getButtonsCount();
@@ -81,4 +87,27 @@ test('Verify that Insight and Sign in buttons are displayed ', async() => {
     const tab = await rdiInstancePage.RdiHeader.InsightsPanel.getActiveTabName();
     await t.expect(tab).eql('Explore');
     await t.expect(rdiInstancePage.RdiHeader.cloudSignInButton.exists).ok('sight in button is not exist');
+});
+
+test('Verify that confirmation message is displayed, if there are unsaved changes ', async() => {
+    const jobName = 'jobName';
+    const textForMonaco = 'here should be a job';
+
+    await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
+    await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
+    await t.click(rdiInstancePage.templateCancelButton);
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.jobsInput, textForMonaco, false);
+    await t.click(rdiInstancePage.RdiHeader.breadcrumbsLink);
+    await t.expect(rdiInstancePage.downloadNavigateDialog.exists).ok('the user can not download');
+    await t.click(rdiInstancePage.closeConfirmNavigateDialog);
+
+    const text = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
+    await t.expect(text).eql(textForMonaco, 'changes is not saved');
+
+    await t.click(rdiInstancePage.PipelineManagementPanel.configurationTabLink);
+    await t.click(rdiInstancePage.templateButton);
+    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MySql);
+    await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
+    await t.click(rdiInstancePage.proceedNavigateDialog);
+    await t.expect(rdiInstancesListPage.rdiInstanceButton.exists).ok('the user is not navigated to the panel');
 });

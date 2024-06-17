@@ -20,8 +20,8 @@ export class MonacoEditor {
      * @param clean if  field should be cleaned
      */
     async sendTextToMonaco(input: Selector, command: string, clean = true): Promise<void> {
+        await t.click(input);
         if(clean) {
-            await t.click(input);
             await t
                 // remove text since replace doesn't work here
                 .pressKey('ctrl+a')

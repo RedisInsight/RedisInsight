@@ -55,7 +55,10 @@ export class RdiInstancePage extends BaseOverviewPage {
     databaseDropdown =  Selector('[data-testid=db-type-select]');
 
     //dialog
-    selectOptionDialog = Selector('[data-testid=rdi-pipeline-source-dialog]', { timeout: 100 });
+    selectOptionDialog = Selector('[data-testid=rdi-pipeline-source-dialog]', { timeout: 1000 });
+    closeConfirmNavigateDialog = Selector('[data-testid=oauth-select-account-dialog] button', { timeout: 1000 });
+    proceedNavigateDialog = Selector('[data-testid=confirm-leave-page]', { timeout: 1000 });
+    downloadNavigateDialog = Selector('[data-testid=popup-download-pipeline-btn]', { timeout: 1000 });
 
     tooltip = Selector('[role=tooltip]', { timeout: 500 });
     /**

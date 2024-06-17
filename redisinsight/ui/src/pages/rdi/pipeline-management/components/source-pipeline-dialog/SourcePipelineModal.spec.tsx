@@ -1,10 +1,10 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { cleanup, mockedStore, render, fireEvent, screen } from 'uiSrc/utils/test-utils'
-import { getPipeline, setPipeline } from 'uiSrc/slices/rdi/pipeline'
+import { getPipeline, setChangedFile, setPipeline } from 'uiSrc/slices/rdi/pipeline'
 import { setPipelineDialogState } from 'uiSrc/slices/app/context'
-
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FileChangeType } from 'uiSrc/slices/interfaces'
 import SourcePipelineDialog, { EMPTY_PIPELINE, PipelineSourceOptions } from './SourcePipelineModal'
 
 jest.mock('formik', () => ({
@@ -66,6 +66,7 @@ describe('SourcePipelineDialog', () => {
 
     const expectedActions = [
       setPipeline(EMPTY_PIPELINE),
+      setChangedFile({ name: 'config', status: FileChangeType.Added }),
       setPipelineDialogState(false),
     ]
 

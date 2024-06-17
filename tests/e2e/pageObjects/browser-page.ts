@@ -860,6 +860,17 @@ export class BrowserPage extends InstancePage {
     }
 
     /**
+     * Add json value inside the Json structure
+     * @param jsonKeyValue The value of the json key
+     */
+    async addJsonValueInsideStructure(jsonKeyValue: string): Promise<void> {
+        await t.click(this.expandJsonObject);
+        await t.click(this.addJsonFieldButton);
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { paste: true });
+        await t.click(this.applyButton);
+    }
+
+    /**
      * Add json structure
      * @param jsonStructure The structure of the json key
      */

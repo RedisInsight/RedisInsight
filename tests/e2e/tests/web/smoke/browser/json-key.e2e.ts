@@ -72,5 +72,5 @@ test('Verify that user can add key with value to any level of JSON structure for
     // Add value inside the json array
     await browserPage.addJsonValueInsideStructure('12345');
     // Check the added key contains json object with added key
-    await t.expect(browserPage.jsonKeyValue.textContent).contains('"70":12345]', 'The json object value not found');
+    await t.expect(browserPage.jsonKeyValue.textContent).contains('"70:12345]', 'The json object value not found');
 });

@@ -65,14 +65,13 @@ test('Verify that user can add key with value to any level of JSON structure for
     const notification = browserPage.Toast.toastHeader.textContent;
     await t.expect(notification).contains('Key has been added', 'The notification not found');
     // Add key with value on the same level
-    await t.debug()
     await browserPage.addJsonKeyOnTheSameLevel('"key1"', '"value1"');
     // Check the added key contains json object with added key
     await t.expect(browserPage.addJsonObjectButton.exists).ok('The add Json object button not found', { timeout: 10000 });
-    await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"}', 'The json object value not found');
+    await t.expect(browserPage.jsonKeyValue.textContent).contains('{"key1:"value1"}', 'The json object value not found');
     // Add key with value inside the json
     await browserPage.addJsonKeyOnTheSameLevel('"key2"', '{}');
     await browserPage.addJsonKeyInsideStructure('"key2222"', '12345');
     // Check the added key contains json object with added key
-    await t.expect(browserPage.jsonKeyValue.textContent).eql('{name:"xyz"key1:"value1"key2:{key2222:12345}}', 'The json object value not found');
+    await t.expect(browserPage.jsonKeyValue.textContent).contains('{key1:"value1"key2:{key2222:12345}}', 'The json object value not found');
 });

@@ -20,13 +20,13 @@ import { isContainJSONModule, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
-import AddKeyHash from './AddKeyHash/AddKeyHash'
-import AddKeyZset from './AddKeyZset/AddKeyZset'
-import AddKeyString from './AddKeyString/AddKeyString'
-import AddKeySet from './AddKeySet/AddKeySet'
-import AddKeyList from './AddKeyList/AddKeyList'
-import AddKeyReJSON from './AddKeyReJSON/AddKeyReJSON'
-import AddKeyStream from './AddKeyStream/AddKeyStream'
+import AddKeyHash from './AddKeyHash'
+import AddKeyZset from './AddKeyZset'
+import AddKeyString from './AddKeyString'
+import AddKeySet from './AddKeySet'
+import AddKeyList from './AddKeyList'
+import AddKeyReJSON from './AddKeyReJSON'
+import AddKeyStream from './AddKeyStream'
 
 import styles from './styles.module.scss'
 
@@ -134,7 +134,7 @@ const AddKey = (props: Props) => {
               </EuiToolTip>
             )}
           </EuiFlexItem>
-          <div className="eui-yScroll">
+          <div className={cx('eui-yScroll', styles.scrollContainer)}>
             <div className={styles.contentFields}>
               <AddKeyCommonFields
                 typeSelected={typeSelected}

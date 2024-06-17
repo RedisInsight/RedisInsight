@@ -2,6 +2,15 @@ import { IP_ADDRESS_REGEX, PRIVATE_IP_ADDRESS_REGEX } from 'src/constants';
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { RedisClient } from 'src/modules/redis/client';
 
+const PROVIDER_HOST_REGEX = {
+  RLCP: /\.rlrcp\.com$/,
+  REDISLABS: /\.redislabs\.com$/,
+  REDISCLOUD: /\.redis-cloud\.com$/,
+  CACHE_AMAZONAWS: /cache\.amazonaws\.com$/,
+  CACHE_WINDOWS: /cache\.windows\.net$/,
+  RE_CACHE_AZURE: /redisenterprise\.cache\.azure\.net$/,
+};
+
 // Because we do not bind potentially dangerous logic to this.
 // We define a hosting provider for telemetry only.
 export const getHostingProvider = async (client: RedisClient, databaseHost: string): Promise<HostingProvider> => {
@@ -9,19 +18,23 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
     const host = databaseHost.toLowerCase();
 
     // Tries to detect the hosting provider from the hostname.
-    if (host.endsWith('rlrcp.com') || host.endsWith('redislabs.com') || host.endsWith('redis-cloud.com')) {
+    if (
+      PROVIDER_HOST_REGEX.RLCP.test(host)
+      || PROVIDER_HOST_REGEX.REDISLABS.test(host)
+      || PROVIDER_HOST_REGEX.REDISCLOUD.test(host)
+    ) {
       return HostingProvider.RE_CLOUD;
     }
-    if (host.endsWith('cache.amazonaws.com')) {
+    if (PROVIDER_HOST_REGEX.CACHE_AMAZONAWS.test(host)) {
       return HostingProvider.AWS_ELASTICACHE;
     }
     if (host.includes('memorydb')) {
       return HostingProvider.AWS_MEMORYDB;
     }
-    if (host.endsWith('cache.windows.net')) {
+    if (PROVIDER_HOST_REGEX.CACHE_WINDOWS.test(host)) {
       return HostingProvider.AZURE_CACHE;
     }
-    if (host.endsWith('redisenterprise.cache.azure.net')) {
+    if (PROVIDER_HOST_REGEX.RE_CACHE_AZURE.test(host)) {
       return HostingProvider.AZURE_CACHE_REDIS_ENTERPRISE;
     }
 

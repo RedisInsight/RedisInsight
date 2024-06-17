@@ -54,11 +54,11 @@ const ConsumersView = (props: Props) => {
           'key-details-table',
           'stream-details-table',
           styles.container,
-          { footerOpened: isFooterOpen }
         )}
         data-testid="stream-consumers-container"
       >
         <VirtualTable
+          autoHeight
           hideProgress
           onRowClick={onSelectConsumer}
           selectable={false}

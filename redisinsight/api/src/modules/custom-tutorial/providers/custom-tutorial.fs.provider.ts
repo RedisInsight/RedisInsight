@@ -1,4 +1,6 @@
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  BadRequestException, Injectable, InternalServerErrorException, Logger,
+} from '@nestjs/common';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +14,11 @@ import ERROR_MESSAGES from 'src/constants/error-messages';
 const PATH_CONFIG = config.get('dir_path');
 
 const TMP_FOLDER = `${PATH_CONFIG.tmpDir}/RedisInsight/custom-tutorials`;
+
+const UPLOAD_FROM_REMOTE_ORIGINS_WHITELIST = [
+  'https://github.com',
+  'https://raw.githubusercontent.com',
+];
 
 @Injectable()
 export class CustomTutorialFsProvider {
@@ -73,6 +80,12 @@ export class CustomTutorialFsProvider {
    */
   public async unzipFromExternalLink(link: string): Promise<string> {
     try {
+      const url = new URL(link);
+
+      if (!UPLOAD_FROM_REMOTE_ORIGINS_WHITELIST.includes(url.origin)) {
+        return Promise.reject(new BadRequestException(ERROR_MESSAGES.CUSTOM_TUTORIAL_UNSUPPORTED_ORIGIN));
+      }
+
       const { data } = await axios.get(link, {
         responseType: 'arraybuffer',
       });

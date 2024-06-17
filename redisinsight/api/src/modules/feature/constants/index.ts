@@ -28,6 +28,7 @@ export enum KnownFeatures {
   DocumentationChat = 'documentationChat',
   DatabaseChat = 'databaseChat',
   Rdi = 'rdi',
+  HashFieldExpiration = 'hashFieldExpiration',
 }
 
 export interface IFeatureFlag {

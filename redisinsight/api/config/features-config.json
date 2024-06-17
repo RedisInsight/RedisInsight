@@ -1,9 +1,9 @@
 {
-  "version": 2.5001,
+  "version": 2.5201,
   "features": {
     "rdi": {
       "flag": true,
-      "perc": [[0,100]],
+      "perc": [[0,0]],
       "filters": [
         {
           "name": "config.server.buildType",

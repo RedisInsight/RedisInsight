@@ -125,10 +125,16 @@ describe('parseCustomError', () => {
 const getRdiValidationMessageTests: Array<[[Maybe<string>, string[]], string]> = [
   [[undefined, []], ''],
   [['Custom message', []], 'Custom message'],
-  [['Custom message', ['field']], 'Custom message'],
-  [['Custom message', ['field', 'field2']], 'Field2 message'],
-  [['Custom message', ['field', 'field2', 'field3']], 'Field3 in field2 message'],
-  [['Custom message', ['field', 'field2', 'field3', 'field4']], 'Field4 in field2/field3 message'],
+  [['Input is required', ['field']], 'Input is required'],
+  [['Input required', ['body', 'targets']], 'Targets required'],
+  [
+    ['Input should be \'postgresql\', \'mysql\', \'oracle\', \'cassandra\', \'sqlserver\' or \'redis\'', ['body', 'targets', 'type']],
+    'Type in targets should be \'postgresql\', \'mysql\', \'oracle\', \'cassandra\', \'sqlserver\' or \'redis\''
+  ],
+  [
+    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 'connection']],
+    'Connection in targets/my-redis should be a valid integer, unable to parse string as an integer'
+  ],
 ]
 
 describe('getRdiValidationMessage', () => {

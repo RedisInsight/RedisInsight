@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { capitalize, clone, isEmpty, isString, isArray, set } from 'lodash'
+import { capitalize, isEmpty, isString, isArray, set } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
@@ -12,14 +12,12 @@ export const getRdiValidationMessage = (message: string = '', loc?: string[]): s
   if (!loc || !isArray(loc) || loc.length < 2) {
     return message
   }
-  const locArr = clone(loc)
-  locArr.shift()
-
-  const field = locArr.pop()
-  const path = locArr?.join('/')
+  const [, ...rest] = loc
+  const field = rest.pop() as string
+  const path = rest.join('/')
   const words = message.split(' ')
 
-  words[0] = path ? `${field} in ${path}` : field || ''
+  words[0] = path ? `${field} in ${path}` : field
 
   return capitalize(words.join(' '))
 }
@@ -174,7 +172,7 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
       break
 
     case CustomErrorCodes.RdiValidationError:
-      const details = err?.details[0] || {}
+      const details = err?.details?.[0] || {}
       title = 'Validation error'
       message = getRdiValidationMessage(details.msg, err?.details[0]?.loc)
 

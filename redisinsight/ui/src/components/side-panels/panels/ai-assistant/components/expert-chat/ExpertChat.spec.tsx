@@ -15,6 +15,7 @@ import {
   aiExpertChatSelector,
   clearExpertChatHistory,
   getExpertChatHistory,
+  getExpertChatHistorySuccess,
   sendExpertQuestion,
   updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
@@ -57,13 +58,18 @@ jest.mock('react-router-dom', () => ({
 }))
 
 let store: typeof mockedStore
-beforeEach(() => {
-  cleanup()
-  store = cloneDeep(mockedStoreFn())
-  store.clearActions()
-})
 
 describe('ExpertChat', () => {
+  beforeEach(() => {
+    cleanup()
+    store = cloneDeep(mockedStoreFn())
+    // store.clearActions()
+  })
+
+  afterEach(() => {
+    console.log(store.getActions())
+  })
+
   it('should render', () => {
     expect(render(<ExpertChat />, { store })).toBeTruthy()
   })
@@ -200,7 +206,8 @@ describe('ExpertChat', () => {
   it('should call action after click on restart session', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 });
+    apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 })
+    apiService.get = jest.fn().mockResolvedValueOnce({ status: 200 });
 
     (aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
@@ -221,6 +228,7 @@ describe('ExpertChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
+      getExpertChatHistorySuccess(),
       clearExpertChatHistory()
     ])
 

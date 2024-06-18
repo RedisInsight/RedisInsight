@@ -1,6 +1,7 @@
 import { IP_ADDRESS_REGEX, PRIVATE_IP_ADDRESS_REGEX } from 'src/constants';
 import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { RedisClient } from 'src/modules/redis/client';
+import { convertRedisInfoReplyToObject } from 'src/utils/redis-reply-converter';
 
 const PROVIDER_HOST_REGEX = {
   RLCP: /\.rlrcp\.com$/,
@@ -97,24 +98,25 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
         return HostingProvider.UPSTASH;
       }
 
-      if (info.includes('executable:/opt/redis/bin/redis-server')) {
-        return HostingProvider.REDIS_COMMUNITY_EDITION;
-      }
+      const infoObj = convertRedisInfoReplyToObject(info);
 
-      if (info.includes('executable:/opt/redis-stack/bin/redis-server')) {
-        return HostingProvider.REDIS_STACK;
+      if (infoObj.server.executable.includes('redis-server')) {
+        if (infoObj.server.executable.includes('redis-stack')) {
+          return HostingProvider.REDIS_STACK;
+        }
+        return HostingProvider.REDIS_COMMUNITY_EDITION;
       }
     } catch (e) {
       // ignore error
     }
 
     if (host === '0.0.0.0' || host === 'localhost' || host === '127.0.0.1') {
-      return HostingProvider.UKNOWN_LOCALHOST;
+      return HostingProvider.UNKNOWN_LOCALHOST;
     }
 
     // todo: investigate weather we need this
     if (IP_ADDRESS_REGEX.test(host) && PRIVATE_IP_ADDRESS_REGEX.test(host)) {
-      return HostingProvider.UKNOWN_LOCALHOST;
+      return HostingProvider.UNKNOWN_LOCALHOST;
     }
   } catch (e) {
     // ignore any error

@@ -207,7 +207,7 @@ describe('ExpertChat', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
     apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 })
-    apiService.get = jest.fn().mockResolvedValueOnce({ status: 200 });
+    apiService.get = jest.fn().mockResolvedValueOnce({ status: 200, data: [] });
 
     (aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
@@ -228,7 +228,7 @@ describe('ExpertChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      getExpertChatHistorySuccess(),
+      getExpertChatHistorySuccess([]),
       clearExpertChatHistory()
     ])
 

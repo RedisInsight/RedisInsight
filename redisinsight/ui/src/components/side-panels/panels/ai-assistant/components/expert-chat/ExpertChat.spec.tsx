@@ -63,11 +63,7 @@ describe('ExpertChat', () => {
   beforeEach(() => {
     cleanup()
     store = cloneDeep(mockedStoreFn())
-    // store.clearActions()
-  })
-
-  afterEach(() => {
-    console.log(store.getActions())
+    store.clearActions()
   })
 
   it('should render', () => {

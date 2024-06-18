@@ -1,9 +1,31 @@
 {
-  "version": 2.4603,
+  "version": 2.52,
   "features": {
     "insightsRecommendations": {
       "flag": true,
       "perc": [[0,100]]
+    },
+    "documentationChat": {
+      "flag": true,
+      "perc": [[0,5]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
+    },
+    "databaseChat": {
+      "flag": true,
+      "perc": [[0,5]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
     },
     "cloudSso": {
       "flag": true,

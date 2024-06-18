@@ -46,10 +46,6 @@ const ChatHistory = (props: Props) => {
   const scrollBehavior = useRef<ScrollBehavior>('auto')
 
   useEffect(() => {
-    if (inProgressMessage?.content === '') scrollToBottomThrottled()
-  }, [inProgressMessage])
-
-  useEffect(() => {
     if (!autoScroll) return undefined
     if (!listRef.current) return undefined
 

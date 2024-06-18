@@ -19,7 +19,7 @@ const providers = [
   'KVROCKS',
   'REDICT',
   'UPSTASH',
-  'UKNOWN_LOCALHOST',
+  'UNKNOWN_LOCALHOST',
   'UNKNOWN',
 ];
 

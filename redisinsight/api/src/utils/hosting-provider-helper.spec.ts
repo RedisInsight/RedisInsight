@@ -3,10 +3,10 @@ import { mockStandaloneRedisClient } from 'src/__mocks__';
 import { getHostingProvider } from './hosting-provider-helper';
 
 const getHostingProviderTests = [
-  { input: '127.0.0.1', output: HostingProvider.UKNOWN_LOCALHOST },
-  { input: '0.0.0.0', output: HostingProvider.UKNOWN_LOCALHOST },
-  { input: 'localhost', output: HostingProvider.UKNOWN_LOCALHOST },
-  { input: '172.18.0.2', output: HostingProvider.UKNOWN_LOCALHOST },
+  { input: '127.0.0.1', output: HostingProvider.UNKNOWN_LOCALHOST },
+  { input: '0.0.0.0', output: HostingProvider.UNKNOWN_LOCALHOST },
+  { input: 'localhost', output: HostingProvider.UNKNOWN_LOCALHOST },
+  { input: '172.18.0.2', output: HostingProvider.UNKNOWN_LOCALHOST },
   { input: '176.87.56.244', output: HostingProvider.UNKNOWN },
   { input: '192.12.56.244', output: HostingProvider.UNKNOWN },
   { input: '255.255.56.244', output: HostingProvider.UNKNOWN },

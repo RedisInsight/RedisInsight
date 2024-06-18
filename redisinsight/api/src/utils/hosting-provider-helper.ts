@@ -111,12 +111,12 @@ export const getHostingProvider = async (client: RedisClient, databaseHost: stri
     }
 
     if (host === '0.0.0.0' || host === 'localhost' || host === '127.0.0.1') {
-      return HostingProvider.UKNOWN_LOCALHOST;
+      return HostingProvider.UNKNOWN_LOCALHOST;
     }
 
     // todo: investigate weather we need this
     if (IP_ADDRESS_REGEX.test(host) && PRIVATE_IP_ADDRESS_REGEX.test(host)) {
-      return HostingProvider.UKNOWN_LOCALHOST;
+      return HostingProvider.UNKNOWN_LOCALHOST;
     }
   } catch (e) {
     // ignore any error

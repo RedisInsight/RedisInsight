@@ -51,6 +51,7 @@ export const isRealObject = (data: any, knownType?: string) => {
 
 export const isRealArray = (data: any, knownType?: string) => {
   if (knownType === ObjectTypes.Array) return true
+  if (knownType) return false
   return isArray(data)
 }
 

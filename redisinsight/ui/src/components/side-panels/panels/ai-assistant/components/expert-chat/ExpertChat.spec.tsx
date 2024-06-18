@@ -65,7 +65,7 @@ beforeEach(() => {
 
 describe('ExpertChat', () => {
   it('should render', () => {
-    expect(render(<ExpertChat />)).toBeTruthy()
+    expect(render(<ExpertChat />, { store })).toBeTruthy()
   })
 
   it('should proper components render by default', () => {

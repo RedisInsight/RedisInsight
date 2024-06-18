@@ -4,6 +4,7 @@ import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import {
   getApiErrorMessage,
+  getAxiosError,
   getRdiUrl,
   isStatusSuccessful,
   Maybe,
@@ -11,6 +12,7 @@ import {
   transformConnectionResults
 } from 'uiSrc/utils'
 import {
+  EnhancedAxiosError,
   IStateRdiTestConnections,
   TestConnectionsResponse,
   TransformResult
@@ -94,8 +96,10 @@ export function testConnectionsAction(
     } catch (_err) {
       if (!axios.isCancel(_err)) {
         const error = _err as AxiosError
+        const parsedError = getAxiosError(error as EnhancedAxiosError)
         const errorMessage = getApiErrorMessage(error)
-        dispatch(addErrorNotification(error))
+
+        dispatch(addErrorNotification(parsedError))
         dispatch(testConnectionsFailure(errorMessage))
         onFailAction?.()
       } else {

@@ -1,11 +1,28 @@
 import { AxiosError } from 'axios'
-import { isEmpty, isString, set } from 'lodash'
+import { capitalize, clone, isEmpty, isString, isArray, set } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+
+export const getRdiValidationMessage = (message: string = '', loc?: string[]): string => {
+  // first item is always "body"
+  if (!loc || !isArray(loc) || loc.length < 2) {
+    return message
+  }
+  const locArr = clone(loc)
+  locArr.shift()
+
+  const field = locArr.pop()
+  const path = locArr?.join('/')
+  const words = message.split(' ')
+
+  words[0] = path ? `${field} in ${path}` : field || ''
+
+  return capitalize(words.join(' '))
+}
 
 export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSAGE): AxiosError => {
   const error = {
@@ -154,6 +171,13 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
       title = 'Pipeline not deployed'
       message = 'Unfortunately we’ve found some errors in your pipeline.'
       additionalInfo.errorCode = err.errorCode
+      break
+
+    case CustomErrorCodes.RdiValidationError:
+      const details = err?.details[0] || {}
+      title = 'Validation error'
+      message = getRdiValidationMessage(details.msg, err?.details[0]?.loc)
+
       break
 
     default:

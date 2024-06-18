@@ -2,7 +2,7 @@ import { set, cloneDeep } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { AxiosError } from 'axios'
-import { parseCustomError } from 'uiSrc/utils'
+import { parseCustomError, getRdiValidationMessage, Maybe } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
@@ -102,12 +102,12 @@ const parseCustomErrorTests = [
         resourceId: undefined
       }
     })],
-  [{ errorCode: 11_301 },
+  [{ errorCode: 11_401 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Pipeline not deployed',
       message: 'Unfortunately we’ve found some errors in your pipeline.',
       additionalInfo: {
-        errorCode: 11301,
+        errorCode: 11_401,
       }
     })],
 ]
@@ -117,6 +117,25 @@ describe('parseCustomError', () => {
     '%j',
     (input, expected) => {
       const result = parseCustomError(input)
+      expect(result).toEqual(expected)
+    }
+  )
+})
+
+const getRdiValidationMessageTests: Array<[[Maybe<string>, string[]], string]> = [
+  [[undefined, []], ''],
+  [['Custom message', []], 'Custom message'],
+  [['Custom message', ['field']], 'Custom message'],
+  [['Custom message', ['field', 'field2']], 'Field2 message'],
+  [['Custom message', ['field', 'field2', 'field3']], 'Field3 in field2 message'],
+  [['Custom message', ['field', 'field2', 'field3', 'field4']], 'Field4 in field2/field3 message'],
+]
+
+describe('getRdiValidationMessage', () => {
+  test.each(getRdiValidationMessageTests)(
+    '%j',
+    (input, expected) => {
+      const result = getRdiValidationMessage(...input)
       expect(result).toEqual(expected)
     }
   )

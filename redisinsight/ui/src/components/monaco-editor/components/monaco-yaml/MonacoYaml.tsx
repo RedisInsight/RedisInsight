@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { isNull } from 'lodash'
 
 import { CommonProps } from 'uiSrc/components/monaco-editor/MonacoEditor'
@@ -23,15 +23,22 @@ const MonacoYaml = (props: Props) => {
     ...rest
   } = props
 
-  // insert schema work only before monaco will be rendered
-  if (isNull(schema)) {
-    return null
-  }
+  useEffect(() => {
+    if (!isNull(schema)) {
+      monacoYamlModel?.update({
+        schemas: [{
+          schema,
+          uri,
+          fileMatch: [fileMatch],
+        }],
+      })
+    }
+  }, [schema, uri, fileMatch])
 
   const editorWillMount = () => {
     monacoYamlModel?.update({
       schemas: [{
-        schema,
+        schema: schema || {},
         uri,
         fileMatch: [fileMatch],
       }],

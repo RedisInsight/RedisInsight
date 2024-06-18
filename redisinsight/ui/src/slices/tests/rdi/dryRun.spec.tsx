@@ -1,5 +1,6 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
+import { AnyAction } from '@reduxjs/toolkit'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
@@ -27,7 +28,7 @@ describe('rdi dry run slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as AnyAction)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -59,7 +60,11 @@ describe('rdi dry run slice', () => {
   describe('dryRunJobSuccess', () => {
     it('should properly set state', () => {
       // Arrange
-      const mockData = { commands: ['HSET 1 1'], transformations: { name: 'John' } }
+      const mockData = {
+        output: [{ connection: 'name', commands: ['HSET 1 1'] }],
+        transformation: { name: 'John' }
+      }
+
       const state = {
         ...initialState,
         results: mockData,

@@ -89,7 +89,7 @@ export enum TelemetryEvents {
   FeatureFlagRecalculated = 'FEATURE_FLAG_RECALCULATED',
 
   // Insights
-  InsightsRecommendationGenerated = 'INSIGHTS_RECOMMENDATION_GENERATED',
+  InsightsTipGenerated = 'INSIGHTS_TIP_GENERATED',
 }
 
 export enum CommandType {

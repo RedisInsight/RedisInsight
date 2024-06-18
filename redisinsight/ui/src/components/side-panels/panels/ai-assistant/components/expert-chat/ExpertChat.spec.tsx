@@ -69,7 +69,7 @@ describe('ExpertChat', () => {
   })
 
   it('should proper components render by default', () => {
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     expect(screen.getByTestId('ai-expert-restart-session-btn')).toBeInTheDocument()
     expect(screen.getByTestId('ai-chat-empty-history')).toBeInTheDocument()
@@ -82,7 +82,7 @@ describe('ExpertChat', () => {
       messages: [],
       agreements: []
     })
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     expect(screen.getByTestId('ai-loading-spinner')).toBeInTheDocument()
     expect(screen.queryByTestId('ai-chat-empty-history')).not.toBeInTheDocument()

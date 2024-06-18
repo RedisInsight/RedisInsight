@@ -38,6 +38,8 @@ const AssistanceChat = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    if (!id || messages.length) return
+
     dispatch(getAssistantChatHistoryAction(id))
   }, [id])
 

@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
 import { decode } from 'jsonwebtoken';
-import { Request } from 'express';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -112,21 +111,14 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async testConnections(config: string, req: Request): Promise<RdiTestConnectionsResponseDto> {
+  async testConnections(config: object): Promise<RdiTestConnectionsResponseDto> {
     try {
-      const abortController = new AbortController();
-      req.socket.on('close', () => {
-        abortController.abort();
-      });
       const response = await this.client.post(
         RdiUrl.TestConnections,
         config,
-        { signal: abortController.signal },
       );
 
-      const actionId = response.data.action_id;
-
-      return this.pollActionStatus(actionId, abortController.signal);
+      return response.data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }

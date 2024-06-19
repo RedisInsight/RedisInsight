@@ -73,11 +73,10 @@ export class RdiPipelineController {
     responses: [{ status: 200, type: RdiTestConnectionsResponseDto }],
   })
   async testConnections(
-    @Req() req: Request,
-      @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() config: string,
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+      @Body() config: object,
   ): Promise<RdiTestConnectionsResponseDto> {
-    return this.rdiPipelineService.testConnections(rdiClientMetadata, config, req);
+    return this.rdiPipelineService.testConnections(rdiClientMetadata, config);
   }
 
   @Get('/strategies')

@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import {
   Rdi,
   RdiClientMetadata, RdiPipeline, RdiStatisticsResult,
@@ -38,7 +37,7 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-  abstract testConnections(config: string, req: Request): Promise<RdiTestConnectionsResponseDto>;
+  abstract testConnections(config: object): Promise<RdiTestConnectionsResponseDto>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 

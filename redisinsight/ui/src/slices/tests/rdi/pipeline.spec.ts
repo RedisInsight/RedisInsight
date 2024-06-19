@@ -26,7 +26,8 @@ import reducer, {
   deployPipelineAction,
   fetchRdiPipelineSchema,
   fetchPipelineStrategies,
-  fetchPipelineTemplate,
+  fetchConfigTemplate,
+  fetchJobTemplate,
   setJobFunctions,
   fetchRdiPipelineJobFunctions,
   getPipelineStatusAction,
@@ -689,9 +690,8 @@ describe('rdi pipe slice', () => {
       })
     })
 
-    describe('fetchPipelineTemplate', () => {
+    describe('fetchJobTemplate', () => {
       it('failed to fetch data', async () => {
-        const mockOptions = { dbType: 'db type' }
         const errorMessage = 'Something was wrong!'
         const responsePayload = {
           response: {
@@ -704,7 +704,33 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchPipelineTemplate('123', mockOptions)
+          fetchJobTemplate('123', 'db_type')
+        )
+
+        // Assert
+        const expectedActions = [
+          addErrorNotification(responsePayload as AxiosError),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('fetchConfigTemplate', () => {
+      it('failed to fetch data', async () => {
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          fetchConfigTemplate('123', 'ingest','db_type')
         )
 
         // Assert

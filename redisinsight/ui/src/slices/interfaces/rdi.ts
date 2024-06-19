@@ -213,17 +213,17 @@ interface IErrorDetail {
   message: string;
 }
 
-interface ISourceDetail {
+interface ITargetDetail {
   status: TestConnectionStatus;
   error?: IErrorDetail;
 }
 
-export interface ISources {
-  [key: string]: ISourceDetail;
+export interface ITargets {
+  [key: string]: ITargetDetail;
 }
 
 export interface TestConnectionsResponse {
-  sources: ISources
+  targets: ITargets
 }
 
 export interface IRdiConnectionResult {

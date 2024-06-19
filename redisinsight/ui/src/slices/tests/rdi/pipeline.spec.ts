@@ -388,7 +388,6 @@ describe('rdi pipe slice', () => {
     })
   })
 
-
   describe('getPipelineStatus', () => {
     it('should set loading = true', () => {
       // Arrange
@@ -730,7 +729,7 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchConfigTemplate('123', 'ingest','db_type')
+          fetchConfigTemplate('123', 'ingest', 'db_type')
         )
 
         // Assert

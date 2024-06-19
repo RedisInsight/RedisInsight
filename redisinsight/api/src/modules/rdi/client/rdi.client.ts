@@ -1,10 +1,9 @@
-import { Request } from 'express';
 import {
   Rdi,
   RdiClientMetadata, RdiPipeline, RdiStatisticsResult,
 } from 'src/modules/rdi/models';
 import {
-  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTestConnectionsResponseDto,
+  RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
 
@@ -28,8 +27,9 @@ export abstract class RdiClient {
 
   abstract getPipeline(): Promise<RdiPipeline>;
 
-  // TODO validate options and response
-  abstract getTemplate(options: object): Promise<unknown>;
+  abstract getConfigTemplate(pipelineType: string, dbType: string): Promise<RdiTemplateResponseDto>;
+
+  abstract getJobTemplate(pipelineType: string): Promise<RdiTemplateResponseDto>;
 
   abstract getStrategies(): Promise<object>;
 
@@ -37,7 +37,7 @@ export abstract class RdiClient {
 
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
-  abstract testConnections(config: string, req: Request): Promise<RdiTestConnectionsResponseDto>;
+  abstract testConnections(config: object): Promise<RdiTestConnectionsResponseDto>;
 
   abstract getStatistics(sections?: string): Promise<RdiStatisticsResult>;
 

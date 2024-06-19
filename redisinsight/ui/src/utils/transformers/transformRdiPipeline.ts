@@ -19,7 +19,6 @@ export const pipelineToJson = ({ config, jobs }: IPipeline): IPipelineJSON => <I
 
 export const transformConnectionResults = (sources: ISources): TransformResult => {
   const result: TransformResult = { success: [], fail: [] }
-
   if (!sources) {
     return result
   }

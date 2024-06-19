@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { apiService, } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { getApiErrorMessage, isStatusSuccessful } from 'uiSrc/utils'
-import { IDryRunJobResults, IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
+import { getApiErrorMessage, getAxiosError, isStatusSuccessful } from 'uiSrc/utils'
+import { EnhancedAxiosError, IDryRunJobResults, IStateRdiDryRunJob } from 'uiSrc/slices/interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -73,8 +73,10 @@ export function rdiDryRunJob(
       }
     } catch (_err) {
       const error = _err as AxiosError
+      const parsedError = getAxiosError(error as EnhancedAxiosError)
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+
+      dispatch(addErrorNotification(parsedError))
       dispatch(dryRunJobFailure(errorMessage))
       onFailAction?.()
     }

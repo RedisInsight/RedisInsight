@@ -238,18 +238,42 @@ export function fetchPipelineStrategies(
   }
 }
 
-export function fetchPipelineTemplate(
+export function fetchJobTemplate(
   rdiInstanceId: string,
-  // TODO add interface
-  options: any,
+  pipelineType: string,
   onSuccessAction?: (template: string) => void,
   onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       const { status, data } = await apiService.get(
-        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_TEMPLATE),
-        { params: options },
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_JOB_TEMPLATE, pipelineType),
+      )
+
+      if (isStatusSuccessful(status)) {
+        onSuccessAction?.(data.template)
+      }
+    } catch (_err) {
+      const error = _err as AxiosError
+      const parsedError = getAxiosError(error as EnhancedAxiosError)
+
+      dispatch(addErrorNotification(parsedError))
+      onFailAction?.()
+    }
+  }
+}
+
+export function fetchConfigTemplate(
+  rdiInstanceId: string,
+  pipelineType: string,
+  dbType: string,
+  onSuccessAction?: (template: string) => void,
+  onFailAction?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { status, data } = await apiService.get(
+        getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_CONFIG_TEMPLATE, pipelineType, dbType),
       )
 
       if (isStatusSuccessful(status)) {

@@ -1,7 +1,7 @@
 import {
   Body,
   ClassSerializerInterceptor, Controller, Get, Post, UseInterceptors, UsePipes, ValidationPipe,
-  Query, Req,
+  Req, Param,
 } from '@nestjs/common';
 import { Rdi, RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
 import { RequestRdiClientMetadata } from 'src/modules/rdi/decorators';
-import { RdiDryRunJobDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
+import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 
 @ApiTags('RDI')
@@ -73,11 +73,10 @@ export class RdiPipelineController {
     responses: [{ status: 200, type: RdiTestConnectionsResponseDto }],
   })
   async testConnections(
-    @Req() req: Request,
-      @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Body() config: string,
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+      @Body() config: object,
   ): Promise<RdiTestConnectionsResponseDto> {
-    return this.rdiPipelineService.testConnections(rdiClientMetadata, config, req);
+    return this.rdiPipelineService.testConnections(rdiClientMetadata, config);
   }
 
   @Get('/strategies')
@@ -91,16 +90,29 @@ export class RdiPipelineController {
     return this.rdiPipelineService.getStrategies(rdiClientMetadata);
   }
 
-  @Get('/template')
+  @Get('/job/template/:pipelineType')
   @ApiEndpoint({
-    description: 'Get pipeline template for selected pipeline type',
-    responses: [{ status: 200, type: Rdi }],
+    description: 'Get job template for selected pipeline type',
+    responses: [{ status: 200, type: RdiTemplateResponseDto }],
   })
-  async getTemplate(
+  async getJobTemplate(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Query() options: object,
-  ): Promise<unknown> {
-    return this.rdiPipelineService.getTemplate(rdiClientMetadata, options);
+      @Param('pipelineType') pipelineType: string,
+  ): Promise<RdiTemplateResponseDto> {
+    return this.rdiPipelineService.getJobTemplate(rdiClientMetadata, pipelineType);
+  }
+
+  @Get('/config/template/:pipelineType/:dbType')
+  @ApiEndpoint({
+    description: 'Get config template for selected pipeline and db types',
+    responses: [{ status: 200, type: RdiTemplateResponseDto }],
+  })
+  async getConfigTemplate(
+    @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
+      @Param('pipelineType') pipelineType: string,
+      @Param('dbType') dbType: string,
+  ): Promise<RdiTemplateResponseDto> {
+    return this.rdiPipelineService.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
   }
 
   @Get('/status')

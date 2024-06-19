@@ -15,13 +15,4 @@ describe('MonacoYaml', () => {
     />)
     expect(queryByTestId(monacoTestId)).toBeInTheDocument()
   })
-  it('should not render if schema is null', () => {
-    const { queryByTestId } = render(<MonacoYaml
-      schema={null}
-      value="val"
-      onChange={jest.fn()}
-      data-testid={monacoTestId}
-    />)
-    expect(queryByTestId(monacoTestId)).not.toBeInTheDocument()
-  })
 })

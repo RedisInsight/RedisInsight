@@ -6,6 +6,7 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
 export interface CustomError {
+  details?: any[];
   error: string
   message: string
   statusCode: number

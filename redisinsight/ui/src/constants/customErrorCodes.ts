@@ -54,6 +54,7 @@ export enum CustomErrorCodes {
 
   GeneralAiUnexpectedError = 11_391,
 
-  // RDI errors [11300, 11499]
-  RdiDeployPipelineFailure = 11_301,
+  // RDI errors [11400, 11499]
+  RdiDeployPipelineFailure = 11_401,
+  RdiValidationError = 11_404,
 }

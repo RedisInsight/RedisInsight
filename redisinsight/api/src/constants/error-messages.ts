@@ -107,4 +107,8 @@ export default {
   AI_QUERY_REQUEST_RATE_LIMIT: 'Exceeded limit for requests',
   AI_QUERY_TOKEN_RATE_LIMIT: 'Exceeded limit for characters in the conversation',
   AI_QUERY_MAX_TOKENS_RATE_LIMIT: 'Token count exceeds the conversation limit',
+
+  RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
+  RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',
+  RDI_VALIDATION_ERROR: 'Validation error',
 };

@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 
 import { ImportDatabasesData } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Nullable } from 'uiSrc/utils'
 import TableResult from '../TableResult'
 
 import styles from './styles.module.scss'
@@ -15,7 +16,7 @@ enum ResultsStatus {
 }
 
 export interface Props {
-  data: ImportDatabasesData
+  data: Nullable<ImportDatabasesData>
 }
 
 const ResultsLog = ({ data }: Props) => {

@@ -90,10 +90,11 @@ test('Verify that user can see in Command helper and click on new group "JSON", 
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // Click on Read More link for selected command
-    await t.click(browserPage.CommandHelper.readMoreButton);
-    // Check new opened window page with the correct URL
-    await Common.checkURL(externalPageLink);
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // // Click on Read More link for selected command
+    // await t.click(browserPage.CommandHelper.readMoreButton);
+    // // Check new opened window page with the correct URL
+    // await Common.checkURL(externalPageLink);
 });
 test('Verify that user can see in Command helper and click on new group "Search", can choose it and see list of commands in the group', async t => {
     filteringGroup = 'Search';
@@ -108,10 +109,11 @@ test('Verify that user can see in Command helper and click on new group "Search"
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // Click on Read More link for selected command
-    await t.click(browserPage.CommandHelper.readMoreButton);
-    // Check new opened window page with the correct URL
-    await Common.checkURL(externalPageLink);
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // // Click on Read More link for selected command
+    // await t.click(browserPage.CommandHelper.readMoreButton);
+    // // Check new opened window page with the correct URL
+    // await Common.checkURL(externalPageLink);
 });
 test('Verify that user can see HyperLogLog title in Command Helper for this command group', async t => {
     filteringGroup = 'HyperLogLog';
@@ -126,10 +128,11 @@ test('Verify that user can see HyperLogLog title in Command Helper for this comm
     await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandToCheck));
     // Verify results of opened command
     await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandArgumentsToCheck, 'Selected command title not correct');
-    // Click on Read More link for selected command
-    await t.click(browserPage.CommandHelper.readMoreButton);
-    // Check new opened window page with the correct URL
-    await Common.checkURL(externalPageLink);
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // // Click on Read More link for selected command
+    // await t.click(browserPage.CommandHelper.readMoreButton);
+    // // Check new opened window page with the correct URL
+    // await Common.checkURL(externalPageLink);
 });
 test('Verify that user can see all separated groups for AI json file (model, tensor, inference, script)', async t => {
     filteringGroups = ['Model', 'Script', 'Inference', 'Tensor'];
@@ -227,13 +230,14 @@ test('Verify that user can work with Bloom groups in Command Helper (RedisBloom 
         await t.click(browserPage.CommandHelper.cliHelperOutputTitles.withExactText(commandsToCheck[i]));
         // Verify results of opened command
         await t.expect(browserPage.CommandHelper.cliHelperTitleArgs.textContent).eql(commandsArgumentsToCheck[i], 'Selected command title not correct');
-        // Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
-        await t.click(browserPage.CommandHelper.readMoreButton);
-        // Check new opened window page with the correct URL
-        await Common.checkURL(externalPageLinks[i]);
-        // Close the window with external link to switch to the application window
-        await goBackHistory();
-        await t.click(browserPage.CommandHelper.expandCommandHelperButton);
+        // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+        // // Verify that user can use Read More link for Bloom, Cuckoo, CMS, TDigest, TopK groups in Command Helper (RedisBloom module).
+        // await t.click(browserPage.CommandHelper.readMoreButton);
+        // // Check new opened window page with the correct URL
+        // await Common.checkURL(externalPageLinks[i]);
+        // // Close the window with external link to switch to the application window
+        // await goBackHistory();
+        // await t.click(browserPage.CommandHelper.expandCommandHelperButton);
         i++;
     }
 });

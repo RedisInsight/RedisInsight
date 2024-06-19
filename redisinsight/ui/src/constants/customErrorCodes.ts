@@ -52,5 +52,9 @@ export enum CustomErrorCodes {
   AiQueryRateLimitToken = 11_361,
   AiQueryRateLimitMaxTokens = 11362,
 
-  GeneralAiUnexpectedError = 11_391
+  GeneralAiUnexpectedError = 11_391,
+
+  // RDI errors [11400, 11499]
+  RdiDeployPipelineFailure = 11_401,
+  RdiValidationError = 11_404,
 }

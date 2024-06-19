@@ -1,8 +1,15 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import { first, isEmpty, isUndefined, reject, without } from 'lodash'
 import { decode } from 'html-entities'
-import { ICommands } from 'uiSrc/constants'
-import { IMonacoCommand, IMonacoQuery } from 'uiSrc/utils'
+import { ICommands, ICommand } from 'uiSrc/constants'
+import {
+  generateArgsForInsertText,
+  generateArgsNames,
+  getCommandMarkdown,
+  IMonacoCommand,
+  IMonacoQuery
+} from 'uiSrc/utils'
+import { TJMESPathFunctions } from 'uiSrc/slices/interfaces'
 import { Nullable } from '../types'
 import { getCommandRepeat, isRepeatCountCorrect } from '../commands'
 
@@ -234,3 +241,25 @@ export const getCommandsFromQuery = (query: string, commandsArray: string[] = []
   const listOfCommands = [commandLine, multiCommands].filter(Boolean)
   return listOfCommands.length ? listOfCommands.join(';') : null
 }
+
+export const parseJMESPathFunctions = (functions: TJMESPathFunctions) => Object.entries(functions)
+  .map(([labelInit, func]) => {
+    const { arguments: args } = func
+    const label = labelInit.toUpperCase()
+    const range = { startLineNumber: 0, endLineNumber: 0, startColumn: 0, endColumn: 0 }
+    const detail = `${label}(${generateArgsNames('', args).join(', ')})`
+    const argsNames = generateArgsNames('', args, false, true)
+    const insertText = `${label}(${generateArgsForInsertText(argsNames, ', ')})`
+
+    return {
+      label,
+      detail,
+      range,
+      documentation: {
+        value: getCommandMarkdown(func as ICommand)
+      },
+      insertText,
+      kind: monacoEditor.languages.CompletionItemKind.Function,
+      insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    }
+  })

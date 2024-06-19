@@ -1,3 +1,5 @@
+import { FeatureFlags } from 'uiSrc/constants'
+
 export interface IRoute {
   path: any
   component: (routes: any) => JSX.Element | Element | null
@@ -6,6 +8,7 @@ export interface IRoute {
   routes?: any
   protected?: boolean
   isAvailableWithoutAgreements?: boolean
+  featureFlag?: FeatureFlags
 }
 
 export enum PageNames {
@@ -17,11 +20,18 @@ export enum PageNames {
   clusterDetails = 'cluster-details',
   databaseAnalysis = 'database-analysis',
   settings = 'settings',
+  // rdi pages
+  rdiPipelineManagement = 'pipeline-management',
+  rdiPipelineConfig = 'config',
+  rdiPipelineJobs = 'jobs',
+  rdiStatistics = 'statistics'
 }
 
 const redisCloud = '/redis-cloud'
 const sentinel = '/sentinel'
+const rdi = '/integrate'
 
+export type PageValues = typeof Pages[keyof typeof Pages]
 export const Pages = {
   home: '/',
   homeEditInstance: (instanceId: string) => `/?editInstance=${instanceId}`,
@@ -42,5 +52,12 @@ export const Pages = {
   clusterDetails: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.clusterDetails}`,
   databaseAnalysis: (instanceId: string) => `/${instanceId}/${PageNames.analytics}/${PageNames.databaseAnalysis}`,
   // rdi pages
-  rdi: '/integrate',
+  rdi,
+  rdiPipeline: (rdiInstance: string) => `${rdi}/${rdiInstance}`,
+  rdiPipelineManagement: (rdiInstance: string) => `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}`,
+  rdiPipelineConfig: (rdiInstance: string) =>
+    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineConfig}`,
+  rdiPipelineJobs: (rdiInstance: string, jobName: string) =>
+    `${rdi}/${rdiInstance}/${PageNames.rdiPipelineManagement}/${PageNames.rdiPipelineJobs}/${jobName}`,
+  rdiStatistics: (rdiInstance: string) => `${rdi}/${rdiInstance}/statistics`,
 }

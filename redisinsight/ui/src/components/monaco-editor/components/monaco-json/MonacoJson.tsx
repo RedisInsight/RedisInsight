@@ -16,7 +16,7 @@ const MonacoJson = (props: CommonProps) => {
       trailingCommas: 'error'
     })
     const messageContribution = editor.getContribution('editor.contrib.messageController')
-    editor.onDidAttemptReadOnlyEdit(() => messageContribution.dispose())
+    editor.onDidAttemptReadOnlyEdit(() => messageContribution?.dispose())
   }
 
   return (

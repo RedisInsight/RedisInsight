@@ -1,6 +1,17 @@
 {
   "version": 2.52,
   "features": {
+    "rdi": {
+      "flag": true,
+      "perc": [[0,0]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "REDIS_STACK",
+          "cond": "neq"
+        }
+      ]
+    },
     "insightsRecommendations": {
       "flag": true,
       "perc": [[0,100]]

@@ -1,5 +1,5 @@
 .pageWrapper {
-  height: calc(100% - 70px);
+  height: 100%;
   overflow: hidden;
 }
 
@@ -34,6 +34,20 @@
 
 .explorePanel {
   padding-bottom: 16px;
+}
+
+.emptyPanel {
+  @include eui.scrollBar;
+
+  overflow: auto;
+  position: relative;
+  height: 100%;
+
+  @media (min-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @include global.insights-open {

@@ -91,7 +91,8 @@ test('Verify that user can type TS. in Command helper and see commands from Redi
     // Search per part of command and check all opened commands
     await browserPage.CommandHelper.checkSearchedCommandInCommandHelper(commandForSearch, timeSeriesCommands);
     // Check the first command documentation url
-    await browserPage.CommandHelper.checkURLCommand(timeSeriesCommands[0], `https://redis.io/docs/latest/commands/${timeSeriesCommands[0].toLowerCase()}/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper`);
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // await browserPage.CommandHelper.checkURLCommand(timeSeriesCommands[0], `https://redis.io/docs/latest/commands/${timeSeriesCommands[0].toLowerCase()}/?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_command_helper`);
 });
 // outdated after https://redislabs.atlassian.net/browse/RI-4608
 test.skip('Verify that user can type GRAPH. in Command helper and see auto-suggestions from RedisGraph commands.json', async t => {

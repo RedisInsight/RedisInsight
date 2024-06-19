@@ -27,6 +27,7 @@ export enum KnownFeatures {
   RedisClient = 'redisClient',
   DocumentationChat = 'documentationChat',
   DatabaseChat = 'databaseChat',
+  Rdi = 'rdi',
   HashFieldExpiration = 'hashFieldExpiration',
 }
 

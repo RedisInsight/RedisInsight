@@ -1,7 +1,6 @@
 import { Selector, t } from 'testcafe';
 
 export class ExploreTab {
-
     dataStructureAccordionTutorialButton = Selector('[data-testid=accordion-button-ds]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-ds-hashes]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
@@ -58,7 +57,7 @@ export class ExploreTab {
      * Run code
      * @param block Name of the block
      */
-    async runBlockCode(block: string): Promise<void> {
+    async   runBlockCode(block: string): Promise<void> {
         const runButton = Selector(this.runMask.replace(/\$name/g, block));
         await t.scrollIntoView(runButton);
         await t.click(runButton);

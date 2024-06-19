@@ -41,7 +41,7 @@ test('Verify that user can see saved CLI size when navigates away to any other p
     const cliAreaHeightEnd = cliAreaHeight + 150;
     const cliResizeButton = workbenchPage.Cli.cliResizeButton;
     await t.hover(cliResizeButton);
-    // Resize CLI 50px up and navigate to the My Redis databases page
+    // Resize CLI 50px up and navigate to the Redis Databases page
     await t.drag(cliResizeButton, 0, -offsetY, { speed: 0.01 });
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     // Navigate back to the database Workbench and check CLI size

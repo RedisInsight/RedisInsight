@@ -42,8 +42,12 @@ import databaseAnalysisReducer from './analytics/dbAnalysis'
 import redisearchReducer from './browser/redisearch'
 import recommendationsReducer from './recommendations/recommendations'
 import sidePanelsReducer from './panels/sidePanels'
+import rdiInstancesReducer from './rdi/instances'
+import rdiPipelineReducer from './rdi/pipeline'
+import rdiDryRunJobReducer from './rdi/dryRun'
+import rdiTestConnectionsReducer from './rdi/testConnections'
+import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
-import appRDIReducer from './rdi/rdi'
 
 export const history = createBrowserHistory()
 
@@ -111,7 +115,11 @@ export const rootReducer = combineReducers({
     aiAssistant: aiAssistantReducer,
   }),
   rdi: combineReducers({
-    rdi: appRDIReducer
+    instances: rdiInstancesReducer,
+    pipeline: rdiPipelineReducer,
+    dryRun: rdiDryRunJobReducer,
+    testConnections: rdiTestConnectionsReducer,
+    statistics: rdiStatisticsReducer,
   })
 })
 

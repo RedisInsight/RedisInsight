@@ -61,7 +61,8 @@ test('Verify bulk upload of different text docs formats', async t => {
 
     // Verify that user can remove uploaded file
     await t.setFilesToUpload(browserPage.BulkActions.bulkUploadInput, [filePathes.bigDataFile]);
-    await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(filesToUpload[1], 'Filename not displayed in upload input');
     await t.click(browserPage.BulkActions.removeFileBtn);
     await t.expect(browserPage.BulkActions.bulkUploadContainer.textContent).contains(defaultText, 'File not removed from upload input');
 

@@ -28,6 +28,10 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
+    this.strategies.set(KnownFeatures.Rdi, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
     this.strategies.set(KnownFeatures.CloudSso, new CloudSsoFlagStrategy(
       this.featuresConfigService,
       this.settingsService,

@@ -37,7 +37,7 @@ test('Verify that user can specify TTL for Key', async t => {
     // Set TTL value
     await t.typeText(browserPage.editKeyTTLInput, ttlValue, { replace: true, paste: true });
     // Save the TTL value
-    await t.click(browserPage.saveTTLValue);
+    await t.click(browserPage.EditorButton.applyBtn);
     // Refresh the page in several seconds
     await t.wait(3000);
     await t.click(browserPage.refreshKeyButton);

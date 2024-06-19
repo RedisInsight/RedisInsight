@@ -6,6 +6,7 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
 export interface CustomError {
+  details?: any[];
   error: string
   message: string
   statusCode: number
@@ -31,6 +32,11 @@ export interface IMessage {
   className?: string
 }
 
+export enum AppWorkspace {
+  Databases = 'databases',
+  RDI = 'rdi'
+}
+
 export interface StateAppInfo {
   loading: boolean
   error: string
@@ -45,7 +51,9 @@ export interface StateAppInfo {
 }
 
 export interface StateAppContext {
+  workspace: AppWorkspace
   contextInstanceId: string
+  contextRdiInstanceId: string
   lastPage: string
   dbConfig: {
     treeViewDelimiter: string
@@ -99,6 +107,10 @@ export interface StateAppContext {
   }
   capability: {
     source: string
+  }
+  pipelineManagement: {
+    lastViewedPage: string
+    isOpenDialog: boolean
   }
 }
 

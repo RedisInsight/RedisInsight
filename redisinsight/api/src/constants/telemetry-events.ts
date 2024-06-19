@@ -90,6 +90,13 @@ export enum TelemetryEvents {
 
   // Insights
   InsightsTipGenerated = 'INSIGHTS_TIP_GENERATED',
+
+  // RDI
+  RdiInstanceDeleted = 'RDI_INSTANCE_DELETED',
+  RdiPipelineDeploymentSucceeded = 'RDI_PIPELINE_DEPLOYMENT_SUCCEEDED',
+  RdiPipelineDeploymentFailed = 'RDI_PIPELINE_DEPLOYMENT_FAILED',
+  RdiPipelineUploaded = 'RDI_PIPELINE_UPLOAD_SUCCEEDED',
+  RdiPipelineUploadFailed = 'RDI_PIPELINE_UPLOAD_FAILED',
 }
 
 export enum CommandType {

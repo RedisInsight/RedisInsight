@@ -26,6 +26,7 @@ import {
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
+import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import InstancePage, { Props } from './InstancePage'
 
@@ -127,6 +128,7 @@ describe('InstancePage', () => {
       clearExpertChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
+      resetRdiConnectedInstance(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

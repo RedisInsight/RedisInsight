@@ -57,7 +57,7 @@ test('Verify DB list search', async t => {
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBHostInvalid, { replace: true, paste: true });
     // Verify that user sees "No results found" message when pattern doesn`t match any database
     await t.expect(myRedisDatabasePage.noResultsFoundMessage.exists).ok('"No results found message" not displayed');
-    await t.expect(myRedisDatabasePage.noResultsFoundText.exists).ok('"No databases matched your search" message not displayed');
+    await t.expect(myRedisDatabasePage.noResultsFoundText.exists).ok('"No results matched your search" message not displayed');
 
     // Search for DB by name
     await t.typeText(myRedisDatabasePage.searchInput, searchedDBName, { replace: true, paste: true });

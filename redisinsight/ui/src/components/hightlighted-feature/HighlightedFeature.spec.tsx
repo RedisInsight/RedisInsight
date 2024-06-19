@@ -36,6 +36,32 @@ describe('HighlightedFeature', () => {
     expect(screen.getByTestId('dot-highlighting')).toBeInTheDocument()
   })
 
+  it('should render badge highlighting', async () => {
+    render(
+      <HighlightedFeature
+        type="tooltip-badge"
+        content="content"
+        title="title"
+        isHighlight
+      >
+        <Content />
+      </HighlightedFeature>
+    )
+
+    expect(screen.getByTestId('some-feature')).toBeInTheDocument()
+    expect(screen.getByTestId('badge-highlighting')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByTestId('tooltip-badge-highlighting-inner'))
+    })
+
+    await waitForEuiToolTipVisible()
+
+    expect(screen.queryByTestId('tooltip-badge-highlighting')).toBeInTheDocument()
+    expect(screen.queryByTestId('tooltip-badge-highlighting')).toHaveTextContent('title')
+    expect(screen.queryByTestId('tooltip-badge-highlighting')).toHaveTextContent('content')
+  })
+
   it('should not render highlighting', () => {
     render(
       <HighlightedFeature type="plain" isHighlight={false}>

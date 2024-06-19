@@ -1,7 +1,7 @@
 import { ANALYTICS_ROUTES } from './analyticsRoutes'
-import { RDI_ROUTES } from './rdiRoutes'
+import { RDI_PIPELINE_MANAGEMENT_ROUTES } from './rdiPipelineManagementRoutes'
 
 export {
   ANALYTICS_ROUTES,
-  RDI_ROUTES,
+  RDI_PIPELINE_MANAGEMENT_ROUTES,
 }

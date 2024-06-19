@@ -22,6 +22,7 @@ import { DatabaseImportModule } from 'src/modules/database-import/database-impor
 import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-auth.middleware';
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
 import { CloudModule } from 'src/modules/cloud/cloud.module';
+import { RdiModule } from 'src/modules/rdi/rdi.module';
 import { AiChatModule } from 'src/modules/ai/chat/ai-chat.module';
 import { AiQueryModule } from 'src/modules/ai/query/ai-query.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -63,6 +64,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     CloudModule.register(),
     AiChatModule,
     AiQueryModule.register(),
+    RdiModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({

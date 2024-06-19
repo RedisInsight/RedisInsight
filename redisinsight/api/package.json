@@ -34,7 +34,8 @@
     "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
     "test:api:ci:cov": "cross-env nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
     "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
-    "typeorm:run": "yarn typeorm migration:run"
+    "typeorm:run": "yarn typeorm migration:run",
+    "typeorm:run:stage": "cross-env NODE_ENV=staging yarn typeorm migration:run"
   },
   "resolutions": {
     "nanoid": "^3.1.31",

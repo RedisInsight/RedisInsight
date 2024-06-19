@@ -30,7 +30,7 @@ test('Verify that when user have selected a command (via “Enter” from the li
     // Start type characters and select command
     await t.typeText(workbenchPage.queryInput, 'LI', { replace: true });
     // Verify that the list with auto-suggestions is displayed
-    await t.expect(workbenchPage.monacoSuggestion.exists).ok('Auto-suggestions are displayed');
+    await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.exists).ok('Auto-suggestions are displayed');
     // Select command and check result
     await t.pressKey('enter');
     const script = await workbenchPage.queryInputScriptArea.textContent;

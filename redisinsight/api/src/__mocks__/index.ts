@@ -38,3 +38,4 @@ export * from './session';
 export * from './cloud-session';
 export * from './database-info';
 export * from './cloud-job';
+export * from './rdi';

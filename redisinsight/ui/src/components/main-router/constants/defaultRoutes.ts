@@ -1,4 +1,4 @@
-import { IRoute, PageNames, Pages } from 'uiSrc/constants'
+import { IRoute, FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import {
   BrowserPage,
   HomePage,
@@ -12,8 +12,11 @@ import {
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import PubSubPage from 'uiSrc/pages/pub-sub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
-import RdiList from 'uiSrc/pages/rdi/home'
-import { ANALYTICS_ROUTES, RDI_ROUTES } from './sub-routes'
+import RdiPage from 'uiSrc/pages/rdi/home'
+import RdiInstancePage from 'uiSrc/pages/rdi/instance'
+import RdiStatisticsPage from 'uiSrc/pages/rdi/statistics'
+import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
+import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
 
@@ -38,6 +41,18 @@ const INSTANCE_ROUTES: IRoute[] = [
     component: AnalyticsPage,
     routes: ANALYTICS_ROUTES,
   },
+]
+
+const RDI_INSTANCE_ROUTES: IRoute[] = [
+  {
+    path: Pages.rdiStatistics(':rdiInstanceId'),
+    component: RdiStatisticsPage,
+  },
+  {
+    path: Pages.rdiPipelineManagement(':rdiInstanceId'),
+    component: PipelineManagementPage,
+    routes: RDI_PIPELINE_MANAGEMENT_ROUTES
+  }
 ]
 
 const ROUTES: IRoute[] = [
@@ -72,14 +87,20 @@ const ROUTES: IRoute[] = [
   },
   {
     path: Pages.rdi,
-    // todo: add home rdi component - list of instances
-    component: RdiList,
-    routes: RDI_ROUTES,
+    component: RdiPage,
+    exact: true,
+    featureFlag: FeatureFlags.rdi,
+  },
+  {
+    path: Pages.rdiPipeline(':rdiInstanceId'),
+    component: RdiInstancePage,
+    routes: RDI_INSTANCE_ROUTES,
+    featureFlag: FeatureFlags.rdi,
   },
   {
     path: '/:instanceId',
     component: InstancePage,
-    routes: INSTANCE_ROUTES,
+    routes: INSTANCE_ROUTES
   },
 ]
 

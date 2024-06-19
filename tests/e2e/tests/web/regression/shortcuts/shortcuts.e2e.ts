@@ -31,11 +31,12 @@ test('Verify that user can see a summary of Shortcuts by clicking "Keyboard Shor
     // Verify that user can close the Shortcuts
     await t.click(myRedisDatabasePage.ShortcutsPanel.shortcutsCloseButton);
     await t.expect(myRedisDatabasePage.ShortcutsPanel.shortcutsPanel.exists).notOk('Shortcuts panel is not displayed');
-    // Click on the Release Notes in Help Center
-    await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
-    await t.click(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterReleaseNotesButton);
-    // Verify redirected link opening Release Notes in Help Center
-    await Common.checkURL('https://github.com/RedisInsight/RedisInsight/releases');
+    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+    // // Click on the Release Notes in Help Center
+    // await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
+    // await t.click(myRedisDatabasePage.NavigationPanel.HelpCenter.helpCenterReleaseNotesButton);
+    // // Verify redirected link opening Release Notes in Help Center
+    // await Common.checkURL('https://github.com/RedisInsight/RedisInsight/releases');
 });
 test('Verify that user can see description of the “up” shortcut in the Help Center > Keyboard Shortcuts > Workbench table', async t => {
     const description = [

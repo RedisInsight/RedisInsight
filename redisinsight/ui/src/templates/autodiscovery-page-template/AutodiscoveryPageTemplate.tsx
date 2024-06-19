@@ -13,7 +13,7 @@ const AutodiscoveryPageTemplate = (props: Props) => {
   const { children } = props
   return (
     <>
-      <PageHeader title="My Redis databases" showInsights />
+      <PageHeader title="Redis databases" showInsights />
       <div />
       <ExplorePanelTemplate panelClassName={styles.explorePanel}>
         <EuiPage className={styles.page}>

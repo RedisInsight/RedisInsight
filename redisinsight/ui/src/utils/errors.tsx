@@ -174,7 +174,7 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
     case CustomErrorCodes.RdiValidationError:
       const details = err?.details?.[0] || {}
       title = 'Validation error'
-      message = getRdiValidationMessage(details.msg, err?.details[0]?.loc)
+      message = getRdiValidationMessage(details.msg, details.loc)
 
       break
 

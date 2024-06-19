@@ -50,8 +50,8 @@ export default rdiPipelineSlice.reducer
 // Asynchronous thunk action
 export function rdiDryRunJob(
   rdiInstanceId: string,
-  input: string,
-  job: string,
+  input_data: object,
+  job: unknown,
   onSuccessAction?: (data: IDryRunJobResults) => void,
   onFailAction?: () => void,
 ) {
@@ -61,7 +61,7 @@ export function rdiDryRunJob(
       const { data, status } = await apiService.post<IDryRunJobResults>(
         `rdi/${rdiInstanceId}/pipeline/dry-run-job`,
         {
-          input,
+          input_data,
           job,
         }
       )

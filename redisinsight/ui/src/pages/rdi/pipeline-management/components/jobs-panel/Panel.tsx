@@ -13,6 +13,7 @@ import {
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import yaml from 'js-yaml'
 
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -107,10 +108,12 @@ const DryRunJobPanel = (props: Props) => {
         id: rdiInstanceId,
       },
     })
-    dispatch(rdiDryRunJob(rdiInstanceId, input, job))
+    dispatch(rdiDryRunJob(rdiInstanceId, JSON.parse(input), yaml.load(job)))
   }
 
-  const isSelectAvailable = selectedTab === PipelineJobsTabs.Output && !!results?.output && (results?.output?.length > 1)
+  const isSelectAvailable = selectedTab === PipelineJobsTabs.Output
+    && !!results?.output
+    && (results?.output?.length > 1)
 
   const Tabs = useCallback(() => (
     <EuiTabs className={styles.tabs}>

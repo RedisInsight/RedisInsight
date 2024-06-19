@@ -1,25 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsString, Validate } from 'class-validator';
-import { SerializedJsonValidator } from 'src/validators';
+import { IsNotEmpty } from 'class-validator';
 
 export class RdiDryRunJobDto {
   @ApiProperty({
     description: 'Input data',
-    type: String,
+    type: Object,
   })
   @Expose()
   @IsNotEmpty()
-  @IsString()
-  @Validate(SerializedJsonValidator)
-  input: string;
+  input_data: object;
 
   @ApiProperty({
     description: 'Job file',
-    type: String,
+    type: Object,
   })
   @Expose()
   @IsNotEmpty()
-  @IsString()
-  job: string;
+  job: object;
 }

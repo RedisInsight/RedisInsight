@@ -126,7 +126,7 @@ describe('rdi dry run slice', () => {
 
         // Act
         await store.dispatch<any>(
-          rdiDryRunJob('123', "{ name: 'Johny' }", 'job string')
+          rdiDryRunJob('123', { name: 'Johny' }, {})
         )
 
         // Assert
@@ -151,7 +151,7 @@ describe('rdi dry run slice', () => {
 
         // Act
         await store.dispatch<any>(
-          rdiDryRunJob('123', "{ name: 'Johny' }", 'job string')
+          rdiDryRunJob('123', { name: 'Johny' }, {})
         )
 
         // Assert

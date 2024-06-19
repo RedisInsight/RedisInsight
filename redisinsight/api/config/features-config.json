@@ -1,5 +1,5 @@
 {
-  "version": 2.5201,
+  "version": 2.52,
   "features": {
     "rdi": {
       "flag": true,
@@ -15,6 +15,28 @@
     "insightsRecommendations": {
       "flag": true,
       "perc": [[0,100]]
+    },
+    "documentationChat": {
+      "flag": true,
+      "perc": [[0,5]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
+    },
+    "databaseChat": {
+      "flag": true,
+      "perc": [[0,5]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
     },
     "cloudSso": {
       "flag": true,

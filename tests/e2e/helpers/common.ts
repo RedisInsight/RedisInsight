@@ -221,6 +221,7 @@ export class Common {
         const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
         return parsedJson[property];
     }
+
     /**
      * Create Zip archive from folder
      * @param folderPath Path to folder to archive

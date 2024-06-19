@@ -30,6 +30,7 @@ export class BrowserPage extends InstancePage {
     hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
     setDeleteButton = Selector('[data-testid=set-delete-btn]');
     streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
+    applyButton = Selector('[data-testid=apply-btn]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
@@ -106,6 +107,8 @@ export class BrowserPage extends InstancePage {
     backToBrowserBtn = Selector('[data-testid=back-right-panel-btn]');
     loadAllBtn = Selector('[data-testid=load-all-value-btn]');
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
+    openTutorialsBtn = Selector('[data-testid=explore-msg-btn]');
+    exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -868,8 +871,8 @@ export class BrowserPage extends InstancePage {
      */
     async addJsonKeyOnTheSameLevel(jsonKey: string, jsonKeyValue: string): Promise<void> {
         await t.click(this.addJsonObjectButton);
-        await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
-        await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
+        await t.typeText(this.jsonKeyInput, jsonKey, { paste: true });
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { paste: true });
         await t.click(this.EditorButton.applyBtn);
     }
 
@@ -881,9 +884,20 @@ export class BrowserPage extends InstancePage {
     async addJsonKeyInsideStructure(jsonKey: string, jsonKeyValue: string): Promise<void> {
         await t.click(this.expandJsonObject);
         await t.click(this.addJsonFieldButton);
-        await t.typeText(this.jsonKeyInput, jsonKey, { replace: true, paste: true });
-        await t.typeText(this.jsonValueInput, jsonKeyValue, { replace: true, paste: true });
+        await t.typeText(this.jsonKeyInput, jsonKey, { paste: true });
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { paste: true });
         await t.click(this.EditorButton.applyBtn);
+    }
+
+    /**
+     * Add json value inside the Json structure
+     * @param jsonKeyValue The value of the json key
+     */
+    async addJsonValueInsideStructure(jsonKeyValue: string): Promise<void> {
+        await t.click(this.expandJsonObject);
+        await t.click(this.addJsonFieldButton);
+        await t.typeText(this.jsonValueInput, jsonKeyValue, { paste: true });
+        await t.click(this.applyButton);
     }
 
     /**
@@ -895,7 +909,7 @@ export class BrowserPage extends InstancePage {
             await t.click(this.expandJsonObject);
         }
         await t.click(this.editJsonObjectButton);
-        await t.typeText(this.jsonValueInput, jsonStructure, { replace: true, paste: true });
+        await t.typeText(this.jsonValueInput, jsonStructure, { paste: true });
         await t.click(this.applyEditButton);
     }
 

@@ -70,12 +70,12 @@ export class RdiPipelineService {
     }
   }
 
-  async testConnections(rdiClientMetadata: RdiClientMetadata, config: string, req: Request): Promise<RdiTestConnectionsResponseDto> {
+  async testConnections(rdiClientMetadata: RdiClientMetadata, config: object): Promise<RdiTestConnectionsResponseDto> {
     this.logger.log('Trying to test connections');
 
     const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-    return await client.testConnections(config, req);
+    return await client.testConnections(config);
   }
 
   async getStrategies(rdiClientMetadata: RdiClientMetadata): Promise<object> {

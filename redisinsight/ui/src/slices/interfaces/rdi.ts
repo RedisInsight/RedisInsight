@@ -52,12 +52,12 @@ export interface IRdiPipelineStrategies {
 
 export interface IConnections {
   [key: string]: {
-    host: string;
-    port: number;
-    status: string;
-    type: string;
-    database: string;
-    user: string;
+    host: string
+    port: number
+    status: string
+    type: string
+    database: string
+    user: string
   }
 }
 
@@ -209,31 +209,31 @@ export enum TestConnectionStatus {
 }
 
 interface IErrorDetail {
-  code: string;
-  message: string;
+  code: string
+  message: string
 }
 
-interface ISourceDetail {
-  status: TestConnectionStatus;
-  error?: IErrorDetail;
+interface ITargetDetail {
+  status: TestConnectionStatus
+  error?: IErrorDetail
 }
 
-export interface ISources {
-  [key: string]: ISourceDetail;
+export interface ITargets {
+  [key: string]: ITargetDetail
 }
 
 export interface TestConnectionsResponse {
-  sources: ISources
+  targets: ITargets
 }
 
 export interface IRdiConnectionResult {
-  target: string;
-  error?: string;
+  target: string
+  error?: string
 }
 
 export interface TransformResult {
-  success: IRdiConnectionResult[];
-  fail: IRdiConnectionResult[];
+  success: IRdiConnectionResult[]
+  fail: IRdiConnectionResult[]
 }
 
 export interface IStateRdiTestConnections {

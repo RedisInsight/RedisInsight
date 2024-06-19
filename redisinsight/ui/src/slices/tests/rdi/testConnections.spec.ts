@@ -13,7 +13,7 @@ import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 const mockData = {
-  sources: {
+  targets: {
     target: {
       status: 'success',
     }
@@ -54,14 +54,15 @@ describe('rdi test connections slice', () => {
   describe('testConnectionsSuccess', () => {
     it('should properly set state', () => {
       // Arrange
+      const data = { success: [{ target: 'target' }], fail: [] }
       const state = {
         ...initialState,
-        results: mockData,
+        results: data,
         loading: false,
       }
 
       // Act
-      const nextState = reducer(initialState, testConnectionsSuccess(mockData))
+      const nextState = reducer(initialState, testConnectionsSuccess(data))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

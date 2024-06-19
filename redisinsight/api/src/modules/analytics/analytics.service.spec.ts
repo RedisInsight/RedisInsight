@@ -17,12 +17,13 @@ import {
 let mockAnalyticsTrack;
 let mockAnalyticsPage;
 jest.mock(
-  'analytics-node',
-  () => jest.fn()
-    .mockImplementation(() => ({
+  '@segment/analytics-node',
+  () => ({
+    Analytics: jest.fn().mockImplementation(() => ({
       track: mockAnalyticsTrack,
       page: mockAnalyticsPage,
     })),
+  }),
 );
 
 const mockAnonymousId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805';

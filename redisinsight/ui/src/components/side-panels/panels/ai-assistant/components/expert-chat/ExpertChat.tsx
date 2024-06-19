@@ -1,4 +1,4 @@
-import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { EuiIcon } from '@elastic/eui'
@@ -9,7 +9,7 @@ import {
   removeExpertChatHistoryAction,
   updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { findTutorialPath, getCommandsFromQuery, isRedisearchAvailable, Nullable, scrollIntoView } from 'uiSrc/utils'
+import { findTutorialPath, getCommandsFromQuery, isRedisearchAvailable, Nullable } from 'uiSrc/utils'
 import { connectedInstanceSelector, freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
@@ -40,7 +40,6 @@ const ExpertChat = () => {
   const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
 
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
-  const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const isAgreementsAccepted = agreements.includes(instanceId) || messages.length > 0
@@ -56,16 +55,11 @@ const ExpertChat = () => {
     // changed account
     if (currentAccountIdRef.current !== userOAuthProfile?.id) {
       currentAccountIdRef.current = userOAuthProfile?.id
-      dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
+      dispatch(getExpertChatHistoryAction(instanceId))
       return
     }
 
-    if (messages.length) {
-      scrollToBottom('auto')
-      return
-    }
-
-    dispatch(getExpertChatHistoryAction(instanceId, () => scrollToBottom('auto')))
+    dispatch(getExpertChatHistoryAction(instanceId))
   }, [instanceId, userOAuthProfile])
 
   useEffect(() => {
@@ -91,8 +85,6 @@ const ExpertChat = () => {
   }
 
   const handleSubmit = useCallback((message: string) => {
-    scrollToBottom()
-
     if (!isAgreementsAccepted) {
       dispatch(updateExpertChatAgreements(instanceId))
 
@@ -109,10 +101,7 @@ const ExpertChat = () => {
       instanceId,
       message,
       {
-        onMessage: (message: AiChatMessage) => {
-          setinProgressMessage({ ...message })
-          scrollToBottom('auto')
-        },
+        onMessage: (message: AiChatMessage) => setinProgressMessage({ ...message }),
         onError: (errorCode: number) => {
           sendEventTelemetry({
             event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
@@ -180,16 +169,6 @@ const ExpertChat = () => {
     })
   }
 
-  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
-    setTimeout(() => {
-      scrollIntoView(scrollDivRef?.current, {
-        behavior,
-        block: 'start',
-        inline: 'start',
-      })
-    }, 0)
-  }
-
   const getValidationMessage = () => {
     if (!instanceId) {
       return {
@@ -226,6 +205,7 @@ const ExpertChat = () => {
       />
       <div className={styles.chatHistory}>
         <ChatHistory
+          autoScroll
           isLoading={loading || isLoading}
           modules={modules}
           initialMessage={isNoIndexes
@@ -233,7 +213,6 @@ const ExpertChat = () => {
             : EXPERT_CHAT_INITIAL_MESSAGE}
           inProgressMessage={inProgressMessage}
           history={messages}
-          scrollDivRef={scrollDivRef}
           onRunCommand={onRunCommand}
           onRestart={onClearSession}
         />

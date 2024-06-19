@@ -36,7 +36,7 @@ describe('DatabaseRecommendationAnalytics', () => {
       );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
-        TelemetryEvents.InsightsRecommendationGenerated,
+        TelemetryEvents.InsightsTipGenerated,
         {
           recommendationName: mockDatabaseRecommendation.name,
           databaseId: mockDatabase.id,

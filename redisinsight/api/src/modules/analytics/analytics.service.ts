@@ -4,6 +4,7 @@ import { get } from 'lodash';
 import { Analytics } from '@segment/analytics-node';
 import { AppAnalyticsEvents } from 'src/constants';
 import config from 'src/utils/config';
+import axios from 'axios';
 import { SettingsService } from 'src/modules/settings/settings.service';
 
 export const NON_TRACKING_ANONYMOUS_ID = '00000000-0000-0000-0000-000000000001';
@@ -68,6 +69,11 @@ export class AnalyticsService {
     this.analytics = new Analytics({
       writeKey: ANALYTICS_CONFIG.writeKey,
       flushInterval: ANALYTICS_CONFIG.flushInterval,
+      httpClient: (url, requestInit) => axios.request({
+        ...requestInit,
+        url,
+        data: requestInit.body,
+      }),
     });
   }
 

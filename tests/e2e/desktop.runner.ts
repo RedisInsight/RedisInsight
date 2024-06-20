@@ -12,7 +12,6 @@ import testcafe from 'testcafe';
                     } })
                 .src((process.env.TEST_FILES || 'tests/electron/**/*.e2e.ts').split('\n'))
                 .browsers(['electron'])
-                // Skipped because screenshots don't work for electron app on linux
                 .screenshots({
                     path: './report/screenshots/',
                     takeOnFails: true,

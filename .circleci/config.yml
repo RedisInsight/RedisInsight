@@ -391,6 +391,14 @@ jobs:
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
+      - name: Install WM
+        run: sudo apt install fluxbox
+      
+      - name: Run X11
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 &
+          sleep 3
+          fluxbox &
       # - run:
       #     name: Clone mocked RDI server
       #     command: |

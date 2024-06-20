@@ -122,7 +122,7 @@ describe('parseCustomError', () => {
   )
 })
 
-const getRdiValidationMessageTests: Array<[[Maybe<string>, string[]], string]> = [
+const getRdiValidationMessageTests: Array<[[Maybe<string>, Array<string | number>], string]> = [
   [[undefined, []], ''],
   [['Custom message', []], 'Custom message'],
   [['Input is required', ['field']], 'Input is required'],
@@ -134,6 +134,19 @@ const getRdiValidationMessageTests: Array<[[Maybe<string>, string[]], string]> =
   [
     ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 'connection']],
     'Connection in targets/my-redis should be a valid integer, unable to parse string as an integer'
+  ],
+  [
+    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 0]],
+    'My-redis[0] in targets should be a valid integer, unable to parse string as an integer'
+  ],
+  [['Input required', ['body', 'targets', 0]], 'Targets[0] required'],
+  [
+    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'db', 'password']],
+    'Password in targets/my-redis[2]/db should be a valid integer, unable to parse string as an integer'
+  ],
+  [
+    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'password']],
+    'Password in targets/my-redis[2] should be a valid integer, unable to parse string as an integer'
   ],
 ]
 

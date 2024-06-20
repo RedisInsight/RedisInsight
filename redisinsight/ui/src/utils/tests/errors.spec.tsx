@@ -148,6 +148,10 @@ const getRdiValidationMessageTests: Array<[[Maybe<string>, Array<string | number
     ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'password']],
     'Password in targets/my-redis[2] should be a valid integer, unable to parse string as an integer'
   ],
+  [
+    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'password', 0]],
+    'Password[0] in targets/my-redis[2] should be a valid integer, unable to parse string as an integer'
+  ],
 ]
 
 describe('getRdiValidationMessage', () => {

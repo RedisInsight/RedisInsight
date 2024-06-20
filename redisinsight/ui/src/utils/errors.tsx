@@ -16,10 +16,10 @@ export const getRdiValidationMessage = (message: string = '', loc?: Array<string
   const [, ...rest] = loc
   const formattedLoc = rest.reduce<string[]>((acc, curr, idx) => {
     if (isNumber(curr)) {
-      acc[idx - 1] = `${acc[idx - 1]}[${curr}]`
-      return acc
+      acc[acc.length - 1] += `[${curr}]`
+    } else {
+      acc.push(curr)
     }
-    acc.push(curr)
     return acc
   }, [])
 

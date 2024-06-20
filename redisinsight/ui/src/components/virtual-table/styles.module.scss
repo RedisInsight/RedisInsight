@@ -191,8 +191,6 @@ $footerHeight: 38px;
 
   :global(.ReactVirtualized__Table__headerRow) {
     border: 1px solid var(--separatorColorLight) !important;
-    // fix border alignment, need to investigate why this happens
-    padding: 0 !important;
   }
 
   :global(.ReactVirtualized__Table__rowColumn) {
@@ -218,6 +216,11 @@ $footerHeight: 38px;
 
       :global(.ReactVirtualized__Table__headerColumn) {
         border-right-color: var(--separatorColorLight) !important;
+
+        &:last-child {
+          // fix border alignment, need to investigate why this happens
+          margin-left: -2px !important;
+        }
       }
     }
   }
@@ -253,7 +256,6 @@ $footerHeight: 38px;
     }
 
     .value-table-separate-border {
-      // border-right-color: var(--tableLightestBorderColor) !important;
       box-sizing: content-box;
     }
 

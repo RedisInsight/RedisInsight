@@ -247,4 +247,14 @@ export class Common {
     static async deleteFileFromFolder(filePath: string): Promise<void> {
         fs.unlinkSync(path.join(__dirname, filePath));
     }
+
+    /**
+      * Delete file from folder if exists
+      * @param folderPath Path to file
+     */
+    static async deleteFileFromFolderIfExists(filePath: string): Promise<void> {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
 }

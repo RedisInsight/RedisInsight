@@ -1,4 +1,3 @@
-import * as fs from 'fs-extra';
 import { commonUrl, workingDirectory } from '../../../../helpers/conf';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
 import { Common } from '../../../../helpers/common';
@@ -16,7 +15,7 @@ fixture `Agreements Verification`
     .requestHooks(Common.mockSettingsResponse());
 test
     .before(async() => {
-        fs.unlinkSync(dbPath);;
+        await Common.deleteFileFromFolderIfExists(dbPath);
     })('Verify that user should accept User Agreements to continue working with the application', async t => {
         await t.expect(userAgreementDialog.userAgreementsPopup.exists).ok('User Agreements Popup is shown');
         // Verify that I still has agreements popup & cannot add a database

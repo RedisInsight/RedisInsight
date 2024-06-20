@@ -12,7 +12,7 @@ const dbPath = `${workingDirectory}/redisinsight.db`;
 fixture `Agreements Verification`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
-    .requestHooks(Common.mockSettingsResponse());
+    .requestHooks(Common.mockDesktopSettingsResponse());
 test
     .before(async() => {
         await Common.deleteFileFromFolderIfExists(dbPath);

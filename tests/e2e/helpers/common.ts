@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
-import { apiUrl, commonUrl } from './conf';
+import { apiUrl } from './conf';
 const archiver = require('archiver');
 
 const chance = new Chance();
@@ -13,7 +13,7 @@ declare global {
     }
   }
 
-const settingsApiUrl = `${commonUrl}/api/settings`;
+const settingsApiUrl = `${apiUrl}/api/settings`;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 const mockedSettingsResponse = {
     agreements: {
@@ -22,12 +22,24 @@ const mockedSettingsResponse = {
         analytics: false
     }
 };
+const mockedSettingsDesktopResponse = {
+    agreements: null,
+    batchSize: 5,
+    scanThreshold: 10000,
+    theme: null
+};
 
 export class Common {
     static mockSettingsResponse(): RequestMock {
         return RequestMock()
             .onRequestTo(settingsApiUrl)
             .respond(mockedSettingsResponse, 200);
+    }
+
+    static mockDesktopSettingsResponse(): RequestMock {
+        return RequestMock()
+            .onRequestTo(settingsApiUrl)
+            .respond(mockedSettingsDesktopResponse, 200);
     }
 
     static async waitForElementNotVisible(elm: Selector): Promise<void> {

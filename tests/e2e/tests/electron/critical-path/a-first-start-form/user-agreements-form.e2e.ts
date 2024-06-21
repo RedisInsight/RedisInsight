@@ -7,7 +7,8 @@ import { UserAgreementDialog } from '../../../../pageObjects/dialogs';
 const userAgreementDialog = new UserAgreementDialog();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 
-fixture `Agreements Verification`
+// Skipped due to unworking mocs to refresh eula https://redislabs.atlassian.net/browse/RI-5868
+fixture.skip `Agreements Verification`
     .meta({ type: 'critical_path', rte: rte.none })
     .page(commonUrl)
     .requestHooks(Common.mockSettingsResponse())

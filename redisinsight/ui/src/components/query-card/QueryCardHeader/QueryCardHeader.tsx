@@ -304,7 +304,7 @@ const QueryCardHeader = (props: Props) => {
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy query"
-              className="copy-btn"
+              className={cx('copy-btn', styles.copyBtn)}
               disabled={emptyCommand}
               onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
               data-testid="copy-command"

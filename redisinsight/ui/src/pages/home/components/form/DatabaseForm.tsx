@@ -97,7 +97,7 @@ const DatabaseForm = (props: Props) => {
             <EuiFormRow label="Host*">
               <EuiFieldText
                 autoFocus={autoFocus}
-                name="host"
+                name="ip"
                 id="host"
                 data-testid="host"
                 color="secondary"

@@ -192,7 +192,7 @@ export interface InitialStateRdiInstances {
 
 // Rdi test target connections
 export enum TestConnectionStatus {
-  Fail = 'fail',
+  Fail = 'failed',
   Success = 'success',
 }
 

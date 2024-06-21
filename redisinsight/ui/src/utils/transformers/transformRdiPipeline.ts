@@ -1,5 +1,17 @@
-import yaml from 'js-yaml'
-import { IPipeline, IPipelineJSON, ISources, TestConnectionStatus, TransformResult } from 'uiSrc/slices/interfaces'
+import yaml, { YAMLException } from 'js-yaml'
+import { IPipeline, IPipelineJSON, ITargets, TestConnectionStatus, TransformResult } from 'uiSrc/slices/interfaces'
+
+export const yamlToJson = (value: string, onError: (e: string) => void) => {
+  try {
+    return yaml.load(value) || {}
+  } catch (e) {
+    if (e instanceof YAMLException) {
+      onError(e.reason)
+      return undefined
+    }
+    return undefined
+  }
+}
 
 export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   config: yaml.dump(pipeline.config),
@@ -17,7 +29,7 @@ export const pipelineToJson = ({ config, jobs }: IPipeline): IPipelineJSON => <I
   }, {})
 })
 
-export const transformConnectionResults = (sources: ISources): TransformResult => {
+export const transformConnectionResults = (sources: ITargets): TransformResult => {
   const result: TransformResult = { success: [], fail: [] }
   if (!sources) {
     return result

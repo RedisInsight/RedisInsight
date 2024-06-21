@@ -6,7 +6,7 @@ import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
 
-import yaml from 'js-yaml'
+import { AxiosError } from 'axios'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -17,8 +17,9 @@ import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { testConnectionsAction, rdiTestConnectionsSelector, testConnectionsController } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
-import { isEqualPipelineFile } from 'uiSrc/utils'
+import { isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -57,8 +58,27 @@ const Config = () => {
   }, [isOpenDialog, config, pipelineLoading])
 
   const testConnections = () => {
+    const onError = (msg: string) => {
+      dispatch(addErrorNotification({
+        response: {
+          data: {
+            message: (
+              <>
+                <EuiText>Config has an invalid structure.</EuiText>
+                <EuiText>{msg}</EuiText>
+              </>
+            )
+          }
+        }
+      } as AxiosError))
+    }
+
+    const JSONValue = yamlToJson(config, onError)
+    if (!JSONValue) {
+      return
+    }
     setIsPanelOpen(true)
-    dispatch(testConnectionsAction(rdiInstanceId, yaml.load(config)))
+    dispatch(testConnectionsAction(rdiInstanceId, JSONValue))
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEST_TARGET_CONNECTIONS_CLICKED,
       eventData: {

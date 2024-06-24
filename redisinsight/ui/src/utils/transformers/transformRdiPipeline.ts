@@ -1,5 +1,12 @@
 import yaml, { YAMLException } from 'js-yaml'
-import { IPipeline, IPipelineJSON, ITargets, TestConnectionStatus, TransformResult } from 'uiSrc/slices/interfaces'
+import {
+  IPipeline,
+  IPipelineJSON,
+  ITargets,
+  IYamlFormatError,
+  TestConnectionStatus,
+  TransformResult
+} from 'uiSrc/slices/interfaces'
 
 export const yamlToJson = (value: string, onError: (e: string) => void) => {
   try {
@@ -7,7 +14,6 @@ export const yamlToJson = (value: string, onError: (e: string) => void) => {
   } catch (e) {
     if (e instanceof YAMLException) {
       onError(e.reason)
-      return undefined
     }
     return undefined
   }
@@ -21,13 +27,38 @@ export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   }))
 })
 
-export const pipelineToJson = ({ config, jobs }: IPipeline): IPipelineJSON => <IPipelineJSON>({
-  config: yaml.load(config) || {},
-  jobs: jobs.reduce<{ [key: string]: unknown }>((acc, job) => {
-    acc[job.name] = yaml.load(job.value)
+export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IYamlFormatError[]) => void) => {
+  const result: IPipelineJSON = {
+    config: {},
+    jobs: []
+  }
+  const errors = []
+
+  try {
+    result.config = yaml.load(config) || {}
+  } catch (e) {
+    if (e instanceof YAMLException) {
+      errors.push({ filename: 'config', msg: e.reason })
+    }
+  }
+  result.jobs = jobs.reduce<{ [key: string]: unknown }>((acc, job) => {
+    try {
+      acc[job.name] = yaml.load(job.value)
+    } catch (e) {
+      if (e instanceof YAMLException) {
+        errors.push({ filename: job.name, msg: e.reason })
+      }
+    }
     return acc
   }, {})
-})
+
+  if (errors.length) {
+    onError(errors)
+    return undefined
+  }
+
+  return result
+}
 
 export const transformConnectionResults = (sources: ITargets): TransformResult => {
   const result: TransformResult = { success: [], fail: [] }

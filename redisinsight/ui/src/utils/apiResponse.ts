@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { first, isArray, get } from 'lodash'
-import { AddRedisDatabaseStatus, EnhancedAxiosError, IBulkOperationResult } from 'uiSrc/slices/interfaces'
+import { AddRedisDatabaseStatus, EnhancedAxiosError, ErrorOptions, IBulkOperationResult } from 'uiSrc/slices/interfaces'
 import { parseCustomError } from 'uiSrc/utils'
 
 export const DEFAULT_ERROR_MESSAGE = 'Something was wrong!'
@@ -11,6 +11,12 @@ export const getAxiosError = (error: EnhancedAxiosError): AxiosError => {
   }
   return error
 }
+
+export const createAxiosError = (options: ErrorOptions): AxiosError => ({
+  response: {
+    data: options
+  }
+} as AxiosError)
 
 export const getApiErrorCode = (error: AxiosError) => error?.response?.status
 

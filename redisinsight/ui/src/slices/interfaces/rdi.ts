@@ -233,3 +233,8 @@ export interface IStateRdiTestConnections {
 export type TJMESPathFunctions = {
   [key: string]: Pick<ICommand, 'summary'> & Required<Pick<ICommand, 'arguments'>>
 }
+
+export interface IYamlFormatError {
+  filename: string
+  msg: string
+}

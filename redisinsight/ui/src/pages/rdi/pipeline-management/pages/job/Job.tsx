@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { get, throttle } from 'lodash'
+import { capitalize, get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { AxiosError } from 'axios/index'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -15,7 +14,7 @@ import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
-import { isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
@@ -69,22 +68,16 @@ const Job = (props: Props) => {
   }, [name])
 
   const handleDryRunJob = () => {
-    const onError = (msg: string) => {
-      dispatch(addErrorNotification({
-        response: {
-          data: {
-            message: (
-              <>
-                <EuiText>{`${name} has an invalid structure.`}</EuiText>
-                <EuiText>{msg}</EuiText>
-              </>
-            )
-          }
-        }
-      } as AxiosError))
-    }
-
-    const JSONValue = yamlToJson(value, onError)
+    const JSONValue = yamlToJson(value, (msg) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: (
+          <>
+            {`${capitalize(name)} has an invalid structure.`}
+            <EuiText>{msg}</EuiText>
+          </>
+        )
+      })))
+    })
     if (!JSONValue) {
       return
     }

@@ -197,7 +197,7 @@ export class ApiRdiClient extends RdiClient {
         const { status, data, error } = response.data;
 
         if (status === 'failed') {
-          throw new RdiPipelineInternalServerErrorException(error);
+          throw new RdiPipelineInternalServerErrorException(error?.message);
         }
 
         if (status === 'completed') {

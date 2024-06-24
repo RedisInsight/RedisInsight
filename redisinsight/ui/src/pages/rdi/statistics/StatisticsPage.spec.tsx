@@ -128,7 +128,7 @@ describe('StatisticsPage', () => {
   it('renders the empty state when pipeline data is empty', () => {
     (rdiPipelineStatusSelector as jest.Mock).mockReturnValueOnce({
       data: {
-        components: { processor: 'ready' },
+        components: { processor: 'not-ready' },
         pipelines: {
           default: {
             status: 'not ready',

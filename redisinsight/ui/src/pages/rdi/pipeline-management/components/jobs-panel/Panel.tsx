@@ -13,6 +13,7 @@ import {
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { isArray } from 'lodash'
 import yaml from 'js-yaml'
 
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
@@ -65,8 +66,8 @@ const DryRunJobPanel = (props: Props) => {
 
   useEffect(() => {
     try {
-      JSON.parse(input)
-      setIsFormValid(true)
+      const jsonValue = JSON.parse(input)
+      setIsFormValid(isArray(jsonValue))
     } catch (e) {
       setIsFormValid(false)
     }
@@ -78,9 +79,11 @@ const DryRunJobPanel = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    if (!results?.output) return
+    if (!results?.output || !isArray(results.output)) return
 
-    const targets = results.output.map(({ connection }) => getTargetOption(connection))
+    const targets = results.output
+      .filter(({ connection }) => connection)
+      .map(({ connection }) => getTargetOption(connection))
     setTargetOptions(targets)
     setSelectedTarget(targets[0]?.value)
   }, [results])
@@ -114,6 +117,7 @@ const DryRunJobPanel = (props: Props) => {
   const isSelectAvailable = selectedTab === PipelineJobsTabs.Output
     && !!results?.output
     && (results?.output?.length > 1)
+    && !!targetOptions.length
 
   const Tabs = useCallback(() => (
     <EuiTabs className={styles.tabs}>

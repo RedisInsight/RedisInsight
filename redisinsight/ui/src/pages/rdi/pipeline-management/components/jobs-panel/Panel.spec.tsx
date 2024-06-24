@@ -53,7 +53,7 @@ describe('JobsPanel', () => {
     expect(screen.getByTestId('dry-run-btn')).toBeDisabled()
 
     // set valid json value
-    fireEvent.change(screen.getByTestId('input-value'), { target: { value: 1 } })
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
 
     expect(screen.getByTestId('dry-run-btn')).not.toBeDisabled()
   })
@@ -61,7 +61,7 @@ describe('JobsPanel', () => {
   it('should call proper telemetry events', () => {
     render(<JobsPanel {...instance(mockedProps)} />)
 
-    fireEvent.change(screen.getByTestId('input-value'), { target: { value: 1 } })
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
     fireEvent.click(screen.getByTestId('dry-run-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -92,7 +92,7 @@ describe('JobsPanel', () => {
   it('should fetch dry run job results', () => {
     render(<JobsPanel {...instance(mockedProps)} />)
 
-    fireEvent.change(screen.getByTestId('input-value'), { target: { value: 1 } })
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
     fireEvent.click(screen.getByTestId('dry-run-btn'))
 
     const expectedActions = [

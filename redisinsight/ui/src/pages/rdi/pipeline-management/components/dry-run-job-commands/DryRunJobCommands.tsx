@@ -11,22 +11,28 @@ export interface Props {
   target?: string
 }
 
+const NO_COMMANDS_MESSAGE = 'No Redis commands provided.'
+
 const DryRunJobCommands = ({ target }: Props) => {
   const { results } = useSelector(rdiDryRunJobSelector)
   const [commands, setCommands] = useState<string>('')
 
   useEffect(() => {
-    const targetCommands = results?.output
-      ?.find((el) => el.connection === target)
-      ?.commands
+    if (!results) {
+      return
+    }
 
     try {
+      const targetCommands = results?.output
+        ?.find((el) => el.connection === target)
+        ?.commands
+
       monaco.editor.colorize((targetCommands ?? []).join('\n').trim(), MonacoLanguage.Redis, {})
         .then((data) => {
           setCommands(data)
         })
     } catch (e) {
-      setCommands((targetCommands ?? []).join(''))
+      setCommands(NO_COMMANDS_MESSAGE)
     }
   }, [results, target])
 

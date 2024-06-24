@@ -32,23 +32,12 @@ export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IY
     config: {},
     jobs: []
   }
-  const errors = []
+  const errors: IYamlFormatError[] = []
 
-  try {
-    result.config = yaml.load(config) || {}
-  } catch (e) {
-    if (e instanceof YAMLException) {
-      errors.push({ filename: 'config', msg: e.reason })
-    }
-  }
+  result.config = yamlToJson(config, (msg) => errors.push({ filename: 'config', msg })) || {}
+
   result.jobs = jobs.reduce<{ [key: string]: unknown }>((acc, job) => {
-    try {
-      acc[job.name] = yaml.load(job.value) || {}
-    } catch (e) {
-      if (e instanceof YAMLException) {
-        errors.push({ filename: job.name, msg: e.reason })
-      }
-    }
+    acc[job.name] = yamlToJson(job.value, (msg) => errors.push({ filename: job.name, msg })) || {}
     return acc
   }, {})
 

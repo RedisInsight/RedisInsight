@@ -190,7 +190,7 @@ const transformConnectionResultsTests: any[] = [
         }
       },
       target2: {
-        status: 'fail',
+        status: 'failed',
         error: {
           code: 'INVALID_CREDENTIALS',
           message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
@@ -213,7 +213,7 @@ const transformConnectionResultsTests: any[] = [
         unknownProperty: 'foo bar'
       },
       target7: {
-        status: 'fail',
+        status: 'failed',
       },
     },
     {

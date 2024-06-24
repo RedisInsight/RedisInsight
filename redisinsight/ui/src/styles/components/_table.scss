@@ -52,6 +52,19 @@ body {
       &:hover {
         background-color: var(--tableRowHoverColor);
       }
+
+      .copyHostPortText,
+      .copyUrlText,
+      .copyPublicEndpointText,
+      .column_name,
+      .column_name .euiToolTipAnchor {
+        display: inline-block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 100%;
+        vertical-align: top;
+      }
     }
   }
 

@@ -131,7 +131,7 @@ describe('StatisticsPage', () => {
         components: { processor: 'not-ready' },
         pipelines: {
           default: {
-            status: 'not ready',
+            status: 'not-ready',
             state: 'some',
             tasks: 'none',
           }

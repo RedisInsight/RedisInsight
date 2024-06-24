@@ -189,7 +189,7 @@ executors:
       docker_layer_caching: true
   docker-node:
     docker:
-      - image: cimg/node:20.15.0
+      - image: cimg/node:20.14.0
   docker:
     docker:
       - image: cibuilds/docker:19.03.5

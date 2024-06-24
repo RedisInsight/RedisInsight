@@ -43,7 +43,7 @@ export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IY
   }
   result.jobs = jobs.reduce<{ [key: string]: unknown }>((acc, job) => {
     try {
-      acc[job.name] = yaml.load(job.value)
+      acc[job.name] = yaml.load(job.value) || {}
     } catch (e) {
       if (e instanceof YAMLException) {
         errors.push({ filename: job.name, msg: e.reason })

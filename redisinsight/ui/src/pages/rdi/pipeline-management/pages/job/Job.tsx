@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { capitalize, get, throttle } from 'lodash'
+import { upperFirst, get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
@@ -72,7 +72,7 @@ const Job = (props: Props) => {
       dispatch(addErrorNotification(createAxiosError({
         message: (
           <>
-            {`${capitalize(name)} has an invalid structure.`}
+            <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
             <EuiText>{msg}</EuiText>
           </>
         )

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Formik, FormikProps } from 'formik'
 import { EuiText } from '@elastic/eui'
-import { capitalize } from 'lodash'
+import { upperFirst } from 'lodash'
 
 import {
   appContextSelector,
@@ -95,7 +95,7 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       dispatch(addErrorNotification(createAxiosError({
         message: (
           <>
-            <EuiText>{`${capitalize(errors[0].filename)} has an invalid structure.`}</EuiText>
+            <EuiText>{`${upperFirst(errors[0].filename)} has an invalid structure.`}</EuiText>
             <EuiText>{errors[0].msg}</EuiText>
           </>
         )

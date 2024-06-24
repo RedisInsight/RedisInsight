@@ -9,6 +9,9 @@ import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, Telemetry
 import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import JobWrapper from './JobWrapper'
+import {addErrorNotification} from "uiSrc/slices/app/notifications";
+import {EuiText} from "@elastic/eui";
+import {AxiosError} from "axios";
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -178,5 +181,43 @@ describe('JobWrapper', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should render error notification', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { jobs: { test: {} } },
+      data: { jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] }
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] },
+    };
+    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+
+    const { queryByTestId } = render(<JobWrapper />)
+
+    fireEvent.click(screen.getByTestId('rdi-job-dry-run'))
+
+    const expectedActions = [
+      addErrorNotification({
+        response: {
+          data: {
+            message: (
+              <>
+                <EuiText>JobName has an invalid structure.</EuiText>
+                <EuiText>end of the stream or a document separator is expected</EuiText>
+              </>
+            )
+          }
+        }
+      } as AxiosError)
+    ]
+
+    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
+
+    expect(queryByTestId('dry-run-panel')).not.toBeInTheDocument()
   })
 })

@@ -34,7 +34,6 @@ const Job = (props: Props) => {
 
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
-  const [JSONJob, setJSONJob] = useState<object>()
   const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -82,7 +81,6 @@ const Job = (props: Props) => {
       return
     }
     setIsPanelOpen(true)
-    setJSONJob(JSONValue)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEST_JOB_OPENED,
       eventData: {
@@ -250,7 +248,8 @@ const Job = (props: Props) => {
       {isPanelOpen && (
         <DryRunJobPanel
           onClose={() => setIsPanelOpen(false)}
-          job={JSONJob}
+          job={value}
+          name={name}
         />
       )}
     </>

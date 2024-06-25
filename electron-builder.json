@@ -7,7 +7,6 @@
     "node_modules",
     "package.json"
   ],
-  "afterSign": "electron-builder-notarize",
   "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
   "asarUnpack": [
@@ -32,6 +31,9 @@
         "arch": ["x64", "arm64"]
       }
     ],
+    "notarize": {
+      "teamId": "UUK47G4BAZ"
+    },
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,

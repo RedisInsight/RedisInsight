@@ -189,7 +189,7 @@ executors:
       docker_layer_caching: true
   docker-node:
     docker:
-      - image: cimg/node:20.15
+      - image: cimg/node:20.14
   docker:
     docker:
       - image: cibuilds/docker:19.03.5
@@ -387,7 +387,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '20.15'
+          node-version: '20.14'
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
@@ -605,7 +605,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '20.15'
+          node-version: '20.14'
       - attach_workspace:
           at: .
       - run:
@@ -875,7 +875,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '20.15'
+          node-version: '20.14'
       - run:
           name: Install dependencies
           command: |

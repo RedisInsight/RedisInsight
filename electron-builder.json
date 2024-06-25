@@ -57,9 +57,7 @@
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
-      "Contents/Resources/app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
-      "Contents/Resources/app-arm64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node",
-      "Contents/Resources/app-x64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node"
+      "Contents/Resources/app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node"
     ],
     "artifactName": "Redis-Insight-${os}-${arch}-mas.${ext}"
   },
@@ -77,9 +75,7 @@
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-arm64/node_sqlite3.node",
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/sqlite3/lib/binding/napi-v6-darwin-unknown-x64/node_sqlite3.node",
       "Contents/Resources/app-arm64.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
-      "Contents/Resources/app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node",
-      "Contents/Resources/app-arm64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node",
-      "Contents/Resources/app-x64.asar.unpacked/node_modules/cpu-features/build/Release/cpufeatures.node"
+      "Contents/Resources/app-x64.asar.unpacked/node_modules/keytar/build/Release/keytar.node"
     ],
     "artifactName": "Redis-Insight-${os}-${arch}-masDev.${ext}"
   },

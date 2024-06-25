@@ -13,7 +13,7 @@ import {
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { isArray } from 'lodash'
+import { isArray, upperFirst } from 'lodash'
 
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -21,12 +21,14 @@ import { rdiDryRunJobSelector, rdiDryRunJob, setInitialDryRunJob } from 'uiSrc/s
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
 import DryRunJobCommands from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-commands'
 import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-transformations'
-import { formatLongName } from 'uiSrc/utils'
+import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import styles from './styles.module.scss'
 
 export interface Props {
-  job?: object
+  job: string
+  name: string
   onClose: () => void
 }
 
@@ -42,7 +44,7 @@ const getTargetOption = (value: string) => {
 }
 
 const DryRunJobPanel = (props: Props) => {
-  const { job, onClose } = props
+  const { job, name, onClose } = props
   const { loading: isDryRunning, results } = useSelector(rdiDryRunJobSelector)
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
@@ -110,9 +112,23 @@ const DryRunJobPanel = (props: Props) => {
         id: rdiInstanceId,
       },
     })
+    const JSONJob = yamlToJson(job, (msg) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: (
+          <>
+            <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
+            <EuiText>{msg}</EuiText>
+          </>
+        )
+      })))
+    })
+    if (!JSONJob) {
+      return
+    }
     const JSONInput = JSON.parse(input)
     const formattedValue = isArray(JSONInput) ? JSONInput : [JSONInput]
-    dispatch(rdiDryRunJob(rdiInstanceId, formattedValue, job))
+
+    dispatch(rdiDryRunJob(rdiInstanceId, formattedValue, JSONJob))
   }
 
   const isSelectAvailable = selectedTab === PipelineJobsTabs.Output

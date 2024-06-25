@@ -3,7 +3,7 @@ set -e
 
 PLATFORM=${PLATFORM:-'linux'}
 ARCH=${ARCH:-'x64'}
-LIBC=${LIBC:-''}
+LIBC=${LIBC:-'unknown'}
 #FILENAME="Redis-Insight-$PLATFORM.$VERSION.$ARCH.zip"
 FILENAME="Redis-Insight-web-$PLATFORM"
 if [ ! -z $LIBC ]
@@ -43,6 +43,7 @@ api/dist \
 ui/dist \
 LICENSE \
 && cd ..
+#
 
 mkdir -p release/web
 cp redisinsight/build.tar.gz release/web/"$FILENAME"

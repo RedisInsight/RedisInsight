@@ -894,8 +894,8 @@ jobs:
             PLATFORM=linux ARCH=arm64 LIBC=musl .circleci/build/build_modules.sh
 
             # Redis Stack + VSC Linux
-            PLATFORM=linux ARCH=x64 .circleci/build/build_modules.sh
-            PLATFORM=linux ARCH=arm64 .circleci/build/build_modules.sh
+            PLATFORM=linux ARCH=x64 LIBC=libc .circleci/build/build_modules.sh
+            PLATFORM=linux ARCH=arm64 LIBC=libc .circleci/build/build_modules.sh
 
             # VSC Darwin
             PLATFORM=darwin ARCH=x64 .circleci/build/build_modules.sh

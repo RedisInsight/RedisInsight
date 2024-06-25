@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Formik, FormikProps } from 'formik'
+import { EuiText } from '@elastic/eui'
+import { upperFirst } from 'lodash'
 
 import {
   appContextSelector,
@@ -22,7 +24,8 @@ import {
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { Nullable, pipelineToJson } from 'uiSrc/utils'
+import { createAxiosError, Nullable, pipelineToJson } from 'uiSrc/utils'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import InstancePageRouter from './InstancePageRouter'
 import { ConfirmLeavePagePopup } from './components'
@@ -88,7 +91,19 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   const onSubmit = (values: IPipeline) => {
-    const JSONValues = pipelineToJson(values)
+    const JSONValues = pipelineToJson(values, (errors) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: (
+          <>
+            <EuiText>{`${upperFirst(errors[0].filename)} has an invalid structure.`}</EuiText>
+            <EuiText>{errors[0].msg}</EuiText>
+          </>
+        )
+      })))
+    })
+    if (!JSONValues) {
+      return
+    }
     dispatch(deployPipelineAction(rdiInstanceId, JSONValues))
   }
 

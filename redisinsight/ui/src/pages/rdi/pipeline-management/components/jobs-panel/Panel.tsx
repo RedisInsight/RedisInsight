@@ -14,7 +14,6 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { isArray } from 'lodash'
-import yaml from 'js-yaml'
 
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -27,7 +26,7 @@ import { formatLongName } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
-  job: string
+  job?: object
   onClose: () => void
 }
 
@@ -111,7 +110,7 @@ const DryRunJobPanel = (props: Props) => {
         id: rdiInstanceId,
       },
     })
-    dispatch(rdiDryRunJob(rdiInstanceId, JSON.parse(input), yaml.load(job)))
+    dispatch(rdiDryRunJob(rdiInstanceId, JSON.parse(input), job))
   }
 
   const isSelectAvailable = selectedTab === PipelineJobsTabs.Output

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { get, throttle } from 'lodash'
+import { upperFirst, get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
@@ -14,10 +14,11 @@ import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
-import { isEqualPipelineFile, Maybe } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -33,6 +34,7 @@ const Job = (props: Props) => {
 
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
+  const [JSONJob, setJSONJob] = useState<object>()
   const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -66,7 +68,21 @@ const Job = (props: Props) => {
   }, [name])
 
   const handleDryRunJob = () => {
+    const JSONValue = yamlToJson(value, (msg) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: (
+          <>
+            <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
+            <EuiText>{msg}</EuiText>
+          </>
+        )
+      })))
+    })
+    if (!JSONValue) {
+      return
+    }
     setIsPanelOpen(true)
+    setJSONJob(JSONValue)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEST_JOB_OPENED,
       eventData: {
@@ -234,7 +250,7 @@ const Job = (props: Props) => {
       {isPanelOpen && (
         <DryRunJobPanel
           onClose={() => setIsPanelOpen(false)}
-          job={value}
+          job={JSONJob}
         />
       )}
     </>

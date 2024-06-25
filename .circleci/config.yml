@@ -176,7 +176,7 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@5.0.2
+  node: circleci/node@5.2.0
   aws: circleci/aws-cli@2.0.3
 
 executors:

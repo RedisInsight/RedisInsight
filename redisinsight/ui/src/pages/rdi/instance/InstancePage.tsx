@@ -63,6 +63,8 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [rdiInstanceId])
 
   useEffect(() => {
+    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
+    dispatch(getPipelineStatusAction(rdiInstanceId))
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
       if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {
@@ -71,9 +73,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       }
       history.push(Pages.rdiPipelineManagement(rdiInstanceId))
     }
-
-    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
-    dispatch(getPipelineStatusAction(rdiInstanceId))
   }, [])
 
   useEffect(() => {

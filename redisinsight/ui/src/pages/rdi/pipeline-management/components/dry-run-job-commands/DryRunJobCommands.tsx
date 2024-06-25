@@ -27,6 +27,10 @@ const DryRunJobCommands = ({ target }: Props) => {
         ?.find((el) => el.connection === target)
         ?.commands
 
+      if (!targetCommands) {
+        setCommands(NO_COMMANDS_MESSAGE)
+        return
+      }
       monaco.editor.colorize((targetCommands ?? []).join('\n').trim(), MonacoLanguage.Redis, {})
         .then((data) => {
           setCommands(data)

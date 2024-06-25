@@ -29,6 +29,21 @@ describe('DryRunJobCommands', () => {
     expect(screen.getByTestId('commands-output')).toHaveTextContent('No Redis commands provided.')
   })
 
+  it('should render no commands message if there is no commands', async () => {
+    const rdiDryRunJobSelectorMock = jest.fn().mockReturnValue({
+      results: {
+        output: [{ name: 1 }],
+      }
+    });
+    (rdiDryRunJobSelector as jest.Mock).mockImplementationOnce(rdiDryRunJobSelectorMock)
+
+    await act(async () => {
+      render(<DryRunJobCommands />)
+    })
+
+    expect(screen.getByTestId('commands-output')).toHaveTextContent('No Redis commands provided.')
+  })
+
   it('should render transformations', async () => {
     const rdiDryRunJobSelectorMock = jest.fn().mockReturnValue({
       results: {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { useFormikContext } from 'formik'
-import { upperFirst, get, throttle } from 'lodash'
+import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
@@ -12,6 +12,7 @@ import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/sl
 import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
@@ -69,12 +70,7 @@ const Job = (props: Props) => {
   const handleDryRunJob = () => {
     const JSONValue = yamlToJson(value, (msg) => {
       dispatch(addErrorNotification(createAxiosError({
-        message: (
-          <>
-            <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
-            <EuiText>{msg}</EuiText>
-          </>
-        )
+        message: rdiErrorMessages.invalidStructure(name, msg)
       })))
     })
     if (!JSONValue) {

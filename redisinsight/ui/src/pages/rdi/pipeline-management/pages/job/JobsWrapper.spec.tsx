@@ -2,16 +2,15 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
+
 import { deleteChangedFile, getPipelineStrategies, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import JobWrapper from './JobWrapper'
-import {addErrorNotification} from "uiSrc/slices/app/notifications";
-import {EuiText} from "@elastic/eui";
-import {AxiosError} from "axios";
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -207,8 +206,9 @@ describe('JobWrapper', () => {
           data: {
             message: (
               <>
-                <EuiText>JobName has an invalid structure.</EuiText>
-                <EuiText>end of the stream or a document separator is expected</EuiText>
+                JobName has an invalid structure.
+                <br />
+                end of the stream or a document separator is expected
               </>
             )
           }

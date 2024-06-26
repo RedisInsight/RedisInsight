@@ -14,6 +14,7 @@ import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfa
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { testConnectionsAction, rdiTestConnectionsSelector, testConnectionsController } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
 import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
@@ -59,12 +60,7 @@ const Config = () => {
   const testConnections = () => {
     const JSONValue = yamlToJson(config, (msg) => {
       dispatch(addErrorNotification(createAxiosError({
-        message: (
-          <>
-            <EuiText>Config has an invalid structure.</EuiText>
-            <EuiText>{msg}</EuiText>
-          </>
-        )
+        message: rdiErrorMessages.invalidStructure('config', msg)
       })))
     })
     if (!JSONValue) {

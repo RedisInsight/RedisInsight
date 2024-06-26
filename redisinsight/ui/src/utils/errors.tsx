@@ -14,7 +14,7 @@ export const getRdiValidationMessage = (message: string = '', loc?: Array<string
   }
 
   const [, ...rest] = loc
-  const formattedLoc = rest.reduce<string[]>((acc, curr, idx) => {
+  const formattedLoc = rest.reduce<string[]>((acc, curr) => {
     if (isNumber(curr)) {
       acc[acc.length - 1] += `[${curr}]`
     } else {

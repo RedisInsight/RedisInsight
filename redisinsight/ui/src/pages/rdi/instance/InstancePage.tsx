@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { Formik, FormikProps } from 'formik'
-import { upperFirst } from 'lodash'
 
 import {
   appContextSelector,
@@ -23,7 +22,7 @@ import {
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { createAxiosError, Nullable, pipelineToJson } from 'uiSrc/utils'
+import { createAxiosError, Nullable, pipelineToJson, rdiErrorMessages } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import InstancePageRouter from './InstancePageRouter'
@@ -91,13 +90,7 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const onSubmit = (values: IPipeline) => {
     const JSONValues = pipelineToJson(values, (errors) => {
       dispatch(addErrorNotification(createAxiosError({
-        message: (
-          <>
-            {`${upperFirst(errors[0].filename)} has an invalid structure.`}
-            <br />
-            {errors[0].msg}
-          </>
-        )
+        message: rdiErrorMessages.invalidStructure(errors[0].filename, errors[0].msg)
       })))
     })
     if (!JSONValues) {

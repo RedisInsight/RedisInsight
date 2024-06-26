@@ -16,7 +16,7 @@ import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
 import { testConnectionsAction, rdiTestConnectionsSelector, testConnectionsController } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
-import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, rdiErrorMessages, yamlToJson } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
@@ -59,13 +59,7 @@ const Config = () => {
   const testConnections = () => {
     const JSONValue = yamlToJson(config, (msg) => {
       dispatch(addErrorNotification(createAxiosError({
-        message: (
-          <>
-            Config has an invalid structure.
-            <br />
-            {msg}
-          </>
-        )
+        message: rdiErrorMessages.invalidStructure('config', msg)
       })))
     })
     if (!JSONValue) {

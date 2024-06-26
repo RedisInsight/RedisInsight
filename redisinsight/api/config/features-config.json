@@ -1,5 +1,5 @@
 {
-  "version": 2.5201,
+  "version": 2.5202,
   "features": {
     "rdi": {
       "flag": true,
@@ -79,11 +79,6 @@
           "value": "ELECTRON",
           "cond": "eq"
         },
-        {
-          "name": "agreements.analytics",
-          "value": true,
-          "cond": "eq"
-        }
       ]
     },
     "redisModuleFilter": {

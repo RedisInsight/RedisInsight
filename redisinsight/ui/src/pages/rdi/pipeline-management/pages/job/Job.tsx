@@ -12,9 +12,10 @@ import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/sl
 import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
-import { createAxiosError, isEqualPipelineFile, Maybe, rdiErrorMessages, yamlToJson } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 

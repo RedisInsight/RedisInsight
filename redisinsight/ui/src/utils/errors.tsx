@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { capitalize, isEmpty, isString, isArray, set, isNumber, upperFirst } from 'lodash'
+import { capitalize, isEmpty, isString, isArray, set, isNumber } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
@@ -201,14 +201,4 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
   }
 
   return set(error, 'response.data', parsedError) as AxiosError
-}
-
-export const rdiErrorMessages = {
-  invalidStructure: (name = 'Value', msg = 'Failed to convert YAML to JSON structure') => (
-    <>
-      {`${upperFirst(name)} has an invalid structure.`}
-      <br />
-      {msg}
-    </>
-  ),
 }

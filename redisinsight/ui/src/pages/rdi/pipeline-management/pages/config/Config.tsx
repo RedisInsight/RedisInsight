@@ -14,9 +14,10 @@ import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfa
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { testConnectionsAction, rdiTestConnectionsSelector, testConnectionsController } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
-import { createAxiosError, isEqualPipelineFile, rdiErrorMessages, yamlToJson } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'

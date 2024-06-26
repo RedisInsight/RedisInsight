@@ -22,7 +22,8 @@ import {
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { createAxiosError, Nullable, pipelineToJson, rdiErrorMessages } from 'uiSrc/utils'
+import { createAxiosError, Nullable, pipelineToJson } from 'uiSrc/utils'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import InstancePageRouter from './InstancePageRouter'

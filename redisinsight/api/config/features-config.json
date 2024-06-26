@@ -78,7 +78,7 @@
           "name": "config.server.buildType",
           "value": "ELECTRON",
           "cond": "eq"
-        },
+        }
       ]
     },
     "redisModuleFilter": {

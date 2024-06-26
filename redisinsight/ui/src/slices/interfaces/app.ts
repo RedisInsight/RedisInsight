@@ -54,7 +54,7 @@ export interface StateAppContext {
   workspace: AppWorkspace
   contextInstanceId: string
   contextRdiInstanceId: string
-  lastPage: string
+  lastBrowserPage: string
   dbConfig: {
     treeViewDelimiter: string
     treeViewSort: SortOrder

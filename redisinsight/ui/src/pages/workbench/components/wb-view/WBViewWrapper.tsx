@@ -44,7 +44,7 @@ interface IState {
 
 let state: IState = {
   loading: false,
-  instance: instanceInitState.connectedInstance,
+  instance: instanceInitState?.connectedInstance,
   unsupportedCommands: [],
   blockingCommands: [],
   visualizations: [],

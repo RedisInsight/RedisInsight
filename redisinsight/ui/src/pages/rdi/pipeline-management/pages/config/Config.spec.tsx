@@ -1,7 +1,6 @@
 import React from 'react'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
-import { EuiText } from '@elastic/eui'
 import { AxiosError } from 'axios'
 import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
@@ -191,8 +190,9 @@ describe('Config', () => {
           data: {
             message: (
               <>
-                <EuiText>Config has an invalid structure.</EuiText>
-                <EuiText>end of the stream or a document separator is expected</EuiText>
+                Config has an invalid structure.
+                <br />
+                end of the stream or a document separator is expected
               </>
             )
           }

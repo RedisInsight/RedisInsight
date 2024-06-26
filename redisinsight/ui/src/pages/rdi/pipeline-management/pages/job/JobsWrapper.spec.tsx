@@ -207,8 +207,9 @@ describe('JobWrapper', () => {
           data: {
             message: (
               <>
-                <EuiText>JobName has an invalid structure.</EuiText>
-                <EuiText>end of the stream or a document separator is expected</EuiText>
+                JobName has an invalid structure.
+                <br />
+                end of the stream or a document separator is expected
               </>
             )
           }

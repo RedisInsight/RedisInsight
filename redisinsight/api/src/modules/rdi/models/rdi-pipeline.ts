@@ -8,7 +8,7 @@ export enum RdiDeployStatus {
 export class RdiPipeline {
   // todo: defined high-level schema. not sure if we need it at all since we are not going to validate it or we are?
 
-  connection: unknown;
+  config?: unknown;
 
-  jobs: RdiJob[];
+  jobs?: unknown;
 }

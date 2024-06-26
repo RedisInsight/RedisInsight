@@ -21,10 +21,12 @@ export const yamlToJson = (value: string, onError: (e: string) => void) => {
 
 export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   config: yaml.dump(pipeline.config),
-  jobs: Object.entries(pipeline.jobs)?.map(([key, value]) => ({
-    name: key,
-    value: yaml.dump(value)
-  }))
+  jobs: pipeline.jobs
+    ? Object.entries(pipeline?.jobs)?.map(([key, value]) => ({
+      name: key,
+      value: yaml.dump(value)
+    }))
+    : []
 })
 
 export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IYamlFormatError[]) => void) => {

@@ -29,7 +29,7 @@ export class RdiPipelineAnalytics extends TelemetryBaseService {
       TelemetryEvents.RdiPipelineDeploymentSucceeded,
       {
         id,
-        jobsNumber: Object.keys(pipeline.jobs).length,
+        jobsNumber: pipeline.jobs ? Object.keys(pipeline.jobs).length : 0,
         source: 'server',
       },
     );

@@ -61,8 +61,9 @@ const Config = () => {
       dispatch(addErrorNotification(createAxiosError({
         message: (
           <>
-            <EuiText>Config has an invalid structure.</EuiText>
-            <EuiText>{msg}</EuiText>
+            Config has an invalid structure.
+            <br />
+            {msg}
           </>
         )
       })))

@@ -34,7 +34,7 @@ const mockSentinelDatabases = (props: SentinelDatabasesProps) => (
     <button type="button" onClick={() => props.onClose()} data-testid="close-btn">onClose</button>
     <button type="button" onClick={() => props.onBack()} data-testid="back-btn">onBack</button>
     <button type="button" onClick={() => props.onSubmit([])} data-testid="submit-btn">onSubmit</button>
-    <div className="databaseList sentinelDatabaseList">
+    <div className="itemList databaseList sentinelDatabaseList">
       <EuiInMemoryTable
         isSelectable
         items={props.masters}

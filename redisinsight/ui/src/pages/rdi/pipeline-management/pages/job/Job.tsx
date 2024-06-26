@@ -71,8 +71,9 @@ const Job = (props: Props) => {
       dispatch(addErrorNotification(createAxiosError({
         message: (
           <>
-            <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
-            <EuiText>{msg}</EuiText>
+            {`${upperFirst(name)} has an invalid structure.`}
+            <br />
+            {msg}
           </>
         )
       })))

@@ -23,7 +23,7 @@ describe('DryRunJobTransformations', () => {
     (rdiDryRunJobSelector as jest.Mock).mockImplementationOnce(rdiDryRunJobSelectorMock)
 
     render(<DryRunJobTransformations />)
-    expect(screen.getByTestId('transformations-output')).toHaveTextContent('No transformation results provided.')
+    expect(screen.getByTestId('transformations-output')).toHaveTextContent('No transformation results provided by the server.')
   })
 
   it('should render transformations', () => {

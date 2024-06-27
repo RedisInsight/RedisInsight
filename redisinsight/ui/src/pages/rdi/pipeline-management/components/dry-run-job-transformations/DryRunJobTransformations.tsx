@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { rdiDryRunJobSelector } from 'uiSrc/slices/rdi/dryRun'
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
 
-const NO_TRANSFORMATION_MESSAGE = 'No transformation results provided.'
+const NO_TRANSFORMATION_MESSAGE = 'No transformation results provided by the server.'
 
 const DryRunJobTransformations = () => {
   const { results } = useSelector(rdiDryRunJobSelector)

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Request } from 'express';
 import { RdiClientMetadata, RdiPipeline } from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';

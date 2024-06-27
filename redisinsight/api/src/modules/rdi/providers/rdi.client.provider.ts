@@ -28,6 +28,7 @@ export class RdiClientProvider {
   async create(clientMetadata: RdiClientMetadata): Promise<RdiClient> {
     const rdi = await this.repository.get(clientMetadata.id);
 
+    // TODO add 404
     return this.rdiClientFactory.createClient(clientMetadata, rdi);
   }
 

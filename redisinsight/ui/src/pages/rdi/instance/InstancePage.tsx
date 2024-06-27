@@ -19,7 +19,6 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   deployPipelineAction,
-  getPipelineStatusAction,
   rdiPipelineSelector,
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
@@ -67,7 +66,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
 
   useEffect(() => {
     dispatch(fetchConnectedInstanceAction(rdiInstanceId))
-    dispatch(getPipelineStatusAction(rdiInstanceId))
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
       if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {

@@ -103,22 +103,20 @@ const QueryActions = (props: Props) => {
         content={isLoading ? 'Please wait while the commands are being executed…' : KeyBoardTooltipContent}
         data-testid="run-query-tooltip"
       >
-        <>
-          <EuiButton
-            onClick={() => {
-              onSubmit()
-              setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
-            }}
-            isLoading={isLoading}
-            disabled={isLoading}
-            iconType="playFilled"
-            className={cx(styles.btn, styles.submitButton)}
-            aria-label="submit"
-            data-testid="btn-submit"
-          >
-            Run
-          </EuiButton>
-        </>
+        <EuiButton
+          onClick={() => {
+            onSubmit()
+            setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
+          }}
+          isLoading={isLoading}
+          disabled={isLoading}
+          iconType="playFilled"
+          className={cx(styles.btn, styles.submitButton)}
+          aria-label="submit"
+          data-testid="btn-submit"
+        >
+          Run
+        </EuiButton>
       </EuiToolTip>
     </div>
   )

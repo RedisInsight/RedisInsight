@@ -11,7 +11,7 @@ export interface Props {
   target?: string
 }
 
-const NO_COMMANDS_MESSAGE = 'No Redis commands provided.'
+const NO_COMMANDS_MESSAGE = 'No Redis commands provided by the server.'
 
 const DryRunJobCommands = ({ target }: Props) => {
   const { results } = useSelector(rdiDryRunJobSelector)

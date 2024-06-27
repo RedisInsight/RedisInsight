@@ -26,7 +26,7 @@ describe('DryRunJobCommands', () => {
       render(<DryRunJobCommands />)
     })
 
-    expect(screen.getByTestId('commands-output')).toHaveTextContent('No Redis commands provided.')
+    expect(screen.getByTestId('commands-output')).toHaveTextContent('No Redis commands provided by the server.')
   })
 
   it('should render no commands message if there is no commands', async () => {
@@ -41,7 +41,7 @@ describe('DryRunJobCommands', () => {
       render(<DryRunJobCommands />)
     })
 
-    expect(screen.getByTestId('commands-output')).toHaveTextContent('No Redis commands provided.')
+    expect(screen.getByTestId('commands-output')).toHaveTextContent('No Redis commands provided by the server.')
   })
 
   it('should render transformations', async () => {

@@ -43,7 +43,7 @@ const BrowserTabs = (props: Props) => {
   }
 
   return (
-    <EuiTabs className={styles.tabs}>
+    <EuiTabs className={styles.tabs} data-testid="browser-tabs">
       {tabs.map(({ id, title, page, onboard, isBeta }) => renderOnboardingTourWithChild(
         (
           <EuiTab

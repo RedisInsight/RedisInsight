@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Request } from 'express';
 import { RdiClientMetadata, RdiPipeline } from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto } from 'src/modules/rdi/dto';
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class RdiPipelineService {
@@ -23,7 +23,7 @@ export class RdiPipelineService {
     return await client.getSchema();
   }
 
-  async getPipeline(rdiClientMetadata: RdiClientMetadata): Promise<object> {
+  async getPipeline(rdiClientMetadata: RdiClientMetadata): Promise<RdiPipeline> {
     this.logger.log('Getting RDI pipeline');
 
     try {
@@ -34,7 +34,8 @@ export class RdiPipelineService {
       this.analytics.sendRdiPipelineFetched(rdiClientMetadata.id, response);
 
       this.logger.log('Succeed to get RDI pipeline');
-      return response;
+
+      return plainToClass(RdiPipeline, response);
     } catch (e) {
       this.logger.error('Failed to get RDI pipeline', e);
 

@@ -1,4 +1,5 @@
 import yaml, { YAMLException } from 'js-yaml'
+import { isEmpty } from 'lodash'
 import {
   IPipeline,
   IPipelineJSON,
@@ -20,11 +21,13 @@ export const yamlToJson = (value: string, onError: (e: string) => void) => {
 }
 
 export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
-  config: yaml.dump(pipeline.config),
-  jobs: Object.entries(pipeline.jobs)?.map(([key, value]) => ({
-    name: key,
-    value: yaml.dump(value)
-  }))
+  config: isEmpty(pipeline?.config) ? '' : yaml.dump(pipeline.config),
+  jobs: pipeline?.jobs
+    ? Object.entries(pipeline.jobs)?.map(([key, value]) => ({
+      name: key,
+      value: yaml.dump(value)
+    }))
+    : []
 })
 
 export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IYamlFormatError[]) => void) => {

@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
-import { rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
+import { rdiPipelineStatusSelector, getPipelineStatus } from 'uiSrc/slices/rdi/pipeline'
 import { getStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
@@ -315,6 +315,7 @@ describe('StatisticsPage', () => {
     render(<StatisticsPage />)
 
     const expectedActions = [
+      getPipelineStatus(),
       getStatistics(),
     ]
 

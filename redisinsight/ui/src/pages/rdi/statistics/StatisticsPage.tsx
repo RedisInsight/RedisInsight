@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStatusAction, rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
 import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import RdiInstancePageTemplate from 'uiSrc/templates/rdi-instance-page-template'
@@ -69,6 +69,7 @@ const StatisticsPage = () => {
   }
 
   useEffect(() => {
+    dispatch(getPipelineStatusAction(rdiInstanceId))
     dispatch(fetchRdiStatistics(rdiInstanceId))
 
     sendPageViewTelemetry({

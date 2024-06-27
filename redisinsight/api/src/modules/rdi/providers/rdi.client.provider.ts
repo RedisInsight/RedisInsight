@@ -1,12 +1,15 @@
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { RdiRepository } from 'src/modules/rdi/repository/rdi.repository';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 @Injectable()
 export class RdiClientProvider {
+  private logger: Logger = new Logger('RdiClientProvider');
+
   constructor(
     private readonly repository: RdiRepository,
     private readonly rdiClientStorage: RdiClientStorage,
@@ -28,7 +31,10 @@ export class RdiClientProvider {
   async create(clientMetadata: RdiClientMetadata): Promise<RdiClient> {
     const rdi = await this.repository.get(clientMetadata.id);
 
-    // TODO add 404
+    if (!rdi) {
+      this.logger.error(`RDI with ${clientMetadata.id} was not Found`);
+      throw new NotFoundException(ERROR_MESSAGES.INVALID_RDI_INSTANCE_ID);
+    }
     return this.rdiClientFactory.createClient(clientMetadata, rdi);
   }
 

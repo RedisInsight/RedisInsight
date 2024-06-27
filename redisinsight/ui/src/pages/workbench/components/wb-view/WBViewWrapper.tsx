@@ -230,7 +230,6 @@ const WBViewWrapper = () => {
       script={script}
       setScript={setScript}
       setScriptEl={setScriptEl}
-      scriptEl={scriptEl}
       scrollDivRef={scrollDivRef}
       activeMode={activeRunQueryMode}
       onSubmit={sourceValueSubmit}

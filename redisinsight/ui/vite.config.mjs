@@ -18,7 +18,7 @@ const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
 
 let base
 if (hostedApiBaseUrl) {
-  base = ''
+  base = '/'
 } else {
   base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 }

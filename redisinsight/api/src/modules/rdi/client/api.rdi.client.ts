@@ -31,6 +31,7 @@ import {
 import { convertKeysToCamelCase } from 'src/utils/base.helper';
 import { RdiPipelineTimeoutException } from 'src/modules/rdi/exceptions/rdi-pipeline.timeout-error.exception';
 import * as https from 'https';
+import { convertApiDataToRdiPipeline, convertRdiPipelineToApiPayload } from 'src/modules/rdi/utils/pipeline.util';
 
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
@@ -59,8 +60,9 @@ export class ApiRdiClient extends RdiClient {
 
   async getPipeline(): Promise<RdiPipeline> {
     try {
-      const response = await this.client.get(RdiUrl.GetPipeline);
-      return response.data;
+      const { data } = await this.client.get(RdiUrl.GetPipeline);
+
+      return convertApiDataToRdiPipeline(data);
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -95,7 +97,11 @@ export class ApiRdiClient extends RdiClient {
 
   async deploy(pipeline: RdiPipeline): Promise<void> {
     try {
-      const response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
+      const response = await this.client.post(
+        RdiUrl.Deploy,
+        convertRdiPipelineToApiPayload(pipeline),
+      );
+
       const actionId = response.data.action_id;
 
       return await this.pollActionStatus(actionId);

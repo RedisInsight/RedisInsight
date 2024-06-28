@@ -4,6 +4,7 @@ import { EuiLink, EuiText } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { findTutorialPath } from 'uiSrc/utils'
+import { TutorialsIds } from 'uiSrc/constants'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -11,15 +12,15 @@ import styles from './styles.module.scss'
 
 const TUTORIALS = [
   {
-    id: 'sq-intro',
+    id: TutorialsIds.IntroToSearch,
     title: 'Intro to search'
   },
   {
-    id: 'redis_use_cases_basic',
+    id: TutorialsIds.BasicRedisUseCases,
     title: 'Basic use cases'
   },
   {
-    id: 'vss-intro',
+    id: TutorialsIds.IntroVectorSearch,
     title: 'Intro to vector search'
   },
 ]

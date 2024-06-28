@@ -121,7 +121,7 @@ export class ClusterScannerStrategy extends ScannerStrategy {
         // eslint-disable-next-line no-param-reassign
         node.scanned = isNull(node.total) ? 1 : node.total;
       });
-      nodes[0].keys = await this.getKeysInfo(client, [keyName], args.type);
+      nodes[0].keys = await this.getKeysInfo(client, [keyName]);
       nodes[0].keys = nodes[0].keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;

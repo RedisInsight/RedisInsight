@@ -138,7 +138,7 @@ export enum PipelineStatus {
 export interface IPipelineStatus {
   components: Record<string, unknown>
   pipelines: {
-    defaults: {
+    defaults?: {
       status: PipelineStatus
       state: unknown
       tasks: unknown
@@ -192,7 +192,7 @@ export interface InitialStateRdiInstances {
 
 // Rdi test target connections
 export enum TestConnectionStatus {
-  Fail = 'fail',
+  Fail = 'failed',
   Success = 'success',
 }
 
@@ -232,4 +232,9 @@ export interface IStateRdiTestConnections {
 
 export type TJMESPathFunctions = {
   [key: string]: Pick<ICommand, 'summary'> & Required<Pick<ICommand, 'arguments'>>
+}
+
+export interface IYamlFormatError {
+  filename: string
+  msg: string
 }

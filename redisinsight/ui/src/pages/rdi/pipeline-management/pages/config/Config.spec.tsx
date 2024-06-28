@@ -1,6 +1,7 @@
 import React from 'react'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
 import { rdiPipelineSelector, setChangedFile, deleteChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
@@ -8,6 +9,7 @@ import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/util
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import Config from './Config'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -149,7 +151,7 @@ describe('Config', () => {
     expect(queryByTestId('test-connection-panel')).toBeInTheDocument()
   })
 
-  it('should open right panel', async () => {
+  it('should close right panel', async () => {
     const { queryByTestId } = render(<Config />)
 
     expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
@@ -164,6 +166,41 @@ describe('Config', () => {
       fireEvent.click(screen.getByTestId('close-test-connections-btn'))
     })
 
+    expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
+  })
+
+  it('should render error notification', async () => {
+    const mockUseFormikContext = {
+      setFieldValue: mockSetFieldValue,
+      values: { config: 'sources:incorrect\n target:' },
+    };
+    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+
+    const { queryByTestId } = render(<Config />)
+
+    expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('rdi-test-connection-btn'))
+    })
+
+    const expectedActions = [
+      addErrorNotification({
+        response: {
+          data: {
+            message: (
+              <>
+                Config has an invalid structure.
+                <br />
+                end of the stream or a document separator is expected
+              </>
+            )
+          }
+        }
+      } as AxiosError)
+    ]
+
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
     expect(queryByTestId('test-connection-panel')).not.toBeInTheDocument()
   })
 

@@ -2,7 +2,7 @@ import { monaco as monacoEditor } from 'react-monaco-editor'
 import { FUNCTIONS, KEYWORDS, OPERATORS } from 'uiSrc/constants/monaco/cypher/monacoCypher'
 
 const STRING_DOUBLE = 'string.double'
-const functions = FUNCTIONS.map((f) => f.name)
+const functions = FUNCTIONS.map((f) => f.label)
 
 export const getCypherMonarchTokensProvider = (): monacoEditor.languages.IMonarchLanguage => (
   {

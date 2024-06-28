@@ -100,5 +100,42 @@ describe('InlineItemEditor', () => {
       fireEvent.click(screen.getByTestId(/save-btn/))
       expect(onApplyMock).toBeCalled()
     })
+
+    it('should not call onApply if form is invalid', () => {
+      const onApplyMock = jest.fn().mockReturnValue(false)
+      render(
+        <InlineItemEditor
+          {...instance(mockedProps)}
+          isLoading
+          onApply={onApplyMock}
+          onDecline={jest.fn()}
+        />
+      )
+
+      expect(screen.getByTestId('apply-btn')).toBeDisabled()
+
+      fireEvent.submit(screen.getByTestId(INLINE_ITEM_EDITOR))
+
+      expect(onApplyMock).not.toBeCalled()
+    })
+
+    it('should call onApply if form is valid', () => {
+      const onApplyMock = jest.fn().mockReturnValue(false)
+      render(
+        <InlineItemEditor
+          {...instance(mockedProps)}
+          onApply={onApplyMock}
+          onDecline={jest.fn()}
+        />
+      )
+
+      fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), { target: { value: 'val123' } })
+
+      expect(screen.getByTestId('apply-btn')).not.toBeDisabled()
+
+      fireEvent.submit(screen.getByTestId(INLINE_ITEM_EDITOR))
+
+      expect(onApplyMock).toBeCalled()
+    })
   })
 })

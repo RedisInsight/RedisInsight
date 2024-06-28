@@ -89,7 +89,7 @@ const StatisticsPage = () => {
 
   // todo add interface
   if (statisticsResults.status === 'failed') {
-    return <EuiText style={{ margin: '20px auto' }}>unexpected error in your RDI endpoint, please refresh the page</EuiText>
+    return <EuiText style={{ margin: '20px auto' }}>Unexpected error in your RDI endpoint, please refresh the page</EuiText>
   }
 
   const { data: statisticsData } = statisticsResults

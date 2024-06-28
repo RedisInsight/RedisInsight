@@ -112,7 +112,7 @@ describe('InlineItemEditor', () => {
         />
       )
 
-      expect(screen.getByTestId('apply-btn')).not.toBeDisabled()
+      expect(screen.getByTestId('apply-btn')).toBeDisabled()
 
       fireEvent.submit(screen.getByTestId(INLINE_ITEM_EDITOR))
 

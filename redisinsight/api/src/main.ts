@@ -42,7 +42,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.useGlobalFilters(new GlobalExceptionFilter(app.getHttpAdapter()));
   app.use(bodyParser.json({ limit: '512mb' }));
   app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));
-  app.enableCors();
+  app.enableCors({ origin: 'http://localhost:8080', credentials: true });
 
   if (process.env.RI_APP_TYPE !== 'electron') {
     let prefix = serverConfig.globalPrefix;

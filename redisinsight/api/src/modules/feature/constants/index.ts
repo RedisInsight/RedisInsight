@@ -32,6 +32,7 @@ export enum KnownFeatures {
   triggersAndFunctions = 'triggersAndFunctions',
   DocumentationChat = 'documentationChat',
   DatabaseChat = 'databaseChat',
+  Csrf = 'csrf',
 }
 
 export interface IFeatureFlag {

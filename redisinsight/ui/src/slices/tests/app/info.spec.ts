@@ -188,4 +188,6 @@ describe('slices', () => {
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })
   })
+
+  // TODO: add tests for csrf token
 })

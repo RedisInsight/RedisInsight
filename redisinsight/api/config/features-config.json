@@ -1,5 +1,5 @@
 {
-  "version": 2.47,
+  "version": 2.48,
   "features": {
     "insightsRecommendations": {
       "flag": true,
@@ -108,6 +108,10 @@
     },
     "triggersAndFunctions": {
       "flag": true,
+      "perc": [[0,100]]
+    },
+    "csrf": {
+      "flag": false,
       "perc": [[0,100]]
     }
   }

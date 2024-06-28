@@ -52,6 +52,9 @@ export const initialState: StateAppFeatures = {
       },
       [FeatureFlags.triggersAndFunctions]: {
         flag: false
+      },
+      [FeatureFlags.csrf]: {
+        flag: false
       }
     }
   }

@@ -44,6 +44,17 @@ const appInfoSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+    getCsrfToken: (state) => {
+      state.loading = true
+    },
+    getCsrfTokenSuccess: (state, { payload }) => {
+      state.loading = false
+      state.server = payload
+    },
+    getCsrfTokenFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
     setShortcutsFlyoutState: (state, { payload }) => {
       state.isShortcutsFlyoutOpen = payload
     },

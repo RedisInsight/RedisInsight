@@ -4,9 +4,9 @@ import { EuiPage, EuiPageBody } from '@elastic/eui'
 
 import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { PagePlaceholder } from 'uiSrc/components'
+import { Csrf, FeatureFlagComponent, PagePlaceholder } from 'uiSrc/components'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
-import { Theme } from './constants'
+import { FeatureFlags, Theme } from './constants'
 import { themeService } from './services'
 import { Config, GlobalSubscriptions, NavigationMenu, Notifications, ShortcutsFlyout } from './components'
 import { ThemeProvider } from './contexts/themeContext'
@@ -14,6 +14,8 @@ import MainComponent from './components/main/MainComponent'
 import ThemeComponent from './components/theme/ThemeComponent'
 import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitializer/MonacoEnvironmentInitializer'
 import GlobalDialogs from './components/global-dialogs'
+import { appFeatureFlagsFeaturesSelector } from './slices/app/features'
+import { csrfSelector } from './slices/app/csrf'
 
 import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
 import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
@@ -35,11 +37,23 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
 )
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
+  const { [FeatureFlags.csrf]: csrfFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { loading: csrfLoading } = useSelector(csrfSelector)
+
+  const loading = csrfFeature ? csrfLoading && serverLoading : serverLoading
+
+  console.log('csrfFeature: ', csrfFeature)
+  console.log('csrfLoading: ', csrfLoading)
+  console.log('loading: ', loading)
+
   return (
     <div className="main-container">
+      <FeatureFlagComponent name={FeatureFlags.csrf}>
+        <Csrf />
+      </FeatureFlagComponent>
       <ThemeComponent />
       <MonacoEnvironmentInitializer />
-      { serverLoading
+      { loading
         ? <PagePlaceholder />
         : (
           <EuiPage className="main">

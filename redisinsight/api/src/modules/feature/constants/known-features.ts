@@ -51,4 +51,8 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.DatabaseChat,
     storage: FeatureStorage.Database,
   },
+  [KnownFeatures.Csrf]: {
+    name: KnownFeatures.Csrf,
+    storage: FeatureStorage.Database,
+  },
 };

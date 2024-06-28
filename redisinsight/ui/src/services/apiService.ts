@@ -11,6 +11,7 @@ const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
 const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
+// const csrfEndpoint = process.env.RI_CSRF_ENDPOINT
 
 let apiPrefix = process.env.RI_API_PREFIX
 
@@ -26,6 +27,23 @@ const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
   withCredentials: true,
 })
+
+// interface CSRFTokenResponse {
+//   csrfToken: {
+//     csrf_token: string;
+//     csrf_enabled: boolean;
+//     errors?: [];
+//   };
+// }
+
+export const setCSRFHeader = (token: string) => {
+  // const { data } = await mutableAxiosInstance.get<CSRFTokenResponse>('https://app-sm.k8s-mw.sm-qa.qa.redislabs.com/api/v1/csrf')
+
+  // console.log(data)
+
+  // mutableAxiosInstance.defaults.headers.common['X-CSRF-Token'] = data.csrfToken.csrf_token
+  mutableAxiosInstance.defaults.headers.common['X-CSRF-Token'] = token
+}
 
 export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
   if (config?.headers) {

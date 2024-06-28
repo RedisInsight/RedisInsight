@@ -28,6 +28,7 @@ import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
 import appFeaturesReducer from './app/features'
 import appUrlHandlingReducer from './app/url-handling'
+import csrfReducer from './app/csrf'
 import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
@@ -58,6 +59,7 @@ export const rootReducer = combineReducers({
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
     urlHandling: appUrlHandlingReducer,
+    csrf: csrfReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,

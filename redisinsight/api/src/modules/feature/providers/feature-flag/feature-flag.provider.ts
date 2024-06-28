@@ -72,6 +72,10 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
+    this.strategies.set(KnownFeatures.Csrf, new CommonFlagStrategy(
+      this.featuresConfigService,
+      this.settingsService,
+    ));
   }
 
   getStrategy(name: string): FeatureFlagStrategy {

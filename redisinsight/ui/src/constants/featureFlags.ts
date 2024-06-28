@@ -9,4 +9,5 @@ export enum FeatureFlags {
   dbAnalysis = 'dbAnalysis',
   appNotifications = 'appNotifications',
   triggersAndFunctions = 'triggersAndFunctions',
+  csrf = 'csrf',
 }

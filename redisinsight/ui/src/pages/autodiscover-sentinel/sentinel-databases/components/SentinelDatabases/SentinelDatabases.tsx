@@ -216,7 +216,7 @@ const SentinelDatabases = ({
         </EuiFormRow>
         <br />
 
-        <div className="databaseList sentinelDatabaseList">
+        <div className="itemList databaseList sentinelDatabaseList">
           <EuiInMemoryTable
             isSelectable
             items={items}

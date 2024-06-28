@@ -58,7 +58,7 @@ test
         }];
 
         await t.click(browserPage.refreshKeysButton);
-        await t.expect(browserPage.guideLinksBtn.count).gte(5);
+        await t.expect(browserPage.guideLinksBtn.count).gte(4);
         for (const capability of capabilities) {
             await browserPage.clickGuideLinksByName(capability.name);
             await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel not opened');

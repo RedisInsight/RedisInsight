@@ -6,9 +6,10 @@ import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
   RdiUrl,
   RDI_TIMEOUT,
-  TOKEN_TRESHOLD,
+  TOKEN_THRESHOLD,
   POLLING_INTERVAL,
   MAX_POLLING_TIME,
+  WAIT_BEFORE_POLLING,
 } from 'src/modules/rdi/constants';
 import {
   RdiDryRunJobDto,
@@ -17,6 +18,7 @@ import {
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
+  RdiPipelineDeployFailedException,
   RdiPipelineInternalServerErrorException,
   wrapRdiPipelineError,
 } from 'src/modules/rdi/exceptions';
@@ -29,6 +31,7 @@ import {
 import { convertKeysToCamelCase } from 'src/utils/base.helper';
 import { RdiPipelineTimeoutException } from 'src/modules/rdi/exceptions/rdi-pipeline.timeout-error.exception';
 import * as https from 'https';
+import { convertApiDataToRdiPipeline, convertRdiPipelineToApiPayload } from 'src/modules/rdi/utils/pipeline.util';
 
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
@@ -57,8 +60,9 @@ export class ApiRdiClient extends RdiClient {
 
   async getPipeline(): Promise<RdiPipeline> {
     try {
-      const response = await this.client.get(RdiUrl.GetPipeline);
-      return response.data;
+      const { data } = await this.client.get(RdiUrl.GetPipeline);
+
+      return convertApiDataToRdiPipeline(data);
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -93,10 +97,14 @@ export class ApiRdiClient extends RdiClient {
 
   async deploy(pipeline: RdiPipeline): Promise<void> {
     try {
-      const response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
+      const response = await this.client.post(
+        RdiUrl.Deploy,
+        convertRdiPipelineToApiPayload(pipeline),
+      );
+
       const actionId = response.data.action_id;
 
-      return this.pollActionStatus(actionId);
+      return await this.pollActionStatus(actionId);
     } catch (error) {
       throw wrapRdiPipelineError(error, error.response.data.message);
     }
@@ -174,16 +182,19 @@ export class ApiRdiClient extends RdiClient {
   async ensureAuth(): Promise<void> {
     const expiresIn = this.auth.exp * 1_000 - Date.now();
 
-    if (expiresIn < TOKEN_TRESHOLD) {
+    if (expiresIn < TOKEN_THRESHOLD) {
       await this.connect();
     }
   }
 
   private async pollActionStatus(actionId: string, abortSignal?: AbortSignal): Promise<any> {
+    await new Promise((resolve) => setTimeout(resolve, WAIT_BEFORE_POLLING));
+
     const startTime = Date.now();
+
     while (true) {
       if (abortSignal?.aborted) {
-        throw new RdiPipelineInternalServerErrorException();
+        throw new RdiPipelineInternalServerErrorException('Operation is aborted');
       }
       if (Date.now() - startTime > MAX_POLLING_TIME) {
         throw new RdiPipelineTimeoutException();
@@ -197,7 +208,7 @@ export class ApiRdiClient extends RdiClient {
         const { status, data, error } = response.data;
 
         if (status === 'failed') {
-          throw new RdiPipelineInternalServerErrorException(error);
+          throw new RdiPipelineDeployFailedException(error?.message);
         }
 
         if (status === 'completed') {

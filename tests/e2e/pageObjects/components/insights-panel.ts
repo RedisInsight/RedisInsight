@@ -16,6 +16,8 @@ export class InsightsPanel {
 
     existsCompatibilityPopover = Selector('[data-testid=explore-capability-popover]');
 
+    activeTabMask = '[class*=euiTab-isSelected]';
+
     /**
      * Open/Close  Panel
      * @param state State of panel
@@ -32,7 +34,7 @@ export class InsightsPanel {
      * get active tab
      */
     async getActiveTabName(): Promise<string> {
-        return this.activeTab.textContent;
+        return (this.sidePanel.find(this.activeTabMask)).textContent;
     }
     /**
      * Click on Panel tab

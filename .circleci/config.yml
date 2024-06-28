@@ -391,10 +391,10 @@ jobs:
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
-      - run:
-          name: Clone mocked RDI server
-          command: |
-            git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
+      #- run:
+      #    name: Clone mocked RDI server
+       #   command: |
+        #    git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
       - run:
           name: .AppImage tests
           command: |

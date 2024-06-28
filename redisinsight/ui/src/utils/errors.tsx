@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios'
-import { capitalize, isEmpty, isString, isArray, set } from 'lodash'
+import { capitalize, isEmpty, isString, isArray, set, isNumber } from 'lodash'
 import React from 'react'
 import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
@@ -7,14 +7,24 @@ import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
-export const getRdiValidationMessage = (message: string = '', loc?: string[]): string => {
+export const getRdiValidationMessage = (message: string = '', loc?: Array<string | number>): string => {
   // first item is always "body"
   if (!loc || !isArray(loc) || loc.length < 2) {
     return message
   }
+
   const [, ...rest] = loc
-  const field = rest.pop() as string
-  const path = rest.join('/')
+  const formattedLoc = rest.reduce<string[]>((acc, curr) => {
+    if (isNumber(curr)) {
+      acc[acc.length - 1] += `[${curr}]`
+    } else {
+      acc.push(curr)
+    }
+    return acc
+  }, [])
+
+  const field = formattedLoc.pop() as string
+  const path = formattedLoc.join('/')
   const words = message.split(' ')
 
   words[0] = path ? `${field} in ${path}` : field

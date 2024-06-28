@@ -38,7 +38,7 @@ export class RdiPipelineController {
   })
   async getPipeline(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-  ): Promise<object> {
+  ): Promise<RdiPipeline> {
     return this.rdiPipelineService.getPipeline(rdiClientMetadata);
   }
 

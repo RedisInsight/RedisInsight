@@ -143,7 +143,7 @@ export abstract class RedisClient extends EventEmitter2 {
       case RedisFeature.HashFieldsExpiration:
         try {
           const info = await this.getInfo();
-          return info?.['server']?.['redis_version'] && semverCompare('7.4', info['server']['redis_version']) < 1;
+          return info?.['server']?.['redis_version'] && semverCompare('7.3', info['server']['redis_version']) < 1;
         } catch (e) {
           return false;
         }

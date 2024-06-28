@@ -2,12 +2,14 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
+import { AxiosError } from 'axios'
+
 import { deleteChangedFile, getPipelineStrategies, rdiPipelineSelector, setChangedFile } from 'uiSrc/slices/rdi/pipeline'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-
 import { sendPageViewTelemetry, TelemetryPageView, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { MOCK_RDI_PIPELINE_CONFIG, MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JOB2 } from 'uiSrc/mocks/data/rdi'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import JobWrapper from './JobWrapper'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -178,5 +180,44 @@ describe('JobWrapper', () => {
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
+  })
+
+  it('should render error notification', () => {
+    const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
+      loading: false,
+      schema: { jobs: { test: {} } },
+      data: { jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] }
+    });
+    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+
+    const mockUseFormikContext = {
+      setFieldValue: jest.fn,
+      values: { config: MOCK_RDI_PIPELINE_CONFIG, jobs: [{ name: 'jobName', value: 'sources:incorrect\n target:' }] },
+    };
+    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+
+    const { queryByTestId } = render(<JobWrapper />)
+
+    fireEvent.click(screen.getByTestId('rdi-job-dry-run'))
+
+    const expectedActions = [
+      addErrorNotification({
+        response: {
+          data: {
+            message: (
+              <>
+                JobName has an invalid structure.
+                <br />
+                end of the stream or a document separator is expected
+              </>
+            )
+          }
+        }
+      } as AxiosError)
+    ]
+
+    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
+
+    expect(queryByTestId('dry-run-panel')).not.toBeInTheDocument()
   })
 })

@@ -1,6 +1,28 @@
 import { Joi } from '../../helpers/test';
 import { caCertSchema, clientCertSchema } from '../certificate/constants';
 
+const providers = [
+  'RE_CLUSTER',
+  'RE_CLOUD',
+  'REDIS_STACK',
+  'REDIS_ENTERPRISE',
+  'AZURE_CACHE',
+  'AZURE_CACHE_REDIS_ENTERPRISE',
+  'REDIS_COMMUNITY_EDITION',
+  'AWS_ELASTICACHE',
+  'AWS_MEMORYDB',
+  'VALKEY',
+  'MEMORYSTORE',
+  'DRAGONFLY',
+  'KEYDB',
+  'GARNET',
+  'KVROCKS',
+  'REDICT',
+  'UPSTASH',
+  'UNKNOWN_LOCALHOST',
+  'UNKNOWN',
+];
+
 export const databaseSchema = Joi.object().keys({
   id: Joi.string().required(),
   name: Joi.string().required(),
@@ -14,7 +36,7 @@ export const databaseSchema = Joi.object().keys({
   compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').required(),
   nameFromProvider: Joi.string().allow(null),
   lastConnection: Joi.string().isoDate().allow(null),
-  provider: Joi.string().valid('LOCALHOST', 'UNKNOWN', 'RE_CLOUD', 'RE_CLUSTER'),
+  provider: Joi.string().valid(...providers),
   new: Joi.boolean().allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),

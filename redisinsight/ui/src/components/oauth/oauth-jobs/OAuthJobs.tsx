@@ -16,7 +16,7 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 import { CloudImportDatabaseResources } from 'uiSrc/slices/interfaces/cloud'
 import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
-import { parseCloudOAuthError } from 'uiSrc/utils'
+import { parseCustomError } from 'uiSrc/utils'
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { ApiStatusCode, BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
@@ -79,7 +79,7 @@ const OAuthJobs = () => {
             break
 
           default:
-            const err = parseCloudOAuthError(error || '')
+            const err = parseCustomError(error || '')
             dispatch(addErrorNotification(err))
             break
         }

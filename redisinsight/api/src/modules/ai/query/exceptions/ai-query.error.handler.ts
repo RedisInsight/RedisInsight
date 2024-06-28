@@ -33,8 +33,8 @@ export const wrapAiQueryError = (error: any, message?: string): HttpException =>
   const response = get(error, ['description', 'target', '_req', 'res'], error.response);
 
   if (response) {
-    const errorOptions = { cause: new Error(response?.data as string) };
-    switch (response?.status || response?.statusCode) {
+    const errorOptions = { cause: new Error(response.data as string) };
+    switch (response.status || response.statusCode) {
       case 401:
         return new AiQueryUnauthorizedException(message, errorOptions);
       case 403:

@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.50.0",
+  "version": "2.52.0",
   "description": "Redis Insight API",
   "private": true,
   "author": {
@@ -34,7 +34,8 @@
     "test:api:cov": "nyc --reporter=html --reporter=text --reporter=text-summary yarn run test:api",
     "test:api:ci:cov": "cross-env nyc -r text -r text-summary -r html yarn run test:api --reporter mocha-multi-reporters --reporter-options configFile=test/api/reporters.json && nyc merge .nyc_output ./coverage/test-run-coverage.json",
     "typeorm:migrate": "cross-env NODE_ENV=staging yarn typeorm migration:generate ./migration/migration",
-    "typeorm:run": "yarn typeorm migration:run"
+    "typeorm:run": "yarn typeorm migration:run",
+    "typeorm:run:stage": "cross-env NODE_ENV=staging yarn typeorm migration:run"
   },
   "resolutions": {
     "nanoid": "^3.1.31",
@@ -55,8 +56,8 @@
     "@nestjs/typeorm": "^9.0.1",
     "@nestjs/websockets": "^10.3.7",
     "@okta/okta-auth-js": "^7.3.0",
+    "@segment/analytics-node": "^2.1.2",
     "adm-zip": "^0.5.9",
-    "analytics-node": "^4.0.1",
     "axios": "^1.6.0",
     "body-parser": "^1.19.0",
     "busboy": "^1.6.0",

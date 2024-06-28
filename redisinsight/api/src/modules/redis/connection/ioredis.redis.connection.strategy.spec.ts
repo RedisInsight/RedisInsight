@@ -7,16 +7,15 @@ import {
   mockSentinelDatabaseWithTlsAuth, mockSshTunnel, mockSshTunnelProvider, mockStandaloneRedisClient
 } from 'src/__mocks__';
 import { EventEmitter } from 'events';
-import apiConfig from 'src/utils/config';
+import apiConfig, { Config } from 'src/utils/config';
 import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { ClusterIoredisClient, SentinelIoredisClient, StandaloneIoredisClient } from 'src/modules/redis/client';
 import { InternalServerErrorException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { TunnelConnectionLostException } from 'src/modules/ssh/exceptions';
 import { ReplyError } from 'src/models';
 
-const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients');
+const REDIS_CLIENTS_CONFIG = apiConfig.get('redis_clients') as Config['redis_clients'];
 
 jest.mock('ioredis', () => ({
   ...jest.requireActual('ioredis') as object,
@@ -49,8 +48,12 @@ describe('IoredisRedisConnectionStrategy', () => {
 
     service = await module.get(IoredisRedisConnectionStrategy);
 
-    mockIoredisNativeClient = new EventEmitter();
-    mockIoredisClusterNativeClient = new EventEmitter();
+    class MockNativeRedisClient extends EventEmitter {
+      addBuiltinCommand = jest.fn();
+    }
+
+    mockIoredisNativeClient = new MockNativeRedisClient();
+    mockIoredisClusterNativeClient = new MockNativeRedisClient();
     spyRedis = jest.spyOn(Redis, 'default');
     spyRedis.mockImplementationOnce(() => mockIoredisNativeClient);
     spyCluster = jest.spyOn(Redis, 'Cluster');
@@ -65,7 +68,7 @@ describe('IoredisRedisConnectionStrategy', () => {
       expect(service['retryStrategy'](2)).toEqual(REDIS_CLIENTS_CONFIG.retryDelay * 2);
     });
     it('should return undefined when number of retries exceeded', () => {
-      expect(service['retryStrategy'](REDIS_CLIENTS_CONFIG.maxRetries + 1)).toEqual(undefined);
+      expect(service['retryStrategy'](REDIS_CLIENTS_CONFIG.retryTimes + 1)).toEqual(undefined);
     });
   });
 

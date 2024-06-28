@@ -1,9 +1,9 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import * as archiver from 'archiver';
 import { ClientFunction, RequestMock, t } from 'testcafe';
 import { Chance } from 'chance';
-import { apiUrl, commonUrl } from './conf';
+import { apiUrl } from './conf';
+const archiver = require('archiver');
 
 const chance = new Chance();
 
@@ -13,7 +13,7 @@ declare global {
     }
   }
 
-const settingsApiUrl = `${commonUrl}/api/settings`;
+const settingsApiUrl = `${apiUrl}/settings`;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 const mockedSettingsResponse = {
     agreements: {
@@ -221,6 +221,7 @@ export class Common {
         const parsedJson = JSON.parse(fs.readFileSync(path, 'utf-8'));
         return parsedJson[property];
     }
+
     /**
      * Create Zip archive from folder
      * @param folderPath Path to folder to archive
@@ -245,5 +246,15 @@ export class Common {
      */
     static async deleteFileFromFolder(filePath: string): Promise<void> {
         fs.unlinkSync(path.join(__dirname, filePath));
+    }
+
+    /**
+      * Delete file from folder if exists
+      * @param folderPath Path to file
+     */
+    static async deleteFileFromFolderIfExists(filePath: string): Promise<void> {
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { rte } from '../../../../helpers/constants';
-import { BrowserPage, MyRedisDatabasePage, WelcomePage } from '../../../../pageObjects';
+import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, invalidOssStandaloneConfig, ossClusterForSSHConfig, ossStandaloneForSSHConfig } from '../../../../helpers/conf';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -11,7 +11,6 @@ const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
-const welcomePage = new WelcomePage();
 const browserActions = new BrowserActions();
 
 const sshParams = {
@@ -66,14 +65,10 @@ test
         const defaultPort = '6379';
         const defaultSentinelPort = '26379';
 
-        if (await welcomePage.addDbManuallyBtn.exists) {
-            await t.click(welcomePage.addDbManuallyBtn);
-        }
-        else {
-            await t
-                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
-                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
-        }
+        await t
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+
         // Verify that the Host, Port, Database Alias values pre-populated by default for the manual flow
         await t
             .expect(myRedisDatabasePage.AddRedisDatabase.hostInput.value).eql(defaultHost, 'Default host not prepopulated')
@@ -114,14 +109,11 @@ test
             sshPassphrase: 'test'
         };
         // Verify that if user have not entered any required value he can see that this field should be specified when hover over the button to add a database
-        if (await welcomePage.addDbManuallyBtn.exists) {
-            await t.click(welcomePage.addDbManuallyBtn);
-        }
-        else {
-            await t
-                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
-                .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
-        }
+
+        await t
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton)
+            .click(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually);
+
         await t
             .click(myRedisDatabasePage.AddRedisDatabase.useSSHCheckbox)
             .click(myRedisDatabasePage.AddRedisDatabase.sshPrivateKeyRadioBtn)
@@ -188,4 +180,24 @@ test
         await myRedisDatabasePage.AddRedisDatabase.addStandaloneSSHDatabase(sshDbClusterPass, sshWithPass);
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
         await Common.checkURLContainsText('browser');
+    });
+test
+    .meta({ rte: rte.none })
+    .before(async() => {
+        await databaseAPIRequests.deleteAllDatabasesApi();
+        await databaseHelper.acceptLicenseTerms();
+    })('Verify that user can see the No databases message on the empty databases list', async t => {
+        const noDatabasesMessage = 'No databases yet, let\'s add one!';
+        // const externalPageLink = 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
+
+        await t.expect(myRedisDatabasePage.emptyListMessage.withText(noDatabasesMessage).exists).ok('Empty databases list message not displayed');
+
+        await t.click(myRedisDatabasePage.addDbFromEmptyListBtn);
+        await t.expect(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn.exists).ok('Add database form not opened');
+        await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
+
+        // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+        // await t.click(myRedisDatabasePage.emptyDbCloudBtn);
+        // await Common.checkURL(externalPageLink);
+        // await goBackHistory();
     });

@@ -1,5 +1,4 @@
 import { isArray } from 'lodash'
-import { JSONErrors } from '../constants'
 import { JSONScalarValue, ObjectTypes } from '../interfaces'
 import styles from '../styles.module.scss'
 
@@ -38,15 +37,6 @@ export const wrapPath = (key: string, path: string = '') => {
   }
 }
 
-export const validateRejsonValue = (value: any) => {
-  try {
-    JSON.parse(value as string)
-    return null
-  } catch (e) {
-    return JSONErrors.valueJSONFormat
-  }
-}
-
 export const getClassNameByValue = (value: any) => {
   const type = typeof value
   // @ts-ignore
@@ -61,6 +51,7 @@ export const isRealObject = (data: any, knownType?: string) => {
 
 export const isRealArray = (data: any, knownType?: string) => {
   if (knownType === ObjectTypes.Array) return true
+  if (knownType) return false
   return isArray(data)
 }
 

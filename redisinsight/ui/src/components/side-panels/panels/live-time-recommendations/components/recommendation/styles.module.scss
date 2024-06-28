@@ -46,7 +46,7 @@
       .euiIEFlexWrapFix .truncateText {
         display: flex;
         overflow: visible;
-        white-space: normal;
+        white-space: normal !important;
       }
     }
 

@@ -44,6 +44,7 @@ enum ApiEndpoints {
   HASH = 'hash',
   HASH_FIELDS = 'hash/fields',
   HASH_GET_FIELDS = 'hash/get-fields',
+  HASH_TTL = 'hash/ttl',
 
   LIST = 'list',
   LIST_GET_ELEMENTS = 'list/get-elements',
@@ -107,12 +108,6 @@ enum ApiEndpoints {
   RECOMMENDATIONS = 'recommendations',
   RECOMMENDATIONS_READ = 'recommendations/read',
 
-  TRIGGERED_FUNCTIONS_LIBRARIES = 'triggered-functions/libraries',
-  TRIGGERED_FUNCTIONS_FUNCTIONS = 'triggered-functions/functions',
-  TRIGGERED_FUNCTIONS_GET_LIBRARY = 'triggered-functions/get-library',
-  TRIGGERED_FUNCTIONS_REPLACE_LIBRARY = 'triggered-functions/library/replace',
-  TRIGGERED_FUNCTIONS_LIBRARY = 'triggered-functions/library',
-
   NOTIFICATIONS = 'notifications',
   NOTIFICATIONS_READ = 'notifications/read',
 
@@ -141,6 +136,18 @@ enum ApiEndpoints {
 
   ANALYTICS_SEND_EVENT = 'analytics/send-event',
   ANALYTICS_SEND_PAGE = 'analytics/send-page',
+
+  RDI_INSTANCES = 'rdi',
+  RDI_PIPELINE = 'pipeline',
+  RDI_PIPELINE_SCHEMA = 'pipeline/schema',
+  RDI_DEPLOY_PIPELINE = 'pipeline/deploy',
+  RDI_TEST_CONNECTIONS = 'pipeline/test-connections',
+  RDI_PIPELINE_STRATEGIES = 'pipeline/strategies',
+  RDI_JOB_TEMPLATE = 'pipeline/job/template',
+  RDI_CONFIG_TEMPLATE = 'pipeline/config/template',
+  RDI_PIPELINE_JOB_FUNCTIONS = 'pipeline/job-functions',
+  RDI_STATISTICS = 'statistics',
+  RDI_PIPELINE_STATUS = 'pipeline/status',
 }
 
 export enum CustomHeaders {

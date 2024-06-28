@@ -6,11 +6,20 @@ import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
 import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
 
 export interface CustomError {
+  details?: any[];
   error: string
   message: string
   statusCode: number
   errorCode?: number
   resourceId?: string
+}
+
+export interface ErrorOptions {
+  message: string | JSX.Element
+  code?: string
+  config?: object
+  request?: object
+  response?: object
 }
 
 export interface EnhancedAxiosError extends AxiosError<CustomError> {
@@ -31,6 +40,11 @@ export interface IMessage {
   className?: string
 }
 
+export enum AppWorkspace {
+  Databases = 'databases',
+  RDI = 'rdi'
+}
+
 export interface StateAppInfo {
   loading: boolean
   error: string
@@ -45,7 +59,9 @@ export interface StateAppInfo {
 }
 
 export interface StateAppContext {
+  workspace: AppWorkspace
   contextInstanceId: string
+  contextRdiInstanceId: string
   lastPage: string
   dbConfig: {
     treeViewDelimiter: string
@@ -97,11 +113,12 @@ export interface StateAppContext {
   analytics: {
     lastViewedPage: string
   }
-  triggeredFunctions: {
-    lastViewedPage: string
-  }
   capability: {
     source: string
+  }
+  pipelineManagement: {
+    lastViewedPage: string
+    isOpenDialog: boolean
   }
 }
 

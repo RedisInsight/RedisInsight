@@ -8,6 +8,7 @@ export enum AiQueryWsEvents {
   REPLY_FINAL = 'reply', // non-ackable, signals the final (non-streaming) reply, client should display it
   GET_INDEX = 'get_index', // ackable, signals a request to the client for an index context
   RUN_QUERY = 'run_query', // ackable, signals a request to the client to run a query
+  STREAM = 'stream',
 }
 
 export enum AiQueryMessageRole {

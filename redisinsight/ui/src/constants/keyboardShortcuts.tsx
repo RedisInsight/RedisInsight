@@ -62,6 +62,12 @@ const COMMON_SHORTCUTS = {
       description: 'Use Non-Redis Editor',
       keys: ['Shift', 'Space'],
     }
+  },
+  rdi: {
+    openDedicatedEditor: {
+      description: 'Open a dedicated SQL or JMESPath editor:',
+      keys: ['Shift', 'Space']
+    }
   }
 }
 
@@ -124,6 +130,12 @@ const MAC_SHORTCUTS = {
     nonRedisEditor: {
       description: 'Use Non-Redis Editor',
       keys: [(<span className="shiftSymbol">⇧</span>), 'Space'],
+    }
+  },
+  rdi: {
+    openDedicatedEditor: {
+      description: 'Open a dedicated SQL or JMESPath editor',
+      keys: [(<span className="shiftSymbol">⇧</span>), 'Space']
     }
   }
 }

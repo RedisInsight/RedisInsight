@@ -32,21 +32,6 @@ describe('ImportDatabasesDialog', () => {
     expect(render(<ImportDatabasesDialog onClose={jest.fn()} />)).toBeTruthy()
   })
 
-  it('should call onClose', () => {
-    const onClose = jest.fn()
-    render(<ImportDatabasesDialog onClose={onClose} />)
-
-    fireEvent.click(screen.getByTestId('cancel-btn'))
-
-    expect(onClose).toBeCalled()
-  })
-
-  it('submit btn should be disabled without file', () => {
-    render(<ImportDatabasesDialog onClose={jest.fn()} />)
-
-    expect(screen.getByTestId('submit-btn')).toBeDisabled()
-  })
-
   it('should call proper actions and send telemetry', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
@@ -61,7 +46,7 @@ describe('ImportDatabasesDialog', () => {
 
     await act(() => {
       fireEvent.change(
-        screen.getByTestId('import-databases-input-file'),
+        screen.getByTestId('import-file-modal-filepicker'),
         {
           target: { files: [file] },
         }
@@ -79,26 +64,6 @@ describe('ImportDatabasesDialog', () => {
     });
 
     (sendEventTelemetry as jest.Mock).mockRestore()
-  })
-
-  it('should render loading indicator', () => {
-    (importInstancesSelector as jest.Mock).mockImplementation(() => ({
-      loading: true,
-      data: null
-    }))
-
-    render(<ImportDatabasesDialog onClose={jest.fn()} />)
-    expect(screen.getByTestId('file-loading-indicator')).toBeInTheDocument()
-  })
-
-  it('should not render error message without error', () => {
-    (importInstancesSelector as jest.Mock).mockImplementation(() => ({
-      loading: false,
-      data: {}
-    }))
-
-    render(<ImportDatabasesDialog onClose={jest.fn()} />)
-    expect(screen.queryByTestId('result-failed')).not.toBeInTheDocument()
   })
 
   it('should render error message when 0 success databases added', () => {

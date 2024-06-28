@@ -1,6 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEnum, IsNotEmpty, IsOptional, IsString,
+} from 'class-validator';
 import { AiQueryIntermediateStep } from 'src/modules/ai/query/models/ai-query.intermediate-step';
 import { Default } from 'src/common/decorators';
 
@@ -39,6 +41,15 @@ export class AiQueryMessage {
   @IsString()
   @IsNotEmpty()
   accountId: string;
+
+  @ApiPropertyOptional({
+    type: String,
+  })
+  @IsOptional()
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  conversationId: string;
 
   @ApiProperty({
     type: String,

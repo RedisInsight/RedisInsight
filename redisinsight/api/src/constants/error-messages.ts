@@ -16,6 +16,7 @@ export default {
   PLUGIN_STATE_NOT_FOUND: 'Plugin state was not found.',
   CUSTOM_TUTORIAL_NOT_FOUND: 'Custom Tutorial was not found.',
   CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL: 'Unable fetch zip file from external source.',
+  CUSTOM_TUTORIAL_UNSUPPORTED_ORIGIN: 'Unsupported origin for tutorial.',
   UNDEFINED_INSTANCE_ID: 'Undefined redis database instance id.',
   NO_CONNECTION_TO_REDIS_DB: 'No connection to the Redis Database.',
   WRONG_DATABASE_TYPE: 'Wrong database type.',
@@ -106,4 +107,9 @@ export default {
   AI_QUERY_REQUEST_RATE_LIMIT: 'Exceeded limit for requests',
   AI_QUERY_TOKEN_RATE_LIMIT: 'Exceeded limit for characters in the conversation',
   AI_QUERY_MAX_TOKENS_RATE_LIMIT: 'Token count exceeds the conversation limit',
+
+  RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
+  RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',
+  RDI_VALIDATION_ERROR: 'Validation error',
+  INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',
 };

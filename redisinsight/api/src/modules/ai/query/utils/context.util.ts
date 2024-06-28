@@ -1,5 +1,4 @@
-import { chunk, keyBy } from 'lodash';
-// import { RedisClient } from 'src/modules/redis/client';
+import { chunk, isArray, keyBy } from 'lodash';
 import { quicktype, InputData, jsonInputForTargetLanguage } from 'quicktype-core';
 
 type ArrayReplyEntry = string | string[];
@@ -9,7 +8,7 @@ type RedisClient = { sendCommand: (args: any, options: any) => Promise<any> };
 const DOCUMENT_SAMPLES_PER_PREFIX = 5;
 const HSCAN_COUNT = 500;
 
-export const quotesIfNeeded = (str: string) => (str.indexOf(' ') > -1 ? JSON.stringify(str) : str);
+export const quotesIfNeeded = (str: string) => (str?.indexOf?.(' ') > -1 ? JSON.stringify(str) : str);
 
 // ====================================================================
 // Reply converter
@@ -28,11 +27,14 @@ export const convertArrayReplyToObject = (
 
 export const convertIndexInfoAttributeReply = (input: string[]): object => {
   const attribute = convertArrayReplyToObject(input);
-  attribute['SORTABLE'] = input.includes('SORTABLE') || undefined;
-  attribute['NOINDEX'] = input.includes('NOINDEX') || undefined;
-  attribute['CASESENSITIVE'] = input.includes('CASESENSITIVE') || undefined;
-  attribute['UNF'] = input.includes('UNF') || undefined;
-  attribute['NOSTEM'] = input.includes('NOSTEM') || undefined;
+
+  if (isArray(input)) {
+    attribute['SORTABLE'] = input.includes('SORTABLE') || undefined;
+    attribute['NOINDEX'] = input.includes('NOINDEX') || undefined;
+    attribute['CASESENSITIVE'] = input.includes('CASESENSITIVE') || undefined;
+    attribute['UNF'] = input.includes('UNF') || undefined;
+    attribute['NOSTEM'] = input.includes('NOSTEM') || undefined;
+  }
 
   return attribute;
 };
@@ -40,7 +42,7 @@ export const convertIndexInfoAttributeReply = (input: string[]): object => {
 export const convertIndexInfoReply = (input: ArrayReplyEntry[]): object => {
   const infoReply = convertArrayReplyToObject(input);
   infoReply['index_definition'] = convertArrayReplyToObject(infoReply['index_definition']);
-  infoReply['attributes'] = infoReply['attributes'].map(convertIndexInfoAttributeReply);
+  infoReply['attributes'] = infoReply['attributes']?.map?.(convertIndexInfoAttributeReply);
 
   return infoReply;
 };
@@ -50,7 +52,7 @@ export const convertIndexInfoReply = (input: ArrayReplyEntry[]): object => {
 // ====================================================================
 export const getAttributeTopValues = async (client: RedisClient, index: string, attribute: object): Promise<object> => {
   try {
-    switch (attribute['type'].toLowerCase()) {
+    switch (attribute?.['type']?.toLowerCase?.()) {
       case 'text':
       case 'tag':
       case 'numeric':
@@ -76,8 +78,8 @@ export const getAttributeTopValues = async (client: RedisClient, index: string, 
         ], { replyEncoding: 'utf8' }) as [string, ...string[]];
 
         return {
-          distinct_count: parseInt(distinct, 10),
-          top_values: top?.map(([, value]) => ({ value })),
+          distinct_count: parseInt(distinct, 10) || 0,
+          top_values: top.map(([, value]) => ({ value })),
         };
       default:
         return {};
@@ -121,12 +123,12 @@ export const createIndexCreateStatement = (info: object) => {
 
 export const createIndexContext = (info: object): object => {
   const context = {
-    index_name: info['index_name'],
+    index_name: info?.['index_name'],
     create_statement: createIndexCreateStatement(info),
     attributes: {},
   };
 
-  context['attributes'] = keyBy(info['attributes'], 'attribute');
+  context['attributes'] = keyBy(info?.['attributes'], 'attribute');
 
   return context;
 };
@@ -197,7 +199,7 @@ export const getIndexContext = async (client: RedisClient, index: string) => {
     index_name: index,
     create_statement: createIndexCreateStatement(info),
     documents_schema: await getDocumentsSchema(client, index, info),
-    documents_type: info['index_definition']?.['key_type'],
+    documents_type: info['index_definition']['key_type'],
     attributes: keyBy((await Promise.all(info['attributes'].map(async (attr) => ({
       ...attr,
       ...await getAttributeTopValues(client, info['index_name'], attr),
@@ -227,23 +229,8 @@ export const getFullDbContext = async (client: RedisClient): Promise<object> => 
     context[index] = {
       index_name: index,
       attributes: info['attributes'],
-      documents_type: info['index_definition']?.['key_type'],
+      documents_type: info['index_definition']['key_type'],
     };
-  }));
-
-  return context;
-};
-
-export const getQueryBuilderContext = async (client: RedisClient): Promise<object> => {
-  const context = {};
-
-  const indexes = await client.sendCommand(
-    ['FT._LIST'],
-    { replyEncoding: 'utf8' },
-  ) as string[];
-
-  await Promise.all(indexes.map(async (index) => {
-    context[index] = await getIndexContext(client, index);
   }));
 
   return context;

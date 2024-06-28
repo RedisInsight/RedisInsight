@@ -19,6 +19,9 @@ body {
         }
       }
     }
+    .euiTableHeaderCell {
+      color: var(--htmlColor) !important;
+    }
     .euiTableRowCell,
     .euiTableRowCellCheckbox {
       border-color: var(--euiColorLightShade) !important;

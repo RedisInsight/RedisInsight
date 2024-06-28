@@ -392,6 +392,19 @@ jobs:
           at: .
       - run: sudo apt-get install net-tools
       - run:
+          name: Install WM
+          command: sudo apt install fluxbox
+      - run:
+          name: Run X11
+          command: |
+            Xvfb :99 -screen 0 1920x1080x24 &
+            sleep 3
+            fluxbox &
+      # - run:
+      #     name: Clone mocked RDI server
+      #     command: |
+      #       git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
+      - run:
           name: .AppImage tests
           command: |
             cd tests/e2e && export TEST_FILES=$(circleci tests glob "tests/electron/**/*.e2e.ts" | circleci tests split --split-by=timings) && cd ../..
@@ -483,6 +496,10 @@ jobs:
                 name: Load built docker image from workspace
                 command: |
                   docker image load -i /tmp/release/docker/docker-linux-alpine.amd64.tar
+            # - run:
+            #     name: Clone mocked RDI server
+            #     command: |
+            #       git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
             - run:
                 name: Run tests
                 command: |
@@ -639,6 +656,7 @@ jobs:
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+            export RI_FEATURES_CONFIG_URL=$RI_FEATURES_CONFIG_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE yarn package:stage --linux << parameters.target >>
@@ -715,6 +733,7 @@ jobs:
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
             export RI_UPGRADES_LINK=''
             export RI_SEGMENT_WRITE_KEY=''
+            export RI_FEATURES_CONFIG_URL=$RI_FEATURES_CONFIG_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               export RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE
@@ -796,6 +815,7 @@ jobs:
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+            export RI_FEATURES_CONFIG_URL=$RI_FEATURES_CONFIG_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE yarn package:stage --win << parameters.target >>
@@ -1233,7 +1253,7 @@ workflows:
             - Build docker image
       - e2e-app-image:
           name: E2ETest (AppImage)
-          parallelism: 2
+          parallelism: 1
           requires:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches

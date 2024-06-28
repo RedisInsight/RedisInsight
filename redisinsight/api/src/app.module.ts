@@ -15,7 +15,6 @@ import { NotificationModule } from 'src/modules/notification/notification.module
 import { BulkActionsModule } from 'src/modules/bulk-actions/bulk-actions.module';
 import { ClusterMonitorModule } from 'src/modules/cluster-monitor/cluster-monitor.module';
 import { DatabaseAnalysisModule } from 'src/modules/database-analysis/database-analysis.module';
-import { TriggeredFunctionsModule } from 'src/modules/triggered-functions/triggered-functions.module';
 import { LocalDatabaseModule } from 'src/local-database.module';
 import { CoreModule } from 'src/core.module';
 import { AutodiscoveryModule } from 'src/modules/autodiscovery/autodiscovery.module';
@@ -23,6 +22,7 @@ import { DatabaseImportModule } from 'src/modules/database-import/database-impor
 import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-auth.middleware';
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
 import { CloudModule } from 'src/modules/cloud/cloud.module';
+import { RdiModule } from 'src/modules/rdi/rdi.module';
 import { AiChatModule } from 'src/modules/ai/chat/ai-chat.module';
 import { AiQueryModule } from 'src/modules/ai/query/ai-query.module';
 import { BrowserModule } from './modules/browser/browser.module';
@@ -61,10 +61,10 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
     CustomTutorialModule.register(),
     DatabaseAnalysisModule,
     DatabaseImportModule,
-    TriggeredFunctionsModule,
     CloudModule.register(),
     AiChatModule,
     AiQueryModule.register(),
+    RdiModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [
         ServeStaticModule.forRoot({

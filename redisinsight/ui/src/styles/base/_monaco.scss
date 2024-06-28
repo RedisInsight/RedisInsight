@@ -64,7 +64,7 @@
 }
 
 .monaco-widget {
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: space-around;
   background: var(--euiColorEmptyShade);
@@ -91,4 +91,12 @@
   & * {
     background: transparent;
   }
+}
+
+.editorBounder {
+  position: absolute;
+  top: 12px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }

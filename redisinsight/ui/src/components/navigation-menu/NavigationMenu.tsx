@@ -13,13 +13,14 @@ import {
   EuiToolTip
 } from '@elastic/eui'
 import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
+import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceSelector as connectedRdiInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import {
   appInfoSelector,
 } from 'uiSrc/slices/app/info'
@@ -34,8 +35,10 @@ import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
 import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
 import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
 import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
-import TriggeredFunctionsSVG from 'uiSrc/assets/img/sidebar/gears.svg'
-import TriggeredFunctionsActiveSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
+import PipelineManagementSVG from 'uiSrc/assets/img/sidebar/pipeline.svg'
+import PipelineManagementActiveSVG from 'uiSrc/assets/img/sidebar/pipeline_active.svg'
+import PipelineStatisticsSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics.svg'
+import PipelineStatisticsActiveSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BuildType } from 'uiSrc/constants/env'
@@ -43,6 +46,8 @@ import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 
+import { appContextSelector } from 'uiSrc/slices/app/context'
+import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
 
@@ -73,9 +78,13 @@ const NavigationMenu = () => {
 
   const [activePage, setActivePage] = useState(Pages.home)
 
+  const { workspace } = useSelector(appContextSelector)
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: connectedRdiInstanceId = '' } = useSelector(connectedRdiInstanceSelector)
   const { server } = useSelector(appInfoSelector)
   const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
+
+  const isRdiWorkspace = workspace === AppWorkspace.RDI
 
   useEffect(() => {
     setActivePage(`/${last(location.pathname.split('/'))}`)
@@ -87,9 +96,8 @@ const NavigationMenu = () => {
     ({ path }) => (`/${last(path.split('/'))}` === activePage)
   )
 
-  const isTriggeredFunctionsPath = (activePage: string) => !!TRIGGERED_FUNCTIONS_ROUTES.find(
-    ({ path }) => (`/${last(path.split('/'))}` === activePage)
-  )
+  const isPipelineManagementPath = () =>
+    location.pathname?.startsWith(Pages.rdiPipelineManagement(connectedRdiInstanceId))
 
   const getAdditionPropsForHighlighting = (pageName: string): Omit<HighlightedFeatureProps, 'children'> => {
     if (BUILD_FEATURES[pageName]?.asPageFeature) {
@@ -167,22 +175,36 @@ const NavigationMenu = () => {
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
     },
+  ]
+
+  const privateRdiRoutes: INavigations[] = [
     {
-      tooltipText: 'Triggers and Functions',
-      pageName: PageNames.triggeredFunctions,
-      ariaLabel: 'Triggers and Functions',
-      onClick: () => handleGoPage(Pages.triggeredFunctions(connectedInstanceId)),
-      dataTestId: 'triggered-functions-page-btn',
-      connectedInstanceId,
-      isActivePage: isTriggeredFunctionsPath(activePage),
-      isBeta: true,
+      tooltipText: 'Pipeline Status',
+      pageName: PageNames.rdiStatistics,
+      ariaLabel: 'Pipeline Status page button',
+      onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
+      dataTestId: 'pipeline-status-page-btn',
+      isActivePage: activePage === `/${PageNames.rdiStatistics}`,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? TriggeredFunctionsActiveSVG : TriggeredFunctionsSVG
+        return this.isActivePage ? PipelineStatisticsActiveSvg : PipelineStatisticsSvg
       },
-      onboard: ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE
+    },
+    {
+      tooltipText: 'Pipeline Management',
+      pageName: PageNames.rdiPipelineManagement,
+      ariaLabel: 'Pipeline Management page button',
+      onClick: () => handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
+      dataTestId: 'pipeline-management-page-btn',
+      isActivePage: isPipelineManagementPath(),
+      getClassName() {
+        return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        return this.isActivePage ? PipelineManagementActiveSVG : PipelineManagementSVG
+      },
     },
   ]
 
@@ -203,53 +225,53 @@ const NavigationMenu = () => {
     },
   ]
 
+  const renderNavItem = (nav: INavigations) => (
+    <React.Fragment key={nav.tooltipText}>
+      {renderOnboardingTourWithChild(
+        (
+          <HighlightedFeature
+            {...getAdditionPropsForHighlighting(nav.pageName)}
+            key={nav.tooltipText}
+            isHighlight={!!highlightedPages[nav.pageName]?.length}
+            dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+            tooltipPosition="right"
+            transformOnHover
+          >
+            <EuiToolTip content={nav.tooltipText} position="right">
+              <div className={styles.navigationButtonWrapper}>
+                <EuiButtonIcon
+                  className={nav.getClassName()}
+                  iconType={nav.getIconType()}
+                  aria-label={nav.ariaLabel}
+                  onClick={nav.onClick}
+                  data-testid={nav.dataTestId}
+                />
+                {nav.isBeta && (<EuiBadge className={styles.betaLabel}>BETA</EuiBadge>)}
+              </div>
+            </EuiToolTip>
+          </HighlightedFeature>
+        ),
+        { options: nav.onboard },
+        nav.isActivePage
+      )}
+    </React.Fragment>
+  )
+
   return (
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
         <EuiToolTip
-          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : isRdiWorkspace ? 'Redis Data Integration' : 'Redis Databases'}
           position="right"
         >
           <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-            <EuiLink {...getRouterLinkProps(Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
+            <EuiLink {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
               <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
             </EuiLink>
           </span>
         </EuiToolTip>
-
-        {connectedInstanceId && (
-          privateRoutes.map((nav) => (
-            <React.Fragment key={nav.tooltipText}>
-              {renderOnboardingTourWithChild(
-                (
-                  <HighlightedFeature
-                    {...getAdditionPropsForHighlighting(nav.pageName)}
-                    key={nav.tooltipText}
-                    isHighlight={!!highlightedPages[nav.pageName]?.length}
-                    dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
-                    tooltipPosition="right"
-                    transformOnHover
-                  >
-                    <EuiToolTip content={nav.tooltipText} position="right">
-                      <div className={styles.navigationButtonWrapper}>
-                        <EuiButtonIcon
-                          className={nav.getClassName()}
-                          iconType={nav.getIconType()}
-                          aria-label={nav.ariaLabel}
-                          onClick={nav.onClick}
-                          data-testid={nav.dataTestId}
-                        />
-                        {nav.isBeta && (<EuiBadge className={styles.betaLabel}>BETA</EuiBadge>)}
-                      </div>
-                    </EuiToolTip>
-                  </HighlightedFeature>
-                ),
-                { options: nav.onboard },
-                nav.isActivePage
-              )}
-            </React.Fragment>
-          ))
-        )}
+        {connectedInstanceId && !isRdiWorkspace && (privateRoutes.map(renderNavItem))}
+        {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
       </div>
       <div className={styles.bottomContainer}>
         <NotificationMenu />

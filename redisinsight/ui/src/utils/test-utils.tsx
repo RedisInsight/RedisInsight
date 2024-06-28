@@ -47,11 +47,14 @@ import { initialState as initialStateDbAnalysis } from 'uiSrc/slices/analytics/d
 import { initialState as initialStatePubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { initialState as initialStateRedisearch } from 'uiSrc/slices/browser/redisearch'
 import { initialState as initialStateRecommendations } from 'uiSrc/slices/recommendations/recommendations'
-import { initialState as initialStateTriggeredFunctions } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import { initialState as initialStateOAuth } from 'uiSrc/slices/oauth/cloud'
 import { initialState as initialStateSidePanels } from 'uiSrc/slices/panels/sidePanels'
+import { initialState as initialStateRdiPipeline } from 'uiSrc/slices/rdi/pipeline'
+import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/instances'
+import { initialState as initialStateRdiDryRunJob } from 'uiSrc/slices/rdi/dryRun'
+import { initialState as initialStateRdiStatistics } from 'uiSrc/slices/rdi/statistics'
+import { initialState as initialStateRdiTestConnections } from 'uiSrc/slices/rdi/testConnections'
 import { initialState as initialStateAiAssistant } from 'uiSrc/slices/panels/aiAssistant'
-import { initialState as initialStateRdi } from 'uiSrc/slices/rdi/rdi'
 import { RESOURCES_BASE_URL } from 'uiSrc/services/resourcesService'
 import { apiService } from 'uiSrc/services'
 
@@ -119,7 +122,6 @@ const initialStateDefault: RootState = {
   },
   recommendations: cloneDeep(initialStateRecommendations),
   pubsub: cloneDeep(initialStatePubSub),
-  triggeredFunctions: cloneDeep(initialStateTriggeredFunctions),
   oauth: {
     cloud: cloneDeep(initialStateOAuth),
   },
@@ -128,7 +130,11 @@ const initialStateDefault: RootState = {
     aiAssistant: cloneDeep(initialStateAiAssistant),
   },
   rdi: {
-    rdi: cloneDeep(initialStateRdi),
+    pipeline: cloneDeep(initialStateRdiPipeline),
+    instances: cloneDeep(initialStateRdi),
+    dryRun: cloneDeep(initialStateRdiDryRunJob),
+    statistics: cloneDeep(initialStateRdiStatistics),
+    testConnections: cloneDeep(initialStateRdiTestConnections)
   }
 }
 
@@ -219,6 +225,8 @@ jest.mock('react-router-dom', () => ({
   }),
   useParams: () => ({
     instanceId: 'instanceId',
+    rdiInstanceId: 'rdiInstanceId',
+    jobName: 'jobName',
   }),
 }))
 

@@ -1,9 +1,42 @@
 {
-  "version": 2.4603,
+  "version": 2.5202,
   "features": {
+    "rdi": {
+      "flag": true,
+      "perc": [[0,0]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "REDIS_STACK",
+          "cond": "neq"
+        }
+      ]
+    },
     "insightsRecommendations": {
       "flag": true,
       "perc": [[0,100]]
+    },
+    "documentationChat": {
+      "flag": true,
+      "perc": [[0,20]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
+    },
+    "databaseChat": {
+      "flag": true,
+      "perc": [[0,20]],
+      "filters": [
+        {
+          "name": "config.server.buildType",
+          "value": "ELECTRON",
+          "cond": "eq"
+        }
+      ]
     },
     "cloudSso": {
       "flag": true,
@@ -23,16 +56,6 @@
         }],
         "selectPlan": {
           "components": {
-            "triggersAndFunctions": [
-              {
-                "provider": "AWS",
-                "regions": ["ap-southeast-1"]
-              },
-              {
-                "provider": "GCP",
-                "regions": ["asia-northeast1"]
-              }
-            ],
             "redisStackPreview": [
               {
                 "provider": "AWS",
@@ -54,11 +77,6 @@
         {
           "name": "config.server.buildType",
           "value": "ELECTRON",
-          "cond": "eq"
-        },
-        {
-          "name": "agreements.analytics",
-          "value": true,
           "cond": "eq"
         }
       ]

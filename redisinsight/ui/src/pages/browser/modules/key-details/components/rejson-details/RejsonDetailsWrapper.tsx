@@ -12,7 +12,7 @@ import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/mod
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
-import RejsonDetails from './rejson-details/RejsonDetails'
+import RejsonDetails from './rejson-details'
 
 import styles from './styles.module.scss'
 
@@ -106,7 +106,7 @@ const RejsonDetailsWrapper = (props: Props) => {
                 data={data as IJSONData}
                 length={length}
                 parentPath={path}
-                expadedRows={expandedRows}
+                expandedRows={expandedRows}
                 onJsonKeyExpandAndCollapse={handleJsonKeyExpandAndCollapse}
                 isDownloaded={downloaded}
               />

@@ -44,6 +44,10 @@ export class MockRedisClient extends RedisClient {
 
   public disconnect = jest.fn().mockResolvedValue(undefined);
 
+  public isFeatureSupported = jest.fn().mockResolvedValue(undefined);
+
+  public getInfo = jest.fn().mockResolvedValue(undefined);
+
   public quit = jest.fn().mockResolvedValue(undefined); // todo: should return commands results
 
   public getCurrentDbIndex = jest.fn().mockResolvedValue(0);

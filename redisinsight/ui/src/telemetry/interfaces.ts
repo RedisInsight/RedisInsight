@@ -15,6 +15,7 @@ export interface ITelemetrySendEvent {
 
 export interface ITelemetrySendPageView {
   name: string
+  eventData?: Object
   databaseId?: string
   nonTracking?: boolean
 }
@@ -37,7 +38,6 @@ export enum RedisModules {
   RedisJSON = 'ReJSON',
   RediSearch = 'search',
   RedisTimeSeries = 'timeseries',
-  'Triggers and Functions' = 'redisgears'
 }
 
 export interface IModuleSummary {

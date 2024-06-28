@@ -1,5 +1,5 @@
 import { MOCK_COMMANDS_SPEC } from 'uiSrc/constants'
-import { createDependencyProposals, getCommandMarkdown } from 'uiSrc/utils'
+import { createDependencyProposals, getCommandMarkdown, getDocUrlForCommand } from 'uiSrc/utils'
 
 const spec = { GET: MOCK_COMMANDS_SPEC.GET }
 
@@ -12,9 +12,9 @@ describe('createDependencyProposals', () => {
         kind: 1,
         detail: 'GET key',
         // eslint-disable-next-line no-template-curly-in-string
-        insertText: 'GET ${1:key} ',
+        insertText: 'GET ${1:key}',
         documentation: {
-          value: getCommandMarkdown('GET', MOCK_COMMANDS_SPEC.GET)
+          value: getCommandMarkdown(MOCK_COMMANDS_SPEC.GET, getDocUrlForCommand('GET'))
         },
         insertTextRules: 4,
         range: {

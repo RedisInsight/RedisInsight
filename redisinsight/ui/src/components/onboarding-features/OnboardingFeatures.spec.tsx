@@ -893,49 +893,6 @@ describe('ONBOARDING_FEATURES', () => {
       fireEvent.click(screen.getByTestId('back-btn'))
       expect(pushMock).toHaveBeenCalledWith(Pages.slowLog(''))
     })
-
-    it('should call proper history push on next ', () => {
-      const pushMock = jest.fn()
-      reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-
-      render(<OnboardingTour options={ONBOARDING_FEATURES.PUB_SUB_PAGE}><span /></OnboardingTour>)
-      fireEvent.click(screen.getByTestId('next-btn'))
-      expect(pushMock).toHaveBeenCalledWith(Pages.triggeredFunctions(''))
-    })
-  })
-
-  describe('TRIGGERED_FUNCTIONS_PAGE', () => {
-    beforeEach(() => {
-      (appFeatureOnboardingSelector as jest.Mock).mockReturnValue({
-        currentStep: OnboardingSteps.TriggeredFunctionsPage,
-        isActive: true,
-        totalSteps: Object.keys(ONBOARDING_FEATURES).length
-      })
-    })
-
-    it('should render', () => {
-      expect(
-        render(<OnboardingTour options={ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE}><span /></OnboardingTour>)
-      ).toBeTruthy()
-      expect(screen.getByTestId('step-content')).toHaveTextContent('Triggers and Functions can execute server-side functions triggered by certain events or data operations to decrease latency and react in real time to database events.See the list of uploaded libraries, upload or delete libraries, or investigate and debug functions.')
-    })
-
-    it('should call proper telemetry events', () => {
-      const sendEventTelemetryMock = jest.fn();
-      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-
-      render(<OnboardingTour options={ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE}><span /></OnboardingTour>)
-      checkAllTelemetryButtons(OnboardingStepName.TriggeredFunctions, sendEventTelemetry as jest.Mock)
-    })
-
-    it('should properly push history on back', () => {
-      const pushMock = jest.fn()
-      reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-
-      render(<OnboardingTour options={ONBOARDING_FEATURES.TRIGGERED_FUNCTIONS_PAGE}><span /></OnboardingTour>)
-      fireEvent.click(screen.getByTestId('back-btn'))
-      expect(pushMock).toHaveBeenCalledWith(Pages.pubSub(''))
-    })
   })
 
   describe('FINISH', () => {

@@ -76,7 +76,7 @@ export default {
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.50.0',
+    appVersion: process.env.RI_APP_VERSION || '2.52.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -100,6 +100,7 @@ export default {
     retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 3,
     retryDelay: parseInt(process.env.RI_CLIENTS_RETRY_DELAY, 10) || 500,
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
+    slotsRefreshTimeout: parseInt(process.env.RI_CLIENTS_SLOTS_REQUEST_TIMEOUT, 10) || 5000,
   },
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,
@@ -205,11 +206,6 @@ export default {
       url: process.env.RI_COMMANDS_REDISBLOOM_URL
         || 'https://raw.githubusercontent.com/RedisBloom/RedisBloom/master/commands.json',
     },
-    {
-      name: 'triggers_and_functions',
-      url: process.env.RI_COMMANDS_TRIGGERS_AND_FUNCTIONS_URL
-        || 'https://raw.githubusercontent.com/RedisGears/RedisGears/master/commands.json',
-    },
   ],
   connections: {
     timeout: parseInt(process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec
@@ -265,5 +261,7 @@ export default {
     querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://app-sm.k8s-cloudapi.sm-qa.qa.redislabs.com',
     querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',
     queryHistoryLimit: parseInt(process.env.RI_AI_QUERY_HISTORY_LIMIT, 10) || 20,
+    queryMaxResults: parseInt(process.env.RI_AI_QUERY_MAX_RESULTS, 10) || 50,
+    queryMaxNestedElements: parseInt(process.env.RI_AI_QUERY_MAX_NESTED_ELEMENTS, 10) || 25,
   },
 };

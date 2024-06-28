@@ -1,11 +1,5 @@
-import * as monacoEditor from 'monaco-editor'
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import cypherFunctions from './functions'
-
-interface CypherFunction {
-  name: string
-  signature: string
-  description: string
-}
 
 export const cypherLanguageConfiguration: monacoEditor.languages.LanguageConfiguration = {
   brackets: [
@@ -165,7 +159,7 @@ export const KEYWORDS = [
   'YIELD',
 ]
 
-export const FUNCTIONS: CypherFunction[] = cypherFunctions
+export const FUNCTIONS: monacoEditor.languages.CompletionItem[] = cypherFunctions
 
 export const STRINGS: string[] = ['stringliteral', 'urlhex']
 

@@ -10,6 +10,7 @@ import {
   EuiFieldText,
   EuiPanel,
 } from '@elastic/eui'
+import { toNumber } from 'lodash'
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
@@ -19,36 +20,28 @@ import {
 } from 'uiSrc/slices/browser/hash'
 import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 
-import { stringToBuffer } from 'uiSrc/utils'
-import { AddFieldsToHashDto } from 'apiSrc/modules/browser/hash/dto'
-import styles from '../styles.module.scss'
+import { stringToBuffer, validateTTLNumberForAddKey } from 'uiSrc/utils'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+import { IHashFieldState, INITIAL_HASH_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
+import { AddFieldsToHashDto, HashFieldDto } from 'apiSrc/modules/browser/hash/dto'
+
+import styles from './styles.module.scss'
 
 export interface Props {
+  isExpireFieldsAvailable?: boolean
   closePanel: (isCancelled?: boolean) => void
 }
 
-export interface IHashFieldState {
-  fieldName: string;
-  fieldValue: string;
-  id: number;
-}
-
-export const INITIAL_HASH_FIELD_STATE: IHashFieldState = {
-  fieldName: '',
-  fieldValue: '',
-  id: 0,
-}
-
 const AddHashFields = (props: Props) => {
-  const { closePanel } = props
+  const { isExpireFieldsAvailable, closePanel } = props
   const dispatch = useDispatch()
   const [fields, setFields] = useState<IHashFieldState[]>([{ ...INITIAL_HASH_FIELD_STATE }])
   const { loading } = useSelector(updateHashValueStateSelector)
   const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+
   const lastAddedFieldName = useRef<HTMLInputElement>(null)
 
   useEffect(() =>
@@ -85,9 +78,19 @@ const AddHashFields = (props: Props) => {
         ...item,
         fieldName: '',
         fieldValue: '',
+        fieldTTL: undefined,
       }
       : item))
     setFields(newState)
+  }
+
+  const onClickRemove = ({ id }: IHashFieldState) => {
+    if (fields.length === 1) {
+      clearFieldsValues(id)
+      return
+    }
+
+    removeField(id)
   }
 
   const onSuccessAdded = () => {
@@ -122,16 +125,24 @@ const AddHashFields = (props: Props) => {
   const submitData = (): void => {
     const data: AddFieldsToHashDto = {
       keyName: selectedKey,
-      fields: fields.map((item) => ({
-        field: stringToBuffer(item.fieldName),
-        value: stringToBuffer(item.fieldValue,)
-      })),
+      fields: fields.map((item) => {
+        const defaultFields: HashFieldDto = {
+          field: stringToBuffer(item.fieldName),
+          value: stringToBuffer(item.fieldValue),
+        }
+
+        if (isExpireFieldsAvailable && item.fieldTTL) {
+          defaultFields.expire = toNumber(item.fieldTTL)
+        }
+
+        return defaultFields
+      })
     }
     dispatch(addHashFieldsAction(data, onSuccessAdded))
   }
 
   const isClearDisabled = (item: IHashFieldState): boolean =>
-    fields.length === 1 && !(item.fieldName.length || item.fieldValue.length)
+    fields.length === 1 && !(item.fieldName.length || item.fieldValue.length || item.fieldTTL?.length)
 
   return (
     <>
@@ -140,59 +151,67 @@ const AddHashFields = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-hash-field-panel"
-        className={cx('eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
-        {fields.map((item, index) => (
-          <EuiFlexItem style={{ marginBottom: '8px' }} grow key={item.id}>
-            <EuiFlexGroup gutterSize="m">
-              <EuiFlexItem grow>
-                <EuiFlexGroup gutterSize="none" alignItems="center">
-                  <EuiFlexItem grow>
-                    <EuiFormRow fullWidth>
-                      <EuiFieldText
-                        fullWidth
-                        name={`fieldName-${item.id}`}
-                        id={`fieldName-${item.id}`}
-                        placeholder="Enter Field"
-                        value={item.fieldName}
-                        disabled={loading}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleFieldChange('fieldName', item.id, e.target.value)}
-                        inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
-                        data-testid="hash-field"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow>
-                    <EuiFormRow fullWidth>
-                      <EuiFieldText
-                        fullWidth
-                        name={`fieldValue-${item.id}`}
-                        id={`fieldValue-${item.id}`}
-                        placeholder="Enter Value"
-                        value={item.fieldValue}
-                        disabled={loading}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleFieldChange('fieldValue', item.id, e.target.value)}
-                        data-testid="hash-value"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+        <AddMultipleFields
+          items={fields}
+          isClearDisabled={isClearDisabled}
+          onClickRemove={onClickRemove}
+          onClickAdd={addField}
+        >
+          {(item, index) => (
+            <EuiFlexGroup gutterSize="none" alignItems="center">
+              <EuiFlexItem grow={2}>
+                <EuiFormRow fullWidth>
+                  <EuiFieldText
+                    fullWidth
+                    name={`fieldName-${item.id}`}
+                    id={`fieldName-${item.id}`}
+                    placeholder="Enter Field"
+                    value={item.fieldName}
+                    disabled={loading}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleFieldChange('fieldName', item.id, e.target.value)}
+                    inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
+                    data-testid="hash-field"
+                  />
+                </EuiFormRow>
               </EuiFlexItem>
-              <AddItemsActions
-                id={item.id}
-                index={index}
-                length={fields.length}
-                addItem={addField}
-                removeItem={removeField}
-                clearItemValues={clearFieldsValues}
-                clearIsDisabled={isClearDisabled(item)}
-                loading={loading}
-              />
+              <EuiFlexItem grow={2}>
+                <EuiFormRow fullWidth>
+                  <EuiFieldText
+                    fullWidth
+                    name={`fieldValue-${item.id}`}
+                    id={`fieldValue-${item.id}`}
+                    placeholder="Enter Value"
+                    value={item.fieldValue}
+                    disabled={loading}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleFieldChange('fieldValue', item.id, e.target.value)}
+                    data-testid="hash-value"
+                  />
+                </EuiFormRow>
+              </EuiFlexItem>
+              {isExpireFieldsAvailable && (
+                <EuiFlexItem grow={1}>
+                  <EuiFormRow fullWidth>
+                    <EuiFieldText
+                      fullWidth
+                      name={`fieldTTL-${item.id}`}
+                      id={`fieldTTL-${item.id}`}
+                      placeholder="Enter TTL"
+                      value={item.fieldTTL || ''}
+                      disabled={loading}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleFieldChange('fieldTTL', item.id, validateTTLNumberForAddKey(e.target.value))}
+                      data-testid="hash-ttl"
+                    />
+                  </EuiFormRow>
+                </EuiFlexItem>
+              )}
             </EuiFlexGroup>
-          </EuiFlexItem>
-        ))}
+          )}
+        </AddMultipleFields>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}

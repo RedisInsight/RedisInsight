@@ -8,4 +8,7 @@ export const CommandsVersions = {
   SPUBLISH_NOT_SUPPORTED: {
     since: '7.0',
   },
+  HASH_TTL: {
+    since: '7.3'
+  },
 }

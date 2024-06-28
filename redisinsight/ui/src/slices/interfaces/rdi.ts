@@ -138,7 +138,7 @@ export enum PipelineStatus {
 export interface IPipelineStatus {
   components: Record<string, unknown>
   pipelines: {
-    defaults: {
+    defaults?: {
       status: PipelineStatus
       state: unknown
       tasks: unknown

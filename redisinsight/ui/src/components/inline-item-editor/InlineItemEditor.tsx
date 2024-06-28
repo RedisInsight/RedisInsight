@@ -158,7 +158,9 @@ const InlineItemEditor = (props: Props) => {
   const handleFormSubmit = (event: React.MouseEvent<HTMLElement>): void => {
     event.preventDefault()
     event.stopPropagation()
-    onApply(value, event)
+    if (!isDisabledApply()) {
+      onApply(value, event)
+    }
   }
 
   const isDisabledApply = (): boolean =>

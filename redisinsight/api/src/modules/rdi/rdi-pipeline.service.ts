@@ -5,7 +5,6 @@ import { RdiDryRunJobDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto 
 import { RdiDryRunJobResponseDto } from 'src/modules/rdi/dto/rdi.dry-run.job.response.dto';
 import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
-import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class RdiPipelineService {
@@ -29,13 +28,13 @@ export class RdiPipelineService {
     try {
       const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
 
-      const response = await client.getPipeline();
+      const pipeline = await client.getPipeline();
 
-      this.analytics.sendRdiPipelineFetched(rdiClientMetadata.id, response);
+      this.analytics.sendRdiPipelineFetched(rdiClientMetadata.id, pipeline);
 
       this.logger.log('Succeed to get RDI pipeline');
 
-      return plainToClass(RdiPipeline, response);
+      return pipeline;
     } catch (e) {
       this.logger.error('Failed to get RDI pipeline', e);
 

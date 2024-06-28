@@ -124,7 +124,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
         </EuiFormRow>
         <br />
 
-        <div className="databaseList clusterDatabaseListResult">
+        <div className="itemList databaseList clusterDatabaseListResult">
           <EuiInMemoryTable
             items={items}
             itemId="uid"

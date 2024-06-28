@@ -97,7 +97,7 @@ const DatabaseForm = (props: Props) => {
             <EuiFormRow label="Host*">
               <EuiFieldText
                 autoFocus={autoFocus}
-                name="host"
+                name="ip"
                 id="host"
                 data-testid="host"
                 color="secondary"
@@ -106,7 +106,7 @@ const DatabaseForm = (props: Props) => {
                 value={formik.values.host ?? ''}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
-                    e.target.name,
+                    'host',
                     validateField(e.target.value.trim())
                   )
                 }}

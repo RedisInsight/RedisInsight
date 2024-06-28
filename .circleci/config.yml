@@ -392,9 +392,18 @@ jobs:
           at: .
       - run: sudo apt-get install net-tools
       - run:
-          name: Clone mocked RDI server
+          name: Install WM
+          command: sudo apt install fluxbox
+      - run:
+          name: Run X11
           command: |
-            git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
+            Xvfb :99 -screen 0 1920x1080x24 &
+            sleep 3
+            fluxbox &
+      # - run:
+      #     name: Clone mocked RDI server
+      #     command: |
+      #       git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
       - run:
           name: .AppImage tests
           command: |
@@ -487,10 +496,10 @@ jobs:
                 name: Load built docker image from workspace
                 command: |
                   docker image load -i /tmp/release/docker/docker-linux-alpine.amd64.tar
-            - run:
-                name: Clone mocked RDI server
-                command: |
-                  git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
+            # - run:
+            #     name: Clone mocked RDI server
+            #     command: |
+            #       git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
             - run:
                 name: Run tests
                 command: |

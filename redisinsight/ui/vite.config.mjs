@@ -67,7 +67,7 @@ export default defineConfig({
       exclude: ['./packages'],
     },
     outDir,
-    target: 'es2020',
+    target: 'es2022',
     minify: 'esbuild',
     rollupOptions: {
       output: {

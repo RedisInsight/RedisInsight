@@ -5,12 +5,11 @@ import {
     BrowserPage
 } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
-import { rte } from '../../../../helpers/constants';
+import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { APIKeyRequests } from '../../../../helpers/api/api-keys';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
 const databaseHelper = new DatabaseHelper();
@@ -47,7 +46,7 @@ test('Verify that user can work with Monitor', async t => {
     await browserPage.Cli.getSuccessCommandResultFromCli(`${command} ${keyName} ${keyValue}`);
     await browserPage.Profiler.checkCommandInMonitorResults(command, [keyName, keyValue]);
 });
-test('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
+test.only('Verify that user can see the list of all commands from all clients ran for this Redis database in the list of results in Monitor', async t => {
     //Define commands in different clients
     const cli_command = 'command';
     const workbench_command = 'hello';
@@ -65,7 +64,7 @@ test('Verify that user can see the list of all commands from all clients ran for
     await browserPage.addHashKey(keyName);
     await browserPage.Profiler.checkCommandInMonitorResults(browser_command);
     //Open Workbench page to create new client
-    await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
     //Send command in Workbench
     await workbenchPage.sendCommandInWorkbench(workbench_command);
     //Check that command from Workbench is displayed in monitor

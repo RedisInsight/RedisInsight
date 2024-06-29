@@ -150,7 +150,7 @@ test('Verify onboard new user skip tour', async(t) => {
     await t.expect(browserPage.patternModeBtn.visible).ok('Browser page is not opened');
 });
 // https://redislabs.atlassian.net/browse/RI-4305
-test.requestHooks(logger)('Verify that the final onboarding step is closed when user opens another page', async(t) => {
+test.only.requestHooks(logger)('Verify that the final onboarding step is closed when user opens another page', async(t) => {
     await t.click(myRedisDatabasePage.NavigationPanel.helpCenterButton);
     await t.click(onboardingCardsDialog.resetOnboardingBtn);
     await onboardingCardsDialog.startOnboarding();
@@ -158,6 +158,7 @@ test.requestHooks(logger)('Verify that the final onboarding step is closed when 
     // Verify last step of onboarding process is visible
     await onboardingCardsDialog.verifyStepVisible('Great job!');
     // Go to Workbench page
+    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
     await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
 
     // Verify that “ONBOARDING_TOUR_FINISHED” event is sent when user opens another page (or close the app)

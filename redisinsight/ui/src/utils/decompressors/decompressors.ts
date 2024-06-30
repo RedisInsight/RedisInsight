@@ -11,7 +11,13 @@ import { COMPRESSOR_MAGIC_SYMBOLS, ICompressorMagicSymbols, KeyValueCompressor }
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { anyToBuffer, bufferToString, bufferToUint8Array, isEqualBuffers, Nullable } from 'uiSrc/utils'
 
-const brotli = await brotliPromise
+let brotli;
+
+brotliPromise.then((brotliModule) => {
+  brotli = brotliModule
+}).catch((error) => {
+  console.error('Failed to load brotli-wasm', error)
+})
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,

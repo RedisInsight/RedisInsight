@@ -5,6 +5,7 @@ import {
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from '@nestjs/core';
 import { join } from 'path';
+import { Response } from 'express';
 import config, { Config } from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';

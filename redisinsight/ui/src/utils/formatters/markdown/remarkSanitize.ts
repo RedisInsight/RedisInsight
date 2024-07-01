@@ -21,7 +21,6 @@ export const remarkSanitize = (): (tree: Node) => void => (tree: any) => {
   visit(tree, 'html', (node) => {
     const dangerousAttrRegex = new RegExp(`\\s*(${dangerousAttributes})="[^"]*"`, 'gi')
 
-    console.log(node.value)
     if (node.value.match(dangerousAttrRegex)) {
       node.value = node.value.replace(dangerousAttrRegex, (match: string) => {
         const attr = match.toLowerCase().trim()

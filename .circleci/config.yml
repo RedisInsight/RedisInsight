@@ -176,7 +176,7 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@5.0.2
+  node: circleci/node@5.2.0
   aws: circleci/aws-cli@2.0.3
 
 executors:
@@ -189,7 +189,7 @@ executors:
       docker_layer_caching: true
   docker-node:
     docker:
-      - image: cimg/node:18.15.0
+      - image: cimg/node:20.15
   docker:
     docker:
       - image: cibuilds/docker:19.03.5
@@ -387,7 +387,8 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          install-yarn: true
+          node-version: '20.15'
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
@@ -443,8 +444,8 @@ jobs:
           at: .
       - run:
           command: |
-            nvm install 18.15.0
-            nvm use 18.15.0
+            nvm install 20.15
+            nvm use 20.15
             npm install --global yarn
       - run:
           command: |
@@ -614,7 +615,8 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          install-yarn: true
+          node-version: '20.15'
       - attach_workspace:
           at: .
       - run:
@@ -675,7 +677,7 @@ jobs:
             - release/*-linux.yml
   macosx:
     executor: macos
-    resource_class: macos.x86.medium.gen2
+    resource_class: macos.m1.medium.gen1
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -693,7 +695,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          node-version: '20.15'
       - attach_workspace:
           at: .
       - run:
@@ -792,8 +794,8 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            nvm install 18.15.0
-            nvm use 18.15.0
+            nvm install 20.15
+            nvm use 20.15
             npm install --global yarn
 
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
@@ -884,7 +886,8 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          install-yarn: true
+          node-version: '20.15'
       - run:
           name: Install dependencies
           command: |

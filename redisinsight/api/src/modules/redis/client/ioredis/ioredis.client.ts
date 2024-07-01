@@ -20,6 +20,10 @@ export abstract class IoredisClient extends RedisClient {
     client.addBuiltinCommand(BrowserToolHashCommands.HExpire);
     client.addBuiltinCommand(BrowserToolHashCommands.HTtl);
     client.addBuiltinCommand(BrowserToolHashCommands.HPersist);
+    // fix not existing command in pipeline
+    client.addBuiltinCommand(BrowserToolHashCommands.HGETALL);
+    // should return array (same as original reply)
+    Redis.Command.setReplyTransformer(BrowserToolHashCommands.HGetAll, (result) => result);
   }
 
   static prepareCommandOptions(options: IRedisClientCommandOptions): any {

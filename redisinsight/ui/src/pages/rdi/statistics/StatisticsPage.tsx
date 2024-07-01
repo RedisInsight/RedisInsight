@@ -1,17 +1,18 @@
-import { get } from 'lodash'
+import { isEmpty } from 'lodash'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { EuiText } from '@elastic/eui'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import { rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStatusAction, rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
 import { fetchRdiStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
 import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
 import RdiInstancePageTemplate from 'uiSrc/templates/rdi-instance-page-template'
 import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
-import { IPipelineStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
+import { IPipelineStatus } from 'uiSrc/slices/interfaces'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -26,7 +27,7 @@ const isPipelineDeployed = (data: Nullable<IPipelineStatus>) => {
     return false
   }
 
-  return get(data, 'pipelines.default.status') === PipelineStatus.Ready
+  return !isEmpty(data.pipelines)
 }
 
 const StatisticsPage = () => {
@@ -69,6 +70,7 @@ const StatisticsPage = () => {
   }
 
   useEffect(() => {
+    dispatch(getPipelineStatusAction(rdiInstanceId))
     dispatch(fetchRdiStatistics(rdiInstanceId))
 
     sendPageViewTelemetry({
@@ -83,6 +85,11 @@ const StatisticsPage = () => {
 
   if (!statisticsResults) {
     return null
+  }
+
+  // todo add interface
+  if (statisticsResults.status === 'failed') {
+    return <EuiText style={{ margin: '20px auto' }}>Unexpected error in your RDI endpoint, please refresh the page</EuiText>
   }
 
   const { data: statisticsData } = statisticsResults

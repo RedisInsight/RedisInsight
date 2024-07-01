@@ -119,7 +119,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
         </EuiFormRow>
         <br />
 
-        <div className="databaseList cloudDatabaseListResult">
+        <div className="itemList databaseList cloudDatabaseListResult">
           <EuiInMemoryTable
             items={items}
             itemId="uid"

@@ -181,7 +181,6 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           });
           connection.on('end', (): void => {
             this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-            tnl?.close?.();
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
@@ -259,7 +258,6 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           });
           cluster.on('end', (): void => {
             this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-            tnls.forEach((tnl) => tnl?.close?.());
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           cluster.on('ready', (): void => {

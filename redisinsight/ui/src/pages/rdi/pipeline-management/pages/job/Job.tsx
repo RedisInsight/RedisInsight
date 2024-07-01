@@ -12,12 +12,14 @@ import { deleteChangedFile, rdiPipelineSelector, setChangedFile } from 'uiSrc/sl
 import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
-import { isEqualPipelineFile, Maybe } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -66,6 +68,14 @@ const Job = (props: Props) => {
   }, [name])
 
   const handleDryRunJob = () => {
+    const JSONValue = yamlToJson(value, (msg) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: rdiErrorMessages.invalidStructure(name, msg)
+      })))
+    })
+    if (!JSONValue) {
+      return
+    }
     setIsPanelOpen(true)
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEST_JOB_OPENED,
@@ -235,6 +245,7 @@ const Job = (props: Props) => {
         <DryRunJobPanel
           onClose={() => setIsPanelOpen(false)}
           job={value}
+          name={name}
         />
       )}
     </>

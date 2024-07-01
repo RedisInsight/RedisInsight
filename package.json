@@ -80,7 +80,6 @@
   "resolutions": {
     "**/trim": "0.0.3",
     "word-wrap": "1.2.4",
-    "electron-builder/app-builder-lib/@electron/universal/dir-compare/minimatch": "^3.0.5",
     "**/semver": "^7.5.2",
     "rawproto/protobufjs": "^7.2.5"
   },
@@ -140,9 +139,9 @@
     "css-minimizer-webpack-plugin": "^6.0.0",
     "csv-parser": "^3.0.0",
     "csv-stringify": "^6.4.0",
-    "electron": "25.8.4",
-    "electron-builder": "^23.6.0",
-    "electron-builder-notarize": "^1.5.1",
+    "electron": "31.0.2",
+    "electron-builder": "^24.13.3",
+    "electron-builder-notarize": "^1.5.2",
     "electron-debug": "^3.2.0",
     "electron-devtools-installer": "^3.2.0",
     "esbuild-plugin-react-virtualized": "^1.0.4",

@@ -39,7 +39,7 @@ RUN yarn --cwd ./redisinsight/api install --production
 COPY ./redisinsight/api/.yarnclean.prod ./redisinsight/api/.yarnclean
 RUN yarn --cwd ./redisinsight/api autoclean --force
 
-FROM 20.14-alpine-alpine
+FROM 20.14-alpine
 
 # runtime args and environment variables
 ARG NODE_ENV=production

@@ -111,4 +111,5 @@ export default {
   RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
   RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',
   RDI_VALIDATION_ERROR: 'Validation error',
+  INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',
 };

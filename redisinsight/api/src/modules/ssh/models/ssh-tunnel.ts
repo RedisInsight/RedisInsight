@@ -26,7 +26,8 @@ export class SshTunnel {
   }
 
   public close() {
-    this.server?.close?.();
-    this.client?.end?.();
+    this.server?.close?.(() => {
+      // ignore any error
+    });
   }
 }

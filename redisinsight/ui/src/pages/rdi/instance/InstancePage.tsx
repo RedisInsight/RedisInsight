@@ -17,12 +17,13 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import {
   deployPipelineAction,
-  getPipelineStatusAction,
   rdiPipelineSelector,
   setPipelineInitialState,
 } from 'uiSrc/slices/rdi/pipeline'
 import { IPipeline } from 'uiSrc/slices/interfaces'
-import { Nullable, pipelineToJson } from 'uiSrc/utils'
+import { createAxiosError, Nullable, pipelineToJson } from 'uiSrc/utils'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import InstancePageRouter from './InstancePageRouter'
 import { ConfirmLeavePagePopup } from './components'
@@ -63,6 +64,7 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [rdiInstanceId])
 
   useEffect(() => {
+    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
       if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {
@@ -71,9 +73,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
       }
       history.push(Pages.rdiPipelineManagement(rdiInstanceId))
     }
-
-    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
-    dispatch(getPipelineStatusAction(rdiInstanceId))
   }, [])
 
   useEffect(() => {
@@ -88,7 +87,14 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   const onSubmit = (values: IPipeline) => {
-    const JSONValues = pipelineToJson(values)
+    const JSONValues = pipelineToJson(values, (errors) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: rdiErrorMessages.invalidStructure(errors[0].filename, errors[0].msg)
+      })))
+    })
+    if (!JSONValues) {
+      return
+    }
     dispatch(deployPipelineAction(rdiInstanceId, JSONValues))
   }
 

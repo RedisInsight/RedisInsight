@@ -16,6 +16,8 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName } from 'uiSrc/utils'
 import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { Pages } from 'uiSrc/constants'
+import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { PackageType } from 'uiSrc/constants/env'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -26,6 +28,7 @@ const OAuthUserProfile = (props: Props) => {
   const { source } = props
   const [selectingAccountId, setSelectingAccountId] = useState<number>()
   const { data } = useSelector(oauthCloudUserSelector)
+  const { server } = useSelector(appInfoSelector)
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isImportLoading, setIsImportLoading] = useState(false)
@@ -34,6 +37,8 @@ const OAuthUserProfile = (props: Props) => {
   const history = useHistory()
 
   if (!data) {
+    if (server?.packageType === PackageType.Mas) return null
+
     return (
       <div className={styles.wrapper}>
         <OAuthSignInButton source={source} />

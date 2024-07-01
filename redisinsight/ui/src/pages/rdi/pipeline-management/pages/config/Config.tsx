@@ -6,7 +6,6 @@ import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
 
-import yaml from 'js-yaml'
 import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -15,10 +14,12 @@ import { FileChangeType, IPipeline, RdiPipelineTabs } from 'uiSrc/slices/interfa
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import TestConnectionsPanel from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-panel'
 import TemplatePopover from 'uiSrc/pages/rdi/pipeline-management/components/template-popover'
+import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { testConnectionsAction, rdiTestConnectionsSelector, testConnectionsController } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
-import { isEqualPipelineFile } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -57,8 +58,16 @@ const Config = () => {
   }, [isOpenDialog, config, pipelineLoading])
 
   const testConnections = () => {
+    const JSONValue = yamlToJson(config, (msg) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: rdiErrorMessages.invalidStructure('config', msg)
+      })))
+    })
+    if (!JSONValue) {
+      return
+    }
     setIsPanelOpen(true)
-    dispatch(testConnectionsAction(rdiInstanceId, yaml.load(config)))
+    dispatch(testConnectionsAction(rdiInstanceId, JSONValue))
     sendEventTelemetry({
       event: TelemetryEvent.RDI_TEST_TARGET_CONNECTIONS_CLICKED,
       eventData: {

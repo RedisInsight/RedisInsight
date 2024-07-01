@@ -44,19 +44,24 @@ test
         await browserPage.searchByKeyName(keyName);
         // Verify that key was found
         const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
-        await t.expect(isKeyIsDisplayedInTheList).ok('The key was found');
+        await t.expect(isKeyIsDisplayedInTheList).ok('The key was not found');
+
+        // Verify that key not found when selecting other key type
+        await browserPage.selectFilterGroupType(KeyTypesTexts.List);
+        await t.expect(await browserPage.isKeyIsDisplayedInTheList(keyName)).notOk('The key was found by invalid filter');
+
         // Verify that user can see filtering per key name starts when he press Enter or clicks the control to filter per key name
         // Clear filter
         await t.click(browserPage.clearFilterButton);
         // Check the filtering starts by press Enter
         await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText', { replace: true, paste: true });
         await t.pressKey('enter');
-        await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
+        await t.expect(browserPage.searchAdvices.exists).ok('The filtering is not set');
         // Check the filtering starts by clicks the control
         await browserPage.reloadPage();
         await t.typeText(browserPage.filterByPatterSearchInput, 'InvalidText', { replace: true, paste: true });
         await t.click(browserPage.searchButton);
-        await t.expect(browserPage.searchAdvices.exists).ok('The filtering is set');
+        await t.expect(browserPage.searchAdvices.exists).ok('The filtering is not set');
     });
 test
     .after(async() => {

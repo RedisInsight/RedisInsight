@@ -25,14 +25,18 @@ export class RdiPipelineAnalytics extends TelemetryBaseService {
   }
 
   sendRdiPipelineFetched(id: string, pipeline: any) {
-    this.sendEvent(
-      TelemetryEvents.RdiPipelineDeploymentSucceeded,
-      {
-        id,
-        jobsNumber: Object.keys(pipeline.jobs).length,
-        source: 'server',
-      },
-    );
+    try {
+      this.sendEvent(
+        TelemetryEvents.RdiPipelineDeploymentSucceeded,
+        {
+          id,
+          jobsNumber: pipeline?.jobs ? Object.keys(pipeline.jobs).length : 0,
+          source: 'server',
+        },
+      );
+    } catch (e) {
+      // ignore
+    }
   }
 
   sendRdiPipelineFetchFailed(

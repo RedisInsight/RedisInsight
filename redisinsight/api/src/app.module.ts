@@ -5,6 +5,7 @@ import {
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RouterModule } from '@nestjs/core';
 import { join } from 'path';
+import { Response } from 'express';
 import config, { Config } from 'src/utils/config';
 import { PluginModule } from 'src/modules/plugin/plugin.module';
 import { CommandsModule } from 'src/modules/commands/commands.module';
@@ -33,10 +34,15 @@ import { CliModule } from './modules/cli/cli.module';
 import { StaticsManagementModule } from './modules/statics-management/statics-management.module';
 import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
+import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
 import { routes } from './app.routes';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
+
+const setXFrameOptionsHeader = (res: Response) => {
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+};
 
 @Module({
   imports: [
@@ -73,6 +79,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
           serveRoot: SERVER_CONFIG.proxyPath ? `/${SERVER_CONFIG.proxyPath}` : '',
           serveStaticOptions: {
             index: false,
+            setHeaders: setXFrameOptionsHeader,
           },
         }),
       ]
@@ -83,6 +90,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
       exclude: ['/api/**'],
       serveStaticOptions: {
         fallthrough: false,
+        setHeaders: setXFrameOptionsHeader,
       },
     }),
     ServeStaticModule.forRoot({
@@ -91,6 +99,7 @@ const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
       exclude: ['/api/**'],
       serveStaticOptions: {
         fallthrough: false,
+        setHeaders: setXFrameOptionsHeader,
       },
     }),
     StaticsManagementModule,
@@ -115,7 +124,7 @@ export class AppModule implements OnModuleInit, NestModule {
 
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(SubpathProxyMiddleware)
+      .apply(SubpathProxyMiddleware, XFrameOptionsMiddleware)
       .forRoutes('*');
 
     consumer

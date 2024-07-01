@@ -15,6 +15,7 @@ const downloadableStaticFiles = (res: Response) => {
   if (res.req?.query?.download === 'true') {
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', 'attachment;');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   }
 };
 

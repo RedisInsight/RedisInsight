@@ -28,7 +28,7 @@ const mutableAxiosInstance: AxiosInstance = axios.create({
 })
 
 export const setCSRFHeader = (token: string) => {
-  mutableAxiosInstance.defaults.headers.common['X-CSRF-Token'] = token
+  mutableAxiosInstance.defaults.headers.common[CustomHeaders.CsrfToken] = token
 }
 
 export const requestInterceptor = (config: InternalAxiosRequestConfig) => {

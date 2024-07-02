@@ -3,19 +3,21 @@ import React, { ReactElement, useEffect, useState } from 'react'
 import apiService, { setCSRFHeader } from 'uiSrc/services/apiService'
 import PagePlaceholder from '../page-placeholder'
 
-const csrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
+const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
 
 interface CSRFTokenResponse {
   token: string;
 }
 
-const Csrf = ({ children }: { children?: ReactElement }) => {
-  const [loading, setLoading] = useState(true)
+const Csrf = ({ children }: { children: ReactElement }) => {
+  const [loading, setLoading] = useState(false)
 
   const fetchCsrfToken = async () => {
     let data: CSRFTokenResponse | undefined
     try {
-      const { data } = await apiService.get<CSRFTokenResponse>(csrfEndpoint())
+      setLoading(true)
+
+      const { data } = await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
 
       setCSRFHeader(data.token)
     } catch (error) {
@@ -28,14 +30,14 @@ const Csrf = ({ children }: { children?: ReactElement }) => {
   }
 
   useEffect(() => {
-    if (!csrfEndpoint()) {
+    if (!getCsrfEndpoint()) {
       return
     }
 
     fetchCsrfToken()
   }, [])
 
-  return loading && csrfEndpoint() ? <PagePlaceholder /> : children || null
+  return loading && getCsrfEndpoint() ? <PagePlaceholder /> : children
 }
 
 export default Csrf

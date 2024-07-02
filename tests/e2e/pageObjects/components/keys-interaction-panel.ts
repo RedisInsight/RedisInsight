@@ -24,6 +24,9 @@ export class KeysInteractionPanel {
      * Click on Panel tab
      * @param type of the tab
      */
+    async setActiveTab(type: KeysInteractionTabs.BrowserAndFilter): Promise<BrowserPage>
+    async setActiveTab(type: KeysInteractionTabs.SearchAndQuery): Promise<SearchAndQueryPage>
+    async setActiveTab(type: KeysInteractionTabs.Workbench): Promise<WorkbenchPage>
     async setActiveTab(type: KeysInteractionTabs): Promise<BrowserPage | WorkbenchPage | SearchAndQueryPage> {
         const activeTabName = await this.getActiveTabName();
 

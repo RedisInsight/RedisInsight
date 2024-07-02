@@ -30,12 +30,14 @@ export class RdiPipelineService {
 
       const pipeline = await client.getPipeline();
 
+      console.log('___ pipeline', pipeline)
       this.analytics.sendRdiPipelineFetched(rdiClientMetadata.id, pipeline);
 
       this.logger.log('Succeed to get RDI pipeline');
 
       return pipeline;
     } catch (e) {
+      console.log('___e', e);
       this.logger.error('Failed to get RDI pipeline', e);
 
       this.analytics.sendRdiPipelineFetchFailed(e, rdiClientMetadata.id);

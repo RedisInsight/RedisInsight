@@ -78,6 +78,11 @@ export class FeatureService {
       }
     });
 
+    features['rdi'] = {
+      flag: true,
+      name: 'rdi'
+    }
+
     return { features };
   }
 

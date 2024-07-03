@@ -110,10 +110,11 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
+  async dryRunJob(dto: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
     try {
-      const response = await this.client.post(RdiUrl.DryRunJob, data);
-      return response.data;
+      const { data } = await this.client.post(RdiUrl.DryRunJob, dto);
+
+      return data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -134,9 +135,9 @@ export class ApiRdiClient extends RdiClient {
 
   async getPipelineStatus(): Promise<any> {
     try {
-      const response = await this.client.get(RdiUrl.GetPipelineStatus);
+      const { data } = await this.client.get(RdiUrl.GetPipelineStatus);
 
-      return response.data;
+      return data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -144,10 +145,11 @@ export class ApiRdiClient extends RdiClient {
 
   async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
     try {
-      const response = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
+      const { data } = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
+
       return {
         status: RdiStatisticsStatus.Success,
-        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(response.data)),
+        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
       return { status: RdiStatisticsStatus.Fail, error: e.message };

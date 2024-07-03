@@ -18,7 +18,7 @@ fixture `Autocomplete for entered commands`
         // Delete database
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test.only('Verify that tutorials can be opened from Workbench"', async t => {
+test('Verify that tutorials can be opened from Workbench', async t => {
     const workbench =  await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
     await t.click(workbench.basicUseCaseTutorialsButton);
     await t.expect(workbench.InsightsPanel.sidePanel.exists).ok('Insight panel is not opened');

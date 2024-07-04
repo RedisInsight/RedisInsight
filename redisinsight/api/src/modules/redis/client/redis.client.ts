@@ -31,6 +31,7 @@ export interface IRedisClientOptions {
   port?: number,
   natHost?: string,
   natPort?: number,
+  tlsPort?: number,
   connectTimeout?: number,
 }
 

@@ -800,6 +800,8 @@ jobs:
 
             # hardcode due to incorrect N-API version detection
             export NAPI_VERSION=6
+            export npm_config_NAPI_VERSION=6
+            export npm_config_napi_version=6
 
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
             yarn install

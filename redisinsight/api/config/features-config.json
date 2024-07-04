@@ -1,5 +1,5 @@
 {
-  "version": 2.5202,
+  "version": 2.5203,
   "features": {
     "rdi": {
       "flag": true,
@@ -13,6 +13,10 @@
       ]
     },
     "insightsRecommendations": {
+      "flag": true,
+      "perc": [[0,100]]
+    },
+    "hashFieldExpiration": {
       "flag": true,
       "perc": [[0,100]]
     },

@@ -24,13 +24,14 @@ let foundExportedFiles: string[];
 
 const filePathes = {
     successful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDIPipeline.zip'),
-    unsuccessful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'UnsuccessRDI_Pipeline.zip')
+    unsuccessful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'UnsuccessRDI_Pipeline.zip'),
+    fullPipeline: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfig.zip')
 };
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'http://localhost:4000',
+    url: 'https://54.175.165.214',
     username: 'username',
-    password: 'password'
+    password: 'v3rY$tronGPa33w0Rd3ECDb'
 };
 
 //skip the tests until rdi integration is added
@@ -47,9 +48,8 @@ fixture.skip `Pipeline`
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
-test('Verify that user can refresh pipeline', async() => {
+test('Verify that new changes are highlight', async() => {
     const text = 'text';
-    const expectedText = 'sources:';
 
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await t.click(rdiInstancePage.templateCancelButton);
@@ -61,37 +61,56 @@ test('Verify that user can refresh pipeline', async() => {
     await t.expect(enteredText).eql(text, 'config text was not changed');
     testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
     await t.expect(testId).contains('updated', 'config text was not changed');
-
-    await t.click(rdiInstancePage.RdiHeader.uploadPipelineButton);
-    await t.click(rdiInstancePage.RdiHeader.confirmUploadingPipelineBatton);
-    const updatedText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
-    await t.expect(updatedText).contains(expectedText, 'config text was not updated');
-    await t.expect(updatedText).notContains(text, 'config text was not updated');
-
 });
+
 // https://redislabs.atlassian.net/browse/RI-5199
 test('Verify that user can deploy pipeline', async() => {
     const messageText = 'Are you sure you want to deploy the pipeline?';
-    const successMessage = 'Deployment completed successfully!';
-    const errorMessage = 'Unfortunately we’ve found some errors in your pipeline.';
+    const emptyText = 'empty';
+    const expectedText = 'sources:';
+    const jobName = 'test';
 
-    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
+    // upload full pipeline
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
+    await rdiInstancePage.RdiHeader.uploadPipeline(filePathes.fullPipeline);
+    await t.click(rdiInstancePage.okUploadPipelineBtn);
     await t.click(rdiInstancePage.RdiHeader.deployPipelineBtn);
     // Verify that user can see message when request to deploy the pipeline
     await browserActions.verifyDialogContainsText(messageText, true);
 
     // Verify that user the successful  message when the pipeline has been deployed
     await t.click(rdiInstancePage.RdiHeader.deployConfirmBtn);
-    await t.expect(rdiInstancePage.successDeployNotification.textContent).contains(successMessage, 'Pipeline deployment is unsuccessful');
-
+    await t.expect(rdiInstancePage.loadingIndicator.exists).notOk({ timeout: 60000 });
+    await t.expect(rdiInstancePage.Toast.toastBody.textContent).contains('Congratulations!');
     await t.click(rdiInstancePage.Toast.toastCloseButton);
-    // Verify that user the error message when the pipeline deployment failed
-    // TODO need to add - Modify deploy.js to receive an error
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, emptyText, true);
+
+    await t.click(rdiInstancePage.RdiHeader.uploadPipelineButton);
+    await t.click(rdiInstancePage.RdiHeader.uploadConfirmPipelineButton);
+    await t.expect(rdiInstancePage.loadingIndicator.exists).notOk({ timeout: 20000 });
+    let updatedText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
+    await t.expect(updatedText).contains(expectedText, 'config text was not updated');
+    await t.expect(updatedText).notContains(emptyText, 'config text was not updated');
+
+    // upload pipeline without jobs
+    await rdiInstancePage.PipelineManagementPanel.deleteJobByName(jobName);
+
     await t.click(rdiInstancePage.RdiHeader.deployPipelineBtn);
     await t.click(rdiInstancePage.RdiHeader.deployConfirmBtn);
-    await t.expect(rdiInstancePage.errorDeployNotification.textContent).contains(errorMessage, 'Pipeline deployment is successful');
-
+    await t.expect(rdiInstancePage.loadingIndicator.exists).notOk({ timeout: 60000 });
+    await t.expect(rdiInstancePage.Toast.toastBody.textContent).contains('Congratulations!');
     await t.click(rdiInstancePage.Toast.toastCloseButton);
+
+    await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, emptyText, true);
+
+    await t.click(rdiInstancePage.RdiHeader.uploadPipelineButton);
+    await t.click(rdiInstancePage.RdiHeader.uploadConfirmPipelineButton);
+    await t.expect(rdiInstancePage.loadingIndicator.exists).notOk({ timeout: 20000 });
+    updatedText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
+    await t.expect(updatedText).contains(expectedText, 'config text was not updated');
+    const selector = await rdiInstancePage.PipelineManagementPanel.getJobByName(jobName);
+    await t.expect(selector.exists).notOk('Job is exist');
+
 });
 // https://redislabs.atlassian.net/browse/RI-5142
 test

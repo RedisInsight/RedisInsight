@@ -9,6 +9,7 @@ export class TestConnectionPanel {
     failedSection = Selector('[data-testid^=failed-connections-]');
     endpointRow = Selector(this.endpointRowString);
     closeSection = Selector('[data-testid=close-test-connections-btn]');
+    targetName = Selector('[data-testid=table-target-target]');
 
     /**
      * Open/Close  section
@@ -32,16 +33,6 @@ export class TestConnectionPanel {
     async getNumberOfSection(section: TextConnectionSection): Promise<string> {
         const sectionSelector = Selector(`[data-testid^=${section}-connections-]`);
         return sectionSelector.find('span[data-testid="number-of-connections"]').textContent;
-    }
-
-    /**
-     * get row count in the section
-     * @param section Name of section
-     */
-    async getNumberOfSectionRow(section: TextConnectionSection): Promise<string> {
-        const sectionSelector = Selector(`[data-testid^=${section}-connections-]`);
-        const rows =  await sectionSelector.find('[data-testid^=table-endpoint]').count;
-        return rows.toString();
     }
 
     /**

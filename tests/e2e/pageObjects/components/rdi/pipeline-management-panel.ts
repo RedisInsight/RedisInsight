@@ -11,7 +11,7 @@ export class PipelineManagementPanel {
 
     jobNameInput = Selector('[data-testid=inline-item-editor]');
     jobItem = Selector('[data-testid*=rdi-nav-job-actions]');
-    confirmBtn  = Selector('[data-testid=confirm-btn]');
+    confirmBtn  = Selector('[data-testid=delete-confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');
 
     /**
@@ -28,7 +28,7 @@ export class PipelineManagementPanel {
      * @param name job name
      */
     async openJobByName(name: string): Promise<void> {
-        const jobBtnSelector = Selector(`[data-testid=rdi-nav-job-${name}]`);
+        const jobBtnSelector = await this.getJobByName(name);
         await t.click(jobBtnSelector);
     }
 
@@ -51,5 +51,13 @@ export class PipelineManagementPanel {
         await t.click(jobBtnSelector)
             .typeText(this.jobNameInput, newName, { replace: true })
             .click(this.EditorButton.applyBtn);
+    }
+
+    /**
+     * Get Job by name
+     * @param name job name
+     */
+    async getJobByName(name: string): Promise<Selector> {
+        return Selector(`[data-testid=rdi-nav-job-${name}]`);
     }
 }

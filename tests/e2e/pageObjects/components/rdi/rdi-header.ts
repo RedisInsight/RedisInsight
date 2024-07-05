@@ -11,10 +11,11 @@ export class RdiHeader {
     deployConfirmBtn = Selector('[data-testid=deploy-confirm-btn]');
 
     uploadPipelineButton = Selector('[data-testid=upload-pipeline-btn]');
+    uploadConfirmPipelineButton = Selector('[data-testid=upload-confirm-btn]');
     uploadFromFileButton = Selector('[data-testid=upload-file-btn]');
     downloadPipelineButton = Selector('[data-testid=download-pipeline-btn]');
     importInput = Selector('[data-testid=import-file-modal-filepicker]');
-    confirmUploadingPipelineBatton = Selector('[data-testid=upload-confirm-btn]');
+    confirmUploadingPipelineBatton = Selector('[data-testid=submit-btn]');
 
     cloudSignInButton = Selector('[data-testid=cloud-sign-in-btn]');
 

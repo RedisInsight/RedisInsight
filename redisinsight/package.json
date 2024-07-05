@@ -11,7 +11,9 @@
     "email": "support@redis.com",
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "npx patch-package"
+  },
   "resolutions": {
     "**/semver": "^7.5.2"
   },

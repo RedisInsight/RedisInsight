@@ -707,6 +707,7 @@ jobs:
           command: |
             yarn install
             yarn --cwd redisinsight/api/ install
+            yarn --cwd redisinsight/ install
             yarn build:statics
           no_output_timeout: 15m
       - run:
@@ -799,9 +800,12 @@ jobs:
             npm install --global yarn
 
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
+            # install dependencies
             yarn install
             yarn --cwd redisinsight/api/ install
+            yarn --cwd redisinsight/ install
             yarn build:statics:win
+
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/win-unpacked

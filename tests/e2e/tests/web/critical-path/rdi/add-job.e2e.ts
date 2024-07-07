@@ -15,7 +15,7 @@ const databaseHelper = new DatabaseHelper();
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'https://54.175.165.214',
+    url: 'https://11.111.111.111',
     username: 'username',
     password: 'v3rY$tronGPa33w0Rd3ECDb'
 };

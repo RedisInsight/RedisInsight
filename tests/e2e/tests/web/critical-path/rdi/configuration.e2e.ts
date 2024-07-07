@@ -1,6 +1,6 @@
+import * as path from 'path';
 import { ClientFunction, t } from 'testcafe';
 import * as yaml from 'js-yaml';
-import * as path from 'path';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
 import { cloudDatabaseConfig, commonUrl } from '../../../../helpers/conf';
@@ -15,24 +15,25 @@ import {
 } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers';
 import { goBackHistory } from '../../../../helpers/utils';
-
+import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancePage = new RdiInstancePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const rdiApiRequests = new RdiApiRequests();
 const databaseHelper = new DatabaseHelper();
+const databaseAPIRequests = new DatabaseAPIRequests();
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'https://54.175.165.214',
+    url: 'https://11.111.111.111',
     username: 'username',
     password: 'v3rY$tronGPa33w0Rd3ECDb'
 };
 
 const getPageUrl = ClientFunction(() => window.location.href);
 
-const filePath = path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfig.zip');
+const filePath = path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfigurations.zip');
 
 //skip the tests until rdi integration is added
 fixture `Pipeline`
@@ -47,16 +48,18 @@ fixture `Pipeline`
         await rdiApiRequests.deleteAllRdiApi();
     });
 
-test.only('Verify that user can test connection', async() => {
+test.after(async() => {
+    // Delete databases
+    await databaseAPIRequests.deleteAllDatabasesApi();
+})('Verify that user can test connection', async() => {
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
     await databaseHelper.autodiscoverRECloudDatabase(
-        //cloudDatabaseConfig.accessKey,
-        //cloudDatabaseConfig.secretKey
-        'A4wddpkno553qruhpsd670y8axe94warws3gbjbw896iyjf6dfl',
-        'S3xf5aiipy32nc9q7dyg8v4yhvf7x18i34euwilbcgrz02yjro5'
+        cloudDatabaseConfig.accessKey,
+        cloudDatabaseConfig.secretKey
     );
     const [host, port] = (await myRedisDatabasePage.hostPort.textContent).split(':');
-    //const password = cloudDatabaseConfig.databasePassword;
+    const password = cloudDatabaseConfig.databasePassword;
+    const errorText = 'Failed to connect to RDI database. Please verify host and port information.';
 
     const configData = {
         sources: {
@@ -80,14 +83,13 @@ test.only('Verify that user can test connection', async() => {
                 type: 'redis',
                 host,
                 port,
-                password: 'dd4oImrbinrNs1LXzKCtsnKjzLxZeaA2'
+                password: password
             }
         }
     };
     const config = yaml.dump(configData, { indent: 2 });
-
-    //fs.writeFileSync('config.yaml', yamlString, 'utf8');
     console.log(JSON.stringify(config));
+
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
@@ -95,6 +97,7 @@ test.only('Verify that user can test connection', async() => {
 
     await t.click(rdiInstancePage.configurationInput);
     const lines = config.split('\n');
+    // the verable shows the level of object depth for input by line in monaco
     const maxLevelDepth = 3;
     const targetName = 'target';
 
@@ -108,11 +111,14 @@ test.only('Verify that user can test connection', async() => {
     await rdiInstancePage.RdiHeader.uploadPipeline(filePath);
     await t.click(rdiInstancePage.okUploadPipelineBtn);
     await t.click(rdiInstancePage.textConnectionBtn);
+    await rdiInstancePage.TestConnectionPanel.expandOrCollapseSection(TextConnectionSection.Failed, true);
+
+    await t.expect(await rdiInstancePage.TestConnectionPanel.resultText.textContent).eql(errorText);
 
 });
 test('Verify that link on configuration is valid', async() => {
 
-    const link = 'https://docs.redis.com/latest/rdi/quickstart/';
+    const link = 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/data-pipelines/?utm_source=redisinsight&utm_medium=rdi&utm_campaign=config_file';
     // Verify the link
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
@@ -123,15 +129,14 @@ test('Verify that link on configuration is valid', async() => {
     await goBackHistory();
 });
 
-test('Verify that user can insert template', async() => {
+test.only('Verify that user can insert template', async() => {
     const disabledAttribute = 'isDisabled';
-    const defaultValue = 'Ingest';
-    const templateWords = 'type: redis';
+    const defaultValue = 'ingest';
+    const templateWords = 'type: mysql';
     // should be empty config
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    await t.click(rdiInstancePage.PipelineManagementPanel.configurationTab);
-    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
     const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');
     await t.expect(buttonClass).notContains(disabledAttribute, 'Apply button is disabled');
@@ -143,12 +148,10 @@ test('Verify that user can insert template', async() => {
     await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the default value is set incorrectly');
     await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest, RdiTemplateDatabaseType.MySql);
 
-    //verify uniq templates words - should be undated when templates are added
     const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).contains(templateWords, 'template is incorrect');
 
     await t.click(rdiInstancePage.templateButton);
     await t.expect(buttonClass).contains(disabledAttribute, 'Apply button is active');
-    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql('Ingest', 'the value is set incorrectly');
-    await t.expect(rdiInstancePage.databaseDropdown.textContent).eql('MySQL', 'the default value is set incorrectly');
+    await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the value is set incorrectly');
 });

@@ -4,12 +4,8 @@ import { TextConnectionSection } from '../../../helpers/constants';
 export class TestConnectionPanel {
     endpointRowString = '[data-testid^=table-endpoint]';
 
-    sidePanel = Selector('[data-testid=test-connection-panel]');
-    successfulSection = Selector('[data-testid^=success-connections]');
-    failedSection = Selector('[data-testid^=failed-connections-]');
-    endpointRow = Selector(this.endpointRowString);
-    closeSection = Selector('[data-testid=close-test-connections-btn]');
     targetName = Selector('[data-testid=table-target-target]');
+    resultText = Selector('[data-testid=table-result-target]');
 
     /**
      * Open/Close  section
@@ -24,25 +20,4 @@ export class TestConnectionPanel {
             await t.click(sectionSelector.find('button'));
         }
     }
-
-    /**
-     * get number of connection
-     * @param section Name of section
-     * @param state State of section
-     */
-    async getNumberOfSection(section: TextConnectionSection): Promise<string> {
-        const sectionSelector = Selector(`[data-testid^=${section}-connections-]`);
-        return sectionSelector.find('span[data-testid="number-of-connections"]').textContent;
-    }
-
-    /**
-     * get row endpoint text by index
-     * @param section Name of section
-     * @param index index of the row to get text
-     */
-    async getSectionRowTextByIndex(section: TextConnectionSection, index: number): Promise<string> {
-        const sectionSelector = Selector(`[data-testid^=${section}-connections-]`);
-        return await (sectionSelector.find(this.endpointRowString).nth(index)).textContent;
-    }
-
 }

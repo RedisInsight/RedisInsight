@@ -20,14 +20,14 @@ const rdiApiRequests = new RdiApiRequests();
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
-    url: 'https://54.175.165.214',
+    url: 'https://11.111.111.111',
     username: 'username',
     password: 'v3rY$tronGPa33w0Rd3ECDb',
     version: '1.2'
 };
 const rdiInstance2: RdiInstance = {
     alias: 'test',
-    url: 'https://54.175.165.214',
+    url: 'https://11.111.111.111',
     username: 'name',
     password: 'v3rY$tronGPa33w0Rd3ECDb',
     version: '1.2'
@@ -35,7 +35,7 @@ const rdiInstance2: RdiInstance = {
 
 const rdiInstance3: RdiInstance = {
     alias: 'first',
-    url: 'https://54.175.165.214',
+    url: 'https://11.111.111.111',
     username: 'name',
     password: 'v3rY$tronGPa33w0Rd3ECDb',
     version: '1.2'
@@ -150,7 +150,7 @@ test('Verify that button is displayed if user does not enter all mandatory infor
 });
 test('Verify that user can see the Redis Data Integration message on the empty RDI list', async t => {
     const noInstancesMessage = 'Redis Data Integration (RDI) synchronizes data from your existing database into Redis in near-real-time. We\'ve done the heavy lifting so you can turn slow data into fast data without coding.';
-    const externalPageLink = 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/?utm_source=redisinsight&utm_medium=rdi&utm_campaign=rdi_list'
+    const externalPageLink = 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/?utm_source=redisinsight&utm_medium=rdi&utm_campaign=rdi_list';
 
     await t.expect(rdiInstancesListPage.emptyRdiList.withText(noInstancesMessage).exists).ok('Empty RDI page message not displayed');
 

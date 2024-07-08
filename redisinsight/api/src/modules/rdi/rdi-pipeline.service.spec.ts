@@ -1,0 +1,403 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
+import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
+import { wrapHttpError } from 'src/common/utils';
+import {
+  MockType, generateMockRdiClient, mockRdiClientProvider, mockRdiDryRunJob,
+} from 'src/__mocks__';
+import { RdiPipelineService } from './rdi-pipeline.service';
+import { RdiDryRunJobDto } from './dto';
+import { RdiDyRunJobStatus, RdiPipeline } from './models';
+
+describe('RdiPipelineService', () => {
+  let service: RdiPipelineService;
+  let rdiClientProvider: MockType<RdiClientProvider>;
+  let analytics: RdiPipelineAnalytics;
+  const rdiClientMetadata = { id: '123', sessionMetadata: undefined };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        RdiPipelineService,
+        {
+          provide: RdiClientProvider,
+          useFactory: mockRdiClientProvider,
+        },
+        {
+          provide: RdiPipelineAnalytics,
+          useValue: {
+            sendRdiPipelineFetched: jest.fn(),
+            sendRdiPipelineFetchFailed: jest.fn(),
+            sendRdiPipelineDeployed: jest.fn(),
+            sendRdiPipelineDeployFailed: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    service = module.get(RdiPipelineService);
+    rdiClientProvider = module.get(RdiClientProvider);
+    analytics = module.get(RdiPipelineAnalytics);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('getSchema', () => {
+    it('should call getSchema on the RdiClientProvider and return the result', async () => {
+      const schema = { schema: {} };
+      const rdiClient = generateMockRdiClient(rdiClientMetadata);
+      rdiClientProvider.getOrCreate.mockResolvedValueOnce(rdiClient);
+      jest.spyOn(rdiClient, 'getSchema').mockResolvedValueOnce(schema);
+
+      const result = await service.getSchema(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClient.getSchema).toHaveBeenCalled();
+      expect(result).toEqual(schema);
+    });
+  });
+
+  describe('getPipeline', () => {
+    it('should call getPipeline on the RdiClientProvider and return the result', async () => {
+      const pipeline = { pipeline: {} };
+      rdiClientProvider.getOrCreate.mockResolvedValue({
+        getPipeline: jest.fn().mockResolvedValue(pipeline),
+      });
+
+      const result = await service.getPipeline(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(result).toEqual(pipeline);
+    });
+
+    it('should call sendRdiPipelineFetched on the RdiPipelineAnalytics if successful', async () => {
+      const pipeline = { pipeline: {} };
+      rdiClientProvider.getOrCreate.mockResolvedValue({
+        getPipeline: jest.fn().mockResolvedValue(pipeline),
+      });
+
+      await service.getPipeline(rdiClientMetadata);
+
+      expect(analytics.sendRdiPipelineFetched).toHaveBeenCalledWith(rdiClientMetadata.id, pipeline);
+    });
+
+    it('should call sendRdiPipelineFetchFailed on the RdiPipelineAnalytics and throw an error if unsuccessful',
+      async () => {
+        const error = new Error('Failed to get pipeline');
+        jest.spyOn(rdiClientProvider, 'getOrCreate').mockRejectedValue(error);
+
+        await expect(service.getPipeline(rdiClientMetadata)).rejects.toThrow(wrapHttpError(error));
+        expect(analytics.sendRdiPipelineFetchFailed).toHaveBeenCalledWith(error, rdiClientMetadata.id);
+      });
+  });
+
+  describe('dryRunJob', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        dryRunJob: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.dryRunJob(rdiClientMetadata, mockRdiDryRunJob);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+    });
+
+    it('should call dryRunJob on the client with the correct dto', async () => {
+      const dto = Object.assign(new RdiDryRunJobDto(), {
+        input_data: {
+          some: 'value',
+        },
+        job: { name: 'job1' },
+      });
+      const client = {
+        dryRunJob: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.dryRunJob(rdiClientMetadata, dto);
+
+      expect(client.dryRunJob).toHaveBeenCalledWith(dto);
+    });
+
+    it('should return the result of dryRunJob on the client', async () => {
+      const rdiClient = generateMockRdiClient(rdiClientMetadata);
+      const dto = Object.assign(new RdiDryRunJobDto(), {
+        input_data: {
+          some: 'value',
+        },
+        job: { name: 'job1' },
+      });
+      const response = {
+        transformations: {
+          status: RdiDyRunJobStatus.Success,
+        },
+        commands: {
+          status: RdiDyRunJobStatus.Success,
+        },
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(rdiClient);
+      rdiClient.dryRunJob.mockResolvedValueOnce(response);
+
+      const result = await service.dryRunJob(rdiClientMetadata, dto);
+
+      expect(result).toBe(response);
+      expect(rdiClient.dryRunJob).toHaveBeenCalledWith(dto);
+    });
+  });
+
+  describe('deploy', () => {
+    const dto = Object.assign(new RdiPipeline(), {
+      jobs: { job1: {} },
+      config: {},
+    });
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        deploy: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.deploy(rdiClientMetadata, dto);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(client.deploy).toHaveBeenCalledWith(dto);
+    });
+
+    it('should call deploy on the client with the correct dto', async () => {
+      const client = {
+        deploy: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.deploy(rdiClientMetadata, dto);
+
+      expect(client.deploy).toHaveBeenCalledWith(dto);
+    });
+
+    it('should call sendRdiPipelineDeployed on analytics if deploy succeeds', async () => {
+      const client = {
+        deploy: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.deploy(rdiClientMetadata, dto);
+
+      expect(analytics.sendRdiPipelineDeployed).toHaveBeenCalledWith(rdiClientMetadata.id);
+    });
+
+    it('should call sendRdiPipelineDeployFailed on analytics if deploy fails', async () => {
+      const error = new Error('Deploy failed');
+      const client = {
+        deploy: jest.fn().mockRejectedValue(error),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      try {
+        await service.deploy(rdiClientMetadata, dto);
+      } catch (e) {
+        expect(analytics.sendRdiPipelineDeployFailed).toHaveBeenCalledWith(error, rdiClientMetadata.id);
+      }
+    });
+
+    it('should throw an error if deploy fails', async () => {
+      const error = new Error('Deploy failed');
+      const client = {
+        deploy: jest.fn().mockRejectedValue(error),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await expect(service.deploy(rdiClientMetadata, dto)).rejects.toThrow(error);
+    });
+  });
+
+  describe('testConnections', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const config = { data: 'some data' };
+      const client = {
+        testConnections: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.testConnections(rdiClientMetadata, config);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+    });
+
+    it('should call testConnections on the client with the correct config', async () => {
+      const config = { data: 'some data' };
+      const client = {
+        testConnections: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.testConnections(rdiClientMetadata, config);
+
+      expect(client.testConnections).toHaveBeenCalledWith(config);
+    });
+
+    it('should return the result of testConnections on the client', async () => {
+      const config = { data: 'some data' };
+      const response = { connected: true };
+      const client = {
+        testConnections: jest.fn().mockResolvedValue(response),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      const result = await service.testConnections(rdiClientMetadata, config);
+
+      expect(result).toBe(response);
+    });
+  });
+
+  describe('getStrategies', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        getStrategies: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getStrategies(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+    });
+
+    it('should call getStrategies on the client', async () => {
+      const client = {
+        getStrategies: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getStrategies(rdiClientMetadata);
+
+      expect(client.getStrategies).toHaveBeenCalled();
+    });
+
+    it('should return the result of getStrategies on the client', async () => {
+      const response = { strategies: [{ id: 1, name: 'Strategy 1' }] };
+      const client = {
+        getStrategies: jest.fn().mockResolvedValue(response),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      const result = await service.getStrategies(rdiClientMetadata);
+
+      expect(result).toBe(response);
+    });
+  });
+
+  describe('getConfigTemplate', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const pipelineType = 'type';
+      const dbType = 'type';
+      const client = {
+        getConfigTemplate: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+    });
+
+    it('should call getConfigTemplate on the client with the correct arguments', async () => {
+      const pipelineType = 'type';
+      const dbType = 'type';
+      const client = {
+        getConfigTemplate: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
+
+      expect(client.getConfigTemplate).toHaveBeenCalledWith(pipelineType, dbType);
+    });
+
+    it('should return the result of getConfigTemplate on the client', async () => {
+      const pipelineType = 'type';
+      const dbType = 'type';
+      const response = { template: 'some template' };
+      const client = {
+        getConfigTemplate: jest.fn().mockResolvedValue(response),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      const result = await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
+
+      expect(result).toBe(response);
+    });
+  });
+
+  describe('getPipelineStatus', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        getPipelineStatus: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getPipelineStatus(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+    });
+
+    it('should call getPipelineStatus on the client', async () => {
+      const client = {
+        getPipelineStatus: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getPipelineStatus(rdiClientMetadata);
+
+      expect(client.getPipelineStatus).toHaveBeenCalled();
+    });
+
+    it('should return the result of getPipelineStatus on the client', async () => {
+      const response = { data: { status: 'running' } };
+      const client = {
+        getPipelineStatus: jest.fn().mockResolvedValue(response),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      const result = await service.getPipelineStatus(rdiClientMetadata);
+
+      expect(result).toBe(response);
+    });
+  });
+
+  describe('getJobFunctions', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        getJobFunctions: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getJobFunctions(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+    });
+
+    it('should call getJobFunctions on the client', async () => {
+      const client = {
+        getJobFunctions: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.getJobFunctions(rdiClientMetadata);
+
+      expect(client.getJobFunctions).toHaveBeenCalled();
+    });
+
+    it('should return the result of getJobFunctions on the client', async () => {
+      const response = { jobFunctions: ['jobFunc1', 'jobFunc2'] };
+      const client = {
+        getJobFunctions: jest.fn().mockResolvedValue(response),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      const result = await service.getJobFunctions(rdiClientMetadata);
+
+      expect(result).toBe(response);
+    });
+  });
+});

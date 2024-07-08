@@ -24,7 +24,12 @@ export const getBaseUrl = () => (!isDevelopment && isWebApp
 
 const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
+  withCredentials: !!hostedApiBaseUrl,
 })
+
+export const setCSRFHeader = (token: string) => {
+  mutableAxiosInstance.defaults.headers.common[CustomHeaders.CsrfToken] = token
+}
 
 export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
   if (config?.headers) {

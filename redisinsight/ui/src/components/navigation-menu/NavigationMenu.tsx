@@ -146,7 +146,7 @@ const NavigationMenu = () => {
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
-      featureFlag: FeatureFlags.dbAnalysis,
+      featureFlag: FeatureFlags.isHosted,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -179,7 +179,7 @@ const NavigationMenu = () => {
       connectedInstanceId,
       isActivePage: isTriggeredFunctionsPath(activePage),
       isBeta: true,
-      featureFlag: FeatureFlags.triggersAndFunctions,
+      featureFlag: FeatureFlags.isHosted,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -198,7 +198,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
-      featureFlag: FeatureFlags.appSettings,
+      featureFlag: FeatureFlags.isHosted,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -282,7 +282,7 @@ const NavigationMenu = () => {
         )}
       </div>
       <div className={styles.bottomContainer}>
-        <FeatureFlagComponent name={FeatureFlags.appNotifications}>
+        <FeatureFlagComponent name={FeatureFlags.isHosted}>
           <NotificationMenu />
         </FeatureFlagComponent>
         <HelpMenu />

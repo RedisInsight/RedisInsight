@@ -123,7 +123,7 @@ describe('wrapRdiPipelineError', () => {
       message: result.message,
       statusCode: HttpStatus.NOT_FOUND,
       error: 'RdiNotFound',
-      errorCode: CustomErrorCodes.ConvAiNotFound,
+      errorCode: CustomErrorCodes.RdiNotFound,
       details: errorDetails.details,
     });
   });

@@ -6,7 +6,7 @@ import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { CreateRdiDto, UpdateRdiDto } from 'src/modules/rdi/dto';
 import { Rdi, RdiClientMetadata } from 'src/modules/rdi/models';
 import {
-  MockType, mockRdi, mockRdiClientFactory, mockRdiClientProvider, mockRdiRepository,
+  MockType, mockRdi, mockRdiAnalytics, mockRdiClientFactory, mockRdiClientProvider, mockRdiRepository,
 } from 'src/__mocks__';
 import { AxiosError } from 'axios';
 import { wrapRdiPipelineError } from './exceptions';
@@ -15,7 +15,7 @@ import { RdiService } from './rdi.service';
 describe('RdiService', () => {
   let service: RdiService;
   let repository: MockType<RdiRepository>;
-  let analytics: RdiAnalytics;
+  let analytics: MockType<RdiAnalytics>;
   let rdiClientProvider: MockType<RdiClientProvider>;
   let rdiClientFactory: MockType<RdiClientFactory>;
 
@@ -29,9 +29,7 @@ describe('RdiService', () => {
         },
         {
           provide: RdiAnalytics,
-          useValue: {
-            sendRdiInstanceDeleted: jest.fn(),
-          },
+          useFactory: mockRdiAnalytics,
         },
         {
           provide: RdiClientProvider,

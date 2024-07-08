@@ -4,6 +4,7 @@ import { RdiPipelineAnalytics } from 'src/modules/rdi/rdi-pipeline.analytics';
 import { wrapHttpError } from 'src/common/utils';
 import {
   MockType, generateMockRdiClient, mockRdiClientProvider, mockRdiDryRunJob,
+  mockRdiPipelineAnalytics,
 } from 'src/__mocks__';
 import { RdiPipelineService } from './rdi-pipeline.service';
 import { RdiDryRunJobDto } from './dto';
@@ -12,7 +13,7 @@ import { RdiDyRunJobStatus, RdiPipeline } from './models';
 describe('RdiPipelineService', () => {
   let service: RdiPipelineService;
   let rdiClientProvider: MockType<RdiClientProvider>;
-  let analytics: RdiPipelineAnalytics;
+  let analytics: MockType<RdiPipelineAnalytics>;
   const rdiClientMetadata = { id: '123', sessionMetadata: undefined };
 
   beforeEach(async () => {
@@ -25,12 +26,7 @@ describe('RdiPipelineService', () => {
         },
         {
           provide: RdiPipelineAnalytics,
-          useValue: {
-            sendRdiPipelineFetched: jest.fn(),
-            sendRdiPipelineFetchFailed: jest.fn(),
-            sendRdiPipelineDeployed: jest.fn(),
-            sendRdiPipelineDeployFailed: jest.fn(),
-          },
+          useFactory: mockRdiPipelineAnalytics,
         },
       ],
     }).compile();
@@ -49,7 +45,7 @@ describe('RdiPipelineService', () => {
       const schema = { schema: {} };
       const rdiClient = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValueOnce(rdiClient);
-      jest.spyOn(rdiClient, 'getSchema').mockResolvedValueOnce(schema);
+      rdiClient.getSchema.mockResolvedValueOnce(schema);
 
       const result = await service.getSchema(rdiClientMetadata);
 
@@ -62,9 +58,9 @@ describe('RdiPipelineService', () => {
   describe('getPipeline', () => {
     it('should call getPipeline on the RdiClientProvider and return the result', async () => {
       const pipeline = { pipeline: {} };
-      rdiClientProvider.getOrCreate.mockResolvedValue({
-        getPipeline: jest.fn().mockResolvedValue(pipeline),
-      });
+      const rdiClient = generateMockRdiClient(rdiClientMetadata);
+      rdiClientProvider.getOrCreate.mockResolvedValueOnce(rdiClient);
+      rdiClient.getPipeline.mockResolvedValueOnce(pipeline);
 
       const result = await service.getPipeline(rdiClientMetadata);
 
@@ -74,9 +70,9 @@ describe('RdiPipelineService', () => {
 
     it('should call sendRdiPipelineFetched on the RdiPipelineAnalytics if successful', async () => {
       const pipeline = { pipeline: {} };
-      rdiClientProvider.getOrCreate.mockResolvedValue({
-        getPipeline: jest.fn().mockResolvedValue(pipeline),
-      });
+      const rdiClient = generateMockRdiClient(rdiClientMetadata);
+      rdiClientProvider.getOrCreate.mockResolvedValueOnce(rdiClient);
+      rdiClient.getPipeline.mockResolvedValueOnce(pipeline);
 
       await service.getPipeline(rdiClientMetadata);
 
@@ -86,7 +82,7 @@ describe('RdiPipelineService', () => {
     it('should call sendRdiPipelineFetchFailed on the RdiPipelineAnalytics and throw an error if unsuccessful',
       async () => {
         const error = new Error('Failed to get pipeline');
-        jest.spyOn(rdiClientProvider, 'getOrCreate').mockRejectedValue(error);
+        rdiClientProvider.getOrCreate.mockRejectedValue(error);
 
         await expect(service.getPipeline(rdiClientMetadata)).rejects.toThrow(wrapHttpError(error));
         expect(analytics.sendRdiPipelineFetchFailed).toHaveBeenCalledWith(error, rdiClientMetadata.id);
@@ -95,9 +91,7 @@ describe('RdiPipelineService', () => {
 
   describe('dryRunJob', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
-      const client = {
-        dryRunJob: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.dryRunJob(rdiClientMetadata, mockRdiDryRunJob);
@@ -112,9 +106,7 @@ describe('RdiPipelineService', () => {
         },
         job: { name: 'job1' },
       });
-      const client = {
-        dryRunJob: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.dryRunJob(rdiClientMetadata, dto);
@@ -166,9 +158,7 @@ describe('RdiPipelineService', () => {
     });
 
     it('should call deploy on the client with the correct dto', async () => {
-      const client = {
-        deploy: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.deploy(rdiClientMetadata, dto);
@@ -177,9 +167,7 @@ describe('RdiPipelineService', () => {
     });
 
     it('should call sendRdiPipelineDeployed on analytics if deploy succeeds', async () => {
-      const client = {
-        deploy: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.deploy(rdiClientMetadata, dto);
@@ -189,11 +177,9 @@ describe('RdiPipelineService', () => {
 
     it('should call sendRdiPipelineDeployFailed on analytics if deploy fails', async () => {
       const error = new Error('Deploy failed');
-      const client = {
-        deploy: jest.fn().mockRejectedValue(error),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
-
+      client.deploy.mockRejectedValueOnce(error);
       try {
         await service.deploy(rdiClientMetadata, dto);
       } catch (e) {
@@ -203,10 +189,9 @@ describe('RdiPipelineService', () => {
 
     it('should throw an error if deploy fails', async () => {
       const error = new Error('Deploy failed');
-      const client = {
-        deploy: jest.fn().mockRejectedValue(error),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.deploy.mockRejectedValueOnce(error);
 
       await expect(service.deploy(rdiClientMetadata, dto)).rejects.toThrow(error);
     });
@@ -215,9 +200,7 @@ describe('RdiPipelineService', () => {
   describe('testConnections', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
       const config = { data: 'some data' };
-      const client = {
-        testConnections: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.testConnections(rdiClientMetadata, config);
@@ -227,9 +210,7 @@ describe('RdiPipelineService', () => {
 
     it('should call testConnections on the client with the correct config', async () => {
       const config = { data: 'some data' };
-      const client = {
-        testConnections: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.testConnections(rdiClientMetadata, config);
@@ -240,10 +221,9 @@ describe('RdiPipelineService', () => {
     it('should return the result of testConnections on the client', async () => {
       const config = { data: 'some data' };
       const response = { connected: true };
-      const client = {
-        testConnections: jest.fn().mockResolvedValue(response),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.testConnections.mockResolvedValueOnce(response);
 
       const result = await service.testConnections(rdiClientMetadata, config);
 
@@ -253,9 +233,7 @@ describe('RdiPipelineService', () => {
 
   describe('getStrategies', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
-      const client = {
-        getStrategies: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getStrategies(rdiClientMetadata);
@@ -264,9 +242,7 @@ describe('RdiPipelineService', () => {
     });
 
     it('should call getStrategies on the client', async () => {
-      const client = {
-        getStrategies: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getStrategies(rdiClientMetadata);
@@ -276,10 +252,9 @@ describe('RdiPipelineService', () => {
 
     it('should return the result of getStrategies on the client', async () => {
       const response = { strategies: [{ id: 1, name: 'Strategy 1' }] };
-      const client = {
-        getStrategies: jest.fn().mockResolvedValue(response),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.getStrategies.mockResolvedValueOnce(response);
 
       const result = await service.getStrategies(rdiClientMetadata);
 
@@ -291,9 +266,7 @@ describe('RdiPipelineService', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
       const pipelineType = 'type';
       const dbType = 'type';
-      const client = {
-        getConfigTemplate: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
@@ -304,9 +277,7 @@ describe('RdiPipelineService', () => {
     it('should call getConfigTemplate on the client with the correct arguments', async () => {
       const pipelineType = 'type';
       const dbType = 'type';
-      const client = {
-        getConfigTemplate: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
@@ -318,11 +289,9 @@ describe('RdiPipelineService', () => {
       const pipelineType = 'type';
       const dbType = 'type';
       const response = { template: 'some template' };
-      const client = {
-        getConfigTemplate: jest.fn().mockResolvedValue(response),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
-
+      client.getConfigTemplate.mockResolvedValue(response);
       const result = await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
 
       expect(result).toBe(response);
@@ -331,9 +300,7 @@ describe('RdiPipelineService', () => {
 
   describe('getPipelineStatus', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
-      const client = {
-        getPipelineStatus: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getPipelineStatus(rdiClientMetadata);
@@ -342,9 +309,7 @@ describe('RdiPipelineService', () => {
     });
 
     it('should call getPipelineStatus on the client', async () => {
-      const client = {
-        getPipelineStatus: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getPipelineStatus(rdiClientMetadata);
@@ -354,10 +319,9 @@ describe('RdiPipelineService', () => {
 
     it('should return the result of getPipelineStatus on the client', async () => {
       const response = { data: { status: 'running' } };
-      const client = {
-        getPipelineStatus: jest.fn().mockResolvedValue(response),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.getPipelineStatus.mockResolvedValueOnce(response);
 
       const result = await service.getPipelineStatus(rdiClientMetadata);
 
@@ -367,9 +331,7 @@ describe('RdiPipelineService', () => {
 
   describe('getJobFunctions', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
-      const client = {
-        getJobFunctions: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getJobFunctions(rdiClientMetadata);
@@ -378,9 +340,7 @@ describe('RdiPipelineService', () => {
     });
 
     it('should call getJobFunctions on the client', async () => {
-      const client = {
-        getJobFunctions: jest.fn(),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
 
       await service.getJobFunctions(rdiClientMetadata);
@@ -390,11 +350,9 @@ describe('RdiPipelineService', () => {
 
     it('should return the result of getJobFunctions on the client', async () => {
       const response = { jobFunctions: ['jobFunc1', 'jobFunc2'] };
-      const client = {
-        getJobFunctions: jest.fn().mockResolvedValue(response),
-      };
+      const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
-
+      client.getJobFunctions.mockResolvedValueOnce(response);
       const result = await service.getJobFunctions(rdiClientMetadata);
 
       expect(result).toBe(response);

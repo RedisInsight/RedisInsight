@@ -6,7 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
-  MockType, generateMockRdiClient, mockRdi, mockRdiRepository,
+  MockType, generateMockRdiClient, mockRdi, mockRdiClientFactory, mockRdiClientStorage, mockRdiRepository,
 } from 'src/__mocks__';
 import { RdiClientProvider } from './rdi.client.provider';
 
@@ -26,18 +26,11 @@ describe('RdiClientProvider', () => {
         },
         {
           provide: RdiClientStorage,
-          useFactory: jest.fn(() => ({
-            getByMetadata: jest.fn(),
-            set: jest.fn(),
-            delete: jest.fn(),
-            deleteManyByRdiId: jest.fn(),
-          })),
+          useFactory: mockRdiClientStorage,
         },
         {
           provide: RdiClientFactory,
-          useFactory: jest.fn(() => ({
-            createClient: jest.fn(),
-          })),
+          useFactory: mockRdiClientFactory,
         },
       ],
     }).compile();

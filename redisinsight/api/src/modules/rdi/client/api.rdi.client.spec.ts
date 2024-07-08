@@ -117,8 +117,6 @@ describe('ApiRdiClient', () => {
       const expectedResponse = {
         transformations: {
           status: RdiDyRunJobStatus.Success,
-          // data: {},
-          // error: ''
         },
         commands: {
           status: RdiDyRunJobStatus.Success,

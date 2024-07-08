@@ -23,7 +23,9 @@ export class MockRdiClient extends ApiRdiClient {
 
   public getPipeline = jest.fn();
 
-  public getTemplate = jest.fn();
+  public getConfigTemplate = jest.fn();
+
+  public getJobTemplate = jest.fn();
 
   public getStrategies = jest.fn();
 
@@ -117,4 +119,22 @@ export const mockRdiClientProvider = jest.fn(() => ({
 
 export const mockRdiClientFactory = jest.fn(() => ({
   createClient: jest.fn(),
+}));
+
+export const mockRdiClientStorage = jest.fn(() => ({
+  getByMetadata: jest.fn(),
+  set: jest.fn(),
+  delete: jest.fn(),
+  deleteManyByRdiId: jest.fn(),
+}));
+
+export const mockRdiPipelineAnalytics = jest.fn(() => ({
+  sendRdiPipelineFetched: jest.fn(),
+  sendRdiPipelineFetchFailed: jest.fn(),
+  sendRdiPipelineDeployed: jest.fn(),
+  sendRdiPipelineDeployFailed: jest.fn(),
+}));
+
+export const mockRdiAnalytics = jest.fn(() => ({
+  sendRdiInstanceDeleted: jest.fn(),
 }));

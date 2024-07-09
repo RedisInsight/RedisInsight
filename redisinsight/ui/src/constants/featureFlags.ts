@@ -4,5 +4,9 @@ export enum FeatureFlags {
   cloudSsoRecommendedSettings = 'cloudSsoRecommendedSettings',
   databaseChat = 'databaseChat',
   documentationChat = 'documentationChat',
-  isDesktop = 'isDesktop',
+  appSettings = 'appSettings',
+  profiler = 'profiler',
+  dbAnalysis = 'dbAnalysis',
+  appNotifications = 'appNotifications',
+  triggersAndFunctions = 'triggersAndFunctions',
 }

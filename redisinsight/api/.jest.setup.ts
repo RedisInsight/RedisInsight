@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 // Workaround for @Type test coverage
 jest.mock("class-transformer", () => {
   return {

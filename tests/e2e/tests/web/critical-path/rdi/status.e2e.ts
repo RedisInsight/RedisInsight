@@ -22,7 +22,7 @@ const rdiInstance: AddNewRdiParameters = {
     password: 'password'
 };
 
-//skip the tests until rdi integration is added
+//skip the tests until understand if the server will be able to sent status data
 fixture.skip `Pipeline`
     .meta({ type: 'critical_path' })
     .page(commonUrl)

@@ -14,7 +14,6 @@ const FeatureFlagComponent = (props: Props) => {
   const { children, name, otherwise } = props
   const { [name]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
   const { flag, variant } = feature ?? { flag: false }
-
   if (!flag) {
     return otherwise ?? null
   }

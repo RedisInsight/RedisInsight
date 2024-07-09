@@ -20,6 +20,7 @@ export class MonacoEditor {
      * @param clean if  field should be cleaned
      */
     async sendTextToMonaco(input: Selector, command: string, clean = true): Promise<void> {
+
         await t.click(input);
         if(clean) {
             await t
@@ -28,6 +29,28 @@ export class MonacoEditor {
                 .pressKey('delete');
         }
         await t.typeText(input, command);
+    }
+
+    /**
+     * Send lines in monacoEditor without additional space that typeText can add
+     * @param input The input locator
+     * @param lines lines
+     * @param depth level of depth of the object
+     */
+    async insertTextByLines(input: Selector, lines: string[], depth: number): Promise<void> {
+        for(let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+
+            for(let j = 0; j < depth; j++) {
+                await t.pressKey('shift+tab');
+            }
+
+            if (line) {
+                await t.typeText(input, line, { paste: true });
+            }
+            await t.pressKey('esc');
+            await t.pressKey('enter');
+        }
     }
 
     /**

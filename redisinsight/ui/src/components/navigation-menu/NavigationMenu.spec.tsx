@@ -26,7 +26,7 @@ jest.mock('uiSrc/slices/app/info', () => ({
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    isDesktop: {
+    appSettings: {
       flag: true,
     },
   }),

@@ -17,8 +17,13 @@ import { ANALYTICS_ROUTES, TRIGGERED_FUNCTIONS_ROUTES } from 'uiSrc/components/m
 
 import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { getRouterLinkProps } from 'uiSrc/services'
 import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import {
+  appInfoSelector,
+} from 'uiSrc/slices/app/info'
+import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
 import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
@@ -33,6 +38,7 @@ import TriggeredFunctionsSVG from 'uiSrc/assets/img/sidebar/gears.svg'
 import TriggeredFunctionsActiveSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
+import { BuildType } from 'uiSrc/constants/env'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
@@ -40,7 +46,6 @@ import { FeatureFlagComponent } from 'uiSrc/components'
 
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
-import { RedisLogo } from './components/redis-logo/RedisLogo'
 
 import styles from './styles.module.scss'
 
@@ -71,6 +76,7 @@ const NavigationMenu = () => {
   const [activePage, setActivePage] = useState(Pages.home)
 
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { server } = useSelector(appInfoSelector)
   const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
 
   useEffect(() => {
@@ -140,7 +146,7 @@ const NavigationMenu = () => {
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
-      featureFlag: FeatureFlags.isDesktop,
+      featureFlag: FeatureFlags.dbAnalysis,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -173,7 +179,7 @@ const NavigationMenu = () => {
       connectedInstanceId,
       isActivePage: isTriggeredFunctionsPath(activePage),
       isBeta: true,
-      featureFlag: FeatureFlags.isDesktop,
+      featureFlag: FeatureFlags.triggersAndFunctions,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -192,7 +198,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
-      featureFlag: FeatureFlags.isDesktop,
+      featureFlag: FeatureFlags.appSettings,
       getClassName() {
         return cx(styles.navigationButton, { [styles.active]: this.isActivePage })
       },
@@ -254,7 +260,16 @@ const NavigationMenu = () => {
   return (
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
-        <RedisLogo />
+        <EuiToolTip
+          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+          position="right"
+        >
+          <span className={cx(styles.iconNavItem, styles.homeIcon)}>
+            <EuiLink {...getRouterLinkProps(Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
+              <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
+            </EuiLink>
+          </span>
+        </EuiToolTip>
 
         {connectedInstanceId && (
           privateRoutes.map((nav) => (
@@ -267,7 +282,7 @@ const NavigationMenu = () => {
         )}
       </div>
       <div className={styles.bottomContainer}>
-        <FeatureFlagComponent name={FeatureFlags.isDesktop}>
+        <FeatureFlagComponent name={FeatureFlags.appNotifications}>
           <NotificationMenu />
         </FeatureFlagComponent>
         <HelpMenu />

@@ -11,7 +11,6 @@ import {
 import { appContextDbIndex } from 'uiSrc/slices/app/context'
 
 import InstanceHeader, { Props } from './InstanceHeader'
-import { isRediStack } from 'uiSrc/utils'
 
 const mockedProps = mock<Props>()
 
@@ -47,15 +46,6 @@ jest.mock('uiSrc/slices/app/context', () => ({
   appContextDbIndex: jest.fn().mockReturnValue({
     disabled: false,
   })
-}))
-
-jest.mock('uiSrc/slices/app/features', () => ({
-  ...jest.requireActual('uiSrc/slices/app/features'),
-  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    isDesktop: {
-      flag: true,
-    },
-  }),
 }))
 
 jest.mock('react-router-dom', () => ({

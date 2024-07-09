@@ -28,7 +28,7 @@ const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'https://11.111.111.111',
     username: 'username',
-    password: 'v3rY$tronGPa33w0Rd3ECDb'
+    password: '111'
 };
 
 const getPageUrl = ClientFunction(() => window.location.href);
@@ -36,7 +36,7 @@ const getPageUrl = ClientFunction(() => window.location.href);
 const filePath = path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfigurations.zip');
 
 //skip the tests until rdi integration is added
-fixture `Pipeline`
+fixture.skip `Pipeline`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {
@@ -129,7 +129,7 @@ test('Verify that link on configuration is valid', async() => {
     await goBackHistory();
 });
 
-test.only('Verify that user can insert template', async() => {
+test('Verify that user can insert template', async() => {
     const disabledAttribute = 'isDisabled';
     const defaultValue = 'ingest';
     const templateWords = 'type: mysql';

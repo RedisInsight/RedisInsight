@@ -22,14 +22,14 @@ const rdiInstance: RdiInstance = {
     alias: 'Alias',
     url: 'https://11.111.111.111',
     username: 'username',
-    password: 'v3rY$tronGPa33w0Rd3ECDb',
+    password: '111',
     version: '1.2'
 };
 const rdiInstance2: RdiInstance = {
     alias: 'test',
     url: 'https://11.111.111.111',
     username: 'name',
-    password: 'v3rY$tronGPa33w0Rd3ECDb',
+    password: '111',
     version: '1.2'
 };
 
@@ -37,12 +37,12 @@ const rdiInstance3: RdiInstance = {
     alias: 'first',
     url: 'https://11.111.111.111',
     username: 'name',
-    password: 'v3rY$tronGPa33w0Rd3ECDb',
+    password: '111',
     version: '1.2'
 };
 //skip the tests until rdi integration is added
 
-fixture `Rdi instance`
+fixture.skip `Rdi instance`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {

@@ -17,11 +17,11 @@ const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'https://11.111.111.111',
     username: 'username',
-    password: 'v3rY$tronGPa33w0Rd3ECDb'
+    password: '111'
 };
 
 //skip the tests until rdi integration is added
-fixture `Add job`
+fixture.skip `Add job`
     .meta({ type: 'critical_path', feature: 'rdi' })
     .page(commonUrl)
     .beforeEach(async() => {

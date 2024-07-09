@@ -23,15 +23,14 @@ const databaseHelper = new DatabaseHelper();
 let foundExportedFiles: string[];
 
 const filePathes = {
-    successful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDIPipeline.zip'),
     unsuccessful: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'UnsuccessRDI_Pipeline.zip'),
-    fullPipeline: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfig.zip')
+    fullPipeline: path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineConfigurations.zip')
 };
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'https://54.175.165.214',
+    url: 'https://11.111.111.111',
     username: 'username',
-    password: 'v3rY$tronGPa33w0Rd3ECDb'
+    password: '111'
 };
 
 //skip the tests until rdi integration is added
@@ -48,19 +47,16 @@ fixture.skip `Pipeline`
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
-test('Verify that new changes are highlight', async() => {
+test('Verify that new changes are highlight in the files', async() => {
     const text = 'text';
 
-    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
-    await t.click(rdiInstancePage.templateCancelButton);
-    let testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
-    await t.expect(testId).notContains('updated', 'config text was not changed');
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
+    await t.expect(rdiInstancePage.PipelineManagementPanel.configHighlightingIcon.exists).notOk('highlighted changes icon is displayed ');
 
     await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.configurationInput, text);
     const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(enteredText).eql(text, 'config text was not changed');
-    testId = await rdiInstancePage.PipelineManagementPanel.configurationTabLink.getAttribute('data-testid');
-    await t.expect(testId).contains('updated', 'config text was not changed');
+    await t.expect(rdiInstancePage.PipelineManagementPanel.configHighlightingIcon.exists).ok('highlighted changes icon is not displayed ');
 });
 
 // https://redislabs.atlassian.net/browse/RI-5199
@@ -132,10 +128,10 @@ test
 
 // https://redislabs.atlassian.net/browse/RI-5143
 test('Verify that user can import pipeline', async() => {
-    const expectedText = 'Uploaded';
+    const expectedText = 'sources';
     // check success uploading
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
-    await rdiInstancePage.RdiHeader.uploadPipeline(filePathes.successful);
+    await rdiInstancePage.RdiHeader.uploadPipeline(filePathes.fullPipeline);
     await t.click(rdiInstancePage.okUploadPipelineBtn);
     const updatedText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
     await t.expect(updatedText).contains(expectedText, 'config text was not updated');

@@ -22,9 +22,9 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'http://localhost:4000',
+    url: 'https://54.175.165.214',
     username: 'username',
-    password: 'password'
+    password: '111'
 };
 
 //skip the tests until rdi integration is added
@@ -55,6 +55,7 @@ test.before(async() => {
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
 
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
+    await t.click(rdiInstancePage.proceedNavigateDialog);
     await t.click(rdiInstancePage.NavigationPanel.managementPageButton);
     await t.expect(rdiInstancePage.RdiHeader.uploadFromFileButton.exists).ok('rdi instance page is opened');
     const rdiName = rdiInstancePage.RdiHeader.rdiNameLinkBreadcrumbs.textContent;
@@ -62,30 +63,26 @@ test.before(async() => {
 
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await t.click(rdiInstancePage.NavigationPanel.myRedisDBButton);
+    await t.click(rdiInstancePage.proceedNavigateDialog);
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
     count = await myRedisDatabasePage.NavigationPanel.getButtonsCount();
     await t.expect(count).eql(3, 'rdi buttons is displayed');
 });
 
-// TODO should be updated
 test('Verify that context is saved after navigation panel', async() => {
-    // check that tab is not highlighted
-    let classes = await rdiInstancePage.PipelineManagementPanel.configurationTab.getAttribute('class');
-    await t.expect(classes?.split(' ').length).eql(1, 'the tab is selected');
-    await t.click(rdiInstancePage.PipelineManagementPanel.configurationTab);
+    await t.click(rdiInstancePage.NavigationPanel.statusPageButton);
 
     await t.click(rdiInstancePage.RdiHeader.breadcrumbsLink);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    await t.expect(rdiInstancePage.selectOptionDialog.exists).notOk('the context is not saved');
-    classes = await rdiInstancePage.PipelineManagementPanel.configurationTab.getAttribute('class');
-    await t.expect(classes?.split(' ').length).eql(2, 'the tab is not selected');
+    // TODO add verification that status page is opened
+    await t.expect(rdiInstancePage.PipelineManagementPanel.configurationTab.exists).notOk('status page is not opened');
 });
 
 test('Verify that Insight and Sign in buttons are displayed ', async() => {
-    await t.expect(rdiInstancePage.RdiHeader.InsightsPanel.getInsightsPanel().exists).ok('Insight panel is not exist');
+    await t.expect(rdiInstancePage.RdiHeader.InsightsPanel.explorePanelButton.exists).ok('Insight panel is not exist');
     await rdiInstancePage.RdiHeader.InsightsPanel.togglePanel(true);
     const tab = await rdiInstancePage.RdiHeader.InsightsPanel.getActiveTabName();
-    await t.expect(tab).eql('Explore');
+    await t.expect(tab).eql('Tutorials');
     await t.expect(rdiInstancePage.RdiHeader.cloudSignInButton.exists).ok('sight in button is not exist');
 });
 

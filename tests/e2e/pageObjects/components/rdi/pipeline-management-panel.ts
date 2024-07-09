@@ -14,6 +14,8 @@ export class PipelineManagementPanel {
     confirmBtn  = Selector('[data-testid=delete-confirm-btn]');
     jobsPipelineTitle = Selector('[class*=rdi__title]');
 
+    configHighlightingIcon = Selector('[data-testid=updated-file-config-highlight]');
+
     /**
      * Add Job by name
      * @param name job name

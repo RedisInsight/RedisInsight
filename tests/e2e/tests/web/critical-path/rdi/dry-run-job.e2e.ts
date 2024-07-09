@@ -21,7 +21,7 @@ const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
     url: 'https://11.111.111.111',
     username: 'username',
-    password: 'v3rY$tronGPa33w0Rd3ECDb'
+    password: '111'
 };
 const filePath = path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineJobValid.zip');
 

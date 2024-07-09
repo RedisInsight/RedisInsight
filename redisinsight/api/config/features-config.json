@@ -90,7 +90,7 @@
         "strategy": "ioredis"
       }
     },
-    "isHosted": {
+    "isDesktop": {
       "flag": true,
       "perc": [[0,100]]
     }

@@ -111,7 +111,7 @@ const BottomGroupMinimized = () => {
             <span>Command Helper</span>
           </EuiBadge>
         </EuiFlexItem>
-        <FeatureFlagComponent name={FeatureFlags.isHosted}>
+        <FeatureFlagComponent name={FeatureFlags.isDesktop}>
           <EuiFlexItem
             className={styles.componentBadgeItem}
             grow={false}

@@ -101,7 +101,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
-              <FeatureFlagComponent name={FeatureFlags.isHosted}>
+              <FeatureFlagComponent name={FeatureFlags.isDesktop}>
                 <EuiToolTip
                   position="bottom"
                   content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
@@ -121,7 +121,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <FeatureFlagComponent name={FeatureFlags.isHosted}>
+                  <FeatureFlagComponent name={FeatureFlags.isDesktop}>
                     <EuiFlexItem grow={false}>
                       <EuiText className={styles.divider}>&#62;</EuiText>
                     </EuiFlexItem>

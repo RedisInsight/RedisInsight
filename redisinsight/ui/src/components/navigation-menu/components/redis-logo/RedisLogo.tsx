@@ -12,9 +12,9 @@ import styles from '../../styles.module.scss'
 
 export const RedisLogo = () => {
   const { server } = useSelector(appInfoSelector)
-  const { [FeatureFlags.isHosted]: isHosted } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.isDesktop]: isDesktop } = useSelector(appFeatureFlagsFeaturesSelector)
 
-  if (!isHosted?.flag) {
+  if (!isDesktop?.flag) {
     return (
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
         <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />

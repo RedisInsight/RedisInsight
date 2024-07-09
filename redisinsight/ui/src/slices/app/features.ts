@@ -38,7 +38,7 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.databaseChat]: {
         flag: false
       },
-      [FeatureFlags.isHosted]: {
+      [FeatureFlags.isDesktop]: {
         flag: false
       },
     }

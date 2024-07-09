@@ -52,7 +52,7 @@ export class FeatureFlagProvider {
       this.featuresConfigService,
       this.settingsService,
     ));
-    this.strategies.set(KnownFeatures.isHosted, new CommonFlagStrategy(
+    this.strategies.set(KnownFeatures.isDesktop, new CommonFlagStrategy(
       this.featuresConfigService,
       this.settingsService,
     ));

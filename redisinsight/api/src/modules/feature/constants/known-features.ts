@@ -23,8 +23,8 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
     name: KnownFeatures.RedisClient,
     storage: FeatureStorage.Database,
   },
-  [KnownFeatures.isHosted]: {
-    name: KnownFeatures.isHosted,
+  [KnownFeatures.isDesktop]: {
+    name: KnownFeatures.isDesktop,
     storage: FeatureStorage.Database,
   },
   [KnownFeatures.DocumentationChat]: {

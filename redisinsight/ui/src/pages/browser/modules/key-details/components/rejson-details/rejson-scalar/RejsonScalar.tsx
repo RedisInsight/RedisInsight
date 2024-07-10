@@ -50,7 +50,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
       return
     }
 
-    dispatch<any>(setReJSONDataAction(selectedKey, path, String(value), () => setEditing(false)))
+    dispatch<any>(setReJSONDataAction(selectedKey, path, String(value), true, undefined, () => setEditing(false)))
   }
 
   return (

@@ -4,7 +4,7 @@
  */
 import isGlob from 'is-glob'
 import { cloneDeep } from 'lodash'
-import * as jsonpath from 'jsonpath'
+import jsonpath from 'jsonpath'
 import { isRedisearchAvailable } from 'uiSrc/utils'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -66,10 +66,10 @@ const getJsonPathLevel = (path: string): string => {
       return 'root'
     }
     const levelsLength = jsonpath.parse(
-      `$${path.startsWith('.') ? '' : '..'}${path}`,
+      `$${path.startsWith('.') ? '.' : '..'}${path}`,
     ).length
 
-    return levelsLength === 1 ? 'root' : `${levelsLength - 2}`
+    return levelsLength === 2 ? 'root' : `${levelsLength - 2}`
   } catch (e) {
     return 'root'
   }

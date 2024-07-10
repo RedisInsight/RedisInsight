@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
-import * as jsonpath from 'jsonpath'
 
 import { isNumber } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -176,6 +175,7 @@ export function setReJSONDataAction(
   key: RedisResponseBuffer,
   path: string,
   data: string,
+  isEditMode: boolean,
   length?: number,
   onSuccessAction?: () => void,
   onFailAction?: () => void
@@ -199,7 +199,6 @@ export function setReJSONDataAction(
 
       if (isStatusSuccessful(status)) {
         try {
-          const isEditMode = jsonpath.query(state.browser.rejson?.data?.data, `$..${path}`).length > 0
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
               state.browser.keys?.viewType,

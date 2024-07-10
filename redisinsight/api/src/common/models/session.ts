@@ -2,6 +2,7 @@ import {
   IsNotEmpty, IsObject, IsOptional, IsString,
 } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export interface ISessionMetadata {
   userId: string;
@@ -32,7 +33,7 @@ export class SessionMetadata implements ISessionMetadata {
       !sessionMetadata?.sessionId
       || !sessionMetadata?.userId
     ) {
-      throw new BadRequestException('Session metadata missed required properties');
+      throw new BadRequestException(ERROR_MESSAGES.INVALID_SESSION_METADATA);
     }
   }
 }

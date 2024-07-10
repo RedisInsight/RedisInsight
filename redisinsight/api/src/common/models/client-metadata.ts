@@ -4,6 +4,7 @@ import {
   IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min,
 } from 'class-validator';
 import { BadRequestException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export enum ClientContext {
   Common = 'Common',
@@ -55,7 +56,7 @@ export class ClientMetadata {
       !clientMetadata?.databaseId
       || !clientMetadata?.context
     ) {
-      throw new BadRequestException('Client metadata missed required properties');
+      throw new BadRequestException(ERROR_MESSAGES.INVALID_CLIENT_METADATA);
     }
   }
 }

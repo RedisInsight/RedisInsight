@@ -106,7 +106,7 @@ export class ApiRdiClient extends RdiClient {
 
       return await this.pollActionStatus(actionId);
     } catch (error) {
-      throw wrapRdiPipelineError(error, error.response.data.message);
+      throw wrapRdiPipelineError(error, error?.response?.data?.message);
     }
   }
 

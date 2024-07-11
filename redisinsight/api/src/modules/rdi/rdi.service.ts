@@ -12,7 +12,7 @@ import { classToClass } from 'src/utils';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { SessionMetadata } from 'src/common/models';
-import { wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
+import { RdiPipelineNotFoundException, wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
 import { isUndefined, omitBy } from 'lodash';
 import { deepMerge } from 'src/common/utils';
 import { RdiAnalytics } from './rdi.analytics';
@@ -45,7 +45,7 @@ export class RdiService {
     const rdi = await this.repository.get(id);
 
     if (!rdi) {
-      throw new Error('TBD not found');
+      throw new RdiPipelineNotFoundException(`RDI with id ${id} was not found`);
     }
 
     return rdi;

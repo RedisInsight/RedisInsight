@@ -12,6 +12,7 @@ import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentine
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { discoverSentinelMasterGroups } from 'src/modules/redis/utils';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 @Injectable()
 export class RedisSentinelService {
@@ -22,6 +23,7 @@ export class RedisSentinelService {
     private readonly databaseService: DatabaseService,
     private readonly databaseFactory: DatabaseFactory,
     private readonly redisSentinelAnalytics: RedisSentinelAnalytics,
+    private readonly constantsProvider: ConstantsProvider,
   ) {}
 
   /**
@@ -118,8 +120,8 @@ export class RedisSentinelService {
     try {
       const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
       const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient({
-        sessionMetadata: {} as SessionMetadata,
-        databaseId: database.id,
+        sessionMetadata: this.constantsProvider.getSystemSessionMetadata(),
+        databaseId: database.id || 'new',
         context: ClientContext.Common,
       }, database, { useRetry: false });
       result = await discoverSentinelMasterGroups(client);

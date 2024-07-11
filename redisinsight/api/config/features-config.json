@@ -89,26 +89,6 @@
       "data": {
         "strategy": "ioredis"
       }
-    },
-    "appSettings": {
-      "flag": true,
-      "perc": [[0,100]]
-    },
-    "profiler": {
-      "flag": true,
-      "perc": [[0,100]]
-    },
-    "dbAnalysis": {
-      "flag": true,
-      "perc": [[0,100]]
-    },
-    "appNotifications": {
-      "flag": true,
-      "perc": [[0,100]]
-    },
-    "triggersAndFunctions": {
-      "flag": true,
-      "perc": [[0,100]]
     }
   }
 }

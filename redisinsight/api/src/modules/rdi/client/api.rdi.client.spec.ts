@@ -1,6 +1,11 @@
 import axios, { AxiosError } from 'axios';
 import {
-  mockRdi, mockRdiClientMetadata, mockRdiDryRunJob, mockRdiPipeline, mockRdiStatisticsData,
+  mockAccessTokenKey,
+  mockRdi,
+  mockRdiClientMetadata,
+  mockRdiDryRunJob,
+  mockRdiPipeline,
+  mockRdiStatisticsData,
 } from 'src/__mocks__';
 import errorMessages from 'src/constants/error-messages';
 import { sign } from 'jsonwebtoken';
@@ -283,7 +288,7 @@ describe('ApiRdiClient', () => {
 
   describe('connect', () => {
     it('should set auth and authorization headers on successful login', async () => {
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, mockAccessTokenKey);
       const expectedAuthorizationHeader = `Bearer ${mockedAccessToken}`;
 
       mockedAxios.post.mockResolvedValue({
@@ -319,7 +324,7 @@ describe('ApiRdiClient', () => {
 
     it('should not call connect if token is not expired', async () => {
       const exp = Math.trunc((Date.now() / 1000) + TOKEN_THRESHOLD + 3600);
-      const mockedAccessToken = sign({ exp }, 'test');
+      const mockedAccessToken = sign({ exp }, mockAccessTokenKey);
       client['auth'] = { exp, jwt: mockedAccessToken };
       await client.ensureAuth();
       expect(connectSpy).not.toHaveBeenCalled();
@@ -327,7 +332,7 @@ describe('ApiRdiClient', () => {
 
     it('should call connect if token is expired', async () => {
       const exp = Math.trunc((Date.now() / 1000) - 3600);
-      const mockedAccessToken = sign({ exp }, 'test');
+      const mockedAccessToken = sign({ exp }, mockAccessTokenKey);
       client['auth'] = { exp, jwt: mockedAccessToken };
       await client.ensureAuth();
       expect(connectSpy).toHaveBeenCalled();

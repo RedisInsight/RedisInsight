@@ -81,6 +81,10 @@ export default {
     excludeRoutes: [],
     excludeAuthRoutes: [],
   },
+  encryption: {
+    encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
+    encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
+  },
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,
@@ -211,7 +215,9 @@ export default {
     timeout: parseInt(process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT, 10) || 30 * 1_000, // 30 sec
   },
   redisStack: {
-    id: process.env.RI_BUILD_TYPE === 'REDIS_STACK' ? process.env.RI_REDIS_STACK_DATABASE_ID || 'redis-stack' : undefined,
+    id: process.env.RI_BUILD_TYPE === 'REDIS_STACK'
+      ? process.env.RI_REDIS_STACK_DATABASE_ID || 'redis-stack'
+      : undefined,
     name: process.env.RI_REDIS_STACK_DATABASE_NAME,
     host: process.env.RI_REDIS_STACK_DATABASE_HOST,
     port: process.env.RI_REDIS_STACK_DATABASE_PORT,

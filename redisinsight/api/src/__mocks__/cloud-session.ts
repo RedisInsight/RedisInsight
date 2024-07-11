@@ -1,13 +1,15 @@
+import { sign } from 'jsonwebtoken';
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
 import { ICloudApiCsrfToken } from 'src/modules/cloud/user/models';
+import { mockAccessTokenKey } from './_shared';
 
 export const mockCloudApiCsrfToken: ICloudApiCsrfToken = {
   csrf_token: 'csrf_p6vA6A5tF36Jf6twH2cBOqtt7n',
 };
 
 export const mockCloudApiAuthDto: ICloudApiCredentials = {
-  accessToken: 'at_p6vA6A5tF36Jf6twH2cBOqtt7n',
+  accessToken: sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, mockAccessTokenKey),
   refreshToken: 'rt_p6vA6A5tF36Jf6twH2cBOqtt7n',
   idpType: CloudAuthIdpType.Google,
   csrf: mockCloudApiCsrfToken.csrf_token,

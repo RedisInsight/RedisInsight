@@ -1,0 +1,6 @@
+# Snyk (https://snyk.io) policy file
+exclude:
+  global:
+    - "*.spec.ts"
+    - redisinsigt/api/test
+    - __mocks__/**

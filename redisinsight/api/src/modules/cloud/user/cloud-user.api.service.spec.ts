@@ -12,9 +12,12 @@ import {
   mockCloudCapiAccount,
   mockCloudApiUser,
   mockCloudApiCsrfToken, mockServerService,
+  mockAccessTokenKey,
 } from 'src/__mocks__';
 import { when, resetAllWhenMocks } from 'jest-when';
-import { CloudApiInternalServerErrorException, CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import {
+  CloudApiInternalServerErrorException, CloudApiUnauthorizedException,
+} from 'src/modules/cloud/common/exceptions';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
 import { CloudUserApiProvider } from 'src/modules/cloud/user/providers/cloud-user.api.provider';
 import { CloudUserRepository } from 'src/modules/cloud/user/repositories/cloud-user.repository';
@@ -123,7 +126,7 @@ describe('CloudUserApiService', () => {
 
   describe('ensureAccessToken', () => {
     it('Should not renew when access token is not expired', async () => {
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
+      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, mockAccessTokenKey);
       sessionService.getSession.mockResolvedValueOnce({
         ...mockCloudApiAuthDto,
         accessToken: mockedAccessToken,
@@ -133,7 +136,7 @@ describe('CloudUserApiService', () => {
       expect(authService.renewTokens).not.toHaveBeenCalled();
     });
     it('Should not renew when access token is not expired and 3m until expiration time', async () => {
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 180 }, 'test');
+      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 180 }, mockAccessTokenKey);
       sessionService.getSession.mockResolvedValueOnce({
         ...mockCloudApiAuthDto,
         accessToken: mockedAccessToken,
@@ -143,7 +146,7 @@ describe('CloudUserApiService', () => {
       expect(authService.renewTokens).not.toHaveBeenCalled();
     });
     it('Should renew tokens when access token is expired', async () => {
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) - 3600 }, 'test');
+      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) - 3600 }, mockAccessTokenKey);
       sessionService.getSession.mockResolvedValueOnce({
         ...mockCloudApiAuthDto,
         accessToken: mockedAccessToken,
@@ -157,7 +160,7 @@ describe('CloudUserApiService', () => {
       );
     });
     it('Should renew tokens when access token is not expired but < 2m until exp time', async () => {
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 100 }, 'test');
+      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 100 }, mockAccessTokenKey);
       sessionService.getSession.mockResolvedValueOnce({
         ...mockCloudApiAuthDto,
         accessToken: mockedAccessToken,
@@ -173,7 +176,7 @@ describe('CloudUserApiService', () => {
     it('Should throw CloudApiUnauthorizedException in case of any error', async () => {
       authService.renewTokens.mockRejectedValueOnce(new Error());
 
-      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) }, 'test');
+      const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) }, mockAccessTokenKey);
       sessionService.getSession.mockResolvedValueOnce({
         ...mockCloudApiAuthDto,
         accessToken: mockedAccessToken,

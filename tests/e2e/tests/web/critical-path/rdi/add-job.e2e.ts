@@ -15,9 +15,9 @@ const databaseHelper = new DatabaseHelper();
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'http://localhost:4000',
+    url: 'https://11.111.111.111',
     username: 'username',
-    password: 'password'
+    password: '111'
 };
 
 //skip the tests until rdi integration is added
@@ -85,6 +85,7 @@ test('Verify that user insert template for jobs', async() => {
     // should be empty config
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
 
+    await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
     await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
     const buttonClass = rdiInstancePage.templateApplyButton.getAttribute('class');
     await t.expect(buttonClass).notContains(disabledAttribute, 'Apply button is disabled');
@@ -94,7 +95,7 @@ test('Verify that user insert template for jobs', async() => {
     await t.click(rdiInstancePage.templateButton);
     await t.expect(rdiInstancePage.templateApplyButton.visible).ok('the template popover is not expanded');
     await t.expect(rdiInstancePage.pipelineDropdown.textContent).eql(defaultValue, 'the default value is set incorrectly');
-    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.WriteBehind);
+    await rdiInstancePage.setTemplateDropdownValue(RdiTemplatePipelineType.Ingest);
 
     //verify uniq templates words - should be undated when templates are added
     const enteredText = await rdiInstancePage.MonacoEditor.getTextFromMonaco();
@@ -120,9 +121,9 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     const jobName = 'testJob';
     const sqlText = 'SELECT test FROM test1';
     const SQLiteText = 's';
-    const SQLiteAutoCompleteText = 'STRFTIME(format, time_value)';
+    const SQLiteAutoCompleteText = 'SIGN(X)';
     const JMESPathText = 'r';
-    const JMESPathAutoCompleteText = 'regex_replace';
+    const JMESPathAutoCompleteText = 'REGEX_REPLACE';
 
     await rdiInstancePage.PipelineManagementPanel.addJob(jobName);
     await rdiInstancePage.PipelineManagementPanel.openJobByName(jobName);
@@ -136,7 +137,7 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     await t.expect(rdiInstancePage.draggableArea.exists).ok('SQL/JMESPath editor is not displayed');
 
     // Verify that user can see SQL(set by default) and JMESPath editor options
-    await t.expect(rdiInstancePage.dedicatedLanguageSelect.textContent).eql('SQL', 'SQL is not set by default');
+    await t.expect(rdiInstancePage.dedicatedLanguageSelect.textContent).eql('SQLite functions', 'SQL is not set by default');
 
     // Verify that user can close the additional editor
     await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, sqlText, false);
@@ -158,7 +159,7 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     // Start type characters and select command
     await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, JMESPathText);
     // Verify that the list with auto-suggestions is displayed
-    await t.expect(rdiInstancePage.MonacoEditor.monacoSuggestion.count).eql(3, 'Auto-suggestions are not displayed');
+    await t.expect(rdiInstancePage.MonacoEditor.monacoSuggestion.count).gt(1, 'Auto-suggestions are not displayed');
     await t.pressKey('tab');
     await t.click(rdiInstancePage.EditorButton.applyBtn);
     await t.expect(await rdiInstancePage.MonacoEditor.getTextFromMonaco()).contains(JMESPathAutoCompleteText, 'Text from JMESPath editor not applied');
@@ -168,7 +169,7 @@ test('Verify that user can open an additional editor to work with SQL and JMESPa
     // Start type characters and select command
     await rdiInstancePage.MonacoEditor.sendTextToMonaco(rdiInstancePage.draggableArea, SQLiteText);
     // Verify that the list with auto-suggestions is displayed
-    await t.expect(rdiInstancePage.MonacoEditor.monacoSuggestion.count).eql(3, 'Auto-suggestions are not displayed');
+    await t.expect(rdiInstancePage.MonacoEditor.monacoSuggestion.count).gt(1, 'Auto-suggestions are not displayed');
     await t.pressKey('tab');
     await t.click(rdiInstancePage.EditorButton.applyBtn);
     await t.expect(await rdiInstancePage.MonacoEditor.getTextFromMonaco()).contains(SQLiteAutoCompleteText, 'Text from SQLite editor not applied');

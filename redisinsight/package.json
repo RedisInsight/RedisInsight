@@ -11,13 +11,15 @@
     "email": "support@redis.com",
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "npx patch-package"
+  },
   "resolutions": {
     "**/semver": "^7.5.2"
   },
   "dependencies": {
     "keytar": "^7.9.0",
-    "sqlite3": "5.1.6",
+    "sqlite3": "5.1.7",
     "tunnel-ssh": "^5.1.2"
   }
 }

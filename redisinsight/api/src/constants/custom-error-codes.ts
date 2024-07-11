@@ -58,4 +58,5 @@ export enum CustomErrorCodes {
   RdiUnauthorized = 11_402,
   RdiInternalServerError = 11_403,
   RdiValidationError = 11_404,
+  RdiNotFound = 11_405,
 }

@@ -4,4 +4,4 @@ exclude:
     - __mocks__/**
     - redisinsight/api/test
     - *.spec.ts
-    - *.spec.tsc
+    - *.spec.tsx

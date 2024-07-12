@@ -2,6 +2,6 @@
 exclude:
   global:
     - __mocks__/**
-    - redisinsight/api/test
-    - *.spec.ts
-    - *.spec.tsx
+    - redisinsight/api/test/**
+    - "*.spec.ts"
+    - "*.spec.tsx"

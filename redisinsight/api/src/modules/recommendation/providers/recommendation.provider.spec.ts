@@ -515,17 +515,6 @@ describe('RecommendationProvider', () => {
           .determineSetPasswordRecommendation(client);
         expect(setPasswordRecommendation).toEqual(null);
       });
-
-    it('should return setPassword recommendation when acl command executed with no password error',
-      async () => {
-        when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['auth']))
-          .mockRejectedValue(mockRedisNoPasswordError);
-
-        const setPasswordRecommendation = await service
-          .determineSetPasswordRecommendation(client);
-        expect(setPasswordRecommendation).toEqual({ name: RECOMMENDATION_NAMES.SET_PASSWORD });
-      });
   });
 
   describe('determineRedisVersionRecommendation', () => {

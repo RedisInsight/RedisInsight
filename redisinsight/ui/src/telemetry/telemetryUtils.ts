@@ -3,13 +3,14 @@
  * This module abstracts the exact service/framework used for tracking usage.
  */
 import isGlob from 'is-glob'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, get } from 'lodash'
 import jsonpath from 'jsonpath'
 import { isRedisearchAvailable } from 'uiSrc/utils'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { IModuleSummary, ITelemetrySendEvent, ITelemetrySendPageView, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
 import { apiService } from 'uiSrc/services'
+import { store } from 'uiSrc/slices/store'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   IRedisModulesSummary,
@@ -19,6 +20,8 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
+export const getProvider = (): string => get(store.getState(), 'connections.instances.connectedInstance.provider', '')
+
 const TELEMETRY_EMPTY_VALUE = 'none'
 
 const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
@@ -27,7 +30,9 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData, traits })
+    const provider = getProvider()
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
+      { event, eventData: { ...eventData, provider }, traits })
   } catch (e) {
     // continue regardless of error
   }
@@ -39,7 +44,8 @@ const sendPageViewTelemetry = async ({ name, eventData }: ITelemetrySendPageView
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData, })
+    const provider = getProvider()
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData: { ...eventData, provider } })
   } catch (e) {
     // continue regardless of error
   }

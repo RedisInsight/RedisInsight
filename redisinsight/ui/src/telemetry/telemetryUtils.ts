@@ -20,7 +20,7 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-export const getProvider = (): string => get(store.getState(), 'connections.instances.connectedInstance.provider', '')
+export const getProvider = (): string | undefined => get(store.getState(), 'connections.instances.connectedInstance.provider', undefined)
 
 const TELEMETRY_EMPTY_VALUE = 'none'
 

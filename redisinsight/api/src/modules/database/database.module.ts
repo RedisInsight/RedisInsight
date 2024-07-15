@@ -16,6 +16,7 @@ import { StackDatabasesRepository } from 'src/modules/database/repositories/stac
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
+import { AutoImportDatabaseRepository } from './repositories/auto-import.database.repository';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -23,7 +24,8 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 export class DatabaseModule {
   static register(
     databaseRepository: Type<DatabaseRepository> =
-    SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesRepository : LocalDatabaseRepository,
+    SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesRepository : (
+      SERVER_CONFIG.buildType == 'REDIS_AUTO_IMPORT' ? AutoImportDatabaseRepository : LocalDatabaseRepository),
   ) {
     return {
       module: DatabaseModule,

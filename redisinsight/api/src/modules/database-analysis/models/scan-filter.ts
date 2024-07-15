@@ -46,7 +46,7 @@ export class ScanFilter {
    * Generate scan args array for filter
    */
   getScanArgsArray(): Array<number | string> {
-    const args = ['count', this.count, 'match', this.match];
+    const args = ['match', this.match];
 
     if (this.type) {
       args.push('type', this.type);

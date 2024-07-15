@@ -8,12 +8,14 @@ export interface Props {
   name: FeatureFlags
   children: JSX.Element | JSX.Element[]
   otherwise?: React.ReactElement
+  enabledByDefault?: boolean
 }
 
 const FeatureFlagComponent = (props: Props) => {
-  const { children, name, otherwise } = props
+  const { children, name, otherwise, enabledByDefault } = props
   const { [name]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
-  const { flag, variant } = feature ?? { flag: false }
+  const { flag, variant } = feature ?? { flag: enabledByDefault }
+
   if (!flag) {
     return otherwise ?? null
   }

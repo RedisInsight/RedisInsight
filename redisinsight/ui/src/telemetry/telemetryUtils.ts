@@ -5,7 +5,7 @@
 import isGlob from 'is-glob'
 import { cloneDeep, get } from 'lodash'
 import jsonpath from 'jsonpath'
-import { isRedisearchAvailable } from 'uiSrc/utils'
+import { Maybe, isRedisearchAvailable } from 'uiSrc/utils'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { IModuleSummary, ITelemetrySendEvent, ITelemetrySendPageView, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
@@ -20,7 +20,7 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-export const getProvider = (): string | undefined => get(store.getState(), 'connections.instances.connectedInstance.provider', undefined)
+export const getProvider = (): Maybe<string> => get(store.getState(), 'connections.instances.connectedInstance.provider')
 
 const TELEMETRY_EMPTY_VALUE = 'none'
 

@@ -3,7 +3,7 @@ import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
 import { render, screen, fireEvent, act, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 
-import { Pages } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appFeatureFlagsFeaturesSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import HomeTabs from './HomeTabs'
@@ -18,9 +18,9 @@ beforeEach(() => {
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    rdi: {
+    redisDataIntegration: {
       flag: true
-    },
+    }
   }),
 }))
 
@@ -88,7 +88,7 @@ describe('HomeTabs', () => {
 
     fireEvent.click(screen.getByTestId('home-tab-rdi-instances'))
 
-    const expectedActions = [removeFeatureFromHighlighting('rdi')]
+    const expectedActions = [removeFeatureFromHighlighting(FeatureFlags.rdi)]
     expect(store.getActions()).toEqual(expectedActions)
   })
 

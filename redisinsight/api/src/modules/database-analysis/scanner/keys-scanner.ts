@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { getTotalKeys } from 'src/modules/redis/utils';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
 import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
+import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 
 @Injectable()
 export class KeysScanner {
@@ -9,7 +10,7 @@ export class KeysScanner {
     private readonly keyInfoProvider: KeyInfoProvider,
   ) {}
 
-  async scan(client: RedisClient, opts: any) {
+  async scan(client: RedisClient, opts: { filter: ScanFilter }) {
     let nodes = [];
 
     if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
@@ -21,7 +22,7 @@ export class KeysScanner {
     return Promise.all(nodes.map((node) => this.nodeScan(node, opts)));
   }
 
-  async nodeScan(client: RedisClient, opts: any) {
+  async nodeScan(client: RedisClient, opts: { filter: ScanFilter }) {
     const total = await getTotalKeys(client);
     let indexes: string[];
     let libraries: string[];
@@ -44,12 +45,29 @@ export class KeysScanner {
       // Ignore errors
     }
 
-    const [
-      ,
-      keys,
-    ] = await client.sendCommand([
-      'scan', 0, ...opts.filter.getScanArgsArray(),
-    ]) as [string, Buffer[]];
+    let keys = [];
+    const COUNT = Math.min(2000, opts.filter.count);
+    let scanned = 0;
+    let cursor: number;
+
+    while (
+      scanned < opts.filter.count
+      && cursor !== 0
+    ) {
+      const [
+        cursorResp,
+        keysResp,
+      ] = await client.sendCommand([
+        'scan',
+        cursor || 0,
+        'count', COUNT,
+        ...opts.filter.getScanArgsArray(),
+      ]) as [string, Buffer[]];
+
+      cursor = parseInt(cursorResp, 10) || 0;
+      scanned += COUNT;
+      keys = keys.concat(keysResp);
+    }
 
     const [sizes, types, ttls] = await Promise.all([
       client.sendPipeline(

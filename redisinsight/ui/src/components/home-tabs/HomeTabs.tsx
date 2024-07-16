@@ -55,7 +55,7 @@ const HomeTabs = () => {
           <HighlightedFeature
             isHighlight={rdiHighlighting}
             /* highlighting will remove in next release, do not need cover multiple tabs */
-            {...(BUILD_FEATURES.rdi || {})}
+            {...(BUILD_FEATURES.redisDataIntegration || {})}
           >
             {title}
           </HighlightedFeature>

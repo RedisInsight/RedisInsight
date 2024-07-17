@@ -26,13 +26,16 @@ import {
   GetHashFieldsResponse, UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { HashService } from 'src/modules/browser/hash/hash.service';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: Hash')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('hash')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class HashController {
-  constructor(private hashService: HashService) {}
+export class HashController extends BrowserBaseController {
+  constructor(private hashService: HashService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold Hash data type' })

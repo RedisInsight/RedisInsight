@@ -11,6 +11,7 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { IModuleSummary, ITelemetrySendEvent, ITelemetrySendPageView, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
 import { apiService } from 'uiSrc/services'
 import { store } from 'uiSrc/slices/store'
+import { eventsWithExcludedProvider } from 'uiSrc/constants/telemetry'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   IRedisModulesSummary,
@@ -30,22 +31,27 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
     if (!isAnalyticsGranted) {
       return
     }
-    const provider = getProvider()
+
+    if (!eventData.provider && !eventsWithExcludedProvider.includes(event)) {
+      eventData.provider = getProvider()
+    }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
-      { event, eventData: { ...eventData, provider }, traits })
+      { event, eventData, traits })
   } catch (e) {
     // continue regardless of error
   }
 }
 
-const sendPageViewTelemetry = async ({ name, eventData }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name, eventData = {} }: ITelemetrySendPageView) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    const provider = getProvider()
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData: { ...eventData, provider } })
+    if (!eventData.provider && !eventsWithExcludedProvider.includes(name)) {
+      eventData.provider = getProvider()
+    }
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData })
   } catch (e) {
     // continue regardless of error
   }

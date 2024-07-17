@@ -11,7 +11,6 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { IModuleSummary, ITelemetrySendEvent, ITelemetrySendPageView, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
 import { apiService } from 'uiSrc/services'
 import { store } from 'uiSrc/slices/store'
-import { eventsWithExcludedProvider } from 'uiSrc/constants/telemetry'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   IRedisModulesSummary,
@@ -21,7 +20,10 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-export const getProvider = (): Maybe<string> => get(store.getState(), 'connections.instances.connectedInstance.provider')
+export const getProvider = (dbId: string): Maybe<string> => {
+  const instance = get(store.getState(), 'connections.instances.connectedInstance')
+  return (instance.id === dbId) ? instance.provider : undefined
+}
 
 const TELEMETRY_EMPTY_VALUE = 'none'
 
@@ -32,8 +34,8 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
       return
     }
 
-    if (!eventData.provider && !eventsWithExcludedProvider.includes(event)) {
-      eventData.provider = getProvider()
+    if (!eventData.provider && eventData.databaseId) {
+      eventData.provider = getProvider(eventData.databaseId)
     }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
       { event, eventData, traits })
@@ -42,16 +44,17 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
   }
 }
 
-const sendPageViewTelemetry = async ({ name, eventData = {} }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name, databaseId, eventData = {} }: ITelemetrySendPageView) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    if (!eventData.provider && !eventsWithExcludedProvider.includes(name)) {
-      eventData.provider = getProvider()
+    if (!eventData.provider && databaseId) {
+      eventData.provider = getProvider(databaseId)
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData })
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`,
+      { event: name, eventData: { ...eventData, databaseId } })
   } catch (e) {
     // continue regardless of error
   }

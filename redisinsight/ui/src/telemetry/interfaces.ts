@@ -8,6 +8,7 @@ export interface ITelemetryIdentify {
 
 export type EventData = {
   [key: string]: any
+  databaseId?: string
   provider?: string
 }
 

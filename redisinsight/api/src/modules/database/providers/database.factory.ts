@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { ConnectionType, HostingProvider } from 'src/modules/database/entities/database.entity';
 import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
@@ -35,7 +36,7 @@ export class DatabaseFactory {
     const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient(
       {
         sessionMetadata,
-        databaseId: database.id,
+        databaseId: database.id || uuidv4(), // we assume that if no database id defined we are in creation process
         context: ClientContext.Common,
       },
       database,
@@ -110,7 +111,7 @@ export class DatabaseFactory {
       const clusterClient = await this.redisClientFactory.getConnectionStrategy().createClusterClient(
         {
           sessionMetadata,
-          databaseId: model.id,
+          databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
           context: ClientContext.Common,
         },
         model,
@@ -157,7 +158,7 @@ export class DatabaseFactory {
       const sentinelClient = await this.redisClientFactory.getConnectionStrategy().createSentinelClient(
         {
           sessionMetadata,
-          databaseId: model.id,
+          databaseId: model.id || uuidv4(), // we assume that if no database id defined we are in creation process
           context: ClientContext.Common,
         },
         model,

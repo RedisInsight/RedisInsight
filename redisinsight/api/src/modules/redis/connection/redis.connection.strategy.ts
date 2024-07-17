@@ -62,7 +62,7 @@ export abstract class RedisConnectionStrategy {
     return [
       CONNECTION_NAME_GLOBAL_PREFIX,
       clientMetadata?.context || 'custom',
-      clientMetadata?.databaseId|| '',
+      clientMetadata?.databaseId || '',
       clientMetadata?.db >= 0 ? clientMetadata.db : '',
       clientMetadata?.uniqueId || '',
       clientMetadata?.sessionMetadata?.userId || '',

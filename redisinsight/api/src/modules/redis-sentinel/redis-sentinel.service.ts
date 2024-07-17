@@ -1,6 +1,7 @@
 import {
   HttpException, Injectable, Logger,
 } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { Database } from 'src/modules/database/models/database';
@@ -121,7 +122,7 @@ export class RedisSentinelService {
       const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
       const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient({
         sessionMetadata: this.constantsProvider.getSystemSessionMetadata(),
-        databaseId: database.id || 'new',
+        databaseId: database.id || uuidv4(),
         context: ClientContext.Common,
       }, database, { useRetry: false });
       result = await discoverSentinelMasterGroups(client);

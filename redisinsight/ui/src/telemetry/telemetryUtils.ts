@@ -44,17 +44,17 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
   }
 }
 
-const sendPageViewTelemetry = async ({ name, databaseId, eventData = {} }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name, eventData = {} }: ITelemetrySendPageView) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    if (!eventData.provider && databaseId) {
-      eventData.provider = getProvider(databaseId)
+    if (!eventData.provider && eventData.databaseId) {
+      eventData.provider = getProvider(eventData.databaseId)
     }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`,
-      { event: name, eventData: { ...eventData, databaseId } })
+      { event: name, eventData })
   } catch (e) {
     // continue regardless of error
   }

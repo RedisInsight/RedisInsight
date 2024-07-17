@@ -22,7 +22,6 @@ export interface ITelemetrySendEvent {
 export interface ITelemetrySendPageView {
   name: string
   eventData?: EventData
-  databaseId?: string
   nonTracking?: boolean
 }
 

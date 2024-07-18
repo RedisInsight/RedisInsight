@@ -94,6 +94,6 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (process.env.RI_APP_TYPE !== 'electron') {
+if (serverConfig.autoBootstrap) {
   bootstrap();
 }

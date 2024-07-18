@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
+import { useParams } from 'react-router-dom'
 import {
   selectedKeySelector,
 } from 'uiSrc/slices/browser/keys'
@@ -12,9 +13,10 @@ import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import AddHashFields from './add-hash-fields/AddHashFields'
 import { HashDetailsTable } from './hash-details-table'
-import { AddItemsAction } from '../key-details-actions'
+import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -28,14 +30,17 @@ const HashDetails = (props: Props) => {
 
   const { loading } = useSelector(selectedKeySelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
+  const { instanceId } = useParams<{ instanceId: string }>()
   const {
     [FeatureFlags.hashFieldExpiration]: hashFieldExpirationFeature
   } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const [isAddItemPanelOpen, setIsAddItemPanelOpen] = useState<boolean>(false)
+  const [showTtl, setShowTtl] = useState<boolean>(true)
 
   const isExpireFieldsAvailable = hashFieldExpirationFeature?.flag
     && isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
+    && showTtl
 
   const openAddItemPanel = () => {
     setIsAddItemPanelOpen(true)
@@ -49,9 +54,17 @@ const HashDetails = (props: Props) => {
     }
   }
 
-  const Actions = ({ width }: { width: number }) => (
-    <AddItemsAction title="Add Fields" width={width} openAddItemPanel={openAddItemPanel} />
-  )
+  const handleSelectShow = (show: boolean) => {
+    setShowTtl(show)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        action: show ? 'show' : 'hide'
+      }
+    })
+  }
 
   return (
     <div className="fluid flex-column relative">
@@ -59,7 +72,12 @@ const HashDetails = (props: Props) => {
         {...props}
         key="key-details-header"
         keyType={keyType}
-        Actions={Actions}
+        displayKeyFormatter={false}
+      />
+      <KeyDetailsSubheader
+        showTtl={showTtl}
+        onShowTtl={handleSelectShow}
+        onAddKey={openAddItemPanel}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (

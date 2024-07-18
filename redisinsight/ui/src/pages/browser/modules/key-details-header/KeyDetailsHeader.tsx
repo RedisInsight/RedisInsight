@@ -47,6 +47,7 @@ export interface KeyDetailsHeaderProps {
   arePanelsCollapsed: boolean
   onToggleFullScreen: () => void
   Actions?: (props: { width: number }) => ReactElement
+  displayKeyFormatter?: boolean
 }
 
 const KeyDetailsHeader = ({
@@ -58,6 +59,7 @@ const KeyDetailsHeader = ({
   onEditKey,
   keyType,
   Actions,
+  displayKeyFormatter = true
 }: KeyDetailsHeaderProps) => {
   const { refreshing, loading, lastRefreshTime, isRefreshDisabled } = useSelector(selectedKeySelector)
   const {
@@ -109,6 +111,8 @@ const KeyDetailsHeader = ({
       handleEnableAutoRefresh(enableAutoRefresh, refreshRate)
     }
   }
+
+  const formatter = displayKeyFormatter && Object.values(KeyTypes).includes(keyType as KeyTypes)
 
   return (
     <div className={`key-details-header ${styles.container}`} data-testid="key-details-header">
@@ -177,7 +181,7 @@ const KeyDetailsHeader = ({
                       onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                       testid="key"
                     />
-                    {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
+                    {formatter && (
                       <KeyDetailsHeaderFormatter width={width} />
                     )}
                     {!isUndefined(Actions) && <Actions width={width} />}

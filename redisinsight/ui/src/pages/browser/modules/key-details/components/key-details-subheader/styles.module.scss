@@ -1,0 +1,55 @@
+.subheaderContainer {
+  padding: 12px 18px 0px 18px;
+
+  .keyFormatter__item {
+    max-width: 100px;
+    margin-right: 0;
+  }
+
+  .showTtl__item {
+    max-width: 110px;
+    display: 'flex';
+    margin-left: 0;
+    .showTtl__checkbox {
+      font-weight: 400;
+      font-size: 14px;
+      margin: auto;
+
+      :global(.euiCheckbox__input) {
+        color: var(--controlsBorderColor) !important;
+      }
+
+      :global(.euiCheckbox__square) {
+        width: 18px !important;
+        height: 18px !important;
+        border: 1px solid var(--controlsBorderColor) !important;
+        border-radius: 4px !important;
+        box-shadow: none !important;
+      }
+
+      :global(.euiCheckbox__label) {
+        color: var(--controlsLabelColor) !important;
+      }
+    }
+  }
+
+  .addBtn__container {
+    max-width: 40px;
+    align-self: center;
+    margin-right: 0 !important;
+    :global(.euiButton) {
+      height: 24px !important;
+      width: 27px !important;
+      min-width: 27px !important;
+
+      :global(.euiButton__content) {
+        padding: 0 !important;
+        :global(.euiButton__text) {
+          font-size: 12px !important;
+          font-weight: 400 !important;
+        }
+      }
+    }
+  }
+}
+

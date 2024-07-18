@@ -51,8 +51,15 @@ export class ApiRdiClient extends RdiClient {
 
   async getSchema(): Promise<object> {
     try {
-      const response = await this.client.get(RdiUrl.GetSchema);
-      return response.data;
+      const [config, jobs] = await Promise.all([
+        this.client.get(RdiUrl.GetConfigSchema).then(({ data }) => data),
+        this.client.get(RdiUrl.GetJobsSchema).then(({ data }) => data),
+      ]);
+
+      return {
+        config,
+        jobs,
+      };
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }

@@ -24,7 +24,9 @@ interface IApp {
 }
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
-  await migrateHomeFolder() && await removeOldFolders();
+  if (serverConfig.migrateOldFolders) {
+    await migrateHomeFolder() && await removeOldFolders();
+  }
 
   const { port, host } = serverConfig;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);

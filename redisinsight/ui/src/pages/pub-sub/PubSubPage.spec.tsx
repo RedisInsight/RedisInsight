@@ -35,7 +35,9 @@ describe('PubSubPage', () => {
 
     expect(sendPageViewTelemetry).toBeCalledWith({
       name: TelemetryPageView.PUBSUB_PAGE,
-      databaseId: 'instanceId'
+      eventData: {
+        databaseId: 'instanceId'
+      }
     })
   })
 })

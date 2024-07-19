@@ -56,6 +56,9 @@ describe('JobWrapper', () => {
 
     expect(sendPageViewTelemetry).toBeCalledWith({
       name: TelemetryPageView.RDI_JOBS,
+      eventData: {
+        rdiInstanceId: 'rdiInstanceId',
+      }
     })
   })
 

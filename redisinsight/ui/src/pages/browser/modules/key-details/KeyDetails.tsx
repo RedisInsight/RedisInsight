@@ -45,7 +45,7 @@ const KeyDetails = (props: Props) => {
   const { viewType } = useSelector(keysSelector)
   const { loading, error = '', data } = useSelector(selectedKeySelector)
   const isKeySelected = !isNull(useSelector(selectedKeyDataSelector))
-  const { type: keyType, name: keyName, length: keyLength } = useSelector(selectedKeyDataSelector) ?? {
+  const { type: keyType, length: keyLength } = useSelector(selectedKeyDataSelector) ?? {
     type: KeyTypes.String,
   }
 
@@ -55,14 +55,7 @@ const KeyDetails = (props: Props) => {
     if (keyProp === null) {
       return
     }
-    // Restore key details from context in future
-    // (selectedKey.data?.name !== keyProp)
-    dispatch(fetchKeyInfo(keyProp))
-    dispatch(setSelectedKeyRefreshDisabled(false))
-  }, [keyProp])
-
-  useEffect(() => {
-    if (!isUndefined(keyName)) {
+    if (keyProp?.data) {
       sendEventTelemetry({
         event: getBasedOnViewTypeEvent(
           viewType,
@@ -76,7 +69,11 @@ const KeyDetails = (props: Props) => {
         }
       })
     }
-  }, [keyName])
+    // Restore key details from context in future
+    // (selectedKey.data?.name !== keyProp)
+    dispatch(fetchKeyInfo(keyProp))
+    dispatch(setSelectedKeyRefreshDisabled(false))
+  }, [keyProp])
 
   const onCloseAddItemPanel = () => {
     sendEventTelemetry({

@@ -40,6 +40,9 @@ const JobWrapper = () => {
   useEffect(() => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_JOBS,
+      eventData: {
+        rdiInstanceId
+      }
     })
   }, [])
 

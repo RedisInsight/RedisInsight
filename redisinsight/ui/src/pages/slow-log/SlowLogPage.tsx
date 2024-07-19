@@ -86,7 +86,9 @@ const SlowLogPage = () => {
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.SLOWLOG_PAGE,
-      databaseId: instanceId
+      eventData: {
+        databaseId: instanceId
+      }
     })
     setIsPageViewSent(true)
   }

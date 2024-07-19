@@ -6,17 +6,22 @@ export interface ITelemetryIdentify {
   sessionId: number
 }
 
+export type EventData = {
+  [key: string]: any
+  databaseId?: string
+  provider?: string
+}
+
 export interface ITelemetrySendEvent {
   event: TelemetryEvent
-  eventData?: Object
+  eventData?: EventData
   nonTracking?: boolean
   traits?: Object
 }
 
 export interface ITelemetrySendPageView {
   name: string
-  eventData?: Object
-  databaseId?: string
+  eventData?: EventData
   nonTracking?: boolean
 }
 

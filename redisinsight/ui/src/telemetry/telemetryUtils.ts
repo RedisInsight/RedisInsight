@@ -20,7 +20,10 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
-export const getProvider = (): Maybe<string> => get(store.getState(), 'connections.instances.connectedInstance.provider')
+export const getProvider = (dbId: string): Maybe<string> => {
+  const instance = get(store.getState(), 'connections.instances.connectedInstance')
+  return (instance.id === dbId) ? instance.provider : undefined
+}
 
 const TELEMETRY_EMPTY_VALUE = 'none'
 
@@ -30,22 +33,28 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
     if (!isAnalyticsGranted) {
       return
     }
-    const provider = getProvider()
+
+    if (!eventData.provider && eventData.databaseId) {
+      eventData.provider = getProvider(eventData.databaseId)
+    }
     await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
-      { event, eventData: { ...eventData, provider }, traits })
+      { event, eventData, traits })
   } catch (e) {
     // continue regardless of error
   }
 }
 
-const sendPageViewTelemetry = async ({ name, eventData }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name, eventData = {} }: ITelemetrySendPageView) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    const provider = getProvider()
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData: { ...eventData, provider } })
+    if (!eventData.provider && eventData.databaseId) {
+      eventData.provider = getProvider(eventData.databaseId)
+    }
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`,
+      { event: name, eventData })
   } catch (e) {
     // continue regardless of error
   }

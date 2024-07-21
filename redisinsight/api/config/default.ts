@@ -216,6 +216,10 @@ export default {
     host: process.env.RI_REDIS_STACK_DATABASE_HOST,
     port: process.env.RI_REDIS_STACK_DATABASE_PORT,
   },
+  preSetupDatabase: {
+    importFile: process.env.RI_IMPORT_ON_EMPTY,
+    disableManageConnections: process.env.RI_DISABLE_MANAGE_CONNECTIONS,
+  },
   features_config: {
     url: process.env.RI_FEATURES_CONFIG_URL
       // eslint-disable-next-line max-len

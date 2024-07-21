@@ -1,5 +1,10 @@
-import { Injectable, Logger, NotImplementedException, OnApplicationBootstrap } from '@nestjs/common';
-import { merge } from 'lodash';
+import {
+  Injectable,
+  Logger,
+  NotImplementedException,
+  OnApplicationBootstrap,
+  ForbiddenException,
+} from '@nestjs/common';
 import config from 'src/utils/config';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
@@ -20,20 +25,20 @@ const REDIS_AUTO_IMPORT_CONFIG = [
   },
 ];
 
+const AutoImportConfig = config.get('preSetupDatabase');
+const RI_DISABLE_MANAGE_CONNECTIONS = AutoImportConfig.disableManageConnections;
+
 @Injectable()
 export class AutoImportDatabaseRepository extends LocalDatabaseRepository implements OnApplicationBootstrap {
   protected logger = new Logger('AutoImportDatabaseRepository');
 
   async onApplicationBootstrap() {
+    if (AutoImportConfig.ENABLE_AUTO_IMPORT) {
+      this.logger.warn('Database management is disabled by environment variable.');
+      return;
+    }
     await this.setPredefinedDatabase(REDIS_AUTO_IMPORT_CONFIG);
   }
-
-  // /**
-  //  * @inheritDoc
-  //  */
-  // async exists(): Promise<boolean> {
-  //   return super.exists(REDIS_AUTO_IMPORT_CONFIG.id);
-  // }
 
   /**
    * @inheritDoc
@@ -43,7 +48,7 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    const database = REDIS_AUTO_IMPORT_CONFIG.find((config) => config.id === id);
+    const database = REDIS_AUTO_IMPORT_CONFIG.find(c => c.id === id);
     return super.get(database.id, ignoreEncryptionErrors, omitFields);
   }
 
@@ -51,10 +56,7 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
    * @inheritDoc
    */
   async list(): Promise<Database[]> {
-
-    const databases = await Promise.all(REDIS_AUTO_IMPORT_CONFIG.map(async (config) => await this.get(config.id)));
-
-    return databases;
+    return await Promise.all(REDIS_AUTO_IMPORT_CONFIG.map(async c => await this.get(c.id)));
   }
 
   /**
@@ -68,18 +70,28 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
    * @inheritDoc
    */
   async update(id: string, data: Database) {
-    const database = REDIS_AUTO_IMPORT_CONFIG.find((config) => config.id === id);
-
+    if (RI_DISABLE_MANAGE_CONNECTIONS) {
+      throw new ForbiddenException('Updating database connections is disabled.');
+    }
+    const database = REDIS_AUTO_IMPORT_CONFIG.find(c => c.id === id);
     return super.update(database.id, data);
   }
 
   private async setPredefinedDatabase(
     options: { id: string; name: string; host: string; port: string; }[],
   ): Promise<void> {
+    if (RI_DISABLE_MANAGE_CONNECTIONS) {
+      this.logger.warn('Setting predefined databases is disabled by environment variable.');
+      return;
+    }
+
     try {
-      options.forEach(async (option) => {
+      options.forEach(async option => {
         const {
-          id, name, host, port,
+          id,
+          name,
+          host,
+          port,
         } = option;
         const isExist = await this.exists(id);
         if (!isExist) {
@@ -105,6 +117,14 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
    * @inheritDoc
    */
   async delete(id: string): Promise<void> {
-    return Promise.reject(new NotImplementedException('This functionality is not supported'));
+    if (RI_DISABLE_MANAGE_CONNECTIONS) {
+      throw new ForbiddenException('Deleting database connections is disabled.');
+    }
+    return super.delete(id);
+  }
+
+  // Additional method to check if management is disabled and hide export control
+  public isManagementDisabled(): boolean {
+    return !!RI_DISABLE_MANAGE_CONNECTIONS;
   }
 }

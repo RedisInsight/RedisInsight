@@ -40,7 +40,6 @@ const HashDetails = (props: Props) => {
 
   const isExpireFieldsAvailable = hashFieldExpirationFeature?.flag
     && isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
-    && showTtl
 
   const openAddItemPanel = () => {
     setIsAddItemPanelOpen(true)
@@ -78,6 +77,7 @@ const HashDetails = (props: Props) => {
         showTtl={showTtl}
         onShowTtl={handleSelectShow}
         onAddKey={openAddItemPanel}
+        isExpireFieldsAvailable={isExpireFieldsAvailable}
       />
       <div className="key-details-body" key="key-details-body">
         {!loading && (
@@ -87,7 +87,7 @@ const HashDetails = (props: Props) => {
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddHashFields isExpireFieldsAvailable={isExpireFieldsAvailable} closePanel={closeAddItemPanel} />
+            <AddHashFields isExpireFieldsAvailable={isExpireFieldsAvailable && showTtl} closePanel={closeAddItemPanel} />
           </div>
         )}
       </div>

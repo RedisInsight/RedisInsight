@@ -1,16 +1,20 @@
 .subheaderContainer {
   padding: 12px 18px 0px 18px;
 
-  .keyFormatter__item {
+  .divider {
+    margin: 0 12px;
+  }
+
+  .keyFormatterItem {
     max-width: 100px;
     margin-right: 0;
   }
 
-  .showTtl__item {
+  .showTtlItem {
     max-width: 110px;
     display: 'flex';
     margin-left: 0;
-    .showTtl__checkbox {
+    .showTtlCheckbox {
       font-weight: 400;
       font-size: 14px;
       margin: auto;
@@ -33,7 +37,7 @@
     }
   }
 
-  .addBtn__container {
+  .addBtnContainer {
     max-width: 40px;
     align-self: center;
     margin-right: 0 !important;

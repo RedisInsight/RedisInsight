@@ -12,6 +12,20 @@ jest.mock('uiSrc/telemetry', () => ({
   sendEventTelemetry: jest.fn(),
 }))
 
+jest.mock('uiSrc/slices/instances/instances', () => ({
+  ...jest.requireActual('uiSrc/slices/instances/instances'),
+  connectedInstanceOverviewSelector: jest.fn().mockReturnValue({
+    version: '7.4.2',
+  }),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    hashFieldExpiration: { flag: true },
+  }),
+}))
+
 describe('HashDetails', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -22,7 +36,7 @@ describe('HashDetails', () => {
 
   it('should render subheader', () => {
     render(<HashDetails {...instance(mockedProps)} />)
-    expect(screen.getByText('Show TTL')).toBeInTheDocument()
+    expect(screen.getByText('+')).toBeInTheDocument()
   })
 
   it('opens and closes the add item panel', () => {
@@ -39,38 +53,45 @@ describe('HashDetails', () => {
     expect(screen.queryByText('Save')).not.toBeInTheDocument()
   })
 
-  it('toggles the show TTL button', () => {
-    render(<HashDetails {...instance(mockedProps)} />)
-    const el = screen.getByTestId('test-check-ttl') as HTMLInputElement
-    expect(el.checked).toBe(true)
-    fireEvent.click(el)
-    expect(el.checked).toBe(false)
-  })
-
-  it('should call proper telemetry event after click on showTtl', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-
-    render(<HashDetails {...instance(mockedProps)} />)
-
-    fireEvent.click(screen.getByTestId('test-check-ttl'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
-      eventData: {
-        databaseId: INSTANCE_ID_MOCK,
-        action: 'hide'
-      }
+  describe('when hashFieldFeatureFlag and version higher 7.3', () => {
+    it('renders subheader with checkbox', () => {
+      render(<HashDetails {...instance(mockedProps)} />)
+      expect(screen.getByText('Show TTL')).toBeInTheDocument()
     })
 
-    fireEvent.click(screen.getByTestId('test-check-ttl'))
+    it('toggles the show TTL button', () => {
+      render(<HashDetails {...instance(mockedProps)} />)
+      const el = screen.getByTestId('test-check-ttl') as HTMLInputElement
+      expect(el.checked).toBe(true)
+      fireEvent.click(el)
+      expect(el.checked).toBe(false)
+    })
 
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
-      eventData: {
-        databaseId: INSTANCE_ID_MOCK,
-        action: 'show'
-      }
+    it('should call proper telemetry event after click on showTtl', () => {
+      const sendEventTelemetryMock = jest.fn();
+      (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+      render(<HashDetails {...instance(mockedProps)} />)
+
+      fireEvent.click(screen.getByTestId('test-check-ttl'))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
+        eventData: {
+          databaseId: INSTANCE_ID_MOCK,
+          action: 'hide'
+        }
+      })
+
+      fireEvent.click(screen.getByTestId('test-check-ttl'))
+
+      expect(sendEventTelemetry).toBeCalledWith({
+        event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
+        eventData: {
+          databaseId: INSTANCE_ID_MOCK,
+          action: 'show'
+        }
+      })
     })
   })
 })

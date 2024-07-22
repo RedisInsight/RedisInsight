@@ -7,6 +7,7 @@ describe('KeyDetailsSubheader', () => {
     showTtl: false,
     onShowTtl: jest.fn(),
     onAddKey: jest.fn(),
+    isExpireFieldsAvailable: true,
   }
 
   it('should render', () => {

@@ -81,6 +81,10 @@ export default {
     excludeRoutes: [],
     excludeAuthRoutes: [],
   },
+  encryption: {
+    encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
+    encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
+  },
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,

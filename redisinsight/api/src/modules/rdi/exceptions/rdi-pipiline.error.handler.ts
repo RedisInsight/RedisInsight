@@ -19,8 +19,10 @@ export const wrapRdiPipelineError = (error: AxiosError<any>, message?: string): 
         return new RdiPipelineUnauthorizedException(message, errorOptions);
       case 422:
         return new RdiPipelineValidationException(message, errorOptions);
-      default:
+      case 404:
         return new RdiPipelineNotFoundException(message, errorOptions);
+      default:
+        return new RdiPipelineInternalServerErrorException(message);
     }
   }
 

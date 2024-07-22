@@ -87,8 +87,7 @@ export class CustomTutorialFsProvider {
       }
 
       // false positive. we have whitelist checks above.
-      // lgtm[js/request-forgery]
-      const { data } = await axios.get(link, {
+      const { data } = await axios.get(link, { // lgtm[js/request-forgery]
         responseType: 'arraybuffer',
       });
 

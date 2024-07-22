@@ -45,8 +45,7 @@ export class ApiRdiClient extends RdiClient {
       timeout: RDI_TIMEOUT,
       httpsAgent: new https.Agent({
         // we might work with self-signed certificates for local builds
-        // lgtm[js/disabling-certificate-validation]
-        rejectUnauthorized: false,
+        rejectUnauthorized: false, // lgtm[js/disabling-certificate-validation]
       }),
     });
   }

@@ -70,7 +70,10 @@ const StatisticsPage = () => {
     dispatch(fetchRdiStatistics(rdiInstanceId))
 
     sendPageViewTelemetry({
-      name: TelemetryPageView.RDI_STATUS
+      name: TelemetryPageView.RDI_STATUS,
+      eventData: {
+        rdiInstanceId
+      }
     })
   }, [])
 

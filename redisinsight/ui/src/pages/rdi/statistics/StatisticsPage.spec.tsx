@@ -140,7 +140,10 @@ describe('StatisticsPage', () => {
     render(<StatisticsPage />)
 
     expect(sendPageViewTelemetry).toBeCalledWith({
-      name: TelemetryPageView.RDI_STATUS
+      name: TelemetryPageView.RDI_STATUS,
+      eventData: {
+        rdiInstanceId: 'rdiInstanceId',
+      }
     })
   })
 

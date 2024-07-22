@@ -14,7 +14,7 @@ export const BUILD_FEATURES: Record<string, BuildHighlightingFeature> = {
   aiChatbot: {
     type: 'dialog'
   },
-  rdi: {
+  redisDataIntegration: {
     type: 'tooltip-badge',
     title: '',
     content: 'Sync Redis databases with data from another database.',

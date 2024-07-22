@@ -10,6 +10,8 @@ const testCases = [
   { input: '<img onload="alert(1)">', output: '<img>' },
   { input: '<img src="javascript:alert(1)">', output: '<img>' },
   { input: '<img src="img.png">', output: '<img src="img.png">' },
+  { input: '<div dangerouslySetInnerHTML={{"__html": "<img src=x onerror=alert(\'this.still.works\')>"}} />', output: '' },
+  { input: '<script>', output: '' },
 ]
 
 describe('remarkSanitize', () => {

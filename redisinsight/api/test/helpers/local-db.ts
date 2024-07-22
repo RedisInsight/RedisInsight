@@ -20,6 +20,7 @@ export const repositories = {
   FEATURES_CONFIG: 'FeaturesConfigEntity',
   FEATURE: 'FeatureEntity',
   CLOUD_DATABASE_DETAILS: 'CloudDatabaseDetailsEntity',
+  RDI: 'RdiEntity',
 }
 
 let localDbConnection;
@@ -197,6 +198,40 @@ export const generatePluginState = async (
     createdAt: new Date(),
     ...partial,
   })
+}
+
+export const generateRdis = async(
+  partial: Record<string, any>,
+  number: number = 2,
+  truncate: boolean = false,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.RDI)
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  for (let i = 0; i < number; i++) {
+    result.push(await rep.save({
+      id: uuidv4(),
+      url: 'http://localhost:4000',
+      name: 'Rdi',
+      username: 'Rdi Username',
+      password: encryptData(constants.TEST_KEYTAR_PASSWORD),
+      lastConnection: new Date(),
+      version: '1.2',
+      encryption: constants.TEST_ENCRYPTION_STRATEGY,
+      ...partial
+    }))
+  }
+
+  return result;
+}
+
+export const getRdiById = async (id: string) => {
+  const rep = await getRepository(repositories.RDI);
+  return rep.findOneBy({ id });
 }
 
 export const generateBrowserHistory = async (

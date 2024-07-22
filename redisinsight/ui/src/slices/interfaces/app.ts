@@ -42,7 +42,7 @@ export interface IMessage {
 
 export enum AppWorkspace {
   Databases = 'databases',
-  RDI = 'rdi'
+  RDI = 'redisDataIntegration'
 }
 
 export interface StateAppInfo {

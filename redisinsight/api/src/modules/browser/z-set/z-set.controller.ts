@@ -27,13 +27,16 @@ import {
 } from 'src/modules/browser/z-set/dto';
 import { ZSetService } from 'src/modules/browser/z-set/z-set.service';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: ZSet')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('zSet')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class ZSetController {
-  constructor(private zSetService: ZSetService) {}
+export class ZSetController extends BrowserBaseController {
+  constructor(private zSetService: ZSetService) {
+    super();
+  }
 
   @Post('')
   @ApiRedisInstanceOperation({

@@ -26,13 +26,16 @@ import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { RedisearchService } from 'src/modules/browser/redisearch/redisearch.service';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: RediSearch')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('redisearch')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class RedisearchController {
-  constructor(private service: RedisearchService) {}
+export class RedisearchController extends BrowserBaseController {
+  constructor(private service: RedisearchService) {
+    super();
+  }
 
   @Get('')
   @ApiOperation({ description: 'Get list of available indexes' })

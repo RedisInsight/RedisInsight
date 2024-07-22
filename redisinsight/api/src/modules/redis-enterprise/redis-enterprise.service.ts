@@ -41,6 +41,7 @@ export class RedisEnterpriseService {
   // TODO: maybe find a workaround without Disabling certificate validation.
   private api = axios.create({
     httpsAgent: new https.Agent({
+      // we might work with self-signed certificates for local builds
       rejectUnauthorized: false, // lgtm[js/disabling-certificate-validation]
     }),
   });

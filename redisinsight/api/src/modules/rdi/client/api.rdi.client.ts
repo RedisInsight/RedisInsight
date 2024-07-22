@@ -172,9 +172,9 @@ export class ApiRdiClient extends RdiClient {
         { username: this.rdi.username, password: this.rdi.password },
       );
       const accessToken = response.data.access_token;
-      const decodedJwt = decode(accessToken);
+      const { exp } = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString());
 
-      this.auth = { jwt: accessToken, exp: decodedJwt.exp };
+      this.auth = { jwt: accessToken, exp };
       this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (e) {
       throw wrapRdiPipelineError(e);

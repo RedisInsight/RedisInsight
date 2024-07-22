@@ -7,8 +7,9 @@ import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { commonUrl } from '../../../../helpers/conf';
 import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/constants';
 import { MyRedisDatabasePage } from '../../../../pageObjects';
-import { DatabaseHelper } from '../../../../helpers';
+import { Common, DatabaseHelper } from '../../../../helpers';
 import { RdiApiRequests } from '../../../../helpers/api/api-rdi';
+import { goBackHistory } from '../../../../helpers/utils';
 
 const rdiInstancesListPage = new RdiInstancesListPage();
 const browserActions = new BrowserActions();
@@ -19,24 +20,24 @@ const rdiApiRequests = new RdiApiRequests();
 
 const rdiInstance: RdiInstance = {
     alias: 'Alias',
-    url: 'http://localhost:4000',
+    url: 'https://11.111.111.111',
     username: 'username',
-    password: 'passwordPassword',
+    password: '111',
     version: '1.2'
 };
 const rdiInstance2: RdiInstance = {
     alias: 'test',
-    url: 'http://localhost:4000',
+    url: 'https://11.111.111.111',
     username: 'name',
-    password: 'pass2024',
+    password: '111',
     version: '1.2'
 };
 
 const rdiInstance3: RdiInstance = {
     alias: 'first',
-    url: 'http://localhost:4000',
+    url: 'https://11.111.111.111',
     username: 'name',
-    password: 'passPassword2024',
+    password: '111',
     version: '1.2'
 };
 //skip the tests until rdi integration is added
@@ -77,7 +78,6 @@ test('Verify that user can add and remove RDI', async() => {
 });
 test
     .after(async() => {
-        await t.typeText(rdiInstancesListPage.searchInput, '', { replace: true });
         await rdiInstancesListPage.deleteAllInstance();
     })('Verify that user can search by RDI', async() => {
         await rdiInstancesListPage.addRdi(rdiInstance);
@@ -90,20 +90,19 @@ test
     });
 test('Verify that sorting on the list of rdi saved when rdi opened', async t => {
     // Sort by Connection Type
-
     await rdiInstancesListPage.addRdi(rdiInstance);
     await rdiInstancesListPage.addRdi(rdiInstance3);
     await rdiInstancesListPage.addRdi(rdiInstance2);
 
-    const sortedByUrl = [rdiInstance3.alias, rdiInstance2.alias, rdiInstance.alias];
-    await rdiInstancesListPage.sortByColumn('URL');
+    const sortedByAlias = [rdiInstance.alias, rdiInstance3.alias, rdiInstance2.alias];
+    await rdiInstancesListPage.sortByColumn('RDI Alias');
     let actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
-    await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
+    await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAlias);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.alias);
     await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Pipeline);
     await t.click(rdiInstancePage.RdiHeader.breadcrumbsLink);
     actualDatabaseList = await rdiInstancesListPage.getAllRdiNames();
-    await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByUrl);
+    await rdiInstancesListPage.compareInstances(actualDatabaseList, sortedByAlias);
 });
 test('Verify that user has the same sorting if db name is changed', async t => {
     const newAliasName  = 'New alias';
@@ -151,7 +150,7 @@ test('Verify that button is displayed if user does not enter all mandatory infor
 });
 test('Verify that user can see the Redis Data Integration message on the empty RDI list', async t => {
     const noInstancesMessage = 'Redis Data Integration (RDI) synchronizes data from your existing database into Redis in near-real-time. We\'ve done the heavy lifting so you can turn slow data into fast data without coding.';
-    // const externalPageLink = 'https://docs.redis.com/rdi-preview/rdi/quickstart/'
+    const externalPageLink = 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/?utm_source=redisinsight&utm_medium=rdi&utm_campaign=rdi_list';
 
     await t.expect(rdiInstancesListPage.emptyRdiList.withText(noInstancesMessage).exists).ok('Empty RDI page message not displayed');
 
@@ -159,8 +158,7 @@ test('Verify that user can see the Redis Data Integration message on the empty R
     await t.expect(rdiInstancesListPage.AddRdiInstance.connectToRdiForm.exists).ok('Add rdi form not opened');
     await t.click(rdiInstancesListPage.AddRdiInstance.cancelInstanceBtn);
 
-    // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
-    // await t.click(rdiInstancesListPage.quickstartBtn);
-    // await Common.checkURL(externalPageLink);
-    // await goBackHistory();
+    await t.click(rdiInstancesListPage.quickstartBtn);
+    await Common.checkURL(externalPageLink);
+    await goBackHistory();
 });

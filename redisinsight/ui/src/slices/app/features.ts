@@ -41,6 +41,9 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.hashFieldExpiration]: {
         flag: false
       },
+      [FeatureFlags.rdi]: {
+        flag: false
+      }
     }
   }
 }

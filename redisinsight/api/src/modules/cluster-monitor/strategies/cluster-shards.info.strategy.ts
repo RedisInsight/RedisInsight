@@ -35,7 +35,8 @@ export class ClusterShardsInfoStrategy extends AbstractInfoStrategy {
       const node = {
         id: nodeObj.id,
         host: nodeObj.ip,
-        port: nodeObj.port,
+        port: nodeObj.port || nodeObj['tls-port'],
+        tlsPort: nodeObj['tls-port'],
         role: nodeObj.role === 'master' ? NodeRole.Primary : NodeRole.Replica,
         health: nodeObj.health,
       };

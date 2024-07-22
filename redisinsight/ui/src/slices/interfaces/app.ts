@@ -14,6 +14,14 @@ export interface CustomError {
   resourceId?: string
 }
 
+export interface ErrorOptions {
+  message: string | JSX.Element
+  code?: string
+  config?: object
+  request?: object
+  response?: object
+}
+
 export interface EnhancedAxiosError extends AxiosError<CustomError> {
 }
 
@@ -34,7 +42,7 @@ export interface IMessage {
 
 export enum AppWorkspace {
   Databases = 'databases',
-  RDI = 'rdi'
+  RDI = 'redisDataIntegration'
 }
 
 export interface StateAppInfo {

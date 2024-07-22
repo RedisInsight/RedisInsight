@@ -12,15 +12,15 @@ services:
     ports:
       - 5551:5551
   # RDI mocked
-  rdi:
-    logging: *logging
-    build:
-      context: rte/rdi
-      dockerfile: Dockerfile
-    volumes:
-      - ./rdi:/data
-    ports:
-      - 4000:4000
+  # rdi:
+  #   logging: *logging
+  #   build:
+  #     context: rte/rdi
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./rdi:/data
+  #   ports:
+  #     - 4000:4000
   # ssh
   ssh:
     logging: *logging

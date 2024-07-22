@@ -9,11 +9,11 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiSuperSelect,
-  keys, EuiSuperSelectOption,
+  keys, EuiSuperSelectOption, EuiToolTip,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import yaml from 'js-yaml'
+import { isArray, upperFirst } from 'lodash'
 
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -21,12 +21,14 @@ import { rdiDryRunJobSelector, rdiDryRunJob, setInitialDryRunJob } from 'uiSrc/s
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
 import DryRunJobCommands from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-commands'
 import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/components/dry-run-job-transformations'
-import { formatLongName } from 'uiSrc/utils'
+import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import styles from './styles.module.scss'
 
 export interface Props {
   job: string
+  name: string
   onClose: () => void
 }
 
@@ -42,7 +44,7 @@ const getTargetOption = (value: string) => {
 }
 
 const DryRunJobPanel = (props: Props) => {
-  const { job, onClose } = props
+  const { job, name, onClose } = props
   const { loading: isDryRunning, results } = useSelector(rdiDryRunJobSelector)
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
@@ -78,9 +80,11 @@ const DryRunJobPanel = (props: Props) => {
   }, [])
 
   useEffect(() => {
-    if (!results?.output) return
+    if (!results?.output || !isArray(results.output)) return
 
-    const targets = results.output.map(({ connection }) => getTargetOption(connection))
+    const targets = results.output
+      .filter(({ connection }) => connection)
+      .map(({ connection }) => getTargetOption(connection))
     setTargetOptions(targets)
     setSelectedTarget(targets[0]?.value)
   }, [results])
@@ -108,12 +112,29 @@ const DryRunJobPanel = (props: Props) => {
         id: rdiInstanceId,
       },
     })
-    dispatch(rdiDryRunJob(rdiInstanceId, JSON.parse(input), yaml.load(job)))
+    const JSONJob = yamlToJson(job, (msg) => {
+      dispatch(addErrorNotification(createAxiosError({
+        message: (
+          <>
+            <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
+            <EuiText>{msg}</EuiText>
+          </>
+        )
+      })))
+    })
+    if (!JSONJob) {
+      return
+    }
+    const JSONInput = JSON.parse(input)
+    const formattedValue = isArray(JSONInput) ? JSONInput : [JSONInput]
+
+    dispatch(rdiDryRunJob(rdiInstanceId, formattedValue, JSONJob))
   }
 
   const isSelectAvailable = selectedTab === PipelineJobsTabs.Output
     && !!results?.output
     && (results?.output?.length > 1)
+    && !!targetOptions.length
 
   const Tabs = useCallback(() => (
     <EuiTabs className={styles.tabs}>
@@ -181,19 +202,24 @@ const DryRunJobPanel = (props: Props) => {
           />
           <EuiFlexGroup gutterSize="none" justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <EuiButton
-                onClick={handleDryRun}
-                iconType="play"
-                iconSide="right"
-                color="success"
-                size="s"
-                disabled={isDryRunning || !isFormValid}
-                isLoading={isDryRunning}
-                className={cx(styles.actionBtn, styles.runBtn)}
-                data-testid="dry-run-btn"
+              <EuiToolTip
+                content={isFormValid ? null : 'Input should have JSON format'}
+                position="top"
               >
-                Dry run
-              </EuiButton>
+                <EuiButton
+                  onClick={handleDryRun}
+                  iconType="play"
+                  iconSide="right"
+                  color="success"
+                  size="s"
+                  disabled={isDryRunning || !isFormValid}
+                  isLoading={isDryRunning}
+                  className={cx(styles.actionBtn, styles.runBtn)}
+                  data-testid="dry-run-btn"
+                >
+                  Dry run
+                </EuiButton>
+              </EuiToolTip>
             </EuiFlexItem>
           </EuiFlexGroup>
           <div className={cx(styles.tabsWrapper, styles.codeLabel)}>

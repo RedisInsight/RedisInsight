@@ -63,6 +63,7 @@ const SourcePipelineDialog = () => {
 
   const handleCloseDialog = () => {
     dispatch(setPipeline(EMPTY_PIPELINE))
+    dispatch(setChangedFile({ name: 'config', status: FileChangeType.Added }))
     dispatch(setPipelineDialogState(false))
   }
 

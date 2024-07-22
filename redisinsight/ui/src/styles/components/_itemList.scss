@@ -1,3 +1,5 @@
+@use "../mixins/eui";
+
 .itemList {
   @include eui.scrollBar;
 

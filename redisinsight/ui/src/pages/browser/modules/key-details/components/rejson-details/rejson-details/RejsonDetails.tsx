@@ -40,7 +40,7 @@ const RejsonDetails = (props: BaseProps) => {
   }
 
   const handleSetRejsonDataAction = (keyName: RedisResponseBuffer, path: string, data: string) => {
-    dispatch(setReJSONDataAction(keyName, path, data, length))
+    dispatch(setReJSONDataAction(keyName, path, data, false, length))
   }
 
   const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {

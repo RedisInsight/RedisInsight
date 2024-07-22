@@ -126,7 +126,7 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       const keyName = Buffer.from(unescapeRedisGlob(match));
       node.cursor = 0;
       node.scanned = isNull(node.total) ? 1 : node.total;
-      node.keys = await this.getKeysInfo(client, [keyName], args.type);
+      node.keys = await this.getKeysInfo(client, [keyName]);
       node.keys = node.keys.filter((key: GetKeyInfoResponse) => {
         if (key.ttl === -2) {
           return false;

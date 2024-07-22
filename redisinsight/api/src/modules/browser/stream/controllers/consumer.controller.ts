@@ -26,13 +26,16 @@ import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-cl
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: Streams')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('streams/consumer-groups/consumers')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class ConsumerController {
-  constructor(private service: ConsumerService) {}
+export class ConsumerController extends BrowserBaseController {
+  constructor(private service: ConsumerService) {
+    super();
+  }
 
   @Post('/get')
   @ApiRedisInstanceOperation({

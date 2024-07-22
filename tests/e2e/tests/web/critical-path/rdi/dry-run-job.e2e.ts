@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { t } from 'testcafe';
 import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 import { AddNewRdiParameters, RdiApiRequests } from '../../../../helpers/api/api-rdi';
@@ -7,21 +8,22 @@ import { RdiPopoverOptions, RedisOverviewPage } from '../../../../helpers/consta
 import { RdiInstancesListPage } from '../../../../pageObjects/rdi-instances-list-page';
 import { DatabaseHelper } from '../../../../helpers';
 
+
 const rdiInstancePage = new RdiInstancePage();
 const rdiApiRequests = new RdiApiRequests();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const rdiInstancesListPage = new RdiInstancesListPage();
 const databaseHelper = new DatabaseHelper();
 
-const resultMock = '{··"name":·"John",··"years":·123}';
-const outputMock = 'Shirizli';
+const outputMock = 'No Redis commands provided by the server.';
 
 const rdiInstance: AddNewRdiParameters = {
     name: 'testInstance',
-    url: 'http://localhost:4000',
+    url: 'https://11.111.111.111',
     username: 'username',
-    password: 'password'
+    password: '111'
 };
+const filePath = path.join('..', '..', '..', '..', 'test-data', 'rdi', 'RDI_pipelineJobValid.zip');
 
 //skip the tests until rdi integration is added
 fixture.skip `Rdi dry run job`
@@ -30,19 +32,30 @@ fixture.skip `Rdi dry run job`
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
         await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
+        await rdiApiRequests.addNewRdiApi(rdiInstance);
+        await myRedisDatabasePage.reloadPage();
 
     })
     .afterEach(async() => {
         await rdiApiRequests.deleteAllRdiApi();
     });
 test('Verify that user can use Dry run panel', async() => {
-    const job = 'testJob';
+    const job = 'test';
 
-    // Need to add method to add jobs once it is implemented
-    await rdiApiRequests.addNewRdiApi(rdiInstance);
+    const expectedTransformation = 'FULL_NAME": "jane smith"';
+
+    const transformationInputText = '{\n' +
+        '      "FNAME": "jane",\n' +
+        '      "LAST_NAME": "smith",\n' +
+        '      "country_code": 1,\n' +
+        '      "country_name": "usa"';
+
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
-    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.Server);
+    await rdiInstancePage.selectStartPipelineOption(RdiPopoverOptions.File);
+    await rdiInstancePage.RdiHeader.uploadPipeline(filePath);
+    await t.click(rdiInstancePage.okUploadPipelineBtn);
     await rdiInstancePage.PipelineManagementPanel.openJobByName(job);
+
     await t.click(rdiInstancePage.dryRunButton);
     // Verify that user can see dry run a job right panel
     await t.expect(rdiInstancePage.dryRunPanel.visible).ok('Dry run panel not opened');
@@ -57,8 +70,8 @@ test('Verify that user can use Dry run panel', async() => {
 
     // Verify that user can request to run the transformation logic
     await t.click(rdiInstancePage.transformationsTab);
-    await rdiInstancePage.sendTransformationInput('1');
-    await t.expect(rdiInstancePage.transformationResults.textContent).contains(resultMock, 'Transformation results not displayed');
+    await rdiInstancePage.sendTransformationInput(transformationInputText);
+    await t.expect(rdiInstancePage.transformationResults.textContent).contains(expectedTransformation, 'Transformation results not displayed');
 
     await t.click(rdiInstancePage.outputTab);
     await t.expect(rdiInstancePage.commandsOutput.innerText).contains(outputMock, 'Transformation output not displayed');

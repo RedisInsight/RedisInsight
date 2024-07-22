@@ -52,7 +52,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
 
     await t.click(
-        myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     await t.click(
         myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);
     // Verify that RE Cloud auto-discovery options Use Cloud Account and Use Cloud API Keys are displayed on Welcome screen

@@ -125,7 +125,7 @@ const SentinelDatabasesResult = ({
         </EuiFormRow>
         <br />
 
-        <div className="databaseList sentinelDatabaseListResult">
+        <div className="itemList databaseList sentinelDatabaseListResult">
           <EuiInMemoryTable
             items={items}
             itemId="id"

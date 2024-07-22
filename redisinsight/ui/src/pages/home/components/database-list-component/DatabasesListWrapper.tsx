@@ -145,14 +145,15 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
         ...modulesSummary,
       }
     })
-    dispatch(checkConnectToInstanceAction(id, connectToInstance))
+    dispatch(checkConnectToInstanceAction(id, connectToInstance, undefined, contextInstanceId !== id))
   }
 
-  const handleClickDeleteInstance = (id: string) => {
+  const handleClickDeleteInstance = ({ id, provider }: Instance) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
       eventData: {
-        databaseId: id
+        databaseId: id,
+        provider
       }
     })
     showPopover(id)
@@ -162,7 +163,8 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CLICKED,
       eventData: {
-        databaseId: instance.id
+        databaseId: instance.id,
+        provider: instance.provider,
       }
     })
     onEditInstance(instance)
@@ -394,7 +396,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
               updateLoading={false}
               showPopover={showPopover}
               handleDeleteItem={() => handleDeleteInstance(instance)}
-              handleButtonClick={() => handleClickDeleteInstance(instance.id)}
+              handleButtonClick={() => handleClickDeleteInstance(instance)}
               testid={`delete-instance-${instance.id}`}
             />
           </>

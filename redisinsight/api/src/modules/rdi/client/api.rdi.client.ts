@@ -6,9 +6,10 @@ import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
   RdiUrl,
   RDI_TIMEOUT,
-  TOKEN_TRESHOLD,
+  TOKEN_THRESHOLD,
   POLLING_INTERVAL,
   MAX_POLLING_TIME,
+  WAIT_BEFORE_POLLING,
 } from 'src/modules/rdi/constants';
 import {
   RdiDryRunJobDto,
@@ -17,6 +18,7 @@ import {
   RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
 import {
+  RdiPipelineDeployFailedException,
   RdiPipelineInternalServerErrorException,
   wrapRdiPipelineError,
 } from 'src/modules/rdi/exceptions';
@@ -29,6 +31,7 @@ import {
 import { convertKeysToCamelCase } from 'src/utils/base.helper';
 import { RdiPipelineTimeoutException } from 'src/modules/rdi/exceptions/rdi-pipeline.timeout-error.exception';
 import * as https from 'https';
+import { convertApiDataToRdiPipeline, convertRdiPipelineToApiPayload } from 'src/modules/rdi/utils/pipeline.util';
 
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
@@ -41,15 +44,23 @@ export class ApiRdiClient extends RdiClient {
       baseURL: rdi.url,
       timeout: RDI_TIMEOUT,
       httpsAgent: new https.Agent({
-        rejectUnauthorized: false,
+        // we might work with self-signed certificates for local builds
+        rejectUnauthorized: false, // lgtm[js/disabling-certificate-validation]
       }),
     });
   }
 
   async getSchema(): Promise<object> {
     try {
-      const response = await this.client.get(RdiUrl.GetSchema);
-      return response.data;
+      const [config, jobs] = await Promise.all([
+        this.client.get(RdiUrl.GetConfigSchema).then(({ data }) => data),
+        this.client.get(RdiUrl.GetJobsSchema).then(({ data }) => data),
+      ]);
+
+      return {
+        config,
+        jobs,
+      };
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -57,8 +68,9 @@ export class ApiRdiClient extends RdiClient {
 
   async getPipeline(): Promise<RdiPipeline> {
     try {
-      const response = await this.client.get(RdiUrl.GetPipeline);
-      return response.data;
+      const { data } = await this.client.get(RdiUrl.GetPipeline);
+
+      return convertApiDataToRdiPipeline(data);
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -93,19 +105,24 @@ export class ApiRdiClient extends RdiClient {
 
   async deploy(pipeline: RdiPipeline): Promise<void> {
     try {
-      const response = await this.client.post(RdiUrl.Deploy, { ...pipeline });
+      const response = await this.client.post(
+        RdiUrl.Deploy,
+        convertRdiPipelineToApiPayload(pipeline),
+      );
+
       const actionId = response.data.action_id;
 
-      return this.pollActionStatus(actionId);
+      return await this.pollActionStatus(actionId);
     } catch (error) {
-      throw wrapRdiPipelineError(error, error.response.data.message);
+      throw wrapRdiPipelineError(error, error?.response?.data?.message);
     }
   }
 
-  async dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
+  async dryRunJob(dto: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto> {
     try {
-      const response = await this.client.post(RdiUrl.DryRunJob, data);
-      return response.data;
+      const { data } = await this.client.post(RdiUrl.DryRunJob, dto);
+
+      return data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -126,9 +143,9 @@ export class ApiRdiClient extends RdiClient {
 
   async getPipelineStatus(): Promise<any> {
     try {
-      const response = await this.client.get(RdiUrl.GetPipelineStatus);
+      const { data } = await this.client.get(RdiUrl.GetPipelineStatus);
 
-      return response.data;
+      return data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -136,10 +153,11 @@ export class ApiRdiClient extends RdiClient {
 
   async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
     try {
-      const response = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
+      const { data } = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
+
       return {
         status: RdiStatisticsStatus.Success,
-        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(response.data)),
+        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
       return { status: RdiStatisticsStatus.Fail, error: e.message };
@@ -162,9 +180,9 @@ export class ApiRdiClient extends RdiClient {
         { username: this.rdi.username, password: this.rdi.password },
       );
       const accessToken = response.data.access_token;
-      const decodedJwt = decode(accessToken);
+      const { exp } = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString());
 
-      this.auth = { jwt: accessToken, exp: decodedJwt.exp };
+      this.auth = { jwt: accessToken, exp };
       this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (e) {
       throw wrapRdiPipelineError(e);
@@ -174,16 +192,19 @@ export class ApiRdiClient extends RdiClient {
   async ensureAuth(): Promise<void> {
     const expiresIn = this.auth.exp * 1_000 - Date.now();
 
-    if (expiresIn < TOKEN_TRESHOLD) {
+    if (expiresIn < TOKEN_THRESHOLD) {
       await this.connect();
     }
   }
 
   private async pollActionStatus(actionId: string, abortSignal?: AbortSignal): Promise<any> {
+    await new Promise((resolve) => setTimeout(resolve, WAIT_BEFORE_POLLING));
+
     const startTime = Date.now();
+
     while (true) {
       if (abortSignal?.aborted) {
-        throw new RdiPipelineInternalServerErrorException();
+        throw new RdiPipelineInternalServerErrorException('Operation is aborted');
       }
       if (Date.now() - startTime > MAX_POLLING_TIME) {
         throw new RdiPipelineTimeoutException();
@@ -197,7 +218,7 @@ export class ApiRdiClient extends RdiClient {
         const { status, data, error } = response.data;
 
         if (status === 'failed') {
-          throw new RdiPipelineInternalServerErrorException(error);
+          throw new RdiPipelineDeployFailedException(error?.message);
         }
 
         if (status === 'completed') {

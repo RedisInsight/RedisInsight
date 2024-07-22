@@ -51,15 +51,61 @@ const pipelineToJsonTests: any[] = [
           ]
         }
       },
-    }
-  ]
+    },
+    0,
+    {}
+  ],
+  [
+    {
+      config: 'connections:incorrect\n  # Redis data DB connection details\n  # This section is for configuring the Redis database to which Redis Data Integration will connect to\n  target:\n    # Target type - Redis is the only supported type (default: redis)\n    type: redis\n    # Host of the Redis database to which Redis Data Integration will write the processed data\n    host: redis-18262.c232.us-east-1-2.ec2.cloud.redislabs.com\n    # Port for the Redis database to which Redis Data Integration will write the processed data\n    port: 18262\n    # User of the Redis database to which Redis Data Integration will write the processed data\n    user: default',
+      jobs: [
+        { name: 'job1', value: 'source:\n  row_format: full\n  server_name: chinook\n  schema: dbo\n  table: Employee\ntransform:\n  - uses: filter\n    with:\n      language: jmespath\n      expression: in(after.LastName,[\'Smith\']) && opcode == \'c\'\noutput:\n  - uses: redis.write\n    with:\n      data_type: json\n      mapping:\n        - EmployeeId\n        - FirstName\n        - LastName' }
+      ]
+    },
+    undefined,
+    1,
+    [{ filename: 'config', msg: 'end of the stream or a document separator is expected' }]
+  ],
+  [
+    {
+      config: 'connections:\n  # Redis data DB connection details\n  # This section is for configuring the Redis database to which Redis Data Integration will connect to\n  target:\n    # Target type - Redis is the only supported type (default: redis)\n    type: redis\n    # Host of the Redis database to which Redis Data Integration will write the processed data\n    host: redis-18262.c232.us-east-1-2.ec2.cloud.redislabs.com\n    # Port for the Redis database to which Redis Data Integration will write the processed data\n    port: 18262\n    # User of the Redis database to which Redis Data Integration will write the processed data\n    user: default',
+      jobs: [
+        { name: 'job1', value: 'source:incorrect\n  row_format: full\n  server_name: chinook\n  schema: dbo\n  table: Employee\ntransform:\n  - uses: filter\n    with:\n      language: jmespath\n      expression: in(after.LastName,[\'Smith\']) && opcode == \'c\'\noutput:\n  - uses: redis.write\n    with:\n      data_type: json\n      mapping:\n        - EmployeeId\n        - FirstName\n        - LastName' }
+      ]
+    },
+    undefined,
+    1,
+    [{ filename: 'job1', msg: 'end of the stream or a document separator is expected' }]
+  ],
+  [
+    {
+      config: 'connections:incorrect\n  # Redis data DB connection details\n  # This section is for configuring the Redis database to which Redis Data Integration will connect to\n  target:\n    # Target type - Redis is the only supported type (default: redis)\n    type: redis\n    # Host of the Redis database to which Redis Data Integration will write the processed data\n    host: redis-18262.c232.us-east-1-2.ec2.cloud.redislabs.com\n    # Port for the Redis database to which Redis Data Integration will write the processed data\n    port: 18262\n    # User of the Redis database to which Redis Data Integration will write the processed data\n    user: default',
+      jobs: [
+        { name: 'job1', value: 'source:incorrect\n  row_format: full\n  server_name: chinook\n  schema: dbo\n  table: Employee\ntransform:\n  - uses: filter\n    with:\n      language: jmespath\n      expression: in(after.LastName,[\'Smith\']) && opcode == \'c\'\noutput:\n  - uses: redis.write\n    with:\n      data_type: json\n      mapping:\n        - EmployeeId\n        - FirstName\n        - LastName' },
+        { name: 'job2', value: 'source:\n  row_format: full\n  server_name: chinook\n  schema: dbo\n  table: Employee\ntransform:\n  - uses: filter\n    with:\n      language: jmespath\n      expression: in(after.LastName,[\'Smith\']) && opcode == \'c\'\noutput:\n  - uses: redis.write\n    with:\n      data_type: json\n      mapping:\n        - EmployeeId\n        - FirstName\n        - LastName' },
+        { name: 'job3', value: 'source:incorrect\n  row_format: full\n  server_name: chinook\n  schema: dbo\n  table: Employee\ntransform:\n  - uses: filter\n    with:\n      language: jmespath\n      expression: in(after.LastName,[\'Smith\']) && opcode == \'c\'\noutput:\n  - uses: redis.write\n    with:\n      data_type: json\n      mapping:\n        - EmployeeId\n        - FirstName\n        - LastName' }
+      ]
+    },
+    undefined,
+    1,
+    [
+      { filename: 'config', msg: 'end of the stream or a document separator is expected' },
+      { filename: 'job1', msg: 'end of the stream or a document separator is expected' },
+      { filename: 'job3', msg: 'end of the stream or a document separator is expected' },
+    ]
+  ],
 ]
 
 describe('pipelineToJson', () => {
   it.each(pipelineToJsonTests)('for input: %s (input), should be output: %s',
-    (input, expected) => {
-      const result = pipelineToJson(input)
+    (input, expected, callback, errors) => {
+      const mockOnError = jest.fn()
+      const result = pipelineToJson(input, mockOnError)
       expect(result).toEqual(expected)
+      expect(mockOnError).toBeCalledTimes(callback)
+      if (callback) {
+        expect(mockOnError).toBeCalledWith(errors)
+      }
     })
 })
 
@@ -144,7 +190,7 @@ const transformConnectionResultsTests: any[] = [
         }
       },
       target2: {
-        status: 'fail',
+        status: 'failed',
         error: {
           code: 'INVALID_CREDENTIALS',
           message: 'Failed to establish connection to the PostgreSQL database. Invalid credentials provided'
@@ -167,7 +213,7 @@ const transformConnectionResultsTests: any[] = [
         unknownProperty: 'foo bar'
       },
       target7: {
-        status: 'fail',
+        status: 'failed',
       },
     },
     {

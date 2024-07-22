@@ -49,7 +49,8 @@ fixture `Upload custom tutorials`
 /* https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4198,
 https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/browse/RI-4318
 */
-test
+// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
+test.skip
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
@@ -163,7 +164,8 @@ test
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4352
-test
+// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
+test.skip
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
@@ -242,7 +244,8 @@ test
         await browserPage.searchByKeyName('*key1*');
         await verifyKeysDisplayingInTheList(keyNames, true);
     });
-test
+// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
+test.skip
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(

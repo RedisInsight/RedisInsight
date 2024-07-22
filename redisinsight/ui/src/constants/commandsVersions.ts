@@ -9,6 +9,6 @@ export const CommandsVersions = {
     since: '7.0',
   },
   HASH_TTL: {
-    since: '7.4'
+    since: '7.3'
   },
 }

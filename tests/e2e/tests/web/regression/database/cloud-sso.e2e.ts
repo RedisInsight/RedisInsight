@@ -38,7 +38,7 @@ test('Verify that user can not see the promo Cloud databases for docker build', 
 
     // Verify that when SSO flag disabled - Use Cloud API Keys displayed not as dropdown
     await t.click(
-        myRedisDatabasePage.AddRedisDatabase.addRedisDatabaseButton);
+        myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     await t.click(
         myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).notOk('Use Cloud Account accordion displayed for docker build');

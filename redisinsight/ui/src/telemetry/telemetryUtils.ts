@@ -3,13 +3,14 @@
  * This module abstracts the exact service/framework used for tracking usage.
  */
 import isGlob from 'is-glob'
-import { cloneDeep } from 'lodash'
-import * as jsonpath from 'jsonpath'
-import { isRedisearchAvailable } from 'uiSrc/utils'
+import { cloneDeep, get } from 'lodash'
+import jsonpath from 'jsonpath'
+import { Maybe, isRedisearchAvailable } from 'uiSrc/utils'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { IModuleSummary, ITelemetrySendEvent, ITelemetrySendPageView, RedisModulesKeyType } from 'uiSrc/telemetry/interfaces'
 import { apiService } from 'uiSrc/services'
+import { store } from 'uiSrc/slices/store'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import {
   IRedisModulesSummary,
@@ -19,6 +20,11 @@ import {
 import { TelemetryEvent } from './events'
 import { checkIsAnalyticsGranted } from './checkAnalytics'
 
+export const getProvider = (dbId: string): Maybe<string> => {
+  const instance = get(store.getState(), 'connections.instances.connectedInstance')
+  return (instance.id === dbId) ? instance.provider : undefined
+}
+
 const TELEMETRY_EMPTY_VALUE = 'none'
 
 const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelemetrySendEvent) => {
@@ -27,19 +33,28 @@ const sendEventTelemetry = async ({ event, eventData = {}, traits = {} }: ITelem
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`, { event, eventData, traits })
+
+    if (!eventData.provider && eventData.databaseId) {
+      eventData.provider = getProvider(eventData.databaseId)
+    }
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_EVENT}`,
+      { event, eventData, traits })
   } catch (e) {
     // continue regardless of error
   }
 }
 
-const sendPageViewTelemetry = async ({ name, eventData }: ITelemetrySendPageView) => {
+const sendPageViewTelemetry = async ({ name, eventData = {} }: ITelemetrySendPageView) => {
   try {
     const isAnalyticsGranted = checkIsAnalyticsGranted()
     if (!isAnalyticsGranted) {
       return
     }
-    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`, { event: name, eventData, })
+    if (!eventData.provider && eventData.databaseId) {
+      eventData.provider = getProvider(eventData.databaseId)
+    }
+    await apiService.post(`${ApiEndpoints.ANALYTICS_SEND_PAGE}`,
+      { event: name, eventData })
   } catch (e) {
     // continue regardless of error
   }
@@ -66,10 +81,10 @@ const getJsonPathLevel = (path: string): string => {
       return 'root'
     }
     const levelsLength = jsonpath.parse(
-      `$${path.startsWith('.') ? '' : '..'}${path}`,
+      `$${path.startsWith('.') ? '.' : '..'}${path}`,
     ).length
 
-    return levelsLength === 1 ? 'root' : `${levelsLength - 2}`
+    return levelsLength === 2 ? 'root' : `${levelsLength - 2}`
   } catch (e) {
     return 'root'
   }

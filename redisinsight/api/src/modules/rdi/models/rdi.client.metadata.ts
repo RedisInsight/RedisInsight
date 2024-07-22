@@ -1,4 +1,4 @@
-import { Session, SessionMetadata } from 'src/common/models/session';
+import { SessionMetadata } from 'src/common/models/session';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
@@ -7,7 +7,7 @@ import {
 
 export class RdiClientMetadata {
   @IsNotEmpty()
-  @Type(() => Session)
+  @Type(() => SessionMetadata)
   sessionMetadata: SessionMetadata;
 
   @IsNotEmpty()

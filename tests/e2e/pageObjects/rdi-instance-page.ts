@@ -15,7 +15,7 @@ export class RdiInstancePage extends BaseOverviewPage {
     RdiHeader = new RdiHeader();
     MonacoEditor = new MonacoEditor();
 
-    dryRunButton = Selector('[data-testid=rdi-jobs-dry-run]');
+    dryRunButton = Selector('[data-testid=rdi-job-dry-run]');
     dryRunSubmitBtn = Selector('[data-testid=dry-run-btn]');
     closeDryRunPanelBtn = Selector('[data-testid=close-dry-run-btn]');
     dryRunPanel = Selector('[data-testid=dry-run-panel]');
@@ -28,6 +28,8 @@ export class RdiInstancePage extends BaseOverviewPage {
     okUploadPipelineBtn = Selector('[data-testid=ok-btn]');
     closeImportModelBtn = Selector('[data-testid=import-file-modal] button');
 
+    loadingIndicator = Selector('[class*=rdi__loading]');
+
     configurationInput = Selector('[data-testid=wrapper-rdi-monaco-config]');
     configurationLink = Selector('[data-testid=rdi-pipeline-config-link]');
 
@@ -38,7 +40,6 @@ export class RdiInstancePage extends BaseOverviewPage {
     jmesPathOption = Selector('[id=jmespath]');
     sqlEditorButton = Selector('[data-testid=open-dedicated-editor-btn]');
 
-    successDeployNotification = Selector('[data-testid=success-deploy-pipeline-notification]');
     errorDeployNotification = Selector('[data-test-subj=toast-error-deploy]');
     failedUploadingPipelineNotification = Selector('[data-testid=result-failed]');
     closeNotification =  Selector('[class*=euiModal__closeIcon]');

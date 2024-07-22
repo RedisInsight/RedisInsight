@@ -11,7 +11,7 @@ export class RdiPipelineNotFoundException extends HttpException {
       message,
       statusCode: HttpStatus.NOT_FOUND,
       error: 'RdiNotFound',
-      errorCode: CustomErrorCodes.ConvAiNotFound,
+      errorCode: CustomErrorCodes.RdiNotFound,
       details: options?.details,
     };
     super(response, response.statusCode, options);

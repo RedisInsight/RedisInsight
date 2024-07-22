@@ -389,7 +389,6 @@ describe('StandaloneScannerStrategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockStandaloneRedisClient,
           [Buffer.from(key)],
-          dto.type,
         );
         expect(strategy['scan']).not.toHaveBeenCalled();
       });
@@ -413,7 +412,6 @@ describe('StandaloneScannerStrategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockStandaloneRedisClient,
           [Buffer.from(mockSearchPattern)],
-          dto.type,
         );
         expect(strategy['scan']).not.toHaveBeenCalled();
       });

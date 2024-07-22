@@ -107,7 +107,7 @@ const Recommendations = () => {
           {title}
         </EuiFlexItem>
       </EuiFlexGroup>
-      <EuiFlexItem grow={false}>2
+      <EuiFlexItem grow={false}>
         <RecommendationBadges badges={badges} />
       </EuiFlexItem>
     </EuiFlexGroup>

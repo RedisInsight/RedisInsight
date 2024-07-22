@@ -1,14 +1,17 @@
-import { RdiJob } from 'src/modules/rdi/models/rdi-job';
-
-export enum RdiDeployStatus {
-  Success = 'success',
-  Error = 'error',
-}
+import {
+  IsObject, IsOptional,
+} from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class RdiPipeline {
-  // todo: defined high-level schema. not sure if we need it at all since we are not going to validate it or we are?
+  @Expose()
+  @IsOptional()
+  @IsObject()
+  // todo add validation
+  jobs: { [key: string]: object };
 
-  connection: unknown;
-
-  jobs: RdiJob[];
+  @Expose()
+  @IsOptional()
+  @IsObject()
+  config: object;
 }

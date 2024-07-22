@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Pages, PageValues } from 'uiSrc/constants'
+import { FeatureFlags, Pages, PageValues } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
@@ -16,7 +16,7 @@ import styles from './styles.module.scss'
 const HomeTabs = () => {
   const [activeTab, setActiveTab] = useState('')
   const { features } = useSelector(appFeatureHighlightingSelector)
-  const { rdi: rdiHighlighting } = getHighlightingFeatures(features)
+  const { [FeatureFlags.rdi]: rdiHighlighting } = getHighlightingFeatures(features)
 
   const history = useHistory()
   const { pathname } = useLocation()
@@ -35,7 +35,7 @@ const HomeTabs = () => {
     })
 
     if (path === Pages.rdi) {
-      dispatch(removeFeatureFromHighlighting('rdi'))
+      dispatch(removeFeatureFromHighlighting(FeatureFlags.rdi))
       history.push(Pages.rdi)
       return
     }
@@ -55,7 +55,7 @@ const HomeTabs = () => {
           <HighlightedFeature
             isHighlight={rdiHighlighting}
             /* highlighting will remove in next release, do not need cover multiple tabs */
-            {...(BUILD_FEATURES.rdi || {})}
+            {...(BUILD_FEATURES.redisDataIntegration || {})}
           >
             {title}
           </HighlightedFeature>

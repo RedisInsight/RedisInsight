@@ -26,13 +26,16 @@ import {
 } from 'src/modules/browser/set/dto';
 import { SetService } from 'src/modules/browser/set/set.service';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: Set')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('set')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class SetController {
-  constructor(private setService: SetService) {}
+export class SetController extends BrowserBaseController {
+  constructor(private setService: SetService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold Set data type' })

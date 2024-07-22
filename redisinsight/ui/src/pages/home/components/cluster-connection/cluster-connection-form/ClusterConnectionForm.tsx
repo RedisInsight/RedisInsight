@@ -61,6 +61,7 @@ const fieldDisplayNames: Values = {
   host: 'Cluster Host',
   port: 'Cluster Port',
   username: 'Admin Username',
+  // deepcode ignore NoHardcodedPasswords: <Not a passowrd but "password" field placeholder>
   password: 'Admin Password',
 }
 

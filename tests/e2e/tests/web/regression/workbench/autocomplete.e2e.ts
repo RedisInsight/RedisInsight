@@ -74,7 +74,7 @@ test('Verify that user can see the static list of arguments when he uses “Ctrl
     await t.pressKey('enter');
     // Check that the command is displayed in Editing area after selecting
     const script = await workbenchPage.queryInputScriptArea.textContent;
-    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value ', 'Result of sent command not exists');
+    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value', 'Result of sent command not exists');
     // Check that hint with arguments are displayed
     await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.visible).ok('Hints with arguments are not displayed');
     // Remove hints with arguments

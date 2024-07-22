@@ -255,7 +255,7 @@ const RedisCloudSubscriptions = ({
         </EuiFormRow>
         <br />
 
-        <div className={cx('databaseList', styles.cloudSubscriptions)}>
+        <div className={cx('databaseList', 'itemList', styles.cloudSubscriptions)}>
           <div className={styles.account}>
             <Account />
           </div>

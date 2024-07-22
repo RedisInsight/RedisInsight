@@ -1,10 +1,13 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
+import { EuiText } from '@elastic/eui'
+import { AxiosError } from 'axios'
 import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { dryRunJob, rdiDryRunJobSelector } from 'uiSrc/slices/rdi/dryRun'
+import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import JobsPanel, { Props } from './Panel'
 
 const mockedProps = mock<Props>()
@@ -53,7 +56,7 @@ describe('JobsPanel', () => {
     expect(screen.getByTestId('dry-run-btn')).toBeDisabled()
 
     // set valid json value
-    fireEvent.change(screen.getByTestId('input-value'), { target: { value: 1 } })
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
 
     expect(screen.getByTestId('dry-run-btn')).not.toBeDisabled()
   })
@@ -61,7 +64,7 @@ describe('JobsPanel', () => {
   it('should call proper telemetry events', () => {
     render(<JobsPanel {...instance(mockedProps)} />)
 
-    fireEvent.change(screen.getByTestId('input-value'), { target: { value: 1 } })
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
     fireEvent.click(screen.getByTestId('dry-run-btn'))
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -92,7 +95,7 @@ describe('JobsPanel', () => {
   it('should fetch dry run job results', () => {
     render(<JobsPanel {...instance(mockedProps)} />)
 
-    fireEvent.change(screen.getByTestId('input-value'), { target: { value: 1 } })
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
     fireEvent.click(screen.getByTestId('dry-run-btn'))
 
     const expectedActions = [
@@ -153,5 +156,30 @@ describe('JobsPanel', () => {
     })
 
     expect(queryByTestId('target-select')).toBeInTheDocument()
+  })
+
+  it('should render error notification', () => {
+    render(<JobsPanel {...instance(mockedProps)} name="jobName" job={'hsources:incorrect\n target:'} />)
+
+    fireEvent.change(screen.getByTestId('input-value'), { target: { value: '[]' } })
+
+    fireEvent.click(screen.getByTestId('dry-run-btn'))
+
+    const expectedActions = [
+      addErrorNotification({
+        response: {
+          data: {
+            message: (
+              <>
+                <EuiText>JobName has an invalid structure.</EuiText>
+                <EuiText>end of the stream or a document separator is expected</EuiText>
+              </>
+            )
+          }
+        }
+      } as AxiosError)
+    ]
+
+    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
   })
 })

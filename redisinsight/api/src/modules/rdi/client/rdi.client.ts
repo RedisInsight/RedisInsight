@@ -5,7 +5,7 @@ import {
 import {
   RdiDryRunJobDto, RdiDryRunJobResponseDto, RdiTemplateResponseDto, RdiTestConnectionsResponseDto,
 } from 'src/modules/rdi/dto';
-import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
+import { IDLE_THRESHOLD } from 'src/modules/rdi/constants';
 
 export abstract class RdiClient {
   public readonly id: string;
@@ -20,7 +20,7 @@ export abstract class RdiClient {
   }
 
   public isIdle(): boolean {
-    return Date.now() - this.lastUsed > IDLE_TRESHOLD;
+    return Date.now() - this.lastUsed > IDLE_THRESHOLD;
   }
 
   abstract getSchema(): Promise<object>;

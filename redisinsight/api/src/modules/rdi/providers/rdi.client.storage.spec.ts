@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { generateMockRdiClient } from 'src/__mocks__';
 import { RdiClientStorage } from 'src/modules/rdi/providers/rdi.client.storage';
-import { IDLE_TRESHOLD } from 'src/modules/rdi/constants';
+import { IDLE_THRESHOLD } from 'src/modules/rdi/constants';
 import { SessionMetadata } from 'src/common/models';
 
 const mockClientMetadata1 = {
@@ -69,7 +69,7 @@ describe('RdiClientStorage', () => {
     it('should remove client with exceeded time in idle', async () => {
       expect(service['clients'].size).toEqual(4);
       const toDelete = service['clients'].get(mockRdiClient1.id);
-      toDelete['lastUsed'] = Date.now() - IDLE_TRESHOLD - 1;
+      toDelete['lastUsed'] = Date.now() - IDLE_THRESHOLD - 1;
       service['syncClients']();
 
       expect(service['clients'].size).toEqual(3);

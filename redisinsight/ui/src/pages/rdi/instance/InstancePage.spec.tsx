@@ -26,7 +26,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { setConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
-import { getPipelineStatus, setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
+import { setPipelineInitialState } from 'uiSrc/slices/rdi/pipeline'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 
 import InstancePage, { Props } from './InstancePage'
@@ -100,7 +100,6 @@ describe('InstancePage', () => {
       setAppContextConnectedRdiInstanceId('rdiInstanceId'),
       resetConnectedDatabaseInstance(),
       ...resetContextActions,
-      getPipelineStatus(),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)

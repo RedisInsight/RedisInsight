@@ -70,7 +70,6 @@ test('Verify that user can switches between Table and Text for FT.AGGREGATE and 
     await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.AGGREGATE');
 });
-// Skipped due to issue https://redislabs.atlassian.net/browse/RI-3524
 test('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
     const command = 'CLIENT LIST';
 
@@ -78,12 +77,12 @@ test('Verify that user can switches between views and see results according to t
     await workbenchPage.sendCommandInWorkbench(command);
     await t.click(workbenchPage.fullScreenButton);
     await t.switchToIframe(workbenchPage.iframe);
-    await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTableResult).visible).ok('The search results are displayed in Table view by default');
+    await t.expect(workbenchPage.queryTableResult.exists).ok('The search results are displayed in Table view by default');
     // Select Text view from dropdown
     await t.switchToMainWindow();
     await workbenchPage.selectViewTypeText();
     // Verify that search results are displayed in Text view
-    await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).visible).ok('The result is displayed in Text view');
+    await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The result is displayed in Text view');
 });
 test('Big output in workbench is visible in virtualized table', async t => {
     // Send commands

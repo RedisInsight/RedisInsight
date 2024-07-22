@@ -1,5 +1,6 @@
 export enum RdiUrl {
-  GetSchema = 'api/v1/schemas',
+  GetConfigSchema = 'api/v1/pipelines/config/schemas',
+  GetJobsSchema = 'api/v1/pipelines/jobs/schemas',
   GetPipeline = 'api/v1/pipelines',
   GetStrategies = 'api/v1/pipelines/strategies',
   GetConfigTemplate = 'api/v1/pipelines/config/templates',
@@ -14,9 +15,10 @@ export enum RdiUrl {
   Action = 'api/v1/actions',
 }
 
-export const IDLE_TRESHOLD = 10 * 60 * 1000; // 10 min
+export const IDLE_THRESHOLD = 10 * 60 * 1000; // 10 min
 export const RDI_TIMEOUT = 30_000; // 30 sec
-export const TOKEN_TRESHOLD = 2 * 60 * 1000; // 2 min
+export const TOKEN_THRESHOLD = 2 * 60 * 1000; // 2 min
 export const RDI_SYNC_INTERVAL = 5 * 60 * 1_000; // 5 min
 export const POLLING_INTERVAL = 1_000;
 export const MAX_POLLING_TIME = 2 * 60 * 1000; // 2 min
+export const WAIT_BEFORE_POLLING = 1_000;

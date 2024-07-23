@@ -28,7 +28,6 @@ const UploadFile = (props: Props) => {
   return (
     <EuiButtonEmpty
       className={styles.emptyBtn}
-      onClick={() => onClick?.()}
       data-testid="upload-file-btn"
     >
       <label htmlFor={id} className={styles.uploadBtn}>
@@ -40,6 +39,10 @@ const UploadFile = (props: Props) => {
           data-testid={id}
           accept={accept || '*'}
           onChange={handleFileChange}
+          onClick={(event) => {
+            event.stopPropagation()
+            onClick?.()
+          }}
           className={styles.fileDrop}
           aria-label="Select file"
         />

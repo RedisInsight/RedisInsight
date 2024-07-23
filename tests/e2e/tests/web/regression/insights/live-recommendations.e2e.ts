@@ -22,7 +22,7 @@ const apiKeyRequests = new APIKeyRequests();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: ossStandaloneConfig.databaseName }
+    { host: ossStandaloneV7Config.host, port: ossStandaloneV7Config.port, databaseName: ossStandaloneV7Config.databaseName }
 ];
 const tenSecondsTimeout = 10000;
 const keyName = `recomKey-${Common.generateWord(10)}`;

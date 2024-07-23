@@ -83,7 +83,7 @@ services:
   # oss standalone v7
   oss-standalone-v7:
     logging: *logging
-    image: redis:7.2.5
+    image: redis:7.4-rc2
     ports:
       - 8108:6379
     networks:

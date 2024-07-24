@@ -145,7 +145,7 @@ export default {
   },
   content: {
     updateUrl: process.env.RI_CONTENT_UPDATE_URL
-      || 'https://github.com/RedisInsight/Statics/releases/download/2.42',
+      || 'https://github.com/RedisInsight/Statics/releases/download/2.54',
     zip: process.env.RI_CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.RI_CONTENT_INFO || buildInfoFileName,
     devMode: !!process.env.RI_CONTENT_PATH,

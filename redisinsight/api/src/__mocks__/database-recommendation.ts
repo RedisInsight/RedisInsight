@@ -10,7 +10,7 @@ export const mockRecommendationName = 'string';
 
 export const mockDatabaseRecommendationParamsEncrypted = 'recommendation.params_ENCRYPTED';
 
-export const mockDatabaseRecommendationParamsPlain = [];
+export const mockDatabaseRecommendationParamsPlain = {};
 
 export const mockDatabaseRecommendation = Object.assign(new DatabaseRecommendation(), {
   id: mockDatabaseRecommendationId,

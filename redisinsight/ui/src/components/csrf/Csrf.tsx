@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 
-import apiService, { setCSRFHeader } from 'uiSrc/services/apiService'
+import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
+import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService'
 import PagePlaceholder from '../page-placeholder'
 
 const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
@@ -10,16 +11,16 @@ interface CSRFTokenResponse {
 }
 
 const Csrf = ({ children }: { children: ReactElement }) => {
-  const [loading, setLoading] = useState(false)
+  // default to true to prevent other components from making requests before the CSRF token is fetched
+  const [loading, setLoading] = useState(true)
 
   const fetchCsrfToken = async () => {
     let data: CSRFTokenResponse | undefined
     try {
-      setLoading(true)
-
       const { data } = await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
 
-      setCSRFHeader(data.token)
+      setApiCsrfHeader(data.token)
+      setResourceCsrfHeader(data.token)
     } catch (error) {
       console.error('Error fetching CSRF token: ', error)
     } finally {

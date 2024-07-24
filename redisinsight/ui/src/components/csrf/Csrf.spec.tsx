@@ -1,11 +1,11 @@
 import React from 'react'
 
-import apiService, { setCSRFHeader } from 'uiSrc/services/apiService'
+import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
 import { render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import Csrf from './Csrf'
 
 jest.mock('uiSrc/services/apiService', () => ({
-  setCSRFHeader: jest.fn(),
+  setApiCsrfHeader: jest.fn(),
   get: jest.fn(() => ({ data: { token: 'csrf-token' } })),
 }))
 
@@ -31,7 +31,7 @@ describe('Csrf', () => {
   })
 
   it('should not fetch CSRF token when endpoint is not provided', () => {
-    render(<Csrf />)
+    render(<Csrf><div>children</div></Csrf>)
 
     expect(apiService.get).not.toHaveBeenCalled()
 
@@ -41,7 +41,7 @@ describe('Csrf', () => {
   it('should render PagePlaceholder when loading', () => {
     process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
 
-    render(<Csrf />)
+    render(<Csrf><div>children</div></Csrf>)
 
     expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
   })
@@ -57,7 +57,7 @@ describe('Csrf', () => {
 
     await waitFor(() => {
       expect(apiService.get).toHaveBeenCalledWith('csrf-endpoint')
-      expect(setCSRFHeader).toHaveBeenCalledWith('csrf-token')
+      expect(setApiCsrfHeader).toHaveBeenCalledWith('csrf-token')
 
       expect(screen.getByText('children')).toBeInTheDocument()
     })

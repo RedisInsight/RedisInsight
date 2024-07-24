@@ -27,7 +27,7 @@ const mutableAxiosInstance: AxiosInstance = axios.create({
   withCredentials: !!hostedApiBaseUrl,
 })
 
-export const setCSRFHeader = (token: string) => {
+export const setApiCsrfHeader = (token: string) => {
   mutableAxiosInstance.defaults.headers.common[CustomHeaders.CsrfToken] = token
 }
 

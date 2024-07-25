@@ -207,7 +207,7 @@ const RedisCloudDatabasesPage = ({
         </EuiFormRow>
         <br />
 
-        <div className="databaseList cloudDatabaseList">
+        <div className="itemList databaseList cloudDatabaseList">
           <EuiInMemoryTable
             items={items}
             itemId="databaseId"

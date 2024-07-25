@@ -160,8 +160,8 @@ const getUnsupportedModulesFromQueryTests: Array<{
   expected: Set<string>
 }> = [
   { input: [[], 'ft.info'], expected: new Set(['search']) },
-  { input: [[], 'bf.info \ntfunction load'], expected: new Set(['bf', 'redisgears']) },
-  { input: [[], 'bf.info \ntfunction load \nJSON.GET'], expected: new Set(['ReJSON', 'bf', 'redisgears']) },
+  { input: [[], 'bf.info'], expected: new Set(['bf']) },
+  { input: [[], 'bf.info \nJSON.GET'], expected: new Set(['ReJSON', 'bf']) },
   { input: [[{ name: 'search' }], 'ft.info'], expected: new Set([]) },
 ]
 

@@ -185,7 +185,14 @@ $marginIcon: 12px;
 }
 
 .titleWrapper {
+  justify-content: center;
+  min-height: 24px;
   overflow: hidden;
+
+  .copyBtn {
+    margin-top: 2px;
+    margin-left: 12px !important;
+  }
 }
 
 .controls {

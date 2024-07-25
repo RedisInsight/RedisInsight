@@ -1,4 +1,4 @@
-import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EuiButtonEmpty } from '@elastic/eui'
@@ -7,11 +7,12 @@ import {
   askAssistantChatbot,
   createAssistantChatAction,
   getAssistantChatHistoryAction,
-  removeAssistantChatAction, removeAssistantChatHistorySuccess,
+  removeAssistantChatAction,
+  removeAssistantChatHistorySuccess,
   sendQuestion,
   updateAssistantChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { getCommandsFromQuery, Nullable, scrollIntoView } from 'uiSrc/utils'
+import { getCommandsFromQuery, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 
@@ -32,23 +33,17 @@ const AssistanceChat = () => {
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
 
   const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
-  const scrollDivRef: Ref<HTMLDivElement> = useRef(null)
   const { instanceId } = useParams<{ instanceId: string }>()
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!id || messages.length) {
-      scrollToBottom('auto')
-      return
-    }
+    if (!id || messages.length) return
 
-    dispatch(getAssistantChatHistoryAction(id, () => scrollToBottom('auto')))
+    dispatch(getAssistantChatHistoryAction(id))
   }, [id])
 
   const handleSubmit = useCallback((message: string) => {
-    scrollToBottom('smooth')
-
     if (!agreements) {
       dispatch(updateAssistantChatAgreements(true))
       sendEventTelemetry({
@@ -95,7 +90,6 @@ const AssistanceChat = () => {
       {
         onMessage: (message: AiChatMessage) => {
           setinProgressMessage({ ...message })
-          scrollToBottom('auto')
         },
         onError: (errorCode: number) => {
           sendEventTelemetry({
@@ -156,16 +150,6 @@ const AssistanceChat = () => {
     })
   }, [])
 
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    requestAnimationFrame(() => {
-      scrollIntoView(scrollDivRef?.current, {
-        behavior,
-        block: 'start',
-        inline: 'start',
-      })
-    })
-  }, [])
-
   return (
     <div className={styles.wrapper} data-testid="ai-general-chat">
       <div className={styles.header}>
@@ -185,13 +169,12 @@ const AssistanceChat = () => {
       </div>
       <div className={styles.chatHistory}>
         <ChatHistory
+          autoScroll
           isLoading={loading}
           modules={modules}
           initialMessage={AssistanceChatInitialMessage}
           inProgressMessage={inProgressMessage}
           history={messages}
-          scrollDivRef={scrollDivRef}
-          onMessageRendered={scrollToBottom}
           onRunCommand={onRunCommand}
           onRestart={onClearSession}
         />

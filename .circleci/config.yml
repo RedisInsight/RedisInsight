@@ -176,7 +176,7 @@ aliases:
 
 orbs:
   win: circleci/windows@2.4.1
-  node: circleci/node@5.0.2
+  node: circleci/node@5.2.0
   aws: circleci/aws-cli@2.0.3
 
 executors:
@@ -189,7 +189,7 @@ executors:
       docker_layer_caching: true
   docker-node:
     docker:
-      - image: cimg/node:18.15.0
+      - image: cimg/node:20.15
   docker:
     docker:
       - image: cibuilds/docker:19.03.5
@@ -387,10 +387,24 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          install-yarn: true
+          node-version: '20.15'
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
+      - run:
+          name: Install WM
+          command: sudo apt install fluxbox
+      - run:
+          name: Run X11
+          command: |
+            Xvfb :99 -screen 0 1920x1080x24 &
+            sleep 3
+            fluxbox &
+      # - run:
+      #     name: Clone mocked RDI server
+      #     command: |
+      #       git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
       - run:
           name: .AppImage tests
           command: |
@@ -430,8 +444,8 @@ jobs:
           at: .
       - run:
           command: |
-            nvm install 18.15.0
-            nvm use 18.15.0
+            nvm install 20.15
+            nvm use 20.15
             npm install --global yarn
       - run:
           command: |
@@ -483,6 +497,10 @@ jobs:
                 name: Load built docker image from workspace
                 command: |
                   docker image load -i /tmp/release/docker/docker-linux-alpine.amd64.tar
+            # - run:
+            #     name: Clone mocked RDI server
+            #     command: |
+            #       git clone https://$GH_RDI_MOCKED_SERVER_KEY@github.com/RedisInsight/RDI_server_mocked.git tests/e2e/rte/rdi
             - run:
                 name: Run tests
                 command: |
@@ -597,7 +615,8 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          install-yarn: true
+          node-version: '20.15'
       - attach_workspace:
           at: .
       - run:
@@ -639,6 +658,7 @@ jobs:
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+            export RI_FEATURES_CONFIG_URL=$RI_FEATURES_CONFIG_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE yarn package:stage --linux << parameters.target >>
@@ -657,7 +677,7 @@ jobs:
             - release/*-linux.yml
   macosx:
     executor: macos
-    resource_class: macos.x86.medium.gen2
+    resource_class: macos.m1.medium.gen1
     parameters:
       env:
         description: Build environment (stage || prod)
@@ -675,7 +695,7 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          node-version: '20.15'
       - attach_workspace:
           at: .
       - run:
@@ -687,6 +707,7 @@ jobs:
           command: |
             yarn install
             yarn --cwd redisinsight/api/ install
+            yarn --cwd redisinsight/ install
             yarn build:statics
           no_output_timeout: 15m
       - run:
@@ -715,6 +736,7 @@ jobs:
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
             export RI_UPGRADES_LINK=''
             export RI_SEGMENT_WRITE_KEY=''
+            export RI_FEATURES_CONFIG_URL=$RI_FEATURES_CONFIG_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               export RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE
@@ -773,14 +795,17 @@ jobs:
       - run:
           name: Build windows exe
           command: |
-            nvm install 18.15.0
-            nvm use 18.15.0
+            nvm install 20.15
+            nvm use 20.15
             npm install --global yarn
 
             # set ALL_REDIS_COMMANDS=$(curl $ALL_REDIS_COMMANDS_RAW_URL)
+            # install dependencies
             yarn install
             yarn --cwd redisinsight/api/ install
+            yarn --cwd redisinsight/ install
             yarn build:statics:win
+
             if [ << parameters.env >> == 'prod' ]; then
               yarn package:prod
               rm -rf release/win-unpacked
@@ -796,6 +821,7 @@ jobs:
             export RI_CLOUD_IDP_GH_ID=$RI_CLOUD_IDP_GH_ID_STAGE
             export RI_CLOUD_API_URL=$RI_CLOUD_API_URL_STAGE
             export RI_CLOUD_CAPI_URL=$RI_CLOUD_CAPI_URL_STAGE
+            export RI_FEATURES_CONFIG_URL=$RI_FEATURES_CONFIG_URL_STAGE
 
             if [ << parameters.env >> == 'stage' ]; then
               RI_UPGRADES_LINK=$RI_UPGRADES_LINK_STAGE RI_SEGMENT_WRITE_KEY=$RI_SEGMENT_WRITE_KEY_STAGE yarn package:stage --win << parameters.target >>
@@ -864,7 +890,8 @@ jobs:
     steps:
       - checkout
       - node/install:
-          node-version: '18.15.0'
+          install-yarn: true
+          node-version: '20.15'
       - run:
           name: Install dependencies
           command: |
@@ -1233,7 +1260,7 @@ workflows:
             - Build docker image
       - e2e-app-image:
           name: E2ETest (AppImage)
-          parallelism: 2
+          parallelism: 1
           requires:
             - Build app - Linux (stage)
   # Workflow for feature, bugfix, main branches

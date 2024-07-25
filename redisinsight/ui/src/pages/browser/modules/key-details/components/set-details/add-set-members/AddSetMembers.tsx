@@ -18,21 +18,14 @@ import { KeyTypes } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { stringToBuffer } from 'uiSrc/utils'
-import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+
+import styles from './styles.module.scss'
 
 export interface Props {
   closePanel: (isCancelled?: boolean) => void
-}
-
-export interface ISetMemberState {
-  name: string;
-  id: number;
-}
-
-export const INITIAL_SET_MEMBER_STATE: ISetMemberState = {
-  name: '',
-  id: 0,
 }
 
 const AddSetMembers = (props: Props) => {
@@ -92,6 +85,15 @@ const AddSetMembers = (props: Props) => {
     setMembers(newState)
   }
 
+  const onClickRemove = ({ id }: ISetMemberState) => {
+    if (members.length === 1) {
+      clearMemberValues(id)
+      return
+    }
+
+    removeMember(id)
+  }
+
   const handleMemberChange = (formField: string, id: number, value: string) => {
     const newState = members.map((item) => {
       if (item.id === id) {
@@ -123,44 +125,35 @@ const AddSetMembers = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-set-field-panel"
-        className={cx('eui-yScroll', 'flexItemNoFullWidth')}
+        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth')}
       >
-        {members.map((item, index) => (
-          <EuiFlexItem style={{ marginBottom: '8px' }} grow key={item.id}>
-            <EuiFlexGroup gutterSize="m">
+        <AddMultipleFields
+          items={members}
+          isClearDisabled={isClearDisabled}
+          onClickRemove={onClickRemove}
+          onClickAdd={addMember}
+        >
+          {(item, index) => (
+            <EuiFlexGroup gutterSize="none" alignItems="center">
               <EuiFlexItem grow>
-                <EuiFlexGroup gutterSize="none" alignItems="center">
-                  <EuiFlexItem grow>
-                    <EuiFormRow fullWidth>
-                      <EuiFieldText
-                        fullWidth
-                        name={`member-${item.id}`}
-                        id={`member-${item.id}`}
-                        placeholder={config.member.placeholder}
-                        value={item.name}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          handleMemberChange('name', item.id, e.target.value)}
-                        inputRef={index === members.length - 1 ? lastAddedMemberName : null}
-                        disabled={loading}
-                        data-testid="member-name"
-                      />
-                    </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                <EuiFormRow fullWidth>
+                  <EuiFieldText
+                    fullWidth
+                    name={`member-${item.id}`}
+                    id={`member-${item.id}`}
+                    placeholder={config.member.placeholder}
+                    value={item.name}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleMemberChange('name', item.id, e.target.value)}
+                    inputRef={index === members.length - 1 ? lastAddedMemberName : null}
+                    disabled={loading}
+                    data-testid="member-name"
+                  />
+                </EuiFormRow>
               </EuiFlexItem>
-              <AddItemsActions
-                id={item.id}
-                index={index}
-                length={members.length}
-                addItem={addMember}
-                removeItem={removeMember}
-                clearIsDisabled={isClearDisabled(item)}
-                clearItemValues={clearMemberValues}
-                loading={loading}
-              />
             </EuiFlexGroup>
-          </EuiFlexItem>
-        ))}
+          )}
+        </AddMultipleFields>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}

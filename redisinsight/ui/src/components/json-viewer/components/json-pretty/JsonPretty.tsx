@@ -7,6 +7,10 @@ import { isArray, isObject } from 'uiSrc/components/json-viewer/utils'
 import { IDefaultProps } from 'uiSrc/components/json-viewer/interfaces'
 
 const JsonPretty = ({ data, ...props }: IDefaultProps) => {
+  if (data?._isBigNumber) {
+    return <JsonPrimitive data={data} {...props} />
+  }
+
   if (isArray(data)) {
     return <JsonArray data={data} {...props} />
   }

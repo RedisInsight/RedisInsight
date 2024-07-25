@@ -55,7 +55,7 @@ const PageHeader = (props: Props) => {
         <div>
           <EuiTitle size="s" className={styles.title} data-testid="page-title">
             <h1>
-              <b>{title}</b>
+              <b data-testid="page-header-title">{title}</b>
             </h1>
           </EuiTitle>
           {subtitle ? <span data-testid="page-subtitle">{subtitle}</span> : ''}

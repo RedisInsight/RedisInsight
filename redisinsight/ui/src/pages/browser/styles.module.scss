@@ -114,4 +114,12 @@ $breakpoint-to-hide-resize-panel: 1280px;
   flex-grow: 0;
   align-self: self-start;
   margin: 0 0 8px 16px;
+
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  &:hover {
+    color: var(--buttonSecondaryTextColor) !important
+  }
 }

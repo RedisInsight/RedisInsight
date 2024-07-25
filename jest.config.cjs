@@ -11,6 +11,7 @@ module.exports = {
     '\\.scss\\?inline$': '<rootDir>/redisinsight/__mocks__/scssRaw.js',
     'uiSrc/(.*)': '<rootDir>/redisinsight/ui/src/$1',
     'monaco-editor': '<rootDir>/redisinsight/__mocks__/monacoMock.js',
+    'monaco-yaml': '<rootDir>/redisinsight/__mocks__/monacoYamlMock.js',
     unified: '<rootDir>/redisinsight/__mocks__/unified.js',
     'remark-parse': '<rootDir>/redisinsight/__mocks__/remarkParse.js',
     'remark-gfm': '<rootDir>/redisinsight/__mocks__/remarkGfm.js',
@@ -55,6 +56,7 @@ module.exports = {
     '<rootDir>/redisinsight/api',
     '<rootDir>/redisinsight/ui/src/packages',
   ],
+  resolver: '<rootDir>/jest-resolver.js',
   coverageThreshold: {
     global: {
       statements: 80,

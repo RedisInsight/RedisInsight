@@ -52,4 +52,11 @@ export enum CustomErrorCodes {
   QueryAiRateLimitRequest = 11_360,
   QueryAiRateLimitToken = 11_361,
   QueryAiRateLimitMaxTokens = 11_362,
+
+  // RDI errors [11400, 11599]
+  RdiDeployPipelineFailure = 11_401,
+  RdiUnauthorized = 11_402,
+  RdiInternalServerError = 11_403,
+  RdiValidationError = 11_404,
+  RdiNotFound = 11_405,
 }

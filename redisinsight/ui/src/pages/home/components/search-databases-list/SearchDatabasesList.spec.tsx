@@ -21,6 +21,7 @@ const instancesMock: Instance[] = [{
   visible: true,
   modules: [],
   lastConnection: new Date(),
+  version: ''
 }, {
   id: '2',
   name: 'cloud',
@@ -29,6 +30,7 @@ const instancesMock: Instance[] = [{
   visible: true,
   modules: [],
   lastConnection: new Date(),
+  version: ''
 }]
 
 beforeEach(() => {

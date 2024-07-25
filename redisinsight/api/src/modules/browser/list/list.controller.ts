@@ -38,13 +38,16 @@ import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 import { ListService } from 'src/modules/browser/list/list.service';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: List')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('list')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class ListController {
-  constructor(private listService: ListService) { }
+export class ListController extends BrowserBaseController {
+  constructor(private listService: ListService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold list data type' })

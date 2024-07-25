@@ -2,7 +2,7 @@ import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import PopoverItemEditor from 'uiSrc/components/popover-item-editor'
+import cx from 'classnames'
 import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import {
   selectedKeyDataSelector,
@@ -26,6 +26,7 @@ import { TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import EditablePopover from 'uiSrc/pages/browser/modules/key-details/shared/editable-popover'
 
 import { ConsumerDto, ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
 
@@ -38,7 +39,7 @@ export interface IConsumerGroup extends ConsumerGroupDto {
 }
 
 const suffix = '_stream_group'
-const actionsWidth = 80
+const actionsWidth = 48
 
 export interface Props {
   isFooterOpen: boolean
@@ -263,28 +264,80 @@ const GroupsViewWrapper = (props: Props) => {
     {
       id: 'lastDeliveredId',
       label: 'Last Delivered ID',
-      minWidth: 190,
-      maxWidth: 190,
-      absoluteWidth: 190,
+      minWidth: 200,
+      maxWidth: 200,
+      absoluteWidth: 200,
       isSortable: true,
-      className: styles.cell,
+      className: cx(styles.cell, 'noPadding'),
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
-      render: function Id(_name: string, { lastDeliveredId: id }: IConsumerGroup) {
+      render: function Id(_name: string, { lastDeliveredId: id, name, editing }: IConsumerGroup) {
         const timestamp = id?.split('-')?.[0]
+        const showIdError = !isIdFocused && idError
+
         return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div className="truncateText streamItem" style={{ display: 'flex' }} data-testid={`stream-group-date-${id}`}>
-                {getFormatTime(timestamp)}
+          <EditablePopover
+            content={(
+              <div className={styles.editableCell}>
+                <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+                  <div
+                    className="truncateText streamItem"
+                    style={{ display: 'flex' }}
+                    data-testid={`stream-group-date-${id}`}
+                  >
+                    {getFormatTime(timestamp)}
+                  </div>
+                </EuiText>
+                <EuiText size="s" style={{ maxWidth: '100%' }}>
+                  <div className="streamItemId" data-testid={`stream-group-id-${id}`}>
+                    {id}
+                  </div>
+                </EuiText>
               </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div className="streamItemId" data-testid={`stream-group-id-${id}`}>
-                {id}
-              </div>
-            </EuiText>
-          </div>
+              )}
+            field={id}
+            prefix="stream-group"
+            isOpen={editing}
+            onOpen={() => handleEditId(name, id)}
+            onDecline={() => dispatch(setSelectedKeyRefreshDisabled(false))}
+            onApply={() => {
+              handleApplyEditId(name)
+              dispatch(setSelectedKeyRefreshDisabled(false))
+            }}
+            className={styles.editLastId}
+            isDisabled={!editValue.length || !!idError}
+            isLoading={loading}
+            delay={500}
+            editBtnClassName={styles.editBtn}
+          >
+            <>
+              <EuiFieldText
+                fullWidth
+                name="id"
+                id="id"
+                placeholder="ID*"
+                value={editValue}
+                onChange={(e: any) => setEditValue(validateConsumerGroupId(e.target.value))}
+                onBlur={() => setIsIdFocused(false)}
+                onFocus={() => setIsIdFocused(true)}
+                append={(
+                  <EuiToolTip
+                    anchorClassName="inputAppendIcon"
+                    position="left"
+                    title="Enter Valid ID, 0 or $"
+                    content={lastDeliveredIDTooltipText}
+                  >
+                    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                  </EuiToolTip>
+                )}
+                style={{ width: 240 }}
+                autoComplete="off"
+                data-testid="last-id-field"
+              />
+              {!showIdError && <span className={styles.idText} data-testid="id-help-text">Timestamp - Sequence Number or $</span>}
+              {showIdError && <span className={styles.error} data-testid="id-error">{idError}</span>}
+            </>
+          </EditablePopover>
         )
       },
     },
@@ -296,52 +349,10 @@ const GroupsViewWrapper = (props: Props) => {
       absoluteWidth: actionsWidth,
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
-      render: function Actions(_act: any, { lastDeliveredId, name, editing }: IConsumerGroup) {
+      render: function Actions(_act: any, { name }: IConsumerGroup) {
         const viewName = name?.viewValue ?? ''
-        const showIdError = !isIdFocused && idError
         return (
           <div>
-            <PopoverItemEditor
-              btnTestId={`edit-stream-last-id-${lastDeliveredId}`}
-              isOpen={editing}
-              onOpen={() => handleEditId(name, lastDeliveredId)}
-              onDecline={() => dispatch(setSelectedKeyRefreshDisabled(false))}
-              onApply={() => {
-                handleApplyEditId(name)
-                dispatch(setSelectedKeyRefreshDisabled(false))
-              }}
-              className={styles.editLastId}
-              isDisabled={!editValue.length || !!idError}
-              isLoading={loading}
-            >
-              <>
-                <EuiFieldText
-                  fullWidth
-                  name="id"
-                  id="id"
-                  placeholder="ID*"
-                  value={editValue}
-                  onChange={(e: any) => setEditValue(validateConsumerGroupId(e.target.value))}
-                  onBlur={() => setIsIdFocused(false)}
-                  onFocus={() => setIsIdFocused(true)}
-                  append={(
-                    <EuiToolTip
-                      anchorClassName="inputAppendIcon"
-                      position="left"
-                      title="Enter Valid ID, 0 or $"
-                      content={lastDeliveredIDTooltipText}
-                    >
-                      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-                    </EuiToolTip>
-                  )}
-                  style={{ width: 240 }}
-                  autoComplete="off"
-                  data-testid="last-id-field"
-                />
-                {!showIdError && <span className={styles.idText} data-testid="id-help-text">Timestamp - Sequence Number or $</span>}
-                {showIdError && <span className={styles.error} data-testid="id-error">{idError}</span>}
-              </>
-            </PopoverItemEditor>
             <PopoverDelete
               header={viewName}
               text={(

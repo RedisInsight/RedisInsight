@@ -5,7 +5,7 @@ import { findIndex } from 'lodash'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { MonacoLanguage, redisLanguageConfig, Theme } from 'uiSrc/constants'
 import { getRedisMonarchTokensProvider } from 'uiSrc/utils'
-import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco/cypher'
+import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 const MonacoLanguages = () => {

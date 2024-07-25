@@ -4,7 +4,7 @@ import {
   getApiErrorCode,
   getApiErrorMessage,
   getAxiosError,
-  parseCloudOAuthError
+  parseCustomError
 } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 
@@ -18,7 +18,7 @@ const customError3: EnhancedAxiosError = { response: { data: { message: 'error',
 describe('getAxiosError', () => {
   it('should return proper error', () => {
     expect(getAxiosError(customError1)).toEqual(customError1)
-    expect(getAxiosError(customError2)).toEqual(parseCloudOAuthError(customError2.response?.data))
+    expect(getAxiosError(customError2)).toEqual(parseCustomError(customError2.response?.data))
     expect(getAxiosError(customError3)).toEqual(customError3)
   })
 })

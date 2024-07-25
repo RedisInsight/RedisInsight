@@ -119,3 +119,48 @@ test('Verify that user can see JSON Key details', async t => {
     await t.expect(keyTTLValue).match(expectedTTL, 'The JSON Key TTL is incorrect');
     await t.expect(keyBadge).contains('JSON', 'The JSON Key Badge is incorrect');
 });
+//the test is skipped until redis databases 7.4 is not added to docker
+test
+    .before(async() => {
+        // await databaseHelper.acceptLicenseTermsAndAddDatabaseApi();
+    })
+    .after(async() => {
+        // Clear and delete database
+        // await apiKeyRequests.deleteKeyByNameApi(keyName, );
+        //  await databaseAPIRequests.deleteStandaloneDatabaseApi();
+    })
+    .skip('Verify that user can set ttl for Hash fields', async t => {
+        keyName = Common.generateWord(10);
+        const keyName2 = Common.generateWord(10);
+        const field1 = 'Field1WithTtl';
+        const field2 = 'Field2WithTtl';
+        await browserPage.addHashKey(keyName, ' ',  field1,  'value',  keyTTL);
+
+        //verify that user can create key with ttl for the has field
+        let ttlFieldValue = await browserPage.getHashTtlFieldInput(field1).textContent;
+        await t.expect(ttlFieldValue).match(expectedTTL, 'the field ttl is not set');
+
+        // verify that ttl can have empty value
+        await browserPage.editHashFieldTtlValue(field1, ' ');
+        ttlFieldValue = await browserPage.getHashTtlFieldInput(field1).textContent;
+        await t.expect(ttlFieldValue).eql('No Limit', 'the field ttl can not be removed');
+
+        //verify that ttl field value can be set
+        await browserPage.addFieldToHash(field2, 'value', keyTTL);
+        ttlFieldValue = await browserPage.getHashTtlFieldInput(field2).textContent;
+        await t.expect(ttlFieldValue).match(expectedTTL, 'the field ttl is not set');
+
+        //verify that field is removed after ttl field is expired
+        await browserPage.editHashFieldTtlValue(field1, '1');
+        await t.wait(1000);
+        await t.click(browserPage.refreshKeyButton);
+        const result = browserPage.hashFieldsList.count;
+        await t.expect(result).eql(1, 'the field was not removed');
+
+        //verify that the key is removed if key has 1 field and ttl field is expired
+        await browserPage.addHashKey(keyName2, ' ',  field1);
+        await browserPage.editHashFieldTtlValue(field1, '1');
+        await t.click(browserPage.refreshKeysButton);
+
+        await t.expect(browserPage.getKeySelectorByName(keyName2).exists).notOk('key is not removed when the field ttl is expired');
+    });

@@ -20,13 +20,13 @@ import { setClusterDetailsInitialState } from 'uiSrc/slices/analytics/clusterDet
 import { setDatabaseAnalysisInitialState } from 'uiSrc/slices/analytics/dbAnalysis'
 import { setInitialAnalyticsSettings } from 'uiSrc/slices/analytics/settings'
 import { getRecommendations, setInitialRecommendationsState } from 'uiSrc/slices/recommendations/recommendations'
-import { setTriggeredFunctionsInitialState } from 'uiSrc/slices/triggeredFunctions/triggeredFunctions'
 import {
   getDatabaseConfigInfo,
   setConnectedInfoInstance,
   setConnectedInstance,
   setDefaultInstance
 } from 'uiSrc/slices/instances/instances'
+import { resetConnectedInstance as resetRdiConnectedInstance } from 'uiSrc/slices/rdi/instances'
 import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
 import InstancePage, { Props } from './InstancePage'
 
@@ -116,7 +116,6 @@ describe('InstancePage', () => {
       setInitialAnalyticsSettings(),
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
-      setTriggeredFunctionsInitialState(),
     ]
 
     const expectedActions = [
@@ -129,6 +128,7 @@ describe('InstancePage', () => {
       clearExpertChatHistory(),
       setAppContextConnectedInstanceId(INSTANCE_ID_MOCK),
       setDbConfig(undefined),
+      resetRdiConnectedInstance(),
     ]
 
     expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)

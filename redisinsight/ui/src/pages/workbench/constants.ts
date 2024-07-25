@@ -66,5 +66,4 @@ export enum ModuleCommandPrefix {
   CMS = 'CMS.',
   TOPK = 'TOPK.',
   TDIGEST = 'TDIGEST.',
-  TriggersAndFunctions = 'TF',
 }

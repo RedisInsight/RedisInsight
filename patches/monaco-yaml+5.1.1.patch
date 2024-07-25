@@ -1,0 +1,20 @@
+diff --git a/node_modules/monaco-yaml/yaml.worker.js b/node_modules/monaco-yaml/yaml.worker.js
+index c4e3806..7140210 100644
+--- a/node_modules/monaco-yaml/yaml.worker.js
++++ b/node_modules/monaco-yaml/yaml.worker.js
+@@ -6709,11 +6709,11 @@ var YAMLHover = class {
+ \`\`\`${example}\`\`\``;
+           });
+         }
+-        if (result.length > 0 && schema.schema.url) {
+-          result += `
++//         if (result.length > 0 && schema.schema.url) {
++//           result += `
+
+-Source: [${getSchemaName(schema.schema)}](${schema.schema.url})`;
+-        }
++// Source: [${getSchemaName(schema.schema)}](${schema.schema.url})`;
++//         }
+         return createHover(result);
+       }
+       return null;

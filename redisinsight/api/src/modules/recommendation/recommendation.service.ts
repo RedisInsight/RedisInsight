@@ -129,6 +129,10 @@ export class RecommendationService {
         RECOMMENDATION_NAMES.SEARCH_VISUALIZATION,
         () => null,
       ],
+      [
+        RECOMMENDATION_NAMES.TRY_RDI,
+        () => null,
+      ],
     ]);
 
     const recommendationsToDetermine = difference(Object.values(RECOMMENDATION_NAMES), exclude);

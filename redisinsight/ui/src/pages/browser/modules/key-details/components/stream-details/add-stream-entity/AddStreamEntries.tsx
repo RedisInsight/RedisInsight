@@ -113,7 +113,6 @@ const AddStreamEntries = (props: Props) => {
         className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         <StreamEntryFields
-          compressed
           entryIdError={entryIdError}
           entryID={entryID}
           setEntryID={setEntryID}

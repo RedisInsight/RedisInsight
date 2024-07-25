@@ -1,0 +1,23 @@
+.tableWrapper {
+  max-height: calc(100vh - 282px);
+  @include eui.scrollBar;
+  overflow: auto;
+
+  .table {
+    :global {
+      .euiTableHeaderCell {
+        background-color: var(--browserTableRowEven);
+      }
+
+      .euiTableRowCell {
+        vertical-align: top !important;
+      }
+
+      .euiTableCellContent {
+        white-space: normal !important;
+        font-size: 12px !important;
+        padding: 8px 14px;
+      }
+    }
+  }
+}

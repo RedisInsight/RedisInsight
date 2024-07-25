@@ -4,7 +4,6 @@ import {
   Instance,
   RedisDefaultModules,
   REDISEARCH_MODULES,
-  TRIGGERED_AND_FUNCTIONS_MODULES
 } from 'uiSrc/slices/interfaces'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -49,18 +48,11 @@ export const isRedisearchModule = (moduleName: string) =>
 export const isRedisearchAvailable = (modules: AdditionalRedisModule[]): boolean =>
   modules?.some(({ name }) => isRedisearchModule(name))
 
-export const isTriggeredAndFunctionsModule = (moduleName: string) =>
-  TRIGGERED_AND_FUNCTIONS_MODULES.some((value) => moduleName === value)
-
-export const isTriggeredAndFunctionsAvailable = (modules: AdditionalRedisModule[]): boolean =>
-  modules?.some(({ name }) => isTriggeredAndFunctionsModule(name))
-
 export const isContainJSONModule = (modules: AdditionalRedisModule[]): boolean =>
   modules?.some((m: AdditionalRedisModule) => m.name === RedisDefaultModules.ReJSON)
 
 export const getDbWithModuleLoaded = (databases: Instance[], moduleName: string) =>
   find(databases, ({ modules }) => {
-    if (isTriggeredAndFunctionsModule(moduleName)) return isTriggeredAndFunctionsAvailable(modules)
     if (isRedisearchModule(moduleName)) return isRedisearchAvailable(modules)
 
     return some(modules, ({ name }) => name === moduleName)

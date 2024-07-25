@@ -11,6 +11,7 @@ import reducer, {
   initialState,
   setAppContextInitialState,
   setAppContextConnectedInstanceId,
+  setAppContextConnectedRdiInstanceId,
   setBrowserPatternKeyListDataLoaded,
   setBrowserRedisearchKeyListDataLoaded,
   setBrowserSelectedKey,
@@ -39,6 +40,10 @@ import reducer, {
   setRecommendationsShowHidden,
   appContextCapability,
   setCapability,
+  setPipelineDialogState,
+  setLastPipelineManagementPage,
+  resetPipelineManagement,
+  appContextPipelineManagement,
 } from '../../app/context'
 
 jest.mock('uiSrc/services', () => ({
@@ -62,13 +67,15 @@ describe('slices', () => {
       expect(appContextSelector(rootState)).toEqual(initialState)
     })
 
-    it('should properly set initial state with existing contextId and capability', () => {
+    it('should properly set initial state with existing contextId and capability and contextRdiInstanceId', () => {
       // Arrange
       const contextInstanceId = '12312-3123'
+      const contextRdiInstanceId = 'rdi-123'
       const capability = { source: '123123' }
       const prevState = {
         ...initialState,
         contextInstanceId,
+        contextRdiInstanceId,
         capability,
         browser: {
           ...initialState.browser,
@@ -104,6 +111,7 @@ describe('slices', () => {
       const state = {
         ...initialState,
         contextInstanceId,
+        contextRdiInstanceId,
         capability,
       }
 
@@ -130,6 +138,27 @@ describe('slices', () => {
 
       // Act
       const nextState = reducer(initialState, setAppContextConnectedInstanceId(contextInstanceId))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setAppContextConnectedRdiInstanceId', () => {
+    it('should properly set id', () => {
+      // Arrange
+      const contextRdiInstanceId = 'rdi-123'
+      const state = {
+        ...initialState,
+        contextRdiInstanceId
+      }
+
+      // Act
+      const nextState = reducer(initialState, setAppContextConnectedRdiInstanceId(contextRdiInstanceId))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -616,11 +645,12 @@ describe('slices', () => {
       // Arrange
       const data = {
         source: '123123',
+        tutorialPopoverShown: false,
       }
 
       const state = {
         ...initialState.capability,
-        ...data,
+        source: data.source,
       }
 
       // Act
@@ -632,6 +662,74 @@ describe('slices', () => {
       })
 
       expect(appContextCapability(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setPipelineDialogState', () => {
+    it('should properly set pipeline dialog state', () => {
+      // Arrange
+      const state = {
+        ...initialState.pipelineManagement,
+        isOpenDialog: false,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setPipelineDialogState(false))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextPipelineManagement(rootState)).toEqual(state)
+    })
+  })
+
+  describe('setLastPipelineManagementPage', () => {
+    it('should properly set last viewed page', () => {
+      // Arrange
+      const mockLastPage = 'name'
+      const state = {
+        ...initialState.pipelineManagement,
+        lastViewedPage: mockLastPage,
+      }
+
+      // Act
+      const nextState = reducer(initialState, setLastPipelineManagementPage(mockLastPage))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextPipelineManagement(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetPipelineManagement', () => {
+    it('should properly set last page', () => {
+      // Arrange
+      const prevState = {
+        ...initialState,
+        pipelineManagement: {
+          lastViewedPage: 'some value',
+          isOpenDialog: false,
+        },
+      }
+      const state = {
+        lastViewedPage: '',
+        isOpenDialog: true,
+      }
+
+      // Act
+      const nextState = reducer(prevState, resetPipelineManagement())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        app: { context: nextState },
+      })
+
+      expect(appContextPipelineManagement(rootState)).toEqual(state)
     })
   })
 })

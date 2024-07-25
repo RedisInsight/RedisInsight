@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 import fixReactVirtualized from 'esbuild-plugin-react-virtualized'
+import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
 // import { compression } from 'vite-plugin-compression2'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
@@ -31,6 +32,7 @@ export default defineConfig({
   plugins: [
     react(),
     svgr({ include: ['**/*.svg?react'] }),
+    reactClickToComponent(),
     // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true
@@ -46,12 +48,18 @@ export default defineConfig({
   },
   server: {
     port: 8080,
+    fs: {
+      allow: [
+        '..',
+        '../../node_modules/monaco-editor',
+      ],
+    },
   },
   envPrefix: 'RI_',
   optimizeDeps: {
     include: [
-      'monaco-editor'
-      // 'monaco-yaml/yaml.worker',
+      'monaco-editor',
+      'monaco-yaml/yaml.worker',
     ],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722

@@ -74,9 +74,9 @@ export class CloudUserApiService {
         throw new CloudApiUnauthorizedException();
       }
 
-      const decodedJwt = decode(session.accessToken);
+      const { exp } = JSON.parse(Buffer.from(session.accessToken.split('.')[1], 'base64').toString());
 
-      const expiresIn = decodedJwt.exp * 1_000 - Date.now();
+      const expiresIn = exp * 1_000 - Date.now();
 
       if (expiresIn < cloudConfig.renewTokensBeforeExpire) {
         // need to renew

@@ -13,7 +13,15 @@ import {
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
+
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
+import {
+  RecommendationBody,
+  RecommendationBadges,
+  RecommendationBadgesLegend,
+  RecommendationVoting,
+  RecommendationCopyComponent,
+} from 'uiSrc/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Theme } from 'uiSrc/constants'
@@ -23,18 +31,9 @@ import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-m
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
 import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
-
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { RecommendationVoting, RecommendationCopyComponent } from 'uiSrc/components'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
-
-import {
-  sortRecommendations,
-  renderRecommendationBadgesLegend,
-  renderRecommendationBadges,
-  renderRecommendationContent,
-} from 'uiSrc/utils/recommendation/utils'
-
+import { sortRecommendations } from 'uiSrc/utils/recommendation'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import styles from './styles.module.scss'
@@ -109,7 +108,7 @@ const Recommendations = () => {
         </EuiFlexItem>
       </EuiFlexGroup>
       <EuiFlexItem grow={false}>
-        {renderRecommendationBadges(badges)}
+        <RecommendationBadges badges={badges} />
       </EuiFlexItem>
     </EuiFlexGroup>
   )
@@ -138,7 +137,7 @@ const Recommendations = () => {
 
   return (
     <div className={styles.wrapper}>
-      {renderRecommendationBadgesLegend()}
+      <RecommendationBadgesLegend />
       <div className={styles.recommendationsContainer}>
         {sortRecommendations(recommendations, recommendationsContent).map(({ name, params, vote }) => {
           const {
@@ -170,7 +169,7 @@ const Recommendations = () => {
                 data-testid={`${id}-accordion`}
               >
                 <EuiPanel className={styles.accordionContent} color="subdued">
-                  {renderRecommendationContent(content, params, { telemetryName: telemetryEvent ?? name })}
+                  <RecommendationBody elements={content} params={params} telemetryName={telemetryEvent ?? name} />
                   {!!params?.keys?.length && (
                     <RecommendationCopyComponent
                       keyName={params.keys[0]}

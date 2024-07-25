@@ -14,7 +14,7 @@ export class DatabaseRecommendationAnalytics extends TelemetryBaseService {
   sendCreatedRecommendationEvent(recommendation: DatabaseRecommendation, database: Database): void {
     try {
       this.sendEvent(
-        TelemetryEvents.InsightsRecommendationGenerated,
+        TelemetryEvents.InsightsTipGenerated,
         {
           recommendationName: recommendation.name,
           databaseId: database.id,

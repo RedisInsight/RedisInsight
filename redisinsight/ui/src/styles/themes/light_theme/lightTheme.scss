@@ -108,6 +108,8 @@
   --buttonDangerToastHoverColor: #{$buttonDangerToastHoverColor};
   --buttonGuideBgColor: #{$buttonGuideBgColor};
   --buttonSuccessColor: #{$buttonSuccessColor};
+  --buttonDarkenTextColor: #{$buttonDarkenTextColor};
+  --buttonDarkenBgColor: #{$buttonDarkenBgColor};
 
   --comboBoxBadgeBgColor: #{$comboBoxBadgeBgColor};
   --loadingContentColor: #{$loadingContentColor};
@@ -198,4 +200,7 @@
   --cloudSsoGoogle: #{$cloudSsoGoogle};
   --cloudSsoGithub: #{$cloudSsoGithub};
   --cloudSsoAdvantagesBgColor: #{$cloudSsoAdvantagesBgColor};
+
+  // rdi
+  --rdiSecondaryBgColor: #{$rdiSecondaryBgColor};
 }

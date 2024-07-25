@@ -3,8 +3,6 @@ import config, { Config } from 'src/utils/config';
 import { Injectable, Logger } from '@nestjs/common';
 import { AiQueryAuthData } from 'src/modules/ai/query/models/ai-query.auth-data';
 import { AiQueryWsEvents } from 'src/modules/ai/query/models';
-import { AiQueryAuthProvider } from 'src/modules/ai/query/providers/auth/ai-query-auth.provider';
-import { SessionMetadata } from 'src/common/models';
 import { wrapAiQueryError } from 'src/modules/ai/query/exceptions';
 
 const aiConfig = config.get('ai') as Config['ai'];
@@ -13,11 +11,7 @@ const aiConfig = config.get('ai') as Config['ai'];
 export class AiQueryProvider {
   private readonly logger = new Logger('AiQueryProvider');
 
-  constructor(
-    private readonly aiQueryAuthProvider: AiQueryAuthProvider,
-  ) {}
-
-  async getSocket(sessionMetadata: SessionMetadata, auth: AiQueryAuthData): Promise<Socket> {
+  async getSocket(auth: AiQueryAuthData): Promise<Socket> {
     try {
       return await new Promise((resolve, reject) => {
         const socket = io(aiConfig.querySocketUrl, {

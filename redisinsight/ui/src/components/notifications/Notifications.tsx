@@ -104,6 +104,14 @@ const Notifications = () => {
           () => removeToast({ id })
         )
       }
+
+      if (additionalInfo?.errorCode === CustomErrorCodes.RdiDeployPipelineFailure) {
+        return errorMessages.RDI_DEPLOY_PIPELINE(
+          { id, title, message },
+          () => removeToast({ id })
+        )
+      }
+
       return errorMessages.DEFAULT(id, message, () => removeToast({ id }), title)
     })
 

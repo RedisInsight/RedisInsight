@@ -16,32 +16,6 @@
   line-height: 24px;
 }
 
-.panelPopover {
-  border-color: var(--euiColorPrimary) !important;
-  :global(.euiPopover__panelArrow:before) {
-    border-top-color: var(--euiColorPrimary) !important;
-  }
-}
-
-.popoverIcon {
-  position: absolute;
-  color: var(--euiColorWarningLight) !important;
-  width: 24px !important;
-  height: 24px !important;
-}
-
-.popoverItem {
-  font-size: 13px !important;
-  line-height: 18px !important;
-  padding-left: 34px;
-}
-
-.popoverItemTitle {
-  color: var(--htmlColor) !important;
-  font-size: 14px !important;
-  line-height: 24px !important;
-}
-
 .content {
   display: flex;
   min-height: 20px;

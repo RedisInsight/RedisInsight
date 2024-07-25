@@ -8,6 +8,7 @@ yarn --cwd tests/e2e install
 
 # create folder before tests run to prevent permissions issue
 mkdir -p tests/e2e/remote
+mkdir -p tests/e2e/rdi
 
 # run rte
 docker-compose -f tests/e2e/rte.docker-compose.yml build

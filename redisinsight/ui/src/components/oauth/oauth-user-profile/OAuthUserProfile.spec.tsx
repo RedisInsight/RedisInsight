@@ -13,6 +13,7 @@ import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
 
+import { appInfoSelector } from 'uiSrc/slices/app/info'
 import OAuthUserProfile, { Props } from './OAuthUserProfile'
 
 const mockedProps = mock<Props>()
@@ -22,6 +23,13 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   oauthCloudUserSelector: jest.fn().mockReturnValue({
     data: null
   }),
+}))
+
+jest.mock('uiSrc/slices/app/info', () => ({
+  ...jest.requireActual('uiSrc/slices/app/info'),
+  appInfoSelector: jest.fn().mockReturnValue({
+    server: {}
+  })
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -46,6 +54,18 @@ describe('OAuthUserProfile', () => {
     render(<OAuthUserProfile {...mockedProps} />)
 
     expect(screen.getByTestId('cloud-sign-in-btn')).toBeInTheDocument()
+    expect(screen.queryByTestId('user-profile-btn')).not.toBeInTheDocument()
+  })
+
+  it('should not render sign in button if no profile and mas build', () => {
+    (appInfoSelector as jest.Mock).mockReturnValueOnce({
+      server: {
+        packageType: 'mas'
+      }
+    })
+    render(<OAuthUserProfile {...mockedProps} />)
+
+    expect(screen.queryByTestId('cloud-sign-in-btn')).not.toBeInTheDocument()
     expect(screen.queryByTestId('user-profile-btn')).not.toBeInTheDocument()
   })
 

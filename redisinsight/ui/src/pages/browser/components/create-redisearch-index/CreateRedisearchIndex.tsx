@@ -22,7 +22,6 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Divider from 'uiSrc/components/divider/Divider'
-import AddItemsActions from 'uiSrc/pages/browser/components/add-items-actions/AddItemsActions'
 import { createIndexStateSelector, createRedisearchIndexAction } from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -30,6 +29,7 @@ import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -95,6 +95,15 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
 
   const clearFieldsValues = (id: number) => {
     setFields((fields) => fields.map((item) => (item.id === id ? initialFieldValue(fieldTypeOptions, id) : item)))
+  }
+
+  const onClickRemove = ({ id }: any) => {
+    if (fields.length === 1) {
+      clearFieldsValues(id)
+      return
+    }
+
+    removeField(id)
   }
 
   const handleFieldChange = (formField: string, id: number, value: string) => {
@@ -239,68 +248,51 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               {IdentifierInfo()}
             </EuiText>
 
-            {
-              fields.map((item, index) => (
-                <EuiFlexItem
-                  key={item.id}
-                  className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
-                  grow
-                  style={{ marginBottom: '8px', marginTop: '10px' }}
-                >
-                  <EuiFlexGroup gutterSize="m">
-                    <EuiFlexItem grow>
-                      <EuiFlexGroup gutterSize="none" alignItems="center">
-                        <EuiFlexItem grow>
-                          <EuiFormRow fullWidth>
-                            <EuiFieldText
-                              fullWidth
-                              name={`identifier-${item.id}`}
-                              id={`identifier-${item.id}`}
-                              placeholder="Enter Identifier"
-                              value={item.identifier}
-                              onChange={(e: ChangeEvent<HTMLInputElement>) => handleFieldChange(
-                                'identifier',
-                                item.id,
-                                e.target.value
-                              )}
-                              inputRef={index === fields.length - 1 ? lastAddedIdentifier : null}
-                              autoComplete="off"
-                              data-testid={`identifier-${item.id}`}
-                            />
-                          </EuiFormRow>
-                        </EuiFlexItem>
-                        <EuiFlexItem grow>
-                          <EuiFormRow>
-                            <EuiSuperSelect
-                              itemClassName="withColorDefinition"
-                              options={fieldTypeOptions}
-                              valueOfSelected={item.fieldType}
-                              onChange={(value: string) => handleFieldChange(
-                                'fieldType',
-                                item.id,
-                                value
-                              )}
-                              data-testid={`field-type-${item.id}`}
-                            />
-                          </EuiFormRow>
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiFlexItem>
-                    <AddItemsActions
-                      id={item.id}
-                      index={index}
-                      length={fields.length}
-                      addItem={addField}
-                      removeItem={removeField}
-                      clearItemValues={clearFieldsValues}
-                      clearIsDisabled={isClearDisabled(item)}
-                      loading={loading}
-                      anchorClassName={styles.refreshKeyTooltip}
-                    />
-                  </EuiFlexGroup>
-                </EuiFlexItem>
-              ))
-            }
+            <AddMultipleFields
+              items={fields}
+              isClearDisabled={isClearDisabled}
+              onClickRemove={onClickRemove}
+              onClickAdd={addField}
+            >
+              {(item, index) => (
+                <EuiFlexGroup gutterSize="none" alignItems="center">
+                  <EuiFlexItem grow>
+                    <EuiFormRow fullWidth>
+                      <EuiFieldText
+                        fullWidth
+                        name={`identifier-${item.id}`}
+                        id={`identifier-${item.id}`}
+                        placeholder="Enter Identifier"
+                        value={item.identifier}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => handleFieldChange(
+                          'identifier',
+                          item.id,
+                          e.target.value
+                        )}
+                        inputRef={index === fields.length - 1 ? lastAddedIdentifier : null}
+                        autoComplete="off"
+                        data-testid={`identifier-${item.id}`}
+                      />
+                    </EuiFormRow>
+                  </EuiFlexItem>
+                  <EuiFlexItem grow>
+                    <EuiFormRow>
+                      <EuiSuperSelect
+                        itemClassName="withColorDefinition"
+                        options={fieldTypeOptions}
+                        valueOfSelected={item.fieldType}
+                        onChange={(value: string) => handleFieldChange(
+                          'fieldType',
+                          item.id,
+                          value
+                        )}
+                        data-testid={`field-type-${item.id}`}
+                      />
+                    </EuiFormRow>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              )}
+            </AddMultipleFields>
           </div>
         </div>
       </div>

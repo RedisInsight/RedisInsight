@@ -1,4 +1,4 @@
-import { isNumber, sortBy } from 'lodash';
+import { camelCase, isNumber, mapKeys, sortBy } from 'lodash';
 
 export const sortByNumberField = <T>(
   items: T[],
@@ -19,3 +19,18 @@ export const isJson = (item: any): boolean =>  {
 
   return typeof value === "object" && value !== null;
 }
+
+export const convertKeysToCamelCase = (data: any): any => {
+  if (Array.isArray(data)) {
+    return data.map(convertKeysToCamelCase);
+  }
+
+  if (data !== null && data.constructor === Object) {
+    return mapKeys(
+      Object.fromEntries(Object.entries(data).map(([key, value]) => [camelCase(key), convertKeysToCamelCase(value)])),
+      (_value, key) => camelCase(key),
+    );
+  }
+
+  return data;
+};

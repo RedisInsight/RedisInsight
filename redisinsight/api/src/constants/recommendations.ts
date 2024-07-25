@@ -1,4 +1,7 @@
 export const RECOMMENDATION_NAMES = Object.freeze({
+  // todo: moved SET_PASSWORD to top [acl list].
+  //  Investigate why there is no response when placed between ZSET_HASHTABLE_TO_ZIPLIST and RSA
+  SET_PASSWORD: 'setPassword',
   LUA_SCRIPT: 'luaScript',
   BIG_HASHES: 'bigHashes',
   BIG_STRINGS: 'bigStrings',
@@ -12,9 +15,9 @@ export const RECOMMENDATION_NAMES = Object.freeze({
   COMPRESS_HASH_FIELD_NAMES: 'compressHashFieldNames',
   COMPRESSION_FOR_LIST: 'compressionForList',
   ZSET_HASHTABLE_TO_ZIPLIST: 'zSetHashtableToZiplist',
-  SET_PASSWORD: 'setPassword',
   RTS: 'RTS',
   REDIS_VERSION: 'redisVersion',
+  TRY_RDI: 'tryRDI',
   SEARCH_INDEXES: 'searchIndexes',
   SEARCH_JSON: 'searchJSON',
   STRING_TO_JSON: 'stringToJson',

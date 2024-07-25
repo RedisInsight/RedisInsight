@@ -10,7 +10,7 @@ import {
   getAxiosError,
   isStatusSuccessful,
   Maybe,
-  parseCloudOAuthError
+  parseCustomError
 } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
 import { getStreamedAnswer } from 'uiSrc/utils/api'
@@ -359,7 +359,7 @@ export function askExpertChatbotAction(
         },
         onError: (error: any) => {
           if (error?.status === ApiStatusCode.Unauthorized) {
-            const err = parseCloudOAuthError(error)
+            const err = parseCustomError(error)
             dispatch(addErrorNotification(err))
             dispatch(logoutUserAction())
           } else {

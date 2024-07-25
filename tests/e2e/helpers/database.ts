@@ -8,11 +8,12 @@ import { DiscoverMasterGroupsPage } from '../pageObjects/sentinel/discovered-sen
 import {
     MyRedisDatabasePage,
     BrowserPage,
-    AutoDiscoverREDatabases,
-    WelcomePage
+    AutoDiscoverREDatabases
 } from '../pageObjects';
 import { UserAgreementDialog } from '../pageObjects/dialogs';
 import { DatabaseAPIRequests } from './api/api-database';
+import { RedisOverviewPage } from './constants';
+import { RdiInstancesListPage } from '../pageObjects/rdi-instances-list-page';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const discoverMasterGroupsPage = new DiscoverMasterGroupsPage();
@@ -20,7 +21,7 @@ const autoDiscoverREDatabases = new AutoDiscoverREDatabases();
 const browserPage = new BrowserPage();
 const userAgreementDialog = new UserAgreementDialog();
 const databaseAPIRequests = new DatabaseAPIRequests();
-const welcomePage = new WelcomePage();
+const rdiInstancesListPage = new RdiInstancesListPage();
 
 export class DatabaseHelper {
     /**
@@ -162,7 +163,7 @@ export class DatabaseHelper {
         const databaseName = await autoDiscoverREDatabases.getDatabaseName();
         await t.click(autoDiscoverREDatabases.databaseCheckbox);
         await t.click(autoDiscoverREDatabases.addSelectedDatabases);
-        // Wait for database to be exist in the My redis databases list
+        // Wait for database to be exist in the redis databases list
         await t
             .expect(
                 autoDiscoverREDatabases.title.withExactText(
@@ -347,6 +348,14 @@ export class DatabaseHelper {
     async acceptLicenseTerms(): Promise<void> {
         await t.maximizeWindow();
         await userAgreementDialog.acceptLicenseTerms();
+        // Open default databases list tab if RDI opened
+        if (await rdiInstancesListPage.rdiInstanceButton.exists) {
+            await myRedisDatabasePage.setActivePage(RedisOverviewPage.DataBase);
+        }
+        // TODO delete after releasing chatbot
+        if (await myRedisDatabasePage.AddRedisDatabase.aiChatMessage.exists) {
+            await t.click(myRedisDatabasePage.AddRedisDatabase.aiCloseMessage)
+        }
     }
 
     // Accept License terms and connect to the RedisStack database
@@ -395,7 +404,7 @@ export class DatabaseHelper {
         databaseParameters: AddNewDatabaseParameters
     ): Promise<void> {
         if (
-            await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.exists || await welcomePage.addDbManuallyBtn.exists
+            await myRedisDatabasePage.AddRedisDatabase.addDatabaseButton.exists
         ) {
             await this.acceptLicenseTermsAndAddDatabase(databaseParameters);
         }

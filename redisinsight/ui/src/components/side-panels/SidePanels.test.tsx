@@ -188,7 +188,7 @@ describe('SidePanels', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.triggeredFunctionsLibraries('instanceId') });
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.pubSub('instanceId') });
 
     (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
     (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' })
@@ -202,7 +202,7 @@ describe('SidePanels', () => {
       eventData: {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
-        page: '/triggered-functions/libraries',
+        page: '/pub-sub',
         tab: 'tips'
       },
     });
@@ -214,7 +214,7 @@ describe('SidePanels', () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
 
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.triggeredFunctionsLibraries('instanceId') });
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.pubSub('instanceId') });
 
     (sidePanelsSelector as jest.Mock).mockReturnValue({ openedPanel: ISidePanels.Insights });
     (insightsPanelSelector as jest.Mock).mockReturnValue({ tabSelected: 'tips' })

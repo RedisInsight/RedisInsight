@@ -12,7 +12,7 @@ export class SshTunnelProvider {
   public async createTunnel(target: Endpoint, sshOptions: SshOptions) {
     try {
       const [server, client] = await createTunnel({
-        autoClose: false,
+        autoClose: true,
       }, {
         host: '127.0.0.1',
       },

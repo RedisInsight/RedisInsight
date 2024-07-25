@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  HttpCode,
+  HttpCode, Patch,
   Post,
   Put,
   UseInterceptors,
@@ -23,16 +23,19 @@ import {
   DeleteFieldsFromHashDto,
   DeleteFieldsFromHashResponse,
   GetHashFieldsDto,
-  GetHashFieldsResponse,
+  GetHashFieldsResponse, UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { HashService } from 'src/modules/browser/hash/hash.service';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: Hash')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('hash')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class HashController {
-  constructor(private hashService: HashService) {}
+export class HashController extends BrowserBaseController {
+  constructor(private hashService: HashService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold Hash data type' })
@@ -78,6 +81,20 @@ export class HashController {
       @Body() dto: AddFieldsToHashDto,
   ): Promise<void> {
     return await this.hashService.addFields(clientMetadata, dto);
+  }
+
+  @Patch('/ttl')
+  @ApiOperation({
+    description: 'Update hash fields ttl',
+  })
+  @ApiRedisParams()
+  @ApiBody({ type: UpdateHashFieldsTtlDto })
+  @ApiQueryRedisStringEncoding()
+  async updateTtl(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: UpdateHashFieldsTtlDto,
+  ): Promise<void> {
+    return await this.hashService.updateTtl(clientMetadata, dto);
   }
 
   @Delete('/fields')

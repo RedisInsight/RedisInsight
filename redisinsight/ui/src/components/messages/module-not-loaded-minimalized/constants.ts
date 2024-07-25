@@ -20,8 +20,4 @@ export const MODULE_CAPABILITY_TEXT_NOT_AVAILABLE: { [key in RedisDefaultModules
     title: 'Time series data structure is not available',
     text: 'Create a free Redis Stack database with the time series data structure that extends the core capabilities of your Redis.'
   },
-  [RedisDefaultModules.RedisGears]: {
-    title: 'Triggers and functions capability is not available',
-    text: 'Create a free Redis Stack database with triggers and functions that extend the core capabilities of your Redis.'
-  },
 }

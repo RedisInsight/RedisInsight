@@ -77,4 +77,13 @@ export class RecommendationsTab {
         const tutorialBtn = Selector(`[data-testid=${recommendationName}-to-tutorial-btn]`);
         await t.click(tutorialBtn);
     }
+
+    /**
+     * click on navigate button in the recommendation
+     * @param recommendationName Name of recommendation
+     */
+    async clickOnNavigationButton(recommendationName: RecommendationIds): Promise<void> {
+        const button = Selector(`[data-testid^=internal-link-${recommendationName}]`);
+        await t.click(button);
+    }
 }

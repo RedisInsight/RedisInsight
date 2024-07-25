@@ -173,6 +173,7 @@ test('Verify that user can delete a Consumer Group', async t => {
     // Verify that user can change the ID set for the Consumer Group when click on the Pencil button
     for (const id of entryIds) {
         const idBefore = await browserPage.streamGroupId.textContent;
+        await t.hover(browserPage.streamGroupId);
         await t.click(browserPage.editStreamLastIdButton);
         await t.typeText(browserPage.lastIdInput, id, { replace: true, paste: true });
         await t.click(browserPage.saveButton);

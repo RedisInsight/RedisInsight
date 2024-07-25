@@ -27,6 +27,8 @@ export enum KnownFeatures {
   RedisClient = 'redisClient',
   DocumentationChat = 'documentationChat',
   DatabaseChat = 'databaseChat',
+  Rdi = 'redisDataIntegration',
+  HashFieldExpiration = 'hashFieldExpiration',
 }
 
 export interface IFeatureFlag {

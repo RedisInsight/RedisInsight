@@ -73,7 +73,7 @@ export class DatabaseConnectionService {
     const rdiFeature = await this.featureService.getByName(KnownFeatures.Rdi);
 
     if (rdiFeature?.flag) {
-      const database = await this.repository.get(clientMetadata.databaseId);
+      const database = await this.repository.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.TRY_RDI,

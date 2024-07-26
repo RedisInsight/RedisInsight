@@ -51,11 +51,16 @@ export interface IRdiPipelineStrategies {
   data: IRdiPipelineStrategy[]
 }
 
+export enum StatisticsConnectionStatus {
+  notYetUsed = 'not yet used',
+  connected = 'connected'
+}
+
 export interface IConnections {
   [key: string]: {
     host: string
     port: number
-    status: string
+    status: StatisticsConnectionStatus
     type: string
     database: string
     user: string

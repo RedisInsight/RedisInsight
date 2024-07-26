@@ -14,8 +14,8 @@ import Divider from 'uiSrc/components/divider/Divider'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onChangeMode: () => void
-  onChangeGroupMode: () => void
+  onChangeMode?: () => void
+  onChangeGroupMode?: () => void
   onSubmit: () => void
   activeMode: RunQueryMode
   resultsMode?: ResultsMode
@@ -54,48 +54,52 @@ const QueryActions = (props: Props) => {
 
   return (
     <div className={cx(styles.actions, { [styles.disabledActions]: isDisabled })}>
-      <EuiToolTip
-        position="left"
-        content="Enables the raw output mode"
-        data-testid="change-mode-tooltip"
-      >
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          onClick={() => onChangeMode()}
-          iconType={RawModeIcon}
-          disabled={isLoading}
-          className={cx(styles.btn, styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
-          data-testid="btn-change-mode"
+      {onChangeMode && (
+        <EuiToolTip
+          position="left"
+          content="Enables the raw output mode"
+          data-testid="change-mode-tooltip"
         >
-          Raw mode
-        </EuiButton>
-      </EuiToolTip>
-      <EuiToolTip
-        position="left"
-        content={(
-          <>
-            Groups the command results into a single window.
-            <br />
-            When grouped, the results can be visualized only in the text format.
-          </>
+          <EuiButton
+            fill
+            size="s"
+            color="secondary"
+            onClick={() => onChangeMode()}
+            iconType={RawModeIcon}
+            disabled={isLoading}
+            className={cx(styles.btn, styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
+            data-testid="btn-change-mode"
+          >
+            Raw mode
+          </EuiButton>
+        </EuiToolTip>
+      )}
+      {onChangeGroupMode && (
+        <EuiToolTip
+          position="left"
+          content={(
+            <>
+              Groups the command results into a single window.
+              <br />
+              When grouped, the results can be visualized only in the text format.
+            </>
         )}
-        data-testid="group-results-tooltip"
-      >
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          onClick={() => onChangeGroupMode()}
-          disabled={isLoading}
-          iconType={GroupModeIcon}
-          className={cx(styles.btn, styles.textBtn, { [styles.activeBtn]: isGroupMode(resultsMode) })}
-          data-testid="btn-change-group-mode"
+          data-testid="group-results-tooltip"
         >
-          Group results
-        </EuiButton>
-      </EuiToolTip>
+          <EuiButton
+            fill
+            size="s"
+            color="secondary"
+            onClick={() => onChangeGroupMode()}
+            disabled={isLoading}
+            iconType={GroupModeIcon}
+            className={cx(styles.btn, styles.textBtn, { [styles.activeBtn]: isGroupMode(resultsMode) })}
+            data-testid="btn-change-group-mode"
+          >
+            Group results
+          </EuiButton>
+        </EuiToolTip>
+      )}
       <Divider orientation="vertical" colorVariable="separatorColor" className={styles.divider} />
       <EuiToolTip
         ref={runTooltipRef}

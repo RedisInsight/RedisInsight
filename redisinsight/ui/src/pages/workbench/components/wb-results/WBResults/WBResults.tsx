@@ -8,7 +8,7 @@ import { CodeButtonParams } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
 import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils'
 import { Nullable } from 'uiSrc/utils'
-import QueryCard from 'uiSrc/components/query-card'
+import { QueryCard } from 'uiSrc/components/query'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 

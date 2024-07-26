@@ -6,7 +6,23 @@ import { findTutorialPath } from 'uiSrc/utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { TutorialsIds } from 'uiSrc/constants'
 import QueryTutorials from './QueryTutorials'
+
+const mockedTutorials = [
+  {
+    id: TutorialsIds.IntroToSearch,
+    title: 'Intro to search'
+  },
+  {
+    id: TutorialsIds.BasicRedisUseCases,
+    title: 'Basic use cases'
+  },
+  {
+    id: TutorialsIds.IntroVectorSearch,
+    title: 'Intro to vector search'
+  },
+]
 
 jest.mock('uiSrc/utils', () => ({
   ...jest.requireActual('uiSrc/utils'),
@@ -20,7 +36,7 @@ jest.mock('uiSrc/telemetry', () => ({
 
 describe('QueryTutorial', () => {
   it('should render', () => {
-    expect(render(<QueryTutorials />)).toBeTruthy()
+    expect(render(<QueryTutorials tutorials={mockedTutorials} source="source" />)).toBeTruthy()
   })
 
   it('should call proper history push after click on guide with tutorial', () => {
@@ -28,9 +44,9 @@ describe('QueryTutorial', () => {
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock });
     (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
-    render(<QueryTutorials />)
+    render(<QueryTutorials tutorials={mockedTutorials} source="source" />)
 
-    fireEvent.click(screen.getByTestId('wb-tutorials-link_sq-intro'))
+    fireEvent.click(screen.getByTestId('query-tutorials-link_sq-intro'))
 
     expect(pushMock).toHaveBeenCalledWith({
       search: 'path=tutorials/path'
@@ -42,16 +58,16 @@ describe('QueryTutorial', () => {
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
     (findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
-    render(<QueryTutorials />)
+    render(<QueryTutorials tutorials={mockedTutorials} source="source" />)
 
-    fireEvent.click(screen.getByTestId('wb-tutorials-link_sq-intro'))
+    fireEvent.click(screen.getByTestId('query-tutorials-link_sq-intro'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_TUTORIAL_OPENED,
       eventData: {
         path: 'path',
         databaseId: 'instanceId',
-        source: 'advanced_workbench_editor',
+        source: 'source',
       }
     })
   })

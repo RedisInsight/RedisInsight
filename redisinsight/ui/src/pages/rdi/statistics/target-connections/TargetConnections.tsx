@@ -1,7 +1,7 @@
 import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
-import { IConnections } from 'uiSrc/slices/interfaces'
+import { IConnections, StatisticsConnectionStatus } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
@@ -22,7 +22,7 @@ const columns: EuiBasicTableColumn<ConnectionData>[] = [
     field: 'status',
     width: '80px',
     render: (status: string) =>
-      (status === 'good' ? (
+      (status === StatisticsConnectionStatus.connected ? (
         <EuiIcon type="dot" color="var(--buttonSuccessColor)" />
       ) : (
         <EuiIcon type="alert" color="danger" />

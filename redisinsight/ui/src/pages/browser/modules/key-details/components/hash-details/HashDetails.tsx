@@ -82,12 +82,12 @@ const HashDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <HashDetailsTable isExpireFieldsAvailable={isExpireFieldsAvailable} onRemoveKey={onRemoveKey} />
+            <HashDetailsTable isExpireFieldsAvailable={isExpireFieldsAvailable && showTtl} onRemoveKey={onRemoveKey} />
           </div>
         )}
         {isAddItemPanelOpen && (
           <div className={cx('formFooterBar', 'contentActive')}>
-            <AddHashFields isExpireFieldsAvailable={isExpireFieldsAvailable && showTtl} closePanel={closeAddItemPanel} />
+            <AddHashFields isExpireFieldsAvailable={isExpireFieldsAvailable} closePanel={closeAddItemPanel} />
           </div>
         )}
       </div>

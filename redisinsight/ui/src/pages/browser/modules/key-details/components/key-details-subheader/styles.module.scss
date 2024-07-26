@@ -9,12 +9,8 @@
     max-width: 100px;
   }
 
-  :global(.euiFlexGroup--gutterLarge>.euiFlexItem) {
-    margin: 12px 0 !important;
-  }
-
   .showTtlItem {
-    max-width: 110px;
+    width: 114px;
     display: 'flex';
     .showTtlCheckbox {
       font-weight: 400;

@@ -54,7 +54,9 @@ const PubSubPage = () => {
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.PUBSUB_PAGE,
-      databaseId: instanceId
+      eventData: {
+        databaseId: instanceId
+      }
     })
     setIsPageViewSent(true)
   }

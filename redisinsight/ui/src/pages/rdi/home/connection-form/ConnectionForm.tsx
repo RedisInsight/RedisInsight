@@ -6,9 +6,7 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiIcon,
   EuiTitle,
-  EuiToolTip
 } from '@elastic/eui'
 import { Field, FieldInputProps, FieldMetaProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
 import React, { useEffect, useState } from 'react'
@@ -42,33 +40,6 @@ const getInitialValues = (values: RdiInstance | null): ConnectionFormValues => (
   username: values?.username || '',
   password: values ? null : ''
 })
-
-const UrlTooltip = () => (
-  <EuiToolTip
-    data-testid="connection-form-url-tooltip"
-    title={(
-      <div>
-        <p>
-          <b>Pasting a connection URL auto fills the instance details.</b>
-        </p>
-        <p style={{ margin: 0, paddingTop: '10px' }}>The following connection URLs are supported:</p>
-      </div>
-        )}
-    className={styles.urlTooltip}
-    anchorClassName="inputAppendIcon"
-    position="right"
-    content={(
-      <ul>
-        <li>
-          <span />
-          TBD
-        </li>
-      </ul>
-        )}
-  >
-    <EuiIcon data-testid="connection-form-url-icon" type="iInCircle" style={{ cursor: 'pointer' }} />
-  </EuiToolTip>
-)
 
 const ConnectionForm = (props: Props) => {
   const { onSubmit, onCancel, editInstance, isLoading } = props
@@ -140,7 +111,6 @@ const ConnectionForm = (props: Props) => {
                       fullWidth
                       placeholder="Enter URL"
                       disabled={!!editInstance}
-                      append={!editInstance ? <UrlTooltip /> : undefined}
                       {...field}
                     />
                   )}

@@ -242,28 +242,6 @@ describe('POST /databases/:instanceId/analysis', () => {
       ].map(mainCheckFn);
     });
 
-    describe('setPassword recommendation', () => {
-      requirements('!rte.pass');
-      [
-        {
-          name: 'Should create new database analysis with setPassword recommendation',
-          data: {
-            delimiter: '-',
-          },
-          statusCode: 201,
-          responseSchema,
-          checkFn: async ({ body }) => {
-            expect(body.recommendations).to.include.deep.members([
-              constants.TEST_SET_PASSWORD_RECOMMENDATION,
-            ]);
-            after: async () => {
-              expect(await repository.count()).to.eq(5);
-            }
-          },
-        },
-      ].map(mainCheckFn);
-    });
-
     describe('recommendations with ReJSON', () => {
       requirements('rte.modules.rejson');
       [

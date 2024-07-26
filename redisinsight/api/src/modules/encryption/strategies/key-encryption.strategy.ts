@@ -11,9 +11,9 @@ import {
 } from 'src/modules/encryption/exceptions';
 import config, { Config } from 'src/utils/config';
 
-const ALGORITHM = 'aes-256-cbc';
 const HASH_ALGORITHM = 'sha256';
 const SERVER_CONFIG = config.get('server') as Config['server'];
+const ENCRYPTION_CONFIG = config.get('encryption') as Config['encryption'];
 
 @Injectable()
 export class KeyEncryptionStrategy implements IEncryptionStrategy {
@@ -25,6 +25,10 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
 
   constructor() {
     this.key = SERVER_CONFIG.encryptionKey;
+  }
+
+  private getCipherIV(): Buffer {
+    return Buffer.from(ENCRYPTION_CONFIG.encryptionIV).slice(0, 16);
   }
 
   /**
@@ -55,7 +59,7 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
   async encrypt(data: string): Promise<EncryptionResult> {
     const cipherKey = await this.getCipherKey();
     try {
-      const cipher = createCipheriv(ALGORITHM, cipherKey, Buffer.alloc(16, 0));
+      const cipher = createCipheriv(ENCRYPTION_CONFIG.encryptionAlgorithm, cipherKey, this.getCipherIV());
       let encrypted = cipher.update(data, 'utf8', 'hex');
       encrypted += cipher.final('hex');
 
@@ -77,7 +81,7 @@ export class KeyEncryptionStrategy implements IEncryptionStrategy {
     const cipherKey = await this.getCipherKey();
 
     try {
-      const decipher = createDecipheriv(ALGORITHM, cipherKey, Buffer.alloc(16, 0));
+      const decipher = createDecipheriv(ENCRYPTION_CONFIG.encryptionAlgorithm, cipherKey, this.getCipherIV());
       let decrypted = decipher.update(data, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;

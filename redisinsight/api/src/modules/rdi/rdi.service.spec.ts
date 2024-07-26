@@ -74,7 +74,7 @@ describe('RdiService', () => {
     it('should throw an error if Rdi instance is not found', async () => {
       repository.get.mockResolvedValue(undefined);
 
-      await expect(service.get('123')).rejects.toThrowError('TBD not found');
+      await expect(service.get('123')).rejects.toThrowError('RDI with id 123 was not found');
     });
   });
 

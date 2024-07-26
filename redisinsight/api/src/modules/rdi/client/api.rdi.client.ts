@@ -44,15 +44,23 @@ export class ApiRdiClient extends RdiClient {
       baseURL: rdi.url,
       timeout: RDI_TIMEOUT,
       httpsAgent: new https.Agent({
-        rejectUnauthorized: false,
+        // we might work with self-signed certificates for local builds
+        rejectUnauthorized: false, // lgtm[js/disabling-certificate-validation]
       }),
     });
   }
 
   async getSchema(): Promise<object> {
     try {
-      const response = await this.client.get(RdiUrl.GetSchema);
-      return response.data;
+      const [config, jobs] = await Promise.all([
+        this.client.get(RdiUrl.GetConfigSchema).then(({ data }) => data),
+        this.client.get(RdiUrl.GetJobsSchema).then(({ data }) => data),
+      ]);
+
+      return {
+        config,
+        jobs,
+      };
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -106,7 +114,7 @@ export class ApiRdiClient extends RdiClient {
 
       return await this.pollActionStatus(actionId);
     } catch (error) {
-      throw wrapRdiPipelineError(error, error.response.data.message);
+      throw wrapRdiPipelineError(error, error?.response?.data?.message);
     }
   }
 
@@ -172,9 +180,9 @@ export class ApiRdiClient extends RdiClient {
         { username: this.rdi.username, password: this.rdi.password },
       );
       const accessToken = response.data.access_token;
-      const decodedJwt = decode(accessToken);
+      const { exp } = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString());
 
-      this.auth = { jwt: accessToken, exp: decodedJwt.exp };
+      this.auth = { jwt: accessToken, exp };
       this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (e) {
       throw wrapRdiPipelineError(e);

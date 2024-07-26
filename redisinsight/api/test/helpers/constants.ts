@@ -9,6 +9,7 @@ import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 
 const API = {
   DATABASES: 'databases',
+  RDI: 'rdi',
 };
 
 const TEST_RUN_ID = `=${uuidv4()}`;

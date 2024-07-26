@@ -38,6 +38,9 @@ const Config = () => {
   useEffect(() => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_CONFIG,
+      eventData: {
+        rdiInstanceId
+      }
     })
 
     return () => {

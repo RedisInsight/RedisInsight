@@ -2,20 +2,15 @@
   padding: 12px 18px 0px 18px;
 
   .divider {
-    margin: 0 12px;
-  }
-
-  .keyFormatterItem {
-    max-width: 100px;
+    margin: 0 14px;
+    height: 20px;
+    width: 1px;
   }
 
   .showTtlItem {
-    width: 114px;
-    display: 'flex';
     .showTtlCheckbox {
       font-weight: 400;
       font-size: 14px;
-      margin: auto;
 
       :global(.euiCheckbox__input) {
         color: var(--controlsBorderColor) !important;
@@ -35,22 +30,8 @@
     }
   }
 
-  .addBtnContainer {
-    max-width: 40px;
-    align-self: center;
-    :global(.euiButton) {
-      height: 24px !important;
-      width: 27px !important;
-      min-width: 27px !important;
-
-      :global(.euiButton__content) {
-        padding: 0 !important;
-        :global(.euiButton__text) {
-          font-size: 12px !important;
-          font-weight: 400 !important;
-        }
-      }
-    }
+  .actionItem {
+    margin-left: 12px;
   }
 }
 

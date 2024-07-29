@@ -36,7 +36,7 @@ describe('HashDetails', () => {
 
   it('should render subheader', () => {
     render(<HashDetails {...instance(mockedProps)} />)
-    expect(screen.getByText('+')).toBeInTheDocument()
+    expect(screen.getByTestId('select-format-key-value')).toBeInTheDocument()
   })
 
   it('opens and closes the add item panel', () => {
@@ -47,7 +47,7 @@ describe('HashDetails', () => {
         onCloseAddItemPanel={() => {}}
       />
     )
-    fireEvent.click(screen.getByText('+'))
+    fireEvent.click(screen.getByTestId('add-key-value-items-btn'))
     expect(screen.getByText('Save')).toBeInTheDocument()
     fireEvent.click(screen.getByText('Cancel'))
     expect(screen.queryByText('Save')).not.toBeInTheDocument()

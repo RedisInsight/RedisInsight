@@ -17,6 +17,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import AddHashFields from './add-hash-fields/AddHashFields'
 import { HashDetailsTable } from './hash-details-table'
 import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
+import { AddItemsAction } from '../key-details-actions'
 
 export interface Props extends KeyDetailsHeaderProps {
   onRemoveKey: () => void
@@ -53,6 +54,10 @@ const HashDetails = (props: Props) => {
     }
   }
 
+  const Actions = ({ width }: { width: number }) => (
+    <AddItemsAction title="Add Fields" width={width} openAddItemPanel={openAddItemPanel} />
+  )
+
   const handleSelectShow = (show: boolean) => {
     setShowTtl(show)
 
@@ -70,13 +75,12 @@ const HashDetails = (props: Props) => {
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
-        keyType={keyType}
-        displayKeyFormatter={false}
       />
       <KeyDetailsSubheader
+        keyType={keyType}
         showTtl={showTtl}
         onShowTtl={handleSelectShow}
-        onAddKey={openAddItemPanel}
+        Actions={Actions}
         isExpireFieldsAvailable={isExpireFieldsAvailable}
       />
       <div className="key-details-body" key="key-details-body">

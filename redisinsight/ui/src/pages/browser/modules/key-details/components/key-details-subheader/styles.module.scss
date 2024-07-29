@@ -7,13 +7,11 @@
 
   .keyFormatterItem {
     max-width: 100px;
-    margin-right: 0;
   }
 
   .showTtlItem {
-    max-width: 110px;
+    width: 114px;
     display: 'flex';
-    margin-left: 0;
     .showTtlCheckbox {
       font-weight: 400;
       font-size: 14px;
@@ -40,7 +38,6 @@
   .addBtnContainer {
     max-width: 40px;
     align-self: center;
-    margin-right: 0 !important;
     :global(.euiButton) {
       height: 24px !important;
       width: 27px !important;

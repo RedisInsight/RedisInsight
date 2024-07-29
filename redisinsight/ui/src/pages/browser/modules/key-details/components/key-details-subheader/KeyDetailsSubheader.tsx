@@ -24,7 +24,7 @@ export const KeyDetailsSubheader = ({
     <AutoSizer disableHeight>
       {({ width = 0 }) => (
         <div style={{ width }}>
-          <EuiFlexGroup justifyContent="flexEnd">
+          <EuiFlexGroup justifyContent="flexEnd" gutterSize="none">
             <EuiFlexItem className={styles.keyFormatterItem}>
               <KeyDetailsHeaderFormatter width={width} />
             </EuiFlexItem>
@@ -36,7 +36,7 @@ export const KeyDetailsSubheader = ({
             />
             {isExpireFieldsAvailable && (
               <>
-                <EuiFlexItem className={styles.showTtlItem}>
+                <EuiFlexItem className={styles.showTtlItem} grow={false}>
                   <EuiCheckbox
                     id="showField"
                     name="showTtl"
@@ -55,7 +55,7 @@ export const KeyDetailsSubheader = ({
                 />
               </>
             )}
-            <EuiFlexItem className={styles.addBtnContainer}>
+            <EuiFlexItem className={styles.addBtnContainer} grow={false}>
               <EuiButton
                 fill
                 color="secondary"

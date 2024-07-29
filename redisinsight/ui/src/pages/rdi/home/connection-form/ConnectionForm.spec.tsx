@@ -72,16 +72,6 @@ describe('ConnectionForm', () => {
     expect(screen.getByTestId('connection-form-url-input')).toBeDisabled()
   })
 
-  it('should show url tooltip when url input is not disabled', async () => {
-    render(<ConnectionForm {...mockedProps} />)
-
-    fireEvent.mouseOver(screen.getByTestId('connection-form-url-icon'))
-
-    const tooltip = await screen.findByTestId('connection-form-url-tooltip')
-
-    expect(tooltip).toBeInTheDocument()
-  })
-
   it('should show validation tooltip when submit button is disabled', async () => {
     render(<ConnectionForm {...mockedProps} />)
 

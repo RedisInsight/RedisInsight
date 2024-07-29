@@ -1,6 +1,12 @@
 import axios, { AxiosError } from 'axios';
 import {
-  mockRdi, mockRdiClientMetadata, mockRdiDryRunJob, mockRdiPipeline, mockRdiStatisticsData,
+  mockRdi,
+  mockRdiClientMetadata,
+  mockRdiConfigSchema,
+  mockRdiDryRunJob, mockRdiJobsSchema,
+  mockRdiPipeline,
+  mockRdiSchema,
+  mockRdiStatisticsData,
 } from 'src/__mocks__';
 import errorMessages from 'src/constants/error-messages';
 import { sign } from 'jsonwebtoken';
@@ -17,18 +23,20 @@ describe('ApiRdiClient', () => {
   let client: ApiRdiClient;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     client = new ApiRdiClient(mockRdiClientMetadata, mockRdi);
   });
 
   describe('getSchema', () => {
     it('should return schema', async () => {
-      const data = { schema: {} };
-      mockedAxios.get.mockResolvedValueOnce({ data });
+      mockedAxios.get.mockResolvedValueOnce({ data: mockRdiConfigSchema });
+      mockedAxios.get.mockResolvedValueOnce({ data: mockRdiJobsSchema });
 
       const result = await client.getSchema();
 
-      expect(result).toEqual(data);
-      expect(mockedAxios.get).toHaveBeenCalledWith(RdiUrl.GetSchema);
+      expect(result).toEqual(mockRdiSchema);
+      expect(mockedAxios.get).toHaveBeenCalledWith(RdiUrl.GetConfigSchema);
+      expect(mockedAxios.get).toHaveBeenCalledWith(RdiUrl.GetJobsSchema);
     });
 
     it('should throw error if request fails', async () => {
@@ -38,6 +46,8 @@ describe('ApiRdiClient', () => {
           status: 401,
         },
       };
+
+      mockedAxios.get.mockResolvedValueOnce({ data: mockRdiConfigSchema });
       mockedAxios.get.mockRejectedValueOnce(error);
 
       await expect(client.getSchema()).rejects.toThrow(errorMessages.UNAUTHORIZED);

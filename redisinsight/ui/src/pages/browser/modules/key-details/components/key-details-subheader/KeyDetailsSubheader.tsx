@@ -60,7 +60,7 @@ export const KeyDetailsSubheader = ({
                 fill
                 color="secondary"
                 onClick={onAddKey}
-                data-testid="btn-add-key"
+                data-testid="add-key-value-items-btn"
               >
                 +
               </EuiButton>

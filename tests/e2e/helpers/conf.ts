@@ -40,8 +40,8 @@ export const ossStandaloneV5Config = {
 };
 
 export const ossStandaloneV7Config = {
-    host: process.env.OSS_STANDALONE_V7_HOST || 'localhost',
-    port: process.env.OSS_STANDALONE_V7_PORT || '6378',
+    host: process.env.OSS_STANDALONE_V7_HOST || 'oss-standalone-v7',
+    port: process.env.OSS_STANDALONE_V7_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_V7_DATABASE_NAME || 'test_standalone-v7'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_V7_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_V7_PASSWORD
@@ -115,7 +115,7 @@ export const cloudDatabaseConfig = {
 };
 
 export const ossStandaloneNoPermissionsConfig = {
-    host: process.env.OSS_STANDALONE_NOPERM_HOST || 'localhost',
+    host: process.env.OSS_STANDALONE_NOPERM_HOST || 'oss-standalone',
     port: process.env.OSS_STANDALONE_NOPERM_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_NOPERM_DATABASE_NAME || 'oss-standalone-no-permissions'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_NOPERM_USERNAME || 'noperm',
@@ -140,7 +140,7 @@ export const ossClusterForSSHConfig = {
 
 export const ossStandaloneTlsConfig = {
     host: process.env.OSS_STANDALONE_TLS_HOST || 'oss-standalone-tls',
-    port: process.env.OSS_STANDALONE_TLS_PORT || '6301',
+    port: process.env.OSS_STANDALONE_TLS_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_TLS_DATABASE_NAME || 'test_standalone_tls'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_TLS_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_TLS_PASSWORD,

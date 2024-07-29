@@ -120,7 +120,7 @@ test('Verify that user can see JSON Key details', async t => {
     await t.expect(keyBadge).contains('JSON', 'The JSON Key Badge is incorrect');
 });
 
-test.only
+test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV7Config);
     })

@@ -11,7 +11,7 @@ interface Props {
   showTtl: boolean
   onShowTtl: (checked: boolean) => void
   onAddKey: () => void
-  isExpireFieldsAvailable: boolean
+  isExpireFieldsAvailable?: boolean
 }
 
 export const KeyDetailsSubheader = ({

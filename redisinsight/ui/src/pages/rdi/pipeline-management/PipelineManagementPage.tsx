@@ -44,7 +44,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   useEffect(() => () => {
     dispatch(setLastPageContext(PageNames.rdiPipelineManagement))
     dispatch(setLastPipelineManagementPage(pathnameRef.current))
-    dispatch(removeInfiniteNotification(InfiniteMessagesIds.appUpdateAvailable))
+    dispatch(removeInfiniteNotification(InfiniteMessagesIds.pipelineDeploySuccess))
   }, [])
 
   useEffect(() => {

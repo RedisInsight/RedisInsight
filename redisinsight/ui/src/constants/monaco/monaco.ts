@@ -41,6 +41,25 @@ export enum MonacoLanguage {
   Text = 'text',
 }
 
+export const defaultMonacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
+  tabCompletion: 'on',
+  wordWrap: 'on',
+  padding: { top: 10 },
+  automaticLayout: true,
+  formatOnPaste: false,
+  glyphMargin: true,
+  stickyScroll: {
+    enabled: true,
+    defaultModel: 'indentationModel'
+  },
+  suggest: {
+    preview: true,
+    showStatusBar: true,
+    showIcons: false,
+  },
+  lineNumbersMinChars: 4
+}
+
 export const DEFAULT_MONACO_YAML_URI = 'http://example.com/schema-name.json'
 export const DEFAULT_MONACO_FILE_MATCH = '*'
 

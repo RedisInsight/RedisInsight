@@ -32,9 +32,17 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/monaco-editor/components/dedicated-editor'
+import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 
-import QueryActions from '../../query-actions'
-import QueryTutorials from '../../query-tutorials'
+import {
+  aroundQuotesRegExp,
+  argInQuotesRegExp,
+  SYNTAX_CONTEXT_ID,
+  SYNTAX_WIDGET_ID,
+  options,
+  TUTORIALS
+} from './constants'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -48,12 +56,6 @@ export interface Props {
   onQueryChangeMode: () => void
   onChangeGroupMode: () => void
 }
-
-const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
-const SYNTAX_WIDGET_ID = 'syntax.content.widget'
-
-const argInQuotesRegExp = /^['"](.|[\r\n])*['"]$/
-const aroundQuotesRegExp = /(^["']|["']$)/g
 
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
@@ -426,25 +428,6 @@ const Query = (props: Props) => {
     ).dispose
   }
 
-  const options: monacoEditor.editor.IStandaloneEditorConstructionOptions = {
-    tabCompletion: 'on',
-    wordWrap: 'on',
-    padding: { top: 10 },
-    automaticLayout: true,
-    formatOnPaste: false,
-    glyphMargin: true,
-    stickyScroll: {
-      enabled: true,
-      defaultModel: 'indentationModel'
-    },
-    suggest: {
-      preview: true,
-      showStatusBar: true,
-      showIcons: false,
-    },
-    lineNumbersMinChars: 4
-  }
-
   const isLoading = loading || processing
 
   return (
@@ -468,7 +451,7 @@ const Query = (props: Props) => {
           />
         </div>
         <div className={styles.queryFooter}>
-          <QueryTutorials />
+          <QueryTutorials tutorials={TUTORIALS} source="advanced_workbench_editor" />
           <QueryActions
             isDisabled={isDedicatedEditorOpen}
             isLoading={isLoading}

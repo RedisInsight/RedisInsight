@@ -2,6 +2,7 @@ import { flatten, isArray, isEmpty, isNumber, reject, toNumber, isNaN, isInteger
 import {
   CommandArgsType,
   CommandProvider,
+  ICommand,
   ICommandArg,
   ICommandArgGenerated
 } from 'uiSrc/constants'
@@ -189,6 +190,15 @@ export const generateArgsNames = (
     isEmpty
   )
 
+export const generateArgsForInsertText = (
+  argsNames: string[],
+  separator: string = ' ',
+): string =>
+  `${!argsNames.length ? '' : argsNames.join(' ').split(' ')
+  // eslint-disable-next-line sonarjs/no-nested-template-literals
+    .map((arg: string, i: number) => `\${${i + 1}:${arg}}${argsNames.length !== i+1 ? separator : ''}`)
+    .join('')}`
+
 export const getDocUrlForCommand = (commandName: string): string => {
   const command = commandName.replace(/\s+/g, '-').toLowerCase()
   return getUtmExternalLink(
@@ -238,4 +248,20 @@ export const arrayCommandToString = (command: string[] | null) => {
   }
 
   return null
+}
+
+export const getCommandMarkdown = (command: ICommand, docUrl: string = ''): string => {
+  const linkMore = !docUrl ? '' : ` [Read more](${docUrl})`
+  const lines: string[] = [command?.summary + linkMore]
+  if (command?.arguments?.length) {
+    // TODO: use i18n file for texts
+    lines.push('### Arguments:')
+    generateArgs(command?.provider, command.arguments).forEach((arg: ICommandArgGenerated): void => {
+      const { multiple, optional } = arg
+      const type: string = multiple ? 'multiple' : optional ? 'optional' : 'required'
+      const argDescription: string = `_${type}_ \`${arg.generatedName}\``
+      lines.push(argDescription)
+    })
+  }
+  return lines.join('\n'.repeat(2))
 }

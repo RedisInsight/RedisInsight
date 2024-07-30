@@ -19,6 +19,7 @@ import {
   EuiPopover,
   EuiButton,
   EuiText,
+  keys,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import styles from './styles.module.scss'
@@ -44,16 +45,19 @@ export interface Props {
   disableByValidation?: (value: string) => boolean
   children?: React.ReactElement
   validation?: (value: string) => string
+  getError?: (value: string) => { title: string, content: string | React.ReactNode } | undefined
   declineOnUnmount?: boolean
   iconSize?: IconSize
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
-  disabledTooltipText?: { title: string, text: string }
+  disabledTooltipText?: { title: string, content: string | React.ReactNode }
   preventOutsideClick?: boolean
   disableFocusTrap?: boolean
   approveByValidation?: (value: string) => boolean
   approveText?: { title: string, text: string }
+  formComponentType?: 'form' | 'div'
+  textFiledClassName?: string
 }
 
 const InlineItemEditor = (props: Props) => {
@@ -74,6 +78,7 @@ const InlineItemEditor = (props: Props) => {
     disableEmpty,
     disableByValidation,
     validation,
+    getError,
     declineOnUnmount = true,
     viewChildrenMode,
     iconSize,
@@ -85,6 +90,8 @@ const InlineItemEditor = (props: Props) => {
     disableFocusTrap = false,
     approveByValidation,
     approveText,
+    formComponentType = 'form',
+    textFiledClassName,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
   const [value, setValue] = useState<string>(initialValue)
@@ -134,13 +141,13 @@ const InlineItemEditor = (props: Props) => {
   }
 
   const handleOnEsc = (e: KeyboardEvent) => {
-    if (e.code.toLowerCase() === 'escape' || e.keyCode === 27) {
+    if (e.key === keys.ESCAPE) {
       e.stopPropagation()
       onDecline()
     }
   }
 
-  const handleApplyClick = (event: React.MouseEvent) => {
+  const handleApplyClick = (event: React.MouseEvent<HTMLElement>) => {
     if (approveByValidation && !approveByValidation?.(value)) {
       setIsShowApprovePopover(true)
     } else {
@@ -151,7 +158,9 @@ const InlineItemEditor = (props: Props) => {
   const handleFormSubmit = (event: React.MouseEvent<HTMLElement>): void => {
     event.preventDefault()
     event.stopPropagation()
-    onApply(value, event)
+    if (!isDisabledApply()) {
+      onApply(value, event)
+    }
   }
 
   const isDisabledApply = (): boolean =>
@@ -162,8 +171,8 @@ const InlineItemEditor = (props: Props) => {
       anchorClassName={styles.tooltip}
       position="bottom"
       display="inlineBlock"
-      title={isDisabled && disabledTooltipText?.title}
-      content={isDisabled && disabledTooltipText?.text}
+      title={(isDisabled && disabledTooltipText?.title) || (getError && getError?.(value)?.title)}
+      content={(isDisabled && disabledTooltipText?.content) || (getError && getError?.(value)?.content)}
       data-testid="apply-tooltip"
     >
       <EuiButtonIcon
@@ -188,9 +197,9 @@ const InlineItemEditor = (props: Props) => {
               <EuiWindowEvent event="keydown" handler={handleOnEsc} />
               <EuiFocusTrap disabled={disableFocusTrap}>
                 <EuiForm
-                  component="form"
+                  component={formComponentType}
                   className="relative"
-                  onSubmit={handleFormSubmit}
+                  onSubmit={(e: unknown) => handleFormSubmit(e as React.MouseEvent<HTMLElement>)}
                 >
                   <EuiFlexItem grow component="span">
                     {children || (
@@ -198,7 +207,7 @@ const InlineItemEditor = (props: Props) => {
                         <EuiFieldText
                           name={fieldName}
                           id={fieldName}
-                          className={styles.field}
+                          className={cx(styles.field, textFiledClassName)}
                           maxLength={maxLength || undefined}
                           placeholder={placeholder}
                           value={value}

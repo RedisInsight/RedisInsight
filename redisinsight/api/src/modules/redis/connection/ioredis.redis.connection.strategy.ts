@@ -59,6 +59,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
       showFriendlyErrorStack: true,
       maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
       retryStrategy: options?.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
+      autoResendUnfulfilledCommands: false,
     };
 
     if (tls) {
@@ -82,7 +83,9 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<ClusterOptions> {
     return {
       clusterRetryStrategy: options.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
+      slotsRefreshTimeout: REDIS_CLIENTS_CONFIG.slotsRefreshTimeout,
       redisOptions: await this.getRedisOptions(clientMetadata, database, options),
+      maxRedirections: REDIS_CLIENTS_CONFIG.maxRedirections,
     };
   }
 
@@ -183,7 +186,6 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           });
           connection.on('end', (): void => {
             this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-            tnl?.close?.();
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
@@ -264,7 +266,6 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           });
           cluster.on('end', (): void => {
             this.logger.warn(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION);
-            tnls.forEach((tnl) => tnl?.close?.());
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           cluster.on('ready', (): void => {

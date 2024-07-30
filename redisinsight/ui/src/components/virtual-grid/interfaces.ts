@@ -65,6 +65,7 @@ export interface IProps {
   hideFooter?: boolean
   maxTableWidth?: number
   hideProgress?: boolean
+  stickLastColumnHeaderCell?: boolean
 }
 
 export interface ISortedColumn {

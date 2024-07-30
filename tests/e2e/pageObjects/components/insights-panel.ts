@@ -12,8 +12,11 @@ export class InsightsPanel {
 
     recommendationsTab = Selector('[data-testid=recommendations-tab]');
     exploreTab = Selector('[data-testid=explore-tab]');
+    copilotTab = Selector('[data-testid=ai-assistant-tab]');
 
     existsCompatibilityPopover = Selector('[data-testid=explore-capability-popover]');
+
+    activeTabMask = '[class*=euiTab-isSelected]';
 
     /**
      * Open/Close  Panel
@@ -31,7 +34,7 @@ export class InsightsPanel {
      * get active tab
      */
     async getActiveTabName(): Promise<string> {
-        return this.activeTab.textContent;
+        return (this.sidePanel.find(this.activeTabMask)).textContent;
     }
     /**
      * Click on Panel tab

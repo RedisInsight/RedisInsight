@@ -619,7 +619,7 @@ describe('Cluster Scanner Strategy', () => {
             scanned: 10,
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClusterRedisClient, [Buffer.from(key)], dto.type);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClusterRedisClient, [Buffer.from(key)]);
         expect(strategy['scanNodes']).not.toHaveBeenCalled();
       });
       it('should find exact key when match is escaped glob patter', async () => {
@@ -652,7 +652,6 @@ describe('Cluster Scanner Strategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockClusterRedisClient,
           [Buffer.from(searchPattern)],
-          dto.type,
         );
         expect(strategy['scanNodes']).not.toHaveBeenCalled();
       });
@@ -690,7 +689,6 @@ describe('Cluster Scanner Strategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockClusterRedisClient,
           [Buffer.from(key)],
-          dto.type,
         );
         expect(strategy['scanNodes']).not.toHaveBeenCalled();
       });
@@ -727,7 +725,6 @@ describe('Cluster Scanner Strategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockClusterRedisClient,
           [Buffer.from(key)],
-          dto.type,
         );
         expect(strategy['scanNodes']).not.toHaveBeenCalled();
       });
@@ -765,7 +762,6 @@ describe('Cluster Scanner Strategy', () => {
         expect(strategy.getKeysInfo).toHaveBeenCalledWith(
           mockClusterRedisClient,
           [Buffer.from(key)],
-          dto.type,
         );
         expect(strategy['scanNodes']).not.toHaveBeenCalled();
       });

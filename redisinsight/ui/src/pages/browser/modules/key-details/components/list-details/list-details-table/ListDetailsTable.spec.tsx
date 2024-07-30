@@ -79,15 +79,35 @@ describe('ListDetailsTable', () => {
 
   it('should render editor after click edit button', async () => {
     render(<ListDetailsTable {...mockedProps} />)
-    await act(() => {
-      fireEvent.click(screen.getAllByTestId(/edit-list-button/)[0])
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('list_content-value-1'))
     })
-    expect(screen.getByTestId('element-value-editor')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByTestId('list_edit-btn-1'))
+    expect(screen.getByTestId('list_value-editor-1')).toBeInTheDocument()
   })
 
   it('should render resize trigger for index column', () => {
     render(<ListDetailsTable {...mockedProps} />)
     expect(screen.getByTestId('resize-trigger-index')).toBeInTheDocument()
+  })
+
+  it('should disable refresh when editing', async () => {
+    render(<ListDetailsTable {...mockedProps} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('list_content-value-0'))
+    })
+
+    fireEvent.click(screen.getByTestId('list_edit-btn-0'))
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 
   describe('decompressed  data', () => {
@@ -102,8 +122,8 @@ describe('ListDetailsTable', () => {
       });
       (listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
 
-      const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
-      const elementEl = queryByTestId(/list-element-value-/)
+      render(<ListDetailsTable {...(mockedProps)} />)
+      const elementEl = screen.getByTestId('list_content-value-0')
 
       expect(elementEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
@@ -124,7 +144,11 @@ describe('ListDetailsTable', () => {
       }))
 
       const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
-      const editBtn = queryByTestId(/edit-list-button-/)!
+      act(() => {
+        fireEvent.mouseEnter(screen.getByTestId('list_content-value-0'))
+      })
+
+      const editBtn = screen.getByTestId('list_edit-btn-0')
 
       fireEvent.click(editBtn)
 
@@ -134,23 +158,8 @@ describe('ListDetailsTable', () => {
       await waitForEuiToolTipVisible()
 
       expect(editBtn).toBeDisabled()
-      expect(screen.getByTestId('list-edit-tooltip')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
-      expect(queryByTestId('list-value-editor')).not.toBeInTheDocument()
+      expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
+      expect(queryByTestId('hash_value-editor-0')).not.toBeInTheDocument()
     })
-  })
-
-  it('should disable refresh when editing', async () => {
-    render(<ListDetailsTable {...mockedProps} />)
-
-    const afterRenderActions = [...store.getActions()]
-
-    await act(() => {
-      fireEvent.click(screen.getByTestId('edit-list-button-0'))
-    })
-
-    expect(store.getActions()).toEqual([
-      ...afterRenderActions,
-      setSelectedKeyRefreshDisabled(true)
-    ])
   })
 })

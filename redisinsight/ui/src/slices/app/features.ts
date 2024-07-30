@@ -38,19 +38,10 @@ export const initialState: StateAppFeatures = {
       [FeatureFlags.databaseChat]: {
         flag: false
       },
-      [FeatureFlags.appSettings]: {
+      [FeatureFlags.hashFieldExpiration]: {
         flag: false
       },
-      [FeatureFlags.profiler]: {
-        flag: false
-      },
-      [FeatureFlags.dbAnalysis]: {
-        flag: false
-      },
-      [FeatureFlags.appNotifications]: {
-        flag: false
-      },
-      [FeatureFlags.triggersAndFunctions]: {
+      [FeatureFlags.rdi]: {
         flag: false
       }
     }

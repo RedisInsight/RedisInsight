@@ -43,8 +43,14 @@ export class ProfilerClient {
       time, args, source, database,
     } = payload;
 
+    // If there's [ in the time, strip it out.
+    //
+    // There is a case of a timestamp coming with '[' on Alibaba
+    // Redis's monitor.
+    const newTime = time.split('[')[0];
+
     this.items.push({
-      time, args, source, database,
+      time: newTime, args, source, database,
     });
 
     this.debounce();

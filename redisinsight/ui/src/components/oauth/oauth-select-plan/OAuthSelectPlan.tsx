@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   EuiButton,
   EuiIcon,
@@ -9,7 +9,6 @@ import {
   EuiText,
   EuiTextColor,
   EuiTitle,
-  EuiToolTip,
 } from '@elastic/eui'
 import { toNumber, filter, get, find, first } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,7 +17,6 @@ import cx from 'classnames'
 import {
   createFreeDbJob,
   oauthCloudPlanSelector,
-  oauthCloudSelector,
   setIsOpenSelectPlanDialog,
   setSocialDialogState,
 } from 'uiSrc/slices/oauth/cloud'
@@ -27,11 +25,8 @@ import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { FeatureFlags, Theme } from 'uiSrc/constants'
-import { OAuthSocialSource, Region } from 'uiSrc/slices/interfaces'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import TriggeredFunctionsDarkSVG from 'uiSrc/assets/img/sidebar/gears.svg'
-import TriggeredFunctionsLightSVG from 'uiSrc/assets/img/sidebar/gears_active.svg'
+import { FeatureFlags } from 'uiSrc/constants'
+import { Region } from 'uiSrc/slices/interfaces'
 
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { OAuthProvider, OAuthProviders } from './constants'
@@ -44,26 +39,19 @@ const getProviderRegions = (regions: Region[], provider: OAuthProvider) =>
   (find(regions, { provider }) || {}).regions || []
 
 const OAuthSelectPlan = () => {
-  const { theme } = useContext(ThemeContext)
   const { isOpenDialog, data: plansInit = [], loading } = useSelector(oauthCloudPlanSelector)
-  const { source } = useSelector(oauthCloudSelector)
   const { [FeatureFlags.cloudSso]: cloudSsoFeature = {} } = useSelector(appFeatureFlagsFeaturesSelector)
 
-  const tfRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.triggersAndFunctions', [])
   const rsRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.redisStackPreview', [])
 
   const [plans, setPlans] = useState(plansInit || [])
   const [planIdSelected, setPlanIdSelected] = useState('')
   const [providerSelected, setProviderSelected] = useState<OAuthProvider>(DEFAULT_PROVIDER)
-  const [tfProviderRegions, setTfProviderRegions] = useState(getProviderRegions(tfRegions, providerSelected))
   const [rsProviderRegions, setRsProviderRegions] = useState(getProviderRegions(rsRegions, providerSelected))
 
   const dispatch = useDispatch()
 
-  const isTFSource = source?.endsWith(OAuthSocialSource.TriggersAndFunctions)
-
   useEffect(() => {
-    setTfProviderRegions(getProviderRegions(tfRegions, providerSelected))
     setRsProviderRegions(getProviderRegions(rsRegions, providerSelected))
   }, [providerSelected, plansInit])
 
@@ -72,20 +60,16 @@ const OAuthSelectPlan = () => {
       return
     }
 
-    const defaultRegions = isTFSource
-      ? [tfProviderRegions, DEFAULT_REGIONS].find((arr) => arr?.length)
-      : DEFAULT_REGIONS
-
     const filteredPlans = filter(plansInit, { provider: providerSelected })
       .sort((a, b) => (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0))
 
-    const defaultPlan = filteredPlans.find(({ region = '' }) => defaultRegions?.includes(region))
+    const defaultPlan = filteredPlans.find(({ region = '' }) => DEFAULT_REGIONS.includes(region))
     const rsPreviewPlan = filteredPlans.find(({ region = '' }) => rsProviderRegions?.includes(region))
     const planId = (defaultPlan || rsPreviewPlan || first(filteredPlans) || {}).id?.toString() || ''
 
     setPlans(filteredPlans)
     setPlanIdSelected(planId)
-  }, [isTFSource, plansInit, providerSelected, tfProviderRegions, rsProviderRegions])
+  }, [plansInit, providerSelected, rsProviderRegions])
 
   const handleOnClose = useCallback(() => {
     sendEventTelemetry({
@@ -101,7 +85,6 @@ const OAuthSelectPlan = () => {
 
   const getOptionDisplay = (item: CloudSubscriptionPlanResponse) => {
     const { region = '', details: { countryName = '', cityName = '' }, provider } = item
-    const tfProviderRegions: string[] = find(tfRegions, { provider })?.regions || []
     const rsProviderRegions: string[] = find(rsRegions, { provider })?.regions || []
 
     return (
@@ -110,18 +93,6 @@ const OAuthSelectPlan = () => {
         <EuiTextColor className={styles.regionName}>{region}</EuiTextColor>
         {rsProviderRegions?.includes(region) && (
           <EuiTextColor className={styles.rspreview} data-testid={`rs-text-${region}`}>(Redis 7.2)</EuiTextColor>
-        )}
-        { tfProviderRegions?.includes(region) && (
-          <EuiToolTip
-            content="Triggers and functions are available in this region"
-            anchorClassName={styles.tfOptionIconTooltip}
-          >
-            <EuiIcon
-              type={theme === Theme.Dark ? TriggeredFunctionsDarkSVG : TriggeredFunctionsLightSVG}
-              className={styles.tfOptionIcon}
-              data-testid={`tf-icon-${region}`}
-            />
-          </EuiToolTip>
         )}
       </EuiText>
     )
@@ -138,9 +109,6 @@ const OAuthSelectPlan = () => {
       }
     }
   )
-
-  const isVendorWithTFRegions = !!regionOptions.length
-    && !plans.some(({ region = '' }) => tfProviderRegions?.includes(region))
 
   const onChangeRegion = (region: string) => {
     setPlanIdSelected(region)
@@ -195,11 +163,6 @@ const OAuthSelectPlan = () => {
               onChange={onChangeRegion}
               data-testid="select-oauth-region"
             />
-            {isVendorWithTFRegions && (
-              <EuiText className={styles.selectDescription} data-testid="select-region-select-description">
-                This vendor does not support triggers and functions capability.
-              </EuiText>
-            )}
             {!regionOptions.length && (
               <EuiText className={styles.selectDescription} data-testid="select-region-select-description">
                 No regions available, try another vendor.

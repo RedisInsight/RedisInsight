@@ -3,15 +3,13 @@ import {
   CloudUser,
   CloudUserAccount,
   ICloudApiAccount,
-  ICloudApiCsrfToken,
   ICloudApiUser,
   ICloudCapiAccount,
 } from 'src/modules/cloud/user/models';
-import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import config, { Config } from 'src/utils/config';
 import { classToPlain } from 'class-transformer';
 import { mockCloudApiCapiAccessKey, mockCloudCapiAuthDto, mockCloudCapiKey } from 'src/__mocks__/cloud-capi-key';
-import { CloudAuthIdpType } from 'src/modules/cloud/auth/models';
+import { mockCloudApiAuthDto, mockCloudSession } from 'src/__mocks__/cloud-session';
 
 const serverConfig = config.get('server') as Config['server'];
 const cloudConfig = config.get('cloud');
@@ -58,18 +56,6 @@ export const mockCloudCapiHeaders = {
     'x-api-secret-key': mockCloudCapiAuthDto.capiSecret,
     'User-Agent': `RedisInsight/${serverConfig.version}`,
   },
-};
-
-export const mockCloudApiCsrfToken: ICloudApiCsrfToken = {
-  csrf_token: 'csrf_p6vA6A5tF36Jf6twH2cBOqtt7n',
-};
-
-export const mockCloudApiAuthDto: ICloudApiCredentials = {
-  accessToken: 'at_p6vA6A5tF36Jf6twH2cBOqtt7n',
-  refreshToken: 'rt_p6vA6A5tF36Jf6twH2cBOqtt7n',
-  idpType: CloudAuthIdpType.Google,
-  csrf: mockCloudApiCsrfToken.csrf_token,
-  apiSessionId: 'asid_p6v-A6A5tF36J-f6twH2cB!@#$_^&*()Oqtt7n',
 };
 
 export const mockCloudUserAccount = Object.assign(new CloudUserAccount(), {
@@ -135,6 +121,8 @@ export const mockCloudUserRepository = jest.fn(() => ({
 
 export const mockCloudUserApiService = jest.fn(() => ({
   getCapiKeys: jest.fn().mockResolvedValue(mockCloudCapiAuthDto),
+  getUserSession: jest.fn().mockResolvedValue(mockCloudSession),
+  invalidateApiSession: jest.fn().mockResolvedValue(undefined),
   me: jest.fn().mockResolvedValue(mockCloudUser),
   getCloudUser: jest.fn().mockResolvedValue(mockCloudUser),
   setCurrentAccount: jest.fn(),

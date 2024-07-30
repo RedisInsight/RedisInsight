@@ -5,4 +5,6 @@ export enum FeatureFlags {
   databaseChat = 'databaseChat',
   documentationChat = 'documentationChat',
   disabledByEnv = 'disabledByEnv',
+  rdi = 'redisDataIntegration',
+  hashFieldExpiration = 'hashFieldExpiration',
 }

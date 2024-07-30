@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { localStorageService } from 'uiSrc/services'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { render } from 'uiSrc/utils/test-utils'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import InstancePageTemplate, { getDefaultSizes } from './InstancePageTemplate'
 

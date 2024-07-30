@@ -39,7 +39,6 @@ const getTutorialCapabilityTests: any[] = [
   [getSourceTutorialByCapability(RedisDefaultModules.Bloom), bloomCapability],
 
   // empty capabilities
-  [OAuthSocialSource.TriggersAndFunctions, emptyCapability],
   [OAuthSocialSource.Autodiscovery, emptyCapability],
   [OAuthSocialSource.ListOfDatabases, emptyCapability],
   [getSourceTutorialByCapability(RedisDefaultModules.Graph), emptyCapability],

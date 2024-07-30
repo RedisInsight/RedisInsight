@@ -27,9 +27,10 @@ export * from './groupTypes'
 export * from './modules'
 export * from './events'
 export * from './telemetry'
-export * from './oauth'
+export * from './errors'
 export * from './redisearch'
 export * from './capability'
+export * from './rdi'
 
 export {
   Maybe,

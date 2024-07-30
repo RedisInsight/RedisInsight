@@ -17,6 +17,7 @@ import {
   BigStringStrategy,
   CompressionForListStrategy,
   BigAmountConnectedClientsStrategy,
+  TryRdiStrategyStrategy,
 } from 'src/modules/database-recommendation/scanner/strategies';
 
 @Injectable()
@@ -40,6 +41,7 @@ export class RecommendationProvider {
     this.strategies.set(RECOMMENDATION_NAMES.BIG_STRINGS, new BigStringStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.COMPRESSION_FOR_LIST, new CompressionForListStrategy());
     this.strategies.set(RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS, new BigAmountConnectedClientsStrategy());
+    this.strategies.set(RECOMMENDATION_NAMES.TRY_RDI, new TryRdiStrategyStrategy());
   }
 
   getStrategy(type: string): IRecommendationStrategy {

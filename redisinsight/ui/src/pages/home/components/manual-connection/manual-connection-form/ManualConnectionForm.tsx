@@ -240,7 +240,7 @@ const ManualConnectionForm = (props: Props) => {
           </EuiFlexItem>
 
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup responsive={false}>
+            <EuiFlexGroup responsive={false} gutterSize="none">
               {onClose && (
                 <EuiButton
                   onClick={onClose}

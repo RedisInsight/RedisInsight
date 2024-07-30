@@ -6,16 +6,22 @@ export interface ITelemetryIdentify {
   sessionId: number
 }
 
+export type EventData = {
+  [key: string]: any
+  databaseId?: string
+  provider?: string
+}
+
 export interface ITelemetrySendEvent {
   event: TelemetryEvent
-  eventData?: Object
+  eventData?: EventData
   nonTracking?: boolean
   traits?: Object
 }
 
 export interface ITelemetrySendPageView {
   name: string
-  databaseId?: string
+  eventData?: EventData
   nonTracking?: boolean
 }
 
@@ -37,7 +43,6 @@ export enum RedisModules {
   RedisJSON = 'ReJSON',
   RediSearch = 'search',
   RedisTimeSeries = 'timeseries',
-  'Triggers and Functions' = 'redisgears'
 }
 
 export interface IModuleSummary {

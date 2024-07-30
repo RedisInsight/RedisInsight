@@ -75,6 +75,7 @@ test.skip('Verify that user can use unblocking command', async t => {
     // Verify that user input is blocked
     await t.expect(browserPage.Cli.cliCommandInput.exists).notOk('Cli input is still shown');
     // Create new window to unblock the client
+    //await openRedisHomePage();
     await t.click(browserPage.NavigationPanel.myRedisDBButton);
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     // Open CLI

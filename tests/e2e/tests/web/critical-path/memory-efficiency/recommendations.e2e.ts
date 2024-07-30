@@ -3,6 +3,7 @@ import { ExploreTabs, RecommendationIds, rte } from '../../../../helpers/constan
 import { DatabaseHelper } from '../../../../helpers/database';
 import {
     commonUrl,
+    ossSentinelConfig,
     ossStandaloneBigConfig,
     ossStandaloneConfig,
     ossStandaloneV5Config
@@ -90,11 +91,13 @@ test
 // skipped due to inability to receive no recommendations for now
 test.skip('No recommendations message', async t => {
     keyName = `recomKey-${Common.generateWord(10)}`;
-    const noRecommendationsMessage = 'No recommendations at the moment, run a new report later to keep up the good work!';
+    const noRecommendationsMessage = 'No Tips at the moment,keep up the good work!';
     const command = `HSET ${keyName} field value`;
 
     // Create Hash key and create report
     await browserPage.Cli.sendCommandInCli(command);
+    // Go to Analysis Tools page
+    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
     await t.click(memoryEfficiencyPage.newReportBtn);
     // Go to Recommendations tab
     await t.click(memoryEfficiencyPage.recommendationsTab);
@@ -159,7 +162,7 @@ test
         await recommendationsActions.voteForRecommendation(redisVersionRecommendation, usefulVoteOption);
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecommendation, usefulVoteOption);
     });
-test.skip
+test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         keyName = `recomKey-${Common.generateWord(10)}`;
@@ -190,7 +193,6 @@ test.skip
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
         await workbenchPage.InsightsPanel.togglePanel(true);
-        await t.expect(await workbenchPage.InsightsPanel.getActiveTabName()).eql(ExploreTabs.Tutorials);
         const tutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tutorial.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded

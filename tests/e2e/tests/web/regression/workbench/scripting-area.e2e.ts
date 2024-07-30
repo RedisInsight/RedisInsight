@@ -91,7 +91,7 @@ test
         // Put Create Hash commands into Editing area
         const codeText  = await tutorials.getBlockCode('Create a hash');
         const regex = new RegExp('HSET', 'g');
-        const monacoCommandIndicatorCount = codeText.match(regex).length;
+        const monacoCommandIndicatorCount = codeText.match(regex)!.length;
         await tutorials.runBlockCode('Create a hash');
         //Get number of commands in scripting area
         const numberOfCommands = await workbenchPage.executedCommandTitle.withText('HSET').count;
@@ -112,11 +112,11 @@ test
         // Right click to get context menu
         await t.rightClick(workbenchPage.queryInput);
         // Select Command Palette option
-        await t.click(workbenchPage.monacoContextMenu.find(workbenchPage.cssMonacoCommandPaletteLine));
+        await t.click(workbenchPage.MonacoEditor.monacoContextMenu.find(workbenchPage.cssMonacoCommandPaletteLine));
         // Print "Run Commands" shortcut
-        await t.typeText(workbenchPage.monacoShortcutInput, 'Run Commands');
+        await t.typeText(workbenchPage.MonacoEditor.monacoShortcutInput, 'Run Commands');
         // Select "Run Commands" from menu
-        await t.click(workbenchPage.monacoSuggestionOption);
+        await t.click(workbenchPage.MonacoEditor.monacoSuggestionOption);
         // Check the result with sent command
         await t.expect(workbenchPage.queryCardCommand.withExactText(command).exists).ok('The result of sent command is not displayed');
     });

@@ -1,1 +1,1 @@
-// import 'monaco-yaml/yaml.worker'
+import 'monaco-yaml/yaml.worker'

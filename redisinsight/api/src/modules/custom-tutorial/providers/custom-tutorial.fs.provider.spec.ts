@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCustomTutorial,
   mockCustomTutorialAdmZipEntry,
-  mockCustomTutorialMacosxAdmZipEntry, mockCustomTutorialsHttpLink,
+  mockCustomTutorialMacosxAdmZipEntry, mockCustomTutorialsHttpLink, mockCustomTutorialsHttpLink2,
   mockCustomTutorialTmpPath,
   mockCustomTutorialZipFile, mockCustomTutorialZipFileAxiosResponse,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
 import axios from 'axios';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
-import { InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import AdmZip from 'adm-zip';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
@@ -80,12 +80,24 @@ describe('CustomTutorialFsProvider', () => {
     });
 
     describe('unzipFromExternalLink', () => {
-      it('should unzip data from external link', async () => {
-        const result = await service.unzipFromExternalLink(mockCustomTutorialsHttpLink);
+      it.each([
+        mockCustomTutorialsHttpLink,
+        mockCustomTutorialsHttpLink2,
+      ])('should unzip data from external link', async (url) => {
+        const result = await service.unzipFromExternalLink(url);
         expect(result).toEqual(mockCustomTutorialTmpPath);
       });
 
-      it('should throw InternalServerError when 4incorrect external link provided', async () => {
+      it.each([
+        'http://hithub.com',
+        'http://raw.githubusercontent.com',
+        'http://raw.amy.other.com',
+      ])('should unzip data from external link', async (url) => {
+        await expect(service.unzipFromExternalLink(url))
+          .rejects.toThrow(new BadRequestException(ERROR_MESSAGES.CUSTOM_TUTORIAL_UNSUPPORTED_ORIGIN));
+      });
+
+      it('should throw InternalServerError when incorrect external link provided', async () => {
         const responsePayload = {
           response: {
             status: 404,

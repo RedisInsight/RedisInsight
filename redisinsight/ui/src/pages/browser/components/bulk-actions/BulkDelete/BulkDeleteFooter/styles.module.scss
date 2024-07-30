@@ -17,7 +17,7 @@
 }
 
 .panelPopover {
-  border-color: var(--euiColorPrimary) !important;
+  border: 1px solid var(--euiColorPrimary) !important;
   :global(.euiPopover__panelArrow:before) {
     border-top-color: var(--euiColorPrimary) !important;
   }

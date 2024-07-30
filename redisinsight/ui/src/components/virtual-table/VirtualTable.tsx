@@ -28,6 +28,8 @@ const TABLE_OUTSIDE_WIDTH = 24
 
 const VirtualTable = (props: IProps) => {
   const {
+    autoHeight,
+    tableRef,
     selectable = false,
     expandable = false,
     headerHeight = 44,
@@ -516,13 +518,19 @@ const VirtualTable = (props: IProps) => {
                 onRowClick={onRowSelect}
                 onRowDoubleClick={() => clearSelectTimeout()}
                 estimatedRowSize={rowHeight}
-                ref={registerChild}
+                ref={(ref) => {
+                  if (tableRef) {
+                    tableRef.current = ref
+                  }
+
+                  return registerChild(ref)
+                }}
                 headerHeight={headerHeight}
                 rowHeight={cellCache.rowHeight}
                 width={tableWidth > width ? tableWidth : width}
                 noRowsRenderer={noRowsRenderer}
                 height={height}
-                className={styles.table}
+                className={cx(styles.table, { [styles.autoHeight]: autoHeight })}
                 gridClassName={cx(styles.customScroll, styles.grid, {
                   [styles.disableScroll]: disableScroll,
                 })}

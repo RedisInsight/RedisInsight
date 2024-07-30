@@ -106,7 +106,9 @@ const ClusterDetailsPage = () => {
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.CLUSTER_DETAILS_PAGE,
-      databaseId: instanceId
+      eventData: {
+        databaseId: instanceId
+      }
     })
     setIsPageViewSent(true)
   }

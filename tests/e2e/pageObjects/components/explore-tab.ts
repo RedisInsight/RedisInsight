@@ -1,11 +1,8 @@
 import { Selector, t } from 'testcafe';
 
 export class ExploreTab {
-
     dataStructureAccordionTutorialButton = Selector('[data-testid=accordion-button-ds]');
-    triggersFunctionsAccordionTutorialButton = Selector('[data-testid=accordion-button-tf]');
     internalLinkWorkingWithHashes = Selector('[data-testid=internal-link-ds-hashes]');
-    internalTriggersAndFunctionsLink = Selector('[data-testid=internal-link-tf-load]');
     redisStackTutorialsButton = Selector('[data-testid=accordion-button-redis_stack]');
     timeSeriesLink = Selector('[data-testid=accordion-button-ds-ts]');
     internalTimeSeriesLink = Selector('[data-testid=internal-link-ds-ts-ret-compact]');
@@ -60,7 +57,7 @@ export class ExploreTab {
      * Run code
      * @param block Name of the block
      */
-    async runBlockCode(block: string): Promise<void> {
+    async   runBlockCode(block: string): Promise<void> {
         const runButton = Selector(this.runMask.replace(/\$name/g, block));
         await t.scrollIntoView(runButton);
         await t.click(runButton);

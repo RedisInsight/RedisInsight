@@ -1,6 +1,8 @@
 import { Selector, t } from 'testcafe';
+import { EditorButton } from './common/editorButton';
 
 export class OverviewPanel {
+    EditorButton = new EditorButton();
     // TEXT ELEMENTS
     overviewTotalKeys = Selector('[data-test-subj=overview-total-keys]');
     overviewTotalMemory = Selector('[data-test-subj=overview-total-memory]');
@@ -15,7 +17,6 @@ export class OverviewPanel {
     overviewRedisStackLogo = Selector('[data-testid=redis-stack-logo]');
     overviewMoreInfo = Selector('[data-testid=overview-more-info-button]');
     changeIndexBtn = Selector('[data-testid=change-index-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     databaseInfoIcon = Selector('[data-testid=db-info-icon]');
     // PANEL
     overviewTooltip = Selector('[data-testid=overview-more-info-tooltip]');
@@ -30,7 +31,7 @@ export class OverviewPanel {
     async changeDbIndex(dbIndex: number): Promise<void> {
         await t.click(this.changeIndexBtn)
             .typeText(this.changeIndexInput, dbIndex.toString(), { replace: true, paste: true })
-            .click(this.applyButton)
+            .click(this.EditorButton.applyBtn)
             .expect(this.changeIndexBtn.textContent).contains(dbIndex.toString());
     }
 

@@ -159,7 +159,7 @@ const RedisClusterDatabases = ({ columns, onClose, onBack, onSubmit }: Props) =>
         </EuiFormRow>
         <br />
 
-        <div className={cx('databaseList clusterDatabaseList', styles.databaseListWrapper)}>
+        <div className={cx('itemList databaseList clusterDatabaseList', styles.databaseListWrapper)}>
           <EuiInMemoryTable
             items={items}
             itemId="uid"

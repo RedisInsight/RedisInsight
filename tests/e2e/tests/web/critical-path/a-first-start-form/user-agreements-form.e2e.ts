@@ -1,5 +1,5 @@
 import { commonUrl } from '../../../../helpers/conf';
-import { SettingsPage, MyRedisDatabasePage, WelcomePage } from '../../../../pageObjects';
+import { SettingsPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import { Common } from '../../../../helpers/common';
 import { rte } from '../../../../helpers/constants';
 import { UserAgreementDialog } from '../../../../pageObjects/dialogs';
@@ -7,7 +7,6 @@ import { UserAgreementDialog } from '../../../../pageObjects/dialogs';
 const userAgreementDialog = new UserAgreementDialog();
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const settingsPage = new SettingsPage();
-const welcomePage = new WelcomePage();
 
 fixture `Agreements Verification`
     .meta({ type: 'critical_path', rte: rte.none })
@@ -31,18 +30,6 @@ test('Verify that the encryption enabled by default and specific message', async
     await t.expect(pluginText).eql(expectedPluginText, 'Plugin text is incorrect');
     // Verify that encryption enabled by default
     await t.expect(userAgreementDialog.switchOptionEncryption.withAttribute('aria-checked', 'true').exists).ok('Encryption enabled by default');
-});
-test('Verify that the Welcome page is opened after user agrees', async t => {
-    // Accept agreements
-    await t.click(settingsPage.switchEulaOption);
-    await t.click(settingsPage.submitConsentsPopupButton);
-    // Verify that I dont have an popup
-    await t.expect(userAgreementDialog.userAgreementsPopup.exists).notOk('User Agreements Popup isn\'t shown after accept agreements');
-    // Verify that Welcome page is displayed after user agrees
-    await t.expect(welcomePage.welcomePageTitle.exists).ok('Welcome page is displayed');
-    // Verify I can work with the application
-    await t.click(welcomePage.addDbManuallyBtn);
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.addDatabaseManually.exists).ok('User can add a database');
 });
 test('Verify that when user checks "Use recommended settings" option on EULA screen, all options (except Licence Terms) are checked', async t => {
     // Verify options unchecked before enabling Use recommended settings

@@ -169,16 +169,6 @@ export const mockFeatureSso = Object.assign(new Feature(), {
   data: {
     selectPlan: {
       components: {
-        triggersAndFunctions: [
-          {
-            provider: 'AWS',
-            regions: ['ap-southeast-1'],
-          },
-          {
-            provider: 'GCP',
-            regions: ['asia-northeast1'],
-          },
-        ],
         redisStackPreview: [
           {
             provider: 'AWS',

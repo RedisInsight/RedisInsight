@@ -83,6 +83,7 @@ export default merge(baseConfig, {
       RI_AI_CONVAI_TOKEN: 'RI_AI_CONVAI_TOKEN' in process.env ? process.env.RI_AI_CONVAI_TOKEN: '',
       RI_AI_QUERY_USER: 'RI_AI_QUERY_USER' in process.env ? process.env.RI_AI_QUERY_USER: '',
       RI_AI_QUERY_PASS: 'RI_AI_QUERY_PASS' in process.env ? process.env.RI_AI_QUERY_PASS: '',
+      RI_FEATURES_CONFIG_URL: 'RI_FEATURES_CONFIG_URL' in process.env ? process.env.RI_FEATURES_CONFIG_URL: '',
     }),
 
     new webpack.DefinePlugin({

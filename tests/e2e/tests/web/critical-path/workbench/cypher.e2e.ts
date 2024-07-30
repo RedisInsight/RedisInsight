@@ -28,7 +28,7 @@ test('Verify that user can see popover Editor when clicks on “Use Cypher Synta
     await t.typeText(workbenchPage.queryInput, `${command} "query"`, { replace: true });
     await t.pressKey('left');
     // Open popover editor by clicks on “Use Cypher Syntax”
-    await t.click(workbenchPage.monacoWidget);
+    await t.click(workbenchPage.MonacoEditor.monacoWidget);
     await t.expect(await workbenchPage.queryInput.nth(1).visible).ok('The user can not see opened popover Editor');
     // Close popover editor and re-open by shortcut
     await t.pressKey('esc');
@@ -43,14 +43,14 @@ test('Verify that popover Editor is populated with the script that was detected 
     // Type command with empty script and open popover
     await t.typeText(workbenchPage.queryInput, `${command} ""`, { replace: true });
     await t.pressKey('left');
-    await t.click(workbenchPage.monacoWidget);
+    await t.click(workbenchPage.MonacoEditor.monacoWidget);
     // Verify that the Editor is blank
     await t.expect(workbenchPage.scriptsLines.nth(1).textContent).eql('', 'The user can not see blank Editor');
     // Close popover editor and re-open with added script
     await t.pressKey('esc');
     await t.typeText(workbenchPage.queryInput, `${command} "${script}`, { replace: true });
     await t.pressKey('left');
-    await t.click(workbenchPage.monacoWidget);
+    await t.click(workbenchPage.MonacoEditor.monacoWidget);
     // Verify that the Editor is populated with the script
     await t.expect(workbenchPage.scriptsLines.nth(1).textContent).eql(script, 'The user can not see editor populated with the script that was detected between the quotes');
 });

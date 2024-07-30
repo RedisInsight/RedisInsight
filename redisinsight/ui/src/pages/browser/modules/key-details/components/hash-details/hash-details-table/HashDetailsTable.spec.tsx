@@ -11,10 +11,10 @@ import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { HashDetailsTable, Props } from './HashDetailsTable'
 
 const mockedProps = mock<Props>()
-const fields: Array<{ field: any, value: any }> = [
+const fields: Array<{ field: any, value: any, expire?: number }> = [
   { field: { type: 'Buffer', data: [49] }, value: { type: 'Buffer', data: [49, 65] } },
   { field: { type: 'Buffer', data: [49, 50, 51] }, value: { type: 'Buffer', data: [49, 11] } },
-  { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] } },
+  { field: { type: 'Buffer', data: [50] }, value: { type: 'Buffer', data: [49, 234, 453] }, expire: 300 },
 ]
 
 jest.mock('uiSrc/slices/browser/hash', () => {
@@ -81,13 +81,61 @@ describe('HashDetailsTable', () => {
 
   it('should render editor after click edit button', () => {
     render(<HashDetailsTable {...instance(mockedProps)} />)
-    fireEvent.click(screen.getAllByTestId(/edit-hash-button/)[0])
-    expect(screen.getByTestId('hash-value-editor')).toBeInTheDocument()
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('hash_content-value-1'))
+    })
+
+    fireEvent.click(screen.getByTestId('hash_edit-btn-1'))
+    expect(screen.getByTestId('hash_value-editor-1')).toBeInTheDocument()
   })
 
   it('should render resize trigger for field column', () => {
     render(<HashDetailsTable {...instance(mockedProps)} />)
     expect(screen.getByTestId('resize-trigger-field')).toBeInTheDocument()
+  })
+
+  it('should disable refresh after click on edit', async () => {
+    render(<HashDetailsTable {...instance(mockedProps)} />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('hash_content-value-1'))
+    })
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('hash_edit-btn-1'))
+    })
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
+  })
+
+  it('should not render ttl column', async () => {
+    render(<HashDetailsTable {...instance(mockedProps)} />)
+    expect(screen.queryByTestId('hash-ttl_content-value-2')).not.toBeInTheDocument()
+  })
+
+  it('should render ttl column', async () => {
+    render(<HashDetailsTable {...instance(mockedProps)} isExpireFieldsAvailable />)
+
+    const afterRenderActions = [...store.getActions()]
+
+    act(() => {
+      fireEvent.mouseEnter(screen.getByTestId('hash-ttl_content-value-2'))
+    })
+
+    act(() => {
+      fireEvent.click(screen.getByTestId('hash-ttl_edit-btn-2'))
+    })
+
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      setSelectedKeyRefreshDisabled(true)
+    ])
   })
 
   describe('decompressed  data', () => {
@@ -103,9 +151,9 @@ describe('HashDetailsTable', () => {
       });
       (hashDataSelector as jest.Mock).mockImplementation(hashDataSelectorMock)
 
-      const { queryByTestId, queryAllByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
+      const { queryAllByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
       const fieldEl = queryAllByTestId(/hash-field-/)?.[0]
-      const valueEl = queryByTestId(/hash-field-value/)
+      const valueEl = queryAllByTestId(/hash_content-value/)?.[0]
 
       expect(fieldEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
       expect(valueEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_2)
@@ -128,8 +176,12 @@ describe('HashDetailsTable', () => {
       }))
 
       const { queryByTestId } = render(<HashDetailsTable {...instance(mockedProps)} />)
-      const editBtn = queryByTestId(/edit-hash-button/)!
 
+      act(() => {
+        fireEvent.mouseEnter(screen.getByTestId('hash_content-value-1'))
+      })
+
+      const editBtn = screen.getByTestId('hash_edit-btn-1')
       fireEvent.click(editBtn)
 
       await act(async () => {
@@ -138,23 +190,8 @@ describe('HashDetailsTable', () => {
       await waitForEuiToolTipVisible()
 
       expect(editBtn).toBeDisabled()
-      expect(screen.getByTestId('hash-edit-tooltip')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
-      expect(queryByTestId('hash-value-editor')).not.toBeInTheDocument()
+      expect(screen.getByTestId('hash_edit-tooltip-1')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
+      expect(queryByTestId('hash_value-editor-1')).not.toBeInTheDocument()
     })
-  })
-
-  it('should disable refresh after click on edit', async () => {
-    render(<HashDetailsTable {...instance(mockedProps)} />)
-
-    const afterRenderActions = [...store.getActions()]
-
-    await act(() => {
-      fireEvent.click(screen.queryAllByTestId(/edit-hash-button/)[0])
-    })
-
-    expect(store.getActions()).toEqual([
-      ...afterRenderActions,
-      setSelectedKeyRefreshDisabled(true)
-    ])
   })
 })

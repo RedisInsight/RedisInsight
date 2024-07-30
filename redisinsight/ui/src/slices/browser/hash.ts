@@ -9,6 +9,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
   GetHashFieldsResponse,
   AddFieldsToHashDto,
+  UpdateHashFieldsTtlDto,
 } from 'apiSrc/modules/browser/hash/dto'
 import {
   deleteKeyFromList,
@@ -151,7 +152,10 @@ const hashSlice = createSlice({
           (item) => isEqualBuffers(item.field, listItem.field)
         )
         if (index > -1) {
-          return payload[index]
+          return ({
+            ...listItem,
+            ...payload[index]
+          })
         }
         return listItem
       })
@@ -395,6 +399,7 @@ export function addHashFieldsAction(
     }
   }
 }
+
 // Asynchronous thunk action
 export function updateHashFieldsAction(
   data: AddFieldsToHashDto,
@@ -426,20 +431,76 @@ export function updateHashFieldsAction(
             keyType: KeyTypes.Hash,
           }
         })
-        if (onSuccessAction) {
-          onSuccessAction()
-        }
         dispatch(updateValueSuccess())
         dispatch(updateFieldsInList(data.fields))
         dispatch<any>(refreshKeyInfoAction(data.keyName))
+        onSuccessAction?.()
       }
     } catch (error) {
-      if (onFailAction) {
-        onFailAction()
-      }
       const errorMessage = getApiErrorMessage(error)
       dispatch(addErrorNotification(error))
       dispatch(updateValueFailure(errorMessage))
+      onFailAction?.()
+    }
+  }
+}
+
+// Asynchronous thunk action
+export function updateHashTTLAction(
+  data: UpdateHashFieldsTtlDto,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void
+) {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    dispatch(updateValue())
+    try {
+      const state = stateInit()
+      const { encoding } = state.app.info
+      const { status } = await apiService.patch(
+        getUrl(
+          state.connections.instances.connectedInstance?.id,
+          ApiEndpoints.HASH_TTL
+        ),
+        data,
+        { params: { encoding } },
+      )
+      if (isStatusSuccessful(status)) {
+        sendEventTelemetry({
+          event: getBasedOnViewTypeEvent(
+            state.browser.keys?.viewType,
+            TelemetryEvent.BROWSER_FIELD_TTL_EDITED,
+            TelemetryEvent.TREE_VIEW_FIELD_TTL_EDITED
+          ),
+          eventData: {
+            databaseId: state.connections.instances?.connectedInstance?.id,
+          }
+        })
+        onSuccessAction?.()
+        dispatch(updateValueSuccess())
+
+        const key = data.keyName as RedisResponseBuffer
+        const isLastFieldAffected = state.browser.hash.data.total - data.fields.length === 0
+        const isSetToZero = data.fields.reduce((prev, current) => prev + current.expire, 0) === 0
+
+        if (isLastFieldAffected && isSetToZero) {
+          dispatch(deleteSelectedKeySuccess())
+          dispatch(deleteKeyFromList(key))
+          dispatch(addMessageNotification(successMessages.DELETED_KEY(key)))
+          return
+        }
+
+        if (isSetToZero) {
+          dispatch(removeFieldsFromList(data.fields.map(({ field }) => field) as any))
+          return
+        }
+
+        dispatch(updateFieldsInList(data.fields as any))
+      }
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error)
+      dispatch(addErrorNotification(error))
+      dispatch(updateValueFailure(errorMessage))
+      onFailAction?.()
     }
   }
 }

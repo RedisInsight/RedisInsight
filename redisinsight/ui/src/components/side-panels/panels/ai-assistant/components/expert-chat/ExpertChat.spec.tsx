@@ -15,6 +15,7 @@ import {
   aiExpertChatSelector,
   clearExpertChatHistory,
   getExpertChatHistory,
+  getExpertChatHistorySuccess,
   sendExpertQuestion,
   updateExpertChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
@@ -57,19 +58,20 @@ jest.mock('react-router-dom', () => ({
 }))
 
 let store: typeof mockedStore
-beforeEach(() => {
-  cleanup()
-  store = cloneDeep(mockedStoreFn())
-  store.clearActions()
-})
 
 describe('ExpertChat', () => {
+  beforeEach(() => {
+    cleanup()
+    store = cloneDeep(mockedStoreFn())
+    store.clearActions()
+  })
+
   it('should render', () => {
-    expect(render(<ExpertChat />)).toBeTruthy()
+    expect(render(<ExpertChat />, { store })).toBeTruthy()
   })
 
   it('should proper components render by default', () => {
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     expect(screen.getByTestId('ai-expert-restart-session-btn')).toBeInTheDocument()
     expect(screen.getByTestId('ai-chat-empty-history')).toBeInTheDocument()
@@ -82,7 +84,7 @@ describe('ExpertChat', () => {
       messages: [],
       agreements: []
     })
-    render(<ExpertChat />)
+    render(<ExpertChat />, { store })
 
     expect(screen.getByTestId('ai-loading-spinner')).toBeInTheDocument()
     expect(screen.queryByTestId('ai-chat-empty-history')).not.toBeInTheDocument()
@@ -200,7 +202,8 @@ describe('ExpertChat', () => {
   it('should call action after click on restart session', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 });
+    apiService.delete = jest.fn().mockResolvedValueOnce({ status: 200 })
+    apiService.get = jest.fn().mockResolvedValueOnce({ status: 200, data: [] });
 
     (aiExpertChatSelector as jest.Mock).mockReturnValue({
       loading: false,
@@ -221,6 +224,7 @@ describe('ExpertChat', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
+      getExpertChatHistorySuccess([]),
       clearExpertChatHistory()
     ])
 

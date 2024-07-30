@@ -16,7 +16,7 @@ const mockRedisCloudDatabasesResult = (props: RedisCloudDatabasesResultProps) =>
   <div>
     <button type="button" onClick={() => props.onView()} data-testid="view-btn">onView</button>
     <button type="button" onClick={() => props.onBack()} data-testid="back-btn">onBack</button>
-    <div className="databaseList">
+    <div className="itemList">
       <EuiInMemoryTable
         isSelectable
         items={[]}

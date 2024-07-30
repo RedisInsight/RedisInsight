@@ -5,7 +5,6 @@ import {
   REDISEARCH_MODULES,
   REDIS_STACK,
   RECOMMENDATION_NAMES,
-  TRIGGERED_AND_FUNCTIONS_MODULES,
   IS_TIMESTAMP,
   IS_INTEGER_NUMBER_REGEX,
   IS_NUMBER_REGEX,
@@ -15,10 +14,6 @@ import { AdditionalRedisModule } from 'src/modules/database/models/additional.re
 
 export const isRedisearchModule = (modules: AdditionalRedisModule[]): boolean => modules?.some(
   ({ name }) => REDISEARCH_MODULES.some((search) => name === search),
-);
-
-export const isTriggeredAndFunctionsModule = (modules: AdditionalRedisModule[]): boolean => modules?.some(
-  ({ name }) => TRIGGERED_AND_FUNCTIONS_MODULES.some((search) => name === search),
 );
 
 export const sortRecommendations = (recommendations: any[]) => sortBy(recommendations, [

@@ -1,15 +1,12 @@
-:global {
-  .editorBounder {
-    position: absolute;
-    top: 12px;
+.wrapper {
+  position: relative;
+  height: 100%;
+
+  :global(.editorBounder) {
     bottom: 6px;
     left: 18px;
     right: 46px;
   }
-}
-.wrapper {
-  position: relative;
-  height: 100%;
 }
 .container {
   display: flex;
@@ -87,7 +84,7 @@
     padding: 0 !important;
   }
 
-  &:hover, 
+  &:hover,
   &:focus {
     border: 1px solid var(--buttonSecondaryHoverColor) !important;
   }
@@ -100,7 +97,7 @@
   &:focus svg path {
     fill: var(--wbHoverIconColor) !important;
   }
-  
+
   &.activeBtn {
     background: var(--browserComponentActive) !important;
     border: 1px solid var(--euiColorSecondary);
@@ -124,7 +121,7 @@
   &Loading {
     position: absolute;
     left: 0;
-    opacity: .5;
+    opacity: 0.5;
     margin-top: -10px;
     svg {
       width: 17px !important;

@@ -36,11 +36,10 @@ export class WorkbenchPage extends InstancePage {
     preselectCreateHashIndex = Selector('[data-testid="preselect-Create a hash index"]');
     preselectGroupBy = Selector('[data-testid*=preselect-Group]');
     preselectButtons = Selector('[data-testid^=preselect-]');
+    copyBtn = Selector('[data-testid^=copy-btn-]');
     reRunCommandButton = Selector('[data-testid=re-run-command]');
     preselectManual = Selector('[data-testid=preselect-Manual]');
     fullScreenButton = Selector('[data-testid=toggle-full-screen]');
-    cancelButton = Selector('[data-testid=cancel-btn]');
-    applyButton = Selector('[data-testid=apply-btn]');
     queryCardNoModuleButton = Selector('[data-testid=query-card-no-module-button] a');
     rawModeBtn = Selector('[data-testid="btn-change-mode"]');
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
@@ -86,17 +85,6 @@ export class WorkbenchPage extends InstancePage {
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
     executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
     queryResult = Selector('[data-testid=query-common-result]');
-    //MONACO ELEMENTS
-    monacoCommandDetails = Selector('div.suggest-details-container');
-    monacoSuggestion = Selector('span.monaco-icon-name-container');
-    monacoContextMenu = Selector('div.shadow-root-host').shadowRoot();
-    monacoShortcutInput = Selector('input.input');
-    monacoSuggestionOption = Selector('div.monaco-list-row');
-    monacoHintWithArguments = Selector('[widgetid="editor.widget.parameterHintsWidget"]');
-    monacoCommandIndicator = Selector('div.monaco-glyph-run-command');
-    monacoWidget = Selector('[data-testid=monaco-widget]');
-    nonRedisEditorResizeBottom = Selector('.t_resize-bottom');
-    nonRedisEditorResizeTop = Selector('.t_resize-top');
     //OPTIONS
     selectViewType = Selector('[data-testid=select-view-type]');
     textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');

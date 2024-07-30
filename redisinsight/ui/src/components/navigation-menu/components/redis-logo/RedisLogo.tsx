@@ -10,7 +10,11 @@ import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import styles from '../../styles.module.scss'
 
-export const RedisLogo = () => {
+type Props = {
+  isRdiWorkspace: boolean
+}
+
+export const RedisLogo = ({ isRdiWorkspace }: Props) => {
   const { disabledByEnv } = useSelector(appFeatureFlagsFeaturesSelector)
   const { server } = useSelector(appInfoSelector)
 
@@ -24,11 +28,11 @@ export const RedisLogo = () => {
 
   return (
     <EuiToolTip
-      content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'My Redis databases'}
+      content={server?.buildType === BuildType.RedisStack ? 'Edit database' : isRdiWorkspace ? 'Redis Data Integration' : 'Redis Databases'}
       position="right"
     >
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiLink {...getRouterLinkProps(Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
+        <EuiLink {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
           <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
         </EuiLink>
       </span>

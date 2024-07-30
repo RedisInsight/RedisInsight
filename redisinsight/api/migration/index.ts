@@ -40,6 +40,8 @@ import { CloudCapiKeys1691061058385 } from './1691061058385-cloud-capi-keys';
 import { FeatureSso1691476419592 } from './1691476419592-feature-sso';
 import { AiHistory1713515657364 } from './1713515657364-ai-history';
 import { AiHistorySteps1714501203616 } from './1714501203616-ai-history-steps';
+import { Rdi1716370509836 } from './1716370509836-rdi';
+import { AiHistory1718260230164 } from './1718260230164-ai-history';
 
 export default [
   initialMigration1614164490968,
@@ -84,4 +86,6 @@ export default [
   FeatureSso1691476419592,
   AiHistory1713515657364,
   AiHistorySteps1714501203616,
+  Rdi1716370509836,
+  AiHistory1718260230164,
 ];

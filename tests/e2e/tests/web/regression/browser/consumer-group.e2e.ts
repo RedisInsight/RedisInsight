@@ -138,9 +138,10 @@ test('Verify that user can see error message if enter invalid last delivered ID'
     await browserPage.openKeyDetails(keyName);
     await t.click(browserPage.streamTabGroups);
     // Change the ID set for the Consumer Group
+    await t.hover(browserPage.streamGroupId);
+    await t.click(browserPage.editStreamLastIdButton);
     for(const id of invalidEntryIds){
         const idBefore = await browserPage.streamGroupId.textContent;
-        await t.click(browserPage.editStreamLastIdButton);
         await t.typeText(browserPage.lastIdInput, id, { replace: true, paste: true });
         await t.click(browserPage.saveButton);
         await t.expect(browserPage.streamGroupId.textContent).eql(idBefore, 'The last delivered ID is not modified');

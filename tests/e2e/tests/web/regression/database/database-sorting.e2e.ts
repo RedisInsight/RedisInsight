@@ -56,28 +56,28 @@ test('Verify that sorting on the list of databases saved when database opened', 
     const sortedByConnectionType = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.masters[0].alias, ossStandaloneConfig.databaseName];
     await t.click(myRedisDatabasePage.sortByConnectionType);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedByConnectionType);
+    await myRedisDatabasePage.compareInstances(actualDatabaseList, sortedByConnectionType);
     // Connect to DB and check sorting
     await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
     await t.expect(browserPage.refreshKeysButton.visible).ok('Browser page is not opened');
     await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedByConnectionType);
+    await myRedisDatabasePage.compareInstances(actualDatabaseList, sortedByConnectionType);
     // Sort by Host and Port
     await t.click(myRedisDatabasePage.sortByHostAndPort);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
     const sortedDatabaseHost = [ossClusterConfig.ossClusterDatabaseName, ossSentinelConfig.masters[0].alias, ossStandaloneConfig.databaseName];
-    await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
+    await myRedisDatabasePage.compareInstances(actualDatabaseList, sortedDatabaseHost);
     // Verify that sorting on the list of databases saved when databases list refreshed
     await myRedisDatabasePage.reloadPage();
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    await myRedisDatabasePage.compareDatabases(actualDatabaseList, sortedDatabaseHost);
+    await myRedisDatabasePage.compareInstances(actualDatabaseList, sortedDatabaseHost);
 });
 test('Verify that user has the same sorting if db name is changed', async t => {
     // Sort by Database name
     await t.click(myRedisDatabasePage.sortByDatabaseAlias);
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
+    await myRedisDatabasePage.compareInstances(actualDatabaseList, await sortList());
     // Change DB name inside of sorted list
     await databaseHelper.clickOnEditDatabaseByName(ossStandaloneConfig.databaseName);
     await t.click(myRedisDatabasePage.editAliasButton);
@@ -90,5 +90,5 @@ test('Verify that user has the same sorting if db name is changed', async t => {
     databases[index].databaseName = newDBName;
     // Compare sorting with expected list
     actualDatabaseList = await myRedisDatabasePage.getAllDatabases();
-    await myRedisDatabasePage.compareDatabases(actualDatabaseList, await sortList());
+    await myRedisDatabasePage.compareInstances(actualDatabaseList, await sortList());
 });

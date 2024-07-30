@@ -155,16 +155,17 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
     })('No RediSearch module message', async t => {
         const noRedisearchMessage = 'RediSearch is not available for this database';
-        const externalPageLinkFirst = 'https://redis.io/try-free';
-        const externalPageLinkSecond = '?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search'
+        // const externalPageLinkFirst = 'https://redis.io/try-free';
+        // const externalPageLinkSecond = '?utm_source=redisinsight&utm_medium=app&utm_campaign=redisinsight_browser_search'
 
         await t.click(browserPage.redisearchModeBtn);
         // Verify that user can see message in the dialog when he doesn't have RediSearch module
         await t.expect(browserPage.noReadySearchDialogTitle.textContent).contains(noRedisearchMessage, 'Invalid text in no redisearch popover');
-        // Verify that user can navigate by link to create a Redis db
-        await t.click(browserPage.redisearchFreeLink);
-        await Common.checkURLContainsText(externalPageLinkFirst);
-        await Common.checkURLContainsText(externalPageLinkSecond);
+        // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+        // // Verify that user can navigate by link to create a Redis db
+        // await t.click(browserPage.redisearchFreeLink);
+        // await Common.checkURLContainsText(externalPageLinkFirst);
+        // await Common.checkURLContainsText(externalPageLinkSecond);
     });
 test
     .before(async() => {
@@ -189,14 +190,15 @@ test
         await t.click(browserPage.selectIndexDdn);
         await t.click(browserPage.createIndexBtn);
         await t.expect(browserPage.newIndexPanel.exists).ok('New Index panel is not displayed');
-        // Verify that user can see a link to create a profound index and navigate
-        await t.click(browserPage.newIndexPanel.find('a'));
-        await Common.checkURL(createIndexLink);
-        await goBackHistory();
+        // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
+        // // Verify that user can see a link to create a profound index and navigate
+        // await t.click(browserPage.newIndexPanel.find('a'));
+        // await Common.checkURL(createIndexLink);
+        // await goBackHistory();
 
         // Verify that user can create an index with multiple prefixes
-        await t.click(browserPage.selectIndexDdn);
-        await t.click(browserPage.createIndexBtn);
+        // await t.click(browserPage.selectIndexDdn);
+        // await t.click(browserPage.createIndexBtn);
         await t.click(browserPage.indexNameInput);
         await t.typeText(browserPage.indexNameInput, indexName);
         await t.click(browserPage.prefixFieldInput);

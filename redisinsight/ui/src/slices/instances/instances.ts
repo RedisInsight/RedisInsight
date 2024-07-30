@@ -323,7 +323,7 @@ export default instancesSlice.reducer
 export let sourceInstance: Nullable<CancelTokenSource> = null
 
 // Asynchronous thunk action
-export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceResponse[]) => void) {
+export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadInstances())
 
@@ -332,7 +332,7 @@ export function fetchInstancesAction(onSuccess?: (data?: DatabaseInstanceRespons
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.instancesCount, data?.length)
-        onSuccess?.(data)
+        onSuccess?.(data as Instance[])
         dispatch(loadInstancesSuccess(data))
       }
     } catch (_err) {

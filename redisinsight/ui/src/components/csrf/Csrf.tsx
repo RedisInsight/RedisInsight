@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react'
 
 import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
 import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService'
+import { localStorageService } from 'uiSrc/services'
 import PagePlaceholder from '../page-placeholder'
 
 const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
@@ -21,6 +22,7 @@ const Csrf = ({ children }: { children: ReactElement }) => {
 
       setApiCsrfHeader(data.token)
       setResourceCsrfHeader(data.token)
+      localStorageService.set('csrfToken', data.token)
     } catch (error) {
       console.error('Error fetching CSRF token: ', error)
     } finally {

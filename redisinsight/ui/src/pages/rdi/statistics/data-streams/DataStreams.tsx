@@ -94,7 +94,7 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
       name: key,
       ...dataStream
     }
-  }).concat([{ name: 'Total', ...data?.totals || {} }])
+  }).concat([{ name: 'Total', ...(data?.totals || {}) }])
 
   return (
     <Panel>

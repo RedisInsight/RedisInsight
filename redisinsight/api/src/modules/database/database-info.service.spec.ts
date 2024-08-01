@@ -7,6 +7,7 @@ import {
   mockDatabaseOverviewProvider,
   mockDatabaseRecommendationService,
   mockDatabaseService,
+  mockDBSize,
   mockRedisGeneralInfo,
   mockStandaloneRedisClient,
   MockType,
@@ -70,6 +71,12 @@ describe('DatabaseInfoService', () => {
   describe('getOverview', () => {
     it('should create client and get overview', async () => {
       expect(await service.getOverview(mockCommonClientMetadata)).toEqual(mockDatabaseOverview);
+    });
+  });
+
+  describe('getDBSize', () => {
+    it('should create client and gets db size', async () => {
+      expect(await service.getDBSize(mockCommonClientMetadata)).toEqual(mockDBSize);
     });
   });
 

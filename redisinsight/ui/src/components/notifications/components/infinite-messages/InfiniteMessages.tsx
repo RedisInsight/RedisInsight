@@ -110,7 +110,7 @@ export const INFINITE_MESSAGES = {
             <EuiFlexItem grow>
               <EuiTitle className="infiniteMessage__title"><span>Congratulations!</span></EuiTitle>
               <EuiText size="xs">
-                You can now use your Redis Stack database in Redis Cloud.
+                You can now use your Redis Stack database in Redis Cloud with pre-loaded sample data.
                 <EuiSpacer size="s" />
                 <b>Notice:</b> the database will be deleted after 15 days of inactivity.
               </EuiText>

@@ -62,17 +62,22 @@ export interface IConnections {
   }
 }
 
+export interface IDataStreamsData {
+  total: number
+  pending: number
+  inserted: number
+  updated: number
+  deleted: number
+  filtered: number
+  rejected: number
+  deduplicated: number
+  lastArrival?: string
+}
+
 export interface IDataStreams {
-  [key: string]: {
-    total: number
-    pending: number
-    inserted: number
-    updated: number
-    deleted: number
-    filtered: number
-    rejected: number
-    deduplicated: number
-    lastArrival: string
+  totals: IDataStreamsData,
+  streams: {
+    [key: string]: IDataStreamsData
   }
 }
 

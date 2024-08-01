@@ -42,9 +42,9 @@ test('Verify that user can search by full member name in Set', async t => {
     await t.expect(result).eql(keyMember, 'The set member by part member name in the end not found');
 
     await browserPage.searchByTheValueInSetKey('*Member11111');
-    // Verify search by part member name in the beggining
+    // Verify search by part member name in the beginning
     result = await browserPage.setMembersList.nth(0).textContent;
-    await t.expect(result).eql(keyMember, 'The set member by part member name in the beggining not found');
+    await t.expect(result).eql(keyMember, 'The set member by part member name in the beginning not found');
 
     await browserPage.searchByTheValueInSetKey('1111*11111');
     // Verify search by part member name in the middle

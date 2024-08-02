@@ -70,6 +70,19 @@ describe('bufferToSerializedFormat', () => {
     })
   })
 
+  describe(KeyValueFormat.TimestampUTC, () => {
+    describe('should properly serialize', () => {
+      const testValues = [new Uint8Array([49, 55, 50, 49, 53, 56, 53, 48, 52, 48])].map((v) => ({
+        input: anyToBuffer(v),
+        expected: 'Sun, 21 Jul 2024 18:04:00 GMT',
+      }))
+
+      test.each(testValues)('test %j', ({ input, expected }) => {
+        expect(JSON.stringify(bufferToSerializedFormat(KeyValueFormat.TimestampUTC, input))).toEqual(expected)
+      })
+    })
+  })
+
   describe(KeyValueFormat.Msgpack, () => {
     describe('should properly serialize', () => {
       const testValues = [{}, '""', 6677, true, { a: { b: [1, 2, '3'] } }].map((v) => ({

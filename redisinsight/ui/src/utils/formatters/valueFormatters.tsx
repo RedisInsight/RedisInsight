@@ -6,6 +6,7 @@ import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
 import { Parser } from 'pickleparser'
 import JSONBigInt from 'json-bigint'
+import { fromUnixTime, formatRFC7231, format as formatDateFns } from 'date-fns'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { KeyValueFormat } from 'uiSrc/constants'
@@ -43,6 +44,8 @@ const isFormatEditable = (format: KeyValueFormat) => ![
   KeyValueFormat.Pickle,
   KeyValueFormat.Vector32Bit,
   KeyValueFormat.Vector64Bit,
+  KeyValueFormat.TimestampUTC,
+  KeyValueFormat.TimestampLocal,
 ].includes(format)
 
 const isFullStringLoaded = (currentLength: Maybe<number>, fullLength: Maybe<number>) => currentLength === fullLength
@@ -122,6 +125,22 @@ const formattingBuffer = (
         return { value: bufferToUTF8(reply), isValid: false }
       }
     }
+    case KeyValueFormat.TimestampUTC: {
+      try {
+        const timestamp = formatRFC7231(fromUnixTime(Number(bufferToUTF8(reply))))
+        return { value: timestamp, isValid: true }
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
+    case KeyValueFormat.TimestampLocal: {
+      try {
+        const timestamp = fromUnixTime(Number(bufferToUTF8(reply)))
+        return { value: formatDateFns(timestamp, "EEE, dd MMM yyyy HH:mm:ss 'GMT'XXX"), isValid: true }
+      } catch (e) {
+        return { value: bufferToUTF8(reply), isValid: false }
+      }
+    }
     case KeyValueFormat.Protobuf: {
       try {
         const decoded = getData(Buffer.from(reply.data))
@@ -165,6 +184,22 @@ const bufferToSerializedFormat = (
     case KeyValueFormat.JSON: return reSerializeJSON(bufferToUTF8(value), space)
     case KeyValueFormat.Vector32Bit: return bufferToFloat32Array(value.data as Uint8Array)
     case KeyValueFormat.Vector64Bit: return bufferToFloat64Array(value.data as Uint8Array)
+    case KeyValueFormat.TimestampUTC: {
+      try {
+        const timestamp = fromUnixTime(Number(bufferToUTF8(reply)))
+        return formatRFC7231(timestamp)
+      } catch (e) {
+        return bufferToUTF8(value)
+      }
+    }
+    case KeyValueFormat.TimestampLocal: {
+      try {
+        const timestamp = new Date(Number(bufferToUTF8(value)))
+        return formatDateFns(timestamp, "EEE, dd MMM yyyy HH:mm:ss 'GMT'XXX")
+      } catch (e) {
+        return bufferToUTF8(value)
+      }
+    }
     case KeyValueFormat.Msgpack: {
       try {
         const decoded = decode(Uint8Array.from(value.data))

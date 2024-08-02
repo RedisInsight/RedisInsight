@@ -148,6 +148,8 @@ export enum KeyValueFormat {
   Pickle = 'Pickle',
   Vector32Bit = 'Vector 32-bit',
   Vector64Bit = 'Vector 64-bit',
+  TimestampUTC = 'Timestamp UTC',
+  TimestampLocal = 'Timestamp Local'
 }
 
 export enum KeyValueCompressor {

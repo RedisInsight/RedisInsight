@@ -1,6 +1,7 @@
+import { format } from 'date-fns'
 import { encode } from 'msgpackr'
 import { serialize } from 'php-serialize'
-import { KeyValueFormat } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat } from 'uiSrc/constants'
 import { anyToBuffer, bufferToSerializedFormat, formattingBuffer, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'
 
 describe('bufferToSerializedFormat', () => {
@@ -178,10 +179,11 @@ describe('stringToSerializedBufferFormat', () => {
 describe('formattingBuffer', () => {
   describe(KeyValueFormat.DateTime, () => {
     describe('should properly format timestamp number', () => {
-      // 1722593319805
+      // Since we formatting with local timezome, we cannot hardcode the expected string result
+      const expected = new Date(1722593319805)
       const testValues = [new Uint8Array([49, 55, 50, 50, 53, 57, 51, 51, 49, 57, 56, 48, 53])].map((v) => ({
         input: anyToBuffer(v),
-        expected: { value: '12:08:39.805 2 Aug 2024', isValid: true },
+        expected: { value: format(expected, DATETIME_FORMATTER_DEFAULT), isValid: true },
       }))
 
       test.each(testValues)('test %j', ({ input, expected }) => {

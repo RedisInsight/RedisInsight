@@ -17,6 +17,7 @@ import {
   validateNumber,
   validateTimeoutNumber,
   checkTimestamp,
+  checkConvertToDate,
 } from 'uiSrc/utils'
 
 const text1 = '123 123 123'
@@ -39,9 +40,10 @@ const checkTimestampTests = [
   { input: '1234567891234567', expected: true },
   { input: '1234567891234567891', expected: true },
   { input: '1234567891.2', expected: true },
-  { input: '1234567891:12', expected: true },
-  { input: '1234567891a12', expected: true },
-  { input: '10-10-2020', expected: true },
+  // it should be valid timestamp (for date < 1970)
+  { input: '-1234567891', expected: true },
+  { input: '-', expected: false },
+  { input: '0', expected: false },
   { input: '1', expected: false },
   { input: '123', expected: false },
   { input: '12345678911', expected: false },
@@ -49,9 +51,19 @@ const checkTimestampTests = [
   { input: '12345678912345678', expected: false },
   { input: '1234567891.2.2', expected: false },
   { input: '1234567891asd', expected: false },
-  { input: '-1234567891', expected: false },
   { input: 'inf', expected: false },
   { input: '-inf', expected: false },
+  { input: '1234567891:12', expected: false },
+  { input: '1234567891a12', expected: false },
+]
+
+const checkConvertToDateTests = [
+  ...checkTimestampTests,
+  { input: '2024-08-02T00:00:00.000Z', expected: true },
+  { input: '10-10-2020', expected: true },
+  { input: '10/10/2020', expected: true },
+  { input: '10/10/2020invalid', expected: false },
+  { input: 'invalid', expected: false },
 ]
 
 describe('Validations utils', () => {
@@ -301,6 +313,12 @@ describe('Validations utils', () => {
   describe('checkTimestamp', () => {
     test.each(checkTimestampTests)('%j', ({ input, expected }) => {
       expect(checkTimestamp(input)).toEqual(expected)
+    })
+  })
+
+  describe('checkConvertToDate', () => {
+    test.each(checkConvertToDateTests)('%j', ({ input, expected }) => {
+      expect(checkConvertToDate(input)).toEqual(expected)
     })
   })
 })

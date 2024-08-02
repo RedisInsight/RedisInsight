@@ -129,26 +129,37 @@ export const getApproximatePercentage = (total?: number, part: number = 0): stri
 }
 
 export const IS_NUMBER_REGEX = /^-?\d*(\.\d+)?$/
-export const IS_TIMESTAMP = /^(\d{10}|\d{13}|\d{16}|\d{19})$/
+export const IS_TIMESTAMP = /^-?(\d{10}|\d{13}|\d{16}|\d{19})$/
 export const IS_INTEGER_NUMBER_REGEX = /^\d+$/
 
-export const checkTimestamp = (value: string): boolean => {
+const detailedTimestampCheck = (value: string) => {
   try {
-    if (!IS_NUMBER_REGEX.test(value) && isValid(new Date(value))) {
-      return true
-    }
-    const integerPart = parseInt(value, 10)
-    if (!IS_TIMESTAMP.test(integerPart.toString())) {
+    // test integer to be of 10, 13, 16 or 19 digits
+    const integerPart = parseInt(value, 10).toString()
+    if (!IS_TIMESTAMP.test(integerPart)) {
       return false
     }
-    if (integerPart.toString().length === value.length) {
+    if (integerPart.length === value.length) {
       return true
     }
-    // check part after separator
-    const subPart = value.replace(integerPart.toString(), '')
+    // check part after dot separator (checking floating numbers)
+    const subPart = value.replace(integerPart, '')
     return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length))
   } catch (err) {
     // ignore errors
     return false
   }
+}
+
+// checks stringified number to may be a timestamp
+export const checkTimestamp = (value: string): boolean => IS_NUMBER_REGEX.test(value) && detailedTimestampCheck(value)
+
+// checks any string to may be converted to date
+export const checkConvertToDate = (value: string): boolean => {
+  // if string is not number-like, try to convert it to date
+  if (!IS_NUMBER_REGEX.test(value)) {
+    return isValid(new Date(value))
+  }
+
+  return checkTimestamp(value)
 }

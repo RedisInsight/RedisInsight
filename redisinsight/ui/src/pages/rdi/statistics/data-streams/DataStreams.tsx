@@ -101,6 +101,7 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
       <Accordion
         id="data-streams"
         title="Data streams overview"
+        hideAutoRefresh
         loading={loading}
         onRefresh={onRefresh}
         onRefreshClicked={onRefreshClicked}

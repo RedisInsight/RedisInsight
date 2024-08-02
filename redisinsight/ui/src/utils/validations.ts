@@ -1,4 +1,5 @@
 import { floor } from 'lodash'
+import { isValid } from 'date-fns'
 
 export const MAX_TTL_NUMBER = 2_147_483_647
 export const MAX_PORT_NUMBER = 65_535
@@ -125,4 +126,29 @@ const getApproximateNumber = (number: number): string => (number < 1 ? '<1' : `$
 export const getApproximatePercentage = (total?: number, part: number = 0): string => {
   const percent = (total ? part / total : 1) * 100
   return `${getApproximateNumber(percent)}%`
+}
+
+export const IS_NUMBER_REGEX = /^-?\d*(\.\d+)?$/
+export const IS_TIMESTAMP = /^(\d{10}|\d{13}|\d{16}|\d{19})$/
+export const IS_INTEGER_NUMBER_REGEX = /^\d+$/
+
+export const checkTimestamp = (value: string): boolean => {
+  try {
+    if (!IS_NUMBER_REGEX.test(value) && isValid(new Date(value))) {
+      return true
+    }
+    const integerPart = parseInt(value, 10)
+    if (!IS_TIMESTAMP.test(integerPart.toString())) {
+      return false
+    }
+    if (integerPart.toString().length === value.length) {
+      return true
+    }
+    // check part after separator
+    const subPart = value.replace(integerPart.toString(), '')
+    return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length))
+  } catch (err) {
+    // ignore errors
+    return false
+  }
 }

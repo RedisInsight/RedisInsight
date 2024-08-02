@@ -16,6 +16,7 @@ import {
   validateConsumerGroupId,
   validateNumber,
   validateTimeoutNumber,
+  checkTimestamp,
 } from 'uiSrc/utils'
 
 const text1 = '123 123 123'
@@ -31,6 +32,27 @@ const text10 = '348.344392421312321312312316786724'
 const text11 = '3.3.1'
 const text12 = '-3-2'
 const text13 = '5'
+
+const checkTimestampTests = [
+  { input: '1234567891', expected: true },
+  { input: '1234567891234', expected: true },
+  { input: '1234567891234567', expected: true },
+  { input: '1234567891234567891', expected: true },
+  { input: '1234567891.2', expected: true },
+  { input: '1234567891:12', expected: true },
+  { input: '1234567891a12', expected: true },
+  { input: '10-10-2020', expected: true },
+  { input: '1', expected: false },
+  { input: '123', expected: false },
+  { input: '12345678911', expected: false },
+  { input: '12345678912345', expected: false },
+  { input: '12345678912345678', expected: false },
+  { input: '1234567891.2.2', expected: false },
+  { input: '1234567891asd', expected: false },
+  { input: '-1234567891', expected: false },
+  { input: 'inf', expected: false },
+  { input: '-inf', expected: false },
+]
 
 describe('Validations utils', () => {
   describe('validateField', () => {
@@ -274,5 +296,11 @@ describe('Validations utils', () => {
         const result = validateTimeoutNumber(input)
         expect(result).toBe(expected)
       })
+  })
+
+  describe('checkTimestamp', () => {
+    test.each(checkTimestampTests)('%j', ({ input, expected }) => {
+      expect(checkTimestamp(input)).toEqual(expected)
+    })
   })
 })

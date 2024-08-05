@@ -25,6 +25,7 @@ import {
   bufferToFloat64Array,
   bufferToFloat32Array,
   checkTimestamp,
+  convertTimestampToMilliseconds,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -152,11 +153,13 @@ const formattingBuffer = (
       }
     }
     case KeyValueFormat.DateTime: {
-      const value = bufferToUnicode(reply)
+      const value = bufferToUnicode(reply)?.trim()
       try {
         if (checkTimestamp(value)) {
-          // formatting to DateTime only from timestamp(the number of milliseconds since January 1, 1970, UTC)
-          return { value: formatDateFns(new Date(+value), DATETIME_FORMATTER_DEFAULT), isValid: true }
+          // formatting to DateTime only from timestamp(the number of milliseconds since January 1, 1970, UTC).
+          // if seconds - add milliseconds (since JS Date works only with milliseconds)
+          const timestamp = convertTimestampToMilliseconds(value)
+          return { value: formatDateFns(timestamp, DATETIME_FORMATTER_DEFAULT), isValid: true }
         }
       } catch (e) {
         // if error return default

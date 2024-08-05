@@ -129,22 +129,24 @@ export const getApproximatePercentage = (total?: number, part: number = 0): stri
 }
 
 export const IS_NUMBER_REGEX = /^-?\d*(\.\d+)?$/
-export const IS_TIMESTAMP = /^-?(\d{10}|\d{13}|\d{16}|\d{19})$/
+export const IS_TIMESTAMP = /^(\d{10}|\d{13}|\d{16}|\d{19})$/
+export const IS_NEGATIVE_TIMESTAMP = /^-(\d{9}|\d{12}|\d{15}|\d{18})$/
 export const IS_INTEGER_NUMBER_REGEX = /^\d+$/
 
 const detailedTimestampCheck = (value: string) => {
   try {
     // test integer to be of 10, 13, 16 or 19 digits
     const integerPart = parseInt(value, 10).toString()
-    if (!IS_TIMESTAMP.test(integerPart)) {
-      return false
+
+    if (IS_TIMESTAMP.test(integerPart) || IS_NEGATIVE_TIMESTAMP.test(integerPart)) {
+      if (integerPart.length === value.length) {
+        return true
+      }
+      // check part after dot separator (checking floating numbers)
+      const subPart = value.replace(integerPart, '')
+      return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length))
     }
-    if (integerPart.length === value.length) {
-      return true
-    }
-    // check part after dot separator (checking floating numbers)
-    const subPart = value.replace(integerPart, '')
-    return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length))
+    return false
   } catch (err) {
     // ignore errors
     return false

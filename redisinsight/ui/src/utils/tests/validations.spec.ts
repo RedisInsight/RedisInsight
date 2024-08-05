@@ -41,7 +41,7 @@ const checkTimestampTests = [
   { input: '1234567891234567891', expected: true },
   { input: '1234567891.2', expected: true },
   // it should be valid timestamp (for date < 1970)
-  { input: '-1234567891', expected: true },
+  { input: '-123456789', expected: true },
   { input: '', expected: false },
   { input: '-', expected: false },
   { input: '0', expected: false },

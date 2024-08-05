@@ -1,20 +1,9 @@
 /* eslint-disable no-continue */
 
-import * as monacoEditor from 'monaco-editor'
-import { monaco } from 'react-monaco-editor'
-import { isString, toNumber } from 'lodash'
+import { toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider } from 'uiSrc/constants'
-import { ArgName, SearchCommand, SearchCommandTree, TokenType } from './types'
-
-export const buildSuggestion = (arg: SearchCommand, range: monaco.IRange, options: any = {}) => ({
-  label: isString(arg) ? arg : arg.token || arg.arguments?.[0].token || arg.name || '',
-  insertText: `${arg.token || arg.arguments?.[0].token || arg.name?.toUpperCase() || ''} `,
-  insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-  range,
-  kind: options?.kind || monacoEditor.languages.CompletionItemKind.Function,
-  ...options,
-})
+import { ArgName, SearchCommand, SearchCommandTree, TokenType } from '../types'
 
 export const splitQueryByArgs = (query: string, position: number = 0) => {
   const args: [string[], string[]] = [[], []]
@@ -85,13 +74,6 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   return { args, isCursorInArg, prevCursorChar: query[position - 1], nextCursorChar: query[position] }
 }
 
-export const getRange = (position: monaco.Position, word: monaco.editor.IWordAtPosition): monaco.IRange => ({
-  startLineNumber: position.lineNumber,
-  endLineNumber: position.lineNumber,
-  endColumn: word.endColumn,
-  startColumn: word.startColumn,
-})
-
 export const findCurrentArgument = (
   args: SearchCommand[],
   prev: string[],
@@ -114,7 +96,7 @@ export const findCurrentArgument = (
 
     const tokenIndex = args.findIndex((cArg) =>
       (cArg.type === TokenType.OneOf
-        ? cArg.arguments?.some((oneOfArg) => oneOfArg.token?.toLowerCase() === arg.toLowerCase())
+        ? cArg.arguments?.some((oneOfArg: SearchCommand) => oneOfArg.token?.toLowerCase() === arg.toLowerCase())
         : cArg.token?.toLowerCase() === arg.toLowerCase()))
     const token = args[tokenIndex]
 
@@ -330,7 +312,7 @@ export const fillArgsByType = (args: SearchCommand[]) => {
 export const findArgByToken = (list: SearchCommand[], arg: string): Maybe<SearchCommand> =>
   list.find((cArg) =>
     (cArg.type === TokenType.OneOf
-      ? cArg.arguments?.some((oneOfArg) => oneOfArg?.token?.toLowerCase() === arg?.toLowerCase())
+      ? cArg.arguments?.some((oneOfArg: SearchCommand) => oneOfArg?.token?.toLowerCase() === arg?.toLowerCase())
       : cArg.arguments?.[0]?.token?.toLowerCase() === arg.toLowerCase()))
 
 export const isCompositeArgument = (arg: string, prevArg?: string) => arg === '*' && prevArg === 'LOAD'

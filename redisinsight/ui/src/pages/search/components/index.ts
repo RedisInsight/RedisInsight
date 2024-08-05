@@ -1,7 +1,7 @@
-import Query from './query'
+import QueryWrapper from './query-wrapper'
 import ResultsHistory from './results-history'
 
 export {
-  Query,
+  QueryWrapper,
   ResultsHistory,
 }

@@ -1,10 +1,10 @@
 import React from 'react'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import Query from './Query'
+import QueryWrapper from './QueryWrapper'
 
 describe('Query', () => {
   it('should render', () => {
-    expect(render(<Query onSubmit={jest.fn()} />)).toBeTruthy()
+    expect(render(<QueryWrapper onSubmit={jest.fn()} />)).toBeTruthy()
   })
 })

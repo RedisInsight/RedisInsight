@@ -8,7 +8,7 @@ import {
   appContextSearchAndQuery,
   setSQVerticalPanelSizes,
 } from 'uiSrc/slices/app/context'
-import { Query, ResultsHistory } from 'uiSrc/pages/search/components'
+import { QueryWrapper, ResultsHistory } from 'uiSrc/pages/search/components'
 
 import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
 import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
@@ -16,6 +16,7 @@ import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { CodeButtonParams } from 'uiSrc/constants'
+
 import styles from './styles.module.scss'
 
 const verticalPanelIds = {
@@ -88,7 +89,7 @@ const SearchPage = () => {
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
                   style={{ minHeight: '240px', zIndex: '8' }}
                 >
-                  <Query onSubmit={handleSubmit} />
+                  <QueryWrapper onSubmit={handleSubmit} />
                 </EuiResizablePanel>
 
                 <EuiResizableButton

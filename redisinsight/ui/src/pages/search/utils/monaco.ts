@@ -26,8 +26,6 @@ export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: mon
   indexes.map((index) => {
     const value = formatLongName(bufferToString(index))
 
-    console.log(value)
-
     return {
       label: value || ' ',
       kind: monacoEditor.languages.CompletionItemKind.Snippet,

@@ -3,7 +3,7 @@
   "appName": "Redis Insight",
   "productName": "RedisInsight",
   "private": true,
-  "version": "2.52.0",
+  "version": "2.54.0",
   "description": "Redis Insight",
   "main": "./dist/main/main.js",
   "author": {
@@ -11,13 +11,15 @@
     "email": "support@redis.com",
     "url": "https://redis.com/redis-enterprise/redis-insight"
   },
-  "scripts": {},
+  "scripts": {
+    "postinstall": "npx patch-package"
+  },
   "resolutions": {
     "**/semver": "^7.5.2"
   },
   "dependencies": {
     "keytar": "^7.9.0",
-    "sqlite3": "5.1.6",
+    "sqlite3": "5.1.7",
     "tunnel-ssh": "^5.1.2"
   }
 }

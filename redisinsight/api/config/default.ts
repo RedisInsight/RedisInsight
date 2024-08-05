@@ -76,10 +76,14 @@ export default {
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.52.0',
+    appVersion: process.env.RI_APP_VERSION || '2.54.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
+  },
+  encryption: {
+    encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
+    encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
   },
   sockets: {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
@@ -100,6 +104,7 @@ export default {
     retryTimes: parseInt(process.env.RI_CLIENTS_RETRY_TIMES, 10) || 3,
     retryDelay: parseInt(process.env.RI_CLIENTS_RETRY_DELAY, 10) || 500,
     maxRetriesPerRequest: parseInt(process.env.RI_CLIENTS_MAX_RETRIES_PER_REQUEST, 10) || 1,
+    maxRedirections: parseInt(process.env.RI_CLIENTS_MAX_REDIRECTIONS, 10) || 3,
     slotsRefreshTimeout: parseInt(process.env.RI_CLIENTS_SLOTS_REQUEST_TIMEOUT, 10) || 5000,
   },
   redis_scan: {
@@ -140,7 +145,7 @@ export default {
   },
   content: {
     updateUrl: process.env.RI_CONTENT_UPDATE_URL
-      || 'https://github.com/RedisInsight/Statics/releases/download/2.42',
+      || 'https://github.com/RedisInsight/Statics/releases/download/2.54',
     zip: process.env.RI_CONTENT_ZIP || dataZipFileName,
     buildInfo: process.env.RI_CONTENT_INFO || buildInfoFileName,
     devMode: !!process.env.RI_CONTENT_PATH,

@@ -42,7 +42,7 @@ const OAuthSignIn = (props: Props) => {
           <OAuthAdvantages />
         </EuiFlexItem>
         <EuiFlexItem className={styles.socialContainer}>
-          <EuiText className={styles.subTitle}>Sign-up to</EuiText>
+          <EuiText className={styles.subTitle}>Get started with</EuiText>
           <EuiTitle className={styles.title}><h2>Redis Cloud account</h2></EuiTitle>
           <OAuthSocialButtons
             className={styles.socialButtons}

@@ -367,10 +367,6 @@ export class RecommendationProvider {
   async determineSetPasswordRecommendation(
     redisClient: RedisClient,
   ): Promise<Recommendation> {
-    if (await this.checkAuth(redisClient)) {
-      return { name: RECOMMENDATION_NAMES.SET_PASSWORD };
-    }
-
     try {
       const users = await redisClient.sendCommand(
         ['acl', 'list'],
@@ -436,17 +432,6 @@ export class RecommendationProvider {
       this.logger.error('Can not determine search indexes recommendation', err);
       return null;
     }
-  }
-
-  private async checkAuth(redisClient: RedisClient): Promise<boolean> {
-    try {
-      await redisClient.sendCommand(['auth', 'pass']);
-    } catch (err) {
-      if (err.message.includes('Client sent AUTH, but no password is set')) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private async determineSearchIndexesForCluster(keys: Key[], client: RedisClient): Promise<RedisString> {

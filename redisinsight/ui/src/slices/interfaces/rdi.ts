@@ -51,28 +51,38 @@ export interface IRdiPipelineStrategies {
   data: IRdiPipelineStrategy[]
 }
 
+export enum StatisticsConnectionStatus {
+  notYetUsed = 'not yet used',
+  connected = 'connected'
+}
+
 export interface IConnections {
   [key: string]: {
     host: string
     port: number
-    status: string
+    status: StatisticsConnectionStatus
     type: string
     database: string
     user: string
   }
 }
 
+export interface IDataStreamsData {
+  total: number
+  pending: number
+  inserted: number
+  updated: number
+  deleted: number
+  filtered: number
+  rejected: number
+  deduplicated: number
+  lastArrival?: string
+}
+
 export interface IDataStreams {
-  [key: string]: {
-    total: number
-    pending: number
-    inserted: number
-    updated: number
-    deleted: number
-    filtered: number
-    rejected: number
-    deduplicated: number
-    lastArrival: string
+  totals: IDataStreamsData,
+  streams: {
+    [key: string]: IDataStreamsData
   }
 }
 
@@ -138,7 +148,7 @@ export enum PipelineStatus {
 export interface IPipelineStatus {
   components: Record<string, unknown>
   pipelines: {
-    defaults?: {
+    default?: {
       status: PipelineStatus
       state: unknown
       tasks: unknown

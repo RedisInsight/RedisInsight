@@ -86,7 +86,8 @@ export class CustomTutorialFsProvider {
         return Promise.reject(new BadRequestException(ERROR_MESSAGES.CUSTOM_TUTORIAL_UNSUPPORTED_ORIGIN));
       }
 
-      const { data } = await axios.get(link, {
+      // false positive. we have whitelist checks above.
+      const { data } = await axios.get(link, { // lgtm[js/request-forgery]
         responseType: 'arraybuffer',
       });
 

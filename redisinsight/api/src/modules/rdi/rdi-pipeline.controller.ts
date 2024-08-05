@@ -3,7 +3,7 @@ import {
   ClassSerializerInterceptor, Controller, Get, Post, UseInterceptors, UsePipes, ValidationPipe,
   Param,
 } from '@nestjs/common';
-import { Rdi, RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
+import { RdiPipeline, RdiClientMetadata } from 'src/modules/rdi/models';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { RdiPipelineService } from 'src/modules/rdi/rdi-pipeline.service';
@@ -23,7 +23,7 @@ export class RdiPipelineController {
   @Get('/schema')
   @ApiEndpoint({
     description: 'Get pipeline schema',
-    responses: [{ status: 200, type: Rdi }],
+    responses: [{ status: 200, type: Object }],
   })
   async getSchema(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
@@ -57,7 +57,7 @@ export class RdiPipelineController {
   @Post('/deploy')
   @ApiEndpoint({
     description: 'Deploy the pipeline',
-    responses: [{ status: 200, type: RdiPipeline }],
+    responses: [{ status: 200 }],
   })
   async deploy(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
@@ -81,7 +81,7 @@ export class RdiPipelineController {
   @Get('/strategies')
   @ApiEndpoint({
     description: 'Get pipeline strategies and db types for template',
-    responses: [{ status: 200, type: Rdi }],
+    responses: [{ status: 200, type: Object }],
   })
   async getStrategies(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,

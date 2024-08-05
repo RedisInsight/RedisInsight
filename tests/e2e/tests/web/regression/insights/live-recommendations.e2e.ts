@@ -2,7 +2,7 @@ import * as path from 'path';
 import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { ExploreTabs, RecommendationIds, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
-import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../../helpers/conf';
+import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config, ossStandaloneV7Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { Telemetry } from '../../../../helpers/telemetry';
@@ -22,7 +22,7 @@ const apiKeyRequests = new APIKeyRequests();
 
 const databasesForAdding = [
     { host: ossStandaloneV5Config.host, port: ossStandaloneV5Config.port, databaseName: ossStandaloneV5Config.databaseName },
-    { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port, databaseName: ossStandaloneConfig.databaseName }
+    { host: ossStandaloneV7Config.host, port: ossStandaloneV7Config.port, databaseName: ossStandaloneV7Config.databaseName }
 ];
 const tenSecondsTimeout = 10000;
 const keyName = `recomKey-${Common.generateWord(10)}`;
@@ -206,56 +206,55 @@ test('Verify that user can snooze recommendation', async t => {
     tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible).ok('recommendation is not displayed again');
 });
+test('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
+    await browserPage.InsightsPanel.togglePanel(true);
+    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
+    const redisVersionRecommendationSelector = tab.getRecommendationByName(redisVersionRecom);
+    // Verify that live recommendation displayed in Insights panel
+    await t.expect(await tab.getRecommendationByName(redisVersionRecom).visible).ok(`${redisVersionRecom} recommendation not displayed`);
+    // Verify that recommendation from db analysis not displayed in Insights panel
+    await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).notOk(`${setPasswordRecom} recommendation displayed`);
+    await browserPage.InsightsPanel.togglePanel(false);
+    // Go to Analysis Tools page
+    await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
+    await t.click(memoryEfficiencyPage.newReportBtn);
+    await browserPage.InsightsPanel.togglePanel(true);
+    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
+    // Verify that recommendations are synchronized
+    await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).ok('Recommendations are not synchronized');
+    // Verify that duplicates are not displayed
+    await t.expect(redisVersionRecommendationSelector.count).eql(1, `${redisVersionRecom} recommendation duplicated`);
+});
+//https://redislabs.atlassian.net/browse/RI-4413
 test
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);
         await updateControlNumber(47.2);
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV7Config);
         await myRedisDatabasePage.reloadPage();
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneV5Config.databaseName);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneV7Config.databaseName);
     }).after(async() => {
-        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV7Config);
         await refreshFeaturesTestData();
-    })('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
-
+    })('Verify that if user clicks on the Analyze button and link, the pop up with analyze button is displayed and new report is generated', async t => {
         await browserPage.InsightsPanel.togglePanel(true);
         let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
-        const redisVersionRecommendationSelector = tab.getRecommendationByName(redisVersionRecom);
-        // Verify that live recommendation displayed in Insights panel
-        await t.expect(await tab.getRecommendationByName(redisVersionRecom).visible).ok(`${redisVersionRecom} recommendation not displayed`);
-        // Verify that recommendation from db analysis not displayed in Insights panel
-        await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).notOk(`${setPasswordRecom} recommendation displayed`);
-        await browserPage.InsightsPanel.togglePanel(false);
-        // Go to Analysis Tools page
-        await t.click(myRedisDatabasePage.NavigationPanel.analysisPageButton);
-        await t.click(memoryEfficiencyPage.newReportBtn);
-        await browserPage.InsightsPanel.togglePanel(true);
+        await t.click(tab.analyzeDatabaseButton);
+        await t.click(tab.analyzeTooltipButton);
+        //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
+        await t.click(memoryEfficiencyPage.selectedReport);
+        await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
+        await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
+        await workbenchPage.InsightsPanel.togglePanel(true);
         tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
-        // Verify that recommendations are synchronized
-        await t.expect(await tab.getRecommendationByName(setPasswordRecom).visible).ok('Recommendations are not synchronized');
-        // Verify that duplicates are not displayed
-        await t.expect(redisVersionRecommendationSelector.count).eql(1, `${redisVersionRecom} recommendation duplicated`);
+        await t.click(tab.analyzeDatabaseLink);
+        await t.click(tab.analyzeTooltipButton);
+        //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
+        await t.click(memoryEfficiencyPage.selectedReport);
+        await t.expect(memoryEfficiencyPage.reportItem.count).eql(2, 'report was not generated');
     });
-//https://redislabs.atlassian.net/browse/RI-4413
-test('Verify that if user clicks on the Analyze button and link, the pop up with analyze button is displayed and new report is generated', async t => {
-    await browserPage.InsightsPanel.togglePanel(true);
-    let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
-    await t.click(tab.analyzeDatabaseButton);
-    await t.click(tab.analyzeTooltipButton);
-    //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
-    await t.click(memoryEfficiencyPage.selectedReport);
-    await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
-    await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
-    await workbenchPage.InsightsPanel.togglePanel(true);
-    tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
-    await t.click(tab.analyzeDatabaseLink);
-    await t.click(tab.analyzeTooltipButton);
-    //Verify that user is navigated to DB Analysis page via Analyze link and new report is generated
-    await t.click(memoryEfficiencyPage.selectedReport);
-    await t.expect(memoryEfficiencyPage.reportItem.count).eql(2, 'report was not generated');
-});
 //https://redislabs.atlassian.net/browse/RI-4493
 test
     .after(async() => {

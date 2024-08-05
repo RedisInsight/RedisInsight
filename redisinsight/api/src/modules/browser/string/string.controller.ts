@@ -27,13 +27,16 @@ import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { Response } from 'express';
 import { StringService } from 'src/modules/browser/string/string.service';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: String')
 @UseInterceptors(BrowserSerializeInterceptor)
 @Controller('string')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class StringController {
-  constructor(private stringService: StringService) {}
+export class StringController extends BrowserBaseController {
+  constructor(private stringService: StringService) {
+    super();
+  }
 
   @Post('')
   @ApiOperation({ description: 'Set key to hold string value' })

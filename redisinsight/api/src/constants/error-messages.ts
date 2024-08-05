@@ -5,6 +5,7 @@ export default {
   BAD_REQUEST: 'Bad request',
   NOT_FOUND: 'Resource was not found',
   INTERNAL_SERVER_ERROR: 'Server error',
+  REQUEST_TIMEOUT: 'Request timeout',
 
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
   COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',

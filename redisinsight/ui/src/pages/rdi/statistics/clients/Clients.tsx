@@ -70,6 +70,7 @@ const Clients = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefre
       <Accordion
         id="clients"
         title="Clients"
+        hideAutoRefresh
         loading={loading}
         onRefresh={onRefresh}
         onRefreshClicked={onRefreshClicked}

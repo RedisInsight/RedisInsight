@@ -21,12 +21,15 @@ import { RejsonRlService } from 'src/modules/browser/rejson-rl/rejson-rl.service
 import { ApiRedisInstanceOperation } from 'src/decorators/api-redis-instance-operation.decorator';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ClientMetadata } from 'src/common/models';
+import { BrowserBaseController } from 'src/modules/browser/browser.base.controller';
 
 @ApiTags('Browser: REJSON-RL')
 @Controller('rejson-rl')
 @UsePipes(new ValidationPipe({ transform: true }))
-export class RejsonRlController {
-  constructor(private service: RejsonRlService) {}
+export class RejsonRlController extends BrowserBaseController {
+  constructor(private service: RejsonRlService) {
+    super();
+  }
 
   @Post('/get')
   @ApiRedisInstanceOperation({

@@ -1,7 +1,7 @@
 {
-  "version": 2.5202,
+  "version": 2.5203,
   "features": {
-    "rdi": {
+    "redisDataIntegration": {
       "flag": true,
       "perc": [[0,0]],
       "filters": [
@@ -13,6 +13,10 @@
       ]
     },
     "insightsRecommendations": {
+      "flag": true,
+      "perc": [[0,100]]
+    },
+    "hashFieldExpiration": {
       "flag": true,
       "perc": [[0,100]]
     },

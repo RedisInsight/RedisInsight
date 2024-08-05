@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash'
+import { get } from 'lodash'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -12,7 +12,7 @@ import RdiInstancePageTemplate from 'uiSrc/templates/rdi-instance-page-template'
 import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
-import { IPipelineStatus } from 'uiSrc/slices/interfaces'
+import { IPipelineStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -22,13 +22,9 @@ import TargetConnections from './target-connections'
 
 import styles from './styles.module.scss'
 
-const isPipelineDeployed = (data: Nullable<IPipelineStatus>) => {
-  if (!data) {
-    return false
-  }
-
-  return !isEmpty(data.pipelines)
-}
+const isPipelineDeployed = (
+  data: Nullable<IPipelineStatus>
+) => get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready
 
 const StatisticsPage = () => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -74,7 +70,10 @@ const StatisticsPage = () => {
     dispatch(fetchRdiStatistics(rdiInstanceId))
 
     sendPageViewTelemetry({
-      name: TelemetryPageView.RDI_STATUS
+      name: TelemetryPageView.RDI_STATUS,
+      eventData: {
+        rdiInstanceId
+      }
     })
   }, [])
 

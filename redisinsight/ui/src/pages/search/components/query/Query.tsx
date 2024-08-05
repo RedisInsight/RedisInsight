@@ -3,7 +3,7 @@ import MonacoEditor, { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
 import { useSelector } from 'react-redux'
 import { merge } from 'lodash'
-import { defaultMonacoOptions, Theme } from 'uiSrc/constants'
+import { defaultMonacoOptions, MonacoLanguage, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { bufferToString, formatLongName, getCommandMarkdown, Nullable } from 'uiSrc/utils'
@@ -57,7 +57,7 @@ const Query = (props: Props) => {
   const { theme } = useContext(ThemeContext)
 
   useEffect(() => {
-    monaco.languages.register({ id: 'RediSearch' })
+    monaco.languages.register({ id: MonacoLanguage.RediSearch })
 
     return () => {
       disposeCompletionItemProvider.current?.()
@@ -280,7 +280,7 @@ const Query = (props: Props) => {
     <MonacoEditor
       value={value}
       onChange={onChange}
-      language="RediSearch"
+      language={MonacoLanguage.RediSearch}
       theme={theme === Theme.Dark ? 'dark' : 'light'}
       options={options}
       editorDidMount={editorDidMount}

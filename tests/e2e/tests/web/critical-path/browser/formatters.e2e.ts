@@ -234,7 +234,7 @@ notEditableFormattersSet.forEach(formatter => {
         }
     });
 });
-test.only('Verify that user can format timestamp value', async t => {
+test('Verify that user can format timestamp value', async t => {
     const formatterName = 'Timestamp to DateTime';
     await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
     //Add fields to the hash key

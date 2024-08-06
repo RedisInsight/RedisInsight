@@ -1,4 +1,5 @@
-import { InstancePage } from './instance-page';
+import { BaseRunCommandsPage } from './base-run-commands-page';
 
-export class SearchAndQueryPage extends InstancePage {
+export class SearchAndQueryPage extends BaseRunCommandsPage {
+
 }

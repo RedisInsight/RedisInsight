@@ -32,6 +32,7 @@ import appOauthReducer from './oauth/cloud'
 import workbenchResultsReducer from './workbench/wb-results'
 import workbenchTutorialsReducer from './workbench/wb-tutorials'
 import workbenchCustomTutorialsReducer from './workbench/wb-custom-tutorials'
+import searchAndQueryReducer from './search/searchAndQuery'
 import contentCreateRedisButtonReducer from './content/create-redis-buttons'
 import contentGuideLinksReducer from './content/guide-links'
 import pubSubReducer from './pubsub/pubsub'
@@ -94,6 +95,9 @@ export const rootReducer = combineReducers({
     results: workbenchResultsReducer,
     tutorials: workbenchTutorialsReducer,
     customTutorials: workbenchCustomTutorialsReducer,
+  }),
+  search: combineReducers({
+    query: searchAndQueryReducer,
   }),
   content: combineReducers({
     createRedisButtons: contentCreateRedisButtonReducer,

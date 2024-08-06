@@ -19,6 +19,7 @@ enum BrowserStorageItem {
   bulkActionDeleteId = 'bulkActionDeleteId',
   dbConfig = 'dbConfig_',
   RunQueryMode = 'RunQueryMode',
+  SQRunQueryMode = 'SQRunQueryMode',
   wbCleanUp = 'wbCleanUp',
   viewFormat = 'viewFormat',
   wbGroupMode = 'wbGroupMode',

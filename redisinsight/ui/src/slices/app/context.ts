@@ -35,7 +35,7 @@ export const initialState: StateAppContext = {
     : AppWorkspace.Databases,
   contextInstanceId: '',
   contextRdiInstanceId: '',
-  lastPage: '',
+  lastBrowserPage: '',
   dbConfig: {
     treeViewDelimiter: DEFAULT_DELIMITER,
     treeViewSort: DEFAULT_TREE_SORTING,
@@ -70,6 +70,12 @@ export const initialState: StateAppContext = {
     }
   },
   workbench: {
+    script: '',
+    panelSizes: {
+      vertical: {}
+    }
+  },
+  searchAndQuery: {
     script: '',
     panelSizes: {
       vertical: {}
@@ -178,8 +184,14 @@ const appContextSlice = createSlice({
     setWorkbenchVerticalPanelSizes: (state, { payload }: { payload: any }) => {
       state.workbench.panelSizes.vertical = payload
     },
+    setSQVerticalPanelSizes: (state, { payload }: { payload: any }) => {
+      state.searchAndQuery.panelSizes.vertical = payload
+    },
+    setSQVerticalScript: (state, { payload }: { payload: any }) => {
+      state.searchAndQuery.script = payload
+    },
     setLastPageContext: (state, { payload }: { payload: string }) => {
-      state.lastPage = payload
+      state.lastBrowserPage = payload
     },
     resetBrowserTree: (state) => {
       state.browser.tree.selectedLeaf = null
@@ -248,6 +260,8 @@ export const {
   resetBrowserTree,
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
+  setSQVerticalPanelSizes,
+  setSQVerticalScript,
   setLastPageContext,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,
@@ -276,6 +290,8 @@ export const appContextBrowserKeyDetails = (state: RootState) =>
   state.app.context.browser.keyDetailsSizes
 export const appContextWorkbench = (state: RootState) =>
   state.app.context.workbench
+export const appContextSearchAndQuery = (state: RootState) =>
+  state.app.context.searchAndQuery
 export const appContextSelectedKey = (state: RootState) =>
   state.app.context.browser.keyList.selectedKey
 export const appContextPubSub = (state: RootState) =>

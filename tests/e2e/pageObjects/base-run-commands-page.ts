@@ -25,6 +25,7 @@ export class BaseRunCommandsPage extends InstancePage {
     queryResult = Selector('[data-testid=query-common-result]');
 
     cssQueryCardCommand = '[data-testid=query-card-command]';
+    cssQueryCardContainer = '[data-testid^="query-card-container-"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssReRunCommandButton = '[data-testid=re-run-command]';
     cssDeleteCommandButton = '[data-testid=delete-command]';
@@ -37,7 +38,7 @@ export class BaseRunCommandsPage extends InstancePage {
      * @param command The command
      */
     async getCardContainerByCommand(command: string): Promise<Selector> {
-        return this.queryCardCommand.withExactText(command).parent('[data-testid^="query-card-container-"]');
+        return this.queryCardCommand.withExactText(command).parent(this.cssQueryCardContainer);
     }
 
     /**
@@ -66,13 +67,5 @@ export class BaseRunCommandsPage extends InstancePage {
         // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
-    }
-
-    /**
-     * Get selector with tutorial name
-     * @param tutorialName name of the uploaded tutorial
-     */
-    getAccordionButtonWithName(tutorialName: string): Selector {
-        return Selector(`[data-testid=accordion-button-${tutorialName}]`);
     }
 }

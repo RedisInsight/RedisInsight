@@ -44,15 +44,12 @@ const FetchPipelinePopover = () => {
 
   return (
     <ConfirmationPopover
-      title="Upload a pipeline from the server"
+      title="Download a pipeline from the server"
       body={(
         <>
           <EuiText size="s">
             When downloading a new pipeline from the server,
-            it will overwrite the existing one displayed in RedisInsight.
-          </EuiText>
-          <EuiText size="s">
-            Download the current pipeline to save the changes locally.
+            it will overwrite the existing one displayed in Redis Insight.
           </EuiText>
         </>
       )}
@@ -63,7 +60,7 @@ const FetchPipelinePopover = () => {
           color="secondary"
           data-testid="upload-confirm-btn"
         >
-          Upload
+          Download from server
         </EuiButton>
       )}
       onConfirm={handleRefreshClick}

@@ -29,6 +29,8 @@ export const mockDatabaseSentinelMasterPasswordEncrypted = 'database.sentinelMas
 
 export const mockDatabaseSentinelMasterPasswordPlain = 'some sentinel pass';
 
+export const mockDBSize = 1;
+
 export const mockDatabase = Object.assign(new Database(), {
   id: mockDatabaseId,
   name: 'database-name',
@@ -275,6 +277,7 @@ export const mockDatabaseInfoProvider = jest.fn(() => ({
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),
+  getRedisDBSize: jest.fn().mockResolvedValue(mockDBSize),
   getClientListInfo: jest.fn().mockReturnValue(mockRedisClientListResult),
 }));
 

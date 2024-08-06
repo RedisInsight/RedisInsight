@@ -19,6 +19,9 @@ import { Database } from 'src/modules/database/models/database';
 import config from 'src/utils/config';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
+import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
+import { ClientContext } from 'src/common/models';
+import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 
 const cloudConfig = config.get('cloud');
 
@@ -36,6 +39,8 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       cloudTaskCapiService: CloudTaskCapiService,
       cloudDatabaseAnalytics: CloudDatabaseAnalytics,
       databaseService: DatabaseService,
+      databaseInfoService: DatabaseInfoService,
+      bulkImportService: BulkImportService,
       cloudCapiKeyService: CloudCapiKeyService,
     },
   ) {
@@ -127,6 +132,22 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
         },
         timeout: cloudConfig.cloudDatabaseConnectionTimeout,
       });
+
+      try {
+        const clientMetadata = {
+          databaseId: database.id,
+          sessionMetadata: this.options.sessionMetadata,
+          context: ClientContext.Common,
+          db: database.db,
+        };
+        const dbSize = await this.dependencies.databaseInfoService.getDBSize(clientMetadata);
+
+        if (dbSize === 0) {
+          this.dependencies.bulkImportService.importDefaultData(clientMetadata);
+        }
+      } catch (e) {
+        this.logger.error('Error when trying to feed the db with default data');
+      }
 
       this.result = {
         resourceId: database.id,

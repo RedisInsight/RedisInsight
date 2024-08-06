@@ -15,5 +15,9 @@ import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service'
     BulkActionsAnalytics,
     BulkImportService,
   ],
+  exports: [
+    BulkImportService,
+    BulkActionsAnalytics,
+  ],
 })
 export class BulkActionsModule {}

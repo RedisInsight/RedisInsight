@@ -28,6 +28,7 @@ export enum InfiniteMessagesIds {
   databaseExists = 'databaseExists',
   subscriptionExists = 'subscriptionExists',
   appUpdateAvailable = 'appUpdateAvailable',
+  pipelineDeploySuccess = 'pipelineDeploySuccess'
 }
 
 // TODO: after merge insights - remove and change to function
@@ -313,7 +314,7 @@ export const INFINITE_MESSAGES = {
     )
   }),
   SUCCESS_DEPLOY_PIPELINE: () => ({
-    id: InfiniteMessagesIds.appUpdateAvailable,
+    id: InfiniteMessagesIds.pipelineDeploySuccess,
     className: 'wide',
     Inner: (
       <div

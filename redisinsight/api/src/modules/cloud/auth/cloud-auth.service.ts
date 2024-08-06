@@ -8,6 +8,7 @@ import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.ser
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { wrapHttpError } from 'src/common/utils';
 import {
+  CloudOauthGithubEmailPermissionException,
   CloudOauthMisconfigurationException, CloudOauthMissedRequiredDataException,
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
@@ -32,11 +33,23 @@ export class CloudAuthService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  static getAuthorizationServerRedirectError(query: { error_description: string }) {
-    if (query?.error_description?.indexOf('properties are missing') > -1) {
-      return new CloudOauthMissedRequiredDataException(query.error_description, {
-        description: query.error_description,
-      });
+  static getAuthorizationServerRedirectError(
+    query: { error_description: string, error: string },
+    authRequest?: CloudAuthRequest,
+  ) {
+    if (
+      query?.error_description?.indexOf('propert') > -1
+      && query?.error_description?.indexOf('required') > -1
+      && query?.error_description?.indexOf('miss') > -1
+    ) {
+      return (
+        authRequest?.idpType === CloudAuthIdpType.GitHub
+          && query?.error_description?.indexOf('email') > -1
+      )
+        ? new CloudOauthGithubEmailPermissionException(query.error_description)
+        : new CloudOauthMissedRequiredDataException(query.error_description, {
+          description: query.error_description,
+        });
     }
 
     return new CloudOauthMisconfigurationException(undefined, {
@@ -68,17 +81,21 @@ export class CloudAuthService {
       callback?: Function,
     },
   ): Promise<string> {
-    const authRequest: any = await this.getAuthStrategy(options?.strategy).generateAuthRequest(sessionMetadata);
-    authRequest.callback = options?.callback;
-    authRequest.action = options?.action;
+    try {
+      const authRequest: any = await this.getAuthStrategy(options?.strategy).generateAuthRequest(sessionMetadata);
+      authRequest.callback = options?.callback;
+      authRequest.action = options?.action;
 
-    // based on requirements we must support only single auth request at the moment
-    // and logout user before
-    await this.logout(sessionMetadata);
-    this.authRequests.clear();
-    this.authRequests.set(authRequest.state, authRequest);
+      // based on requirements we must support only single auth request at the moment
+      // and logout user before
+      await this.logout(sessionMetadata);
+      this.authRequests.clear();
+      this.authRequests.set(authRequest.state, authRequest);
 
-    return CloudAuthStrategy.generateAuthUrl(authRequest).toString();
+      return CloudAuthStrategy.generateAuthUrl(authRequest).toString();
+    } catch (e) {
+      throw new CloudOauthMisconfigurationException();
+    }
   }
 
   /**
@@ -137,11 +154,11 @@ export class CloudAuthService {
       throw new CloudOauthUnknownAuthorizationRequestException();
     }
 
-    if (query?.error) {
-      throw CloudAuthService.getAuthorizationServerRedirectError(query);
-    }
-
     const authRequest = this.authRequests.get(query.state);
+
+    if (query?.error) {
+      throw CloudAuthService.getAuthorizationServerRedirectError(query, authRequest);
+    }
 
     // delete authRequest on this step
     // allow to redirect with authorization code only once

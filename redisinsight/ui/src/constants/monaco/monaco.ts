@@ -39,6 +39,7 @@ export enum MonacoLanguage {
   JMESPath = 'jmespathLanguage',
   SQLiteFunctions = 'sqliteFunctions',
   Text = 'text',
+  RediSearch = 'redisearch',
 }
 
 export const defaultMonacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = {

@@ -1,16 +1,12 @@
-import { TutorialsIds } from 'uiSrc/constants'
+import { merge } from 'lodash'
+import { defaultMonacoOptions } from 'uiSrc/constants'
 
-export const TUTORIALS = [
+export const options = merge(defaultMonacoOptions,
   {
-    id: TutorialsIds.ExactMatch,
-    title: 'Exact match'
-  },
-  {
-    id: TutorialsIds.FullTextSearch,
-    title: 'Full-text search'
-  },
-  {
-    id: TutorialsIds.IntroVectorSearch,
-    title: 'Intro to vector search'
-  },
-]
+    suggest: {
+      showWords: false,
+      showIcons: true
+    }
+  })
+
+export const SUPPORTED_COMMANDS_LIST = ['FT.SEARCH', 'FT.AGGREGATE']

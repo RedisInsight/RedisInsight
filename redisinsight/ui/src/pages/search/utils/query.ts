@@ -3,7 +3,7 @@
 import { toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider } from 'uiSrc/constants'
-import { ArgName, SearchCommand, SearchCommandTree, TokenType } from '../types'
+import { ArgName, FoundCommandArgument, SearchCommand, SearchCommandTree, TokenType } from '../types'
 
 export const splitQueryByArgs = (query: string, position: number = 0) => {
   const args: [string[], string[]] = [[], []]
@@ -78,13 +78,7 @@ export const findCurrentArgument = (
   args: SearchCommand[],
   prev: string[],
   parent?: SearchCommandTree
-): Nullable<{
-  isComplete: boolean
-  stopArg: Maybe<SearchCommand>,
-  isBlocked: boolean,
-  append: Maybe<SearchCommand>[],
-  parent: Maybe<SearchCommand>
-}> => {
+): Nullable<FoundCommandArgument> => {
   for (let i = prev.length - 1; i >= 0; i--) {
     const arg = prev[i]
     const currentArg = findArgByToken(args, arg)
@@ -228,7 +222,7 @@ export const getArgumentSuggestions = (
   isComplete: boolean
   stopArg: Maybe<SearchCommand>,
   isBlocked: boolean,
-  append: Maybe<SearchCommand>[],
+  append: SearchCommand[],
 } => {
   const {
     restArguments,
@@ -240,14 +234,19 @@ export const getArgumentSuggestions = (
 
   const stopArgument = restArguments[stopArgIndex]
   const restNotFilledArgs = restArguments.slice(stopArgIndex)
-  const isBlocked = isWasBlocked || (stopArgument && !(stopArgument.token || stopArgument?.arguments?.length))
+  const isStopArgumentCannotSuggest = Boolean(stopArgument && !(stopArgument.token || stopArgument?.arguments?.length))
+  const isBlocked = isWasBlocked || isStopArgumentCannotSuggest
+
   const restParentOptionalSuggestions = !stopArgument || stopArgument?.optional
     ? getRestParentArguments(current?.parent, current?.name, current?.multiple)
-      .filter((arg) => arg.optional)
-      .filter((arg) => arg.name !== current?.name)
+      .filter((arg) =>
+        arg.optional && arg.name !== stopArgument?.name
+        && (current?.multiple || arg.name !== current?.name))
     : []
 
-  const restOptionalSuggestions = fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions])
+  const restOptionalSuggestions = isBlocked
+    ? []
+    : fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions])
   const isOneOfArgument = stopArgument?.type === TokenType.OneOf
     || (stopArgument?.type === TokenType.PureToken && current?.parent?.type === TokenType.OneOf)
   const isArgSuggestions = stopArgument && !stopArgument.optional && (stopArgument?.token || isOneOfArgument)
@@ -255,16 +254,14 @@ export const getArgumentSuggestions = (
   const suggestions = isArgSuggestions
     // only 1 suggestion since next arg is required
     ? [isOneOfArgument ? stopArgument.arguments : stopArgument].flat()
-    : !isBlocked
-      ? restOptionalSuggestions
-      : []
+    : restOptionalSuggestions
 
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {
     isComplete: requiredArgsLength === 0 && !isBlocked,
     stopArg: stopArgument,
-    isBlocked: isBlocked && !isOneOfArgument,
+    isBlocked,
     append: suggestions,
   }
 }

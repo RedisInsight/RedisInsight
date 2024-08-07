@@ -3,8 +3,20 @@ import * as monacoEditor from 'monaco-editor'
 import { isString } from 'lodash'
 import { generateDetail } from 'uiSrc/pages/search/utils/query'
 import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
-import { bufferToString, formatLongName, Maybe } from 'uiSrc/utils'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { Maybe } from 'uiSrc/utils'
+
+export const setCursorPositionAtTheEnd = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+  if (!editor) return
+
+  const rows = editor.getValue().split('\n')
+
+  editor.setPosition({
+    column: rows[rows.length - 1].trimEnd().length + 1,
+    lineNumber: rows.length
+  })
+
+  editor.focus()
+}
 
 export const getRange = (position: monaco.Position, word: monaco.editor.IWordAtPosition): monaco.IRange => ({
   startLineNumber: position.lineNumber,
@@ -21,28 +33,6 @@ export const buildSuggestion = (arg: SearchCommand, range: monaco.IRange, option
   kind: options?.kind || monacoEditor.languages.CompletionItemKind.Function,
   ...options,
 })
-
-export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange) =>
-  indexes.map((index) => {
-    const value = formatLongName(bufferToString(index))
-
-    return {
-      label: value || ' ',
-      kind: monacoEditor.languages.CompletionItemKind.Snippet,
-      insertText: `"${value}" "$1" `,
-      insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-      range,
-    }
-  })
-
-export const getFieldsSuggestions = (fields: string[], range: monaco.IRange, spaceAfter = false) =>
-  fields.map((field) => ({
-    label: field,
-    kind: monacoEditor.languages.CompletionItemKind.Reference,
-    insertText: `${field}${spaceAfter ? ' ' : ''}`,
-    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-    range,
-  }))
 
 export const getRediSearchSignutureProvider = (options: Maybe<{
   isOpen: boolean

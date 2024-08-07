@@ -1,23 +1,28 @@
-import React, { useContext, useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { MonacoLanguage, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { getCommandMarkdown, Nullable } from 'uiSrc/utils'
+import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import {
-  buildSuggestion,
   findCurrentArgument,
-  generateDetail, getFieldsSuggestions, getIndexesSuggestions,
   getRange,
-  getRediSearchSignutureProvider,
+  getRediSearchSignutureProvider, setCursorPositionAtTheEnd,
   splitQueryByArgs
 } from 'uiSrc/pages/search/utils'
 import { SearchCommand } from 'uiSrc/pages/search/types'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { SUPPORTED_COMMANDS_LIST, options } from './constants'
+import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
+import { SUPPORTED_COMMANDS_LIST, options, DefinedArgumentName } from './constants'
+import {
+  getFieldsSuggestions,
+  getIndexesSuggestions,
+  asSuggestionsRef,
+  getMandatoryArgumentSuggestions, getOptionalSuggestions, getCommandsSuggestions
+} from './utils'
 
 export interface Props {
   value: string
@@ -29,6 +34,8 @@ const Query = (props: Props) => {
   const { value, onChange, indexes } = props
   const { spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
 
+  const [selectedIndex, setSelectedIndex] = useState('')
+
   const SUPPORTED_COMMANDS = SUPPORTED_COMMANDS_LIST.map((name) => ({
     ...REDIS_COMMANDS_SPEC[name],
     name
@@ -37,15 +44,20 @@ const Query = (props: Props) => {
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const disposeCompletionItemProvider = useRef(() => {})
   const disposeSignatureHelpProvider = useRef(() => {})
-  const suggestionsRef = useRef<monacoEditor.languages.CompletionItem[]>([])
+  const suggestionsRef = useRef<{
+    forceHide: boolean
+    data: monacoEditor.languages.CompletionItem[]
+  }>({ forceHide: false, data: [] })
   const helpWidgetRef = useRef<any>({
     isOpen: false,
     parent: null,
     currentArg: null
   })
   const indexesRef = useRef<RedisResponseBuffer[]>([])
+  const attributesRef = useRef<any>([])
 
   const { theme } = useContext(ThemeContext)
+  const dispatch = useDispatch()
 
   useEffect(() => () => {
     disposeCompletionItemProvider.current?.()
@@ -56,6 +68,18 @@ const Query = (props: Props) => {
     indexesRef.current = indexes
   }, [indexes])
 
+  useEffect(() => {
+    if (!selectedIndex) return
+
+    const index = selectedIndex.replace(/^(['"])(.*)\1$/, '$2')
+
+    dispatch(fetchRedisearchInfoAction(index,
+      (data) => {
+        const { attributes } = data as any
+        attributesRef.current = attributes
+      }))
+  }, [selectedIndex])
+
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     monaco: typeof monacoEditor
@@ -63,8 +87,16 @@ const Query = (props: Props) => {
     monaco.languages.register({ id: MonacoLanguage.RediSearch })
     monacoObjects.current = { editor, monaco }
 
-    suggestionsRef.current = getSuggestions(editor)
-    triggerSuggestions()
+    if (value) {
+      setCursorPositionAtTheEnd(editor)
+    } else {
+      const position = editor.getPosition()
+
+      if (position?.column === 1 && position?.lineNumber === 1) {
+        suggestionsRef.current = getSuggestions(editor)
+        triggerSuggestions()
+      }
+    }
 
     disposeSignatureHelpProvider.current?.()
     disposeSignatureHelpProvider.current = monaco.languages.registerSignatureHelpProvider(MonacoLanguage.RediSearch, {
@@ -73,7 +105,8 @@ const Query = (props: Props) => {
 
     disposeCompletionItemProvider.current?.()
     disposeCompletionItemProvider.current = monaco.languages.registerCompletionItemProvider(MonacoLanguage.RediSearch, {
-      provideCompletionItems: (): monacoEditor.languages.CompletionList => ({ suggestions: suggestionsRef.current })
+      provideCompletionItems: (): monacoEditor.languages.CompletionList =>
+        ({ suggestions: suggestionsRef.current.data })
     }).dispose
 
     editor.onDidChangeCursorPosition(handleCursorChange)
@@ -81,25 +114,25 @@ const Query = (props: Props) => {
 
   const handleCursorChange = () => {
     const { editor } = monacoObjects.current || {}
-    suggestionsRef.current = []
+    suggestionsRef.current.data = []
 
     if (!editor) return
-
     if (!editor.getSelection()?.isEmpty()) {
-      setTimeout(() => editor?.trigger('', 'hideSuggestWidget', null), 0)
+      editor?.trigger('', 'hideSuggestWidget', null)
       return
     }
 
     suggestionsRef.current = getSuggestions(editor)
-
-    if (suggestionsRef.current?.length) {
+    if (suggestionsRef.current.data.length) {
       triggerSuggestions()
       helpWidgetRef.current.isOpen = false
       return
     }
 
-    setTimeout(() => editor?.trigger('', 'hideSuggestWidget', null), 0)
-    editor?.trigger('', 'editor.action.triggerParameterHints', '')
+    if (suggestionsRef.current.forceHide) {
+      setTimeout(() => editor?.trigger('', 'hideSuggestWidget', null), 0)
+      editor?.trigger('', 'editor.action.triggerParameterHints', '')
+    }
   }
 
   const triggerSuggestions = () => {
@@ -111,11 +144,14 @@ const Query = (props: Props) => {
 
   const getSuggestions = (
     editor: monacoEditor.editor.IStandaloneCodeEditor
-  ): monacoEditor.languages.CompletionItem[] => {
+  ): {
+    forceHide: boolean
+    data: monacoEditor.languages.CompletionItem[]
+  } => {
     const position = editor.getPosition()
     const model = editor.getModel()
 
-    if (!position || !model) return []
+    if (!position || !model) return asSuggestionsRef([])
 
     const value = editor.getValue()
     const offset = model.getOffsetAt(position)
@@ -123,6 +159,7 @@ const Query = (props: Props) => {
     const range = getRange(position, word)
 
     const { args, isCursorInArg, prevCursorChar, nextCursorChar } = splitQueryByArgs(value, offset)
+    const allArgs = args.flat()
     const [beforeOffsetArgs] = args
     const [firstArg, ...prevArgs] = beforeOffsetArgs
 
@@ -130,33 +167,32 @@ const Query = (props: Props) => {
     const command = REDIS_COMMANDS_SPEC[commandName] as unknown as SearchCommand
 
     if (!command && position.lineNumber === 1 && word.startColumn === 1) {
-      return SUPPORTED_COMMANDS.map((command) => buildSuggestion(command, range, {
-        detail: generateDetail(command),
-        documentation: {
-          value: getCommandMarkdown(command as any)
-        },
-      }))
+      return getCommandsSuggestions(SUPPORTED_COMMANDS, range)
     }
 
-    if (!command) return []
+    if (!command) return asSuggestionsRef([])
+
+    setSelectedIndex(allArgs[1] || '')
 
     // cover query
-    if (command?.arguments?.[prevArgs.length]?.name === 'query') {
+    if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.query) {
       if (prevCursorChar === '@') {
-        return getFieldsSuggestions(['field1', 'field2'], range)
+        return asSuggestionsRef(getFieldsSuggestions(attributesRef.current, range), false)
       }
 
-      return []
+      return asSuggestionsRef([])
     }
 
-    if (isCursorInArg || nextCursorChar?.trim()) return []
+    if (isCursorInArg || nextCursorChar?.trim()) return asSuggestionsRef([])
 
     // cover index field
-    if (command?.arguments?.[prevArgs.length]?.name === 'index') {
-      return getIndexesSuggestions(indexesRef.current, range)
+    if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.index) {
+      if (prevCursorChar?.trim()) return asSuggestionsRef([], false)
+      return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range))
     }
 
-    if (prevArgs.length < 2) return []
+    if (prevArgs.length < 2) return asSuggestionsRef([])
+
     const foundArg = findCurrentArgument(command?.arguments || [], prevArgs)
 
     helpWidgetRef.current = {
@@ -165,44 +201,9 @@ const Query = (props: Props) => {
       currentArg: foundArg?.stopArg
     }
 
-    // suggest arguments of argument
-    if (foundArg && !foundArg.isComplete) {
-      if (foundArg.stopArg?.name === 'field') {
-        return getFieldsSuggestions(['field1', 'field2'], range, true)
-      }
-
-      if (foundArg.isBlocked) return []
-      if (foundArg.append?.length) {
-        return foundArg.append.map((arg: any) => buildSuggestion(arg, range, {
-          kind: monacoEditor.languages.CompletionItemKind.Property,
-          detail: generateDetail(foundArg?.parent)
-        }))
-      }
-
-      return []
-    }
-
-    if (!foundArg || foundArg.isComplete) {
-      const appendCommands = foundArg?.append ?? []
-
-      return [
-        ...appendCommands.map((arg: any) => buildSuggestion(arg, range, {
-          sortText: 'a',
-          kind: monacoEditor.languages.CompletionItemKind.Property,
-          detail: generateDetail(foundArg?.parent)
-        })),
-        ...(command?.arguments || [])
-          .filter((arg) => arg.optional)
-          .filter((arg) => arg.multiple || !args.flat().includes(arg.token || arg.arguments?.[0]?.token || ''))
-          .map((arg: any) => buildSuggestion(arg, range, {
-            sortText: 'b',
-            kind: monacoEditor.languages.CompletionItemKind.Reference,
-            detail: generateDetail(arg)
-          }))
-      ]
-    }
-
-    return []
+    if (foundArg && !foundArg.isComplete) return getMandatoryArgumentSuggestions(foundArg, attributesRef.current, range)
+    if (!foundArg || foundArg.isComplete) return getOptionalSuggestions(command, foundArg, allArgs, range)
+    return asSuggestionsRef([])
   }
 
   return (

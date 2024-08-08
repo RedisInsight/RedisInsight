@@ -1,3 +1,5 @@
+import { Maybe } from 'uiSrc/utils'
+
 export enum TokenType {
   PureToken = 'pure-token',
   Block = 'block',
@@ -19,4 +21,12 @@ export interface SearchCommand {
 
 export interface SearchCommandTree extends SearchCommand {
   parent?: SearchCommandTree
+}
+
+export interface FoundCommandArgument {
+  isComplete: boolean
+  stopArg: Maybe<SearchCommand>
+  isBlocked: boolean
+  append: Maybe<SearchCommand[]>
+  parent: Maybe<SearchCommand>
 }

@@ -15,9 +15,7 @@ export const getOauthIpcErrorResponse = (error: any): { status: CloudAuthStatus.
 
   if (error?.getResponse) {
     errorResponse = error.getResponse()
-  }
-
-  if (error instanceof Error) {
+  } else if (error instanceof Error) {
     errorResponse = new CloudOauthUnexpectedErrorException(error.message).getResponse()
   }
 

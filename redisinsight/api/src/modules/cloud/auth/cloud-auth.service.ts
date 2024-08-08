@@ -8,8 +8,10 @@ import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.ser
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { wrapHttpError } from 'src/common/utils';
 import {
+  CloudOauthCanceledException,
   CloudOauthGithubEmailPermissionException,
   CloudOauthMisconfigurationException, CloudOauthMissedRequiredDataException,
+  CloudOauthUnexpectedErrorException,
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
 import { CloudAuthRequestInfo, CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
@@ -37,6 +39,10 @@ export class CloudAuthService {
     query: { error_description: string, error: string },
     authRequest?: CloudAuthRequest,
   ) {
+    if (query?.error_description?.indexOf('canceled') > -1) {
+      return new CloudOauthCanceledException();
+    }
+
     if (
       query?.error_description?.indexOf('propert') > -1
       && query?.error_description?.indexOf('required') > -1
@@ -52,7 +58,7 @@ export class CloudAuthService {
         });
     }
 
-    return new CloudOauthMisconfigurationException(undefined, {
+    return new CloudOauthUnexpectedErrorException(undefined, {
       description: query.error_description,
     });
   }

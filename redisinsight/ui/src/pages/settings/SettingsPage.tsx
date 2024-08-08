@@ -30,7 +30,7 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 
 import { AdvancedSettings, WorkbenchSettings, CloudSettings } from './components'
-
+import { DateTimeFormatter, TimezoneFormatter } from './components/general-settings'
 import styles from './styles.module.scss'
 
 const SettingsPage = () => {
@@ -95,6 +95,8 @@ const SettingsPage = () => {
         <EuiSpacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />
+      <DateTimeFormatter />
+      <TimezoneFormatter />
     </>
   )
 

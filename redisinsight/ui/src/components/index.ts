@@ -34,6 +34,7 @@ import {
   RecommendationCopyComponent,
   RecommendationVoting,
 } from './recommendation'
+import { FormatedDate } from './formated-date'
 
 export { FullScreen } from './full-screen'
 
@@ -79,4 +80,5 @@ export {
   RecommendationBody,
   RecommendationBadges,
   RecommendationBadgesLegend,
+  FormatedDate
 }

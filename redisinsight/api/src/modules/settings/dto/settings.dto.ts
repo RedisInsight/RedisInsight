@@ -71,6 +71,24 @@ export class GetAppSettingsResponse {
   theme: string = null;
 
   @ApiProperty({
+    description: 'Applied application date format',
+    type: String,
+    example: 'yyyy-mm-dd',
+  })
+  @Expose()
+  @Default(null)
+  dateFormat: string = null;
+
+  @ApiProperty({
+    description: 'Applied application timezone',
+    type: String,
+    example: 'local',
+  })
+  @Expose()
+  @Default(null)
+  timezone: string = null;
+
+  @ApiProperty({
     description: 'Applied the threshold for scan operation.',
     type: Number,
     example: 10000,
@@ -112,6 +130,24 @@ export class UpdateSettingsDto {
   @IsOptional()
   @IsString()
   theme?: string;
+
+  @ApiPropertyOptional({
+    description: 'Application date format.',
+    type: String,
+    example: 'yyyy-mm-dd',
+  })
+  @IsOptional()
+  @IsString()
+  dateFormat?: string;
+
+  @ApiPropertyOptional({
+    description: 'Application timezone.',
+    type: String,
+    example: 'local',
+  })
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 
   @ApiPropertyOptional({
     description: 'Threshold for scan operation.',

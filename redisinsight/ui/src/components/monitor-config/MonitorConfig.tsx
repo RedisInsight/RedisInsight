@@ -21,6 +21,7 @@ import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'u
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { CustomHeaders } from 'uiSrc/constants/api'
+import { localStorageService } from 'uiSrc/services'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
@@ -62,13 +63,19 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
     logFileIdRef.current = `_redis_${uuidv4()}`
     timestampRef.current = Date.now()
 
+    const csrfToken = localStorageService.get('csrfToken')
+
     // Create SocketIO connection to instance by instanceId
     socketRef.current = io(`${getBaseApiUrl()}/monitor`, {
       path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+      },
       rejectUnauthorized: false,
+      ...(process.env.RI_FORCE_WEBSOCKET_POLLING ? { transports: ['polling'], withCredentials: true } : {}),
     })
     dispatch(setSocket(socketRef.current))
 

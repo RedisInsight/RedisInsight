@@ -14,7 +14,7 @@ import {
   setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
-import { sessionStorageService } from 'uiSrc/services'
+import { localStorageService, sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
@@ -37,13 +37,18 @@ const BulkActionsConfig = () => {
     }
 
     let retryTimer: NodeJS.Timer
+    const csrfToken = localStorageService.get('csrfToken')
 
     socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
       path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+      },
       rejectUnauthorized: false,
+      ...(process.env.RI_FORCE_WEBSOCKET_POLLING ? { transports: ['polling'], withCredentials: true } : {}),
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

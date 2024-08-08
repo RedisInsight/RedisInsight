@@ -20,6 +20,11 @@ export const getProxyPath = () => {
   if (window.__RI_PROXY_PATH__) {
     return `/${window.__RI_PROXY_PATH__}/socket.io`
   }
+
+  if (process.env.RI_HOSTED_SOCKET_PROXY_PATH) {
+    return process.env.RI_HOSTED_SOCKET_PROXY_PATH
+  }
+
   return '/socket.io'
 }
 

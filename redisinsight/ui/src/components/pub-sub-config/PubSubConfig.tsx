@@ -16,6 +16,7 @@ import {
   setLoading,
   setPubSubConnected,
 } from 'uiSrc/slices/pubsub/pubsub'
+import { localStorageService } from 'uiSrc/services'
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
 
 interface IProps {
@@ -34,13 +35,18 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
       return
     }
     let retryTimer: NodeJS.Timer
+    const csrfToken = localStorageService.get('csrfToken')
 
     socketRef.current = io(`${getBaseApiUrl()}/pub-sub`, {
       path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+      },
       rejectUnauthorized: false,
+      ...(process.env.RI_FORCE_WEBSOCKET_POLLING ? { transports: ['polling'], withCredentials: true } : {}),
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

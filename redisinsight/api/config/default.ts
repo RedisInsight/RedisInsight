@@ -89,6 +89,7 @@ export default {
     cors: process.env.RI_SOCKETS_CORS ? process.env.RI_SOCKETS_CORS === 'true' : false,
     serveClient: process.env.RI_SOCKETS_SERVE_CLIENT ? process.env.RI_SOCKETS_SERVE_CLIENT === 'true' : false,
     path: socketPath,
+    namespacePrefix: '',
   },
   db: {
     database: join(homedir, 'redisinsight.db'),

@@ -15,6 +15,7 @@ import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { logoutUser, oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobName } from 'uiSrc/electron/constants'
+import { localStorageService } from 'uiSrc/services'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 
 const CommonAppSubscription = () => {
@@ -30,12 +31,18 @@ const CommonAppSubscription = () => {
       return
     }
 
+    const csrfToken = localStorageService.get('csrfToken')
+
     socketRef.current = io(`${getBaseApiUrl()}`, {
       path: getProxyPath(),
       forceNew: false,
-      rejectUnauthorized: false,
       reconnection: true,
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+      },
+      rejectUnauthorized: false,
+      ...(process.env.RI_FORCE_WEBSOCKET_POLLING ? { transports: ['polling'], withCredentials: true } : {}),
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

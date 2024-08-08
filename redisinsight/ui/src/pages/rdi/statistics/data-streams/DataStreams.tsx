@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
+import { EuiTableFieldDataColumnType, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 import { IDataStreams } from 'uiSrc/slices/interfaces'
@@ -20,7 +20,7 @@ type DataStreamsData = {
   lastArrival?: string
 }
 
-const columns: EuiBasicTableColumn<DataStreamsData>[] = [
+const columns: EuiTableFieldDataColumnType<DataStreamsData>[] = [
   {
     name: 'Stream name',
     field: 'name',
@@ -30,52 +30,62 @@ const columns: EuiBasicTableColumn<DataStreamsData>[] = [
         <span>{formatLongName(name, 30, 0, '...')}</span>
       </EuiToolTip>
     ),
-    width: '20%'
+    width: '20%',
+    footer: 'Total',
   },
   {
     name: 'Total',
     field: 'total',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Pending',
     field: 'pending',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Inserted',
     field: 'inserted',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Updated',
     field: 'updated',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Deleted',
     field: 'deleted',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Filtered',
     field: 'filtered',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Rejected',
     field: 'rejected',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Deduplicated',
     field: 'deduplicated',
-    sortable: true
+    sortable: true,
+    footer: '0',
   },
   {
     name: 'Last arrival',
     field: 'lastArrival',
-    sortable: true
+    sortable: true,
+    footer: '',
   }
 ]
 
@@ -94,7 +104,17 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
       name: key,
       ...dataStream
     }
-  }).concat([{ name: 'Total', ...(data?.totals || {}) }])
+  })
+
+  if (data?.totals) {
+    columns.forEach((col) => {
+      const totals = data?.totals as { [key: string]: any }
+      const fieldName = col.field
+      if (totals[fieldName]) {
+        col.footer = totals[col.field] || '0'
+      }
+    })
+  }
 
   return (
     <Panel>

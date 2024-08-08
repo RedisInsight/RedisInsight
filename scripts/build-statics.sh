@@ -47,6 +47,7 @@ function extract_plugins {
   fi
 }
 
+# if Extract plugins succeeds, we are done
 if extract_plugins; then
   echo "Plugins were extracted successfully"
   exit 0

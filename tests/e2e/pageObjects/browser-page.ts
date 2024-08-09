@@ -271,6 +271,8 @@ export class BrowserPage extends InstancePage {
     //Get Hash key field ttl value
     //for Redis databases 7.4 and higher
     getHashTtlFieldInput = (fieldName: string): Selector => (Selector(`[data-testid=hash-ttl_content-value-${fieldName}]`));
+    //checkbox
+    showTtlCheckbox =  Selector('[data-testid=test-check-ttl]~label');
 
     /**
      * Common part for Add any new key

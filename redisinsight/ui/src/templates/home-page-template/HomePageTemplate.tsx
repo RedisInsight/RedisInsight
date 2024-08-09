@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 
+import cx from 'classnames'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import HomeTabs from 'uiSrc/components/home-tabs'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -22,6 +23,7 @@ const HomePageTemplate = (props: Props) => {
   const { children } = props
 
   const {
+    [FeatureFlags.rdi]: rdiFeature,
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
@@ -31,7 +33,9 @@ const HomePageTemplate = (props: Props) => {
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
-        <CapabilityPromotion />
+        <CapabilityPromotion
+          wrapperClassName={cx(styles.capabilityWrapper, { [styles.rdiEnabled]: !!rdiFeature?.flag })}
+        />
         <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
           {isAnyChatAvailable && (
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>

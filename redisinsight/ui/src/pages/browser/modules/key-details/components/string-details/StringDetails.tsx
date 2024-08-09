@@ -23,6 +23,7 @@ import { resetStringValue, stringDataSelector, stringSelector } from 'uiSrc/slic
 import { isFormatEditable, isFullStringLoaded } from 'uiSrc/utils'
 import { StringDetailsValue } from './string-details-value'
 import { EditItemAction } from '../key-details-actions'
+import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
 
 export interface Props extends KeyDetailsHeaderProps {}
 
@@ -70,8 +71,10 @@ const StringDetails = (props: Props) => {
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
-        keyType={keyType}
         onRemoveKey={handleRemoveKey}
+      />
+      <KeyDetailsSubheader
+        keyType={keyType}
         Actions={Actions}
       />
       <div className="key-details-body" key="key-details-body">

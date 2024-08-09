@@ -64,7 +64,6 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [rdiInstanceId])
 
   useEffect(() => {
-    dispatch(fetchConnectedInstanceAction(rdiInstanceId))
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
       if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {

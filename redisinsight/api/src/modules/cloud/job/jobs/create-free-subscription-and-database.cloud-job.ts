@@ -11,6 +11,8 @@ import { Database } from 'src/modules/database/models/database';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { CloudSubscription } from 'src/modules/cloud/subscription/models';
+import { DatabaseInfoService } from 'src/modules/database/database-info.service';
+import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
 import { CloudSubscriptionApiService } from '../../subscription/cloud-subscription.api.service';
 import { CloudSubscriptionPlanResponse } from '../../subscription/dto';
 
@@ -31,6 +33,8 @@ export class CreateFreeSubscriptionAndDatabaseCloudJob extends CloudJob {
       cloudTaskCapiService: CloudTaskCapiService,
       cloudDatabaseAnalytics: CloudDatabaseAnalytics,
       databaseService: DatabaseService,
+      databaseInfoService: DatabaseInfoService,
+      bulkImportService: BulkImportService,
       cloudCapiKeyService: CloudCapiKeyService,
       cloudSubscriptionApiService: CloudSubscriptionApiService,
     },

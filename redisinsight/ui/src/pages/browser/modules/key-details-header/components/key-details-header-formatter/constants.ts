@@ -49,6 +49,10 @@ export const KEY_VALUE_FORMATTER_OPTIONS = [
     text: 'Vector 64-bit',
     value: KeyValueFormat.Vector64Bit,
   },
+  {
+    text: 'Timestamp to DateTime',
+    value: KeyValueFormat.DateTime,
+  }
 ]
 
 export const KEY_VALUE_JSON_FORMATTER_OPTIONS = []

@@ -17,6 +17,8 @@ import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-databas
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { CloudSubscriptionApiService } from 'src/modules/cloud/subscription/cloud-subscription.api.service';
+import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
+import { DatabaseInfoService } from 'src/modules/database/database-info.service';
 
 @Injectable()
 export class CloudJobFactory {
@@ -26,6 +28,8 @@ export class CloudJobFactory {
     private readonly cloudTaskCapiService: CloudTaskCapiService,
     private readonly cloudDatabaseAnalytics: CloudDatabaseAnalytics,
     private readonly databaseService: DatabaseService,
+    private readonly databaseInfoService: DatabaseInfoService,
+    private readonly bulkImportService: BulkImportService,
     private readonly cloudCapiKeyService: CloudCapiKeyService,
     private readonly cloudSubscriptionApiService: CloudSubscriptionApiService,
   ) {}
@@ -54,6 +58,8 @@ export class CloudJobFactory {
             cloudTaskCapiService: this.cloudTaskCapiService,
             cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
             databaseService: this.databaseService,
+            databaseInfoService: this.databaseInfoService,
+            bulkImportService: this.bulkImportService,
             cloudCapiKeyService: this.cloudCapiKeyService,
             cloudSubscriptionApiService: this.cloudSubscriptionApiService,
           },
@@ -71,6 +77,8 @@ export class CloudJobFactory {
             cloudTaskCapiService: this.cloudTaskCapiService,
             cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
             databaseService: this.databaseService,
+            databaseInfoService: this.databaseInfoService,
+            bulkImportService: this.bulkImportService,
             cloudCapiKeyService: this.cloudCapiKeyService,
           },
         );

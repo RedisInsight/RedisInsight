@@ -90,7 +90,7 @@ const CapabilityPromotion = (props: Props) => {
             tabIndex={0}
             role="button"
             onClick={() => onClickTutorial(tutorialId)}
-            className={styles.guideItem}
+            className={cx('capabilities__item', styles.guideItem)}
             data-testid={`capability-promotion-${tutorialId}`}
           >
             {icon in GUIDE_ICONS && (

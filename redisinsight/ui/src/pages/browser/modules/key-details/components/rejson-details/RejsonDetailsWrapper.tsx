@@ -9,7 +9,6 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
 import { KeyDetailsHeader, KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 
-import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
 import RejsonDetails from './rejson-details'
@@ -19,7 +18,6 @@ import styles from './styles.module.scss'
 export interface Props extends KeyDetailsHeaderProps {}
 
 const RejsonDetailsWrapper = (props: Props) => {
-  const keyType = KeyTypes.ReJSON
   const { loading } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
   const { name: selectedKey, nameString, length } = useSelector(selectedKeyDataSelector) || {}
@@ -83,7 +81,6 @@ const RejsonDetailsWrapper = (props: Props) => {
       <KeyDetailsHeader
         {...props}
         key="key-details-header"
-        keyType={keyType}
       />
       <div className="key-details-body" key="key-details-body">
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>

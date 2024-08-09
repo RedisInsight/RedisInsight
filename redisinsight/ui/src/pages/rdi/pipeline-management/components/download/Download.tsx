@@ -51,7 +51,7 @@ const Download = ({ dataTestid }: Props) => {
       aria-labelledby="Download pipeline button"
       data-testid={dataTestid || 'download-pipeline-btn'}
     >
-      Download
+      Save to file
     </EuiButtonEmpty>
   )
 }

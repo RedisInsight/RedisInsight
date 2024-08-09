@@ -14,6 +14,7 @@ import { StreamDetails } from '../stream-details'
 export interface Props extends KeyDetailsHeaderProps {
   onOpenAddItemPanel: () => void
   onCloseAddItemPanel: () => void
+  keyType: KeyTypes | ModulesKeyTypes
 }
 
 const DynamicTypeDetails = (props: Props) => {

@@ -9,9 +9,10 @@ export interface Props {
   orientation?: 'horizontal' | 'vertical',
   variant? : 'fullWidth' | 'middle' | 'half';
   className?: string;
+  style?: any
 }
 
-const Divider = ({ orientation, variant, className, color, colorVariable }: Props) => (
+const Divider = ({ orientation, variant, className, color, colorVariable, ...props }: Props) => (
   <div
     className={cx(
       styles.divider,
@@ -19,6 +20,7 @@ const Divider = ({ orientation, variant, className, color, colorVariable }: Prop
       styles[`divider-${orientation || 'horizontal'}`],
       className,
     )}
+    {...props}
   >
     <hr style={(color || colorVariable) ? { backgroundColor: color ?? `var(--${colorVariable})` } : {}} />
   </div>

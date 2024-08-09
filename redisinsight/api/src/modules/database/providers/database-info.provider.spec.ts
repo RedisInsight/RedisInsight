@@ -308,6 +308,29 @@ describe('DatabaseInfoProvider', () => {
     });
   });
 
+  describe('getRedisDBSize', () => {
+    it('get dbsize for redis standalone', async () => {
+      when(standaloneClient.sendCommand)
+        .calledWith(['dbsize'], { replyEncoding: 'utf8' })
+        .mockResolvedValue('1');
+
+      const result = await service.getRedisDBSize(standaloneClient);
+      expect(result).toEqual(1);
+    });
+
+    it('get general info for redis cluster', async () => {
+      clusterClient.nodes.mockResolvedValueOnce([standaloneClient, standaloneClient]);
+      when(standaloneClient.sendCommand)
+        .calledWith(['dbsize'], { replyEncoding: 'utf8' })
+        .mockResolvedValueOnce('1')
+        .mockResolvedValueOnce('2');
+
+      const result = await service.getRedisDBSize(clusterClient);
+
+      expect(result).toEqual(3);
+    });
+  });
+
   describe('getRedisGeneralInfo', () => {
     beforeEach(() => {
       service.getDatabasesCount = jest.fn().mockResolvedValue(16);

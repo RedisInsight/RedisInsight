@@ -11,7 +11,8 @@ import {
     formattersHighlightedSet,
     formattersWithTooltipSet,
     fromBinaryFormattersSet,
-    notEditableFormattersSet
+    notEditableFormattersSet,
+    formatters
 } from '../../../../test-data/formatters-data';
 import { phpData } from '../../../../test-data/formatters';
 
@@ -232,4 +233,49 @@ notEditableFormattersSet.forEach(formatter => {
             }
         }
     });
+});
+test('Verify that user can format timestamp value', async t => {
+    const formatterName = 'Timestamp to DateTime';
+    await browserPage.openKeyDetailsByKeyName(keysData[0].keyName);
+    //Add fields to the hash key
+    await browserPage.selectFormatter('Unicode');
+    const formatter = formatters.find(f => f.format === formatterName);
+    if (!formatter) {
+        throw new Error('Formatter  not found');
+    }
+    // add key in sec
+    const hashSec = {
+        field: 'fromTextSec',
+        value: formatter.fromText!
+    };
+    // add key in msec
+    const hashMsec = {
+        field: 'fromTextMsec',
+        value: `${formatter.fromText!}000`
+    };
+    // add key with minus
+    const hashMinusSec = {
+        field: 'fromTextEdit',
+        value: formatter.fromTextEdit!
+    };
+    //Search the added field
+    await browserPage.addFieldToHash(
+        hashSec.field, hashSec.value
+    );
+    await browserPage.addFieldToHash(
+        hashMsec.field, hashMsec.value
+    );
+    await browserPage.addFieldToHash(
+        hashMinusSec.field, hashMinusSec.value
+    );
+
+    await browserPage.searchByTheValueInKeyDetails(hashSec.field);
+    await browserPage.selectFormatter('DateTime');
+    await t.expect(await browserPage.getHashKeyValue()).eql(formatter.formattedText!, `Value is not formatted as DateTime ${formatter.fromText}`);
+
+    await browserPage.searchByTheValueInKeyDetails(hashMsec.field);
+    await t.expect(await browserPage.getHashKeyValue()).eql(formatter.formattedText!, `Value is not formatted as DateTime ${formatter.fromTextEdit}`);
+
+    await browserPage.searchByTheValueInKeyDetails(hashMinusSec.field);
+    await t.expect(await browserPage.getHashKeyValue()).eql(formatter.formattedTextEdit!, `Value is not formatted as DateTime ${formatter.fromTextEdit}`);
 });

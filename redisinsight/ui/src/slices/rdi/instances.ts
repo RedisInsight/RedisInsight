@@ -303,7 +303,6 @@ export function checkConnectToRdiInstanceAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(setDefaultInstance())
-    dispatch(resetConnectedInstance())
     try {
       const { status } = await apiService.get(`${ApiEndpoints.RDI_INSTANCES}/${id}/connect`)
 
@@ -315,6 +314,7 @@ export function checkConnectToRdiInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
 
+      dispatch(resetConnectedInstance())
       dispatch(setDefaultInstanceFailure(errorMessage))
       dispatch(addErrorNotification({ ...error, instanceId: id }))
       onFailAction?.()

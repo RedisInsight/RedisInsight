@@ -56,6 +56,7 @@ export default merge(baseConfig, {
       DEBUG_PROD: false,
       START_MINIMIZED: false,
       RI_APP_TYPE: 'electron',
+      RI_AUTO_BOOTSTRAP: false,
       RI_SERVER_TLS_CERT: process.env.RI_SERVER_TLS_CERT || '',
       RI_SERVER_TLS_KEY: process.env.RI_SERVER_TLS_KEY || '',
       RI_SERVE_STATICS: false,

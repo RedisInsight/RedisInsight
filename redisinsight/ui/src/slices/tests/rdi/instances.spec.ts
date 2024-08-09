@@ -224,7 +224,6 @@ describe('rdi instances slice', () => {
         // Assert
         const expectedActions = [
           setDefaultInstance(),
-          resetConnectedInstance(),
           setDefaultInstanceSuccess(),
         ]
 

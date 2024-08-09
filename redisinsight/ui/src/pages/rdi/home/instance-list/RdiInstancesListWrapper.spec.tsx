@@ -138,7 +138,6 @@ describe('RdiInstancesListWrapper', () => {
 
     const expectedActions = [
       setDefaultInstance(),
-      resetConnectedInstance()
     ]
 
     expect(store.getActions()).toEqual(expectedActions)

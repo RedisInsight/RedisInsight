@@ -6,9 +6,10 @@ import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
 import { Parser } from 'pickleparser'
 import JSONBigInt from 'json-bigint'
+import { format as formatDateFns } from 'date-fns'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
-import { KeyValueFormat } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   anyToBuffer,
@@ -23,6 +24,8 @@ import {
   Maybe,
   bufferToFloat64Array,
   bufferToFloat32Array,
+  checkTimestamp,
+  convertTimestampToMilliseconds,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -148,6 +151,20 @@ const formattingBuffer = (
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
       }
+    }
+    case KeyValueFormat.DateTime: {
+      const value = bufferToUnicode(reply)?.trim()
+      try {
+        if (checkTimestamp(value)) {
+          // formatting to DateTime only from timestamp(the number of milliseconds since January 1, 1970, UTC).
+          // if seconds - add milliseconds (since JS Date works only with milliseconds)
+          const timestamp = convertTimestampToMilliseconds(value)
+          return { value: formatDateFns(timestamp, DATETIME_FORMATTER_DEFAULT), isValid: true }
+        }
+      } catch (e) {
+        // if error return default
+      }
+      return { value, isValid: false }
     }
     default: return { value: bufferToUnicode(reply), isValid: true }
   }

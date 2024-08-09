@@ -70,6 +70,9 @@ describe('InstancePage', () => {
   })
 
   it('should call proper actions with resetting context', async () => {
+    (appContextSelector as jest.Mock).mockReturnValue({
+      contextRdiInstanceId: ''
+    })
     await act(() => {
       render(
         <BrowserRouter>
@@ -93,10 +96,13 @@ describe('InstancePage', () => {
       setRedisearchInitialState(),
       setInitialRecommendationsState(),
       clearExpertChatHistory(),
-      setConnectedInstance(),
     ]
 
     const expectedActions = [
+      setAppContextConnectedRdiInstanceId(''),
+      setPipelineInitialState(),
+      resetPipelineManagement(),
+      setConnectedInstance(),
       setAppContextConnectedRdiInstanceId('rdiInstanceId'),
       resetConnectedDatabaseInstance(),
       ...resetContextActions,

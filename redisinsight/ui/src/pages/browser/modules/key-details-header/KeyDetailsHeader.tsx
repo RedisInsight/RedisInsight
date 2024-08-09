@@ -13,8 +13,6 @@ import AutoSizer from 'react-virtualized-auto-sizer'
 import { GroupBadge, AutoRefresh, FullScreen } from 'uiSrc/components'
 import {
   HIDE_LAST_REFRESH,
-  KeyTypes,
-  ModulesKeyTypes,
 } from 'uiSrc/constants'
 import {
   deleteSelectedKeyAction,
@@ -30,7 +28,6 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import { KeyDetailsHeaderFormatter } from './components/key-details-header-formatter'
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
 import { KeyDetailsHeaderDelete } from './components/key-details-header-delete'
@@ -39,7 +36,6 @@ import { KeyDetailsHeaderSizeLength } from './components/key-details-header-size
 import styles from './styles.module.scss'
 
 export interface KeyDetailsHeaderProps {
-  keyType: KeyTypes | ModulesKeyTypes
   onCloseKey: (key: RedisResponseBuffer) => void
   onRemoveKey: () => void
   onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
@@ -56,7 +52,6 @@ const KeyDetailsHeader = ({
   onCloseKey,
   onRemoveKey,
   onEditKey,
-  keyType,
   Actions,
 }: KeyDetailsHeaderProps) => {
   const { refreshing, loading, lastRefreshTime, isRefreshDisabled } = useSelector(selectedKeySelector)
@@ -177,9 +172,6 @@ const KeyDetailsHeader = ({
                       onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
                       testid="key"
                     />
-                    {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
-                      <KeyDetailsHeaderFormatter width={width} />
-                    )}
                     {!isUndefined(Actions) && <Actions width={width} />}
                     <KeyDetailsHeaderDelete onDelete={handleDeleteKey} />
                   </div>

@@ -1,4 +1,5 @@
 import { floor } from 'lodash'
+import { isValid } from 'date-fns'
 
 export const MAX_TTL_NUMBER = 2_147_483_647
 export const MAX_PORT_NUMBER = 65_535
@@ -125,4 +126,42 @@ const getApproximateNumber = (number: number): string => (number < 1 ? '<1' : `$
 export const getApproximatePercentage = (total?: number, part: number = 0): string => {
   const percent = (total ? part / total : 1) * 100
   return `${getApproximateNumber(percent)}%`
+}
+
+export const IS_NUMBER_REGEX = /^-?\d*(\.\d+)?$/
+export const IS_TIMESTAMP = /^(\d{10}|\d{13}|\d{16}|\d{19})$/
+export const IS_NEGATIVE_TIMESTAMP = /^-(\d{9}|\d{12}|\d{15}|\d{18})$/
+export const IS_INTEGER_NUMBER_REGEX = /^\d+$/
+
+const detailedTimestampCheck = (value: string) => {
+  try {
+    // test integer to be of 10, 13, 16 or 19 digits
+    const integerPart = parseInt(value, 10).toString()
+
+    if (IS_TIMESTAMP.test(integerPart) || IS_NEGATIVE_TIMESTAMP.test(integerPart)) {
+      if (integerPart.length === value.length) {
+        return true
+      }
+      // check part after dot separator (checking floating numbers)
+      const subPart = value.replace(integerPart, '')
+      return IS_INTEGER_NUMBER_REGEX.test(subPart.substring(1, subPart.length))
+    }
+    return false
+  } catch (err) {
+    // ignore errors
+    return false
+  }
+}
+
+// checks stringified number to may be a timestamp
+export const checkTimestamp = (value: string): boolean => IS_NUMBER_REGEX.test(value) && detailedTimestampCheck(value)
+
+// checks any string to may be converted to date
+export const checkConvertToDate = (value: string): boolean => {
+  // if string is not number-like, try to convert it to date
+  if (!IS_NUMBER_REGEX.test(value)) {
+    return isValid(new Date(value))
+  }
+
+  return checkTimestamp(value)
 }

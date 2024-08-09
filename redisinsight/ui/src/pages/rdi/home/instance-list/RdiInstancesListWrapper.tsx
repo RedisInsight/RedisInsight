@@ -16,6 +16,7 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
+import { setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -68,7 +69,11 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
   }, [width])
 
   const handleCheckConnectToInstance = (id: string) => {
-    dispatch(checkConnectToRdiInstanceAction(id, (id: string) => history.push(Pages.rdiPipeline(id))))
+    dispatch(checkConnectToRdiInstanceAction(
+      id,
+      (id: string) => history.push(Pages.rdiPipeline(id)),
+      () => dispatch(setAppContextConnectedRdiInstanceId(''))
+    ))
   }
 
   const handleCopy = (text = '', id: string) => {

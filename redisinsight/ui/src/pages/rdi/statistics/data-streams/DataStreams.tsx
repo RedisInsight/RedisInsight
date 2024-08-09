@@ -17,7 +17,7 @@ type DataStreamsData = {
   filtered: number
   rejected: number
   deduplicated: number
-  lastArrival: string
+  lastArrival?: string
 }
 
 const columns: EuiBasicTableColumn<DataStreamsData>[] = [
@@ -88,19 +88,20 @@ interface Props {
 }
 
 const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoRefresh }: Props) => {
-  const dataStreams = Object.keys(data).map((key) => {
-    const dataStream = data[key]
+  const dataStreams = Object.keys(data?.streams || {}).map((key) => {
+    const dataStream = data.streams[key]
     return {
       name: key,
       ...dataStream
     }
-  })
+  }).concat([{ name: 'Total', ...(data?.totals || {}) }])
 
   return (
     <Panel>
       <Accordion
         id="data-streams"
         title="Data streams overview"
+        hideAutoRefresh
         loading={loading}
         onRefresh={onRefresh}
         onRefreshClicked={onRefreshClicked}

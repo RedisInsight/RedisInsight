@@ -51,6 +51,17 @@ export class DatabaseInfoService {
   }
 
   /**
+   * Get redis database number of keys
+   *
+   * @param clientMetadata
+   */
+  async getDBSize(clientMetadata: ClientMetadata): Promise<number> {
+    const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+
+    return this.databaseInfoProvider.getRedisDBSize(client);
+  }
+
+  /**
    * Create connection to specified database index
    *
    * @param clientMetadata

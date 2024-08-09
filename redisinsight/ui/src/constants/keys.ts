@@ -148,7 +148,10 @@ export enum KeyValueFormat {
   Pickle = 'Pickle',
   Vector32Bit = 'Vector 32-bit',
   Vector64Bit = 'Vector 64-bit',
+  DateTime = 'DateTime',
 }
+
+export const DATETIME_FORMATTER_DEFAULT = 'HH:mm:ss.SSS d MMM yyyy'
 
 export enum KeyValueCompressor {
   GZIP = 'GZIP',

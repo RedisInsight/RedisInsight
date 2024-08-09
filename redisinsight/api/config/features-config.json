@@ -1,9 +1,9 @@
 {
-  "version": 2.5203,
+  "version": 2.5401,
   "features": {
     "redisDataIntegration": {
       "flag": true,
-      "perc": [[0,0]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",

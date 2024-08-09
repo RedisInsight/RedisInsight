@@ -223,10 +223,10 @@ describe('CloudAuthService', () => {
       await expect(service['callback'](
         {
           ...mockCloudAuthGoogleCallbackQueryObject,
-          error: 'bad request',
-          error_description: 'Some properties are missing: email and lastName',
+          error: 'access_denied',
+          error_description: 'Some required properties are missing: email and lastName',
         },
-      )).rejects.toThrow(new CloudOauthMissedRequiredDataException('Some properties are missing: email and lastName'));
+      )).rejects.toThrow(new CloudOauthMissedRequiredDataException('Some required properties are missing: email and lastName'));
     });
     it('should throw an error if request not found', async () => {
       expect(service['authRequests'].size).toEqual(1);

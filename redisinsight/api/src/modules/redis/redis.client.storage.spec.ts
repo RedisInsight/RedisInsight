@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { generateMockRedisClient, mockDatabase } from 'src/__mocks__';
-import { ClientContext, SessionMetadata } from 'src/common/models';
+import {
+  generateMockRedisClient,
+  mockDatabase,
+  mockInvalidClientMetadataError,
+  mockInvalidSessionMetadataError, mockStandaloneRedisClient,
+} from 'src/__mocks__';
+import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import apiConfig from 'src/utils/config';
 import { BadRequestException } from '@nestjs/common';
@@ -43,6 +48,8 @@ describe('RedisClientStorage', () => {
   });
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RedisClientStorage,
@@ -160,7 +167,10 @@ describe('RedisClientStorage', () => {
     });
     it('should not fail when there is no client', async () => {
       const result = await service.getByMetadata({
-        sessionMetadata: undefined,
+        sessionMetadata: {
+          userId: 'uid',
+          sessionId: 'uid',
+        },
         databaseId: 'invalid-instance-id',
         context: ClientContext.Common,
       });
@@ -397,6 +407,490 @@ describe('RedisClientStorage', () => {
 
       expect(await service.removeManyByMetadata(query)).toEqual(0);
       expect(service['clients'].size).toEqual(5);
+    });
+  });
+
+  describe('advanced', () => {
+    beforeEach(() => {
+      // @ts-ignore
+      service['clients'] = new Map();
+    });
+
+    const CLIENTS_NUMBER = 10;
+    const getGenericValue = (value, defaultValue) => (value === false ? undefined : (value || defaultValue));
+
+    const generateNClients = (n: number, options = {}) => {
+      const result = [];
+
+      for (let i = 0; i < n; i += 1) {
+        const clientMetadata = Object.assign(new ClientMetadata(), {
+          databaseId: getGenericValue(options['databaseId'], `db_${i}`),
+          context: getGenericValue(options['context'], ClientContext.Common),
+          uniqueId: getGenericValue(options['uniqueId'], `unique_${i}`),
+          db: getGenericValue(options['db'], 0),
+          sessionMetadata: {
+            userId: getGenericValue(options['userId'], `user_${i}`),
+            sessionId: getGenericValue(options['sessionId'], `session_${i}`),
+            uniqueId: getGenericValue(options['sessionUId'], `session_unique_${i}`),
+          },
+        });
+        result.push([clientMetadata, generateMockRedisClient(clientMetadata)]);
+      }
+
+      return result;
+    };
+
+    it.each([
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          db: 0,
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_0_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_(nil)',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {},
+        error: mockInvalidSessionMetadataError,
+      },
+    ] as any)('%# validation and id generation', async ({ clientMetadata, id, error }) => {
+      const mapSetSpy = jest.spyOn(service['clients'], 'set');
+
+      const client = generateMockRedisClient(clientMetadata);
+
+      if (error) {
+        await expect(service.set(client)).rejects.toThrow(error);
+        expect(mapSetSpy).not.toHaveBeenCalled();
+      } else {
+        await expect(service.set(client)).resolves.toEqual(client);
+        expect(mapSetSpy).toHaveBeenCalledTimes(1);
+        expect(mapSetSpy).lastCalledWith(id, client);
+      }
+    });
+
+    it.each([
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          db: 0,
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_0_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_(nil)',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {},
+        error: mockInvalidSessionMetadataError,
+      },
+    ] as any)('%# validation and id generation', async ({ clientMetadata, id, error }) => {
+      const mapGetSpy = jest.spyOn(service['clients'], 'get');
+
+      if (error) {
+        await expect(service.getByMetadata(clientMetadata)).rejects.toThrow(error);
+        expect(mapGetSpy).not.toHaveBeenCalled();
+      } else {
+        await expect(service.getByMetadata(clientMetadata)).resolves.toEqual(undefined);
+        expect(mapGetSpy).toHaveBeenCalledTimes(1);
+        expect(mapGetSpy).lastCalledWith(id);
+      }
+    });
+
+    it.each([
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          db: 0,
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_0_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_(nil)',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {},
+        error: mockInvalidSessionMetadataError,
+      },
+    ] as any)('%# validation and id generation', async ({ clientMetadata, id, error }) => {
+      jest.spyOn(service['clients'], 'get').mockReturnValue(mockStandaloneRedisClient);
+      const mapDeleteSpy = jest.spyOn(service['clients'], 'delete');
+
+      if (error) {
+        await expect(service.removeByMetadata(clientMetadata)).rejects.toThrow(error);
+        expect(mapDeleteSpy).not.toHaveBeenCalled();
+      } else {
+        await expect(service.removeByMetadata(clientMetadata)).resolves.toEqual(1);
+        expect(mapDeleteSpy).toHaveBeenCalledTimes(1);
+        expect(mapDeleteSpy).lastCalledWith(id);
+      }
+    });
+
+    it('check common use cases', async () => {
+      expect(service['clients'].size).toEqual(0);
+
+      const clients = generateNClients(CLIENTS_NUMBER);
+
+      await Promise.all(clients.map(async ([cm, client]) => {
+        expect(client.clientMetadata).toEqual(cm);
+
+        // should set each client with expect id
+        await service.set(client);
+
+        // should get each client with expect id
+        expect(await service.getByMetadata(cm)).toEqual(client);
+      }));
+
+      expect(service['clients'].size).toEqual(CLIENTS_NUMBER);
+
+      expect(await service.getByMetadata(clients[0][0])).toEqual(clients[0][1]);
+      await service.removeByMetadata(clients[0][0]);
+      expect(await service.getByMetadata(clients[0][0])).toEqual(undefined);
+
+      expect(service['clients'].size).toEqual(CLIENTS_NUMBER - 1);
+
+      expect(await service.getByMetadata(clients[1][0])).toEqual(clients[1][1]);
+      await service.removeByMetadata(clients[1][0]);
+      expect(await service.getByMetadata(clients[1][0])).toEqual(undefined);
+
+      expect(service['clients'].size).toEqual(CLIENTS_NUMBER - 2);
+
+      await Promise.all(clients.map(async ([cm, client]) => {
+        expect(client.clientMetadata).toEqual(cm);
+
+        // should set each client with expect id
+        await service.removeByMetadata(cm);
+      }));
+
+      expect(service['clients'].size).toEqual(0);
+    });
+
+    describe('remove many', () => {
+      it('remove all', async () => {
+        expect(service['clients'].size).toEqual(0);
+
+        const clients = generateNClients(100);
+
+        await Promise.all([
+          ...clients,
+        ].map(async ([, client]) => {
+          await service.set(client);
+        }));
+
+        expect(service['clients'].size).toEqual(100);
+
+        // removes all clients when no any field specified
+        await service.removeManyByMetadata({});
+
+        expect(service['clients'].size).toEqual(0);
+      });
+
+      it.each([
+        [
+          { databaseId: 'db' },
+          { databaseId: 'not-existing' },
+          { databaseId: 'db' },
+        ],
+        [
+          { context: 'Browser' },
+          { context: 'not-existing' },
+          { context: 'Browser' },
+        ],
+        [
+          { uniqueId: 'uuid' },
+          { uniqueId: 'not-existing' },
+          { uniqueId: 'uuid' },
+        ],
+        [
+          { db: 1 },
+          { db: 2 },
+          { db: 1 },
+        ],
+        [
+          { userId: 'uid' },
+          { sessionMetadata: { userId: 'not-existing' } },
+          { sessionMetadata: { userId: 'uid' } },
+        ],
+        [
+          { sessionId: 'sid' },
+          { sessionMetadata: { sessionId: 'not-existing' } },
+          { sessionMetadata: { sessionId: 'sid' } },
+        ],
+        // compound
+        [
+          { databaseId: 'db', sessionId: 'sid', userId: 'uid' },
+          { databaseId: 'db', sessionMetadata: { sessionId: 'not-existing', userId: 'uid' } },
+          { databaseId: 'db', sessionMetadata: { sessionId: 'sid', userId: 'uid' } },
+        ],
+      ] as any)('remove many by %p', async (generate, notExisting, clientMetadata) => {
+        expect(service['clients'].size).toEqual(0);
+
+        const targetClients = generateNClients(100, generate);
+        const clients = generateNClients(100);
+
+        await Promise.all([
+          ...targetClients,
+          ...clients,
+        ].map(async ([, client]) => {
+          await service.set(client);
+        }));
+
+        expect(service['clients'].size).toEqual(200);
+
+        // shouldn't remove since there is no match
+        await service.removeManyByMetadata(notExisting);
+
+        expect(service['clients'].size).toEqual(200);
+
+        await service.removeManyByMetadata(clientMetadata);
+
+        expect(service['clients'].size).toEqual(100);
+
+        await Promise.all(clients.map(async ([cm, client]) => {
+          expect(await service.getByMetadata(cm)).toEqual(client);
+        }));
+      });
     });
   });
 });

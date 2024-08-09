@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsArray, IsEnum, IsOptional, IsBoolean,
+  IsEnum, IsOptional, IsBoolean,
 } from 'class-validator';
 import { DatabaseRecommendationParams } from 'src/modules/database-recommendation/models';
 
@@ -77,11 +77,9 @@ export class DatabaseRecommendation {
 
   @ApiPropertyOptional({
     description: 'Additional recommendation params',
-    isArray: true,
-    type: () => String,
+    type: Object,
   })
-  @IsArray()
   @IsOptional()
   @Expose()
-  params?: DatabaseRecommendationParams[];
+  params?: DatabaseRecommendationParams;
 }

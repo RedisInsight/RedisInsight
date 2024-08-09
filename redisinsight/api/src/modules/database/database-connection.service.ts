@@ -50,7 +50,7 @@ export class DatabaseConnectionService {
       }));
     }
 
-    await this.repository.update(clientMetadata.databaseId, toUpdate);
+    await this.repository.update(clientMetadata.sessionMetadata, clientMetadata.databaseId, toUpdate);
 
     const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
 
@@ -73,7 +73,7 @@ export class DatabaseConnectionService {
     const rdiFeature = await this.featureService.getByName(KnownFeatures.Rdi);
 
     if (rdiFeature?.flag) {
-      const database = await this.repository.get(clientMetadata.databaseId);
+      const database = await this.repository.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
       this.recommendationService.check(
         clientMetadata,
         RECOMMENDATION_NAMES.TRY_RDI,

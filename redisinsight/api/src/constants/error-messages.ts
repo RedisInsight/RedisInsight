@@ -7,6 +7,9 @@ export default {
   INTERNAL_SERVER_ERROR: 'Server error',
   REQUEST_TIMEOUT: 'Request timeout',
 
+  INVALID_CLIENT_METADATA: 'Client metadata missed required properties',
+  INVALID_SESSION_METADATA: 'Session metadata missed required properties',
+
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
   COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
   DATABASE_ANALYSIS_NOT_FOUND: 'Database analysis was not found.',

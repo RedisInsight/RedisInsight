@@ -36,6 +36,7 @@ import { ExcludeRouteMiddleware } from './middleware/exclude-route.middleware';
 import SubpathProxyMiddleware from './middleware/subpath-proxy.middleware';
 import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
 import { routes } from './app.routes';
+import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -53,7 +54,7 @@ const setXFrameOptionsHeader = (res: Response) => {
     RedisEnterpriseModule,
     CloudModule.register(),
     RedisSentinelModule,
-    BrowserModule,
+    BrowserModule.register(),
     CliModule,
     WorkbenchModule.register(),
     PluginModule,
@@ -61,7 +62,7 @@ const setXFrameOptionsHeader = (res: Response) => {
     ProfilerModule,
     PubSubModule,
     SlowLogModule,
-    NotificationModule,
+    NotificationModule.register(),
     BulkActionsModule,
     ClusterMonitorModule,
     CustomTutorialModule.register(),
@@ -102,7 +103,7 @@ const setXFrameOptionsHeader = (res: Response) => {
         setHeaders: setXFrameOptionsHeader,
       },
     }),
-    StaticsManagementModule,
+    StaticsManagementModule.register(),
   ],
   controllers: [],
   providers: [],
@@ -137,5 +138,9 @@ export class AppModule implements OnModuleInit, NestModule {
       .forRoutes(
         ...SERVER_CONFIG.excludeRoutes,
       );
+
+    consumer
+      .apply(RedisConnectionMiddleware)
+      .forRoutes(...redisConnectionControllers);
   }
 }

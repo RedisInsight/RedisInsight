@@ -2,6 +2,8 @@ import { ClientMetadata } from 'src/common/models';
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
 import { mockCommonClientMetadata } from 'src/__mocks__/common';
+import { BadRequestException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export interface IRedisClientInstance {
   id: string,
@@ -9,6 +11,9 @@ export interface IRedisClientInstance {
   client: any;
   lastTimeUsed: number;
 }
+
+export const mockInvalidClientMetadataError = new BadRequestException(ERROR_MESSAGES.INVALID_CLIENT_METADATA);
+export const mockInvalidSessionMetadataError = new BadRequestException(ERROR_MESSAGES.INVALID_SESSION_METADATA);
 
 // todo: NEW. remove everything above
 export class MockRedisClient extends RedisClient {

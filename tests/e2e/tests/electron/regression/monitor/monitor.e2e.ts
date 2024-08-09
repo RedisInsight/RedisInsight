@@ -29,6 +29,7 @@ test
         // await t.expect(browserPage.Cli.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was not found & executed');
         // await t.click(browserPage.Cli.cliCollapseButton);
         // await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+        await t.click(browserPage.Cli.cliExpandButton);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await browserPage.reloadPage();

@@ -22,6 +22,8 @@ fixture `Monitor`
 
 test
     .before(async t => {
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.Cli.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor -client');
         // Check command result in CLI
@@ -29,15 +31,13 @@ test
         await t.expect(browserPage.Cli.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was not found & executed');
         await t.click(browserPage.Cli.cliCollapseButton);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig, false, 'testName');
-        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await browserPage.reloadPage();
-        await myRedisDatabasePage.clickOnDBByName('testName');
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })
     .after(async t => {
         // Delete created user
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await myRedisDatabasePage.clickOnDBByName('testName');
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
         await browserPage.Cli.sendCommandInCli('acl DELUSER noperm');
         // Delete database
         await databaseAPIRequests.deleteAllDatabasesByConnectionTypeApi('STANDALONE');

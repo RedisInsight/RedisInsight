@@ -4,7 +4,11 @@ import {
     WorkbenchPage,
     BrowserPage
 } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, ossStandaloneNoPermissionsConfig } from '../../../../helpers/conf';
+import {
+    commonUrl,
+    ossStandaloneConfig,
+    ossStandaloneConfigEmpty,
+} from '../../../../helpers/conf';
 import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { WorkbenchActions } from '../../../../common-actions/workbench-actions';
@@ -30,10 +34,10 @@ test
         // await t.click(browserPage.Cli.cliCollapseButton);
         // await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await t.click(browserPage.Cli.cliExpandButton);
-        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneConfigEmpty);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await browserPage.reloadPage();
-        await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
+        await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfigEmpty.databaseName);
     })
     .after(async t => {
         // Delete created user
@@ -41,7 +45,7 @@ test
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await browserPage.Cli.sendCommandInCli('acl DELUSER noperm');
         // Delete database
-        await databaseAPIRequests.deleteStandaloneDatabasesApi([ossStandaloneConfig, ossStandaloneNoPermissionsConfig]);
+        await databaseAPIRequests.deleteStandaloneDatabasesApi([ossStandaloneConfig, ossStandaloneConfigEmpty]);
     })('Verify that if user doesn\'t have permissions to run monitor, user can see error message', async t => {
         const command = 'CLIENT LIST';
         // Expand the Profiler

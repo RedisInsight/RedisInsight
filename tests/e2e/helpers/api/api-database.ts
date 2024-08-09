@@ -91,7 +91,8 @@ export class DatabaseAPIRequests {
             ResourcePath.Databases,
             requestBody
         );
-        console.log(response.body.message);
+        await t
+            .expect(response.body.message).eql('check');
         await t
             .expect(await response.body.name)
             .eql(

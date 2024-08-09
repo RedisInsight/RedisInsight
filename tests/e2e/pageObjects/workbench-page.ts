@@ -58,7 +58,6 @@ export class WorkbenchPage extends BaseRunCommandsPage {
     mainEditorArea = Selector('[data-testid=main-input-container-area]');
     queryTextResult = Selector(this.cssQueryTextResult);
     queryColumns = Selector('[data-testid*=query-column-]');
-    queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
     noCommandHistorySection = Selector('[data-testid=wb_no-results]');
     noCommandHistoryTitle = Selector('[data-testid=wb_no-results__title]');
     noCommandHistoryText = Selector('[data-testid=wb_no-results__summary]');

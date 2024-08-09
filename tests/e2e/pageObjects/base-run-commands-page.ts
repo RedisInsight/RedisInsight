@@ -5,6 +5,7 @@ export class BaseRunCommandsPage extends InstancePage {
 
     submitCommandButton = Selector('[data-testid=btn-submit]');
     queryInput = Selector('[data-testid=query-input-container]');
+    queryInputForText = Selector('[data-testid=query-input-container] .view-lines');
 
     // History containers
     queryCardCommand = Selector('[data-testid=query-card-command]');
@@ -23,6 +24,7 @@ export class BaseRunCommandsPage extends InstancePage {
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
     executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
     queryResult = Selector('[data-testid=query-common-result]');
+    queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
 
     cssQueryCardCommand = '[data-testid=query-card-command]';
     cssQueryCardContainer = '[data-testid^="query-card-container-"]';

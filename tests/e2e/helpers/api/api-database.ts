@@ -23,10 +23,15 @@ export class DatabaseAPIRequests {
      * @param databaseParameters The database parameters
      */
     async addNewStandaloneDatabaseApi(
-        databaseParameters: AddNewDatabaseParameters, isCloud = false
+        databaseParameters: AddNewDatabaseParameters,
+        isCloud = false,
+        newDataBaseName = ' '
     ): Promise<void> {
         const uniqueId = chance.string({ length: 10 });
         const uniqueIdNumber = chance.integer({ min: 1, max: 1000 });
+        if (newDataBaseName !== ' '){
+            databaseParameters.databaseName = newDataBaseName;
+        }
         const requestBody: {
             name?: string,
             host: string,
@@ -86,6 +91,7 @@ export class DatabaseAPIRequests {
             ResourcePath.Databases,
             requestBody
         );
+        console.log(response.body.message);
         await t
             .expect(await response.body.name)
             .eql(

@@ -20,75 +20,6 @@ type DataStreamsData = {
   lastArrival?: string
 }
 
-const columns: EuiTableFieldDataColumnType<DataStreamsData>[] = [
-  {
-    name: 'Stream name',
-    field: 'name',
-    sortable: true,
-    render: (name: string) => (
-      <EuiToolTip content={name}>
-        <span>{formatLongName(name, 30, 0, '...')}</span>
-      </EuiToolTip>
-    ),
-    width: '20%',
-    footer: 'Total',
-  },
-  {
-    name: 'Total',
-    field: 'total',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Pending',
-    field: 'pending',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Inserted',
-    field: 'inserted',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Updated',
-    field: 'updated',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Deleted',
-    field: 'deleted',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Filtered',
-    field: 'filtered',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Rejected',
-    field: 'rejected',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Deduplicated',
-    field: 'deduplicated',
-    sortable: true,
-    footer: '0',
-  },
-  {
-    name: 'Last arrival',
-    field: 'lastArrival',
-    sortable: true,
-    footer: '',
-  }
-]
-
 interface Props {
   data: IDataStreams
   loading: boolean
@@ -106,15 +37,76 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
     }
   })
 
-  if (data?.totals) {
-    columns.forEach((col) => {
-      const totals = data?.totals as { [key: string]: any }
-      const fieldName = col.field
-      if (totals[fieldName]) {
-        col.footer = totals[col.field] || '0'
-      }
-    })
-  }
+  const totals = data?.totals
+
+  const columns: EuiTableFieldDataColumnType<DataStreamsData>[] = [
+    {
+      name: 'Stream name',
+      field: 'name',
+      sortable: true,
+      render: (name: string) => (
+        <EuiToolTip content={name}>
+          <span>{formatLongName(name, 30, 0, '...')}</span>
+        </EuiToolTip>
+      ),
+      width: '20%',
+      footer: 'Total',
+    },
+    {
+      name: 'Total',
+      field: 'total',
+      sortable: true,
+      footer: () => totals.total || '0',
+    },
+    {
+      name: 'Pending',
+      field: 'pending',
+      sortable: true,
+      footer: () => totals.pending || '0',
+    },
+    {
+      name: 'Inserted',
+      field: 'inserted',
+      sortable: true,
+      footer: () => totals.inserted || '0',
+    },
+    {
+      name: 'Updated',
+      field: 'updated',
+      sortable: true,
+      footer: () => totals.updated || '0',
+    },
+    {
+      name: 'Deleted',
+      field: 'deleted',
+      sortable: true,
+      footer: () => totals.deleted || '0',
+    },
+    {
+      name: 'Filtered',
+      field: 'filtered',
+      sortable: true,
+      footer: () => totals.filtered || '0',
+    },
+    {
+      name: 'Rejected',
+      field: 'rejected',
+      sortable: true,
+      footer: () => totals.rejected || '0',
+    },
+    {
+      name: 'Deduplicated',
+      field: 'deduplicated',
+      sortable: true,
+      footer: () => totals.deduplicated || '0',
+    },
+    {
+      name: 'Last arrival',
+      field: 'lastArrival',
+      sortable: true,
+      footer: '',
+    }
+  ]
 
   return (
     <Panel>

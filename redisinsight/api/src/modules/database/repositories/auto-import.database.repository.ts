@@ -1,3 +1,8 @@
+import { promises as fs } from 'fs';
+import { v5 as uuidv5 } from 'uuid';
+import { plainToClass } from 'class-transformer';
+import { Validator } from 'class-validator';
+import { get, set } from 'lodash';
 import {
   Injectable,
   Logger,
@@ -6,24 +11,14 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import config from 'src/utils/config';
-import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import { classToClass, determineConnectionType, fieldsMapSchema } from 'src/utils';
+import { ConnectionType, Compressor } from 'src/modules/database/entities/database.entity';
 import { LocalDatabaseRepository } from 'src/modules/database/repositories/local.database.repository';
 import { Database } from 'src/modules/database/models/database';
-
-const REDIS_AUTO_IMPORT_CONFIG = [
-  {
-    id: 'redis-auto-import-1',
-    name: 'Redis Auto Import',
-    host: 'localhost',
-    port: '6379',
-  },
-  {
-    id: 'redis-stack-server',
-    name: 'Redis Stack Server',
-    host: 'localhost',
-    port: '6380',
-  },
-];
+import { ImportDatabaseDto } from 'src/modules/database-import/dto/import.database.dto';
+import {
+  InvalidCompressorException,
+} from 'src/modules/database-import/exceptions';
 
 const AutoImportConfig = config.get('preSetupDatabase');
 const RI_DISABLE_MANAGE_CONNECTIONS = AutoImportConfig.disableManageConnections;
@@ -32,12 +27,10 @@ const RI_DISABLE_MANAGE_CONNECTIONS = AutoImportConfig.disableManageConnections;
 export class AutoImportDatabaseRepository extends LocalDatabaseRepository implements OnApplicationBootstrap {
   protected logger = new Logger('AutoImportDatabaseRepository');
 
+  private validator = new Validator();
+
   async onApplicationBootstrap() {
-    if (AutoImportConfig.ENABLE_AUTO_IMPORT) {
-      this.logger.warn('Database management is disabled by environment variable.');
-      return;
-    }
-    await this.setPredefinedDatabase(REDIS_AUTO_IMPORT_CONFIG);
+    this.processFile(AutoImportConfig.importFile);
   }
 
   /**
@@ -48,15 +41,14 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
     ignoreEncryptionErrors: boolean = false,
     omitFields: string[] = [],
   ): Promise<Database> {
-    const database = REDIS_AUTO_IMPORT_CONFIG.find(c => c.id === id);
-    return super.get(database.id, ignoreEncryptionErrors, omitFields);
+    return super.get(id, ignoreEncryptionErrors, omitFields);
   }
 
   /**
    * @inheritDoc
    */
   async list(): Promise<Database[]> {
-    return await Promise.all(REDIS_AUTO_IMPORT_CONFIG.map(async c => await this.get(c.id)));
+    return await (await super.list()).filter((db) => db.id === this.getDatabaseId(db.name));
   }
 
   /**
@@ -70,23 +62,25 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
    * @inheritDoc
    */
   async update(id: string, data: Database) {
-    if (RI_DISABLE_MANAGE_CONNECTIONS) {
-      throw new ForbiddenException('Updating database connections is disabled.');
-    }
-    const database = REDIS_AUTO_IMPORT_CONFIG.find(c => c.id === id);
-    return super.update(database.id, data);
+    return super.update(id, data);
+  }
+
+  getDatabaseId(name: string) {
+    return uuidv5(name, 'f7c8bfce-3a2f-59b1-9c8b-2ac0efc81024');
   }
 
   private async setPredefinedDatabase(
     options: { id: string; name: string; host: string; port: string; }[],
   ): Promise<void> {
-    if (RI_DISABLE_MANAGE_CONNECTIONS) {
-      this.logger.warn('Setting predefined databases is disabled by environment variable.');
+    const existingDatabases = await super.list();
+
+    if (existingDatabases.length > 0) {
+      this.logger.log('Predefined databases already exist. Skipping the process.');
       return;
     }
 
     try {
-      options.forEach(async option => {
+      options.forEach(async (option) => {
         const {
           id,
           name,
@@ -123,8 +117,84 @@ export class AutoImportDatabaseRepository extends LocalDatabaseRepository implem
     return super.delete(id);
   }
 
-  // Additional method to check if management is disabled and hide export control
-  public isManagementDisabled(): boolean {
-    return !!RI_DISABLE_MANAGE_CONNECTIONS;
+  /**
+   * @inheritDoc
+   */
+  async processFile(filename: string): Promise<void> {
+    const existingDatabases = await super.list();
+    if (existingDatabases.length > 0) {
+      this.logger.log('Not importing databases since there are databases.');
+      return;
+    }
+
+    const fileData = await fs.readFile(filename, { encoding: 'utf8' });
+    const databases = JSON.parse(fileData as unknown as string);
+
+    if (!Array.isArray(databases)) {
+      throw new Error('Invalid data format');
+    }
+
+    databases.forEach(async (db) => {
+      const isExist = await this.exists(db.id);
+      if (isExist) {
+        return;
+      }
+
+      const data: any = {};
+
+      data.new = true;
+
+      fieldsMapSchema.forEach(([field, paths]) => {
+        let value;
+        paths.every((path) => {
+          value = get(db, path);
+          return value === undefined;
+        });
+
+        set(data, field, value);
+      });
+
+      if (!data.name) {
+        data.name = `${data.host}:${data.port}`;
+      }
+
+      data.connectionType = determineConnectionType(data);
+
+      if (data?.sentinelMasterName) {
+        data.sentinelMaster = {
+          name: data.sentinelMasterName,
+          username: data.sentinelMasterUsername || undefined,
+          password: data.sentinelMasterPassword,
+        };
+        data.nodes = [{
+          host: data.host,
+          port: parseInt(data.port, 10),
+        }];
+      }
+      if (data?.compressor && !(data.compressor in Compressor)) {
+        data.compressor = Compressor.NONE;
+      }
+
+      const dto = plainToClass(
+        ImportDatabaseDto,
+        Object.keys(data)
+          .reduce((acc, key) => {
+            acc[key] = data[key] === '' ? null : data[key];
+            return acc;
+          }, {}),
+        {
+          groups: ['security'],
+        },
+      );
+
+      await this.validator.validateOrReject(dto, {
+        whitelist: true,
+      });
+
+      const database = classToClass(Database, dto);
+      database.id = this.getDatabaseId(database.name);
+
+      await super.create(database, false);
+    });
   }
 }

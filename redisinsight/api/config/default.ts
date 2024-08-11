@@ -218,7 +218,7 @@ export default {
   },
   preSetupDatabase: {
     importFile: process.env.RI_IMPORT_ON_EMPTY,
-    disableManageConnections: process.env.RI_DISABLE_MANAGE_CONNECTIONS,
+    disableManageConnections: !!process.env.RI_DISABLE_MANAGE_CONNECTIONS,
   },
   features_config: {
     url: process.env.RI_FEATURES_CONFIG_URL

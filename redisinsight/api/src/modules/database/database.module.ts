@@ -19,13 +19,14 @@ import { ConnectionMiddleware } from './middleware/connection.middleware';
 import { AutoImportDatabaseRepository } from './repositories/auto-import.database.repository';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
+const AutoImportConfig = config.get('preSetupDatabase');
 
 @Module({})
 export class DatabaseModule {
   static register(
     databaseRepository: Type<DatabaseRepository> =
     SERVER_CONFIG.buildType === 'REDIS_STACK' ? StackDatabasesRepository : (
-      SERVER_CONFIG.buildType == 'REDIS_AUTO_IMPORT' ? AutoImportDatabaseRepository : LocalDatabaseRepository),
+      AutoImportConfig.importFile != '' ? AutoImportDatabaseRepository : LocalDatabaseRepository),
   ) {
     return {
       module: DatabaseModule,

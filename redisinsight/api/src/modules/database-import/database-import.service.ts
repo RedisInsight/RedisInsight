@@ -4,7 +4,7 @@ import {
 import { get, isArray, set } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import { plainToClass } from 'class-transformer';
-import { ConnectionType, Compressor } from 'src/modules/database/entities/database.entity';
+import { Compressor } from 'src/modules/database/entities/database.entity';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import {
   DatabaseImportResponse,
@@ -13,7 +13,7 @@ import {
 } from 'src/modules/database-import/dto/database-import.response';
 import { ValidationError, Validator } from 'class-validator';
 import { ImportDatabaseDto } from 'src/modules/database-import/dto/import.database.dto';
-import { classToClass } from 'src/utils';
+import { classToClass, determineConnectionType, fieldsMapSchema } from 'src/utils';
 import { DatabaseImportAnalytics } from 'src/modules/database-import/database-import.analytics';
 import {
   NoDatabaseImportFileProvidedException,
@@ -31,39 +31,6 @@ export class DatabaseImportService {
 
   private validator = new Validator();
 
-  private fieldsMapSchema: Array<[string, string[]]> = [
-    ['name', ['name', 'connectionName']],
-    ['username', ['username']],
-    ['password', ['password', 'auth']],
-    ['host', ['host']],
-    ['port', ['port']],
-    ['db', ['db']],
-    ['provider', ['provider']],
-    ['isCluster', ['cluster']],
-    ['type', ['type']],
-    ['connectionType', ['connectionType']],
-    ['tls', ['tls', 'ssl']],
-    ['tlsServername', ['tlsServername']],
-    ['tlsCaName', ['caCert.name']],
-    ['tlsCaCert', ['caCert.certificate', 'caCert', 'sslOptions.ca', 'ssl_ca_cert_path']],
-    ['tlsClientName', ['clientCert.name']],
-    ['tlsClientCert', ['clientCert.certificate', 'certificate', 'sslOptions.cert', 'ssl_local_cert_path']],
-    ['tlsClientKey', ['clientCert.key', 'keyFile', 'sslOptions.key', 'ssl_private_key_path']],
-    ['sentinelMasterName', ['sentinelMaster.name', 'sentinelOptions.masterName', 'sentinelOptions.name']],
-    ['sentinelMasterUsername', ['sentinelMaster.username']],
-    ['sentinelMasterPassword', [
-      'sentinelMaster.password', 'sentinelOptions.nodePassword', 'sentinelOptions.sentinelPassword',
-    ]],
-    ['sshHost', ['sshOptions.host', 'ssh_host', 'sshHost']],
-    ['sshPort', ['sshOptions.port', 'ssh_port', 'sshPort']],
-    ['sshUsername', ['sshOptions.username', 'ssh_user', 'sshUser']],
-    ['sshPassword', ['sshOptions.password', 'ssh_password', 'sshPassword']],
-    ['sshPrivateKey', ['sshOptions.privateKey', 'sshOptions.privatekey', 'ssh_private_key_path', 'sshKeyFile']],
-    ['sshPassphrase', ['sshOptions.passphrase', 'sshKeyPassphrase']],
-    ['sshAgentPath', ['ssh_agent_path']],
-    ['compressor', ['compressor']],
-    ['modules', ['modules']],
-  ];
 
   constructor(
     private readonly certificateImportService: CertificateImportService,
@@ -151,7 +118,7 @@ export class DatabaseImportService {
       // set this is a new connection
       data.new = true;
 
-      this.fieldsMapSchema.forEach(([field, paths]) => {
+      fieldsMapSchema.forEach(([field, paths]) => {
         let value;
         paths.every((path) => {
           value = get(item, path);
@@ -166,7 +133,7 @@ export class DatabaseImportService {
         data.name = `${data.host}:${data.port}`;
       }
 
-      data.connectionType = DatabaseImportService.determineConnectionType(data);
+      data.connectionType = determineConnectionType(data);
 
       if (data?.sentinelMasterName) {
         data.sentinelMaster = {
@@ -281,42 +248,6 @@ export class DatabaseImportService {
         errors,
       };
     }
-  }
-
-  /**
-   * Try to determine connection type based on input data
-   * Should return NOT_CONNECTED when it is not possible
-   * @param data
-   */
-  static determineConnectionType(data: any = {}): ConnectionType {
-    if (data?.connectionType) {
-      return (data.connectionType in ConnectionType)
-        ? ConnectionType[data.connectionType]
-        : ConnectionType.NOT_CONNECTED;
-    }
-
-    if (data?.type) {
-      switch (data.type) {
-        case 'cluster':
-          return ConnectionType.CLUSTER;
-        case 'sentinel':
-          return ConnectionType.SENTINEL;
-        case 'standalone':
-          return ConnectionType.STANDALONE;
-        default:
-          return ConnectionType.NOT_CONNECTED;
-      }
-    }
-
-    if (data?.isCluster === true) {
-      return ConnectionType.CLUSTER;
-    }
-
-    if (data?.sentinelMasterName) {
-      return ConnectionType.SENTINEL;
-    }
-
-    return ConnectionType.NOT_CONNECTED;
   }
 
   /**

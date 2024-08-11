@@ -23,6 +23,7 @@ import {
 } from 'src/modules/database-import/exceptions';
 import { CertificateImportService } from 'src/modules/database-import/certificate-import.service';
 import { SshImportService } from 'src/modules/database-import/ssh-import.service';
+import { determineConnectionType } from 'src/utils';
 
 describe('DatabaseImportService', () => {
   let service: DatabaseImportService;
@@ -276,7 +277,7 @@ describe('DatabaseImportService', () => {
 
     tcs.forEach((tc) => {
       it(`should return ${tc.output} when called with ${JSON.stringify(tc.input)}`, () => {
-        expect(DatabaseImportService.determineConnectionType(tc.input)).toEqual(tc.output);
+        expect(determineConnectionType(tc.input)).toEqual(tc.output);
       });
     });
   });

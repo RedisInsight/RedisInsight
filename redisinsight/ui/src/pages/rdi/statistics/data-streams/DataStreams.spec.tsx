@@ -5,27 +5,39 @@ import DataStreams from './DataStreams'
 
 const mockedProps = {
   data: {
-    stream1: {
-      total: 11,
-      pending: 5,
-      inserted: 3,
-      updated: 2,
-      deleted: 1,
+    totals: {
+      total: 31,
+      pending: 15,
+      inserted: 9,
+      updated: 6,
+      deleted: 3,
       filtered: 0,
       rejected: 0,
       deduplicated: 0,
-      lastArrival: '2022-01-01'
     },
-    stream2: {
-      total: 20,
-      pending: 10,
-      inserted: 6,
-      updated: 4,
-      deleted: 2,
-      filtered: 0,
-      rejected: 0,
-      deduplicated: 0,
-      lastArrival: '2022-01-02'
+    streams: {
+      stream1: {
+        total: 11,
+        pending: 5,
+        inserted: 3,
+        updated: 2,
+        deleted: 1,
+        filtered: 0,
+        rejected: 0,
+        deduplicated: 0,
+        lastArrival: '2022-01-01'
+      },
+      stream2: {
+        total: 20,
+        pending: 10,
+        inserted: 6,
+        updated: 4,
+        deleted: 2,
+        filtered: 0,
+        rejected: 0,
+        deduplicated: 0,
+        lastArrival: '2022-01-02'
+      }
     }
   },
   loading: false,
@@ -47,6 +59,6 @@ describe('DataStreams', () => {
 
     // Assert that the data rows are rendered
     const dataRows = screen.getAllByRole('row')
-    expect(dataRows).toHaveLength(3) // 2 data rows + 1 header row
+    expect(dataRows).toHaveLength(4) // 2 data rows + 1 header row + 1 totals row
   })
 })

@@ -14,6 +14,8 @@ import { formatLongName, setTitle } from 'uiSrc/utils'
 import SourcePipelineDialog from 'uiSrc/pages/rdi/pipeline-management/components/source-pipeline-dialog'
 import { RdiPipelineManagementTemplate } from 'uiSrc/templates'
 
+import { removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import PipelinePageRouter from './PipelineManagementPageRouter'
 
 export interface Props {
@@ -42,6 +44,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   useEffect(() => () => {
     dispatch(setLastPageContext(PageNames.rdiPipelineManagement))
     dispatch(setLastPipelineManagementPage(pathnameRef.current))
+    dispatch(removeInfiniteNotification(InfiniteMessagesIds.pipelineDeploySuccess))
   }, [])
 
   useEffect(() => {

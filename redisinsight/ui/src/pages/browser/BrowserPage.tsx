@@ -148,7 +148,9 @@ const BrowserPage = () => {
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.BROWSER_PAGE,
-      databaseId: instanceId
+      eventData: {
+        databaseId: instanceId
+      }
     })
     setIsPageViewSent(true)
   }

@@ -4,6 +4,7 @@ import { nock } from '../../../helpers/test';
 import {
   describe, expect, deps, getMainCheckFn,
 } from '../../deps';
+import { mockRdiConfigSchema, mockRdiJobsSchema, mockRdiSchema } from 'src/__mocks__';
 
 const {
   localDb, request, server, constants,
@@ -16,27 +17,23 @@ const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 't
 
 const endpoint = (id: string) => request(server).get(`/${constants.API.RDI}/${id || testRdiId}/pipeline/schema`);
 
-const mockResponseSuccess = {
-  schema: { },
-};
-
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('GET /rdi/:id/pipeline/schema', () => {
   [
     {
       name: 'Should be success if rdi with :id is in db',
-      // responseSchema,
       statusCode: 200,
       checkFn: ({ body }) => {
-        expect(body).to.eql(mockResponseSuccess);
+        expect(body).to.eql(mockRdiSchema);
       },
       before: async () => {
         await localDb.generateRdis({ id: testRdiId, url: testRdiUrl }, 1);
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetSchema}`).query(true).reply(200, mockResponseSuccess);
+        nock(testRdiUrl).get(`/${RdiUrl.GetConfigSchema}`).query(true).reply(200, mockRdiConfigSchema);
+        nock(testRdiUrl).get(`/${RdiUrl.GetJobsSchema}`).query(true).reply(200, mockRdiJobsSchema);
       },
     },
     {
@@ -56,7 +53,6 @@ describe('GET /rdi/:id/pipeline/schema', () => {
     },
     {
       name: 'Should throw error if client getSchema will not succeed',
-      // responseSchema,
       statusCode: 401,
       checkFn: ({ body }) => {
         expect(body).to.eql({
@@ -71,7 +67,8 @@ describe('GET /rdi/:id/pipeline/schema', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetSchema}`).query(true).reply(401, {
+        nock(testRdiUrl).get(`/${RdiUrl.GetConfigSchema}`).query(true).reply(200, mockRdiConfigSchema);
+        nock(testRdiUrl).get(`/${RdiUrl.GetJobsSchema}`).query(true).reply(401, {
           message: 'Request failed with status code 401',
         });
       },

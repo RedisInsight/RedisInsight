@@ -64,6 +64,9 @@ describe('Config', () => {
 
     expect(sendPageViewTelemetry).toBeCalledWith({
       name: TelemetryPageView.RDI_CONFIG,
+      eventData: {
+        rdiInstanceId: 'rdiInstanceId',
+      }
     })
   })
 

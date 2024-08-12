@@ -12,9 +12,9 @@ import { WorkbenchActions } from '../../../../common-actions/workbench-actions';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const { acceptLicenseTermsAndAddDatabaseApi } = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const workbenchActions = new WorkbenchActions();
+const databaseHelper = new DatabaseHelper();
 
 fixture `Monitor`
     .meta({ type: 'critical_path', rte: rte.standalone })
@@ -22,7 +22,7 @@ fixture `Monitor`
 
 test
     .before(async t => {
-        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await  databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.Cli.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor -client');
         // Check command result in CLI
         await t.click(browserPage.Cli.cliExpandButton);

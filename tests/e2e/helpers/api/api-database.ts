@@ -87,8 +87,9 @@ export class DatabaseAPIRequests {
             requestBody
         );
         if(databaseParameters.databaseName?.includes('oss-standalone-no-permissions')){
+            const stting =  JSON.stringify(requestBody, null, 2);
             await t
-                .expect(response.body).eql('check');
+                .expect(stting).eql('check');
         }
         await t
             .expect(await response.body.name)

@@ -9,6 +9,7 @@ import {
 import { CustomErrorCodes } from 'src/constants';
 import errorMessages from 'src/constants/error-messages';
 import { wrapRdiPipelineError } from './rdi-pipiline.error.handler';
+import { RdiPipelineForbiddenException } from './rdi-pipeline.forbidden.exception';
 
 describe('wrapRdiPipelineError', () => {
   it('should return the original error if it is an instance of HttpException', () => {
@@ -55,6 +56,29 @@ describe('wrapRdiPipelineError', () => {
 
     expect(result).toBeInstanceOf(RdiPipelineUnauthorizedException);
     expect(result.message).toBe(errorMessages.UNAUTHORIZED);
+  });
+
+  it('should return a RdiPipelineForbiddenException if the response status is 403', () => {
+    const error = {
+      response: {
+        status: 403,
+        data: {
+          detail: {
+            message: 'Unauthorized',
+          },
+        },
+      },
+    } as AxiosError;
+    const result = wrapRdiPipelineError(error, 'Test error');
+
+    expect(result).toBeInstanceOf(RdiPipelineForbiddenException);
+    expect(result.message).toBe('Test error');
+    expect(result.getResponse()).toEqual({
+      message: result.message,
+      statusCode: HttpStatus.FORBIDDEN,
+      error: 'RdiForbidden',
+      errorCode: CustomErrorCodes.RdiForbidden,
+    });
   });
 
   it('should return a RdiPipelineValidationException if the response status is 422', () => {

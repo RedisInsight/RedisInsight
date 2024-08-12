@@ -4,6 +4,7 @@ import {
   RdiPipelineInternalServerErrorException,
   RdiPipelineUnauthorizedException, RdiPipelineNotFoundException, RdiPipelineValidationException,
 } from 'src/modules/rdi/exceptions';
+import { RdiPipelineForbiddenException } from './rdi-pipeline.forbidden.exception';
 
 export const wrapRdiPipelineError = (error: AxiosError<any>, message?: string): HttpException => {
   if (error instanceof HttpException) {
@@ -17,6 +18,8 @@ export const wrapRdiPipelineError = (error: AxiosError<any>, message?: string): 
     switch (response?.status) {
       case 401:
         return new RdiPipelineUnauthorizedException(message, errorOptions);
+      case 403:
+        return new RdiPipelineForbiddenException(message, errorOptions);
       case 422:
         return new RdiPipelineValidationException(message, errorOptions);
       case 404:

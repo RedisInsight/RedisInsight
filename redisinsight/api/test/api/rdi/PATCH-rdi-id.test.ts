@@ -52,6 +52,23 @@ describe('PATCH /rdi/:id', () => {
   describe('Common', () => {
     [
       {
+        name: 'Should throw error if rdiClient was not connected',
+        statusCode: 401,
+        data: validInputData,
+        before: () => {
+          nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(401, {
+            message: 'Unauthorized',
+            detail: 'Unauthorized'
+          });
+        },
+        responseBody: {
+          message: 'Unauthorized',
+          statusCode: 401,
+          error: 'RdiUnauthorized',
+          errorCode: 11402,
+        },
+      },
+      {
         name: 'Should update rdi name',
         responseSchema,
         data: { name: validInputData.name },
@@ -81,22 +98,6 @@ describe('PATCH /rdi/:id', () => {
           nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
             access_token: mockedAccessToken,
           });
-        },
-      },
-      {
-        name: 'Should throw error if rdiClient was not connected',
-        statusCode: 401,
-        data: validInputData,
-        before: () => {
-          nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(401, {
-            message: 'Unauthorized',
-          });
-        },
-        responseBody: {
-          message: 'Authorization failed',
-          statusCode: 401,
-          error: 'RdiUnauthorized',
-          errorCode: 11402,
         },
       },
     ].forEach(mainCheckFn);

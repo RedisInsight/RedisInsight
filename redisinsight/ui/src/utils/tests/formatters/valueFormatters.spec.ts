@@ -1,7 +1,8 @@
+import { format } from 'date-fns'
 import { encode } from 'msgpackr'
 import { serialize } from 'php-serialize'
-import { KeyValueFormat } from 'uiSrc/constants'
-import { anyToBuffer, bufferToSerializedFormat, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'
+import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat } from 'uiSrc/constants'
+import { anyToBuffer, bufferToSerializedFormat, formattingBuffer, stringToBuffer, stringToSerializedBufferFormat } from 'uiSrc/utils'
 
 describe('bufferToSerializedFormat', () => {
   describe(KeyValueFormat.JSON, () => {
@@ -170,6 +171,46 @@ describe('stringToSerializedBufferFormat', () => {
 
       test.each(testValues)('test json values', (val) => {
         expect(stringToSerializedBufferFormat(KeyValueFormat.PHP, val)).toEqual(stringToBuffer(val))
+      })
+    })
+  })
+})
+
+describe('formattingBuffer', () => {
+  describe(KeyValueFormat.DateTime, () => {
+    describe('should properly format timestamp number', () => {
+      // Since we formatting with local timezome, we cannot hardcode the expected string result
+      const expected = new Date(1722593319805)
+      const testValues = [new Uint8Array([49, 55, 50, 50, 53, 57, 51, 51, 49, 57, 56, 48, 53])].map((v) => ({
+        input: anyToBuffer(v),
+        expected: { value: format(expected, DATETIME_FORMATTER_DEFAULT), isValid: true },
+      }))
+
+      test.each(testValues)('test %j', ({ input, expected }) => {
+        expect(formattingBuffer(input, KeyValueFormat.DateTime)).toEqual(expected)
+      })
+    })
+
+    describe('should left iso strings and other strings as they are', () => {
+      const testValues = [
+        {
+          input: anyToBuffer(new Uint8Array(
+            [65, 110, 121, 32, 83, 116, 114, 105, 110, 103]
+          )),
+          expected: { value: 'Any String', isValid: false },
+        },
+        {
+          input: anyToBuffer(new Uint8Array([
+            50, 48, 50, 52, 45, 48, 56, 45,
+            48, 50, 84, 48, 48, 58, 48, 48,
+            58, 48, 48, 46, 48, 48, 48, 90
+          ])),
+          expected: { value: '2024-08-02T00:00:00.000Z', isValid: false }
+        }
+      ]
+
+      test.each(testValues)('test %j', ({ input, expected }) => {
+        expect(formattingBuffer(input, KeyValueFormat.DateTime)).toEqual(expected)
       })
     })
   })

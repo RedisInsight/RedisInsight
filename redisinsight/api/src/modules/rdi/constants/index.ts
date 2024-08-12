@@ -1,5 +1,6 @@
 export enum RdiUrl {
-  GetSchema = 'api/v1/schemas',
+  GetConfigSchema = 'api/v1/pipelines/config/schemas',
+  GetJobsSchema = 'api/v1/pipelines/jobs/schemas',
   GetPipeline = 'api/v1/pipelines',
   GetStrategies = 'api/v1/pipelines/strategies',
   GetConfigTemplate = 'api/v1/pipelines/config/templates',

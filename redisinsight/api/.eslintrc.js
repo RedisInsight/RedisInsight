@@ -14,6 +14,7 @@ module.exports = {
     'max-classes-per-file': 'off',
     'class-methods-use-this': 'off', // should be ignored since NestJS allow inheritance without using "this" inside class methods
     'no-await-in-loop': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
   parserOptions: {
     project: './tsconfig.json',

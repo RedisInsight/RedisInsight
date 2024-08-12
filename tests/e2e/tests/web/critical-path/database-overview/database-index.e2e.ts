@@ -111,7 +111,7 @@ test('Switching between indexed databases', async t => {
     await workbenchPage.checkWorkbenchCommandResult(`[db1] ${command}`, '8');
 
     // Open Browser page
-    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     // Clear filter
     await t.click(browserPage.clearFilterButton);
     // Verify that data changed for indexed db on Workbench page (on Search capability page)

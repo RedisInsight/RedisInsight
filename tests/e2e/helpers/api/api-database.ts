@@ -23,8 +23,7 @@ export class DatabaseAPIRequests {
      * @param databaseParameters The database parameters
      */
     async addNewStandaloneDatabaseApi(
-        databaseParameters: AddNewDatabaseParameters,
-        isCloud = false
+        databaseParameters: AddNewDatabaseParameters, isCloud = false
     ): Promise<void> {
         const uniqueId = chance.string({ length: 10 });
         const uniqueIdNumber = chance.integer({ min: 1, max: 1000 });
@@ -87,8 +86,6 @@ export class DatabaseAPIRequests {
             ResourcePath.Databases,
             requestBody
         );
-        await t
-            .expect(response.body).eql('check');
         await t
             .expect(await response.body.name)
             .eql(

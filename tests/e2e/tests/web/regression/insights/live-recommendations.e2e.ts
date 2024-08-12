@@ -275,7 +275,6 @@ test
         await t.click(tab.analyzeDatabaseLink);
         await t.click(tab.analyzeTooltipButton);
         await t.click(memoryEfficiencyPage.recommendationsTab);
-        await memoryEfficiencyPage.getRecommendationButtonByName(RecommendationIds.searchJson);
         keyNameFromRecommendation = await tab.getRecommendationByName(RecommendationIds.searchJson)
             .find(tab.cssKeyName)
             .innerText;

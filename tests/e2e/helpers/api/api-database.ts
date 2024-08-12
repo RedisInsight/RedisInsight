@@ -87,6 +87,8 @@ export class DatabaseAPIRequests {
             requestBody
         );
         await t
+            .expect(response.body).eql('check');
+        await t
             .expect(await response.body.name)
             .eql(
                 databaseParameters.databaseName,

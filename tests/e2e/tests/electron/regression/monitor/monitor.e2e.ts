@@ -12,7 +12,7 @@ import { WorkbenchActions } from '../../../../common-actions/workbench-actions';
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const browserPage = new BrowserPage();
-const databaseHelper = new DatabaseHelper();
+const { acceptLicenseTermsAndAddDatabaseApi } = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const workbenchActions = new WorkbenchActions();
 
@@ -22,15 +22,13 @@ fixture `Monitor`
 
 test
     .before(async t => {
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneNoPermissionsConfig);
-        await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
-        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
+        await acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await browserPage.Cli.sendCommandInCli('acl setuser noperm nopass on +@all ~* -monitor -client');
         // Check command result in CLI
         await t.click(browserPage.Cli.cliExpandButton);
         await t.expect(browserPage.Cli.cliOutputResponseSuccess.textContent).eql('"OK"', 'Command from autocomplete was not found & executed');
-        await t.click(browserPage.Cli.cliCollapseButton);
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
+        await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneNoPermissionsConfig);
         await browserPage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneNoPermissionsConfig.databaseName);
     })

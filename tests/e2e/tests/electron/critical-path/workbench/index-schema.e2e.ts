@@ -20,7 +20,7 @@ fixture `Index Schema at Workbench`
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Go to Workbench page
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);;
+        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
     })
     .afterEach(async t => {
         // Drop index, documents and database

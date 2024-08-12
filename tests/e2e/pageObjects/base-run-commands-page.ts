@@ -33,7 +33,7 @@ export class BaseRunCommandsPage extends InstancePage {
     cssDeleteCommandButton = '[data-testid=delete-command]';
 
     getTutorialLinkLocator = (tutorialName: string): Selector =>
-        Selector(`[@data-testid="data-testid=query-tutorials-link_${tutorialName}"]`);
+        Selector(`[data-testid=query-tutorials-link_${tutorialName}]`);
 
     /**
      * Get card container by command

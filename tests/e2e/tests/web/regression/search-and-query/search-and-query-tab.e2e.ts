@@ -50,6 +50,27 @@ test('Verify that tutorials can be opened from Workbench', async t => {
     const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.expect(tab.preselectArea.textContent).contains('EXACT MATCH', 'the tutorial page is incorrect');
 });
+test('Verify that user can use show more to see command fully in 2nd tooltip', async t => {
+    const commandDetails = [
+        'index query [VERBATIM] [LOAD count field [field ...]]',
+        'Run a search query on an index and perform aggregate transformations on the results',
+        'Arguments:',
+        'required index',
+        'required query',
+        'optional [verbatim]'
+    ];
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
+    await t.typeText(searchAndQueryPage.queryInput, 'FT', { replace: true });
+    // Verify that user can use show more to see command fully in 2nd tooltip
+    await t.pressKey('ctrl+space');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.exists).ok('The "read more" about the command is not opened');
+    for(const detail of commandDetails) {
+        await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.textContent).contains(detail, `The ${detail} command detail is not displayed`);
+    }
+    // Verify that user can close show more tooltip by 'x' or 'Show less'
+    await t.pressKey('ctrl+space');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.exists).notOk('The "read more" about the command is not closed');
+});
 test('Verify full commands suggestions with index and query for FT.AGGREGATE', async t => {
     const groupByArgInfo = 'GROUPBY nargs property [property ...] [REDUCE function nargs arg [arg ...] [AS name] [REDUCE function nargs arg [arg ...] [AS name] ...]]';
     const indexFields = [
@@ -62,29 +83,12 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
         'students',
         'type'
     ];
-    const commandDetails = [
-        'index query [VERBATIM] [LOAD count field [field ...]]',
-        'Run a search query on an index and perform aggregate transformations on the results',
-        'Arguments:',
-        'required index',
-        'required query',
-        'optional [verbatim]'
-    ];
     await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
 
     // Verify basic commands suggestions FT.SEARCH and FT.AGGREGATE
     await t.typeText(searchAndQueryPage.queryInput, 'FT', { replace: true });
     // Verify that the list with FT.SEARCH and FT.AGGREGATE auto-suggestions is displayed
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.count).eql(2, 'FT.SEARCH and FT.AGGREGATE auto-suggestions are not displayed');
-    // Verify that user can use show more to see command fully in 2nd tooltip
-    await t.pressKey('ctrl+space');
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.exists).ok('The "read more" about the command is not opened');
-    for(const detail of commandDetails) {
-        await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.textContent).contains(detail, `The ${detail} command detail is not displayed`);
-    }
-    // Verify that user can close show more tooltip by 'x' or 'Show less'
-    await t.pressKey('ctrl+space');
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.exists).notOk('The "read more" about the command is not closed');
     // Select command and check result
     await t.pressKey('enter');
     let script = await searchAndQueryPage.queryInputScriptArea.textContent;

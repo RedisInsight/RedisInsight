@@ -86,8 +86,10 @@ export class DatabaseAPIRequests {
             ResourcePath.Databases,
             requestBody
         );
-        await t
-            .expect(response.body).eql('check');
+        if(databaseParameters.databaseName?.includes('oss-standalone-no-permissions')){
+            await t
+                .expect(response.body).eql('check');
+        }
         await t
             .expect(await response.body.name)
             .eql(

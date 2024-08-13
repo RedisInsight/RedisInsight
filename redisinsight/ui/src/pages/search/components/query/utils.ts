@@ -21,6 +21,7 @@ export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: mon
       insertText: `"${value}" "$1" `,
       insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range,
+      detail: value || ' ',
     }
   })
 
@@ -36,10 +37,11 @@ export const getFieldsSuggestions = (fields: any[], range: monaco.IRange, spaceA
 export const getCommandsSuggestions = (commands: SearchCommand[], range: monaco.IRange) => asSuggestionsRef(
   commands.map((command) => buildSuggestion(command, range, {
     detail: generateDetail(command),
+    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
     documentation: {
       value: getCommandMarkdown(command as any)
     },
-  }))
+  })), false
 )
 
 export const getMandatoryArgumentSuggestions = (
@@ -66,7 +68,8 @@ export const getOptionalSuggestions = (
   command: SearchCommand,
   foundArg: Nullable<FoundCommandArgument>,
   allArgs: string[],
-  range: monaco.IRange
+  range: monaco.IRange,
+  currentArg?: string
 ) => {
   const appendCommands = foundArg?.append ?? []
 
@@ -78,7 +81,8 @@ export const getOptionalSuggestions = (
     })),
     ...(command?.arguments || [])
       .filter((arg) => arg.optional)
-      .filter((arg) => arg.multiple || !allArgs.includes(arg.token || arg.arguments?.[0]?.token || ''))
+      .filter((arg) =>
+        arg.multiple || !(currentArg !== arg.token && allArgs.includes(arg.token || arg.arguments?.[0]?.token || '')))
       .map((arg) => buildSuggestion(arg, range, {
         sortText: 'b',
         kind: monacoEditor.languages.CompletionItemKind.Reference,

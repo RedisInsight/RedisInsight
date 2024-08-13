@@ -26,7 +26,8 @@ const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
 @WebSocketGateway({
   path: SOCKETS_CONFIG.path,
   namespace: `${SOCKETS_CONFIG.namespacePrefix}pub-sub`,
-  cors: SOCKETS_CONFIG.cors,
+  cors: SOCKETS_CONFIG.cors.enabled
+    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
   serveClient: SOCKETS_CONFIG.serveClient,
 })
 export class PubSubGateway implements OnGatewayConnection, OnGatewayDisconnect {

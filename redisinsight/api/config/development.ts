@@ -3,7 +3,9 @@ export default {
     env: 'development',
   },
   sockets: {
-    cors: true,
+    cors: {
+      enabled: true,
+    },
   },
   db: {
     synchronize: process.env.RI_DB_SYNC ? process.env.RI_DB_SYNC === 'true' : true,

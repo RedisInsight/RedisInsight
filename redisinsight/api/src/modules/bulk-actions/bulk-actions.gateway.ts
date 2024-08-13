@@ -27,7 +27,8 @@ const SOCKETS_CONFIG = config.get('sockets');
 @WebSocketGateway({
   path: SOCKETS_CONFIG.path,
   namespace: 'bulk-actions',
-  cors: SOCKETS_CONFIG.cors,
+  cors: SOCKETS_CONFIG.cors
+    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
   serveClient: SOCKETS_CONFIG.serveClient,
 })
 export class BulkActionsGateway implements OnGatewayConnection, OnGatewayDisconnect {

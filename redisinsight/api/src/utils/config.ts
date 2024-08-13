@@ -5,7 +5,6 @@ import staging from '../../config/staging';
 import test from '../../config/test';
 import production from '../../config/production';
 import stack from '../../config/stack';
-import hosted from '../../config/hosted'
 
 const config = cloneDeep(defaultConfig);
 
@@ -19,9 +18,6 @@ switch (process.env.NODE_ENV) {
     break;
   case 'test':
     envConfig = test;
-    break;
-  case 'hosted':
-    envConfig = hosted;
     break;
   default:
     envConfig = development;

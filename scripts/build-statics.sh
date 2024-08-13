@@ -47,8 +47,11 @@ function extract_plugins {
   fi
 }
 
+# env variable pluginsBuild=1 will enforce plugins build
+pluginsBuild="${pluginsBuild:-0}"
+
 # if Extract plugins succeeds, we are done
-if extract_plugins; then
+if [ "$pluginsBuild" = 0 ] &&  extract_plugins; then
   echo "Plugins were extracted successfully"
   exit 0
 fi

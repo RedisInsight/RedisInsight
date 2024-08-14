@@ -11,7 +11,7 @@ import {
   Body,
   Logger, UseFilters, UsePipes, ValidationPipe,
 } from '@nestjs/common';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { BulkActionsServerEvents } from 'src/modules/bulk-actions/constants';
 import { CreateBulkActionDto } from 'src/modules/bulk-actions/dto/create-bulk-action.dto';
 import { BulkActionsService } from 'src/modules/bulk-actions/bulk-actions.service';
@@ -20,14 +20,14 @@ import { BulkActionIdDto } from 'src/modules/bulk-actions/dto/bulk-action-id.dto
 import { SessionMetadata } from 'src/common/models';
 import { WSSessionMetadata } from 'src/modules/auth/session-metadata/decorators/ws-session-metadata.decorator';
 
-const SOCKETS_CONFIG = config.get('sockets');
+const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
 
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseFilters(AckWsExceptionFilter)
 @WebSocketGateway({
   path: SOCKETS_CONFIG.path,
   namespace: 'bulk-actions',
-  cors: SOCKETS_CONFIG.cors
+  cors: SOCKETS_CONFIG.cors.enabled
     ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
   serveClient: SOCKETS_CONFIG.serveClient,
 })

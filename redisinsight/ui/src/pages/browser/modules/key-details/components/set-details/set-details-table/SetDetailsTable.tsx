@@ -4,7 +4,6 @@ import cx from 'classnames'
 import {
   EuiProgress,
   EuiText,
-  EuiToolTip,
 } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
@@ -16,7 +15,7 @@ import {
   formatLongName,
   formattingBuffer,
 } from 'uiSrc/utils'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent, getMatchType } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { selectedKeyDataSelector, keysSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
@@ -36,6 +35,7 @@ import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { IColumnSearchState, ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
+import { FormattedValue } from '../../../shared'
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -203,18 +203,15 @@ const SetDetailsTable = (props: Props) => {
               style={{ display: 'flex' }}
               data-testid={`set-member-value-${cellContent}`}
             >
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  anchorClassName="truncateText"
-                  position="left"
-                  content={tooltipContent}
-                >
-                  <>{cellContent}</>
-                </EuiToolTip>
-              )}
-              {expanded && value}
+              <FormattedValue
+                value={value}
+                expanded={expanded}
+                title="Member"
+                tooltipContent={tooltipContent}
+                isValid={isValid}
+                viewFormatProp={viewFormatProp}
+                position="left"
+              />
             </div>
           </EuiText>
         )

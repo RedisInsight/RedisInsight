@@ -26,6 +26,7 @@ import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP, MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP } from '../constants'
+import { FormattedValue } from '../../../shared'
 
 const suffix = '_stream'
 const actionsWidth = 50
@@ -99,7 +100,7 @@ const StreamDataViewWrapper = (props: Props) => {
             render: () => {
               const { value: decompressedName } = decompressingBuffer(name, compressor)
               const value = name ? bufferToString(name) : ''
-              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp)
+              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp, { isField: true })
               const tooltipContent = formatLongName(value)
               return (
                 <>
@@ -108,14 +109,12 @@ const StreamDataViewWrapper = (props: Props) => {
                       style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all', width: 'max-content' }}
                       data-testid={`stream-field-name-${field}`}
                     >
-                      <EuiToolTip
-                        title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                        anchorClassName="truncateText"
-                        position="bottom"
-                        content={tooltipContent}
-                      >
-                        <>{formattedValue}</>
-                      </EuiToolTip>
+                      <FormattedValue
+                        value={formattedValue}
+                        tooltipContent={tooltipContent}
+                        isValid={isValid}
+                        viewFormatProp={viewFormatProp}
+                      />
                     </div>
                   ) : (
                     <div>&nbsp;</div>
@@ -214,7 +213,6 @@ const StreamDataViewWrapper = (props: Props) => {
       const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
       // const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(decompressedBufferValue, viewFormatProp, { expanded })
-      const cellContent = formattedValue?.substring?.(0, 650) ?? formattedValue
       const tooltipContent = formatLongName(value)
 
       return (
@@ -224,18 +222,15 @@ const StreamDataViewWrapper = (props: Props) => {
             className="streamItem"
             data-testid={`stream-entry-field-${id}`}
           >
-            {!expanded && (
-              <EuiToolTip
-                title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                className={styles.tooltip}
-                anchorClassName="streamItem line-clamp-2"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
-            )}
-            {expanded && formattedValue}
+            <FormattedValue
+              value={formattedValue}
+              tooltipContent={tooltipContent}
+              isValid={isValid}
+              viewFormatProp={viewFormatProp}
+              expanded={expanded}
+              truncateLength={650}
+              anchorClassName="streamItem line-clamp-2"
+            />
           </div>
         </EuiText>
       )

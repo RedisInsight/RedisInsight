@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -31,7 +31,6 @@ import {
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_UNPRINTABLE_CHARACTERS,
   TEXT_DISABLED_COMPRESSED_VALUE,
-  TEXT_FAILED_CONVENT_FORMATTER,
 } from 'uiSrc/constants'
 import {
   bufferToString,
@@ -53,11 +52,10 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
-import { StopPropagation } from 'uiSrc/components/virtual-table'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
-import { EditableTextArea } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { EditableTextArea, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -307,18 +305,14 @@ const ListDetailsTable = (props: Props) => {
             testIdPrefix="list"
           >
             <div className="innerCellAsCell">
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Element' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  position="bottom"
-                  content={tooltipContent}
-                  anchorClassName="truncateText"
-                >
-                  <>{(value as any)?.substring?.(0, 200) ?? value}</>
-                </EuiToolTip>
-              )}
-              {expanded && value}
+              <FormattedValue
+                value={value}
+                expanded={expanded}
+                title="Element"
+                tooltipContent={tooltipContent}
+                isValid={isValid}
+                viewFormatProp={viewFormatProp}
+              />
             </div>
           </EditableTextArea>
         )

@@ -26,11 +26,13 @@ import {
   bufferToFloat32Array,
   checkTimestamp,
   convertTimestampToMilliseconds,
+  buffersEqual,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 export interface FormattingProps {
   expanded?: boolean
+  isField?: boolean
 }
 
 const isTextViewFormatter = (format: KeyValueFormat) => [
@@ -108,16 +110,30 @@ const formattingBuffer = (
       }
     }
     case KeyValueFormat.Vector32Bit: {
+      const utfVariant = bufferToUTF8(reply)
       try {
+        if (props?.isField) return { value: utfVariant, isValid: true }
+        const bufferFromUtf = Buffer.from(utfVariant)
+        const bufferFromValue = Buffer.from(reply.data)
+        if (buffersEqual(bufferFromUtf, bufferFromValue)) {
+          return { value: utfVariant, isValid: true }
+        }
         const vector = Array.from(bufferToFloat32Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
-        return { value: bufferToUTF8(reply), isValid: false }
+        return { value: utfVariant, isValid: false }
       }
     }
     case KeyValueFormat.Vector64Bit: {
+      const utfVariant = bufferToUTF8(reply)
       try {
+        if (props?.isField) return { value: utfVariant, isValid: true }
+        const bufferFromUtf = Buffer.from(utfVariant)
+        const bufferFromValue = Buffer.from(reply.data)
+        if (buffersEqual(bufferFromUtf, bufferFromValue)) {
+          return { value: utfVariant, isValid: true }
+        }
         const vector = Array.from(bufferToFloat64Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })

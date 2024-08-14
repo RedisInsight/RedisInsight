@@ -213,6 +213,9 @@ parameters:
   redis_client:
     type: string
     default: ""
+  env:
+    type: string
+    default: "stage"
 
 jobs:
   # Test jobs
@@ -1351,24 +1354,24 @@ workflows:
           os: linux
           target: << pipeline.parameters.linux >>
       - setup-sign-certificates:
-          name: Setup sign certificates (stage)
+          name: Setup sign certificates (<< pipeline.parameters.env >>)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (stage)
-          env: stage
+          name: Setup build (<< pipeline.parameters.env >>)
+          env:  << pipeline.parameters.env >>
           requires:
-            - Setup sign certificates (stage)
+            - Setup sign certificates (<< pipeline.parameters.env >>)
       - linux:
-          name: Build app - Linux (stage)
-          env: stage
+          name: Build app - Linux (<< pipeline.parameters.env >>)
+          env: << pipeline.parameters.env >>
           target: << pipeline.parameters.linux >>
           requires:
-            - Setup build (stage)
+            - Setup build (<< pipeline.parameters.env >>)
       - store-build-artifacts:
-          name: Store build artifacts (stage)
+          name: Store build artifacts (<< pipeline.parameters.env >>)
           requires:
-            - Build app - Linux (stage)
+            - Build app - Linux (<< pipeline.parameters.env >>)
   manual-build-mac:
     when: << pipeline.parameters.mac >>
     jobs:
@@ -1377,25 +1380,25 @@ workflows:
           os: mac
           target: << pipeline.parameters.mac >>
       - setup-sign-certificates:
-          name: Setup sign certificates (stage)
+          name: Setup sign certificates (<< pipeline.parameters.env >>)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (stage)
-          env: stage
+          name: Setup build (<< pipeline.parameters.env >>)
+          env: << pipeline.parameters.env >>
           requires:
-            - Setup sign certificates (stage)
+            - Setup sign certificates (<< pipeline.parameters.env >>)
       - macosx:
-          name: Build app - MacOS (stage)
-          env: stage
+          name: Build app - MacOS (<< pipeline.parameters.env >>)
+          env: << pipeline.parameters.env >>
           redisstack: false
           target: << pipeline.parameters.mac >>
           requires:
-            - Setup build (stage)
+            - Setup build (<< pipeline.parameters.env >>)
       - store-build-artifacts:
-          name: Store build artifacts (stage)
+          name: Store build artifacts (<< pipeline.parameters.env >>)
           requires:
-            - Build app - MacOS (stage)
+            - Build app - MacOS (<< pipeline.parameters.env >>)
   manual-build-windows:
     when: << pipeline.parameters.windows >>
     jobs:
@@ -1404,24 +1407,24 @@ workflows:
           os: windows
           target: << pipeline.parameters.windows >>
       - setup-sign-certificates:
-          name: Setup sign certificates (stage)
+          name: Setup sign certificates (<< pipeline.parameters.env >>)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (stage)
-          env: stage
+          name: Setup build (<< pipeline.parameters.env >>)
+          env: << pipeline.parameters.env >>
           requires:
-            - Setup sign certificates (stage)
+            - Setup sign certificates (<< pipeline.parameters.env >>)
       - windows:
-          name: Build app - Windows (stage)
-          env: stage
+          name: Build app - Windows (<< pipeline.parameters.env >>)
+          env: << pipeline.parameters.env >>
           target: << pipeline.parameters.windows >>
           requires:
-            - Setup build (stage)
+            - Setup build (<< pipeline.parameters.env >>)
       - store-build-artifacts:
-          name: Store build artifacts (stage)
+          name: Store build artifacts (<< pipeline.parameters.env >>)
           requires:
-            - Build app - Windows (stage)
+            - Build app - Windows (<< pipeline.parameters.env >>)
   manual-build-docker:
     when: << pipeline.parameters.docker >>
     jobs:
@@ -1430,22 +1433,22 @@ workflows:
           os: docker
           target: << pipeline.parameters.docker >>
       - setup-sign-certificates:
-          name: Setup sign certificates (stage)
+          name: Setup sign certificates (<< pipeline.parameters.env >>)
           requires:
             - Validating build parameters
       - setup-build:
-          name: Setup build (stage)
-          env: stage
+          name: Setup build (<< pipeline.parameters.env >>)
+          env: << pipeline.parameters.env >>
           requires:
-            - Setup sign certificates (stage)
+            - Setup sign certificates (<< pipeline.parameters.env >>)
       - docker:
-          name: Build docker images (stage)
+          name: Build docker images (<< pipeline.parameters.env >>)
           requires:
-            - Setup build (stage)
+            - Setup build (<< pipeline.parameters.env >>)
       - store-build-artifacts:
-          name: Store build artifacts (stage)
+          name: Store build artifacts (<< pipeline.parameters.env >>)
           requires:
-            - Build docker images (stage)
+            - Build docker images (<< pipeline.parameters.env >>)
 
   # build electron app (dev) from "build" branches
   build:

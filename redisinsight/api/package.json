@@ -58,7 +58,7 @@
     "@okta/okta-auth-js": "^7.3.0",
     "@segment/analytics-node": "^2.1.2",
     "adm-zip": "^0.5.9",
-    "axios": "^1.6.0",
+    "axios": "^1.7.4",
     "body-parser": "^1.19.0",
     "busboy": "^1.6.0",
     "class-transformer": "^0.2.3",

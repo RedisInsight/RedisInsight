@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { apiService } from 'uiSrc/services'
-import { setApiCsrfHeader } from 'uiSrc/services/apiService';
-import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService';
+import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
+import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService'
 import { AppDispatch, RootState } from '../store'
 
 const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
@@ -10,13 +9,9 @@ interface CSRFTokenResponse {
   token: string;
 }
 
-export type StateCsrf = {
-  token: string;
-}
-
 export const initialState: {
   csrfEndpoint: string;
-  loading: null | boolean;
+  loading: boolean;
   token: string;
 } = {
   csrfEndpoint: getCsrfEndpoint(),
@@ -33,7 +28,7 @@ const appCsrfSlice = createSlice({
   }
 })
 
-const { setLoading, setToken } = appCsrfSlice.actions
+export const { setLoading, setToken } = appCsrfSlice.actions
 
 export const appCsrfSelector = (state: RootState) => state.app.csrf
 
@@ -53,8 +48,6 @@ export function fetchCsrfToken(
         setResourceCsrfHeader(data.token)
         onSuccessAction && onSuccessAction(data)
       }
-
-      dispatch(setLoading({ loading: false }))
     } catch (error) {
       console.error('Error fetching CSRF token: ', error)
       onFailAction && onFailAction()

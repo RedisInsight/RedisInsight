@@ -20,6 +20,7 @@ import {
 import {
   RdiPipelineDeployFailedException,
   RdiPipelineInternalServerErrorException,
+  parseErrorMessage,
   wrapRdiPipelineError,
 } from 'src/modules/rdi/exceptions';
 import {
@@ -160,7 +161,7 @@ export class ApiRdiClient extends RdiClient {
         data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
+      const message: string = parseErrorMessage(e);
       return { status: RdiStatisticsStatus.Fail, error: message };
     }
   }

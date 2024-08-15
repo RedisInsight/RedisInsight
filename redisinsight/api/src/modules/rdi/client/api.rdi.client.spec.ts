@@ -327,7 +327,6 @@ describe('ApiRdiClient', () => {
 
   describe('pollActionStatus', () => {
     const responseData = 'some data';
-    const error = new Error('Test error');
     const actionId = 'test-action-id';
 
     it('should return response data on success', async () => {

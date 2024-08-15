@@ -6,7 +6,7 @@ import {
 } from 'src/modules/rdi/exceptions';
 import { RdiPipelineForbiddenException } from './rdi-pipeline.forbidden.exception';
 
-const parseErrorMessage = (error: AxiosError<any>): string => {
+export const parseErrorMessage = (error: AxiosError<any>): string => {
   const detail = error.response?.data?.detail;
   if (!detail) return error.message;
 

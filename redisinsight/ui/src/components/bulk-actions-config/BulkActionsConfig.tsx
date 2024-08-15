@@ -14,19 +14,21 @@ import {
   setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
-import { localStorageService, sessionStorageService } from 'uiSrc/services'
+import { sessionStorageService } from 'uiSrc/services'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CustomHeaders } from 'uiSrc/constants/api'
+import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isConnected } = useSelector(bulkActionsSelector)
   const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
   const { filter, search } = useSelector(keysSelector)
+  const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
@@ -37,7 +39,6 @@ const BulkActionsConfig = () => {
     }
 
     let retryTimer: NodeJS.Timer
-    const csrfToken = localStorageService.get('csrfToken')
 
     socketRef.current = io(`${getBaseApiUrl()}/bulk-actions`, {
       path: getProxyPath(),
@@ -45,7 +46,7 @@ const BulkActionsConfig = () => {
       query: { instanceId },
       extraHeaders: {
         [CustomHeaders.WindowId]: window.windowId || '',
-        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
       transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),

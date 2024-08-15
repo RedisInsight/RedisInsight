@@ -16,8 +16,8 @@ import {
   setLoading,
   setPubSubConnected,
 } from 'uiSrc/slices/pubsub/pubsub'
-import { localStorageService } from 'uiSrc/services'
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
+import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 
 interface IProps {
   retryDelay?: number;
@@ -26,6 +26,7 @@ interface IProps {
 const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { isSubscribeTriggered, isConnected, subscriptions } = useSelector(pubSubSelector)
+  const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
@@ -35,7 +36,6 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
       return
     }
     let retryTimer: NodeJS.Timer
-    const csrfToken = localStorageService.get('csrfToken')
 
     socketRef.current = io(`${getBaseApiUrl()}/pub-sub`, {
       path: getProxyPath(),
@@ -43,7 +43,7 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
       query: { instanceId },
       extraHeaders: {
         [CustomHeaders.WindowId]: window.windowId || '',
-        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
       transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),

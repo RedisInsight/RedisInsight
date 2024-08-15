@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 
-import { get, remove } from 'lodash'
-import { ApiStatusCode, CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import { remove } from 'lodash'
+import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -13,14 +13,15 @@ import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommend
 import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
 import { CustomHeaders } from 'uiSrc/constants/api'
-import { logoutUser, oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
+import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobName } from 'uiSrc/electron/constants'
-import { localStorageService } from 'uiSrc/services'
+import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 
 const CommonAppSubscription = () => {
   const { id: jobId = '' } = useSelector(oauthCloudJobSelector) ?? {}
   const { id: instanceId } = useSelector(connectedInstanceSelector)
+  const { token } = useSelector(appCsrfSelector)
   const [recommendationsSubscriptions, setRecommendationsSubscriptions] = useState<string[]>([])
   const socketRef = useRef<Nullable<Socket>>(null)
 
@@ -31,15 +32,13 @@ const CommonAppSubscription = () => {
       return
     }
 
-    const csrfToken = localStorageService.get('csrfToken')
-
     socketRef.current = io(`${getBaseApiUrl()}`, {
       path: getProxyPath(),
       forceNew: false,
       reconnection: true,
       extraHeaders: {
         [CustomHeaders.WindowId]: window.windowId || '',
-        ...(csrfToken ? { [CustomHeaders.CsrfToken]: csrfToken } : {}),
+        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
       transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),

@@ -8,13 +8,14 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import {
+  addOwnTokenToArgs,
   findCurrentArgument,
   getRange,
   getRediSearchSignutureProvider,
   setCursorPositionAtTheEnd,
   splitQueryByArgs
 } from 'uiSrc/pages/search/utils'
-import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
+import { SearchCommand } from 'uiSrc/pages/search/types'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
@@ -27,7 +28,7 @@ import {
   asSuggestionsRef,
   getMandatoryArgumentSuggestions,
   getOptionalSuggestions,
-  getCommandsSuggestions
+  getCommandsSuggestions, isIndexComplete
 } from './utils'
 
 export interface Props {
@@ -83,8 +84,8 @@ const Query = (props: Props) => {
   }, [selectedCommand])
 
   useDebouncedEffect(() => {
-    if (!selectedIndex) return
-    // TODO: add check is selectedIndex is complete (", "\", "dwadawd) - do not request
+    attributesRef.current = []
+    if (!isIndexComplete(selectedIndex)) return
 
     const index = selectedIndex.replace(/^(['"])(.*)\1$/, '$2')
     dispatch(fetchRedisearchInfoAction(index,
@@ -133,6 +134,16 @@ const Query = (props: Props) => {
     editor.onDidChangeCursorPosition(handleCursorChange)
   }
 
+  const isSuggestionsOpened = () => {
+    const { editor } = monacoObjects.current || {}
+
+    if (!editor) return false
+    const suggestController = editor.getContribution<any>('editor.contrib.suggestController')
+    const suggestModel = suggestController?.model
+
+    return suggestModel?.state === 1
+  }
+
   const handleCursorChange = () => {
     const { editor } = monacoObjects.current || {}
     suggestionsRef.current.data = []
@@ -151,14 +162,12 @@ const Query = (props: Props) => {
       return
     }
 
-    editor?.trigger('', 'editor.action.triggerParameterHints', '')
-
-    const suggestController = editor.getContribution<any>('editor.contrib.suggestController')
-    const suggestModel = suggestController?.model
-    helpWidgetRef.current.isOpen = suggestModel?.state === 0 && helpWidgetRef.current.isOpen
+    editor.trigger('', 'editor.action.triggerParameterHints', '')
 
     if (suggestionsRef.current.forceHide) {
       setTimeout(() => editor?.trigger('', 'hideSuggestWidget', null), 0)
+    } else {
+      helpWidgetRef.current.isOpen = !isSuggestionsOpened() && helpWidgetRef.current.isOpen
     }
   }
 
@@ -167,6 +176,12 @@ const Query = (props: Props) => {
     if (!monaco) return
 
     setTimeout(() => editor?.trigger('', 'editor.action.triggerSuggest', { auto: false }))
+  }
+
+  const updateHelpWidget = (isOpen: boolean, parent?: SearchCommand, currentArg?: SearchCommand) => {
+    helpWidgetRef.current.isOpen = isOpen
+    helpWidgetRef.current.parent = parent
+    helpWidgetRef.current.currentArg = currentArg
   }
 
   const getSuggestions = (
@@ -193,10 +208,8 @@ const Query = (props: Props) => {
     const commandName = (firstArg || currentOffsetArg)?.toUpperCase()
     const command = REDIS_COMMANDS_SPEC[commandName] as unknown as SearchCommand
 
-    const isCommandSuppurted = SUPPORTED_COMMANDS
-      .some(({ name }) => commandName === name)
+    const isCommandSuppurted = SUPPORTED_COMMANDS.some(({ name }) => commandName === name)
     if (command && !isCommandSuppurted) return asSuggestionsRef([])
-
     if (!command && position.lineNumber === 1 && position.column === 1) {
       return getCommandsSuggestions(SUPPORTED_COMMANDS, range)
     }
@@ -206,17 +219,13 @@ const Query = (props: Props) => {
       return asSuggestionsRef([], false)
     }
 
-    helpWidgetRef.current = {
-      isOpen: beforeOffsetArgs.length > 0,
-      parent: { command, arguments: [{ token: commandName, type: TokenType.PureToken }, ...command.arguments!] },
-      currentArg: command?.arguments?.[prevArgs.length]
-    }
-
     setSelectedIndex(allArgs[1] || '')
     setSelectedCommand(commandName)
 
     // cover query
     if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.query) {
+      updateHelpWidget(true, addOwnTokenToArgs(commandName, command), command?.arguments?.[prevArgs.length])
+
       if (prevCursorChar === '@') {
         helpWidgetRef.current.isOpen = false
         return asSuggestionsRef(getFieldsSuggestions(attributesRef.current, range), false)
@@ -227,24 +236,19 @@ const Query = (props: Props) => {
 
     if (isCursorInArg || nextCursorChar?.trim()) return asSuggestionsRef([])
 
-    // cover index field
+    // cover index
     if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.index) {
+      updateHelpWidget(true, addOwnTokenToArgs(commandName, command), command?.arguments?.[prevArgs.length])
+
       if (currentOffsetArg) return asSuggestionsRef([], false)
-      if (indexesRef.current.length) {
-        return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range))
-      }
+      if (indexesRef.current.length) return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range))
       return asSuggestionsRef([])
     }
 
     if (prevArgs.length < 2) return asSuggestionsRef([])
 
     const foundArg = findCurrentArgument(command?.arguments || [], prevArgs)
-
-    helpWidgetRef.current = {
-      isOpen: !!foundArg?.stopArg,
-      parent: foundArg?.parent,
-      currentArg: foundArg?.stopArg
-    }
+    updateHelpWidget(!!foundArg?.stopArg, foundArg?.parent, foundArg?.stopArg)
 
     if (foundArg && !foundArg.isComplete) return getMandatoryArgumentSuggestions(foundArg, attributesRef.current, range)
     if (!foundArg || foundArg.isComplete) {

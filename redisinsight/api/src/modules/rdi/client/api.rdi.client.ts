@@ -62,8 +62,7 @@ export class ApiRdiClient extends RdiClient {
         jobs,
       };
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -73,8 +72,7 @@ export class ApiRdiClient extends RdiClient {
 
       return convertApiDataToRdiPipeline(data);
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -83,8 +81,7 @@ export class ApiRdiClient extends RdiClient {
       const response = await this.client.get(RdiUrl.GetStrategies);
       return response.data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -93,8 +90,7 @@ export class ApiRdiClient extends RdiClient {
       const response = await this.client.get(`${RdiUrl.GetConfigTemplate}/${pipelineType}/${dbType}`);
       return response.data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -103,8 +99,7 @@ export class ApiRdiClient extends RdiClient {
       const response = await this.client.get(`${RdiUrl.GetJobTemplate}/${pipelineType}`);
       return response.data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -119,8 +114,7 @@ export class ApiRdiClient extends RdiClient {
 
       return await this.pollActionStatus(actionId);
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -130,8 +124,7 @@ export class ApiRdiClient extends RdiClient {
 
       return data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -144,8 +137,7 @@ export class ApiRdiClient extends RdiClient {
 
       return response.data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -155,8 +147,7 @@ export class ApiRdiClient extends RdiClient {
 
       return data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -179,8 +170,7 @@ export class ApiRdiClient extends RdiClient {
       const response = await this.client.get(RdiUrl.JobFunctions);
       return response.data;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -196,8 +186,7 @@ export class ApiRdiClient extends RdiClient {
       this.auth = { jwt: accessToken, exp };
       this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } catch (e) {
-      const message: string = e.response?.data?.detail || e.message || '';
-      throw wrapRdiPipelineError(e, message);
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -237,8 +226,7 @@ export class ApiRdiClient extends RdiClient {
           return data;
         }
       } catch (e) {
-        const message: string = e.response?.data?.detail || e.message || '';
-        throw wrapRdiPipelineError(e, message);
+        throw wrapRdiPipelineError(e);
       }
 
       await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL));

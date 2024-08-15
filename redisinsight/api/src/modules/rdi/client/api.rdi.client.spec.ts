@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import {
   mockRdi,
   mockRdiClientMetadata,
@@ -9,12 +9,10 @@ import {
   mockRdiStatisticsData,
   mockRdiUnauthorizedError,
 } from 'src/__mocks__';
-import errorMessages from 'src/constants/error-messages';
 import { sign } from 'jsonwebtoken';
 import { ApiRdiClient } from './api.rdi.client';
 import { RdiDyRunJobStatus, RdiPipeline, RdiStatisticsStatus } from '../models';
 import { RdiUrl, TOKEN_THRESHOLD } from '../constants';
-import { wrapRdiPipelineError } from '../exceptions';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');

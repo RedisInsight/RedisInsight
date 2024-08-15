@@ -29,10 +29,9 @@ describe('wrapRdiPipelineError', () => {
         },
       },
     } as AxiosError;
-    const result = wrapRdiPipelineError(error, 'Test error');
+    const result = wrapRdiPipelineError(error);
 
     expect(result).toBeInstanceOf(RdiPipelineUnauthorizedException);
-    expect(result.message).toBe('Test error');
     expect(result.getResponse()).toEqual({
       message: result.message,
       statusCode: HttpStatus.UNAUTHORIZED,
@@ -55,7 +54,7 @@ describe('wrapRdiPipelineError', () => {
     const result = wrapRdiPipelineError(error);
 
     expect(result).toBeInstanceOf(RdiPipelineUnauthorizedException);
-    expect(result.message).toBe(errorMessages.UNAUTHORIZED);
+    expect(result.message).toBe('Unauthorized');
   });
 
   it('should return a RdiPipelineForbiddenException if the response status is 403', () => {
@@ -69,10 +68,9 @@ describe('wrapRdiPipelineError', () => {
         },
       },
     } as AxiosError;
-    const result = wrapRdiPipelineError(error, 'Test error');
+    const result = wrapRdiPipelineError(error);
 
     expect(result).toBeInstanceOf(RdiPipelineForbiddenException);
-    expect(result.message).toBe('Test error');
     expect(result.getResponse()).toEqual({
       message: result.message,
       statusCode: HttpStatus.FORBIDDEN,
@@ -95,9 +93,8 @@ describe('wrapRdiPipelineError', () => {
         },
       },
     } as AxiosError;
-    const result = wrapRdiPipelineError(error, 'Test error');
+    const result = wrapRdiPipelineError(error);
     expect(result).toBeInstanceOf(RdiPipelineValidationException);
-    expect(result.message).toBe('Test error');
     expect(result.getResponse()).toEqual({
       message: result.message,
       statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -140,9 +137,8 @@ describe('wrapRdiPipelineError', () => {
         },
       },
     } as AxiosError;
-    const result = wrapRdiPipelineError(error, 'Test error');
+    const result = wrapRdiPipelineError(error);
     expect(result).toBeInstanceOf(RdiPipelineNotFoundException);
-    expect(result.message).toBe('Test error');
     expect(result.getResponse()).toEqual({
       message: result.message,
       statusCode: HttpStatus.NOT_FOUND,

@@ -6,12 +6,22 @@ import {
 } from 'src/modules/rdi/exceptions';
 import { RdiPipelineForbiddenException } from './rdi-pipeline.forbidden.exception';
 
-export const wrapRdiPipelineError = (error: AxiosError<any>, message?: string): HttpException => {
+const parseErrorMessage = (error: AxiosError<any>): string => {
+  const detail = error.response?.data?.detail;
+  if (!detail) return error.message;
+
+  if (typeof detail === 'string') return detail;
+
+  return detail.message || detail.msg;
+};
+
+export const wrapRdiPipelineError = (error: AxiosError<any>): HttpException => {
   if (error instanceof HttpException) {
     return error;
   }
 
   const { response } = error;
+  const message: string = parseErrorMessage(error);
 
   if (response) {
     const errorOptions = response?.data?.detail;

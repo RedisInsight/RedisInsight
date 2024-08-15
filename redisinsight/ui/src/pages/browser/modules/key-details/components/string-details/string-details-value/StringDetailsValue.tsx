@@ -193,10 +193,6 @@ const StringDetailsValue = (props: Props) => {
       </EuiText>
     )
 
-    if (length && length > 500) {
-      return textEl
-    }
-
     return (
       <EuiToolTip
         title={!isValid ? noEditableText : undefined}

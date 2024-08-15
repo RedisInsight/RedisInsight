@@ -19,6 +19,7 @@ import {
   TableCellAlignment,
   TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_DISABLED_FORMATTER_EDITING,
+  TEXT_FAILED_CONVENT_FORMATTER,
   TEXT_INVALID_VALUE,
   TEXT_UNPRINTABLE_CHARACTERS
 } from 'uiSrc/constants'
@@ -309,7 +310,7 @@ const HashDetailsTable = (props: Props) => {
         const field = bufferToString(fieldItem) || ''
         // Better to cut the long string, because it could affect virtual scroll performance
         const tooltipContent = formatLongName(field)
-        const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded, isField: true })
+        const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded, skipVector: true })
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
@@ -317,9 +318,8 @@ const HashDetailsTable = (props: Props) => {
               <FormattedValue
                 value={value}
                 expanded={expanded}
+                title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                 tooltipContent={tooltipContent}
-                isValid={isValid}
-                viewFormatProp={viewFormatProp}
               />
             </div>
           </EuiText>
@@ -379,10 +379,8 @@ const HashDetailsTable = (props: Props) => {
               <FormattedValue
                 value={formattedValue}
                 expanded={expanded}
-                title="Value"
+                title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                 tooltipContent={tooltipContent}
-                isValid={isValid}
-                viewFormatProp={viewFormatProp}
               />
             </div>
           </EditableTextArea>

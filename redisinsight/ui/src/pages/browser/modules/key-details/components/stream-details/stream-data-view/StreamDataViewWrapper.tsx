@@ -22,11 +22,11 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
+import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP, MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP } from '../constants'
-import { FormattedValue } from '../../../shared'
 
 const suffix = '_stream'
 const actionsWidth = 50
@@ -100,7 +100,7 @@ const StreamDataViewWrapper = (props: Props) => {
             render: () => {
               const { value: decompressedName } = decompressingBuffer(name, compressor)
               const value = name ? bufferToString(name) : ''
-              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp, { isField: true })
+              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp, { skipVector: true })
               const tooltipContent = formatLongName(value)
               return (
                 <>
@@ -111,9 +111,8 @@ const StreamDataViewWrapper = (props: Props) => {
                     >
                       <FormattedValue
                         value={formattedValue}
+                        title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                         tooltipContent={tooltipContent}
-                        isValid={isValid}
-                        viewFormatProp={viewFormatProp}
                       />
                     </div>
                   ) : (
@@ -224,9 +223,8 @@ const StreamDataViewWrapper = (props: Props) => {
           >
             <FormattedValue
               value={formattedValue}
+              title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
               tooltipContent={tooltipContent}
-              isValid={isValid}
-              viewFormatProp={viewFormatProp}
               expanded={expanded}
               truncateLength={650}
               anchorClassName="streamItem line-clamp-2"

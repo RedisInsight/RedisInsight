@@ -17,7 +17,7 @@ import {
   fetchSearchZSetMembers,
   fetchSearchMoreZSetMembers,
 } from 'uiSrc/slices/browser/zset'
-import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TableCellAlignment } from 'uiSrc/constants'
+import { KeyTypes, OVER_RENDER_BUFFER_COUNT, SortOrder, TEXT_FAILED_CONVENT_FORMATTER, TableCellAlignment } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { NoResultsFoundText } from 'uiSrc/constants/texts'
@@ -286,10 +286,8 @@ const ZSetDetailsTable = (props: Props) => {
               <FormattedValue
                 value={value}
                 expanded={expanded}
-                title="Member"
+                title={isValid ? 'Member' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                 tooltipContent={tooltipContent}
-                isValid={isValid}
-                viewFormatProp={viewFormatProp}
               />
             </div>
           </EuiText>

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import { useParams } from 'react-router-dom'
-import { EuiCheckbox, EuiFlexItem } from '@elastic/eui'
+import { EuiCheckbox } from '@elastic/eui'
 import {
   selectedKeySelector,
 } from 'uiSrc/slices/browser/keys'

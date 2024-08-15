@@ -26,13 +26,14 @@ import {
   bufferToFloat32Array,
   checkTimestamp,
   convertTimestampToMilliseconds,
-  buffersEqual,
+  UTF8ToBuffer,
+  isEqualBuffers,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 export interface FormattingProps {
   expanded?: boolean
-  isField?: boolean
+  skipVector?: boolean
 }
 
 const isTextViewFormatter = (format: KeyValueFormat) => [
@@ -112,10 +113,9 @@ const formattingBuffer = (
     case KeyValueFormat.Vector32Bit: {
       const utfVariant = bufferToUTF8(reply)
       try {
-        if (props?.isField) return { value: utfVariant, isValid: true }
-        const bufferFromUtf = Buffer.from(utfVariant)
-        const bufferFromValue = Buffer.from(reply.data)
-        if (buffersEqual(bufferFromUtf, bufferFromValue)) {
+        if (props?.skipVector) return { value: utfVariant, isValid: true }
+        const bufferFromUtf = UTF8ToBuffer(utfVariant)
+        if (isEqualBuffers(reply, bufferFromUtf)) {
           return { value: utfVariant, isValid: true }
         }
         const vector = Array.from(bufferToFloat32Array(reply.data as Uint8Array))
@@ -128,10 +128,9 @@ const formattingBuffer = (
     case KeyValueFormat.Vector64Bit: {
       const utfVariant = bufferToUTF8(reply)
       try {
-        if (props?.isField) return { value: utfVariant, isValid: true }
-        const bufferFromUtf = Buffer.from(utfVariant)
-        const bufferFromValue = Buffer.from(reply.data)
-        if (buffersEqual(bufferFromUtf, bufferFromValue)) {
+        if (props?.skipVector) return { value: utfVariant, isValid: true }
+        const bufferFromUtf = UTF8ToBuffer(utfVariant)
+        if (isEqualBuffers(reply, bufferFromUtf)) {
           return { value: utfVariant, isValid: true }
         }
         const vector = Array.from(bufferToFloat64Array(reply.data as Uint8Array))

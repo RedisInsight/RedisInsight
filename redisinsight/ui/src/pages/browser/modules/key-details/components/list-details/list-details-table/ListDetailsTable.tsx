@@ -31,6 +31,7 @@ import {
   TEXT_DISABLED_FORMATTER_EDITING,
   TEXT_UNPRINTABLE_CHARACTERS,
   TEXT_DISABLED_COMPRESSED_VALUE,
+  TEXT_FAILED_CONVENT_FORMATTER,
 } from 'uiSrc/constants'
 import {
   bufferToString,
@@ -308,10 +309,8 @@ const ListDetailsTable = (props: Props) => {
               <FormattedValue
                 value={value}
                 expanded={expanded}
-                title="Element"
+                title={isValid ? 'Element' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
                 tooltipContent={tooltipContent}
-                isValid={isValid}
-                viewFormatProp={viewFormatProp}
               />
             </div>
           </EditableTextArea>

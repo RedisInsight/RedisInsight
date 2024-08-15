@@ -26,13 +26,17 @@ export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: mon
   })
 
 export const getFieldsSuggestions = (fields: any[], range: monaco.IRange, spaceAfter = false) =>
-  fields.map(({ attribute }) => ({
-    label: attribute,
-    kind: monacoEditor.languages.CompletionItemKind.Reference,
-    insertText: `${attribute}${spaceAfter ? ' ' : ''}`,
-    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-    range,
-  }))
+  fields.map(({ attribute }) => {
+    const insertText = attribute.trim() ? attribute : `"${attribute}"`
+    return {
+      label: attribute || ' ',
+      kind: monacoEditor.languages.CompletionItemKind.Reference,
+      insertText: `${insertText}${spaceAfter ? ' ' : ''}`,
+      insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      range,
+      detail: attribute || ' ',
+    }
+  })
 
 export const getCommandsSuggestions = (commands: SearchCommand[], range: monaco.IRange) => asSuggestionsRef(
   commands.map((command) => buildSuggestion(command, range, {
@@ -50,6 +54,7 @@ export const getMandatoryArgumentSuggestions = (
   range: monaco.IRange
 ) => {
   if (foundArg.stopArg?.name === DefinedArgumentName.field) {
+    if (!fields.length) asSuggestionsRef([])
     return asSuggestionsRef(getFieldsSuggestions(fields, range, true))
   }
 
@@ -89,4 +94,21 @@ export const getOptionalSuggestions = (
         detail: generateDetail(arg)
       }))
   ])
+}
+
+export const isIndexComplete = (index: string) => {
+  if (!index) return false
+  if (index.startsWith('"')) {
+    if (index.length < 2) return false
+    if (!index.endsWith('"')) return false
+    return !index.endsWith('\\', -1)
+  }
+
+  if (index.startsWith("'")) {
+    if (index.length < 2) return false
+    if (!index.endsWith("'")) return false
+    return !index.endsWith('\\', -1)
+  }
+
+  return true
 }

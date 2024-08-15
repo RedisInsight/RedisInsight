@@ -230,39 +230,45 @@ export const getArgumentSuggestions = (
     isBlocked: isWasBlocked
   } = findStopArgumentInQuery(pastStringArgs, pastCommandArgs)
 
-  // TODO refactor to early return related to where we stopped
-
   const stopArgument = restArguments[stopArgIndex]
   const restNotFilledArgs = restArguments.slice(stopArgIndex)
-  const isStopArgumentCannotSuggest = Boolean(stopArgument && !(stopArgument.token || stopArgument?.arguments?.length))
-  const isBlocked = isWasBlocked || isStopArgumentCannotSuggest
 
-  const restParentOptionalSuggestions = !stopArgument || stopArgument?.optional
-    ? getRestParentArguments(current?.parent, current?.name, current?.multiple)
-      .filter((arg) =>
-        arg.optional && arg.name !== stopArgument?.name
-        && (current?.multiple || arg.name !== current?.name))
-    : []
-
-  const restOptionalSuggestions = isBlocked
-    ? []
-    : fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions])
   const isOneOfArgument = stopArgument?.type === TokenType.OneOf
     || (stopArgument?.type === TokenType.PureToken && current?.parent?.type === TokenType.OneOf)
-  const isArgSuggestions = stopArgument && !stopArgument.optional && (stopArgument?.token || isOneOfArgument)
 
-  const suggestions = isArgSuggestions
-    // only 1 suggestion since next arg is required
-    ? [isOneOfArgument ? stopArgument.arguments : stopArgument].flat()
-    : restOptionalSuggestions
+  if (isWasBlocked) {
+    return {
+      isComplete: false,
+      stopArg: stopArgument,
+      isBlocked: !isOneOfArgument,
+      append: isOneOfArgument ? stopArgument.arguments! : [],
+    }
+  }
 
+  if (stopArgument && !stopArgument.optional) {
+    const isCanAppend = stopArgument?.token || isOneOfArgument
+    const append = isCanAppend ? [isOneOfArgument ? stopArgument.arguments! : stopArgument].flat() : []
+
+    return {
+      isComplete: false,
+      stopArg: stopArgument,
+      isBlocked: !isCanAppend,
+      append,
+    }
+  }
+
+  const restParentOptionalSuggestions = getRestParentArguments(current?.parent, current?.name, current?.multiple)
+    .filter((arg) => arg.optional && arg.name !== stopArgument?.name
+        && (current?.multiple || arg.name !== current?.name))
+
+  const restOptionalSuggestions = fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions])
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {
-    isComplete: requiredArgsLength === 0 && !isBlocked,
+    isComplete: requiredArgsLength === 0,
     stopArg: stopArgument,
-    isBlocked,
-    append: suggestions,
+    isBlocked: false,
+    append: restOptionalSuggestions,
   }
 }
 
@@ -284,23 +290,15 @@ export const getRestParentArguments = (
   return [...currentRestArgs, ...prevArgs]
 }
 
-export const fillArgsByType = (args: SearchCommand[]) => {
-  const result = []
+export const fillArgsByType = (args: SearchCommand[]): SearchCommand[] => {
+  const result: SearchCommand[] = []
 
   for (let i = 0; i < args.length; i++) {
     const currentArg = args[i]
 
-    if (currentArg.type === TokenType.OneOf) {
-      result.push(...(currentArg?.arguments || []))
-    }
-
-    if (currentArg.type === TokenType.Block) {
-      result.push(currentArg.arguments?.[0])
-    }
-
-    if (currentArg.token) {
-      result.push(currentArg)
-    }
+    if (currentArg.type === TokenType.OneOf) result.push(...(currentArg?.arguments || []))
+    if (currentArg.type === TokenType.Block) result.push(currentArg.arguments?.[0] as SearchCommand)
+    if (currentArg.token) result.push(currentArg)
   }
 
   return result
@@ -316,18 +314,18 @@ export const isCompositeArgument = (arg: string, prevArg?: string) => arg === '*
 
 export const generateDetail = (command: Maybe<SearchCommand>) => {
   if (!command) return ''
-
-  if (command.arguments) {
-    return generateArgsNames(CommandProvider.Main, command.arguments).join(' ')
-  }
-
+  if (command.arguments) return generateArgsNames(CommandProvider.Main, command.arguments).join(' ')
   if (command.token) {
-    if (command.type === TokenType.PureToken) {
-      return command.token
-    }
-
+    if (command.type === TokenType.PureToken) return command.token
     return `${command.token} ${command.name}`
   }
 
   return ''
+}
+
+export const addOwnTokenToArgs = (token: string, command: SearchCommand) => {
+  if (command.arguments) {
+    return ({ ...command, arguments: [{ token, type: TokenType.PureToken }, ...command.arguments] })
+  }
+  return command
 }

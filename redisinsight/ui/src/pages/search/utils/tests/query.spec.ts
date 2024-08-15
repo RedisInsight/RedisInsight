@@ -12,7 +12,7 @@ const ftAggreageTests = [
     args: ['index', '"query"', 'APPLY'],
     result: {
       stopArg: { name: 'expression', token: 'APPLY', type: 'string' },
-      append: [{ name: 'expression', token: 'APPLY', type: 'string' }],
+      append: [],
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object)
@@ -253,13 +253,7 @@ const ftSearchTests = [
         type: 'string',
         token: 'FIELDS'
       },
-      append: [
-        {
-          name: 'count',
-          type: 'string',
-          token: 'FIELDS'
-        }
-      ],
+      append: [],
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object)

@@ -70,7 +70,8 @@ export const languages = {
   },
   CompletionItemInsertTextRule: {
     InsertAsSnippet: 4
-  }
+  },
+  ...monacoEditor.languages
 }
 
 export const monaco = {

@@ -129,7 +129,7 @@ formattersWithTooltipSet.forEach(formatter => {
             // Open key details and select formatter
             await browserPage.openKeyDetailsByKeyName(keysData[i].keyName);
             //change the value that should not convert to Vector formats
-            if(formatter.format === 'Vector 32-bit' || 'Vector 32-bit'){
+            if(formatter.format === 'Vector 32-bit' || 'Vector 64-bit'){
                 await browserPage.selectFormatter('Binary');
                 await browserPage.editHashKeyValue('10101100');
             }
@@ -139,7 +139,9 @@ formattersWithTooltipSet.forEach(formatter => {
             await t.hover(innerValueSelector);
             // Verify that tooltip with convertion failed message displayed
             await t.expect(browserPage.tooltip.textContent).contains(failedMessage, `"${failedMessage}" is not displayed in tooltip`);
-            if(formatter.format === 'Vector 32-bit' || 'Vector 32-bit'){
+            // return to default value if the value was changed for Vector formatters
+            if(formatter.format === 'Vector 32-bit' || 'Vector 64-bit'){
+                await browserPage.selectFormatter('Unicode');
                 await browserPage.editHashKeyValue(keysData[i].data);
             }
         }

@@ -6,6 +6,7 @@ export const options = merge(defaultMonacoOptions,
     suggest: {
       showWords: false,
       showIcons: true,
+      insertMode: 'replace',
     }
   })
 

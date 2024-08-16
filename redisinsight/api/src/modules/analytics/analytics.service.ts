@@ -6,6 +6,7 @@ import { AppAnalyticsEvents } from 'src/constants';
 import config from 'src/utils/config';
 import axios from 'axios';
 import { SettingsService } from 'src/modules/settings/settings.service';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 export const NON_TRACKING_ANONYMOUS_ID = '00000000-0000-0000-0000-000000000001';
 const ANALYTICS_CONFIG = config.get('analytics');
@@ -48,7 +49,8 @@ export class AnalyticsService {
   private analytics: Analytics;
 
   constructor(
-    private settingsService: SettingsService,
+    private readonly settingsService: SettingsService,
+    private readonly constantsProvider: ConstantsProvider,
   ) {}
 
   public getAnonymousId(): string {
@@ -162,8 +164,8 @@ export class AnalyticsService {
 
   private async checkIsAnalyticsGranted() {
     return !!get(
-      // todo: define how to fetch userId?
-      await this.settingsService.getAppSettings('1'),
+      // todo: [USER_CONTEXT] define how to fetch userId?
+      await this.settingsService.getAppSettings(this.constantsProvider.getSystemSessionMetadata()),
       'agreements.analytics',
       false,
     );

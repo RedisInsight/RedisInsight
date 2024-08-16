@@ -12,11 +12,13 @@ interface CSRFTokenResponse {
 export const initialState: {
   csrfEndpoint: string
   loading: boolean
-  token: string
+  token: string,
+  error: string,
 } = {
   csrfEndpoint: getCsrfEndpoint(),
   loading: false,
   token: '',
+  error: '',
 }
 
 const appCsrfSlice = createSlice({
@@ -30,7 +32,10 @@ const appCsrfSlice = createSlice({
       state.token = payload.token
       state.loading = false
     },
-    fetchCsrfTokenFail: (state) => { state.loading = false },
+    fetchCsrfTokenFail: (state, { payload }: { payload: { error: string } }) => {
+      state.loading = false
+      state.error = payload.error
+    },
   }
 })
 
@@ -57,9 +62,9 @@ export function fetchCsrfTokenAction(
 
         onSuccessAction?.(data)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching CSRF token: ', error)
-      dispatch(fetchCsrfTokenFail())
+      dispatch(fetchCsrfTokenFail({ error: error?.message || '' }))
       onFailAction?.()
     }
   }

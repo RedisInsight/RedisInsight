@@ -60,6 +60,22 @@ describe('slices', () => {
     expect(appCsrfSelector(newState).loading).toEqual(false)
   })
 
+  it('fetch token failure reducer should properly set the state', () => {
+    const nextState = reducer(initialState, fetchCsrfTokenFail({ error: 'something went wrong' }))
+
+    const newState = {
+      ...initialStateDefault,
+      app: {
+        ...initialStateDefault.app,
+        csrf: nextState,
+      }
+    }
+
+    expect(appCsrfSelector(newState).token).toEqual('')
+    expect(appCsrfSelector(newState).loading).toEqual(false)
+    expect(appCsrfSelector(newState).error).toEqual('something went wrong')
+  })
+
   it('fetchCsrfToken should fetch the token', async () => {
     process.env.RI_CSRF_ENDPOINT = 'http://localhost'
 
@@ -83,14 +99,14 @@ describe('slices', () => {
   it('fetchCsrfToken should handle failure', async () => {
     process.env.RI_CSRF_ENDPOINT = 'http://localhost'
 
-    apiService.get = jest.fn().mockRejectedValueOnce(new Error('error'))
+    apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
     const successFn = jest.fn()
     const failFn = jest.fn()
     await store.dispatch<any>(fetchCsrfTokenAction(successFn, failFn))
 
     expect(store.getActions()).toEqual([
       fetchCsrfToken(),
-      fetchCsrfTokenFail()
+      fetchCsrfTokenFail({ error: 'something went wrong' })
     ])
     expect(successFn).not.toHaveBeenCalled()
     expect(failFn).toHaveBeenCalled()

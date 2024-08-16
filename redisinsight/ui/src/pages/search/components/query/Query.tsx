@@ -63,6 +63,7 @@ const Query = (props: Props) => {
   })
   const indexesRef = useRef<RedisResponseBuffer[]>([])
   const attributesRef = useRef<any>([])
+  const isEscapedSuggestions = useRef<boolean>(false)
 
   const { theme } = useContext(ThemeContext)
   const dispatch = useDispatch()
@@ -102,6 +103,8 @@ const Query = (props: Props) => {
     monaco.languages.register({ id: MonacoLanguage.RediSearch })
     monacoObjects.current = { editor, monaco }
 
+    suggestionsRef.current = getSuggestions(editor)
+
     if (value) {
       setCursorPositionAtTheEnd(editor)
     } else {
@@ -109,7 +112,6 @@ const Query = (props: Props) => {
 
       if (position?.column === 1 && position?.lineNumber === 1) {
         editor.focus()
-        suggestionsRef.current = getSuggestions(editor)
         triggerSuggestions()
       }
     }
@@ -131,7 +133,13 @@ const Query = (props: Props) => {
     }).dispose
 
     installRedisearchTheme()
+
     editor.onDidChangeCursorPosition(handleCursorChange)
+    editor.onKeyDown((e: monacoEditor.IKeyboardEvent) => {
+      if (e.keyCode === monacoEditor.KeyCode.Escape && isSuggestionsOpened()) {
+        isEscapedSuggestions.current = true
+      }
+    })
   }
 
   const isSuggestionsOpened = () => {
@@ -200,7 +208,7 @@ const Query = (props: Props) => {
     const word = model.getWordUntilPosition(position)
     const range = getRange(position, word)
 
-    const { args, isCursorInArg, prevCursorChar, nextCursorChar } = splitQueryByArgs(value, offset)
+    const { args, isCursorInQuotes, prevCursorChar, nextCursorChar } = splitQueryByArgs(value, offset)
     const allArgs = args.flat()
     const [beforeOffsetArgs, [currentOffsetArg]] = args
     const [firstArg, ...prevArgs] = beforeOffsetArgs
@@ -234,18 +242,20 @@ const Query = (props: Props) => {
       return asSuggestionsRef([], false)
     }
 
-    if (isCursorInArg || nextCursorChar?.trim()) return asSuggestionsRef([])
-
     // cover index
     if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.index) {
       updateHelpWidget(true, addOwnTokenToArgs(commandName, command), command?.arguments?.[prevArgs.length])
 
+      // we do not suggest indexes if there is something next
       if (currentOffsetArg) return asSuggestionsRef([], false)
       if (indexesRef.current.length) return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range))
       return asSuggestionsRef([])
     }
 
+    if (isCursorInQuotes || nextCursorChar?.trim()) return asSuggestionsRef([])
     if (prevArgs.length < 2) return asSuggestionsRef([])
+    if ((prevCursorChar?.trim() || isCursorInQuotes) && isEscapedSuggestions.current) return asSuggestionsRef([])
+    isEscapedSuggestions.current = false
 
     const foundArg = findCurrentArgument(command?.arguments || [], prevArgs)
     updateHelpWidget(!!foundArg?.stopArg, foundArg?.parent, foundArg?.stopArg)

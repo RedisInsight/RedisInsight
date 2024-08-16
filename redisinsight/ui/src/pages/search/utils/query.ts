@@ -1,6 +1,6 @@
 /* eslint-disable no-continue */
 
-import { toNumber } from 'lodash'
+import { toNumber, uniqBy } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider } from 'uiSrc/constants'
 import { ArgName, FoundCommandArgument, SearchCommand, SearchCommandTree, TokenType } from '../types'
@@ -11,7 +11,7 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   let inQuotes = false
   let escapeNextChar = false
   let quoteChar = ''
-  const isCursorInArg = false
+  let isCursorInQuotes = false
   let lastArg = ''
 
   const pushToProperTuple = (isAfterOffset: boolean, arg: string) => {
@@ -27,6 +27,7 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
     const isAfterOffset = i >= position + (inQuotes ? -1 : 0)
+    if (i === position - 1) isCursorInQuotes = inQuotes
 
     if (escapeNextChar) {
       arg += char
@@ -71,7 +72,7 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
     pushToProperTuple(true, arg)
   }
 
-  return { args, isCursorInArg, prevCursorChar: query[position - 1], nextCursorChar: query[position] }
+  return { args, isCursorInQuotes, prevCursorChar: query[position - 1], nextCursorChar: query[position] }
 }
 
 export const findCurrentArgument = (
@@ -140,6 +141,17 @@ const findStopArgumentInQuery = (
       continue
     }
 
+    if (
+      !isBlockedOnCommand
+      && currentCommandArg?.token
+      && currentCommandArg.optional
+      && currentCommandArg.token !== arg.toUpperCase()
+    ) {
+      moveToNextCommandArg()
+      skipArg()
+      continue
+    }
+
     // if we are on token - that requires one more argument
     if (currentCommandArg?.token === arg.toUpperCase()) {
       blockCommand()
@@ -204,7 +216,8 @@ const findStopArgumentInQuery = (
     moveToNextCommandArg()
 
     const nextCommand = restCommandArgs[currentCommandArgIndex + 1]
-    isBlockedOnCommand = (!!nextCommand && !nextCommand.optional)
+    const currentCommand = restCommandArgs[currentCommandArgIndex]
+    isBlockedOnCommand = [currentCommand, nextCommand].every((arg) => arg && !arg.optional)
   }
 
   return {
@@ -261,7 +274,10 @@ export const getArgumentSuggestions = (
     .filter((arg) => arg.optional && arg.name !== stopArgument?.name
         && (current?.multiple || arg.name !== current?.name))
 
-  const restOptionalSuggestions = fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions])
+  const restOptionalSuggestions = uniqBy(
+    fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions]),
+    'token'
+  )
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {

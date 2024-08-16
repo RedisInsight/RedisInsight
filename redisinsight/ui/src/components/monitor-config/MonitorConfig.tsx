@@ -32,7 +32,7 @@ interface IProps {
 const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
-  const { token } = useSelector(appCsrfSelector);
+  const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
   const logFileIdRef = useRef<string>()

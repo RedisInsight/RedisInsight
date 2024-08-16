@@ -1,26 +1,48 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
-import { render, screen, waitFor } from 'uiSrc/utils/test-utils'
-import Csrf from './Csrf'
+import { render, screen, initialStateDefault } from 'uiSrc/utils/test-utils'
+import Csrf from 'uiSrc/components/csrf/Csrf'
 
-jest.mock('uiSrc/services/apiService', () => ({
-  setApiCsrfHeader: jest.fn(),
-  get: jest.fn(() => ({ data: { token: 'csrf-token' } })),
+jest.mock('react-redux', () => ({
+  useDispatch: jest.fn(),
+  useSelector: jest.fn(),
 }))
 
-describe('Csrf', () => {
-  const OLD_ENV = process.env
+const mockDispatch = jest.fn()
+const useDispatchMock = useDispatch as jest.Mock
+const useSelectorMock = useSelector as jest.Mock
 
+describe('Csrf', () => {
   beforeEach(() => {
     jest.resetModules()
-    process.env = { ...OLD_ENV }
-  })
-  afterAll(() => {
-    process.env = OLD_ENV
+    useDispatchMock.mockReturnValue(mockDispatch)
+    useSelectorMock.mockReturnValue(initialStateDefault.app.csrf)
+    useDispatch
   })
 
-  it('should render children', () => {
+  it('should render children when not loading and no csrf endpoint set', () => {
+    render(
+      <Csrf>
+        <div>children</div>
+      </Csrf>
+    )
+
+    expect(mockDispatch).toHaveBeenCalled()
+    expect(screen.getByText('children')).toBeInTheDocument()
+  })
+
+  it('should render PagePlaceholder when loading', () => {
+    useSelectorMock.mockReturnValueOnce({ loading: true })
+
+    render(<Csrf><div>children</div></Csrf>)
+
+    expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
+  })
+
+  it('should render children when csrf endpoint is present, token is present, and not loading', () => {
+    useSelectorMock.mockReturnValueOnce({ csrfEndpoint: 'http://example.com/csrf', token: 'csrf-token' })
+
     render(
       <Csrf>
         <div>children</div>
@@ -30,24 +52,28 @@ describe('Csrf', () => {
     expect(screen.getByText('children')).toBeInTheDocument()
   })
 
-  it('should not fetch CSRF token when endpoint is not provided', () => {
-    render(<Csrf><div>children</div></Csrf>)
+  it('should render placeholder when csrf endpoint is present, token is present, and loading', () => {
+    useSelectorMock.mockReturnValueOnce({
+      csrfEndpoint: 'http://example.com/csrf',
+      token: 'csrf-token',
+      loading: true
+    })
 
-    expect(apiService.get).not.toHaveBeenCalled()
-
-    expect(screen.queryByTestId('page-placeholder')).not.toBeInTheDocument()
-  })
-
-  it('should render PagePlaceholder when loading', () => {
-    process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
-
-    render(<Csrf><div>children</div></Csrf>)
+    render(
+      <Csrf>
+        <div>children</div>
+      </Csrf>
+    )
 
     expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
   })
 
-  it('should fetch CSRF token', async () => {
-    process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
+  it('should render placeholder when csrf endpoint is present, token is missing, and not loading', () => {
+    useSelectorMock.mockReturnValueOnce({
+      csrfEndpoint: 'http://example.com/csrf',
+      token: 'csrf-token',
+      loading: true
+    })
 
     render(
       <Csrf>
@@ -55,29 +81,6 @@ describe('Csrf', () => {
       </Csrf>
     )
 
-    await waitFor(() => {
-      expect(apiService.get).toHaveBeenCalledWith('csrf-endpoint')
-      expect(setApiCsrfHeader).toHaveBeenCalledWith('csrf-token')
-
-      expect(screen.getByText('children')).toBeInTheDocument()
-    })
-  })
-
-  it('should handle error while fetching CSRF token', async () => {
-    process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
-    jest.spyOn(apiService, 'get').mockImplementationOnce(() => { throw new Error('error') })
-    jest.spyOn(console, 'error').mockImplementationOnce(() => {})
-
-    render(
-      <Csrf>
-        <div>children</div>
-      </Csrf>
-    )
-
-    await waitFor(() => {
-      expect(console.error).toHaveBeenCalledWith('Error fetching CSRF token: ', new Error('error'))
-
-      expect(screen.getByText('children')).toBeInTheDocument()
-    })
+    expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
   })
 })

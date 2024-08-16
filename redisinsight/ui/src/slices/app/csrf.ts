@@ -6,16 +6,16 @@ import { AppDispatch, RootState } from '../store'
 const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
 
 interface CSRFTokenResponse {
-  token: string;
+  token: string
 }
 
 export const initialState: {
-  csrfEndpoint: string;
-  loading: boolean;
-  token: string;
+  csrfEndpoint: string
+  loading: boolean
+  token: string
 } = {
   csrfEndpoint: getCsrfEndpoint(),
-  loading: true,
+  loading: false,
   token: '',
 }
 
@@ -23,36 +23,44 @@ const appCsrfSlice = createSlice({
   name: 'appCsrf',
   initialState,
   reducers: {
-    setToken: (state, { payload }: { payload: { token: string } }) => { state.token = payload.token },
-    setLoading: (state, { payload }: { payload: { loading: boolean } }) => { state.loading = payload.loading },
+    fetchCsrfToken: (state) => {
+      state.loading = true
+    },
+    fetchCsrfTokenSuccess: (state, { payload }: { payload: { token: string } }) => {
+      state.token = payload.token
+      state.loading = false
+    },
+    fetchCsrfTokenFail: (state) => { state.loading = false },
   }
 })
 
-export const { setLoading, setToken } = appCsrfSlice.actions
+export const { fetchCsrfToken, fetchCsrfTokenSuccess, fetchCsrfTokenFail } = appCsrfSlice.actions
 
 export const appCsrfSelector = (state: RootState) => state.app.csrf
 
 export default appCsrfSlice.reducer
 
-export function fetchCsrfToken(
+export function fetchCsrfTokenAction(
   onSuccessAction?: (data: any) => void,
   onFailAction?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       if (getCsrfEndpoint()) {
+        dispatch(fetchCsrfToken())
+
         const { data } = await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
 
-        dispatch(setToken({ token: data.token }))
         setApiCsrfHeader(data.token)
         setResourceCsrfHeader(data.token)
-        onSuccessAction && onSuccessAction(data)
+        dispatch(fetchCsrfTokenSuccess({ token: data.token }))
+
+        onSuccessAction?.(data)
       }
     } catch (error) {
       console.error('Error fetching CSRF token: ', error)
-      onFailAction && onFailAction()
-    } finally {
-      dispatch(setLoading({ loading: false }))
+      dispatch(fetchCsrfTokenFail())
+      onFailAction?.()
     }
   }
 }

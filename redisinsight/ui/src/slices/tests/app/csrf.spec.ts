@@ -1,5 +1,12 @@
 import { cloneDeep } from 'lodash'
-import reducer, { appCsrfSelector, fetchCsrfToken, initialState, setLoading, setToken } from 'uiSrc/slices/app/csrf'
+import reducer, {
+  appCsrfSelector,
+  fetchCsrfTokenAction,
+  initialState,
+  fetchCsrfToken,
+  fetchCsrfTokenSuccess,
+  fetchCsrfTokenFail
+} from 'uiSrc/slices/app/csrf'
 import {
   cleanup,
   initialStateDefault,
@@ -24,8 +31,8 @@ describe('slices', () => {
     process.env = OLD_ENV
   })
 
-  it('reducer should properly set the token', () => {
-    const nextState = reducer(initialState, setToken({ token: 'abc-123' }))
+  it('fetch token reducer should properly set the token', () => {
+    const nextState = reducer(initialState, fetchCsrfToken())
 
     const newState = {
       ...initialStateDefault,
@@ -35,11 +42,11 @@ describe('slices', () => {
       }
     }
 
-    expect(appCsrfSelector(newState).token).toEqual('abc-123')
+    expect(appCsrfSelector(newState).loading).toEqual(true)
   })
 
-  it('reducer should properly set the loading state', () => {
-    const nextState = reducer(initialState, setLoading({ loading: false }))
+  it('fetch token success reducer should properly set the state', () => {
+    const nextState = reducer(initialState, fetchCsrfTokenSuccess({ token: 'xyz-456' }))
 
     const newState = {
       ...initialStateDefault,
@@ -49,30 +56,49 @@ describe('slices', () => {
       }
     }
 
+    expect(appCsrfSelector(newState).token).toEqual('xyz-456')
     expect(appCsrfSelector(newState).loading).toEqual(false)
   })
 
   it('fetchCsrfToken should fetch the token', async () => {
     process.env.RI_CSRF_ENDPOINT = 'http://localhost'
 
-    apiService.get = jest.fn().mockResolvedValue({
+    apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
         token: 'xyz-456'
       }
     })
-    await store.dispatch<any>(fetchCsrfToken())
+    const successFn = jest.fn()
+    const failFn = jest.fn()
+    await store.dispatch<any>(fetchCsrfTokenAction(successFn, failFn))
 
     expect(store.getActions()).toEqual([
-      setToken({ token: 'xyz-456' }),
-      setLoading({ loading: false })
+      fetchCsrfToken(),
+      fetchCsrfTokenSuccess({ token: 'xyz-456' })
     ])
+    expect(successFn).toHaveBeenCalledWith({ token: 'xyz-456' })
+    expect(failFn).not.toHaveBeenCalled()
+  })
+
+  it('fetchCsrfToken should handle failure', async () => {
+    process.env.RI_CSRF_ENDPOINT = 'http://localhost'
+
+    apiService.get = jest.fn().mockRejectedValueOnce(new Error('error'))
+    const successFn = jest.fn()
+    const failFn = jest.fn()
+    await store.dispatch<any>(fetchCsrfTokenAction(successFn, failFn))
+
+    expect(store.getActions()).toEqual([
+      fetchCsrfToken(),
+      fetchCsrfTokenFail()
+    ])
+    expect(successFn).not.toHaveBeenCalled()
+    expect(failFn).toHaveBeenCalled()
   })
 
   it('fetchCsrfToken should not fetch the token when endpoint is not provided', async () => {
-    await store.dispatch<any>(fetchCsrfToken())
+    await store.dispatch<any>(fetchCsrfTokenAction())
 
-    expect(store.getActions()).toEqual([
-      setLoading({ loading: false })
-    ])
+    expect(store.getActions()).toEqual([])
   })
 })

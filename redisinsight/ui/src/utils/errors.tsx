@@ -39,7 +39,6 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
       data: { },
     },
   }
-  console.log('err: ', err)
 
   if (isString(err)) {
     return set(error, 'response.data.message', err) as AxiosError

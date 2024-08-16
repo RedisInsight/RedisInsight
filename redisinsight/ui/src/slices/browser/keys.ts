@@ -503,7 +503,6 @@ export function setInitialStateByType(type: string) {
 }
 // Asynchronous thunk action
 export function fetchPatternKeysAction(
-  scanThreshold: number,
   cursor: string,
   count: number,
   telemetryProperties: { [key: string]: any } = {},
@@ -520,6 +519,7 @@ export function fetchPatternKeysAction(
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
+      const scanThreshold  = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT;
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
@@ -1169,12 +1169,11 @@ export function fetchKeys(
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
-    const scanThreshold  = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT;
     const isRedisearchExists = isRedisearchAvailable(state.connections.instances.connectedInstance.modules)
     const { searchMode, count, cursor, telemetryProperties } = options
 
     return searchMode === SearchMode.Pattern || !isRedisearchExists
-      ? dispatch<any>(fetchPatternKeysAction(scanThreshold, cursor, count, telemetryProperties, onSuccess, onFailed))
+      ? dispatch<any>(fetchPatternKeysAction(cursor, count, telemetryProperties, onSuccess, onFailed))
       : dispatch<any>(fetchRedisearchKeysAction(cursor, count, telemetryProperties, onSuccess, onFailed))
   }
 }

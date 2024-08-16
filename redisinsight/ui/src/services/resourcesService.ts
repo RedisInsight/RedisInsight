@@ -1,12 +1,13 @@
 import axios from 'axios'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
+import { envConfig } from 'uiSrc/env-config'
 
 const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
-const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
+const hostedApiBaseUrl = envConfig.RI_HOSTED_API_BASE_URL
 
 let BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
 

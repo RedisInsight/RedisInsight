@@ -139,9 +139,9 @@ formattersWithTooltipSet.forEach(formatter => {
             await t.hover(innerValueSelector);
             // Verify that tooltip with convertion failed message displayed
             await t.expect(browserPage.tooltip.textContent).contains(failedMessage, `"${failedMessage}" is not displayed in tooltip`);
-            // if(formatter.format === 'Vector 32-bit' || 'Vector 32-bit'){
-            //     await browserPage.editHashKeyValue(keysData[i].data);
-            // }
+            if(formatter.format === 'Vector 32-bit' || 'Vector 32-bit'){
+                await browserPage.editHashKeyValue(keysData[i].data);
+            }
         }
     });
 });

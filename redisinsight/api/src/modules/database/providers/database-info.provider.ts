@@ -110,6 +110,16 @@ export class DatabaseInfoProvider {
     return await this.filterRawModules(modules);
   }
 
+  public async getRedisDBSize(client: RedisClient): Promise<number> {
+    if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
+      const nodesResult: number[] = await Promise.all(
+        (await client.nodes()).map(async (node) => this.getRedisNodeDBSize(node)),
+      );
+      return nodesResult.reduce((ac, cur) => ac + cur, 0);
+    }
+    return await this.getRedisNodeDBSize(client);
+  }
+
   public async getRedisGeneralInfo(
     client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
@@ -236,6 +246,17 @@ export class DatabaseInfoProvider {
       return calculateRedisHitRatio(keyspaceHits, keyspaceMisses);
     } catch (error) {
       return undefined;
+    }
+  }
+
+  private async getRedisNodeDBSize(client: RedisClient): Promise<number> {
+    try {
+      const total = await client.sendCommand(['dbsize'], {
+        replyEncoding: 'utf8',
+      }) as string;
+      return parseInt(total, 10);
+    } catch (e) {
+      throw catchAclError(e);
     }
   }
 }

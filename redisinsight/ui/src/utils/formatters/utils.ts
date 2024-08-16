@@ -11,3 +11,17 @@ export const bufferFormatRangeItems = (
 
   return newItems
 }
+
+export const convertTimestampToMilliseconds = (value: string): number => {
+  // seconds, microseconds, nanoseconds to milliseconds
+  switch (parseInt(value, 10).toString().length) {
+    case 10:
+      return +value * 1000
+    case 16:
+      return +value / 1000
+    case 19:
+      return +value / 1000000
+    default:
+      return +value
+  }
+}

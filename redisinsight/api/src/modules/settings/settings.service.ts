@@ -10,6 +10,8 @@ import {
   map,
   cloneDeep,
 } from 'lodash';
+import { readFile } from 'fs-extra';
+import { join } from 'path';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
 import config, { Config } from 'src/utils/config';
 import { AgreementIsNotDefinedException } from 'src/constants';
@@ -21,6 +23,7 @@ import { classToClass } from 'src/utils';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
 import { FeatureServerEvents } from 'src/modules/feature/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { IAgreementSpecFile } from 'src/modules/settings/models/agreements.interface';
 import { GetAgreementsSpecResponse, GetAppSettingsResponse, UpdateSettingsDto } from './dto/settings.dto';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
@@ -135,10 +138,30 @@ export class SettingsService {
   }
 
   /**
+   * Try to get agreements from file
+   * Shouldn't throw an error on fail
+   * @private
+   */
+  private async getAgreementsSpecFromFile(): Promise<any> {
+    try {
+      if (SERVER_CONFIG.agreementsPath) {
+        return JSON.parse(await readFile(join(
+          __dirname,
+          SERVER_CONFIG.agreementsPath,
+        ), 'utf8'));
+      }
+    } catch (e) {
+      // ignore error
+    }
+
+    return null;
+  }
+
+  /**
    * Process conditional agreements where needed and returns proper agreements spec
    */
   public async getAgreementsSpec(): Promise<GetAgreementsSpecResponse> {
-    const agreementsSpec = cloneDeep<any>(AGREEMENTS_SPEC);
+    const agreementsSpec = await this.getAgreementsSpecFromFile() || cloneDeep<IAgreementSpecFile>(AGREEMENTS_SPEC);
 
     await Promise.all(map(agreementsSpec.agreements, async (agreement: any, name) => {
       if (agreement.conditional) {

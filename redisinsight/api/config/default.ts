@@ -71,6 +71,7 @@ export default {
     base: process.env.RI_BASE || '/',
     proxyPath,
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
+    agreementsPath: process.env.RI_AGREEMENTS_PATH,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
@@ -84,6 +85,7 @@ export default {
     excludeAuthRoutes: [],
   },
   encryption: {
+    keytar: process.env.RI_ENCRYPTION_KEYTAR ? process.env.RI_ENCRYPTION_KEYTAR === 'true' : true, // enabled by default
     encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
     encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
   },

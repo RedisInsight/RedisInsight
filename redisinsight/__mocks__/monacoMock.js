@@ -15,10 +15,14 @@ const editor = {
   executeEdits: jest.fn(),
   updateOptions: jest.fn(),
   setSelection: jest.fn(),
+  setPosition: jest.fn(),
   createDecorationsCollection: jest.fn(),
   getValue: jest.fn().mockReturnValue(''),
-  getModel: jest.fn().mockReturnValue({}),
-  getPosition: jest.fn(),
+  getModel: jest.fn().mockReturnValue({
+    getOffsetAt: jest.fn().mockReturnValue(0),
+    getWordUntilPosition: jest.fn().mockReturnValue(''),
+  }),
+  getPosition: jest.fn().mockReturnValue({}),
   trigger: jest.fn(),
 }
 
@@ -78,9 +82,10 @@ export const monaco = {
   languages,
   Selection: jest.fn().mockImplementation(() => ({})),
   editor: {
+    ...editor,
     colorize: jest.fn().mockImplementation((data) => Promise.resolve(data)),
     defineTheme: jest.fn(),
-    setTheme: jest.fn()
+    setTheme: jest.fn(),
   },
   Range: monacoEditor.Range
 }

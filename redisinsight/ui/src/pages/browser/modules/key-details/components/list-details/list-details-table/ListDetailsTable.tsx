@@ -43,7 +43,8 @@ import {
   stringToBuffer,
   stringToSerializedBufferFormat,
   validateListIndex,
-  Nullable
+  Nullable,
+  createTooltipContent
 } from 'uiSrc/utils'
 import {
   selectedKeyDataSelector,
@@ -280,7 +281,7 @@ const ListDetailsTable = (props: Props) => {
           && !isEqualBuffers(elementItem, stringToBuffer(element))
         const isEditable = !isCompressed && isFormatEditable(viewFormat)
 
-        const tooltipContent = formatLongName(element)
+        const tooltipContent = createTooltipContent(value, decompressedElementItem, viewFormatProp)
         const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
 
         return (

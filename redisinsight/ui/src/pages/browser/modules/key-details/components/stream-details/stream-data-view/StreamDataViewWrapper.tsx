@@ -8,6 +8,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
+  createTooltipContent,
   formatLongName,
   formattingBuffer,
   stringToBuffer
@@ -99,9 +100,10 @@ const StreamDataViewWrapper = (props: Props) => {
             label: field,
             render: () => {
               const { value: decompressedName } = decompressingBuffer(name, compressor)
-              const value = name ? bufferToString(name) : ''
-              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp, { skipVector: true })
-              const tooltipContent = formatLongName(value)
+              const buffer = decompressedName || stringToBuffer('')
+              const { value: formattedValue, isValid } = formattingBuffer(buffer, viewFormatProp, { skipVector: true })
+              const tooltipContent = createTooltipContent(formattedValue, buffer, viewFormatProp, { skipVector: true })
+
               return (
                 <>
                   {formattedValue ? (
@@ -212,7 +214,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
       // const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(decompressedBufferValue, viewFormatProp, { expanded })
-      const tooltipContent = formatLongName(value)
+      const tooltipContent = createTooltipContent(formattedValue, decompressedBufferValue, viewFormatProp)
 
       return (
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>

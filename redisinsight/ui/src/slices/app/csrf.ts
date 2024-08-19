@@ -34,6 +34,7 @@ const appCsrfSlice = createSlice({
     },
     fetchCsrfTokenFail: (state, { payload }: { payload: { error: string } }) => {
       state.loading = false
+      state.token = ''
       state.error = payload.error
     },
   }
@@ -59,7 +60,6 @@ export function fetchCsrfTokenAction(
         setApiCsrfHeader(data.token)
         setResourceCsrfHeader(data.token)
         dispatch(fetchCsrfTokenSuccess({ token: data.token }))
-
         onSuccessAction?.(data)
       }
     } catch (error: any) {

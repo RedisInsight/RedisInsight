@@ -1,39 +1,49 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { cloneDeep } from 'lodash'
 
-import { render, screen, initialStateDefault } from 'uiSrc/utils/test-utils'
+import { render, screen, initialStateDefault, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import Csrf from 'uiSrc/components/csrf/Csrf'
+import { appCsrfSelector, fetchCsrfToken, fetchCsrfTokenSuccess, getCsrfEndpoint } from 'uiSrc/slices/app/csrf'
 
-jest.mock('react-redux', () => ({
-  useDispatch: jest.fn(),
-  useSelector: jest.fn(),
+jest.mock('uiSrc/slices/app/csrf', () => ({
+  ...jest.requireActual('uiSrc/slices/app/csrf'),
+  appCsrfSelector: jest.fn(),
 }))
 
-const mockDispatch = jest.fn()
-const useDispatchMock = useDispatch as jest.Mock
-const useSelectorMock = useSelector as jest.Mock
+jest.mock('uiSrc/services', () => ({
+  get: jest.fn(() => ({ data: { token: 'csrf-token' } }))
+}))
+
+const initialSlice = initialStateDefault.app.csrf
+
+let mockAppCsrfSelector = jest.mocked(appCsrfSelector)
+// let mockGetCsrfEndpoint = jest.mocked(getCsrfEndpoint)
+let store: typeof mockedStore
 
 describe('Csrf', () => {
   beforeEach(() => {
-    jest.resetModules()
-    useDispatchMock.mockReturnValue(mockDispatch)
-    useSelectorMock.mockReturnValue(initialStateDefault.app.csrf)
-    useDispatch
+    mockAppCsrfSelector = jest.mocked(appCsrfSelector)
+
+    cleanup()
+    store = cloneDeep(mockedStore)
+    store.clearActions()
   })
 
   it('should render children when not loading and no csrf endpoint set', () => {
+    mockAppCsrfSelector.mockReturnValue({ ...initialSlice })
+
     render(
       <Csrf>
         <div>children</div>
       </Csrf>
     )
 
-    expect(mockDispatch).toHaveBeenCalled()
     expect(screen.getByText('children')).toBeInTheDocument()
+    expect(store.getActions()).toEqual([])
   })
 
   it('should render PagePlaceholder when loading', () => {
-    useSelectorMock.mockReturnValueOnce({ loading: true })
+    mockAppCsrfSelector.mockReturnValue({ ...initialSlice, loading: true })
 
     render(<Csrf><div>children</div></Csrf>)
 
@@ -41,7 +51,7 @@ describe('Csrf', () => {
   })
 
   it('should render children when csrf endpoint is present, token is present, and not loading', () => {
-    useSelectorMock.mockReturnValueOnce({ csrfEndpoint: 'http://example.com/csrf', token: 'csrf-token' })
+    mockAppCsrfSelector.mockReturnValue({ ...initialSlice, csrfEndpoint: 'http://example.com/csrf', token: 'csrf-token' })
 
     render(
       <Csrf>
@@ -53,10 +63,11 @@ describe('Csrf', () => {
   })
 
   it('should render placeholder when csrf endpoint is present, token is present, and loading', () => {
-    useSelectorMock.mockReturnValueOnce({
+    mockAppCsrfSelector.mockReturnValue({
+      ...initialSlice,
       csrfEndpoint: 'http://example.com/csrf',
       token: 'csrf-token',
-      loading: true
+      loading: true,
     })
 
     render(
@@ -69,7 +80,8 @@ describe('Csrf', () => {
   })
 
   it('should render placeholder when csrf endpoint is present, token is missing, and not loading', () => {
-    useSelectorMock.mockReturnValueOnce({
+    mockAppCsrfSelector.mockReturnValue({
+      ...initialSlice,
       csrfEndpoint: 'http://example.com/csrf',
       token: 'csrf-token',
       loading: true

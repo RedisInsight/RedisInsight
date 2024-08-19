@@ -135,7 +135,6 @@ formattersWithTooltipSet.forEach(formatter => {
             await t.hover(innerValueSelector);
             // Verify that tooltip with convertion failed message displayed
             await t.expect(browserPage.tooltip.textContent).contains(failedMessage, `"${failedMessage}" is not displayed in tooltip`);
-
         }
     });
 });

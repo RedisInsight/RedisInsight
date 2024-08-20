@@ -4,7 +4,7 @@ import React from 'react'
 
 export interface Props extends Omit<EuiToolTipProps, 'children' | 'delay' | 'position'> {
   value: string | JSX.Element
-  tooltipContent: string
+  tooltipContent: string | JSX.Element
   expanded?: boolean
   title?: string
   truncateLength?: number

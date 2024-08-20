@@ -34,6 +34,7 @@ import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 export interface FormattingProps {
   expanded?: boolean
   skipVector?: boolean
+  tooltip?: boolean
 }
 
 const isTextViewFormatter = (format: KeyValueFormat) => [

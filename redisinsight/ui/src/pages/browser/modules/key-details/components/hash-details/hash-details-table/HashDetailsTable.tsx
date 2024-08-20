@@ -50,6 +50,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
+  createTooltipContent,
   formatLongName,
   formattingBuffer,
   isEqualBuffers,
@@ -308,9 +309,8 @@ const HashDetailsTable = (props: Props) => {
       render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
         const { value: decompressedItem } = decompressingBuffer(fieldItem, compressor)
         const field = bufferToString(fieldItem) || ''
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const tooltipContent = formatLongName(field)
         const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded, skipVector: true })
+        const tooltipContent = createTooltipContent(value, decompressedItem, viewFormatProp, { skipVector: true })
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
@@ -343,9 +343,8 @@ const HashDetailsTable = (props: Props) => {
         const { value: decompressedValueItem, isCompressed } = decompressingBuffer(valueItem, compressor)
         const value = bufferToString(valueItem)
         const field = bufferToString(decompressedFieldItem)
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(decompressedValueItem, viewFormatProp, { expanded })
+        const tooltipContent = createTooltipContent(formattedValue, decompressedValueItem, viewFormatProp)
         const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
           && !isEqualBuffers(valueItem, stringToBuffer(value))
         const isEditable = !isCompressed && isFormatEditable(viewFormat)

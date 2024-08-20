@@ -12,7 +12,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
-  formatLongName,
+  createTooltipContent,
   formattingBuffer,
 } from 'uiSrc/utils'
 import { KeyTypes, OVER_RENDER_BUFFER_COUNT, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
@@ -191,10 +191,8 @@ const SetDetailsTable = (props: Props) => {
       truncateText: true,
       render: function Name(_name: string, memberItem: RedisResponseBuffer, expanded: boolean = false) {
         const { value: decompressedMemberItem } = decompressingBuffer(memberItem, compressor)
-        const member = bufferToString(memberItem)
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const tooltipContent = formatLongName(member)
         const { value, isValid } = formattingBuffer(decompressedMemberItem, viewFormatProp, { expanded })
+        const tooltipContent = createTooltipContent(value, decompressedMemberItem, viewFormatProp)
         const cellContent = value?.substring?.(0, 200) ?? value
 
         return (

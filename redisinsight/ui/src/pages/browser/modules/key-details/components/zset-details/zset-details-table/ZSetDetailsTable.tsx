@@ -33,6 +33,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
+  createTooltipContent,
   formatLongName,
   formattingBuffer,
   isEqualBuffers,
@@ -274,8 +275,8 @@ const ZSetDetailsTable = (props: Props) => {
       render: function Name(_name: string, { name: nameItem }: IZsetMember, expanded?: boolean) {
         const { value: decompressedNameItem } = decompressingBuffer(nameItem, compressor)
         const name = bufferToString(nameItem)
-        const tooltipContent = formatLongName(name)
         const { value, isValid } = formattingBuffer(decompressedNameItem, viewFormat, { expanded })
+        const tooltipContent = createTooltipContent(value, decompressedNameItem, viewFormat)
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>

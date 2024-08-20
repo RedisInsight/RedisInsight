@@ -118,7 +118,7 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           expect(body).to.eql({
             error: 'RdiUnauthorized',
             errorCode: 11402,
-            message: 'Authorization failed',
+            message: 'Unauthorized',
             statusCode: 401,
           });
         },
@@ -129,6 +129,7 @@ describe('POST /rdi/:id/pipeline/test-connections', () => {
           });
           nock(testRdiUrl).post(`/${RdiUrl.TestConnections}`).query(true).reply(401, {
             message: 'Request failed with status code 401',
+            detail: 'Unauthorized',
           });
         },
       },

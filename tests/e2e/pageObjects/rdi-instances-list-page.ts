@@ -30,7 +30,6 @@ export class RdiInstancesListPage extends BaseOverviewPage {
      * @param instanceValue rdi instance data
      */
     async addRdi(instanceValue: RdiInstance): Promise<void> {
-
         await t.click(this.rdiInstanceButton);
         await t
             .typeText(this.AddRdiInstance.rdiAliasInput, instanceValue.alias)
@@ -38,7 +37,6 @@ export class RdiInstancesListPage extends BaseOverviewPage {
             .typeText(this.AddRdiInstance.usernameInput, instanceValue.username as string)
             .typeText(this.AddRdiInstance.passwordInput, instanceValue.password as string);
         await t.click(this.AddRdiInstance.addInstanceButton);
-
     }
 
     /**

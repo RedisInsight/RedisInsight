@@ -13,6 +13,7 @@ import {
   mockedStore,
 } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
+import { envConfig } from 'uiSrc/env-config'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -22,13 +23,13 @@ beforeEach(() => {
 })
 
 describe('slices', () => {
-  const OLD_ENV = process.env
+  const OLD_ENV_CONFIG = { ...envConfig }
 
   beforeEach(() => {
-    process.env = { ...OLD_ENV }
+    envConfig.RI_CSRF_ENDPOINT = OLD_ENV_CONFIG.RI_CSRF_ENDPOINT
   })
   afterAll(() => {
-    process.env = OLD_ENV
+    envConfig.RI_CSRF_ENDPOINT = OLD_ENV_CONFIG.RI_CSRF_ENDPOINT
   })
 
   it('fetch token reducer should properly set the token', () => {
@@ -77,7 +78,7 @@ describe('slices', () => {
   })
 
   it('fetchCsrfToken should fetch the token', async () => {
-    process.env.RI_CSRF_ENDPOINT = 'http://localhost'
+    envConfig.RI_CSRF_ENDPOINT = 'http://localhost'
 
     apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
@@ -97,7 +98,7 @@ describe('slices', () => {
   })
 
   it('fetchCsrfToken should handle failure', async () => {
-    process.env.RI_CSRF_ENDPOINT = 'http://localhost'
+    envConfig.RI_CSRF_ENDPOINT = 'http://localhost'
 
     apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
     const successFn = jest.fn()

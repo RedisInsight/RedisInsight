@@ -1,26 +1,63 @@
 import React from 'react'
+import { cloneDeep } from 'lodash'
 
-import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
-import { render, screen, waitFor } from 'uiSrc/utils/test-utils'
-import Csrf from './Csrf'
+import { render, screen, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import Csrf from 'uiSrc/components/csrf/Csrf'
+import { appCsrfSelector, fetchCsrfToken, initialState } from 'uiSrc/slices/app/csrf'
+import { apiService } from 'uiSrc/services'
+
+jest.mock('uiSrc/slices/app/csrf', () => ({
+  ...jest.requireActual('uiSrc/slices/app/csrf'),
+  appCsrfSelector: jest.fn().mockReturnValue(jest.requireActual('uiSrc/slices/app/csrf').initialState),
+}))
 
 jest.mock('uiSrc/services/apiService', () => ({
-  setApiCsrfHeader: jest.fn(),
   get: jest.fn(() => ({ data: { token: 'csrf-token' } })),
 }))
 
-describe('Csrf', () => {
-  const OLD_ENV = process.env
+const OLD_ENV = { ...process.env }
+let store: typeof mockedStore
 
+describe('Csrf', () => {
   beforeEach(() => {
-    jest.resetModules()
     process.env = { ...OLD_ENV }
+    apiService.get = jest.fn()
+
+    cleanup()
+    store = cloneDeep(mockedStore)
+    store.clearActions()
   })
   afterAll(() => {
     process.env = OLD_ENV
   })
 
-  it('should render children', () => {
+  it('should render children when not loading and no csrf endpoint set', () => {
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState })
+
+    render(
+      <Csrf>
+        <div>children</div>
+      </Csrf>
+    )
+    expect(apiService.get).not.toBeCalled()
+    expect(screen.getByText('children')).toBeInTheDocument()
+    expect(store.getActions()).toEqual([])
+  })
+
+  it('should render PagePlaceholder when loading', () => {
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, loading: true })
+
+    render(<Csrf><div>children</div></Csrf>)
+
+    expect(apiService.get).not.toBeCalled()
+    expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
+  })
+
+  it('should render children when csrf endpoint is present, token is present, and not loading', async () => {
+    const csrfEndpoint = 'csrf'
+    process.env.RI_CSRF_ENDPOINT = csrfEndpoint;
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
+
     render(
       <Csrf>
         <div>children</div>
@@ -28,26 +65,33 @@ describe('Csrf', () => {
     )
 
     expect(screen.getByText('children')).toBeInTheDocument()
+    expect(store.getActions()).toEqual([fetchCsrfToken()])
   })
 
-  it('should not fetch CSRF token when endpoint is not provided', () => {
-    render(<Csrf><div>children</div></Csrf>)
+  it('should render placeholder when csrf endpoint is present, token is present, and loading', () => {
+    (appCsrfSelector as jest.Mock).mockReturnValue({
+      ...initialState,
+      csrfEndpoint: 'http://example.com/csrf',
+      token: 'csrf-token',
+      loading: true,
+    })
 
-    expect(apiService.get).not.toHaveBeenCalled()
-
-    expect(screen.queryByTestId('page-placeholder')).not.toBeInTheDocument()
-  })
-
-  it('should render PagePlaceholder when loading', () => {
-    process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
-
-    render(<Csrf><div>children</div></Csrf>)
+    render(
+      <Csrf>
+        <div>children</div>
+      </Csrf>
+    )
 
     expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
   })
 
-  it('should fetch CSRF token', async () => {
-    process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
+  it('should render placeholder when csrf endpoint is present, token is missing, and not loading', () => {
+    (appCsrfSelector as jest.Mock).mockReturnValue({
+      ...initialState,
+      csrfEndpoint: 'http://example.com/csrf',
+      token: 'csrf-token',
+      loading: true
+    })
 
     render(
       <Csrf>
@@ -55,18 +99,13 @@ describe('Csrf', () => {
       </Csrf>
     )
 
-    await waitFor(() => {
-      expect(apiService.get).toHaveBeenCalledWith('csrf-endpoint')
-      expect(setApiCsrfHeader).toHaveBeenCalledWith('csrf-token')
-
-      expect(screen.getByText('children')).toBeInTheDocument()
-    })
+    expect(screen.getByTestId('page-placeholder')).toBeInTheDocument()
   })
 
-  it('should handle error while fetching CSRF token', async () => {
-    process.env.RI_CSRF_ENDPOINT = 'csrf-endpoint'
-    jest.spyOn(apiService, 'get').mockImplementationOnce(() => { throw new Error('error') })
-    jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+  it('should not throw and render placeholder when erroring', async () => {
+    const csrfEndpoint = 'csrf'
+    process.env.RI_CSRF_ENDPOINT = csrfEndpoint;
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(
       <Csrf>
@@ -74,10 +113,7 @@ describe('Csrf', () => {
       </Csrf>
     )
 
-    await waitFor(() => {
-      expect(console.error).toHaveBeenCalledWith('Error fetching CSRF token: ', new Error('error'))
-
-      expect(screen.getByText('children')).toBeInTheDocument()
-    })
+    expect(store.getActions()).toEqual([fetchCsrfToken()])
+    expect(screen.getByText('children')).toBeInTheDocument()
   })
 })

@@ -21,12 +21,14 @@ import { isProcessingBulkAction } from 'uiSrc/pages/browser/components/bulk-acti
 import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, SocketEvent } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CustomHeaders } from 'uiSrc/constants/api'
+import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
   const { isConnected } = useSelector(bulkActionsSelector)
   const { isActionTriggered: isDeleteTriggered } = useSelector(bulkActionsDeleteSelector)
   const { filter, search } = useSelector(keysSelector)
+  const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
@@ -42,8 +44,13 @@ const BulkActionsConfig = () => {
       path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
+      },
       rejectUnauthorized: false,
+      transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),
+      withCredentials: process.env.RI_SOCKET_CREDENTIALS === 'true',
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

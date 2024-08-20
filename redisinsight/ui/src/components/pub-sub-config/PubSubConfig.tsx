@@ -17,6 +17,7 @@ import {
   setPubSubConnected,
 } from 'uiSrc/slices/pubsub/pubsub'
 import { getBaseApiUrl, Nullable, getProxyPath } from 'uiSrc/utils'
+import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 
 interface IProps {
   retryDelay?: number;
@@ -25,6 +26,7 @@ interface IProps {
 const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { isSubscribeTriggered, isConnected, subscriptions } = useSelector(pubSubSelector)
+  const { token } = useSelector(appCsrfSelector)
   const socketRef = useRef<Nullable<Socket>>(null)
 
   const dispatch = useDispatch()
@@ -39,8 +41,13 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
       path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
+      },
       rejectUnauthorized: false,
+      transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),
+      withCredentials: process.env.RI_SOCKET_CREDENTIALS === 'true',
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

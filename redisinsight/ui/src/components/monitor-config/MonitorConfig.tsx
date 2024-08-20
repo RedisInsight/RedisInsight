@@ -21,6 +21,7 @@ import { MonitorErrorMessages, MonitorEvent, SocketErrors, SocketEvent } from 'u
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { CustomHeaders } from 'uiSrc/constants/api'
+import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
@@ -31,6 +32,7 @@ interface IProps {
 const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
   const { id: instanceId = '' } = useSelector(connectedInstanceSelector)
   const { socket, isRunning, isPaused, isSaveToFile, isMinimizedMonitor, isShowMonitor } = useSelector(monitorSelector)
+  const { token } = useSelector(appCsrfSelector)
 
   const socketRef = useRef<Nullable<Socket>>(null)
   const logFileIdRef = useRef<string>()
@@ -67,8 +69,13 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
       path: getProxyPath(),
       forceNew: true,
       query: { instanceId },
-      extraHeaders: { [CustomHeaders.WindowId]: window.windowId || '' },
+      extraHeaders: {
+        [CustomHeaders.WindowId]: window.windowId || '',
+        ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
+      },
       rejectUnauthorized: false,
+      transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),
+      withCredentials: process.env.RI_SOCKET_CREDENTIALS === 'true',
     })
     dispatch(setSocket(socketRef.current))
 

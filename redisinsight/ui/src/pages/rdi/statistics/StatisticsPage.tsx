@@ -1,8 +1,8 @@
 import { get } from 'lodash'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiText } from '@elastic/eui'
+import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { getPipelineStatusAction, rdiPipelineStatusSelector } from 'uiSrc/slices/rdi/pipeline'
@@ -27,6 +27,7 @@ const isPipelineDeployed = (
 ) => get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready
 
 const StatisticsPage = () => {
+  const [pageLoading, setPageLoading] = useState(true)
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const dispatch = useDispatch()
@@ -65,9 +66,13 @@ const StatisticsPage = () => {
     })
   }
 
+  const hideSpinner = () => {
+    setPageLoading(false)
+  }
+
   useEffect(() => {
     dispatch(getPipelineStatusAction(rdiInstanceId))
-    dispatch(fetchRdiStatistics(rdiInstanceId))
+    dispatch(fetchRdiStatistics(rdiInstanceId, undefined, hideSpinner, hideSpinner))
 
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_STATUS,
@@ -97,6 +102,11 @@ const StatisticsPage = () => {
     <RdiInstancePageTemplate>
       <div className={styles.pageContainer}>
         <div className={styles.bodyContainer}>
+          {pageLoading && (
+            <div className={styles.cover}>
+              <EuiLoadingSpinner size="xl" />
+            </div>
+          )}
           {!isPipelineDeployed(statusData) ? (
             // TODO add loader
             <Empty rdiInstanceId={rdiInstanceId} />

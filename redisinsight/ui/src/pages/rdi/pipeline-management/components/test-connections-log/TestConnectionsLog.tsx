@@ -19,7 +19,8 @@ export interface Props {
 
 const TestConnectionsLog = (props: Props) => {
   const { data } = props
-
+  const statusData = data?.fail?.length ? data.fail : data?.success
+  const status = data?.fail?.length ? ResultsStatus.Failed : ResultsStatus.Success
   const [openedNav, setOpenedNav] = useState<string>('')
 
   const onToggle = (length: number = 0, isOpen: boolean, name: string) => {
@@ -34,33 +35,22 @@ const TestConnectionsLog = (props: Props) => {
     </div>
   )
 
+  const navTitle = status === ResultsStatus.Success ? 'Connected successfully' : 'Failed to connect'
+
   const getNavGroupState = (name: ResultsStatus) => (openedNav === name ? 'open' : 'closed')
 
   return (
-    <>
-      <EuiCollapsibleNavGroup
-        title={<CollapsibleNavTitle title="Connected successfully" length={data?.success?.length ?? 0} />}
-        className={cx(styles.collapsibleNav, ResultsStatus.Success, { [styles.disabled]: !data?.success?.length })}
-        isCollapsible
-        initialIsOpen={false}
-        onToggle={(isOpen) => onToggle(data?.success?.length, isOpen, ResultsStatus.Success)}
-        forceState={getNavGroupState(ResultsStatus.Success)}
-        data-testid={`success-connections-${getNavGroupState(ResultsStatus.Success)}`}
-      >
-        <TestConnectionsTable data={data?.success ?? []} />
-      </EuiCollapsibleNavGroup>
-      <EuiCollapsibleNavGroup
-        title={<CollapsibleNavTitle title="Failed to connect" length={data?.fail?.length ?? 0} />}
-        className={cx(styles.collapsibleNav, ResultsStatus.Failed, { [styles.disabled]: !data?.fail?.length })}
-        isCollapsible
-        initialIsOpen={false}
-        onToggle={(isOpen) => onToggle(data?.fail?.length, isOpen, ResultsStatus.Failed)}
-        forceState={getNavGroupState(ResultsStatus.Failed)}
-        data-testid={`failed-connections-${getNavGroupState(ResultsStatus.Failed)}`}
-      >
-        <TestConnectionsTable data={data?.fail ?? []} />
-      </EuiCollapsibleNavGroup>
-    </>
+    <EuiCollapsibleNavGroup
+      title={<CollapsibleNavTitle title={navTitle} length={statusData?.length ?? 0} />}
+      className={cx(styles.collapsibleNav, status, { [styles.disabled]: !statusData?.length })}
+      isCollapsible
+      initialIsOpen={false}
+      onToggle={(isOpen) => onToggle(statusData?.length, isOpen, status)}
+      forceState={getNavGroupState(status)}
+      data-testid={`${status}-connections-${getNavGroupState(status)}`}
+    >
+      <TestConnectionsTable data={statusData ?? []} />
+    </EuiCollapsibleNavGroup>
   )
 }
 

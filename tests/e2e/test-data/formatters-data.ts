@@ -67,9 +67,11 @@ export const formattersWithTooltipSet: IFormatter[] = [
     ProtobufFormatter,
     PHPFormatter,
     JavaFormatter,
-    PickleFormatter,
-    Vector32BitFormatter,
-    Vector64BitFormatter
+    PickleFormatter
+];
+export const vectorFormattersSet: IFormatter[] = [
+    Vector64BitFormatter,
+    Vector32BitFormatter
 ];
 export const notEditableFormattersSet: IFormatter[] = [
     ProtobufFormatter,

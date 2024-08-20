@@ -1,5 +1,6 @@
-import { findCurrentArgument } from 'uiSrc/pages/search/utils'
+import { addOwnTokenToArgs, findCurrentArgument, generateDetail, splitQueryByArgs } from 'uiSrc/pages/search/utils'
 import { SearchCommand } from 'uiSrc/pages/search/types'
+import { Maybe } from 'uiSrc/utils'
 import { MOCKED_SUPPORTED_COMMANDS } from './mocks'
 
 const ftSearchCommand = MOCKED_SUPPORTED_COMMANDS['FT.SEARCH']
@@ -190,6 +191,36 @@ const ftAggreageTests = [
       parent: expect.any(Object)
     }
   },
+  {
+    args: ['index', '"query"', 'LOAD', '4'],
+    result: {
+      stopArg: { multiple: true, name: 'field', type: 'string' },
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['index', '"query"', 'LOAD', '4', '1', '2', '3'],
+    result: {
+      stopArg: { multiple: true, name: 'field', type: 'string' },
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['index', '"query"', 'LOAD', '4', '1', '2', '3', '4'],
+    result: {
+      stopArg: undefined,
+      append: [],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
 ]
 
 const ftSearchTests = [
@@ -316,6 +347,112 @@ const ftSearchTests = [
       parent: expect.any(Object)
     }
   },
+  {
+    args: ['', '', 'RETURN', '2', 'iden'],
+    result: {
+      stopArg: {
+        name: 'property',
+        type: 'string',
+        token: 'AS',
+        optional: true
+      },
+      append: [
+        {
+          name: 'property',
+          type: 'string',
+          token: 'AS',
+          optional: true
+        }
+      ],
+      isBlocked: false,
+      isComplete: false,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['', '', 'RETURN', '2', 'iden', 'iden'],
+    result: {
+      stopArg: {
+        name: 'property',
+        type: 'string',
+        token: 'AS',
+        optional: true
+      },
+      append: [
+        {
+          name: 'property',
+          type: 'string',
+          token: 'AS',
+          optional: true
+        }
+      ],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['', '', 'RETURN', '2', 'iden', 'iden', 'AS'],
+    result: {
+      stopArg: {
+        name: 'property',
+        type: 'string',
+        token: 'AS',
+        optional: true
+      },
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['', '', 'SORTBY', 'f'],
+    result: {
+      stopArg: {
+        name: 'order',
+        type: 'oneof',
+        optional: true,
+        arguments: [
+          {
+            name: 'asc',
+            type: 'pure-token',
+            token: 'ASC'
+          },
+          {
+            name: 'desc',
+            type: 'pure-token',
+            token: 'DESC'
+          }
+        ]
+      },
+      append: [
+        {
+          name: 'asc',
+          type: 'pure-token',
+          token: 'ASC'
+        },
+        {
+          name: 'desc',
+          type: 'pure-token',
+          token: 'DESC'
+        }
+      ],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['', '', 'SORTBY', 'f', 'DESC'],
+    result: {
+      stopArg: undefined,
+      append: [],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
 ]
 
 describe('findCurrentArgument', () => {
@@ -326,7 +463,7 @@ describe('findCurrentArgument', () => {
           ftAggregateCommand.arguments as SearchCommand[],
           args
         )
-        expect(result).toEqual(testResult)
+        expect(testResult).toEqual(result)
       })
     })
   })
@@ -338,8 +475,100 @@ describe('findCurrentArgument', () => {
           ftSearchCommand.arguments as SearchCommand[],
           args
         )
-        expect(result).toEqual(testResult)
+        expect(testResult).toEqual(result)
       })
     })
+  })
+})
+
+const splitQueryByArgsTests: Array<{
+  input: [string, number?]
+  result: any
+}> = [
+  {
+    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS'],
+    result: {
+      args: [[], ['FT.SEARCH', '"idx:bicycle"', '""', 'WITHSORTKEYS']],
+      isCursorInQuotes: false,
+      nextCursorChar: 'F',
+      prevCursorChar: undefined
+    }
+  },
+  {
+    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS', 17],
+    result: {
+      args: [['FT.SEARCH'], ['"idx:bicycle"', '""', 'WITHSORTKEYS']],
+      isCursorInQuotes: true,
+      nextCursorChar: 'c',
+      prevCursorChar: 'i'
+    }
+  },
+  {
+    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS', 39],
+    result: {
+      args: [['FT.SEARCH', '"idx:bicycle"', '""'], ['WITHSORTKEYS']],
+      isCursorInQuotes: false,
+      nextCursorChar: undefined,
+      prevCursorChar: 'S'
+    }
+  },
+  {
+    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS ', 40],
+    result: {
+      args: [['FT.SEARCH', '"idx:bicycle"', '""', 'WITHSORTKEYS'], []],
+      isCursorInQuotes: false,
+      nextCursorChar: undefined,
+      prevCursorChar: ' '
+    }
+  },
+  {
+    input: ['FT.SEARCH "idx:bicycle \\" \\"" "" WITHSORTKEYS ', 46],
+    result: {
+      args: [['FT.SEARCH', '"idx:bicycle " ""', '""', 'WITHSORTKEYS'], []],
+      isCursorInQuotes: false,
+      nextCursorChar: undefined,
+      prevCursorChar: ' '
+    }
+  }
+]
+
+describe('splitQueryByArgs', () => {
+  it.each(splitQueryByArgsTests)('should return for %input proper result', ({ input, result }) => {
+    const testResult = splitQueryByArgs(...input)
+    expect(testResult).toEqual(result)
+  })
+})
+
+const generateDetailTests: Array<{ input: Maybe<SearchCommand>, result: any }> = [
+  {
+    input: ftSearchCommand.arguments.find(({ name }) => name === 'nocontent') as SearchCommand,
+    result: 'NOCONTENT'
+  },
+  {
+    input: ftSearchCommand.arguments.find(({ name }) => name === 'filter') as SearchCommand,
+    result: 'FILTER numeric_field min max'
+  },
+  {
+    input: ftSearchCommand.arguments.find(({ name }) => name === 'geo_filter') as SearchCommand,
+    result: 'GEOFILTER geo_field lon lat radius m | km | mi | ft'
+  },
+  {
+    input: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby') as SearchCommand,
+    result: 'GROUPBY nargs property [property ...] [REDUCE function nargs arg [arg ...] [AS name] [REDUCE function nargs arg [arg ...] [AS name] ...]]'
+  },
+]
+
+describe('generateDetail', () => {
+  it.each(generateDetailTests)('should return for %input proper result', ({ input, result }) => {
+    const testResult = generateDetail(input)
+    expect(testResult).toEqual(result)
+  })
+})
+
+describe('addOwnTokenToArgs', () => {
+  it('should add FT.SEARCH to args', () => {
+    const result = addOwnTokenToArgs('FT.SEARCH', { arguments: [] })
+
+    expect({ arguments: [{ token: 'FT.SEARCH', type: 'pure-token' }] }).toEqual(result)
   })
 })

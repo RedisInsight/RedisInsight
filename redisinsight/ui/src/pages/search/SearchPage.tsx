@@ -53,7 +53,9 @@ const SearchPage = () => {
   const sendPageView = (instanceId: string) => {
     sendPageViewTelemetry({
       name: TelemetryPageView.SEARCH_AND_QUERY_PAGE,
-      databaseId: instanceId
+      eventData: {
+        databaseId: instanceId
+      }
     })
     setIsPageViewSent(true)
   }

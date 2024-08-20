@@ -6,12 +6,15 @@ import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 import { RunQueryMode } from 'uiSrc/slices/interfaces'
 import { CodeButtonParams } from 'uiSrc/constants'
 
-import { Nullable } from 'uiSrc/utils'
+import { getCommandsFromQuery, Nullable } from 'uiSrc/utils'
 import { changeSQActiveRunQueryMode, searchAndQuerySelector } from 'uiSrc/slices/search/searchAndQuery'
 import { appContextSearchAndQuery, setSQVerticalScript } from 'uiSrc/slices/app/context'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
+import { SUPPORTED_COMMANDS_LIST } from 'uiSrc/pages/search/components/query/constants'
+import { SearchCommand } from 'uiSrc/pages/search/types'
 import { TUTORIALS } from './constants'
 
 import Query from '../query'
@@ -33,10 +36,17 @@ const QueryWrapper = (props: Props) => {
   const { script: scriptContext } = useSelector(appContextSearchAndQuery)
   const { activeRunQueryMode } = useSelector(searchAndQuerySelector)
   const { data: indexes = [] } = useSelector(redisearchListSelector)
+  const { spec: REDIS_COMMANDS_SPEC, commandsArray } = useSelector(appRedisCommandsSelector)
+
   const [value, setValue] = useState(scriptContext)
 
   const input = useRef<HTMLDivElement>(null)
   const scriptRef = useRef('')
+
+  const SUPPORTED_COMMANDS = SUPPORTED_COMMANDS_LIST.map((name) => ({
+    ...REDIS_COMMANDS_SPEC[name],
+    name
+  })) as unknown as SearchCommand[]
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -66,14 +76,17 @@ const QueryWrapper = (props: Props) => {
   }
 
   const handleSubmit = () => {
-    onSubmit(value.split('\n').join(' '), undefined, { mode: activeRunQueryMode })
+    const val = value.split('\n').join(' ')
+    if (!val) return
+
+    onSubmit(val, undefined, { mode: activeRunQueryMode })
     sendEventTelemetry({
       event: TelemetryEvent.SEARCH_COMMAND_SUBMITTED,
       eventData: {
         databaseId: instanceId,
         mode: activeRunQueryMode,
         // TODO sanitize user query
-        command: value
+        command: getCommandsFromQuery(value, commandsArray) || ''
       }
     })
   }
@@ -92,7 +105,13 @@ const QueryWrapper = (props: Props) => {
         data-testid="main-input-container-area"
       >
         <div className={styles.input} data-testid="query-input-container" ref={input}>
-          <Query indexes={indexes} value={value} onChange={handleChange} />
+          <Query
+            indexes={indexes}
+            value={value}
+            onChange={handleChange}
+            supportedCommands={SUPPORTED_COMMANDS}
+            commandsSpec={REDIS_COMMANDS_SPEC}
+          />
         </div>
         <div className={styles.queryFooter}>
           <QueryTutorials tutorials={TUTORIALS} source="search_tab" />

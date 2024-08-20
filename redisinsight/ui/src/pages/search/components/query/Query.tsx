@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-import { MonacoLanguage, Theme } from 'uiSrc/constants'
+import { ICommands, MonacoLanguage, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import {
@@ -21,7 +20,7 @@ import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
 import { installRedisearchTheme, RedisearchMonacoTheme } from 'uiSrc/utils/monaco/monacoThemes'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { SUPPORTED_COMMANDS_LIST, options, DefinedArgumentName } from './constants'
+import { options, DefinedArgumentName } from './constants'
 import {
   getFieldsSuggestions,
   getIndexesSuggestions,
@@ -35,19 +34,15 @@ export interface Props {
   value: string
   onChange: (val: string) => void
   indexes: RedisResponseBuffer[]
+  supportedCommands?: SearchCommand[]
+  commandsSpec?: ICommands
 }
 
 const Query = (props: Props) => {
-  const { value, onChange, indexes } = props
-  const { spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
+  const { value, onChange, indexes, supportedCommands = [], commandsSpec } = props
 
   const [selectedCommand, setSelectedCommand] = useState('')
   const [selectedIndex, setSelectedIndex] = useState('')
-
-  const SUPPORTED_COMMANDS = SUPPORTED_COMMANDS_LIST.map((name) => ({
-    ...REDIS_COMMANDS_SPEC[name],
-    name
-  })) as unknown as SearchCommand[]
 
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const disposeCompletionItemProvider = useRef(() => {})
@@ -80,7 +75,7 @@ const Query = (props: Props) => {
   useEffect(() => {
     monacoEditor.languages.setMonarchTokensProvider(
       MonacoLanguage.RediSearch,
-      getRediSearchMonarchTokensProvider(SUPPORTED_COMMANDS, selectedCommand)
+      getRediSearchMonarchTokensProvider(supportedCommands, selectedCommand)
     )
   }, [selectedCommand])
 
@@ -118,7 +113,7 @@ const Query = (props: Props) => {
 
     monaco.languages.setMonarchTokensProvider(
       MonacoLanguage.RediSearch,
-      getRediSearchMonarchTokensProvider(SUPPORTED_COMMANDS)
+      getRediSearchMonarchTokensProvider(supportedCommands)
     )
 
     disposeSignatureHelpProvider.current?.()
@@ -209,17 +204,18 @@ const Query = (props: Props) => {
     const range = getRange(position, word)
 
     const { args, isCursorInQuotes, prevCursorChar, nextCursorChar } = splitQueryByArgs(value, offset)
+
     const allArgs = args.flat()
     const [beforeOffsetArgs, [currentOffsetArg]] = args
     const [firstArg, ...prevArgs] = beforeOffsetArgs
 
     const commandName = (firstArg || currentOffsetArg)?.toUpperCase()
-    const command = REDIS_COMMANDS_SPEC[commandName] as unknown as SearchCommand
+    const command = commandsSpec?.[commandName] as unknown as SearchCommand
 
-    const isCommandSuppurted = SUPPORTED_COMMANDS.some(({ name }) => commandName === name)
+    const isCommandSuppurted = supportedCommands.some(({ name }) => commandName === name)
     if (command && !isCommandSuppurted) return asSuggestionsRef([])
     if (!command && position.lineNumber === 1 && position.column === 1) {
-      return getCommandsSuggestions(SUPPORTED_COMMANDS, range)
+      return getCommandsSuggestions(supportedCommands, range)
     }
 
     if (!command) {

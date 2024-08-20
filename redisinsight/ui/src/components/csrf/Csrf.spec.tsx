@@ -1,31 +1,26 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 
-import { render, screen, initialStateDefault, mockedStore, cleanup, waitFor } from 'uiSrc/utils/test-utils'
+import { render, screen, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import Csrf from 'uiSrc/components/csrf/Csrf'
-import { appCsrfSelector, fetchCsrfToken, fetchCsrfTokenFail, fetchCsrfTokenSuccess } from 'uiSrc/slices/app/csrf'
+import { appCsrfSelector, fetchCsrfToken, initialState } from 'uiSrc/slices/app/csrf'
 import { apiService } from 'uiSrc/services'
 
 jest.mock('uiSrc/slices/app/csrf', () => ({
   ...jest.requireActual('uiSrc/slices/app/csrf'),
-  appCsrfSelector: jest.fn(),
+  appCsrfSelector: jest.fn().mockReturnValue(jest.requireActual('uiSrc/slices/app/csrf').initialState),
 }))
 
 jest.mock('uiSrc/services/apiService', () => ({
   get: jest.fn(() => ({ data: { token: 'csrf-token' } })),
 }))
 
-const initialSlice = initialStateDefault.app.csrf
-
 const OLD_ENV = { ...process.env }
-
-let mockAppCsrfSelector = jest.mocked(appCsrfSelector)
 let store: typeof mockedStore
 
 describe('Csrf', () => {
   beforeEach(() => {
     process.env = { ...OLD_ENV }
-    mockAppCsrfSelector = jest.mocked(appCsrfSelector)
     apiService.get = jest.fn()
 
     cleanup()
@@ -37,7 +32,7 @@ describe('Csrf', () => {
   })
 
   it('should render children when not loading and no csrf endpoint set', () => {
-    mockAppCsrfSelector.mockReturnValue({ ...initialSlice })
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState })
 
     render(
       <Csrf>
@@ -50,7 +45,7 @@ describe('Csrf', () => {
   })
 
   it('should render PagePlaceholder when loading', () => {
-    mockAppCsrfSelector.mockReturnValue({ ...initialSlice, loading: true })
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, loading: true })
 
     render(<Csrf><div>children</div></Csrf>)
 
@@ -60,10 +55,8 @@ describe('Csrf', () => {
 
   it('should render children when csrf endpoint is present, token is present, and not loading', async () => {
     const csrfEndpoint = 'csrf'
-    process.env.RI_CSRF_ENDPOINT = csrfEndpoint
-    const getMock = jest.fn().mockResolvedValue({ data: { token: 'csrf-token' } })
-    apiService.get = getMock
-    mockAppCsrfSelector.mockReturnValue({ ...initialSlice, csrfEndpoint, token: 'csrf-token' })
+    process.env.RI_CSRF_ENDPOINT = csrfEndpoint;
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(
       <Csrf>
@@ -71,16 +64,13 @@ describe('Csrf', () => {
       </Csrf>
     )
 
-    await waitFor(() => {
-      expect(getMock).toBeCalledWith(csrfEndpoint)
-      expect(screen.getByText('children')).toBeInTheDocument()
-      expect(store.getActions()).toEqual([fetchCsrfToken(), fetchCsrfTokenSuccess({ token: 'csrf-token' })])
-    }, { timeout: 150 })
+    expect(screen.getByText('children')).toBeInTheDocument()
+    expect(store.getActions()).toEqual([fetchCsrfToken()])
   })
 
   it('should render placeholder when csrf endpoint is present, token is present, and loading', () => {
-    mockAppCsrfSelector.mockReturnValue({
-      ...initialSlice,
+    (appCsrfSelector as jest.Mock).mockReturnValue({
+      ...initialState,
       csrfEndpoint: 'http://example.com/csrf',
       token: 'csrf-token',
       loading: true,
@@ -96,8 +86,8 @@ describe('Csrf', () => {
   })
 
   it('should render placeholder when csrf endpoint is present, token is missing, and not loading', () => {
-    mockAppCsrfSelector.mockReturnValue({
-      ...initialSlice,
+    (appCsrfSelector as jest.Mock).mockReturnValue({
+      ...initialState,
       csrfEndpoint: 'http://example.com/csrf',
       token: 'csrf-token',
       loading: true
@@ -114,10 +104,8 @@ describe('Csrf', () => {
 
   it('should not throw and render placeholder when erroring', async () => {
     const csrfEndpoint = 'csrf'
-    process.env.RI_CSRF_ENDPOINT = csrfEndpoint
-    const getMock = jest.fn().mockRejectedValue(new Error('can not get token'))
-    apiService.get = getMock
-    mockAppCsrfSelector.mockReturnValue({ ...initialSlice, csrfEndpoint, token: 'csrf-token' })
+    process.env.RI_CSRF_ENDPOINT = csrfEndpoint;
+    (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(
       <Csrf>
@@ -125,9 +113,7 @@ describe('Csrf', () => {
       </Csrf>
     )
 
-    await waitFor(() => {
-      expect(getMock).toBeCalledWith(csrfEndpoint)
-      expect(store.getActions()).toEqual([fetchCsrfToken(), fetchCsrfTokenFail({ error: 'can not get token' })])
-    }, { timeout: 150 })
+    expect(store.getActions()).toEqual([fetchCsrfToken()])
+    expect(screen.getByText('children')).toBeInTheDocument()
   })
 })

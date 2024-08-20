@@ -4,7 +4,7 @@ import iwarning from 'uiSrc/assets/img/icons/warning.svg'
 import styles from './styles.module.scss'
 
 const UploadWarning = () => (
-  <EuiFlexGroup className={styles.wrapper} gutterSize="xs">
+  <EuiFlexGroup className={styles.wrapper} gutterSize="xs" responsive={false}>
     <EuiFlexItem grow={false}>
       <EuiIcon type={iwarning} />
     </EuiFlexItem>

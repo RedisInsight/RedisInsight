@@ -4,6 +4,7 @@ import JSONBigInt from 'json-bigint'
 
 import JsonPretty from 'uiSrc/components/json-viewer/components/json-pretty'
 import { formatLongName } from 'uiSrc/utils'
+import { TOOLTIP_CONTENT_MAX_LENGTH } from 'uiSrc/constants'
 
 interface Props {
   value: string
@@ -20,7 +21,7 @@ const JSONViewer = (props: Props) => {
     const className = cx('jsonViewer', { 'jsonViewer-collapsed': !expanded && !tooltip })
     const data = JSONBigInt({ useNativeBigInt }).parse(value)
 
-    if (tooltip && value?.length > 500) {
+    if (tooltip && value?.length > TOOLTIP_CONTENT_MAX_LENGTH) {
       return { value: formatLongName(value), isValid: true }
     }
 

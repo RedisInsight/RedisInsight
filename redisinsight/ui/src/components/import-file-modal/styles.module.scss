@@ -13,6 +13,13 @@
     }
   }
 
+  .uploadWarningContainer {
+    align-self: flex-start;
+    text-wrap: wrap;
+    margin-left: 30px;
+    max-width: 400px;
+  }
+
   :global {
     .euiModalHeader {
       padding: 4px 42px 20px 30px;
@@ -20,6 +27,8 @@
 
     .euiModalBody__overflow {
       padding: 8px 30px;
+      overflow-y: hidden !important;
+      mask-image: none !important;
     }
 
     .euiModal__closeIcon {

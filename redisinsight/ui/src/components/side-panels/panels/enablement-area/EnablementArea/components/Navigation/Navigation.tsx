@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiListGroup } from '@elastic/eui'
+import { EuiListGroup, EuiText } from '@elastic/eui'
 import { isArray } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
@@ -10,6 +10,7 @@ import { ApiEndpoints, EAItemActions, EAManifestFirstKey } from 'uiSrc/constants
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
 import { deleteCustomTutorial, uploadCustomTutorial } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
+import UploadWarning from 'uiSrc/components/upload-warning'
 import {
   FormValues
 } from '../UploadTutorialForm/UploadTutorialForm'
@@ -115,7 +116,12 @@ const Navigation = (props: Props) => {
             {isCustomTutorials && actions?.includes(EAItemActions.Create) && (
               <div className={styles.customTuturoialsForm}>
                 {!isCreateOpen && children?.length === 0 && (
-                  <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
+                  <div>
+                    <WelcomeMyTutorials handleOpenUpload={() => setIsCreateOpen(true)} />
+                    <div className={styles.uploadWarningContainer}>
+                      <UploadWarning />
+                    </div>
+                  </div>
                 )}
                 {isCreateOpen && (
                   <UploadTutorialForm

@@ -1,5 +1,5 @@
 .table {
-  thead {
+  thead, tfoot {
     background-color: var(--rdiSecondaryBgColor);
     th {
       padding: 10px 0;
@@ -7,6 +7,10 @@
   }
 
   :global {
+    .euiTableFooterCell {
+      background-color: inherit !important;
+      color: inherit !important;
+    }
     .euiTableRow {
       &:nth-child(even) {
         background-color: var(--browserTableRowEven);

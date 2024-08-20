@@ -12,9 +12,10 @@ const staticDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resources
   ? join(process['resourcesPath'], 'static')
   : join(__dirname, '..', 'static');
 
-const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
-  ? join(process['resourcesPath'], 'defaults')
-  : join(__dirname, '..', 'defaults');
+const defaultsDir = process.env.RI_DEFAULTS_DIR
+  || ((process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath'])
+    ? join(process['resourcesPath'], 'defaults')
+    : join(__dirname, '..', 'defaults'));
 
 const proxyPath = trim(process.env.RI_PROXY_PATH, '/');
 

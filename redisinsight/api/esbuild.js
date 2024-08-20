@@ -1,10 +1,13 @@
 const esbuild = require('esbuild');
+const fs = require('fs-extra');
+const path = require('path');
 require('dotenv').config();
 const { dependencies } = require('../package.json');
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
 
+const outDir = 'dist-minified';
 const define = {
   'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
 };
@@ -27,7 +30,7 @@ async function main() {
     sourcemap: !production,
     sourcesContent: false,
     platform: 'node',
-    outfile: 'dist-minified/main.js',
+    outfile: `${outDir}/main.js`,
     define,
     external,
     logLevel: 'silent',
@@ -45,6 +48,16 @@ async function main() {
   }
 }
 
+function copySource(source, destination) {
+  try {
+    if (fs.pathExistsSync(source)) {
+      fs.copySync(source, destination);
+    }
+  } catch (error) {
+    console.error('✘ [esbuild ERROR copySource]', error);
+  }
+}
+
 /**
  * @type {import('esbuild').Plugin}
  */
@@ -57,10 +70,16 @@ const esbuildProblemMatcherPlugin = {
     });
     build.onEnd((result) => {
       result.errors.forEach(({ text, location }) => {
-        console.error(`✘ [ERROR] ${text}`);
+        console.error(`✘ [esbuild ERROR] ${text}`);
         console.error(`    ${location.file}:${location.line}:${location.column}:`);
       });
       console.debug('[esbuild] build finished');
+
+      copySource(
+        path.resolve(__dirname, 'defaults'),
+        path.resolve(__dirname, outDir, 'defaults'),
+      );
+      console.debug('[esbuild] copied "defaults" folder');
     });
   },
 };

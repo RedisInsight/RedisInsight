@@ -78,7 +78,7 @@ async function runLicenseCheck(path) {
     new Promise((resolve, reject) => {
       exec(command, (error, stdout, stderr) => {
         if (error) {
-          console.error(`Failed command: ${commandProd}, error:`, stderr);
+          console.error(`Failed command: ${command}, error:`, stderr);
           reject(error);
         }
         resolve();

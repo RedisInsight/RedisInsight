@@ -27,7 +27,7 @@ const OAuthSsoForm = ({
   onBack,
   onSubmit,
 }: Props) => {
-  const [validationErrors, setValidationErrors] = useState<FormikErrors<Values>>({})
+  const [validationErrors, setValidationErrors] = useState<FormikErrors<Values>>({ email: '' })
 
   const validate = (values: Values) => {
     const errs: FormikErrors<Values> = {}

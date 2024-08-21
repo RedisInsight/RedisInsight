@@ -5,12 +5,13 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
 import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
+import { envConfig } from 'uiSrc/env-config'
 
 const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
-const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
+const hostedApiBaseUrl = envConfig.RI_HOSTED_API_BASE_URL
 
 let apiPrefix = process.env.RI_API_PREFIX
 

@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { envConfig } from 'uiSrc/env-config'
 import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
 import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService'
 import { AppDispatch, RootState } from '../store'
 
-const getCsrfEndpoint = () => process.env.RI_CSRF_ENDPOINT || ''
+const getCsrfEndpoint = () => envConfig.RI_CSRF_ENDPOINT || ''
 
 interface CSRFTokenResponse {
   token: string

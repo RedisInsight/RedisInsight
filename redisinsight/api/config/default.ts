@@ -262,6 +262,16 @@ export default {
         redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
         idp: process.env.RI_CLOUD_IDP_GH_ID,
       },
+      sso: {
+        authorizeUrl: process.env.RI_CLOUD_IDP_SSO_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_SSO_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
+        revokeTokenUrl: process.env.RI_CLOUD_IDP_SSO_REVOKE_TOKEN_URL || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_SSO_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
+        clientId: process.env.RI_CLOUD_IDP_SSO_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_SSO_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        emailVerificationUri: process.env.RI_CLOUD_IDP_SSO_EMAIL_VERIFICATION_URI || 'saml/okta_idp_id',
+        idp: process.env.RI_CLOUD_IDP_SSO_ID,
+      },
     },
   },
   ai: {

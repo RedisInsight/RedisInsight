@@ -90,6 +90,14 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
         </>
       )
       break
+    case CustomErrorCodes.CloudOauthSsoUnsupportedEmail:
+      title = 'Invalid email'
+      message = (
+        <>
+          Email is not recognized. Use an email associated with your organization’s SSO.
+        </>
+      )
+      break
     case CustomErrorCodes.CloudApiBadRequest:
       title = 'Bad request'
       message = (

@@ -12,7 +12,7 @@ import {
 } from '@elastic/eui'
 import { remove } from 'lodash'
 
-import { Pages } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
 import {
   recommendationsSelector,
@@ -31,6 +31,7 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -195,31 +196,33 @@ const LiveTimeRecommendations = () => {
           : renderBody()}
       </div>
       {instanceId && (
-        <div className={styles.footer}>
-          <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
-          <EuiText className={styles.text}>
-            {'Run '}
-            <PopoverRunAnalyze
-              isShowPopover={isShowApproveRun}
-              setIsShowPopover={setIsShowApproveRun}
-              onApproveClick={handleClickDbAnalysisLink}
-              popoverContent={
-                    connectionType === ConnectionType.Cluster
-                      ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
-                      : ANALYZE_TOOLTIP_MESSAGE
-                  }
-            >
-              <EuiLink
-                className={styles.link}
-                onClick={() => setIsShowApproveRun(true)}
-                data-testid="footer-db-analysis-link"
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <div className={styles.footer}>
+            <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
+            <EuiText className={styles.text}>
+              {'Run '}
+              <PopoverRunAnalyze
+                isShowPopover={isShowApproveRun}
+                setIsShowPopover={setIsShowApproveRun}
+                onApproveClick={handleClickDbAnalysisLink}
+                popoverContent={
+                        connectionType === ConnectionType.Cluster
+                          ? ANALYZE_CLUSTER_TOOLTIP_MESSAGE
+                          : ANALYZE_TOOLTIP_MESSAGE
+                      }
               >
-                Database Analysis
-              </EuiLink>
-            </PopoverRunAnalyze>
-            {' to get more tips'}
-          </EuiText>
-        </div>
+                <EuiLink
+                  className={styles.link}
+                  onClick={() => setIsShowApproveRun(true)}
+                  data-testid="footer-db-analysis-link"
+                >
+                  Database Analysis
+                </EuiLink>
+              </PopoverRunAnalyze>
+              {' to get more tips'}
+            </EuiText>
+          </div>
+        </FeatureFlagComponent>
       )}
     </div>
   )

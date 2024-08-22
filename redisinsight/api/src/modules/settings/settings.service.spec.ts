@@ -5,7 +5,7 @@ import {
   mockAgreementsRepository, mockAppSettings,
   mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSessionMetadata, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
-  MockType, mockUserId,
+  MockType,
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
@@ -95,11 +95,14 @@ describe('SettingsService', () => {
         theme: null,
         scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
         batchSize: WORKBENCH_CONFIG.countBatch,
+        dateFormat: null,
+        timezone: null,
         agreements: null,
       });
 
       expect(eventEmitter.emit).not.toHaveBeenCalled();
     });
+
     it('should return some application settings already defined by user', async () => {
       agreementsRepository.getOrCreate.mockResolvedValue(mockAgreements);
       settingsRepository.getOrCreate.mockResolvedValue(mockSettings);
@@ -114,6 +117,7 @@ describe('SettingsService', () => {
         },
       });
     });
+
     it('should throw InternalServerError', async () => {
       agreementsRepository.getOrCreate.mockRejectedValue(new Error('some error'));
 
@@ -187,6 +191,8 @@ describe('SettingsService', () => {
 
       const dto: UpdateSettingsDto = {
         batchSize: 6,
+        dateFormat: 'hh-mmm-ss',
+        timezone: 'UTC',
         agreements: new Map(Object.entries({
           notifications: false,
         })),
@@ -197,6 +203,8 @@ describe('SettingsService', () => {
         ...mockSettings,
         data: {
           batchSize: 6,
+          dateFormat: 'hh-mmm-ss',
+          timezone: 'UTC',
         },
 
       });

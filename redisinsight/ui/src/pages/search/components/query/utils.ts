@@ -97,6 +97,7 @@ export const getCommandSuggestions = (
 }
 
 export const getGeneralSuggestions = (
+  foundArg: any,
   commandContext: CommandContext,
   cursorContext: CursorContext,
   fields: any[],
@@ -105,9 +106,7 @@ export const getGeneralSuggestions = (
   forceHide?: boolean
   helpWidgetData?: any
 } => {
-  const { command, prevArgs } = commandContext
   const { range } = cursorContext
-  const foundArg = findCurrentArgument(command?.arguments || [], prevArgs)
 
   if (foundArg && !foundArg.isComplete) {
     return {
@@ -152,7 +151,7 @@ export const getNextSuggestions = (
     return {
       helpWidgetData: {
         isOpen: !!currentCommandArg,
-        parent: addOwnTokenToArgs(command.name!, command),
+        parent: foundArg?.stopArg,
         currentArg: nextMandatoryArg
       },
       suggestions: []

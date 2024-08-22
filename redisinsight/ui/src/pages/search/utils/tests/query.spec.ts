@@ -1,13 +1,22 @@
 import { addOwnTokenToArgs, findCurrentArgument, generateDetail, splitQueryByArgs } from 'uiSrc/pages/search/utils'
 import { SearchCommand } from 'uiSrc/pages/search/types'
 import { Maybe } from 'uiSrc/utils'
-import { MOCKED_SUPPORTED_COMMANDS } from './mocks'
+import { MOCKED_SUPPORTED_COMMANDS } from '../../mocks/mocks'
 
 const ftSearchCommand = MOCKED_SUPPORTED_COMMANDS['FT.SEARCH']
 const ftAggregateCommand = MOCKED_SUPPORTED_COMMANDS['FT.AGGREGATE']
 
 const ftAggreageTests = [
-  { args: [''], result: null },
+  {
+    args: [''],
+    result: {
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: undefined,
+      stopArg: { name: 'query', type: 'string' }
+    }
+  },
   { args: ['', ''], result: null },
   {
     args: ['index', '"query"', 'APPLY'],
@@ -224,7 +233,15 @@ const ftAggreageTests = [
 ]
 
 const ftSearchTests = [
-  { args: [''], result: null },
+  {
+    args: [''],
+    result: {
+      append: [],
+      isBlocked: true,
+      isComplete: false,
+      parent: undefined,
+      stopArg: { name: 'query', type: 'string' } }
+  },
   { args: ['', ''], result: null },
   {
     args: ['', '', 'SUMMARIZE'],

@@ -1,5 +1,6 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
+import { DefinedArgumentName } from 'uiSrc/pages/search/components/query/constants'
 
 const STRING_DOUBLE = 'string.double'
 
@@ -41,6 +42,13 @@ const generateTokens = (command?: SearchCommand) => {
   return levels
 }
 
+const isQueryAfterIndex = (command?: SearchCommand) => {
+  if (!command) return false
+
+  const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index) || -2
+  return command.arguments?.[index + 1]?.name === DefinedArgumentName.query
+}
+
 export const getRediSearchMonarchTokensProvider = (
   commands: SearchCommand[],
   command?: string
@@ -49,6 +57,7 @@ export const getRediSearchMonarchTokensProvider = (
 
   const keywords = generateKeywords(commands)
   const argTokens = generateTokens(currentCommand)
+  const isHighlightQuery = isQueryAfterIndex(currentCommand)
 
   return (
     {
@@ -86,9 +95,9 @@ export const getRediSearchMonarchTokensProvider = (
         ],
         'argument.block': argTokens.map((tokens, lvl) => [`(${tokens.join('|')})\\b`, `argument.block.${lvl}`]),
         index: [
-          [/"([^"\\]|\\.)*"/, { token: 'index', next: '@query' }],
-          [/'([^'\\]|\\.)*'/, { token: 'index', next: '@query' }],
-          [/[a-zA-Z_]\w*/, { token: 'index', next: '@query' }],
+          [/"([^"\\]|\\.)*"/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
+          [/'([^'\\]|\\.)*'/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
+          [/[a-zA-Z_]\w*/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
           { include: 'root' } // Fallback to the root state if nothing matches
         ],
         query: [

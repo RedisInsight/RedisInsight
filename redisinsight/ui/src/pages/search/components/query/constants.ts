@@ -10,7 +10,7 @@ export const options = merge(defaultMonacoOptions,
     }
   })
 
-export const SUPPORTED_COMMANDS_LIST = ['FT.SEARCH', 'FT.AGGREGATE']
+export const SUPPORTED_COMMANDS_LIST = ['FT.SEARCH', 'FT.AGGREGATE', 'FT.PROFILE', 'FT.EXPLAIN']
 
 export enum DefinedArgumentName {
   index = 'index',

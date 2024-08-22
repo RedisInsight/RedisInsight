@@ -1,12 +1,13 @@
 import { decode, encode } from 'msgpackr'
 // eslint-disable-next-line import/order
 import { Buffer } from 'buffer'
-import { isUndefined } from 'lodash'
+import { isUndefined, get } from 'lodash'
 import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
 import { Parser } from 'pickleparser'
 import JSONBigInt from 'json-bigint'
 import { format as formatDateFns } from 'date-fns'
+import { store } from 'uiSrc/slices/store'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
 import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat } from 'uiSrc/constants'
@@ -26,6 +27,7 @@ import {
   bufferToFloat32Array,
   checkTimestamp,
   convertTimestampToMilliseconds,
+  formatTimestamp,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
@@ -159,7 +161,8 @@ const formattingBuffer = (
           // formatting to DateTime only from timestamp(the number of milliseconds since January 1, 1970, UTC).
           // if seconds - add milliseconds (since JS Date works only with milliseconds)
           const timestamp = convertTimestampToMilliseconds(value)
-          return { value: formatDateFns(timestamp, DATETIME_FORMATTER_DEFAULT), isValid: true }
+          const config = get(store.getState(), 'user.settings.config', null)
+          return { value: formatTimestamp(timestamp, config?.dateFormat, config?.timezone), isValid: true }
         }
       } catch (e) {
         // if error return default

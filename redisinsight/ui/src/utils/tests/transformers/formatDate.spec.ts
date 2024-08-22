@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import { DATETIME_FORMATTER_DEFAULT } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { checkDateTimeFormat, formatTimestamp, secondsToMinutes } from 'uiSrc/utils'
 
 const defaultValue = new Date('2023-10-05T12:34:56Z')
@@ -73,7 +73,9 @@ describe('checkDateTimeFormat', () => {
   it.each(checkDateTimeFormatTests)('should be output: %s, for value: $s',
     (input, output) => {
       const result = checkDateTimeFormat(input)
-      expect(result).toBe(output)
+      const resultUTC = checkDateTimeFormat(input, TimezoneOption.UTC)
+      expect(result.valid).toBe(output)
+      expect(resultUTC.valid).toBe(output)
     })
 })
 

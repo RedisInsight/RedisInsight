@@ -9,6 +9,7 @@ import {
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   formatLongName,
+  formatTimestamp,
   formattingBuffer,
   stringToBuffer
 } from 'uiSrc/utils'
@@ -22,6 +23,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
+import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
@@ -46,6 +48,7 @@ const StreamDataViewWrapper = (props: Props) => {
   const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType: browserViewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
+  const config = useSelector(userSettingsConfigSelector)
 
   const dispatch = useDispatch()
 
@@ -253,7 +256,7 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id }: StreamEntryDto) {
       const idStr = bufferToString(id, viewFormat)
       const timestamp = idStr.split('-')?.[0]
-      const formattedTimestamp = timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : getFormatTime(timestamp)
+      const formattedTimestamp = timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : formatTimestamp(timestamp, config?.dateFormat, config?.timezone)
 
       return (
         <div>

@@ -1,8 +1,9 @@
 import { addMilliseconds, format as formatDateFns, formatDistanceToNow, isValid } from 'date-fns'
 import { format as formatDateTZ, toZonedTime } from 'date-fns-tz'
-import { DATETIME_FORMATTER_DEFAULT } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { truncateNumberToFirstUnit } from './truncateTTL'
 import { IS_NUMBER_REGEX, checkTimestamp } from '../validations'
+import { Nullable } from '../types'
 
 export const lastConnectionFormat = (date?: Date) => (date
   ? `${formatDistanceToNow(new Date(date), { addSuffix: true })}`
@@ -32,12 +33,15 @@ export const secondsToMinutes = (time: number) => {
   return `${minutes} minute${minutes === 1 ? '' : 's'}`
 }
 
-export const checkDateTimeFormat = (format: string): boolean => {
+export const checkDateTimeFormat = (
+  format: string,
+  timeZone: TimezoneOption = TimezoneOption.Local
+): { valid: boolean, error: Nullable<string> } => {
   try {
-    const dateString = formatDateFns(new Date(), format)
-    return !!dateString
-  } catch (e) {
-    return false
+    const dateString = formatDateInternal(new Date(), format, timeZone)
+    return { valid: !!dateString, error: null }
+  } catch (e: any) {
+    return { valid: false, error: e.message }
   }
 }
 
@@ -55,16 +59,15 @@ export const convertTimestampToMilliseconds = (value: string): number => {
   }
 }
 
-const formatDateInternal = (date: Date, format: string, timeZone: string) => {
-  if (timeZone === 'local' || !timeZone) {
+const formatDateInternal = (date: Date, format: string, timeZone: TimezoneOption) => {
+  if (timeZone === TimezoneOption.Local || !timeZone) {
     return formatDateFns(date, format)
   }
   const zonedDate = toZonedTime(date, timeZone)
-  console.log('zonedDate: ', zonedDate, 'formatDateTZ(zonedDate, format, { timeZone }): ', formatDateTZ(zonedDate, format, { timeZone }))
   return formatDateTZ(zonedDate, format, { timeZone })
 }
 
-const formatStringTimestamp = (value: string, format: string, timezone: string): string => {
+const formatStringTimestamp = (value: string, format: string, timezone: TimezoneOption): string => {
 // check for string to be a valid value for datetime formatting
   if (!IS_NUMBER_REGEX.test(value) && isValid(new Date(value))) {
     return formatDateInternal(new Date(value), format, timezone)
@@ -76,7 +79,11 @@ const formatStringTimestamp = (value: string, format: string, timezone: string):
   return value
 }
 
-export const formatTimestamp = (value: string | Date | number, format: string = DATETIME_FORMATTER_DEFAULT, timezone: string = 'local'): string => {
+export const formatTimestamp = (
+  value: string | Date | number,
+  format: string = DATETIME_FORMATTER_DEFAULT,
+  timezone: TimezoneOption = TimezoneOption.Local
+): string => {
   try {
     if ((value instanceof Date) && Object.prototype.toString.call(value) === '[object Date]') {
       return formatDateInternal(value, format, timezone)

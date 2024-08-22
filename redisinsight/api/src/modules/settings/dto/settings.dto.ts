@@ -18,6 +18,11 @@ import { IAgreementSpec } from 'src/modules/settings/models/agreements.interface
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
 
+export enum TimezoneOption {
+  Local = 'local',
+  UTC = 'UTC',
+}
+
 export class GetAgreementsSpecResponse {
   @ApiProperty({
     description: 'Version of agreements specification.',
@@ -81,12 +86,12 @@ export class GetAppSettingsResponse {
 
   @ApiProperty({
     description: 'Applied application timezone',
-    type: String,
+    enum: TimezoneOption,
     example: 'local',
   })
   @Expose()
   @Default(null)
-  timezone: string = null;
+  timezone: TimezoneOption = null;
 
   @ApiProperty({
     description: 'Applied the threshold for scan operation.',

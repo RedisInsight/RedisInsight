@@ -1,22 +1,21 @@
 import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { DATETIME_FORMATTER_DEFAULT } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { formatTimestamp } from 'uiSrc/utils'
 
-export interface Prop {
+export interface Props {
   date: Date | string | number
   truncate?: number
 }
 
-const FormatedDate = ({ date, truncate }: Prop) => {
+const FormatedDate = ({ date, truncate }: Props) => {
   const config = useSelector(userSettingsConfigSelector)
   const dateFormat = config?.dateFormat || DATETIME_FORMATTER_DEFAULT
-  const timezone = config?.timezone || 'local'
+  const timezone = config?.timezone || TimezoneOption.Local
 
   const formatedDate = formatTimestamp(date, dateFormat, timezone)
-  return date.toString()
 
   if (truncate && dateFormat.length > truncate) {
     return (

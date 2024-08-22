@@ -152,4 +152,10 @@ describe('BulkUpload', () => {
       }
     })
   })
+
+  it('should contain the upload warning text', () => {
+    render(<BulkUpload onCancel={jest.fn()} />)
+
+    expect(screen.getByText('Use files only from trusted authors to avoid automatic execution of malicious code.')).toBeInTheDocument()
+  })
 })

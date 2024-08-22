@@ -35,6 +35,7 @@ import {
   RecommendationVoting,
 } from './recommendation'
 import { FormatedDate } from './formated-date'
+import { UploadWarning } from './upload-warning'
 
 export { FullScreen } from './full-screen'
 
@@ -80,5 +81,6 @@ export {
   RecommendationBody,
   RecommendationBadges,
   RecommendationBadgesLegend,
-  FormatedDate
+  FormatedDate,
+  UploadWarning,
 }

@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
+import { EuiTableFieldDataColumnType, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 import { IDataStreams } from 'uiSrc/slices/interfaces'
@@ -20,65 +20,6 @@ type DataStreamsData = {
   lastArrival?: string
 }
 
-const columns: EuiBasicTableColumn<DataStreamsData>[] = [
-  {
-    name: 'Stream name',
-    field: 'name',
-    sortable: true,
-    render: (name: string) => (
-      <EuiToolTip content={name}>
-        <span>{formatLongName(name, 30, 0, '...')}</span>
-      </EuiToolTip>
-    ),
-    width: '20%'
-  },
-  {
-    name: 'Total',
-    field: 'total',
-    sortable: true
-  },
-  {
-    name: 'Pending',
-    field: 'pending',
-    sortable: true
-  },
-  {
-    name: 'Inserted',
-    field: 'inserted',
-    sortable: true
-  },
-  {
-    name: 'Updated',
-    field: 'updated',
-    sortable: true
-  },
-  {
-    name: 'Deleted',
-    field: 'deleted',
-    sortable: true
-  },
-  {
-    name: 'Filtered',
-    field: 'filtered',
-    sortable: true
-  },
-  {
-    name: 'Rejected',
-    field: 'rejected',
-    sortable: true
-  },
-  {
-    name: 'Deduplicated',
-    field: 'deduplicated',
-    sortable: true
-  },
-  {
-    name: 'Last arrival',
-    field: 'lastArrival',
-    sortable: true
-  }
-]
-
 interface Props {
   data: IDataStreams
   loading: boolean
@@ -94,7 +35,78 @@ const DataStreams = ({ data, loading, onRefresh, onRefreshClicked, onChangeAutoR
       name: key,
       ...dataStream
     }
-  }).concat([{ name: 'Total', ...(data?.totals || {}) }])
+  })
+
+  const totals = data?.totals
+
+  const columns: EuiTableFieldDataColumnType<DataStreamsData>[] = [
+    {
+      name: 'Stream name',
+      field: 'name',
+      sortable: true,
+      render: (name: string) => (
+        <EuiToolTip content={name}>
+          <span>{formatLongName(name, 30, 0, '...')}</span>
+        </EuiToolTip>
+      ),
+      width: '20%',
+      footer: 'Total',
+    },
+    {
+      name: 'Total',
+      field: 'total',
+      sortable: true,
+      footer: () => totals?.total || '0',
+    },
+    {
+      name: 'Pending',
+      field: 'pending',
+      sortable: true,
+      footer: () => totals?.pending || '0',
+    },
+    {
+      name: 'Inserted',
+      field: 'inserted',
+      sortable: true,
+      footer: () => totals?.inserted || '0',
+    },
+    {
+      name: 'Updated',
+      field: 'updated',
+      sortable: true,
+      footer: () => totals?.updated || '0',
+    },
+    {
+      name: 'Deleted',
+      field: 'deleted',
+      sortable: true,
+      footer: () => totals?.deleted || '0',
+    },
+    {
+      name: 'Filtered',
+      field: 'filtered',
+      sortable: true,
+      footer: () => totals?.filtered || '0',
+    },
+    {
+      name: 'Rejected',
+      field: 'rejected',
+      sortable: true,
+      footer: () => totals?.rejected || '0',
+    },
+    {
+      name: 'Deduplicated',
+      field: 'deduplicated',
+      sortable: true,
+      footer: () => totals?.deduplicated || '0',
+    },
+    {
+      name: 'Last arrival',
+      field: 'lastArrival',
+      sortable: true,
+      footer: '',
+    }
+  ]
 
   return (
     <Panel>

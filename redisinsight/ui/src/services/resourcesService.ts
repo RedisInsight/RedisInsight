@@ -1,10 +1,12 @@
 import axios from 'axios'
+import { CustomHeaders } from 'uiSrc/constants/api'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
 const { apiPort } = window.app?.config || { apiPort: process.env.RI_APP_PORT }
 const baseApiUrl = process.env.RI_BASE_API_URL
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isWebApp = process.env.RI_APP_TYPE === 'web'
+const hostedApiBaseUrl = process.env.RI_HOSTED_API_BASE_URL
 
 let BASE_URL = !isDevelopment && isWebApp ? '/' : `${baseApiUrl}:${apiPort}/`
 
@@ -15,8 +17,13 @@ if (window.__RI_PROXY_PATH__) {
 export const RESOURCES_BASE_URL = BASE_URL
 
 const resourcesService = axios.create({
-  baseURL: RESOURCES_BASE_URL,
+  baseURL: hostedApiBaseUrl || RESOURCES_BASE_URL,
+  withCredentials: !!hostedApiBaseUrl,
 })
+
+export const setResourceCsrfHeader = (token: string) => {
+  resourcesService.defaults.headers.common[CustomHeaders.CsrfToken] = token
+}
 
 // TODO: it seems it's shoudn't be location.origin
 // TODO: check all cases and rename this to getResourcesUrl

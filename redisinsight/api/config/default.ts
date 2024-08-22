@@ -130,6 +130,7 @@ export default {
   analytics: {
     writeKey: process.env.RI_SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
     flushInterval: parseInt(process.env.RI_ANALYTICS_FLUSH_INTERVAL, 10) || 3000,
+    startEvents: process.env.RI_ANALYTICS_START_EVENTS ? process.env.RI_ANALYTICS_START_EVENTS === 'true' : false,
   },
   logger: {
     logLevel: process.env.RI_LOG_LEVEL || 'info', // log level

@@ -122,7 +122,7 @@ export default defineConfig({
       RI_APP_TYPE: process.env.RI_APP_TYPE,
       RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
       RI_SOCKET_TRANSPORTS: process.env.RI_SOCKET_TRANSPORTS,
-      RI_SOCKET_CREDENTIALS: process.env.RI_SOCKET_CREDENTIALS === 'true',
+      RI_SOCKET_CREDENTIALS: process.env.RI_SOCKET_CREDENTIALS,
       RI_HOSTED_SOCKET_PROXY_PATH: process.env.RI_HOSTED_SOCKET_PROXY_PATH,
     },
   },

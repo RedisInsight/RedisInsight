@@ -8,7 +8,7 @@ import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import {
   addOwnTokenToArgs,
-  findCurrentArgInQuery, findCurrentArgument,
+  findCurrentArgInQuery,
   getRange,
   getRediSearchSignutureProvider,
   setCursorPositionAtTheEnd,
@@ -229,6 +229,7 @@ const Query = (props: Props) => {
       return asSuggestionsRef([], false)
     }
 
+    // TODO: change to more generic logic
     setSelectedIndex(allArgs[1] || '')
     setSelectedCommand(commandName)
 

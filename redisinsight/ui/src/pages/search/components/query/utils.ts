@@ -165,18 +165,19 @@ export const getNextSuggestions = (
 }
 
 export const isIndexComplete = (index: string) => {
-  if (!index) return false
-  if (index.startsWith('"')) {
-    if (index.length < 2) return false
-    if (!index.endsWith('"')) return false
-    return !index.endsWith('\\', -1)
+  if (index.length === 0) return false
+
+  const firstChar = index[0]
+  const lastChar = index[index.length - 1]
+
+  if (firstChar !== '"' && firstChar !== "'") return true
+  if (index.length === 1 && (firstChar === '"' || firstChar === "'")) return false
+  if (firstChar !== lastChar) return false
+
+  let escape = false
+  for (let i = 1; i < index.length - 1; i++) {
+    escape = index[i] === '\\' && !escape
   }
 
-  if (index.startsWith("'")) {
-    if (index.length < 2) return false
-    if (!index.endsWith("'")) return false
-    return !index.endsWith('\\', -1)
-  }
-
-  return true
+  return !escape
 }

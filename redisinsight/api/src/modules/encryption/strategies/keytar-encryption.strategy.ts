@@ -26,6 +26,10 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
 
   constructor() {
     try {
+      if (!ENCRYPTION_CONFIG.keytar) {
+        return;
+      }
+
       // Have to require keytar here since during tests of keytar module
       // at some point it threw an error when OS secure storage was unavailable
       // Since it is difficult to reproduce we keep module require here to be
@@ -100,6 +104,10 @@ export class KeytarEncryptionStrategy implements IEncryptionStrategy {
    * Basically just try to get a password and checks if this call fails
    */
   async isAvailable(): Promise<boolean> {
+    if (!ENCRYPTION_CONFIG.keytar) {
+      return false;
+    }
+
     try {
       await this.keytar.getPassword(SERVICE, ACCOUNT);
       return true;

@@ -12,9 +12,10 @@ const staticDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resources
   ? join(process['resourcesPath'], 'static')
   : join(__dirname, '..', 'static');
 
-const defaultsDir = process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath']
-  ? join(process['resourcesPath'], 'defaults')
-  : join(__dirname, '..', 'defaults');
+const defaultsDir = process.env.RI_DEFAULTS_DIR
+  || ((process.env.RI_BUILD_TYPE === 'ELECTRON' && process['resourcesPath'])
+    ? join(process['resourcesPath'], 'defaults')
+    : join(__dirname, '..', 'defaults'));
 
 const proxyPath = trim(process.env.RI_PROXY_PATH, '/');
 
@@ -71,6 +72,7 @@ export default {
     base: process.env.RI_BASE || '/',
     proxyPath,
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
+    agreementsPath: process.env.RI_AGREEMENTS_PATH,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
@@ -84,6 +86,7 @@ export default {
     excludeAuthRoutes: [],
   },
   encryption: {
+    keytar: process.env.RI_ENCRYPTION_KEYTAR ? process.env.RI_ENCRYPTION_KEYTAR === 'true' : true, // enabled by default
     encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),
     encryptionAlgorithm: process.env.RI_ENCRYPTION_ALGORYTHM || 'aes-256-cbc',
   },
@@ -128,6 +131,7 @@ export default {
   analytics: {
     writeKey: process.env.RI_SEGMENT_WRITE_KEY || 'SOURCE_WRITE_KEY',
     flushInterval: parseInt(process.env.RI_ANALYTICS_FLUSH_INTERVAL, 10) || 3000,
+    startEvents: process.env.RI_ANALYTICS_START_EVENTS ? process.env.RI_ANALYTICS_START_EVENTS === 'true' : false,
   },
   logger: {
     logLevel: process.env.RI_LOG_LEVEL || 'info', // log level

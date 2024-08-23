@@ -52,12 +52,13 @@ const OAuthSsoForm = ({
   const submitIsDisabled = () => !isEmpty(validationErrors)
 
   const SubmitButton = ({
-    text = '',
+    text,
     disabled,
-  }: { disabled: boolean, text?: string }) => (
+  }: { disabled: boolean, text: string }) => (
     <EuiToolTip
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
+      data-testid="btn-submit-tooltip"
       content={disabled ? (
         <>
           <p>Email must be in the format</p>

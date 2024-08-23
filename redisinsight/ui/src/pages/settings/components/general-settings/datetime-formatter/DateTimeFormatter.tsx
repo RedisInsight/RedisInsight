@@ -92,7 +92,7 @@ const DateTimeFormatter = () => {
   }
 
   const showError = !!error || !formik.values.customFormat
-  const getBtnIconType = () => (showError ? 'iInCircle' : saveFormatSucceed ? icheck : undefined)
+  const getBtnIconType = () => (showError ? 'iInCircle' : (saveFormatSucceed ? icheck : undefined))
 
   const handleFormatCheck = (format = formik.values.format, timezone = formik.values.timezone) => {
     const { valid, error: errorMsg } = checkDateTimeFormat(format, timezone)
@@ -186,7 +186,7 @@ const DateTimeFormatter = () => {
           <div className={styles.radioLabelTextContainer}>
             <EuiText color="subdued" className={styles.radioLabelText}>Custom</EuiText>
           </div>
-          {formik.values.selectedRadioOption === DatetimeRadioOption.Custom ? (
+          {formik.values.selectedRadioOption === DatetimeRadioOption.Custom && (
             <>
               <EuiFieldText
                 className={styles.datetimeInput}
@@ -216,7 +216,7 @@ const DateTimeFormatter = () => {
                 </EuiButton>
               </EuiToolTip>
             </>
-          ) : null}
+          )}
         </div>)
     }
   ]

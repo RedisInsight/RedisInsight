@@ -1,4 +1,4 @@
-import { addMilliseconds, format as formatDateFns, formatDistanceToNow, isValid } from 'date-fns'
+import { addMilliseconds, format as formatDateFns, formatDistanceToNow, isValid, isDate } from 'date-fns'
 import { format as formatDateTZ, toZonedTime } from 'date-fns-tz'
 import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { truncateNumberToFirstUnit } from './truncateTTL'
@@ -85,7 +85,7 @@ export const formatTimestamp = (
   timezone: TimezoneOption = TimezoneOption.Local
 ): string => {
   try {
-    if ((value instanceof Date) && Object.prototype.toString.call(value) === '[object Date]') {
+    if (isDate(value)) {
       return formatDateInternal(value, format, timezone)
     }
     return formatStringTimestamp(value.toString(), format, timezone)

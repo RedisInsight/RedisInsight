@@ -8,7 +8,6 @@ import { mockSentinelMasterDto } from 'src/__mocks__/redis-sentinel';
 import { pick } from 'lodash';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { DatabaseOverview } from 'src/modules/database/models/database-overview';
-import { ClientContext, ClientMetadata } from 'src/common/models';
 import {
   mockSshOptionsBasic,
   mockSshOptionsBasicEntity,
@@ -28,6 +27,8 @@ export const mockDatabasePasswordPlain = 'some pass';
 export const mockDatabaseSentinelMasterPasswordEncrypted = 'database.sentinelMasterPassword_ENCRYPTED';
 
 export const mockDatabaseSentinelMasterPasswordPlain = 'some sentinel pass';
+
+export const mockDBSize = 1;
 
 export const mockDatabase = Object.assign(new Database(), {
   id: mockDatabaseId,
@@ -205,12 +206,6 @@ export const mockNewDatabase = Object.assign(new Database(), {
   new: true,
 });
 
-export const mockClientMetadata: ClientMetadata = {
-  sessionMetadata: undefined,
-  databaseId: mockDatabase.id,
-  context: ClientContext.Common,
-};
-
 export const mockDatabaseOverview: DatabaseOverview = {
   version: '6.2.4',
   usedMemory: 1,
@@ -275,6 +270,7 @@ export const mockDatabaseInfoProvider = jest.fn(() => ({
   determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),
+  getRedisDBSize: jest.fn().mockResolvedValue(mockDBSize),
   getClientListInfo: jest.fn().mockReturnValue(mockRedisClientListResult),
 }));
 

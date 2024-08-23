@@ -11,6 +11,7 @@ import {
     Vector32BitFormatter,
     Vector64BitFormatter
 } from './formatters';
+import { DataTimeFormatter } from './formatters/DataTime';
 
 interface IFormatter {
     format: string,
@@ -36,7 +37,8 @@ export const formatters: IFormatter[] = [
     BinaryFormatter,
     PickleFormatter,
     Vector32BitFormatter,
-    Vector64BitFormatter
+    Vector64BitFormatter,
+    DataTimeFormatter
 ];
 
 export const binaryFormattersSet: IFormatter[] = [
@@ -65,9 +67,11 @@ export const formattersWithTooltipSet: IFormatter[] = [
     ProtobufFormatter,
     PHPFormatter,
     JavaFormatter,
-    PickleFormatter,
-    Vector32BitFormatter,
-    Vector64BitFormatter
+    PickleFormatter
+];
+export const vectorFormattersSet: IFormatter[] = [
+    Vector64BitFormatter,
+    Vector32BitFormatter
 ];
 export const notEditableFormattersSet: IFormatter[] = [
     ProtobufFormatter,

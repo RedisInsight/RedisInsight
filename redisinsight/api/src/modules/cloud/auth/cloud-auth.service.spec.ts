@@ -18,7 +18,7 @@ import {
   mockGithubIdpCloudAuthStrategy,
   mockGoogleIdpCloudAuthStrategy,
   mockTokenResponse,
-  mockTokenResponseNew
+  mockTokenResponseNew,
 } from 'src/__mocks__/cloud-auth';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -31,8 +31,8 @@ import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudAuthIdpType, CloudAuthStatus } from 'src/modules/cloud/auth/models';
 import {
-  CloudOauthMisconfigurationException,
   CloudOauthMissedRequiredDataException,
+  CloudOauthUnexpectedErrorException,
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
 import { InternalServerErrorException } from '@nestjs/common';
@@ -216,17 +216,17 @@ describe('CloudAuthService', () => {
           error: 'bad request',
           error_description: 'some unknown error message',
         },
-      )).rejects.toThrow(CloudOauthMisconfigurationException);
+      )).rejects.toThrow(CloudOauthUnexpectedErrorException);
     });
     it('should throw an error if error field in query parameters (CloudOauthMissedRequiredDataException)', async () => {
       expect(service['authRequests'].size).toEqual(1);
       await expect(service['callback'](
         {
           ...mockCloudAuthGoogleCallbackQueryObject,
-          error: 'bad request',
-          error_description: 'Some properties are missing: email and lastName',
+          error: 'access_denied',
+          error_description: 'Some required properties are missing: email and lastName',
         },
-      )).rejects.toThrow(new CloudOauthMissedRequiredDataException('Some properties are missing: email and lastName'));
+      )).rejects.toThrow(new CloudOauthMissedRequiredDataException('Some required properties are missing: email and lastName'));
     });
     it('should throw an error if request not found', async () => {
       expect(service['authRequests'].size).toEqual(1);

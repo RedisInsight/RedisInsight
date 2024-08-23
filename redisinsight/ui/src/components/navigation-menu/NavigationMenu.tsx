@@ -15,16 +15,11 @@ import {
 import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
-import { PageNames, Pages } from 'uiSrc/constants'
+import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { getRouterLinkProps } from 'uiSrc/services'
 import { appFeaturePagesHighlightingSelector, removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { connectedInstanceSelector as connectedRdiInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import {
-  appInfoSelector,
-} from 'uiSrc/slices/app/info'
-import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
 import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
 import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
@@ -41,16 +36,17 @@ import PipelineStatisticsSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics.
 import PipelineStatisticsActiveSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics_active.svg'
 import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
 import Divider from 'uiSrc/components/divider/Divider'
-import { BuildType } from 'uiSrc/constants/env'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
+import { FeatureFlagComponent } from 'uiSrc/components'
 
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
 
+import { RedisLogo } from './components/redis-logo/RedisLogo'
 import styles from './styles.module.scss'
 
 const workbenchPath = `/${PageNames.workbench}`
@@ -69,6 +65,7 @@ interface INavigations {
   getClassName: () => string
   getIconType: () => string
   onboard?: any
+  featureFlag?: FeatureFlags
 }
 
 const NavigationMenu = () => {
@@ -81,7 +78,6 @@ const NavigationMenu = () => {
   const { workspace } = useSelector(appContextSelector)
   const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
   const { id: connectedRdiInstanceId = '' } = useSelector(connectedRdiInstanceSelector)
-  const { server } = useSelector(appInfoSelector)
   const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
 
   const isRdiWorkspace = workspace === AppWorkspace.RDI
@@ -158,6 +154,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
       },
+      featureFlag: FeatureFlags.disabledByEnv,
     },
     {
       tooltipText: 'Pub/Sub',
@@ -222,78 +219,102 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SettingsActiveSVG : SettingsSVG
       },
+      featureFlag: FeatureFlags.disabledByEnv,
     },
   ]
 
-  const renderNavItem = (nav: INavigations) => (
-    <React.Fragment key={nav.tooltipText}>
-      {renderOnboardingTourWithChild(
-        (
-          <HighlightedFeature
-            {...getAdditionPropsForHighlighting(nav.pageName)}
-            key={nav.tooltipText}
-            isHighlight={!!highlightedPages[nav.pageName]?.length}
-            dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
-            tooltipPosition="right"
-            transformOnHover
-          >
-            <EuiToolTip content={nav.tooltipText} position="right">
-              <div className={styles.navigationButtonWrapper}>
-                <EuiButtonIcon
-                  className={nav.getClassName()}
-                  iconType={nav.getIconType()}
-                  aria-label={nav.ariaLabel}
-                  onClick={nav.onClick}
-                  data-testid={nav.dataTestId}
-                />
-                {nav.isBeta && (<EuiBadge className={styles.betaLabel}>BETA</EuiBadge>)}
-              </div>
-            </EuiToolTip>
-          </HighlightedFeature>
-        ),
-        { options: nav.onboard },
-        nav.isActivePage
-      )}
-    </React.Fragment>
-  )
+  const renderNavItem = (nav: INavigations) => {
+    const fragment = (
+      <React.Fragment key={nav.tooltipText}>
+        {renderOnboardingTourWithChild(
+          (
+            <HighlightedFeature
+              {...getAdditionPropsForHighlighting(nav.pageName)}
+              key={nav.tooltipText}
+              isHighlight={!!highlightedPages[nav.pageName]?.length}
+              dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+              tooltipPosition="right"
+              transformOnHover
+            >
+              <EuiToolTip content={nav.tooltipText} position="right">
+                <div className={styles.navigationButtonWrapper}>
+                  <EuiButtonIcon
+                    className={nav.getClassName()}
+                    iconType={nav.getIconType()}
+                    aria-label={nav.ariaLabel}
+                    onClick={nav.onClick}
+                    data-testid={nav.dataTestId}
+                  />
+                  {nav.isBeta && (<EuiBadge className={styles.betaLabel}>BETA</EuiBadge>)}
+                </div>
+              </EuiToolTip>
+            </HighlightedFeature>
+          ),
+          { options: nav.onboard },
+          nav.isActivePage
+        )}
+      </React.Fragment>
+    )
+
+    return nav.featureFlag
+      ? (
+        <FeatureFlagComponent
+          name={nav.featureFlag}
+          key={nav.tooltipText}
+          enabledByDefault
+        >
+          {fragment}
+        </FeatureFlagComponent>
+      )
+      : fragment
+  }
+
+  const renderPublicNavItem = (nav: INavigations) => {
+    const fragment = (
+      <HighlightedFeature
+        key={nav.tooltipText}
+        isHighlight={!!highlightedPages[nav.pageName]?.length}
+        dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+        transformOnHover
+      >
+        <EuiToolTip content={nav.tooltipText} position="right">
+          <EuiButtonIcon
+            className={nav.getClassName()}
+            iconType={nav.getIconType()}
+            aria-label={nav.ariaLabel}
+            onClick={nav.onClick}
+            data-testid={nav.dataTestId}
+          />
+        </EuiToolTip>
+      </HighlightedFeature>
+    )
+
+    return nav.featureFlag
+      ? (
+        <FeatureFlagComponent
+          name={nav.featureFlag}
+          key={nav.tooltipText}
+          enabledByDefault
+        >
+          {fragment}
+        </FeatureFlagComponent>
+      )
+      : fragment
+  }
 
   return (
     <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
       <div className={styles.container}>
-        <EuiToolTip
-          content={server?.buildType === BuildType.RedisStack ? 'Edit database' : isRdiWorkspace ? 'Redis Data Integration' : 'Redis Databases'}
-          position="right"
-        >
-          <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-            <EuiLink {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)} className={styles.logo} data-test-subj="home-page-btn">
-              <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />
-            </EuiLink>
-          </span>
-        </EuiToolTip>
+        <RedisLogo isRdiWorkspace={isRdiWorkspace} />
         {connectedInstanceId && !isRdiWorkspace && (privateRoutes.map(renderNavItem))}
         {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
       </div>
       <div className={styles.bottomContainer}>
-        <NotificationMenu />
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <NotificationMenu />
+        </FeatureFlagComponent>
         <HelpMenu />
-        {publicRoutes.map((nav) => (
-          <HighlightedFeature
-            key={nav.tooltipText}
-            isHighlight={!!highlightedPages[nav.pageName]?.length}
-            dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
-            transformOnHover
-          >
-            <EuiToolTip content={nav.tooltipText} position="right">
-              <EuiButtonIcon
-                className={nav.getClassName()}
-                iconType={nav.getIconType()}
-                aria-label={nav.ariaLabel}
-                onClick={nav.onClick}
-                data-testid={nav.dataTestId}
-              />
-            </EuiToolTip>
-          </HighlightedFeature>
-        ))}
+        {publicRoutes.map(renderPublicNavItem)}
         <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         <Divider
           colorVariable="separatorNavigationColor"

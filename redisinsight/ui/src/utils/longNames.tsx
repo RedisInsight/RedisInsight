@@ -1,7 +1,8 @@
 import React from 'react'
-import { RedisString } from 'uiSrc/slices/interfaces'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { replaceSpaces } from 'uiSrc/utils/transformers'
-import { bufferToString } from './formatters'
+import { KeyValueFormat } from 'uiSrc/constants'
+import { bufferToString, formattingBuffer } from './formatters'
 
 export function formatLongName(
   name = '',
@@ -17,6 +18,19 @@ export function formatLongName(
   const startPart = currentName.substring(0, maxNameLength - endPartLength - separator.length)
   const endPart = currentName.substring(currentName.length - endPartLength)
   return `${startPart}${separator}${endPart}`
+}
+
+export function createTooltipContent(
+  value: string | JSX.Element,
+  bufferValue: RedisResponseBuffer,
+  viewFormatProp: KeyValueFormat,
+  props = {}
+) {
+  if (React.isValidElement(value)) {
+    return formattingBuffer(bufferValue, viewFormatProp, { tooltip: true, ...props }).value
+  }
+
+  return formatLongName(value as string)
 }
 
 export function formatNameShort(name = '') {

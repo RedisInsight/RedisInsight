@@ -20,6 +20,7 @@ import {
 import {
   RdiPipelineDeployFailedException,
   RdiPipelineInternalServerErrorException,
+  parseErrorMessage,
   wrapRdiPipelineError,
 } from 'src/modules/rdi/exceptions';
 import {
@@ -89,8 +90,8 @@ export class ApiRdiClient extends RdiClient {
     try {
       const response = await this.client.get(`${RdiUrl.GetConfigTemplate}/${pipelineType}/${dbType}`);
       return response.data;
-    } catch (error) {
-      throw wrapRdiPipelineError(error);
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -98,8 +99,8 @@ export class ApiRdiClient extends RdiClient {
     try {
       const response = await this.client.get(`${RdiUrl.GetJobTemplate}/${pipelineType}`);
       return response.data;
-    } catch (error) {
-      throw wrapRdiPipelineError(error);
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -113,8 +114,8 @@ export class ApiRdiClient extends RdiClient {
       const actionId = response.data.action_id;
 
       return await this.pollActionStatus(actionId);
-    } catch (error) {
-      throw wrapRdiPipelineError(error, error?.response?.data?.message);
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
     }
   }
 
@@ -160,7 +161,8 @@ export class ApiRdiClient extends RdiClient {
         data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
-      return { status: RdiStatisticsStatus.Fail, error: e.message };
+      const message: string = parseErrorMessage(e);
+      return { status: RdiStatisticsStatus.Fail, error: message };
     }
   }
 

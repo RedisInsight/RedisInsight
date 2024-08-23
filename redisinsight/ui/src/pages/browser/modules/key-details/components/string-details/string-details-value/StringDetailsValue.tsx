@@ -179,6 +179,33 @@ const StringDetailsValue = (props: Props) => {
     })
   }
 
+  const renderValue = (value: string) => {
+    const textEl = (
+      <EuiText
+        className={styles.stringValue}
+        onClick={() => isEditable && setIsEdit(true)}
+        style={{ whiteSpace: 'break-spaces' }}
+        data-testid="string-value"
+      >
+        {areaValue !== ''
+          ? value
+          : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
+      </EuiText>
+    )
+
+    return (
+      <EuiToolTip
+        title={!isValid ? noEditableText : undefined}
+        anchorClassName={styles.tooltipAnchor}
+        className={styles.tooltip}
+        position="left"
+        data-testid="string-value-tooltip"
+      >
+        {textEl}
+      </EuiToolTip>
+    )
+  }
+
   return (
     <>
       <div className={styles.container} ref={containerRef} data-testid="string-details">
@@ -191,24 +218,7 @@ const StringDetailsValue = (props: Props) => {
           />
         )}
         {!isEditItem && (
-          <EuiToolTip
-            title={!isValid ? noEditableText : undefined}
-            anchorClassName={styles.tooltipAnchor}
-            className={styles.tooltip}
-            position="left"
-            data-testid="string-value-tooltip"
-          >
-            <EuiText
-              className={styles.stringValue}
-              onClick={() => isEditable && setIsEdit(true)}
-              style={{ whiteSpace: 'break-spaces' }}
-              data-testid="string-value"
-            >
-              {areaValue !== ''
-                ? value
-                : (!isLoading && (<span style={{ fontStyle: 'italic' }}>Empty</span>))}
-            </EuiText>
-          </EuiToolTip>
+          renderValue(value as string)
         )}
         {isEditItem && (
           <InlineItemEditor

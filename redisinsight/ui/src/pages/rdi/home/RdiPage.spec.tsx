@@ -150,7 +150,7 @@ describe('RdiPage', () => {
     expect(screen.getByTestId('connection-form-password-input')).toHaveValue('••••••••••••')
   })
 
-  it('should open empty connection form with when using header button', async () => {
+  it('should open empty connection form with "default" username value when using header button', async () => {
     render(<RdiPage />)
 
     expect(screen.queryByTestId('connection-form')).not.toBeInTheDocument()
@@ -161,7 +161,7 @@ describe('RdiPage', () => {
 
     expect(screen.getByTestId('connection-form-name-input')).toHaveValue('')
     expect(screen.getByTestId('connection-form-url-input')).toHaveValue('')
-    expect(screen.getByTestId('connection-form-username-input')).toHaveValue('')
+    expect(screen.getByTestId('connection-form-username-input')).toHaveValue('default')
     expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
   })
 

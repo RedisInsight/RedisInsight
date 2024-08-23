@@ -108,6 +108,13 @@ export const findCurrentArgument = (
     }
   }
 
+  if (args[prev.length] && !args[prev.length].optional) {
+    return {
+      ...getArgumentSuggestions([], args.slice(prev.length)),
+      parent: undefined
+    }
+  }
+
   return null
 }
 
@@ -344,4 +351,22 @@ export const addOwnTokenToArgs = (token: string, command: SearchCommand) => {
     return ({ ...command, arguments: [{ token, type: TokenType.PureToken }, ...command.arguments] })
   }
   return command
+}
+
+export const findCurrentArgInQuery = (args: string[], command: SearchCommand) => {
+  if (!command.arguments || !command.arguments.length) return null
+
+  let argIndex = 0
+  args.forEach((arg) => {
+    for (let i = argIndex; i < command.arguments!.length; i++) {
+      if (command.arguments![i]?.optional && command.arguments![i]?.token?.toUpperCase() !== arg?.toUpperCase()) {
+        continue
+      }
+
+      argIndex = i + 1
+      break
+    }
+  })
+
+  return command.arguments[argIndex]
 }

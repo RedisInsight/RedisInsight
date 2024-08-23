@@ -8,13 +8,13 @@ import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import {
   addOwnTokenToArgs,
-  findCurrentArgument,
+  findCurrentArgInQuery,
   getRange,
   getRediSearchSignutureProvider,
   setCursorPositionAtTheEnd,
   splitQueryByArgs
 } from 'uiSrc/pages/search/utils'
-import { SearchCommand } from 'uiSrc/pages/search/types'
+import { CommandContext, CursorContext, SearchCommand } from 'uiSrc/pages/search/types'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
@@ -25,9 +25,9 @@ import {
   getFieldsSuggestions,
   getIndexesSuggestions,
   asSuggestionsRef,
-  getMandatoryArgumentSuggestions,
-  getOptionalSuggestions,
-  getCommandsSuggestions, isIndexComplete
+  getCommandsSuggestions,
+  isIndexComplete,
+  getGeneralSuggestions
 } from './utils'
 
 export interface Props {
@@ -223,44 +223,66 @@ const Query = (props: Props) => {
       return asSuggestionsRef([], false)
     }
 
+    // TODO: change to more generic logic
     setSelectedIndex(allArgs[1] || '')
     setSelectedCommand(commandName)
 
-    // cover query
-    if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.query) {
-      updateHelpWidget(true, addOwnTokenToArgs(commandName, command), command?.arguments?.[prevArgs.length])
-
-      if (prevCursorChar === '@') {
-        helpWidgetRef.current.isOpen = false
-        return asSuggestionsRef(getFieldsSuggestions(attributesRef.current, range), false)
-      }
-
-      return asSuggestionsRef([], false)
-    }
+    const currentCommandArg = findCurrentArgInQuery(prevArgs, command)
 
     // cover index
-    if (command?.arguments?.[prevArgs.length]?.name === DefinedArgumentName.index) {
-      updateHelpWidget(true, addOwnTokenToArgs(commandName, command), command?.arguments?.[prevArgs.length])
+    if (currentCommandArg?.name === DefinedArgumentName.index) {
+      updateHelpWidget(true, addOwnTokenToArgs(commandName, command), currentCommandArg)
+      return getIndexSuggestions(command, prevArgs.length, currentOffsetArg, range)
+    }
 
-      // we do not suggest indexes if there is something next
-      if (currentOffsetArg) return asSuggestionsRef([], false)
-      if (indexesRef.current.length) return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range))
-      return asSuggestionsRef([])
+    // cover query
+    if (currentCommandArg?.name === DefinedArgumentName.query) {
+      updateHelpWidget(true, addOwnTokenToArgs(commandName, command), currentCommandArg)
+
+      return getQuerySuggestions(prevCursorChar, range)
     }
 
     if (isCursorInQuotes || nextCursorChar?.trim()) return asSuggestionsRef([])
-    if (prevArgs.length < 2) return asSuggestionsRef([])
     if ((prevCursorChar?.trim() || isCursorInQuotes) && isEscapedSuggestions.current) return asSuggestionsRef([])
     isEscapedSuggestions.current = false
 
-    const foundArg = findCurrentArgument(command?.arguments || [], prevArgs)
-    updateHelpWidget(!!foundArg?.stopArg, foundArg?.parent, foundArg?.stopArg)
+    const cursorContext: CursorContext = { isCursorInQuotes, prevCursorChar, nextCursorChar, currentOffsetArg, range }
+    const commandContext: CommandContext = { commandName, command, prevArgs, allArgs, currentCommandArg }
 
-    if (foundArg && !foundArg.isComplete) return getMandatoryArgumentSuggestions(foundArg, attributesRef.current, range)
-    if (!foundArg || foundArg.isComplete) {
-      return getOptionalSuggestions(command, foundArg, allArgs, range, currentOffsetArg)
+    const { suggestions, forceHide, helpWidgetData } = getGeneralSuggestions(
+      commandContext,
+      cursorContext,
+      attributesRef.current
+    )
+
+    if (helpWidgetData) updateHelpWidget(helpWidgetData.isOpen, helpWidgetData.parent, helpWidgetData.currentArg)
+    return asSuggestionsRef(suggestions, forceHide)
+  }
+
+  const getIndexSuggestions = (
+    command: SearchCommand,
+    prevArgsLength: number,
+    currentOffsetArg: Nullable<string>,
+    range: monacoEditor.IRange
+  ) => {
+    if (currentOffsetArg) return asSuggestionsRef([], false)
+    if (indexesRef.current.length) {
+      const isNextArgQuery = command?.arguments?.[prevArgsLength + 1]?.name === DefinedArgumentName.query
+      return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range, isNextArgQuery))
     }
     return asSuggestionsRef([])
+  }
+
+  const getQuerySuggestions = (
+    prevCursorChar: string,
+    range: monacoEditor.IRange
+  ) => {
+    if (prevCursorChar === '@') {
+      helpWidgetRef.current.isOpen = false
+      return asSuggestionsRef(getFieldsSuggestions(attributesRef.current, range), false)
+    }
+
+    return asSuggestionsRef([], false)
   }
 
   return (

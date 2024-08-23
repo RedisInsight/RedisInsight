@@ -672,5 +672,50 @@ export const MOCKED_SUPPORTED_COMMANDS = {
     ],
     since: '1.1.0',
     group: 'search'
+  },
+
+  'FT.PROFILE': {
+    summary: 'Performs a `FT.SEARCH` or `FT.AGGREGATE` command and collects performance information',
+    complexity: 'O(N)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'querytype',
+        type: 'oneof',
+        arguments: [
+          {
+            name: 'search',
+            type: 'pure-token',
+            token: 'SEARCH'
+          },
+          {
+            name: 'aggregate',
+            type: 'pure-token',
+            token: 'AGGREGATE'
+          }
+        ]
+      },
+      {
+        name: 'limited',
+        type: 'pure-token',
+        token: 'LIMITED',
+        optional: true
+      },
+      {
+        name: 'queryword',
+        type: 'pure-token',
+        token: 'QUERY'
+      },
+      {
+        name: 'query',
+        type: 'string'
+      }
+    ],
+    since: '2.2.0',
+    group: 'search',
+    provider: 'redisearch'
   }
 }

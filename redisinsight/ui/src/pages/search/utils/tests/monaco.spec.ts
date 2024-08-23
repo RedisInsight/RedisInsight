@@ -1,5 +1,5 @@
 import { getRediSearchSignutureProvider } from 'uiSrc/pages/search/utils'
-import { MOCKED_SUPPORTED_COMMANDS } from 'uiSrc/pages/search/utils/tests/mocks'
+import { MOCKED_SUPPORTED_COMMANDS } from 'uiSrc/pages/search/mocks/mocks'
 import { SearchCommand } from 'uiSrc/pages/search/types'
 
 const ftAggregateCommand = MOCKED_SUPPORTED_COMMANDS['FT.AGGREGATE']

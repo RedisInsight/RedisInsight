@@ -145,7 +145,7 @@ const ConnectionForm = (props: Props) => {
                       fullWidth
                       placeholder="Enter the RDI Redis username"
                       maxLength={500}
-                      append={<AppendInfo content="The RDI REST API authentication is using the RDI REDIS username and password." />}
+                      append={<AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />}
                       {...field}
                     />
                   )}
@@ -175,7 +175,7 @@ const ConnectionForm = (props: Props) => {
                           form.setFieldValue('password', '')
                         }
                       }}
-                      append={<AppendInfo content="The RDI REST API authentication is using the RDI REDIS username and password." />}
+                      append={<AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />}
                     />
                   )}
                 </Field>

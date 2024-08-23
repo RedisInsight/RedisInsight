@@ -159,6 +159,9 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
   ): Promise<RedisClient> {
     this.logger.debug('Creating ioredis standalone client');
 
+    // Additional validation
+    ClientMetadata.validate(clientMetadata);
+
     let tnl: SshTunnel;
 
     try {
@@ -217,6 +220,9 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClient> {
+    // Additional validation
+    ClientMetadata.validate(clientMetadata);
+
     let tnls: SshTunnel[] = [];
     let standaloneClient: RedisClient;
     let rootNodes = [{
@@ -292,6 +298,9 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClient> {
+    // Additional validation
+    ClientMetadata.validate(clientMetadata);
+
     const config = await this.getRedisSentinelOptions(clientMetadata, database, options);
 
     return new Promise((resolve, reject) => {

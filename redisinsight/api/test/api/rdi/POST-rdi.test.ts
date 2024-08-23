@@ -69,10 +69,11 @@ describe('POST /rdi', () => {
         before: () => {
           nock(validInputData.url).post(`/${RdiUrl.Login}`).query(true).reply(401, {
             message: 'Unauthorized',
+            detail: 'Unauthorized'
           });
         },
         responseBody: {
-          message: 'Authorization failed',
+          message: 'Unauthorized',
           statusCode: 401,
           error: 'RdiUnauthorized',
           errorCode: 11402,

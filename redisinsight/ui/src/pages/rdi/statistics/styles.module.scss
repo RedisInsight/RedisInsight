@@ -5,6 +5,20 @@
   position: relative;
 }
 
+.cover {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: 0.8;
+  background-color: var(--euiColorLightestShade);
+}
+
 .bodyContainer {
   :global {
     .euiPanel:first-child {

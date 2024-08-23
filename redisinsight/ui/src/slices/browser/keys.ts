@@ -519,6 +519,7 @@ export function fetchPatternKeysAction(
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
+      const scanThreshold  = state.user.settings.config?.scanThreshold || SCAN_COUNT_DEFAULT;
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
 
@@ -528,7 +529,7 @@ export function fetchPatternKeysAction(
           ApiEndpoints.KEYS
         ),
         {
-          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false, scanThreshold
         },
         {
           params: { encoding },
@@ -593,6 +594,7 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
       sourceKeysFetch = CancelToken.source()
 
       const state = stateInit()
+      const scanThreshold = state.user.settings.config?.scanThreshold ?? SCAN_COUNT_DEFAULT;
       const { search: match, filter: type } = state.browser.keys
       const { encoding } = state.app.info
       const { data, status } = await apiService.post(
@@ -601,7 +603,7 @@ export function fetchMorePatternKeysAction(oldKeys: IKeyPropTypes[] = [], cursor
           ApiEndpoints.KEYS
         ),
         {
-          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false,
+          cursor, count, type, match: match || DEFAULT_SEARCH_MATCH, keysInfo: false, scanThreshold
         },
         {
           params: { encoding },

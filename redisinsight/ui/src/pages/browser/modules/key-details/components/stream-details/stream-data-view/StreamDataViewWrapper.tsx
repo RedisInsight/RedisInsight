@@ -8,6 +8,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
+  createTooltipContent,
   formatLongName,
   formattingBuffer,
   stringToBuffer
@@ -22,6 +23,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
+import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
@@ -98,9 +100,10 @@ const StreamDataViewWrapper = (props: Props) => {
             label: field,
             render: () => {
               const { value: decompressedName } = decompressingBuffer(name, compressor)
-              const value = name ? bufferToString(name) : ''
-              const { value: formattedValue, isValid } = formattingBuffer(decompressedName || stringToBuffer(''), viewFormatProp)
-              const tooltipContent = formatLongName(value)
+              const buffer = decompressedName || stringToBuffer('')
+              const { value: formattedValue, isValid } = formattingBuffer(buffer, viewFormatProp, { skipVector: true })
+              const tooltipContent = createTooltipContent(formattedValue, buffer, viewFormatProp, { skipVector: true })
+
               return (
                 <>
                   {formattedValue ? (
@@ -108,14 +111,11 @@ const StreamDataViewWrapper = (props: Props) => {
                       style={{ display: 'flex', whiteSpace: 'break-spaces', wordBreak: 'break-all', width: 'max-content' }}
                       data-testid={`stream-field-name-${field}`}
                     >
-                      <EuiToolTip
+                      <FormattedValue
+                        value={formattedValue}
                         title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                        anchorClassName="truncateText"
-                        position="bottom"
-                        content={tooltipContent}
-                      >
-                        <>{formattedValue}</>
-                      </EuiToolTip>
+                        tooltipContent={tooltipContent}
+                      />
                     </div>
                   ) : (
                     <div>&nbsp;</div>
@@ -214,8 +214,7 @@ const StreamDataViewWrapper = (props: Props) => {
       const { value: decompressedBufferValue } = decompressingBuffer(values[index]?.value || stringToBuffer(''), compressor)
       // const bufferValue = values[index]?.value || stringToBuffer('')
       const { value: formattedValue, isValid } = formattingBuffer(decompressedBufferValue, viewFormatProp, { expanded })
-      const cellContent = formattedValue?.substring?.(0, 650) ?? formattedValue
-      const tooltipContent = formatLongName(value)
+      const tooltipContent = createTooltipContent(formattedValue, decompressedBufferValue, viewFormatProp)
 
       return (
         <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
@@ -224,18 +223,14 @@ const StreamDataViewWrapper = (props: Props) => {
             className="streamItem"
             data-testid={`stream-entry-field-${id}`}
           >
-            {!expanded && (
-              <EuiToolTip
-                title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                className={styles.tooltip}
-                anchorClassName="streamItem line-clamp-2"
-                position="bottom"
-                content={tooltipContent}
-              >
-                <>{cellContent}</>
-              </EuiToolTip>
-            )}
-            {expanded && formattedValue}
+            <FormattedValue
+              value={formattedValue}
+              title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+              tooltipContent={tooltipContent}
+              expanded={expanded}
+              truncateLength={650}
+              anchorClassName="streamItem line-clamp-2"
+            />
           </div>
         </EuiText>
       )

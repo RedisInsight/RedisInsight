@@ -3,6 +3,8 @@ import { Type } from 'class-transformer';
 import {
   IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Max, Min,
 } from 'class-validator';
+import { BadRequestException } from '@nestjs/common';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export enum ClientContext {
   Common = 'Common',
@@ -40,4 +42,21 @@ export class ClientMetadata {
   @Min(0)
   @Max(2147483647)
   db?: number;
+
+  /**
+   * Validates client metadata required properties to be defined
+   * Must be used in all the places that works with clients
+   * @param clientMetadata
+   */
+  static validate(clientMetadata: ClientMetadata) {
+    // validate session metadata
+    SessionMetadata.validate(clientMetadata?.sessionMetadata);
+
+    if (
+      !clientMetadata?.databaseId
+      || !clientMetadata?.context
+    ) {
+      throw new BadRequestException(ERROR_MESSAGES.INVALID_CLIENT_METADATA);
+    }
+  }
 }

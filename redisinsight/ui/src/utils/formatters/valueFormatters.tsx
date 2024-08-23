@@ -6,9 +6,10 @@ import { serialize, unserialize } from 'php-serialize'
 import { getData } from 'rawproto'
 import { Parser } from 'pickleparser'
 import JSONBigInt from 'json-bigint'
+import { format as formatDateFns } from 'date-fns'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
-import { KeyValueFormat } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   anyToBuffer,
@@ -23,11 +24,17 @@ import {
   Maybe,
   bufferToFloat64Array,
   bufferToFloat32Array,
+  checkTimestamp,
+  convertTimestampToMilliseconds,
+  UTF8ToBuffer,
+  isEqualBuffers,
 } from 'uiSrc/utils'
 import { reSerializeJSON } from 'uiSrc/utils/formatters/json'
 
 export interface FormattingProps {
   expanded?: boolean
+  skipVector?: boolean
+  tooltip?: boolean
 }
 
 const isTextViewFormatter = (format: KeyValueFormat) => [
@@ -105,16 +112,28 @@ const formattingBuffer = (
       }
     }
     case KeyValueFormat.Vector32Bit: {
+      const utfVariant = bufferToUTF8(reply)
       try {
+        if (props?.skipVector) return { value: utfVariant, isValid: true }
+        const bufferFromUtf = UTF8ToBuffer(utfVariant)
+        if (isEqualBuffers(reply, bufferFromUtf)) {
+          return { value: utfVariant, isValid: true }
+        }
         const vector = Array.from(bufferToFloat32Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
       } catch (e) {
-        return { value: bufferToUTF8(reply), isValid: false }
+        return { value: utfVariant, isValid: false }
       }
     }
     case KeyValueFormat.Vector64Bit: {
+      const utfVariant = bufferToUTF8(reply)
       try {
+        if (props?.skipVector) return { value: utfVariant, isValid: true }
+        const bufferFromUtf = UTF8ToBuffer(utfVariant)
+        if (isEqualBuffers(reply, bufferFromUtf)) {
+          return { value: utfVariant, isValid: true }
+        }
         const vector = Array.from(bufferToFloat64Array(reply.data as Uint8Array))
         const value = JSONBigInt.stringify(vector)
         return JSONViewer({ value, useNativeBigInt: false, ...props })
@@ -148,6 +167,20 @@ const formattingBuffer = (
       } catch (e) {
         return { value: bufferToUTF8(reply), isValid: false }
       }
+    }
+    case KeyValueFormat.DateTime: {
+      const value = bufferToUnicode(reply)?.trim()
+      try {
+        if (checkTimestamp(value)) {
+          // formatting to DateTime only from timestamp(the number of milliseconds since January 1, 1970, UTC).
+          // if seconds - add milliseconds (since JS Date works only with milliseconds)
+          const timestamp = convertTimestampToMilliseconds(value)
+          return { value: formatDateFns(timestamp, DATETIME_FORMATTER_DEFAULT), isValid: true }
+        }
+      } catch (e) {
+        // if error return default
+      }
+      return { value, isValid: false }
     }
     default: return { value: bufferToUnicode(reply), isValid: true }
   }

@@ -177,15 +177,21 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
 
     case CustomErrorCodes.RdiDeployPipelineFailure:
       title = 'Pipeline not deployed'
-      message = 'Unfortunately we’ve found some errors in your pipeline.'
+      message = err?.message || 'Unfortunately we’ve found some errors in your pipeline.'
       additionalInfo.errorCode = err.errorCode
       break
 
     case CustomErrorCodes.RdiValidationError:
-      const details = err?.details?.[0] || {}
       title = 'Validation error'
-      message = getRdiValidationMessage(details.msg, details.loc)
-
+      if (isString(err?.details)) {
+        message = err.details
+      } else {
+        const details = err?.details?.[0] || {}
+        message = getRdiValidationMessage(details.msg, details.loc)
+      }
+      if (!message && err?.message) {
+        message = err.message
+      }
       break
 
     default:

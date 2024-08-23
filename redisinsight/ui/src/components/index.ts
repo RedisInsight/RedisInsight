@@ -34,6 +34,7 @@ import {
   RecommendationCopyComponent,
   RecommendationVoting,
 } from './recommendation'
+import { UploadWarning } from './upload-warning'
 
 export { FullScreen } from './full-screen'
 
@@ -79,4 +80,5 @@ export {
   RecommendationBody,
   RecommendationBadges,
   RecommendationBadgesLegend,
+  UploadWarning,
 }

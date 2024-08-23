@@ -58,7 +58,7 @@ describe('GET /rdi/:id/pipeline/schema', () => {
         expect(body).to.eql({
           error: 'RdiUnauthorized',
           errorCode: 11402,
-          message: 'Authorization failed',
+          message: 'Unauthorized',
           statusCode: 401,
         });
       },
@@ -70,6 +70,7 @@ describe('GET /rdi/:id/pipeline/schema', () => {
         nock(testRdiUrl).get(`/${RdiUrl.GetConfigSchema}`).query(true).reply(200, mockRdiConfigSchema);
         nock(testRdiUrl).get(`/${RdiUrl.GetJobsSchema}`).query(true).reply(401, {
           message: 'Request failed with status code 401',
+          detail: 'Unauthorized',
         });
       },
     },

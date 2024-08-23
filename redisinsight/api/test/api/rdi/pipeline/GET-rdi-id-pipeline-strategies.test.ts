@@ -60,7 +60,7 @@ describe('GET /rdi/:id/pipeline/strategies', () => {
         expect(body).to.eql({
           error: 'RdiUnauthorized',
           errorCode: 11402,
-          message: 'Authorization failed',
+          message: 'Unauthorized',
           statusCode: 401,
         });
       },
@@ -71,6 +71,7 @@ describe('GET /rdi/:id/pipeline/strategies', () => {
         });
         nock(testRdiUrl).get(`/${RdiUrl.GetStrategies}`).query(true).reply(401, {
           message: 'Request failed with status code 401',
+          detail: 'Unauthorized',
         });
       },
     },

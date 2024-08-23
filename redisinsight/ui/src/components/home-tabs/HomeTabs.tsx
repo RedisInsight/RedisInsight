@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useHistory, useLocation } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { FeatureFlags, Pages, PageValues } from 'uiSrc/constants'
+import { Pages, PageValues } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { tabs } from './constants'
 
 import styles from './styles.module.scss'
@@ -15,7 +13,6 @@ const HomeTabs = () => {
 
   const history = useHistory()
   const { pathname } = useLocation()
-  const dispatch = useDispatch()
 
   useEffect(() => {
     setActiveTab(pathname.startsWith(Pages.rdi) ? Pages.rdi : Pages.home)
@@ -30,7 +27,6 @@ const HomeTabs = () => {
     })
 
     if (path === Pages.rdi) {
-      dispatch(removeFeatureFromHighlighting(FeatureFlags.rdi))
       history.push(Pages.rdi)
       return
     }

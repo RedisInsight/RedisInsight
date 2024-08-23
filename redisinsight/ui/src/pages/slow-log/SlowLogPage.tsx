@@ -174,7 +174,7 @@ const SlowLogPage = () => {
                         {lastTimestamp && (
                           <>
                             <span>&nbsp;from &nbsp;</span>
-                            <FormatedDate date={lastTimestamp * 1000} truncate={30} />
+                            <FormatedDate date={lastTimestamp * 1000} />
                           </>
                         )})
                       </EuiText>

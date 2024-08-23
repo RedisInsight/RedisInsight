@@ -120,7 +120,7 @@ const MessagesList = (props: Props) => {
 
     return (
       <div style={style} className={styles.item} data-testid={`row-${index}`}>
-        <div className={styles.time}><FormatedDate date={time} truncate={18} /></div>
+        <div className={styles.time}><FormatedDate date={time} /></div>
         <div className={styles.channel}>
           <EuiToolTip
             content={channel}

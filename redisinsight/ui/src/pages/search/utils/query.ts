@@ -1,6 +1,6 @@
 /* eslint-disable no-continue */
 
-import { toNumber, uniqBy } from 'lodash'
+import { toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider } from 'uiSrc/constants'
 import { ArgName, FoundCommandArgument, SearchCommand, SearchCommandTree, TokenType } from '../types'
@@ -27,7 +27,6 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   for (let i = 0; i < query.length; i++) {
     const char = query[i]
     const isAfterOffset = i >= position + (inQuotes ? -1 : 0)
-    if (i === position - 1) isCursorInQuotes = inQuotes
 
     if (escapeNextChar) {
       arg += char
@@ -66,6 +65,8 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
     } else {
       arg += char
     }
+
+    if (i === position - 1) isCursorInQuotes = inQuotes
   }
 
   if (arg.length > 0) {
@@ -105,13 +106,6 @@ export const findCurrentArgument = (
         ...getArgumentSuggestions(pastArgs, commandArgs, parent),
         parent: parent || token
       }
-    }
-  }
-
-  if (args[prev.length] && !args[prev.length].optional) {
-    return {
-      ...getArgumentSuggestions([], args.slice(prev.length)),
-      parent: undefined
     }
   }
 
@@ -242,7 +236,7 @@ export const getArgumentSuggestions = (
   isComplete: boolean
   stopArg: Maybe<SearchCommand>,
   isBlocked: boolean,
-  append: SearchCommand[],
+  append: Array<SearchCommand[]>,
 } => {
   const {
     restArguments,
@@ -261,13 +255,13 @@ export const getArgumentSuggestions = (
       isComplete: false,
       stopArg: stopArgument,
       isBlocked: !isOneOfArgument,
-      append: isOneOfArgument ? stopArgument.arguments! : [],
+      append: isOneOfArgument ? [stopArgument.arguments!] : [],
     }
   }
 
   if (stopArgument && !stopArgument.optional) {
     const isCanAppend = stopArgument?.token || isOneOfArgument
-    const append = isCanAppend ? [isOneOfArgument ? stopArgument.arguments! : stopArgument].flat() : []
+    const append = isCanAppend ? [[isOneOfArgument ? stopArgument.arguments! : stopArgument].flat()] : []
 
     return {
       isComplete: false,
@@ -277,49 +271,83 @@ export const getArgumentSuggestions = (
     }
   }
 
-  const restParentOptionalSuggestions = getRestParentArguments(current?.parent, current?.name, current?.multiple)
-    .filter((arg) => arg.optional && arg.name !== stopArgument?.name
-        && (current?.multiple || arg.name !== current?.name))
-
-  const restOptionalSuggestions = uniqBy(
-    fillArgsByType([...restNotFilledArgs, ...restParentOptionalSuggestions]),
-    'token'
-  )
+  const beforeMandatoryOptionalArgs = getAllRestArguments(current, stopArgument, pastStringArgs)
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {
     isComplete: requiredArgsLength === 0,
     stopArg: stopArgument,
     isBlocked: false,
-    append: restOptionalSuggestions,
+    append: beforeMandatoryOptionalArgs,
   }
 }
 
-export const getRestParentArguments = (
-  parent?: SearchCommandTree,
-  currentArgName?: string,
-  isIncludeOwn: boolean = true,
-  prevArgs: SearchCommand[] = []
-): SearchCommand[] => {
-  if (!currentArgName) return []
+export const getRestArguments = (
+  current: Maybe<SearchCommandTree>,
+  stopArgument: Nullable<SearchCommand>
+): SearchCommandTree[] => {
+  if (!stopArgument) return []
 
-  const currentArgIndex = parent?.arguments?.findIndex((arg) => arg?.name === currentArgName)
-  if (!currentArgIndex) return prevArgs
+  const argumentIndexInArg = current?.arguments
+    ?.findIndex(({ name }) => name === stopArgument?.name) || -1
+  const nextMandatoryIndex = current?.arguments
+    ?.findIndex(({ optional }, i) => !optional && i > argumentIndexInArg) || -1
 
-  const currentRestArgs = parent?.arguments?.slice(currentArgIndex + (isIncludeOwn ? 0 : 1)) || []
+  const beforeMandatoryOptionalArgs = (
+    nextMandatoryIndex > -1
+      ? current?.arguments?.slice(argumentIndexInArg, nextMandatoryIndex)
+      : current?.arguments?.filter(({ optional }) => optional)
+  ) || []
 
-  if (parent?.parent) return getRestParentArguments(parent.parent, parent.name, true, currentRestArgs)
+  const nextMandatoryArg = current?.arguments?.[nextMandatoryIndex]
 
-  return [...currentRestArgs, ...prevArgs]
+  if (nextMandatoryArg?.token) {
+    beforeMandatoryOptionalArgs.unshift(nextMandatoryArg)
+  }
+
+  return fillArgsByType(beforeMandatoryOptionalArgs)
+    .map((arg) => ({
+      ...arg,
+      parent: current
+    }))
 }
 
-export const fillArgsByType = (args: SearchCommand[]): SearchCommand[] => {
+export const getAllRestArguments = (
+  current: Maybe<SearchCommandTree>,
+  stopArgument: Nullable<SearchCommand>,
+  prevStringArgs: string[] = [],
+) => {
+  const appendArgs: Array<SearchCommand[]> = []
+  const currentLvlNextArgs = removeNotSuggestedArgs(
+    prevStringArgs,
+    getRestArguments(current, stopArgument)
+  )
+
+  if (currentLvlNextArgs.length) {
+    appendArgs.push(currentLvlNextArgs)
+  }
+
+  if (current?.parent) {
+    const parentArgs = getAllRestArguments(current.parent, current, [])
+    if (parentArgs?.length) {
+      appendArgs.push(...parentArgs)
+    }
+  }
+
+  return appendArgs
+}
+
+export const removeNotSuggestedArgs = (args: string[], commandArgs: SearchCommandTree[]) =>
+  commandArgs.filter((arg) => arg.token
+    && (arg.multiple || !args.some((queryArg) => queryArg.toUpperCase() === arg.token?.toUpperCase())))
+
+export const fillArgsByType = (args: SearchCommand[], expandBlock = true): SearchCommand[] => {
   const result: SearchCommand[] = []
 
   for (let i = 0; i < args.length; i++) {
     const currentArg = args[i]
 
-    if (currentArg.type === TokenType.OneOf) result.push(...(currentArg?.arguments || []))
+    if (expandBlock && currentArg.type === TokenType.OneOf) result.push(...(currentArg?.arguments || []))
     if (currentArg.type === TokenType.Block) result.push(currentArg.arguments?.[0] as SearchCommand)
     if (currentArg.token) result.push(currentArg)
   }
@@ -351,22 +379,4 @@ export const addOwnTokenToArgs = (token: string, command: SearchCommand) => {
     return ({ ...command, arguments: [{ token, type: TokenType.PureToken }, ...command.arguments] })
   }
   return command
-}
-
-export const findCurrentArgInQuery = (args: string[], command: SearchCommand) => {
-  if (!command.arguments || !command.arguments.length) return null
-
-  let argIndex = 0
-  args.forEach((arg) => {
-    for (let i = argIndex; i < command.arguments!.length; i++) {
-      if (command.arguments![i]?.optional && command.arguments![i]?.token?.toUpperCase() !== arg?.toUpperCase()) {
-        continue
-      }
-
-      argIndex = i + 1
-      break
-    }
-  })
-
-  return command.arguments[argIndex]
 }

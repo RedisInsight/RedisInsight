@@ -48,6 +48,7 @@ redisinsight/ui/style.css.map
 redisinsight/ui/dist
 redisinsight/api/commands
 redisinsight/api/guides
+redisinsight/api/dist-minified
 redisinsight/api/tutorials
 redisinsight/api/content
 redisinsight/ui/dist-stats.html

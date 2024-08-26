@@ -80,15 +80,16 @@ test.after(async() => {
         },
         targets: {
             target: {
-                type: 'redis',
-                host,
-                port,
-                password: password
+                connection: {
+                    type: 'redis',
+                    host,
+                    port,
+                    password: password
+                }
             }
         }
     };
     const config = yaml.dump(configData, { indent: 2 });
-    console.log(JSON.stringify(config));
 
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);
@@ -97,8 +98,8 @@ test.after(async() => {
 
     await t.click(rdiInstancePage.configurationInput);
     const lines = config.split('\n');
-    // the verable shows the level of object depth for input by line in monaco
-    const maxLevelDepth = 3;
+    // the variable shows the level of object depth for input by line in monaco
+    const maxLevelDepth = 4;
     const targetName = 'target';
 
     await rdiInstancePage.MonacoEditor.insertTextByLines(rdiInstancePage.configurationInput, lines, maxLevelDepth);

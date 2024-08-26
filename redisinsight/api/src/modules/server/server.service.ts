@@ -13,6 +13,7 @@ import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
+const ANALYTICS_CONFIG = config.get('analytics') as Config['analytics'];
 const REDIS_STACK_CONFIG = config.get('redisStack') as Config['redisStack'];
 
 @Injectable()
@@ -58,7 +59,7 @@ export class ServerService implements OnApplicationBootstrap {
     });
 
     // do not track start events for non-electron builds
-    if (SERVER_CONFIG?.buildType.toUpperCase() === 'ELECTRON') {
+    if (ANALYTICS_CONFIG.startEvents) {
       this.eventEmitter.emit(AppAnalyticsEvents.Track, {
         event: startEvent,
         eventData: {

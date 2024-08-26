@@ -43,7 +43,7 @@ test('Verify that user can see SSO feature if it is enabled in feature config', 
     await t.expect(myRedisDatabasePage.AuthorizationDialog.gitHubAuth.exists).ok('Github auth button not displayed in Sigh in modal');
     await t.expect(myRedisDatabasePage.AuthorizationDialog.ssoAuth.exists).ok('SSO auth button not displayed in Sigh in modal');
     // await t.click(myRedisDatabasePage.Modal.closeModalButton);
-    await t.pressKey('escape');
+    await t.pressKey('esc');
 
     await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     await t.click(myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);

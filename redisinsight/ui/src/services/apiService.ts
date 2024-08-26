@@ -61,6 +61,14 @@ export const cloudAuthInterceptor = (error: AxiosError) => {
   return Promise.reject(error)
 }
 
+export const hostedAuthInterceptor = (error: AxiosError) => {
+  const { response } = error
+  if (response?.status === 401 && hostedApiBaseUrl) {
+    // provide the current path to redirect back to the same location after login
+    window.location.href = `${envConfig.RI_401_REDIRECT_URL}${window.location.pathname}`
+  }
+}
+
 mutableAxiosInstance.interceptors.request.use(
   requestInterceptor,
   (error) => Promise.reject(error)
@@ -69,6 +77,11 @@ mutableAxiosInstance.interceptors.request.use(
 mutableAxiosInstance.interceptors.response.use(
   undefined,
   cloudAuthInterceptor
+)
+
+mutableAxiosInstance.interceptors.response.use(
+  undefined,
+  hostedAuthInterceptor
 )
 
 export default mutableAxiosInstance

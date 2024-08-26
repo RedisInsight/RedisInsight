@@ -2,30 +2,32 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockClientMetadata,
   mockClusterDatabaseWithTlsAuth,
-  mockClusterRedisClient,
+  mockClusterRedisClient, mockConstantsProvider,
   mockDatabase, mockFeatureRedisClient,
   mockFeatureService,
   mockIoRedisRedisConnectionStrategy,
   mockNodeRedisConnectionStrategy,
   mockSentinelDatabaseWithTlsAuth,
-  mockSentinelRedisClient,
+  mockSentinelRedisClient, mockSessionMetadata,
   mockStandaloneRedisClient,
   MockType,
-} from 'src/__mocks__';
+} from 'src/__mocks__'
 import { Database } from 'src/modules/database/models/database';
 import { RedisClientFactory, RedisClientLib } from 'src/modules/redis/redis.client.factory';
 import { IoredisRedisConnectionStrategy } from 'src/modules/redis/connection/ioredis.redis.connection.strategy';
 import { NodeRedisConnectionStrategy } from 'src/modules/redis/connection/node.redis.connection.strategy';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { LocalRedisClientFactory } from 'src/modules/redis/local.redis.client.factory';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 jest.mock('ioredis', () => ({
   ...jest.requireActual('ioredis') as object,
 }));
 
-describe('RedisClientFactory', () => {
+describe('LocalRedisClientFactory', () => {
   let module: TestingModule;
-  let service: RedisClientFactory;
+  let service: LocalRedisClientFactory;
   let ioredisRedisConnectionStrategy: MockType<IoredisRedisConnectionStrategy>;
   let nodeRedisConnectionStrategy: MockType<NodeRedisConnectionStrategy>;
   let featureService: MockType<FeatureService>;
@@ -33,7 +35,7 @@ describe('RedisClientFactory', () => {
   beforeEach(async () => {
     module = await Test.createTestingModule({
       providers: [
-        RedisClientFactory,
+        LocalRedisClientFactory,
         {
           provide: IoredisRedisConnectionStrategy,
           useFactory: mockIoRedisRedisConnectionStrategy,
@@ -46,10 +48,14 @@ describe('RedisClientFactory', () => {
           provide: FeatureService,
           useFactory: mockFeatureService,
         },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
+        },
       ],
     }).compile();
 
-    service = await module.get(RedisClientFactory);
+    service = await module.get(LocalRedisClientFactory);
     ioredisRedisConnectionStrategy = await module.get(IoredisRedisConnectionStrategy);
     nodeRedisConnectionStrategy = await module.get(NodeRedisConnectionStrategy);
     featureService = await module.get(FeatureService);
@@ -64,7 +70,7 @@ describe('RedisClientFactory', () => {
 
       await service.onModuleInit();
 
-      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
     });
@@ -81,7 +87,7 @@ describe('RedisClientFactory', () => {
 
       await service.onModuleInit();
 
-      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
     });
@@ -93,7 +99,7 @@ describe('RedisClientFactory', () => {
 
       await service.onModuleInit();
 
-      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
     });
@@ -108,7 +114,7 @@ describe('RedisClientFactory', () => {
 
       await service.onModuleInit();
 
-      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
     });
@@ -123,7 +129,7 @@ describe('RedisClientFactory', () => {
 
       await service.onModuleInit();
 
-      expect(featureService.getByName).toHaveBeenCalledWith(KnownFeatures.RedisClient);
+      expect(featureService.getByName).toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.RedisClient);
       expect(service['defaultConnectionStrategy']['lib']) // lib field doesn't exist in the not mocked implementation
         .toEqual(RedisClientLib.IOREDIS);
     });

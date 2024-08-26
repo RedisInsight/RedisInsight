@@ -25,7 +25,7 @@ import { ConstantsModule } from 'src/modules/constants/constants.module';
     SettingsModule.register(),
     CertificateModule.register(),
     DatabaseModule.register(),
-    RedisModule,
+    RedisModule.register(),
     DatabaseRecommendationModule.register(),
     SshModule,
     NestjsFormDataModule,

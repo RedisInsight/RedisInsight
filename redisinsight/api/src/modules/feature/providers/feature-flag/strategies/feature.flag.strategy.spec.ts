@@ -4,7 +4,7 @@ import {
   mockFeaturesConfig,
   mockFeaturesConfigDataComplex, mockFeaturesConfigJson,
   mockFeaturesConfigService,
-  mockServerState,
+  mockServerState, mockSessionMetadata,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -69,14 +69,14 @@ describe('FeatureFlagStrategy', () => {
 
     testCases.forEach((tc) => {
       it(`should return ${tc[1]} for range: [${tc[0]}]`, async () => {
-        expect(await service['isInTargetRange'](tc[0] as number[][])).toEqual(tc[1]);
+        expect(await service['isInTargetRange'](mockSessionMetadata, tc[0] as number[][])).toEqual(tc[1]);
       });
     });
 
     it('should return false in case of any error', async () => {
       featuresConfigService.getControlInfo.mockRejectedValueOnce(new Error('unable to get control info'));
 
-      expect(await service['isInTargetRange']([[0, 100]])).toEqual(false);
+      expect(await service['isInTargetRange'](mockSessionMetadata, [[0, 100]])).toEqual(false);
     });
   });
 

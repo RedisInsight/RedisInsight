@@ -37,7 +37,7 @@ test
         await databaseAPIRequests.deleteAllDatabasesApi();
     })('Verify that insights panel is opened in cloud db if users db does not have some module', async t => {
         await t.click(browserPage.redisearchModeBtn);
-        await t.click(browserPage.closeDialogButton);
+        await t.click(browserPage.Modal.closeModalButton);
         await t.click(browserPage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneConfig.databaseName);
         await t.expect(browserPage.InsightsPanel.sidePanel.exists).ok('Insights panel is not opened');

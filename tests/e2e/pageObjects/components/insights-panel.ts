@@ -2,11 +2,13 @@ import { Selector, t } from 'testcafe';
 import { ExploreTabs } from '../../helpers/constants';
 import { RecommendationsTab } from './recommendations-tab';
 import { ExploreTab } from './explore-tab';
+import { NavigationHeader } from './navigation/navigation-header';
 
 export class InsightsPanel {
+    NavigationHeader = new NavigationHeader();
+
     // CONTAINERS
     sidePanel = Selector('[data-testid=side-panels-insights]');
-    explorePanelButton = Selector('[data-testid=insights-trigger]');
     closeButton = Selector('[data-testid=close-insights-btn]');
     activeTab = Selector('[class*=euiTab-isSelected]');
 
@@ -26,7 +28,7 @@ export class InsightsPanel {
         const isPanelExists = await this.sidePanel.exists;
 
         if (state !== isPanelExists) {
-            await t.click(this.explorePanelButton);
+            await t.click(this.NavigationHeader.insightsTriggerButton);
         }
     }
 

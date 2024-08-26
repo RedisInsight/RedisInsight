@@ -369,6 +369,7 @@ describe('FeatureFlagStrategy', () => {
       isInTargetRangeSpy.mockReturnValueOnce(false);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.InsightsRecommendations],
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
       ))
@@ -378,6 +379,7 @@ describe('FeatureFlagStrategy', () => {
         });
 
       expect(isInTargetRangeSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
       );
       expect(filterSpy).not.toHaveBeenCalled();
@@ -388,6 +390,7 @@ describe('FeatureFlagStrategy', () => {
       filterSpy.mockReturnValueOnce(false);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.InsightsRecommendations],
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
       ))
@@ -397,6 +400,7 @@ describe('FeatureFlagStrategy', () => {
         });
 
       expect(isInTargetRangeSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
       );
       expect(filterSpy).toHaveBeenCalledWith(
@@ -408,6 +412,7 @@ describe('FeatureFlagStrategy', () => {
       filterSpy.mockReturnValueOnce(true);
 
       expect(await service.calculate(
+        mockSessionMetadata,
         knownFeatures[KnownFeatures.InsightsRecommendations],
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
       ))
@@ -417,6 +422,7 @@ describe('FeatureFlagStrategy', () => {
         });
 
       expect(isInTargetRangeSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].perc,
       );
       expect(filterSpy).toHaveBeenCalledWith(
@@ -432,7 +438,7 @@ describe('FeatureFlagStrategy', () => {
         settingsService as unknown as SettingsService,
       );
 
-      expect(await strategy.calculate(knownFeatures[KnownFeatures.InsightsRecommendations]))
+      expect(await strategy.calculate(mockSessionMetadata, knownFeatures[KnownFeatures.InsightsRecommendations]))
         .toEqual({
           name: KnownFeatures.InsightsRecommendations,
           flag: false,

@@ -20,7 +20,7 @@ export abstract class FeatureFlagStrategy {
     protected readonly settingsService: SettingsService,
   ) {}
 
-  abstract calculate(knownFeature: IFeatureFlag, data: any): Promise<Feature>;
+  abstract calculate(sessionMetadata: SessionMetadata, knownFeature: IFeatureFlag, data: any): Promise<Feature>;
 
   static async getCustomConfig(): Promise<object> {
     try {

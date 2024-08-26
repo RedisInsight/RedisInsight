@@ -130,6 +130,7 @@ export class LocalFeatureService extends FeatureService {
             if (knownFeatures[name]) {
               actions.toUpsert.push({
                 ...(await this.featureFlagProvider.calculate(
+                  sessionMetadata,
                   knownFeatures[name],
                   feature,
                 )),

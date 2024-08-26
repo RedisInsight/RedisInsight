@@ -131,7 +131,7 @@ const parseCustomErrorTests = [
       title: 'Invalid email',
       message: (
         <>
-          Email is not recognized. Use an email associated with your organization’s SSO.
+          Invalid email.
         </>
       )
     })],

@@ -94,7 +94,7 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
       title = 'Invalid email'
       message = (
         <>
-          Email is not recognized. Use an email associated with your organization’s SSO.
+          Invalid email.
         </>
       )
       break

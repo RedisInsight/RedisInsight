@@ -11,7 +11,7 @@ import { SessionMetadata } from 'src/common/models';
 export class SessionMetadataAdapter extends IoAdapter {
   private logger = new Logger('SessionMetadataAdapter');
 
-  async bindMessageHandlers(
+  bindMessageHandlers(
     socket: Socket,
     handlers: MessageMappingProperties[],
     transform: (data: any) => Observable<any>,

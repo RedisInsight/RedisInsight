@@ -28,7 +28,16 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: ''
-  })
+  }),
+}))
+
+jest.mock('uiSrc/slices/app/features', () => ({
+  ...jest.requireActual('uiSrc/slices/app/features'),
+  appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
+    appSettings: {
+      flag: true,
+    },
+  }),
 }))
 
 describe('NavigationMenu', () => {

@@ -1,3 +1,4 @@
+import { input } from '@testing-library/user-event/dist/types/event'
 import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
 import {
   bufferToString,
@@ -105,6 +106,7 @@ const getBuffersTest = [
   { input1: anyToBuffer([16, 101, 5435, 116]), input2: anyToBuffer([116, 101, 543]), expected: false },
   { input1: { data: [16, 101, 35, 116] }, input2: anyToBuffer([16, 101, 35, 116]), expected: true },
   { input1: { data: [16, 101, 35, 116] }, input2: { data: [16, 101, 35, 116] }, expected: true },
+  { input1: anyToBuffer([116, 101, 115, 116]), input2: anyToBuffer([116, 101, 115]), expected: false },
 ]
 
 describe('isEqualBuffers', () => {

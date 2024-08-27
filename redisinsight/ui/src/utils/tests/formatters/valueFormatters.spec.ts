@@ -25,7 +25,7 @@ describe('bufferToSerializedFormat', () => {
 
   describe(KeyValueFormat.Vector32Bit, () => {
     describe('should properly serialize', () => {
-      const testValues = [new Float32Array([1.0, 2.0]), new Float32Array([12.12, 13.41])].map((v) => ({
+      const testValues = [new Float32Array([1.0, 2.0]), new Float32Array([12.12, 13.41]), new Float32Array([0.34, 0.63, -0.54, -0.69, 0.98, 0.61])].map((v) => ({
         input: anyToBuffer(v.buffer),
         expected: JSON.stringify(v),
       }))
@@ -177,6 +177,60 @@ describe('stringToSerializedBufferFormat', () => {
 })
 
 describe('formattingBuffer', () => {
+  describe(KeyValueFormat.Vector32Bit, () => {
+    describe('should properly serialize', () => {
+      const floatTestValues = [
+        new Float32Array([1.0, 2.0]),
+        new Float32Array([12.12, 13.41]),
+        new Float32Array([0.34, 0.63, -0.54, -0.69, 0.98, 0.61])
+      ].map((v) => ({
+        input: anyToBuffer(v.buffer),
+        expected: { value: JSON.stringify(v), isValid: true },
+      }))
+      const stringTestValues = [
+        '[1,2.0,3]',
+        'hello',
+        'привет'
+      ].map((v) => ({
+        input: stringToBuffer(v),
+        expected: { value: v, isValid: true },
+      }))
+      test.each(floatTestValues)('test %j', ({ input, expected }) => {
+        expect(formattingBuffer(input, KeyValueFormat.Vector32Bit).isValid).toEqual(expected.isValid)
+      })
+      test.each(stringTestValues)('test %j', ({ input, expected }) => {
+        expect(formattingBuffer(input, KeyValueFormat.Vector32Bit)).toEqual(expected)
+      })
+    })
+  })
+
+  describe(KeyValueFormat.Vector64Bit, () => {
+    describe('should properly serialize', () => {
+      const floatTestValues = [
+        new Float64Array([1.0, 2.0]),
+        new Float64Array([12.12, 13.41]),
+        new Float64Array([0.34, 0.63, -0.54, -0.69, 0.98, 0.61])
+      ].map((v) => ({
+        input: anyToBuffer(v.buffer),
+        expected: { value: JSON.stringify(v), isValid: true },
+      }))
+      const stringTestValues = [
+        '[1,2.0,3]',
+        'hello',
+        'привет'
+      ].map((v) => ({
+        input: stringToBuffer(v),
+        expected: { value: v, isValid: true },
+      }))
+      test.each(floatTestValues)('test %j', ({ input, expected }) => {
+        expect(formattingBuffer(input, KeyValueFormat.Vector64Bit).isValid).toEqual(expected.isValid)
+      })
+      test.each(stringTestValues)('test %j', ({ input, expected }) => {
+        expect(formattingBuffer(input, KeyValueFormat.Vector64Bit)).toEqual(expected)
+      })
+    })
+  })
+
   describe(KeyValueFormat.DateTime, () => {
     describe('should properly format timestamp number', () => {
       // Since we formatting with local timezome, we cannot hardcode the expected string result

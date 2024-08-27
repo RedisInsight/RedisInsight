@@ -9,6 +9,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
+  mockConstantsProvider,
   mockDatabaseFactory,
   mockDatabaseService,
   mockIORedisClient,
@@ -24,6 +25,7 @@ import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentine
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 describe('RedisSentinelService', () => {
   let service: RedisSentinelService;
@@ -48,6 +50,10 @@ describe('RedisSentinelService', () => {
         {
           provide: DatabaseFactory,
           useFactory: mockDatabaseFactory,
+        },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
         },
       ],
     }).compile();

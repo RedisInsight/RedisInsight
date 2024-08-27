@@ -123,4 +123,10 @@ describe('ImportFileModal', () => {
 
     expect(screen.getByTestId('warning')).toHaveTextContent('warning')
   })
+
+  it('should contain the upload warning text', () => {
+    render(<ImportFileModal {...mockProps} />)
+
+    expect(screen.getByText('Use files only from trusted authors to avoid automatic execution of malicious code.')).toBeInTheDocument()
+  })
 })

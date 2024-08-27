@@ -12,6 +12,10 @@ export class AddRdiInstance {
     cancelInstanceBtn = Selector('[data-testid=connection-form-cancel-button]');
 
     connectToRdiForm = Selector('[data-testid=connection-form]');
+    // ICONS
+    urlInputInfoIcon = Selector('[data-testid=connection-form-url-input]').parent('div').parent('div').find('svg');
+    usernameInputInfoIcon = Selector('[data-testid=connection-form-username-input]').parent('div').parent('div').find('svg');
+    passwordInputInfoIcon = Selector('[data-testid=connection-form-password-input]').parent('div').parent('div').find('svg');
 }
 
 /**

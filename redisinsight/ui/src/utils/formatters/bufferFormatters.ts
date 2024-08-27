@@ -15,8 +15,10 @@ import { Nullable } from '../types'
 const decoder = new TextDecoder('utf-8')
 const encoder = new TextEncoder()
 
-const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) =>
-  a?.data?.join(',') === b?.data?.join(',')
+const isEqualBuffers = (a?: Nullable<RedisResponseBuffer>, b?: Nullable<RedisResponseBuffer>) => {
+  if (a?.data?.length !== b?.data?.length) return false
+  return a?.data?.join(',') === b?.data?.join(',')
+}
 
 // eslint-disable-next-line no-control-regex
 const IS_NON_PRINTABLE_ASCII_CHARACTER = /[^ -~\u0007\b\t\n\r]/

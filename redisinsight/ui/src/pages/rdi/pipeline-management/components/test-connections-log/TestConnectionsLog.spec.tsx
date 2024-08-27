@@ -10,20 +10,20 @@ describe('TestConnectionsLog', () => {
     render(<TestConnectionsLog data={mockedData} />)
   })
 
-  it('should be all collapsed nav groups', () => {
+  it('should be a collapsed nav group', () => {
     const mockedData: ITestConnection = {
       fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
-      success: [{ index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }]
+      success: []
     }
     render(<TestConnectionsLog data={mockedData} />)
 
-    expect(screen.getByTestId('success-connections-closed')).toBeInTheDocument()
+    expect(screen.queryByTestId('success-connections-closed')).not.toBeInTheDocument()
     expect(screen.getByTestId('failed-connections-closed')).toBeInTheDocument()
   })
 
   it('should open and collapse other groups', () => {
     const mockedData: ITestConnection = {
-      fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
+      fail: [],
       success: [{ index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }]
     }
     render(<TestConnectionsLog data={mockedData} />)
@@ -32,19 +32,11 @@ describe('TestConnectionsLog', () => {
       within(screen.getByTestId('success-connections-closed')).getByRole('button')
     )
     expect(screen.getByTestId('success-connections-open')).toBeInTheDocument()
-
-    expect(screen.getByTestId('failed-connections-closed')).toBeInTheDocument()
-
-    fireEvent.click(
-      within(screen.getByTestId('failed-connections-closed')).getByRole('button')
-    )
-    expect(screen.getByTestId('failed-connections-open')).toBeInTheDocument()
-    expect(screen.getByTestId('success-connections-closed')).toBeInTheDocument()
   })
 
   it('should show proper items length', () => {
     const mockedData: ITestConnection = {
-      fail: [{ index: 0, status: TestConnectionStatus.Fail, endpoint: 'localhost:1233', error: 'some error' }],
+      fail: [],
       success: [
         { index: 1, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' },
         { index: 2, status: TestConnectionStatus.Success, endpoint: 'localhost:1233' }
@@ -55,8 +47,5 @@ describe('TestConnectionsLog', () => {
     expect(
       within(screen.getByTestId('success-connections-closed')).getByTestId('number-of-connections')
     ).toHaveTextContent('2')
-    expect(
-      within(screen.getByTestId('failed-connections-closed')).getByTestId('number-of-connections')
-    ).toHaveTextContent('1')
   })
 })

@@ -50,9 +50,8 @@ fixture `Upload custom tutorials`
 /* https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4198,
 https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/browse/RI-4318
 */
-// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
-test.skip
-    .before(async t => {
+test
+    .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
@@ -72,8 +71,8 @@ test.skip
         const imageExternalPath = 'Redis Insight screen external';
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
-        await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await browserPage.InsightsPanel.togglePanel(true);
+        const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
         await t.click(tutorials.tutorialOpenUploadButton);
@@ -167,9 +166,8 @@ test
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4352
-// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
-test.skip
-    .before(async t => {
+test
+    .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
         await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
@@ -251,8 +249,7 @@ test.skip
         await browserPage.searchByKeyName('*key1*');
         await verifyKeysDisplayingInTheList(keyNames, true);
     });
-// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
-test.skip
+test
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(

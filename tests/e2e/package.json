@@ -59,7 +59,7 @@
     "selenium-webdriver": "^4.20.0",
     "sqlite3": "^5.1.6",
     "supertest": "^4.0.2",
-    "testcafe": "3.6.0",
+    "testcafe": "3.6.2",
     "testcafe-browser-provider-electron": "0.0.21",
     "testcafe-reporter-html": "1.4.6",
     "testcafe-reporter-json": "2.2.0",

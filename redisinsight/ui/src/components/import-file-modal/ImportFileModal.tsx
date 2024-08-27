@@ -19,6 +19,7 @@ import React from 'react'
 
 import { Nullable } from 'uiSrc/utils'
 
+import { UploadWarning } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -121,6 +122,11 @@ const ImportFileModal = <T,>({
               </div>
             )}
           </EuiFlexItem>
+          {isShowForm && (
+            <EuiFlexItem className={styles.uploadWarningContainer}>
+              <UploadWarning />
+            </EuiFlexItem>
+          )}
         </EuiFlexGroup>
         {data && (
           <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>

@@ -6,7 +6,11 @@ import {
   EuiFlexItem,
   EuiForm,
   EuiFormRow,
+  EuiIcon,
   EuiTitle,
+  EuiToolTip,
+  EuiToolTipProps,
+  ToolTipPositions,
 } from '@elastic/eui'
 import { Field, FieldInputProps, FieldMetaProps, Form, Formik, FormikErrors, FormikHelpers } from 'formik'
 import React, { useEffect, useState } from 'react'
@@ -19,6 +23,10 @@ import { getFormUpdates, Nullable } from 'uiSrc/utils'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
+
+export interface AppendInfoProps extends Omit<EuiToolTipProps, 'children' | 'delay' | 'position'> {
+  position?: ToolTipPositions
+}
 
 export interface ConnectionFormValues {
   name: string
@@ -37,9 +45,21 @@ export interface Props {
 const getInitialValues = (values: RdiInstance | null): ConnectionFormValues => ({
   name: values?.name || '',
   url: values?.url || '',
-  username: values?.username || '',
+  username: values?.username || 'default',
   password: values ? null : ''
 })
+
+const AppendInfo = ({ title, content, ...rest }: AppendInfoProps) => (
+  <EuiToolTip
+    anchorClassName="inputAppendIcon"
+    position="right"
+    title={title}
+    content={content}
+    {...rest}
+  >
+    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+  </EuiToolTip>
+)
 
 const ConnectionForm = (props: Props) => {
   const { onSubmit, onCancel, editInstance, isLoading } = props
@@ -109,8 +129,9 @@ const ConnectionForm = (props: Props) => {
                     <EuiFieldText
                       data-testid="connection-form-url-input"
                       fullWidth
-                      placeholder="Enter URL"
+                      placeholder="Enter the RDI host IP as: https://[IP-Address]"
                       disabled={!!editInstance}
+                      append={<AppendInfo content="The RDI machine servers REST API via port 443. Ensure that Redis Insight can access the RDI host over port 443." />}
                       {...field}
                     />
                   )}
@@ -122,8 +143,9 @@ const ConnectionForm = (props: Props) => {
                     <EuiFieldText
                       data-testid="connection-form-username-input"
                       fullWidth
-                      placeholder="Enter Username"
+                      placeholder="Enter the RDI Redis username"
                       maxLength={500}
+                      append={<AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />}
                       {...field}
                     />
                   )}
@@ -144,7 +166,7 @@ const ConnectionForm = (props: Props) => {
                       data-testid="connection-form-password-input"
                       className={styles.passwordField}
                       fullWidth
-                      placeholder="Enter Password"
+                      placeholder="Enter the RDI Redis password"
                       maxLength={500}
                       {...field}
                       value={isNull(field.value) ? SECURITY_FIELD : field.value}
@@ -153,6 +175,7 @@ const ConnectionForm = (props: Props) => {
                           form.setFieldValue('password', '')
                         }
                       }}
+                      append={<AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />}
                     />
                   )}
                 </Field>

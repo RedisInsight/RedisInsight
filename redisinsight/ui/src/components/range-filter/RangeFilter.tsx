@@ -1,9 +1,7 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
-import { getFormatTime } from 'uiSrc/utils/streamUtils'
-
-import FormatedDate from '../formated-date'
+import { FormatedDate } from '../formated-date'
 import styles from './styles.module.scss'
 
 const buttonString = 'Reset Filter'

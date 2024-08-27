@@ -35,16 +35,15 @@ fixture `Cloud SSO`
 test('Verify that user can see SSO feature if it is enabled in feature config', async t => {
     await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).ok('Cloud Sign in button not displayed when SSO feature enabled');
 
+    // TODO fix once Sign in modal will be available to testcafe https://redislabs.atlassian.net/browse/RI-6048
     // Open Cloud Sign in dialog
-    await t.click(myRedisDatabasePage.promoButton);
+    // await t.click(myRedisDatabasePage.promoButton);
     // Verify that Cloud Sign in dialog has authorization buttons for Electron app
-    await t.expect(myRedisDatabasePage.AuthorizationDialog.authDialog.exists).ok('Cloud Sigh in modal not opened');
-    await t.expect(myRedisDatabasePage.AuthorizationDialog.googleAuth.exists).ok('Google auth button not displayed in Sigh in modal');
-    await t.expect(myRedisDatabasePage.AuthorizationDialog.gitHubAuth.exists).ok('Github auth button not displayed in Sigh in modal');
-    await t.expect(myRedisDatabasePage.AuthorizationDialog.ssoAuth.exists).ok('SSO auth button not displayed in Sigh in modal');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.authDialog.exists).ok('Cloud Sigh in modal not opened');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.googleAuth.exists).ok('Google auth button not displayed in Sigh in modal');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.gitHubAuth.exists).ok('Github auth button not displayed in Sigh in modal');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.ssoAuth.exists).ok('SSO auth button not displayed in Sigh in modal');
     // await t.click(myRedisDatabasePage.Modal.closeModalButton);
-    await t.pressKey('esc');
-    await t.wait(1000);
 
     await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
     await t.click(myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);

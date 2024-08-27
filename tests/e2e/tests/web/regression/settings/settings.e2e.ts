@@ -77,6 +77,7 @@ test('Verify that user can set custom date time format', async t => {
     await t.click(settingsPage.saveCustomFormatButton);
 
     await t.click(settingsPage.NavigationPanel.analysisPageButton);
+    await t.click(memoryEfficiencyPage.databaseAnalysisTab);
     await t.click(memoryEfficiencyPage.newReportBtn);
     await t.expect(enteredDateReqExp.test(await memoryEfficiencyPage.selectedReport.textContent)).ok(`custom format is not working ${enteredFormat}`);
 });

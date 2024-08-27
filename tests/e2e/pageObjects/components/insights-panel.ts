@@ -2,11 +2,8 @@ import { Selector, t } from 'testcafe';
 import { ExploreTabs } from '../../helpers/constants';
 import { RecommendationsTab } from './recommendations-tab';
 import { ExploreTab } from './explore-tab';
-import { NavigationHeader } from './navigation/navigation-header';
 
 export class InsightsPanel {
-    NavigationHeader = new NavigationHeader();
-
     // CONTAINERS
     sidePanel = Selector('[data-testid=side-panels-insights]');
     closeButton = Selector('[data-testid=close-insights-btn]');
@@ -21,23 +18,12 @@ export class InsightsPanel {
     activeTabMask = '[class*=euiTab-isSelected]';
 
     /**
-     * Open/Close  Panel
-     * @param state State of panel
-     */
-    async togglePanel(state: boolean): Promise<void> {
-        const isPanelExists = await this.sidePanel.exists;
-
-        if (state !== isPanelExists) {
-            await t.click(this.NavigationHeader.insightsTriggerButton);
-        }
-    }
-
-    /**
      * get active tab
      */
     async getActiveTabName(): Promise<string> {
         return (this.sidePanel.find(this.activeTabMask)).textContent;
     }
+
     /**
      * Click on Panel tab
      * @param type of the tab
@@ -66,5 +52,4 @@ export class InsightsPanel {
     getInsightsPanel(): Selector {
         return Selector('[class=euiButton__text]').withExactText(ExploreTabs.Tips);
     }
-
 }

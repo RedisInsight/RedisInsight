@@ -67,7 +67,7 @@ test
         const imageExternalPath = 'Redis Insight screen external';
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
@@ -134,7 +134,7 @@ test
         tutorialName = 'Tutorials with manifest';
         const summary = 'Summary for JSON';
 
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.tutorialOpenUploadButton);
         // Verify that user can upload tutorials using a URL
@@ -177,7 +177,7 @@ test
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await tutorials.deleteTutorialByName(tutorialName);
         await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
@@ -192,7 +192,7 @@ test
         const fileStarts = 'Upload';
 
         // Upload custom tutorial
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t
             .click(tutorials.tutorialOpenUploadButton)
@@ -262,7 +262,7 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can open tutorial from links in other tutorials', async t => {
         // Upload custom tutorial
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t
             .click(tutorials.tutorialOpenUploadButton)

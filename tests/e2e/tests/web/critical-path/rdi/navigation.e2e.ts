@@ -80,7 +80,7 @@ test('Verify that context is saved after navigation panel', async() => {
 
 test('Verify that Insight and Sign in buttons are displayed ', async() => {
     await t.expect(rdiInstancePage.NavigationHeader.insightsTriggerButton.exists).ok('Insight panel is not exist');
-    await rdiInstancePage.RdiHeader.InsightsPanel.togglePanel(true);
+    await rdiInstancePage.NavigationHeader.togglePanel(true);
     const tab = await rdiInstancePage.RdiHeader.InsightsPanel.getActiveTabName();
     await t.expect(tab).eql('Tutorials');
     await t.expect(rdiInstancePage.NavigationHeader.cloudSignInButton.exists).ok('sight in button is not exist');

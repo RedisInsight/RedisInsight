@@ -9,21 +9,20 @@ import {
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   createTooltipContent,
-  formatTimestamp,
   formattingBuffer,
   stringToBuffer
 } from 'uiSrc/utils'
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { DATETIME_FORMATTER_DEFAULT, KeyTypes, TableCellTextAlignment, TEXT_FAILED_CONVENT_FORMATTER, TimezoneOption } from 'uiSrc/constants'
+import { KeyTypes, TableCellTextAlignment, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
-import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { FormatedDate } from 'uiSrc/components'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
@@ -48,7 +47,6 @@ const StreamDataViewWrapper = (props: Props) => {
   const { id: instanceId, compressor = null } = useSelector(connectedInstanceSelector)
   const { viewType: browserViewType } = useSelector(keysSelector)
   const { viewFormat: viewFormatProp } = useSelector(selectedKeySelector)
-  const config = useSelector(userSettingsConfigSelector)
 
   const dispatch = useDispatch()
 
@@ -249,18 +247,15 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id }: StreamEntryDto) {
       const idStr = bufferToString(id, viewFormat)
       const timestamp = idStr.split('-')?.[0]
-      const formattedTimestamp = timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : formatTimestamp(
-        timestamp,
-        config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
-        config?.timezone || TimezoneOption.Local
-      )
 
       return (
         <div>
           {id.length < MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP && (
             <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
               <div className="streamItem truncateText" style={{ display: 'flex' }} data-testid={`stream-entry-${id}-date`}>
-                {formattedTimestamp}
+                {timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : (
+                  <FormatedDate date={timestamp} />
+                )}
               </div>
             </EuiText>
           )}

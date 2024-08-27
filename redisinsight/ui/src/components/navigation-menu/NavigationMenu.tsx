@@ -315,8 +315,20 @@ const NavigationMenu = () => {
         </FeatureFlagComponent>
         <HelpMenu />
         {publicRoutes.map(renderPublicNavItem)}
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent
+          name={FeatureFlags.disabledByEnv}
+          enabledByDefault
+          otherwise={(
+            <Divider
+              color="transparent"
+              className="eui-hideFor--xs eui-hideFor--s"
+              variant="middle"
+            />
+          )}
+        >
           <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+        </FeatureFlagComponent>
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
           <Divider
             colorVariable="separatorNavigationColor"
             className="eui-showFor--xs--flex eui-showFor--s--flex"

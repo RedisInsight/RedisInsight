@@ -289,7 +289,7 @@ const GroupsViewWrapper = (props: Props) => {
                 <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
                   <div
                     className="truncateText streamItem"
-                    style={{ display: 'flex' }}
+                    style={{ display: 'flex', maxWidth: '190px' }}
                     data-testid={`stream-group-date-${id}`}
                   >
                     <FormatedDate date={timestamp} />

@@ -5,12 +5,14 @@ import {
 } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { deleteAllKeysFromDB } from '../../../../helpers/keys';
+import { DatabaseHelper } from '../../../../helpers';
 
 const browserPage = new BrowserPage();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const workbenchPage = new WorkbenchPage();
 const settingsPage = new SettingsPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
+const databaseHelper = new DatabaseHelper();
 
 fixture `Add keys`
     .meta({
@@ -19,7 +21,7 @@ fixture `Add keys`
     })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
+        await databaseHelper.acceptLicenseTermsAndAddOSSClusterDatabase(ossClusterConfig);
     })
     .afterEach(async() => {
         await deleteAllKeysFromDB(ossClusterConfig.ossClusterPort, ossClusterConfig.ossClusterPort);

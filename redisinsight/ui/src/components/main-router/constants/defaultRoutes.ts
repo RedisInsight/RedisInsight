@@ -35,6 +35,7 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.pubSub,
     path: Pages.pubSub(':instanceId'),
     component: PubSubPage,
+    featureFlag: FeatureFlags.disabledByEnv,
   },
   {
     path: Pages.analytics(':instanceId'),

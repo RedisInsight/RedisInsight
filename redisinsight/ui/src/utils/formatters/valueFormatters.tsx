@@ -9,7 +9,7 @@ import JSONBigInt from 'json-bigint'
 import { store } from 'uiSrc/slices/store'
 
 import JSONViewer from 'uiSrc/components/json-viewer/JSONViewer'
-import { KeyValueFormat } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, KeyValueFormat, TimezoneOption } from 'uiSrc/constants'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import {
   anyToBuffer,
@@ -177,7 +177,12 @@ const formattingBuffer = (
           // if seconds - add milliseconds (since JS Date works only with milliseconds)
           const timestamp = convertTimestampToMilliseconds(value)
           const config = get(store.getState(), 'user.settings.config', null)
-          return { value: formatTimestamp(timestamp, config?.dateFormat, config?.timezone), isValid: true }
+          return { value: formatTimestamp(
+            timestamp,
+            config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
+            config?.timezone || TimezoneOption.Local,
+          ),
+          isValid: true }
         }
       } catch (e) {
         // if error return default

@@ -5,7 +5,7 @@ import {
   mockAgreementsRepository, mockAppSettings,
   mockEncryptionStrategyInstance, mockKeyEncryptionStrategyInstance, mockSessionMetadata, mockSettings,
   mockSettingsAnalyticsService, mockSettingsRepository,
-  MockType, mockUserId,
+  MockType,
 } from 'src/__mocks__';
 import { UpdateSettingsDto } from 'src/modules/settings/dto/settings.dto';
 import * as AGREEMENTS_SPEC from 'src/constants/agreements-spec.json';
@@ -38,7 +38,6 @@ describe('SettingsService', () => {
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
   let keytarStrategy: MockType<KeytarEncryptionStrategy>;
-  let keyStrategy: MockType<KeyEncryptionStrategy>;
   let eventEmitter: EventEmitter2;
 
   beforeEach(async () => {
@@ -75,13 +74,12 @@ describe('SettingsService', () => {
       ],
     }).compile();
 
-    agreementsRepository = await module.get(AgreementsRepository);
-    settingsRepository = await module.get(SettingsRepository);
-    keytarStrategy = await module.get(KeytarEncryptionStrategy);
-    keyStrategy = await module.get(KeyEncryptionStrategy);
-    analyticsService = await module.get<SettingsAnalytics>(SettingsAnalytics);
-    service = await module.get(SettingsService);
-    eventEmitter = await module.get(EventEmitter2);
+    agreementsRepository = module.get(AgreementsRepository);
+    settingsRepository = module.get(SettingsRepository);
+    keytarStrategy = module.get(KeytarEncryptionStrategy);
+    analyticsService = module.get(SettingsAnalytics);
+    service = module.get(SettingsService);
+    eventEmitter = module.get(EventEmitter2);
   });
 
   describe('getAppSettings', () => {
@@ -93,7 +91,7 @@ describe('SettingsService', () => {
 
       expect(result).toEqual({
         theme: null,
-        scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
+        scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
         batchSize: WORKBENCH_CONFIG.countBatch,
         agreements: null,
       });
@@ -212,7 +210,7 @@ describe('SettingsService', () => {
       expect(analyticsService.sendAnalyticsAgreementChange).not.toHaveBeenCalled();
       expect(analyticsService.sendSettingsUpdatedEvent).toHaveBeenCalledWith(mockAppSettings, {
         ...mockAppSettings,
-        scanThreshold: REDIS_SCAN_CONFIG.countThreshold,
+        scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
         batchSize: WORKBENCH_CONFIG.countBatch,
         theme: null,
       });

@@ -53,6 +53,13 @@ describe('OAuthSignIn', () => {
     fireEvent.click(screen.queryByTestId('sso-oauth') as HTMLButtonElement)
 
     expect(screen.getByTestId('sso-email')).toBeInTheDocument()
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption: OAuthStrategy.SSO,
+        action: OAuthSocialAction.SignIn,
+      }
+    })
 
     await act(async () => {
       fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
@@ -65,9 +72,8 @@ describe('OAuthSignIn', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
-        accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.SignIn,
       }
     })
@@ -86,8 +92,8 @@ describe('OAuthSignIn', () => {
     invokeMock.mockRestore()
 
     const expectedActions = [
-      signIn(),
       setSSOFlow(OAuthSocialAction.SignIn),
+      signIn(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
 

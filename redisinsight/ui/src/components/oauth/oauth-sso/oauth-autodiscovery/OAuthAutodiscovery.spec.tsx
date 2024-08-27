@@ -71,9 +71,9 @@ describe('OAuthAutodiscovery', () => {
     invokeMock.mockRestore()
 
     const expectedActions = [
-      signIn(),
       setSSOFlow(OAuthSocialAction.Import),
-      setOAuthCloudSource(OAuthSocialSource.Autodiscovery)
+      setOAuthCloudSource(OAuthSocialSource.Autodiscovery),
+      signIn(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
 
@@ -88,6 +88,15 @@ describe('OAuthAutodiscovery', () => {
 
     expect(screen.getByTestId('sso-email')).toBeInTheDocument()
 
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption: OAuthStrategy.SSO,
+        action: OAuthSocialAction.Import,
+        source: OAuthSocialSource.Autodiscovery
+      }
+    })
+
     await act(async () => {
       fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
     })
@@ -99,11 +108,9 @@ describe('OAuthAutodiscovery', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
-        accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.Import,
-        source: OAuthSocialSource.Autodiscovery
       }
     })
 
@@ -121,9 +128,9 @@ describe('OAuthAutodiscovery', () => {
     invokeMock.mockRestore()
 
     const expectedActions = [
-      signIn(),
       setSSOFlow(OAuthSocialAction.Import),
-      setOAuthCloudSource(OAuthSocialSource.Autodiscovery)
+      setOAuthCloudSource(OAuthSocialSource.Autodiscovery),
+      signIn(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
 

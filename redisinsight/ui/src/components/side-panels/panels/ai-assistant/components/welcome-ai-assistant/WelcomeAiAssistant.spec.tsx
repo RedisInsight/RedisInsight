@@ -46,9 +46,9 @@ describe('WelcomeAiAssistant', () => {
     fireEvent.click(screen.getByTestId('google-oauth'))
 
     expect(store.getActions()).toEqual([
-      signIn(),
       setSSOFlow(OAuthSocialAction.SignIn),
-      setOAuthCloudSource(OAuthSocialSource.AiChat)
+      setOAuthCloudSource(OAuthSocialSource.AiChat),
+      signIn(),
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -69,6 +69,15 @@ describe('WelcomeAiAssistant', () => {
 
     expect(screen.getByTestId('sso-email')).toBeInTheDocument()
 
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption: OAuthStrategy.SSO,
+        action: OAuthSocialAction.SignIn,
+        source: OAuthSocialSource.AiChat
+      }
+    })
+
     await act(async () => {
       fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
     })
@@ -80,17 +89,15 @@ describe('WelcomeAiAssistant', () => {
     })
 
     expect(store.getActions()).toEqual([
-      signIn(),
       setSSOFlow(OAuthSocialAction.SignIn),
-      setOAuthCloudSource(OAuthSocialSource.AiChat)
+      setOAuthCloudSource(OAuthSocialSource.AiChat),
+      signIn(),
     ])
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
-        accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.SignIn,
-        source: OAuthSocialSource.AiChat
       }
     });
     (sendEventTelemetry as jest.Mock).mockRestore()

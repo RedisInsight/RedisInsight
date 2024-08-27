@@ -72,6 +72,15 @@ describe('OAuthCreateDb', () => {
 
     expect(screen.getByTestId('sso-email')).toBeInTheDocument()
 
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption: OAuthStrategy.SSO,
+        action: OAuthSocialAction.Create,
+        cloudRecommendedSettings: 'enabled'
+      }
+    })
+
     await act(async () => {
       fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
     })
@@ -83,15 +92,13 @@ describe('OAuthCreateDb', () => {
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
-        accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.Create,
-        cloudRecommendedSettings: 'enabled'
       }
     })
 
-    const expectedActions = [signIn(), setIsRecommendedSettingsSSO(true)]
+    const expectedActions = [setIsRecommendedSettingsSSO(true), signIn()]
     expect(store.getActions()).toEqual(expectedActions);
     (sendEventTelemetry as jest.Mock).mockRestore()
   })
@@ -110,7 +117,7 @@ describe('OAuthCreateDb', () => {
       }
     })
 
-    const expectedActions = [signIn(), setIsRecommendedSettingsSSO(true)]
+    const expectedActions = [setIsRecommendedSettingsSSO(true), signIn()]
     expect(store.getActions()).toEqual(expectedActions);
     (sendEventTelemetry as jest.Mock).mockRestore()
   })

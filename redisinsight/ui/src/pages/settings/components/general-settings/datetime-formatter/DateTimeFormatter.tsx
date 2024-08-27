@@ -170,7 +170,8 @@ const DateTimeFormatter = () => {
           </div>
           <EuiSuperSelect
             className={styles.datetimeInput}
-            options={dateTimeOptions}
+            options={dateTimeOptions
+              .map((option) => ({ ...option, 'data-test-subj': `date-option-${option.value}` }))}
             valueOfSelected={formik.values.commonFormat}
             onChange={(option) => onCommonFormatChange(option)}
             disabled={formik.values.selectedRadioOption !== DatetimeRadioOption.Common}
@@ -247,7 +248,8 @@ const DateTimeFormatter = () => {
             <div>
               <EuiSuperSelect
                 className={styles.datetimeInput}
-                options={timezoneOptions}
+                options={timezoneOptions
+                  .map((option) => ({ ...option, 'data-test-subj': `zone-option-${option.value}` }))}
                 valueOfSelected={formik.values.timezone}
                 onChange={(option) => onTimezoneChange(option)}
                 data-test-subj="select-timezone"
@@ -257,7 +259,7 @@ const DateTimeFormatter = () => {
           <EuiFlexItem grow={2}>
             <div className={styles.previewContainer}>
               <EuiText className={styles.dateTimeSubtitle} color="subdued">Preview:</EuiText>
-              <EuiText className={styles.preview}>{preview}</EuiText>
+              <EuiText className={styles.preview} data-testid="data-preview">{preview}</EuiText>
             </div>
           </EuiFlexItem>
         </EuiFlexGroup>

@@ -25,6 +25,18 @@ export class SettingsPage extends BasePage {
     commandsInPipelineInput = Selector('[data-testid=pipeline-bunch-input]');
     pipelineLink = Selector('[data-testid=pipelining-link]');
 
+    //Date and Time Format
+    selectFormatDropdown = Selector('[data-test-subj=select-datetime]');
+    selectTimezoneDropdown = Selector('[data-test-subj=select-timezone]');
+    getDateTimeOption = (option: string): Selector =>
+        Selector(`[data-test-subj^=date-option-${option}]`);
+    getZoneOption = (option: string): Selector =>
+        Selector(`[data-test-subj=zone-option-${option}]`);
+    dataPreview = Selector('[data-testid=data-preview]');
+    customRadioButton = Selector('[id=custom]').sibling();
+    customTextField =  Selector('[data-testid=custom-datetime-input]');
+    saveCustomFormatButton = Selector('[data-testid=datetime-custom-btn]');
+
     /**
      * Change Keys to Scan value
      * @param value Value for scan
@@ -106,5 +118,27 @@ export class SettingsPage extends BasePage {
         if (toValue !== await this.getAnalyticsSwitcherValue()) {
             await t.click(this.switchAnalyticsOption);
         }
+    }
+
+    /**
+     * Select data time option in Settings
+     */
+    async selectDataFormatDropdown(value: string): Promise<void>{
+        await t.click(this.selectFormatDropdown);
+        await t.click(this.getDateTimeOption(value));
+    }
+
+    /**
+     * Select timezone option in Settings
+     */
+    async selectTimeZoneDropdown(value: string): Promise<void>{
+        await t.click(this.selectTimezoneDropdown);
+        await t.click(this.getZoneOption(value));
+    }
+    /**
+     * Enter text in custom field Select timezone option in Settings
+     */
+    async enterTextInCustom(command: string): Promise<void>{
+        await t.typeText(this.customTextField, command, { replace: true });
     }
 }

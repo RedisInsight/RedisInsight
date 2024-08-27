@@ -17,8 +17,6 @@ export class RdiHeader {
     importInput = Selector('[data-testid=import-file-modal-filepicker]');
     confirmUploadingPipelineBatton = Selector('[data-testid=submit-btn]');
 
-    cloudSignInButton = Selector('[data-testid=cloud-sign-in-btn]');
-
     /**
      * Import pipeline
      * @param filePath the name if the file

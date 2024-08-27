@@ -28,14 +28,15 @@ export class SettingsPage extends BasePage {
     //Date and Time Format
     selectFormatDropdown = Selector('[data-test-subj=select-datetime]');
     selectTimezoneDropdown = Selector('[data-test-subj=select-timezone]');
-    getDateTimeOption = (option: string): Selector =>
-        Selector(`[data-test-subj^=date-option-${option}]`);
-    getZoneOption = (option: string): Selector =>
-        Selector(`[data-test-subj=zone-option-${option}]`);
     dataPreview = Selector('[data-testid=data-preview]');
     customRadioButton = Selector('[id=custom]').sibling();
     customTextField =  Selector('[data-testid=custom-datetime-input]');
     saveCustomFormatButton = Selector('[data-testid=datetime-custom-btn]');
+
+    getDateTimeOption = (option: string): Selector =>
+        Selector(`[data-test-subj^=date-option-${option}]`);
+    getZoneOption = (option: string): Selector =>
+        Selector(`[data-test-subj=zone-option-${option}]`);
 
     /**
      * Change Keys to Scan value

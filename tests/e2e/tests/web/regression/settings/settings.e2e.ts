@@ -14,7 +14,7 @@ const settingsPage = new SettingsPage();
 const memoryEfficiencyPage = new MemoryEfficiencyPage();
 const databaseHelper = new DatabaseHelper();
 
-fixture `Add keys`
+fixture `DataTime format setting`
     .meta({
         type: 'regression',
         rte: rte.standalone

@@ -240,7 +240,7 @@ const DateTimeFormatter = () => {
         onChange={(id) => onRadioOptionChange(id)}
       />
       <EuiSpacer size="m" />
-      <EuiText className={styles.dateTimeSubtitle} color="subdued">Timezone</EuiText>
+      <EuiText className={styles.dateTimeSubtitle} color="subdued">Specifies the time zone to be used in Redis Insight:</EuiText>
       <EuiSpacer size="s" />
       <div>
         <EuiFlexGroup alignItems="center">

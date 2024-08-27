@@ -16,7 +16,7 @@ import {
 import { streamDataSelector, deleteStreamEntry } from 'uiSrc/slices/browser/stream'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { KeyTypes, TableCellTextAlignment, TEXT_FAILED_CONVENT_FORMATTER } from 'uiSrc/constants'
+import { DATETIME_FORMATTER_DEFAULT, KeyTypes, TableCellTextAlignment, TEXT_FAILED_CONVENT_FORMATTER, TimezoneOption } from 'uiSrc/constants'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { keysSelector, selectedKeySelector, updateSelectedKeyRefreshTime } from 'uiSrc/slices/browser/keys'
@@ -249,7 +249,11 @@ const StreamDataViewWrapper = (props: Props) => {
     render: function Id({ id }: StreamEntryDto) {
       const idStr = bufferToString(id, viewFormat)
       const timestamp = idStr.split('-')?.[0]
-      const formattedTimestamp = timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : formatTimestamp(timestamp, config?.dateFormat, config?.timezone)
+      const formattedTimestamp = timestamp.length > MAX_FORMAT_LENGTH_STREAM_TIMESTAMP ? '-' : formatTimestamp(
+        timestamp,
+        config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
+        config?.timezone || TimezoneOption.Local
+      )
 
       return (
         <div>

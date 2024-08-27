@@ -63,7 +63,7 @@ test('Verify that user can select date time format', async t => {
 
 });
 
-test('Verify that user can select date time format', async t => {
+test('Verify that user can set custom date time format', async t => {
     const enteredFormat = 'MMM dd yyyy/ HH.mm.ss';
     const enteredDateReqExp = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-2]\d|3[01]) \d{4}\/ ([01]\d|2[0-3])\.[0-5]\d\.[0-5]\d$/;
 

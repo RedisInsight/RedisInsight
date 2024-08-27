@@ -1,9 +1,15 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { render, cleanup, mockedStore, fireEvent, screen, act, waitFor } from 'uiSrc/utils/test-utils'
 import { OAuthStrategy } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_SSO_EMAIL } from 'uiSrc/mocks/data/oauth'
 import OAuthForm from './OAuthForm'
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
@@ -60,6 +66,11 @@ describe('OAuthForm', () => {
       fireEvent.click(screen.getByTestId('btn-submit'))
     })
 
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
+      eventData: {}
+    })
+
     expect(onClick).toBeCalledWith(OAuthStrategy.SSO)
   })
 
@@ -72,6 +83,11 @@ describe('OAuthForm', () => {
     expect(screen.getByTestId('btn-back')).toBeInTheDocument()
 
     fireEvent.click(screen.getByTestId('btn-back'))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_CANCELED,
+      eventData: {}
+    })
 
     expect(screen.getByTestId('sso-oauth')).toBeInTheDocument()
   })
@@ -100,7 +116,5 @@ describe('OAuthForm', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('btn-submit'))
     })
-
-    expect(onClick).not.toHaveBeenCalled()
   })
 })

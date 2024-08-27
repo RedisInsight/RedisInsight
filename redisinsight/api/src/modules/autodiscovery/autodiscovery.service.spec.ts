@@ -161,20 +161,19 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should should not call addRedisDatabase when no endpoints found', async () => {
-      await service['discoverDatabases']();
+      await service['discoverDatabases'](mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should should call addRedisDatabase 2 times', async () => {
       mocked(getAvailableEndpoints).mockResolvedValueOnce([mockAutodiscoveryEndpoint, mockAutodiscoveryEndpoint]);
-      await service['discoverDatabases']();
+      await service['discoverDatabases'](mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(2);
       expect(addRedisDatabaseSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockAutodiscoveryEndpoint,
-        jasmine.anything(),
-        jasmine.anything(),
       );
     });
   });

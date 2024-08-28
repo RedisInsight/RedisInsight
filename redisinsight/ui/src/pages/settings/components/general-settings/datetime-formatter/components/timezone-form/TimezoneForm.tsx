@@ -8,7 +8,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
 interface InitialValuesType {
-  timezone: TimezoneOption;
+  timezone: TimezoneOption
 }
 
 const TimezoneForm = () => {

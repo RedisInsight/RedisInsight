@@ -19,14 +19,14 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import styles from './styles.module.scss'
 
 interface InitialValuesType {
-  format: string;
-  customFormat: string;
-  commonFormat: string;
-  selectedRadioOption: DatetimeRadioOption;
+  format: string
+  customFormat: string
+  commonFormat: string
+  selectedRadioOption: DatetimeRadioOption
 }
 
 export interface Props {
-  onFormatChange: (newPreview: string) => void;
+  onFormatChange: (newPreview: string) => void
 }
 
 const DatetimeForm = ({ onFormatChange }: Props) => {

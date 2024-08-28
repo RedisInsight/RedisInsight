@@ -46,7 +46,7 @@ const MonitorWrapper = () => {
         enabledByDefault
         otherwise={(
           <div style={{ display: 'grid', placeContent: 'center', height: '100%' }}>
-            <EuiTextColor color="accent">Profiler not implemented in this environment.</EuiTextColor>
+            <EuiTextColor color="accent">Monitor not supported in this environment.</EuiTextColor>
           </div>
         )}
       >

@@ -97,7 +97,7 @@ export const cliTexts = {
     <FeatureFlagComponent
       name={FeatureFlags.disabledByEnv}
       enabledByDefault
-      otherwise={<EuiTextColor color="accent">Profiler not implemented in this environment.</EuiTextColor>}
+      otherwise={<EuiTextColor color="accent">Monitor not supported in this environment.</EuiTextColor>}
     >
       <EuiTextColor color="danger" key={Date.now()}>
         {'Use '}

@@ -13,6 +13,7 @@ export class MemoryEfficiencyPage extends InstancePage {
     cssReadMoreLink = '[data-testid=read-more-link]';
     cssKeyName = '[data-testid=recommendation-key-name]';
     // BUTTONS
+    databaseAnalysisTab = Selector('[data-testid=analytics-tab-DatabaseAnalysis]');
     newReportBtn = Selector('[data-testid=start-database-analysis-btn]');
     expandArrowBtn = Selector('[data-testid^=expand-arrow-]');
     sortByKeyPattern = Selector('[data-testid=tableHeaderSortButton]');

@@ -16,6 +16,10 @@
 
 // relative path for import fonts to plugins static
 @font-face {
+  font-family: "SourceCodePro";
+  src: url("./fonts/SourceCodePro-Regular.ttf") format("truetype");
+}
+@font-face {
   font-family: "Inconsolata";
   src: url("./fonts/Inconsolata-Regular.ttf") format("truetype");
 }

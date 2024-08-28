@@ -93,11 +93,14 @@ describe('SettingsService', () => {
         theme: null,
         scanThreshold: REDIS_SCAN_CONFIG.scanThreshold,
         batchSize: WORKBENCH_CONFIG.countBatch,
+        dateFormat: null,
+        timezone: null,
         agreements: null,
       });
 
       expect(eventEmitter.emit).not.toHaveBeenCalled();
     });
+
     it('should return some application settings already defined by user', async () => {
       agreementsRepository.getOrCreate.mockResolvedValue(mockAgreements);
       settingsRepository.getOrCreate.mockResolvedValue(mockSettings);
@@ -112,6 +115,7 @@ describe('SettingsService', () => {
         },
       });
     });
+
     it('should throw InternalServerError', async () => {
       agreementsRepository.getOrCreate.mockRejectedValue(new Error('some error'));
 
@@ -185,6 +189,8 @@ describe('SettingsService', () => {
 
       const dto: UpdateSettingsDto = {
         batchSize: 6,
+        dateFormat: 'hh-mmm-ss',
+        timezone: 'UTC',
         agreements: new Map(Object.entries({
           notifications: false,
         })),
@@ -195,6 +201,8 @@ describe('SettingsService', () => {
         ...mockSettings,
         data: {
           batchSize: 6,
+          dateFormat: 'hh-mmm-ss',
+          timezone: 'UTC',
         },
 
       });

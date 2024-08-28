@@ -46,7 +46,7 @@ const SlowLogTable = (props: Props) => {
       minWidth: 190,
       isSortable: true,
       render: (timestamp) => (
-        <EuiText size="s" color="subdued" data-testid="timestamp-value">
+        <EuiText size="s" color="subdued" data-testid="timestamp-value" className={styles.timestampCell}>
           <FormatedDate date={timestamp * 1000} />
         </EuiText>
       )

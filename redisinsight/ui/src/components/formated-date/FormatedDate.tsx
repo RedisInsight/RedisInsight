@@ -15,6 +15,8 @@ const FormatedDate = ({ date }: Props) => {
   const dateFormat = config?.dateFormat || DATETIME_FORMATTER_DEFAULT
   const timezone = config?.timezone || TimezoneOption.Local
 
+  if (!date) return null
+
   const formatedDate = formatTimestamp(date, dateFormat, timezone)
 
   return (

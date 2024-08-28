@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Dispatch, SetStateAction, useMemo, useState } from 'react'
+import React, { ChangeEvent, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import {
@@ -25,11 +25,11 @@ interface InitialValuesType {
   selectedRadioOption: DatetimeRadioOption;
 }
 
-interface Props {
-  setPreview: Dispatch<SetStateAction<string>>;
+export interface Props {
+  onFormatChange: (newPreview: string) => void;
 }
 
-const DatetimeForm = ({ setPreview }: Props) => {
+const DatetimeForm = ({ onFormatChange }: Props) => {
   const [error, setError] = useState('')
   const [saveFormatSucceed, setSaveFormatSucceed] = useState(false)
   const config = useSelector(userSettingsConfigSelector)
@@ -86,11 +86,11 @@ const DatetimeForm = ({ setPreview }: Props) => {
     const { valid, error: errorMsg } = checkDateTimeFormat(format)
     if (!valid) {
       setError(errorMsg || 'This format is not supported')
-      setPreview('Invalid Format')
+      onFormatChange?.('Invalid Format')
     } else {
       setError('')
       const newPreview = formatTimestamp(new Date(), format, config?.timezone || TimezoneOption.Local)
-      setPreview(newPreview)
+      onFormatChange?.(newPreview)
     }
     return valid
   }

@@ -36,7 +36,7 @@ const DateTimeFormatter = () => {
         Specifies the date and time format to be used in Redis Insight:
       </EuiText>
       <EuiSpacer size="m" />
-      <DatetimeForm setPreview={setPreview} />
+      <DatetimeForm onFormatChange={(newPreview) => setPreview(newPreview)} />
       <EuiSpacer size="m" />
       <EuiText className={styles.dateTimeSubtitle} color="subdued">Specifies the time zone to be used in Redis Insight:</EuiText>
       <EuiSpacer size="s" />

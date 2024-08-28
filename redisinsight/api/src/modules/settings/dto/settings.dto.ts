@@ -76,8 +76,8 @@ export class GetAppSettingsResponse {
     example: 10000,
   })
   @Expose()
-  @Default(REDIS_SCAN_CONFIG.countThreshold)
-  scanThreshold: number = REDIS_SCAN_CONFIG.countThreshold;
+  @Default(REDIS_SCAN_CONFIG.scanThreshold)
+  scanThreshold: number = REDIS_SCAN_CONFIG.scanThreshold;
 
   @ApiProperty({
     description: 'Applied the batch of the commands for workbench.',

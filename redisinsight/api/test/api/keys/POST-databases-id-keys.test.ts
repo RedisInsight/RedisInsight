@@ -189,7 +189,7 @@ describe('POST /databases/:id/keys', () => {
             count: 100,
             cursor: '0',
             match: 'not_exist_key*',
-            countThreshold: 500,
+            scanThreshold: 500,
           },
           responseSchema,
           after: async () => await initSettings(),

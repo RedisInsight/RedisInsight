@@ -85,6 +85,10 @@ export default {
     excludeRoutes: [],
     excludeAuthRoutes: [],
   },
+  statics: {
+    initDefaults: process.env.RI_STATICS_INIT_DEFAULTS ? process.env.RI_STATICS_INIT_DEFAULTS === 'true' : true,
+    autoUpdate: process.env.RI_STATICS_AUTO_UPDATE ? process.env.RI_STATICS_AUTO_UPDATE === 'true' : true,
+  },
   encryption: {
     keytar: process.env.RI_ENCRYPTION_KEYTAR ? process.env.RI_ENCRYPTION_KEYTAR === 'true' : true, // enabled by default
     encryptionIV: process.env.RI_ENCRYPTION_IV || Buffer.alloc(16, 0),

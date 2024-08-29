@@ -10,6 +10,8 @@ export enum RedisStringResponseEncoding {
 
 export type RedisString = string | Buffer;
 
+export type Nullable<T> = T | null;
+
 export interface RedisStringTransformOptions extends TransformOptions {
   each: boolean;
 }

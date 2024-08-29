@@ -26,7 +26,7 @@ const aiAssistantNock = nock(serverConfig.get('ai').convAiApiUrl)
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
-describe('GET /ai/assistant/chats/:id', () => {
+describe('GET /ai/assistant/chats/:id', (done) => {
   [
     {
       name: 'Should return history with items',

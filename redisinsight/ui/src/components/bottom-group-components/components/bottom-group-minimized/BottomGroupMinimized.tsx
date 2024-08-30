@@ -129,7 +129,7 @@ const BottomGroupMinimized = () => {
           </EuiFlexItem>
         </FeatureFlagComponent>
       </EuiFlexGroup>
-      <FeatureFlagComponent name={FeatureFlags.insightsRecommendations} enabledByDefault>
+      <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
         <a
           className={styles.surveyLink}
           target="_blank"

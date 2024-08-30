@@ -1,7 +1,7 @@
 .modal {
   background: var(--euiColorEmptyShade) !important;
-  min-width: 420px !important;
-  min-height: auto !important;
+  min-width: 768px !important;
+  min-height: 472px !important;
   padding: 0;
 
   :global(.euiModalBody__overflow) {
@@ -9,8 +9,7 @@
   }
 
   &.createDb, &.import {
-    min-width: 720px !important;
-    max-width: 800px !important;
+    max-width: 768px !important;
     min-height: 500px !important;
   }
 }

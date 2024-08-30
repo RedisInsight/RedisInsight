@@ -14,6 +14,7 @@ export enum CustomErrorCodes {
   CloudOauthUnexpectedError = 11_008,
   CloudOauthMissedRequiredData = 11_009,
   CloudOauthCanceled = 11_010,
+  CloudOauthSsoUnsupportedEmail = 11_011,
   CloudCapiUnauthorized = 11_021,
   CloudCapiKeyUnauthorized = 11_022,
   CloudCapiKeyNotFound = 11_023,

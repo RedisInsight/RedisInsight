@@ -3,10 +3,15 @@ import { RedisOverviewPage } from '../helpers/constants';
 import { Toast } from './components/common/toast';
 import { ShortcutsPanel } from './components/shortcuts-panel';
 import { EditorButton } from './components/common/editorButton';
+import { NavigationHeader } from './components/navigation/navigation-header';
+import { Modal } from './components/common/modal';
+
 export class BaseOverviewPage {
     ShortcutsPanel = new ShortcutsPanel();
     Toast = new Toast();
     EditorButton = new EditorButton();
+    NavigationHeader = new NavigationHeader();
+    Modal = new Modal();
 
     notification = Selector('[data-testid^=-notification]');
     deleteRowButton = Selector('[data-testid^=delete-instance-]');
@@ -21,6 +26,7 @@ export class BaseOverviewPage {
 
     databasePageLink = Selector('[data-testid=home-tab-databases]');
     rdiPageLink = Selector('[data-testid=home-tab-rdi-instances]');
+    exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
 
     /**
      * Reload page

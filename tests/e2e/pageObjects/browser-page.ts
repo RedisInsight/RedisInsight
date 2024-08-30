@@ -108,7 +108,6 @@ export class BrowserPage extends InstancePage {
     loadAllBtn = Selector('[data-testid=load-all-value-btn]');
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
     openTutorialsBtn = Selector('[data-testid=explore-msg-btn]');
-    exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -266,7 +265,6 @@ export class BrowserPage extends InstancePage {
     keyListItem = Selector('[role=rowgroup] [role=row]');
     // Dialog
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
-    closeDialogButton = Selector('[class*=euiModal__closeIcon]');
 
     //Get Hash key field ttl value
     //for Redis databases 7.4 and higher

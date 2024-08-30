@@ -99,6 +99,12 @@ export enum OAuthSocialAction {
   SignIn = 'signIn'
 }
 
+export enum OAuthStrategy {
+  Google = 'google',
+  GitHub = 'github',
+  SSO = 'sso'
+}
+
 export enum CloudSsoUtmCampaign {
   ListOfDatabases = 'list_of_databases',
   Workbench = 'redisinsight_workbench',

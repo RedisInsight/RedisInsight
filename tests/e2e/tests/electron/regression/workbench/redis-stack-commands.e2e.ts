@@ -28,7 +28,7 @@ fixture `Redis Stack command in Workbench`
 //skipped due the inaccessibility of the iframe
 test.skip('Verify that user can switches between Graph and Text for GRAPH command and see results corresponding to their views', async t => {
     // Send Graph command
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.redisStackTutorialsButton);
     await t.click(tutorials.tutorialsWorkingWithGraphLink);
@@ -45,7 +45,7 @@ test.skip('Verify that user can switches between Graph and Text for GRAPH comman
 //skipped due to Graph no longer displayed in tutorials
 test.skip('Verify that user can see "No data to visualize" message for Graph command', async t => {
     // Send Graph command
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.redisStackTutorialsButton);
     await tutorials.runBlockCode('Show all sales per region');

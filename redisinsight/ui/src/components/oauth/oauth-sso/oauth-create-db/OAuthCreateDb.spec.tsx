@@ -7,16 +7,16 @@ import {
   addFreeDb,
   getPlans,
   oauthCloudUserSelector,
-  setJob,
   setSocialDialogState,
   showOAuthProgress,
   signIn
 } from 'uiSrc/slices/oauth/cloud'
 import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
+import { CloudJobStep } from 'uiSrc/electron/constants'
 import { addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
-import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
+import { OAuthSocialAction, OAuthStrategy } from 'uiSrc/slices/interfaces'
+import { MOCK_OAUTH_SSO_EMAIL } from 'uiSrc/mocks/data/oauth'
 import OAuthCreateDb from './OAuthCreateDb'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -65,10 +65,45 @@ describe('OAuthCreateDb', () => {
     expect(screen.getByTestId('oauth-recommended-settings-checkbox')).toBeInTheDocument()
   })
 
-  it('should call proper actions after click on sign button', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+  it('should call proper actions after click on sso sign button', async () => {
+    render(<OAuthCreateDb />)
 
+    fireEvent.click(screen.getByTestId('sso-oauth'))
+
+    expect(screen.getByTestId('sso-email')).toBeInTheDocument()
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
+      eventData: {
+        accountOption: OAuthStrategy.SSO,
+        action: OAuthSocialAction.Create,
+        cloudRecommendedSettings: 'enabled'
+      }
+    })
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
+    })
+
+    expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('btn-submit'))
+    })
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
+      eventData: {
+        action: OAuthSocialAction.Create,
+      }
+    })
+
+    const expectedActions = [setIsRecommendedSettingsSSO(true), signIn()]
+    expect(store.getActions()).toEqual(expectedActions);
+    (sendEventTelemetry as jest.Mock).mockRestore()
+  })
+
+  it('should call proper actions after click on sign button', () => {
     render(<OAuthCreateDb />)
 
     fireEvent.click(screen.getByTestId('google-oauth'))
@@ -76,13 +111,13 @@ describe('OAuthCreateDb', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_SIGN_IN_SOCIAL_ACCOUNT_SELECTED,
       eventData: {
-        accountOption: 'Google',
-        action: 'create',
+        accountOption: OAuthStrategy.Google,
+        action: OAuthSocialAction.Create,
         cloudRecommendedSettings: 'enabled'
       }
     })
 
-    const expectedActions = [signIn(), setIsRecommendedSettingsSSO(true)]
+    const expectedActions = [setIsRecommendedSettingsSSO(true), signIn()]
     expect(store.getActions()).toEqual(expectedActions);
     (sendEventTelemetry as jest.Mock).mockRestore()
   })

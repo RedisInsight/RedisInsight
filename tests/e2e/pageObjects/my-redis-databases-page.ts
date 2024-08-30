@@ -5,6 +5,8 @@ import { InsightsPanel } from './components/insights-panel';
 import { CompatibilityPromotion } from './components/compatibility-promotion';
 import { BaseOverviewPage } from './base-overview-page';
 import { NavigationPanel } from './components/navigation-panel';
+import { NavigationHeader } from './components/navigation/navigation-header';
+import { AuthorizationDialog } from './dialogs/authorization-dialog';
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 
@@ -14,6 +16,8 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     AddRedisDatabase = new AddRedisDatabase();
     InsightsPanel = new InsightsPanel();
     CompatibilityPromotion = new CompatibilityPromotion();
+    NavigationHeader = new NavigationHeader();
+    AuthorizationDialog = new AuthorizationDialog();
 
     //-------------------------------------------------------------------------------------------
     //DECLARATION OF SELECTORS
@@ -39,12 +43,10 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     sortByLastConnection = Selector('span').withAttribute('title', 'Last connection');
     importDatabasesBtn = Selector('[data-testid=import-from-file-btn]');
     submitImportBtn = Selector('[data-testid=submit-btn]');
-    closeDialogBtn = Selector('[aria-label="Closes this modal window"]');
     okDialogBtn = Selector('[data-testid=ok-btn]');
     removeImportedFileBtn = Selector('[aria-label="Clear selected files"]');
     exportBtn = Selector('[data-testid=export-btn]');
     exportSelectedDbsBtn = Selector('[data-testid=export-selected-dbs]');
-    exploreRedisBtn = Selector('[data-testid=explore-redis-btn]');
     userProfileBtn = Selector('[data-testid=user-profile-btn]');
     addDbFromEmptyListBtn = Selector('[data-testid=empty-rdi-instance-button]');
     emptyDbCloudBtn = Selector('[data-testid=empty-database-cloud-button]');
@@ -90,7 +92,8 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     connectionTypeTitle  = Selector('[data-test-subj=tableHeaderCell_connectionType_2]');
     signInAgreement = Selector('[class="euiCheckbox__square"]');
     googleAuth = Selector('[data-testid=google-oauth]');
-    authDialog = Selector('[data-testid=social-oauth-dialog]');
+    gitHubAuth = Selector('[data-testid=github-oauth]');
+    ssoAuth = Selector('[data-testid=sso-oauth]');
 
     /**
      * Click on the database by name

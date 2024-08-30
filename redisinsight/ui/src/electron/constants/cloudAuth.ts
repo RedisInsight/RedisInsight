@@ -9,11 +9,6 @@ export interface CloudAuthResponse {
   error?: object | string
 }
 
-export enum CloudAuthSocial {
-  Github = 'github',
-  Google = 'google',
-}
-
 export enum CloudJobStatus {
   Initializing = 'initializing',
   Running = 'running',

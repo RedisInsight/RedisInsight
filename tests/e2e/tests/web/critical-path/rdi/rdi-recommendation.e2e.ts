@@ -28,7 +28,7 @@ fixture.skip `Rdi recommendation`
     });
 // it doesn't work until recommendation.json is not updated
 test('Verify that rdi recommendation is displayed for oss cluster', async() => {
-    await browserPage.InsightsPanel.togglePanel(true);
+    await browserPage.NavigationHeader.togglePanel(true);
     const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(tab.getRecommendationByName(rdiRecommendation).exists).ok('Redis Version recommendation not displayed');
     await tab.clickOnNavigationButton(rdiRecommendation);

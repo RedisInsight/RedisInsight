@@ -15,13 +15,6 @@ export class LocalAiAuthProvider extends AiAuthProvider {
   }
 
   async getAuthData(sessionMetadata: SessionMetadata): Promise<AiAuthData> {
-    // TODO: remove
-    // return {
-    //   sessionId: '1',
-    //   csrf: 'csrf',
-    //   accountId: 'currentAccountId',
-    // };
-
     const session = await this.cloudUserApiService.getUserSession(sessionMetadata);
 
     return {

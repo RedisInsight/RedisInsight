@@ -3,8 +3,7 @@ import {
   Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
-import { Nullable } from 'src/common/constants';
-import { AiTools } from '../models';
+import { AiGeneralTools } from '../models';
 
 @Entity('ai_message')
 export class AiMessageEntity {
@@ -15,7 +14,7 @@ export class AiMessageEntity {
   @Column({ nullable: true })
   @Index()
   @Expose()
-  databaseId: Nullable<string>;
+  databaseId: string;
 
   @Column({ nullable: false })
   @Index()
@@ -29,9 +28,9 @@ export class AiMessageEntity {
   @Expose()
   @Column({
     nullable: false,
-    default: AiTools.General,
+    default: AiGeneralTools.General,
   })
-  tool: AiTools;
+  tool: string;
 
   @Column({ nullable: false })
   @Expose()

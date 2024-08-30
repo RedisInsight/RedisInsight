@@ -21,6 +21,7 @@ export const repositories = {
   FEATURE: 'FeatureEntity',
   CLOUD_DATABASE_DETAILS: 'CloudDatabaseDetailsEntity',
   RDI: 'RdiEntity',
+  AIMessage: 'AiMessageEntity',
 }
 
 let localDbConnection;
@@ -666,4 +667,28 @@ export const createNotExistingNotifications = async (truncate: boolean = false) 
   ];
 
   await createNotifications(notifications, truncate);
+}
+
+export const generateAiMessages = async (
+  partial?: Record<string, any>,
+  truncate: boolean = true,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.AIMessage);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  result.push(await rep.save({
+    ...constants.TEST_AI_MESSAGE_HUMAN,
+    content: encryptData(constants.TEST_AI_MESSAGE_HUMAN.content),
+  }));
+
+  result.push(await rep.save({
+    ...constants.TEST_AI_MESSAGE_AI_RESPONSE,
+    content: encryptData(constants.TEST_AI_MESSAGE_AI_RESPONSE.content),
+  }));
+
+  return result;
 }

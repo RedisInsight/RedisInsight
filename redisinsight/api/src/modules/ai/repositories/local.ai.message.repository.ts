@@ -40,7 +40,7 @@ export class LocalAiMessageRepository extends AiMessageRepository {
       .where({ databaseId: databaseId ?? IsNull(), accountId })
       .select('id')
       .orderBy('createdAt', 'DESC')
-      .offset(aiConfig.queryHistoryLimit)
+      .offset(aiConfig.historyLimit)
       .getRawMany()).map((item) => item.id);
 
     await this.repository
@@ -55,7 +55,7 @@ export class LocalAiMessageRepository extends AiMessageRepository {
       .createQueryBuilder('e')
       .where({ databaseId: databaseId ?? IsNull(), accountId })
       .orderBy('e.createdAt', 'ASC')
-      .limit(aiConfig.queryHistoryLimit)
+      .limit(aiConfig.historyLimit)
       .getMany();
 
     const decryptedEntities = await Promise.all(

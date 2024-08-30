@@ -34,7 +34,7 @@ export class AiMessage {
   @Expose()
   @IsEnum(AiTools)
   @IsDefined()
-  tool: AiTools;
+  tool: typeof AiTools;
 
   @ApiProperty({
     type: String,

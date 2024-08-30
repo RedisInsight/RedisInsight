@@ -68,13 +68,13 @@ describe('LocalAiAuthProvider', () => {
       .mockResolvedValue(mockAiAiResponseEntity.steps);
   });
 
-  describe('cleanupDatabaseHistory', () => {
+  describe('cleanupHistory', () => {
     beforeEach(() => {
       repository.createQueryBuilder().getRawMany.mockResolvedValueOnce([mockAiHumanMessage.id]);
     });
 
     it('should get id to and remove it', async () => {
-      await expect(service['cleanupDatabaseHistory'](mockAiDatabaseId, mockAiAccountId))
+      await expect(service['cleanupHistory'](mockAiDatabaseId, mockAiAccountId))
         .resolves.toEqual(undefined);
     });
   });

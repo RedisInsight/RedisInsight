@@ -24,7 +24,15 @@ export enum AiServerErrors {
   MaxTokens = 'MaxTokens',
 }
 
-export enum AiTools {
+export enum AiGeneralTools {
   General = 'General',
+}
+
+export enum AiDatabaseTools {
   Query = 'Query',
 }
+
+export const AiTools = {
+  ...AiGeneralTools,
+  ...AiDatabaseTools,
+};

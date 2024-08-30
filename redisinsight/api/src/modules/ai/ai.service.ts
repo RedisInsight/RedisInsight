@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 import { Injectable, Logger } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { AiProvider } from 'src/modules/ai/providers/ai.provider';
-import { SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
+import { SendAiDatabaseMessageDto, SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { wrapAiError } from 'src/modules/ai/exceptions';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { getFullDbContext, getIndexContext } from 'src/modules/ai/utils/context.util';
@@ -64,13 +64,13 @@ export class AiService {
     return steps;
   }
 
-  static limitQueryReply(reply: any, maxResults = aiConfig.queryMaxResults) {
+  static limitQueryReply(reply: any, maxResults = aiConfig.maxResults) {
     let results = reply;
     if (isArray(reply)) {
       results = reply.slice(0, maxResults);
       results = results.map((nested) => {
         if (Array.isArray(nested)) {
-          AiService.limitQueryReply(nested, aiConfig.queryMaxNestedElements);
+          AiService.limitQueryReply(nested, aiConfig.maxNestedElements);
         }
         return nested;
       });
@@ -128,7 +128,7 @@ export class AiService {
   async stream(
     sessionMetadata: SessionMetadata,
     databaseId: Nullable<string>,
-    dto: SendAiMessageDto,
+    dto: SendAiMessageDto | SendAiDatabaseMessageDto,
     res: Response,
   ) {
     return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {

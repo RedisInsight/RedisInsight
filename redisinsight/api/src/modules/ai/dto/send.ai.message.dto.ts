@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDefined, IsEnum, IsNotEmpty, IsString,
 } from 'class-validator';
-import { AiTools } from '../models';
+import { AiDatabaseTools, AiGeneralTools } from '../models';
 
-export class SendAiMessageDto {
+export class AiMessageDto {
   @ApiProperty({
     description: 'Message content',
     type: String,
@@ -12,12 +12,24 @@ export class SendAiMessageDto {
   @IsString()
   @IsNotEmpty()
   content: string;
+}
 
+export class SendAiMessageDto extends AiMessageDto {
   @ApiProperty({
     description: 'Message tool',
-    enum: AiTools,
+    enum: AiGeneralTools,
   })
   @IsDefined()
-  @IsEnum(AiTools)
-  tool: AiTools;
+  @IsEnum(AiGeneralTools)
+  tool: AiGeneralTools;
+}
+
+export class SendAiDatabaseMessageDto extends AiMessageDto {
+  @ApiProperty({
+    description: 'Message tool',
+    enum: AiDatabaseTools,
+  })
+  @IsDefined()
+  @IsEnum(AiDatabaseTools)
+  tool: AiDatabaseTools;
 }

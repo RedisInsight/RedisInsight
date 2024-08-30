@@ -14,8 +14,8 @@ export class AiProvider {
   async getSocket(auth: AiAuthData): Promise<Socket> {
     try {
       return await new Promise((resolve, reject) => {
-        const socket = io(aiConfig.querySocketUrl, {
-          path: aiConfig.querySocketPath,
+        const socket = io(aiConfig.socketUrl, {
+          path: aiConfig.socketPath,
           reconnection: false,
           transports: ['websocket'],
           extraHeaders: {

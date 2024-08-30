@@ -12,7 +12,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 import { AiService } from 'src/modules/ai/ai.service';
-import { SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
+import { SendAiDatabaseMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { Response } from 'express';
 
 @ApiTags('AI')
@@ -35,7 +35,7 @@ export class AiDatabaseController {
   async streamQuestion(
   @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
-    @Body() dto: SendAiMessageDto,
+    @Body() dto: SendAiDatabaseMessageDto,
     @Res() res: Response,
   ) {
     await this.service.stream(sessionMetadata, databaseId, dto, res);

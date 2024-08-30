@@ -151,7 +151,7 @@ export enum KeyValueFormat {
   DateTime = 'DateTime',
 }
 
-export const DATETIME_FORMATTER_DEFAULT = 'HH:mm:ss.SSS d MMM yyyy'
+export const DATETIME_FORMATTER_DEFAULT = 'HH:mm:ss d MMM yyyy'
 
 export enum KeyValueCompressor {
   GZIP = 'GZIP',

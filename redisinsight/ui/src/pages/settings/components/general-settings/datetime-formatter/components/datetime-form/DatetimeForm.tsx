@@ -84,7 +84,9 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
 
   const handleFormatCheck = (format = formik.values.format) => {
     const { valid, error: errorMsg } = checkDateTimeFormat(format)
-    if (!valid) {
+    if (format.length > 50) {
+      setError('Format should not exceed 50 characters')
+    } else if (!valid) {
       setError(errorMsg || 'This format is not supported')
       onFormatChange?.('Invalid Format')
     } else {

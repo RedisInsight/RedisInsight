@@ -1,53 +1,15 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
-import { DefinedArgumentName } from 'uiSrc/pages/search/components/query/constants'
+import { SearchCommand } from 'uiSrc/pages/search/types'
+import {
+  generateKeywords,
+  generateTokens,
+  generateTokensWithFunctions,
+  getBlockTokens,
+  isQueryAfterIndex
+} from 'uiSrc/utils/monaco/redisearch/utils'
+import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensTemplates'
 
 const STRING_DOUBLE = 'string.double'
-
-const generateKeywords = (commands: SearchCommand[]) => commands.map(({ name }) => name)
-const generateTokens = (command?: SearchCommand) => {
-  if (!command) return []
-  const levels: Array<Array<string>> = []
-
-  function processArguments(args: SearchCommand[], level = 0) {
-    // Ensure the current level exists in the levels array
-    if (!levels[level]) {
-      levels[level] = []
-    }
-
-    args.forEach((arg) => {
-      if (arg.token) levels[level].push(arg.token)
-
-      if (arg.type === TokenType.Block && arg.arguments) {
-        const blockToken = arg.arguments[0].token
-        const nextArgs = arg.arguments
-        if (blockToken) {
-          levels[level].push(blockToken)
-        }
-        processArguments(blockToken ? nextArgs.slice(1, nextArgs.length) : nextArgs, level + 1)
-      }
-
-      if (arg.type === TokenType.OneOf && arg.arguments) {
-        arg.arguments.forEach((choice) => {
-          if (choice.token) levels[level].push(choice.token)
-        })
-      }
-    })
-  }
-
-  if (command.arguments) {
-    processArguments(command.arguments, 0)
-  }
-
-  return levels
-}
-
-const isQueryAfterIndex = (command?: SearchCommand) => {
-  if (!command) return false
-
-  const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index) || -2
-  return command.arguments?.[index + 1]?.name === DefinedArgumentName.query
-}
 
 export const getRediSearchMonarchTokensProvider = (
   commands: SearchCommand[],
@@ -77,6 +39,7 @@ export const getRediSearchMonarchTokensProvider = (
           { include: '@keyword' },
           [/LOAD\s+\*/, 'loadAll'],
           { include: '@argument.block' },
+          { include: '@argument.block.withFunctions' },
           [/[;,.]/, 'delimiter'],
           [/[()]/, '@brackets'],
           [
@@ -93,45 +56,15 @@ export const getRediSearchMonarchTokensProvider = (
         keyword: [
           [`(${keywords.join('|')})\\b`, { token: 'keyword', next: '@index' }]
         ],
-        'argument.block': argTokens.map((tokens, lvl) => [`(${tokens.join('|')})\\b`, `argument.block.${lvl}`]),
+        'argument.block': getBlockTokens(argTokens?.pureTokens),
+        ...generateTokensWithFunctions(argTokens?.tokensWithQueryAfter),
         index: [
           [/"([^"\\]|\\.)*"/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
           [/'([^'\\]|\\.)*'/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
           [/[a-zA-Z_]\w*/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
           { include: 'root' } // Fallback to the root state if nothing matches
         ],
-        query: [
-          [/"/, { token: 'query', next: '@queryInsideDouble' }],
-          [/'/, { token: 'query', next: '@queryInsideSingle' }],
-          [/[a-zA-Z_]\w*/, { token: 'query', next: '@root' }],
-          { include: 'root' } // Fallback to the root state if nothing matches
-        ],
-        queryInsideDouble: [
-          [/@/, { token: 'field', next: '@fieldInDouble' }],
-          [/\\"/, { token: 'query', next: 'queryInsideDouble' }],
-          [/"/, { token: 'query', next: '@root' }],
-          [/./, { token: 'query', next: '@queryInsideDouble' }],
-          { include: '@query' } // Fallback to the root state if nothing matches
-        ],
-        queryInsideSingle: [
-          [/@/, { token: 'field', next: '@fieldInSingle' }],
-          [/\\'/, { token: 'query', next: 'queryInsideSingle' }],
-          [/'/, { token: 'query', next: '@root' }],
-          [/./, { token: 'query', next: '@queryInsideSingle' }],
-          { include: '@query' } // Fallback to the root state if nothing matches
-        ],
-        fieldInDouble: [
-          [/\w+/, { token: 'field', next: '@queryInsideDouble' }],
-          [/\s+/, { token: '@rematch', next: '@queryInsideDouble' }],
-          [/"/, { token: 'query', next: '@root' }],
-          { include: '@query' } // Fallback to the root state if nothing matches
-        ],
-        fieldInSingle: [
-          [/\w+/, { token: 'field', next: '@queryInsideSingle' }],
-          [/\s+/, { token: '@rematch', next: '@queryInsideSingle' }],
-          [/'/, { token: 'query', next: '@root' }],
-          { include: '@query' } // Fallback to the root state if nothing matches
-        ],
+        ...generateQuery(),
         whitespace: [
           [/\s+/, 'white'],
           [/\/\/.*$/, 'comment'],

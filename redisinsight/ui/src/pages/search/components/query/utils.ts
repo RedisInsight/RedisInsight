@@ -1,7 +1,7 @@
 import { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { bufferToString, formatLongName, getCommandMarkdown, Nullable } from 'uiSrc/utils'
+import { bufferToString, formatLongName, generateArgsForInsertText, getCommandMarkdown, Nullable } from 'uiSrc/utils'
 import {
   buildSuggestion,
   generateDetail,
@@ -10,9 +10,14 @@ import {
 import { FoundCommandArgument, SearchCommand } from 'uiSrc/pages/search/types'
 import { DefinedArgumentName } from 'uiSrc/pages/search/components/query/constants'
 
-export const asSuggestionsRef = (suggestions: monacoEditor.languages.CompletionItem[], forceHide = true) => ({
+export const asSuggestionsRef = (
+  suggestions: monacoEditor.languages.CompletionItem[],
+  forceHide = true,
+  forceShow = true
+) => ({
   data: suggestions,
-  forceHide
+  forceHide,
+  forceShow
 })
 
 export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, nextQoutes = true) =>
@@ -42,6 +47,22 @@ export const getFieldsSuggestions = (fields: any[], range: monaco.IRange, spaceA
       detail: attribute || ' ',
     }
   })
+
+const insertFunctionArguments = (args: SearchCommand[]) =>
+  generateArgsForInsertText(
+    args.map(({ token, optional }) => (optional ? `[${token}]` : (token || ''))) as string[],
+    ', '
+  )
+
+export const getFunctionsSuggestions = (functions: SearchCommand[], range: monaco.IRange) => functions
+  .map(({ token, summary, arguments: args }) => ({
+    label: token || '',
+    insertText: `${token}(${insertFunctionArguments(args || [])})`,
+    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    range,
+    kind: monacoEditor.languages.CompletionItemKind.Function,
+    detail: summary
+  }))
 
 export const getCommandsSuggestions = (commands: SearchCommand[], range: monaco.IRange) => asSuggestionsRef(
   commands.map((command) => buildSuggestion(command, range, {

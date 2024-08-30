@@ -13,6 +13,8 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   let quoteChar = ''
   let isCursorInQuotes = false
   let lastArg = ''
+  let argLeftOffset = 0
+  let argRightOffset = 0
 
   const pushToProperTuple = (isAfterOffset: boolean, arg: string) => {
     lastArg = arg
@@ -22,6 +24,11 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   const updateLastArgument = (isAfterOffset: boolean, arg: string) => {
     const argsBySide = args[isAfterOffset ? 1 : 0]
     argsBySide[argsBySide.length - 1] = `${argsBySide[argsBySide.length - 1]} ${arg}`
+  }
+
+  const updateArgOffsets = (left: number, right: number) => {
+    argLeftOffset = left
+    argRightOffset = right
   }
 
   for (let i = 0; i < query.length; i++) {
@@ -37,6 +44,10 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
       if (char === quoteChar) {
         inQuotes = false
         const argWithChat = arg + char
+
+        if (isAfterOffset && !argLeftOffset) {
+          updateArgOffsets(i - arg.length, i + 1)
+        }
 
         if (isCompositeArgument(argWithChat, lastArg)) {
           updateLastArgument(isAfterOffset, argWithChat)
@@ -54,6 +65,10 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
       arg += char
     } else if (char === ' ' || char === '\n') {
       if (arg.length > 0) {
+        if (isAfterOffset && !argLeftOffset) {
+          updateArgOffsets(i - arg.length, i)
+        }
+
         if (isCompositeArgument(arg, lastArg)) {
           updateLastArgument(isAfterOffset, arg)
         } else {
@@ -70,10 +85,19 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
   }
 
   if (arg.length > 0) {
+    if (!argLeftOffset) updateArgOffsets(query.length - arg.length, query.length)
     pushToProperTuple(true, arg)
   }
 
-  return { args, isCursorInQuotes, prevCursorChar: query[position - 1], nextCursorChar: query[position] }
+  const cursor = {
+    isCursorInQuotes,
+    prevCursorChar: query[position - 1],
+    nextCursorChar: query[position],
+    argLeftOffset,
+    argRightOffset
+  }
+
+  return { args, cursor }
 }
 
 export const findCurrentArgument = (
@@ -91,9 +115,7 @@ export const findCurrentArgument = (
     }
 
     const tokenIndex = args.findIndex((cArg) =>
-      (cArg.type === TokenType.OneOf
-        ? cArg.arguments?.some((oneOfArg: SearchCommand) => oneOfArg.token?.toLowerCase() === arg.toLowerCase())
-        : cArg.token?.toLowerCase() === arg.toLowerCase()))
+      cArg.token?.toLowerCase() === arg.toLowerCase())
     const token = args[tokenIndex]
 
     if (token) {
@@ -123,6 +145,7 @@ const findStopArgumentInQuery = (
   let currentCommandArgIndex = 0
   let isBlockedOnCommand = false
   let multipleIndexStart = 0
+  let multipleCountNumber = 0
 
   const moveToNextCommandArg = () => currentCommandArgIndex++
   const blockCommand = () => { isBlockedOnCommand = true }
@@ -202,11 +225,14 @@ const findStopArgumentInQuery = (
     }
 
     if (currentCommandArg?.multiple) {
-      const numberOfArgs = toNumber(queryArgs[currentCommandArgIndex]) || 0
+      if (!multipleIndexStart) {
+        multipleCountNumber = toNumber(queryArgs[i - 1])
+        multipleIndexStart = i - 1
+      }
 
-      if (!multipleIndexStart) multipleIndexStart = currentCommandArgIndex
-      if (i - multipleIndexStart >= numberOfArgs) {
+      if (i - multipleIndexStart >= multipleCountNumber) {
         skipArg()
+        multipleIndexStart = 0
         continue
       }
 
@@ -271,7 +297,9 @@ export const getArgumentSuggestions = (
     }
   }
 
-  const beforeMandatoryOptionalArgs = getAllRestArguments(current, stopArgument, pastStringArgs)
+  // if we finished argument - stopArgument will be undefined, then we get it as token
+  const lastArgument = stopArgument ?? restArguments[0]
+  const beforeMandatoryOptionalArgs = getAllRestArguments(current, lastArgument, pastStringArgs)
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {
@@ -286,20 +314,20 @@ export const getRestArguments = (
   current: Maybe<SearchCommandTree>,
   stopArgument: Nullable<SearchCommand>
 ): SearchCommandTree[] => {
-  if (!stopArgument) return []
-
   const argumentIndexInArg = current?.arguments
-    ?.findIndex(({ name }) => name === stopArgument?.name) || -1
-  const nextMandatoryIndex = current?.arguments
-    ?.findIndex(({ optional }, i) => !optional && i > argumentIndexInArg) || -1
+    ?.findIndex(({ name }) => name === stopArgument?.name)
+  const nextMandatoryIndex = argumentIndexInArg && argumentIndexInArg > -1 ? current?.arguments
+    ?.findIndex(({ optional }, i) => !optional && i > argumentIndexInArg) : -1
 
   const beforeMandatoryOptionalArgs = (
-    nextMandatoryIndex > -1
+    nextMandatoryIndex && nextMandatoryIndex > -1
       ? current?.arguments?.slice(argumentIndexInArg, nextMandatoryIndex)
       : current?.arguments?.filter(({ optional }) => optional)
   ) || []
 
-  const nextMandatoryArg = current?.arguments?.[nextMandatoryIndex]
+  const nextMandatoryArg = nextMandatoryIndex && nextMandatoryIndex > -1
+    ? current?.arguments?.[nextMandatoryIndex]
+    : undefined
 
   if (nextMandatoryArg?.token) {
     beforeMandatoryOptionalArgs.unshift(nextMandatoryArg)

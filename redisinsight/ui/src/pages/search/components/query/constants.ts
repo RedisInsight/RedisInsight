@@ -16,4 +16,7 @@ export enum DefinedArgumentName {
   index = 'index',
   query = 'query',
   field = 'field',
+  expression = 'expression'
 }
+
+export const FIELD_START_SYMBOL = '@'

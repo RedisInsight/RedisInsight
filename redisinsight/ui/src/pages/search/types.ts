@@ -3,7 +3,8 @@ import { Maybe } from 'uiSrc/utils'
 export enum TokenType {
   PureToken = 'pure-token',
   Block = 'block',
-  OneOf = 'oneof'
+  OneOf = 'oneof',
+  String = 'string',
 }
 
 export enum ArgName {
@@ -12,6 +13,8 @@ export enum ArgName {
 
 export interface SearchCommand {
   name?: string
+  summary?: string
+  expression?: boolean
   type?: TokenType
   token?: string
   optional?: boolean
@@ -29,4 +32,14 @@ export interface FoundCommandArgument {
   isBlocked: boolean
   append: Maybe<Array<SearchCommandTree[]>>
   parent: Maybe<SearchCommand>
+}
+
+export interface CursorContext {
+  prevCursorChar: string
+  nextCursorChar: string
+  isCursorInQuotes: boolean
+  currentOffsetArg: string
+  offset: number
+  argLeftOffset: number
+  argRightOffset: number
 }

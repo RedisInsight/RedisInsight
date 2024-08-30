@@ -17,6 +17,8 @@ import { SUPPORTED_COMMANDS_LIST } from 'uiSrc/pages/search/components/query/con
 import { SearchCommand } from 'uiSrc/pages/search/types'
 import { TUTORIALS } from './constants'
 
+import REDIS_COMMANDS_SPEC from '../constants/supported_commands.json'
+
 import Query from '../query'
 
 import styles from './styles.module.scss'
@@ -36,7 +38,7 @@ const QueryWrapper = (props: Props) => {
   const { script: scriptContext } = useSelector(appContextSearchAndQuery)
   const { activeRunQueryMode } = useSelector(searchAndQuerySelector)
   const { data: indexes = [] } = useSelector(redisearchListSelector)
-  const { spec: REDIS_COMMANDS_SPEC, commandsArray } = useSelector(appRedisCommandsSelector)
+  const { commandsArray } = useSelector(appRedisCommandsSelector)
 
   const [value, setValue] = useState(scriptContext)
 

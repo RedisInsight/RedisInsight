@@ -25,14 +25,17 @@ export const getRange = (position: monaco.Position, word: monaco.editor.IWordAtP
   startColumn: word.startColumn,
 })
 
-export const buildSuggestion = (arg: SearchCommand, range: monaco.IRange, options: any = {}) => ({
-  label: isString(arg) ? arg : arg.token || arg.arguments?.[0].token || arg.name || '',
-  insertText: `${arg.token || arg.arguments?.[0].token || arg.name?.toUpperCase() || ''} `,
-  insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-  range,
-  kind: options?.kind || monacoEditor.languages.CompletionItemKind.Function,
-  ...options,
-})
+export const buildSuggestion = (arg: SearchCommand, range: monaco.IRange, options: any = {}) => {
+  const extraQuotes = arg.expression ? '"$1"' : ''
+  return {
+    label: isString(arg) ? arg : arg.token || arg.arguments?.[0].token || arg.name || '',
+    insertText: `${arg.token || arg.arguments?.[0].token || arg.name?.toUpperCase() || ''} ${extraQuotes}`,
+    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    range,
+    kind: options?.kind || monacoEditor.languages.CompletionItemKind.Function,
+    ...options,
+  }
+}
 
 export const getRediSearchSignutureProvider = (options: Maybe<{
   isOpen: boolean

@@ -43,8 +43,8 @@
     "nanoid": "^3.1.31",
     "word-wrap": "1.2.4",
     "mocha/minimatch": "^3.0.5",
-    "**/semver": "^7.5.2",
-    "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0"
+    "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0",
+    "**/braces": "^3.0.3"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.7",

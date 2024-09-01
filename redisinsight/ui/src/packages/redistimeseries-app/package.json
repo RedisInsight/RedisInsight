@@ -43,10 +43,10 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "^2.8.3",
-    "@parcel/compressor-gzip": "^2.8.3",
-    "@parcel/transformer-less": "^2.8.3",
-    "@parcel/transformer-sass": "2.8.3",
+    "@parcel/compressor-brotli": "^2.12.0",
+    "@parcel/compressor-gzip": "^2.12.0",
+    "@parcel/transformer-less": "^2.12.0",
+    "@parcel/transformer-sass": "2.12.0",
     "@types/file-saver": "^2.0.5",
     "@types/jest": "^27.4.1",
     "@types/plotly.js-dist-min": "^2.3.0",
@@ -55,7 +55,7 @@
     "esbuild": "^0.17.12",
     "jest": "^27.5.1",
     "less": "^4.1.2",
-    "parcel": "^2.8.3",
+    "parcel": "^2.12.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.4"
   },
@@ -72,6 +72,6 @@
   },
   "resolutions": {
     "trim": "0.0.3",
-    "**/semver": "^7.5.2"
+    "**/braces": "^3.0.3"
   }
 }

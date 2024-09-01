@@ -44,7 +44,8 @@
     "word-wrap": "1.2.4",
     "mocha/minimatch": "^3.0.5",
     "winston-daily-rotate-file/**/file-stream-rotator": "^1.0.0",
-    "**/braces": "^3.0.3"
+    "**/braces": "^3.0.3",
+    "**/micromatch": "^4.0.8"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.7",

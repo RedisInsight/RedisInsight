@@ -1,5 +1,6 @@
 import React from 'react'
-import { BrowserStorageItem, Theme, THEMES, THEME_MATCH_MEDIA_DARK } from '../constants'
+import { IpcInvokeEvent } from 'uiSrc/electron/constants'
+import { BrowserStorageItem, Theme, THEMES, THEME_MATCH_MEDIA_DARK, DEFAULT_THEME } from '../constants'
 import { localStorageService, themeService } from '../services'
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 const THEME_NAMES = THEMES.map(({ value }) => value)
 
 export const defaultState = {
-  theme: THEME_NAMES[1], // dark theme by default
+  theme: DEFAULT_THEME || THEME_NAMES[1], // env configured theme or dark theme by default
   usingSystemTheme: localStorageService.get(BrowserStorageItem.theme) === Theme.System,
   changeTheme: (themeValue: any) => {
     themeService.applyTheme(themeValue)
@@ -36,6 +37,7 @@ export class ThemeProvider extends React.Component<Props> {
     }
   }
 
+  // eslint-disable-next-line max-len
   getSystemTheme = () => (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches ? Theme.Dark : Theme.Light)
 
   changeTheme = (themeValue: any) => {
@@ -43,7 +45,7 @@ export class ThemeProvider extends React.Component<Props> {
     if (themeValue === Theme.System) {
       actualTheme = this.getSystemTheme()
     }
-    window.app?.ipc?.invoke?.('theme:change', themeValue)
+    window.app?.ipc?.invoke?.('theme:change' as IpcInvokeEvent, themeValue)
 
     this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
       themeService.applyTheme(themeValue)

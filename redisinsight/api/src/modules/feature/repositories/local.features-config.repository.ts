@@ -43,13 +43,21 @@ export class LocalFeaturesConfigRepository extends FeaturesConfigRepository {
     let entity = await this.repository.findOneBy({ id: this.id });
 
     if (!entity) {
-      this.logger.log('Creating features config entity');
+      try {
+        this.logger.log('Creating features config entity');
 
-      entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
-        id: this.id,
-        data: defaultConfig,
-        controlNumber: this.generateControlNumber(),
-      }));
+        entity = await this.repository.save(plainToClass(FeaturesConfigEntity, {
+          id: this.id,
+          data: defaultConfig,
+          controlNumber: this.generateControlNumber(),
+        }));
+      } catch (e) {
+        if (e.code === 'SQLITE_CONSTRAINT') {
+          return this.getOrCreate();
+        }
+
+        throw e;
+      }
     }
 
     return classToClass(FeaturesConfig, entity);

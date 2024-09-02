@@ -20,4 +20,7 @@
   background-color: var(--euiPageBackgroundColor);
   padding: 4px;
   margin-left: 4px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  max-width: 330px;
 }

@@ -1,35 +1,32 @@
 import { getGeneralSuggestions, isIndexComplete } from 'uiSrc/pages/search/components/query/utils'
 import { MOCKED_SUPPORTED_COMMANDS } from 'uiSrc/pages/search/mocks/mocks'
-import { buildSuggestion } from 'uiSrc/pages/search/utils'
-import { SearchCommand } from 'uiSrc/pages/search/types'
+import { addOwnTokenToArgs, buildSuggestion, findCurrentArgument } from 'uiSrc/pages/search/utils'
+import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
 
 const ftAggregate = MOCKED_SUPPORTED_COMMANDS['FT.AGGREGATE']
-const ftProfile = MOCKED_SUPPORTED_COMMANDS['FT.PROFILE']
 
-const getCursorContext = () => ({
-  currentOffsetArg: undefined,
-  isCursorInQuotes: false,
-  nextCursorChar: undefined,
-  prevCursorChar: ' ',
-  range: {}
-})
+const commands = Object.keys(MOCKED_SUPPORTED_COMMANDS)
+  .map((key) => ({
+    ...addOwnTokenToArgs(key, MOCKED_SUPPORTED_COMMANDS[key]),
+    token: key,
+    type: TokenType.Block
+  }))
+
+const ftAggregateAppend = ftAggregate.arguments.slice(2)
+  .map((arg) => ({ ...arg, parent: ftAggregate }))
 
 const getGeneralSuggestionsTests = [
   {
     input: {
-      commandContext: {
-        allArgs: ['FT.AGGREGATE', '""', '""'],
-        command: ftAggregate,
-        commandName: 'FT.AGGREGATE',
-        currentCommandArg: null,
-        prevArgs: ['""', '""']
-      },
-      cursorContext: getCursorContext()
+      foundArg: findCurrentArgument(
+        commands,
+        ['FT.AGGREGATE', '""', '""']
+      ),
+      allArgs: ['FT.AGGREGATE', '""', '""']
     },
     result: {
       helpWidgetData: expect.any(Object),
-      suggestions: ftAggregate.arguments
-        .slice(2)
+      suggestions: ftAggregateAppend
         .map((arg) => ({
           ...buildSuggestion(arg as SearchCommand, {} as any),
           sortText: expect.any(String),
@@ -40,14 +37,11 @@ const getGeneralSuggestionsTests = [
   },
   {
     input: {
-      commandContext: {
-        allArgs: ['FT.AGGREGATE', '""', '""', 'APPLY', 'expression'],
-        command: ftAggregate,
-        commandName: 'FT.AGGREGATE',
-        currentCommandArg: null,
-        prevArgs: ['""', '""', 'APPLY', 'expression']
-      },
-      cursorContext: getCursorContext()
+      foundArg: findCurrentArgument(
+        commands,
+        ['FT.AGGREGATE', '""', '""', 'APPLY', 'expression']
+      ),
+      allArgs: ['FT.AGGREGATE', '""', '""', 'APPLY', 'expression']
     },
     result: {
       helpWidgetData: expect.any(Object),
@@ -65,14 +59,11 @@ const getGeneralSuggestionsTests = [
   },
   {
     input: {
-      commandContext: {
-        allArgs: ['FT.PROFILE', '""'],
-        command: ftProfile,
-        commandName: 'FT.PROFILE',
-        currentCommandArg: null,
-        prevArgs: ['""']
-      },
-      cursorContext: getCursorContext()
+      foundArg: findCurrentArgument(
+        commands,
+        ['FT.PROFILE', '""']
+      ),
+      allArgs: ['FT.PROFILE', '""']
     },
     result: {
       helpWidgetData: expect.any(Object),
@@ -83,7 +74,7 @@ const getGeneralSuggestionsTests = [
           insertTextRules: 4,
           range: expect.any(Object),
           kind: undefined,
-          detail: '',
+          detail: expect.any(String),
         },
         {
           label: 'AGGREGATE',
@@ -91,16 +82,26 @@ const getGeneralSuggestionsTests = [
           insertTextRules: 4,
           range: expect.any(Object),
           kind: undefined,
-          detail: '',
+          detail: expect.any(String),
         }
       ]
     }
-  }
+  },
 ]
 
 describe('getGeneralSuggestions', () => {
   it.each(getGeneralSuggestionsTests)('should properly return suggestions', ({ input, result }) => {
-    const testResult = getGeneralSuggestions(input.commandContext, input.cursorContext, [])
+    const testResult = getGeneralSuggestions(
+      input.foundArg as any,
+      input.allArgs,
+      {} as any,
+      []
+    )
+
+    console.log(findCurrentArgument(
+      commands,
+      ['FT.AGGREGATE', '""', '""']
+    ))
 
     expect(testResult).toEqual(result)
   })

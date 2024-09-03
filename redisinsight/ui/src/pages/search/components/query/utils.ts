@@ -86,7 +86,7 @@ export const getMandatoryArgumentSuggestions = (
 
   if (foundArg.isBlocked) return []
   if (foundArg.append?.length) {
-    return foundArg.append.flat().map((arg: any) => buildSuggestion(arg, range, {
+    return foundArg.append[0].map((arg: any) => buildSuggestion(arg, range, {
       kind: monacoEditor.languages.CompletionItemKind.Property,
       detail: generateDetail(foundArg?.parent)
     }))

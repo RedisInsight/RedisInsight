@@ -125,7 +125,7 @@ export const findCurrentArgument = (
       // getArgByRest - here we preparing the list of arguments which can be inserted,
       // this is the main function which creates the list of arguments
       return {
-        ...getArgumentSuggestions(pastArgs, commandArgs, parent),
+        ...getArgumentSuggestions({ tokenArgs: pastArgs, levelArgs: prev }, commandArgs, parent),
         parent: parent || token
       }
     }
@@ -242,9 +242,7 @@ const findStopArgumentInQuery = (
 
     moveToNextCommandArg()
 
-    const nextCommand = restCommandArgs[currentCommandArgIndex + 1]
-    const currentCommand = restCommandArgs[currentCommandArgIndex]
-    isBlockedOnCommand = [currentCommand, nextCommand].every((arg) => arg && !arg.optional)
+    isBlockedOnCommand = false
   }
 
   return {
@@ -255,7 +253,10 @@ const findStopArgumentInQuery = (
 }
 
 export const getArgumentSuggestions = (
-  pastStringArgs: string[],
+  { tokenArgs, levelArgs }: {
+    tokenArgs: string[],
+    levelArgs: string[]
+  },
   pastCommandArgs: SearchCommand[],
   current?: SearchCommandTree
 ): {
@@ -268,7 +269,7 @@ export const getArgumentSuggestions = (
     restArguments,
     stopArgIndex,
     isBlocked: isWasBlocked
-  } = findStopArgumentInQuery(pastStringArgs, pastCommandArgs)
+  } = findStopArgumentInQuery(tokenArgs, pastCommandArgs)
 
   const stopArgument = restArguments[stopArgIndex]
   const restNotFilledArgs = restArguments.slice(stopArgIndex)
@@ -299,7 +300,7 @@ export const getArgumentSuggestions = (
 
   // if we finished argument - stopArgument will be undefined, then we get it as token
   const lastArgument = stopArgument ?? restArguments[0]
-  const beforeMandatoryOptionalArgs = getAllRestArguments(current, lastArgument, pastStringArgs)
+  const beforeMandatoryOptionalArgs = getAllRestArguments(current, lastArgument, levelArgs, !stopArgument)
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {
@@ -344,19 +345,21 @@ export const getAllRestArguments = (
   current: Maybe<SearchCommandTree>,
   stopArgument: Nullable<SearchCommand>,
   prevStringArgs: string[] = [],
+  skipLevel = false
 ) => {
   const appendArgs: Array<SearchCommand[]> = []
+
   const currentLvlNextArgs = removeNotSuggestedArgs(
     prevStringArgs,
     getRestArguments(current, stopArgument)
   )
 
-  if (currentLvlNextArgs.length) {
+  if (!skipLevel) {
     appendArgs.push(currentLvlNextArgs)
   }
 
   if (current?.parent) {
-    const parentArgs = getAllRestArguments(current.parent, current, [])
+    const parentArgs = getAllRestArguments(current.parent, current, skipLevel ? prevStringArgs : [])
     if (parentArgs?.length) {
       appendArgs.push(...parentArgs)
     }

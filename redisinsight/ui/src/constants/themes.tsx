@@ -1,4 +1,4 @@
-import { EuiSuperSelectOption } from '@elastic/eui'
+import { EuiSuperSelectOption } from '@elastic/eui';
 
 export enum Theme {
   Dark = 'DARK',

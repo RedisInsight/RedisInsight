@@ -29,7 +29,8 @@ export class SettingsPage extends BasePage {
     selectFormatDropdown = Selector('[data-test-subj=select-datetime]');
     selectTimezoneDropdown = Selector('[data-test-subj=select-timezone]');
     dataPreview = Selector('[data-testid=data-preview]');
-    customRadioButton = Selector('[id=custom]').sibling();
+    customRadioButton = Selector('[id=custom]', { timeout: 500 }).sibling();
+    commonRadioButton = Selector('[id=common]', { timeout: 500 }).sibling();
     customTextField =  Selector('[data-testid=custom-datetime-input]');
     saveCustomFormatButton = Selector('[data-testid=datetime-custom-btn]');
 

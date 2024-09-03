@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { signIn } from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialAction, OAuthStrategy } from 'uiSrc/slices/interfaces'
@@ -24,10 +24,6 @@ const OAuthForm = ({
   const dispatch = useDispatch()
 
   const [authStrategy, setAuthStrategy] = useState('')
-
-  useEffect(() => () => {
-    setAuthStrategy('')
-  }, [])
 
   const initOAuthProcess = (strategy: OAuthStrategy, action: string, data?: {}) => {
     dispatch(signIn())

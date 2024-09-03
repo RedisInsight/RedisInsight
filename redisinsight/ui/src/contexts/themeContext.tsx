@@ -37,7 +37,6 @@ export class ThemeProvider extends React.Component<Props> {
     }
   }
 
-  // eslint-disable-next-line max-len
   getSystemTheme = () => (window.matchMedia && window.matchMedia(THEME_MATCH_MEDIA_DARK).matches ? Theme.Dark : Theme.Light)
 
   changeTheme = (themeValue: any) => {

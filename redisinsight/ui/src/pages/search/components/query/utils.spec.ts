@@ -98,11 +98,6 @@ describe('getGeneralSuggestions', () => {
       []
     )
 
-    console.log(findCurrentArgument(
-      commands,
-      ['FT.AGGREGATE', '""', '""']
-    ))
-
     expect(testResult).toEqual(result)
   })
 })

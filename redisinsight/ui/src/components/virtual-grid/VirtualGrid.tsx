@@ -194,24 +194,21 @@ const VirtualGrid = (props: IProps) => {
       const lastColumn = columns[columns.length - 1]
       const allDynamicRowsHeight: number[] = Object.values(rowHeightsMap.current)
         .map((row) => Math.max(...Object.values(row)))
-
-      const allRowsHeight = allDynamicRowsHeight.reduce((a, b) => a + b, 0)
-       + (items.length - allDynamicRowsHeight.length) * rowHeight
-
-      const hasHorizontalScrollOffset = height < allRowsHeight
+      const cellHeight = expanded ? allDynamicRowsHeight[rowIndex - 1] : rowHeight
 
       return (
-        <div
-          style={style}
-          ref={cellRef}
-          className={cx(styles.gridItem,
-            rowIndex % 2
-              ? styles.gridItemOdd
-              : styles.gridItemEven)}
-        >
-          {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
-          {!column?.render && content }
-
+        <>
+          <div
+            style={style}
+            ref={cellRef}
+            className={cx(styles.gridItem,
+              rowIndex % 2
+                ? styles.gridItemOdd
+                : styles.gridItemEven)}
+          >
+            {column?.render && isObject(rowData) && column?.render(rowData, expanded)}
+            {!column?.render && content}
+          </div>
           <div
             className={cx(styles.gridItem, styles.gridItemLast,
               rowIndex % 2
@@ -220,12 +217,15 @@ const VirtualGrid = (props: IProps) => {
             style={{
               width: lastColumn?.minWidth,
               height: getRowHeight(rowIndex),
-              marginLeft: width - lastColumn?.minWidth - (hasHorizontalScrollOffset ? 23 : 13)
+              position: 'sticky',
+              left: width - (lastColumn?.minWidth || 0),
+              marginTop: `-${cellHeight}px`,
+              zIndex: 2
             }}
           >
-            {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData, expanded) }
+            {lastColumn?.render && isObject(rowData) && lastColumn?.render(rowData, expanded)}
           </div>
-        </div>
+        </>
       )
     }
 
@@ -239,8 +239,8 @@ const VirtualGrid = (props: IProps) => {
             : styles.gridItemEven,
           columnIndex === columns.length - 2 ? 'penult' : '')}
       >
-        {column?.render && isObject(rowData) && column?.render(rowData, expanded) }
-        {!column?.render && content }
+        {column?.render && isObject(rowData) && column?.render(rowData, expanded)}
+        {!column?.render && content}
       </div>
     )
   }

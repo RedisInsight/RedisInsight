@@ -103,6 +103,12 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       formik.setFieldValue('customFormat', formik.values.format)
     } else {
       formik.setFieldValue('format', formik.values.commonFormat)
+      sendEventTelemetry({
+        event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
+        eventData: {
+          currentFormat: formik.values.commonFormat,
+        }
+      })
       formik.handleSubmit()
     }
   }
@@ -154,6 +160,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
             onChange={(option) => onCommonFormatChange(option)}
             disabled={formik.values.selectedRadioOption !== DatetimeRadioOption.Common}
             data-test-subj="select-datetime"
+            data-testid="select-datetime-testid"
           />
         </div>
       ),

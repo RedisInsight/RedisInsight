@@ -103,6 +103,12 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       formik.setFieldValue('customFormat', formik.values.format)
     } else {
       formik.setFieldValue('format', formik.values.commonFormat)
+      sendEventTelemetry({
+        event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
+        eventData: {
+          currentFormat: formik.values.commonFormat,
+        }
+      })
       formik.handleSubmit()
     }
   }

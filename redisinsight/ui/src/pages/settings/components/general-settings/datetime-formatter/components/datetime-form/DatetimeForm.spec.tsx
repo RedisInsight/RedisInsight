@@ -47,7 +47,7 @@ describe('DatetimeForm', () => {
     expect(onFormatChange).toBeCalledWith('Invalid Format')
   })
 
-  it('should call proper telemetry events', async () => {
+  it('should call proper telemetry events when custom format is saved', async () => {
     const sendEventTelemetryMock = jest.fn()
     sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
 
@@ -59,6 +59,39 @@ describe('DatetimeForm', () => {
     await act(() => fireEvent.change(customInput, { target: { value: dateTimeOptions[1].value } }))
     await act(() => fireEvent.click(screen.getByTestId('datetime-custom-btn')))
 
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
+      eventData: {
+        currentFormat: dateTimeOptions[1].value
+      }
+    })
+  })
+
+  it('should call proper telemetry events when radio option is changed to common', async () => {
+    const sendEventTelemetryMock = jest.fn()
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<DatetimeForm {...instance(mockedProps)} />)
+
+    await act(() => fireEvent.click(screen.getByText('Custom')))
+    await act(() => fireEvent.click(screen.getByText('Pre-selected formats')))
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
+      eventData: {
+        currentFormat: dateTimeOptions[0].value
+      }
+    })
+  })
+
+  it('should call sendEventTelemetry when common formats is changed', async () => {
+    const sendEventTelemetryMock = jest.fn()
+    sendEventTelemetry.mockImplementation(() => sendEventTelemetryMock)
+
+    render(<DatetimeForm {...instance(mockedProps)} />)
+
+    fireEvent.click(screen.getByTestId('select-datetime-testid'))
+    await act(() => fireEvent.click(screen.queryByText(dateTimeOptions[1].value) || document))
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {

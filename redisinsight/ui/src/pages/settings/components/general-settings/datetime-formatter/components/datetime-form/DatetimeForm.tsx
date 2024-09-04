@@ -160,6 +160,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
             onChange={(option) => onCommonFormatChange(option)}
             disabled={formik.values.selectedRadioOption !== DatetimeRadioOption.Common}
             data-test-subj="select-datetime"
+            data-testid="select-datetime-testid"
           />
         </div>
       ),

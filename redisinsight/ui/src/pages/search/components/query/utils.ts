@@ -56,7 +56,7 @@ export const getFieldsSuggestions = (
     const { attribute, type } = field
     const attibuteText = attribute.trim() ? attribute : `\\"${attribute}\\"`
     const insertText = withType ? addFieldAttribute(attibuteText, type) : attibuteText
-    // const insertText = attibuteText
+
     return {
       label: attribute || ' ',
       kind: monacoEditor.languages.CompletionItemKind.Reference,

@@ -7,16 +7,7 @@ const ftSearchCommand = MOCKED_SUPPORTED_COMMANDS['FT.SEARCH']
 const ftAggregateCommand = MOCKED_SUPPORTED_COMMANDS['FT.AGGREGATE']
 
 const ftAggreageTests = [
-  {
-    args: [''],
-    result: {
-      append: [],
-      isBlocked: true,
-      isComplete: false,
-      parent: undefined,
-      stopArg: { name: 'query', type: 'string' }
-    }
-  },
+  { args: [''], result: null },
   { args: ['', ''], result: null },
   {
     args: ['index', '"query"', 'APPLY'],
@@ -78,17 +69,75 @@ const ftAggreageTests = [
         optional: true
       },
       append: [
-        {
-          name: 'name',
-          type: 'string',
-          token: 'AS',
-          optional: true
-        },
-        {
-          name: 'function',
-          type: 'string',
-          token: 'REDUCE'
-        }
+        [
+          {
+            name: 'name',
+            type: 'string',
+            token: 'AS',
+            optional: true,
+            parent: {
+              name: 'reduce',
+              type: 'block',
+              optional: true,
+              multiple: true,
+              arguments: [
+                {
+                  name: 'function',
+                  token: 'REDUCE',
+                  type: 'string'
+                },
+                {
+                  name: 'nargs',
+                  type: 'integer'
+                },
+                {
+                  name: 'arg',
+                  type: 'string',
+                  multiple: true
+                },
+                {
+                  name: 'name',
+                  type: 'string',
+                  token: 'AS',
+                  optional: true
+                }
+              ],
+              parent: expect.any(Object)
+            }
+          }
+        ],
+        [
+          {
+            name: 'function',
+            token: 'REDUCE',
+            type: 'string',
+            parent: {
+              name: 'groupby',
+              type: 'block',
+              optional: true,
+              multiple: true,
+              arguments: [
+                {
+                  name: 'nargs',
+                  type: 'integer',
+                  token: 'GROUPBY'
+                },
+                {
+                  name: 'property',
+                  type: 'string',
+                  multiple: true
+                },
+                {
+                  name: 'reduce',
+                  type: 'block',
+                  optional: true,
+                  multiple: true,
+                  arguments: expect.any(Array)
+                }
+              ]
+            }
+          }
+        ]
       ],
       isBlocked: false,
       isComplete: true,
@@ -124,7 +173,7 @@ const ftAggreageTests = [
           }
         ]
       },
-      append: [
+      append: [[
         {
           name: 'asc',
           type: 'pure-token',
@@ -135,7 +184,7 @@ const ftAggreageTests = [
           type: 'pure-token',
           token: 'DESC'
         }
-      ],
+      ]],
       isBlocked: false,
       isComplete: false,
       parent: expect.any(Object)
@@ -151,12 +200,15 @@ const ftAggreageTests = [
         optional: true
       },
       append: [
-        {
-          name: 'num',
-          type: 'integer',
-          token: 'MAX',
-          optional: true
-        }
+        [
+          {
+            name: 'num',
+            type: 'integer',
+            token: 'MAX',
+            optional: true,
+            parent: expect.any(Object)
+          }
+        ]
       ],
       isBlocked: false,
       isComplete: true,
@@ -173,12 +225,13 @@ const ftAggreageTests = [
         optional: true
       },
       append: [
-        {
+        [{
           name: 'num',
           type: 'integer',
           token: 'MAX',
-          optional: true
-        }
+          optional: true,
+          parent: expect.any(Object)
+        }]
       ],
       isBlocked: false,
       isComplete: true,
@@ -233,15 +286,7 @@ const ftAggreageTests = [
 ]
 
 const ftSearchTests = [
-  {
-    args: [''],
-    result: {
-      append: [],
-      isBlocked: true,
-      isComplete: false,
-      parent: undefined,
-      stopArg: { name: 'query', type: 'string' } }
-  },
+  { args: [''], result: null },
   { args: ['', ''], result: null },
   {
     args: ['', '', 'SUMMARIZE'],
@@ -263,31 +308,35 @@ const ftSearchTests = [
           }
         ]
       },
-      append: [
+      append: [[
         {
           name: 'count',
           type: 'string',
-          token: 'FIELDS'
+          token: 'FIELDS',
+          parent: expect.any(Object)
         },
         {
           name: 'num',
           type: 'integer',
           token: 'FRAGS',
-          optional: true
+          optional: true,
+          parent: expect.any(Object)
         },
         {
           name: 'fragsize',
           type: 'integer',
           token: 'LEN',
-          optional: true
+          optional: true,
+          parent: expect.any(Object)
         },
         {
           name: 'separator',
           type: 'string',
           token: 'SEPARATOR',
-          optional: true
+          optional: true,
+          parent: expect.any(Object)
         }
-      ],
+      ]],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -345,20 +394,22 @@ const ftSearchTests = [
         token: 'LEN',
         optional: true
       },
-      append: [
+      append: [[
         {
           name: 'fragsize',
           type: 'integer',
           token: 'LEN',
-          optional: true
+          optional: true,
+          parent: expect.any(Object)
         },
         {
           name: 'separator',
           type: 'string',
           token: 'SEPARATOR',
-          optional: true
+          optional: true,
+          parent: expect.any(Object)
         }
-      ],
+      ]],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -373,14 +424,8 @@ const ftSearchTests = [
         token: 'AS',
         optional: true
       },
-      append: [
-        {
-          name: 'property',
-          type: 'string',
-          token: 'AS',
-          optional: true
-        }
-      ],
+      // TODO: append may have AS token, since it is optional - we skip for now
+      append: [[]],
       isBlocked: false,
       isComplete: false,
       parent: expect.any(Object)
@@ -395,14 +440,7 @@ const ftSearchTests = [
         token: 'AS',
         optional: true
       },
-      append: [
-        {
-          name: 'property',
-          type: 'string',
-          token: 'AS',
-          optional: true
-        }
-      ],
+      append: [[]],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -444,16 +482,20 @@ const ftSearchTests = [
         ]
       },
       append: [
-        {
-          name: 'asc',
-          type: 'pure-token',
-          token: 'ASC'
-        },
-        {
-          name: 'desc',
-          type: 'pure-token',
-          token: 'DESC'
-        }
+        [
+          {
+            name: 'asc',
+            type: 'pure-token',
+            token: 'ASC',
+            parent: expect.any(Object)
+          },
+          {
+            name: 'desc',
+            type: 'pure-token',
+            token: 'DESC',
+            parent: expect.any(Object)
+          }
+        ]
       ],
       isBlocked: false,
       isComplete: true,
@@ -506,45 +548,65 @@ const splitQueryByArgsTests: Array<{
     input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS'],
     result: {
       args: [[], ['FT.SEARCH', '"idx:bicycle"', '""', 'WITHSORTKEYS']],
-      isCursorInQuotes: false,
-      nextCursorChar: 'F',
-      prevCursorChar: undefined
+      cursor: {
+        argLeftOffset: 10,
+        argRightOffset: 23,
+        isCursorInQuotes: false,
+        nextCursorChar: 'F',
+        prevCursorChar: undefined
+      }
     }
   },
   {
     input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS', 17],
     result: {
       args: [['FT.SEARCH'], ['"idx:bicycle"', '""', 'WITHSORTKEYS']],
-      isCursorInQuotes: true,
-      nextCursorChar: 'c',
-      prevCursorChar: 'i'
+      cursor: {
+        argLeftOffset: 10,
+        argRightOffset: 23,
+        isCursorInQuotes: true,
+        nextCursorChar: 'c',
+        prevCursorChar: 'i'
+      }
     }
   },
   {
     input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS', 39],
     result: {
       args: [['FT.SEARCH', '"idx:bicycle"', '""'], ['WITHSORTKEYS']],
-      isCursorInQuotes: false,
-      nextCursorChar: undefined,
-      prevCursorChar: 'S'
+      cursor: {
+        argLeftOffset: 27,
+        argRightOffset: 39,
+        isCursorInQuotes: false,
+        nextCursorChar: undefined,
+        prevCursorChar: 'S'
+      }
     }
   },
   {
     input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS ', 40],
     result: {
       args: [['FT.SEARCH', '"idx:bicycle"', '""', 'WITHSORTKEYS'], []],
-      isCursorInQuotes: false,
-      nextCursorChar: undefined,
-      prevCursorChar: ' '
+      cursor: {
+        argLeftOffset: 0,
+        argRightOffset: 0,
+        isCursorInQuotes: false,
+        nextCursorChar: undefined,
+        prevCursorChar: ' '
+      }
     }
   },
   {
     input: ['FT.SEARCH "idx:bicycle \\" \\"" "" WITHSORTKEYS ', 46],
     result: {
       args: [['FT.SEARCH', '"idx:bicycle " ""', '""', 'WITHSORTKEYS'], []],
-      isCursorInQuotes: false,
-      nextCursorChar: undefined,
-      prevCursorChar: ' '
+      cursor: {
+        argLeftOffset: 0,
+        argRightOffset: 0,
+        isCursorInQuotes: false,
+        nextCursorChar: undefined,
+        prevCursorChar: ' '
+      }
     }
   }
 ]

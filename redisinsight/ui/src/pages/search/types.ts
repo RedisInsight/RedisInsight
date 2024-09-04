@@ -1,10 +1,10 @@
-import { monaco as monacoEditor } from 'react-monaco-editor'
-import { Maybe, Nullable } from 'uiSrc/utils'
+import { Maybe } from 'uiSrc/utils'
 
 export enum TokenType {
   PureToken = 'pure-token',
   Block = 'block',
-  OneOf = 'oneof'
+  OneOf = 'oneof',
+  String = 'string',
 }
 
 export enum ArgName {
@@ -13,6 +13,8 @@ export enum ArgName {
 
 export interface SearchCommand {
   name?: string
+  summary?: string
+  expression?: boolean
   type?: TokenType
   token?: string
   optional?: boolean
@@ -28,22 +30,16 @@ export interface FoundCommandArgument {
   isComplete: boolean
   stopArg: Maybe<SearchCommand>
   isBlocked: boolean
-  append: Maybe<SearchCommand[]>
+  append: Maybe<Array<SearchCommandTree[]>>
   parent: Maybe<SearchCommand>
 }
 
-export interface CommandContext {
-  commandName: string
-  command: Maybe<SearchCommand>
-  prevArgs: string[]
-  allArgs: string[]
-  currentCommandArg: Nullable<SearchCommand>
-}
-
 export interface CursorContext {
-  isCursorInQuotes: boolean
   prevCursorChar: string
   nextCursorChar: string
-  currentOffsetArg: any
-  range: monacoEditor.IRange
+  isCursorInQuotes: boolean
+  currentOffsetArg: string
+  offset: number
+  argLeftOffset: number
+  argRightOffset: number
 }

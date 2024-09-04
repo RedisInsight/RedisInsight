@@ -1,14 +1,23 @@
 import { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { bufferToString, formatLongName, getCommandMarkdown, Nullable } from 'uiSrc/utils'
-import { addOwnTokenToArgs, buildSuggestion, findCurrentArgument, generateDetail } from 'uiSrc/pages/search/utils'
-import { CommandContext, CursorContext, FoundCommandArgument, SearchCommand } from 'uiSrc/pages/search/types'
+import { bufferToString, formatLongName, generateArgsForInsertText, getCommandMarkdown, Nullable } from 'uiSrc/utils'
+import {
+  buildSuggestion,
+  generateDetail,
+  removeNotSuggestedArgs
+} from 'uiSrc/pages/search/utils'
+import { FoundCommandArgument, SearchCommand } from 'uiSrc/pages/search/types'
 import { DefinedArgumentName } from 'uiSrc/pages/search/components/query/constants'
 
-export const asSuggestionsRef = (suggestions: monacoEditor.languages.CompletionItem[], forceHide = true) => ({
+export const asSuggestionsRef = (
+  suggestions: monacoEditor.languages.CompletionItem[],
+  forceHide = true,
+  forceShow = true
+) => ({
   data: suggestions,
-  forceHide
+  forceHide,
+  forceShow
 })
 
 export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, nextQoutes = true) =>
@@ -39,6 +48,22 @@ export const getFieldsSuggestions = (fields: any[], range: monaco.IRange, spaceA
     }
   })
 
+const insertFunctionArguments = (args: SearchCommand[]) =>
+  generateArgsForInsertText(
+    args.map(({ token, optional }) => (optional ? `[${token}]` : (token || ''))) as string[],
+    ', '
+  )
+
+export const getFunctionsSuggestions = (functions: SearchCommand[], range: monaco.IRange) => functions
+  .map(({ token, summary, arguments: args }) => ({
+    label: token || '',
+    insertText: `${token}(${insertFunctionArguments(args || [])})`,
+    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    range,
+    kind: monacoEditor.languages.CompletionItemKind.Function,
+    detail: summary
+  }))
+
 export const getCommandsSuggestions = (commands: SearchCommand[], range: monaco.IRange) => asSuggestionsRef(
   commands.map((command) => buildSuggestion(command, range, {
     detail: generateDetail(command),
@@ -61,7 +86,7 @@ export const getMandatoryArgumentSuggestions = (
 
   if (foundArg.isBlocked) return []
   if (foundArg.append?.length) {
-    return foundArg.append.map((arg: any) => buildSuggestion(arg, range, {
+    return foundArg.append[0].map((arg: any) => buildSuggestion(arg, range, {
       kind: monacoEditor.languages.CompletionItemKind.Property,
       detail: generateDetail(foundArg?.parent)
     }))
@@ -71,44 +96,44 @@ export const getMandatoryArgumentSuggestions = (
 }
 
 export const getCommandSuggestions = (
-  firstLevelArgs: SearchCommand[],
   foundArg: Nullable<FoundCommandArgument>,
   allArgs: string[],
   range: monaco.IRange,
-  currentArg?: string
 ) => {
   const appendCommands = foundArg?.append ?? []
+  const suggestions = []
 
-  return [
-    ...appendCommands.map((arg) => buildSuggestion(arg, range, {
-      sortText: 'a',
-      kind: monacoEditor.languages.CompletionItemKind.Property,
-      detail: generateDetail(foundArg?.parent)
-    })),
-    ...firstLevelArgs
-      .filter((arg) =>
-        arg.multiple || !(currentArg !== arg.token && allArgs.includes(arg.token || arg.arguments?.[0]?.token || '')))
+  for (let i = 0; i < appendCommands.length; i++) {
+    const isLastLevel = i === appendCommands.length - 1
+    const filteredFileldArgs = isLastLevel
+      ? removeNotSuggestedArgs(allArgs, appendCommands[i])
+      : appendCommands[i]
+
+    const leveledSuggestions = filteredFileldArgs
       .map((arg) => buildSuggestion(arg, range, {
-        sortText: 'b',
-        kind: monacoEditor.languages.CompletionItemKind.Reference,
-        detail: generateDetail(arg)
+        sortText: `${i}`,
+        kind: isLastLevel
+          ? monacoEditor.languages.CompletionItemKind.Reference
+          : monacoEditor.languages.CompletionItemKind.Property,
+        detail: generateDetail(arg?.parent)
       }))
-  ]
+
+    suggestions.push(leveledSuggestions)
+  }
+
+  return suggestions.flat()
 }
 
 export const getGeneralSuggestions = (
-  commandContext: CommandContext,
-  cursorContext: CursorContext,
+  foundArg: Nullable<FoundCommandArgument>,
+  allArgs: string[],
+  range: monacoEditor.IRange,
   fields: any[],
 ): {
   suggestions: monacoEditor.languages.CompletionItem[],
   forceHide?: boolean
   helpWidgetData?: any
 } => {
-  const { command, prevArgs } = commandContext
-  const { range } = cursorContext
-  const foundArg = findCurrentArgument(command?.arguments || [], prevArgs)
-
   if (foundArg && !foundArg.isComplete) {
     return {
       suggestions: getMandatoryArgumentSuggestions(foundArg, fields, range),
@@ -120,47 +145,18 @@ export const getGeneralSuggestions = (
     }
   }
 
-  return getNextSuggestions(commandContext, cursorContext, foundArg)
+  return getNextSuggestions(foundArg, allArgs, range)
 }
 
 export const getNextSuggestions = (
-  { command, currentCommandArg, prevArgs, allArgs }: CommandContext,
-  { currentOffsetArg, range }: CursorContext,
-  foundArg: Nullable<FoundCommandArgument>
+  foundArg: Nullable<FoundCommandArgument>,
+  allArgs: string[],
+  range: monacoEditor.IRange
 ) => {
-  if (!command) return { suggestions: [] }
   if (foundArg && !foundArg.isComplete) return { suggestions: [], helpWidgetData: { isOpen: false } }
 
-  const parentArgIndex = command.arguments
-    ?.findIndex(({ name }) => name === foundArg?.parent?.name) || -1
-  const currentArgIndex = parentArgIndex > -1 ? parentArgIndex : prevArgs.length - 1
-  const nextMandatoryIndex = command.arguments
-    ?.findIndex(({ optional }, i) => !optional && i > currentArgIndex) || -1
-
-  const nextOptionalArgs = (
-    nextMandatoryIndex > -1
-      ? command.arguments?.slice(currentArgIndex + 1, nextMandatoryIndex)
-      : command.arguments?.filter(({ optional }) => optional)
-  ) || []
-  const nextMandatoryArg = command.arguments?.[nextMandatoryIndex]
-
-  if (nextMandatoryArg?.token) {
-    nextOptionalArgs.unshift(nextMandatoryArg)
-  }
-
-  if (nextMandatoryArg && !nextMandatoryArg.token) {
-    return {
-      helpWidgetData: {
-        isOpen: !!currentCommandArg,
-        parent: addOwnTokenToArgs(command.name!, command),
-        currentArg: nextMandatoryArg
-      },
-      suggestions: []
-    }
-  }
-
   return {
-    suggestions: getCommandSuggestions(nextOptionalArgs, foundArg, allArgs, range, currentOffsetArg),
+    suggestions: getCommandSuggestions(foundArg, allArgs, range),
     helpWidgetData: { isOpen: false }
   }
 }

@@ -13,6 +13,8 @@ export enum CustomErrorCodes {
   CloudOauthUnknownAuthorizationRequest = 11_007,
   CloudOauthUnexpectedError = 11_008,
   CloudOauthMissedRequiredData = 11_009,
+  CloudOauthCanceled = 11_010,
+  CloudOauthSsoUnsupportedEmail = 11_011,
   CloudCapiUnauthorized = 11_021,
   CloudCapiKeyUnauthorized = 11_022,
   CloudCapiKeyNotFound = 11_023,
@@ -59,4 +61,5 @@ export enum CustomErrorCodes {
   RdiInternalServerError = 11_403,
   RdiValidationError = 11_404,
   RdiNotFound = 11_405,
+  RdiForbidden = 11_406,
 }

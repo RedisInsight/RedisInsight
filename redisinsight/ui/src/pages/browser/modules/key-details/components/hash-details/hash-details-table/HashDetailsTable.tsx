@@ -50,6 +50,7 @@ import {
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
+  createTooltipContent,
   formatLongName,
   formattingBuffer,
   isEqualBuffers,
@@ -63,7 +64,7 @@ import {
 import { stringToBuffer } from 'uiSrc/utils/formatters/bufferFormatters'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
-import { EditableInput, EditableTextArea } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { EditableInput, EditableTextArea, FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import {
   AddFieldsToHashDto,
   GetHashFieldsResponse,
@@ -308,25 +309,18 @@ const HashDetailsTable = (props: Props) => {
       render: (_name: string, { field: fieldItem }: HashFieldDto, expanded?: boolean) => {
         const { value: decompressedItem } = decompressingBuffer(fieldItem, compressor)
         const field = bufferToString(fieldItem) || ''
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const tooltipContent = formatLongName(field)
-        const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded })
+        const { value, isValid } = formattingBuffer(decompressedItem, viewFormatProp, { expanded, skipVector: true })
+        const tooltipContent = createTooltipContent(value, decompressedItem, viewFormatProp, { skipVector: true })
 
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}>
             <div style={{ display: 'flex' }} data-testid={`hash-field-${field}`}>
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  anchorClassName="truncateText"
-                  position="bottom"
-                  content={tooltipContent}
-                >
-                  <>{value?.substring?.(0, 200) ?? value}</>
-                </EuiToolTip>
-              )}
-              {expanded && value}
+              <FormattedValue
+                value={value}
+                expanded={expanded}
+                title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                tooltipContent={tooltipContent}
+              />
             </div>
           </EuiText>
         )
@@ -349,9 +343,8 @@ const HashDetailsTable = (props: Props) => {
         const { value: decompressedValueItem, isCompressed } = decompressingBuffer(valueItem, compressor)
         const value = bufferToString(valueItem)
         const field = bufferToString(decompressedFieldItem)
-        // Better to cut the long string, because it could affect virtual scroll performance
-        const tooltipContent = formatLongName(value)
         const { value: formattedValue, isValid } = formattingBuffer(decompressedValueItem, viewFormatProp, { expanded })
+        const tooltipContent = createTooltipContent(formattedValue, decompressedValueItem, viewFormatProp)
         const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
           && !isEqualBuffers(valueItem, stringToBuffer(value))
         const isEditable = !isCompressed && isFormatEditable(viewFormat)
@@ -382,18 +375,12 @@ const HashDetailsTable = (props: Props) => {
             testIdPrefix="hash"
           >
             <div className="innerCellAsCell">
-              {!expanded && (
-                <EuiToolTip
-                  title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
-                  className={styles.tooltip}
-                  position="bottom"
-                  content={tooltipContent}
-                  anchorClassName="truncateText"
-                >
-                  <>{(formattedValue as any)?.substring?.(0, 200) ?? formattedValue}</>
-                </EuiToolTip>
-              )}
-              {expanded && formattedValue}
+              <FormattedValue
+                value={formattedValue}
+                expanded={expanded}
+                title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+                tooltipContent={tooltipContent}
+              />
             </div>
           </EditableTextArea>
         )

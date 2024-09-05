@@ -1,6 +1,6 @@
 {
   "name": "redisinsight-api",
-  "version": "2.54.0",
+  "version": "2.56.0",
   "description": "Redis Insight API",
   "private": true,
   "author": {
@@ -18,6 +18,8 @@
     "build:prod": "rimraf dist && nest build -p ./tsconfig.build.prod.json && cross-env NODE_ENV=production",
     "build:stage": "rimraf dist && nest build && cross-env NODE_ENV=staging",
     "format": "prettier --write \"src/**/*.ts\"",
+    "minify:prod": "node ./esbuild.js --production",
+    "minify:dev": "node ./esbuild.js --watch",
     "lint": "eslint --ext .ts .",
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
@@ -111,6 +113,7 @@
     "chai": "^4.3.4",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.3",
+    "esbuild": "^0.23.0",
     "eslint": "^7.1.0",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^6.10.0",

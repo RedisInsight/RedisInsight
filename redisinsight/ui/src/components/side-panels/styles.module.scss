@@ -152,24 +152,6 @@ $animation-duration: 300ms;
   flex-grow: 1;
 }
 
-.betaLabel {
-  margin-left: 4px;
-  font-size: 8px !important;
-  line-height: 12px !important;
-  background-color: var(--recommendationLiveBorderColor) !important;
-  border: 1px solid var(--triggerIconActiveColor) !important;
-  color: #FFF7EA !important;
-  border-radius: 2px !important;
-  padding: 0 3px !important;
-
-  transition: transform 250ms ease-in-out;
-  pointer-events: none;
-
-  :global(.euiBadge__content) {
-    min-height: 12px !important;
-  }
-}
-
 .onboardingAnchorWrapper {
   display: flex;
 

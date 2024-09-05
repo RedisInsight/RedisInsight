@@ -1,9 +1,9 @@
 {
-  "version": 2.5203,
+  "version": 2.5403,
   "features": {
     "redisDataIntegration": {
       "flag": true,
-      "perc": [[0,0]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -22,7 +22,7 @@
     },
     "documentationChat": {
       "flag": true,
-      "perc": [[0,20]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",
@@ -33,7 +33,7 @@
     },
     "databaseChat": {
       "flag": true,
-      "perc": [[0,20]],
+      "perc": [[0,100]],
       "filters": [
         {
           "name": "config.server.buildType",

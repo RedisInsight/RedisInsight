@@ -21,6 +21,8 @@ const responseSchema = Joi.object().keys({
   theme: Joi.string().allow(null).required(),
   scanThreshold: Joi.number().required(),
   batchSize: Joi.number().required(),
+  dateFormat: Joi.string().allow(null),
+  timezone: Joi.string().allow(null),
   agreements: Joi.object().keys({
     version: Joi.string().required(),
     eula: Joi.bool().required(),
@@ -32,6 +34,8 @@ const responseSchema = Joi.object().keys({
 const dataSchema = Joi.object({
   theme: Joi.string().allow(null).optional(),
   scanThreshold: Joi.number().allow(null).min(500).optional(),
+  dateFormat: Joi.string().allow(null),
+  timezone: Joi.string().allow(null),
   agreements: Joi.object().keys({
     eula: Joi.boolean().label('.eula').optional(),
     encryption: Joi.boolean().label('.encryption').optional(),
@@ -45,6 +49,8 @@ const validInputData = {
   theme: 'DARK',
   scanThreshold: 100000,
   batchSize: 5,
+  dateFormat: null,
+  timezone: null,
   agreements: {
     eula: true,
     analytics: false,

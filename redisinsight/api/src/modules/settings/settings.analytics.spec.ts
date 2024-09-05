@@ -85,6 +85,8 @@ describe('SettingsAnalytics', () => {
       agreements: null,
       scanThreshold: 10000,
       batchSize: 5,
+      dateFormat: null,
+      timezone: null,
       theme: null,
     };
     it('should emit [SETTINGS_KEYS_TO_SCAN_CHANGED] event', async () => {

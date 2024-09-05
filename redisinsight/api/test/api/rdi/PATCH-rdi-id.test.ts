@@ -42,6 +42,7 @@ const responseSchema = Joi.object().keys({
 const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
 
 const mainCheckFn = getMainCheckFn(endpoint);
+const loginNock =   nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true)
 
 describe('PATCH /rdi/:id', () => {
   describe('Validation', () => {
@@ -62,7 +63,7 @@ describe('PATCH /rdi/:id', () => {
         },
         before: async () => {
           await localDb.generateRdis(testRdiBase, 1);
-          nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
+          loginNock.reply(200, {
             access_token: mockedAccessToken,
           });
         },
@@ -78,7 +79,7 @@ describe('PATCH /rdi/:id', () => {
         },
         before: async () => {
           await localDb.generateRdis(testRdiBase, 1);
-          nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
+          loginNock.reply(200, {
             access_token: mockedAccessToken,
           });
         },
@@ -87,16 +88,17 @@ describe('PATCH /rdi/:id', () => {
         name: 'Should throw error if rdiClient was not connected',
         statusCode: 401,
         data: validInputData,
-        before: () => {
-          nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(401, {
-            message: 'Unauthorized',
-          });
-        },
         responseBody: {
-          message: 'Authorization failed',
+          message: 'Unauthorized',
           statusCode: 401,
           error: 'RdiUnauthorized',
           errorCode: 11402,
+        },
+        before: () => {
+          loginNock.reply(401, {
+            message: 'Unauthorized',
+            detail: 'Unauthorized'
+          });
         },
       },
     ].forEach(mainCheckFn);

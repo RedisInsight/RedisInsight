@@ -49,11 +49,9 @@ fixture `Upload custom tutorials`
 /* https://redislabs.atlassian.net/browse/RI-4186, https://redislabs.atlassian.net/browse/RI-4198,
 https://redislabs.atlassian.net/browse/RI-4302, https://redislabs.atlassian.net/browse/RI-4318
 */
-// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
-test.skip
-    .before(async t => {
+test
+    .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
         zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
         // Create zip file for uploading
@@ -69,8 +67,8 @@ test.skip
         const imageExternalPath = 'Redis Insight screen external';
 
         // Verify that user can see the “MY TUTORIALS” section in the Enablement area.
-        await workbenchPage.InsightsPanel.togglePanel(true);
-        const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
+        await browserPage.NavigationHeader.togglePanel(true);
+        const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
 
         await t.expect(tutorials.customTutorials.visible).ok('custom tutorials sections is not visible');
         await t.click(tutorials.tutorialOpenUploadButton);
@@ -136,7 +134,7 @@ test
         tutorialName = 'Tutorials with manifest';
         const summary = 'Summary for JSON';
 
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.tutorialOpenUploadButton);
         // Verify that user can upload tutorials using a URL
@@ -164,11 +162,9 @@ test
             .notOk(`${tutorialName} tutorial is not uploaded`);
     });
 // https://redislabs.atlassian.net/browse/RI-4352
-// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
-test.skip
-    .before(async t => {
+test
+    .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
-        await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
         tutorialName = `${zipFolderName}${Common.generateWord(5)}`;
         zipFilePath = path.join('..', 'test-data', 'upload-tutorials', `${tutorialName}.zip`);
         // Create zip file for uploading
@@ -181,7 +177,7 @@ test.skip
         await deleteAllKeysFromDB(ossStandaloneRedisearch.host, ossStandaloneRedisearch.port);
         // Clear and delete database
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await tutorials.deleteTutorialByName(tutorialName);
         await t.expect(tutorials.tutorialAccordionButton.withText(tutorialName).exists)
@@ -196,7 +192,7 @@ test.skip
         const fileStarts = 'Upload';
 
         // Upload custom tutorial
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t
             .click(tutorials.tutorialOpenUploadButton)
@@ -244,8 +240,7 @@ test.skip
         await browserPage.searchByKeyName('*key1*');
         await verifyKeysDisplayingInTheList(keyNames, true);
     });
-// Unskip after resolving https://redislabs.atlassian.net/browse/RI-5859
-test.skip
+test
     .before(async() => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewStandaloneDatabaseApi(
@@ -267,7 +262,7 @@ test.skip
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     })('Verify that user can open tutorial from links in other tutorials', async t => {
         // Upload custom tutorial
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t
             .click(tutorials.tutorialOpenUploadButton)

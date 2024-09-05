@@ -13,6 +13,7 @@ import {
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { CloudJobStatus, CloudJobName } from 'uiSrc/electron/constants'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import reducer, {
   initialState,
   oauthCloudSelector,
@@ -1024,13 +1025,13 @@ describe('oauth cloud slice', () => {
         const onConnect = () => {}
 
         // Act
-        await store.dispatch<any>(createFreeDbSuccess(result, {}))
+        await store.dispatch<any>(createFreeDbSuccess(result, {}, CloudJobName.CreateFreeDatabase))
 
         // Assert
         const expectedActions = [
           showOAuthProgress(true),
           removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
-          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onConnect)),
+          addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB({}, onConnect, CloudJobName.CreateFreeDatabase)),
           setSelectAccountDialogState(false),
         ]
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -1276,6 +1277,7 @@ describe('oauth cloud slice', () => {
         // Assert
         const expectedActions = [
           logoutUser(),
+          setSSOFlow(),
           logoutUserSuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1298,6 +1300,7 @@ describe('oauth cloud slice', () => {
         // Assert
         const expectedActions = [
           logoutUser(),
+          setSSOFlow(),
           addErrorNotification(responsePayload as AxiosError),
           logoutUserFailure(),
         ]

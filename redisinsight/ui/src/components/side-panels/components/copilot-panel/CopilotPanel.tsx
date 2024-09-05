@@ -26,7 +26,6 @@ const CopilotPanel = (props: Props) => {
         >
           <div className={styles.titleWrapper}>
             <span className={styles.title}>Redis Copilot</span>
-            <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
           </div>
         </OnboardingTour>
       </div>

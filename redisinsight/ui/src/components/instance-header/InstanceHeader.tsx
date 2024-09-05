@@ -101,27 +101,31 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
         <EuiFlexItem style={{ overflow: 'hidden' }}>
           <div className={styles.breadcrumbsContainer} data-testid="breadcrumbs-container">
             <div>
-              <EuiToolTip
-                position="bottom"
-                content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
-              >
-                <EuiText
-                  className={styles.breadCrumbLink}
-                  aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
-                  data-testid="my-redis-db-btn"
-                  onClick={goHome}
-                  onKeyDown={goHome}
+              <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+                <EuiToolTip
+                  position="bottom"
+                  content={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
                 >
-                  Databases
-                </EuiText>
-              </EuiToolTip>
+                  <EuiText
+                    className={styles.breadCrumbLink}
+                    aria-label={server?.buildType === BuildType.RedisStack ? 'Edit database' : 'Redis Databases'}
+                    data-testid="my-redis-db-btn"
+                    onClick={goHome}
+                    onKeyDown={goHome}
+                  >
+                    Databases
+                  </EuiText>
+                </EuiToolTip>
+              </FeatureFlagComponent>
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <div style={{ maxWidth: '100%' }}>
                 <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                  <EuiFlexItem grow={false}>
-                    <EuiText className={styles.divider}>&#62;</EuiText>
-                  </EuiFlexItem>
+                  <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+                    <EuiFlexItem grow={false}>
+                      <EuiText className={styles.divider}>&#62;</EuiText>
+                    </EuiFlexItem>
+                  </FeatureFlagComponent>
                   <EuiFlexItem style={{ overflow: 'hidden' }}>
                     <b className={styles.dbName}>{name}</b>
                   </EuiFlexItem>

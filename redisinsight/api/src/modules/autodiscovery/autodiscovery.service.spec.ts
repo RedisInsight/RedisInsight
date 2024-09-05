@@ -6,6 +6,7 @@ import {
   mockAutodiscoveryEndpoint,
   mockDatabaseService,
   mockRedisClientFactory,
+  mockSessionMetadata,
   mockSettingsService,
   MockType,
 } from 'src/__mocks__';
@@ -15,6 +16,8 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { mocked } from 'ts-jest/utils';
 import config, { Config } from 'src/utils/config';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { mockConstantsProvider } from 'src/__mocks__/constants';
 
 jest.mock(
   'src/modules/autodiscovery/utils/autodiscovery.util',
@@ -69,13 +72,17 @@ describe('AutodiscoveryService', () => {
           provide: RedisClientFactory,
           useFactory: mockRedisClientFactory,
         },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
+        },
       ],
     }).compile();
 
     service = module.get(AutodiscoveryService);
     settingsService = module.get(SettingsService);
     databaseService = module.get(DatabaseService);
-    redisClientFactory = await module.get(RedisClientFactory);
+    redisClientFactory = module.get(RedisClientFactory);
 
     mocked(utils.convertRedisInfoReplyToObject).mockReturnValue({
       server: {
@@ -154,33 +161,35 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should should not call addRedisDatabase when no endpoints found', async () => {
-      await service['discoverDatabases']();
+      await service['discoverDatabases'](mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(0);
     });
 
     it('should should call addRedisDatabase 2 times', async () => {
       mocked(getAvailableEndpoints).mockResolvedValueOnce([mockAutodiscoveryEndpoint, mockAutodiscoveryEndpoint]);
-      await service['discoverDatabases']();
+      await service['discoverDatabases'](mockSessionMetadata);
 
       expect(addRedisDatabaseSpy).toHaveBeenCalledTimes(2);
       expect(addRedisDatabaseSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
         mockAutodiscoveryEndpoint,
-        jasmine.anything(),
-        jasmine.anything(),
       );
     });
   });
 
   describe('addRedisDatabase', () => {
     it('should create database if redis_mode is standalone', async () => {
-      await service['addRedisDatabase'](mockAutodiscoveryEndpoint);
+      await service['addRedisDatabase'](mockSessionMetadata, mockAutodiscoveryEndpoint);
 
       expect(databaseService.create).toHaveBeenCalledTimes(1);
-      expect(databaseService.create).toHaveBeenCalledWith({
-        name: `${mockAutodiscoveryEndpoint.host}:${mockAutodiscoveryEndpoint.port}`,
-        ...mockAutodiscoveryEndpoint,
-      });
+      expect(databaseService.create).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        {
+          name: `${mockAutodiscoveryEndpoint.host}:${mockAutodiscoveryEndpoint.port}`,
+          ...mockAutodiscoveryEndpoint,
+        },
+      );
     });
 
     it('should not create database if redis_mode is not standalone', async () => {
@@ -190,7 +199,7 @@ describe('AutodiscoveryService', () => {
         },
       });
 
-      await service['addRedisDatabase'](mockAutodiscoveryEndpoint);
+      await service['addRedisDatabase'](mockSessionMetadata, mockAutodiscoveryEndpoint);
 
       expect(databaseService.create).toHaveBeenCalledTimes(0);
     });
@@ -198,7 +207,7 @@ describe('AutodiscoveryService', () => {
     it('should not fail in case of an error', async () => {
       redisClientFactory.createClient.mockRejectedValue(new Error());
 
-      await service['addRedisDatabase'](mockAutodiscoveryEndpoint);
+      await service['addRedisDatabase'](mockSessionMetadata, mockAutodiscoveryEndpoint);
 
       expect(databaseService.create).toHaveBeenCalledTimes(0);
     });

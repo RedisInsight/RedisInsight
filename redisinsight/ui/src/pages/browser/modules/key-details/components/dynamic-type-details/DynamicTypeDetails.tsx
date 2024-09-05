@@ -14,6 +14,7 @@ import { StreamDetails } from '../stream-details'
 export interface Props extends KeyDetailsHeaderProps {
   onOpenAddItemPanel: () => void
   onCloseAddItemPanel: () => void
+  keyType: KeyTypes | ModulesKeyTypes
 }
 
 const DynamicTypeDetails = (props: Props) => {
@@ -40,12 +41,7 @@ const DynamicTypeDetails = (props: Props) => {
   }
 
   // Unsupported key type
-  if (!(Object.values(KeyTypes).includes(selectedKeyType as KeyTypes))
-    && !(Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes))) {
-    return <UnsupportedTypeDetails />
-  }
-
-  return null
+  return <UnsupportedTypeDetails />
 }
 
 export { DynamicTypeDetails }

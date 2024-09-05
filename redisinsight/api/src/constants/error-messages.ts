@@ -7,6 +7,9 @@ export default {
   INTERNAL_SERVER_ERROR: 'Server error',
   REQUEST_TIMEOUT: 'Request timeout',
 
+  INVALID_CLIENT_METADATA: 'Client metadata missed required properties',
+  INVALID_SESSION_METADATA: 'Session metadata missed required properties',
+
   INVALID_DATABASE_INSTANCE_ID: 'Invalid database instance id.',
   COMMAND_EXECUTION_NOT_FOUND: 'Command execution was not found.',
   DATABASE_ANALYSIS_NOT_FOUND: 'Database analysis was not found.',
@@ -83,10 +86,12 @@ export default {
 
   CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
 
+  CLOUD_OAUTH_CANCELED: 'Authorization request was canceled.',
   CLOUD_OAUTH_MISCONFIGURATION: 'Authorization server misconfiguration.',
   CLOUD_OAUTH_GITHUB_EMAIL_PERMISSION: 'Unable to get an email from the GitHub account. Make sure that it is available.',
+  CLOUD_OAUTH_SSO_UNSUPPORTED_EMAIL: 'Invalid email.',
   CLOUD_OAUTH_MISSED_REQUIRED_DATA: 'Unable to get required data from the user profile.',
-  CLOUD_OAUTH_GITHUB_UNKNOWN_AUTHORIZATION_REQUEST: 'Unknown authorization request.',
+  CLOUD_OAUTH_UNKNOWN_AUTHORIZATION_REQUEST: 'Unknown authorization request.',
   CLOUD_OAUTH_UNEXPECTED_ERROR: 'Unexpected error.',
 
   CLOUD_JOB_UNEXPECTED_ERROR: 'Unexpected error occurred',

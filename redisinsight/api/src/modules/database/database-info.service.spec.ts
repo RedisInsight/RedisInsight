@@ -7,7 +7,9 @@ import {
   mockDatabaseOverviewProvider,
   mockDatabaseRecommendationService,
   mockDatabaseService,
+  mockDBSize,
   mockRedisGeneralInfo,
+  mockSessionMetadata,
   mockStandaloneRedisClient,
   MockType,
 } from 'src/__mocks__';
@@ -73,6 +75,12 @@ describe('DatabaseInfoService', () => {
     });
   });
 
+  describe('getDBSize', () => {
+    it('should create client and gets db size', async () => {
+      expect(await service.getDBSize(mockCommonClientMetadata)).toEqual(mockDBSize);
+    });
+  });
+
   describe('getDatabaseIndex', () => {
     it('should not return a new client', async () => {
       expect(await service.getDatabaseIndex(mockCommonClientMetadata, 0)).toEqual(undefined);
@@ -86,7 +94,7 @@ describe('DatabaseInfoService', () => {
       databaseClientFactory.createClient.mockResolvedValueOnce(client);
       await service.getDatabaseIndex(mockCommonClientMetadata, db);
 
-      expect(databaseService.get).toBeCalledWith(mockCommonClientMetadata.databaseId);
+      expect(databaseService.get).toBeCalledWith(mockSessionMetadata, mockCommonClientMetadata.databaseId);
     });
     describe('recommendationService', () => {
       it('getDatabaseIndex should call recommendationService', async () => {
@@ -105,7 +113,7 @@ describe('DatabaseInfoService', () => {
         await expect(service.getDatabaseIndex(mockCommonClientMetadata, 2)).rejects.toThrow(Error);
         await expect(recommendationService.check).toBeCalledTimes(0);
         await expect(databaseService.get).toBeCalledTimes(1);
-        await expect(databaseService.get).toBeCalledWith(mockCommonClientMetadata.databaseId);
+        await expect(databaseService.get).toBeCalledWith(mockSessionMetadata, mockCommonClientMetadata.databaseId);
       });
     });
   });

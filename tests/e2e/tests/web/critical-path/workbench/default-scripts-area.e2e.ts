@@ -52,7 +52,7 @@ test
         // Send commands
         await workbenchPage.sendCommandInWorkbench(commandsForSend.join('\n'));
         // Run automatically added "FT._LIST" and "FT.INFO {index}" scripts
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);

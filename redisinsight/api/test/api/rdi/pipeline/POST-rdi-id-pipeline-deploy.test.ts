@@ -115,6 +115,7 @@ describe('POST /rdi/:id/pipeline/deploy', () => {
         });
         nock(testRdiUrl).post(`/${RdiUrl.Deploy}`).query(true).reply(401, {
           message: errorMessage,
+          detail: errorMessage,
         });
       },
     },
@@ -138,6 +139,7 @@ describe('POST /rdi/:id/pipeline/deploy', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Deploy}`).query(true).reply(200, mockResponse);
         nock(testRdiUrl).get(`/${RdiUrl.Action}/${mockResponse.action_id}`).query(true).reply(401, {
           message: 'Authorization 2 failed',
+          detail: errorMessage
         });
       },
     },

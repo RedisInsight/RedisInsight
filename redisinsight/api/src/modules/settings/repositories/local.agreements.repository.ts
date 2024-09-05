@@ -4,6 +4,7 @@ import { classToClass } from 'src/utils';
 import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
 import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { Agreements } from 'src/modules/settings/models/agreements';
+import { SessionMetadata } from 'src/common/models';
 
 export class LocalAgreementsRepository extends AgreementsRepository {
   constructor(
@@ -17,14 +18,24 @@ export class LocalAgreementsRepository extends AgreementsRepository {
     let entity = await this.repository.findOneBy({});
 
     if (!entity) {
-      entity = await this.repository.save(this.repository.create());
+      try {
+        entity = await this.repository.save(this.repository.create({ id: 1 }));
+      } catch (e) {
+        if (e.code === 'SQLITE_CONSTRAINT') {
+          return this.getOrCreate();
+        }
+
+        throw e;
+      }
     }
 
     return classToClass(Agreements, entity);
   }
 
-  async update(id: string, agreements: Agreements): Promise<Agreements> {
-    await this.repository.update(id || {}, classToClass(AgreementsEntity, agreements));
+  async update(_: SessionMetadata, agreements: Agreements): Promise<Agreements> {
+    const entity = classToClass(AgreementsEntity, agreements);
+
+    await this.repository.save(entity);
 
     return this.getOrCreate();
   }

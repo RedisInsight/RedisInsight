@@ -49,7 +49,7 @@ if (fs.existsSync(workingDirectory)) {
         await t.click(myRedisDatabasePage.NavigationPanel.workbenchButton);
 
         // Check Enablement area and validate that removed file is existed in Guides
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tab = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tab.guidesGraphAccordion);
         await t.click(tab.guidesIntroductionGraphLink.nth(1));

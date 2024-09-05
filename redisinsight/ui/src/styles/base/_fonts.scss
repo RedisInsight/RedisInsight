@@ -59,3 +59,10 @@
   font-style: italic;
   src: url('uiSrc/assets/fonts/graphik/Graphik-SemiboldItalic.woff2') format('woff2');
 }
+
+@font-face {
+  font-family: 'SourceCodePro';
+  font-weight: 400;
+  font-style: normal;
+  src: url('uiSrc/assets/fonts/sourceCodePro/SourceCodePro-Regular.ttf') format('truetype');
+}

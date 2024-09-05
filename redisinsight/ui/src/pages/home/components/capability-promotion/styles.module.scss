@@ -62,15 +62,3 @@
     }
   }
 }
-
-@include global.welcome-page-header(650px) {
-  .guideItem:nth-child(3) {
-    display: none;
-  }
-}
-
-@include global.welcome-page-header(850px) {
-  .guideItem:nth-child(4) {
-    display: none;
-  }
-}

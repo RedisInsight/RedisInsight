@@ -153,6 +153,7 @@ enum ApiEndpoints {
 export enum CustomHeaders {
   DbIndex = 'ri-db-index',
   WindowId = 'x-window-id',
+  CsrfToken = 'X-CSRF-Token',
 }
 
 export const DEFAULT_SEARCH_MATCH = '*'

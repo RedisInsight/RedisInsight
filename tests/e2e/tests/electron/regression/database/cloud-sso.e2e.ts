@@ -8,17 +8,14 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { modifyFeaturesConfigJson, updateControlNumber } from '../../../../helpers/insights';
 import { processGoogleSSO } from '../../../../helpers/google-authorization';
 import { openChromeWithUrl, saveOpenedChromeTabUrl } from '../../../../helpers/scripts/browser-scripts';
-import { RdiInstancePage } from '../../../../pageObjects/rdi-instance-page';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
-const rdiInstancePage = new RdiInstancePage();
 
 let urlToUse = '';
 const pathes = {
     defaultRemote: path.join('.', 'test-data', 'features-configs', 'insights-default-remote.json'),
-    dockerConfig: path.join('.', 'test-data', 'features-configs', 'sso-docker-build.json'),
     electronConfig: path.join('.', 'test-data', 'features-configs', 'sso-electron-build.json')
 };
 
@@ -28,36 +25,36 @@ fixture `Cloud SSO`
     .beforeEach(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
+        // Update remote config .json to config with buildType filter including current app build
+        await modifyFeaturesConfigJson(pathes.electronConfig);
+        await updateControlNumber(48.2);
     })
     .afterEach(async() => {
-        // await databaseAPIRequests.deleteAllDatabasesApi();
-        // await myRedisDatabasePage.reloadPage();
-        // // Update remote config .json to default
-        // await modifyFeaturesConfigJson(pathes.defaultRemote);
-        // // Clear features config table
-        // await DatabaseScripts.deleteRowsFromTableInDB({ tableName: 'features_config' });
+        await databaseAPIRequests.deleteAllDatabasesApi();
     });
 test('Verify that user can see SSO feature if it is enabled in feature config', async t => {
-    //TODO should be updated when AI or sth other will be added
+    await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).ok('Cloud Sign in button not displayed when SSO feature enabled');
 
-    // Update remote config .json to config with buildType filter excluding current app build
-    // await modifyFeaturesConfigJson(pathes.dockerConfig);
-    // await updateControlNumber(48.2);
-    // // Verify that user can't see SSO feature if it is disabled in feature config
-    // await t.expect(myRedisDatabasePage.promoButton.exists).notOk('promo Cloud database button displayed when SSO feature disabled');
+    // TODO fix once Sign in modal will be available to testcafe https://redislabs.atlassian.net/browse/RI-6048
+    // Open Cloud Sign in dialog
+    // await t.click(myRedisDatabasePage.promoButton);
+    // Verify that Cloud Sign in dialog has authorization buttons for Electron app
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.authDialog.exists).ok('Cloud Sigh in modal not opened');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.googleAuth.exists).ok('Google auth button not displayed in Sigh in modal');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.gitHubAuth.exists).ok('Github auth button not displayed in Sigh in modal');
+    // await t.expect(myRedisDatabasePage.AuthorizationDialog.ssoAuth.exists).ok('SSO auth button not displayed in Sigh in modal');
+    // await t.click(myRedisDatabasePage.Modal.closeModalButton);
 
-    // Update remote config .json to config with buildType filter including current app build
-    await modifyFeaturesConfigJson(pathes.electronConfig);
-    await updateControlNumber(48.2);
-    await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
-
-    await t.click(
-        myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
-    await t.click(
-        myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addDatabaseButton);
+    await t.click(myRedisDatabasePage.AddRedisDatabase.addAutoDiscoverDatabase);
     // Verify that RE Cloud auto-discovery options Use Cloud Account and Use Cloud API Keys are displayed on Welcome screen
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudAccount.exists).ok('Use Cloud Account accordion not displayed when SSO feature enabled');
     await t.expect(myRedisDatabasePage.AddRedisDatabase.useCloudKeys.exists).ok('Use Cloud Keys accordion not displayed when SSO feature enabled');
+    await t.click(myRedisDatabasePage.AddRedisDatabase.useCloudAccount);
+    // Verify that Auth buttons are displayed for auto-discovery panel on Electron app
+    await t.expect(myRedisDatabasePage.googleAuth.exists).ok('Google auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.gitHubAuth.exists).ok('Github auth button not displayed when SSO feature enabled');
+    await t.expect(myRedisDatabasePage.ssoAuth.exists).ok('SSO auth button not displayed when SSO feature enabled');
 });
 // skip until adding linux support
 test.skip('Verify that user can sign in using SSO via Google authorization', async t => {
@@ -65,7 +62,7 @@ test.skip('Verify that user can sign in using SSO via Google authorization', asy
     const logsFilePath = path.join('test-data', logsFilename);
 
     await t.expect(myRedisDatabasePage.promoButton.exists).ok('Import Cloud database button not displayed when SSO feature enabled');
-    await t.click(rdiInstancePage.RdiHeader.cloudSignInButton);
+    await t.click(myRedisDatabasePage.NavigationHeader.cloudSignInButton);
     // Navigate to Google Auth button
     await t.pressKey('tab');
     await t.pressKey('tab');
@@ -82,7 +79,7 @@ test.skip('Verify that user can sign in using SSO via Google authorization', asy
 
     urlToUse = fs.readFileSync(logsFilePath, 'utf8');
     await processGoogleSSO(urlToUse);
-    await t.expect(rdiInstancePage.RdiHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
+    await t.expect(myRedisDatabasePage.NavigationHeader.cloudSignInButton.exists).notOk('Sign in button still displayed', { timeout: 10000 });
     await myRedisDatabasePage.reloadPage();
     await t.expect(myRedisDatabasePage.userProfileBtn.exists).ok('User profile button not displayed');
     await t.click(myRedisDatabasePage.userProfileBtn);

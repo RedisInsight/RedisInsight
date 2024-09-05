@@ -156,7 +156,7 @@ test
         await t.expect(browserPage.OverviewPanel.overviewCommandsSec.exists).ok('Commands/Sec is dispalyed in the Overview');
         await t.expect(browserPage.OverviewPanel.overviewCpu.exists).ok('CPU (%) is dispalyed in the Overview');
         //Run Create hash index command
-        await browserPage.InsightsPanel.togglePanel(true);
+        await browserPage.NavigationHeader.togglePanel(true);
         const tutorials = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.click(tutorials.dataStructureAccordionTutorialButton);
         await t.click(tutorials.internalLinkWorkingWithHashes);

@@ -15,6 +15,7 @@ import { AppModule } from './app.module';
 import SWAGGER_CONFIG from '../config/swagger';
 import LOGGER_CONFIG from '../config/logger';
 import { createHttpOptions } from './utils/createHttpOptions';
+import { SessionMetadataAdapter } from './modules/auth/session-metadata/adapters/session-metadata.adapter';
 
 const serverConfig = get('server') as Config['server'];
 
@@ -24,7 +25,9 @@ interface IApp {
 }
 
 export default async function bootstrap(apiPort?: number): Promise<IApp> {
-  await migrateHomeFolder() && await removeOldFolders();
+  if (serverConfig.migrateOldFolders) {
+    await migrateHomeFolder() && await removeOldFolders();
+  }
 
   const { port, host } = serverConfig;
   const logger = WinstonModule.createLogger(LOGGER_CONFIG);
@@ -68,6 +71,8 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
     app.useWebSocketAdapter(new WindowsAuthAdapter(app));
   }
 
+  app.useWebSocketAdapter(new SessionMetadataAdapter(app));
+
   const logFileProvider = app.get(LogFileProvider);
 
   await app.listen(apiPort || port, host);
@@ -92,6 +97,6 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   return { app, gracefulShutdown };
 }
 
-if (process.env.RI_APP_TYPE !== 'electron') {
+if (serverConfig.autoBootstrap) {
   bootstrap();
 }

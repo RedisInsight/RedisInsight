@@ -26,6 +26,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
 import styles from '../styles.module.scss'
 import { useDispatch } from 'react-redux'
+import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
 
 const suffix = '_tls_details'
 
@@ -35,7 +36,6 @@ export interface Props {
   formik: FormikProps<DbConnectionInfo>
   caCertificates?: { id: string; name: string }[]
   certificates?: { id: number; name: string }[]
-  onDeleteCaCert?: (id: string) => void
 }
 const TlsDetails = (props: Props) => {
   const dispatch = useDispatch()
@@ -46,18 +46,20 @@ const TlsDetails = (props: Props) => {
     dispatch(deleteCaCertificateAction([id]))
   }
 
+  const handleDeleteClientCert = (id: string) => {
+    dispatch(deleteClientCertAction([id]))
+  }
+
+
   const certRef = useRef<string>(null)
 
-  const handleClickDeleteCaCert = (id: string) => {
+  const handleClickDeleteCert = (id: string) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_CA_CERTIFICATE_DELETE_CLICKED,
-      eventData: {
-        caCertId: id,
-      }
+      event: TelemetryEvent.CONFIG_DATABASES_CERTIFICATE_REMOVED,
+      eventData: {},
     })
     showPopover(id)
   }
-
 
   const closePopover = (id: string) => {
     if (certRef.current) {
@@ -87,8 +89,8 @@ const TlsDetails = (props: Props) => {
       value: cert.id,
       inputDisplay: cert.name,
       dropdownDisplay: (
-        <div>
-          <span>{cert.name}</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>{cert.name}</div>
           <PopoverDelete
             header={cert.name}
             text="will be deleted from RedisInsight."
@@ -99,7 +101,7 @@ const TlsDetails = (props: Props) => {
             updateLoading={false}
             showPopover={showPopover}
             handleDeleteItem={() => handleDeleteCaCert(cert.id)}
-            handleButtonClick={() => handleClickDeleteCaCert(cert.id)}
+            handleButtonClick={() => handleClickDeleteCert(cert.id)}
             testid={`delete-ca-cert-${cert.id}`}
           />
         </div>
@@ -118,6 +120,24 @@ const TlsDetails = (props: Props) => {
     optionsCertsClient.push({
       value: `${cert.id}`,
       inputDisplay: cert.name,
+      dropdownDisplay: (
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>{cert.name}</div>
+          <PopoverDelete
+            header={cert.name}
+            text="will be deleted from RedisInsight."
+            item={cert.id}
+            suffix={suffix}
+            deleting={certRef.current}
+            closePopover={closePopover}
+            updateLoading={false}
+            showPopover={showPopover}
+            handleDeleteItem={() => handleDeleteClientCert(cert.id)}
+            handleButtonClick={() => handleClickDeleteCert(cert.id)}
+            testid={`delete-ca-cert-${cert.id}`}
+          />
+        </div>
+      ),
     })
   })
 

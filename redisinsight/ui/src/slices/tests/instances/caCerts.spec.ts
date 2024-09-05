@@ -17,7 +17,6 @@ import reducer, {
   deleteCaCertificate,
   deleteCaCertificateSuccess,
   deleteCaCertificateFailure,
-  deleteCaCertificateAction,
 
 } from '../../instances/caCerts'
 import { addErrorNotification } from '../../app/notifications'
@@ -56,7 +55,7 @@ describe('caCerts slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, deleteCaCertificateAction())
+      const nextState = reducer(initialState, deleteCaCertificate())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -71,13 +70,10 @@ describe('caCerts slice', () => {
 
   describe('deleteCaCertificateSuccess', () => {
     it('should properly set the state with fetched data', () => {
-      // Arrange
-      const data ='70b95d32-c19d-4311-bb24-e684af12cf15'
-
       const state = {
         ...initialState,
         loading: false,
-        data,
+        data: [],
       }
 
       // Act

@@ -94,6 +94,7 @@ export function deleteCaCertificateAction(id: string) {
       )
 
       if (isStatusSuccessful(status)) {
+        dispatch(deleteCaCertificateSuccess())
         dispatch(fetchCaCerts())
       }
     } catch (error) {

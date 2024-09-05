@@ -13,6 +13,12 @@ import reducer, {
   loadCaCertsFailure,
   caCertsSelector,
   fetchCaCerts,
+
+  deleteCaCertificate,
+  deleteCaCertificateSuccess,
+  deleteCaCertificateFailure,
+  deleteCaCertificateAction,
+
 } from '../../instances/caCerts'
 import { addErrorNotification } from '../../app/notifications'
 
@@ -38,6 +44,77 @@ describe('caCerts slice', () => {
 
       // Assert
       expect(result).toEqual(nextState)
+    })
+  })
+
+  describe('deleteCaCertificate', () => {
+    it('should properly set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState,
+        loading: true,
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteCaCertificateAction())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          caCerts: nextState,
+        },
+      })
+      expect(caCertsSelector(rootState)).toEqual(state)
+    })
+  })
+
+
+  describe('deleteCaCertificateSuccess', () => {
+    it('should properly set the state with fetched data', () => {
+      // Arrange
+      const data ='70b95d32-c19d-4311-bb24-e684af12cf15'
+
+      const state = {
+        ...initialState,
+        loading: false,
+        data,
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteCaCertificateSuccess(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          caCerts: nextState,
+        },
+      })
+      expect(caCertsSelector(rootState)).toEqual(state)
+    })
+  })
+
+
+  describe('deleteCaCertificateFailure', () => {
+    it('should properly set the error', () => {
+      // Arrange
+      const data = 'some error'
+      const state = {
+        ...initialState,
+        loading: false,
+        error: data,
+        data: [],
+      }
+
+      // Act
+      const nextState = reducer(initialState, deleteCaCertificateFailure(data))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        connections: {
+          caCerts: nextState,
+        },
+      })
+      expect(caCertsSelector(rootState)).toEqual(state)
     })
   })
 

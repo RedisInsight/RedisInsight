@@ -30,7 +30,6 @@ export interface Props {
   columns: ITableColumn[]
   onClosePopover: () => void
   loadMoreItems: () => void
-  isFooterOpen?: boolean
 }
 
 const StreamDataView = (props: Props) => {
@@ -39,7 +38,6 @@ const StreamDataView = (props: Props) => {
     columns = [],
     onClosePopover,
     loadMoreItems,
-    isFooterOpen
   } = props
   const dispatch = useDispatch()
 
@@ -88,7 +86,6 @@ const StreamDataView = (props: Props) => {
           'key-details-table',
           'stream-details-table',
           styles.container,
-          { footerOpened: isFooterOpen }
         )}
         data-testid="stream-entries-container"
       >

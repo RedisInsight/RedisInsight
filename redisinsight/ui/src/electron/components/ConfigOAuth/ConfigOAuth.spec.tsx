@@ -14,7 +14,7 @@ import {
   showOAuthProgress,
   signInFailure
 } from 'uiSrc/slices/oauth/cloud'
-import { cloudSelector, loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import { cloudSelector, loadSubscriptionsRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import ConfigOAuth from './ConfigOAuth'
@@ -91,7 +91,6 @@ describe('ConfigOAuth', () => {
           status: 500
         }
       } as any),
-      setSSOFlow(undefined)
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })

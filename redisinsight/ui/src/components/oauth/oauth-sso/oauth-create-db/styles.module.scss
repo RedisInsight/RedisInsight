@@ -3,10 +3,9 @@
   display: flex;
 
   .advantagesContainer {
-    max-width: 300px;
-
+    max-width: 320px;
+    padding: 0 24px 24px;
     background-color: var(--cloudSsoAdvantagesBgColor);
-    padding-bottom: 24px;
   }
 
   .socialContainer {

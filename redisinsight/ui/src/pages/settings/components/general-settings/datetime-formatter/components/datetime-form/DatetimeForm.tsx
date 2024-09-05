@@ -84,7 +84,9 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
 
   const handleFormatCheck = (format = formik.values.format) => {
     const { valid, error: errorMsg } = checkDateTimeFormat(format)
-    if (!valid) {
+    if (format.length > 50) {
+      setError('Format should not exceed 50 characters')
+    } else if (!valid) {
       setError(errorMsg || 'This format is not supported')
       onFormatChange?.('Invalid Format')
     } else {
@@ -101,6 +103,12 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       formik.setFieldValue('customFormat', formik.values.format)
     } else {
       formik.setFieldValue('format', formik.values.commonFormat)
+      sendEventTelemetry({
+        event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
+        eventData: {
+          currentFormat: formik.values.commonFormat,
+        }
+      })
       formik.handleSubmit()
     }
   }
@@ -152,6 +160,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
             onChange={(option) => onCommonFormatChange(option)}
             disabled={formik.values.selectedRadioOption !== DatetimeRadioOption.Common}
             data-test-subj="select-datetime"
+            data-testid="select-datetime-testid"
           />
         </div>
       ),

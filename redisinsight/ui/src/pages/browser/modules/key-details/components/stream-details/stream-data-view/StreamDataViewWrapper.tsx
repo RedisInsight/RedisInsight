@@ -224,7 +224,7 @@ const StreamDataViewWrapper = (props: Props) => {
           >
             <FormattedValue
               value={formattedValue}
-              title={isValid ? 'Field' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
+              title={isValid ? 'Value' : TEXT_FAILED_CONVENT_FORMATTER(viewFormatProp)}
               tooltipContent={tooltipContent}
               expanded={expanded}
               truncateLength={650}

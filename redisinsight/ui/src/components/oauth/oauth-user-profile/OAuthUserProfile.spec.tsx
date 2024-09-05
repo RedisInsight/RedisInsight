@@ -180,6 +180,6 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-logout'))
 
-    expect(store.getActions()).toEqual([logoutUser()])
+    expect(store.getActions()).toEqual([logoutUser(), setSSOFlow()])
   })
 })

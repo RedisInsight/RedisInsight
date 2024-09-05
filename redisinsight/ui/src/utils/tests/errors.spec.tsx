@@ -4,6 +4,7 @@ import { EuiSpacer } from '@elastic/eui'
 import { AxiosError } from 'axios'
 import { parseCustomError, getRdiValidationMessage, Maybe } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
+import { CustomErrorCodes } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 
 const responseData = { response: { data: { }, status: 500 } }
@@ -66,6 +67,71 @@ const parseCustomErrorTests = [
           Sign in again to continue working with Redis Cloud.
           <EuiSpacer size="s" />
           If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+    })],
+  [{ errorCode: 11_021 },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Session expired',
+      message: (
+        <>
+          Sign in again to continue working with Redis Cloud.
+          <EuiSpacer size="s" />
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+    })],
+  [{ errorCode: CustomErrorCodes.CloudOauthGithubEmailPermission },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Github Email Permission',
+      message: (
+        <>
+          Unable to get an email from the GitHub account. Make sure that it is available.
+          <br />
+        </>
+      )
+    })],
+  [{ errorCode: CustomErrorCodes.CloudOauthMisconfiguration },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Misconfiguration',
+      message: (
+        <>
+          Authorization server encountered a misconfiguration error and was unable to complete your request.
+          <EuiSpacer size="xs" />
+          Try again later.
+          <EuiSpacer size="s" />
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+    })],
+  [{ errorCode: CustomErrorCodes.CloudOauthUnknownAuthorizationRequest },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Error',
+      message: (
+        <>
+          Unknown authorization request.
+          <EuiSpacer size="s" />
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+    })],
+  [{ errorCode: CustomErrorCodes.CloudOauthUnexpectedError },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Error',
+      message: (
+        <>
+          An unexpected error occurred.
+          <EuiSpacer size="s" />
+          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+        </>
+      )
+    })],
+  [{ errorCode: CustomErrorCodes.CloudOauthSsoUnsupportedEmail },
+    set(cloneDeep(responseData), 'response.data', {
+      title: 'Invalid email',
+      message: (
+        <>
+          Invalid email.
         </>
       )
     })],

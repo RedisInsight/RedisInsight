@@ -64,7 +64,9 @@ describe('CloudUserApiProvider', () => {
       mockedAxios.post.mockResolvedValue(response);
 
       expect(await service.getApiSessionId(mockCloudSession)).toEqual(mockCloudApiAuthDto.apiSessionId);
-      expect(mockedAxios.post).toHaveBeenCalledWith('login', {}, {
+      expect(mockedAxios.post).toHaveBeenCalledWith('login', {
+        auth_mode: mockCloudSession.idpType,
+      }, {
         ...mockCloudApiHeaders,
       });
     });
@@ -81,6 +83,7 @@ describe('CloudUserApiProvider', () => {
       )).toEqual(mockCloudApiAuthDto.apiSessionId);
 
       expect(mockedAxios.post).toHaveBeenCalledWith('login', {
+        auth_mode: mockCloudSession.idpType,
         utm_source: 's',
         utm_medium: 'm',
         utm_campaign: 'c',
@@ -101,6 +104,7 @@ describe('CloudUserApiProvider', () => {
       )).toEqual(mockCloudApiAuthDto.apiSessionId);
 
       expect(mockedAxios.post).toHaveBeenCalledWith('login', {
+        auth_mode: mockCloudSession.idpType,
         utm_medium: 'm',
       }, {
         ...mockCloudApiHeaders,

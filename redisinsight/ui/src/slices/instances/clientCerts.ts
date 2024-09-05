@@ -93,6 +93,7 @@ export function deleteClientCertAction(id: string) {
       )
 
       if (isStatusSuccessful(status)) {
+        dispatch(deleteClientCertSuccess())
         dispatch(fetchClientCerts())
       }
     } catch (error) {

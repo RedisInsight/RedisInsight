@@ -77,7 +77,7 @@ describe('caCerts slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, deleteCaCertificateSuccess(data))
+      const nextState = reducer(initialState, deleteCaCertificateSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {

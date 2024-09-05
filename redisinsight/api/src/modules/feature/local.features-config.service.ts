@@ -42,9 +42,10 @@ export class LocalFeaturesConfigService
    */
   async onApplicationBootstrap() {
     // todo: [USER_CONTEXT] revise
-    this.sync(this.constantsProvider.getSystemSessionMetadata()).catch();
+    const sessionMetadata = this.constantsProvider.getSystemSessionMetadata();
+    this.sync(sessionMetadata).catch();
     if (FEATURES_CONFIG.syncInterval > 0) {
-      setInterval(this.sync.bind(this), FEATURES_CONFIG.syncInterval);
+      setInterval(this.sync.bind(this, sessionMetadata), FEATURES_CONFIG.syncInterval);
     }
   }
 

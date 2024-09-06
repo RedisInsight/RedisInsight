@@ -56,7 +56,7 @@ const SetDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <SetDetailsTable isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />
+            <SetDetailsTable onRemoveKey={onRemoveKey} />
           </div>
         )}
         {isAddItemPanelOpen && (

@@ -23,11 +23,10 @@ export interface Props {
   columns: ITableColumn[]
   onClosePopover: () => void
   onSelectConsumer: ({ rowData }: { rowData: any }) => void
-  isFooterOpen?: boolean
 }
 
 const ConsumersView = (props: Props) => {
-  const { data = [], columns = [], onClosePopover, onSelectConsumer, isFooterOpen } = props
+  const { data = [], columns = [], onClosePopover, onSelectConsumer } = props
 
   const { loading } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }

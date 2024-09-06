@@ -67,7 +67,7 @@ const StreamDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <StreamDetailsBody isFooterOpen={isAddItemPanelOpen} />
+            <StreamDetailsBody />
           </div>
         )}
         {isAddItemPanelOpen && (

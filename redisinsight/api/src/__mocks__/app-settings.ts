@@ -11,6 +11,8 @@ export const mockSettings = Object.assign(new Settings(), {
     theme: 'DARK',
     scanThreshold: 500,
     batchSize: 10,
+    dateFormat: null,
+    timezone: null,
   },
 });
 

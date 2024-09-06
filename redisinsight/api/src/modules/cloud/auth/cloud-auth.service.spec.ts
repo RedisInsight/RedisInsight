@@ -16,7 +16,7 @@ import {
   mockCloudAuthResponse,
   mockCloudRefreshTokenNew,
   mockGithubIdpCloudAuthStrategy,
-  mockGoogleIdpCloudAuthStrategy,
+  mockGoogleIdpCloudAuthStrategy, mockSsoIdpCloudAuthStrategy,
   mockTokenResponse,
   mockTokenResponseNew,
 } from 'src/__mocks__/cloud-auth';
@@ -24,13 +24,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import {
-  mockAxiosBadRequestError, mockCloudApiAuthDto, mockCloudSessionService, mockSessionMetadata, MockType
+  mockAxiosBadRequestError, mockCloudApiAuthDto, mockCloudSessionService, mockSessionMetadata, MockType,
 } from 'src/__mocks__';
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudAuthIdpType, CloudAuthStatus } from 'src/modules/cloud/auth/models';
 import {
+  CloudOauthMisconfigurationException,
   CloudOauthMissedRequiredDataException,
   CloudOauthUnexpectedErrorException,
   CloudOauthUnknownAuthorizationRequestException,
@@ -38,6 +39,10 @@ import {
 import { InternalServerErrorException } from '@nestjs/common';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/sso-idp.cloud.auth-strategy';
+import {
+  CloudOauthSsoUnsupportedEmailException
+} from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -46,6 +51,7 @@ describe('CloudAuthService', () => {
   let service: CloudAuthService;
   let analytics: MockType<CloudAuthAnalytics>;
   let sessionService: MockType<CloudSessionService>;
+  let ssoIdpCLoudAuthStrategy: MockType<SsoIdpCloudAuthStrategy>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -67,6 +73,10 @@ describe('CloudAuthService', () => {
           useFactory: mockGoogleIdpCloudAuthStrategy,
         },
         {
+          provide: SsoIdpCloudAuthStrategy,
+          useFactory: mockSsoIdpCloudAuthStrategy,
+        },
+        {
           provide: CloudAuthAnalytics,
           useFactory: mockCloudAuthAnalytics,
         },
@@ -76,6 +86,7 @@ describe('CloudAuthService', () => {
     service = await module.get(CloudAuthService);
     analytics = await module.get(CloudAuthAnalytics);
     sessionService = await module.get(CloudSessionService);
+    ssoIdpCLoudAuthStrategy = await module.get(SsoIdpCloudAuthStrategy);
   });
 
   describe('getAuthStrategy', () => {
@@ -84,6 +95,9 @@ describe('CloudAuthService', () => {
     });
     it('should get GitHub auth strategy', async () => {
       expect(service.getAuthStrategy(CloudAuthIdpType.GitHub)).toEqual(service['githubIdpCloudAuthStrategy']);
+    });
+    it('should get Sso auth strategy', async () => {
+      expect(service.getAuthStrategy(CloudAuthIdpType.Sso)).toEqual(service['ssoIdpCloudAuthStrategy']);
     });
     it('should throw CloudOauthUnknownAuthorizationRequestException error for unsupported strategy', async () => {
       try {
@@ -134,8 +148,23 @@ describe('CloudAuthService', () => {
         {
           strategy: CloudAuthIdpType.GitHub,
         },
-      )).rejects.toThrow(Error);
+      )).rejects.toThrow(CloudOauthMisconfigurationException);
       expect(logoutSpy).toHaveBeenCalled();
+      // previous request should stay
+      expect(service['authRequests'].size).toEqual(1);
+      expect(service['authRequests'].get(mockCloudAuthGoogleRequest.state)).toEqual(mockCloudAuthGoogleRequest);
+    });
+    it('should throw CloudOauthSsoUnsupportedEmailException when no email assign to SAML config', async () => {
+      ssoIdpCLoudAuthStrategy.generateAuthRequest.mockRejectedValueOnce(new CloudOauthSsoUnsupportedEmailException());
+      service['authRequests'].set(mockCloudAuthGoogleRequest.state, mockCloudAuthGoogleRequest);
+      expect(service['authRequests'].size).toEqual(1);
+      await expect(service.getAuthorizationUrl(
+        mockSessionMetadata,
+        {
+          strategy: CloudAuthIdpType.Sso,
+        },
+      )).rejects.toThrow(CloudOauthSsoUnsupportedEmailException);
+      expect(logoutSpy).not.toHaveBeenCalled();
       // previous request should stay
       expect(service['authRequests'].size).toEqual(1);
       expect(service['authRequests'].get(mockCloudAuthGoogleRequest.state)).toEqual(mockCloudAuthGoogleRequest);

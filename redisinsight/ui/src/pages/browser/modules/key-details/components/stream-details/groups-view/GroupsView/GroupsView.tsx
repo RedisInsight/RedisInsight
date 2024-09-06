@@ -27,11 +27,10 @@ export interface Props {
   columns: ITableColumn[]
   onClosePopover: () => void
   onSelectGroup: ({ rowData }: { rowData: any }) => void
-  isFooterOpen?: boolean
 }
 
 const ConsumerGroups = (props: Props) => {
-  const { data = [], columns = [], onClosePopover, onSelectGroup, isFooterOpen } = props
+  const { data = [], columns = [], onClosePopover, onSelectGroup } = props
 
   const { loading } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }

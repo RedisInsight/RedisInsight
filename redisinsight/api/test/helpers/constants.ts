@@ -19,6 +19,8 @@ const APP_DEFAULT_SETTINGS = {
   scanThreshold: 10000,
   batchSize: 5,
   theme: null,
+  dateFormat: null,
+  timezone: null,
   agreements: null,
 };
 const TEST_LIBRARY_NAME = 'lib';

@@ -5,7 +5,6 @@ import {
   EuiSuperSelectOption,
   EuiText,
 } from '@elastic/eui'
-import { format } from 'date-fns'
 import { minBy, toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,7 +12,6 @@ import { useParams } from 'react-router-dom'
 import { AutoSizer } from 'react-virtualized'
 
 import { DEFAULT_SLOWLOG_MAX_LEN, DurationUnits } from 'uiSrc/constants'
-import { DATE_FORMAT } from 'uiSrc/pages/slow-log/components/SlowLogTable/SlowLogTable'
 import { convertNumberByUnits } from 'uiSrc/pages/slow-log/utils'
 import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -32,6 +30,7 @@ import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 
+import { FormatedDate } from 'uiSrc/components'
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
 
 import { EmptySlowLog, SlowLogTable, Actions } from './components'
@@ -172,7 +171,12 @@ const SlowLogPage = () => {
                     <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
                       <EuiText size="xs" color="subdued" data-testid="entries-from-timestamp">
                         ({data.length} entries
-                        {lastTimestamp && (<>&nbsp;from {format(lastTimestamp * 1000, DATE_FORMAT)}</>)})
+                        {lastTimestamp && (
+                          <>
+                            <span>&nbsp;from &nbsp;</span>
+                            <FormatedDate date={lastTimestamp * 1000} />
+                          </>
+                        )})
                       </EuiText>
                     </EuiFlexItem>
                   )}

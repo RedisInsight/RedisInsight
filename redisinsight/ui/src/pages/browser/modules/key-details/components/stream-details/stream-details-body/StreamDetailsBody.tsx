@@ -35,7 +35,6 @@ import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from '../constants'
 import styles from './styles.module.scss'
 
 export interface Props {
-  isFooterOpen: boolean
 }
 
 const StreamDetailsBody = (props: Props) => {

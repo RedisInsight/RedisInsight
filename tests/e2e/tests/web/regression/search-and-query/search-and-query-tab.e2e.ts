@@ -88,7 +88,9 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     // Verify basic commands suggestions FT.SEARCH and FT.AGGREGATE
     await t.typeText(searchAndQueryPage.queryInput, 'FT', { replace: true });
     // Verify that the list with FT.SEARCH and FT.AGGREGATE auto-suggestions is displayed
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.count).eql(2, 'FT.SEARCH and FT.AGGREGATE auto-suggestions are not displayed');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withText('FT.SEARCH').exists).ok('FT.SEARCH auto-suggestions are not displayed');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withText('FT.AGGREGATE').exists).ok('FT.AGGREGATE auto-suggestions are not displayed');
+
     // Select command and check result
     await t.pressKey('enter');
     let script = await searchAndQueryPage.queryInputScriptArea.textContent;
@@ -146,9 +148,8 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
 });
 test('Verify full commands suggestions with index and query for FT.SEARCH', async t => {
     await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
-    await t.typeText(searchAndQueryPage.queryInput, 'FT', { replace: true });
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.SE', { replace: true });
     // Select command and check result
-    await t.pressKey('down');
     await t.pressKey('enter');
     const script = await searchAndQueryPage.queryInputScriptArea.textContent;
     await t.expect(script.replace(/\s/g, ' ')).contains('FT.SEARCH ', 'Result of sent command exists');
@@ -177,4 +178,89 @@ test('Verify full commands suggestions with index and query for FT.SEARCH', asyn
     await t.pressKey('backspace');
     // Verify that 'No suggestions' tooltip is displayed when returning to invalid typing like WRONGCOMMAND
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestWidget.textContent).contains('No suggestions.', 'Index not auto-suggested');
+});
+test('Verify full commands suggestions with index and query for FT.PROFILE(SEARCH)', async t => {
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.PR', { replace: true });
+    // Select command and check result
+    await t.pressKey('enter');
+    const script = await searchAndQueryPage.queryInputScriptArea.textContent;
+    await t.expect(script.replace(/\s/g, ' ')).contains('FT.PROFILE ', 'Result of sent command exists');
+
+    await t.pressKey('tab');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('AGGREGATE').exists).ok('FT.PROFILE aggregate argument not suggested');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('SEARCH').exists).ok('FT.PROFILE search argument not suggested');
+
+    // Select SEARCH command
+    await t.typeText(searchAndQueryPage.queryInput, 'SEA', { replace: false });
+    await t.pressKey('enter');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('LIMITED').exists).ok('FT.PROFILE SEARCH arguments not suggested');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('QUERY').exists).ok('FT.PROFILE SEARCH arguments not suggested');
+
+    // Select QUERY
+    await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    // Select '@city' field
+    await t.pressKey('down');
+    await t.pressKey('tab');
+    await t.pressKey('right');
+    await t.pressKey('space');
+    // Verify that there are no more suggestions
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
+    const expectedText = `FT.PROFILE "${indexName1}" SEARCH QUERY "@city"`.trim().replace(/\s+/g, ' ');
+    // Verify command entered correctly
+    await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
+});
+test('Verify full commands suggestions with index and query for FT.PROFILE(AGGREGATE)', async t => {
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.PR', { replace: true });
+    // Select command and check result
+    await t.pressKey('enter');
+    await t.pressKey('tab');
+    // Select AGGREGATE command
+    await t.typeText(searchAndQueryPage.queryInput, 'AGG', { replace: false });
+    await t.pressKey('enter');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('LIMITED').exists).ok('FT.PROFILE AGGREGATE arguments not suggested');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('QUERY').exists).ok('FT.PROFILE AGGREGATE arguments not suggested');
+
+    // Select QUERY
+    await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    // Select '@city' field
+    await t.pressKey('down');
+    await t.pressKey('tab');
+    await t.pressKey('right');
+    await t.pressKey('space');
+    // Verify that there are no more suggestions
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
+    const expectedText = `FT.PROFILE "${indexName1}" AGGREGATE QUERY "@city"`.trim().replace(/\s+/g, ' ');
+    // Verify command entered correctly
+    await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
+});
+test('Verify full commands suggestions with index and query for FT.EXPLAIN', async t => {
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.EX', { replace: true });
+    // Select command and check result
+    await t.pressKey('enter');
+    await t.pressKey('tab');
+
+    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    // Select '@city' field
+    await t.pressKey('down');
+    await t.pressKey('tab');
+    await t.pressKey('right');
+    await t.pressKey('space');
+
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('DIALECT').exists).ok('FT.EXPLAIN arguments not suggested');
+    // Add DIALECT
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, 'dialectTest', { replace: false });
+    // Verify that there are no more suggestions
+    await t.pressKey('space');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
+    const expectedText = `FT.EXPLAIN "${indexName1}" "@city" DIALECT dialectTest`.trim().replace(/\s+/g, ' ');
+    // Verify command entered correctly
+    await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });

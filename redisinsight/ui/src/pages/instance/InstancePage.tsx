@@ -70,7 +70,10 @@ const InstancePage = ({ routes = [] }: Props) => {
   }, [pathname])
 
   useEffect(() => {
-    if (isShouldChildrenRerender) setIsShouldChildrenRerender(false)
+    if (isShouldChildrenRerender) {
+      dispatch(resetDatabaseContext())
+      setIsShouldChildrenRerender(false)
+    }
   }, [isShouldChildrenRerender])
 
   if (isShouldChildrenRerender) {

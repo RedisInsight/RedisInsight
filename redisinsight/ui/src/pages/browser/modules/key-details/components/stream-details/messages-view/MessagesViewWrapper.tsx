@@ -37,7 +37,6 @@ const claimPrefix = '-claim'
 const ackPrefix = '-ack'
 
 export interface Props {
-  isFooterOpen: boolean
 }
 
 const MessagesViewWrapper = (props: Props) => {

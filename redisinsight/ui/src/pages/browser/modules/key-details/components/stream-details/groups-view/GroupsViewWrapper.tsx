@@ -42,7 +42,6 @@ const suffix = '_stream_group'
 const actionsWidth = 48
 
 export interface Props {
-  isFooterOpen: boolean
 }
 
 const GroupsViewWrapper = (props: Props) => {

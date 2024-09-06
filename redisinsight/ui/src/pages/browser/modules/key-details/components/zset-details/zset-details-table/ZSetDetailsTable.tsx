@@ -66,7 +66,6 @@ interface IZsetMember extends ZsetMember {
 }
 
 export interface Props {
-  isFooterOpen?: boolean
   onRemoveKey: () => void
 }
 

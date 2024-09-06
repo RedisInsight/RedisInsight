@@ -57,7 +57,7 @@ const ZSetDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <ZSetDetailsTable isFooterOpen={isAddItemPanelOpen} onRemoveKey={onRemoveKey} />
+            <ZSetDetailsTable onRemoveKey={onRemoveKey} />
           </div>
         )}
         {isAddItemPanelOpen && (

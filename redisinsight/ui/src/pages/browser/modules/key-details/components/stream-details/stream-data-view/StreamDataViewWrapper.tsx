@@ -33,7 +33,6 @@ const actionsWidth = 50
 const minColumnWidth = 190
 
 export interface Props {
-  isFooterOpen: boolean
   loadMoreItems: () => void
 }
 

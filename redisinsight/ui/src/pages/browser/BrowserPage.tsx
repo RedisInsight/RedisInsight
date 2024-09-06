@@ -33,6 +33,7 @@ import {
   setBrowserPanelSizes,
   setLastPageContext,
   setBrowserBulkActionOpen,
+  appContextSelector,
 } from 'uiSrc/slices/app/context'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
@@ -66,6 +67,8 @@ const BrowserPage = () => {
     keyList: { selectedKey: selectedKeyContext },
     bulkActions: { opened: bulkActionOpenContext },
   } = useSelector(appContextBrowser)
+  const { contextInstanceId } = useSelector(appContextSelector)
+
   const { isBrowserFullScreen } = useSelector(keysSelector)
   const { type } = useSelector(selectedKeyDataSelector) ?? { type: '', length: 0 }
   const { viewType, searchMode } = useSelector(keysSelector)
@@ -73,7 +76,11 @@ const BrowserPage = () => {
 
   const [isPageViewSent, setIsPageViewSent] = useState(false)
   const [arePanelsCollapsed, setArePanelsCollapsed] = useState(isOneSideMode(!!openedSidePanel))
-  const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(selectedKeyContext)
+  const [selectedKey, setSelectedKey] = useState<Nullable<RedisResponseBuffer>>(
+    contextInstanceId === instanceId
+      ? selectedKeyContext
+      : null
+  )
   const [isAddKeyPanelOpen, setIsAddKeyPanelOpen] = useState(false)
   const [isCreateIndexPanelOpen, setIsCreateIndexPanelOpen] = useState(false)
   const [isBulkActionsPanelOpen, setIsBulkActionsPanelOpen] = useState(bulkActionOpenContext)

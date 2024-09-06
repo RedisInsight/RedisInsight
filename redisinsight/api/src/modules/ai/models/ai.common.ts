@@ -30,6 +30,7 @@ export enum AiGeneralTools {
 
 export enum AiDatabaseTools {
   Query = 'Query',
+  General = 'General',
 }
 
 export const AiTools = {

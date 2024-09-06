@@ -155,6 +155,7 @@ export class AiService {
         const question = classToClass(AiMessage, {
           type: AiMessageType.HumanMessage,
           content: dto.content,
+          tool: dto.tool,
           databaseId,
           conversationId,
           accountId: auth.accountId,
@@ -164,6 +165,7 @@ export class AiService {
         const answer = classToClass(AiMessage, {
           type: AiMessageType.AiMessage,
           content: '',
+          tool: dto.tool,
           databaseId,
           conversationId,
           accountId: auth.accountId,

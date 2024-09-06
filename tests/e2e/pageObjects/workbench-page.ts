@@ -37,7 +37,6 @@ export class WorkbenchPage extends BaseRunCommandsPage {
     closeEnablementPage = Selector('[data-testid=enablement-area__page-close]');
     groupMode = Selector('[data-testid=btn-change-group-mode]');
     clearResultsBtn = Selector('[data-testid=clear-history-btn]');
-    exploreRedisBtn = Selector('[data-testid=no-results-explore-btn]');
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');

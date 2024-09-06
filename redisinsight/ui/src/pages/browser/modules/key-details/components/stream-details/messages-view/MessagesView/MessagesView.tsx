@@ -23,11 +23,10 @@ export interface Props {
   total: number
   onClosePopover: () => void
   loadMoreItems: () => void
-  isFooterOpen?: boolean
 }
 
 const MessagesView = (props: Props) => {
-  const { data = [], columns = [], total, onClosePopover, loadMoreItems, isFooterOpen } = props
+  const { data = [], columns = [], total, onClosePopover, loadMoreItems } = props
 
   const { loading, } = useSelector(streamGroupsSelector)
   const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }

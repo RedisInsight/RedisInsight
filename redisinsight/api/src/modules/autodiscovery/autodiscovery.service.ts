@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
 import { convertRedisInfoReplyToObject } from 'src/utils';
@@ -51,7 +52,7 @@ export class AutodiscoveryService implements OnModuleInit {
         return;
       }
 
-      await this.discoverDatabases();
+      await this.discoverDatabases(sessionMetadata);
     } catch (e) {
       this.logger.warn('Unable to discover redis database', e);
     }
@@ -62,12 +63,12 @@ export class AutodiscoveryService implements OnModuleInit {
    * Database alias will be "host:port"
    * @private
    */
-  private async discoverDatabases() {
+  private async discoverDatabases(sessionMetadata: SessionMetadata) {
     const endpoints = await getAvailableEndpoints();
 
     // Add redis databases or resolve after 1s to not block app startup for a long time
     await Promise.race([
-      Promise.all(endpoints.map(this.addRedisDatabase.bind(this))),
+      Promise.all(endpoints.map((endpoint) => this.addRedisDatabase(sessionMetadata, endpoint))),
       new Promise((resolve) => setTimeout(resolve, 1000)),
     ]);
   }
@@ -82,7 +83,9 @@ export class AutodiscoveryService implements OnModuleInit {
     try {
       const client = await this.redisClientFactory.createClient(
         {
+          databaseId: uuidv4(),
           context: ClientContext.Common,
+          sessionMetadata,
         } as ClientMetadata,
         plainToClass(Database, endpoint),
         { useRetry: false, connectionName: 'redisinsight-auto-discovery' },

@@ -1,5 +1,4 @@
 import { EuiText, EuiToolTip } from '@elastic/eui'
-import { format } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
@@ -9,6 +8,7 @@ import { convertNumberByUnits } from 'uiSrc/pages/slow-log/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
+import { FormatedDate } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 export const DATE_FORMAT = 'HH:mm:ss d LLL yyyy'
@@ -45,7 +45,11 @@ const SlowLogTable = (props: Props) => {
       absoluteWidth: 190,
       minWidth: 190,
       isSortable: true,
-      render: (timestamp) => <EuiText size="s" color="subdued" data-testid="timestamp-value">{format(timestamp * 1000, DATE_FORMAT)}</EuiText>
+      render: (timestamp) => (
+        <EuiText size="s" color="subdued" data-testid="timestamp-value" className={styles.timestampCell}>
+          <FormatedDate date={timestamp * 1000} />
+        </EuiText>
+      )
     },
     {
       id: 'durationUs',

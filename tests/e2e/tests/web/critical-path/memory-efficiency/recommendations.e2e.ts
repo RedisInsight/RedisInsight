@@ -192,7 +192,7 @@ test
         await t.expect(recommendation.exists).ok('Query and search JSON documents recommendation not displayed');
         // Verify that tutorial opened
         await t.click(memoryEfficiencyPage.getToTutorialBtnByRecomName(searchJsonRecommendation));
-        await workbenchPage.InsightsPanel.togglePanel(true);
+        await workbenchPage.NavigationHeader.togglePanel(true);
         const tutorial = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
         await t.expect(tutorial.preselectArea.visible).ok('Workbench Enablement area not opened');
         // Verify that REDIS FOR TIME SERIES tutorial expanded

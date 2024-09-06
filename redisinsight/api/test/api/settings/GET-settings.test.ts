@@ -17,6 +17,8 @@ const responseSchema = Joi.object().keys({
   theme: Joi.string().allow(null).required(),
   scanThreshold: Joi.number().required(),
   batchSize: Joi.number().required(),
+  dateFormat: Joi.string().allow(null),
+  timezone: Joi.string().allow(null),
   agreements: Joi.object().keys({
     version: Joi.string().required(),
     eula: Joi.bool().required(),

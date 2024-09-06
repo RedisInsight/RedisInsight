@@ -42,7 +42,7 @@ test('Verify that user can see options on what can be done to work with capabili
     const commandJSON = 'JSON.ARRAPPEND key value';
     const commandFT = 'FT.LIST';
 
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     await workbenchPage.sendCommandInWorkbench(commandJSON);
     // Verify change screens when capability not available - 'JSON'
     await t.expect(await workbenchPage.commandExecutionResult.withText('RedisJSON is not available').visible)

@@ -44,7 +44,7 @@ test('Verify that user can see the [Manual] option in the Enablement area', asyn
 });
 test('Verify that user can see saved article in Enablement area when he leaves Workbench page and goes back again', async t => {
     const tooltipText = 'Open Workbench in the left menu to see the command results.';
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hashes link is not visible', { timeout: 5000 });
@@ -84,7 +84,7 @@ test('Verify that user can see saved article in Enablement area when he leaves W
 });
 test('Verify that user can see saved scroll position in Enablement area when he leaves Workbench page and goes back again', async t => {
     // Open Working with Hashes section
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.internalLinkWorkingWithHashes);
@@ -93,8 +93,8 @@ test('Verify that user can see saved scroll position in Enablement area when he 
     const lastButton = workbenchPage.copyBtn.nth(buttonsQuantity - 1);
     // Scroll to the very bottom of the page
     await t.scrollIntoView(lastButton);
-    await workbenchPage.InsightsPanel.togglePanel(false);
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(false);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     // Check the scroll position
     const scrollPosition = await workbenchPage.scrolledEnablementArea.scrollTop;
     // Check that scroll position is saved
@@ -117,7 +117,7 @@ test('Verify that user can see the siblings menu by clicking on page counter ele
     ];
 
     // Open Working with Hashes section and click on the on page counter
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.expect(tutorials.internalLinkWorkingWithHashes.visible).ok('The working with hachs link is not visible', { timeout: 5000 });

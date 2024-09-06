@@ -18,14 +18,24 @@ export class LocalSettingsRepository extends SettingsRepository {
     let entity = await this.repository.findOneBy({});
 
     if (!entity) {
-      entity = await this.repository.save(this.repository.create());
+      try {
+        entity = await this.repository.save(this.repository.create({ id : 1 }));
+      } catch (e) {
+        if (e.code === 'SQLITE_CONSTRAINT') {
+          return this.getOrCreate();
+        }
+
+        throw e;
+      }
     }
 
     return classToClass(Settings, entity);
   }
 
   async update(_: SessionMetadata, settings: Settings): Promise<Settings> {
-    await this.repository.update({}, classToClass(SettingsEntity, settings));
+    const entity = classToClass(SettingsEntity, settings);
+
+    await this.repository.save(entity);
 
     return this.getOrCreate();
   }

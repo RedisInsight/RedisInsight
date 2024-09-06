@@ -75,7 +75,7 @@ const ListDetails = (props: Props) => {
       <div className="key-details-body" key="key-details-body">
         {!loading && (
           <div className="flex-column" style={{ flex: '1', height: '100%' }}>
-            <ListDetailsTable isFooterOpen={isAddItemPanelOpen} />
+            <ListDetailsTable />
           </div>
         )}
         {isAddItemPanelOpen && (

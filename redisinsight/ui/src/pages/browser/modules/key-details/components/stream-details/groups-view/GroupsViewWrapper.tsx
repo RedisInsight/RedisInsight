@@ -21,13 +21,13 @@ import {
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { bufferToString, consumerGroupIdRegex, formatLongName, isEqualBuffers, validateConsumerGroupId } from 'uiSrc/utils'
-import { getFormatTime } from 'uiSrc/utils/streamUtils'
 import { TableCellTextAlignment } from 'uiSrc/constants'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import EditablePopover from 'uiSrc/pages/browser/modules/key-details/shared/editable-popover'
 
+import { FormatedDate } from 'uiSrc/components'
 import { ConsumerDto, ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
 
 import GroupsView from './GroupsView'
@@ -42,7 +42,6 @@ const suffix = '_stream_group'
 const actionsWidth = 48
 
 export interface Props {
-  isFooterOpen: boolean
 }
 
 const GroupsViewWrapper = (props: Props) => {
@@ -240,7 +239,14 @@ const GroupsViewWrapper = (props: Props) => {
         const smallestTimestamp = smallestPendingId?.viewValue?.split('-')?.[0]
         const greatestTimestamp = greatestPendingId?.viewValue?.split('-')?.[0]
 
-        const tooltipContent = `${getFormatTime(smallestTimestamp)} – ${getFormatTime(greatestTimestamp)}`
+        const tooltipContent = (
+          <>
+            <FormatedDate date={smallestTimestamp} />
+            <span>&nbsp;–&nbsp;</span>
+            <FormatedDate date={greatestTimestamp} />
+          </>
+        )
+
         return (
           <EuiText size="s" style={{ maxWidth: '100%' }}>
             <div style={{ display: 'flex' }} className="truncateText" data-testid={`group-pending-${viewName}`}>
@@ -282,10 +288,10 @@ const GroupsViewWrapper = (props: Props) => {
                 <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
                   <div
                     className="truncateText streamItem"
-                    style={{ display: 'flex' }}
+                    style={{ display: 'flex', maxWidth: '190px' }}
                     data-testid={`stream-group-date-${id}`}
                   >
-                    {getFormatTime(timestamp)}
+                    <FormatedDate date={timestamp} />
                   </div>
                 </EuiText>
                 <EuiText size="s" style={{ maxWidth: '100%' }}>

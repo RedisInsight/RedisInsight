@@ -50,6 +50,21 @@ describe('LocalSettingsRepository', () => {
         data: undefined,
       });
     });
+    it('should fail to create with unique constraint and return existing', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.findOneBy.mockResolvedValueOnce(mockSettings);
+      repository.save.mockRejectedValueOnce({ code: 'SQLITE_CONSTRAINT' });
+
+      const result = await service.getOrCreate();
+
+      expect(result).toEqual(mockSettings);
+    });
+    it('should fail when failed to create new and error is not unique constraint', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      repository.save.mockRejectedValueOnce(new Error());
+
+      await expect(service.getOrCreate()).rejects.toThrow(Error);
+    });
   });
 
   describe('update', () => {
@@ -57,9 +72,7 @@ describe('LocalSettingsRepository', () => {
       const result = await service.update(mockSessionMetadata, mockSettings);
 
       expect(result).toEqual(mockSettings);
-      expect(repository.update).toHaveBeenCalledWith({}, {
-        ...mockSettingsEntity,
-      });
+      expect(repository.save).toHaveBeenCalledWith(mockSettingsEntity);
     });
   });
 });

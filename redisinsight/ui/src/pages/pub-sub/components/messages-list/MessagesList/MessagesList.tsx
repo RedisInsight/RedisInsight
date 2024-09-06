@@ -3,8 +3,8 @@ import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } 
 import { useParams } from 'react-router-dom'
 import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
-import { getFormatDateTime } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FormatedDate } from 'uiSrc/components'
 import { IMessage } from 'apiSrc/modules/pub-sub/interfaces/message.interface'
 
 import styles from './styles.module.scss'
@@ -120,7 +120,7 @@ const MessagesList = (props: Props) => {
 
     return (
       <div style={style} className={styles.item} data-testid={`row-${index}`}>
-        <div className={styles.time}>{getFormatDateTime(time)}</div>
+        <div className={styles.time}><FormatedDate date={time} /></div>
         <div className={styles.channel}>
           <EuiToolTip
             content={channel}

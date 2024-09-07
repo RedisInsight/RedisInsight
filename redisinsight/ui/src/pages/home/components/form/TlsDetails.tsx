@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import {
   EuiCheckbox,
   EuiFieldText,
@@ -13,7 +13,7 @@ import {
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
-import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
+import { useDispatch } from 'react-redux'
 import { validateCertName, validateField } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 
@@ -23,10 +23,9 @@ import {
 } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-
-import styles from '../styles.module.scss'
-import { useDispatch } from 'react-redux'
+import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
 import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
+import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
 
@@ -37,21 +36,19 @@ export interface Props {
   caCertificates?: { id: string; name: string }[]
   certificates?: { id: number; name: string }[]
 }
+
 const TlsDetails = (props: Props) => {
   const dispatch = useDispatch()
   const { flexGroupClassName = '', flexItemClassName = '', formik, caCertificates, certificates } = props
-  const [, forceRerender] = useState({})
+  const [activeCertId, setActiveCertId] = useState<string | null>(null)
 
   const handleDeleteCaCert = (id: string) => {
-    dispatch(deleteCaCertificateAction([id]))
+    dispatch(deleteCaCertificateAction(id, handleClickDeleteCert))
   }
 
   const handleDeleteClientCert = (id: string) => {
-    dispatch(deleteClientCertAction([id]))
+    dispatch(deleteClientCertAction(id, handleClickDeleteCert))
   }
-
-
-  const certRef = useRef<string>(null)
 
   const handleClickDeleteCert = (id: string) => {
     sendEventTelemetry({
@@ -61,16 +58,12 @@ const TlsDetails = (props: Props) => {
     showPopover(id)
   }
 
-  const closePopover = (id: string) => {
-    if (certRef.current) {
-      certRef.current = ''
-      forceRerender({})
-    }
+  const closePopover = () => {
+    setActiveCertId(null)
   }
 
   const showPopover = (id: string) => {
-    certRef.current = `${id + suffix}`
-    forceRerender({})
+    setActiveCertId(`${id}${suffix}`)
   }
 
   const optionsCertsCA: EuiSuperSelectOption<string>[] = [
@@ -96,12 +89,11 @@ const TlsDetails = (props: Props) => {
             text="will be deleted from RedisInsight."
             item={cert.id}
             suffix={suffix}
-            deleting={certRef.current}
+            deleting={activeCertId}
             closePopover={closePopover}
             updateLoading={false}
             showPopover={showPopover}
             handleDeleteItem={() => handleDeleteCaCert(cert.id)}
-            handleButtonClick={() => handleClickDeleteCert(cert.id)}
             testid={`delete-ca-cert-${cert.id}`}
           />
         </div>
@@ -128,13 +120,12 @@ const TlsDetails = (props: Props) => {
             text="will be deleted from RedisInsight."
             item={cert.id}
             suffix={suffix}
-            deleting={certRef.current}
+            deleting={activeCertId}
             closePopover={closePopover}
             updateLoading={false}
             showPopover={showPopover}
             handleDeleteItem={() => handleDeleteClientCert(cert.id)}
-            handleButtonClick={() => handleClickDeleteCert(cert.id)}
-            testid={`delete-ca-cert-${cert.id}`}
+            testid={`delete-client-cert-${cert.id}`}
           />
         </div>
       ),

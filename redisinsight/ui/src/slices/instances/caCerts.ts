@@ -84,7 +84,7 @@ export function fetchCaCerts() {
   }
 }
 
-export function deleteCaCertificateAction(id: string) {
+export function deleteCaCertificateAction(id: string, onSuccessAction?: (id: string) => void,) {
   return async (dispatch: AppDispatch) => {
     dispatch(deleteCaCertificate(id))
 
@@ -95,6 +95,7 @@ export function deleteCaCertificateAction(id: string) {
 
       if (isStatusSuccessful(status)) {
         dispatch(deleteCaCertificateSuccess())
+        onSuccessAction?.(id)
         dispatch(fetchCaCerts())
       }
     } catch (error) {

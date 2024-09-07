@@ -85,7 +85,7 @@ export function fetchClientCerts() {
   }
 }
 
-export function deleteClientCertAction(id: string) {
+export function deleteClientCertAction(id: string, onSuccessAction?: (id: string) => void,) {
   return async (dispatch: AppDispatch) => {
     try {
       const { status } = await apiService.delete(
@@ -94,6 +94,7 @@ export function deleteClientCertAction(id: string) {
 
       if (isStatusSuccessful(status)) {
         dispatch(deleteClientCertSuccess())
+        onSuccessAction?.(id)
         dispatch(fetchClientCerts())
       }
     } catch (error) {

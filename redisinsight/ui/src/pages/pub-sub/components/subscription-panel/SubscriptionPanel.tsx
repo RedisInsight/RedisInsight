@@ -78,10 +78,10 @@ const SubscriptionPanel = () => {
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
           <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
             <EuiFieldText
-              placeholder="Enter Channel name (Default: '*')"
+              placeholder="Enter Channel Name (Default: '*')"
               value={channelInput}
               onChange={(e) => setChannelInput(e.target.value)}
-              aria-label="enter Channel name"
+              aria-label="enter channel name"
               size={24}
             />
           </EuiFlexItem>          

@@ -246,6 +246,7 @@ describe('caCerts slice', () => {
       const expectedActions = [
         deleteCaCertificate(),
         deleteCaCertificateSuccess(),
+        fetchCaCerts(),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

@@ -236,15 +236,17 @@ describe('caCerts slice', () => {
       // mock function for onSuccessAction
       const onSuccessAction = jest.fn()
 
+      const id = '70b95d32-c19d-4311-bb24-e684af12cf15'
+
       // Act
-      await store.dispatch<any>(deleteCaCertificateAction('70b95d32-c19d-4311-bb24-e684af12cf15', onSuccessAction))
+      await store.dispatch<any>(deleteCaCertificateAction(id, onSuccessAction))
 
       // assert that onSuccessAction is called
       expect(onSuccessAction).toBeCalled()
 
       // Assert
       const expectedActions = [
-        deleteCaCertificate(),
+        deleteCaCertificate(id),
         deleteCaCertificateSuccess(),
         fetchCaCerts(),
       ]
@@ -266,15 +268,17 @@ describe('caCerts slice', () => {
       // mock function for onSuccessAction
       const onSuccessAction = jest.fn()
 
+      const id = '70b95d32-c19d-4311-bb24-e684af12cf15'
+
       // Act
-      await store.dispatch<any>(deleteCaCertificateAction('70b95d32-c19d-4311-bb24-e684af12cf15', onSuccessAction))
+      await store.dispatch<any>(deleteCaCertificateAction(id, onSuccessAction))
 
       // assert that onSuccessAction is not called
       expect(onSuccessAction).not.toBeCalled()
 
       // Assert
       const expectedActions = [
-        deleteCaCertificate(),
+        deleteCaCertificate(id),
         addErrorNotification(responsePayload as AxiosError),
         deleteCaCertificateFailure(responsePayload.response.data.message),
       ]

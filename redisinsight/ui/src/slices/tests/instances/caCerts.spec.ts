@@ -17,6 +17,7 @@ import reducer, {
   deleteCaCertificate,
   deleteCaCertificateSuccess,
   deleteCaCertificateFailure,
+  deleteCaCertificateAction,
 
 } from '../../instances/caCerts'
 import { addErrorNotification } from '../../app/notifications'
@@ -67,7 +68,6 @@ describe('caCerts slice', () => {
     })
   })
 
-
   describe('deleteCaCertificateSuccess', () => {
     it('should properly set the state with fetched data', () => {
       const state = {
@@ -88,7 +88,6 @@ describe('caCerts slice', () => {
       expect(caCertsSelector(rootState)).toEqual(state)
     })
   })
-
 
   describe('deleteCaCertificateFailure', () => {
     it('should properly set the error', () => {
@@ -224,6 +223,59 @@ describe('caCerts slice', () => {
       const expectedActions = [
         loadCaCerts(),
         loadCaCertsSuccess(responsePayload.data),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('call both fetchCaCerts and deleteCaCertificateSuccess when delete ca certificate action is successed', async () => {
+      // Arrange
+      const responsePayload = { status: 200 }
+
+      apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+      // mock function for onSuccessAction
+      const onSuccessAction = jest.fn()
+
+      // Act
+      await store.dispatch<any>(deleteCaCertificateAction('70b95d32-c19d-4311-bb24-e684af12cf15', onSuccessAction))
+
+      // assert that onSuccessAction is called
+      expect(onSuccessAction).toBeCalled()
+
+      // Assert
+      const expectedActions = [
+        deleteCaCertificate(),
+        deleteCaCertificateSuccess(),
+      ]
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+
+    it('call both fetchCaCerts and deleteCaCertificateFailure when delete ca certificate action is failed', async () => {
+      // Arrange
+      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+      const responsePayload = {
+        response: {
+          status: 500,
+          data: { message: errorMessage },
+        },
+      }
+
+      apiService.delete = jest.fn().mockRejectedValueOnce(responsePayload)
+
+      // mock function for onSuccessAction
+      const onSuccessAction = jest.fn()
+
+      // Act
+      await store.dispatch<any>(deleteCaCertificateAction('70b95d32-c19d-4311-bb24-e684af12cf15', onSuccessAction))
+
+      // assert that onSuccessAction is not called
+      expect(onSuccessAction).not.toBeCalled()
+
+      // Assert
+      const expectedActions = [
+        deleteCaCertificate(),
+        addErrorNotification(responsePayload as AxiosError),
+        deleteCaCertificateFailure(responsePayload.response.data.message),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

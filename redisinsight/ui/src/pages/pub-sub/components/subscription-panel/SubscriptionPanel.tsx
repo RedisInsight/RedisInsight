@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { SubscriptionType, PubSubEvent } from 'uiSrc/constants/pubSub'
+import { SubscriptionType } from 'uiSrc/constants/pubSub'
 import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 

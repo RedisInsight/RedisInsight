@@ -1,11 +1,11 @@
-import { EuiButton, EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip, EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { PUB_SUB_DEFAULT_CHANNEL } from 'uiSrc/pages/pub-sub/PubSubPage'
+import { SubscriptionType, PubSubEvent } from 'uiSrc/constants/pubSub'
 import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -18,16 +18,14 @@ import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.s
 import styles from './styles.module.scss'
 
 const SubscriptionPanel = () => {
-  const { messages, isSubscribed, loading, count } = useSelector(pubSubSelector)
+  const [channelInput, setChannelInput] = useState('')
+  const { messages, isSubscribed, loading, count } = useSelector(pubSubSelector)  
 
   const dispatch = useDispatch()
   const { theme } = useContext(ThemeContext)
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const toggleSubscribe = () => {
-    dispatch(toggleSubscribeTriggerPubSub([PUB_SUB_DEFAULT_CHANNEL]))
-  }
 
   const onClickClear = () => {
     dispatch(clearPubSubMessages())
@@ -40,12 +38,20 @@ const SubscriptionPanel = () => {
     })
   }
 
+  const handleSubscribeToggle = () => {
+    const channelToToggle = channelInput.trim() || '*'
+    dispatch(toggleSubscribeTriggerPubSub([{ 
+      channel: channelToToggle, 
+      type: SubscriptionType.PSubscribe 
+    }]))
+  }
+
   const subscribedIcon = theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight
   const notSubscribedIcon = theme === Theme.Dark ? NotSubscribedIconDark : NotSubscribedIconLight
 
   const displayMessages = count !== 0 || isSubscribed
 
-  return (
+  return ( 
     <EuiFlexGroup className={styles.container} alignItems="center" justifyContent="spaceBetween" gutterSize="s" responsive={false}>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
@@ -70,7 +76,30 @@ const SubscriptionPanel = () => {
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
-          {!!messages.length && (
+          <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
+            <EuiFieldText
+              placeholder="Enter Channel name (Default: '*')"
+              value={channelInput}
+              onChange={(e) => setChannelInput(e.target.value)}
+              aria-label="enter Channel name"
+              size={24}
+            />
+          </EuiFlexItem>          
+          <EuiFlexItem grow={false}>
+            <EuiButton
+              fill={!isSubscribed}
+              size="s"
+              color="secondary"
+              className={styles.buttonSubscribe}
+              type="submit"
+              onClick={handleSubscribeToggle}
+              iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
+              data-testid="subscribe-btn"
+              disabled={loading}
+            >
+              { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
+            </EuiButton>
+          </EuiFlexItem>
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
               <EuiToolTip
                 content="Clear Messages"
@@ -84,22 +113,6 @@ const SubscriptionPanel = () => {
                 />
               </EuiToolTip>
             </EuiFlexItem>
-          )}
-          <EuiFlexItem grow={false}>
-            <EuiButton
-              fill={!isSubscribed}
-              size="s"
-              color="secondary"
-              className={styles.buttonSubscribe}
-              type="submit"
-              onClick={toggleSubscribe}
-              iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
-              data-testid="subscribe-btn"
-              disabled={loading}
-            >
-              { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
-            </EuiButton>
-          </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexItem>
     </EuiFlexGroup>

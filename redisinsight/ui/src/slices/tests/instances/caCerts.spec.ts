@@ -230,8 +230,15 @@ describe('caCerts slice', () => {
     it('call both fetchCaCerts and deleteCaCertificateSuccess when delete ca certificate action is successed', async () => {
       // Arrange
       const responsePayload = { status: 200 }
-
       apiService.delete = jest.fn().mockResolvedValue(responsePayload)
+
+      // Arrange
+      const data = [
+        { id: '70b95d32-c19d-4311-bb24-e684af12cf15', name: 'ca cert' },
+      ]
+      const fetchResponsePayload = { data, status: 200 }
+
+      apiService.get = jest.fn().mockResolvedValue(fetchResponsePayload)
 
       // mock function for onSuccessAction
       const onSuccessAction = jest.fn()
@@ -248,7 +255,8 @@ describe('caCerts slice', () => {
       const expectedActions = [
         deleteCaCertificate(id),
         deleteCaCertificateSuccess(),
-        fetchCaCerts(),
+        loadCaCerts(),
+        loadCaCertsSuccess(fetchResponsePayload.data),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })

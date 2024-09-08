@@ -10,6 +10,10 @@ import reducer, {
   loadClientCertsFailure,
   clientCertsSelector,
   fetchClientCerts,
+  deleteClientCert,
+  deleteClientCertSuccess,
+  deleteClientCertFailure,
+  deleteClientCertAction,
 } from '../../instances/clientCerts'
 
 jest.mock('uiSrc/services', () => ({
@@ -48,7 +52,7 @@ describe('clientCerts slice', () => {
       })
       expect(clientCertsSelector(rootState)).toEqual(state)
     })
-  }
+  })
 
   describe('loadClientCerts', () => {
     it('should properly set the state before the fetch data', () => {
@@ -90,7 +94,7 @@ describe('clientCerts slice', () => {
       })
       expect(clientCertsSelector(rootState)).toEqual(state)
     })
-  }
+  })
 
   describe('loadClientCertsSuccess', () => {
     it('should properly set the state with fetched data', () => {
@@ -230,14 +234,13 @@ describe('clientCerts slice', () => {
       const store = cloneDeep(mockedStore)
 
       // Act
-      await store.dispatch<any>(deleteClientCert(id, onSuccessAction))
+      await store.dispatch<any>(deleteClientCertAction(id, onSuccessAction))
 
       // Assert onSuccessAction
       expect(onSuccessAction).toBeCalled()
 
       // Assert
       const expectedActions = [
-        deleteClientCert(),
         deleteClientCertSuccess(),
         loadClientCerts(),
         loadClientCertsSuccess(fetchResponsePayload.data),
@@ -259,14 +262,13 @@ describe('clientCerts slice', () => {
       const store = cloneDeep(mockedStore)
 
       // Act
-      await store.dispatch<any>(deleteClientCert(id, onSuccessAction))
+      await store.dispatch<any>(deleteClientCertAction(id, onSuccessAction))
 
       // assert that onSuccessAction is not called
       expect(onSuccessAction).not.toBeCalled()
 
       // Assert
       const expectedActions = [
-        deleteClientCert(),
         addErrorNotification(responsePayload as AxiosError),
         deleteClientCertFailure(responsePayload.response.data.message),
       ]

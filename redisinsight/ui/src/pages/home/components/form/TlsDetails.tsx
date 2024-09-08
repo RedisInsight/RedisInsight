@@ -83,7 +83,7 @@ const TlsDetails = (props: Props) => {
       inputDisplay: cert.name,
       dropdownDisplay: (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>{cert.name}</div>
+          <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
             text="will be deleted from RedisInsight."
@@ -114,7 +114,7 @@ const TlsDetails = (props: Props) => {
       inputDisplay: cert.name,
       dropdownDisplay: (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div>{cert.name}</div>
+          <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
             text="will be deleted from RedisInsight."

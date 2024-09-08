@@ -2,7 +2,7 @@ import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
-import { initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import reducer, {
   initialState,
   loadClientCerts,
@@ -19,6 +19,13 @@ import reducer, {
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
 }))
+
+let store: typeof mockedStore
+beforeEach(() => {
+  cleanup()
+  store = cloneDeep(mockedStore)
+  store.clearActions()
+})
 
 describe('clientCerts slice', () => {
   describe('reducer, actions and selectors', () => {
@@ -201,7 +208,6 @@ describe('clientCerts slice', () => {
       const responsePayload = { data, status: 200 }
 
       apiService.get = jest.fn().mockResolvedValue(responsePayload)
-      const store = cloneDeep(mockedStore)
 
       // Act
       await store.dispatch<any>(fetchClientCerts())
@@ -231,8 +237,6 @@ describe('clientCerts slice', () => {
 
       const id = '70b95d32-c19d-4311-bb24-e684af12cf15'
 
-      const store = cloneDeep(mockedStore)
-
       // Act
       await store.dispatch<any>(deleteClientCertAction(id, onSuccessAction))
 
@@ -258,8 +262,6 @@ describe('clientCerts slice', () => {
 
       const onSuccessAction = jest.fn()
       const id = '70b95d32-c19d-4311-bb24-e684af12cf15'
-
-      const store = cloneDeep(mockedStore)
 
       // Act
       await store.dispatch<any>(deleteClientCertAction(id, onSuccessAction))

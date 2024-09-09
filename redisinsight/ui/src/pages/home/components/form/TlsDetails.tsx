@@ -92,7 +92,7 @@ const TlsDetails = (props: Props) => {
             closePopover={closePopover}
             updateLoading={false}
             showPopover={showPopover}
-            handleDeleteItem={() => handleDeleteCaCert(cert.id)}
+            handleDeleteItem={handleDeleteCaCert}
             testid={`delete-ca-cert-${cert.id}`}
           />
         </div>
@@ -123,7 +123,7 @@ const TlsDetails = (props: Props) => {
             closePopover={closePopover}
             updateLoading={false}
             showPopover={showPopover}
-            handleDeleteItem={() => handleDeleteClientCert(cert.id)}
+            handleDeleteItem={handleDeleteClientCert}
             testid={`delete-client-cert-${cert.id}`}
           />
         </div>

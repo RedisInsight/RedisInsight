@@ -52,7 +52,7 @@ export class PluginsService {
         return new PluginCommandExecution({
           ...dto,
           databaseId: clientMetadata.databaseId,
-          result: [new CommandExecutionResult({
+          result: [plainToClass(CommandExecutionResult, {
             response: error.message,
             status: CommandExecutionStatus.Fail,
           })],

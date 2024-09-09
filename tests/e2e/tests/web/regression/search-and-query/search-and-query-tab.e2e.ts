@@ -204,6 +204,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(SEARC
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
+    await t.wait(200);
     await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
     await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
@@ -232,6 +233,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(AGGRE
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
+    await t.wait(200);
     await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
     await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
@@ -251,6 +253,7 @@ test('Verify full commands suggestions with index and query for FT.EXPLAIN', asy
     // Select command and check result
     await t.pressKey('enter');
     await t.pressKey('tab');
+    await t.wait(200);
     await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
     await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });

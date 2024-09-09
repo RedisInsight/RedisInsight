@@ -157,14 +157,8 @@ test('Verify full commands suggestions with index and query for FT.SEARCH', asyn
     await t.expect(script.replace(/\s/g, ' ')).contains('FT.SEARCH ', 'Result of sent command exists');
 
     await t.pressKey('tab');
-    await t.wait(200);
-    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
-    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
     // Select '@city' field
-    await t.pressKey('tab');
-    await t.pressKey('right');
-    await t.pressKey('space');
+    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('DIALECT').exists).ok('FT.SEARCH arguments not suggested');
     await t.typeText(searchAndQueryPage.queryInput, 'n', { replace: false });
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.nth(0).textContent).contains('NOCONTENT', 'Argument not suggested after typing first letters');
@@ -204,14 +198,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(SEARC
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
-    await t.wait(200);
-    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
-    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
-    // Select '@city' field
-    await t.pressKey('tab');
-    await t.pressKey('right');
-    await t.pressKey('space');
+    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
     // Verify that there are no more suggestions
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
     const expectedText = `FT.PROFILE "${indexName1}" SEARCH QUERY "@city"`.trim().replace(/\s+/g, ' ');
@@ -233,14 +220,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(AGGRE
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
-    await t.wait(200);
-    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
-    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
-    // Select '@city' field
-    await t.pressKey('tab');
-    await t.pressKey('right');
-    await t.pressKey('space');
+    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
     // Verify that there are no more suggestions
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
     const expectedText = `FT.PROFILE "${indexName1}" AGGREGATE QUERY "@city"`.trim().replace(/\s+/g, ' ');
@@ -253,14 +233,7 @@ test('Verify full commands suggestions with index and query for FT.EXPLAIN', asy
     // Select command and check result
     await t.pressKey('enter');
     await t.pressKey('tab');
-    await t.wait(200);
-    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
-    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
-    // Select '@city' field
-    await t.pressKey('tab');
-    await t.pressKey('right');
-    await t.pressKey('space');
+    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
 
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('DIALECT').exists).ok('FT.EXPLAIN arguments not suggested');
     // Add DIALECT

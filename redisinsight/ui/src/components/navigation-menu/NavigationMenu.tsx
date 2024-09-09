@@ -314,7 +314,9 @@ const NavigationMenu = () => {
         <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
           <NotificationMenu />
         </FeatureFlagComponent>
-        <HelpMenu />
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <HelpMenu />
+        </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
         <FeatureFlagComponent
           name={FeatureFlags.disabledByEnv}

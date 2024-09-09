@@ -14,7 +14,7 @@ import cx from 'classnames'
 import { FormikProps } from 'formik'
 
 import { useDispatch } from 'react-redux'
-import { validateCertName, validateField } from 'uiSrc/utils'
+import { validateCertName, validateField, Nullable, truncateText } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 
 import {
@@ -40,7 +40,7 @@ export interface Props {
 const TlsDetails = (props: Props) => {
   const dispatch = useDispatch()
   const { flexGroupClassName = '', flexItemClassName = '', formik, caCertificates, certificates } = props
-  const [activeCertId, setActiveCertId] = useState<string | null>(null)
+  const [activeCertId, setActiveCertId] = useState<Nullable<string>>(null)
 
   const handleDeleteCaCert = (id: string) => {
     dispatch(deleteCaCertificateAction(id, handleClickDeleteCert))
@@ -50,12 +50,11 @@ const TlsDetails = (props: Props) => {
     dispatch(deleteClientCertAction(id, handleClickDeleteCert))
   }
 
-  const handleClickDeleteCert = (id: string) => {
+  const handleClickDeleteCert = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_CERTIFICATE_REMOVED,
       eventData: {},
     })
-    showPopover(id)
   }
 
   const closePopover = () => {

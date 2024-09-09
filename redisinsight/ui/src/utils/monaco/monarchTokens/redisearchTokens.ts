@@ -61,7 +61,7 @@ export const getRediSearchMonarchTokensProvider = (
         index: [
           [/"([^"\\]|\\.)*"/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
           [/'([^'\\]|\\.)*'/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
-          [/[a-zA-Z_]\w*/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
+          [/[\w:]+/, { token: 'index', next: isHighlightQuery ? '@query' : '@root' }],
           { include: 'root' } // Fallback to the root state if nothing matches
         ],
         ...generateQuery(),

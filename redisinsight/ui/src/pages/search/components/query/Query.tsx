@@ -315,7 +315,9 @@ const Query = (props: Props) => {
     cursorContext: CursorContext,
     range: monacoEditor.IRange
   ) => {
-    if (foundArg?.stopArg?.expression) return handleExpressionSuggestions(value, foundArg, cursorContext, range)
+    if (foundArg?.isBlocked && foundArg?.stopArg?.expression) {
+      return handleExpressionSuggestions(value, foundArg, cursorContext, range)
+    }
 
     const { prevCursorChar, nextCursorChar, isCursorInQuotes } = cursorContext
     if (isCursorInQuotes || nextCursorChar?.trim()) return asSuggestionsRef([])

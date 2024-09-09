@@ -14,6 +14,7 @@ import { SessionMetadata } from 'src/common/models';
 import { AiService } from 'src/modules/ai/ai.service';
 import { SendAiDatabaseMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { Response } from 'express';
+import { AiAgreement, AiAgreementResponse } from './models/ai.agreement';
 
 @ApiTags('AI')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -65,5 +66,41 @@ export class AiDatabaseController {
     @Param('id') databaseId: string,
   ) {
     return this.service.clearHistory(sessionMetadata, databaseId);
+  }
+
+  @Get('/agreement')
+  @ApiEndpoint({
+    description: 'Get ai agreement',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'Ai agreement',
+        type: AiAgreementResponse,
+      },
+    ],
+  })
+  async getAiAgreement(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+      @Param('id') databaseId: string,
+  ): Promise<AiAgreementResponse> {
+    return this.service.getAiAgreement(sessionMetadata, databaseId);
+  }
+
+  @Post('/agreement')
+  @ApiEndpoint({
+    description: 'Create new ai agreement for database',
+    statusCode: 200,
+    responses: [{
+      status: 200,
+      description: 'Ai agreement',
+      type: AiAgreement,
+    }],
+  })
+  async createAiAgreement(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+      @Param('id') databaseId: string,
+  ): Promise<AiAgreement> {
+    return await this.service.createAiAgreement(sessionMetadata, databaseId);
   }
 }

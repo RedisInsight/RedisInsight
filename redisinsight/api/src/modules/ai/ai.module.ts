@@ -11,6 +11,8 @@ import {
 } from 'src/modules/ai/repositories/in-memory.ai.context.repository';
 import { AiController } from './ai.controller';
 import { AiDatabaseController } from './ai-database.controller';
+import { AiAgreementRepository } from './repositories/ai.agreement.repository';
+import { LocalAiAgreementRepository } from './repositories/local.ai.agreement.repository';
 
 @Module({})
 export class AiModule {
@@ -18,6 +20,7 @@ export class AiModule {
     aiAuthProvider: Type<AiAuthProvider> = LocalAiAuthProvider,
     aiMessageRepository: Type<AiMessageRepository> = LocalAiMessageRepository,
     aiContextRepository: Type<AiContextRepository> = InMemoryAiContextRepository,
+    aiAgreementRepository: Type<AiAgreementRepository> = LocalAiAgreementRepository,
   ) {
     return {
       module: AiModule,
@@ -36,6 +39,10 @@ export class AiModule {
         {
           provide: AiContextRepository,
           useClass: aiContextRepository,
+        },
+        {
+          provide: AiAgreementRepository,
+          useClass: aiAgreementRepository,
         },
       ],
     };

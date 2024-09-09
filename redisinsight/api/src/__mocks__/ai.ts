@@ -9,6 +9,8 @@ import { mockCloudSession } from 'src/__mocks__/cloud-session';
 import { AiMessageEntity } from 'src/modules/ai/entities/ai.message.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { AiModule } from 'src/modules/ai/ai.module';
+import { AiAgreementEntity } from 'src/modules/ai/entities/ai.agreement.entity';
+import { AiAgreement } from 'src/modules/ai/models/ai.agreement';
 
 export const mockAiChatId = '0539879dc020add5abb33f6f60a07fe8d5a0b9d61c81c9d79d77f9b1b2f2e239';
 
@@ -544,4 +546,17 @@ export const mockAiContextRepository = jest.fn(() => ({
   getIndexContext: jest.fn().mockResolvedValue(mockAiIndexContext),
   setIndexContext: jest.fn().mockResolvedValue(mockAiIndexContext),
   reset: jest.fn(),
+}));
+
+export const mockAiAgreementEntity = Object.assign(new AiAgreementEntity(), {
+  id: 'uuid-for-ai-agreement',
+  databaseId: mockAiDatabaseId,
+  accountId: mockAiAccountId,
+  createdAt: new Date('2024-09-09'),
+});
+
+export const mockAiAgreement = Object.assign(new AiAgreement(), mockAiAgreementEntity);
+export const mockAiAgreementRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockAiAgreement),
+  create: jest.fn().mockResolvedValue(mockAiAgreement),
 }));

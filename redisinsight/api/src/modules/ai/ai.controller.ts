@@ -14,6 +14,7 @@ import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 import { AiService } from './ai.service';
 import { SendAiMessageDto } from './dto/send.ai.message.dto';
+import { AiAgreement, AiAgreementResponse } from './models/ai.agreement';
 
 @ApiTags('AI')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -60,5 +61,39 @@ export class AiController {
   @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ) {
     return this.service.clearHistory(sessionMetadata, null);
+  }
+
+  @Get('/agreement')
+  @ApiEndpoint({
+    description: 'Get ai general agreement',
+    statusCode: 200,
+    responses: [
+      {
+        status: 200,
+        description: 'General Ai agreement',
+        type: AiAgreementResponse,
+      },
+    ],
+  })
+  async getAiAgreement(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  ): Promise<AiAgreementResponse> {
+    return this.service.getAiAgreement(sessionMetadata, null);
+  }
+
+  @Post('/agreement')
+  @ApiEndpoint({
+    description: 'Create new ai agreement general',
+    statusCode: 200,
+    responses: [{
+      status: 200,
+      description: 'General Ai agreement',
+      type: AiAgreement,
+    }],
+  })
+  async createAiAgreement(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  ): Promise<AiAgreement> {
+    return await this.service.createAiAgreement(sessionMetadata, null);
   }
 }

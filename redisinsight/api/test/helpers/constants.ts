@@ -7,6 +7,7 @@ import { Compressor } from 'src/modules/database/entities/database.entity';
 import { Vote } from 'src/modules/database-recommendation/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { AiMessageType } from 'src/modules/ai/models';
+// import { mockAiAccountId, mockAiDatabaseId } from 'src/__mocks__';
 
 const API = {
   DATABASES: 'databases',
@@ -641,5 +642,12 @@ export const constants = {
     encryption: 'KEYTAR',
     accountId: 40131,
   },
+
+  TEST_AI_AGREEMENT: {
+    id: 'uuid-for-ai-agreement',
+    databaseId: 'test_ai-db_id',
+    accountId: 40131,
+    createdAt: new Date('2024-09-09'),
+  }
   // etc...
 }

@@ -26,6 +26,8 @@ import { AiContextRepository } from 'src/modules/ai/repositories/ai.context.repo
 import config from 'src/utils/config';
 import { Nullable } from 'src/common/constants';
 import { RedisClient } from 'src/modules/redis/client';
+import { AiAgreement, AiAgreementResponse } from './models/ai.agreement';
+import { AiAgreementRepository } from './repositories/ai.agreement.repository';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -44,6 +46,7 @@ export class AiService {
     private readonly aiMessageRepository: AiMessageRepository,
     private readonly aiAuthProvider: AiAuthProvider,
     private readonly aiContextRepository: AiContextRepository,
+    private readonly aiAgreementRepository: AiAgreementRepository,
   ) {}
 
   static prepareHistoryIntermediateSteps(message: AiMessage): [AiMessageRole, string][] {
@@ -289,6 +292,28 @@ export class AiService {
         return this.aiMessageRepository.clearHistory(sessionMetadata, databaseId, auth.accountId);
       } catch (e) {
         throw wrapAiError(e, 'Unable to clear history');
+      }
+    });
+  }
+
+  async getAiAgreement(sessionMetadata: SessionMetadata, databaseId: Nullable<string>): Promise<AiAgreementResponse> {
+    return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
+      try {
+        const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
+        return { aiAgreement: await this.aiAgreementRepository.get(databaseId, auth.accountId) };
+      } catch (e) {
+        throw wrapAiError(e, 'Unable to get Ai Agreement');
+      }
+    });
+  }
+
+  async createAiAgreement(sessionMetadata: SessionMetadata, databaseId: Nullable<string>): Promise<AiAgreement> {
+    return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
+      try {
+        const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
+        return await this.aiAgreementRepository.create(databaseId, auth.accountId);
+      } catch (e) {
+        throw wrapAiError(e, 'Unable to create Ai Agreement');
       }
     });
   }

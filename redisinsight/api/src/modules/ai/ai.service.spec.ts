@@ -15,7 +15,9 @@ import {
   mockSendAiChatMessageDto,
   mockSessionMetadata,
   mockStandaloneRedisClient,
+  mockAiAgreementRepository,
   MockType,
+  mockAiAgreement,
 } from 'src/__mocks__';
 import { LocalAiAuthProvider } from 'src/modules/ai/providers/auth/local.ai-auth.provider';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
@@ -33,6 +35,7 @@ import { createServer } from 'http';
 import { AddressInfo } from 'net';
 import { AiRateLimitRequestException } from 'src/modules/ai/exceptions';
 import * as ContextUtil from './utils/context.util';
+import { AiAgreementRepository } from './repositories/ai.agreement.repository';
 
 describe('AiService', () => {
   let wsServer;
@@ -44,6 +47,7 @@ describe('AiService', () => {
   let aiProvider: MockType<AiProvider>;
   let cloudUserApiService: MockType<CloudUserApiService>;
   let aiContextRepository: MockType<AiContextRepository>;
+  let aiAgreementRepository: MockType<AiAgreementRepository>;
 
   beforeAll((done) => {
     httpServer = createServer();
@@ -87,6 +91,10 @@ describe('AiService', () => {
           useFactory: mockAiContextRepository,
         },
         {
+          provide: AiAgreementRepository,
+          useFactory: mockAiAgreementRepository,
+        },
+        {
           provide: AiMessageRepository,
           useFactory: mockAiMessageRepository,
         },
@@ -101,6 +109,7 @@ describe('AiService', () => {
     aiProvider = module.get(AiProvider);
     cloudUserApiService = module.get(CloudUserApiService);
     aiContextRepository = module.get(AiContextRepository);
+    aiAgreementRepository = module.get(AiAgreementRepository);
   });
 
   describe('stream', () => {
@@ -304,6 +313,41 @@ describe('AiService', () => {
       cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
 
       await expect(service.clearHistory(mockSessionMetadata, mockAiDatabaseId)).rejects.toThrow(
+        CloudApiUnauthorizedException,
+      );
+    });
+  });
+
+  describe('getAiAgreement', () => {
+    it('should get ai agreemet of a given db and account', async () => {
+      expect(await service.getAiAgreement(mockSessionMetadata, mockAiDatabaseId))
+        .toEqual({ aiAgreement: mockAiAgreement });
+    });
+
+    it('should be null if no agreement with a given dbId found', async () => {
+      aiAgreementRepository.get.mockResolvedValueOnce(null);
+      expect(await service.getAiAgreement(mockSessionMetadata, mockAiDatabaseId)).toEqual({ aiAgreement: null });
+    });
+
+    it('throw CloudApiUnauthorizedException', async () => {
+      cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+
+      await expect(service.getAiAgreement(mockSessionMetadata, mockAiDatabaseId)).rejects.toThrow(
+        CloudApiUnauthorizedException,
+      );
+    });
+  });
+
+  describe('createAiAgreement', () => {
+    it('should create ai agreement from a given databaseId', async () => {
+      expect(await service.createAiAgreement(mockSessionMetadata, mockAiDatabaseId)).toEqual(mockAiAgreement);
+    });
+    it('throw CloudApiUnauthorizedException', async () => {
+      cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+      cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
+
+      await expect(service.createAiAgreement(mockSessionMetadata, mockAiDatabaseId)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
     });

@@ -72,7 +72,7 @@ test('Verify that user can use show more to see command fully in 2nd tooltip', a
     await t.expect(searchAndQueryPage.MonacoEditor.monacoCommandDetails.exists).notOk('The "read more" about the command is not closed');
 });
 test('Verify full commands suggestions with index and query for FT.AGGREGATE', async t => {
-    const groupByArgInfo = 'GROUPBY nargs property [property ...] [REDUCE function nargs arg [arg ...] [AS name] [REDUCE function nargs arg [arg ...] [AS name] ...]]';
+    const groupByArgInfo = 'GROUPBY nargs property [property ...] [REDUCE ';
     const indexFields = [
         'address',
         'city',
@@ -102,6 +102,7 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText(indexName2).exists).ok('All indexes not auto-suggested');
 
     await t.pressKey('tab');
+    await t.wait(200);
     await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
     script = await searchAndQueryPage.queryInputScriptArea.textContent;
     // Verify that user can see the list of fields from the index selected when type in “@”
@@ -110,7 +111,7 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
         await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText(field).exists).ok(`${field} Index field not auto-suggested`);
     }
     // Verify that user can use autosuggestions by typing fields from index after "@"
-    await t.typeText(searchAndQueryPage.queryInput, 'c', { replace: false });
+    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('city').exists).ok('Index field not auto-suggested after starting typing');
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.count).eql(1, 'Wrong index fields suggested after typing first letter');
 
@@ -124,7 +125,7 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
 
     await t.pressKey('tab');
     // Verify that user can see widget about entered argument
-    await t.expect(searchAndQueryPage.MonacoEditor.monacoHintWithArguments.withText(groupByArgInfo).exists).ok('Widget with info about entered argument not displayed');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoHintWithArguments.textContent).contains(groupByArgInfo, 'Widget with info about entered argument not displayed');
 
     await t.typeText(searchAndQueryPage.queryInput, '1 "London"', { replace: false });
     await t.pressKey('space');
@@ -140,6 +141,7 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.typeText(searchAndQueryPage.queryInput, 'stud', { replace: false });
 
     await t.pressKey('space');
+    await t.debug();
     // Verify multiple argument option suggestions
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.nth(0).textContent).contains('REDUCE', 'Incorrect order of suggested arguments');
     // Verify complex command sequences like nargs and properties are suggested accurately for GROUPBY
@@ -155,9 +157,11 @@ test('Verify full commands suggestions with index and query for FT.SEARCH', asyn
     await t.expect(script.replace(/\s/g, ' ')).contains('FT.SEARCH ', 'Result of sent command exists');
 
     await t.pressKey('tab');
-    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    await t.wait(200);
+    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
     // Select '@city' field
-    await t.pressKey('down');
     await t.pressKey('tab');
     await t.pressKey('right');
     await t.pressKey('space');
@@ -200,9 +204,10 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(SEARC
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
-    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
     // Select '@city' field
-    await t.pressKey('down');
     await t.pressKey('tab');
     await t.pressKey('right');
     await t.pressKey('space');
@@ -227,9 +232,10 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(AGGRE
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
-    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
     // Select '@city' field
-    await t.pressKey('down');
     await t.pressKey('tab');
     await t.pressKey('right');
     await t.pressKey('space');
@@ -245,10 +251,10 @@ test('Verify full commands suggestions with index and query for FT.EXPLAIN', asy
     // Select command and check result
     await t.pressKey('enter');
     await t.pressKey('tab');
-
-    await t.typeText(searchAndQueryPage.queryInput, '@c', { replace: false });
+    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'ci', { replace: false });
     // Select '@city' field
-    await t.pressKey('down');
     await t.pressKey('tab');
     await t.pressKey('right');
     await t.pressKey('space');

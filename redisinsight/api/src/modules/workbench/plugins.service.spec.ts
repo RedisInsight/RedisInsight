@@ -20,7 +20,7 @@ import { PluginStateRepository } from 'src/modules/workbench/repositories/plugin
 import { PluginState } from 'src/modules/workbench/models/plugin-state';
 import config from 'src/utils/config';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import { RunQueryMode } from 'src/modules/workbench/models/command-execution';
+import {CommandExecutionType, ResultsMode, RunQueryMode} from 'src/modules/workbench/models/command-execution'
 
 const PLUGINS_CONFIG = config.get('plugins');
 
@@ -101,11 +101,13 @@ describe('PluginsService', () => {
 
       const result = await service.sendCommand(mockWorkbenchClientMetadata, dto);
 
-      expect(result).toEqual(new PluginCommandExecution({
+      expect(result).toEqual({
         ...dto,
         databaseId: mockWorkbenchClientMetadata.databaseId,
         result: [mockCommandExecutionUnsupportedCommandResult],
-      }));
+        resultsMode: ResultsMode.Default,
+        type: CommandExecutionType.Workbench,
+      });
       expect(workbenchCommandsExecutor.sendCommand).not.toHaveBeenCalled();
     });
     it('should throw an error when command execution failed', async () => {

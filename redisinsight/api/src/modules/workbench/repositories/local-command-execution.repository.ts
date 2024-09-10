@@ -43,7 +43,7 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
     // todo: limit by 30 max to insert
     const response = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
       const entity = plainToClass(CommandExecutionEntity, commandExecution);
-      let isNotStored = false;
+      let isNotStored: undefined | boolean;
 
       // Do not store command execution result that exceeded limitation
       if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {

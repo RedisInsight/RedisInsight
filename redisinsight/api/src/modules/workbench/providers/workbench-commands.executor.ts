@@ -45,7 +45,7 @@ export class WorkbenchCommandsExecutor {
 
   /**
    * Entrypoint for any CommandExecution
-   * Will determine type of a command (standalone, per node(s)) and format, and execute it
+   * Will determine type of command (standalone, per node(s)) and format, and execute it
    * Also sis a single place of analytics events invocation
    * @param client
    * @param dto

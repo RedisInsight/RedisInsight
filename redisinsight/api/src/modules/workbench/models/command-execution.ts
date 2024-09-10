@@ -159,7 +159,11 @@ export class CommandExecution {
   })
   @Expose()
   @IsOptional()
-  @IsEnum(CommandExecutionType)
+  @IsEnum(CommandExecutionType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      CommandExecutionType,
+    )}.`,
+  })
   @Default(CommandExecutionType.Workbench)
   type?: CommandExecutionType;
 }

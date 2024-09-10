@@ -35,9 +35,28 @@ export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: mon
     }
   })
 
-export const getFieldsSuggestions = (fields: any[], range: monaco.IRange, spaceAfter = false) =>
-  fields.map(({ attribute }) => {
-    const insertText = attribute.trim() ? attribute : `"${attribute}"`
+export const addFieldAttribute = (attribute: string, type: string) => {
+  switch (type) {
+    case 'TAG': return `${attribute}:{\${1:tag}}`
+    case 'TEXT': return `${attribute}:(\${1:term})`
+    case 'NUMERIC': return `${attribute}:[\${1:range}]`
+    case 'GEO': return `${attribute}:[\${1:lon} \${2:lat} \${3:radius} \${4:unit}]`
+    case 'VECTOR': return `${attribute} \${1:vector}`
+    default: return attribute
+  }
+}
+
+export const getFieldsSuggestions = (
+  fields: any[],
+  range: monaco.IRange,
+  spaceAfter = false,
+  withType = false
+) =>
+  fields.map((field) => {
+    const { attribute, type } = field
+    const attibuteText = attribute.trim() ? attribute : `\\"${attribute}\\"`
+    const insertText = withType ? addFieldAttribute(attibuteText, type) : attibuteText
+
     return {
       label: attribute || ' ',
       kind: monacoEditor.languages.CompletionItemKind.Reference,

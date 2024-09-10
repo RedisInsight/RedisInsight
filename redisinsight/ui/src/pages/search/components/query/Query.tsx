@@ -238,14 +238,21 @@ const Query = (props: Props) => {
     setSelectedIndex(allArgs[1] || '')
     setSelectedCommand(commandName)
 
+    const foundArg = findCurrentArgument(COMMANDS_LIST, beforeOffsetArgs)
     if (prevCursorChar === FIELD_START_SYMBOL) {
       helpWidgetRef.current.isOpen = false
-      return asSuggestionsRef(getFieldsSuggestions(attributesRef.current, range), false)
+      return asSuggestionsRef(
+        getFieldsSuggestions(
+          attributesRef.current,
+          range,
+          false,
+          foundArg?.stopArg?.name === DefinedArgumentName.query
+        ),
+        false
+      )
     }
 
     const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset }
-    const foundArg = findCurrentArgument(COMMANDS_LIST, beforeOffsetArgs)
-
     switch (foundArg?.stopArg?.name) {
       case DefinedArgumentName.index: {
         return handleIndexSuggestions(command, foundArg, prevArgs.length, currentOffsetArg, range)

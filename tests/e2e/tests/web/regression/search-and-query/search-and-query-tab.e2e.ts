@@ -35,6 +35,7 @@ fixture `Autocomplete for entered commands in search and query`
 
         // Create 3 keys and index
         await browserPage.Cli.sendCommandsInCli(commands);
+        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     })
     .afterEach(async() => {
         // Clear and delete database
@@ -44,9 +45,9 @@ fixture `Autocomplete for entered commands in search and query`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that tutorials can be opened from Workbench', async t => {
-    const search = await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
-    await t.click(search.getTutorialLinkLocator('sq-exact-match'));
-    await t.expect(search.InsightsPanel.sidePanel.exists).ok('Insight panel is not opened');
+    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
+    await t.click(searchAndQueryPage.getTutorialLinkLocator('sq-exact-match'));
+    await t.expect(searchAndQueryPage.InsightsPanel.sidePanel.exists).ok('Insight panel is not opened');
     const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.expect(tab.preselectArea.textContent).contains('EXACT MATCH', 'the tutorial page is incorrect');
 });
@@ -59,7 +60,6 @@ test('Verify that user can use show more to see command fully in 2nd tooltip', a
         'required query',
         'optional [verbatim]'
     ];
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     await t.typeText(searchAndQueryPage.queryInput, 'FT', { replace: true });
     // Verify that user can use show more to see command fully in 2nd tooltip
     await t.pressKey('ctrl+space');
@@ -83,8 +83,6 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
         'students',
         'type'
     ];
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
-
     // Verify basic commands suggestions FT.SEARCH and FT.AGGREGATE
     await t.typeText(searchAndQueryPage.queryInput, 'FT', { replace: true });
     // Verify that the list with FT.SEARCH and FT.AGGREGATE auto-suggestions is displayed
@@ -149,7 +147,6 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
 test('Verify full commands suggestions with index and query for FT.SEARCH', async t => {
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     await t.typeText(searchAndQueryPage.queryInput, 'FT.SE', { replace: true });
     // Select command and check result
     await t.pressKey('enter');
@@ -158,7 +155,7 @@ test('Verify full commands suggestions with index and query for FT.SEARCH', asyn
 
     await t.pressKey('tab');
     // Select '@city' field
-    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
+    await searchAndQueryPage.selectFieldUsingAutosuggest('city');
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('DIALECT').exists).ok('FT.SEARCH arguments not suggested');
     await t.typeText(searchAndQueryPage.queryInput, 'n', { replace: false });
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.nth(0).textContent).contains('NOCONTENT', 'Argument not suggested after typing first letters');
@@ -178,7 +175,6 @@ test('Verify full commands suggestions with index and query for FT.SEARCH', asyn
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestWidget.textContent).contains('No suggestions.', 'Index not auto-suggested');
 });
 test('Verify full commands suggestions with index and query for FT.PROFILE(SEARCH)', async t => {
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     await t.typeText(searchAndQueryPage.queryInput, 'FT.PR', { replace: true });
     // Select command and check result
     await t.pressKey('enter');
@@ -198,7 +194,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(SEARC
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
-    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
+    await searchAndQueryPage.selectFieldUsingAutosuggest('city');
     // Verify that there are no more suggestions
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
     const expectedText = `FT.PROFILE "${indexName1}" SEARCH QUERY "@city"`.trim().replace(/\s+/g, ' ');
@@ -206,7 +202,6 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(SEARC
     await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
 test('Verify full commands suggestions with index and query for FT.PROFILE(AGGREGATE)', async t => {
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     await t.typeText(searchAndQueryPage.queryInput, 'FT.PR', { replace: true });
     // Select command and check result
     await t.pressKey('enter');
@@ -220,7 +215,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(AGGRE
     // Select QUERY
     await t.typeText(searchAndQueryPage.queryInput, 'QUE', { replace: false });
     await t.pressKey('enter');
-    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
+    await searchAndQueryPage.selectFieldUsingAutosuggest('city');
     // Verify that there are no more suggestions
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
     const expectedText = `FT.PROFILE "${indexName1}" AGGREGATE QUERY "@city"`.trim().replace(/\s+/g, ' ');
@@ -228,12 +223,11 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(AGGRE
     await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
 test('Verify full commands suggestions with index and query for FT.EXPLAIN', async t => {
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.SearchAndQuery);
     await t.typeText(searchAndQueryPage.queryInput, 'FT.EX', { replace: true });
     // Select command and check result
     await t.pressKey('enter');
     await t.pressKey('tab');
-    await searchAndQueryPage.selectQueryUsingAutosuggest('city');
+    await searchAndQueryPage.selectFieldUsingAutosuggest('city');
 
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('DIALECT').exists).ok('FT.EXPLAIN arguments not suggested');
     // Add DIALECT
@@ -245,4 +239,75 @@ test('Verify full commands suggestions with index and query for FT.EXPLAIN', asy
     const expectedText = `FT.EXPLAIN "${indexName1}" "@city" DIALECT dialectTest`.trim().replace(/\s+/g, ' ');
     // Verify command entered correctly
     await t.expect((await searchAndQueryPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
+});
+test('Verify commands suggestions for APPLY and FILTER', async t => {
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.AGGREGATE ', { replace: true });
+    await t.pressKey('enter');
+
+    await t.typeText(searchAndQueryPage.queryInput, '*');
+    await t.pressKey('right');
+    await t.pressKey('space');
+    //Verify APPLY command
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('APPLY').exists).ok('Apply is not suggested');
+    await t.pressKey('enter');
+
+    await t.typeText(searchAndQueryPage.queryInput, 'g');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).ok('commands is not suggested');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'location', { replace: false });
+    await t.typeText(searchAndQueryPage.queryInput, ', \'40.7128,-74.0060\'');
+    for (let i = 0; i < 3; i++) {
+        await t.pressKey('right');
+    }
+    await t.pressKey('space');
+    await t.pressKey('tab');
+    await t.typeText(searchAndQueryPage.queryInput, 'apply_key', { replace: false });
+
+    await t.pressKey('space');
+    //Verify Filter command
+    await t.typeText(searchAndQueryPage.queryInput, 'F');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('FILTER').exists).ok('FILTER is not suggested');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, 'apply_key < 5000', { replace: false });
+    await t.pressKey('right');
+    await t.pressKey('space');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('GROUPBY').exists).ok('query can not be prolong');
+});
+
+test('Verify REDUCE commands', async t => {
+    await t.typeText(searchAndQueryPage.queryInput, `FT.AGGREGATE ${indexName1} "*" GROUPBY 1 @location`, { replace: true });
+    await t.pressKey('space');
+    // select Reduce
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('REDUCE').exists).ok('REDUCE is not suggested');
+    await t.typeText(searchAndQueryPage.queryInput, 'R');
+    await t.pressKey('enter');
+
+    // set value of reduce
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'CO');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, '0');
+
+    // verify that count of nargs is correct
+    await t.pressKey('space');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('AS').exists).ok('AS is not suggested');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, 'item_count ');
+
+    //add additional reduce
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('REDUCE').exists).ok('Apply is not suggested');
+    await t.typeText(searchAndQueryPage.queryInput, 'R');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, 'SUM');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, '1 ');
+
+    await t.typeText(searchAndQueryPage.queryInput, '@', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    await t.typeText(searchAndQueryPage.queryInput, 'students ', { replace: false });
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('AS').exists).ok('AS is not suggested');
+    await t.pressKey('enter');
+    await t.typeText(searchAndQueryPage.queryInput, 'total_students');
 });

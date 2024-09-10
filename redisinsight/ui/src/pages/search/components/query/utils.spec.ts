@@ -1,4 +1,9 @@
-import { getGeneralSuggestions, isIndexComplete } from 'uiSrc/pages/search/components/query/utils'
+import {
+  addFieldAttribute,
+  getFieldsSuggestions,
+  getGeneralSuggestions,
+  isIndexComplete
+} from 'uiSrc/pages/search/components/query/utils'
 import { MOCKED_SUPPORTED_COMMANDS } from 'uiSrc/pages/search/mocks/mocks'
 import { addOwnTokenToArgs, buildSuggestion, findCurrentArgument } from 'uiSrc/pages/search/utils'
 import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
@@ -118,6 +123,50 @@ const isIndexCompleteTests: Array<[string, boolean]> = [
 describe('isIndexComplete', () => {
   it.each(isIndexCompleteTests)('should properly return value for %s', (index, result) => {
     const testResult = isIndexComplete(index)
+
+    expect(testResult).toEqual(result)
+  })
+})
+
+const mockedFields = [
+  { identifier: 'name', attribute: 'name', type: 'TEXT', WEIGHT: '1', SORTABLE: true, NOSTEM: true },
+  { identifier: 'description', attribute: 'description', type: 'TEXT', WEIGHT: '1' },
+  { identifier: 'class', attribute: 'class', type: 'TAG', SEPARATOR: ',' },
+  { identifier: 'type', attribute: 'type', type: 'TAG', SEPARATOR: ';' },
+  { identifier: 'address_city', attribute: 'city', type: 'TAG', SEPARATOR: ',' },
+  { identifier: 'address_street', attribute: 'address', type: 'TEXT', WEIGHT: '1', NOSTEM: true },
+  { identifier: 'students', attribute: 'students', type: 'NUMERIC', SORTABLE: true },
+  { identifier: 'location', attribute: 'location', type: 'GEO' }
+]
+
+const getFieldsSuggestionsTests = [
+  [
+    [mockedFields, {}],
+    mockedFields.map((field) => ({
+      detail: field.attribute,
+      insertText: field.attribute,
+      insertTextRules: 4,
+      kind: undefined,
+      label: field.attribute,
+      range: expect.any(Object),
+    }))
+  ],
+  [
+    [mockedFields, {}, false, true],
+    mockedFields.map((field) => ({
+      detail: field.attribute,
+      insertText: addFieldAttribute(field.attribute, field.type),
+      insertTextRules: 4,
+      kind: undefined,
+      label: field.attribute,
+      range: expect.any(Object),
+    }))
+  ],
+]
+
+describe('getFieldsSuggestions', () => {
+  it.each(getFieldsSuggestionsTests)('should properly return value for %s', (input, result) => {
+    const testResult = getFieldsSuggestions(...input)
 
     expect(testResult).toEqual(result)
   })

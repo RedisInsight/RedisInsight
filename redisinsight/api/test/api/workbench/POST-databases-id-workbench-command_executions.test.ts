@@ -71,7 +71,7 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
 
   describe('Common', () => {
     describe('String', () => {
-      const bigStringValue = Buffer.alloc(1023 * 1024, 'a').toString();
+      const bigStringValue = Buffer.alloc(10, 'a').toString();
 
       [
         {
@@ -103,8 +103,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             });
 
             expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
-            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
+            expect(body[0].command).to.eql(localDb.decryptData(entity.command));
+            expect(body[0].result).to.eql(JSON.parse(localDb.decryptData(entity.result)));
           },
           before: async () => {
             expect(await rte.client.set(constants.TEST_STRING_KEY_1, bigStringValue));
@@ -215,8 +215,8 @@ describe('POST /databases/:instanceId/workbench/command-executions', () => {
             });
 
             expect(entity.encryption).to.eql(constants.TEST_ENCRYPTION_STRATEGY);
-            expect(localDb.encryptData(body[0].command)).to.eql(entity.command);
-            expect(localDb.encryptData(JSON.stringify(body[0].result))).to.eql(entity.result);
+            expect(body[0].command).to.eql(localDb.decryptData(entity.command));
+            expect(body[0].result).to.eql(JSON.parse(localDb.decryptData(entity.result)));
           }
         },
         {

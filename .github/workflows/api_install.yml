@@ -25,4 +25,4 @@ jobs:
 
       - name: 'Run API Unit Tests'
         working-directory: './redisinsight/api'
-        run: 'yarn api:test:cov'
+        run: 'yarn test:api:cov'

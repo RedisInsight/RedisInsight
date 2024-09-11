@@ -1,39 +1,23 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import {
-  IsEnum, IsArray, IsDefined, IsOptional, IsString, ArrayNotEmpty,
+  IsArray, IsDefined, IsString, ArrayNotEmpty,
 } from 'class-validator';
-import { RunQueryMode, ResultsMode } from './create-command-execution.dto';
+import { CommandExecution } from 'src/modules/workbench/models/command-execution';
+import { Expose } from 'class-transformer';
 
-export class CreateCommandExecutionsDto {
+export class CreateCommandExecutionsDto extends PickType(
+  CommandExecution,
+  ['mode', 'resultsMode', 'type'] as const,
+) {
   @ApiProperty({
     isArray: true,
     type: String,
     description: 'Redis commands',
   })
+  @Expose()
   @IsArray()
   @ArrayNotEmpty()
   @IsDefined()
   @IsString({ each: true })
   commands: string[];
-
-  @ApiPropertyOptional({
-    description: 'Workbench mode',
-    default: RunQueryMode.ASCII,
-    enum: RunQueryMode,
-  })
-  @IsOptional()
-  @IsEnum(RunQueryMode, {
-    message: `mode must be a valid enum value. Valid values: ${Object.values(
-      RunQueryMode,
-    )}.`,
-  })
-  mode?: RunQueryMode = RunQueryMode.ASCII;
-
-  @IsOptional()
-  @IsEnum(ResultsMode, {
-    message: `resultsMode must be a valid enum value. Valid values: ${Object.values(
-      ResultsMode,
-    )}.`,
-  })
-  resultsMode?: ResultsMode;
 }

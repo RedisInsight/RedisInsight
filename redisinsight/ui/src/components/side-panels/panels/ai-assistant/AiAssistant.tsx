@@ -4,8 +4,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { clearExpertChatHistory } from 'uiSrc/slices/panels/aiAssistant'
-import { WelcomeAiAssistant, ChatsWrapper } from './components'
+import {
+  clearAiChatHistory,
+} from 'uiSrc/slices/panels/aiAssistant'
+import {
+  WelcomeAiAssistant,
+} from './components'
+import AiChat from './components/ai-chat'
 import styles from './styles.module.scss'
 
 const AiAssistant = () => {
@@ -13,6 +18,7 @@ const AiAssistant = () => {
   const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
+
   const isShowAuth = cloudSsoFeature?.flag && !userOAuthProfile
 
   const dispatch = useDispatch()
@@ -20,7 +26,7 @@ const AiAssistant = () => {
   useEffect(() => {
     // user logout
     if (currentAccountIdRef.current && !userOAuthProfile?.id) {
-      dispatch(clearExpertChatHistory())
+      dispatch(clearAiChatHistory())
     }
 
     currentAccountIdRef.current = userOAuthProfile?.id
@@ -28,7 +34,7 @@ const AiAssistant = () => {
 
   return (
     <div className={styles.wrapper} data-testid="redis-copilot">
-      {isShowAuth ? (<WelcomeAiAssistant />) : (<ChatsWrapper />)}
+      {isShowAuth ? (<WelcomeAiAssistant />) : (<AiChat />)}
     </div>
   )
 }

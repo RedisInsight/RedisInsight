@@ -2,14 +2,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
 
 import { AxiosError } from 'axios'
-import { apiService, localStorageService, sessionStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { AiChatMessage, AiChatType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { apiService } from 'uiSrc/services'
+import { ApiEndpoints } from 'uiSrc/constants'
+import { AiAgreement, AiChatMessage, BotType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
   getAxiosError,
   isStatusSuccessful,
   Maybe,
+  Nullable,
   parseCustomError
 } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
@@ -21,24 +22,13 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 import { AppDispatch, RootState } from '../store'
 
-const getTabSelected = (tab?: string): AiChatType => {
-  if (Object.values(AiChatType).includes(tab as unknown as AiChatType)) return tab as AiChatType
-  return AiChatType.Assistance
-}
-
 export const initialState: StateAiAssistant = {
-  activeTab: getTabSelected(sessionStorageService.get(BrowserStorageItem.selectedAiChat)),
-  assistant: {
+  ai: {
     loading: false,
-    agreements: localStorageService.get(BrowserStorageItem.generalChatAgreements) ?? false,
-    id: sessionStorageService.get(BrowserStorageItem.aiChatSession) ?? '',
-    messages: []
-  },
-  expert: {
-    loading: false,
+    agreementLoading: false,
     agreements: [],
-    messages: []
-  }
+    messages: [],
+  },
 }
 
 // A slice for recipes
@@ -46,92 +36,47 @@ const aiAssistantSlice = createSlice({
   name: 'aiAssistant',
   initialState,
   reducers: {
-    setSelectedTab: (state, { payload }: PayloadAction<AiChatType>) => {
-      state.activeTab = payload
-      sessionStorageService.set(BrowserStorageItem.selectedAiChat, payload)
+    getAiAgreement: (state) => {
+      state.ai.agreementLoading = true
     },
-    updateAssistantChatAgreements: (state, { payload }: PayloadAction<boolean>) => {
-      state.assistant.agreements = payload
-      localStorageService.set(BrowserStorageItem.generalChatAgreements, payload)
+    getAiAgreementSuccess: (state, { payload }: PayloadAction<AiAgreement>) => {
+      state.ai.agreementLoading = false
+      if (payload && !state.ai.agreements?.some((agr) =>
+        agr.accountId === payload.accountId && agr.databaseId === payload.databaseId)) state.ai.agreements.push(payload)
     },
-    updateExpertChatAgreements: (state, { payload }: PayloadAction<string>) => {
-      state.expert.agreements.push(payload)
+    getAiAgreementFailed: (state) => {
+      state.ai.agreementLoading = false
     },
-    createAssistantChat: (state) => {
-      state.assistant.loading = true
-      state.assistant.id = ''
-      sessionStorageService.remove(BrowserStorageItem.aiChatSession)
-    },
-    createAssistantSuccess: (state, { payload }: PayloadAction<string>) => {
-      state.assistant.id = payload
-      state.assistant.loading = false
 
-      sessionStorageService.set(BrowserStorageItem.aiChatSession, payload)
+    createAiAgreement: (state) => {
+      state.ai.agreementLoading = true
     },
-    clearAssistantChatId: (state) => {
-      state.assistant.id = ''
-      sessionStorageService.remove(BrowserStorageItem.aiChatSession)
+    createAiAgreementSuccess: (state, { payload }: PayloadAction<AiAgreement>) => {
+      state.ai.agreementLoading = false
+      state.ai.agreements.push(payload)
     },
-    createAssistantFailed: (state) => {
-      state.assistant.loading = false
+    createAiAgreementFailed: (state) => {
+      state.ai.agreementLoading = false
     },
-    getAssistantChatHistory: (state) => {
-      state.assistant.loading = true
+
+    clearAiAgreements: (state) => {
+      state.ai.agreements = []
     },
-    getAssistantChatHistorySuccess: (state, { payload }: PayloadAction<Array<AiChatMessage>>) => {
-      state.assistant.loading = false
-      state.assistant.messages = payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
+
+    getAiChatHistory: (state) => {
+      state.ai.loading = true
     },
-    getAssistantChatHistoryFailed: (state) => {
-      state.assistant.loading = false
+    getAiChatHistorySuccess: (state, { payload }: PayloadAction<Array<AiChatMessage>>) => {
+      state.ai.loading = false
+      state.ai.messages = payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
     },
-    removeAssistantChatHistory: (state) => {
-      state.assistant.loading = true
+    getAiChatHistoryFailed: (state) => {
+      state.ai.loading = false
     },
-    removeAssistantChatHistorySuccess: (state) => {
-      state.assistant.loading = false
-      state.assistant.messages = []
-      state.assistant.id = ''
-      sessionStorageService.remove(BrowserStorageItem.aiChatSession)
+    sendAiQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.ai.messages.push(payload)
     },
-    removeAssistantChatHistoryFailed: (state) => {
-      state.assistant.loading = false
-    },
-    sendQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
-      state.assistant.messages.push(payload)
-    },
-    setQuestionError: (
-      state,
-      { payload }: PayloadAction<{
-        id: string,
-        error: Maybe<{
-          statusCode: number
-          errorCode?: number
-        }>
-      }>
-    ) => {
-      state.assistant.messages = state.assistant.messages.map((item) => (item.id === payload.id ? {
-        ...item,
-        error: payload.error
-      } : item))
-    },
-    sendAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
-      state.assistant.messages.push(payload)
-    },
-    getExpertChatHistory: (state) => {
-      state.expert.loading = true
-    },
-    getExpertChatHistorySuccess: (state, { payload }: PayloadAction<Array<AiChatMessage>>) => {
-      state.expert.loading = false
-      state.expert.messages = payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
-    },
-    getExpertChatHistoryFailed: (state) => {
-      state.expert.loading = false
-    },
-    sendExpertQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
-      state.expert.messages.push(payload)
-    },
-    setExpertQuestionError: (
+    setAiQuestionError: (
       state,
       { payload }: PayloadAction<{
         id: string,
@@ -142,173 +87,58 @@ const aiAssistantSlice = createSlice({
         }>
       }>
     ) => {
-      state.expert.messages = state.expert.messages.map((item) => (item.id === payload.id ? {
+      state.ai.messages = state.ai.messages.map((item) => (item.id === payload.id ? {
         ...item,
         error: payload.error
       } : item))
     },
-    sendExpertAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
-      state.expert.messages.push(payload)
+    sendAiAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.ai.messages.push(payload)
     },
-    clearExpertChatHistory: (state) => {
-      state.expert.messages = []
+    clearAiChatHistory: (state) => {
+      state.ai.messages = []
     },
   }
 })
 
 // A selector
-export const aiChatSelector = (state: RootState) => state.panels.aiAssistant
-export const aiAssistantChatSelector = (state: RootState) => state.panels.aiAssistant.assistant
-export const aiExpertChatSelector = (state: RootState) => state.panels.aiAssistant.expert
+export const aiChatSelector = (state: RootState) => state.panels.aiAssistant.ai
 
 // Actions generated from the slice
 export const {
-  createAssistantChat,
-  updateAssistantChatAgreements,
-  updateExpertChatAgreements,
-  clearAssistantChatId,
-  setSelectedTab,
-  createAssistantSuccess,
-  createAssistantFailed,
-  getAssistantChatHistory,
-  getAssistantChatHistorySuccess,
-  getAssistantChatHistoryFailed,
-  removeAssistantChatHistory,
-  removeAssistantChatHistorySuccess,
-  removeAssistantChatHistoryFailed,
-  sendQuestion,
-  setQuestionError,
-  sendAnswer,
-  getExpertChatHistory,
-  getExpertChatHistorySuccess,
-  getExpertChatHistoryFailed,
-  sendExpertQuestion,
-  setExpertQuestionError,
-  sendExpertAnswer,
-  clearExpertChatHistory,
+  getAiAgreement,
+  getAiAgreementSuccess,
+  getAiAgreementFailed,
+
+  createAiAgreement,
+  createAiAgreementSuccess,
+  createAiAgreementFailed,
+
+  getAiChatHistory,
+  getAiChatHistorySuccess,
+  getAiChatHistoryFailed,
+
+  sendAiQuestion,
+  setAiQuestionError,
+  sendAiAnswer,
+  clearAiAgreements,
+  clearAiChatHistory,
 } = aiAssistantSlice.actions
 
 // The reducer
 export default aiAssistantSlice.reducer
 
-export function createAssistantChatAction(onSuccess?: (chatId: string) => void, onFail?: () => void) {
+export function getAiAgreementAction(instanceId: Nullable<string>, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
-    dispatch(createAssistantChat())
+    dispatch(getAiAgreement())
 
     try {
-      const { status, data } = await apiService.post<any>(ApiEndpoints.AI_ASSISTANT_CHATS)
+      let aiUrl: string = ApiEndpoints.AI_CHAT
+      if (instanceId) aiUrl += `/${instanceId}`
+      const { status, data } = await apiService.get<any>(`${aiUrl}/messages/agreement`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(createAssistantSuccess(data.id))
-        onSuccess?.(data.id)
-      }
-    } catch (e) {
-      dispatch(createAssistantFailed())
-      onFail?.()
-    }
-  }
-}
-
-export function askAssistantChatbot(
-  id: string,
-  message: string,
-  { onMessage, onFinish, onError }: {
-    onMessage?: (message: AiChatMessage) => void,
-    onError?: (errorCode: number) => void,
-    onFinish?: () => void
-  }
-) {
-  return async (dispatch: AppDispatch) => {
-    const humanMessage = generateHumanMessage(message)
-    const aiMessageProgressed = generateAiMessage()
-
-    dispatch(sendQuestion(humanMessage))
-
-    onMessage?.(aiMessageProgressed)
-
-    const baseUrl = getBaseUrl()
-    const url = `${baseUrl}${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}/messages`
-
-    await getStreamedAnswer(
-      url,
-      message,
-      {
-        onMessage: (value: string) => {
-          aiMessageProgressed.content += value
-          onMessage?.(aiMessageProgressed)
-        },
-        onFinish: () => {
-          dispatch(sendAnswer(aiMessageProgressed))
-          onFinish?.()
-        },
-        onError: (error: any) => {
-          dispatch(setQuestionError({
-            id: humanMessage.id,
-            error: {
-              statusCode: error?.status ?? 500,
-              errorCode: error?.errorCode
-            }
-          }))
-          onError?.(error?.status ?? 500)
-          onFinish?.()
-        }
-      }
-    )
-  }
-}
-
-export function getAssistantChatHistoryAction(
-  id: string,
-  onSuccess?: () => void
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(getAssistantChatHistory())
-
-    try {
-      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}`)
-
-      if (isStatusSuccessful(status)) {
-        dispatch(getAssistantChatHistorySuccess(data.messages))
-        onSuccess?.()
-      }
-    } catch (e) {
-      dispatch(getAssistantChatHistoryFailed())
-      const error = e as AxiosError
-      if (error?.response?.status === ApiStatusCode.Unauthorized) {
-        dispatch(clearAssistantChatId())
-      }
-    }
-  }
-}
-
-export function removeAssistantChatAction(id: string) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(removeAssistantChatHistory())
-
-    try {
-      const { status } = await apiService.delete<any>(`${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}`)
-
-      if (isStatusSuccessful(status)) {
-        dispatch(removeAssistantChatHistorySuccess())
-      }
-    } catch (e) {
-      dispatch(removeAssistantChatHistoryFailed())
-    }
-  }
-}
-
-export function getExpertChatHistoryAction(
-  instanceId: string,
-  onSuccess?: () => void
-) {
-  return async (dispatch: AppDispatch) => {
-    dispatch(getExpertChatHistory())
-
-    try {
-      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_EXPERT}/${instanceId}/messages`)
-
-      if (isStatusSuccessful(status)) {
-        dispatch(getExpertChatHistorySuccess(data))
+        dispatch(getAiAgreementSuccess(data.aiAgreement))
         onSuccess?.()
       }
     } catch (error) {
@@ -320,14 +150,69 @@ export function getExpertChatHistoryAction(
       }
 
       dispatch(addErrorNotification(err))
-      dispatch(getExpertChatHistoryFailed())
+      dispatch(getAiAgreementFailed())
     }
   }
 }
 
-export function askExpertChatbotAction(
-  databaseId: string,
+export function createAiAgreementAction(instanceId: Nullable<string>, onSuccess?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(createAiAgreement())
+
+    try {
+      let aiUrl: string = ApiEndpoints.AI_CHAT
+      if (instanceId) aiUrl += `/${instanceId}`
+      const { status, data } = await apiService.post<any>(`${aiUrl}/messages/agreement`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(createAiAgreementSuccess(data))
+        onSuccess?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
+      dispatch(createAiAgreementFailed())
+    }
+  }
+}
+
+export function getAiChatHistoryAction(instanceId: Nullable<string>, onSuccess?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getAiChatHistory())
+
+    try {
+      let aiUrl: string = ApiEndpoints.AI_CHAT
+      if (instanceId) aiUrl += `/${instanceId}`
+      const { status, data } = await apiService.get<any>(`${aiUrl}/messages`)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getAiChatHistorySuccess(data))
+        onSuccess?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
+      dispatch(getAiChatHistoryFailed())
+    }
+  }
+}
+
+export function askAiChatbotAction(
+  databaseId: Nullable<string>,
   message: string,
+  tool: BotType,
   { onMessage, onError, onFinish }: {
     onMessage?: (message: AiChatMessage) => void,
     onError?: (errorCode: number) => void,
@@ -335,26 +220,29 @@ export function askExpertChatbotAction(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    const humanMessage = generateHumanMessage(message)
-    const aiMessageProgressed: AiChatMessage = generateAiMessage()
+    const humanMessage = generateHumanMessage(message, tool)
+    const aiMessageProgressed: AiChatMessage = generateAiMessage(tool)
 
-    dispatch(sendExpertQuestion(humanMessage))
+    dispatch(sendAiQuestion(humanMessage))
 
     onMessage?.(aiMessageProgressed)
 
     const baseUrl = getBaseUrl()
-    const url = `${baseUrl}${ApiEndpoints.AI_EXPERT}/${databaseId}/messages`
+    let aiUrl: string = `${baseUrl}${ApiEndpoints.AI_CHAT}`
+    if (databaseId) aiUrl += `/${databaseId}`
+    aiUrl += '/messages'
 
     await getStreamedAnswer(
-      url,
+      aiUrl,
       message,
+      tool,
       {
         onMessage: (value: string) => {
           aiMessageProgressed.content += value
           onMessage?.(aiMessageProgressed)
         },
         onFinish: () => {
-          dispatch(sendExpertAnswer(aiMessageProgressed))
+          dispatch(sendAiAnswer(aiMessageProgressed))
           onFinish?.()
         },
         onError: (error: any) => {
@@ -363,7 +251,7 @@ export function askExpertChatbotAction(
             dispatch(addErrorNotification(err))
             dispatch(logoutUserAction())
           } else {
-            dispatch(setExpertQuestionError({
+            dispatch(setAiQuestionError({
               id: humanMessage.id,
               error: {
                 statusCode: error?.status ?? 500,
@@ -381,18 +269,17 @@ export function askExpertChatbotAction(
   }
 }
 
-export function removeExpertChatHistoryAction(
-  instanceId: string,
+export function removeAiChatHistoryAction(
+  databaseId: Nullable<string>,
   onSuccess?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
-    // dispatch(getExpertChatHistory())
-
+    let aiUrl: string = ApiEndpoints.AI_CHAT
+    if (databaseId) aiUrl += `/${databaseId}`
     try {
-      const { status } = await apiService.delete<any>(`${ApiEndpoints.AI_EXPERT}/${instanceId}/messages`)
-
+      const { status } = await apiService.delete<any>(`${aiUrl}/messages`)
       if (isStatusSuccessful(status)) {
-        dispatch(clearExpertChatHistory())
+        dispatch(clearAiChatHistory())
         onSuccess?.()
       }
     } catch (error) {

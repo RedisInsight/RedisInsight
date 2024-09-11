@@ -1,43 +1,31 @@
 import { cloneDeep } from 'lodash'
-import { AxiosError } from 'axios'
 import reducer, {
   initialState,
-  getAssistantChatHistoryFailed,
-  removeAssistantChatHistory,
-  removeAssistantChatHistorySuccess,
-  removeAssistantChatHistoryFailed,
-  sendQuestion,
-  updateAssistantChatAgreements,
-  updateExpertChatAgreements,
-  clearAssistantChatId,
-  setQuestionError,
-  getExpertChatHistory,
-  getExpertChatHistorySuccess,
-  getExpertChatHistoryFailed,
-  sendAnswer,
-  sendExpertQuestion,
-  setExpertQuestionError,
-  sendExpertAnswer,
-  clearExpertChatHistory,
-  getAssistantChatHistorySuccess,
-  aiAssistantChatSelector,
-  createAssistantFailed,
-  getAssistantChatHistory,
   aiChatSelector,
-  createAssistantChat,
-  setSelectedTab,
-  createAssistantSuccess,
-  createAssistantChatAction,
-  getAssistantChatHistoryAction,
-  removeAssistantChatAction,
-  getExpertChatHistoryAction,
-  removeExpertChatHistoryAction,
-  aiExpertChatSelector,
+  getAiChatHistory,
+  getAiChatHistorySuccess,
+  getAiChatHistoryFailed,
+  getAiAgreement,
+  getAiAgreementSuccess,
+  getAiAgreementFailed,
+  createAiAgreement,
+  createAiAgreementSuccess,
+  createAiAgreementFailed,
+  clearAiAgreements,
+  sendAiQuestion,
+  sendAiAnswer,
+  setAiQuestionError,
+  clearAiChatHistory,
+  getAiChatHistoryAction,
+  getAiAgreementAction,
+  removeAiChatHistoryAction,
+  createAiAgreementAction,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiChatMessage, AiChatMessageType, BotType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 
 let store: typeof mockedStore
 
@@ -62,16 +50,16 @@ describe('ai assistant slice', () => {
       expect(result).toEqual(nextState)
     })
 
-    describe('setSelectedTab', () => {
+    describe('getAiAgreement', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
-          ...initialState,
-          activeTab: AiChatType.Query,
+          ...initialState.ai,
+          agreementLoading: true
         }
 
         // Act
-        const nextState = reducer(initialState, setSelectedTab(AiChatType.Query))
+        const nextState = reducer(initialState, getAiAgreement())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -81,319 +69,241 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('createAssistantChat', () => {
+    describe('getAiAgreementSuccess', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
-          ...initialState.assistant,
+          ...initialState.ai,
+          agreementLoading: false,
+          agreements: expect.any(Array)
+        }
+
+        // Act
+        const aiAgreement = { id: 'testId', databaseId: null, accountId: '1234', createdAt: new Date('2024-12-11') }
+        const nextState = reducer(initialState, getAiAgreementSuccess(aiAgreement))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiAgreementFailed', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          agreementLoading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, getAiAgreementFailed())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('createAiAgreement', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          agreementLoading: true
+        }
+
+        // Act
+        const nextState = reducer(initialState, createAiAgreement())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('createAiAgreementSuccess', () => {
+      it('should properly set state', () => {
+        const aiAgreement = { id: 'testId', databaseId: null, accountId: '1234', createdAt: new Date('2024-12-11') }
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          agreementLoading: false,
+          agreements: [aiAgreement]
+        }
+
+        // Act
+        const nextState = reducer(initialState, createAiAgreementSuccess(aiAgreement))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('createAiAgreementFailed', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          agreementLoading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, createAiAgreementFailed())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('clearAiAgreements', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          agreements: []
+        }
+
+        // Act
+        const nextState = reducer(initialState, clearAiAgreements())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiChatHistory', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
           loading: true
         }
 
         // Act
-        const nextState = reducer(initialState, createAssistantChat())
+        const nextState = reducer(initialState, getAiChatHistory())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
 
-    describe('createAssistantSuccess', () => {
+    describe('getAiChatHistorySuccess', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
-          ...initialState.assistant,
-          loading: false,
-          id: '1'
-        }
-
-        // Act
-        const nextState = reducer(initialState, createAssistantSuccess('1'))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('createAssistantFailed', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-          loading: false,
-        }
-
-        // Act
-        const nextState = reducer(initialState, createAssistantFailed())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('getAssistantChatHistory', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-          loading: true
-        }
-
-        // Act
-        const nextState = reducer(initialState, getAssistantChatHistory())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('getAssistantChatHistorySuccess', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
+          ...initialState.ai,
           loading: false,
           messages: expect.any(Array)
         }
 
         // Act
-        const nextState = reducer(initialState, getAssistantChatHistorySuccess([]))
+        const nextState = reducer(initialState, getAiChatHistorySuccess([]))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
 
-    describe('getAssistantChatHistoryFailed', () => {
+    describe('getAiChatHistoryFailed', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
-          ...initialState.assistant,
+          ...initialState.ai,
           loading: false,
         }
 
         // Act
-        const nextState = reducer(initialState, getAssistantChatHistoryFailed())
+        const nextState = reducer(initialState, getAiChatHistoryFailed())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
 
-    describe('getAssistantChatHistoryFailed', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-          loading: false,
-        }
-
-        // Act
-        const nextState = reducer(initialState, getAssistantChatHistoryFailed())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('removeAssistantChatHistory', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-          loading: true,
-        }
-
-        // Act
-        const nextState = reducer(initialState, removeAssistantChatHistory())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('removeAssistantChatHistorySuccess', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-          loading: false
-        }
-
-        // Act
-        const nextState = reducer(initialState, removeAssistantChatHistorySuccess())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('removeAssistantChatHistoryFailed', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-        }
-
-        // Act
-        const nextState = reducer(initialState, removeAssistantChatHistoryFailed())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('sendQuestion', () => {
+    describe('sendAiQuestion', () => {
       it('should properly set state', () => {
         // Arrange
         const humanMessage = {
           id: '1',
           type: AiChatMessageType.HumanMessage,
           content: 'message',
-          context: {}
+          context: {},
+          tool: BotType.General,
         }
         const state = {
-          ...initialState.assistant,
+          ...initialState.ai,
           messages: [humanMessage]
         }
 
         // Act
-        const nextState = reducer(initialState, sendQuestion(humanMessage))
+        const nextState = reducer(initialState, sendAiQuestion(humanMessage))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
 
-    describe('sendAnswer', () => {
+    describe('sendAiAnswer', () => {
       it('should properly set state', () => {
         // Arrange
         const data: AiChatMessage = {
           id: '1',
           type: AiChatMessageType.AIMessage,
           content: 'message',
-          context: {}
+          context: {},
+          tool: BotType.General
         }
         const state = {
-          ...initialState.assistant,
+          ...initialState.ai,
           messages: [data]
         }
 
         // Act
-        const nextState = reducer(initialState, sendAnswer(data))
+        const nextState = reducer(initialState, sendAiAnswer(data))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
 
-    describe('updateAssistantChatAgreements', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.assistant,
-          agreements: true
-        }
-
-        // Act
-        const nextState = reducer(initialState, updateAssistantChatAgreements(true))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('updateExpertChatAgreements', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.expert,
-          agreements: ['id']
-        }
-
-        // Act
-        const nextState = reducer(initialState, updateExpertChatAgreements('id'))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('clearAssistantChatId', () => {
+    describe('setAiQuestionError', () => {
       it('should properly set state', () => {
         // Arrange
         const currentState = {
           ...initialState,
-          assistant: {
-            ...initialState.assistant,
-            id: 'chatId'
-          }
-        }
-
-        const state = {
-          ...initialState.assistant,
-          id: ''
-        }
-
-        // Act
-        const nextState = reducer(currentState, clearAssistantChatId())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('setQuestionError', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const currentState = {
-          ...initialState,
-          assistant: {
-            ...initialState.assistant,
+          ai: {
+            ...initialState.ai,
             messages: [{
               id: '1',
               content: '2'
@@ -410,7 +320,7 @@ describe('ai assistant slice', () => {
         }
 
         const state = {
-          ...initialState.assistant,
+          ...initialState.ai,
           messages: [{
             ...data,
             content: '2',
@@ -418,183 +328,23 @@ describe('ai assistant slice', () => {
         }
 
         // Act
-        const nextState = reducer(currentState, setQuestionError(data))
+        const nextState = reducer(currentState, setAiQuestionError(data))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiAssistantChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
 
-    describe('getExpertChatHistory', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const state = {
-          ...initialState.expert,
-          loading: true
-        }
-
-        // Act
-        const nextState = reducer(initialState, getExpertChatHistory())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('getExpertChatHistorySuccess', () => {
+    describe('clearAiChatHistory', () => {
       it('should properly set state', () => {
         // Arrange
         const currentState = {
           ...initialState,
-          expert: {
-            ...initialState.expert,
-            loading: true
-          }
-        }
-
-        const state = {
-          ...initialState.expert,
-          loading: false,
-          messages: [{ id: expect.any(String) }]
-        }
-
-        // Act
-        const nextState = reducer(currentState, getExpertChatHistorySuccess([{}] as any))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('getExpertChatHistoryFailed', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const currentState = {
-          ...initialState,
-          expert: {
-            ...initialState.expert,
-            loading: true
-          }
-        }
-
-        const state = {
-          ...initialState.expert,
-          loading: false
-        }
-
-        // Act
-        const nextState = reducer(currentState, getExpertChatHistoryFailed())
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('sendExpertQuestion', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const data = { id: '1' } as any
-        const state = {
-          ...initialState.expert,
-          messages: [data]
-        }
-
-        // Act
-        const nextState = reducer(initialState, sendExpertQuestion(data))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('setExpertQuestionError', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const currentState = {
-          ...initialState,
-          expert: {
-            ...initialState.expert,
-            messages: [{
-              id: '1',
-              content: '2'
-            }]
-          }
-        } as any
-
-        const data = {
-          id: '1',
-          error: {
-            statusCode: 500,
-            errorCode: 1
-          }
-        }
-
-        const state = {
-          ...initialState.expert,
-          messages: [{
-            ...data,
-            content: '2',
-          }]
-        }
-
-        // Act
-        const nextState = reducer(currentState, setExpertQuestionError(data))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('sendExpertAnswer', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const data: AiChatMessage = {
-          id: '1',
-          type: AiChatMessageType.AIMessage,
-          content: 'message',
-          context: {}
-        }
-        const state = {
-          ...initialState.expert,
-          messages: [data]
-        }
-
-        // Act
-        const nextState = reducer(initialState, sendExpertAnswer(data))
-
-        // Assert
-        const rootState = Object.assign(initialStateDefault, {
-          panels: { aiAssistant: nextState },
-        })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
-      })
-    })
-
-    describe('clearExpertChatHistory', () => {
-      it('should properly set state', () => {
-        // Arrange
-        const currentState = {
-          ...initialState,
-          expert: {
-            ...initialState.expert,
+          ai: {
+            ...initialState.ai,
             messages: [{
               id: '1',
               content: '2'
@@ -603,38 +353,126 @@ describe('ai assistant slice', () => {
         } as any
 
         const state = {
-          ...initialState.expert,
+          ...initialState.ai,
           messages: []
         }
 
         // Act
-        const nextState = reducer(currentState, clearExpertChatHistory())
+        const nextState = reducer(currentState, clearAiChatHistory())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
           panels: { aiAssistant: nextState },
         })
-        expect(aiExpertChatSelector(rootState)).toEqual(state)
+        expect(aiChatSelector(rootState)).toEqual(state)
       })
     })
   })
 
   describe('thunks', () => {
-    describe('createAssistantChatAction', () => {
+    describe('getAiChatHistoryAction', () => {
       it('should call proper actions with success result', async () => {
-        const data = { id: '1' }
+        const data: AiChatMessage[] = []
 
         const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getAiChatHistoryAction('1'))
+
+        // Assert
+        const expectedActions = [
+          getAiChatHistory(),
+          getAiChatHistorySuccess(data),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions with failed result', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        } as EnhancedAxiosError
+
+        apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getAiChatHistoryAction('1'))
+
+        // Assert
+        const expectedActions = [
+          getAiChatHistory(),
+          addErrorNotification(responsePayload),
+          getAiChatHistoryFailed(),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('getAiAgreementAction', () => {
+      it('should call proper actions with success result', async () => {
+        const aiAgreement: AiAgreement = { id: 'id', databaseId: 'dbId', accountId: '1234', date: new Date('2024-11-11') }
+        const data = { aiAgreement }
+
+        const responsePayload = { data, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getAiAgreementAction('1'))
+
+        // Assert
+        const expectedActions = [
+          getAiAgreement(),
+          getAiAgreementSuccess(data.aiAgreement),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions with failed result', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        } as EnhancedAxiosError
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getAiAgreementAction('1'))
+
+        // Assert
+        const expectedActions = [
+          getAiAgreement(),
+          addErrorNotification(responsePayload),
+          getAiAgreementFailed(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('createAiAgreementAction', () => {
+      it('should call proper actions with success result', async () => {
+        const aiAgreement: AiAgreement = { id: 'id', databaseId: '1', accountId: '1234', date: new Date('2024-11-11') }
+
+        const responsePayload = { data: aiAgreement, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createAssistantChatAction())
+        await store.dispatch<any>(createAiAgreementAction('1'))
 
         // Assert
         const expectedActions = [
-          createAssistantChat(),
-          createAssistantSuccess(data.id),
+          createAiAgreement(),
+          createAiAgreementSuccess(aiAgreement),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -646,77 +484,35 @@ describe('ai assistant slice', () => {
             status: 500,
             data: { message: errorMessage },
           },
-        }
+        } as EnhancedAxiosError
 
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createAssistantChatAction())
+        await store.dispatch<any>(createAiAgreementAction('1'))
 
         // Assert
         const expectedActions = [
-          createAssistantChat(),
-          createAssistantFailed(),
+          createAiAgreement(),
+          addErrorNotification(responsePayload),
+          createAiAgreementFailed(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
 
-    describe('getAssistantChatHistoryAction', () => {
-      it('should call proper actions with success result', async () => {
-        const data = { messages: [] }
-
-        const responsePayload = { data, status: 200 }
-
-        apiService.get = jest.fn().mockResolvedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(getAssistantChatHistoryAction('1'))
-
-        // Assert
-        const expectedActions = [
-          getAssistantChatHistory(),
-          getAssistantChatHistorySuccess(data.messages),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-
-      it('should call proper actions with failed result', async () => {
-        const errorMessage = 'Error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
-        }
-
-        apiService.get = jest.fn().mockRejectedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(getAssistantChatHistoryAction('1'))
-
-        // Assert
-        const expectedActions = [
-          getAssistantChatHistory(),
-          getAssistantChatHistoryFailed(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-    })
-
-    describe('removeAssistantChatAction', () => {
+    describe('removeAiChatAction', () => {
       it('should call proper actions with success result', async () => {
         const responsePayload = { status: 200 }
 
         apiService.delete = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(removeAssistantChatAction('1'))
+        await store.dispatch<any>(removeAiChatHistoryAction('1'))
 
         // Assert
         const expectedActions = [
-          removeAssistantChatHistory(),
-          removeAssistantChatHistorySuccess(),
+          clearAiChatHistory(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -728,76 +524,16 @@ describe('ai assistant slice', () => {
             status: 500,
             data: { message: errorMessage },
           },
-        }
+        } as EnhancedAxiosError
 
         apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(removeAssistantChatAction('1'))
+        await store.dispatch<any>(removeAiChatHistoryAction('1'))
 
         // Assert
         const expectedActions = [
-          removeAssistantChatHistory(),
-          removeAssistantChatHistoryFailed(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-    })
-
-    describe('getExpertChatHistoryAction', () => {
-      it('should call proper actions with success result', async () => {
-        const data = [] as any
-        const responsePayload = { data, status: 200 }
-
-        apiService.get = jest.fn().mockResolvedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(getExpertChatHistoryAction('1'))
-
-        // Assert
-        const expectedActions = [
-          getExpertChatHistory(),
-          getExpertChatHistorySuccess(data),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-
-      it('should call proper actions with failed result', async () => {
-        const errorMessage = 'Error'
-        const responsePayload = {
-          response: {
-            status: 500,
-            data: { message: errorMessage },
-          },
-        }
-
-        apiService.get = jest.fn().mockRejectedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(getExpertChatHistoryAction('1'))
-
-        // Assert
-        const expectedActions = [
-          getExpertChatHistory(),
-          addErrorNotification(responsePayload as AxiosError),
-          getExpertChatHistoryFailed(),
-        ]
-        expect(store.getActions()).toEqual(expectedActions)
-      })
-    })
-
-    describe('removeExpertChatHistoryAction', () => {
-      it('should call proper actions with success result', async () => {
-        const responsePayload = { status: 200 }
-
-        apiService.delete = jest.fn().mockResolvedValue(responsePayload)
-
-        // Act
-        await store.dispatch<any>(removeExpertChatHistoryAction('1'))
-
-        // Assert
-        const expectedActions = [
-          clearExpertChatHistory()
+          addErrorNotification(responsePayload)
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

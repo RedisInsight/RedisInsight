@@ -4,8 +4,6 @@ import { cleanup, mockedStore, render, screen, fireEvent } from 'uiSrc/utils/tes
 
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
-import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { removeFeatureFromHighlighting } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import AiChatbotMessage from './AiChatbotMessage'
@@ -32,7 +30,6 @@ describe('AiChatbotMessage', () => {
     fireEvent.click(screen.getByTestId('ai-chat-message-btn'))
 
     expect(store.getActions()).toEqual([
-      setSelectedTab(AiChatType.Assistance),
       changeSidePanel(SidePanels.AiAssistant),
       removeFeatureFromHighlighting('aiChatbot'),
     ])

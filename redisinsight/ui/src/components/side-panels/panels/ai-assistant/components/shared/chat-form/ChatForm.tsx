@@ -1,40 +1,86 @@
 import React, { Ref, useRef, useState } from 'react'
-import { EuiButton, EuiForm, EuiPopover, EuiSpacer, EuiText, EuiTextArea, EuiTitle, EuiToolTip, keys } from '@elastic/eui'
+import { EuiButton, EuiForm, EuiIcon, EuiPopover, EuiSpacer, EuiText, EuiTextArea, EuiTitle, EuiToolTip, keys } from '@elastic/eui'
 
 import cx from 'classnames'
+import { useDispatch, useSelector } from 'react-redux'
 import { isModifiedEvent } from 'uiSrc/services'
 
 import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
 
+import { Nullable, isRedisearchAvailable } from 'uiSrc/utils'
+import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
+import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg?react'
+import { createAiAgreementAction } from 'uiSrc/slices/panels/aiAssistant'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { BotType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { ASSISTANCE_CHAT_AGREEMENTS, EXPERT_CHAT_AGREEMENTS } from '../../texts'
 import styles from './styles.module.scss'
 
+export interface IValidation {
+  title?: React.ReactNode
+  content?: React.ReactNode
+  icon?: React.ReactNode
+}
+
 export interface Props {
-  validation?: {
-    title?: React.ReactNode
-    content?: React.ReactNode
-    icon?: React.ReactNode
-  }
-  agreements?: React.ReactNode
-  onAgreementsDisplayed?: () => void
   isDisabled?: boolean
-  placeholder?: string
   onSubmit: (value: string) => void
+  dbId: Nullable<string>
+  modules: AdditionalRedisModule[]
+  isAgreementAccepted: (dbId: Nullable<string>) => boolean
 }
 
 const INDENT_TEXTAREA_SPACE = 2
 
 const ChatForm = (props: Props) => {
   const {
-    validation,
-    agreements,
-    onAgreementsDisplayed,
     isDisabled,
-    placeholder,
-    onSubmit
+    onSubmit,
+    dbId,
+    modules,
+    isAgreementAccepted,
   } = props
   const [value, setValue] = useState('')
+  const [validation, setValidation] = useState<Nullable<IValidation>>(null)
   const [isAgreementsPopoverOpen, setIsAgreementsPopoverOpen] = useState(false)
+  const [agreement, setAgreement] = useState<any>(null)
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
+  const freeInstances = useSelector(freeInstancesSelector) || []
+
+  const dispatch = useDispatch()
+
+  const getValidationMessage = (message?: string) => {
+    if (!message || !(message && message.trim().startsWith('/query'))) {
+      // set validation to null
+      if (validation) setValidation(null)
+      return
+    }
+    if (!dbId) {
+      setValidation({
+        title: 'Open a database',
+        content: 'Open your Redis database with search & query, or create a new database to get started.'
+      })
+      return
+    }
+
+    if (!isRedisearchAvailable(modules)) {
+      setValidation({
+        title: 'Search & query capability is not available',
+        content: freeInstances?.length
+          ? 'Use your free all-in-one Redis Cloud database to start exploring these capabilities.'
+          : 'Create a free Redis Stack database with search & query capability that extends the core capabilities of open-source Redis.',
+        icon: (
+          <EuiIcon
+            className={styles.iconTelescope}
+            type={TelescopeImg}
+          />
+        )
+      })
+      return
+    }
+    validation && setValidation(null)
+  }
 
   const updateTextAreaHeight = (initialState = false) => {
     if (!textAreaRef.current) return
@@ -58,6 +104,7 @@ const ChatForm = (props: Props) => {
   const handleChange = ({ target }: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(target.value)
     updateTextAreaHeight()
+    getValidationMessage(target.value)
   }
 
   const handleSubmitForm = (e: React.MouseEvent<HTMLFormElement>) => {
@@ -65,23 +112,56 @@ const ChatForm = (props: Props) => {
     handleSubmitMessage()
   }
 
+  const showAgreement = (dbId: Nullable<string>) => {
+    const newAgreement = dbId ? EXPERT_CHAT_AGREEMENTS : ASSISTANCE_CHAT_AGREEMENTS
+    setAgreement(newAgreement)
+    setIsAgreementsPopoverOpen(true)
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
+      eventData: {
+        chat: dbId ? BotType.Query : BotType.General,
+      }
+    })
+  }
+
   const handleSubmitMessage = () => {
     if (!value || isDisabled) return
 
-    if (agreements) {
-      setIsAgreementsPopoverOpen(true)
-      onAgreementsDisplayed?.()
+    const dbAiAgreementId = value.trim().startsWith('/query') ? dbId : null
+    if (!isAgreementAccepted(dbAiAgreementId)) {
+      showAgreement(dbAiAgreementId)
       return
     }
-
     submitMessage()
   }
 
+  const acceptAiAgreement = (dbId: Nullable<string>) => {
+    dispatch(createAiAgreementAction(dbId))
+
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
+      eventData: {
+        databaseId: dbId || undefined,
+        chat: dbId ? BotType.Query : BotType.General,
+      }
+    })
+  }
+
   const submitMessage = () => {
-    setIsAgreementsPopoverOpen(false)
+    if (isAgreementsPopoverOpen) {
+      // createe needed ai agreements
+      const dbAiAgreementId = value.trim().startsWith('/query') ? dbId : null
+      if (dbAiAgreementId && !isAgreementAccepted(null)) {
+        acceptAiAgreement(null)
+      }
+      acceptAiAgreement(dbAiAgreementId)
+      setAgreement(null)
+      setIsAgreementsPopoverOpen(false)
+    }
 
     onSubmit?.(value)
-    setValue('')
+    const newValue = value.trim().startsWith('/query') ? '/query ' : ''
+    setValue(newValue)
     updateTextAreaHeight(true)
   }
 
@@ -106,18 +186,20 @@ const ChatForm = (props: Props) => {
         display="block"
       >
         <EuiForm
-          className={cx(styles.wrapper, { [styles.isFormDisabled]: validation })}
+          className={cx(styles.wrapper, {
+            // [styles.isFormDisabled]: validation
+          })}
           component="form"
           onSubmit={handleSubmitForm}
           onKeyDown={handleKeyDown}
         >
           <EuiTextArea
             inputRef={textAreaRef}
-            placeholder={placeholder || 'Ask me about Redis'}
+            placeholder="Message Redis AI Assistant..."
             className={styles.textarea}
             value={value}
             onChange={handleChange}
-            disabled={!!validation}
+            // disabled={!!validation}
             data-testid="ai-message-textarea"
           />
           <EuiPopover
@@ -125,7 +207,10 @@ const ChatForm = (props: Props) => {
             initialFocus={false}
             isOpen={isAgreementsPopoverOpen}
             anchorPosition="downRight"
-            closePopover={() => setIsAgreementsPopoverOpen(false)}
+            closePopover={() => {
+              setAgreement(null)
+              setIsAgreementsPopoverOpen(false)
+            }}
             panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             button={(
@@ -143,7 +228,7 @@ const ChatForm = (props: Props) => {
             )}
           >
             <>
-              {agreements}
+              {agreement}
               <EuiSpacer size="m" />
               <EuiButton
                 fill

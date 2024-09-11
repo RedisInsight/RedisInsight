@@ -8,8 +8,6 @@ import AiRobot from 'uiSrc/assets/img/ai/ai-robot.svg'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
-import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import styles from './styles.module.scss'
 
 const AiChatbotMessage = () => {
@@ -22,7 +20,6 @@ const AiChatbotMessage = () => {
   }, [])
 
   const handleClickShowMe = () => {
-    dispatch(setSelectedTab(AiChatType.Assistance))
     dispatch(changeSidePanel(SidePanels.AiAssistant))
 
     sendEventTelemetry({

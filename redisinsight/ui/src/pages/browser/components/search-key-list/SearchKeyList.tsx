@@ -23,8 +23,6 @@ import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
-import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
-import { setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 
 import { FeatureFlags } from 'uiSrc/constants'
@@ -126,7 +124,6 @@ const SearchKeyList = () => {
   }
 
   const handleClickAskCopilot = () => {
-    dispatch(setSelectedTab(AiChatType.Query))
     dispatch(changeSidePanel(SidePanels.AiAssistant))
   }
 

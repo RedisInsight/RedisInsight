@@ -16,16 +16,17 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
 
+import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
   connectedInstanceName?: string
-  databaseId: string
+  databaseId: Nullable<string>
   isClearDisabled?: boolean
   onRestart: () => void
 }
 
-const ExpertChatHeader = (props: Props) => {
+const ChatHeader = (props: Props) => {
   const { databaseId, connectedInstanceName, isClearDisabled, onRestart } = props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
 
@@ -53,7 +54,7 @@ const ExpertChatHeader = (props: Props) => {
 
   return (
     <div className={styles.header}>
-      {connectedInstanceName ? (
+      {(databaseId && connectedInstanceName) ? (
         <EuiToolTip
           content={connectedInstanceName}
           anchorClassName={styles.dbName}
@@ -85,7 +86,7 @@ const ExpertChatHeader = (props: Props) => {
                 size="xs"
                 onClick={() => setIsTutorialsPopoverOpen(true)}
                 className={cx(styles.headerBtn)}
-                data-testid="ai-expert-tutorial-btn"
+                data-testid="ai-tutorial-btn"
               />
             )}
           >
@@ -98,7 +99,7 @@ const ExpertChatHeader = (props: Props) => {
                 color="secondary"
                 onClick={handleOpenTutorials}
                 className={styles.openTutorialsBtn}
-                data-testid="ai-expert-open-tutorials"
+                data-testid="ai-open-tutorials"
               >
                 Open tutorials
               </EuiButton>
@@ -112,7 +113,7 @@ const ExpertChatHeader = (props: Props) => {
               iconType="eraser"
               size="xs"
               className={styles.headerBtn}
-              data-testid="ai-expert-restart-session-btn"
+              data-testid="ai-restart-session-btn"
             />
           )}
           onConfirm={onRestart}
@@ -122,4 +123,4 @@ const ExpertChatHeader = (props: Props) => {
   )
 }
 
-export default ExpertChatHeader
+export default ChatHeader

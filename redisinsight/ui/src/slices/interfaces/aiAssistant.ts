@@ -1,3 +1,10 @@
+import { Nullable } from 'uiSrc/utils'
+
+export enum BotType {
+  General = 'General',
+  Query = 'Query',
+}
+
 export enum AiChatType {
   Assistance = 'document',
   Query = 'database'
@@ -12,6 +19,7 @@ export interface AiChatMessage {
   id: string
   type: AiChatMessageType
   content: string
+  tool: BotType
   error?: {
     statusCode: number
     errorCode?: number
@@ -24,17 +32,18 @@ export interface AiChatMessage {
   }
 }
 
+export interface AiAgreement {
+  id: string
+  databaseId: Nullable<string>
+  accountId: string
+  createdAt: Date
+}
+
 export interface StateAiAssistant {
-  activeTab: AiChatType
-  assistant: {
+  ai: {
     loading: boolean
-    agreements: boolean
-    id: string
-    messages: Array<AiChatMessage>
-  },
-  expert: {
-    loading: boolean
-    agreements: string[]
+    agreementLoading: boolean
+    agreements: AiAgreement[]
     messages: Array<AiChatMessage>
   }
 }

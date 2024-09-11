@@ -1,4 +1,5 @@
 import React from 'react'
+import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import { cleanup, fireEvent, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
@@ -11,7 +12,9 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import ExpertChatHeader from './ExpertChatHeader'
+import ChatHeader, { Props } from './ChatHeader'
+
+const mockedProps = mock<Props>()
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
@@ -25,15 +28,21 @@ beforeEach(() => {
   store.clearActions()
 })
 
-describe('ExpertChatHeader', () => {
+describe('ChatHeader', () => {
   it('should render', () => {
-    expect(render(<ExpertChatHeader databaseId="1" />)).toBeTruthy()
+    expect(render(<ChatHeader {...mockedProps} databaseId="1" />)).toBeTruthy()
   })
 
   it('should render disabled restart session button', () => {
-    render(<ExpertChatHeader databaseId="1" isClearDisabled />)
+    render(<ChatHeader {...mockedProps} databaseId="1" isClearDisabled />)
 
-    expect(screen.getByTestId('ai-expert-restart-session-btn')).toBeDisabled()
+    expect(screen.getByTestId('ai-restart-session-btn')).toBeDisabled()
+  })
+
+  it('should not render instanceName if databaseId is null', () => {
+    const instanceName = 'redisInstanceName'
+    render(<ChatHeader {...mockedProps} databaseId={null} connectedInstanceName={instanceName} />)
+    expect(screen.queryByText(instanceName)).toBe(null)
   })
 
   it('should call proper actions after click on tutorial button', async () => {
@@ -42,13 +51,13 @@ describe('ExpertChatHeader', () => {
 
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
-    render(<ExpertChatHeader databaseId="1" />)
+    render(<ChatHeader {...mockedProps} databaseId="1" />)
 
-    fireEvent.click(screen.getByTestId('ai-expert-tutorial-btn'))
+    fireEvent.click(screen.getByTestId('ai-tutorial-btn'))
 
     await waitForEuiPopoverVisible()
 
-    fireEvent.click(screen.getByTestId('ai-expert-open-tutorials'))
+    fireEvent.click(screen.getByTestId('ai-open-tutorials'))
 
     expect(store.getActions()).toEqual([
       resetExplorePanelSearch(),

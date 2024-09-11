@@ -187,7 +187,7 @@ const appContextSlice = createSlice({
     setSQVerticalPanelSizes: (state, { payload }: { payload: any }) => {
       state.searchAndQuery.panelSizes.vertical = payload
     },
-    setSQVerticalScript: (state, { payload }: { payload: any }) => {
+    setSQScript: (state, { payload }: { payload: any }) => {
       state.searchAndQuery.script = payload
     },
     setLastPageContext: (state, { payload }: { payload: string }) => {
@@ -261,7 +261,7 @@ export const {
   setWorkbenchScript,
   setWorkbenchVerticalPanelSizes,
   setSQVerticalPanelSizes,
-  setSQVerticalScript,
+  setSQScript,
   setLastPageContext,
   setPubSubFieldsContext,
   setBrowserBulkActionOpen,

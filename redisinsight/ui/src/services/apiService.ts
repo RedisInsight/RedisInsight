@@ -67,6 +67,7 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
     // provide the current path to redirect back to the same location after login
     window.location.href = `${envConfig.RI_401_REDIRECT_URL}${window.location.pathname}`
   }
+  return Promise.reject(error)
 }
 
 mutableAxiosInstance.interceptors.request.use(

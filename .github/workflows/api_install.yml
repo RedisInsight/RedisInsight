@@ -1,0 +1,28 @@
+name: "API Install"
+
+on:
+  workflow_call:
+    inputs:
+      runs_on:
+        type: string
+        required: true
+jobs:
+  api_install:
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'Setup Node'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.15'
+          cache: 'yarn'
+
+      - name: 'Install API dependencies'
+        working-directory: './redisinsight/api'
+        run: 'yarn install --frozen-lockfile'
+
+      - name: 'Run API Unit Tests'
+        working-directory: './redisinsight/api'
+        run: 'yarn api:test:cov'

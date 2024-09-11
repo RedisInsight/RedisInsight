@@ -1,0 +1,12 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ gh/* ]
+
+jobs:
+  tests:
+    name: TEst
+    uses: './.github/workflows/api_install.yml'
+    with:
+      runs_on: ubuntu-latest

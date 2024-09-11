@@ -311,3 +311,28 @@ test('Verify REDUCE commands', async t => {
     await t.pressKey('enter');
     await t.typeText(searchAndQueryPage.queryInput, 'total_students');
 });
+test('Verify suggestions for fields', async t => {
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.AGGREGATE ', { replace: true });
+    await t.typeText(searchAndQueryPage.queryInput, 'idx1');
+    await t.pressKey('enter');
+    await t.wait(200);
+
+    await t.typeText(searchAndQueryPage.queryInput, '@');
+    await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+
+    //verify suggestions for geo
+    await t.typeText(searchAndQueryPage.queryInput, 'l');
+    await t.pressKey('tab');
+    await t.expect((await searchAndQueryPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE "${indexName1}" "@location:[lon lat radius unit]"`);
+
+    //verify for numeric
+    await t.typeText(searchAndQueryPage.queryInput, 'FT.AGGREGATE ', { replace: true });
+    await t.typeText(searchAndQueryPage.queryInput, 'idx1');
+    await t.pressKey('enter');
+    await t.wait(200);
+
+    await t.typeText(searchAndQueryPage.queryInput, '@');
+    await t.typeText(searchAndQueryPage.queryInput, 's');
+    await t.pressKey('tab');
+    await t.expect((await searchAndQueryPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE "${indexName1}" "@students:[range]"`);
+});

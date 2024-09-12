@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { chunk, reverse } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
@@ -29,6 +29,7 @@ import {
 } from '../interfaces'
 
 export const initialState: StateWorkbenchResults = {
+  type: CommandExecutionType.Workbench,
   isLoaded: false,
   loading: false,
   processing: false,
@@ -45,6 +46,10 @@ const workbenchResultsSlice = createSlice({
   initialState,
   reducers: {
     setWBResultsInitialState: () => initialState,
+
+    setExecutionType: (state, { payload }: PayloadAction<CommandExecutionType>) => {
+      state.type = payload
+    },
 
     // Fetch Workbench history
     loadWBHistory: (state) => {
@@ -110,8 +115,15 @@ const workbenchResultsSlice = createSlice({
       state.processing = false
     },
 
-    sendWBCommand: (state, { payload: { commands, commandId } }:
-    { payload: { commands: string[], commandId: string } }) => {
+    sendWBCommand: (
+      state,
+      {
+        payload: { commands, commandId, executionType }
+      }:
+      PayloadAction<{ commands: string[], commandId: string, executionType: CommandExecutionType }>
+    ) => {
+      if (executionType !== state.type) return
+
       let newItems = [
         ...commands.map((command, i) => ({
           command,
@@ -215,6 +227,7 @@ const workbenchResultsSlice = createSlice({
 // Actions generated from the slice
 export const {
   setWBResultsInitialState,
+  setExecutionType,
   loadWBHistory,
   loadWBHistorySuccess,
   loadWBHistoryFailure,
@@ -297,7 +310,8 @@ export function sendWBCommandAction({
 
       dispatch(sendWBCommand({
         commands: isGroupResults(resultsMode) ? [`${commands.length} - Command(s)`] : commands,
-        commandId
+        commandId,
+        executionType
       }))
 
       dispatch(setDbIndexState(true))
@@ -363,7 +377,8 @@ export function sendWBCommandClusterAction({
 
       dispatch(sendWBCommand({
         commands: isGroupResults(resultsMode) ? [`${commands.length} - Commands`] : commands,
-        commandId
+        commandId,
+        executionType
       }))
 
       const { data, status } = await apiService.post<CommandExecution[]>(
@@ -489,7 +504,7 @@ export function clearWbResultsAction(
           ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
         {
-          params: { type: executionType }
+          data: { type: executionType }
         }
       )
 

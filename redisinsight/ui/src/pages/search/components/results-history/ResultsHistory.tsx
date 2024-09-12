@@ -94,7 +94,7 @@ const ResultsHistory = (props: Props) => {
     const { command, mode } = commandExecution
     const profileQuery = generateProfileQueryForCommand(command, profileType)
     if (profileQuery) {
-      onSubmit(command, null, { mode })
+      onSubmit(profileQuery, null, { mode })
     }
   }
 

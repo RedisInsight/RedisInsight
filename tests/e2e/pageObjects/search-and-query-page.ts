@@ -7,7 +7,7 @@ export class SearchAndQueryPage extends BaseRunCommandsPage {
     * Select query using autosuggest
     * @param query Value of query
     */
-    async selectQueryUsingAutosuggest(value: string): Promise<void> {
+    async selectFieldUsingAutosuggest(value: string): Promise<void> {
         await t.wait(200);
         await t.typeText(this.queryInput, '@', { replace: false });
         await t.expect(this.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');

@@ -9,6 +9,7 @@ export interface StateWorkbenchSettings {
 }
 
 export interface StateWorkbenchResults {
+  type: CommandExecutionType
   isLoaded: boolean
   loading: boolean
   processing: boolean

@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { appContextSearchAndQuery, setSQVerticalPanelSizes, } from 'uiSrc/slices/app/context'
 import { QueryWrapper, ResultsHistory } from 'uiSrc/pages/search/components'
 
-import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
+import { sendWbQueryAction, setExecutionType } from 'uiSrc/slices/workbench/wb-results'
 import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -37,8 +37,11 @@ const SearchPage = () => {
 
   setTitle(`${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)} - Search and Query`)
 
-  useEffect(() => () => {
-    dispatch(setSQVerticalPanelSizes(verticalSizesRef.current))
+  useEffect(() => {
+    dispatch(setExecutionType(CommandExecutionType.Search))
+    return () => {
+      dispatch(setSQVerticalPanelSizes(verticalSizesRef.current))
+    }
   }, [])
 
   useEffect(() => {

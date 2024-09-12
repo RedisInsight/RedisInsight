@@ -23,6 +23,15 @@ jobs:
         working-directory: './redisinsight/api'
         run: 'yarn install --frozen-lockfile'
 
-      - name: 'Run API Unit Tests'
+      - name: 'Run code analysis'
         working-directory: './redisinsight/api'
-        run: 'yarn test:api:cov'
+        run: 'yarn test:cov'
+
+      - name: 'Build Electron Linux'
+        working-directory: './redisinsight/api'
+        run: |
+          yarn --cwd redisinsight/api install --frozen-lockfile --ignore-optional
+          yarn --cwd redisinsight install --frozen-lockfile --ignore-optional
+          yarn install --frozen-lockfile
+          yarn build:statics
+          yarn package:prod

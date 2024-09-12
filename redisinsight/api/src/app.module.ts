@@ -24,8 +24,7 @@ import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-aut
 import { CustomTutorialModule } from 'src/modules/custom-tutorial/custom-tutorial.module';
 import { CloudModule } from 'src/modules/cloud/cloud.module';
 import { RdiModule } from 'src/modules/rdi/rdi.module';
-import { AiChatModule } from 'src/modules/ai/chat/ai-chat.module';
-import { AiQueryModule } from 'src/modules/ai/query/ai-query.module';
+import { AiModule } from 'src/modules/ai/ai.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
 import { RedisSentinelModule } from './modules/redis-sentinel/redis-sentinel.module';
@@ -69,8 +68,7 @@ const setXFrameOptionsHeader = (res: Response) => {
     DatabaseAnalysisModule,
     DatabaseImportModule,
     CloudModule.register(),
-    AiChatModule,
-    AiQueryModule.register(),
+    AiModule.register(),
     RdiModule.register(),
     ...(SERVER_CONFIG.staticContent
       ? [

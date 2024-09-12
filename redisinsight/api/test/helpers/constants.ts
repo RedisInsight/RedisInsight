@@ -6,6 +6,8 @@ import { RECOMMENDATION_NAMES, TelemetryEvents } from 'src/constants';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { Vote } from 'src/modules/database-recommendation/models';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
+import { AiMessageType } from 'src/modules/ai/models';
+// import { mockAiAccountId, mockAiDatabaseId } from 'src/__mocks__';
 
 const API = {
   DATABASES: 'databases',
@@ -603,5 +605,51 @@ export const constants = {
   TEST_ANALYTICS_PAGE,
 
   TEST_DATA_DIR: process.env.TEST_DATA_DIR || `${TEST_RUN_DIR}/data`,
+
+  // AI
+  TEST_AI_MESSAGE_HUMAN: {
+    id: 'uuid-for-human-message-1',
+    type: AiMessageType.HumanMessage,
+    content: 'human message 1',
+    databaseId: null,
+    encryption: 'KEYTAR',
+    accountId: 40131,
+  },
+
+  TEST_AI_MESSAGE_HUMAN_2: {
+    id: 'uuid-for-human-message-2',
+    type: AiMessageType.HumanMessage,
+    content: 'human message 2',
+    databaseId: null,
+    encryption: 'KEYTAR',
+    accountId: 40131,
+  },
+
+  TEST_AI_MESSAGE_AI_RESPONSE: {
+    id: 'uuid-for-ai-response-1',
+    type: AiMessageType.AiMessage,
+    content: 'ai response 1',
+    steps: [],
+    databaseId: null,
+    encryption: 'KEYTAR',
+    accountId: 40131,
+  },
+
+  TEST_AI_MESSAGE_AI_RESPONSE_2: {
+    id: 'uuid-for-ai-response-2',
+    type: AiMessageType.AiMessage,
+    content: 'ai response 2',
+    steps: [],
+    databaseId: null,
+    encryption: 'KEYTAR',
+    accountId: 40131,
+  },
+
+  TEST_AI_AGREEMENT: {
+    id: 'uuid-for-ai-agreement',
+    databaseId: 'test_ai-db_id',
+    accountId: 40131,
+    createdAt: new Date('2024-09-09'),
+  }
   // etc...
 }

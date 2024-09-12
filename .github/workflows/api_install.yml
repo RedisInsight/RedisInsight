@@ -28,7 +28,6 @@ jobs:
         run: 'yarn test:cov'
 
       - name: 'Build Electron Linux'
-        working-directory: './redisinsight/api'
         run: |
           yarn --cwd redisinsight/api install --frozen-lockfile --ignore-optional
           yarn --cwd redisinsight install --frozen-lockfile --ignore-optional

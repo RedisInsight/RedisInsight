@@ -8,11 +8,10 @@ import { CodeButtonParams } from 'uiSrc/constants'
 
 import { getCommandsFromQuery, Nullable } from 'uiSrc/utils'
 import { changeSQActiveRunQueryMode, searchAndQuerySelector } from 'uiSrc/slices/search/searchAndQuery'
-import { appContextSearchAndQuery, setSQVerticalScript } from 'uiSrc/slices/app/context'
+import { appContextSearchAndQuery, setSQScript } from 'uiSrc/slices/app/context'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { SUPPORTED_COMMANDS_LIST } from 'uiSrc/pages/search/components/query/constants'
 import { SearchCommand } from 'uiSrc/pages/search/types'
 import { TUTORIALS } from './constants'
@@ -24,6 +23,7 @@ import Query from '../query'
 import styles from './styles.module.scss'
 
 export interface Props {
+  commandsArray?: string[]
   onSubmit: (
     commandInit: string,
     commandId?: Nullable<string>,
@@ -32,13 +32,12 @@ export interface Props {
 }
 
 const QueryWrapper = (props: Props) => {
-  const { onSubmit } = props
+  const { commandsArray = [], onSubmit } = props
 
   const { id: connectedIndstanceId } = useSelector(connectedInstanceSelector)
   const { script: scriptContext } = useSelector(appContextSearchAndQuery)
   const { activeRunQueryMode } = useSelector(searchAndQuerySelector)
   const { data: indexes = [] } = useSelector(redisearchListSelector)
-  const { commandsArray } = useSelector(appRedisCommandsSelector)
 
   const [value, setValue] = useState(scriptContext)
 
@@ -55,7 +54,7 @@ const QueryWrapper = (props: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => () => {
-    dispatch(setSQVerticalScript(scriptRef.current))
+    dispatch(setSQScript(scriptRef.current))
   }, [])
 
   useEffect(() => {
@@ -87,7 +86,6 @@ const QueryWrapper = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         mode: activeRunQueryMode,
-        // TODO sanitize user query
         command: getCommandsFromQuery(value, commandsArray) || ''
       }
     })

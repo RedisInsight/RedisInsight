@@ -5,7 +5,7 @@ import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, CodeButtonParams, EMPTY_COMMAND } from 'uiSrc/constants'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CliOutputFormatterType } from 'uiSrc/constants/cliOutput'
-import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { RunQueryMode, ResultsMode, CommandExecutionType } from 'uiSrc/slices/interfaces/workbench'
 import {
   getApiErrorMessage, getCommandsForExecution,
   getExecuteParams,
@@ -242,7 +242,10 @@ export const workbenchResultsSelector = (state: RootState) => state.workbench.re
 export default workbenchResultsSlice.reducer
 
 // Asynchronous thunk actions
-export function fetchWBHistoryAction(instanceId: string) {
+export function fetchWBHistoryAction(
+  instanceId: string,
+  executionType = CommandExecutionType.Workbench,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadWBHistory())
 
@@ -251,7 +254,8 @@ export function fetchWBHistoryAction(instanceId: string) {
         getUrl(
           instanceId,
           ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
-        )
+        ),
+        { params: { type: executionType } }
       )
 
       if (isStatusSuccessful(status)) {
@@ -273,6 +277,7 @@ export function sendWBCommandAction({
   mode = RunQueryMode.ASCII,
   resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
+  executionType = CommandExecutionType.Workbench,
   onSuccessAction,
   onFailAction,
 }: {
@@ -281,6 +286,7 @@ export function sendWBCommandAction({
   commandId?: string
   mode: RunQueryMode
   resultsMode?: ResultsMode
+  executionType?: CommandExecutionType
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -304,7 +310,8 @@ export function sendWBCommandAction({
         {
           commands,
           mode,
-          resultsMode
+          resultsMode,
+          type: executionType
         }
       )
 
@@ -335,6 +342,7 @@ export function sendWBCommandClusterAction({
   mode = RunQueryMode.ASCII,
   resultsMode = ResultsMode.Default,
   commandId = `${Date.now()}`,
+  executionType = CommandExecutionType.Workbench,
   onSuccessAction,
   onFailAction,
 }: {
@@ -344,6 +352,7 @@ export function sendWBCommandClusterAction({
   multiCommands?: string[]
   mode?: RunQueryMode,
   resultsMode?: ResultsMode
+  executionType?: CommandExecutionType
   onSuccessAction?: (multiCommands: string[]) => void
   onFailAction?: () => void
 }) {
@@ -367,6 +376,7 @@ export function sendWBCommandClusterAction({
           commands,
           mode,
           resultsMode,
+          type: executionType,
           outputFormat: CliOutputFormatterType.Raw
         }
       )
@@ -462,6 +472,7 @@ export function deleteWBCommandAction(
 
 // Asynchronous thunk action
 export function clearWbResultsAction(
+  executionType = CommandExecutionType.Workbench,
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
@@ -477,6 +488,9 @@ export function clearWbResultsAction(
           id,
           ApiEndpoints.WORKBENCH_COMMAND_EXECUTIONS,
         ),
+        {
+          params: { type: executionType }
+        }
       )
 
       if (isStatusSuccessful(status)) {
@@ -498,6 +512,7 @@ export function sendWbQueryAction(
   queryInit: string,
   commandId?: Nullable<string>,
   executeParams: CodeButtonParams = {},
+  executionType?: CommandExecutionType,
   onSuccessAction?: {
     afterEach?: () => void,
     afterAll?: () => void
@@ -533,6 +548,7 @@ export function sendWbQueryAction(
           commands,
           multiCommands,
           mode: activeRunQueryMode,
+          executionType,
           onSuccessAction: onSuccess,
           onFailAction: onFail
         }))
@@ -555,6 +571,7 @@ export function sendWbQueryAction(
           mode: activeRunQueryMode,
           resultsMode,
           multiCommands,
+          executionType,
           onSuccessAction: onSuccess,
           onFailAction: onFail
         })

@@ -7,7 +7,7 @@ import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { getBaseApiUrl, Nullable, formatToText, replaceEmptyValue } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
-import { CommandExecutionResult, IPluginVisualization, RunQueryMode } from 'uiSrc/slices/interfaces'
+import { CommandExecutionResult, CommandExecutionType, IPluginVisualization, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { prepareIframeHtml } from 'uiSrc/plugins/pluginImport'
 import {
@@ -28,6 +28,7 @@ export interface Props {
   setMessage: (text: string) => void
   commandId: string
   mode?: RunQueryMode
+  executionType?: CommandExecutionType
 }
 
 enum StylesNamePostfix {
@@ -44,7 +45,15 @@ enum ActionTypes {
 const baseUrl = getBaseApiUrl()
 
 const QueryCardCliPlugin = (props: Props) => {
-  const { query, id, result, setMessage, commandId, mode = RunQueryMode.Raw } = props
+  const {
+    query,
+    id,
+    result,
+    setMessage,
+    commandId,
+    mode = RunQueryMode.Raw,
+    executionType
+  } = props
   const { visualizations = [], staticPath } = useSelector(appPluginsSelector)
   const { modules = [] } = useSelector(connectedInstanceSelector)
   const serverInfo = useSelector(appServerInfoSelector)
@@ -84,6 +93,7 @@ const QueryCardCliPlugin = (props: Props) => {
     dispatch(
       sendPluginCommandAction({
         command,
+        executionType,
         onSuccessAction: (response) => {
           sendMessageToPlugin({
             ...commonOptions,

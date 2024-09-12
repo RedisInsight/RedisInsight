@@ -5,15 +5,9 @@ import { EuiLoadingContent, keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 
-import { WBQueryType, ProfileQueryType, DEFAULT_TEXT_VIEW_TYPE } from 'uiSrc/pages/workbench/constants'
-import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
-import {
-  getWBQueryType,
-  getVisualizationsByCommand,
-  Maybe,
-  isGroupResults,
-  isSilentModeWithoutError,
-} from 'uiSrc/utils'
+import { DEFAULT_TEXT_VIEW_TYPE, ProfileQueryType, WBQueryType } from 'uiSrc/pages/workbench/constants'
+import { CommandExecutionType, ResultsMode, ResultsSummary, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
+import { getVisualizationsByCommand, getWBQueryType, isGroupResults, isSilentModeWithoutError, Maybe, } from 'uiSrc/utils'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -36,6 +30,7 @@ export interface Props {
   activeResultsMode?: ResultsMode
   resultsMode?: ResultsMode
   emptyCommand?: boolean
+  executionType?: CommandExecutionType
   summary?: ResultsSummary
   createdAt?: Date
   loading?: boolean
@@ -73,6 +68,7 @@ const QueryCard = (props: Props) => {
     mode,
     activeResultsMode,
     resultsMode,
+    executionType = CommandExecutionType.Workbench,
     summary,
     isOpen,
     createdAt,
@@ -117,7 +113,9 @@ const QueryCard = (props: Props) => {
   const toggleFullScreen = () => {
     setIsFullScreen((isFull) => {
       sendEventTelemetry({
-        event: TelemetryEvent.WORKBENCH_RESULTS_IN_FULL_SCREEN,
+        event: executionType === CommandExecutionType.Search
+          ? TelemetryEvent.SEARCH_RESULTS_IN_FULL_SCREEN
+          : TelemetryEvent.WORKBENCH_RESULTS_IN_FULL_SCREEN,
         eventData: {
           databaseId: instanceId,
           state: isFull ? 'Close' : 'Open'
@@ -184,6 +182,7 @@ const QueryCard = (props: Props) => {
           mode={mode}
           resultsMode={resultsMode}
           activeResultsMode={activeResultsMode}
+          executionType={executionType}
           emptyCommand={emptyCommand}
           summary={summary}
           summaryText={getSummaryText(summary, resultsMode)}
@@ -224,6 +223,7 @@ const QueryCard = (props: Props) => {
                               result={result}
                               query={command}
                               mode={mode}
+                              executionType={executionType}
                               setMessage={setMessage}
                               commandId={id}
                             />

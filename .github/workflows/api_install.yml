@@ -13,24 +13,38 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@v3
 
-      - name: 'Setup Node'
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.15'
-          cache: 'yarn'
-
-      - name: 'Install API dependencies'
-        working-directory: './redisinsight/api'
-        run: 'yarn install --frozen-lockfile'
-
-      - name: 'Run code analysis'
-        working-directory: './redisinsight/api'
-        run: 'yarn test:cov'
-
-      - name: 'Build Electron Linux'
+      - name: 'custom file'
         run: |
-          yarn --cwd redisinsight/api install --frozen-lockfile --ignore-optional
-          yarn --cwd redisinsight install --frozen-lockfile --ignore-optional
-          yarn install --frozen-lockfile
-          yarn build:statics
-          yarn package:prod
+          mkdir -p release
+          echo "Artifact 1 content" > art1.txt
+          echo "Artifact 2 content" > art2.txt
+          echo "Artifact 3 content" > diff_name_art3.txt
+
+      - name: 'store artifacts'
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'artifact'
+          path: |
+            release/art*
+            package.json
+#      - name: 'Setup Node'
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: '20.15'
+#          cache: 'yarn'
+#
+#      - name: 'Install API dependencies'
+#        working-directory: './redisinsight/api'
+#        run: 'yarn install --frozen-lockfile'
+#
+#      - name: 'Run code analysis'
+#        working-directory: './redisinsight/api'
+#        run: 'yarn test:cov'
+#
+#      - name: 'Build Electron Linux'
+#        run: |
+#          yarn --cwd redisinsight/api install --frozen-lockfile --ignore-optional
+#          yarn --cwd redisinsight install --frozen-lockfile --ignore-optional
+#          yarn install --frozen-lockfile
+#          yarn build:statics
+#          yarn package:prod

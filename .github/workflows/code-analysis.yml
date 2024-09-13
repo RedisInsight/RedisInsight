@@ -9,4 +9,4 @@ jobs:
     name: TEst
     uses: './.github/workflows/api_install.yml'
     with:
-      runs_on: ubuntu-latest
+      runs_on: macos-14

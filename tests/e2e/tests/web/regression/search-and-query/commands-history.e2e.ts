@@ -148,17 +148,16 @@ test('Verify that user can switches between Table and Text for FT.INFO and see r
     await t.switchToIframe(searchAndQueryPage.iframe);
     await t.expect(searchAndQueryPage.queryTableResult.exists).ok('The table view is not switched for command FT.INFO');
 });
-test
-    .meta({ rte: rte.standalone })('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
-        const keyName = Common.generateWord(5);
-        const command = `set ${keyName} test`;
+test('Verify that user can see original date and time of command execution in Workbench history after the page update', async t => {
+    const keyName = Common.generateWord(5);
+    const command = `set ${keyName} test`;
 
-        // Send command and remember the time
-        await searchAndQueryPage.sendCommandInWorkbench(command);
-        const dateTime = await searchAndQueryPage.queryCardContainer.nth(0).find(searchAndQueryPage.cssCommandExecutionDateTime).textContent;
-        // Wait fo 1 minute, refresh page and check results
-        await t.wait(60000);
-        await searchAndQueryPage.reloadPage();
-        await t.expect(searchAndQueryPage.queryCardContainer.nth(0).find(searchAndQueryPage.cssCommandExecutionDateTime).textContent).eql(dateTime, 'The original date and time of command execution is not saved after the page update');
-    });
+    // Send command and remember the time
+    await searchAndQueryPage.sendCommandInWorkbench(command);
+    const dateTime = await searchAndQueryPage.queryCardContainer.nth(0).find(searchAndQueryPage.cssCommandExecutionDateTime).textContent;
+    // Wait fo 1 minute, refresh page and check results
+    await t.wait(60000);
+    await searchAndQueryPage.reloadPage();
+    await t.expect(searchAndQueryPage.queryCardContainer.nth(0).find(searchAndQueryPage.cssCommandExecutionDateTime).textContent).eql(dateTime, 'The original date and time of command execution is not saved after the page update');
+});
 

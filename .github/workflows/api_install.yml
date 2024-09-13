@@ -33,6 +33,15 @@ jobs:
           name: 'diff'
           path: |
             release/diff*
+
+      - name: 'Store builds'
+        run: |
+          rm release/._* ||:
+          chmod +x .circleci/build/sum_sha256.sh
+          .circleci/build/sum_sha256.sh
+          applicationVersion=$(jq -r '.version' redisinsight/package.json)
+
+          aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/private/builds/some_date/${{ github.sha }}_${applicationVersion} --recursive
 #      - name: 'Setup Node'
 #        uses: actions/setup-node@v3
 #        with:

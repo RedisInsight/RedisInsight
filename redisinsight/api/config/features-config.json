@@ -1,5 +1,5 @@
 {
-  "version": 2.5403,
+  "version": 2.56,
   "features": {
     "redisDataIntegration": {
       "flag": true,

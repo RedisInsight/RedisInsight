@@ -124,7 +124,7 @@ export class RedisSentinelService {
         sessionMetadata: this.constantsProvider.getSystemSessionMetadata(),
         databaseId: database.id || uuidv4(),
         context: ClientContext.Common,
-      }, database, { useRetry: false });
+      }, database, { useRetry: false, enableReadyCheck: false });
       result = await discoverSentinelMasterGroups(client);
       this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(result);
 

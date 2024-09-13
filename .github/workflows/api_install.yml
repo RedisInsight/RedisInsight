@@ -9,6 +9,9 @@ on:
 jobs:
   api_install:
     runs-on: ${{ inputs.runs_on }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v3
@@ -35,9 +38,6 @@ jobs:
             release/diff*
 
       - name: 'Store builds'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           rm release/._* ||:
           chmod +x .circleci/build/sum_sha256.sh

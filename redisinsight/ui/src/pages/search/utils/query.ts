@@ -1,6 +1,6 @@
 /* eslint-disable no-continue */
 
-import { toNumber } from 'lodash'
+import { isNumber, toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider } from 'uiSrc/constants'
 import { ArgName, FoundCommandArgument, SearchCommand, SearchCommandTree, TokenType } from '../types'
@@ -140,18 +140,24 @@ const findStopArgumentInQuery = (
 ): {
   restArguments: SearchCommand[]
   stopArgIndex: number
+  argumentsIntered?: number
   isBlocked: boolean
 } => {
   let currentCommandArgIndex = 0
+  let argumentsIntered = 0
   let isBlockedOnCommand = false
   let multipleIndexStart = 0
   let multipleCountNumber = 0
 
-  const moveToNextCommandArg = () => currentCommandArgIndex++
+  const moveToNextCommandArg = () => {
+    currentCommandArgIndex++
+    argumentsIntered++
+  }
   const blockCommand = () => { isBlockedOnCommand = true }
   const unBlockCommand = () => { isBlockedOnCommand = false }
 
   const skipArg = () => {
+    argumentsIntered -= 1
     moveToNextCommandArg()
     unBlockCommand()
   }
@@ -165,15 +171,16 @@ const findStopArgumentInQuery = (
       continue
     }
 
-    if (
-      !isBlockedOnCommand
-      && currentCommandArg?.token
-      && currentCommandArg.optional
-      && currentCommandArg.token !== arg.toUpperCase()
-    ) {
-      moveToNextCommandArg()
-      skipArg()
-      continue
+    if (!isBlockedOnCommand && currentCommandArg.optional) {
+      const isNotToken = currentCommandArg?.token && currentCommandArg.token !== arg.toUpperCase()
+      const isNotOneOfToken = currentCommandArg?.type === TokenType.OneOf
+        && currentCommandArg?.arguments?.every(({ token }) => token !== arg.toUpperCase())
+
+      if (isNotToken || isNotOneOfToken) {
+        moveToNextCommandArg()
+        skipArg()
+        continue
+      }
     }
 
     // if we are on token - that requires one more argument
@@ -183,16 +190,23 @@ const findStopArgumentInQuery = (
     }
 
     if (currentCommandArg?.type === TokenType.Block) {
-      // if block is multiple - we duplicate nArgs inner arguments
       let blockArguments = currentCommandArg.arguments
-
+      const nArgs = toNumber(queryArgs[i - 1]) || 0
+      // if block is multiple - we duplicate nArgs inner arguments
       if (currentCommandArg?.multiple) {
-        const nArgs = toNumber(queryArgs[i - 1]) || 0
         blockArguments = Array(nArgs).fill(currentCommandArg.arguments).flat()
       }
 
       const blockSuggestion = findStopArgumentInQuery(queryArgs.slice(i), blockArguments)
       const stopArg = blockSuggestion.restArguments?.[blockSuggestion.stopArgIndex]
+      const { argumentsIntered } = blockSuggestion
+
+      if (isNumber(argumentsIntered) && argumentsIntered >= nArgs) {
+        i += queryArgs.slice(i).length - 1
+        skipArg()
+        continue
+      }
+
       if (blockSuggestion.isBlocked || stopArg) return blockSuggestion
 
       i += queryArgs.slice(i).length - 1
@@ -248,6 +262,7 @@ const findStopArgumentInQuery = (
   return {
     restArguments: restCommandArgs,
     stopArgIndex: currentCommandArgIndex,
+    argumentsIntered,
     isBlocked: isBlockedOnCommand
   }
 }
@@ -379,7 +394,13 @@ export const fillArgsByType = (args: SearchCommand[], expandBlock = true): Searc
     const currentArg = args[i]
 
     if (expandBlock && currentArg.type === TokenType.OneOf) result.push(...(currentArg?.arguments || []))
-    if (currentArg.type === TokenType.Block) result.push(currentArg.arguments?.[0] as SearchCommand)
+    if (currentArg.type === TokenType.Block) {
+      result.push({
+        multiple: currentArg.multiple,
+        optional: currentArg.optional,
+        ...(currentArg?.arguments?.[0] as SearchCommand || {}),
+      })
+    }
     if (currentArg.token) result.push(currentArg)
   }
 

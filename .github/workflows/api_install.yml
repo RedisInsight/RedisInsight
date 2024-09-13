@@ -35,6 +35,10 @@ jobs:
             release/diff*
 
       - name: 'Store builds'
+        env:
+          AWS_BUCKET_NAME_TEST: ${{ secrets.AWS_BUCKET_NAME_TEST }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           rm release/._* ||:
           chmod +x .circleci/build/sum_sha256.sh

@@ -7,7 +7,7 @@ on:
 jobs:
   tests:
     name: TEst
-    uses: '.github/workflows/api_install.yml'
+    uses: './.github/workflows/api_install.yml'
     secrets: 'inherit'
     with:
       runs_on: macos-14

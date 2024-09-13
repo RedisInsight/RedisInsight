@@ -33,6 +33,7 @@ export const getRediSearchMonarchTokensProvider = (
       keywords,
       tokenizer: {
         root: [
+          { include: '@fields' },
           { include: '@whitespace' },
           { include: '@numbers' },
           { include: '@strings' },
@@ -65,6 +66,9 @@ export const getRediSearchMonarchTokensProvider = (
           { include: 'root' } // Fallback to the root state if nothing matches
         ],
         ...generateQuery(),
+        fields: [
+          [/@\w+/, { token: 'field', }]
+        ],
         whitespace: [
           [/\s+/, 'white'],
           [/\/\/.*$/, 'comment'],

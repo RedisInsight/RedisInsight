@@ -16,9 +16,9 @@ jobs:
       - name: 'custom file'
         run: |
           mkdir -p release
-          echo "Artifact 1 content" > art1.txt
-          echo "Artifact 2 content" > art2.txt
-          echo "Artifact 3 content" > diff_name_art3.txt
+          echo "Artifact 1 content" > release/art1.txt
+          echo "Artifact 2 content" > release/art2.txt
+          echo "Artifact 3 content" > release/diff_name_art3.txt
 
       - name: 'store artifacts'
         uses: actions/upload-artifact@v3
@@ -27,6 +27,12 @@ jobs:
           path: |
             release/art*
             package.json
+
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'diff'
+          path: |
+            release/diff*
 #      - name: 'Setup Node'
 #        uses: actions/setup-node@v3
 #        with:

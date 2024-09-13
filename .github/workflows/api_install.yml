@@ -27,7 +27,7 @@ jobs:
           path: |
             release/art*
             package.json
-
+      - name: 'store artifacts'
         uses: actions/upload-artifact@v3
         with:
           name: 'diff'

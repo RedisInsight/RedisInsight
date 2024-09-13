@@ -84,6 +84,8 @@ export class RedisSentinelService {
                 password,
               },
             } as Database,
+            undefined,
+            { enableReadyCheck: false },
           );
 
           result.push({

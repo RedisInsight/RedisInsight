@@ -1,12 +1,11 @@
 import { DatabaseHelper } from '../../../../helpers/database';
-import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../../pageObjects';
+import { WorkbenchPage, BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { WorkbenchActions } from '../../../../common-actions/workbench-actions';
 
-const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
 const workBenchActions = new WorkbenchActions();
 const databaseHelper = new DatabaseHelper();

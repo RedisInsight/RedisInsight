@@ -54,8 +54,8 @@ jobs:
 
       - name: 'Build Electron Linux'
         run: |
-          yarn --cwd redisinsight/api install --frozen-lockfile --ignore-optional
           yarn --cwd redisinsight install --frozen-lockfile --ignore-optional
+          yarn --cwd redisinsight/api install --frozen-lockfile --ignore-optional
           yarn install --frozen-lockfile
           yarn build:statics
           yarn package:prod

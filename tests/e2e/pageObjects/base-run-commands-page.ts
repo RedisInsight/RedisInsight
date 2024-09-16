@@ -25,12 +25,30 @@ export class BaseRunCommandsPage extends InstancePage {
     executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
     queryResult = Selector('[data-testid=query-common-result]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
+    parametersAnchor = Selector('[data-testid=parameters-anchor]');
+
+    iframe = Selector('[data-testid=pluginIframe]');
+
+    //OPTIONS
+    selectViewType = Selector('[data-testid=select-view-type]');
+    queryTableResult = Selector('[data-testid^=query-table-result-]');
+    textViewTypeOption = Selector('[data-test-subj^=view-type-option-Text]');
+    tableViewTypeOption = Selector('[data-test-subj^=view-type-option-Plugin]');
+
+    clearResultsBtn = Selector('[data-testid=clear-history-btn]');
+    rawModeIcon = Selector('[data-testid=raw-mode-tooltip]');
 
     cssQueryCardCommand = '[data-testid=query-card-command]';
     cssQueryCardContainer = '[data-testid^="query-card-container-"]';
     cssQueryTextResult = '[data-testid=query-cli-result]';
     cssReRunCommandButton = '[data-testid=re-run-command]';
     cssDeleteCommandButton = '[data-testid=delete-command]';
+    cssJsonViewTypeOption = '[data-testid=view-type-selected-Plugin-client-list__json-view]';
+    cssQueryTableResult = '[data-testid^=query-table-result-]';
+    cssTableViewTypeOption = '[data-testid=view-type-selected-Plugin-redisearch__redisearch]';
+    cssCommandExecutionDateTime = '[data-testid=command-execution-date-time]';
+
+    queryTextResult = Selector(this.cssQueryTextResult);
 
     getTutorialLinkLocator = (tutorialName: string): Selector =>
         Selector(`[data-testid=query-tutorials-link_${tutorialName}]`);
@@ -69,5 +87,19 @@ export class BaseRunCommandsPage extends InstancePage {
         // Compare the command result with executed command
         const actualCommandResult = await this.queryCardContainer.nth(childNum).find(this.cssQueryTextResult).textContent;
         await t.expect(actualCommandResult).contains(result, 'Actual command result is not equal to executed');
+    }
+
+    // Select Text view option in Workbench results
+    async selectViewTypeText(): Promise<void> {
+        await t
+            .click(this.selectViewType)
+            .click(this.textViewTypeOption);
+    }
+
+    // Select Table view option in Workbench results
+    async selectViewTypeTable(): Promise<void> {
+        await t
+            .click(this.selectViewType)
+            .doubleClick(this.tableViewTypeOption);
     }
 }

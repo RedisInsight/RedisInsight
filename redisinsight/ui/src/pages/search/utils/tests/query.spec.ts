@@ -111,6 +111,8 @@ const ftAggreageTests = [
             name: 'function',
             token: 'REDUCE',
             type: 'string',
+            multiple: true,
+            optional: true,
             parent: {
               name: 'groupby',
               type: 'block',
@@ -145,6 +147,27 @@ const ftAggreageTests = [
     }
   },
   {
+    args: ['""', '""', 'GROUPBY', '2', 'p1', 'p2', 'REDUCE', 'f', '1', 'AS', 'name'],
+    result: {
+      stopArg: undefined,
+      append: [
+        [
+          {
+            name: 'function',
+            token: 'REDUCE',
+            type: 'string',
+            multiple: true,
+            optional: true,
+            parent: expect.any(Object)
+          }
+        ]
+      ],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
+  {
     args: ['index', '"query"', 'SORTBY'],
     result: {
       stopArg: { name: 'nargs', token: 'SORTBY', type: 'integer' },
@@ -158,40 +181,29 @@ const ftAggreageTests = [
     args: ['index', '"query"', 'SORTBY', '1', 'p1'],
     result: {
       stopArg: {
-        name: 'order',
-        type: 'oneof',
-        arguments: [
+        name: 'num',
+        type: 'integer',
+        token: 'MAX',
+        optional: true
+      },
+      append: [
+        [
           {
-            name: 'asc',
-            type: 'pure-token',
-            token: 'ASC'
-          },
-          {
-            name: 'desc',
-            type: 'pure-token',
-            token: 'DESC'
+            name: 'num',
+            type: 'integer',
+            token: 'MAX',
+            optional: true,
+            parent: expect.any(Object)
           }
         ]
-      },
-      append: [[
-        {
-          name: 'asc',
-          type: 'pure-token',
-          token: 'ASC'
-        },
-        {
-          name: 'desc',
-          type: 'pure-token',
-          token: 'DESC'
-        }
-      ]],
+      ],
       isBlocked: false,
-      isComplete: false,
+      isComplete: true,
       parent: expect.any(Object)
     }
   },
   {
-    args: ['index', '"query"', 'SORTBY', '1', 'p1', 'ASC'],
+    args: ['index', '"query"', 'SORTBY', '2', 'p1', 'ASC'],
     result: {
       stopArg: {
         name: 'num',
@@ -239,7 +251,7 @@ const ftAggreageTests = [
     }
   },
   {
-    args: ['index', '"query"', 'SORTBY', '1', 'p1', 'ASC', 'MAX'],
+    args: ['index', '"query"', 'SORTBY', '2', 'p1', 'ASC', 'MAX'],
     result: {
       stopArg: {
         name: 'num',
@@ -313,7 +325,8 @@ const ftSearchTests = [
           name: 'count',
           type: 'string',
           token: 'FIELDS',
-          parent: expect.any(Object)
+          parent: expect.any(Object),
+          optional: true
         },
         {
           name: 'num',
@@ -416,6 +429,17 @@ const ftSearchTests = [
     }
   },
   {
+    args: ['', '', 'RETURN', '1', 'iden'],
+    result: {
+      stopArg: undefined,
+      // TODO: append may have AS token, since it is optional - we skip for now
+      append: [],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
+  {
     args: ['', '', 'RETURN', '2', 'iden'],
     result: {
       stopArg: {
@@ -424,7 +448,6 @@ const ftSearchTests = [
         token: 'AS',
         optional: true
       },
-      // TODO: append may have AS token, since it is optional - we skip for now
       append: [[]],
       isBlocked: false,
       isComplete: false,
@@ -434,6 +457,16 @@ const ftSearchTests = [
   {
     args: ['', '', 'RETURN', '2', 'iden', 'iden'],
     result: {
+      stopArg: undefined,
+      append: [],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
+  {
+    args: ['', '', 'RETURN', '3', 'iden', 'iden'],
+    result: {
       stopArg: {
         name: 'property',
         type: 'string',
@@ -442,22 +475,17 @@ const ftSearchTests = [
       },
       append: [[]],
       isBlocked: false,
-      isComplete: true,
+      isComplete: false,
       parent: expect.any(Object)
     }
   },
   {
-    args: ['', '', 'RETURN', '2', 'iden', 'iden', 'AS'],
+    args: ['', '', 'RETURN', '3', 'iden', 'iden', 'AS', 'iden2'],
     result: {
-      stopArg: {
-        name: 'property',
-        type: 'string',
-        token: 'AS',
-        optional: true
-      },
+      stopArg: undefined,
       append: [],
-      isBlocked: true,
-      isComplete: false,
+      isBlocked: false,
+      isComplete: true,
       parent: expect.any(Object)
     }
   },

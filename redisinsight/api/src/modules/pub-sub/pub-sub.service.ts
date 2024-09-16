@@ -34,7 +34,7 @@ export class PubSubService {
       await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
         this.subscriptionProvider.createSubscription(userClient, subDto),
       )));
-      this.analyticsService.sendChannelSubscribeEvent(userClient.getDatabaseId());
+      this.analyticsService.sendChannelSubscribeEvent(userClient.getDatabaseId(), dto.subscriptions);
     } catch (e) {
       this.logger.error('Unable to create subscriptions', e);
 

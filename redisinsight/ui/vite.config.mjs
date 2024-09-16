@@ -125,6 +125,7 @@ export default defineConfig({
       RI_SOCKET_CREDENTIALS: process.env.RI_SOCKET_CREDENTIALS,
       RI_HOSTED_SOCKET_PROXY_PATH: process.env.RI_HOSTED_SOCKET_PROXY_PATH,
       RI_DEFAULT_THEME: process.env.RI_DEFAULT_THEME,
+      RI_TIMEOUT_TO_GET_INFO: process.env.RI_TIMEOUT_TO_GET_INFO
     },
   },
   // hack: apply proxy path to monaco webworker

@@ -31,3 +31,14 @@
   border-bottom: 1px solid var(--tableDarkestBorderColor);
 }
 
+.clearAllBtn {
+  font-size: 14px !important;
+
+  :global {
+    .euiIcon {
+      width: 14px !important;
+      height: 14px !important;
+    }
+  }
+}
+

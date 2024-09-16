@@ -1,10 +1,32 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsDefined, IsInt, IsOptional, Min,
+  IsDefined,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
 } from 'class-validator';
 import { CommandExecutionResult } from 'src/modules/workbench/models/command-execution-result';
-import { RunQueryMode, ResultsMode } from 'src/modules/workbench/dto/create-command-execution.dto';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { Default } from 'src/common/decorators';
+
+export enum RunQueryMode {
+  Raw = 'RAW',
+  ASCII = 'ASCII',
+}
+
+export enum ResultsMode {
+  Default = 'DEFAULT',
+  GroupMode = 'GROUP_MODE',
+  Silent = 'SILENT',
+}
+
+export enum CommandExecutionType {
+  Workbench = 'WORKBENCH',
+  Search = 'SEARCH',
+}
 
 export class ResultsSummary {
   @ApiProperty({
@@ -45,9 +67,11 @@ export class CommandExecution {
   databaseId: string;
 
   @ApiProperty({
-    description: 'Redis command executed',
+    description: 'Redis command',
     type: String,
   })
+  @IsString()
+  @IsNotEmpty()
   @Expose()
   command: string;
 
@@ -57,7 +81,14 @@ export class CommandExecution {
     enum: RunQueryMode,
   })
   @Expose()
-  mode?: RunQueryMode = RunQueryMode.ASCII;
+  @IsOptional()
+  @IsEnum(RunQueryMode, {
+    message: `mode must be a valid enum value. Valid values: ${Object.values(
+      RunQueryMode,
+    )}.`,
+  })
+  @Default(RunQueryMode.ASCII)
+  mode?: RunQueryMode;
 
   @ApiPropertyOptional({
     description: 'Workbench result mode',
@@ -65,7 +96,14 @@ export class CommandExecution {
     enum: ResultsMode,
   })
   @Expose()
-  resultsMode?: ResultsMode = ResultsMode.Default;
+  @IsOptional()
+  @IsEnum(ResultsMode, {
+    message: `resultsMode must be a valid enum value. Valid values: ${Object.values(
+      ResultsMode,
+    )}.`,
+  })
+  @Default(ResultsMode.Default)
+  resultsMode?: ResultsMode;
 
   @ApiPropertyOptional({
     description: 'Workbench executions summary',
@@ -79,6 +117,7 @@ export class CommandExecution {
     type: () => CommandExecutionResult,
     isArray: true,
   })
+  @Type(() => CommandExecutionResult)
   @Expose()
   result: CommandExecutionResult[];
 
@@ -113,7 +152,18 @@ export class CommandExecution {
   @IsOptional()
   db?: number;
 
-  constructor(partial: Partial<CommandExecution> = {}) {
-    Object.assign(this, partial);
-  }
+  @ApiPropertyOptional({
+    description: 'Command execution type. Used to distinguish between search and workbench',
+    default: CommandExecutionType.Workbench,
+    enum: CommandExecutionType,
+  })
+  @Expose()
+  @IsOptional()
+  @IsEnum(CommandExecutionType, {
+    message: `type must be a valid enum value. Valid values: ${Object.values(
+      CommandExecutionType,
+    )}.`,
+  })
+  @Default(CommandExecutionType.Workbench)
+  type?: CommandExecutionType;
 }

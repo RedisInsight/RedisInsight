@@ -4,19 +4,18 @@ import { EuiResizableContainer } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useParams } from 'react-router-dom'
-import {
-  appContextSearchAndQuery,
-  setSQVerticalPanelSizes,
-} from 'uiSrc/slices/app/context'
+import { appContextSearchAndQuery, setSQVerticalPanelSizes, } from 'uiSrc/slices/app/context'
 import { QueryWrapper, ResultsHistory } from 'uiSrc/pages/search/components'
 
-import { sendWbQueryAction } from 'uiSrc/slices/workbench/wb-results'
+import { sendWbQueryAction, setExecutionType } from 'uiSrc/slices/workbench/wb-results'
 import { formatLongName, getDbIndex, Nullable, setTitle } from 'uiSrc/utils'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import { CodeButtonParams } from 'uiSrc/constants'
 
+import { CommandExecutionType } from 'uiSrc/slices/interfaces'
+import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import styles from './styles.module.scss'
 
 const verticalPanelIds = {
@@ -26,6 +25,8 @@ const verticalPanelIds = {
 
 const SearchPage = () => {
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
+  const { commandsArray } = useSelector(appRedisCommandsSelector)
+
   const { panelSizes: { vertical } } = useSelector(appContextSearchAndQuery)
   const [isPageViewSent, setIsPageViewSent] = useState(false)
 
@@ -36,8 +37,11 @@ const SearchPage = () => {
 
   setTitle(`${formatLongName(connectedInstanceName, 33, 0, '...')} ${getDbIndex(db)} - Search and Query`)
 
-  useEffect(() => () => {
-    dispatch(setSQVerticalPanelSizes(verticalSizesRef.current))
+  useEffect(() => {
+    dispatch(setExecutionType(CommandExecutionType.Search))
+    return () => {
+      dispatch(setSQVerticalPanelSizes(verticalSizesRef.current))
+    }
   }, [])
 
   useEffect(() => {
@@ -71,7 +75,8 @@ const SearchPage = () => {
       {
         ...executeParams,
         results: 'single',
-      }
+      },
+      CommandExecutionType.Search
     ))
   }
 
@@ -91,7 +96,7 @@ const SearchPage = () => {
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
                   style={{ minHeight: '240px', zIndex: '8' }}
                 >
-                  <QueryWrapper onSubmit={handleSubmit} />
+                  <QueryWrapper commandsArray={commandsArray} onSubmit={handleSubmit} />
                 </EuiResizablePanel>
 
                 <EuiResizableButton
@@ -109,7 +114,7 @@ const SearchPage = () => {
                   // Fix scroll on low height - 140px (queryPanel)
                   style={{ maxHeight: 'calc(100% - 240px)' }}
                 >
-                  <ResultsHistory onSubmit={handleSubmit} />
+                  <ResultsHistory commandsArray={commandsArray} onSubmit={handleSubmit} />
                 </EuiResizablePanel>
               </>
             )}

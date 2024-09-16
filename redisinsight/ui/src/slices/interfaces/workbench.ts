@@ -9,6 +9,7 @@ export interface StateWorkbenchSettings {
 }
 
 export interface StateWorkbenchResults {
+  type: CommandExecutionType
   isLoaded: boolean
   loading: boolean
   processing: boolean
@@ -67,6 +68,11 @@ export enum ResultsMode {
   Silent = 'SILENT',
   Default = 'DEFAULT',
   GroupMode = 'GROUP_MODE',
+}
+
+export enum CommandExecutionType {
+  Workbench = 'WORKBENCH',
+  Search = 'SEARCH',
 }
 
 export interface ResultsSummary {

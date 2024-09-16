@@ -2,9 +2,10 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
 
-import { loadWBHistory, sendWBCommand } from 'uiSrc/slices/workbench/wb-results'
+import { loadWBHistory, sendWBCommand, setExecutionType } from 'uiSrc/slices/workbench/wb-results'
 import { setDbIndexState } from 'uiSrc/slices/app/context'
 import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
+import { CommandExecutionType } from 'uiSrc/slices/interfaces'
 import SearchPage from './SearchPage'
 
 jest.mock('uiSrc/slices/app/context', () => ({
@@ -66,9 +67,11 @@ describe('SearchPage', () => {
 
     expect(store.getActions()).toEqual([
       loadWBHistory(),
+      setExecutionType(CommandExecutionType.Search),
       sendWBCommand({
         commandId: expect.any(String),
-        commands: ['value']
+        commands: ['value'],
+        executionType: CommandExecutionType.Search
       }),
       setDbIndexState(true)
     ])

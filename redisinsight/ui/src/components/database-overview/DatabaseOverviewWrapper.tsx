@@ -21,6 +21,10 @@ const DatabaseOverviewWrapper = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    let timeout = TIMEOUT_TO_GET_INFO;
+    if (!isNaN(timeout) || timeout < 1) {
+      timeout = 60000
+    }
     interval = setInterval(() => {
       if (document.hidden) return
 
@@ -29,7 +33,7 @@ const DatabaseOverviewWrapper = () => {
         () => {},
         () => clearInterval(interval)
       ))
-    }, TIMEOUT_TO_GET_INFO)
+    }, timeout)
     return () => clearInterval(interval)
   }, [connectedInstanceId])
 

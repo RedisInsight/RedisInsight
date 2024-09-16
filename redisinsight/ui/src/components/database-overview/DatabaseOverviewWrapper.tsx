@@ -21,8 +21,8 @@ const DatabaseOverviewWrapper = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    let timeout = TIMEOUT_TO_GET_INFO;
-    if (!isNaN(timeout) || timeout < 1) {
+    let timeout = TIMEOUT_TO_GET_INFO
+    if (!Number.isNaN(timeout) || timeout < 1) {
       timeout = 60000
     }
     interval = setInterval(() => {

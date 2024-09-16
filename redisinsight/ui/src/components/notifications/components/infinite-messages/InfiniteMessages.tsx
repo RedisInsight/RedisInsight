@@ -20,6 +20,8 @@ import { OAuthProviders } from 'uiSrc/components/oauth/oauth-select-plan/constan
 import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
 
 import { Maybe } from 'uiSrc/utils'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { EXTERNAL_LINKS, UTM_CAMPAINGS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -32,8 +34,10 @@ export enum InfiniteMessagesIds {
   pipelineDeploySuccess = 'pipelineDeploySuccess'
 }
 
-// TODO: after merge insights - remove and change to function
-const MANAGE_DB_LINK = 'https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
+const MANAGE_DB_LINK = getUtmExternalLink(
+  EXTERNAL_LINKS.cloudConsole,
+  { campaign: UTM_CAMPAINGS.Main, medium: UTM_MEDIUMS.Main }
+)
 
 export const INFINITE_MESSAGES = {
   AUTHENTICATING: () => ({

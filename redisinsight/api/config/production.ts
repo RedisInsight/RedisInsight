@@ -40,7 +40,7 @@ export default {
   },
   ai: {
     convAiApiUrl: process.env.RI_AI_CONVAI_API_URL || 'https://redis.io/convai/api',
-    querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://app.redislabs.com',
+    querySocketUrl: process.env.RI_AI_QUERY_SOCKET_URL || 'https://cloud.redis.io',
     querySocketPath: process.env.RI_AI_QUERY_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',
   },
 };

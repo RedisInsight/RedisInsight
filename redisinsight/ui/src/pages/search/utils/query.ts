@@ -171,7 +171,7 @@ const findStopArgumentInQuery = (
       continue
     }
 
-    if (!isBlockedOnCommand && currentCommandArg.optional) {
+    if (!isBlockedOnCommand && currentCommandArg?.optional) {
       const isNotToken = currentCommandArg?.token && currentCommandArg.token !== arg.toUpperCase()
       const isNotOneOfToken = currentCommandArg?.type === TokenType.OneOf
         && currentCommandArg?.arguments?.every(({ token }) => token !== arg.toUpperCase())
@@ -315,7 +315,8 @@ export const getArgumentSuggestions = (
 
   // if we finished argument - stopArgument will be undefined, then we get it as token
   const lastArgument = stopArgument ?? restArguments[0]
-  const beforeMandatoryOptionalArgs = getAllRestArguments(current, lastArgument, levelArgs, !stopArgument)
+  const isBlockComplete = !stopArgument && current?.name === lastArgument?.name
+  const beforeMandatoryOptionalArgs = getAllRestArguments(current, lastArgument, levelArgs, isBlockComplete)
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {

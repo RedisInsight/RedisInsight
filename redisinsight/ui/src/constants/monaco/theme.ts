@@ -1,32 +1,5 @@
 import { monaco } from 'react-monaco-editor'
 
-export const darkThemeRules = [
-  { token: 'function', foreground: 'BFBC4E' }
-]
-
-export const lightThemeRules = [
-  { token: 'function', foreground: '795E26' }
-]
-
-export enum MonacoThemes {
-  Dark = 'dark',
-  Light = 'light'
-}
-
-export const darkTheme: monaco.editor.IStandaloneThemeData = {
-  base: 'vs-dark',
-  inherit: true,
-  rules: darkThemeRules,
-  colors: {}
-}
-
-export const lightTheme: monaco.editor.IStandaloneThemeData = {
-  base: 'vs',
-  inherit: true,
-  rules: lightThemeRules,
-  colors: {}
-}
-
 export const redisearchDarKThemeRules = [
   { token: 'keyword', foreground: '#8094B1', fontStyle: 'bold' },
   { token: 'argument.block.0', foreground: '#BDE8D7' },
@@ -62,3 +35,38 @@ export const redisearchLightThemeRules = [
   { token: 'query.operator', foreground: '#B9F0F3' },
   { token: 'function', foreground: '#9E7EE8' },
 ]
+
+export const darkThemeRules = [
+  { token: 'function', foreground: 'BFBC4E' },
+  ...redisearchDarKThemeRules.map((rule) => ({
+    ...rule,
+    token: `${rule.token}.redisearch`
+  }))
+]
+
+export const lightThemeRules = [
+  { token: 'function', foreground: '795E26' },
+  ...redisearchLightThemeRules.map((rule) => ({
+    ...rule,
+    token: `${rule.token}.redisearch`
+  }))
+]
+
+export enum MonacoThemes {
+  Dark = 'dark',
+  Light = 'light'
+}
+
+export const darkTheme: monaco.editor.IStandaloneThemeData = {
+  base: 'vs-dark',
+  inherit: true,
+  rules: darkThemeRules,
+  colors: {}
+}
+
+export const lightTheme: monaco.editor.IStandaloneThemeData = {
+  base: 'vs',
+  inherit: true,
+  rules: lightThemeRules,
+  colors: {}
+}

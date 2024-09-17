@@ -18,7 +18,6 @@ import { CursorContext, FoundCommandArgument, SearchCommand, TokenType } from 'u
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
-import { installRedisearchTheme, RedisearchMonacoTheme } from 'uiSrc/utils/monaco/monacoThemes'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { options, DefinedArgumentName, FIELD_START_SYMBOL } from './constants'
 import {
@@ -134,8 +133,6 @@ const Query = (props: Props) => {
       provideCompletionItems: (): monacoEditor.languages.CompletionList =>
         ({ suggestions: suggestionsRef.current.data })
     }).dispose
-
-    installRedisearchTheme()
 
     editor.onDidChangeCursorPosition(handleCursorChange)
     editor.onKeyDown((e: monacoEditor.IKeyboardEvent) => {
@@ -346,7 +343,7 @@ const Query = (props: Props) => {
       value={value}
       onChange={onChange}
       language={MonacoLanguage.RediSearch}
-      theme={theme === Theme.Dark ? RedisearchMonacoTheme.dark : RedisearchMonacoTheme.light}
+      theme={theme === Theme.Dark ? 'dark' : 'light'}
       options={options}
       editorDidMount={editorDidMount}
     />

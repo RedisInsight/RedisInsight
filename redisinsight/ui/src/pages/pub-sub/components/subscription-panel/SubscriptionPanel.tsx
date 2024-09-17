@@ -1,11 +1,10 @@
-import { EuiButton, EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiFieldText, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { PUB_SUB_DEFAULT_CHANNEL } from 'uiSrc/pages/pub-sub/PubSubPage'
 import { clearPubSubMessages, pubSubSelector, toggleSubscribeTriggerPubSub } from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -25,8 +24,10 @@ const SubscriptionPanel = () => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
+  const [channels, setChannels] = useState('')
+
   const toggleSubscribe = () => {
-    dispatch(toggleSubscribeTriggerPubSub([PUB_SUB_DEFAULT_CHANNEL]))
+    dispatch(toggleSubscribeTriggerPubSub(channels))
   }
 
   const onClickClear = () => {
@@ -70,21 +71,17 @@ const SubscriptionPanel = () => {
       </EuiFlexItem>
       <EuiFlexItem grow={false}>
         <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
-          {!!messages.length && (
-            <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
-              <EuiToolTip
-                content="Clear Messages"
-                anchorClassName={cx('inline-flex')}
-              >
-                <EuiButtonIcon
-                  iconType="eraser"
-                  onClick={onClickClear}
-                  aria-label="clear pub sub"
-                  data-testid="clear-pubsub-btn"
-                />
-              </EuiToolTip>
-            </EuiFlexItem>
-          )}
+          <EuiFlexItem grow={false} className={styles.channels}>
+            <EuiFieldText
+              value={channels}
+              disabled={isSubscribed}
+              className={styles.channels}
+              onChange={(e) => setChannels(e.target.value)}
+              placeholder="Enter Channel to Subscribe"
+              aria-label="channel names for filtering"
+              data-testid="channels-input"
+            />
+          </EuiFlexItem>
           <EuiFlexItem grow={false}>
             <EuiButton
               fill={!isSubscribed}
@@ -100,6 +97,21 @@ const SubscriptionPanel = () => {
               { isSubscribed ? 'Unsubscribe' : 'Subscribe' }
             </EuiButton>
           </EuiFlexItem>
+          {!!messages.length && (
+            <EuiFlexItem grow={false} style={{ marginLeft: 8 }}>
+              <EuiToolTip
+                content="Clear Messages"
+                anchorClassName={cx('inline-flex')}
+              >
+                <EuiButtonIcon
+                  iconType="eraser"
+                  onClick={onClickClear}
+                  aria-label="clear pub sub"
+                  data-testid="clear-pubsub-btn"
+                />
+              </EuiToolTip>
+            </EuiFlexItem>
+          )}
         </EuiFlexGroup>
       </EuiFlexItem>
     </EuiFlexGroup>

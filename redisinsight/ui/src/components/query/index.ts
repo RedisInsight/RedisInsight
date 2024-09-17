@@ -1,3 +1,9 @@
-import QueryWrapper from './QueryWrapper'
+import QueryCard from './query-card'
+import QueryActions from './query-actions'
+import QueryTutorials from './query-tutorials'
 
-export default QueryWrapper
+export {
+  QueryCard,
+  QueryActions,
+  QueryTutorials
+}

@@ -1,10 +1,20 @@
 import { addOwnTokenToArgs, findCurrentArgument, generateDetail, splitQueryByArgs } from 'uiSrc/pages/search/utils'
-import { SearchCommand } from 'uiSrc/pages/search/types'
+import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
 import { Maybe } from 'uiSrc/utils'
 import { MOCKED_SUPPORTED_COMMANDS } from '../../mocks/mocks'
 
 const ftSearchCommand = MOCKED_SUPPORTED_COMMANDS['FT.SEARCH']
 const ftAggregateCommand = MOCKED_SUPPORTED_COMMANDS['FT.AGGREGATE']
+const COMMANDS = [
+  {
+    name: 'FT.SEARCH',
+    ...ftSearchCommand
+  },
+  {
+    name: 'FT.AGGREGATE',
+    ...ftAggregateCommand
+  }
+]
 
 const ftAggreageTests = [
   { args: [''], result: null },
@@ -151,6 +161,7 @@ const ftAggreageTests = [
     result: {
       stopArg: undefined,
       append: [
+        [],
         [
           {
             name: 'function',
@@ -289,7 +300,7 @@ const ftAggreageTests = [
     args: ['index', '"query"', 'LOAD', '4', '1', '2', '3', '4'],
     result: {
       stopArg: undefined,
-      append: [],
+      append: [[]],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -433,7 +444,9 @@ const ftSearchTests = [
     result: {
       stopArg: undefined,
       // TODO: append may have AS token, since it is optional - we skip for now
-      append: [],
+      append: [
+        []
+      ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -458,7 +471,9 @@ const ftSearchTests = [
     args: ['', '', 'RETURN', '2', 'iden', 'iden'],
     result: {
       stopArg: undefined,
-      append: [],
+      append: [
+        []
+      ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -483,7 +498,9 @@ const ftSearchTests = [
     args: ['', '', 'RETURN', '3', 'iden', 'iden', 'AS', 'iden2'],
     result: {
       stopArg: undefined,
-      append: [],
+      append: [
+        []
+      ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -540,9 +557,78 @@ const ftSearchTests = [
       parent: expect.any(Object)
     }
   },
+  {
+    args: ['', '', 'DIALECT', '1'],
+    result: {
+      stopArg: undefined,
+      append: [
+        []
+      ],
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    }
+  },
+]
+
+// Common test cases - provides list of suggestions
+const commonfindCurrentArgumentCases = [
+  {
+    input: 'FT.SEARCH index "" DIALECT 1',
+    result: {
+      stopArg: undefined,
+      append: expect.any(Array),
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    },
+    appendIncludes: ['WITHSCORES', 'VERBATIM', 'FILTER', 'SORTBY', 'RETURN'],
+    appendNotIncludes: ['DIALECT']
+  },
+  {
+    input: 'FT.AGGREGATE "idx:schools" "" GROUPBY 1 p REDUCE AVG 1 a1 AS name ',
+    result: {
+      stopArg: undefined,
+      append: expect.any(Array),
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    },
+    appendIncludes: ['REDUCE', 'APPLY', 'SORTBY', 'GROUPBY'],
+    appendNotIncludes: ['AS'],
+  },
 ]
 
 describe('findCurrentArgument', () => {
+  describe('with list of commands', () => {
+    commonfindCurrentArgumentCases.forEach(({ input, result, appendIncludes, appendNotIncludes }) => {
+      it(`should return proper suggestions for ${input}`, () => {
+        const { args } = splitQueryByArgs(input)
+        const COMMANDS_LIST = COMMANDS.map((command) => ({
+          ...addOwnTokenToArgs(command.name!, command),
+          token: command.name!,
+          type: TokenType.Block
+        }))
+
+        const testResult = findCurrentArgument(
+          COMMANDS_LIST,
+          args.flat()
+        )
+        expect(testResult).toEqual(result)
+        expect(
+          testResult?.append?.flat()?.map((arg) => arg.token)
+        ).toEqual(
+          expect.arrayContaining(appendIncludes)
+        )
+        expect(
+          testResult?.append?.flat()?.map((arg) => arg.token)
+        ).toEqual(
+          expect.not.arrayContaining(appendNotIncludes)
+        )
+      })
+    })
+  })
+
   describe('FT.AGGREGATE', () => {
     ftAggreageTests.forEach(({ args, result: testResult }) => {
       it(`should return proper suggestions for ${args.join(' ')}`, () => {

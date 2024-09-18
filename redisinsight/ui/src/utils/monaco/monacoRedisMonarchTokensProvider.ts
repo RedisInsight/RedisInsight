@@ -79,14 +79,14 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
         [/"/, { token: STRING_DOUBLE, next: '@stringDouble' }],
       ],
       string: [
-        [/[^']+/, 'string'],
-        [/''/, 'string'],
+        [/\\./, 'string'],
         [/'/, { token: 'string', next: '@pop' }],
+        [/[^\\']+/, 'string'],
       ],
       stringDouble: [
-        [/[^"]+/, STRING_DOUBLE],
-        [/""/, STRING_DOUBLE],
+        [/\\./, STRING_DOUBLE],
         [/"/, { token: STRING_DOUBLE, next: '@pop' }],
+        [/[^\\"]+/, STRING_DOUBLE],
       ],
       scopes: [
         // NOT SUPPORTED

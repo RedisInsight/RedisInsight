@@ -9,7 +9,7 @@ import {
 } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { IPlugin, PluginsResponse, StateAppPlugins } from 'uiSrc/slices/interfaces'
+import { CommandExecutionType, IPlugin, PluginsResponse, StateAppPlugins } from 'uiSrc/slices/interfaces'
 import { SendCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import { PluginState } from 'apiSrc/modules/workbench/models/plugin-state'
 
@@ -95,11 +95,19 @@ export function loadPluginsAction() {
 }
 
 // Asynchronous thunk action
-export function sendPluginCommandAction({ command = '', onSuccessAction, onFailAction }: {
-  command: string
-  onSuccessAction?: (responseData: any) => void
-  onFailAction?: (error: any) => void
-}) {
+export function sendPluginCommandAction(
+  {
+    command = '',
+    executionType = CommandExecutionType.Workbench,
+    onSuccessAction,
+    onFailAction
+  }: {
+    command: string
+    executionType?: CommandExecutionType
+    onSuccessAction?: (responseData: any) => void
+    onFailAction?: (error: any) => void
+  }
+) {
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
@@ -112,7 +120,8 @@ export function sendPluginCommandAction({ command = '', onSuccessAction, onFailA
           ApiEndpoints.COMMAND_EXECUTIONS
         ),
         {
-          command: multilineCommandToOneLine(command)
+          command: multilineCommandToOneLine(command),
+          type: executionType
         }
       )
 

@@ -1,4 +1,4 @@
-import { rte } from '../../../../helpers/constants';
+import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
@@ -62,6 +62,7 @@ test('Verify that user can see link to Workbench under word “Workbench” in t
 
         // Add key and verify Workbench link
         await browserPage.Cli.sendCommandInCli(commands[i]);
+        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.BrowserAndFilter);
         await browserPage.searchByKeyName(keyName);
         await t.click(browserPage.keyNameInTheList);
         await t.click(browserPage.internalLinkToWorkbench);

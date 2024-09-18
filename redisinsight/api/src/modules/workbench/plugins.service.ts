@@ -49,13 +49,13 @@ export class PluginsService {
       });
     } catch (error) {
       if (error instanceof CommandNotSupportedError) {
-        return new PluginCommandExecution({
+        return plainToClass(PluginCommandExecution, {
           ...dto,
           databaseId: clientMetadata.databaseId,
-          result: [new CommandExecutionResult({
+          result: [{
             response: error.message,
             status: CommandExecutionStatus.Fail,
-          })],
+          }],
         });
       }
 

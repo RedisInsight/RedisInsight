@@ -19,6 +19,8 @@ import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-cl
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
 import {
   CreateRedisearchIndexDto,
+  IndexInfoDto,
+  IndexInfoRequestBodyDto,
   ListRedisearchIndexesResponse,
   SearchRedisearchDto,
 } from 'src/modules/browser/redisearch/dto';
@@ -71,5 +73,16 @@ export class RedisearchController extends BrowserBaseController {
       @Body() dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
     return await this.service.search(clientMetadata, dto);
+  }
+
+  @Post('info')
+  @HttpCode(200)
+  @ApiOperation({ description: 'Get index info' })
+  @ApiOkResponse({ type: IndexInfoDto })
+  async info(
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+      @Body() dto: IndexInfoRequestBodyDto,
+  ): Promise<IndexInfoDto> {
+    return await this.service.getInfo(clientMetadata, dto);
   }
 }

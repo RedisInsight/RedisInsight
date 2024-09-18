@@ -1,11 +1,11 @@
 import {
   expect,
   describe,
-  it,
+  before,
   Joi,
   deps,
-  validateApiCall,
-} from '../deps';
+  getMainCheckFn,
+} from '../deps'
 const { server, request, constants, localDb } = deps;
 
 // endpoint to test
@@ -28,26 +28,10 @@ const responseSchema = Joi.array().items(Joi.object().keys({
   }).allow(null),
   db: Joi.number().integer().allow(null),
   createdAt: Joi.date().required(),
+  type: Joi.string().valid('WORKBENCH', 'SEARCH').required(),
 })).required().max(30);
 
-const mainCheckFn = async (testCase) => {
-  it(testCase.name, async () => {
-    // additional checks before test run
-    if (testCase.before) {
-      await testCase.before();
-    }
-
-    await validateApiCall({
-      endpoint,
-      ...testCase,
-    });
-
-    // additional checks after test pass
-    if (testCase.after) {
-      await testCase.after();
-    }
-  });
-};
+const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('GET /databases/:instanceId/workbench/command-executions', () => {
   describe('Common', () => {
@@ -106,6 +90,60 @@ describe('GET /databases/:instanceId/workbench/command-executions', () => {
           statusCode: 404,
           message: 'Invalid database instance id.',
           error: 'Not Found'
+        },
+      },
+    ].map(mainCheckFn);
+  });
+  describe('Filter', () => {
+    before(async () => {
+      await localDb.generateNCommandExecutions({
+        databaseId: constants.TEST_INSTANCE_ID,
+        type: 'WORKBENCH',
+      }, 20, true);
+      await localDb.generateNCommandExecutions({
+        databaseId: constants.TEST_INSTANCE_ID,
+        type: 'SEARCH',
+      }, 10, false);
+    });
+
+    [
+      {
+        name: 'Should get only 20 items (workbench by default)',
+        responseSchema,
+        checkFn: async ({ body }) => {
+          expect(body.length).to.eql(20);
+          for (let i = 0; i < 20; i ++) {
+            expect(body[i].command).to.eql('set foo bar');
+            expect(body[i].type).to.eql('WORKBENCH');
+          }
+        },
+      },
+      {
+        name: 'Should get only 20 items filtered by type (WORKBENCH)',
+        query: {
+          type: 'WORKBENCH',
+        },
+        responseSchema,
+        checkFn: async ({ body }) => {
+          expect(body.length).to.eql(20);
+          for (let i = 0; i < 20; i ++) {
+            expect(body[i].command).to.eql('set foo bar');
+            expect(body[i].type).to.eql('WORKBENCH');
+          }
+        },
+      },
+      {
+        name: 'Should get only 10 items filtered by type (SEARCH)',
+        responseSchema,
+        query: {
+          type: 'SEARCH',
+        },
+        checkFn: async ({ body }) => {
+          expect(body.length).to.eql(10);
+          for (let i = 0; i < 10; i ++) {
+            expect(body[i].command).to.eql('set foo bar');
+            expect(body[i].type).to.eql('SEARCH');
+          }
         },
       },
     ].map(mainCheckFn);

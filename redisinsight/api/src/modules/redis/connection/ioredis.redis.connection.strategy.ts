@@ -60,6 +60,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
       maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
       retryStrategy: options?.useRetry ? this.retryStrategy.bind(this) : this.dummyFn.bind(this),
       autoResendUnfulfilledCommands: false,
+      enableReadyCheck: options.enableReadyCheck ?? true,
     };
 
     if (tls) {

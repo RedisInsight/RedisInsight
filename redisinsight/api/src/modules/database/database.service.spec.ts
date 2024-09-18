@@ -555,6 +555,7 @@ describe('DatabaseService', () => {
             privateKey: null,
           },
         },
+        {},
       );
     });
 
@@ -590,6 +591,7 @@ describe('DatabaseService', () => {
             passphrase: 'ssh-passphrase',
           },
         },
+        {},
       );
     });
 
@@ -621,6 +623,7 @@ describe('DatabaseService', () => {
             name: 'name',
           },
         },
+        {},
       );
     });
 
@@ -650,6 +653,7 @@ describe('DatabaseService', () => {
             id: 'new id',
           },
         },
+        {},
       );
     });
 

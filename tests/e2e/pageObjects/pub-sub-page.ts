@@ -27,6 +27,7 @@ export class PubSubPage extends InstancePage {
     //INPUTS
     channelNameInput = Selector('[data-testid=field-channel-name]');
     messageInput = Selector('[data-testid=field-message]');
+    channelsSubscribeInput = Selector('[data-testid=channels-input]');
 
     /**
      * Publish message in pubsub

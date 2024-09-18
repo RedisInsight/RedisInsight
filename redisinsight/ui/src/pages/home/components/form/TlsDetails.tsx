@@ -43,17 +43,19 @@ const TlsDetails = (props: Props) => {
   const [activeCertId, setActiveCertId] = useState<Nullable<string>>(null)
 
   const handleDeleteCaCert = (id: string) => {
-    dispatch(deleteCaCertificateAction(id, handleClickDeleteCert))
+    dispatch(deleteCaCertificateAction(id, () => handleClickDeleteCert('CA')))
   }
 
   const handleDeleteClientCert = (id: string) => {
-    dispatch(deleteClientCertAction(id, handleClickDeleteCert))
+    dispatch(deleteClientCertAction(id, () => handleClickDeleteCert('Client')))
   }
 
-  const handleClickDeleteCert = () => {
+  const handleClickDeleteCert = (certificateType: 'Client' | 'CA') => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_CERTIFICATE_REMOVED,
-      eventData: {},
+      eventData: {
+        certificateType,
+      },
     })
   }
 

@@ -85,7 +85,7 @@ const TlsDetails = (props: Props) => {
           <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
-            text="will be deleted from RedisInsight."
+            text="will be removed from RedisInsight."
             item={cert.id}
             suffix={suffix}
             deleting={activeCertId}
@@ -116,7 +116,7 @@ const TlsDetails = (props: Props) => {
           <div>{truncateText(cert.name, 25)}</div>
           <PopoverDelete
             header={cert.name}
-            text="will be deleted from RedisInsight."
+            text="will be removed from RedisInsight."
             item={cert.id}
             suffix={suffix}
             deleting={activeCertId}

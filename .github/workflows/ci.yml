@@ -38,12 +38,7 @@ jobs:
           echo "$CSC_MAC_INSTALLER_P12_BASE64" | base64 --decode > certs/mac-installer.p12
           echo "$CSC_MAS_P12_BASE64" | base64 --decode > certs/mas-distribution.p12
           echo "$WIN_CSC_PFX_BASE64" | base64 --decode > certs/redislabs_win.pfx
-
-  add_keychain:
-    runs-on: macos-latest
-    needs: setup_sign_certificates
-    steps:
-      - name: Add cert to keychain
+      - name: Add certs to keychain
         run: |
           security create-keychain -p mysecretpassword $KEYCHAIN
           security default-keychain -s $KEYCHAIN
@@ -73,7 +68,7 @@ jobs:
           export CSC_KEYCHAIN=$KEYCHAIN
           yarn package:prod
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: macos-build
           path: release/*.dmg
@@ -96,7 +91,7 @@ jobs:
         run: |
           yarn package:prod
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: linux-build
           path: release/*.AppImage
@@ -117,7 +112,7 @@ jobs:
         run: |
           yarn package:prod
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: release/*.exe

@@ -1456,7 +1456,7 @@ workflows:
           filters:
             branches:
               only:
-                - /^build.*/
+                - /^build2.*/
       - setup-build:
           name: Setup build (dev)
           env: dev

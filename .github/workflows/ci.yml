@@ -1,0 +1,154 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/*'
+      - 'build/*'
+      - 'feature/*'
+      - 'bugfix/*'
+  pull_request:
+    branches:
+      - main
+      - 'release/*'
+      - 'feature/*'
+      - 'bugfix/*'
+
+env:
+  KEYCHAIN: redisinsight.keychain
+  SLACK_REPORT_API: ${{ secrets.SLACK_REPORT_API }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+  VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+  SLACK_TEST_REPORT_KEY: ${{ secrets.SLACK_TEST_REPORT_KEY }}
+
+jobs:
+  setup_sign_certificates:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Sign Certificates
+        run: |
+          mkdir -p certs
+          echo "$CSC_P12_BASE64" | base64 --decode > certs/mac-developer.p12
+          echo "$CSC_MAC_INSTALLER_P12_BASE64" | base64 --decode > certs/mac-installer.p12
+          echo "$CSC_MAS_P12_BASE64" | base64 --decode > certs/mas-distribution.p12
+          echo "$WIN_CSC_PFX_BASE64" | base64 --decode > certs/redislabs_win.pfx
+
+  add_keychain:
+    runs-on: macos-latest
+    needs: setup_sign_certificates
+    steps:
+      - name: Add cert to keychain
+        run: |
+          security create-keychain -p mysecretpassword $KEYCHAIN
+          security default-keychain -s $KEYCHAIN
+          security unlock-keychain -p mysecretpassword $KEYCHAIN
+          security set-keychain-settings -u -t 10000000 $KEYCHAIN
+          security import certs/mac-developer.p12 -k $KEYCHAIN -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+          security import certs/mas-distribution.p12 -k $KEYCHAIN -P "$CSC_MAS_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+          security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
+          security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
+
+  build_macos:
+    runs-on: macos-latest
+    needs: add_keychain
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: Install Dependencies
+        run: |
+          yarn install
+      - name: Build macOS dmg
+        run: |
+          export CSC_IDENTITY_AUTO_DISCOVERY=true
+          export CSC_KEYCHAIN=$KEYCHAIN
+          yarn package:prod
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos-build
+          path: release/*.dmg
+
+  build_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y rpm flatpak flatpak-builder
+          flatpak install flathub --assumeyes org.electronjs.Electron2.BaseApp/x86_64/20.08
+          yarn install
+      - name: Build AppImage
+        run: |
+          yarn package:prod
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux-build
+          path: release/*.AppImage
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - name: Install Dependencies
+        run: |
+          yarn install
+      - name: Build Windows EXE
+        run: |
+          yarn package:prod
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-build
+          path: release/*.exe
+
+  virustotal_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: VirusTotal Scan
+        run: |
+          uploadUrl=$(curl -sq -XGET https://www.virustotal.com/api/v3/files/upload_url -H "x-apikey: $VIRUSTOTAL_API_KEY" | jq -r '.data')
+          uploadFile=$("/usr/bin/find" release -name ${FILE_NAME})
+          analysedId=$(curl -sq -XPOST "${uploadUrl}" -H "x-apikey: $VIRUSTOTAL_API_KEY" --form file=@"${uploadFile}" | jq -r '.data.id')
+          echo "Analyzed ID: ${analysedId}"
+
+  docker_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Build and push Docker images
+        run: |
+          docker buildx create --use
+          docker buildx build --platform linux/amd64,linux/arm64 -t myorg/myapp:latest --push .

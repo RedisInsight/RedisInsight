@@ -41,7 +41,7 @@ export const addFieldAttribute = (attribute: string, type: string) => {
     case 'TEXT': return `${attribute}:(\${1:term})`
     case 'NUMERIC': return `${attribute}:[\${1:range}]`
     case 'GEO': return `${attribute}:[\${1:lon} \${2:lat} \${3:radius} \${4:unit}]`
-    case 'VECTOR': return `${attribute} \${1:vector}`
+    case 'VECTOR': return `${attribute} \\$\${1:vector}`
     default: return attribute
   }
 }

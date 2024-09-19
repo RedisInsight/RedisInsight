@@ -2,7 +2,7 @@ import React from 'react'
 import { Form } from 'formik'
 
 import RdiInstanceHeader from 'uiSrc/components/rdi-instance-header'
-import RdiPipelineManagementHeader from 'uiSrc/pages/rdi/pipeline-management/components/header'
+import RdiPipelineManagementHeader from 'uiSrc/pages/rdi/instance/components/header'
 import Navigation from 'uiSrc/pages/rdi/pipeline-management/components/navigation'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 

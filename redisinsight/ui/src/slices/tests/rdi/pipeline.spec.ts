@@ -33,12 +33,28 @@ import reducer, {
   getPipelineStatusAction,
   rdiPipelineSelector,
   rdiPipelineStatusSelector,
+  resetPipeline,
+  rdiPipelineResetSelector,
+  resetPipelineSuccess,
+  resetPipelineFailure,
+  stopPipeline,
+  rdiPipelineStopSelector,
+  stopPipelineSuccess,
+  stopPipelineFailure,
+  startPipeline,
+  rdiPipelineStartSelector,
+  startPipelineSuccess,
+  startPipelineFailure,
+  resetPipelineAction,
+  stopPipelineAction,
+  startPipelineAction,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, addInfiniteNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { parseJMESPathFunctions } from 'uiSrc/utils'
+import successMessages from 'uiSrc/components/notifications/success-messages'
 
 let store: typeof mockedStore
 
@@ -459,6 +475,207 @@ describe('rdi pipe slice', () => {
     })
   })
 
+  describe('resetPipeline', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.reset,
+        loading: true,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, resetPipeline())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineResetSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetPipelineSuccess', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.reset,
+        loading: false,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, resetPipelineSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineResetSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('resetPipelineFailure', () => {
+    it('should set loading = true', () => {
+      const error = 'Some reset error'
+      // Arrange
+      const state = {
+        ...initialState.reset,
+        loading: false,
+        error,
+      }
+
+      // Act
+      const nextState = reducer(initialState, resetPipelineFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineResetSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('stopPipeline', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.stop,
+        loading: true,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, stopPipeline())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStopSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('stopPipelineSuccess', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.stop,
+        loading: false,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, stopPipelineSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStopSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('stopPipelineFailure', () => {
+    it('should set loading = true', () => {
+      const error = 'Some stop error'
+      // Arrange
+      const state = {
+        ...initialState.stop,
+        loading: false,
+        error,
+      }
+
+      // Act
+      const nextState = reducer(initialState, stopPipelineFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStopSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('startPipeline', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.start,
+        loading: true,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, startPipeline())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStartSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('startPipelineSuccess', () => {
+    it('should set loading = true', () => {
+      // Arrange
+      const state = {
+        ...initialState.start,
+        loading: false,
+        error: '',
+      }
+
+      // Act
+      const nextState = reducer(initialState, startPipelineSuccess())
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStartSelector(rootState)).toEqual(state)
+    })
+  })
+
+  describe('startPipelineFailure', () => {
+    it('should set loading = true', () => {
+      const error = 'Some start error'
+      // Arrange
+      const state = {
+        ...initialState.start,
+        loading: false,
+        error,
+      }
+
+      // Act
+      const nextState = reducer(initialState, startPipelineFailure(error))
+
+      // Assert
+      const rootState = Object.assign(initialStateDefault, {
+        rdi: {
+          pipeline: nextState,
+        }
+      })
+      expect(rdiPipelineStartSelector(rootState)).toEqual(state)
+    })
+  })
+
   // thunks
   describe('thunks', () => {
     describe('fetchRdiPipeline', () => {
@@ -555,6 +772,155 @@ describe('rdi pipe slice', () => {
           deployPipeline(),
           addErrorNotification(responsePayload as AxiosError),
           deployPipelineFailure()
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('resetPipelineAction', () => {
+      it('succeed to post data', async () => {
+        const cb = jest.fn()
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          resetPipelineAction('123', cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          resetPipeline(),
+          resetPipelineSuccess(),
+          // setChangedFiles({}),
+          addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('failed to post data', async () => {
+        const cb = jest.fn()
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          resetPipelineAction('123', cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          resetPipeline(),
+          addErrorNotification(responsePayload as AxiosError),
+          resetPipelineFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('stopPipelineAction', () => {
+      it('succeed to post data', async () => {
+        const cb = jest.fn()
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          stopPipelineAction('123', cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          stopPipeline(),
+          stopPipelineSuccess(),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('failed to post data', async () => {
+        const cb = jest.fn()
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          stopPipelineAction('123', cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          stopPipeline(),
+          addErrorNotification(responsePayload as AxiosError),
+          stopPipelineFailure(errorMessage)
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('startPipelineAction', () => {
+      it('succeed to post data', async () => {
+        const cb = jest.fn()
+        const responsePayload = { status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          startPipelineAction('123', cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          startPipeline(),
+          startPipelineSuccess(),
+        ]
+
+        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      })
+
+      it('failed to post data', async () => {
+        const cb = jest.fn()
+        const errorMessage = 'Something was wrong!'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        }
+
+        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(
+          startPipelineAction('123', cb)
+        )
+
+        // Assert
+        const expectedActions = [
+          startPipeline(),
+          addErrorNotification(responsePayload as AxiosError),
+          startPipelineFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

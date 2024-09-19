@@ -145,13 +145,25 @@ export enum PipelineStatus {
   Stopped = 'stopped',
 }
 
+export enum PipelineState {
+  InitialSync = 'initial-sync',
+  CDC = 'cdc',
+  NotRunning = 'not-running',
+}
+
+export enum CollectorStatus {
+  Ready = 'ready',
+  Stopped = 'stopped',
+  NotReady = 'not-ready',
+}
+
 export interface IPipelineStatus {
   components: Record<string, unknown>
   pipelines: {
     default?: {
       status: PipelineStatus
-      state: unknown
-      tasks: unknown
+      state: PipelineState,
+      tasks: unknown,
     }
   }
 }
@@ -160,6 +172,7 @@ export interface IStateRdiPipeline {
   loading: boolean
   error: string
   data: Nullable<IPipeline>
+  resetChecked: boolean
   schema: Nullable<object>
   strategies: IRdiPipelineStrategies
   changes: Record<string, FileChangeType>
@@ -168,6 +181,18 @@ export interface IStateRdiPipeline {
     loading: boolean
     error: string
     data: Nullable<IPipelineStatus>
+  }
+  reset: {
+    loading: boolean
+    error: string
+  }
+  start: {
+    loading: boolean
+    error: string
+  }
+  stop: {
+    loading: boolean
+    error: string
   }
 }
 
@@ -247,4 +272,9 @@ export type TJMESPathFunctions = {
 export interface IYamlFormatError {
   filename: string
   msg: string
+}
+
+export interface IActionPipelineResultProps {
+  success: boolean
+  error: Nullable<string>
 }

@@ -197,6 +197,75 @@ describe('RdiPipelineService', () => {
     });
   });
 
+  describe('startPipeline', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        startPipeline: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.startPipeline(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(client.startPipeline).toHaveBeenCalled();
+    });
+
+    it('should throw an error if startPipeline fails', async () => {
+      const error = new Error('Start Pipeline failed');
+      const client = generateMockRdiClient(rdiClientMetadata);
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.startPipeline.mockRejectedValueOnce(error);
+
+      await expect(service.startPipeline(rdiClientMetadata)).rejects.toThrow(error);
+    });
+  });
+
+  describe('stopPipeline', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        stopPipeline: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.stopPipeline(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(client.stopPipeline).toHaveBeenCalled();
+    });
+
+    it('should throw an error if stopPipeline fails', async () => {
+      const error = new Error('Stop Pipeline failed');
+      const client = generateMockRdiClient(rdiClientMetadata);
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.stopPipeline.mockRejectedValueOnce(error);
+
+      await expect(service.stopPipeline(rdiClientMetadata)).rejects.toThrow(error);
+    });
+  });
+
+  describe('resetPipeline', () => {
+    it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
+      const client = {
+        resetPipeline: jest.fn(),
+      };
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+
+      await service.resetPipeline(rdiClientMetadata);
+
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(client.resetPipeline).toHaveBeenCalled();
+    });
+
+    it('should throw an error if resetPipeline fails', async () => {
+      const error = new Error('Stop Pipeline failed');
+      const client = generateMockRdiClient(rdiClientMetadata);
+      rdiClientProvider.getOrCreate.mockResolvedValue(client);
+      client.resetPipeline.mockRejectedValueOnce(error);
+
+      await expect(service.resetPipeline(rdiClientMetadata)).rejects.toThrow(error);
+    });
+  });
+
   describe('testConnections', () => {
     it('should call getOrCreate on rdiClientProvider with the correct metadata', async () => {
       const config = { data: 'some data' };

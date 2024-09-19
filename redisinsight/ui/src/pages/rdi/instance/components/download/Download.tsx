@@ -9,12 +9,16 @@ import { useParams } from 'react-router-dom'
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import saveIcon from 'uiSrc/assets/img/rdi/save.svg?react'
+
+import styles from './styles.module.scss'
 
 interface Props {
   dataTestid?: string
+  onClose?: () => void
 }
 
-const Download = ({ dataTestid }: Props) => {
+const Download = ({ dataTestid, onClose }: Props) => {
   const { loading } = useSelector(rdiPipelineSelector)
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -39,13 +43,16 @@ const Download = ({ dataTestid }: Props) => {
 
     const content = await zip.generateAsync({ type: 'blob' })
     saveAs(content, 'RDI_pipeline.zip')
+
+    onClose?.()
   }
 
   return (
     <EuiButtonEmpty
       color="text"
-      size="xs"
-      iconType="exportAction"
+      className={styles.downloadBtn}
+      iconSize="m"
+      iconType={saveIcon}
       disabled={loading}
       onClick={handleDownloadClick}
       aria-labelledby="Download pipeline button"

@@ -31,6 +31,12 @@ export class MockRdiClient extends ApiRdiClient {
 
   public deploy = jest.fn();
 
+  public startPipeline = jest.fn();
+
+  public stopPipeline = jest.fn();
+
+  public resetPipeline = jest.fn();
+
   public deployJob = jest.fn();
 
   public dryRunJob = jest.fn();

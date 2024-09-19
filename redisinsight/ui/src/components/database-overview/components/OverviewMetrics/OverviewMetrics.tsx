@@ -119,10 +119,11 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     },
   }
 
-  let [networkIn, networkInUnit] = formatBytes(networkInKbps, 3, true)
-  networkInUnit = `${networkInUnit.toLowerCase()}/s`
-  let [networkOut, networkOutUnit] = formatBytes(networkOutKbps, 3, true)
-  networkOutUnit = `${networkOutUnit.toLowerCase()}/s`
+  let [networkIn, networkInUnit] = formatBytes(networkInKbps * 1000, 3, true, 1000)
+  console.log(networkInKbps, networkIn, networkInUnit)
+  networkInUnit = networkInUnit ? `${networkInUnit.toLowerCase()}/s` : ''
+  let [networkOut, networkOutUnit] = formatBytes(networkOutKbps * 1000, 3, true, 1000)
+  networkOutUnit = networkOutUnit ? `${networkOutUnit.toLowerCase()}/s` : ''
 
   const networkInItem = {
     id: 'network-input',

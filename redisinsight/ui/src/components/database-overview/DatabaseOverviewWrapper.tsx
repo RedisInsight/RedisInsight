@@ -10,7 +10,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = process.env.RI_TIMEOUT_TO_GET_INFO ? +process.env.RI_TIMEOUT_TO_GET_INFO : 5000 // 5˚ sec for production
+const TIMEOUT_TO_GET_INFO = process.env.RI_TIMEOUT_TO_GET_INFO ? +process.env.RI_TIMEOUT_TO_GET_INFO : 5000 // 5 sec for production
 
 const DatabaseOverviewWrapper = () => {
   let interval: NodeJS.Timeout
@@ -23,7 +23,7 @@ const DatabaseOverviewWrapper = () => {
   useEffect(() => {
     let timeout = TIMEOUT_TO_GET_INFO
     if (!Number.isNaN(timeout) || timeout < 1) {
-      timeout = 60000
+      timeout = 5000
     }
     interval = setInterval(() => {
       if (document.hidden) return

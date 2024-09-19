@@ -125,7 +125,7 @@ const DatabasesListWrapper = ({ width, onEditInstance, editedInstance, onDeleteI
     }
     dispatch(setConnectedInstanceId(id))
 
-    history.push(Pages.keys(id))
+    history.push(Pages.browser(id))
   }
   const handleCheckConnectToInstance = (
     event: React.MouseEvent | React.KeyboardEvent,

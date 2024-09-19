@@ -86,7 +86,7 @@ describe('InsightsTrigger', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         source: 'overview',
-        page: '/browser/browser',
+        page: '/browser',
         tab: 'tips'
       },
     });

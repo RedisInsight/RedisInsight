@@ -1,5 +1,6 @@
 import { IRoute, FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import {
+  BrowserPage,
   HomePage,
   InstancePage,
   RedisCloudDatabasesPage,
@@ -8,23 +9,33 @@ import {
   RedisCloudSubscriptionsPage,
   RedisClusterDatabasesPage,
 } from 'uiSrc/pages'
-import KeysPage from 'uiSrc/pages/keys'
+import WorkbenchPage from 'uiSrc/pages/workbench'
 import PubSubPage from 'uiSrc/pages/pub-sub'
 import AnalyticsPage from 'uiSrc/pages/analytics'
 import RdiPage from 'uiSrc/pages/rdi/home'
 import RdiInstancePage from 'uiSrc/pages/rdi/instance'
 import RdiStatisticsPage from 'uiSrc/pages/rdi/statistics'
 import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
-
-import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES, BROWSER_ROUTES } from './sub-routes'
+import SearchPage from 'uiSrc/pages/search'
+import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES } from './sub-routes'
 
 import COMMON_ROUTES from './commonRoutes'
 
 const INSTANCE_ROUTES: IRoute[] = [
   {
-    path: Pages.keys(':instanceId'),
-    component: KeysPage,
-    routes: BROWSER_ROUTES,
+    pageName: PageNames.browser,
+    path: Pages.browser(':instanceId'),
+    component: BrowserPage,
+  },
+  {
+    pageName: PageNames.workbench,
+    path: Pages.workbench(':instanceId'),
+    component: WorkbenchPage,
+  },
+  {
+    pageName: PageNames.search,
+    path: Pages.search(':instanceId'),
+    component: SearchPage,
   },
   {
     pageName: PageNames.pubSub,
@@ -36,10 +47,6 @@ const INSTANCE_ROUTES: IRoute[] = [
     component: AnalyticsPage,
     routes: ANALYTICS_ROUTES,
   },
-  {
-    path: '/:instanceId/workbench',
-    redirect: (params) => Pages.workbench(params?.instanceId || '')
-  }
 ]
 
 const RDI_INSTANCE_ROUTES: IRoute[] = [

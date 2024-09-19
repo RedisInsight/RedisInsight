@@ -23,6 +23,10 @@ if (isHostedApi) {
 } else {
   base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 }
+const DEFAULT_TIMEOUT_TO_GET_INFO = process.env.NODE_ENV !== 'development' ? 5_000 : 60_000
+const ENV_TIMEOUT_TO_GET_INFO = process.env.RI_TIMEOUT_TO_GET_INFO
+  ? +process.env.RI_TIMEOUT_TO_GET_INFO
+  : DEFAULT_TIMEOUT_TO_GET_INFO
 
 /**
  * @type {import('vite').UserConfig}
@@ -125,7 +129,7 @@ export default defineConfig({
       RI_SOCKET_CREDENTIALS: process.env.RI_SOCKET_CREDENTIALS,
       RI_HOSTED_SOCKET_PROXY_PATH: process.env.RI_HOSTED_SOCKET_PROXY_PATH,
       RI_DEFAULT_THEME: process.env.RI_DEFAULT_THEME,
-      RI_TIMEOUT_TO_GET_INFO: process.env.RI_TIMEOUT_TO_GET_INFO
+      RI_TIMEOUT_TO_GET_INFO: ENV_TIMEOUT_TO_GET_INFO
     },
   },
   // hack: apply proxy path to monaco webworker

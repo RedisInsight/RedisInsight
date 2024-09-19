@@ -214,11 +214,11 @@ const ManualConnectionWrapper = (props: Props) => {
       // clicked. Once the apply is clicked, the editedInstance object
       // that is validated against, still has the older certificates
       // attached. Attaching the new certs to the final object helps.
-      if (values.selectedCaCertName === 'ADD_NEW_CA_CERT' && values.newCaCertName !== '' && values.newCaCertName === editedInstance.caCert?.name) {
+      if (values.selectedCaCertName === ADD_NEW_CA_CERT && values.newCaCertName !== '' && values.newCaCertName === editedInstance.caCert?.name) {
         updatedValues.caCert = database.caCert
       }
 
-      if (values.selectedTlsClientCertId === 'ADD_NEW' && values.newTlsCertPairName !== '' && values.selectedTlsClientCertName === editedInstance.newTlsCertPairName?.name) {
+      if (values.selectedTlsClientCertId === ADD_NEW && values.newTlsCertPairName !== '' && values.selectedTlsClientCertName === editedInstance.newTlsCertPairName?.name) {
         updatedValues.clientCert = database.clientCert
       }
 

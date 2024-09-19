@@ -10,7 +10,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
 import { getOverviewMetrics } from './components/OverviewMetrics'
 
-const TIMEOUT_TO_GET_INFO = process.env.RI_TIMEOUT_TO_GET_INFO ? +process.env.RI_TIMEOUT_TO_GET_INFO : 60000 // 60 sec for production
+const TIMEOUT_TO_GET_INFO = process.env.RI_TIMEOUT_TO_GET_INFO ? +process.env.RI_TIMEOUT_TO_GET_INFO : 5000 // 5˚ sec for production
 
 const DatabaseOverviewWrapper = () => {
   let interval: NodeJS.Timeout

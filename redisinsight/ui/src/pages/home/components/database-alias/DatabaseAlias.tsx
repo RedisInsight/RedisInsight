@@ -95,7 +95,7 @@ const DatabaseAlias = (props: Props) => {
       dispatch(setAppContextInitialState())
     }
     dispatch(setConnectedInstanceId(id ?? ''))
-    history.push(Pages.keys(id ?? ''))
+    history.push(Pages.browser(id ?? ''))
   }
 
   const handleOpen = (event: any) => {

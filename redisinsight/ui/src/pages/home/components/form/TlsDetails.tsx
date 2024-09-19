@@ -19,7 +19,8 @@ import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/Popover
 
 import {
   ADD_NEW_CA_CERT,
-  NO_CA_CERT
+  NO_CA_CERT,
+  ADD_NEW,
 } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -43,11 +44,27 @@ const TlsDetails = (props: Props) => {
   const [activeCertId, setActiveCertId] = useState<Nullable<string>>(null)
 
   const handleDeleteCaCert = (id: string) => {
-    dispatch(deleteCaCertificateAction(id, () => handleClickDeleteCert('CA')))
+    dispatch(deleteCaCertificateAction(id, () => {
+      if (formik.values.selectedCaCertName === id) {
+        formik.setFieldValue(
+          'selectedCaCertName',
+          NO_CA_CERT,
+        )
+      }
+      handleClickDeleteCert('CA')
+    }))
   }
 
   const handleDeleteClientCert = (id: string) => {
-    dispatch(deleteClientCertAction(id, () => handleClickDeleteCert('Client')))
+    dispatch(deleteClientCertAction(id, () => {
+      if (formik.values.selectedTlsClientCertId === id) {
+        formik.setFieldValue(
+          'selectedTlsClientCertId',
+          ADD_NEW,
+        )
+      }
+      handleClickDeleteCert('Client')
+    }))
   }
 
   const handleClickDeleteCert = (certificateType: 'Client' | 'CA') => {

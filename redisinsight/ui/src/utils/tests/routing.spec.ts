@@ -18,6 +18,8 @@ const getRedirectionPageTests = [
   { input: ['/workbench', databaseId], expected: '/1/workbench' },
   { input: ['browser', databaseId], expected: '/1/browser' },
   { input: ['/browser', databaseId], expected: '/1/browser' },
+  { input: ['search', databaseId], expected: '/1/search' },
+  { input: ['/search', databaseId], expected: '/1/search' },
   { input: ['/analytics/slowlog', databaseId], expected: '/1/analytics/slowlog' },
   { input: ['/analytics/slowlog'], expected: null },
   { input: ['/analytics', databaseId], expected: '/1/analytics' },

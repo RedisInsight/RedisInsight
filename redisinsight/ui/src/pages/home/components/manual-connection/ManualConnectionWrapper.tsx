@@ -27,6 +27,8 @@ import { applyTlSDatabase, applySSHDatabase, autoFillFormDetails, getTlsSettings
 import {
   DEFAULT_TIMEOUT,
   SubmitBtnText,
+  ADD_NEW,
+  ADD_NEW_CA_CERT,
 } from 'uiSrc/pages/home/constants'
 import ManualConnectionForm from './manual-connection-form'
 

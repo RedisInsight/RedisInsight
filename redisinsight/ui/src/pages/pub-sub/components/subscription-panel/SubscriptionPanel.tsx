@@ -14,6 +14,9 @@ import SubscribedIconLight from 'uiSrc/assets/img/pub-sub/subscribed-lt.svg'
 import NotSubscribedIconDark from 'uiSrc/assets/img/pub-sub/not-subscribed.svg'
 import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.svg'
 
+import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import PatternsInfo from './components/patternsInfo'
+import AppendInfo from './components/append-info'
 import styles from './styles.module.scss'
 
 const SubscriptionPanel = () => {
@@ -24,7 +27,7 @@ const SubscriptionPanel = () => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const [channels, setChannels] = useState('')
+  const [channels, setChannels] = useState(DEFAULT_SEARCH_MATCH)
 
   const toggleSubscribe = () => {
     dispatch(toggleSubscribeTriggerPubSub(channels))
@@ -39,6 +42,12 @@ const SubscriptionPanel = () => {
         messages: count
       }
     })
+  }
+
+  const onFocusOut = () => {
+    if (!channels) {
+      setChannels(DEFAULT_SEARCH_MATCH)
+    }
   }
 
   const subscribedIcon = theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight
@@ -61,6 +70,11 @@ const SubscriptionPanel = () => {
               You are { !isSubscribed && 'not' } subscribed
             </EuiText>
           </EuiFlexItem>
+          {isSubscribed && (
+            <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+              <PatternsInfo channels={channels} />
+            </EuiFlexItem>
+          )}
           {displayMessages && (
             <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
               <EuiText color="subdued" size="s" data-testid="messages-count">Messages: {count}</EuiText>
@@ -75,11 +89,13 @@ const SubscriptionPanel = () => {
             <EuiFieldText
               value={channels}
               disabled={isSubscribed}
-              className={styles.channels}
+              compressed
               onChange={(e) => setChannels(e.target.value)}
-              placeholder="Enter Channel to Subscribe"
+              onBlur={onFocusOut}
+              placeholder=""
               aria-label="channel names for filtering"
               data-testid="channels-input"
+              append={<AppendInfo title={null} content="Subscribe to one or more channels or patterns by entering them, separated by spaces." />}
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>

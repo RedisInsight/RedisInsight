@@ -33,26 +33,18 @@ import reducer, {
   getPipelineStatusAction,
   rdiPipelineSelector,
   rdiPipelineStatusSelector,
-  resetPipeline,
-  rdiPipelineResetSelector,
-  resetPipelineSuccess,
-  resetPipelineFailure,
-  stopPipeline,
-  rdiPipelineStopSelector,
-  stopPipelineSuccess,
-  stopPipelineFailure,
-  startPipeline,
-  rdiPipelineStartSelector,
-  startPipelineSuccess,
-  startPipelineFailure,
   resetPipelineAction,
   stopPipelineAction,
   startPipelineAction,
+  triggerPipelineAction,
+  triggerPipelineActionSuccess,
+  triggerPipelineActionFailure,
+  rdiPipelineActionSelector,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification, addInfiniteNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
-import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { FileChangeType, PipelineAction } from 'uiSrc/slices/interfaces'
 import { parseJMESPathFunctions } from 'uiSrc/utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 
@@ -475,17 +467,18 @@ describe('rdi pipe slice', () => {
     })
   })
 
-  describe('resetPipeline', () => {
+  describe('triggerPipelineAction', () => {
     it('should set loading = true', () => {
       // Arrange
       const state = {
-        ...initialState.reset,
+        ...initialState.pipelineAction,
         loading: true,
+        action: PipelineAction.Start,
         error: '',
       }
 
       // Act
-      const nextState = reducer(initialState, resetPipeline())
+      const nextState = reducer(initialState, triggerPipelineAction(PipelineAction.Start))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -493,21 +486,21 @@ describe('rdi pipe slice', () => {
           pipeline: nextState,
         }
       })
-      expect(rdiPipelineResetSelector(rootState)).toEqual(state)
+      expect(rdiPipelineActionSelector(rootState)).toEqual(state)
     })
   })
 
-  describe('resetPipelineSuccess', () => {
+  describe('triggerPipelineActionSuccess', () => {
     it('should set loading = true', () => {
       // Arrange
       const state = {
-        ...initialState.reset,
+        ...initialState.pipelineAction,
         loading: false,
         error: '',
       }
 
       // Act
-      const nextState = reducer(initialState, resetPipelineSuccess())
+      const nextState = reducer(initialState, triggerPipelineActionSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -515,22 +508,22 @@ describe('rdi pipe slice', () => {
           pipeline: nextState,
         }
       })
-      expect(rdiPipelineResetSelector(rootState)).toEqual(state)
+      expect(rdiPipelineActionSelector(rootState)).toEqual(state)
     })
   })
 
-  describe('resetPipelineFailure', () => {
+  describe('triggerPipelineActionFailure', () => {
     it('should set loading = true', () => {
       const error = 'Some reset error'
       // Arrange
       const state = {
-        ...initialState.reset,
+        ...initialState.pipelineAction,
         loading: false,
         error,
       }
 
       // Act
-      const nextState = reducer(initialState, resetPipelineFailure(error))
+      const nextState = reducer(initialState, triggerPipelineActionFailure(error))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -538,141 +531,7 @@ describe('rdi pipe slice', () => {
           pipeline: nextState,
         }
       })
-      expect(rdiPipelineResetSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('stopPipeline', () => {
-    it('should set loading = true', () => {
-      // Arrange
-      const state = {
-        ...initialState.stop,
-        loading: true,
-        error: '',
-      }
-
-      // Act
-      const nextState = reducer(initialState, stopPipeline())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineStopSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('stopPipelineSuccess', () => {
-    it('should set loading = true', () => {
-      // Arrange
-      const state = {
-        ...initialState.stop,
-        loading: false,
-        error: '',
-      }
-
-      // Act
-      const nextState = reducer(initialState, stopPipelineSuccess())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineStopSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('stopPipelineFailure', () => {
-    it('should set loading = true', () => {
-      const error = 'Some stop error'
-      // Arrange
-      const state = {
-        ...initialState.stop,
-        loading: false,
-        error,
-      }
-
-      // Act
-      const nextState = reducer(initialState, stopPipelineFailure(error))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineStopSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('startPipeline', () => {
-    it('should set loading = true', () => {
-      // Arrange
-      const state = {
-        ...initialState.start,
-        loading: true,
-        error: '',
-      }
-
-      // Act
-      const nextState = reducer(initialState, startPipeline())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineStartSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('startPipelineSuccess', () => {
-    it('should set loading = true', () => {
-      // Arrange
-      const state = {
-        ...initialState.start,
-        loading: false,
-        error: '',
-      }
-
-      // Act
-      const nextState = reducer(initialState, startPipelineSuccess())
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineStartSelector(rootState)).toEqual(state)
-    })
-  })
-
-  describe('startPipelineFailure', () => {
-    it('should set loading = true', () => {
-      const error = 'Some start error'
-      // Arrange
-      const state = {
-        ...initialState.start,
-        loading: false,
-        error,
-      }
-
-      // Act
-      const nextState = reducer(initialState, startPipelineFailure(error))
-
-      // Assert
-      const rootState = Object.assign(initialStateDefault, {
-        rdi: {
-          pipeline: nextState,
-        }
-      })
-      expect(rdiPipelineStartSelector(rootState)).toEqual(state)
+      expect(rdiPipelineActionSelector(rootState)).toEqual(state)
     })
   })
 
@@ -787,14 +646,13 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          resetPipelineAction('123', cb)
+          resetPipelineAction('123', cb, cb)
         )
 
         // Assert
         const expectedActions = [
-          resetPipeline(),
-          resetPipelineSuccess(),
-          // setChangedFiles({}),
+          triggerPipelineAction(PipelineAction.Reset),
+          triggerPipelineActionSuccess(),
           addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()),
         ]
 
@@ -815,14 +673,14 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          resetPipelineAction('123', cb)
+          resetPipelineAction('123', cb, cb)
         )
 
         // Assert
         const expectedActions = [
-          resetPipeline(),
+          triggerPipelineAction(PipelineAction.Reset),
           addErrorNotification(responsePayload as AxiosError),
-          resetPipelineFailure(errorMessage)
+          triggerPipelineActionFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -838,13 +696,13 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          stopPipelineAction('123', cb)
+          stopPipelineAction('123', cb, cb)
         )
 
         // Assert
         const expectedActions = [
-          stopPipeline(),
-          stopPipelineSuccess(),
+          triggerPipelineAction(PipelineAction.Stop),
+          triggerPipelineActionSuccess(),
         ]
 
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -864,14 +722,14 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          stopPipelineAction('123', cb)
+          stopPipelineAction('123', cb, cb)
         )
 
         // Assert
         const expectedActions = [
-          stopPipeline(),
+          triggerPipelineAction(PipelineAction.Stop),
           addErrorNotification(responsePayload as AxiosError),
-          stopPipelineFailure(errorMessage)
+          triggerPipelineActionFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -887,13 +745,13 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          startPipelineAction('123', cb)
+          startPipelineAction('123', cb, cb)
         )
 
         // Assert
         const expectedActions = [
-          startPipeline(),
-          startPipelineSuccess(),
+          triggerPipelineAction(PipelineAction.Start),
+          triggerPipelineActionSuccess(),
         ]
 
         expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
@@ -913,14 +771,14 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          startPipelineAction('123', cb)
+          startPipelineAction('123', cb, cb)
         )
 
         // Assert
         const expectedActions = [
-          startPipeline(),
+          triggerPipelineAction(PipelineAction.Start),
           addErrorNotification(responsePayload as AxiosError),
-          startPipelineFailure(errorMessage)
+          triggerPipelineActionFailure(errorMessage)
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

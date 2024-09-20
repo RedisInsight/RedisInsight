@@ -101,9 +101,9 @@ const StatisticsPage = () => {
     <div className={styles.pageContainer}>
       <div className={styles.bodyContainer}>
         {pageLoading && (
-        <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
-        </div>
+          <div className={styles.cover}>
+            <EuiLoadingSpinner size="xl" />
+          </div>
         )}
         {!isPipelineDeployed(statusData) ? (
         // TODO add loader

@@ -11,6 +11,7 @@ import {
   TJMESPathFunctions,
   IPipelineStatus,
   IActionPipelineResultProps,
+  PipelineAction,
 } from 'uiSrc/slices/interfaces/rdi'
 import {
   getApiErrorMessage,
@@ -45,16 +46,9 @@ export const initialState: IStateRdiPipeline = {
     data: null,
     error: '',
   },
-  reset: {
+  pipelineAction: {
     loading: false,
-    error: '',
-  },
-  stop: {
-    loading: false,
-    error: '',
-  },
-  start: {
-    loading: false,
+    action: null,
     error: '',
   }
 }
@@ -90,41 +84,18 @@ const rdiPipelineSlice = createSlice({
     deployPipelineFailure: (state) => {
       state.loading = false
     },
-    stopPipeline: (state) => {
-      state.stop.loading = true
-      state.stop.error = ''
+    triggerPipelineAction: (state, { payload }: PayloadAction<PipelineAction>) => {
+      state.pipelineAction.loading = true
+      state.pipelineAction.action = payload
+      state.pipelineAction.error = ''
     },
-    stopPipelineSuccess: (state) => {
-      state.stop.loading = false
-      state.stop.error = ''
+    triggerPipelineActionSuccess: (state) => {
+      state.pipelineAction.loading = false
+      state.pipelineAction.action = null
     },
-    stopPipelineFailure: (state, { payload }: PayloadAction<string>) => {
-      state.stop.loading = false
-      state.stop.error = payload
-    },
-    startPipeline: (state) => {
-      state.start.loading = true
-      state.start.error = ''
-    },
-    startPipelineSuccess: (state) => {
-      state.start.loading = false
-      state.start.error = ''
-    },
-    startPipelineFailure: (state, { payload }: PayloadAction<string>) => {
-      state.start.loading = false
-      state.start.error = payload
-    },
-    resetPipeline: (state) => {
-      state.reset.loading = true
-      state.reset.error = ''
-    },
-    resetPipelineSuccess: (state) => {
-      state.reset.loading = false
-      state.reset.error = ''
-    },
-    resetPipelineFailure: (state, { payload }: PayloadAction<string>) => {
-      state.reset.loading = false
-      state.reset.error = payload
+    triggerPipelineActionFailure: (state, { payload }: PayloadAction<string>) => {
+      state.pipelineAction.loading = false
+      state.pipelineAction.error = payload
     },
     setPipelineSchema: (state, { payload }: PayloadAction<Nullable<object>>) => {
       state.schema = payload
@@ -179,11 +150,9 @@ const rdiPipelineSlice = createSlice({
 })
 
 export const rdiPipelineSelector = (state: RootState) => state.rdi.pipeline
+export const rdiPipelineActionSelector = (state: RootState) => state.rdi.pipeline.pipelineAction
 export const rdiPipelineStrategiesSelector = (state: RootState) => state.rdi.pipeline.strategies
 export const rdiPipelineStatusSelector = (state: RootState) => state.rdi.pipeline.status
-export const rdiPipelineStopSelector = (state: RootState) => state.rdi.pipeline.stop
-export const rdiPipelineStartSelector = (state: RootState) => state.rdi.pipeline.start
-export const rdiPipelineResetSelector = (state: RootState) => state.rdi.pipeline.reset
 
 export const {
   resetPipelineChecked,
@@ -206,15 +175,9 @@ export const {
   getPipelineStatus,
   getPipelineStatusSuccess,
   getPipelineStatusFailure,
-  startPipeline,
-  startPipelineSuccess,
-  startPipelineFailure,
-  stopPipeline,
-  stopPipelineSuccess,
-  stopPipelineFailure,
-  resetPipeline,
-  resetPipelineSuccess,
-  resetPipelineFailure,
+  triggerPipelineAction,
+  triggerPipelineActionSuccess,
+  triggerPipelineActionFailure,
 } = rdiPipelineSlice.actions
 
 // The reducer
@@ -436,18 +399,19 @@ export function getPipelineStatusAction(
 
 export function stopPipelineAction(
   rdiInstanceId: string,
-  callback: (result: IActionPipelineResultProps) => void,
+  successCallback: (result: IActionPipelineResultProps) => void,
+  errorCallback: (result: IActionPipelineResultProps) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(stopPipeline())
+      dispatch(triggerPipelineAction(PipelineAction.Stop))
       const { status } = await apiService.post(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_STOP),
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(stopPipelineSuccess())
-        callback?.({ success: true, error: null })
+        dispatch(triggerPipelineActionSuccess())
+        successCallback?.({ success: true, error: null })
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -455,26 +419,27 @@ export function stopPipelineAction(
       const parsedError = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(addErrorNotification(parsedError))
-      dispatch(stopPipelineFailure(errorMessage))
-      callback?.({ success: false, error: errorMessage })
+      dispatch(triggerPipelineActionFailure(errorMessage))
+      errorCallback?.({ success: false, error: errorMessage })
     }
   }
 }
 
 export function startPipelineAction(
   rdiInstanceId: string,
-  callback: (result: IActionPipelineResultProps) => void,
+  successCallback: (result: IActionPipelineResultProps) => void,
+  errorCallback: (result: IActionPipelineResultProps) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(startPipeline())
+      dispatch(triggerPipelineAction(PipelineAction.Start))
       const { status } = await apiService.post(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_START),
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(startPipelineSuccess())
-        callback?.({ success: true, error: null })
+        dispatch(triggerPipelineActionSuccess())
+        successCallback?.({ success: true, error: null })
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -482,27 +447,28 @@ export function startPipelineAction(
       const parsedError = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(addErrorNotification(parsedError))
-      dispatch(startPipelineFailure(errorMessage))
-      callback?.({ success: false, error: errorMessage })
+      dispatch(triggerPipelineActionFailure(errorMessage))
+      errorCallback?.({ success: false, error: errorMessage })
     }
   }
 }
 
 export function resetPipelineAction(
   rdiInstanceId: string,
-  callback: (result: IActionPipelineResultProps) => void,
+  successCallback: (result: IActionPipelineResultProps) => void,
+  errorCallback: (result: IActionPipelineResultProps) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
-      dispatch(resetPipeline())
+      dispatch(triggerPipelineAction(PipelineAction.Reset))
       const { status } = await apiService.post(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE_RESET),
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(resetPipelineSuccess())
+        dispatch(triggerPipelineActionSuccess())
         dispatch(addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()))
-        callback?.({ success: true, error: null })
+        successCallback?.({ success: true, error: null })
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -510,9 +476,8 @@ export function resetPipelineAction(
       const parsedError = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(addErrorNotification(parsedError))
-      dispatch(resetPipelineFailure(errorMessage))
-      // dispatch(resetPipelineFailure())
-      callback?.({ success: false, error: errorMessage })
+      dispatch(triggerPipelineActionFailure(errorMessage))
+      errorCallback?.({ success: false, error: errorMessage })
     }
   }
 }

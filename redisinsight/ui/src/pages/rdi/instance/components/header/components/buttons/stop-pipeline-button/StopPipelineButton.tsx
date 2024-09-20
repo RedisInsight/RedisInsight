@@ -5,7 +5,7 @@ import cx from 'classnames'
 import StopIcon from 'uiSrc/assets/img/rdi/stopFilled.svg?react'
 
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 const StopPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps) => (
   <EuiToolTip
@@ -18,7 +18,7 @@ const StopPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps)
       size="s"
       isLoading={loading}
       isDisabled={disabled}
-      className={cx(styles.stopPipelineBtn, { [styles.btnDisabled]: disabled })}
+      className={cx(styles.pipelineBtn, { [styles.btnDisabled]: disabled })}
       iconType={StopIcon}
       data-testid="stop-pipeline-btn"
       onClick={onClick}

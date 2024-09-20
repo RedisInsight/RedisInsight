@@ -107,8 +107,9 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   const updatePipelineStatus = () => {
     if (resetChecked) {
       dispatch(resetPipelineChecked(false))
-      dispatch(resetPipelineAction(rdiInstanceId, (result: IActionPipelineResultProps) =>
-        actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result)))
+      dispatch(resetPipelineAction(rdiInstanceId,
+        (result: IActionPipelineResultProps) => actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result),
+        (result: IActionPipelineResultProps) => actionPipelineCallback(TelemetryEvent.RDI_PIPELINE_RESET, result)))
     } else {
       dispatch(getPipelineStatusAction(rdiInstanceId))
     }

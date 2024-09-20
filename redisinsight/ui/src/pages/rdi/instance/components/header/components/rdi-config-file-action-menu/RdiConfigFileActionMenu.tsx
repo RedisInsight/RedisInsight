@@ -9,9 +9,10 @@ import {
 import cx from 'classnames'
 import threeDots from 'uiSrc/assets/img/rdi/three_dots.svg?react'
 import uploadIcon from 'uiSrc/assets/img/rdi/upload.svg?react'
+import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
+import Download from 'uiSrc/pages/rdi/instance/components/download'
 import FetchPipelinePopover from '../fetch-pipeline-popover'
-import UploadModal from '../../../../../pipeline-management/components/upload-modal/UploadModal'
-import Download from '../../../download/Download'
+
 import styles from './styles.module.scss'
 
 const RdiConfigFileActionMenu = () => {

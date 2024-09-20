@@ -2,12 +2,12 @@ import React from 'react'
 import { EuiButton, EuiSpacer, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import ResetIcon from 'uiSrc/assets/img/rdi/reset.svg?react'
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 export interface PipelineButtonProps {
-  onClick: () => void;
-  disabled: boolean;
-  loading: boolean;
+  onClick: () => void
+  disabled: boolean
+  loading: boolean
 }
 
 const ResetPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps) => (

@@ -168,6 +168,12 @@ export interface IPipelineStatus {
   }
 }
 
+export enum PipelineAction {
+  Start = 'start',
+  Stop = 'stop',
+  Reset = 'reset',
+}
+
 export interface IStateRdiPipeline {
   loading: boolean
   error: string
@@ -182,17 +188,10 @@ export interface IStateRdiPipeline {
     error: string
     data: Nullable<IPipelineStatus>
   }
-  reset: {
+  pipelineAction: {
     loading: boolean
     error: string
-  }
-  start: {
-    loading: boolean
-    error: string
-  }
-  stop: {
-    loading: boolean
-    error: string
+    action: Nullable<PipelineAction>
   }
 }
 

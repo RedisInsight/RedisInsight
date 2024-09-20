@@ -5,7 +5,7 @@ import cx from 'classnames'
 import StartIcon from 'uiSrc/assets/img/rdi/playFilled.svg?react'
 
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 const StartPipelineButton = ({ onClick, disabled, loading }: PipelineButtonProps) => (
   <EuiToolTip

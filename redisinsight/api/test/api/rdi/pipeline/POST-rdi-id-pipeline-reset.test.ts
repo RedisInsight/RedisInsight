@@ -6,6 +6,7 @@ import {
 import { nock } from '../../../helpers/test';
 import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { mockedAccessToken } from 'src/__mocks__';
 
 const {
   localDb, request, server, constants,
@@ -27,7 +28,6 @@ const mockActionResponse = {
   error: null,
 };
 const mockErrorMessage = 'Error when resetting a pipeline'
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

@@ -399,8 +399,8 @@ export function getPipelineStatusAction(
 
 export function stopPipelineAction(
   rdiInstanceId: string,
-  successCallback: (result: IActionPipelineResultProps) => void,
-  errorCallback: (result: IActionPipelineResultProps) => void,
+  onSuccessAction?: (result: IActionPipelineResultProps) => void,
+  onErrorAction?: (result: IActionPipelineResultProps) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
@@ -411,7 +411,7 @@ export function stopPipelineAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(triggerPipelineActionSuccess())
-        successCallback?.({ success: true, error: null })
+        onSuccessAction?.({ success: true, error: null })
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -420,15 +420,15 @@ export function stopPipelineAction(
 
       dispatch(addErrorNotification(parsedError))
       dispatch(triggerPipelineActionFailure(errorMessage))
-      errorCallback?.({ success: false, error: errorMessage })
+      onErrorAction?.({ success: false, error: errorMessage })
     }
   }
 }
 
 export function startPipelineAction(
   rdiInstanceId: string,
-  successCallback: (result: IActionPipelineResultProps) => void,
-  errorCallback: (result: IActionPipelineResultProps) => void,
+  onSuccessAction?: (result: IActionPipelineResultProps) => void,
+  onErrorAction?: (result: IActionPipelineResultProps) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
@@ -439,7 +439,7 @@ export function startPipelineAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(triggerPipelineActionSuccess())
-        successCallback?.({ success: true, error: null })
+        onSuccessAction?.({ success: true, error: null })
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -448,15 +448,15 @@ export function startPipelineAction(
 
       dispatch(addErrorNotification(parsedError))
       dispatch(triggerPipelineActionFailure(errorMessage))
-      errorCallback?.({ success: false, error: errorMessage })
+      onErrorAction?.({ success: false, error: errorMessage })
     }
   }
 }
 
 export function resetPipelineAction(
   rdiInstanceId: string,
-  successCallback: (result: IActionPipelineResultProps) => void,
-  errorCallback: (result: IActionPipelineResultProps) => void,
+  onSuccessAction?: (result: IActionPipelineResultProps) => void,
+  onErrorAction?: (result: IActionPipelineResultProps) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
@@ -468,7 +468,7 @@ export function resetPipelineAction(
       if (isStatusSuccessful(status)) {
         dispatch(triggerPipelineActionSuccess())
         dispatch(addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()))
-        successCallback?.({ success: true, error: null })
+        onSuccessAction?.({ success: true, error: null })
       }
     } catch (_err) {
       const error = _err as AxiosError
@@ -477,7 +477,7 @@ export function resetPipelineAction(
 
       dispatch(addErrorNotification(parsedError))
       dispatch(triggerPipelineActionFailure(errorMessage))
-      errorCallback?.({ success: false, error: errorMessage })
+      onErrorAction?.({ success: false, error: errorMessage })
     }
   }
 }

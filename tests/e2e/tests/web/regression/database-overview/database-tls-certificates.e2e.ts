@@ -34,7 +34,7 @@ test('Verify that user can remove added certificates', async t => {
     //verify that ca certificate is deleted
     await t.expect(myRedisDatabasePage.AddRedisDatabase.caCertField.textContent).contains('No CA Certificate', 'CA certificate was not deleted');
     await t.click(myRedisDatabasePage.AddRedisDatabase.caCertField);
-    await t.expect(myRedisDatabasePage.AddRedisDatabase.certificateDropdownList.textContent).notContains('ca', 'CA certificate was not deleted');
+    await t.expect(myRedisDatabasePage.AddRedisDatabase.certificateDropdownList.exists).notOk('CA certificate was not deleted');
 
     //verify that client certificate is deleted
     await myRedisDatabasePage.AddRedisDatabase.removeCertificateButton(TlsCertificates.Client, 'client');

@@ -55,6 +55,7 @@ export const applyTlSDatabase = (database: any, tlsSettings: any) => {
   database.tls = useTls
   database.tlsServername = servername
   database.verifyServerCert = !!verifyServerCert
+  database.clientCert = clientCert
 
   if (!isUndefined(caCert?.new)) {
     database.caCert = {
@@ -68,7 +69,7 @@ export const applyTlSDatabase = (database: any, tlsSettings: any) => {
   }
 
   if (clientAuth) {
-    if (!isUndefined(clientCert.new)) {
+    if (!isUndefined(clientCert?.new)) {
       database.clientCert = {
         name: clientCert.new.name,
         certificate: clientCert.new.certificate,
@@ -76,7 +77,7 @@ export const applyTlSDatabase = (database: any, tlsSettings: any) => {
       }
     }
 
-    if (!isUndefined(clientCert.id)) {
+    if (!isUndefined(clientCert?.id)) {
       database.clientCert = { id: clientCert.id }
     }
   }

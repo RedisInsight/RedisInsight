@@ -49,7 +49,7 @@ export const ossStandaloneV7Config = {
 
 export const ossStandaloneV8Config = {
     host: process.env.OSS_STANDALONE_V8_HOST || 'oss-standalone-v8',
-    port: process.env.OSS_STANDALONE_V8_PORT || '6377',
+    port: process.env.OSS_STANDALONE_V8_PORT || '6379',
     databaseName: `${process.env.OSS_STANDALONE_V8_DATABASE_NAME || 'test_standalone-v8'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_V8_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_V8_PASSWORD

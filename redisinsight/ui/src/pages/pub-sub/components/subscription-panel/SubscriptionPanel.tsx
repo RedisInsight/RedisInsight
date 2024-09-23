@@ -92,7 +92,7 @@ const SubscriptionPanel = () => {
               compressed
               onChange={(e) => setChannels(e.target.value)}
               onBlur={onFocusOut}
-              placeholder=""
+              placeholder="Enter Pattern"
               aria-label="channel names for filtering"
               data-testid="channels-input"
               append={<AppendInfo title={null} content="Subscribe to one or more channels or patterns by entering them, separated by spaces." />}

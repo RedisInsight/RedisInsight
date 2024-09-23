@@ -7,6 +7,8 @@ export const options = merge(defaultMonacoOptions,
       showWords: false,
       showIcons: true,
       insertMode: 'replace',
+      filterGraceful: false,
+      matchOnWordStartOnly: true
     }
   })
 

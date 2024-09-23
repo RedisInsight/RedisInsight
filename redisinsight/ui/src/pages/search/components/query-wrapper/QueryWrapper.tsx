@@ -77,7 +77,9 @@ const QueryWrapper = (props: Props) => {
   }
 
   const handleSubmit = () => {
-    const val = value.split('\n').join(' ')
+    const val = value
+      .replace(/[\r\n?]{2}|\n\n/g, ' ')
+      .replace(/\n/g, ' ')
     if (!val) return
 
     onSubmit(val, undefined, { mode: activeRunQueryMode })

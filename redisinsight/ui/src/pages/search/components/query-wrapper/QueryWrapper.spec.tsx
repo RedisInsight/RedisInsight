@@ -75,4 +75,17 @@ describe('Query', () => {
       }
     })
   })
+
+  it('should call onSubmit with proper value', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    const onSubmit = jest.fn()
+    render(<QueryWrapper onSubmit={onSubmit} />)
+
+    fireEvent.change(screen.getByTestId('monaco'), { target: { value: 'set\ra\rb\n\nc \nd' } })
+    fireEvent.click(screen.getByTestId('btn-submit'))
+
+    expect(onSubmit).toBeCalledWith('set a b c  d', undefined, { mode: RunQueryMode.ASCII })
+  })
 })

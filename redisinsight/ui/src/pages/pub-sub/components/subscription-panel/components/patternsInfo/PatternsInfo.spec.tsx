@@ -2,7 +2,7 @@ import React from 'react'
 import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import PatternsInfo from './PatternsInfo'
 
-describe('InstancePage', () => {
+describe('PatternsInfo', () => {
   it('should render', () => {
     expect(
       render(

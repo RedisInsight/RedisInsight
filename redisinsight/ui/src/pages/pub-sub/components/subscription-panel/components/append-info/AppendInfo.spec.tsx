@@ -2,7 +2,7 @@ import React from 'react'
 import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
 import AppendInfo from './AppendInfo'
 
-describe('InstancePage', () => {
+describe('AppendInfo', () => {
   it('should render', () => {
     expect(
       render(

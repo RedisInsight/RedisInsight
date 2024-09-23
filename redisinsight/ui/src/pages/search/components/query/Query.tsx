@@ -178,7 +178,6 @@ const Query = (props: Props) => {
 
   const triggerSuggestions = () => {
     const { editor } = monacoObjects.current || {}
-    isEscapedSuggestions.current = false
     setTimeout(() => editor?.trigger('', 'editor.action.triggerSuggest', { auto: false }))
   }
 
@@ -204,9 +203,8 @@ const Query = (props: Props) => {
     const range = getRange(position, word)
 
     const { args, cursor } = splitQueryByArgs(value, offset)
-    const { argLeftOffset, prevCursorChar } = cursor
+    const { prevCursorChar } = cursor
 
-    const argBeforeCursor = prevCursorChar ?? (value.substring(argLeftOffset, offset) || '')
     const allArgs = args.flat()
     const [beforeOffsetArgs, [currentOffsetArg]] = args
     const [firstArg] = beforeOffsetArgs
@@ -217,7 +215,7 @@ const Query = (props: Props) => {
 
     if (command && !isCommandSupported) return asSuggestionsRef([])
     if (!command) {
-      if (position.lineNumber === 1 && position.column === 1) {
+      if ((position.lineNumber === 1 && position.column === 1) || beforeOffsetArgs.length === 0) {
         return asSuggestionsRef(getCommandsSuggestions(supportedCommands, range), false)
       }
 
@@ -232,7 +230,7 @@ const Query = (props: Props) => {
     const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset }
     const foundArg = findCurrentArgument(COMMANDS_LIST, beforeOffsetArgs)
 
-    if (argBeforeCursor.startsWith(FIELD_START_SYMBOL)) return handleFieldSuggestions(foundArg, range)
+    if (prevCursorChar === FIELD_START_SYMBOL) return handleFieldSuggestions(foundArg, range)
 
     switch (foundArg?.stopArg?.name) {
       case DefinedArgumentName.index: {

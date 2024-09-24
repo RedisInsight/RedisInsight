@@ -17,6 +17,12 @@ export class RdiHeader {
     importInput = Selector('[data-testid=import-file-modal-filepicker]');
     confirmUploadingPipelineBatton = Selector('[data-testid=submit-btn]');
 
+    resetPipelineButton = Selector('[data-testid=reset-pipeline-btn]');
+    stopPipelineButton = Selector('[data-testid=stop-pipeline-btn]');
+    startPipelineButton = Selector('[data-testid=start-pipeline-btn]');
+
+    pipelineStatus = Selector('[data-testid=pipeline-state-badge]');
+
     /**
      * Import pipeline
      * @param filePath the name if the file

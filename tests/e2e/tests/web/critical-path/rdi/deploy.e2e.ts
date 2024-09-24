@@ -143,7 +143,7 @@ test.after(async() => {
         .ok('Key list not loaded', { timeout: 5000 });
 });
 
-test('Verify that context is saved after navigation panel', async() => {
+test('Verify stop and start works', async() => {
 
     await myRedisDatabasePage.setActivePage(RedisOverviewPage.Rdi);
     await rdiInstancesListPage.clickRdiByName(rdiInstance.name);

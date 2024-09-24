@@ -20,10 +20,10 @@ export const asSuggestionsRef = (
   forceShow
 })
 
-export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, nextQoutes = true) =>
+export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, nextQuotes = true) =>
   indexes.map((index) => {
     const value = formatLongName(bufferToString(index))
-    const insertQueryQuotes = nextQoutes ? ' "$1"' : ''
+    const insertQueryQuotes = nextQuotes ? ' "$1"' : ''
 
     return {
       label: value || ' ',
@@ -83,15 +83,14 @@ export const getFunctionsSuggestions = (functions: SearchCommand[], range: monac
     detail: summary
   }))
 
-export const getCommandsSuggestions = (commands: SearchCommand[], range: monaco.IRange) => asSuggestionsRef(
+export const getCommandsSuggestions = (commands: SearchCommand[], range: monaco.IRange) =>
   commands.map((command) => buildSuggestion(command, range, {
     detail: generateDetail(command),
     insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
     documentation: {
       value: getCommandMarkdown(command as any)
     },
-  })), false
-)
+  }))
 
 export const getMandatoryArgumentSuggestions = (
   foundArg: FoundCommandArgument,
@@ -147,7 +146,7 @@ export const getGeneralSuggestions = (
   foundArg: Nullable<FoundCommandArgument>,
   allArgs: string[],
   range: monacoEditor.IRange,
-  fields: any[],
+  fields: any[]
 ): {
   suggestions: monacoEditor.languages.CompletionItem[],
   forceHide?: boolean
@@ -156,23 +155,9 @@ export const getGeneralSuggestions = (
   if (foundArg && !foundArg.isComplete) {
     return {
       suggestions: getMandatoryArgumentSuggestions(foundArg, fields, range),
-      helpWidgetData: {
-        isOpen: !!foundArg?.stopArg,
-        parent: foundArg?.parent,
-        currentArg: foundArg?.stopArg
-      }
+      helpWidgetData: { isOpen: !!foundArg?.stopArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg }
     }
   }
-
-  return getNextSuggestions(foundArg, allArgs, range)
-}
-
-export const getNextSuggestions = (
-  foundArg: Nullable<FoundCommandArgument>,
-  allArgs: string[],
-  range: monacoEditor.IRange
-) => {
-  if (foundArg && !foundArg.isComplete) return { suggestions: [], helpWidgetData: { isOpen: false } }
 
   return {
     suggestions: getCommandSuggestions(foundArg, allArgs, range),

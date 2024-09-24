@@ -667,7 +667,7 @@ const splitQueryByArgsTests: Array<{
         argRightOffset: 23,
         isCursorInQuotes: false,
         nextCursorChar: 'F',
-        prevCursorChar: undefined
+        prevCursorChar: ''
       }
     }
   },
@@ -692,7 +692,7 @@ const splitQueryByArgsTests: Array<{
         argLeftOffset: 27,
         argRightOffset: 39,
         isCursorInQuotes: false,
-        nextCursorChar: undefined,
+        nextCursorChar: '',
         prevCursorChar: 'S'
       }
     }
@@ -705,8 +705,8 @@ const splitQueryByArgsTests: Array<{
         argLeftOffset: 0,
         argRightOffset: 0,
         isCursorInQuotes: false,
-        nextCursorChar: undefined,
-        prevCursorChar: ' '
+        nextCursorChar: '',
+        prevCursorChar: ''
       }
     }
   },
@@ -718,8 +718,8 @@ const splitQueryByArgsTests: Array<{
         argLeftOffset: 0,
         argRightOffset: 0,
         isCursorInQuotes: false,
-        nextCursorChar: undefined,
-        prevCursorChar: ' '
+        nextCursorChar: '',
+        prevCursorChar: ''
       }
     }
   }

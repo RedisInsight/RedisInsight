@@ -91,8 +91,8 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
 
   const cursor = {
     isCursorInQuotes,
-    prevCursorChar: query[position - 1],
-    nextCursorChar: query[position],
+    prevCursorChar: query[position - 1]?.trim() || '',
+    nextCursorChar: query[position]?.trim() || '',
     argLeftOffset,
     argRightOffset
   }

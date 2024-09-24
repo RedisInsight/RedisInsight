@@ -58,13 +58,19 @@ test
 
 test.meta({ rte: rte.ossCluster })('Verify that PSUBSCRIBE works, that user can specify channel name to subscribe', async t => {
     const channelsName = 'first second third';
+    const namesList = channelsName.split(' ');
+
+    await t.expect(pubSubPage.channelsSubscribeInput.value).eql('*', 'the default value is not set');
     await t.typeText(pubSubPage.channelsSubscribeInput, channelsName, { replace: true });
     await t.click(pubSubPage.subscribeButton);
     await t.expect(pubSubPage.channelsSubscribeInput.hasAttribute('disabled')).ok('the field is not disabled after subscribe');
-    await pubSubPage.publishMessage(channelsName.split(' ')[0], 'published message');
+    await pubSubPage.publishMessage(namesList[0], 'published message');
     await verifyMessageDisplayingInPubSub('published message', true);
-    await pubSubPage.publishMessage(channelsName.split(' ')[1], 'second message');
+    await pubSubPage.publishMessage(namesList[1], 'second message');
     await verifyMessageDisplayingInPubSub('second message', true);
     await pubSubPage.publishMessage('not exist', 'not exist message');
     await verifyMessageDisplayingInPubSub('not exist message', false);
+
+    await t.expect(pubSubPage.patternsCount.textContent).contains(namesList.length.toString(), 'patterns count is not calculated correctly');
+    await t.expect(pubSubPage.messageCount.textContent).contains('2', 'message count is not calculated correctly');
 });

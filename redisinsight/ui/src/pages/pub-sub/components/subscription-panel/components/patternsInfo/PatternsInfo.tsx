@@ -17,7 +17,7 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
 
   return (
     <div className={styles.patternsContainer}>
-      <EuiText color="subdued" size="s" data-testid="messages-count">Patterns:&nbsp;{getChannelsCount()} </EuiText>
+      <EuiText color="subdued" size="s" data-testid="patterns-count">Patterns:&nbsp;{getChannelsCount()} </EuiText>
       <AppendInfo title={<>{channels?.trim().split(' ').map((ch) => <p>{ch}</p>)}</>} />
     </div>
   )

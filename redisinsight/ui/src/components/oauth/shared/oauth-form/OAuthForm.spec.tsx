@@ -1,10 +1,9 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { render, cleanup, clearStoreActions, mockedStore, fireEvent, screen, act, waitFor } from 'uiSrc/utils/test-utils'
+import { render, cleanup, mockedStore, fireEvent, screen, act, waitFor } from 'uiSrc/utils/test-utils'
 import { OAuthStrategy } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_SSO_EMAIL } from 'uiSrc/mocks/data/oauth'
-import { updateUserConfigSettings, userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import OAuthForm from './OAuthForm'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -18,17 +17,6 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
     source: 'source',
   }),
   oauthCloudPAgreementSelector: jest.fn().mockReturnValue(true),
-}))
-
-jest.mock('uiSrc/slices/user/user-settings', () => ({
-  ...jest.requireActual('uiSrc/slices/user/user-settings'),
-  userSettingsConfigSelector: jest.fn().mockReturnValue({
-    agreements: {
-      eula: true,
-      version: '1.0.1',
-      analytics: true,
-    },
-  })
 }))
 
 const onClick = jest.fn()
@@ -128,24 +116,5 @@ describe('OAuthForm', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('btn-submit'))
     })
-  })
-
-  it('should updaten analytics if analytics is set to false', () => {
-    (userSettingsConfigSelector as jest.Mock).mockReturnValueOnce({
-      agreements: {
-        eula: true,
-        version: '1.0.1',
-        analytics: false,
-      },
-    })
-
-    render(<OAuthForm>{(children) => (<>{children}</>)}</OAuthForm>)
-
-    fireEvent.click(screen.getByTestId('google-oauth'))
-
-    const expectedActions = [{}].fill(updateUserConfigSettings(), 0)
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
   })
 })

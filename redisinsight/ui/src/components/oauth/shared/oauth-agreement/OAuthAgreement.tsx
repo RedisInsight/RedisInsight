@@ -7,7 +7,7 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { setAgreement, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 
-import { updateUserConfigSettingsAction, userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { enableUserAnalyticsAction } from 'uiSrc/slices/user/user-settings'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -17,13 +17,12 @@ export interface Props {
 const OAuthAgreement = (props: Props) => {
   const { size = 'm' } = props
   const agreement = useSelector(oauthCloudPAgreementSelector)
-  const config = useSelector(userSettingsConfigSelector)
 
   const dispatch = useDispatch()
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked && !config?.agreements?.analytics) {
-      dispatch(updateUserConfigSettingsAction({ agreements: { ...config?.agreements, analytics: true } }))
+    if (e.target.checked) {
+      dispatch(enableUserAnalyticsAction())
     }
     dispatch(setAgreement(e.target.checked))
     localStorageService.set(BrowserStorageItem.OAuthAgreement, e.target.checked)

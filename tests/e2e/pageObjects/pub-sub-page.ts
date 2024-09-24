@@ -29,6 +29,9 @@ export class PubSubPage extends InstancePage {
     messageInput = Selector('[data-testid=field-message]');
     channelsSubscribeInput = Selector('[data-testid=channels-input]');
 
+    patternsCount = Selector('[data-testid=patterns-count]');
+    messageCount = Selector('[data-testid=messages-count]');
+
     /**
      * Publish message in pubsub
      * @param channel The name of channel

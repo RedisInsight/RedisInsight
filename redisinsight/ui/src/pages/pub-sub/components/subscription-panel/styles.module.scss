@@ -24,11 +24,7 @@
 .channels {
   margin-right: 8px;
 
-  input {
-    width: 210px;
-  }
-
-  :global(.euiFormControlLayout), input {
-    height: 30px;
+  :global(.euiFormControlLayout--compressed .inputAppendIcon > svg) {
+    height: 31px !important;
   }
 }

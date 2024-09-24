@@ -80,7 +80,7 @@ const Config = () => {
     if (cloudSsoFeature?.flag) {
       dispatch(fetchProfile())
     }
-  }, [cloudSsoFeature])
+  }, [cloudSsoFeature?.flag])
 
   useEffect(() => {
     featuresHighlight()

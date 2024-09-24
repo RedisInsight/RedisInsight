@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 import { plainToClass } from 'class-transformer';
-import { decode } from 'jsonwebtoken';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
@@ -10,6 +9,7 @@ import {
   POLLING_INTERVAL,
   MAX_POLLING_TIME,
   WAIT_BEFORE_POLLING,
+  PipelineActions,
 } from 'src/modules/rdi/constants';
 import {
   RdiDryRunJobDto,
@@ -33,6 +33,9 @@ import { convertKeysToCamelCase } from 'src/utils/base.helper';
 import { RdiPipelineTimeoutException } from 'src/modules/rdi/exceptions/rdi-pipeline.timeout-error.exception';
 import * as https from 'https';
 import { convertApiDataToRdiPipeline, convertRdiPipelineToApiPayload } from 'src/modules/rdi/utils/pipeline.util';
+import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipeline-failed.exception';
+import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
+import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
 
 export class ApiRdiClient extends RdiClient {
   protected readonly client: AxiosInstance;
@@ -113,7 +116,46 @@ export class ApiRdiClient extends RdiClient {
 
       const actionId = response.data.action_id;
 
-      return await this.pollActionStatus(actionId);
+      return await this.pollActionStatus(actionId, PipelineActions.Deploy);
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
+  }
+
+  async stopPipeline(): Promise<void> {
+    try {
+      const response = await this.client.post(
+        RdiUrl.StopPipeline, {},
+      );
+      const actionId = response.data.action_id;
+
+      return await this.pollActionStatus(actionId, PipelineActions.Stop);
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
+  }
+
+  async startPipeline(): Promise<void> {
+    try {
+      const response = await this.client.post(
+        RdiUrl.StartPipeline, {},
+      );
+      const actionId = response.data.action_id;
+
+      return await this.pollActionStatus(actionId, PipelineActions.Start);
+    } catch (e) {
+      throw wrapRdiPipelineError(e);
+    }
+  }
+
+  async resetPipeline(): Promise<void> {
+    try {
+      const response = await this.client.post(
+        RdiUrl.ResetPipeline, {},
+      );
+      const actionId = response.data.action_id;
+
+      return await this.pollActionStatus(actionId, PipelineActions.Reset);
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -199,7 +241,7 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  private async pollActionStatus(actionId: string, abortSignal?: AbortSignal): Promise<any> {
+  private async pollActionStatus(actionId: string, action: PipelineActions, abortSignal?: AbortSignal): Promise<any> {
     await new Promise((resolve) => setTimeout(resolve, WAIT_BEFORE_POLLING));
 
     const startTime = Date.now();
@@ -220,7 +262,18 @@ export class ApiRdiClient extends RdiClient {
         const { status, data, error } = response.data;
 
         if (status === 'failed') {
-          throw new RdiPipelineDeployFailedException(error?.message);
+          switch (action) {
+            case PipelineActions.Deploy:
+              throw new RdiPipelineDeployFailedException(error?.message);
+            case PipelineActions.Reset:
+              throw new RdiResetPipelineFailedException(error?.message);
+            case PipelineActions.Start:
+              throw new RdiStartPipelineFailedException(error?.message);
+            case PipelineActions.Stop:
+              throw new RdiStopPipelineFailedException(error?.message);
+            default:
+              throw new RdiPipelineDeployFailedException(error?.message);
+          }
         }
 
         if (status === 'completed') {

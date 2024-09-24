@@ -35,6 +35,17 @@ describe('Download', () => {
     expect(render(<Download />)).toBeTruthy()
   })
 
+  it('should call onClose when download clicked', async () => {
+    const onClose = jest.fn()
+    render(<Download onClose={onClose} />)
+
+    await act(() => {
+      fireEvent.click(screen.getByTestId('download-pipeline-btn'))
+    })
+
+    expect(onClose).toBeCalledTimes(1)
+  })
+
   it('should call proper telemetry event when button is clicked', async () => {
     const sendEventTelemetryMock = jest.fn();
     (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)

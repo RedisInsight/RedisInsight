@@ -12,10 +12,16 @@ import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover
 import { IPipeline } from 'uiSrc/slices/interfaces'
 import { fetchRdiPipeline, rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
-import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
+import Download from 'uiSrc/pages/rdi/instance/components/download/Download'
+import downloadIcon from 'uiSrc/assets/img/rdi/download.svg?react'
 
-const FetchPipelinePopover = () => {
+import styles from './styles.module.scss'
+
+export interface Props {
+  onClose?: () => void
+}
+
+const FetchPipelinePopover = ({ onClose }: Props) => {
   const { loading, data } = useSelector(rdiPipelineSelector)
 
   const { resetForm } = useFormikContext<IPipeline>()
@@ -28,6 +34,7 @@ const FetchPipelinePopover = () => {
     dispatch(
       fetchRdiPipeline(rdiInstanceId, () => {
         resetForm()
+        onClose?.()
       })
     )
   }
@@ -67,8 +74,9 @@ const FetchPipelinePopover = () => {
       button={(
         <EuiButtonEmpty
           color="text"
-          size="xs"
-          iconType={UploadIcon}
+          className={styles.downloadBtn}
+          iconSize="m"
+          iconType={downloadIcon}
           disabled={loading}
           aria-labelledby="Upload pipeline button"
           data-testid="upload-pipeline-btn"

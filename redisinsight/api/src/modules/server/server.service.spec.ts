@@ -2,8 +2,6 @@ import { TestingModule, Test } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
-  mockControlGroup,
-  mockControlNumber,
   mockEncryptionService,
   mockFeaturesConfigService,
   mockGetServerInfoResponse,
@@ -15,10 +13,8 @@ import config, { Config } from 'src/utils/config';
 import {
   ServerInfoNotFoundException,
   AppAnalyticsEvents,
-  TelemetryEvents,
 } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ITelemetryEvent } from 'src/modules/analytics/analytics.service';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { ServerService } from 'src/modules/server/server.service';
@@ -27,17 +23,6 @@ import { FeaturesConfigService } from 'src/modules/feature/features-config.servi
 import { AppType } from 'src/modules/server/models/server';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
-
-const mockEventPayload: ITelemetryEvent = {
-  event: TelemetryEvents.ApplicationStarted,
-  eventData: {
-    appVersion: SERVER_CONFIG.appVersion,
-    osPlatform: process.platform,
-    buildType: SERVER_CONFIG.buildType,
-    port: SERVER_CONFIG.port,
-  },
-  nonTracking: true,
-};
 
 describe('ServerService', () => {
   let service: ServerService;
@@ -66,8 +51,8 @@ describe('ServerService', () => {
       ],
     }).compile();
 
-    serverRepository = await module.get(ServerRepository);
-    eventEmitter = await module.get<EventEmitter2>(EventEmitter2);
+    serverRepository = module.get(ServerRepository);
+    eventEmitter = module.get(EventEmitter2);
     encryptionService = module.get(EncryptionService);
     service = module.get(ServerService);
     jest.spyOn(eventEmitter, 'emit');
@@ -89,19 +74,8 @@ describe('ServerService', () => {
           sessionId,
           appType: AppType.Docker,
           appVersion: SERVER_CONFIG.appVersion,
-          controlNumber: mockControlNumber,
-          controlGroup: mockControlGroup,
         },
       );
-      // Ignore: Valid for electron builds only
-      // expect(eventEmitter.emit).toHaveBeenNthCalledWith(
-      //   2,
-      //   AppAnalyticsEvents.Track,
-      //   {
-      //     ...mockEventPayload,
-      //     event: TelemetryEvents.ApplicationFirstStart,
-      //   },
-      // );
     });
     it('should not create server instance on the second application launch', async () => {
       serverRepository.exists.mockResolvedValueOnce(true);
@@ -119,19 +93,8 @@ describe('ServerService', () => {
           sessionId,
           appType: AppType.Docker,
           appVersion: SERVER_CONFIG.appVersion,
-          controlNumber: mockControlNumber,
-          controlGroup: mockControlGroup,
         },
       );
-      // Ignore: Valid for electron builds only
-      // expect(eventEmitter.emit).toHaveBeenNthCalledWith(
-      //   2,
-      //   AppAnalyticsEvents.Track,
-      //   {
-      //     ...mockEventPayload,
-      //     event: TelemetryEvents.ApplicationStarted,
-      //   },
-      // );
     });
   });
 

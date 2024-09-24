@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import axios from 'axios';
 import {
+  mockConstantsProvider,
   mockControlGroup,
   mockControlNumber, mockFeatureAnalytics,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
-  mockFeaturesConfigRepository,
+  mockFeaturesConfigRepository, mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
-import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { plainToClass } from 'class-transformer';
@@ -16,13 +16,15 @@ import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 import { FeatureConfigConfigDestination, FeatureServerEvents, KnownFeatures } from 'src/modules/feature/constants';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
+import { LocalFeaturesConfigService } from 'src/modules/feature/local.features-config.service';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 import * as defaultConfig from '../../../config/features-config.json';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe('FeaturesConfigService', () => {
-  let service: FeaturesConfigService;
+describe('LocalFeaturesConfigService', () => {
+  let service: LocalFeaturesConfigService;
   let repository: MockType<FeaturesConfigRepository>;
   let analytics: MockType<FeatureAnalytics>;
   let eventEmitter: EventEmitter2;
@@ -31,7 +33,7 @@ describe('FeaturesConfigService', () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        FeaturesConfigService,
+        LocalFeaturesConfigService,
         {
           provide: EventEmitter2,
           useFactory: () => ({
@@ -46,10 +48,14 @@ describe('FeaturesConfigService', () => {
           provide: FeatureAnalytics,
           useFactory: mockFeatureAnalytics,
         },
+        {
+          provide: ConstantsProvider,
+          useFactory: mockConstantsProvider,
+        },
       ],
     }).compile();
 
-    service = module.get(FeaturesConfigService);
+    service = module.get(LocalFeaturesConfigService);
     repository = module.get(FeaturesConfigRepository);
     analytics = module.get(FeatureAnalytics);
     eventEmitter = module.get(EventEmitter2);
@@ -130,9 +136,9 @@ describe('FeaturesConfigService', () => {
         data: plainToClass(FeaturesConfigData, defaultConfig),
       });
 
-      await service['sync']();
+      await service['sync'](mockSessionMetadata);
 
-      expect(repository.update).toHaveBeenCalledWith(mockFeaturesConfigJson);
+      expect(repository.update).toHaveBeenCalledWith(mockSessionMetadata, mockFeaturesConfigJson);
       expect(eventEmitter.emit).toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
       expect(analytics.sendFeatureFlagConfigUpdated).toHaveBeenCalledWith({
         oldVersion: defaultConfig.version,
@@ -147,9 +153,9 @@ describe('FeaturesConfigService', () => {
       });
       repository.update.mockRejectedValueOnce(new Error('update error'));
 
-      await service['sync']();
+      await service['sync'](mockSessionMetadata);
 
-      expect(repository.update).toHaveBeenCalledWith(mockFeaturesConfigJson);
+      expect(repository.update).toHaveBeenCalledWith(mockSessionMetadata, mockFeaturesConfigJson);
       expect(eventEmitter.emit).not.toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
       expect(analytics.sendFeatureFlagConfigUpdated).not.toHaveBeenCalled();
     });
@@ -159,7 +165,7 @@ describe('FeaturesConfigService', () => {
     it('should get controlNumber and controlGroup', async () => {
       repository.getOrCreate.mockResolvedValue(mockFeaturesConfig);
 
-      const result = await service['getControlInfo']();
+      const result = await service['getControlInfo'](mockSessionMetadata);
 
       expect(result).toEqual({
         controlNumber: mockControlNumber,

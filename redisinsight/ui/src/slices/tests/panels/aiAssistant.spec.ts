@@ -33,6 +33,7 @@ import reducer, {
   getExpertChatHistoryAction,
   removeExpertChatHistoryAction,
   aiExpertChatSelector,
+  setHideCopilotSplashScreen,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -72,6 +73,25 @@ describe('ai assistant slice', () => {
 
         // Act
         const nextState = reducer(initialState, setSelectedTab(AiChatType.Query))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('setHideCopilotSplashScreen', () => {
+      it('should properly set sate', () => {
+        // Arrange
+        const state = {
+          ...initialState,
+          hideCopilotSplashScreen: true,
+        }
+
+        // Act
+        const nextState = reducer(initialState, setHideCopilotSplashScreen(true))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {

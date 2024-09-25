@@ -1,0 +1,43 @@
+.container {
+  padding: 20px;
+  height: 100%;
+
+  .closeBtnWrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .contentWrapper {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    .header {
+      flex-shrink: 0;
+      padding-left: 20px;
+      margin-top:20px;
+    }
+
+    .copilotPreviewWrapper {
+      flex-grow: 1;
+      overflow: hidden;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .actionBtnWrapper {
+      flex-shrink: 0;
+      padding: 40px 20px;
+      align-self: flex-end;
+
+      .getStartedBtn {
+        width: 110px;
+      }
+    }
+  }
+}
+

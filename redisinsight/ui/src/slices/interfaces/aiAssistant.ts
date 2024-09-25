@@ -36,5 +36,6 @@ export interface StateAiAssistant {
     loading: boolean
     agreements: string[]
     messages: Array<AiChatMessage>
-  }
+  },
+  hideCopilotSplashScreen: boolean
 }

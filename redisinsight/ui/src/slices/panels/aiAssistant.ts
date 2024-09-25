@@ -38,7 +38,8 @@ export const initialState: StateAiAssistant = {
     loading: false,
     agreements: [],
     messages: []
-  }
+  },
+  hideCopilotSplashScreen: localStorageService.get(BrowserStorageItem.hideCopilotSplashScreen) ?? false,
 }
 
 // A slice for recipes
@@ -49,6 +50,10 @@ const aiAssistantSlice = createSlice({
     setSelectedTab: (state, { payload }: PayloadAction<AiChatType>) => {
       state.activeTab = payload
       sessionStorageService.set(BrowserStorageItem.selectedAiChat, payload)
+    },
+    setHideCopilotSplashScreen: (state, { payload }: PayloadAction<boolean>) => {
+      state.hideCopilotSplashScreen = payload
+      localStorageService.set(BrowserStorageItem.hideCopilotSplashScreen, payload)
     },
     updateAssistantChatAgreements: (state, { payload }: PayloadAction<boolean>) => {
       state.assistant.agreements = payload
@@ -164,6 +169,7 @@ export const aiExpertChatSelector = (state: RootState) => state.panels.aiAssista
 // Actions generated from the slice
 export const {
   createAssistantChat,
+  setHideCopilotSplashScreen,
   updateAssistantChatAgreements,
   updateExpertChatAgreements,
   clearAssistantChatId,

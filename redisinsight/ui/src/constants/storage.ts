@@ -35,7 +35,8 @@ enum BrowserStorageItem {
   capability = 'capability',
   aiChatSession = 'aiChatSession',
   selectedAiChat = 'selectedAiChat',
-  generalChatAgreements = 'generalChatAgreements'
+  generalChatAgreements = 'generalChatAgreements',
+  hideCopilotSplashScreen = 'hideCopilotSplashScreen',
 }
 
 export default BrowserStorageItem

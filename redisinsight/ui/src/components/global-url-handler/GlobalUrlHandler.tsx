@@ -38,7 +38,7 @@ const GlobalUrlHandler = () => {
       const actionUrl = new URL(fromUrl)
       const fromParams = new URLSearchParams(actionUrl.search)
       const pathname = actionUrl.hostname + actionUrl.pathname
-      const action = pathname?.replace(/^(\/\/?)/g, '')
+      const action = pathname?.replace(/^(\/\/?)|\/$/g, '')
 
       // @ts-ignore
       const urlProperties = Object.fromEntries(fromParams) || {}

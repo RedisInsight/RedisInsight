@@ -20,6 +20,7 @@ export interface IRedisConnectionOptions {
   useRetry?: boolean,
   connectionName?: string,
   clientLib?: RedisClientLib,
+  enableReadyCheck?: boolean,
 }
 
 @Injectable()

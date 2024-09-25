@@ -1,11 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { GoogleIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/google-idp.cloud.auth-strategy';
-import { CloudAuthIdpType, CloudAuthRequest } from 'src/modules/cloud/auth/models/cloud-auth-request';
+import {
+  CloudAuthIdpType,
+  CloudAuthRequest,
+  CloudAuthRequestOptions,
+} from 'src/modules/cloud/auth/models/cloud-auth-request';
 import { CloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/cloud-auth.strategy';
 import { SessionMetadata } from 'src/common/models';
 import { CloudSessionService } from 'src/modules/cloud/session/cloud-session.service';
 import { GithubIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/github-idp.cloud.auth-strategy';
+import { SsoIdpCloudAuthStrategy } from 'src/modules/cloud/auth/auth-strategy/sso-idp.cloud.auth-strategy';
 import { wrapHttpError } from 'src/common/utils';
 import {
   CloudOauthCanceledException,
@@ -20,6 +25,9 @@ import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.fla
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CloudAuthServerEvent } from 'src/modules/cloud/common/constants';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
+import {
+  CloudOauthSsoUnsupportedEmailException,
+} from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
 
 @Injectable()
 export class CloudAuthService {
@@ -31,9 +39,18 @@ export class CloudAuthService {
     private readonly sessionService: CloudSessionService,
     private readonly googleIdpAuthStrategy: GoogleIdpCloudAuthStrategy,
     private readonly githubIdpCloudAuthStrategy: GithubIdpCloudAuthStrategy,
+    private readonly ssoIdpCloudAuthStrategy: SsoIdpCloudAuthStrategy,
     private readonly analytics: CloudAuthAnalytics,
     private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  static getOAuthHttpRequestHeaders() {
+    return {
+      accept: 'application/json',
+      'cache-control': 'no-cache',
+      'content-type': 'application/x-www-form-urlencoded',
+    };
+  }
 
   static getAuthorizationServerRedirectError(
     query: { error_description: string, error: string },
@@ -69,6 +86,8 @@ export class CloudAuthService {
         return this.googleIdpAuthStrategy;
       case CloudAuthIdpType.GitHub:
         return this.githubIdpCloudAuthStrategy;
+      case CloudAuthIdpType.Sso:
+        return this.ssoIdpCloudAuthStrategy;
       default:
         throw new CloudOauthUnknownAuthorizationRequestException('Unknown cloud auth strategy');
     }
@@ -81,14 +100,11 @@ export class CloudAuthService {
    */
   async getAuthorizationUrl(
     sessionMetadata: SessionMetadata,
-    options: {
-      strategy: CloudAuthIdpType,
-      action?: string,
-      callback?: Function,
-    },
+    options: CloudAuthRequestOptions,
   ): Promise<string> {
     try {
-      const authRequest: any = await this.getAuthStrategy(options?.strategy).generateAuthRequest(sessionMetadata);
+      const authRequest: any = await this.getAuthStrategy(options?.strategy)
+        .generateAuthRequest(sessionMetadata, options);
       authRequest.callback = options?.callback;
       authRequest.action = options?.action;
 
@@ -100,6 +116,10 @@ export class CloudAuthService {
 
       return CloudAuthStrategy.generateAuthUrl(authRequest).toString();
     } catch (e) {
+      if (e instanceof CloudOauthSsoUnsupportedEmailException) {
+        throw e;
+      }
+
       throw new CloudOauthMisconfigurationException();
     }
   }
@@ -114,11 +134,7 @@ export class CloudAuthService {
       const tokenUrl = CloudAuthStrategy.generateExchangeCodeUrl(authRequest, code);
 
       const { data } = await axios.post(tokenUrl.toString().split('?')[0], tokenUrl.searchParams, {
-        headers: {
-          accept: 'application/json',
-          'cache-control': 'no-cache',
-          'content-type': 'application/x-www-form-urlencoded',
-        },
+        headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
 
       return data;
@@ -195,11 +211,7 @@ export class CloudAuthService {
 
       await axios.post(tokenUrl.toString()
         .split('?')[0], tokenUrl.searchParams, {
-        headers: {
-          accept: 'application/json',
-          'cache-control': 'no-cache',
-          'content-type': 'application/x-www-form-urlencoded',
-        },
+        headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
     } catch (e) {
       // ignore error
@@ -252,11 +264,7 @@ export class CloudAuthService {
 
       const { data } = await axios.post(tokenUrl.toString()
         .split('?')[0], tokenUrl.searchParams, {
-        headers: {
-          accept: 'application/json',
-          'cache-control': 'no-cache',
-          'content-type': 'application/x-www-form-urlencoded',
-        },
+        headers: CloudAuthService.getOAuthHttpRequestHeaders(),
       });
 
       await this.sessionService.updateSessionData(sessionMetadata.sessionId, {

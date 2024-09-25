@@ -12,11 +12,12 @@ import {
 } from 'uiSrc/slices/app/context'
 import { formatLongName, setTitle } from 'uiSrc/utils'
 import SourcePipelineDialog from 'uiSrc/pages/rdi/pipeline-management/components/source-pipeline-dialog'
-import { RdiPipelineManagementTemplate } from 'uiSrc/templates'
+import Navigation from 'uiSrc/pages/rdi/pipeline-management/components/navigation'
 
 import { removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
 import { InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import PipelinePageRouter from './PipelineManagementPageRouter'
+import styles from './styles.module.scss'
 
 export interface Props {
   routes: IRoute[]
@@ -67,10 +68,11 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   }, [pathname, lastViewedPage])
 
   return (
-    <RdiPipelineManagementTemplate>
+    <div className={styles.wrapper}>
+      <Navigation />
       <SourcePipelineDialog />
       <PipelinePageRouter routes={routes} />
-    </RdiPipelineManagementTemplate>
+    </div>
   )
 }
 

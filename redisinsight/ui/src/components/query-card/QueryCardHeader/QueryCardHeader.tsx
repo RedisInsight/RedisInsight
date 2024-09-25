@@ -11,7 +11,6 @@ import {
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
-import { format, parseISO } from 'date-fns'
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 
@@ -36,7 +35,7 @@ import { getViewTypeOptions, WBQueryType, getProfileViewTypeOptions, ProfileQuer
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { FullScreen } from 'uiSrc/components'
+import { FormatedDate, FullScreen } from 'uiSrc/components'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
@@ -180,10 +179,6 @@ const QueryCardHeader = (props: Props) => {
     onQueryReRun()
   }
 
-  const getFormatTime = () => (createdAt
-    && format(parseISO(createdAt?.toString()), `${parseISO(createdAt?.toString()).getFullYear() === new Date().getFullYear() ? 'LLL d,' : 'PP'} HH:mm:ss`)
-  ) || ''
-
   const handleToggleOpen = () => {
     if (!isFullScreen && !isSilentModeWithoutError(resultsMode, summary?.fail)) {
       sendEvent(
@@ -316,7 +311,7 @@ const QueryCardHeader = (props: Props) => {
             <EuiFlexItem className={cx(styles.time)} data-testid="command-execution-date-time">
               {!!createdAt && (
                 <EuiTextColor className={styles.timeText} component="div">
-                  {getFormatTime()}
+                  <FormatedDate date={createdAt} />
                 </EuiTextColor>
               )}
             </EuiFlexItem>

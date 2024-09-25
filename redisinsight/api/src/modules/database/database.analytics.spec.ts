@@ -307,7 +307,7 @@ describe('DatabaseAnalytics', () => {
       expect(sendEventSpy).toHaveBeenCalledWith(
         TelemetryEvents.DatabaseConnectedClientList,
         {
-          instanceId: mockDatabase.id,
+          databaseId: mockDatabase.id,
           version: mockDatabase.version,
           resp: '2',
         },

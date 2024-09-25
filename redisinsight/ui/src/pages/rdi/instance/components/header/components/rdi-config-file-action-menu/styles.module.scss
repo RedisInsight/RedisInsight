@@ -1,0 +1,16 @@
+.threeDotsBtn {
+  svg {
+    color: var(--buttonSecondaryTextColor) !important;
+  }
+}
+
+.popoverWrapper {
+  min-width: 200px;
+}
+
+.uploadBtn {
+  :global(.euiButtonEmpty__text) {
+    margin-inline: 4px;
+  }
+}
+

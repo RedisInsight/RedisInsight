@@ -228,6 +228,7 @@ describe('OAuthJobs', () => {
 
     const expectedActions = [
       logoutUser(),
+      setSSOFlow(),
       addInfiniteNotification(INFINITE_MESSAGES.DATABASE_EXISTS()),
       setSSOFlow(),
       setSocialDialogState(null),

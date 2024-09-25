@@ -1,8 +1,7 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
-import { getFormatTime } from 'uiSrc/utils/streamUtils'
-
+import { FormatedDate } from '../formated-date'
 import styles from './styles.module.scss'
 
 const buttonString = 'Reset Filter'
@@ -138,8 +137,8 @@ const RangeFilter = (props: Props) => {
     return (
       <div data-testid="mock-fill-range" className={styles.rangeWrapper}>
         <div className={cx(styles.sliderRange, styles.mockRange)}>
-          <div className={styles.sliderLeftValue} data-testid="range-left-timestamp">{getFormatTime(start?.toString())}</div>
-          <div className={styles.sliderRightValue} data-testid="range-right-timestamp">{getFormatTime(end?.toString())}</div>
+          <div className={styles.sliderLeftValue} data-testid="range-left-timestamp"><FormatedDate date={start?.toString()} /></div>
+          <div className={styles.sliderRightValue} data-testid="range-right-timestamp"><FormatedDate date={end?.toString()} /></div>
         </div>
       </div>
     )
@@ -192,7 +191,7 @@ const RangeFilter = (props: Props) => {
                 })
               }
             >
-              {getFormatTime(startVal?.toString())}
+              <FormatedDate date={startVal?.toString()} />
             </div>
             <div className={
               cx(styles.sliderRightValue,
@@ -202,7 +201,7 @@ const RangeFilter = (props: Props) => {
                 })
               }
             >
-              {getFormatTime(endVal?.toString())}
+              <FormatedDate date={endVal?.toString()} />
             </div>
           </div>
         </div>

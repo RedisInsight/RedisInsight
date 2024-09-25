@@ -51,6 +51,7 @@ const selectKey = (state: any, selectedKey: any, data?: any = {}) => {
       ...state.app,
       context: {
         ...state.app.context,
+        contextInstanceId: 'instanceId',
         browser: {
           ...state.app.context.browser,
           bulkActions: {

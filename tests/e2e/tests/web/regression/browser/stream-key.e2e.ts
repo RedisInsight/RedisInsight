@@ -55,6 +55,7 @@ test('Verify that user can sort ASC/DESC by Entry ID', async t => {
     // Add new Stream key with 5 EntryIds
     for(let i = 0; i < 5; i++){
         await browserPage.Cli.sendCommandInCli(command);
+        await t.wait(1000);
     }
     // Open key details and check Entry ID ASC sorting
     await browserPage.openKeyDetails(keyName);

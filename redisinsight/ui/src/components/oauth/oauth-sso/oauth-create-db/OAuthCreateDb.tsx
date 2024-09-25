@@ -18,7 +18,8 @@ import { addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slice
 import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
 import { setIsRecommendedSettingsSSO, setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
-import { OAuthAdvantages, OAuthAgreement, OAuthRecommendedSettings, OAuthSocialButtons } from '../../shared'
+import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
+import { OAuthAdvantages, OAuthAgreement, OAuthRecommendedSettings } from '../../shared'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -89,19 +90,23 @@ const OAuthCreateDb = (props: Props) => {
         </EuiFlexItem>
         <EuiFlexItem className={styles.socialContainer}>
           {!data ? (
-            <>
-              <EuiText className={styles.subTitle}>Get started with</EuiText>
-              <EuiTitle className={styles.title}><h2>Free Cloud database</h2></EuiTitle>
-              <OAuthSocialButtons
-                className={styles.socialButtons}
-                onClick={handleSocialButtonClick}
-                action={OAuthSocialAction.Create}
-              />
-              <div>
-                <OAuthRecommendedSettings value={isRecommended} onChange={handleChangeRecommendedSettings} />
-                <OAuthAgreement />
-              </div>
-            </>
+            <OAuthForm
+              className={styles.socialButtons}
+              onClick={handleSocialButtonClick}
+              action={OAuthSocialAction.Create}
+            >
+              {(form: React.ReactNode) => (
+                <>
+                  <EuiText className={styles.subTitle}>Get started with</EuiText>
+                  <EuiTitle className={styles.title}><h2>Free Cloud database</h2></EuiTitle>
+                  {form}
+                  <div>
+                    <OAuthRecommendedSettings value={isRecommended} onChange={handleChangeRecommendedSettings} />
+                    <OAuthAgreement />
+                  </div>
+                </>
+              )}
+            </OAuthForm>
           ) : (
             <>
               <EuiText className={styles.subTitle}>Get your</EuiText>

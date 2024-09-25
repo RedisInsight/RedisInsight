@@ -80,7 +80,7 @@ export default {
     migrateOldFolders: process.env.RI_MIGRATE_OLD_FOLDERS ? process.env.RI_MIGRATE_OLD_FOLDERS === 'true' : true,
     autoBootstrap: process.env.RI_AUTO_BOOTSTRAP ? process.env.RI_AUTO_BOOTSTRAP === 'true' : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
-    appVersion: process.env.RI_APP_VERSION || '2.54.0',
+    appVersion: process.env.RI_APP_VERSION || '2.56.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -123,8 +123,8 @@ export default {
   },
   redis_scan: {
     countDefault: parseInt(process.env.RI_SCAN_COUNT_DEFAULT, 10) || 200,
-    countThreshold: parseInt(process.env.RI_SCAN_COUNT_THRESHOLD, 10) || 10000,
-    countThresholdMax: parseInt(process.env.RI_SCAN_COUNT_THRESHOLD_MAX, 10) || Number.MAX_VALUE,
+    scanThreshold: parseInt(process.env.RI_SCAN_THRESHOLD, 10) || 10000,
+    scanThresholdMax: parseInt(process.env.RI_SCAN_THRESHOLD_MAX, 10) || Number.MAX_VALUE,
   },
   modules: {
     json: {
@@ -274,6 +274,16 @@ export default {
         clientId: process.env.RI_CLOUD_IDP_GH_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
         redirectUri: process.env.RI_CLOUD_IDP_GH_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
         idp: process.env.RI_CLOUD_IDP_GH_ID,
+      },
+      sso: {
+        authorizeUrl: process.env.RI_CLOUD_IDP_SSO_AUTHORIZE_URL || process.env.RI_CLOUD_IDP_AUTHORIZE_URL,
+        tokenUrl: process.env.RI_CLOUD_IDP_SSO_TOKEN_URL || process.env.RI_CLOUD_IDP_TOKEN_URL,
+        revokeTokenUrl: process.env.RI_CLOUD_IDP_SSO_REVOKE_TOKEN_URL || process.env.RI_CLOUD_IDP_REVOKE_TOKEN_URL,
+        issuer: process.env.RI_CLOUD_IDP_SSO_ISSUER || process.env.RI_CLOUD_IDP_ISSUER,
+        clientId: process.env.RI_CLOUD_IDP_SSO_CLIENT_ID || process.env.RI_CLOUD_IDP_CLIENT_ID,
+        redirectUri: process.env.RI_CLOUD_IDP_SSO_REDIRECT_URI || process.env.RI_CLOUD_IDP_REDIRECT_URI,
+        emailVerificationUri: process.env.RI_CLOUD_IDP_SSO_EMAIL_VERIFICATION_URI || 'saml/okta_idp_id',
+        idp: process.env.RI_CLOUD_IDP_SSO_ID,
       },
     },
   },

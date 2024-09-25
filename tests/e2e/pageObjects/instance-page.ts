@@ -3,6 +3,7 @@ import { Profiler, Cli, CommandHelper } from './components/bottom-panel';
 import { OverviewPanel } from './components/overview-panel';
 import { InsightsPanel } from './components/insights-panel';
 import { MonacoEditor } from './components/monaco-editor';
+import { NavigationHeader } from './components/navigation/navigation-header';
 export class InstancePage extends BasePage {
     Profiler = new Profiler();
     Cli = new Cli();
@@ -10,4 +11,5 @@ export class InstancePage extends BasePage {
     OverviewPanel = new OverviewPanel();
     InsightsPanel = new InsightsPanel();
     MonacoEditor = new MonacoEditor();
+    NavigationHeader = new NavigationHeader();
 }

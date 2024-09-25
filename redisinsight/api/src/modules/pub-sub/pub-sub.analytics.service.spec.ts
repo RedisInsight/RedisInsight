@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { mockDatabase } from 'src/__mocks__';
 import { TelemetryEvents } from 'src/constants';
 import { PubSubAnalyticsService } from './pub-sub.analytics.service';
+import { SubscriptionType } from './constants';
 
 const instanceId = mockDatabase.id;
 
@@ -45,15 +46,32 @@ describe('PubSubAnalyticsService', () => {
   });
 
   describe('sendChannelSubscribeEvent', () => {
-    it('should emit sendChannelSubscribe event', () => {
+    it('should emit sendChannelSubscribe event for all channels', () => {
       service.sendChannelSubscribeEvent(
         instanceId,
+        [{ channel: '*', type: SubscriptionType.Subscribe }],
       );
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         TelemetryEvents.PubSubChannelSubscribed,
         {
           databaseId: instanceId,
+          allChannels: 'yes',
+        },
+      );
+    });
+
+    it('should emit sendChannelSubscribe event not for all channels', () => {
+      service.sendChannelSubscribeEvent(
+        instanceId,
+        [{ channel: '1', type: SubscriptionType.Subscribe }],
+      );
+
+      expect(sendEventMethod).toHaveBeenCalledWith(
+        TelemetryEvents.PubSubChannelSubscribed,
+        {
+          databaseId: instanceId,
+          allChannels: 'no',
         },
       );
     });

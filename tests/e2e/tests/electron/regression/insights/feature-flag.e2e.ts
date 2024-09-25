@@ -35,10 +35,10 @@ test.skip('Verify that Insights panel can be displayed for Electron app accordin
     // Update remote config .json to config with buildType filter excluding current app build
     await modifyFeaturesConfigJson(pathes.dockerConfig);
     await updateControlNumber(48.2);
-    await t.expect(browserPage.InsightsPanel.explorePanelButton.exists).notOk('Insights panel displayed when filter excludes this buildType');
+    await t.expect(browserPage.NavigationHeader.insightsTriggerButton.exists).notOk('Insights panel displayed when filter excludes this buildType');
 
     // Update remote config .json to config with buildType filter including current app build
     await modifyFeaturesConfigJson(pathes.electronConfig);
     await updateControlNumber(48.2);
-    await t.expect(browserPage.InsightsPanel.explorePanelButton.exists).ok('Insights panel not displayed when filter includes this buildType');
+    await t.expect(browserPage.NavigationHeader.insightsTriggerButton.exists).ok('Insights panel not displayed when filter includes this buildType');
 });

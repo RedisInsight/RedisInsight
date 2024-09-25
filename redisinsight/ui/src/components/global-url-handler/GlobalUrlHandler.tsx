@@ -55,7 +55,6 @@ const GlobalUrlHandler = () => {
       const transformedProperties = transformQueryParamsObject(urlProperties)
       handleCommonProperties(transformedProperties)
 
-      console.log(transformedProperties)
       if (action === UrlHandlingActions.Connect) connectToDatabase(urlProperties)
       if (action === UrlHandlingActions.Open) openPage(transformedProperties)
     } catch (_e) {

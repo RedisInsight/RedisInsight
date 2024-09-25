@@ -174,6 +174,8 @@ const ManualConnectionWrapper = (props: Props) => {
       sentinelMasterName,
       sentinelMasterUsername,
       sentinelMasterPassword,
+      ssh,
+      tls
     } = values
 
     const database: any = {
@@ -186,6 +188,8 @@ const ManualConnectionWrapper = (props: Props) => {
       password,
       compressor,
       timeout: timeout ? toNumber(timeout) * 1_000 : toNumber(DEFAULT_TIMEOUT),
+      ssh,
+      tls
     }
 
     // add tls & ssh for database (modifies database object)

@@ -1,4 +1,4 @@
-import { AppType, Server } from 'src/modules/server/models/server';
+import { AppType, PackageType, Server } from 'src/modules/server/models/server';
 import { ServerEntity } from 'src/modules/server/entities/server.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import config, { Config } from 'src/utils/config';
@@ -28,6 +28,7 @@ export const mockGetServerInfoResponse = Object.assign(new GetServerInfoResponse
     EncryptionStrategy.PLAIN,
     EncryptionStrategy.KEYTAR,
   ],
+  packageType: PackageType.Unknown,
 });
 
 export const mockServerRepository = jest.fn(() => ({

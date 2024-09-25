@@ -40,7 +40,7 @@ const CopilotSplashScreen = ({ onClose }: Props) => {
           data-testid="close-copilot-splashscreen-btn"
         />
       </div>
-      <div className={styles.contentWrapper}>
+      <div className={styles.contentWrapper} data-testid="copilot-splashscreen">
         <div className={styles.header}>
           <EuiTitle size="s">
             <span>Redis Copilot</span>

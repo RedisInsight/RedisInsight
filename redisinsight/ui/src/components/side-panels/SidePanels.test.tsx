@@ -269,7 +269,7 @@ describe('SidePanels', () => {
     })
 
     render(<SidePanels />)
-    expect(screen.getByTestId('redis-copilot')).toBeInTheDocument()
+    expect(screen.getByTestId('copilot-splashscreen')).toBeInTheDocument()
   })
 
   it('should not render copilot tab if not any chats available', () => {

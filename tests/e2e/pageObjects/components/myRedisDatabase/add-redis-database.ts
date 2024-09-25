@@ -64,7 +64,7 @@ export class AddRedisDatabase {
     // CHECKBOXES
     useSSHCheckbox = Selector('[data-testid=use-ssh]~div', { timeout: 500 });
     dataCompressorCheckbox = Selector('[data-testid=showCompressor] ~ label');
-    requiresTlsClientCheckbox = Selector('[data-testid=tls-required-checkbox]');
+    requiresTlsClientCheckbox = Selector('[data-testid=tls-required-checkbox]  ~ label');
     // RADIO BUTTONS
     sshPasswordRadioBtn = Selector('#password~div', { timeout: 500 });
     sshPrivateKeyRadioBtn = Selector('#privateKey~div', { timeout: 500 });

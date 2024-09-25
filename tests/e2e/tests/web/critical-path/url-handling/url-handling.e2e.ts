@@ -4,6 +4,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { DatabaseHelper } from '../../../../helpers/database';
+import { OnboardingCardsDialog } from '../../../../pageObjects/dialogs';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const workbenchPage = new WorkbenchPage();
@@ -11,6 +12,7 @@ const browserPage = new BrowserPage();
 
 const databaseAPIRequests = new DatabaseAPIRequests();
 const databaseHelper = new DatabaseHelper();
+const onboardingCardsDialog = new OnboardingCardsDialog();
 
 const { host, port, databaseName, databaseUsername = '', databasePassword = '' } = ossStandaloneRedisGears;
 const username = 'alice&&';
@@ -51,7 +53,7 @@ test
     });
 
 //Verify that RedisInsight can work with the encoded redis URLs passed from Cloud via deep linking.
-test
+test.only
     .before(async()  => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
         await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);
@@ -74,7 +76,8 @@ test
             subscriptionType: 'fixed',
             planMemoryLimit: '30',
             memoryLimitMeasurementUnit: 'mb',
-            free: 'true'
+            free: 'true',
+            onboarding: 'true'
         };
 
         await t.navigateTo(generateLink(connectUrlParams));
@@ -87,7 +90,11 @@ test
         //Verify that the same db is not added
         await t.navigateTo(generateLink(connectUrlParams));
         await t.wait(10_000);
+        await t.click(workbenchPage.NavigationPanel.browserButton);
+        await t.expect(onboardingCardsDialog.showMeAroundButton.exists).ok('onboarding is nor reset');
+        await t.click(onboardingCardsDialog.skipTourButton);
         await t.click(workbenchPage.NavigationPanel.myRedisDBButton);
         await t.expect(browserPage.notification.exists).notOk({ timeout: 10000 });
         await t.expect(myRedisDatabasePage.dbNameList.child('span').withExactText(databaseName).count).eql(2, 'the same db is added twice');
+
     });

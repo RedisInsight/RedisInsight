@@ -88,7 +88,7 @@ const GlobalUrlHandler = () => {
       }
     }
 
-    history.push(Pages.browser(id))
+    history.push(id ? Pages.browser(id) : Pages.home)
   }
 
   const connectToDatabase = (properties: Record<string, any>) => {

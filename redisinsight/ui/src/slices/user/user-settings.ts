@@ -182,3 +182,14 @@ export function updateUserConfigSettingsAction(
     }
   }
 }
+
+export function enableUserAnalyticsAction() {
+  return async (dispatch: AppDispatch, stateInit: () => RootState) => {
+    const state = stateInit()
+    const agreements = state?.user?.settings?.config?.agreements
+
+    if (agreements && !agreements.analytics) {
+      dispatch(updateUserConfigSettingsAction({ agreements: { ...agreements, analytics: true } }))
+    }
+  }
+}

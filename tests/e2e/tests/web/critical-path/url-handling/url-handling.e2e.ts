@@ -53,7 +53,7 @@ test
     });
 
 //Verify that RedisInsight can work with the encoded redis URLs passed from Cloud via deep linking.
-test.only
+test
     .before(async()  => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisGears);
         await browserPage.Cli.sendCommandInCli(`acl DELUSER ${username}`);

@@ -105,7 +105,7 @@ describe('AutodiscoveryService', () => {
     it('should not discover databases REDIS_STACK builds', async () => {
       mockServerConfig.buildType = 'REDIS_STACK';
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(settingsService.getAppSettings).toHaveBeenCalledTimes(0);
       expect(databaseService.list).toHaveBeenCalledTimes(0);
@@ -115,7 +115,7 @@ describe('AutodiscoveryService', () => {
     it('should not discover databases if not a first start', async () => {
       settingsService.getAppSettings.mockResolvedValue({ agreements: {} });
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
       expect(databaseService.list).toHaveBeenCalledTimes(0);
@@ -125,7 +125,7 @@ describe('AutodiscoveryService', () => {
     it('should not discover databases if already have databases', async () => {
       databaseService.list.mockResolvedValue([{}]);
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
       expect(databaseService.list).toHaveBeenCalledTimes(1);
@@ -133,7 +133,7 @@ describe('AutodiscoveryService', () => {
     });
 
     it('should discover databases', async () => {
-      await service.onModuleInit();
+      await service.init();
 
       expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
       expect(databaseService.list).toHaveBeenCalledTimes(1);
@@ -143,7 +143,7 @@ describe('AutodiscoveryService', () => {
     it('should not fail in case of an error', async () => {
       discoverDatabasesSpy.mockRejectedValueOnce(new Error());
 
-      await service.onModuleInit();
+      await service.init();
 
       expect(settingsService.getAppSettings).toHaveBeenCalledTimes(1);
       expect(databaseService.list).toHaveBeenCalledTimes(1);

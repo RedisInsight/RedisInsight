@@ -60,27 +60,57 @@ describe('AnalyticsService', () => {
     expect(anonymousId).toEqual(NON_TRACKING_ANONYMOUS_ID);
   });
 
-  describe('initialize', () => {
-    it('should set anonymousId', () => {
-      service.initialize({
+  describe('init', () => {
+    let sendEventSpy;
+
+    beforeEach(() => {
+      sendEventSpy = jest.spyOn(service, 'sendEvent');
+    });
+
+    it('should set anonymousId and send application started event', () => {
+      service.init({
         anonymousId: mockAnonymousId,
         sessionId,
         appType: AppType.Electron,
         controlNumber: mockControlNumber,
         controlGroup: mockControlGroup,
         appVersion: mockAppVersion,
+        firstStart: false,
       });
 
       const anonymousId = service.getAnonymousId();
 
       expect(anonymousId).toEqual(mockAnonymousId);
+      expect(sendEventSpy).toHaveBeenCalledTimes(1);
+      expect(sendEventSpy).toHaveBeenCalledWith(expect.objectContaining({
+        event: TelemetryEvents.ApplicationStarted,
+      }));
+    });
+    it('should set anonymousId and send application first start event', () => {
+      service.init({
+        anonymousId: mockAnonymousId,
+        sessionId,
+        appType: AppType.Electron,
+        controlNumber: mockControlNumber,
+        controlGroup: mockControlGroup,
+        appVersion: mockAppVersion,
+        firstStart: true,
+      });
+
+      const anonymousId = service.getAnonymousId();
+
+      expect(anonymousId).toEqual(mockAnonymousId);
+      expect(sendEventSpy).toHaveBeenCalledTimes(1);
+      expect(sendEventSpy).toHaveBeenCalledWith(expect.objectContaining({
+        event: TelemetryEvents.ApplicationFirstStart,
+      }));
     });
   });
 
   describe('sendEvent', () => {
     beforeEach(() => {
       mockAnalyticsTrack = jest.fn();
-      service.initialize({
+      service.init({
         anonymousId: mockAnonymousId,
         sessionId,
         appType: AppType.Electron,
@@ -118,6 +148,7 @@ describe('AnalyticsService', () => {
     });
     it('should not send event if permission are not granted', async () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+      mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
       await service.sendEvent({
         event: 'SOME_EVENT',
@@ -129,6 +160,7 @@ describe('AnalyticsService', () => {
     });
     it('should send event for non tracking events event if permission are not granted', async () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+      mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
       await service.sendEvent({
         event: TelemetryEvents.ApplicationStarted,
@@ -156,6 +188,7 @@ describe('AnalyticsService', () => {
     });
     it('should send event for non tracking with regular payload', async () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
+      mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
       await service.sendEvent({
         event: TelemetryEvents.ApplicationStarted,
@@ -186,7 +219,7 @@ describe('AnalyticsService', () => {
   describe('sendPage', () => {
     beforeEach(() => {
       mockAnalyticsPage = jest.fn();
-      service.initialize({
+      service.init({
         anonymousId: mockAnonymousId,
         sessionId,
         appType: AppType.Electron,

@@ -73,7 +73,7 @@ export abstract class ServerService {
    * Initialize Server module.
    * Note: should be called once
    */
-  public abstract init(): Promise<void>;
+  public abstract init(): Promise<boolean>;
 
   /**
    * Get general server info

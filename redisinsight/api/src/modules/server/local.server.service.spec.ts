@@ -5,15 +5,12 @@ import {
   mockEncryptionService,
   mockFeaturesConfigService,
   mockGetServerInfoResponse,
-  mockServer,
   mockServerRepository,
   mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
-import config, { Config } from 'src/utils/config';
 import {
   ServerInfoNotFoundException,
-  AppAnalyticsEvents,
 } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
@@ -21,10 +18,7 @@ import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { ServerService } from 'src/modules/server/server.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
-import { AppType } from 'src/modules/server/models/server';
 import { LocalServerService } from 'src/modules/server/local.server.service';
-
-const SERVER_CONFIG = config.get('server') as Config['server'];
 
 describe('LocalServerService', () => {
   let service: ServerService;
@@ -59,43 +53,22 @@ describe('LocalServerService', () => {
     jest.spyOn(eventEmitter, 'emit');
   });
 
-  describe('onApplicationBootstrap', () => {
+  describe('init', () => {
     it('should create server instance on first application launch', async () => {
       serverRepository.exists.mockResolvedValueOnce(false);
 
-      await service.init();
+      expect(await service.init()).toEqual(true);
 
       expect(serverRepository.exists).toHaveBeenCalled();
       expect(serverRepository.getOrCreate).toHaveBeenCalled();
-      expect(eventEmitter.emit).toHaveBeenNthCalledWith(
-        1,
-        AppAnalyticsEvents.Initialize,
-        {
-          anonymousId: mockServer.id,
-          sessionId: expect.any(Number),
-          appType: AppType.Docker,
-          appVersion: SERVER_CONFIG.appVersion,
-        },
-      );
     });
     it('should not create server instance on the second application launch', async () => {
       serverRepository.exists.mockResolvedValueOnce(true);
 
-      await service.init();
+      expect(await service.init()).toEqual(false);
 
       expect(serverRepository.exists).toHaveBeenCalled();
       expect(serverRepository.getOrCreate).toHaveBeenCalled();
-
-      expect(eventEmitter.emit).toHaveBeenNthCalledWith(
-        1,
-        AppAnalyticsEvents.Initialize,
-        {
-          anonymousId: mockServer.id,
-          sessionId: expect.any(Number),
-          appType: AppType.Docker,
-          appVersion: SERVER_CONFIG.appVersion,
-        },
-      );
     });
   });
 

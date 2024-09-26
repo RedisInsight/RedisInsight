@@ -33,6 +33,7 @@ enum BrowserStorageItem {
   insightsPanel = 'insightsPanel',
   sidePanel = 'sidePanel',
   capability = 'capability',
+  hideCopilotSplashScreen = 'hideCopilotSplashScreen',
 }
 
 export default BrowserStorageItem

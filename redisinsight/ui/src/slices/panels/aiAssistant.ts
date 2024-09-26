@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid'
 
 import { AxiosError } from 'axios'
-import { apiService } from 'uiSrc/services'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { apiService, localStorageService } from 'uiSrc/services'
+import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { AiAgreement, AiChatMessage, BotType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
@@ -27,8 +27,9 @@ export const initialState: StateAiAssistant = {
     loading: false,
     agreementLoading: false,
     agreements: [],
-    messages: [],
+    messages: []
   },
+  hideCopilotSplashScreen: localStorageService.get(BrowserStorageItem.hideCopilotSplashScreen) ?? false,
 }
 
 // A slice for recipes
@@ -36,6 +37,10 @@ const aiAssistantSlice = createSlice({
   name: 'aiAssistant',
   initialState,
   reducers: {
+    setHideCopilotSplashScreen: (state, { payload }: PayloadAction<boolean>) => {
+      state.hideCopilotSplashScreen = payload
+      localStorageService.set(BrowserStorageItem.hideCopilotSplashScreen, payload)
+    },
     getAiAgreement: (state) => {
       state.ai.agreementLoading = true
     },
@@ -123,6 +128,7 @@ export const {
   sendAiAnswer,
   clearAiAgreements,
   clearAiChatHistory,
+  setHideCopilotSplashScreen,
 } = aiAssistantSlice.actions
 
 // The reducer

@@ -20,6 +20,7 @@ import reducer, {
   getAiAgreementAction,
   removeAiChatHistoryAction,
   createAiAgreementAction,
+  setHideCopilotSplashScreen,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
 import { AiAgreement, AiChatMessage, AiChatMessageType, BotType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -50,6 +51,25 @@ describe('ai assistant slice', () => {
       expect(result).toEqual(nextState)
     })
 
+    describe('setHideCopilotSplashScreen', () => {
+      it('should properly set sate', () => {
+        // Arrange
+        const state = {
+          ...initialState,
+          hideCopilotSplashScreen: true,
+        }
+
+        // Act
+        const nextState = reducer(initialState, setHideCopilotSplashScreen(true))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
     describe('getAiAgreement', () => {
       it('should properly set state', () => {
         // Arrange
@@ -70,6 +90,27 @@ describe('ai assistant slice', () => {
     })
 
     describe('getAiAgreementSuccess', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          agreementLoading: false,
+          agreements: expect.any(Array)
+        }
+
+        // Act
+        const aiAgreement = { id: 'testId', databaseId: null, accountId: '1234', createdAt: new Date('2024-12-11') }
+        const nextState = reducer(initialState, getAiAgreementSuccess(aiAgreement))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('createAssistantChat', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
@@ -415,7 +456,7 @@ describe('ai assistant slice', () => {
 
     describe('getAiAgreementAction', () => {
       it('should call proper actions with success result', async () => {
-        const aiAgreement: AiAgreement = { id: 'id', databaseId: 'dbId', accountId: '1234', date: new Date('2024-11-11') }
+        const aiAgreement: AiAgreement = { id: 'id', databaseId: 'dbId', accountId: '1234', createdAt: new Date('2024-11-11') }
         const data = { aiAgreement }
 
         const responsePayload = { data, status: 200 }
@@ -460,7 +501,7 @@ describe('ai assistant slice', () => {
 
     describe('createAiAgreementAction', () => {
       it('should call proper actions with success result', async () => {
-        const aiAgreement: AiAgreement = { id: 'id', databaseId: '1', accountId: '1234', date: new Date('2024-11-11') }
+        const aiAgreement: AiAgreement = { id: 'id', databaseId: '1', accountId: '1234', createdAt: new Date('2024-11-11') }
 
         const responsePayload = { data: aiAgreement, status: 200 }
 

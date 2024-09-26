@@ -14,7 +14,7 @@ import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-
 export class ImportDatabaseDto extends PickType(Database, [
   'host', 'port', 'name', 'db', 'username', 'password',
   'connectionType', 'tls', 'verifyServerCert', 'sentinelMaster', 'nodes',
-  'new', 'ssh', 'sshOptions', 'provider', 'compressor', 'modules',
+  'new', 'ssh', 'sshOptions', 'provider', 'compressor', 'modules', 'tlsServername',
 ] as const) {
   @Expose()
   @IsNotEmpty()

@@ -115,6 +115,9 @@ export default {
   AI_QUERY_MAX_TOKENS_RATE_LIMIT: 'Token count exceeds the conversation limit',
 
   RDI_DEPLOY_PIPELINE_FAILURE: 'Failed to deploy pipeline',
+  RDI_RESET_PIPELINE_FAILURE: 'Failed to reset pipeline',
+  RDI_STOP_PIPELINE_FAILURE: 'Failed to stop pipeline',
+  RDI_START_PIPELINE_FAILURE: 'Failed to start pipeline',
   RDI_TIMEOUT_ERROR: 'Encountered a timeout error while attempting to retrieve data',
   RDI_VALIDATION_ERROR: 'Validation error',
   INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',

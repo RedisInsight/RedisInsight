@@ -9,7 +9,7 @@ import { DatabaseInfoProvider } from 'src/modules/database/providers/database-in
 import { RedisErrorCodes } from 'src/constants';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
-import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import {
   discoverClusterNodes, discoverSentinelMasterGroups, isCluster, isSentinel,
 } from 'src/modules/redis/utils';
@@ -28,9 +28,15 @@ export class DatabaseFactory {
 
   /**
    * Create model
+   * @param sessionMetadata
    * @param database
+   * @param options
    */
-  async createDatabaseModel(sessionMetadata: SessionMetadata, database: Database): Promise<Database> {
+  async createDatabaseModel(
+    sessionMetadata: SessionMetadata,
+    database: Database,
+    options: IRedisConnectionOptions = {},
+  ): Promise<Database> {
     let model = await this.createStandaloneDatabaseModel(database);
 
     const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient(
@@ -40,7 +46,7 @@ export class DatabaseFactory {
         context: ClientContext.Common,
       },
       database,
-      { useRetry: true },
+      { ...options, useRetry: true },
     );
 
     if (!HostingProvider[model.provider]) {

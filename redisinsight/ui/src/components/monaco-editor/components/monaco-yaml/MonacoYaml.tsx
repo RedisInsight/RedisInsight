@@ -79,4 +79,4 @@ const MonacoYaml = (props: Props) => {
   )
 }
 
-export default MonacoYaml
+export default React.memo(MonacoYaml)

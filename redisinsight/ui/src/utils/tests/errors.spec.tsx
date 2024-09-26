@@ -147,7 +147,7 @@ const parseCustomErrorTests = [
         <>
           You already have a free Redis Cloud database running.
           <EuiSpacer size="s" />
-          Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
+          Check out your<a href="https://cloud.redis.io/?utm_source=redisinsight&utm_medium=main&utm_campaign=main#/databases/" target="_blank" rel="noreferrer"> Cloud console </a>for connection details.
         </>
       )
     })],

@@ -47,6 +47,14 @@ export const ossStandaloneV7Config = {
     databasePassword: process.env.OSS_STANDALONE_V7_PASSWORD
 };
 
+export const ossStandaloneV8Config = {
+    host: process.env.OSS_STANDALONE_V8_HOST || 'oss-standalone-v8',
+    port: process.env.OSS_STANDALONE_V8_PORT || '6379',
+    databaseName: `${process.env.OSS_STANDALONE_V8_DATABASE_NAME || 'test_standalone-v8'}-${uniqueId}`,
+    databaseUsername: process.env.OSS_STANDALONE_V8_USERNAME,
+    databasePassword: process.env.OSS_STANDALONE_V8_PASSWORD
+};
+
 export const ossStandaloneRedisearch = {
     host: process.env.OSS_STANDALONE_REDISEARCH_HOST || 'oss-standalone-redisearch',
     port: process.env.OSS_STANDALONE_REDISEARCH_PORT || '6379',

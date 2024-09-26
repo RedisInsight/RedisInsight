@@ -7,7 +7,12 @@ import {
 import { RdiPipelineForbiddenException } from './rdi-pipeline.forbidden.exception';
 
 export const parseErrorMessage = (error: AxiosError<any>): string => {
-  const detail = error.response?.data?.detail;
+  const data = error.response?.data;
+  if (typeof data === 'string') {
+    return data;
+  }
+
+  const detail = data?.detail;
   if (!detail) return error.message;
 
   if (typeof detail === 'string') return detail;

@@ -23,7 +23,7 @@ import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { deepMerge } from 'src/common/utils';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
-import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
@@ -149,15 +149,25 @@ export class DatabaseService {
    * @param sessionMetadata
    * @param dto
    * @param uniqueCheck
+   * @param options
    */
-  async create(sessionMetadata: SessionMetadata, dto: CreateDatabaseDto, uniqueCheck = false): Promise<Database> {
+  async create(
+    sessionMetadata: SessionMetadata,
+    dto: CreateDatabaseDto,
+    uniqueCheck = false,
+    options: IRedisConnectionOptions = {},
+  ): Promise<Database> {
     try {
       this.logger.log('Creating new database.');
 
       const database = await this.repository.create(
         sessionMetadata,
         {
-          ...await this.databaseFactory.createDatabaseModel(sessionMetadata, classToClass(Database, dto)),
+          ...await this.databaseFactory.createDatabaseModel(
+            sessionMetadata,
+            classToClass(Database, dto),
+            options,
+          ),
           new: true,
         },
         uniqueCheck,

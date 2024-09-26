@@ -16,6 +16,10 @@ import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { autoCreateAndConnectToInstanceAction } from 'uiSrc/slices/instances/instances'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
 import { Nullable, transformQueryParamsObject, parseRedisUrl } from 'uiSrc/utils'
+import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import { SidePanels } from 'uiSrc/slices/interfaces/insights'
+import { setOnboarding } from 'uiSrc/slices/app/features'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 const GlobalUrlHandler = () => {
   const { fromUrl } = useSelector(appRedirectionSelector)
@@ -33,21 +37,26 @@ const GlobalUrlHandler = () => {
     try {
       const actionUrl = new URL(fromUrl)
       const fromParams = new URLSearchParams(actionUrl.search)
+      const pathname = actionUrl.hostname + actionUrl.pathname
+      const action = pathname?.replace(/^(\/\/?)|\/$/g, '')
 
       // @ts-ignore
       const urlProperties = Object.fromEntries(fromParams) || {}
 
       // rename cloudBdbId to cloudId
-      urlProperties.cloudId = urlProperties.cloudBdbId
-      delete urlProperties.cloudBdbId
+      if (action === UrlHandlingActions.Connect) {
+        urlProperties.cloudId = urlProperties.cloudBdbId
+        delete urlProperties.cloudBdbId
+      }
 
       dispatch(setUrlProperties(urlProperties))
       dispatch(setFromUrl(null))
 
-      const pathname = actionUrl.hostname + actionUrl.pathname
-      if (pathname?.replace(/^(\/\/?)/g, '') === UrlHandlingActions.Connect) {
-        connectToDatabase(urlProperties)
-      }
+      const transformedProperties = transformQueryParamsObject(urlProperties)
+      handleCommonProperties(transformedProperties)
+
+      if (action === UrlHandlingActions.Connect) connectToDatabase(urlProperties)
+      if (action === UrlHandlingActions.Open) openPage(transformedProperties)
     } catch (_e) {
       //
     }
@@ -69,7 +78,7 @@ const GlobalUrlHandler = () => {
     }
   }, [search])
 
-  const onSuccessConnectToDb = (id: string, redirectPage: Nullable<string>) => {
+  const redirectToPage = (id: string, redirectPage: Nullable<string>) => {
     if (redirectPage) {
       const pageToRedirect = getRedirectionPage(redirectPage, id)
 
@@ -79,7 +88,7 @@ const GlobalUrlHandler = () => {
       }
     }
 
-    history.push(Pages.browser(id))
+    history.push(id ? Pages.browser(id) : Pages.home)
   }
 
   const connectToDatabase = (properties: Record<string, any>) => {
@@ -130,7 +139,7 @@ const GlobalUrlHandler = () => {
           db.cloudDetails = cloudDetails
         }
         dispatch(setUrlHandlingInitialState())
-        dispatch(autoCreateAndConnectToInstanceAction(db, (id) => onSuccessConnectToDb(id, redirect)))
+        dispatch(autoCreateAndConnectToInstanceAction(db, (id) => redirectToPage(id, redirect)))
 
         return
       }
@@ -150,6 +159,21 @@ const GlobalUrlHandler = () => {
     } catch (e) {
       //
     }
+  }
+
+  const handleCommonProperties = (properties: Record<string, any>) => {
+    if (properties.copilot) {
+      dispatch(changeSidePanel(SidePanels.AiAssistant))
+    }
+
+    if (properties.onboarding) {
+      const totalSteps = Object.keys(ONBOARDING_FEATURES || {}).length
+      dispatch(setOnboarding({ currentStep: 0, totalSteps }))
+    }
+  }
+
+  const openPage = (properties: Record<string, any>) => {
+    redirectToPage('', properties.redirect || '/_')
   }
 
   return null

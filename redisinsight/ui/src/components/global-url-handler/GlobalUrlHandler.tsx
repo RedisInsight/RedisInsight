@@ -84,9 +84,11 @@ const GlobalUrlHandler = () => {
     redirectPage: Nullable<string>,
     currentPathname?: string
   ) => {
+    console.log(redirectPage)
     if (redirectPage) {
       const pageToRedirect = getRedirectionPage(redirectPage, id || undefined, currentPathname)
 
+      console.log(pageToRedirect)
       if (pageToRedirect) {
         history.push(pageToRedirect)
         return

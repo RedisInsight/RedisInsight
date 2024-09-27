@@ -53,8 +53,9 @@ const fromUrl = 'redisinsight://databases/connect?redisUrl=redis://default:passw
 
 describe('GlobalUrlHandler', () => {
   beforeEach(() => {
-    reactRouterDom.useLocation = jest.fn().mockReturnValueOnce({ search: '' })
+    reactRouterDom.useLocation = jest.fn().mockReturnValue({ search: '', pathname: '' })
   })
+
   it('should render', () => {
     expect(render(<GlobalUrlHandler />)).toBeTruthy()
   })

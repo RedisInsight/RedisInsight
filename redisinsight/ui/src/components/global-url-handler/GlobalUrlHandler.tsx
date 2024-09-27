@@ -15,7 +15,7 @@ import { userSettingsSelector } from 'uiSrc/slices/user/user-settings'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { autoCreateAndConnectToInstanceAction } from 'uiSrc/slices/instances/instances'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
-import { Nullable, transformQueryParamsObject, parseRedisUrl } from 'uiSrc/utils'
+import { Nullable, transformQueryParamsObject, parseRedisUrl, Maybe } from 'uiSrc/utils'
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { setOnboarding } from 'uiSrc/slices/app/features'
@@ -28,6 +28,7 @@ const GlobalUrlHandler = () => {
 
   const history = useHistory()
   const dispatch = useDispatch()
+  const location = useLocation()
 
   useEffect(() => {
     // start handling only after closing consent popup
@@ -78,9 +79,13 @@ const GlobalUrlHandler = () => {
     }
   }, [search])
 
-  const redirectToPage = (id: string, redirectPage: Nullable<string>) => {
+  const redirectToPage = (
+    id: Maybe<string>,
+    redirectPage: Nullable<string>,
+    currentPathname?: string
+  ) => {
     if (redirectPage) {
-      const pageToRedirect = getRedirectionPage(redirectPage, id)
+      const pageToRedirect = getRedirectionPage(redirectPage, id || undefined, currentPathname)
 
       if (pageToRedirect) {
         history.push(pageToRedirect)
@@ -173,7 +178,7 @@ const GlobalUrlHandler = () => {
   }
 
   const openPage = (properties: Record<string, any>) => {
-    redirectToPage('', properties.redirect || '/_')
+    redirectToPage(undefined, properties.redirect || '/_', location.pathname)
   }
 
   return null

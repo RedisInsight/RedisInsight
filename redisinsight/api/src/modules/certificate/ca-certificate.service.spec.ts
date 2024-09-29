@@ -6,8 +6,12 @@ import {
   mockCaCertificateRepository, mockCreateCaCertificateDto,
   MockType,
   mockSessionMetadata,
+  mockDatabaseRepository,
+  mockRedisClientStorage,
 } from 'src/__mocks__';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
+import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { pick } from 'lodash';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { CaCertificateService } from './ca-certificate.service';
@@ -24,6 +28,14 @@ describe('CaCertificateService', () => {
         {
           provide: CaCertificateRepository,
           useFactory: mockCaCertificateRepository,
+        },
+        {
+          provide: DatabaseRepository,
+          useFactory: mockDatabaseRepository,
+        },
+        {
+          provide: RedisClientStorage,
+          useFactory: mockRedisClientStorage,
         },
       ],
     }).compile();

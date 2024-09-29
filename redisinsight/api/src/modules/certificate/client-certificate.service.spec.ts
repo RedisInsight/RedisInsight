@@ -7,10 +7,14 @@ import {
   mockClientCertificateRepository, mockCreateClientCertificateDto,
   MockType,
   mockSessionMetadata,
+  mockDatabaseRepository,
+  mockRedisClientStorage,
 } from 'src/__mocks__';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
+import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 describe('ClientCertificateService', () => {
   let service: ClientCertificateService;
@@ -24,6 +28,14 @@ describe('ClientCertificateService', () => {
         {
           provide: ClientCertificateRepository,
           useFactory: mockClientCertificateRepository,
+        },
+        {
+          provide: DatabaseRepository,
+          useFactory: mockDatabaseRepository,
+        },
+        {
+          provide: RedisClientStorage,
+          useFactory: mockRedisClientStorage,
         },
       ],
     }).compile();

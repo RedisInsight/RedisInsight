@@ -12,6 +12,8 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { RequestSessionMetadata } from 'src/common/decorators';
+import { SessionMetadata } from 'src/common/models';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 
@@ -39,7 +41,10 @@ export class ClientCertificateController {
   @Delete(':id')
   @ApiOperation({ description: 'Delete Client Certificate pair by id' })
   @ApiParam({ name: 'id', type: String })
-  async deleteClientCertificatePair(@Param('id') id: string): Promise<void> {
-    await this.service.delete(id);
+  async deleteClientCertificatePair(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+      @Param('id') id: string,
+  ): Promise<void> {
+    await this.service.delete(sessionMetadata, id);
   }
 }

@@ -12,6 +12,9 @@ import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
 import { classToClass } from 'src/utils';
+import { SessionMetadata } from 'src/common/models';
+import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
+import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
 export class CaCertificateService {
@@ -19,6 +22,8 @@ export class CaCertificateService {
 
   constructor(
     private readonly repository: CaCertificateRepository,
+    private readonly databaseRepository: DatabaseRepository,
+    private redisClientStorage: RedisClientStorage,
   ) {}
 
   async get(id: string): Promise<CaCertificate> {
@@ -55,10 +60,16 @@ export class CaCertificateService {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    this.logger.log(`Deleting certificate. id: ${id}`);
-
+  async delete(sessionMetadata: SessionMetadata, id: string): Promise<void> {
     try {
+      const databases = await this.databaseRepository.list(sessionMetadata);
+      await Promise.all(databases.map(async (database) => {
+        const db = await this.databaseRepository.get(sessionMetadata, database.id);
+        if (db.caCert?.id === id) {
+          // If the certificate is used by the database, remove the client
+          await this.redisClientStorage.removeManyByMetadata({ databaseId: db.id });
+        }
+      }));
       await this.repository.delete(id);
     } catch (error) {
       this.logger.error(`Failed to delete certificate ${id}`, error);

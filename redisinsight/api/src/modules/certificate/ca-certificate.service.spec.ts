@@ -5,6 +5,7 @@ import {
   mockCaCertificate,
   mockCaCertificateRepository, mockCreateCaCertificateDto,
   MockType,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { pick } from 'lodash';
@@ -88,13 +89,13 @@ describe('CaCertificateService', () => {
 
   describe('delete', () => {
     it('should delete ca certificate', async () => {
-      expect(await service.delete(mockCaCertificate.id)).toEqual(undefined);
+      expect(await service.delete(mockSessionMetadata, mockCaCertificate.id)).toEqual(undefined);
     });
     it('should throw encryption error', async () => {
       repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
       try {
-        await service.delete(mockCaCertificate.id);
+        await service.delete(mockSessionMetadata, mockCaCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(KeytarEncryptionErrorException);
@@ -104,7 +105,7 @@ describe('CaCertificateService', () => {
       repository.delete.mockRejectedValueOnce(new Error());
 
       try {
-        await service.delete(mockCaCertificate.id);
+        await service.delete(mockSessionMetadata, mockCaCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

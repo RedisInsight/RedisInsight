@@ -6,6 +6,7 @@ import {
   mockClientCertificate,
   mockClientCertificateRepository, mockCreateClientCertificateDto,
   MockType,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
@@ -88,13 +89,13 @@ describe('ClientCertificateService', () => {
 
   describe('delete', () => {
     it('should delete client certificate', async () => {
-      expect(await service.delete(mockClientCertificate.id)).toEqual(undefined);
+      expect(await service.delete(mockSessionMetadata, mockClientCertificate.id)).toEqual(undefined);
     });
     it('should throw encryption error', async () => {
       repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
       try {
-        await service.delete(mockClientCertificate.id);
+        await service.delete(mockSessionMetadata, mockClientCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(KeytarEncryptionErrorException);
@@ -104,7 +105,7 @@ describe('ClientCertificateService', () => {
       repository.delete.mockRejectedValueOnce(new Error());
 
       try {
-        await service.delete(mockClientCertificate.id);
+        await service.delete(mockSessionMetadata, mockClientCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

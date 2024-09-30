@@ -378,6 +378,8 @@ export function deletePipelineJob(
 
 export function getPipelineStatusAction(
   rdiInstanceId: string,
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
@@ -388,11 +390,13 @@ export function getPipelineStatusAction(
 
       if (isStatusSuccessful(status)) {
         dispatch(getPipelineStatusSuccess(data))
+        onSuccessAction?.()
       }
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(getPipelineStatusFailure(errorMessage))
+      onFailAction?.()
     }
   }
 }

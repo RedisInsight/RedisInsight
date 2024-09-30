@@ -43,6 +43,9 @@ const isRediStackTests = [
   { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'graph', 'redisgears', 'custom']), null], expected: false },
 
   { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight']), '6.2.4'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'redisgears']), '7.9'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'redisgears']), '8.0.0'], expected: false },
+  { input: [unmapWithName(['bf', 'timeseries', 'ReJSON', 'searchlight', 'redisgears']), '8.0.0-rc'], expected: false },
 ]
 
 describe('isRediStack', () => {

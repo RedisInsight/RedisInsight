@@ -62,4 +62,7 @@ export enum CustomErrorCodes {
   RdiValidationError = 11_404,
   RdiNotFound = 11_405,
   RdiForbidden = 11_406,
+  RdiResetPipelineFailure = 11_407,
+  RdiStartPipelineFailure = 11_408,
+  RdiStopPipelineFailure = 11_409,
 }

@@ -14,8 +14,6 @@ import {
 } from '@nestjs/swagger';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { CaCertificateService } from 'src/modules/certificate/ca-certificate.service';
-import { RequestSessionMetadata } from 'src/common/decorators';
-import { SessionMetadata } from 'src/common/models';
 
 @ApiTags('TLS Certificates')
 @Controller('certificates/ca')
@@ -41,9 +39,8 @@ export class CaCertificateController {
   @ApiOperation({ description: 'Delete Ca Certificate by id' })
   @ApiParam({ name: 'id', type: String })
   async delete(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('id') id: string,
+    @Param('id') id: string,
   ): Promise<void> {
-    await this.service.delete(sessionMetadata, id);
+    await this.service.delete(id);
   }
 }

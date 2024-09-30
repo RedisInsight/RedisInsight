@@ -12,8 +12,6 @@ import { ClientCertificateRepository } from 'src/modules/certificate/repositorie
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
 import { classToClass } from 'src/utils';
-import { SessionMetadata } from 'src/common/models';
-import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
@@ -22,7 +20,6 @@ export class ClientCertificateService {
 
   constructor(
     private readonly repository: ClientCertificateRepository,
-    private readonly databaseRepository: DatabaseRepository,
     private redisClientStorage: RedisClientStorage,
   ) {}
 
@@ -68,19 +65,16 @@ export class ClientCertificateService {
     }
   }
 
-  async delete(sessionMetadata: SessionMetadata, id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     this.logger.log(`Deleting client certificate. id: ${id}`);
 
     try {
-      const databases = await this.databaseRepository.list(sessionMetadata);
-      await Promise.all(databases.map(async (database) => {
-        const db = await this.databaseRepository.get(sessionMetadata, database.id);
-        if (db.clientCert?.id === id) {
-          // If the certificate is used by the database, remove the client
-          await this.redisClientStorage.removeManyByMetadata({ databaseId: db.id });
-        }
+      const { affectedDatabases } = await this.repository.delete(id);
+
+      await Promise.all(affectedDatabases.map(async (databaseId) => {
+        // If the certificate is used by the database, remove the client
+        await this.redisClientStorage.removeManyByMetadata({ databaseId });
       }));
-      await this.repository.delete(id);
     } catch (error) {
       this.logger.error(`Failed to delete certificate ${id}`, error);
 

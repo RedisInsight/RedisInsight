@@ -7,6 +7,7 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { setAgreement, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 
+import { enableUserAnalyticsAction } from 'uiSrc/slices/user/user-settings'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -20,6 +21,9 @@ const OAuthAgreement = (props: Props) => {
   const dispatch = useDispatch()
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      dispatch(enableUserAnalyticsAction())
+    }
     dispatch(setAgreement(e.target.checked))
     localStorageService.set(BrowserStorageItem.OAuthAgreement, e.target.checked)
   }
@@ -62,6 +66,9 @@ const OAuthAgreement = (props: Props) => {
         </li>
         <li className={styles.listItem}>
           that Redis Insight will generate Redis Cloud API account and user keys, and store them locally on your machine
+        </li>
+        <li className={styles.listItem}>
+          Analytics will be enabled to aggregate anonymized user data to improve user experience. You can disable it anytime on the Settings page.
         </li>
       </ul>
     </div>

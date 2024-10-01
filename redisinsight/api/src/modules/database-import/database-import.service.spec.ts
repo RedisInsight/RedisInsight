@@ -231,12 +231,13 @@ describe('DatabaseImportService', () => {
         false,
       );
     });
-    it('should create standalone with compressor', async () => {
+    it('should create standalone with compressor and tlsServername', async () => {
       await service['createDatabase'](
         mockSessionMetadata,
         {
           ...mockDatabase,
           compressor: Compressor.GZIP,
+          tlsServername: 'redis-insight',
         },
         0,
       );
@@ -244,8 +245,9 @@ describe('DatabaseImportService', () => {
       expect(databaseRepository.create).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
-          ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules']),
+          ...pick(mockDatabase, ['host', 'port', 'name', 'connectionType', 'compressor', 'modules', 'tlsServername']),
           compressor: Compressor.GZIP,
+          tlsServername: 'redis-insight',
           new: true,
         },
         false,

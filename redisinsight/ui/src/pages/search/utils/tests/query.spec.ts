@@ -38,11 +38,13 @@ describe('findCurrentArgument', () => {
         )
 
         if (appendNotIncludes) {
-          expect(
-            testResult?.append?.flat()?.map((arg) => arg.token)
-          ).toEqual(
-            expect.not.arrayContaining(appendNotIncludes)
-          )
+          appendNotIncludes.forEach((token) => {
+            expect(
+              testResult?.append?.flat()?.map((arg) => arg.token)
+            ).not.toEqual(
+              expect.arrayContaining([token])
+            )
+          })
         }
       })
     })

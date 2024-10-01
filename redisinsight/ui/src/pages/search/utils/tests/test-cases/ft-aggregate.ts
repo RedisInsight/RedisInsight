@@ -105,31 +105,7 @@ export const findArgumentftAggreageTests = [
             type: 'string',
             multiple: true,
             optional: true,
-            parent: {
-              name: 'groupby',
-              type: 'block',
-              optional: true,
-              multiple: true,
-              arguments: [
-                {
-                  name: 'nargs',
-                  type: 'integer',
-                  token: 'GROUPBY'
-                },
-                {
-                  name: 'property',
-                  type: 'string',
-                  multiple: true
-                },
-                {
-                  name: 'reduce',
-                  type: 'block',
-                  optional: true,
-                  multiple: true,
-                  arguments: expect.any(Array)
-                }
-              ]
-            }
+            parent: expect.any(Object)
           }
         ]
       ],

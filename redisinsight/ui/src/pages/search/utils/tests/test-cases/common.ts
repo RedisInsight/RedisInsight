@@ -43,6 +43,12 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['DIALECT'],
   },
   {
+    input: 'FT.PROFILE \'idx:schools\' SEARCH ',
+    result: expect.any(Object),
+    appendIncludes: ['LIMITED', 'QUERY'],
+    appendNotIncludes: ['AGGREGATE', 'SEARCH'],
+  },
+  {
     input: 'FT.CREATE "idx:schools" ',
     result: expect.any(Object),
     appendIncludes: ['FILTER', 'ON', 'SCHEMA', 'SCORE', 'NOHL'],

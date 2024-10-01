@@ -26,8 +26,8 @@ export const findArgumentftSearchTests = [
           name: 'count',
           type: 'string',
           token: 'FIELDS',
+          optional: true,
           parent: expect.any(Object),
-          optional: true
         },
         {
           name: 'num',

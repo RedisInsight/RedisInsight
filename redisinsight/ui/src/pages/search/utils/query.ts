@@ -381,11 +381,7 @@ export const getRestArguments = (
     beforeMandatoryOptionalArgs.unshift(...(nextMandatoryArg.arguments || []))
   }
 
-  return fillArgsByType(beforeMandatoryOptionalArgs)
-    .map((arg) => ({
-      ...arg,
-      parent: current
-    }))
+  return beforeMandatoryOptionalArgs.map((arg) => ({ ...arg, parent: current }))
 }
 
 export const getAllRestArguments = (
@@ -401,7 +397,7 @@ export const getAllRestArguments = (
   )
 
   if (!skipLevel) {
-    appendArgs.push(currentLvlNextArgs)
+    appendArgs.push(fillArgsByType(currentLvlNextArgs))
   }
 
   if (current?.parent) {
@@ -415,23 +411,37 @@ export const getAllRestArguments = (
 }
 
 export const removeNotSuggestedArgs = (args: string[], commandArgs: SearchCommandTree[]) =>
-  commandArgs.filter((arg) => arg.token
-    && (arg.multiple || !args.some((queryArg) => queryArg.toUpperCase() === arg.token?.toUpperCase())))
+  commandArgs.filter((arg) => {
+    if (arg.token && arg.multiple) return true
 
-export const fillArgsByType = (args: SearchCommand[], expandBlock = true): SearchCommand[] => {
-  const result: SearchCommand[] = []
+    if (arg.type === TokenType.OneOf) {
+      return !args
+        .some((queryArg) => arg.arguments
+          ?.some((oneOfArg) => oneOfArg.token?.toUpperCase() === queryArg.toUpperCase()))
+    }
+
+    if (arg.type === TokenType.Block) {
+      return arg.arguments?.[0]?.token && !args.includes(arg.arguments?.[0]?.token?.toUpperCase())
+    }
+
+    return arg.token && !args.includes(arg.token)
+  })
+
+export const fillArgsByType = (args: SearchCommand[], expandBlock = true): SearchCommandTree[] => {
+  const result: SearchCommandTree[] = []
 
   for (let i = 0; i < args.length; i++) {
     const currentArg = args[i]
 
     if (expandBlock && currentArg.type === TokenType.OneOf && !currentArg.token) {
-      result.push(...(currentArg?.arguments || []))
+      result.push(...(currentArg?.arguments?.map((arg) => ({ ...arg, parent: currentArg })) || []))
     }
 
     if (currentArg.type === TokenType.Block) {
       result.push({
         multiple: currentArg.multiple,
         optional: currentArg.optional,
+        parent: currentArg,
         ...(currentArg?.arguments?.[0] as SearchCommand || {}),
       })
     }

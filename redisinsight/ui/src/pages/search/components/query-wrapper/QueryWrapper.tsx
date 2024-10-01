@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 
 import { RunQueryMode } from 'uiSrc/slices/interfaces'
-import { CodeButtonParams } from 'uiSrc/constants'
+import { CodeButtonParams, ICommands } from 'uiSrc/constants'
 
 import { getCommandsFromQuery, Nullable } from 'uiSrc/utils'
 import { changeSQActiveRunQueryMode, searchAndQuerySelector } from 'uiSrc/slices/search/searchAndQuery'
@@ -24,6 +24,7 @@ import styles from './styles.module.scss'
 
 export interface Props {
   commandsArray?: string[]
+  spec?: ICommands
   onSubmit: (
     commandInit: string,
     commandId?: Nullable<string>,
@@ -32,7 +33,7 @@ export interface Props {
 }
 
 const QueryWrapper = (props: Props) => {
-  const { commandsArray = [], onSubmit } = props
+  const { commandsArray = [], spec = {}, onSubmit } = props
 
   const { id: connectedIndstanceId } = useSelector(connectedInstanceSelector)
   const { script: scriptContext } = useSelector(appContextSearchAndQuery)
@@ -44,10 +45,12 @@ const QueryWrapper = (props: Props) => {
   const input = useRef<HTMLDivElement>(null)
   const scriptRef = useRef('')
 
-  const SUPPORTED_COMMANDS = SUPPORTED_COMMANDS_LIST.map((name) => ({
-    ...REDIS_COMMANDS_SPEC[name],
-    name
-  })) as unknown as SearchCommand[]
+  const getCommandByName = (name: string) =>
+    (name in REDIS_COMMANDS_SPEC ? REDIS_COMMANDS_SPEC[name] : (spec[name] || {}))
+
+  const SUPPORTED_COMMANDS = commandsArray
+    .filter((item) => item.startsWith('FT.'))
+    .map((name) => ({ ...getCommandByName(name), name })) as unknown as SearchCommand[]
 
   const { instanceId } = useParams<{ instanceId: string }>()
 

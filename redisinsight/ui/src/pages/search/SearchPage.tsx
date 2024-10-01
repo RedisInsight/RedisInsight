@@ -25,7 +25,7 @@ const verticalPanelIds = {
 
 const SearchPage = () => {
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)
-  const { commandsArray } = useSelector(appRedisCommandsSelector)
+  const { commandsArray, spec } = useSelector(appRedisCommandsSelector)
 
   const { panelSizes: { vertical } } = useSelector(appContextSearchAndQuery)
   const [isPageViewSent, setIsPageViewSent] = useState(false)
@@ -96,7 +96,7 @@ const SearchPage = () => {
                   initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
                   style={{ minHeight: '240px', zIndex: '8' }}
                 >
-                  <QueryWrapper commandsArray={commandsArray} onSubmit={handleSubmit} />
+                  <QueryWrapper spec={spec} commandsArray={commandsArray} onSubmit={handleSubmit} />
                 </EuiResizablePanel>
 
                 <EuiResizableButton

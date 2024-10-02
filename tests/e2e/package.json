@@ -13,7 +13,7 @@
     "build:ui": "yarn --cwd ../../ build:ui",
     "redis:last": "docker run --name redis-last-version -p 7777:6379 -d redislabs/redismod",
     "start:app": "cross-env yarn start:api",
-    "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --allow-insecure-localhost --disable-multiple-windows --concurrency 1 chrome tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots/,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
+    "test:chrome": "testcafe --compiler-options typescript.configPath=tsconfig.testcafe.json --cache --disable-multiple-windows --concurrency 1 chrome:--disable-search-engine-choice-screen tests/ -r html:./report/report.html,spec -e -s takeOnFails=true,path=report/screenshots/,pathPattern=${OS}_${BROWSER}/${DATE}_${TIME}/${FIXTURE}_${TEST}_${FILE_INDEX}.png",
     "test:chrome:ci": "ts-node ./web.runner.ts",
     "test": "yarn test:chrome",
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
@@ -25,8 +25,12 @@
   "author": "",
   "dependencies": {
     "axios": "^1.6.0",
+    "brotli-unicode": "^1.0.2",
     "cli-argument-parser": "0.4.5",
-    "js-yaml": "^4.1.0"
+    "fflate": "^0.8.2",
+    "js-yaml": "^4.1.0",
+    "msgpackr": "^1.11.0",
+    "protobufjs": "^7.4.0"
   },
   "resolutions": {
     "@types/lodash": "4.14.192",

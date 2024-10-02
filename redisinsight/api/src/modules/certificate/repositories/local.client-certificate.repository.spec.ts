@@ -11,6 +11,7 @@ import {
   mockClientCertificateId,
   mockClientCertificateKeyEncrypted,
   mockClientCertificateKeyPlain,
+  mockDatabaseRepository,
   mockEncryptionService,
   mockRepository,
   MockType,
@@ -22,6 +23,7 @@ import {
   LocalClientCertificateRepository,
 } from 'src/modules/certificate/repositories/local.client-certificate.repository';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
+import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 
 describe('LocalClientCertificateRepository', () => {
   let service: LocalClientCertificateRepository;
@@ -37,6 +39,10 @@ describe('LocalClientCertificateRepository', () => {
         {
           provide: getRepositoryToken(ClientCertificateEntity),
           useFactory: mockRepository,
+        },
+        {
+          provide: DatabaseRepository,
+          useFactory: mockDatabaseRepository,
         },
         {
           provide: EncryptionService,

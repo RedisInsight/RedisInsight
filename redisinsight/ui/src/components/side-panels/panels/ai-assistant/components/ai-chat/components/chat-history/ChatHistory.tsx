@@ -7,7 +7,7 @@ import { AiChatMessage, AiChatMessageType, AiChatType } from 'uiSrc/slices/inter
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
-import { AssistanceChatInitialMessage } from './texts'
+import { AiChatInitialMessage } from './texts'
 import LoadingMessage from '../loading-message'
 
 import ChatbotAvatar from '../chatbot-avatar/ChatbotAvatar'
@@ -139,7 +139,7 @@ const ChatHistory = (props: Props) => {
                 className={styles.answer}
                 data-testid="ai-message-initial-message"
               >
-                {AssistanceChatInitialMessage}
+                {AiChatInitialMessage}
               </div>
             </div>
           </div>

@@ -39,7 +39,7 @@ export default {
     cApiUrl: process.env.RI_CLOUD_CAPI_URL || 'https://api.redislabs.com/v1',
   },
   ai: {
-    socketUrl: process.env.RI_AI_SOCKET_URL || 'https://cloud.redis.io',
+    socketUrl: process.env.RI_AI_SOCKET_URL || 'https://app.redislabs.com',
     socketPath: process.env.RI_AI_SOCKET_PATH || '/api/v1/cloud-copilot-service/socket.io/',
   },
 };

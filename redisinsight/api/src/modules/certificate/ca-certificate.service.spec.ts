@@ -93,9 +93,26 @@ describe('CaCertificateService', () => {
   });
 
   describe('delete', () => {
-    it('should delete ca certificate', async () => {
-      expect(await service.delete(mockCaCertificate.id)).toEqual(undefined);
+    const mockId = 'mock-ca-cert-id';
+    const mockAffectedDatabases = ['db1', 'db2'];
+
+    beforeEach(() => {
+      jest.clearAllMocks();
     });
+
+    it('should delete CA certificate and remove affected database clients', async () => {
+      jest.spyOn(repository, 'delete').mockResolvedValue({ affectedDatabases: mockAffectedDatabases });
+      jest.spyOn(service['redisClientStorage'], 'removeManyByMetadata').mockResolvedValue(undefined);
+
+      await service.delete(mockId);
+
+      expect(repository.delete).toHaveBeenCalledWith(mockId);
+      expect(service['redisClientStorage'].removeManyByMetadata).toHaveBeenCalledTimes(mockAffectedDatabases.length);
+      mockAffectedDatabases.forEach((databaseId) => {
+        expect(service['redisClientStorage'].removeManyByMetadata).toHaveBeenCalledWith({ databaseId });
+      });
+    });
+
     it('should throw encryption error', async () => {
       repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 

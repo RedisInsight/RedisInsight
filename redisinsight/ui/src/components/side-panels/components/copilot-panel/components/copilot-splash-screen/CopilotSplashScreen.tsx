@@ -1,10 +1,13 @@
 import React from 'react'
-import { EuiButton, EuiButtonIcon, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import CopilotPreview from 'uiSrc/components/side-panels/components/copilot-panel/components/copilot-preview'
 import { setHideCopilotSplashScreen } from 'uiSrc/slices/panels/aiAssistant'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import { ExternalLink } from 'uiSrc/components/base'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { EXTERNAL_LINKS, UTM_CAMPAINGS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -31,6 +34,9 @@ const CopilotSplashScreen = ({ onClose }: Props) => {
   return (
     <div className={styles.container}>
       <div className={styles.closeBtnWrapper}>
+        <div className={styles.titleWrapper}>
+          <span className={styles.title}>Redis Copilot</span>
+        </div>
         <EuiButtonIcon
           iconSize="m"
           iconType="cross"
@@ -41,15 +47,18 @@ const CopilotSplashScreen = ({ onClose }: Props) => {
         />
       </div>
       <div className={styles.contentWrapper} data-testid="copilot-splashscreen">
-        <div className={styles.header}>
-          <EuiTitle size="s">
-            <span>Redis Copilot</span>
-          </EuiTitle>
-        </div>
         <div className={styles.copilotPreviewWrapper}>
           <CopilotPreview />
         </div>
         <div className={styles.actionBtnWrapper}>
+          <ExternalLink
+            iconPosition="right"
+            href={getUtmExternalLink(EXTERNAL_LINKS.copilotMoreInfo, {
+              medium: UTM_MEDIUMS.Main,
+              campaign: UTM_CAMPAINGS.Copilot,
+            })}
+          >More Info
+          </ExternalLink>
           <EuiButton
             aria-label="Get started with Copilot"
             onClick={onStartCopilot}

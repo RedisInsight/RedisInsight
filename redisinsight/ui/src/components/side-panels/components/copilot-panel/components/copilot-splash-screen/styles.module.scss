@@ -4,7 +4,17 @@
 
   .closeBtnWrapper {
     display: flex;
-    justify-content: flex-end;
+    margin-bottom: 20px;
+
+    .titleWrapper {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+
+      .title {
+        font-size: 16px;
+      }
+    }
   }
 
   .contentWrapper {
@@ -14,11 +24,11 @@
     display: flex;
     flex-direction: column;
 
-    .header {
-      flex-shrink: 0;
-      padding-left: 20px;
-      margin-top:20px;
-    }
+    // .header {
+    //   flex-shrink: 0;
+    //   padding-left: 20px;
+    //   margin-top:20px;
+    // }
 
     .copilotPreviewWrapper {
       flex-grow: 1;
@@ -27,12 +37,20 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+
+      img {
+        display: block;
+        margin: auto;
+      }
     }
 
     .actionBtnWrapper {
       flex-shrink: 0;
       padding: 40px 20px;
-      align-self: flex-end;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
 
       .getStartedBtn {
         width: 110px;

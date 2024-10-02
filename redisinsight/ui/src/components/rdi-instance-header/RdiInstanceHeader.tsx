@@ -21,9 +21,9 @@ const RdiInstanceHeader = () => {
   const { name = '' } = useSelector(connectedInstanceSelector)
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
+    // [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  // const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
   const history = useHistory()
 
   const goHome = () => {
@@ -65,7 +65,7 @@ const RdiInstanceHeader = () => {
         </div>
       </EuiFlexItem>
 
-      {isAnyChatAvailable && (
+      {databaseChatFeature?.flag && (
         <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
           <CopilotTrigger />
         </EuiFlexItem>

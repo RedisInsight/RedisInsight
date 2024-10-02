@@ -12,9 +12,10 @@ import { ApiTags } from '@nestjs/swagger';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 import { AiService } from 'src/modules/ai/ai.service';
-import { SendAiDatabaseMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
+import { AiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { Response } from 'express';
-import { AiAgreement, AiAgreementResponse } from './models/ai.agreement';
+import { AiAgreement } from './models/ai.agreement';
+import { UpdateAiAgreementsDto } from './dto/update.ai.agreements.dto';
 
 @ApiTags('AI')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -36,10 +37,10 @@ export class AiDatabaseController {
   async streamQuestion(
   @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') databaseId: string,
-    @Body() dto: SendAiDatabaseMessageDto,
+    @Body() dto: AiMessageDto,
     @Res() res: Response,
   ) {
-    await this.service.stream(sessionMetadata, databaseId, dto, res);
+    await this.service.streamMessage(sessionMetadata, databaseId, dto, res);
   }
 
   @Get()
@@ -68,39 +69,22 @@ export class AiDatabaseController {
     return this.service.clearHistory(sessionMetadata, databaseId);
   }
 
-  @Get('/agreement')
+  @Post('/agreements')
   @ApiEndpoint({
-    description: 'Get ai agreement',
-    statusCode: 200,
-    responses: [
-      {
-        status: 200,
-        description: 'Ai agreement',
-        type: AiAgreementResponse,
-      },
-    ],
-  })
-  async getAiAgreement(
-    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('id') databaseId: string,
-  ): Promise<AiAgreementResponse> {
-    return this.service.getAiAgreement(sessionMetadata, databaseId);
-  }
-
-  @Post('/agreement')
-  @ApiEndpoint({
-    description: 'Create new ai agreement for database',
+    description: 'Creates or deletes database ai agreement',
     statusCode: 200,
     responses: [{
       status: 200,
-      description: 'Ai agreement',
+      description: 'Database Ai agreement',
+      isArray: true,
       type: AiAgreement,
     }],
   })
-  async createAiAgreement(
+  async updateAiAgreement(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
       @Param('id') databaseId: string,
-  ): Promise<AiAgreement> {
-    return await this.service.createAiAgreement(sessionMetadata, databaseId);
+      @Body() reqDto: UpdateAiAgreementsDto,
+  ): Promise<AiAgreement[]> {
+    return await this.service.updateAiAgreements(sessionMetadata, databaseId, reqDto);
   }
 }

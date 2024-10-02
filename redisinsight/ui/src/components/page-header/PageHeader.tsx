@@ -31,9 +31,9 @@ const PageHeader = (props: Props) => {
 
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
+    // [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  // const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -63,7 +63,7 @@ const PageHeader = (props: Props) => {
         {children ? <>{children}</> : ''}
         {showInsights ? (
           <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
-            {isAnyChatAvailable && (
+            {databaseChatFeature?.flag && (
               <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
                 <CopilotTrigger />
               </EuiFlexItem>

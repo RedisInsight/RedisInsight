@@ -33,6 +33,14 @@ describe('LocalAiAuthProvider', () => {
     repository = module.get(getRepositoryToken(AiAgreementEntity));
   });
 
+  describe('list', () => {
+    it('should get list of Ai agreements by databaseId and accountId', async () => {
+      repository.createQueryBuilder().getMany.mockResolvedValueOnce([mockAiAgreementEntity]);
+      await expect(service.list(mockAiAccountId))
+        .resolves.toEqual([mockAiAgreement]);
+    });
+  });
+
   describe('get', () => {
     it('should get Ai agreement by databaseId and accountId', async () => {
       repository.findOneBy.mockResolvedValueOnce(mockAiAgreementEntity);
@@ -53,6 +61,13 @@ describe('LocalAiAuthProvider', () => {
       repository.save.mockResolvedValueOnce(mockAiAgreementEntity);
       await expect(service.create(mockAiDatabaseId, mockAiAccountId))
         .resolves.toEqual(mockAiAgreement);
+    });
+  });
+
+  describe('delete', () => {
+    it('should delete Ai agreement by databaseId and accountId', async () => {
+      await expect(service.delete(mockAiDatabaseId, mockAiAccountId))
+        .resolves.toEqual(undefined);
     });
   });
 });

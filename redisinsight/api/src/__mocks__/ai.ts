@@ -556,7 +556,14 @@ export const mockAiAgreementEntity = Object.assign(new AiAgreementEntity(), {
 });
 
 export const mockAiAgreement = Object.assign(new AiAgreement(), mockAiAgreementEntity);
+export const mockGeneralAiAgreement = Object.assign(new AiAgreement(), {
+  ...mockAiAgreementEntity,
+  id: 'uuid-for-general-ai-agreement',
+  databaseId: null,
+});
 export const mockAiAgreementRepository = jest.fn(() => ({
+  list: jest.fn().mockResolvedValue([mockAiAgreement]),
   get: jest.fn().mockResolvedValue(mockAiAgreement),
   create: jest.fn().mockResolvedValue(mockAiAgreement),
+  delete: jest.fn().mockResolvedValue(undefined),
 }));

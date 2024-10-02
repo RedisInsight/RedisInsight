@@ -10,6 +10,9 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
       flag: true
+    },
+    databaseChat: {
+      flag: true
     }
   }),
 }))
@@ -37,7 +40,6 @@ describe('AiAssistant', () => {
     render(<AiAssistant />)
 
     expect(screen.queryByTestId('copilot-welcome')).not.toBeInTheDocument()
-    expect(screen.getByTestId('chat-wrapper')).toBeInTheDocument()
   })
 
   it('should not render welcome screen without feature flag', () => {
@@ -45,6 +47,5 @@ describe('AiAssistant', () => {
     render(<AiAssistant />)
 
     expect(screen.queryByTestId('copilot-welcome')).not.toBeInTheDocument()
-    expect(screen.getByTestId('chat-wrapper')).toBeInTheDocument()
   })
 })

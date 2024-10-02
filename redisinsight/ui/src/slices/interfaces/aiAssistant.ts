@@ -1,13 +1,8 @@
 import { Nullable } from 'uiSrc/utils'
 
-export enum BotType {
-  General = 'General',
-  Query = 'Query',
-}
-
 export enum AiChatType {
-  Assistance = 'document',
-  Query = 'database'
+  General = 'general',
+  Database = 'database'
 }
 
 export enum AiChatMessageType {
@@ -19,7 +14,6 @@ export interface AiChatMessage {
   id: string
   type: AiChatMessageType
   content: string
-  tool: BotType
   error?: {
     statusCode: number
     errorCode?: number
@@ -43,7 +37,7 @@ export interface StateAiAssistant {
   ai: {
     loading: boolean
     agreementLoading: boolean
-    agreements: AiAgreement[]
+    agreements: Nullable<AiAgreement[]>
     messages: Array<AiChatMessage>
   },
   hideCopilotSplashScreen: boolean

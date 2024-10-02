@@ -43,6 +43,10 @@ $delay: .13s;
   gap: 4px;
 }
 
+.answerTextWrapper {
+  width: 100%;
+}
+
 .answer, .question {
   // display: flex;
   overflow-wrap: break-word;

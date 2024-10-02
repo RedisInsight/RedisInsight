@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
-import { AiAgreement, AiChatMessage, BotType, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiChatMessage, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
   getAxiosError,
@@ -26,8 +26,8 @@ export const initialState: StateAiAssistant = {
   ai: {
     loading: false,
     agreementLoading: false,
-    agreements: [],
-    messages: []
+    agreements: null,
+    messages: [],
   },
   hideCopilotSplashScreen: localStorageService.get(BrowserStorageItem.hideCopilotSplashScreen) ?? false,
 }
@@ -41,31 +41,31 @@ const aiAssistantSlice = createSlice({
       state.hideCopilotSplashScreen = payload
       localStorageService.set(BrowserStorageItem.hideCopilotSplashScreen, payload)
     },
-    getAiAgreement: (state) => {
-      state.ai.agreementLoading = true
-    },
-    getAiAgreementSuccess: (state, { payload }: PayloadAction<AiAgreement>) => {
-      state.ai.agreementLoading = false
-      if (payload && !state.ai.agreements?.some((agr) =>
-        agr.accountId === payload.accountId && agr.databaseId === payload.databaseId)) state.ai.agreements.push(payload)
-    },
-    getAiAgreementFailed: (state) => {
-      state.ai.agreementLoading = false
-    },
 
-    createAiAgreement: (state) => {
+    getAiAgreements: (state) => {
       state.ai.agreementLoading = true
     },
-    createAiAgreementSuccess: (state, { payload }: PayloadAction<AiAgreement>) => {
+    getAiAgreementsSuccess: (state, { payload }: PayloadAction<AiAgreement[]>) => {
       state.ai.agreementLoading = false
-      state.ai.agreements.push(payload)
+      state.ai.agreements = payload
     },
-    createAiAgreementFailed: (state) => {
+    getAiAgreementsFailed: (state) => {
       state.ai.agreementLoading = false
     },
 
     clearAiAgreements: (state) => {
       state.ai.agreements = []
+    },
+
+    updateAiAgreements: (state) => {
+      state.ai.agreementLoading = true
+    },
+    updateAiAgreementsSuccess: (state, { payload }: PayloadAction<AiAgreement[]>) => {
+      state.ai.agreementLoading = false
+      state.ai.agreements = payload
+    },
+    updateAiAgreementsFailed: (state) => {
+      state.ai.agreementLoading = false
     },
 
     getAiChatHistory: (state) => {
@@ -108,16 +108,17 @@ const aiAssistantSlice = createSlice({
 
 // A selector
 export const aiChatSelector = (state: RootState) => state.panels.aiAssistant.ai
+export const aiAssistantSelector = (state: RootState) => state.panels.aiAssistant
 
 // Actions generated from the slice
 export const {
-  getAiAgreement,
-  getAiAgreementSuccess,
-  getAiAgreementFailed,
+  getAiAgreements,
+  getAiAgreementsSuccess,
+  getAiAgreementsFailed,
 
-  createAiAgreement,
-  createAiAgreementSuccess,
-  createAiAgreementFailed,
+  updateAiAgreements,
+  updateAiAgreementsSuccess,
+  updateAiAgreementsFailed,
 
   getAiChatHistory,
   getAiChatHistorySuccess,
@@ -134,19 +135,18 @@ export const {
 // The reducer
 export default aiAssistantSlice.reducer
 
-export function getAiAgreementAction(instanceId: Nullable<string>, onSuccess?: () => void) {
+export function getAiAgreementsAction(onSuccess?: () => void, onFailure?: () => void) {
   return async (dispatch: AppDispatch) => {
-    dispatch(getAiAgreement())
+    dispatch(getAiAgreements())
 
     try {
-      let aiUrl: string = ApiEndpoints.AI_CHAT
-      if (instanceId) aiUrl += `/${instanceId}`
-      const { status, data } = await apiService.get<any>(`${aiUrl}/messages/agreement`)
+      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_CHAT}/messages/agreements`)
 
       if (isStatusSuccessful(status)) {
-        dispatch(getAiAgreementSuccess(data.aiAgreement))
-        onSuccess?.()
+        dispatch(getAiAgreementsSuccess(data))
       }
+
+      onSuccess?.()
     } catch (error) {
       const err = getAxiosError(error as EnhancedAxiosError)
       const errorCode = getApiErrorCode(error as AxiosError)
@@ -156,22 +156,32 @@ export function getAiAgreementAction(instanceId: Nullable<string>, onSuccess?: (
       }
 
       dispatch(addErrorNotification(err))
-      dispatch(getAiAgreementFailed())
+      dispatch(getAiAgreementsFailed())
+      onFailure?.()
     }
   }
 }
 
-export function createAiAgreementAction(instanceId: Nullable<string>, onSuccess?: () => void) {
+export interface UpdateAiAgreementsInterface {
+  general: boolean
+  db?: boolean
+}
+
+export function updateAiAgreementsAction(
+  instanceId: Nullable<string>,
+  toUpdate: UpdateAiAgreementsInterface,
+  onSuccess?: () => void,
+  onFailure?: () => void
+) {
   return async (dispatch: AppDispatch) => {
-    dispatch(createAiAgreement())
+    dispatch(updateAiAgreements())
 
     try {
       let aiUrl: string = ApiEndpoints.AI_CHAT
       if (instanceId) aiUrl += `/${instanceId}`
-      const { status, data } = await apiService.post<any>(`${aiUrl}/messages/agreement`)
-
+      const { status, data } = await apiService.post<any>(`${aiUrl}/messages/agreements`, toUpdate)
       if (isStatusSuccessful(status)) {
-        dispatch(createAiAgreementSuccess(data))
+        dispatch(updateAiAgreementsSuccess(data))
         onSuccess?.()
       }
     } catch (error) {
@@ -183,7 +193,8 @@ export function createAiAgreementAction(instanceId: Nullable<string>, onSuccess?
       }
 
       dispatch(addErrorNotification(err))
-      dispatch(createAiAgreementFailed())
+      dispatch(updateAiAgreementsFailed())
+      onFailure?.()
     }
   }
 }
@@ -218,7 +229,6 @@ export function getAiChatHistoryAction(instanceId: Nullable<string>, onSuccess?:
 export function askAiChatbotAction(
   databaseId: Nullable<string>,
   message: string,
-  tool: BotType,
   { onMessage, onError, onFinish }: {
     onMessage?: (message: AiChatMessage) => void,
     onError?: (errorCode: number) => void,
@@ -226,8 +236,8 @@ export function askAiChatbotAction(
   }
 ) {
   return async (dispatch: AppDispatch) => {
-    const humanMessage = generateHumanMessage(message, tool)
-    const aiMessageProgressed: AiChatMessage = generateAiMessage(tool)
+    const humanMessage = generateHumanMessage(message)
+    const aiMessageProgressed: AiChatMessage = generateAiMessage()
 
     dispatch(sendAiQuestion(humanMessage))
 
@@ -241,7 +251,6 @@ export function askAiChatbotAction(
     await getStreamedAnswer(
       aiUrl,
       message,
-      tool,
       {
         onMessage: (value: string) => {
           aiMessageProgressed.content += value

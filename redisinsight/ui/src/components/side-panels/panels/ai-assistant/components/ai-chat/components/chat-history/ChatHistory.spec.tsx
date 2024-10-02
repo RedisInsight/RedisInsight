@@ -2,7 +2,7 @@ import React from 'react'
 import { mock } from 'ts-mockito'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import { AiChatMessage, AiChatMessageType, BotType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
 import ChatHistory, { Props } from './ChatHistory'
 
 const mockedProps = mock<Props>()
@@ -12,25 +12,21 @@ const history: AiChatMessage[] = [
     content: '1',
     type: AiChatMessageType.HumanMessage,
     id: '1',
-    tool: BotType.General
   },
   {
     content: '2',
     type: AiChatMessageType.AIMessage,
     id: '2',
-    tool: BotType.General
   },
   {
     content: '3',
     type: AiChatMessageType.HumanMessage,
     id: '3',
-    tool: BotType.General
   },
   {
     content: '4',
     type: AiChatMessageType.AIMessage,
     id: '4',
-    tool: BotType.General
   }
 ]
 

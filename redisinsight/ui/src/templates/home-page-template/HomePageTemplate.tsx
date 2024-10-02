@@ -25,9 +25,9 @@ const HomePageTemplate = (props: Props) => {
   const {
     [FeatureFlags.rdi]: rdiFeature,
     [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
+    // [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  // const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
   return (
     <>
@@ -37,7 +37,7 @@ const HomePageTemplate = (props: Props) => {
           wrapperClassName={cx(styles.capabilityWrapper, { [styles.rdiEnabled]: !!rdiFeature?.flag })}
         />
         <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
-          {isAnyChatAvailable && (
+          {databaseChatFeature?.flag && (
             <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
               <CopilotTrigger />
             </EuiFlexItem>

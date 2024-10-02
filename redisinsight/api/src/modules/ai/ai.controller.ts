@@ -13,7 +13,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { RequestSessionMetadata } from 'src/common/decorators';
 import { SessionMetadata } from 'src/common/models';
 import { AiService } from './ai.service';
-import { SendAiMessageDto } from './dto/send.ai.message.dto';
+import { AiMessageDto } from './dto/send.ai.message.dto';
+import { UpdateAiAgreementsDto } from './dto/update.ai.agreements.dto';
 import { AiAgreement, AiAgreementResponse } from './models/ai.agreement';
 
 @ApiTags('AI')
@@ -34,9 +35,9 @@ export class AiController {
   async postMessage(
   @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Res() res: Response,
-    @Body() dto: SendAiMessageDto,
+    @Body() dto: AiMessageDto,
   ) {
-    await this.service.stream(sessionMetadata, null, dto, res);
+    await this.service.streamGeneralMessage(sessionMetadata, dto, res);
   }
 
   @Get()
@@ -63,9 +64,9 @@ export class AiController {
     return this.service.clearHistory(sessionMetadata, null);
   }
 
-  @Get('/agreement')
+  @Get('/agreements')
   @ApiEndpoint({
-    description: 'Get ai general agreement',
+    description: 'Get list of  ai agreements',
     statusCode: 200,
     responses: [
       {
@@ -75,15 +76,15 @@ export class AiController {
       },
     ],
   })
-  async getAiAgreement(
+  async listAiAgreements(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-  ): Promise<AiAgreementResponse> {
-    return this.service.getAiAgreement(sessionMetadata, null);
+  ): Promise<AiAgreement[]> {
+    return this.service.listAiAgreements(sessionMetadata);
   }
 
-  @Post('/agreement')
+  @Post('/agreements')
   @ApiEndpoint({
-    description: 'Create new ai agreement general',
+    description: 'Creates or deletes general ail agreement',
     statusCode: 200,
     responses: [{
       status: 200,
@@ -91,9 +92,10 @@ export class AiController {
       type: AiAgreement,
     }],
   })
-  async createAiAgreement(
+  async updateAiAgreements(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-  ): Promise<AiAgreement> {
-    return await this.service.createAiAgreement(sessionMetadata, null);
+      @Body() reqDto: UpdateAiAgreementsDto,
+  ): Promise<AiAgreement[]> {
+    return await this.service.updateAiAgreements(sessionMetadata, null, reqDto);
   }
 }

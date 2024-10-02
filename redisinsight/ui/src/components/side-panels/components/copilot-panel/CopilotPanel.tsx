@@ -5,7 +5,7 @@ import styles from 'uiSrc/components/side-panels/styles.module.scss'
 import AiAssistant from 'uiSrc/components/side-panels/panels/ai-assistant'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
-import { aiChatSelector } from 'uiSrc/slices/panels/aiAssistant'
+import { aiAssistantSelector } from 'uiSrc/slices/panels/aiAssistant'
 import CopilotSplashScreen from './components/copilot-splash-screen'
 
 export interface Props {
@@ -16,7 +16,7 @@ export interface Props {
 
 const CopilotPanel = (props: Props) => {
   const { isFullScreen, onToggleFullScreen, onClose } = props
-  const { hideCopilotSplashScreen } = useSelector(aiChatSelector)
+  const { hideCopilotSplashScreen } = useSelector(aiAssistantSelector)
 
   const CopilotHeader = useCallback(() => (
     <div className={styles.assistantHeader}>

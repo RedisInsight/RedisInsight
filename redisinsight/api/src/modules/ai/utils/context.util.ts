@@ -189,37 +189,7 @@ export const getDocumentsSchema = async (client: RedisClient, index: string, inf
  * @param index
  */
 export const getIndexContext = async (client: RedisClient, index: string) => {
-  const infoReply = await client.sendCommand(
-    ['FT.INFO', index],
-    { replyEncoding: 'utf8' },
-  ) as string[][];
-
-  const info = convertIndexInfoReply(infoReply);
-
-  return {
-    index_name: index,
-    create_statement: createIndexCreateStatement(info),
-    documents_schema: await getDocumentsSchema(client, index, info),
-    documents_type: info['index_definition']['key_type'],
-    attributes: keyBy((await Promise.all(info['attributes'].map(async (attr) => ({
-      ...attr,
-      ...await getAttributeTopValues(client, info['index_name'], attr),
-    })))), 'attribute'),
-  };
-};
-
-/**
- * Get "general" context without additional data for all indexes inside database
- */
-export const getFullDbContext = async (client: RedisClient): Promise<object> => {
-  const context = {};
-
-  const indexes = await client.sendCommand(
-    ['FT._LIST'],
-    { replyEncoding: 'utf8' },
-  ) as string[];
-
-  await Promise.all(indexes.map(async (index) => {
+  try {
     const infoReply = await client.sendCommand(
       ['FT.INFO', index],
       { replyEncoding: 'utf8' },
@@ -227,12 +197,50 @@ export const getFullDbContext = async (client: RedisClient): Promise<object> => 
 
     const info = convertIndexInfoReply(infoReply);
 
-    context[index] = {
+    return {
       index_name: index,
-      attributes: info['attributes'],
+      create_statement: createIndexCreateStatement(info),
+      documents_schema: await getDocumentsSchema(client, index, info),
       documents_type: info['index_definition']['key_type'],
+      attributes: keyBy((await Promise.all(info['attributes'].map(async (attr) => ({
+        ...attr,
+        ...await getAttributeTopValues(client, info['index_name'], attr),
+      })))), 'attribute'),
     };
-  }));
+  } catch (e) {
+    return { error: e.message };
+  }
+};
 
-  return context;
+/**
+ * Get "general" context without additional data for all indexes inside database
+ */
+export const getFullDbContext = async (client: RedisClient): Promise<object> => {
+  try {
+    const context = {};
+
+    const indexes = await client.sendCommand(
+      ['FT._LIST'],
+      { replyEncoding: 'utf8' },
+    ) as string[];
+
+    await Promise.all(indexes.map(async (index) => {
+      const infoReply = await client.sendCommand(
+        ['FT.INFO', index],
+        { replyEncoding: 'utf8' },
+      ) as string[][];
+
+      const info = convertIndexInfoReply(infoReply);
+
+      context[index] = {
+        index_name: index,
+        attributes: info['attributes'],
+        documents_type: info['index_definition']['key_type'],
+      };
+    }));
+
+    return context;
+  } catch (e) {
+    return { error: e.message };
+  }
 };

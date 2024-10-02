@@ -1,0 +1,56 @@
+.agreementsPopover {
+  width: 350px;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid var(--separatorColor);
+}
+
+.aiAgreementSubtitle {
+  font-weight: 400;
+  font-size: 14px !important;
+  line-height: 16.8px !important;
+}
+
+.aiAgreementText {
+  font-weight: 400;
+  font-size: 12px !important;
+  line-height: 14.4px !important;
+}
+
+.switchLabel {
+  color: var(--euiTextSubduedColor);
+}
+
+.switchLabelDisabled {
+  color: var(--inputPlaceholderColor) !important;
+}
+
+.generalAgreementCheckbox {
+  :global(.euiCheckbox__square) {
+    border: 1px solid var(--controlsBorderColor) !important;
+    box-shadow: none !important;
+  }
+
+  :global(.euiCheckbox__label) {
+    color: var(--controlsLabelColor) !important;
+  }
+
+  :global(.euiCheckbox .euiCheckbox__input:checked + .euiCheckbox__square) {
+    background-color: var(--euiColorPrimary) !important;
+  }
+}
+
+.warnigMessageWrapper {
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  gap: 4px;
+  background-color: var(--browserViewTypePassive);
+}
+
+.actionsWrapper {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

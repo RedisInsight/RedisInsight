@@ -2,7 +2,7 @@ import React from 'react'
 import cx from 'classnames'
 
 import { EuiIcon } from '@elastic/eui'
-import { AiChatMessage, BotType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiChatMessage } from 'uiSrc/slices/interfaces/aiAssistant'
 import ErrorMessage from '../../error-message'
 
 import UserAvatar from '../../user-avatar/UserAvatar'
@@ -14,9 +14,8 @@ export interface AiQuestionMessageProps {
 }
 
 const AiQuestionMessage = ({ message, onRestart }: AiQuestionMessageProps) => {
-  const { id, content, error, tool, type } = message
+  const { id, content, error, type } = message
 
-  const messageContent = tool === BotType.Query ? `/query ${content}` : content
   return (
     <React.Fragment key={id}>
       <div className={styles.questionWrapper}>
@@ -25,7 +24,7 @@ const AiQuestionMessage = ({ message, onRestart }: AiQuestionMessageProps) => {
           data-testid={`ai-message-${type}_${id}`}
         >
           {error && (<EuiIcon type="alert" className={styles.errorIcon} />)}
-          {messageContent}
+          {content}
         </div>
         <UserAvatar />
       </div>

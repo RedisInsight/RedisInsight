@@ -17,7 +17,6 @@ import {
   mockStandaloneRedisClient,
   mockAiAgreementRepository,
   MockType,
-  mockAiAgreement,
 } from 'src/__mocks__';
 import { LocalAiAuthProvider } from 'src/modules/ai/providers/auth/local.ai-auth.provider';
 import { CloudUserApiService } from 'src/modules/cloud/user/cloud-user.api.service';
@@ -112,7 +111,7 @@ describe('AiService', () => {
     aiAgreementRepository = module.get(AiAgreementRepository);
   });
 
-  describe('stream', () => {
+  describe('streamMessage', () => {
     let getIndexContextSpy;
 
     beforeEach((done) => {
@@ -150,7 +149,7 @@ describe('AiService', () => {
         cb({ status: 'ok' });
       });
 
-      await expect(service.stream(
+      await expect(service.streamMessage(
         mockSessionMetadata,
         mockAiDatabaseId,
         mockSendAiChatMessageDto,
@@ -178,7 +177,7 @@ describe('AiService', () => {
           });
       });
 
-      await expect(service.stream(
+      await expect(service.streamMessage(
         mockSessionMetadata,
         mockAiDatabaseId,
         mockSendAiChatMessageDto,
@@ -188,6 +187,7 @@ describe('AiService', () => {
 
       expect(mockResponse.content).toEqual(mockAiAiResponse.content);
     });
+
     it('should calculate index and get from cache on 2nd attempt and send error on 3d attempt', async () => {
       serverSocket.once(AiWsEvents.STREAM, (_content, _context, _history, _opts, cb) => {
         aiContextRepository.getIndexContext.mockResolvedValueOnce(null);
@@ -214,7 +214,7 @@ describe('AiService', () => {
           });
       });
 
-      await expect(service.stream(
+      await expect(service.streamMessage(
         mockSessionMetadata,
         mockAiDatabaseId,
         mockSendAiChatMessageDto,
@@ -224,6 +224,7 @@ describe('AiService', () => {
 
       expect(mockResponse.content).toEqual(mockAiAiResponse.content);
     });
+
     it('should return errors for run queries', async () => {
       serverSocket.once(AiWsEvents.STREAM, (_content, _context, _history, _opts, cb) => {
         when(mockStandaloneRedisClient.sendCommand)
@@ -251,7 +252,7 @@ describe('AiService', () => {
           });
       });
 
-      await expect(service.stream(
+      await expect(service.streamMessage(
         mockSessionMetadata,
         mockAiDatabaseId,
         mockSendAiChatMessageDto,
@@ -261,12 +262,13 @@ describe('AiService', () => {
 
       expect(mockResponse.content).toEqual(mockAiAiResponse.content);
     });
+
     it('should fail when ack has error property', async () => {
       serverSocket.once(AiWsEvents.STREAM, (_content, _context, _history, _opts, cb) => {
         cb({ error: { error: AiServerErrors.RateLimitRequest } });
       });
 
-      await expect(service.stream(
+      await expect(service.streamMessage(
         mockSessionMetadata,
         mockAiDatabaseId,
         mockSendAiChatMessageDto,
@@ -318,36 +320,20 @@ describe('AiService', () => {
     });
   });
 
-  describe('getAiAgreement', () => {
+  describe('updateAiAgreements', () => {
+    const reqDto = { general: false, db: false };
     it('should get ai agreemet of a given db and account', async () => {
-      expect(await service.getAiAgreement(mockSessionMetadata, mockAiDatabaseId))
-        .toEqual({ aiAgreement: mockAiAgreement });
-    });
-
-    it('should be null if no agreement with a given dbId found', async () => {
-      aiAgreementRepository.get.mockResolvedValueOnce(null);
-      expect(await service.getAiAgreement(mockSessionMetadata, mockAiDatabaseId)).toEqual({ aiAgreement: null });
+      aiAgreementRepository.get.mockResolvedValue(null);
+      aiAgreementRepository.list.mockResolvedValueOnce([]);
+      expect(await service.updateAiAgreements(mockSessionMetadata, mockAiDatabaseId, reqDto))
+        .toEqual([]);
     });
 
     it('throw CloudApiUnauthorizedException', async () => {
       cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
       cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
 
-      await expect(service.getAiAgreement(mockSessionMetadata, mockAiDatabaseId)).rejects.toThrow(
-        CloudApiUnauthorizedException,
-      );
-    });
-  });
-
-  describe('createAiAgreement', () => {
-    it('should create ai agreement from a given databaseId', async () => {
-      expect(await service.createAiAgreement(mockSessionMetadata, mockAiDatabaseId)).toEqual(mockAiAgreement);
-    });
-    it('throw CloudApiUnauthorizedException', async () => {
-      cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      cloudUserApiService.getUserSession.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-
-      await expect(service.createAiAgreement(mockSessionMetadata, mockAiDatabaseId)).rejects.toThrow(
+      await expect(service.updateAiAgreements(mockSessionMetadata, mockAiDatabaseId, reqDto)).rejects.toThrow(
         CloudApiUnauthorizedException,
       );
     });

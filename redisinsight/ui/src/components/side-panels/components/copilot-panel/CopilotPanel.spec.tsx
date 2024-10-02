@@ -2,14 +2,14 @@ import React from 'react'
 import { mock } from 'ts-mockito'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
-import { aiChatSelector } from 'uiSrc/slices/panels/aiAssistant'
+import { aiAssistantSelector } from 'uiSrc/slices/panels/aiAssistant'
 import CopilotPanel, { Props } from './CopilotPanel'
 
 const mockedProps = mock<Props>()
 
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   ...jest.requireActual('uiSrc/slices/panels/aiAssistant'),
-  aiChatSelector: jest.fn().mockReturnValue({
+  aiAssistantSelector: jest.fn().mockReturnValue({
     hideCopilotSplashScreen: null
   })
 }))
@@ -26,7 +26,7 @@ describe('CopilotPanel', () => {
   })
 
   it('should not display SplashScreen when hideCopilotSplashScreen is set to true', () => {
-    (aiChatSelector as jest.Mock).mockReturnValueOnce({
+    (aiAssistantSelector as jest.Mock).mockReturnValueOnce({
       hideCopilotSplashScreen: true
     })
     render(<CopilotPanel {...mockedProps} />)

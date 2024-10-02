@@ -52,9 +52,9 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
   const {
     [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
+    // [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  // const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
 
   const history = useHistory()
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
@@ -204,10 +204,10 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           <DatabaseOverviewWrapper />
         </EuiFlexItem>
 
-        {isAnyChatAvailable && (
-          <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
-            <CopilotTrigger />
-          </EuiFlexItem>
+        {databaseChatFeature?.flag && (
+        <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+          <CopilotTrigger />
+        </EuiFlexItem>
         )}
 
         <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>

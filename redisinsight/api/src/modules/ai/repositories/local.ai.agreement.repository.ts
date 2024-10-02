@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { AiAgreementEntity } from 'src/modules/ai/entities/ai.agreement.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import { Nullable } from 'src/common/constants';
 import { plainToClass } from 'class-transformer';
 import { classToClass } from 'src/utils';
@@ -19,9 +19,19 @@ export class LocalAiAgreementRepository extends AiAgreementRepository {
   }
 
   /**
-   * return ai agreement by DB or account id or null
-   * @param databaseId
-   * @param accountId
+   * @inheritDoc
+   */
+  public async list(accountId: string): Promise<AiAgreement[]> {
+    const entities = await this.repository
+      .createQueryBuilder('e')
+      .where({ accountId })
+      .getMany();
+
+    return entities.map((entity) => classToClass(AiAgreement, entity));
+  }
+
+  /**
+   * @inheritDoc
    */
   public async get(databaseId: Nullable<string>, accountId: string): Promise<Nullable<AiAgreement>> {
     const entity: AiAgreementEntity = await this.repository.findOneBy({ databaseId, accountId });
@@ -32,9 +42,7 @@ export class LocalAiAgreementRepository extends AiAgreementRepository {
   }
 
   /**
-   * creates ai agreement with a given db id and account id
-   * @param databaseId
-   * @param accountId
+   * @inheritDoc
    */
   public async create(databaseId: Nullable<string>, accountId: string): Promise<AiAgreement> {
     const entity: AiAgreementEntity = plainToClass(AiAgreementEntity, {
@@ -43,8 +51,17 @@ export class LocalAiAgreementRepository extends AiAgreementRepository {
       createdAt: new Date(),
     });
 
-    console.log('entity!!!!!!!!!!!1', entity);
-
     return classToClass(AiAgreement, await this.repository.save(entity));
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public async delete(databaseId: Nullable<string>, accountId: string): Promise<void> {
+    await this.repository
+      .createQueryBuilder('a')
+      .delete()
+      .where({ databaseId: databaseId ?? IsNull(), accountId })
+      .execute();
   }
 }

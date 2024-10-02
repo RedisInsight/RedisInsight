@@ -29,6 +29,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      // color:#898A90 !important;
     }
 
     &:placeholder-shown {
@@ -66,9 +67,9 @@
   align-items: center;
 }
 
-.popoverAnchor {
+.submitBtnWrapper {
   position: absolute;
-  bottom: 6px;
+  bottom: 12px;
   right: 10px;
   z-index: 1;
 

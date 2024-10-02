@@ -4,7 +4,7 @@ import { Socket } from 'socket.io-client';
 import { Injectable, Logger } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { AiProvider } from 'src/modules/ai/providers/ai.provider';
-import { SendAiDatabaseMessageDto, SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
+// import { SendAiDatabaseMessageDto, SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { wrapAiError } from 'src/modules/ai/exceptions';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { getFullDbContext, getIndexContext } from 'src/modules/ai/utils/context.util';
@@ -26,8 +26,10 @@ import { AiContextRepository } from 'src/modules/ai/repositories/ai.context.repo
 import config from 'src/utils/config';
 import { Nullable } from 'src/common/constants';
 import { RedisClient } from 'src/modules/redis/client';
-import { AiAgreement, AiAgreementResponse } from './models/ai.agreement';
+import { AiMessageDto } from './dto/send.ai.message.dto';
+import { AiAgreement } from './models/ai.agreement';
 import { AiAgreementRepository } from './repositories/ai.agreement.repository';
+import { UpdateAiAgreementsDto } from './dto/update.ai.agreements.dto';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -35,6 +37,8 @@ const COMMANDS_WHITELIST = {
   'ft.search': true,
   'ft.aggregate': true,
 };
+
+const NO_AI_AGREEMENT_ERROR = 'Permission to run a query was not granted';
 
 @Injectable()
 export class AiService {
@@ -128,37 +132,34 @@ export class AiService {
     return context;
   }
 
-  async stream(
+  async streamMessage(
     sessionMetadata: SessionMetadata,
     databaseId: Nullable<string>,
-    dto: SendAiMessageDto | SendAiDatabaseMessageDto,
+    dto: AiMessageDto,
     res: Response,
   ) {
     return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
       let socket: Socket;
 
       try {
-        let client = null;
-        let context = {};
-
         const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
         const history = await this.aiMessageRepository.list(sessionMetadata, databaseId, auth.accountId);
         const conversationId = AiService.getConversationId(history);
 
-        if (databaseId) {
-          client = await this.databaseClientFactory.getOrCreateClient({
-            sessionMetadata,
-            databaseId,
-            context: ClientContext.AI,
-          });
+        const client = await this.databaseClientFactory.getOrCreateClient({
+          sessionMetadata,
+          databaseId,
+          context: ClientContext.AI,
+        });
 
-          context = await this.getContext(sessionMetadata, databaseId, auth, client);
-        }
+        const agreement = await this.aiAgreementRepository.get(databaseId, auth.accountId);
+
+        const context = agreement ? await this.getContext(sessionMetadata, databaseId, auth, client)
+          : { error: NO_AI_AGREEMENT_ERROR };
 
         const question = classToClass(AiMessage, {
           type: AiMessageType.HumanMessage,
           content: dto.content,
-          tool: dto.tool,
           databaseId,
           conversationId,
           accountId: auth.accountId,
@@ -168,7 +169,6 @@ export class AiService {
         const answer = classToClass(AiMessage, {
           type: AiMessageType.AiMessage,
           content: '',
-          tool: dto.tool,
           databaseId,
           conversationId,
           accountId: auth.accountId,
@@ -183,6 +183,7 @@ export class AiService {
 
         socket.on(AiWsEvents.GET_INDEX, async (index, cb) => {
           try {
+            if (!agreement) return cb({ error: NO_AI_AGREEMENT_ERROR });
             const indexContext = await this.aiContextRepository.getIndexContext(
               sessionMetadata,
               databaseId,
@@ -209,6 +210,7 @@ export class AiService {
 
         socket.on(AiWsEvents.RUN_QUERY, async (data, cb) => {
           try {
+            if (!agreement) return cb(`-ERR: ${NO_AI_AGREEMENT_ERROR}`);
             if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()]) {
               return cb('-ERR: This command is not allowed');
             }
@@ -269,6 +271,92 @@ export class AiService {
     });
   }
 
+  async streamGeneralMessage(
+    sessionMetadata: SessionMetadata,
+    dto: AiMessageDto,
+    res: Response,
+  ) {
+    return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
+      let socket: Socket;
+
+      try {
+        const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
+        const history = await this.aiMessageRepository.list(sessionMetadata, null, auth.accountId);
+        const conversationId = AiService.getConversationId(history);
+
+        const question = classToClass(AiMessage, {
+          type: AiMessageType.HumanMessage,
+          content: dto.content,
+          databaseId: null,
+          conversationId,
+          accountId: auth.accountId,
+          createdAt: new Date(),
+        });
+
+        const answer = classToClass(AiMessage, {
+          type: AiMessageType.AiMessage,
+          content: '',
+          databaseId: null,
+          conversationId,
+          accountId: auth.accountId,
+        });
+
+        socket = await this.aiProvider.getSocket(auth);
+
+        socket.on(AiWsEvents.REPLY_CHUNK, (chunk) => {
+          answer.content += chunk;
+          res.write(chunk);
+        });
+
+        socket.on(AiWsEvents.TOOL_CALL, async (data) => {
+          answer.steps.push(plainToClass(AiIntermediateStep, {
+            type: AiIntermediateStepType.TOOL_CALL,
+            data,
+          }));
+        });
+
+        socket.on(AiWsEvents.TOOL_REPLY, async (data) => {
+          answer.steps.push(plainToClass(AiIntermediateStep, {
+            type: AiIntermediateStepType.TOOL,
+            data,
+          }));
+        });
+
+        await new Promise((resolve, reject) => {
+          socket.on(AiWsEvents.ERROR, async (error) => {
+            reject(error);
+          });
+
+          socket.emitWithAck(
+            AiWsEvents.GENERAL,
+            dto.content,
+            {},
+            AiService.prepareHistory(history),
+            {
+              conversationId,
+            },
+          )
+            .then((ack) => {
+              if (ack?.error) {
+                return reject(ack.error);
+              }
+
+              return resolve(ack);
+            })
+            .catch(reject);
+        });
+        socket.close();
+
+        await this.aiMessageRepository.createMany(sessionMetadata, [question, answer]);
+
+        return res.end();
+      } catch (e) {
+        socket?.close?.();
+        throw wrapAiError(e, 'Unable to send the question');
+      }
+    });
+  }
+
   async getHistory(sessionMetadata: SessionMetadata, databaseId: Nullable<string>): Promise<AiMessage[]> {
     return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
       try {
@@ -296,24 +384,50 @@ export class AiService {
     });
   }
 
-  async getAiAgreement(sessionMetadata: SessionMetadata, databaseId: Nullable<string>): Promise<AiAgreementResponse> {
+  async listAiAgreements(sessionMetadata: SessionMetadata): Promise<AiAgreement[]> {
     return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
       try {
         const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
-        return { aiAgreement: await this.aiAgreementRepository.get(databaseId, auth.accountId) };
+        // const auth = { accountId: '1234' };
+        return await this.aiAgreementRepository.list(auth.accountId);
       } catch (e) {
-        throw wrapAiError(e, 'Unable to get Ai Agreement');
+        throw wrapAiError(e, 'Unable to get Ai Agreements');
       }
     });
   }
 
-  async createAiAgreement(sessionMetadata: SessionMetadata, databaseId: Nullable<string>): Promise<AiAgreement> {
+  async updateAiAgreements(
+    sessionMetadata: SessionMetadata,
+    databaseId: Nullable<string>,
+    reqDto: UpdateAiAgreementsDto,
+  ): Promise<AiAgreement[]> {
     return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
       try {
+        this.logger.log('Updating Ai Agreements data');
         const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
-        return await this.aiAgreementRepository.create(databaseId, auth.accountId);
+        const generalAiAgreement = await this.aiAgreementRepository.get(null, auth.accountId);
+        if (reqDto.general) {
+          if (!generalAiAgreement) {
+            await this.aiAgreementRepository.create(null, auth.accountId);
+          }
+        } else if (generalAiAgreement) {
+          await this.aiAgreementRepository.delete(null, auth.accountId);
+        }
+
+        if (databaseId) {
+          const dbAiAgreement = await this.aiAgreementRepository.get(databaseId, auth.accountId);
+          if (reqDto.db) {
+            if (!dbAiAgreement) {
+              await this.aiAgreementRepository.create(databaseId, auth.accountId);
+            }
+          } else if (dbAiAgreement) {
+            await this.aiAgreementRepository.delete(databaseId, auth.accountId);
+          }
+        }
+
+        return await this.listAiAgreements(sessionMetadata);
       } catch (e) {
-        throw wrapAiError(e, 'Unable to create Ai Agreement');
+        throw wrapAiError(e, 'Unable to update Ai Agrements');
       }
     });
   }

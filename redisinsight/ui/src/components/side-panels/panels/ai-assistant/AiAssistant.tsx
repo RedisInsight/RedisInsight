@@ -15,7 +15,10 @@ import styles from './styles.module.scss'
 
 const AiAssistant = () => {
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.cloudSso]: cloudSsoFeature,
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const currentAccountIdRef = useRef(userOAuthProfile?.id)
 
@@ -31,6 +34,8 @@ const AiAssistant = () => {
 
     currentAccountIdRef.current = userOAuthProfile?.id
   }, [userOAuthProfile])
+
+  if (!databaseChatFeature) return <></>
 
   return (
     <div className={styles.wrapper} data-testid="redis-copilot">

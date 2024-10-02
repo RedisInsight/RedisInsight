@@ -123,24 +123,43 @@ describe('LocalClientCertificateRepository', () => {
   });
 
   describe('delete', () => {
-    it('should delete client certificate', async () => {
-      const result = await service.delete(mockClientCertificate.id);
+    const mockId = 'mock-client-cert-id';
+    const mockAffectedDatabases = ['db1', 'db2'];
 
-      expect(result).toEqual(undefined);
+    beforeEach(() => {
+      jest.clearAllMocks();
     });
 
-    it('should throw an error when trying to delete non-existing client certificate', async () => {
-      repository.findOneBy.mockResolvedValueOnce(null);
+    it('should delete client certificate and return affected databases', async () => {
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(mockClientCertificate);
 
-      try {
-        await service.delete(mockClientCertificate.id);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(NotFoundException);
-        // todo: why such message?
-        expect(e.message).toEqual('Not Found');
-        expect(repository.delete).not.toHaveBeenCalled();
-      }
+      const mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })))
+      };
+      jest.spyOn(service['databaseRepository'], 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+
+      jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
+
+      const result = await service.delete(mockId);
+
+      expect(result).toEqual({ affectedDatabases: mockAffectedDatabases });
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
+      expect(service['databaseRepository'].createQueryBuilder).toHaveBeenCalledWith('d');
+      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('d.clientCert', 'c');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith({ clientCert: mockId });
+      expect(mockQueryBuilder.select).toHaveBeenCalledWith(['d.id']);
+      expect(repository.delete).toHaveBeenCalledWith(mockId);
+    });
+
+    it('should throw NotFoundException when trying to delete non-existing client certificate', async () => {
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+
+      await expect(service.delete(mockId)).rejects.toThrow(NotFoundException);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
+      expect(repository.delete).not.toHaveBeenCalled();
     });
   });
 });

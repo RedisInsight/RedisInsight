@@ -107,24 +107,45 @@ describe('LocalCaCertificateRepository', () => {
   });
 
   describe('delete', () => {
-    it('should delete ca certificate', async () => {
-      const result = await service.delete(mockCaCertificate.id);
+    it('should delete ca certificate and return affected databases', async () => {
+      const mockId = 'mock-ca-cert-id';
+      const mockAffectedDatabases = ['db1', 'db2'];
 
-      expect(result).toEqual(undefined);
+      // Mock findOneBy to return a certificate
+      repository.findOneBy.mockResolvedValue(mockCaCertificate);
+
+      // Mock getMany to return affected databases
+      const mockQueryBuilder = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        select: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockAffectedDatabases.map((id) => ({ id }))),
+      };
+      jest.spyOn(service['databaseRepository'], 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+
+      // Mock delete operation
+      repository.delete.mockResolvedValue(undefined);
+
+      const result = await service.delete(mockId);
+
+      expect(result).toEqual({ affectedDatabases: mockAffectedDatabases });
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
+      expect(service['databaseRepository'].createQueryBuilder).toHaveBeenCalledWith('d');
+      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('d.caCert', 'c');
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith({ caCert: mockId });
+      expect(mockQueryBuilder.select).toHaveBeenCalledWith(['d.id']);
+      expect(repository.delete).toHaveBeenCalledWith(mockId);
     });
 
-    it('should throw an error when trying to delete non-existing ca certificate', async () => {
-      repository.findOneBy.mockResolvedValueOnce(null);
+    it('should throw NotFoundException when trying to delete non-existing ca certificate', async () => {
+      const mockId = 'non-existent-id';
 
-      try {
-        await service.delete(mockCaCertificate.id);
-        fail();
-      } catch (e) {
-        expect(e).toBeInstanceOf(NotFoundException);
-        // todo: why such message?
-        expect(e.message).toEqual('Not Found');
-        expect(repository.delete).not.toHaveBeenCalled();
-      }
+      // Mock findOneBy to return null (certificate not found)
+      repository.findOneBy.mockResolvedValue(null);
+
+      await expect(service.delete(mockId)).rejects.toThrow(NotFoundException);
+      expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
+      expect(repository.delete).not.toHaveBeenCalled();
     });
   });
 });

@@ -13,11 +13,11 @@ describe('generateHumanMessage', () => {
 })
 
 describe('generateAiMessage', () => {
-  it('should properly return human message object', () => {
-    expect(generateAiMessage('hello')).toEqual({
+  it('should properly return ai message object', () => {
+    expect(generateAiMessage()).toEqual({
       id: expect.any(String),
       type: AiChatMessageType.AIMessage,
-      content: 'hello',
+      content: '',
     })
   })
 })

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiFlexGroup, EuiFlexItem, EuiForm, EuiIcon, EuiLink, EuiPopover, EuiSpacer, EuiSwitch, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiCheckbox, EuiFlexGroup, EuiFlexItem, EuiForm, EuiIcon, EuiLink, EuiPopover, EuiSpacer, EuiSwitch, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
@@ -115,7 +115,7 @@ const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) =>
 
   return (
     <EuiPopover
-      ownFocus
+      ownFocus={false}
       anchorPosition="downRight"
       isOpen={agreementsPopoverOpen}
       panelPaddingSize="m"
@@ -192,15 +192,19 @@ const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) =>
             <div className={styles.dbAgreementWrapper}>
               <EuiFlexGroup gutterSize="s" alignItems="center">
                 <EuiFlexItem grow={false}>
-                  <EuiSwitch
-                    showLabel={false}
-                    label=""
-                    disabled={!formik.values.checkGeneralAgreement}
-                    checked={formik.values.checkDbAgreement}
-                    onChange={(e) => toggleDbAgreement(e.target.checked)}
-                    className={styles.switchOption}
-                    data-testid="check-ai-database-agreement"
-                  />
+                  <EuiToolTip
+                    content={formik.values.checkGeneralAgreement ? null : 'Accept the Redis Copilot General terms'}
+                  >
+                    <EuiSwitch
+                      showLabel={false}
+                      label=""
+                      disabled={!formik.values.checkGeneralAgreement}
+                      checked={formik.values.checkDbAgreement}
+                      onChange={(e) => toggleDbAgreement(e.target.checked)}
+                      className={styles.switchOption}
+                      data-testid="check-ai-database-agreement"
+                    />
+                  </EuiToolTip>
                 </EuiFlexItem>
                 <EuiFlexItem grow={false}>
                   <EuiText

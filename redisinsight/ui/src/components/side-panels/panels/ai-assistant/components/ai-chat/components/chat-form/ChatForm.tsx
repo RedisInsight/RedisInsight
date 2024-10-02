@@ -83,7 +83,9 @@ const ChatForm = (props: Props) => {
     <div>
       <EuiToolTip
         title={isGeneralAgreementAccepted ? null : 'Accept the Redis Copilot General terms'}
-        content={!isGeneralAgreementAccepted ? 'Accept the Redis Copilot General terms in the menu above to get started.' : validation ? 'Open your Redis database with Query Engine , or create a new database to get started.' : null}
+        content={!isGeneralAgreementAccepted ? 'Accept the Redis Copilot General terms in the menu above to get started.'
+          : validation ? 'Open your Redis database with Redis Query Engine , or create a new database to get started.'
+            : null}
         className={styles.validationTooltip}
         display="block"
       >

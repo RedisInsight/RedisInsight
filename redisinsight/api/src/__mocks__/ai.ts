@@ -4,7 +4,7 @@ import {
 import { Readable } from 'stream';
 import * as MockSocket from 'socket.io-mock';
 import { AxiosError } from 'axios';
-import { SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
+import { AiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { mockCloudSession } from 'src/__mocks__/cloud-session';
 import { AiMessageEntity } from 'src/modules/ai/entities/ai.message.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
@@ -87,7 +87,7 @@ export const mockAiChat = Object.assign(new AiModule(), {
 export const getMockedReadableStream = () => new Readable();
 export const mockAiResponseStream = getMockedReadableStream();
 
-export const mockSendAiChatMessageDto = Object.assign(new SendAiMessageDto(), {
+export const mockSendAiChatMessageDto = Object.assign(new AiMessageDto(), {
   content: mockHumanMessage1Response.content,
 });
 

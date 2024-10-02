@@ -38,9 +38,7 @@ export class CaCertificateController {
   @Delete(':id')
   @ApiOperation({ description: 'Delete Ca Certificate by id' })
   @ApiParam({ name: 'id', type: String })
-  async delete(
-    @Param('id') id: string,
-  ): Promise<void> {
+  async delete(@Param('id') id: string): Promise<void> {
     await this.service.delete(id);
   }
 }

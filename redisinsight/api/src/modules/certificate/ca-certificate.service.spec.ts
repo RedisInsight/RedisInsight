@@ -5,12 +5,9 @@ import {
   mockCaCertificate,
   mockCaCertificateRepository, mockCreateCaCertificateDto,
   MockType,
-  mockSessionMetadata,
-  mockDatabaseRepository,
   mockRedisClientStorage,
 } from 'src/__mocks__';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
-import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { pick } from 'lodash';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
@@ -28,10 +25,6 @@ describe('CaCertificateService', () => {
         {
           provide: CaCertificateRepository,
           useFactory: mockCaCertificateRepository,
-        },
-        {
-          provide: DatabaseRepository,
-          useFactory: mockDatabaseRepository,
         },
         {
           provide: RedisClientStorage,
@@ -101,13 +94,13 @@ describe('CaCertificateService', () => {
 
   describe('delete', () => {
     it('should delete ca certificate', async () => {
-      expect(await service.delete(mockSessionMetadata, mockCaCertificate.id)).toEqual(undefined);
+      expect(await service.delete(mockCaCertificate.id)).toEqual(undefined);
     });
     it('should throw encryption error', async () => {
       repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
       try {
-        await service.delete(mockSessionMetadata, mockCaCertificate.id);
+        await service.delete(mockCaCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(KeytarEncryptionErrorException);
@@ -117,7 +110,7 @@ describe('CaCertificateService', () => {
       repository.delete.mockRejectedValueOnce(new Error());
 
       try {
-        await service.delete(mockSessionMetadata, mockCaCertificate.id);
+        await service.delete(mockCaCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

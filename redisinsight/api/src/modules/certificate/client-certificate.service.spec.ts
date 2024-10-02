@@ -6,14 +6,11 @@ import {
   mockClientCertificate,
   mockClientCertificateRepository, mockCreateClientCertificateDto,
   MockType,
-  mockSessionMetadata,
-  mockDatabaseRepository,
   mockRedisClientStorage,
 } from 'src/__mocks__';
 import { KeytarEncryptionErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateService } from 'src/modules/certificate/client-certificate.service';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
-import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 describe('ClientCertificateService', () => {
@@ -28,10 +25,6 @@ describe('ClientCertificateService', () => {
         {
           provide: ClientCertificateRepository,
           useFactory: mockClientCertificateRepository,
-        },
-        {
-          provide: DatabaseRepository,
-          useFactory: mockDatabaseRepository,
         },
         {
           provide: RedisClientStorage,
@@ -101,13 +94,13 @@ describe('ClientCertificateService', () => {
 
   describe('delete', () => {
     it('should delete client certificate', async () => {
-      expect(await service.delete(mockSessionMetadata, mockClientCertificate.id)).toEqual(undefined);
+      expect(await service.delete(mockClientCertificate.id)).toEqual(undefined);
     });
     it('should throw encryption error', async () => {
       repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
 
       try {
-        await service.delete(mockSessionMetadata, mockClientCertificate.id);
+        await service.delete(mockClientCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(KeytarEncryptionErrorException);
@@ -117,7 +110,7 @@ describe('ClientCertificateService', () => {
       repository.delete.mockRejectedValueOnce(new Error());
 
       try {
-        await service.delete(mockSessionMetadata, mockClientCertificate.id);
+        await service.delete(mockClientCertificate.id);
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(InternalServerErrorException);

@@ -39,9 +39,7 @@ export class ClientCertificateController {
   @Delete(':id')
   @ApiOperation({ description: 'Delete Client Certificate pair by id' })
   @ApiParam({ name: 'id', type: String })
-  async deleteClientCertificatePair(
-    @Param('id') id: string,
-  ): Promise<void> {
+  async deleteClientCertificatePair(@Param('id') id: string): Promise<void> {
     await this.service.delete(id);
   }
 }

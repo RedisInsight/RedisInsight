@@ -20,15 +20,15 @@ export const asSuggestionsRef = (
   forceShow
 })
 
-export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, nextQuotes = true) =>
+export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, isNextArgQuery = true) =>
   indexes.map((index) => {
     const value = formatLongName(bufferToString(index))
-    const insertQueryQuotes = nextQuotes ? ' "$1"' : ''
+    const insertQueryQuotes = isNextArgQuery ? " '\${1:query to search}'" : ''
 
     return {
       label: value || ' ',
       kind: monacoEditor.languages.CompletionItemKind.Snippet,
-      insertText: `"${value}"${insertQueryQuotes} `,
+      insertText: `'${value}'${insertQueryQuotes} `,
       insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
       range,
       detail: value || ' ',
@@ -54,7 +54,7 @@ export const getFieldsSuggestions = (
 ) =>
   fields.map((field) => {
     const { attribute, type } = field
-    const attibuteText = attribute.trim() ? attribute : `\\"${attribute}\\"`
+    const attibuteText = attribute.trim() ? attribute : `\\'${attribute}\\'`
     const insertText = withType ? addFieldAttribute(attibuteText, type) : attibuteText
 
     return {

@@ -23,6 +23,7 @@ import {
   LocalClientCertificateRepository,
 } from 'src/modules/certificate/repositories/local.client-certificate.repository';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 describe('LocalClientCertificateRepository', () => {
   let service: LocalClientCertificateRepository;

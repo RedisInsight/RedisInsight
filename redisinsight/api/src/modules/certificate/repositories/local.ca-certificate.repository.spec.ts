@@ -16,6 +16,7 @@ import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certifi
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
+import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
 describe('LocalCaCertificateRepository', () => {
   let service: LocalCaCertificateRepository;
@@ -33,7 +34,7 @@ describe('LocalCaCertificateRepository', () => {
           useFactory: mockRepository,
         },
         {
-          provide: getRepositoryToken(DatabaseRepository),
+          provide: getRepositoryToken(DatabaseEntity),
           useFactory: mockDatabaseRepository,
         },
         {

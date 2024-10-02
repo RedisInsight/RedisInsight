@@ -4,7 +4,7 @@ import {
   generateKeywords,
   generateTokens,
   generateTokensWithFunctions,
-  getBlockTokens,
+  getBlockTokens, isIndexAfterKeyword,
   isQueryAfterIndex
 } from 'uiSrc/utils/monaco/redisearch/utils'
 import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensTemplates'
@@ -18,6 +18,7 @@ export const getRediSearchMonarchTokensProvider = (
   const currentCommand = commands.find(({ name }) => name === command)
 
   const keywords = generateKeywords(commands)
+  const isHighlightIndex = isIndexAfterKeyword(currentCommand)
   const argTokens = generateTokens(currentCommand)
   const isHighlightQuery = isQueryAfterIndex(currentCommand)
 
@@ -55,7 +56,7 @@ export const getRediSearchMonarchTokensProvider = (
           [/[<>=!%&+\-*/|~^]/, 'operator'],
         ],
         keyword: [
-          [`(${keywords.join('|')})\\b`, { token: 'keyword', next: '@index' }]
+          [`(${keywords.join('|')})\\b`, { token: 'keyword', next: isHighlightIndex ? '@index' : '@root' }]
         ],
         'argument.block': getBlockTokens(argTokens?.pureTokens),
         ...generateTokensWithFunctions(argTokens?.tokensWithQueryAfter),

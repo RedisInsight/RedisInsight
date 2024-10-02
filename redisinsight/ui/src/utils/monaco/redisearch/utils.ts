@@ -55,6 +55,13 @@ export const generateTokens = (command?: SearchCommand): Nullable<{
   return { pureTokens, tokensWithQueryAfter }
 }
 
+export const isIndexAfterKeyword = (command?: SearchCommand) => {
+  if (!command) return false
+
+  const index = command.arguments?.findIndex(({ name }) => name === DefinedArgumentName.index)
+  return isNumber(index) && index === 0
+}
+
 export const isQueryAfterIndex = (command?: SearchCommand) => {
   if (!command) return false
 

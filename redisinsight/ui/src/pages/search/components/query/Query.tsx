@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { useDispatch } from 'react-redux'
 
-import { ICommands, MonacoLanguage, Theme } from 'uiSrc/constants'
+import { isNumber } from 'lodash'
+import { MonacoLanguage, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Nullable } from 'uiSrc/utils'
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
@@ -19,7 +20,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { options, DefinedArgumentName, FIELD_START_SYMBOL } from './constants'
+import { options, DefinedArgumentName, FIELD_START_SYMBOL, COMMANDS_TO_GET_INDEX_INFO } from './constants'
 import {
   getFieldsSuggestions,
   getIndexesSuggestions,
@@ -35,11 +36,10 @@ export interface Props {
   onChange: (val: string) => void
   indexes: RedisResponseBuffer[]
   supportedCommands?: SearchCommand[]
-  commandsSpec?: ICommands
 }
 
 const Query = (props: Props) => {
-  const { value, onChange, indexes, supportedCommands = [], commandsSpec } = props
+  const { value, onChange, indexes, supportedCommands = [] } = props
 
   const [selectedCommand, setSelectedCommand] = useState('')
   const [selectedIndex, setSelectedIndex] = useState('')
@@ -209,22 +209,21 @@ const Query = (props: Props) => {
     const [beforeOffsetArgs, [currentOffsetArg]] = args
     const [firstArg] = beforeOffsetArgs
 
-    const commandName = (firstArg || currentOffsetArg)?.toUpperCase()
-    const command = commandsSpec?.[commandName] as unknown as SearchCommand
-    const isCommandSupported = supportedCommands.some(({ name }) => commandName === name)
-
-    if (command && !isCommandSupported) return asSuggestionsRef([])
-    if (!command) {
-      if ((position.lineNumber === 1 && position.column === 1) || beforeOffsetArgs.length === 0) {
-        return asSuggestionsRef(getCommandsSuggestions(supportedCommands, range), false)
-      }
-
-      helpWidgetRef.current.isOpen = false
-      return asSuggestionsRef([], false)
+    if ((position.lineNumber === 1 && position.column === 1) || beforeOffsetArgs.length === 0) {
+      return asSuggestionsRef(getCommandsSuggestions(COMMANDS_LIST, range), false)
     }
 
-    // TODO: change to more generic logic
-    setSelectedIndex(allArgs[1] || '')
+    const commandName = (firstArg || currentOffsetArg)?.toUpperCase()
+    const command = COMMANDS_LIST.find(({ name }) => commandName === name)
+    if (!command) {
+      helpWidgetRef.current.isOpen = false
+      return asSuggestionsRef([])
+    }
+
+    if (COMMANDS_TO_GET_INDEX_INFO.some((name) => name === commandName)) {
+      setSelectedIndex(allArgs[1] || '')
+    }
+
     setSelectedCommand(commandName)
 
     const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset }
@@ -234,7 +233,7 @@ const Query = (props: Props) => {
 
     switch (foundArg?.stopArg?.name) {
       case DefinedArgumentName.index: {
-        return handleIndexSuggestions(command, foundArg, beforeOffsetArgs.length, currentOffsetArg, range)
+        return handleIndexSuggestions(command, foundArg, currentOffsetArg, range)
       }
       case DefinedArgumentName.query: {
         return handleQuerySuggestions(command, foundArg)
@@ -254,7 +253,6 @@ const Query = (props: Props) => {
   const handleIndexSuggestions = (
     command: SearchCommand,
     foundArg: FoundCommandArgument,
-    lastArgIndex: number,
     currentOffsetArg: Nullable<string>,
     range: monacoEditor.IRange
   ) => {
@@ -263,7 +261,11 @@ const Query = (props: Props) => {
     const isIndex = indexesRef.current.length > 0
     if (!isIndex || currentOffsetArg) return asSuggestionsRef([], !currentOffsetArg)
 
-    const isNextArgQuery = command?.arguments?.[lastArgIndex]?.name === DefinedArgumentName.query
+    const argumentIndex = command?.arguments
+      ?.findIndex(({ name }) => foundArg?.stopArg?.name === name)
+    const isNextArgQuery = isNumber(argumentIndex)
+      && command?.arguments?.[argumentIndex + 1]?.name === DefinedArgumentName.query
+
     return asSuggestionsRef(getIndexesSuggestions(indexesRef.current, range, isNextArgQuery))
   }
 

@@ -423,7 +423,6 @@ export const MOCKED_SUPPORTED_COMMANDS = {
     since: '1.0.0',
     group: 'search'
   },
-
   'FT.AGGREGATE': {
     summary: 'Run a search query on an index and perform aggregate transformations on the results',
     complexity: 'O(1)',
@@ -673,7 +672,6 @@ export const MOCKED_SUPPORTED_COMMANDS = {
     since: '1.1.0',
     group: 'search'
   },
-
   'FT.PROFILE': {
     summary: 'Performs a `FT.SEARCH` or `FT.AGGREGATE` command and collects performance information',
     complexity: 'O(N)',
@@ -717,5 +715,807 @@ export const MOCKED_SUPPORTED_COMMANDS = {
     since: '2.2.0',
     group: 'search',
     provider: 'redisearch'
-  }
+  },
+  'FT.ALIASADD': {
+    summary: 'Adds an alias to the index',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'alias',
+        type: 'string'
+      },
+      {
+        name: 'index',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.ALIASDEL': {
+    summary: 'Deletes an alias from the index',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'alias',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.ALIASUPDATE': {
+    summary: 'Adds or updates an alias to the index',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'alias',
+        type: 'string'
+      },
+      {
+        name: 'index',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.ALTER': {
+    summary: 'Adds a new field to the index',
+    complexity: 'O(N) where N is the number of keys in the keyspace',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'skipinitialscan',
+        type: 'pure-token',
+        token: 'SKIPINITIALSCAN',
+        optional: true
+      },
+      {
+        name: 'schema',
+        type: 'pure-token',
+        token: 'SCHEMA'
+      },
+      {
+        name: 'add',
+        type: 'pure-token',
+        token: 'ADD'
+      },
+      {
+        name: 'field',
+        type: 'string'
+      },
+      {
+        name: 'options',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.CONFIG GET': {
+    summary: 'Retrieves runtime configuration options',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'option',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.CONFIG HELP': {
+    summary: 'Help description of runtime configuration options',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'option',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.CONFIG SET': {
+    summary: 'Sets runtime configuration options',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'option',
+        type: 'string'
+      },
+      {
+        name: 'value',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.CREATE': {
+    summary: 'Creates an index with the given spec',
+    complexity: 'O(K) at creation where K is the number of fields, O(N) if scanning the keyspace is triggered, where N is the number of keys in the keyspace',
+    history: [
+      [
+        '2.0.0',
+        'Added `PAYLOAD_FIELD` argument for backward support of `FT.SEARCH` deprecated `WITHPAYLOADS` argument'
+      ],
+      [
+        '2.0.0',
+        'Deprecated `PAYLOAD_FIELD` argument'
+      ]
+    ],
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'data_type',
+        token: 'ON',
+        type: 'oneof',
+        arguments: [
+          {
+            name: 'hash',
+            type: 'pure-token',
+            token: 'HASH'
+          },
+          {
+            name: 'json',
+            type: 'pure-token',
+            token: 'JSON'
+          }
+        ],
+        optional: true
+      },
+      {
+        name: 'prefix',
+        type: 'block',
+        optional: true,
+        arguments: [
+          {
+            name: 'count',
+            type: 'integer',
+            token: 'PREFIX'
+          },
+          {
+            name: 'prefix',
+            type: 'string',
+            multiple: true
+          }
+        ]
+      },
+      {
+        name: 'filter',
+        type: 'string',
+        optional: true,
+        token: 'FILTER'
+      },
+      {
+        name: 'default_lang',
+        type: 'string',
+        token: 'LANGUAGE',
+        optional: true
+      },
+      {
+        name: 'lang_attribute',
+        type: 'string',
+        token: 'LANGUAGE_FIELD',
+        optional: true
+      },
+      {
+        name: 'default_score',
+        type: 'double',
+        token: 'SCORE',
+        optional: true
+      },
+      {
+        name: 'score_attribute',
+        type: 'string',
+        token: 'SCORE_FIELD',
+        optional: true
+      },
+      {
+        name: 'payload_attribute',
+        type: 'string',
+        token: 'PAYLOAD_FIELD',
+        optional: true
+      },
+      {
+        name: 'maxtextfields',
+        type: 'pure-token',
+        token: 'MAXTEXTFIELDS',
+        optional: true
+      },
+      {
+        name: 'seconds',
+        type: 'double',
+        token: 'TEMPORARY',
+        optional: true
+      },
+      {
+        name: 'nooffsets',
+        type: 'pure-token',
+        token: 'NOOFFSETS',
+        optional: true
+      },
+      {
+        name: 'nohl',
+        type: 'pure-token',
+        token: 'NOHL',
+        optional: true
+      },
+      {
+        name: 'nofields',
+        type: 'pure-token',
+        token: 'NOFIELDS',
+        optional: true
+      },
+      {
+        name: 'nofreqs',
+        type: 'pure-token',
+        token: 'NOFREQS',
+        optional: true
+      },
+      {
+        name: 'stopwords',
+        type: 'block',
+        optional: true,
+        token: 'STOPWORDS',
+        arguments: [
+          {
+            name: 'count',
+            type: 'integer'
+          },
+          {
+            name: 'stopword',
+            type: 'string',
+            multiple: true,
+            optional: true
+          }
+        ]
+      },
+      {
+        name: 'skipinitialscan',
+        type: 'pure-token',
+        token: 'SKIPINITIALSCAN',
+        optional: true
+      },
+      {
+        name: 'schema',
+        type: 'pure-token',
+        token: 'SCHEMA'
+      },
+      {
+        name: 'field',
+        type: 'block',
+        multiple: true,
+        arguments: [
+          {
+            name: 'field_name',
+            type: 'string'
+          },
+          {
+            name: 'alias',
+            type: 'string',
+            token: 'AS',
+            optional: true
+          },
+          {
+            name: 'field_type',
+            type: 'oneof',
+            arguments: [
+              {
+                name: 'text',
+                type: 'pure-token',
+                token: 'TEXT'
+              },
+              {
+                name: 'tag',
+                type: 'pure-token',
+                token: 'TAG'
+              },
+              {
+                name: 'numeric',
+                type: 'pure-token',
+                token: 'NUMERIC'
+              },
+              {
+                name: 'geo',
+                type: 'pure-token',
+                token: 'GEO'
+              },
+              {
+                name: 'vector',
+                type: 'pure-token',
+                token: 'VECTOR'
+              }
+            ]
+          },
+          {
+            name: 'withsuffixtrie',
+            type: 'pure-token',
+            token: 'WITHSUFFIXTRIE',
+            optional: true
+          },
+          {
+            name: 'INDEXEMPTY',
+            type: 'pure-token',
+            token: 'INDEXEMPTY',
+            optional: true
+          },
+          {
+            name: 'indexmissing',
+            type: 'pure-token',
+            token: 'INDEXMISSING',
+            optional: true
+          },
+          {
+            name: 'sortable',
+            type: 'block',
+            optional: true,
+            arguments: [
+              {
+                name: 'sortable',
+                type: 'pure-token',
+                token: 'SORTABLE'
+              },
+              {
+                name: 'UNF',
+                type: 'pure-token',
+                token: 'UNF',
+                optional: true
+              }
+            ]
+          },
+          {
+            name: 'noindex',
+            type: 'pure-token',
+            token: 'NOINDEX',
+            optional: true
+          }
+        ]
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.CURSOR DEL': {
+    summary: 'Deletes a cursor',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'cursor_id',
+        type: 'integer'
+      }
+    ],
+    since: '1.1.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.CURSOR READ': {
+    summary: 'Reads from a cursor',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'cursor_id',
+        type: 'integer'
+      },
+      {
+        name: 'read size',
+        type: 'integer',
+        optional: true,
+        token: 'COUNT'
+      }
+    ],
+    since: '1.1.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.DICTADD': {
+    summary: 'Adds terms to a dictionary',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'dict',
+        type: 'string'
+      },
+      {
+        name: 'term',
+        type: 'string',
+        multiple: true
+      }
+    ],
+    since: '1.4.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.DICTDEL': {
+    summary: 'Deletes terms from a dictionary',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'dict',
+        type: 'string'
+      },
+      {
+        name: 'term',
+        type: 'string',
+        multiple: true
+      }
+    ],
+    since: '1.4.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.DICTDUMP': {
+    summary: 'Dumps all terms in the given dictionary',
+    complexity: 'O(N), where N is the size of the dictionary',
+    arguments: [
+      {
+        name: 'dict',
+        type: 'string'
+      }
+    ],
+    since: '1.4.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.DROPINDEX': {
+    summary: 'Deletes the index',
+    complexity: 'O(1) or O(N) if documents are deleted, where N is the number of keys in the keyspace',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'delete docs',
+        type: 'oneof',
+        arguments: [
+          {
+            name: 'delete docs',
+            type: 'pure-token',
+            token: 'DD'
+          }
+        ],
+        optional: true
+      }
+    ],
+    since: '2.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.EXPLAIN': {
+    summary: 'Returns the execution plan for a complex query',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'query',
+        type: 'string'
+      },
+      {
+        name: 'dialect',
+        type: 'integer',
+        optional: true,
+        token: 'DIALECT',
+        since: '2.4.3'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.EXPLAINCLI': {
+    summary: 'Returns the execution plan for a complex query',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'query',
+        type: 'string'
+      },
+      {
+        name: 'dialect',
+        type: 'integer',
+        optional: true,
+        token: 'DIALECT',
+        since: '2.4.3'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.INFO': {
+    summary: 'Returns information and statistics on the index',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.SPELLCHECK': {
+    summary: 'Performs spelling correction on a query, returning suggestions for misspelled terms',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'query',
+        type: 'string'
+      },
+      {
+        name: 'distance',
+        token: 'DISTANCE',
+        type: 'integer',
+        optional: true
+      },
+      {
+        name: 'terms',
+        token: 'TERMS',
+        type: 'block',
+        optional: true,
+        arguments: [
+          {
+            name: 'inclusion',
+            type: 'oneof',
+            arguments: [
+              {
+                name: 'include',
+                type: 'pure-token',
+                token: 'INCLUDE'
+              },
+              {
+                name: 'exclude',
+                type: 'pure-token',
+                token: 'EXCLUDE'
+              }
+            ]
+          },
+          {
+            name: 'dictionary',
+            type: 'string'
+          },
+          {
+            name: 'terms',
+            type: 'string',
+            multiple: true,
+            optional: true
+          }
+        ]
+      },
+      {
+        name: 'dialect',
+        type: 'integer',
+        optional: true,
+        token: 'DIALECT',
+        since: '2.4.3'
+      }
+    ],
+    since: '1.4.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.SUGADD': {
+    summary: 'Adds a suggestion string to an auto-complete suggestion dictionary',
+    complexity: 'O(1)',
+    history: [
+      [
+        '2.0.0',
+        'Deprecated `PAYLOAD` argument'
+      ]
+    ],
+    arguments: [
+      {
+        name: 'key',
+        type: 'string'
+      },
+      {
+        name: 'string',
+        type: 'string'
+      },
+      {
+        name: 'score',
+        type: 'double'
+      },
+      {
+        name: 'increment score',
+        type: 'oneof',
+        arguments: [
+          {
+            name: 'incr',
+            type: 'pure-token',
+            token: 'INCR'
+          }
+        ],
+        optional: true
+      },
+      {
+        name: 'payload',
+        token: 'PAYLOAD',
+        type: 'string',
+        optional: true
+      }
+    ],
+    since: '1.0.0',
+    group: 'suggestion',
+    provider: 'redisearch'
+  },
+  'FT.SUGDEL': {
+    summary: 'Deletes a string from a suggestion index',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'key',
+        type: 'string'
+      },
+      {
+        name: 'string',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'suggestion',
+    provider: 'redisearch'
+  },
+  'FT.SUGGET': {
+    summary: 'Gets completion suggestions for a prefix',
+    complexity: 'O(1)',
+    history: [
+      [
+        '2.0.0',
+        'Deprecated `WITHPAYLOADS` argument'
+      ]
+    ],
+    arguments: [
+      {
+        name: 'key',
+        type: 'string'
+      },
+      {
+        name: 'prefix',
+        type: 'string'
+      },
+      {
+        name: 'fuzzy',
+        type: 'pure-token',
+        token: 'FUZZY',
+        optional: true
+      },
+      {
+        name: 'withscores',
+        type: 'pure-token',
+        token: 'WITHSCORES',
+        optional: true
+      },
+      {
+        name: 'withpayloads',
+        type: 'pure-token',
+        token: 'WITHPAYLOADS',
+        optional: true
+      },
+      {
+        name: 'max',
+        token: 'MAX',
+        type: 'integer',
+        optional: true
+      }
+    ],
+    since: '1.0.0',
+    group: 'suggestion',
+    provider: 'redisearch'
+  },
+  'FT.SUGLEN': {
+    summary: 'Gets the size of an auto-complete suggestion dictionary',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'key',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'suggestion',
+    provider: 'redisearch'
+  },
+  'FT.SYNDUMP': {
+    summary: 'Dumps the contents of a synonym group',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      }
+    ],
+    since: '1.2.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.SYNUPDATE': {
+    summary: 'Creates or updates a synonym group with additional terms',
+    complexity: 'O(1)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'synonym_group_id',
+        type: 'string'
+      },
+      {
+        name: 'skipinitialscan',
+        type: 'pure-token',
+        token: 'SKIPINITIALSCAN',
+        optional: true
+      },
+      {
+        name: 'term',
+        type: 'string',
+        multiple: true
+      }
+    ],
+    since: '1.2.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT.TAGVALS': {
+    summary: 'Returns the distinct tags indexed in a Tag field',
+    complexity: 'O(N)',
+    arguments: [
+      {
+        name: 'index',
+        type: 'string'
+      },
+      {
+        name: 'field_name',
+        type: 'string'
+      }
+    ],
+    since: '1.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
+  'FT._LIST': {
+    summary: 'Returns a list of all existing indexes',
+    complexity: 'O(1)',
+    since: '2.0.0',
+    group: 'search',
+    provider: 'redisearch'
+  },
 }

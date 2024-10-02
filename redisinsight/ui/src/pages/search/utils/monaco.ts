@@ -26,7 +26,7 @@ export const getRange = (position: monaco.Position, word: monaco.editor.IWordAtP
 })
 
 export const buildSuggestion = (arg: SearchCommand, range: monaco.IRange, options: any = {}) => {
-  const extraQuotes = arg.expression ? '"$1"' : ''
+  const extraQuotes = arg.expression ? '\'$1\'' : ''
   return {
     label: isString(arg) ? arg : arg.token || arg.arguments?.[0].token || arg.name || '',
     insertText: `${arg.token || arg.arguments?.[0].token || arg.name?.toUpperCase() || ''} ${extraQuotes}`,

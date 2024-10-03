@@ -14,7 +14,7 @@ describe('AddListElements', () => {
 
   it('should set elements input properly', () => {
     render(<AddListElements {...instance(mockedProps)} />)
-    const elementsInput = screen.getByTestId('elements-input')
+    const elementsInput = screen.getByTestId(elementFindingRegex)
     fireEvent.change(
       elementsInput,
       { target: { value: '123' } }

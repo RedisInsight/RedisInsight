@@ -131,7 +131,7 @@ const Query = (props: Props) => {
     })
 
     const suggestionWidget = editor.getContribution<any>('editor.contrib.suggestController')
-    suggestionWidget.onWillInsertSuggestItem(({ item }: Record<'item', any>) => {
+    suggestionWidget?.onWillInsertSuggestItem(({ item }: Record<'item', any>) => {
       if (item.completion.id === EmptySuggestionsIds.NoIndexes) {
         updateHelpWidget(true)
         editor.trigger('', 'hideSuggestWidget', null)

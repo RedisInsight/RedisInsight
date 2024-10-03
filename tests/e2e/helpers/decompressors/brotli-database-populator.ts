@@ -1,40 +1,16 @@
-import { createClient } from 'redis';
 import * as proto from 'protobufjs';
 import { pack as msgpackrPack } from 'msgpackr';
 import * as brotli from 'brotli-unicode';
 import * as fflate from 'fflate';
 import * as fs from 'fs';
+import { BaseDatabasePopulator } from './base-decompressors-populator';
 
 const COMPRESSED_PREFIX = 'Comp';
 const BROTLI_PREFIX = 'BROTLI';
 
-export class BrotliDatabasePopulator {
-    private client: ReturnType<typeof createClient>;
+export class BrotliDatabasePopulator extends BaseDatabasePopulator {
 
-    constructor(private host: string, private port: string) {
-        const dbConf = { port: Number.parseInt(port), host, username: 'default' };
-        this.client = createClient(dbConf);
-
-        this.client.on('error', (error: string) => {
-            throw new Error(`Redis connection error: ${error}`);
-        });
-    }
-
-    public async populateDB(): Promise<void> {
-        this.client.on('connect', async () => {
-            console.log('Connected to Redis');
-
-            try {
-                await this.createBrotliCompressedKeys();
-            } catch (error) {
-                console.error('Error during key creation:', error);
-            } finally {
-                await this.client.quit();
-            }
-        });
-    }
-
-    private async createBrotliCompressedKeys(): Promise<void> {
+    protected async createCompressedKeys(): Promise<void> {
         await this.createBrotliUnicodeKeys();
         await this.createBrotliASCIIKeys();
         await this.createBrotliVectorKeys();
@@ -52,7 +28,7 @@ export class BrotliDatabasePopulator {
         const rawValue = '漢字';
         const buf = encoder.encode(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
-        this.createString(prefix, value);
+        await this.createString(prefix, value);
     }
 
     private async createBrotliASCIIKeys() {
@@ -60,7 +36,7 @@ export class BrotliDatabasePopulator {
         const rawValue = '\xac\xed\x00\x05t\x0a4102';
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
-        this.createString(prefix, value);
+        await this.createString(prefix, value);
     }
 
     private async createBrotliVectorKeys() {
@@ -68,7 +44,7 @@ export class BrotliDatabasePopulator {
         const rawValue = JSON.parse(fs.readFileSync('./test-data/decompressors/vector.json', 'utf8'));
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
-        this.createString(prefix, value);
+        await this.createString(prefix, value);
     }
 
     private async createBrotliJSONKeys() {
@@ -76,7 +52,7 @@ export class BrotliDatabasePopulator {
         const rawValue = '{"test":"test"}';
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
-        this.createString(prefix, value);
+        await this.createString(prefix, value);
     }
 
     private async createBrotliPHPUnserializedJSONKeys() {
@@ -84,15 +60,15 @@ export class BrotliDatabasePopulator {
         const rawValue = 'a:2:{i:0;s:12:"Sample array";i:1;a:2:{i:0;s:5:"Apple";i:1;s:6:"Orange";}}';
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
-        this.createString(prefix, value);
+        await this.createString(prefix, value);
     }
 
     private async createBrotliPickleKeys() {
-    const prefix = `${COMPRESSED_PREFIX}:${BROTLI_PREFIX}:Pickle`;
-    const rawValue = fs.readFileSync('./test-data/decompressors/pickleFile1.pickle');
-    const value = Buffer.from(await brotli.compress(rawValue));
-    this.createString(prefix, value);
-};
+        const prefix = `${COMPRESSED_PREFIX}:${BROTLI_PREFIX}:Pickle`;
+        const rawValue = fs.readFileSync('./test-data/decompressors/pickleFile1.pickle');
+        const value = Buffer.from(await brotli.compress(rawValue));
+        await this.createString(prefix, value);
+    };
 
     private async createBrotliJavaSerializedObjectKeys() {
         const prefix = `${COMPRESSED_PREFIX}:${BROTLI_PREFIX}:Java`;
@@ -102,8 +78,8 @@ export class BrotliDatabasePopulator {
         const value = Buffer.from(await brotli.compress(rawValue));
         const value2 = Buffer.from(await brotli.compress(rawValue2));
 
-        this.createString(prefix, value);
-        this.createString(prefix, value2);
+        await this.createString(prefix, value);
+        await this.createString(prefix, value2);
     }
 
     private async createBrotliMsgpackKeys(): Promise<void> {
@@ -111,11 +87,11 @@ export class BrotliDatabasePopulator {
         const rawValue = msgpackrPack({
             hello: 'World',
             array: [1, 2],
-            obj: { test: 'test' },
+            obj: {test: 'test'},
             boolean: false,
         });
         const value = Buffer.from(await brotli.compress(rawValue));
-        this.createString(prefix, value);
+        await this.createString(prefix, value);
     }
 
     private createBrotliProtobufKeys(): Promise<void> {
@@ -129,12 +105,12 @@ export class BrotliDatabasePopulator {
 
                 try {
                     const Book = root.lookupType('com.book.BookStore');
-                    const payload = { name: 'Test name', books: { 0: 'book 1', 1: 'book 2' } };
+                    const payload = {name: 'Test name', books: {0: 'book 1', 1: 'book 2'}};
                     const message = Book.create(payload);
                     const rawValue = Book.encode(message).finish();
 
                     const value = Buffer.from(await brotli.compress(rawValue));
-                    this.createString(prefix, value);
+                    await this.createString(prefix, value);
                     resolve();
                 } catch (error) {
                     reject(error);
@@ -142,14 +118,5 @@ export class BrotliDatabasePopulator {
             });
         });
     }
-
-    private createString(prefix: string, value: Buffer): void {
-        this.client.set(`${prefix}:string`, value, (error: Error | null) => {
-            if (error) {
-                console.error(`Error saving key ${prefix}:`, error);
-                throw error;
-            }
-            console.log(`Key ${prefix} successfully saved.`);
-        });
-    }
 }
+

@@ -370,7 +370,7 @@ describe('slices', () => {
       const lastPage = 'workbench'
       const state = {
         ...initialState,
-        lastBrowserPage: lastPage
+        lastPage
       }
 
       // Act

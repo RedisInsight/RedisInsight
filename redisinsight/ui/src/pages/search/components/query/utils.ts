@@ -8,7 +8,7 @@ import {
   removeNotSuggestedArgs
 } from 'uiSrc/pages/search/utils'
 import { FoundCommandArgument, SearchCommand } from 'uiSrc/pages/search/types'
-import { DefinedArgumentName } from 'uiSrc/pages/search/components/query/constants'
+import { DefinedArgumentName, EmptySuggestionsIds } from 'uiSrc/pages/search/components/query/constants'
 
 export const asSuggestionsRef = (
   suggestions: monacoEditor.languages.CompletionItem[],
@@ -19,6 +19,21 @@ export const asSuggestionsRef = (
   forceHide,
   forceShow
 })
+
+export const getNoIndexesSuggestion = (range: monaco.IRange) => [
+  {
+    id: EmptySuggestionsIds.NoIndexes,
+    label: 'No indexes to display',
+    kind: monacoEditor.languages.CompletionItemKind.Issue,
+    insertText: '',
+    insertTextRules: monacoEditor.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+    range,
+    detail: 'Create an index',
+    documentation: {
+      value: 'See the [documentation](https://redis.io/docs/latest/commands/ft.create/?utm_source=redisinsight&utm_medium=app&utm_campaign=workbench) for detailed instructions on how to create an index.',
+    }
+  }
+]
 
 export const getIndexesSuggestions = (indexes: RedisResponseBuffer[], range: monaco.IRange, isNextArgQuery = true) =>
   indexes.map((index) => {

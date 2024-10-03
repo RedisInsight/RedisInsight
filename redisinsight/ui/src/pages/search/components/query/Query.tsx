@@ -20,7 +20,13 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { getRediSearchMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokens'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { options, DefinedArgumentName, FIELD_START_SYMBOL, COMMANDS_TO_GET_INDEX_INFO } from './constants'
+import {
+  options,
+  DefinedArgumentName,
+  FIELD_START_SYMBOL,
+  COMMANDS_TO_GET_INDEX_INFO,
+  EmptySuggestionsIds
+} from './constants'
 import {
   getFieldsSuggestions,
   getIndexesSuggestions,
@@ -29,6 +35,7 @@ import {
   isIndexComplete,
   getGeneralSuggestions,
   getFunctionsSuggestions,
+  getNoIndexesSuggestion,
 } from './utils'
 
 export interface Props {
@@ -123,6 +130,15 @@ const Query = (props: Props) => {
       }
     })
 
+    const suggestionWidget = editor.getContribution<any>('editor.contrib.suggestController')
+    suggestionWidget?.onWillInsertSuggestItem(({ item }: Record<'item', any>) => {
+      if (item.completion.id === EmptySuggestionsIds.NoIndexes) {
+        updateHelpWidget(true)
+        editor.trigger('', 'hideSuggestWidget', null)
+        editor.trigger('', 'editor.action.triggerParameterHints', '')
+      }
+    })
+
     suggestionsRef.current = getSuggestions(editor).data
     if (value) {
       setCursorPositionAtTheEnd(editor)
@@ -182,7 +198,10 @@ const Query = (props: Props) => {
   }
 
   const updateHelpWidget = (isOpen: boolean, parent?: SearchCommand, currentArg?: SearchCommand) => {
-    helpWidgetRef.current = { isOpen, parent, currentArg }
+    helpWidgetRef.current = {
+      isOpen,
+      parent: parent || helpWidgetRef.current.parent,
+      currentArg: currentArg || helpWidgetRef.current.currentArg }
   }
 
   const getSuggestions = (
@@ -256,9 +275,14 @@ const Query = (props: Props) => {
     currentOffsetArg: Nullable<string>,
     range: monacoEditor.IRange
   ) => {
-    updateHelpWidget(true, command, foundArg?.stopArg)
-
     const isIndex = indexesRef.current.length > 0
+    updateHelpWidget(isIndex, command, foundArg?.stopArg)
+
+    if (!isIndex) {
+      updateHelpWidget(!!currentOffsetArg)
+      return asSuggestionsRef(!currentOffsetArg ? getNoIndexesSuggestion(range) : [], true)
+    }
+
     if (!isIndex || currentOffsetArg) return asSuggestionsRef([], !currentOffsetArg)
 
     const argumentIndex = command?.arguments

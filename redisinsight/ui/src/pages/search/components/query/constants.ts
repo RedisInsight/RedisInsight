@@ -59,3 +59,6 @@ export enum DefinedArgumentName {
 }
 
 export const FIELD_START_SYMBOL = '@'
+export enum EmptySuggestionsIds {
+  NoIndexes = 'no-indexes'
+}

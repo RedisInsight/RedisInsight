@@ -465,7 +465,7 @@ export const generateDetail = (command: Maybe<SearchCommand>) => {
   if (command.arguments) return generateArgsNames(CommandProvider.Main, command.arguments).join(' ')
   if (command.token) {
     if (command.type === TokenType.PureToken) return command.token
-    return `${command.token} ${command.name}`
+    return `${command.token}`
   }
 
   return ''

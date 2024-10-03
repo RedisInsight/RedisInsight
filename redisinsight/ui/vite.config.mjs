@@ -52,6 +52,7 @@ export default defineConfig({
       allow: [
         '..',
         '../../node_modules/monaco-editor',
+        '../../node_modules/brotli-wasm',
       ],
     },
   },
@@ -61,6 +62,7 @@ export default defineConfig({
       'monaco-editor',
       'monaco-yaml/yaml.worker',
     ],
+    exclude: ["brotli-wasm", "brotli-wasm/pkg.bundler/brotli_wasm_bg.wasm"],
     esbuildOptions: {
       // fix for https://github.com/bvaughn/react-virtualized/issues/1722
       plugins: [fixReactVirtualized],
@@ -71,7 +73,7 @@ export default defineConfig({
       exclude: ['./packages'],
     },
     outDir,
-    target: 'es2020',
+    target: 'es2022',
     minify: 'esbuild',
     rollupOptions: {
       output: {

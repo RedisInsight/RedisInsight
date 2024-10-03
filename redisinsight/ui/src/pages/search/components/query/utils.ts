@@ -9,6 +9,7 @@ import {
 } from 'uiSrc/pages/search/utils'
 import { FoundCommandArgument, SearchCommand } from 'uiSrc/pages/search/types'
 import { DefinedArgumentName, EmptySuggestionsIds } from 'uiSrc/pages/search/components/query/constants'
+import { getUtmExternalLink } from 'uiSrc/utils/links'
 
 export const asSuggestionsRef = (
   suggestions: monacoEditor.languages.CompletionItem[],
@@ -20,6 +21,7 @@ export const asSuggestionsRef = (
   forceShow
 })
 
+const NO_INDEXES_DOC_LINK = getUtmExternalLink('https://redis.io/docs/latest/commands/ft.create/', { campaign: 'workbench' })
 export const getNoIndexesSuggestion = (range: monaco.IRange) => [
   {
     id: EmptySuggestionsIds.NoIndexes,
@@ -30,7 +32,7 @@ export const getNoIndexesSuggestion = (range: monaco.IRange) => [
     range,
     detail: 'Create an index',
     documentation: {
-      value: 'See the [documentation](https://redis.io/docs/latest/commands/ft.create/?utm_source=redisinsight&utm_medium=app&utm_campaign=workbench) for detailed instructions on how to create an index.',
+      value: `See the [documentation](${NO_INDEXES_DOC_LINK}) for detailed instructions on how to create an index.`,
     }
   }
 ]

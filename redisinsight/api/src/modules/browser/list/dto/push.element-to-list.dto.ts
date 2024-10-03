@@ -1,8 +1,8 @@
-import { KeyDto } from 'src/modules/browser/keys/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDefined, IsEnum } from 'class-validator';
-import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
+import { RedisStringType } from 'src/common/decorators';
+import { KeyDto } from 'src/modules/browser/keys/dto';
 
 export enum ListElementDestination {
   Tail = 'TAIL',
@@ -11,13 +11,13 @@ export enum ListElementDestination {
 
 export class PushElementToListDto extends KeyDto {
   @ApiProperty({
-    description: 'List element',
+    description: 'List elements',
+    isArray: true,
     type: String,
   })
   @IsDefined()
-  @IsRedisString()
-  @RedisStringType()
-  element: RedisString;
+  @RedisStringType({ each: true })
+  elements: RedisString[];
 
   @ApiPropertyOptional({
     description:

@@ -1,25 +1,25 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
   EuiButton,
-  EuiFormRow,
-  EuiTextColor,
-  EuiForm,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiForm,
   EuiPanel,
-  EuiFieldText,
+  EuiTextColor
 } from '@elastic/eui'
 
-import { Maybe, stringToBuffer } from 'uiSrc/utils'
-import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
 import { CreateListWithExpireDto } from 'apiSrc/modules/browser/list/dto'
+import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
+import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
+import AddMultipleFields from '../../add-multiple-fields'
+import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import {
   AddListFormConfig as config,
 } from '../constants/fields-config'
-import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 export interface Props {
   keyName: string
@@ -29,7 +29,8 @@ export interface Props {
 
 const AddKeyList = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
-  const [element, setElement] = useState<string>('')
+  const [elements, setElements] = useState<string[]>([''])
+
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
   const { loading } = useSelector(addKeyStateSelector)
@@ -46,11 +47,25 @@ const AddKeyList = (props: Props) => {
       submitData()
     }
   }
+  const addField = () => {
+    setElements([...elements, ''])
+  }
+  const onClickRemove = (_item: string, index?: number) => {
+    setElements(elements.filter((_el, i) => i !== index))
+  }
+
+  const isClearDisabled = (_element:string, index?: number) => index === 0
+
+  const handleElementChange = (value: string, index: number) => {
+    const newElements = [...elements]
+    newElements[index] = value
+    setElements(newElements)
+  }
 
   const submitData = (): void => {
     const data: CreateListWithExpireDto = {
       keyName: stringToBuffer(keyName),
-      element: stringToBuffer(element),
+      elements: elements.map((el) => stringToBuffer(el)),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -60,19 +75,26 @@ const AddKeyList = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <EuiFormRow label={config.element.label} fullWidth>
-        <EuiFieldText
-          fullWidth
-          name="element"
-          id="element"
-          placeholder={config.element.placeholder}
-          value={element}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setElement(e.target.value)}
-          disabled={loading}
-          data-testid="element"
-        />
-      </EuiFormRow>
+      <AddMultipleFields
+        items={elements}
+        onClickRemove={onClickRemove}
+        onClickAdd={addField}
+        isClearDisabled={isClearDisabled}
+      >
+        {(item, index) => (
+          <EuiFieldText
+            fullWidth
+            name={`element-${index}`}
+            id={`element-${index}`}
+            placeholder={config.element.placeholder}
+            value={item}
+            disabled={loading}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleElementChange(e.target.value, index)}
+            data-testid={`element-${index}`}
+          />
+        )}
+      </AddMultipleFields>
       <EuiButton type="submit" fill style={{ display: 'none' }}>
         Submit
       </EuiButton>

@@ -4,11 +4,16 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { isNull, isArray } from 'lodash';
+import { plainToClass } from 'class-transformer';
+import { isArray, isNull } from 'lodash';
+import { ClientMetadata } from 'src/common/models';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { catchAclError, catchMultiTransactionError } from 'src/utils';
-import { ClientMetadata } from 'src/common/models';
+import {
+  BrowserToolKeysCommands,
+  BrowserToolListCommands,
+} from 'src/modules/browser/constants/browser-tool-commands';
+import { KeyDto } from 'src/modules/browser/keys/dto';
 import {
   CreateListWithExpireDto,
   DeleteListElementsDto,
@@ -22,15 +27,10 @@ import {
   SetListElementDto,
   SetListElementResponse,
 } from 'src/modules/browser/list/dto';
-import { KeyDto } from 'src/modules/browser/keys/dto';
-import {
-  BrowserToolKeysCommands,
-  BrowserToolListCommands,
-} from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
-import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { catchAclError, catchMultiTransactionError } from 'src/utils';
 
 @Injectable()
 export class ListService {
@@ -69,13 +69,13 @@ export class ListService {
   ): Promise<PushListElementsResponse> {
     try {
       this.logger.log('Insert element at the tail/head of the list data type.');
-      const { keyName, element, destination } = dto;
+      const { keyName, elements, destination } = dto;
       const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const total: RedisClientCommandReply = await client.sendCommand([
         BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPushX' : 'LPushX'],
         keyName,
-        element,
+        ...elements,
       ]);
       if (!total) {
         this.logger.error(
@@ -234,17 +234,17 @@ export class ListService {
     client: RedisClient,
     dto: PushElementToListDto,
   ): Promise<void> {
-    const { keyName, element } = dto;
-    await client.sendCommand([BrowserToolListCommands.LPush, keyName, element]);
+    const { keyName, elements } = dto;
+    await client.sendCommand([BrowserToolListCommands.LPush, keyName, ...elements]);
   }
 
   public async createListWithExpiration(
     client: RedisClient,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
-    const { keyName, element, expire } = dto;
+    const { keyName, elements, expire } = dto;
     const transactionResults = await client.sendPipeline([
-      [BrowserToolListCommands.LPush, keyName, element],
+      [BrowserToolListCommands.LPush, keyName, ...elements],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
     catchMultiTransactionError(transactionResults);

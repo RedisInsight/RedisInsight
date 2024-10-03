@@ -27,7 +27,12 @@ export abstract class BaseDatabasePopulator {
         });
     }
 
-    protected async createHash(prefix: string, value: Buffer, onlyOneItem = false, value2 = ''): Promise<void> {
+    protected async createHash(
+        prefix: string,
+        value: Buffer,
+        onlyOneItem = false,
+        value2: Buffer = Buffer.from('')
+    ): Promise<void> {
         let fields: string[] = [];
 
         const randomNumber = Array.from({ length: 5 }).map(() => Math.random());
@@ -40,7 +45,7 @@ export abstract class BaseDatabasePopulator {
         }
 
         if (value2) {
-            fields.push(value2, value2);
+            fields.push(value2.toString(), value2.toString());
         }
 
         try {

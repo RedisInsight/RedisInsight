@@ -9,6 +9,10 @@ const GZLIB_PREFIX = 'GZLIB';
 
 export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
 
+    /**
+     * Create keys with all types of LZ4 compression
+     */
+
     protected async createCompressedKeys(): Promise<void> {
         await this.createGZCompressUnicodeKeys();
         await this.createGZCompressASCIIKeys();
@@ -28,7 +32,8 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(fflate.zlibSync(buf));
 
-        await this.createHash(prefix, value, true);
+        await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     };
 
     private async createGZCompressASCIIKeys() {
@@ -38,6 +43,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.zlibSync(buf));
 
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     };
 
     private async createGZCompressJSONKeys() {
@@ -48,6 +54,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.zlibSync(buf));
 
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     };
 
     private async createGZCompressPHPUnserializedJSONKeys() {
@@ -58,6 +65,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.zlibSync(buf));
 
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     };
 
     private async createGZCompressJavaSerializedObjectKeys() {
@@ -69,6 +77,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value2 = Buffer.from(fflate.zlibSync(rawValue2));
 
         await this.createHash(prefix, [value,value2]);
+        await this.createString(prefix, value);
     };
 
     private async createGZCompressMsgpackKeys() {
@@ -83,6 +92,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.zlibSync(rawValue));
 
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     };
 
     private async createGZCompressVectorKeys() {
@@ -92,6 +102,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.zlibSync(rawValue));
 
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     };
 
     private createGZCompressProtobufKeys() : Promise<void> {
@@ -116,6 +127,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
 
                     const value = Buffer.from(fflate.zlibSync(rawValue));
                     await this.createHash(prefix, [value]);
+                    await this.createString(prefix, value);
                     resolve();
                 } catch (error) {
                     reject(error);
@@ -133,6 +145,7 @@ export class PhpGzcompressDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.zlibSync(rawValue));
         const value2 = Buffer.from(fflate.zlibSync(rawValue2));
         await this.createHash(prefix, [value,value2]);
+        await this.createString(prefix, value);
     };
 }
 

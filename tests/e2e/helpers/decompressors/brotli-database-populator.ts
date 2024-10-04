@@ -10,7 +10,10 @@ const BROTLI_PREFIX = 'BROTLI';
 
 export class BrotliDatabasePopulator extends BaseDatabasePopulator {
 
-    protected async createCompressedKeys(): Promise<void> {
+    /**
+     * Create keys with all types of Bolti compression
+     */
+        protected async createCompressedKeys(): Promise<void> {
         await this.createBrotliUnicodeKeys();
         await this.createBrotliASCIIKeys();
         await this.createBrotliVectorKeys();

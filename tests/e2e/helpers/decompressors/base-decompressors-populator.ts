@@ -30,6 +30,11 @@ export abstract class BaseDatabasePopulator {
         });
     }
 
+    /**
+     * create a hash
+     * @param prefix prefix of the key name
+     * @param values values of the hash
+     */
     protected async createHash(
         prefix: string,
         values: Buffer[]
@@ -53,6 +58,11 @@ export abstract class BaseDatabasePopulator {
         }
     }
 
+    /**
+     * create a string
+     * @param prefix prefix of the key name
+     * @param value values of the string
+     */
     protected async createString(prefix: string, value: Buffer): Promise<void> {
         this.client.set(`${prefix}:string`, value, (error: Error | null) => {
             if (error) {

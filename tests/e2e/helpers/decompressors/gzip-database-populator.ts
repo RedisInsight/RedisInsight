@@ -10,6 +10,9 @@ const GZIP_PREFIX = 'GZIP';
 
 export class GzipDatabasePopulator extends BaseDatabasePopulator {
 
+    /**
+     * Create keys with all types of Gzip compression
+     */
     protected async createCompressedKeys(): Promise<void> {
         await this.createGZIPUnicodeKeys();
         await this.createGZIPASCIIKeys();

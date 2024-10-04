@@ -10,6 +10,9 @@ const LZ4_PREFIX = 'LZ4';
 
 export class LZ4DatabasePopulator extends BaseDatabasePopulator{
 
+    /**
+     * Create keys with all types of LZ4 compression
+     */
     protected async createCompressedKeys(): Promise<void> {
         await this.createLZ4UnicodeKeys();
         await this.createLZ4ASCIIKeys();
@@ -28,6 +31,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const buf = new TextEncoder().encode(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
 
     private async createLZ4ASCIIKeys() {
@@ -36,6 +40,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
 
     private async createLZ4JSONKeys() {
@@ -44,6 +49,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
 
     private async createLZ4PHPUnserializedJSONKeys() {
@@ -52,6 +58,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
 
     private async createLZ4JavaSerializedObjectKeys() {
@@ -61,6 +68,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const value = Buffer.from(lz4js.compress(rawValue));
         const value2 = Buffer.from(lz4js.compress(rawValue2));
         await this.createHash(prefix, [value,value2]);
+        await this.createString(prefix, value);
     }
 
     private async createLZ4MsgpackKeys(): Promise<void> {
@@ -73,6 +81,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         });
         const value = Buffer.from(lz4js.compress(rawValue));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
 
     private createLZ4ProtobufKeys(): Promise<void> {
@@ -90,6 +99,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
                     const rawValue = Book.encode(message).finish();
                     const value = Buffer.from(lz4js.compress(rawValue));
                     await this.createHash(prefix, [value]);
+                    await this.createString(prefix, value);
                     resolve();
                 } catch (error) {
                     reject(error);
@@ -103,6 +113,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue = fs.readFileSync('./test-data/decompressors/pickleFile1.pickle');
         const value = Buffer.from(lz4js.compress(rawValue));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
 
     private async createLZ4VectorKeys() {
@@ -110,6 +121,6 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue = JSON.parse(fs.readFileSync('./test-data/decompressors/vector.json', 'utf8'));
         const value = Buffer.from(lz4js.compress(rawValue));
         await this.createHash(prefix, [value]);
+        await this.createString(prefix, value);
     }
-
 }

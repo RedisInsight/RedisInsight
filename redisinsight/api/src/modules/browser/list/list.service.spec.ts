@@ -84,7 +84,7 @@ describe('ListService', () => {
         .calledWith([
           BrowserToolListCommands.LPush,
           mockPushElementDto.keyName,
-          mockPushElementDto.elements,
+          ...mockPushElementDto.elements,
         ])
         .mockResolvedValue(1);
 
@@ -125,7 +125,7 @@ describe('ListService', () => {
         .calledWith([
           BrowserToolListCommands.RPushX,
           mockPushElementDto.keyName,
-          mockPushElementDto.elements,
+          ...mockPushElementDto.elements,
         ])
         .mockResolvedValue(1);
 
@@ -138,7 +138,7 @@ describe('ListService', () => {
         .calledWith([
           BrowserToolListCommands.LPushX,
           mockPushElementDto.keyName,
-          mockPushElementDto.elements,
+          ...mockPushElementDto.elements,
         ])
         .mockResolvedValue(12);
 
@@ -154,7 +154,7 @@ describe('ListService', () => {
         .calledWith([
           BrowserToolListCommands.RPushX,
           mockPushElementDto.keyName,
-          mockPushElementDto.elements,
+          ...mockPushElementDto.elements,
         ])
         .mockResolvedValue(0);
 
@@ -475,7 +475,7 @@ describe('ListService', () => {
     it("shouldn't throw error", async () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
-          [BrowserToolListCommands.LPush, dto.keyName, dto.elements],
+          [BrowserToolListCommands.LPush, dto.keyName, ...dto.elements],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
         .mockResolvedValue([
@@ -494,7 +494,7 @@ describe('ListService', () => {
       };
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
-          [BrowserToolListCommands.LPush, dto.keyName, dto.elements],
+          [BrowserToolListCommands.LPush, dto.keyName, ...dto.elements],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
         .mockResolvedValue([[replyError, []]]);

@@ -1,6 +1,10 @@
+import { lazy } from 'react'
 import { FeatureFlags, IRoute, Pages } from 'uiSrc/constants'
-import { SettingsPage } from 'uiSrc/pages'
-import { SentinelDatabasesPage, SentinelDatabasesResultPage, SentinelPage } from 'uiSrc/pages/autodiscover-sentinel'
+import SettingsPage from 'uiSrc/pages/settings'
+
+const SentinelDatabasesPage = lazy(() => import('uiSrc/pages/autodiscover-sentinel/sentinel-databases'))
+const SentinelDatabasesResultPage = lazy(() => import('uiSrc/pages/autodiscover-sentinel/sentinel-databases-result'))
+const SentinelPage = lazy(() => import('uiSrc/pages/autodiscover-sentinel/sentinel'))
 
 const ROUTES: IRoute[] = [
   {

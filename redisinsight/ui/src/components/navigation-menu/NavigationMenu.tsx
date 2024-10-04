@@ -171,7 +171,6 @@ const NavigationMenu = () => {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
-      featureFlag: FeatureFlags.disabledByEnv,
     },
   ]
 

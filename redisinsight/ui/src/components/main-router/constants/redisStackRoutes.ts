@@ -1,15 +1,16 @@
+import { lazy } from 'react'
 import { PageNames, Pages, IRoute } from 'uiSrc/constants'
-import {
-  BrowserPage, InstancePage,
-} from 'uiSrc/pages'
+import BrowserPage from 'uiSrc/pages/browser'
 import WorkbenchPage from 'uiSrc/pages/workbench'
-import SlowLogPage from 'uiSrc/pages/slow-log'
 import PubSubPage from 'uiSrc/pages/pub-sub'
-import EditConnection from 'uiSrc/pages/redis-stack/components/edit-connection'
-import ClusterDetailsPage from 'uiSrc/pages/cluster-details'
-import AnalyticsPage from 'uiSrc/pages/analytics'
-import DatabaseAnalysisPage from 'uiSrc/pages/database-analysis'
 import COMMON_ROUTES from './commonRoutes'
+
+const InstancePage = lazy(() => import('uiSrc/pages/instance'))
+const SlowLogPage = lazy(() => import('uiSrc/pages/slow-log'))
+const EditConnection = lazy(() => import('uiSrc/pages/redis-stack/components/edit-connection'))
+const ClusterDetailsPage = lazy(() => import('uiSrc/pages/cluster-details'))
+const AnalyticsPage = lazy(() => import('uiSrc/pages/analytics'))
+const DatabaseAnalysisPage = lazy(() => import('uiSrc/pages/database-analysis'))
 
 const ANALYTICS_ROUTES: IRoute[] = [
   {

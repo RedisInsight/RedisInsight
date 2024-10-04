@@ -57,7 +57,9 @@ const Config = () => {
     dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
-    dispatch(fetchNotificationsAction())
+    if (disabledByEnvFeature?.flag) {
+      dispatch(fetchNotificationsAction())
+    }
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 

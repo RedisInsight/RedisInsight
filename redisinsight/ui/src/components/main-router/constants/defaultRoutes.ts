@@ -1,24 +1,23 @@
+import { lazy } from 'react'
 import { IRoute, FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
-import {
-  BrowserPage,
-  HomePage,
-  InstancePage,
-  RedisCloudDatabasesPage,
-  RedisCloudDatabasesResultPage,
-  RedisCloudPage,
-  RedisCloudSubscriptionsPage,
-  RedisClusterDatabasesPage,
-} from 'uiSrc/pages'
+import BrowserPage from 'uiSrc/pages/browser'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import PubSubPage from 'uiSrc/pages/pub-sub'
-import AnalyticsPage from 'uiSrc/pages/analytics'
-import RdiPage from 'uiSrc/pages/rdi/home'
-import RdiInstancePage from 'uiSrc/pages/rdi/instance'
-import RdiStatisticsPage from 'uiSrc/pages/rdi/statistics'
-import PipelineManagementPage from 'uiSrc/pages/rdi/pipeline-management'
 import { ANALYTICS_ROUTES, RDI_PIPELINE_MANAGEMENT_ROUTES } from './sub-routes'
-
 import COMMON_ROUTES from './commonRoutes'
+
+const HomePage = lazy(() => import('uiSrc/pages/home'))
+const InstancePage = lazy(() => import('uiSrc/pages/instance'))
+const RedisCloudDatabasesPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud-databases'))
+const RedisCloudDatabasesResultPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud-databases-result'))
+const RedisCloudSubscriptionsPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud-subscriptions'))
+const RedisClusterDatabasesPage = lazy(() => import('uiSrc/pages/redis-cluster'))
+const AnalyticsPage = lazy(() => import('uiSrc/pages/analytics'))
+const RedisCloudPage = lazy(() => import('uiSrc/pages/autodiscover-cloud/redis-cloud'))
+const RdiPage = lazy(() => import('uiSrc/pages/rdi/home'))
+const RdiInstancePage = lazy(() => import('uiSrc/pages/rdi/instance'))
+const RdiStatisticsPage = lazy(() => import('uiSrc/pages/rdi/statistics'))
+const PipelineManagementPage = lazy(() => import('uiSrc/pages/rdi/pipeline-management'))
 
 const INSTANCE_ROUTES: IRoute[] = [
   {

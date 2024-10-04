@@ -7,7 +7,7 @@ import {
 import { useParams } from 'react-router-dom'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import Download from 'uiSrc/pages/rdi/pipeline-management/components/download/Download'
+import Download from 'uiSrc/pages/rdi/instance/components/download/Download'
 
 import styles from './styles.module.scss'
 

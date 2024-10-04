@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
+import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
@@ -543,6 +544,7 @@ export function logoutUserAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(logoutUser())
+    dispatch(setSSOFlow())
 
     try {
       const { status } = await apiService.get(

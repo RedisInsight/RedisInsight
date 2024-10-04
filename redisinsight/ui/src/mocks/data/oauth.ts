@@ -17,3 +17,5 @@ export const MOCK_OAUTH_USER_PROFILE = {
   ],
   currentAccountId: 1,
 }
+
+export const MOCK_OAUTH_SSO_EMAIL = 'sso@mail.com'

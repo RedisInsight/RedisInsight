@@ -93,10 +93,10 @@ const Config = () => {
     dispatch(setChangedFile({ name: 'config', status: FileChangeType.Modified }))
   }, 2000), [data])
 
-  const handleChange = (value: string) => {
+  const handleChange = useCallback((value: string) => {
     setFieldValue('config', value)
     checkIsFileUpdated(value)
-  }
+  }, [data])
 
   const handleClosePanel = () => {
     testConnectionsController?.abort()
@@ -171,4 +171,4 @@ const Config = () => {
   )
 }
 
-export default Config
+export default React.memo(Config)

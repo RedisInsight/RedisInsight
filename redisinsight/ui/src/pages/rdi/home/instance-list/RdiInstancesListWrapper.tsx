@@ -186,7 +186,7 @@ const RdiInstancesListWrapper = ({ width, onEditInstance, editedInstance, onDele
           />
           <PopoverDelete
             header={formatLongName(instance.name, 50, 10, '...')}
-            text="will be deleted from RedisInsight."
+            text="will be removed from RedisInsight."
             item={instance.id}
             suffix={suffix}
             deleting={deleting.id}

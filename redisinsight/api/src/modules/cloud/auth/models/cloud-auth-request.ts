@@ -3,16 +3,23 @@ import { SessionMetadata } from 'src/common/models';
 export enum CloudAuthIdpType {
   Google = 'google',
   GitHub = 'github',
+  Sso = 'sso',
 }
 
-export class CloudAuthRequest {
+export class CloudAuthRequestOptions {
+  strategy: CloudAuthIdpType;
+
+  action?: string;
+
+  data?: Record<string, any>;
+
+  callback?: Function;
+}
+
+export class CloudAuthRequest extends CloudAuthRequestOptions {
   idpType: CloudAuthIdpType;
 
   sessionMetadata: SessionMetadata;
 
-  callback?: Function;
-
   createdAt: Date;
-
-  action?: string;
 }

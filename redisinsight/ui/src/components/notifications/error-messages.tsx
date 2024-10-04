@@ -72,7 +72,6 @@ export default {
     color: 'danger',
     iconType: 'alert',
     onClose,
-    toastLifeTimeMs: TOAST_LIFE_TIME,
     title: (
       <EuiTextColor color="ghost">
         <b>{title}</b>

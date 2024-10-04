@@ -28,7 +28,6 @@ const suffix = '_stream_consumer'
 const actionsWidth = 50
 
 export interface Props {
-  isFooterOpen: boolean
 }
 
 const ConsumersViewWrapper = (props: Props) => {

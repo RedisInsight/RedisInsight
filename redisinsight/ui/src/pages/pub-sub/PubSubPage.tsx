@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { SubscriptionType } from 'uiSrc/constants/pubSub'
 import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPageView } from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
@@ -14,8 +13,6 @@ import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { MessagesListWrapper, PublishMessage, SubscriptionPanel } from './components'
 
 import styles from './styles.module.scss'
-
-export const PUB_SUB_DEFAULT_CHANNEL = { channel: '*', type: SubscriptionType.PSubscribe }
 
 const PubSubPage = () => {
   const { name: connectedInstanceName, db } = useSelector(connectedInstanceSelector)

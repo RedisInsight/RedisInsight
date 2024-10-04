@@ -12,7 +12,7 @@ import {
 import { sign } from 'jsonwebtoken';
 import { ApiRdiClient } from './api.rdi.client';
 import { RdiDyRunJobStatus, RdiPipeline, RdiStatisticsStatus } from '../models';
-import { RdiUrl, TOKEN_THRESHOLD } from '../constants';
+import { PipelineActions, RdiUrl, TOKEN_THRESHOLD } from '../constants';
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 jest.mock('axios');
@@ -161,6 +161,90 @@ describe('ApiRdiClient', () => {
       mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
 
       await expect(client.deploy(mockRdiPipeline)).rejects.toThrow(mockRdiUnauthorizedError.message);
+    });
+  });
+
+  describe('startPipeline', () => {
+    it('should start the pipeline and poll for status', async () => {
+      const actionId = '123';
+      const postResponse = { data: { action_id: actionId } };
+      const getResponse = {
+        data: {
+          status: 'completed',
+          data: 'some data',
+          error: '',
+        },
+      };
+
+      mockedAxios.post.mockResolvedValueOnce(postResponse);
+      mockedAxios.get.mockResolvedValueOnce(getResponse);
+
+      const result = await client.startPipeline();
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.StartPipeline, expect.any(Object));
+      expect(result).toEqual(getResponse.data.data);
+    });
+
+    it('should throw an error if start pipeline fails', async () => {
+      mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
+
+      await expect(client.startPipeline()).rejects.toThrow(mockRdiUnauthorizedError.message);
+    });
+  });
+
+  describe('stopPipeline', () => {
+    it('should stop the pipeline and poll for status', async () => {
+      const actionId = '123';
+      const postResponse = { data: { action_id: actionId } };
+      const getResponse = {
+        data: {
+          status: 'completed',
+          data: 'some data',
+          error: '',
+        },
+      };
+
+      mockedAxios.post.mockResolvedValueOnce(postResponse);
+      mockedAxios.get.mockResolvedValueOnce(getResponse);
+
+      const result = await client.stopPipeline();
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.StopPipeline, expect.any(Object));
+      expect(result).toEqual(getResponse.data.data);
+    });
+
+    it('should throw an error if stop pipeline fails', async () => {
+      mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
+
+      await expect(client.stopPipeline()).rejects.toThrow(mockRdiUnauthorizedError.message);
+    });
+  });
+
+  describe('resetPipeline', () => {
+    it('should reset the pipeline and poll for status', async () => {
+      const actionId = '123';
+      const postResponse = { data: { action_id: actionId } };
+      const getResponse = {
+        data: {
+          status: 'completed',
+          data: 'some data',
+          error: '',
+        },
+      };
+
+      mockedAxios.post.mockResolvedValueOnce(postResponse);
+      mockedAxios.get.mockResolvedValueOnce(getResponse);
+
+      const result = await client.resetPipeline();
+
+      expect(mockedAxios.post).toHaveBeenCalledWith(RdiUrl.ResetPipeline, expect.any(Object));
+      expect(result).toEqual(getResponse.data.data);
+    });
+
+    it('should throw an error if reset pipeline fails', async () => {
+      mockedAxios.post.mockRejectedValueOnce(mockRdiUnauthorizedError);
+
+      await expect(client.resetPipeline()).rejects.toThrow(mockRdiUnauthorizedError.message);
     });
   });
 
@@ -332,7 +416,7 @@ describe('ApiRdiClient', () => {
     it('should return response data on success', async () => {
       mockedAxios.get.mockResolvedValueOnce({ data: { status: 'completed', data: responseData } });
 
-      const result = await client['pollActionStatus'](actionId);
+      const result = await client['pollActionStatus'](actionId, PipelineActions.Deploy);
 
       expect(mockedAxios.get).toHaveBeenCalledWith(`${RdiUrl.Action}/${actionId}`, { signal: undefined });
       expect(result).toEqual(responseData);
@@ -341,13 +425,14 @@ describe('ApiRdiClient', () => {
     it('should throw an error if action status is failed', async () => {
       mockedAxios.get.mockResolvedValueOnce({ data: { status: 'failed', error: { message: 'Test error' } } });
 
-      await expect(client['pollActionStatus'](actionId)).rejects.toThrow('Test error');
+      await expect(client['pollActionStatus'](actionId, PipelineActions.Deploy)).rejects.toThrow('Test error');
     });
 
     it('should throw an error if an error occurs during polling', async () => {
       mockedAxios.get.mockRejectedValueOnce(mockRdiUnauthorizedError);
 
-      await expect(client['pollActionStatus'](actionId)).rejects.toThrow(mockRdiUnauthorizedError.message);
+      await expect(client['pollActionStatus'](actionId, PipelineActions.Deploy))
+        .rejects.toThrow(mockRdiUnauthorizedError.message);
       expect(mockedAxios.get).toHaveBeenCalledWith(`${RdiUrl.Action}/${actionId}`, { signal: undefined });
     });
   });

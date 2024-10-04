@@ -47,6 +47,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { getBasedOnViewTypeEvent, getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
+  bufferToSerializedFormat,
   bufferToString,
   createDeleteFieldHeader,
   createDeleteFieldMessage,
@@ -349,12 +350,13 @@ const HashDetailsTable = (props: Props) => {
           && !isEqualBuffers(valueItem, stringToBuffer(value))
         const isEditable = !isCompressed && isFormatEditable(viewFormat)
         const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
-
         const isEditing = editingIndex?.field === 'value' && editingIndex?.index === rowIndex
+
+        const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, valueItem, 4) : ''
 
         return (
           <EditableTextArea
-            initialValue={value}
+            initialValue={serializedValue}
             isLoading={updateLoading}
             isDisabled={disabled}
             isEditing={isEditing}

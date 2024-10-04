@@ -26,7 +26,7 @@ test.skip('Verify that when user clicks on auto-execute button, command is run',
     // Verify that clicking on auto-executed button, command is not inserted to Editor
     await t.typeText(workbenchPage.queryInput, command, { replace: true, paste: true });
     // Verify that admin can use redis-auto format in .md file for Guides for auto-executed button
-    await workbenchPage.InsightsPanel.togglePanel(true);
+    await workbenchPage.NavigationHeader.togglePanel(true);
     const tutorials = await workbenchPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.click(tutorials.dataStructureAccordionTutorialButton);
     await t.click(tutorials.internalLinkWorkingWithHashes);

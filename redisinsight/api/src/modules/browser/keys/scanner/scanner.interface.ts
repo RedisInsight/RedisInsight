@@ -8,7 +8,7 @@ export interface IScannerGetKeysArgs {
   match?: string;
   type?: RedisDataType;
   keysInfo?: boolean;
-  countThreshold: number;
+  scanThreshold: number;
 }
 
 export interface IScannerNodeKeys {

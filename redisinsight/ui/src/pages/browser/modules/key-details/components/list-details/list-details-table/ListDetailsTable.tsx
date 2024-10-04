@@ -44,7 +44,7 @@ import {
   stringToSerializedBufferFormat,
   validateListIndex,
   Nullable,
-  createTooltipContent
+  createTooltipContent, bufferToSerializedFormat
 } from 'uiSrc/utils'
 import {
   selectedKeyDataSelector,
@@ -77,11 +77,7 @@ const cellCache = new CellMeasurerCache({
 
 interface IListElement extends SetListElementResponse {}
 
-export interface Props {
-  isFooterOpen: boolean
-}
-
-const ListDetailsTable = (props: Props) => {
+const ListDetailsTable = () => {
   const { loading } = useSelector(listSelector)
   const { loading: updateLoading } = useSelector(updateListValueStateSelector)
   const { elements: loadedElements, total, searchedIndex } = useSelector(
@@ -280,16 +276,18 @@ const ListDetailsTable = (props: Props) => {
         const disabled = !isNonUnicodeFormatter(viewFormat, isValid)
           && !isEqualBuffers(elementItem, stringToBuffer(element))
         const isEditable = !isCompressed && isFormatEditable(viewFormat)
+        const isEditing = index === editingIndex
 
         const tooltipContent = createTooltipContent(value, decompressedElementItem, viewFormatProp)
         const editTooltipContent = isCompressed ? TEXT_DISABLED_COMPRESSED_VALUE : TEXT_DISABLED_FORMATTER_EDITING
+        const serializedValue = isEditing ? bufferToSerializedFormat(viewFormat, elementItem, 4) : ''
 
         return (
           <EditableTextArea
-            initialValue={element}
+            initialValue={serializedValue}
             isLoading={updateLoading}
             isDisabled={disabled}
-            isEditing={index === editingIndex}
+            isEditing={isEditing}
             isEditDisabled={!isEditable || updateLoading}
             disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
             onDecline={() => handleEditElement(index, false)}

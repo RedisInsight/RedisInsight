@@ -42,7 +42,10 @@ const SETTINGS_PAGE_PATH = '/settings'
 const Config = () => {
   const serverInfo = useSelector(appServerInfoSelector)
   const { config, spec } = useSelector(userSettingsSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    [FeatureFlags.cloudSso]: cloudSsoFeature,
+    [FeatureFlags.disabledByEnv]: disabledByEnvFeature
+  } = useSelector(appFeatureFlagsFeaturesSelector)
   const { pathname } = useLocation()
 
   const dispatch = useDispatch()
@@ -60,7 +63,9 @@ const Config = () => {
 
     // get tutorials
     dispatch(fetchTutorials())
-    dispatch(fetchCustomTutorials())
+    if (disabledByEnvFeature) {
+      dispatch(fetchCustomTutorials())
+    }
 
     dispatch(fetchFeatureFlags())
 
@@ -80,7 +85,7 @@ const Config = () => {
     if (cloudSsoFeature?.flag) {
       dispatch(fetchProfile())
     }
-  }, [cloudSsoFeature])
+  }, [cloudSsoFeature?.flag])
 
   useEffect(() => {
     featuresHighlight()

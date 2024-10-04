@@ -24,7 +24,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "axios": "^1.6.0",
+    "axios": "^1.7.5",
     "cli-argument-parser": "0.4.5",
     "js-yaml": "^4.1.0"
   },
@@ -32,7 +32,9 @@
     "@types/lodash": "4.14.192",
     "@types/node": "20.3.1",
     "word-wrap": "1.2.4",
-    "**/semver": "^7.5.2"
+    "**/semver": "^7.5.2",
+    "testcafe/**/ws": "^7.5.10",
+    "**/braces": "^3.0.3"
   },
   "devDependencies": {
     "@types/archiver": "^5.3.2",

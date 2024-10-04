@@ -47,12 +47,12 @@
     }
   ],
   "devDependencies": {
-    "@parcel/compressor-brotli": "^2.8.3",
-    "@parcel/compressor-gzip": "^2.8.3",
-    "@parcel/transformer-less": "^2.8.3",
+    "@parcel/compressor-brotli": "^2.12.0",
+    "@parcel/compressor-gzip": "^2.12.0",
+    "@parcel/transformer-less": "^2.12.0",
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "parcel": "^2.8.3",
+    "parcel": "^2.12.0",
     "rimraf": "^3.0.2",
     "terser": "^5.16.6"
   },
@@ -71,6 +71,6 @@
   },
   "resolutions": {
     "trim": "0.0.3",
-    "**/semver": "^7.5.2"
+    "**/braces": "^3.0.3"
   }
 }

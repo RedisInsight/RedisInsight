@@ -29,6 +29,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(buf));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createGZIPASCIIKeys(): Promise<void> {
@@ -38,6 +39,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(buf));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createGZIPJSONKeys(): Promise<void> {
@@ -47,6 +49,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(buf));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createGZIPPHPUnserializedJSONKeys(): Promise<void> {
@@ -57,6 +60,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(buf));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createGZIPJavaSerializedObjectKeys(): Promise<void> {
@@ -69,6 +73,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
 
         await this.createString(prefix, value);
         await this.createString(prefix, value2);
+        await this.createHash(prefix, [value,value2]);
     }
 
     private async createGZIPMsgpackKeys(): Promise<void> {
@@ -83,6 +88,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(rawValue));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createGZIPVectorKeys(): Promise<void> {
@@ -91,6 +97,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(rawValue));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private createGZIPProtobufKeys(): Promise<void> {
@@ -113,6 +120,7 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
                 const value = Buffer.from(fflate.compressSync(rawValue));
 
                 await this.createString(prefix, value);
+                await this.createHash(prefix, [value]);
 
                 resolve();
             });
@@ -125,5 +133,6 @@ export class GzipDatabasePopulator extends BaseDatabasePopulator {
         const value = Buffer.from(fflate.compressSync(rawValue));
 
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 }

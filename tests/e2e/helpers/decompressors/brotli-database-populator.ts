@@ -29,6 +29,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         const buf = encoder.encode(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createBrotliASCIIKeys() {
@@ -37,6 +38,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createBrotliVectorKeys() {
@@ -45,6 +47,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createBrotliJSONKeys() {
@@ -53,6 +56,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createBrotliPHPUnserializedJSONKeys() {
@@ -61,6 +65,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(await brotli.compress(buf));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createBrotliPickleKeys() {
@@ -68,6 +73,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         const rawValue = fs.readFileSync('./test-data/decompressors/pickleFile1.pickle');
         const value = Buffer.from(await brotli.compress(rawValue));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     };
 
     private async createBrotliJavaSerializedObjectKeys() {
@@ -80,6 +86,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
 
         await this.createString(prefix, value);
         await this.createString(prefix, value2);
+        await this.createHash(prefix, [value,value2]);
     }
 
     private async createBrotliMsgpackKeys(): Promise<void> {
@@ -92,6 +99,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
         });
         const value = Buffer.from(await brotli.compress(rawValue));
         await this.createString(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private createBrotliProtobufKeys(): Promise<void> {
@@ -111,6 +119,7 @@ export class BrotliDatabasePopulator extends BaseDatabasePopulator {
 
                     const value = Buffer.from(await brotli.compress(rawValue));
                     await this.createString(prefix, value);
+                    await this.createHash(prefix, [value]);
                     resolve();
                 } catch (error) {
                     reject(error);

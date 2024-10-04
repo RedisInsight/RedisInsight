@@ -27,7 +27,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue = '漢字';
         const buf = new TextEncoder().encode(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createLZ4ASCIIKeys() {
@@ -35,7 +35,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue = '\xac\xed\x00\x05t\x0a4102';
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createLZ4JSONKeys() {
@@ -43,7 +43,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue = '{"test":"test"}';
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createLZ4PHPUnserializedJSONKeys() {
@@ -51,7 +51,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue = 'a:2:{i:0;s:12:"Sample array";i:1;a:2:{i:0;s:5:"Apple";i:1;s:6:"Orange";}}';
         const buf = fflate.strToU8(rawValue);
         const value = Buffer.from(lz4js.compress(buf));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createLZ4JavaSerializedObjectKeys() {
@@ -60,8 +60,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const rawValue2 = fs.readFileSync('./test-data/decompressors/test_annotated_obj.ser');
         const value = Buffer.from(lz4js.compress(rawValue));
         const value2 = Buffer.from(lz4js.compress(rawValue2));
-        await this.createHash(prefix, value);
-        await this.createHash(prefix, value2);
+        await this.createHash(prefix, [value,value2]);
     }
 
     private async createLZ4MsgpackKeys(): Promise<void> {
@@ -73,7 +72,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
             boolean: false,
         });
         const value = Buffer.from(lz4js.compress(rawValue));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private createLZ4ProtobufKeys(): Promise<void> {
@@ -90,7 +89,7 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
                     const message = Book.create(payload);
                     const rawValue = Book.encode(message).finish();
                     const value = Buffer.from(lz4js.compress(rawValue));
-                    this.createHash(prefix, value);
+                    await this.createHash(prefix, [value]);
                     resolve();
                 } catch (error) {
                     reject(error);
@@ -103,14 +102,14 @@ export class LZ4DatabasePopulator extends BaseDatabasePopulator{
         const prefix = `${COMPRESSED_PREFIX}:${LZ4_PREFIX}:Pickle`;
         const rawValue = fs.readFileSync('./test-data/decompressors/pickleFile1.pickle');
         const value = Buffer.from(lz4js.compress(rawValue));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
     private async createLZ4VectorKeys() {
         const prefix = `${COMPRESSED_PREFIX}:${LZ4_PREFIX}:Vector`;
         const rawValue = JSON.parse(fs.readFileSync('./test-data/decompressors/vector.json', 'utf8'));
         const value = Buffer.from(lz4js.compress(rawValue));
-        await this.createHash(prefix, value);
+        await this.createHash(prefix, [value]);
     }
 
 }

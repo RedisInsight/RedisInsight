@@ -29,9 +29,7 @@ export const fieldDisplayNames = {
   sshUsername: 'SSH Username',
 }
 
-const DEFAULT_TIMEOUT_ENV = process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT || '30000' // 30 sec
-
-export const DEFAULT_TIMEOUT = parseInt(DEFAULT_TIMEOUT_ENV, 10)
+export const DEFAULT_TIMEOUT = riConfig.database.defaultConnectionTimeout
 
 export enum SubmitBtnText {
   AddDatabase = 'Add Redis Database',

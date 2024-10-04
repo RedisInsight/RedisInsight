@@ -49,8 +49,8 @@ const BulkActionsConfig = () => {
         ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
-      transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),
-      withCredentials: process.env.RI_SOCKET_CREDENTIALS === 'true',
+      transports: riConfig.api.socketTransports?.split(','),
+      withCredentials: riConfig.api.socketCredentials,
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

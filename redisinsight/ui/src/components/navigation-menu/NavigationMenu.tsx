@@ -220,7 +220,6 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SettingsActiveSVG : SettingsSVG
       },
-      featureFlag: FeatureFlags.disabledByEnv,
     },
   ]
 

@@ -1,4 +1,4 @@
-import { IRoute, Pages } from 'uiSrc/constants'
+import { FeatureFlags, IRoute, Pages } from 'uiSrc/constants'
 import { SettingsPage } from 'uiSrc/pages'
 import { SentinelDatabasesPage, SentinelDatabasesResultPage, SentinelPage } from 'uiSrc/pages/autodiscover-sentinel'
 
@@ -20,6 +20,7 @@ const ROUTES: IRoute[] = [
         component: SentinelDatabasesResultPage,
       },
     ],
+    featureFlag: FeatureFlags.disabledByEnv,
   },
 ]
 

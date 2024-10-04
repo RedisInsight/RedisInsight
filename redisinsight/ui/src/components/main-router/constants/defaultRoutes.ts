@@ -35,12 +35,12 @@ const INSTANCE_ROUTES: IRoute[] = [
     pageName: PageNames.pubSub,
     path: Pages.pubSub(':instanceId'),
     component: PubSubPage,
-    featureFlag: FeatureFlags.disabledByEnv,
   },
   {
     path: Pages.analytics(':instanceId'),
     component: AnalyticsPage,
     routes: ANALYTICS_ROUTES,
+    featureFlag: FeatureFlags.disabledByEnv,
   },
 ]
 
@@ -48,11 +48,13 @@ const RDI_INSTANCE_ROUTES: IRoute[] = [
   {
     path: Pages.rdiStatistics(':rdiInstanceId'),
     component: RdiStatisticsPage,
+    featureFlag: FeatureFlags.disabledByEnv,
   },
   {
     path: Pages.rdiPipelineManagement(':rdiInstanceId'),
     component: PipelineManagementPage,
-    routes: RDI_PIPELINE_MANAGEMENT_ROUTES
+    routes: RDI_PIPELINE_MANAGEMENT_ROUTES,
+    featureFlag: FeatureFlags.disabledByEnv,
   }
 ]
 
@@ -62,11 +64,13 @@ const ROUTES: IRoute[] = [
     exact: true,
     component: HomePage,
     isAvailableWithoutAgreements: true,
+    featureFlag: FeatureFlags.disabledByEnv
   },
   ...COMMON_ROUTES,
   {
     path: Pages.redisEnterpriseAutodiscovery,
     component: RedisClusterDatabasesPage,
+    featureFlag: FeatureFlags.disabledByEnv,
   },
   {
     path: Pages.redisCloud,
@@ -85,6 +89,7 @@ const ROUTES: IRoute[] = [
         component: RedisCloudDatabasesResultPage,
       },
     ],
+    featureFlag: FeatureFlags.disabledByEnv,
   },
   {
     path: Pages.rdi,

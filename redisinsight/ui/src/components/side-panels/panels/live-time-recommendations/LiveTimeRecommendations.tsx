@@ -153,21 +153,23 @@ const LiveTimeRecommendations = () => {
             data-testid="recommendations-info-icon"
           />
         </EuiToolTip>
-        <EuiLink
-          external={false}
-          href={EXTERNAL_LINKS.githubRepo}
-          target="_blank"
-          style={{ marginLeft: 6 }}
-          data-testid="github-repo-btn"
-        >
-          <EuiIcon
-            className={styles.githubIcon}
-            aria-label="redis insight github repository"
-            type={GithubSVG}
-            size="s"
-            data-testid="github-repo-icon"
-          />
-        </EuiLink>
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <EuiLink
+            external={false}
+            href={EXTERNAL_LINKS.githubRepo}
+            target="_blank"
+            style={{ marginLeft: 6 }}
+            data-testid="github-repo-btn"
+          >
+            <EuiIcon
+              className={styles.githubIcon}
+              aria-label="redis insight github repository"
+              type={GithubSVG}
+              size="s"
+              data-testid="github-repo-icon"
+            />
+          </EuiLink>
+        </FeatureFlagComponent>
       </div>
 
       {isShowHiddenDisplayed && (

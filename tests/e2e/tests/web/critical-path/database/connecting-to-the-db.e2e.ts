@@ -182,14 +182,14 @@ test
         await myRedisDatabasePage.clickOnDBByName(sshDbPass.databaseName);
         await Common.checkURLContainsText('browser');
     });
-test.only
+test
     .meta({ rte: rte.none })
     .before(async() => {
         await databaseAPIRequests.deleteAllDatabasesApi();
         await databaseHelper.acceptLicenseTerms();
     })('Verify that user can see the No databases message on the empty databases list', async t => {
         const noDatabasesMessage = 'No databases yet, let\'s add one!';
-        const externalPageLink = 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=empty_db_list'
+        const externalPageLink = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=main&utm_campaign=empty_db_list'
 
         await t.expect(myRedisDatabasePage.emptyListMessage.withText(noDatabasesMessage).exists).ok('Empty databases list message not displayed');
 

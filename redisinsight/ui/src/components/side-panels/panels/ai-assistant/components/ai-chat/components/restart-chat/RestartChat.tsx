@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import cx from 'classnames'
 import { EuiButton, EuiPopover, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
 
+import { useSelector } from 'react-redux'
+import { aiChatSelector } from 'uiSrc/slices/panels/aiAssistant'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -13,6 +15,7 @@ export interface Props {
 const RestartChat = (props: Props) => {
   const { button, onConfirm, anchorClassName = '' } = props
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const { loading } = useSelector(aiChatSelector)
 
   const handleConfirm = () => {
     setIsPopoverOpen(false)
@@ -50,6 +53,8 @@ const RestartChat = (props: Props) => {
           color="secondary"
           onClick={handleConfirm}
           className={styles.confirmBtn}
+          isLoading={loading}
+          isDisabled={loading}
           data-testid="ai-chat-restart-confirm"
         >
           Restart

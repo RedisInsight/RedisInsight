@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import {
   aiChatSelector,
   askAiChatbotAction,
@@ -26,41 +26,27 @@ const AiChat = () => {
   const { modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
-  const [dbId, setDbId] = useState<Nullable<string>>(null)
 
   const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
   const { instanceId } = useParams<{ instanceId: string }>()
-  const { pathname } = useLocation()
 
   const dispatch = useDispatch()
 
-  const isGeneralAgreementAccepted = () => (agreements ? agreements?.some((agr) => agr?.databaseId === null) : false)
+  useEffect(() => {
+    dispatch(getAiChatHistoryAction(instanceId))
+  }, [instanceId, userOAuthProfile?.id])
 
   useEffect(() => {
-    if (pathname.indexOf('integrate') >= 0 || !instanceId) {
-      setDbId(null)
-      dispatch(getAiChatHistoryAction(null))
-    } else if (instanceId && instanceId !== dbId) {
-      setDbId(instanceId)
-      dispatch(getAiChatHistoryAction(instanceId))
-    }
-  }, [pathname, instanceId, userOAuthProfile?.id])
-
-  useEffect(() => {
-    if (!userOAuthProfile?.id && messages?.length) {
-      dispatch(clearAiChatHistory())
-    }
-
     dispatch(getAiAgreementsAction())
   }, [userOAuthProfile?.id])
 
   const handleSubmit = useCallback((message: string) => {
     sendChatMessage(message)
-  }, [agreements, dbId])
+  }, [agreements, instanceId])
 
   const sendChatMessage = (message: string) => {
     dispatch(askAiChatbotAction(
-      dbId,
+      instanceId,
       message,
       {
         onMessage: (message: AiChatMessage) => {
@@ -70,7 +56,7 @@ const AiChat = () => {
           sendEventTelemetry({
             event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
             eventData: {
-              chatBot: dbId ? AiChatType.Database : AiChatType.General,
+              chatBot: instanceId ? AiChatType.Database : AiChatType.General,
               errorCode
             }
           })
@@ -82,7 +68,7 @@ const AiChat = () => {
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
       eventData: {
-        chatBot: dbId ? AiChatType.Database : AiChatType.General,
+        chatBot: instanceId ? AiChatType.Database : AiChatType.General,
       }
     })
   }
@@ -93,12 +79,12 @@ const AiChat = () => {
       return
     }
 
-    dispatch(removeAiChatHistoryAction(dbId))
+    dispatch(removeAiChatHistoryAction(instanceId))
 
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
-        chatBot: dbId ? AiChatType.Database : AiChatType.General,
+        chatBot: instanceId ? AiChatType.Database : AiChatType.General,
       }
     })
   }, [messages])
@@ -108,18 +94,18 @@ const AiChat = () => {
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_BOT_COMMAND_RUN_CLICKED,
       eventData: {
-        databaseId: dbId || undefined,
-        chatBot: dbId ? AiChatType.Database : AiChatType.General,
+        databaseId: instanceId || undefined,
+        chatBot: instanceId ? AiChatType.Database : AiChatType.General,
         provider,
         command
       }
     })
-  }, [dbId, provider])
+  }, [instanceId, provider])
 
   return (
     <div className={styles.wrapper} data-testid="ai-chat">
       <ChatHeader
-        databaseId={dbId}
+        databaseId={instanceId}
         onRestart={onClearSession}
         agreements={agreements}
       />
@@ -138,8 +124,8 @@ const AiChat = () => {
         <ChatForm
           isDisabled={inProgressMessage?.content === ''}
           onSubmit={handleSubmit}
-          dbId={dbId}
-          isGeneralAgreementAccepted={isGeneralAgreementAccepted()}
+          databaseId={instanceId}
+          isGeneralAgreementAccepted={agreements?.some((agr) => !agr?.databaseId)}
         />
       </div>
     </div>

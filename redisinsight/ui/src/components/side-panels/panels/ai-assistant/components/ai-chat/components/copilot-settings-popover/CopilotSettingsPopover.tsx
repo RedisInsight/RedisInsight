@@ -233,21 +233,21 @@ const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) =>
         <div className={styles.actionsWrapper}>
           <EuiButton
             color="secondary"
-            aria-label="cancel button"
             size="s"
-            data-test-id="copilot-settings-cancel-btn"
-            onClick={onCancel}
+            aria-label="cancel button"
             isLoading={formik.isSubmitting}
+            onClick={onCancel}
+            data-test-id="copilot-settings-cancel-btn"
           >Cancel
           </EuiButton>
           <EuiButton
-            type="submit"
-            aria-label="close copilot settings"
             fill
             color="secondary"
             size="s"
-            data-testId="copilot-settings-action-btn"
+            type="submit"
+            aria-label="close copilot settings"
             isLoading={formik.isSubmitting}
+            data-testId="copilot-settings-action-btn"
           >Save
           </EuiButton>
         </div>

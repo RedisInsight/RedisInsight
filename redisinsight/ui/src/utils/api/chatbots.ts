@@ -1,5 +1,6 @@
 import { CustomHeaders } from 'uiSrc/constants/api'
-import { isStatusSuccessful } from 'uiSrc/utils'
+import { Nullable, isStatusSuccessful } from 'uiSrc/utils'
+import { ApiEndpoints } from 'uiSrc/constants'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
 
@@ -60,4 +61,10 @@ export const getStreamedAnswer = async (
   } catch (error: any) {
     onError?.(error?.name === 'AbortError' ? { status: ApiStatusCode.Timeout, statusText: 'ERRTIMEOUT' } : error)
   }
+}
+
+export const getAiUrl = (instanceId: Nullable<string>, ...path: string[]) => {
+  let aiUrl: string = ApiEndpoints.AI_CHAT
+  if (instanceId) aiUrl += `/${instanceId}`
+  return `/${aiUrl}/messages/${path.join('/')}`
 }

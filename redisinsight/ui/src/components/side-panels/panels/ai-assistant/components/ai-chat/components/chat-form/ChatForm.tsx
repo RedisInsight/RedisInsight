@@ -5,7 +5,7 @@ import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
 
 import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
-import { Nullable } from 'uiSrc/utils'
+import { Maybe, Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface IValidation {
@@ -17,8 +17,8 @@ export interface IValidation {
 export interface Props {
   isDisabled?: boolean
   onSubmit: (value: string) => void
-  dbId: Nullable<string>
-  isGeneralAgreementAccepted: boolean
+  databaseId: Nullable<string>
+  isGeneralAgreementAccepted: Maybe<boolean>
 }
 
 const INDENT_TEXTAREA_SPACE = 2
@@ -27,11 +27,11 @@ const ChatForm = (props: Props) => {
   const {
     isDisabled,
     onSubmit,
-    dbId,
+    databaseId,
     isGeneralAgreementAccepted,
   } = props
   const [value, setValue] = useState('')
-  const [validation, setValidation] = useState(false)
+  const [validation, setValidation] = useState<Nullable<string>>(null)
   const textAreaRef: Ref<HTMLTextAreaElement> = useRef(null)
 
   const updateTextAreaHeight = (initialState = false) => {
@@ -57,9 +57,9 @@ const ChatForm = (props: Props) => {
     setValue(target.value)
     updateTextAreaHeight()
 
-    if (!dbId && value.trim().startsWith('/query')) {
-      setValidation(true)
-    } else if (validation) setValidation(false)
+    if (!databaseId && value.trim().startsWith('/query')) {
+      setValidation('Open your Redis database with Redis Query Engine , or create a new database to get started.')
+    } else if (validation) setValidation(null)
   }
 
   const handleSubmitForm = (e: React.MouseEvent<HTMLFormElement>) => {
@@ -82,10 +82,9 @@ const ChatForm = (props: Props) => {
   return (
     <div>
       <EuiToolTip
-        title={isGeneralAgreementAccepted ? null : 'Accept the Redis Copilot General terms'}
+        title={!isGeneralAgreementAccepted ? 'Accept the Redis Copilot General terms' : null}
         content={!isGeneralAgreementAccepted ? 'Accept the Redis Copilot General terms in the menu above to get started.'
-          : validation ? 'Open your Redis database with Redis Query Engine , or create a new database to get started.'
-            : null}
+          : validation}
         className={styles.validationTooltip}
         display="block"
       >
@@ -110,13 +109,13 @@ const ChatForm = (props: Props) => {
             <EuiButton
               fill
               size="s"
-              color="secondary"
-              disabled={!value.length || isDisabled || validation}
-              isDisabled={!value.length || isDisabled || validation}
-              className={styles.submitBtn}
               iconType={SendIcon}
-              type="submit"
+              color="secondary"
+              className={styles.submitBtn}
               aria-label="submit"
+              type="submit"
+              disabled={!value.length || isDisabled || !!validation}
+              isDisabled={!value.length || isDisabled || !!validation}
               data-testid="ai-submit-message-btn"
             />
           </div>

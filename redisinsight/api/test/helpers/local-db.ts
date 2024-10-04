@@ -671,48 +671,12 @@ export const createNotExistingNotifications = async (truncate: boolean = false) 
   await createNotifications(notifications, truncate);
 }
 
-export const checkDatabaseExist = async (dbId) => {
-  const dbRep = await getRepository(repositories.DATABASE)
-
-  const db = await dbRep.findOneBy({ id: dbId})
-
-  if (!db) {
-    await dbRep.save({
-      tls: false,
-      verifyServerCert: false,
-      host: constants.TEST_INSTANCE_HOST_2,
-      port: 3679,
-      connectionType: 'STANDALONE',
-      name: constants.TEST_INSTANCE_NAME_2,
-      db: constants.TEST_REDIS_DB_INDEX,
-      timeout: 30000,
-      modules: '[]',
-      version: '7.0',
-      id: dbId,
-    });
-  }
-}
-
-export const clearAiAgreements = async () => {
-  const rep = await getRepository(repositories.AiAgreement)
-  await rep.clear()
-}
-
-export const generateAiAgreements = async (
-  partial: Record<string, any> = {},
-  truncate: boolean = true,
-) => {
-  const result = [];
-  // create db in order to avoid QueryFailedError: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed
+export const generateDatabase = async (databaseId: string) => {
   const dbRep = await getRepository(repositories.DATABASE);
-  const rep = await getRepository(repositories.AiAgreement);
 
-  if (truncate) {
-    await dbRep.clear();
-    await rep.clear();
-  }
+  await dbRep.clear();
 
-  const db = await dbRep.save({
+  return await dbRep.save({
     tls: false,
     verifyServerCert: false,
     host: constants.TEST_INSTANCE_HOST_2,
@@ -723,15 +687,54 @@ export const generateAiAgreements = async (
     timeout: 30000,
     modules: '[]',
     version: '7.0',
-    id: partial.databaseId || constants.TEST_INSTANCE_ID_2,
+    id: databaseId,
   });
+}
+
+export const checkDatabaseExist = async (dbId) => {
+  const dbRep = await getRepository(repositories.DATABASE)
+
+  const db = await dbRep.findOneBy({ id: dbId})
+
+  if (!db) {
+    await generateDatabase(dbId)
+  }
+}
+
+export const clearAiAgreements = async () => {
+  const rep = await getRepository(repositories.AiAgreement)
+  await rep.clear()
+}
+
+export const generateAiAgreement = async (
+  partial: Record<string, any> = {},
+  truncate: boolean = true,
+) => {
+  const result = [];
+  const rep = await getRepository(repositories.AiAgreement);
+
+  if (truncate) {
+    await rep.clear();
+    }
+
+    let db = null
+
+    if (partial.databaseId) {
+    // create db in order to avoid QueryFailedError: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed
+    db = await generateDatabase(partial.databaseId)
+  }
 
   result.push(await rep.save({
     ...constants.TEST_AI_AGREEMENT,
-    databaseId: db.id,
+   ...partial,
   }))
 
   return result
+}
+
+export const getAllAiMessages = async () => {
+  const rep = await getRepository(repositories.AIMessage);
+  return rep.createQueryBuilder('m').getMany()
 }
 
 export const generateAiDatabaseMessages = async (

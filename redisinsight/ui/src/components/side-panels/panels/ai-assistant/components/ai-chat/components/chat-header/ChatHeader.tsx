@@ -28,10 +28,10 @@ const ChatHeader = (props: Props) => {
         <RestartChat
           button={(
             <EuiButtonIcon
-              aria-label="restart ai session button"
-              iconType={RestartIcon}
-              iconSize="l"
               size="s"
+              iconSize="l"
+              iconType={RestartIcon}
+              aria-label="restart ai session button"
               data-testid="ai-restart-session-btn"
             />
           )}

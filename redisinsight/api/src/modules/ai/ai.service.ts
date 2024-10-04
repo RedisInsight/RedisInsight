@@ -4,7 +4,6 @@ import { Socket } from 'socket.io-client';
 import { Injectable, Logger } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { AiProvider } from 'src/modules/ai/providers/ai.provider';
-// import { SendAiDatabaseMessageDto, SendAiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
 import { wrapAiError } from 'src/modules/ai/exceptions';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { getFullDbContext, getIndexContext } from 'src/modules/ai/utils/context.util';
@@ -388,7 +387,6 @@ export class AiService {
     return this.aiAuthProvider.callWithAuthRetry(sessionMetadata, async () => {
       try {
         const auth = await this.aiAuthProvider.getAuthData(sessionMetadata);
-        // const auth = { accountId: '1234' };
         return await this.aiAgreementRepository.list(auth.accountId);
       } catch (e) {
         throw wrapAiError(e, 'Unable to get Ai Agreements');
@@ -410,9 +408,7 @@ export class AiService {
           if (!generalAiAgreement) {
             await this.aiAgreementRepository.create(null, auth.accountId);
           }
-        } else if (generalAiAgreement) {
-          await this.aiAgreementRepository.delete(null, auth.accountId);
-        }
+        } else if (generalAiAgreement) await this.aiAgreementRepository.delete(null, auth.accountId);
 
         if (databaseId) {
           const dbAiAgreement = await this.aiAgreementRepository.get(databaseId, auth.accountId);
@@ -420,9 +416,7 @@ export class AiService {
             if (!dbAiAgreement) {
               await this.aiAgreementRepository.create(databaseId, auth.accountId);
             }
-          } else if (dbAiAgreement) {
-            await this.aiAgreementRepository.delete(databaseId, auth.accountId);
-          }
+          } else if (dbAiAgreement) await this.aiAgreementRepository.delete(databaseId, auth.accountId);
         }
 
         return await this.listAiAgreements(sessionMetadata);

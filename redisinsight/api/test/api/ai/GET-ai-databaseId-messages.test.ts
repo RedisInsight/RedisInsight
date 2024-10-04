@@ -8,7 +8,6 @@ import {
 import { initApiUserProfileNockScope,  } from '../cloud/constants';
 import { AiMessageType, AiTools } from 'src/modules/ai/models';
 import { mockAiDatabaseId } from 'src/__mocks__';
-import { Nullable } from 'src/common/constants';
 
 const { server, request, localDb } = deps;
 
@@ -47,7 +46,7 @@ describe('GET /ai/:databaseId/messages', (done) => {
         },
       },
       {
-        name: 'Should if no messages with other dbId',
+        name: 'Should not return messages of other dbId',
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.length).to.eql(0);
@@ -56,18 +55,6 @@ describe('GET /ai/:databaseId/messages', (done) => {
         endpoint: () => endpoint('NO_AI_MESSAGES_TEST_DB_ID'),
         before: async () => {
           await localDb.generateAiDatabaseMessages({ databaseId: mockAiDatabaseId});
-        },
-      },
-      {
-        name: 'Should return history with general tool messages for a given database if such exist',
-        responseSchema,
-        checkFn: ({ body }) => {
-          expect(body.length).to.eql(2);
-          expect(body.filter(el => el.tool === AiTools.General && el.databaseId == mockAiDatabaseId).length).to.eql(2)
-        },
-        endpoint,
-        before: async () => {
-          await localDb.generateAiDatabaseMessages({ databaseId: mockAiDatabaseId, tool: AiTools.General });
         },
       },
     ].map(mainCheckFn);

@@ -37,7 +37,7 @@ describe('GET /ai/messages', (done) => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.length).to.eql(2);
-          expect(body.filter(el => el.tool === AiTools.General && el.databaseId == null).length).to.eql(2)
+          expect(body.filter(el => !el.databaseId).length).to.eql(2)
         },
         endpoint,
         before: async () => {
@@ -45,23 +45,11 @@ describe('GET /ai/messages', (done) => {
         },
       },
       {
-        name: 'Should return history with general messages only with null database',
+        name: 'Should not return history with database messages',
         responseSchema,
         checkFn: ({ body }) => {
           expect(body.length).to.eql(0);
-          expect(body.filter(el => el.tool === AiTools.General && el.databaseId == null).length).to.eql(0)
-        },
-        endpoint,
-        before: async () => {
-          await localDb.generateAiDatabaseMessages();
-        },
-      },
-      {
-        name: 'Should return history with general messages only with null database',
-        responseSchema,
-        checkFn: ({ body }) => {
-          expect(body.length).to.eql(0);
-          expect(body.filter(el => el.tool === AiTools.General && el.databaseId == null).length).to.eql(0)
+          expect(body.filter(el => !!el.databaseId).length).to.eql(0)
         },
         endpoint,
         before: async () => {

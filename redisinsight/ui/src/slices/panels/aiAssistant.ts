@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
-import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem } from 'uiSrc/constants'
 import { AiAgreement, AiChatMessage, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
@@ -14,7 +14,7 @@ import {
   parseCustomError
 } from 'uiSrc/utils'
 import { getBaseUrl } from 'uiSrc/services/apiService'
-import { getStreamedAnswer } from 'uiSrc/utils/api'
+import { getAiUrl, getStreamedAnswer } from 'uiSrc/utils/api'
 import ApiStatusCode from 'uiSrc/constants/apiStatusCode'
 import { generateAiMessage, generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
@@ -78,6 +78,17 @@ const aiAssistantSlice = createSlice({
     getAiChatHistoryFailed: (state) => {
       state.ai.loading = false
     },
+
+    removeAiChatHistory: (state) => {
+      state.ai.loading = true
+    },
+    removeAiChatHistorySuccess: (state) => {
+      state.ai.messages = []
+    },
+    removeAiChatHistoryFailed: (state) => {
+      state.ai.loading = false
+    },
+
     sendAiQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.ai.messages.push(payload)
     },
@@ -124,10 +135,15 @@ export const {
   getAiChatHistorySuccess,
   getAiChatHistoryFailed,
 
+  removeAiChatHistory,
+  removeAiChatHistorySuccess,
+  removeAiChatHistoryFailed,
+
   sendAiQuestion,
   setAiQuestionError,
   sendAiAnswer,
   clearAiAgreements,
+
   clearAiChatHistory,
   setHideCopilotSplashScreen,
 } = aiAssistantSlice.actions
@@ -140,7 +156,8 @@ export function getAiAgreementsAction(onSuccess?: () => void, onFailure?: () => 
     dispatch(getAiAgreements())
 
     try {
-      const { status, data } = await apiService.get<any>(`${ApiEndpoints.AI_CHAT}/messages/agreements`)
+      const aiUrl = getAiUrl(null, 'agreements')
+      const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
         dispatch(getAiAgreementsSuccess(data))
@@ -168,7 +185,7 @@ export interface UpdateAiAgreementsInterface {
 }
 
 export function updateAiAgreementsAction(
-  instanceId: Nullable<string>,
+  databaseId: Nullable<string>,
   toUpdate: UpdateAiAgreementsInterface,
   onSuccess?: () => void,
   onFailure?: () => void
@@ -177,9 +194,8 @@ export function updateAiAgreementsAction(
     dispatch(updateAiAgreements())
 
     try {
-      let aiUrl: string = ApiEndpoints.AI_CHAT
-      if (instanceId) aiUrl += `/${instanceId}`
-      const { status, data } = await apiService.post<any>(`${aiUrl}/messages/agreements`, toUpdate)
+      const aiUrl = getAiUrl(databaseId, 'agreements')
+      const { status, data } = await apiService.post<any>(aiUrl, toUpdate)
       if (isStatusSuccessful(status)) {
         dispatch(updateAiAgreementsSuccess(data))
         onSuccess?.()
@@ -199,14 +215,13 @@ export function updateAiAgreementsAction(
   }
 }
 
-export function getAiChatHistoryAction(instanceId: Nullable<string>, onSuccess?: () => void) {
+export function getAiChatHistoryAction(databaseId: Nullable<string>, onSuccess?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(getAiChatHistory())
 
     try {
-      let aiUrl: string = ApiEndpoints.AI_CHAT
-      if (instanceId) aiUrl += `/${instanceId}`
-      const { status, data } = await apiService.get<any>(`${aiUrl}/messages`)
+      const aiUrl = getAiUrl(databaseId)
+      const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
         dispatch(getAiChatHistorySuccess(data))
@@ -244,12 +259,11 @@ export function askAiChatbotAction(
     onMessage?.(aiMessageProgressed)
 
     const baseUrl = getBaseUrl()
-    let aiUrl: string = `${baseUrl}${ApiEndpoints.AI_CHAT}`
-    if (databaseId) aiUrl += `/${databaseId}`
-    aiUrl += '/messages'
+    const aiUrl = getAiUrl(databaseId)
+    const url: string = `${baseUrl}${aiUrl}`
 
     await getStreamedAnswer(
-      aiUrl,
+      url,
       message,
       {
         onMessage: (value: string) => {
@@ -289,12 +303,12 @@ export function removeAiChatHistoryAction(
   onSuccess?: () => void
 ) {
   return async (dispatch: AppDispatch) => {
-    let aiUrl: string = ApiEndpoints.AI_CHAT
-    if (databaseId) aiUrl += `/${databaseId}`
+    dispatch(removeAiChatHistory())
+    const aiUrl = getAiUrl(databaseId)
     try {
-      const { status } = await apiService.delete<any>(`${aiUrl}/messages`)
+      const { status } = await apiService.delete<any>(aiUrl)
       if (isStatusSuccessful(status)) {
-        dispatch(clearAiChatHistory())
+        dispatch(removeAiChatHistorySuccess())
         onSuccess?.()
       }
     } catch (error) {
@@ -306,6 +320,7 @@ export function removeAiChatHistoryAction(
       }
 
       dispatch(addErrorNotification(err))
+      dispatch(removeAiChatHistoryFailed())
     }
   }
 }

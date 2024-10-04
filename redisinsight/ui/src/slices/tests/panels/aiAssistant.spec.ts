@@ -19,6 +19,9 @@ import reducer, {
   updateAiAgreements,
   updateAiAgreementsSuccess,
   updateAiAgreementsFailed,
+  removeAiChatHistory,
+  removeAiChatHistorySuccess,
+  removeAiChatHistoryFailed,
   getAiAgreementsAction,
   updateAiAgreementsAction,
   aiAssistantSelector,
@@ -257,6 +260,64 @@ describe('ai assistant slice', () => {
 
         // Act
         const nextState = reducer(initialState, getAiChatHistoryFailed())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('removeAiChatHistory', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          loading: true
+        }
+
+        // Act
+        const nextState = reducer(initialState, removeAiChatHistory())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiChatHistorySuccess', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          loading: false,
+          messages: []
+        }
+
+        // Act
+        const nextState = reducer(initialState, removeAiChatHistorySuccess())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiChatHistoryFailed', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          loading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, removeAiChatHistoryFailed())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -532,7 +593,8 @@ describe('ai assistant slice', () => {
 
         // Assert
         const expectedActions = [
-          clearAiChatHistory(),
+          removeAiChatHistory(),
+          removeAiChatHistorySuccess(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -553,7 +615,9 @@ describe('ai assistant slice', () => {
 
         // Assert
         const expectedActions = [
-          addErrorNotification(responsePayload)
+          removeAiChatHistory(),
+          addErrorNotification(responsePayload),
+          removeAiChatHistoryFailed(),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

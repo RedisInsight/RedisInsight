@@ -63,7 +63,7 @@ const Config = () => {
 
     // get tutorials
     dispatch(fetchTutorials())
-    if (disabledByEnvFeature) {
+    if (disabledByEnvFeature?.flag) {
       dispatch(fetchCustomTutorials())
     }
 

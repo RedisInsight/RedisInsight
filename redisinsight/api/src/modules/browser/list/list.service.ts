@@ -4,16 +4,11 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
-import { isArray, isNull } from 'lodash';
-import { ClientMetadata } from 'src/common/models';
+import { isNull, isArray } from 'lodash';
 import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import {
-  BrowserToolKeysCommands,
-  BrowserToolListCommands,
-} from 'src/modules/browser/constants/browser-tool-commands';
-import { KeyDto } from 'src/modules/browser/keys/dto';
+import { catchAclError, catchMultiTransactionError } from 'src/utils';
+import { ClientMetadata } from 'src/common/models';
 import {
   CreateListWithExpireDto,
   DeleteListElementsDto,
@@ -27,10 +22,15 @@ import {
   SetListElementDto,
   SetListElementResponse,
 } from 'src/modules/browser/list/dto';
-import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import { KeyDto } from 'src/modules/browser/keys/dto';
+import {
+  BrowserToolKeysCommands,
+  BrowserToolListCommands,
+} from 'src/modules/browser/constants/browser-tool-commands';
+import { plainToClass } from 'class-transformer';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
-import { catchAclError, catchMultiTransactionError } from 'src/utils';
+import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
 
 @Injectable()
 export class ListService {

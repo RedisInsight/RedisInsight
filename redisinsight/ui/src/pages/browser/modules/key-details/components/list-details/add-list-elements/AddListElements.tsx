@@ -1,27 +1,26 @@
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 import {
   EuiButton,
-  EuiFieldText,
+  EuiTextColor,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiFieldText,
   EuiPanel,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiTextColor
 } from '@elastic/eui'
-import cx from 'classnames'
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 
-import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
-import { KeyTypes } from 'uiSrc/constants'
-import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { keysSelector, selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { insertListElementsAction } from 'uiSrc/slices/browser/list'
+import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { insertListElementsAction } from 'uiSrc/slices/browser/list'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
+import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
-import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import styles from '../styles.module.scss'
 
 export interface Props {

@@ -1,25 +1,24 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
   EuiButton,
-  EuiFieldText,
+  EuiTextColor,
+  EuiForm,
   EuiFlexGroup,
   EuiFlexItem,
-  EuiForm,
   EuiPanel,
-  EuiTextColor
+  EuiFieldText,
 } from '@elastic/eui'
 
-import { CreateListWithExpireDto } from 'apiSrc/modules/browser/list/dto'
-import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
+import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
+import { CreateListWithExpireDto } from 'apiSrc/modules/browser/list/dto'
 
-import AddMultipleFields from '../../add-multiple-fields'
-import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import {
   AddListFormConfig as config,
 } from '../constants/fields-config'
+import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 export interface Props {
   keyName: string

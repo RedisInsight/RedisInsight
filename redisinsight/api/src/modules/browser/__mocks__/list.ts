@@ -1,4 +1,3 @@
-import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 import {
   DeleteListElementsDto,
   GetListElementResponse,
@@ -8,6 +7,7 @@ import {
   PushElementToListDto,
   SetListElementDto,
 } from 'src/modules/browser/list/dto';
+import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 
 export const mockIndex: number = 0;
 export const mockListElement = Buffer.from('Lorem ipsum dolor sit amet.');

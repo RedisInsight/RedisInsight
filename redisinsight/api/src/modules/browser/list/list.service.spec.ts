@@ -1,21 +1,26 @@
+import { Test, TestingModule } from '@nestjs/testing';
 import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
+import { ReplyError } from 'src/models/redis-client';
 import {
-  mockBrowserClientMetadata,
   mockRedisNoPermError,
   mockRedisWrongNumberOfArgumentsError,
   mockRedisWrongTypeError,
+  mockBrowserClientMetadata,
 } from 'src/__mocks__';
-import { mockDatabaseClientFactory } from 'src/__mocks__/databases-client';
-import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
-import ERROR_MESSAGES from 'src/constants/error-messages';
-import { ReplyError } from 'src/models/redis-client';
+import {
+  CreateListWithExpireDto,
+  ListElementDestination,
+} from 'src/modules/browser/list/dto';
+import {
+  BrowserToolKeysCommands,
+  BrowserToolListCommands,
+} from 'src/modules/browser/constants/browser-tool-commands';
 import {
   mockDeleteElementsDto,
   mockGetListElementResponse,
@@ -29,15 +34,10 @@ import {
   mockPushElementDto,
   mockSetListElementDto,
 } from 'src/modules/browser/__mocks__';
-import {
-  BrowserToolKeysCommands,
-  BrowserToolListCommands,
-} from 'src/modules/browser/constants/browser-tool-commands';
-import {
-  CreateListWithExpireDto,
-  ListElementDestination,
-} from 'src/modules/browser/list/dto';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
+import { mockDatabaseClientFactory } from 'src/__mocks__/databases-client';
+import { mockStandaloneRedisClient } from 'src/__mocks__/redis-client';
+import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ListService } from './list.service';
 
 describe('ListService', () => {

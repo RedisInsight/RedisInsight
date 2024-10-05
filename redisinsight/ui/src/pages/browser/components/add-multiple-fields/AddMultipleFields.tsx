@@ -1,6 +1,6 @@
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiToolTip } from '@elastic/eui'
-import cx from 'classnames'
 import React from 'react'
+import cx from 'classnames'
+import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiToolTip } from '@elastic/eui'
 
 import styles from './styles.module.scss'
 

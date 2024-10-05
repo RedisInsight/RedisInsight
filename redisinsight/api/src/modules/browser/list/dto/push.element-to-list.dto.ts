@@ -1,8 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsDefined, IsEnum } from 'class-validator';
-import { RedisString } from 'src/common/constants';
-import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { KeyDto } from 'src/modules/browser/keys/dto';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDefined, IsEnum } from 'class-validator';
+import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import { RedisString } from 'src/common/constants';
 
 export enum ListElementDestination {
   Tail = 'TAIL',

@@ -19,6 +19,7 @@ import {
   AddListFormConfig as config,
 } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
+import AddMultipleFields from '../../add-multiple-fields'
 
 export interface Props {
   keyName: string

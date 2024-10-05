@@ -15,6 +15,7 @@ import {
 import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { insertListElementsAction } from 'uiSrc/slices/browser/list'
+import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'

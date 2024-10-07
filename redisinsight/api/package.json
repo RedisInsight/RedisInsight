@@ -61,7 +61,7 @@
     "@segment/analytics-node": "^2.1.2",
     "adm-zip": "^0.5.9",
     "axios": "^1.6.0",
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.3",
     "busboy": "^1.6.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.14.0",

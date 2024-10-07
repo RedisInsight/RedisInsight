@@ -33,7 +33,7 @@ fixture `List Key verification`
     });
 test('Verify that user can search List element by index', async t => {
     keyName = Common.generateWord(10);
-    await browserPage.addListKey(keyName, keyTTL, elements[0]);
+    await browserPage.addListKey(keyName, keyTTL, [elements[0]]);
     // Add few elements to the List key
     await browserPage.addElementToList(elements[1]);
     await browserPage.addElementToList(elements[2]);

@@ -22,7 +22,7 @@ fixture `List Key verification`
     .page(commonUrl)
     .beforeEach(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await browserPage.addListKey(keyName, '2147476121', 'testElement');
+        await browserPage.addListKey(keyName, '2147476121', ['testElement']);
     })
     .afterEach(async() => {
         // Clear and delete database

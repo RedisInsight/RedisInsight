@@ -162,7 +162,6 @@ export class BrowserPage extends InstancePage {
     hashFieldNameInput = Selector('[data-testid=field-name]');
     hashFieldValueEditor = Selector('[data-testid^=hash_value-editor]');
     hashTtlFieldInput = Selector('[data-testid=hash-ttl]');
-    listKeyElementInput = Selector('[data-testid=element]');
     listKeyElementEditorInput = Selector('[data-testid^=list_value-editor-]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-mode-id=json]');
@@ -265,12 +264,14 @@ export class BrowserPage extends InstancePage {
     keyListItem = Selector('[role=rowgroup] [role=row]');
     // Dialog
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
+    //checkbox
+    showTtlCheckbox =  Selector('[data-testid=test-check-ttl]~label');
 
     //Get Hash key field ttl value
     //for Redis databases 7.4 and higher
     getHashTtlFieldInput = (fieldName: string): Selector => (Selector(`[data-testid=hash-ttl_content-value-${fieldName}]`));
-    //checkbox
-    showTtlCheckbox =  Selector('[data-testid=test-check-ttl]~label');
+    getListElementInput = (count: number): Selector => (Selector(`[data-testid*=element-${count}]`));
+
 
     /**
      * Common part for Add any new key
@@ -385,7 +386,7 @@ export class BrowserPage extends InstancePage {
      * @param TTL The Time to live value of the key
      * @param element The key element
      */
-    async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
+    async addListKey(keyName: string, TTL = ' ', element = [' ']): Promise<void> {
         await Common.waitForElementNotVisible(this.progressLine);
         await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
@@ -395,8 +396,14 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
         await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
-        await t.click(this.listKeyElementInput);
-        await t.typeText(this.listKeyElementInput, element, { replace: true, paste: true });
+        for(let i = 0; i < element.length; i++ ) {
+            await t.click(this.getListElementInput(i));
+            await t.typeText(this.getListElementInput(i), element[i], { replace: true, paste: true });
+            // If there's more than one element and it's not the last element, add a new row
+            if (element.length > 1 && i < element.length - 1) {
+                await t.click(this.addStreamRow);
+            }
+        }
         await t.click(this.addKeyButton);
     }
 

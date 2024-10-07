@@ -48,7 +48,7 @@ test('Verify that user can select remove List element position: from tail', asyn
 });
 test('Verify that user can select remove List element position: from head', async t => {
     keyName = Common.generateWord(10);
-    await browserPage.addListKey(keyName, keyTTL, element);
+    await browserPage.addListKey(keyName, keyTTL, [element]);
     // Add few elements to the List key
     await browserPage.addElementToList(element2);
     await browserPage.addElementToList(element3);

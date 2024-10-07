@@ -31,8 +31,8 @@ describe('getOriginUrl', () => {
   })
 
   test('shoud return origin with not absolute path', () => {
-    riConfig.app.type = 'web'
-    riConfig.app.env = 'production'
+    window.riConfig.app.type = 'web'
+    window.riConfig.app.env = 'production'
 
     const { getOriginUrl } = require('../resourcesService')
     expect(getOriginUrl()).toEqual('http://localhost')
@@ -47,8 +47,8 @@ describe('getPathToResource', () => {
   })
 
   test('shoud return origin with not absolute path', () => {
-    riConfig.app.type = 'web'
-    riConfig.app.env = 'production'
+    window.riConfig.app.type = 'web'
+    window.riConfig.app.env = 'production'
 
     const { getPathToResource } = require('../resourcesService')
     expect(getPathToResource('data/file.txt')).toEqual('http://localhost/data/file.txt')

@@ -49,7 +49,3 @@ export const config = {
 }
 
 export type Config = typeof config
-
-declare global {
-  const riConfig: Config
-}

@@ -128,7 +128,7 @@ export const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
-  devTools: riConfig.app.env !== 'production',
+  devTools: window.riConfig.app.env !== 'production',
 })
 
 export { store }

@@ -16,7 +16,7 @@ let store: typeof mockedStore
 
 describe('Csrf', () => {
   beforeEach(() => {
-    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
 
     apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
@@ -29,7 +29,7 @@ describe('Csrf', () => {
     store.clearActions()
   })
   afterAll(() => {
-    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })
 
   it('should render children when not loading and no csrf endpoint set', () => {
@@ -57,7 +57,7 @@ describe('Csrf', () => {
 
   it('should render children when csrf endpoint is present, token is present, and not loading', async () => {
     const csrfEndpoint = 'csrf'
-    riConfig.api.csrfEndpoint = csrfEndpoint;
+    window.riConfig.api.csrfEndpoint = csrfEndpoint;
     (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(
@@ -106,7 +106,7 @@ describe('Csrf', () => {
 
   it('should not throw and render placeholder when erroring', async () => {
     const csrfEndpoint = 'csrf'
-    riConfig.api.csrfEndpoint = csrfEndpoint;
+    window.riConfig.api.csrfEndpoint = csrfEndpoint;
     (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(

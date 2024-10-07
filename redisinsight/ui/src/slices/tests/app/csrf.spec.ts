@@ -24,10 +24,10 @@ beforeEach(() => {
 describe('slices', () => {
   const OLD_ENV_CONFIG = cloneDeep(riConfig)
   beforeEach(() => {
-    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })
   afterAll(() => {
-    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })
 
   it('fetch token reducer should properly set the token', () => {
@@ -76,7 +76,7 @@ describe('slices', () => {
   })
 
   it('fetchCsrfToken should fetch the token', async () => {
-    riConfig.api.csrfEndpoint = 'http://localhost'
+    window.riConfig.api.csrfEndpoint = 'http://localhost'
 
     apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
@@ -96,7 +96,7 @@ describe('slices', () => {
   })
 
   it('fetchCsrfToken should handle failure', async () => {
-    riConfig.api.csrfEndpoint = 'http://localhost'
+    window.riConfig.api.csrfEndpoint = 'http://localhost'
 
     apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
     const successFn = jest.fn()

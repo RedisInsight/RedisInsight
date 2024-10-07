@@ -4,7 +4,7 @@ import LogoIcon from 'uiSrc/assets/img/logo_small.svg?react'
 
 const PagePlaceholder = () => (
   <>
-    { riConfig.app.env !== 'development' && (
+    { window.riConfig.app.env !== 'development' && (
       <EuiEmptyPrompt
         data-testid="page-placeholder"
         icon={<EuiLoadingLogo logo={LogoIcon} size="xl" style={{ fontSize: '40px' }} />}

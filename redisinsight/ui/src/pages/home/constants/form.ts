@@ -29,7 +29,7 @@ export const fieldDisplayNames = {
   sshUsername: 'SSH Username',
 }
 
-export const DEFAULT_TIMEOUT = riConfig.database.defaultConnectionTimeout
+export const DEFAULT_TIMEOUT = window.riConfig.database.defaultConnectionTimeout
 
 export enum SubmitBtnText {
   AddDatabase = 'Add Redis Database',

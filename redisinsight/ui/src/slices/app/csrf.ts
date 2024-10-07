@@ -3,7 +3,7 @@ import apiService, { setApiCsrfHeader } from 'uiSrc/services/apiService'
 import { setResourceCsrfHeader } from 'uiSrc/services/resourcesService'
 import { AppDispatch, RootState } from '../store'
 
-const getCsrfEndpoint = () => riConfig.api.csrfEndpoint
+const getCsrfEndpoint = () => window.riConfig.api.csrfEndpoint
 
 interface CSRFTokenResponse {
   token: string

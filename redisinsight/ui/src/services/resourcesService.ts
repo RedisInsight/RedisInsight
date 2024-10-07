@@ -2,12 +2,12 @@ import axios from 'axios'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { IS_ABSOLUTE_PATH } from 'uiSrc/constants/regex'
 
-const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
-const isDevelopment = riConfig.app.env === 'development'
-const isWebApp = riConfig.app.type === 'web'
-const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
+const { apiPort } = window.app?.config || { apiPort: window.riConfig.api.port }
+const isDevelopment = window.riConfig.app.env === 'development'
+const isWebApp = window.riConfig.app.type === 'web'
+const hostedApiBaseUrl = window.riConfig.api.hostedBaseUrl
 
-let BASE_URL = !isDevelopment && isWebApp ? '/' : `${riConfig.api.baseUrl}:${apiPort}/`
+let BASE_URL = !isDevelopment && isWebApp ? '/' : `${window.riConfig.api.baseUrl}:${apiPort}/`
 
 if (window.__RI_PROXY_PATH__) {
   BASE_URL = `${BASE_URL}${window.__RI_PROXY_PATH__}/`

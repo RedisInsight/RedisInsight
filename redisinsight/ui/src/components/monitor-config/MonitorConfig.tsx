@@ -74,8 +74,8 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
         ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
-      transports: riConfig.api.socketTransports?.split(','),
-      withCredentials: riConfig.api.socketCredentials,
+      transports: window.riConfig.api.socketTransports?.split(','),
+      withCredentials: window.riConfig.api.socketCredentials,
     })
     dispatch(setSocket(socketRef.current))
 

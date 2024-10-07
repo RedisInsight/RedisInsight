@@ -6,12 +6,12 @@ import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
 import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 
-const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
-const isDevelopment = riConfig.app.env === 'development'
-const isWebApp = riConfig.app.type === 'web'
-const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
+const { apiPort } = window.app?.config || { apiPort: window.riConfig.api.port }
+const isDevelopment = window.riConfig.app.env === 'development'
+const isWebApp = window.riConfig.app.type === 'web'
+const hostedApiBaseUrl = window.riConfig.api.hostedBaseUrl
 
-let apiPrefix = riConfig.api.prefix
+let apiPrefix = window.riConfig.api.prefix
 
 if (window.__RI_PROXY_PATH__) {
   apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
@@ -19,7 +19,7 @@ if (window.__RI_PROXY_PATH__) {
 
 export const getBaseUrl = () => (!isDevelopment && isWebApp
   ? `${window.location.origin}/${apiPrefix}/`
-  : `${riConfig.api.baseUrl}:${apiPort}/${apiPrefix}/`)
+  : `${window.riConfig.api.baseUrl}:${apiPort}/${apiPrefix}/`)
 
 const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
@@ -63,7 +63,7 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
   const { response } = error
   if (response?.status === 401 && hostedApiBaseUrl) {
     // provide the current path to redirect back to the same location after login
-    window.location.href = `${riConfig.app.unauthenticatedRedirect}${window.location.pathname}`
+    window.location.href = `${window.riConfig.app.unauthenticatedRedirect}${window.location.pathname}`
   }
   return Promise.reject(error)
 }

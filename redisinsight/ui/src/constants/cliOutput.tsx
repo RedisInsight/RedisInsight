@@ -2,8 +2,6 @@ import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { getDbIndex } from 'uiSrc/utils'
-import { FeatureFlags } from 'uiSrc/constants/featureFlags'
-import { FeatureFlagComponent } from 'uiSrc/components'
 
 export const ClearCommand = 'clear'
 export const SelectCommand = 'select'
@@ -90,27 +88,6 @@ export const cliTexts = {
   SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     [
       cliTexts.SUBSCRIBE_COMMAND(path),
-      '\n',
-    ]
-  ),
-  MONITOR_COMMAND: (onClick: () => void) => (
-    <FeatureFlagComponent
-      name={FeatureFlags.disabledByEnv}
-      enabledByDefault
-      otherwise={<EuiTextColor color="accent">Monitor not supported in this environment.</EuiTextColor>}
-    >
-      <EuiTextColor color="danger" key={Date.now()}>
-        {'Use '}
-        <EuiLink onClick={onClick} className="btnLikeLink" color="text" data-test-subj="monitor-btn">
-          Profiler
-        </EuiLink>
-        {' tool to see all the requests processed by the server.'}
-      </EuiTextColor>
-    </FeatureFlagComponent>
-  ),
-  MONITOR_COMMAND_CLI: (onClick: () => void) => (
-    [
-      cliTexts.MONITOR_COMMAND(onClick),
       '\n',
     ]
   ),

@@ -2,6 +2,8 @@
   eslint-disable global-require
 */
 
+import { cloneDeep } from 'lodash'
+
 Object.defineProperty(window, 'location', {
   value: {
     origin: 'http://localhost'
@@ -9,17 +11,18 @@ Object.defineProperty(window, 'location', {
   writable: true
 })
 
+const OLD_ENV = cloneDeep(window.riConfig)
+
+beforeEach(() => {
+  jest.resetModules()
+  window.riConfig = cloneDeep(OLD_ENV)
+})
+afterAll(() => {
+  // @ts-ignore
+  window.riConfig = cloneDeep(OLD_ENV)
+})
+
 describe('getOriginUrl', () => {
-  const OLD_ENV = process.env
-
-  beforeEach(() => {
-    jest.resetModules()
-    process.env = { ...OLD_ENV }
-  })
-  afterAll(() => {
-    process.env = OLD_ENV
-  })
-
   test('shoud return url with absolute path', () => {
     const { getOriginUrl } = require('../resourcesService')
 
@@ -27,8 +30,8 @@ describe('getOriginUrl', () => {
   })
 
   test('shoud return origin with not absolute path', () => {
-    process.env.RI_APP_TYPE = 'web'
-    process.env.NODE_ENV = 'production'
+    window.riConfig.app.type = 'web'
+    window.riConfig.app.env = 'production'
 
     const { getOriginUrl } = require('../resourcesService')
     expect(getOriginUrl()).toEqual('http://localhost')
@@ -36,16 +39,6 @@ describe('getOriginUrl', () => {
 })
 
 describe('getPathToResource', () => {
-  const OLD_ENV = process.env
-
-  beforeEach(() => {
-    jest.resetModules()
-    process.env = { ...OLD_ENV }
-  })
-  afterAll(() => {
-    process.env = OLD_ENV
-  })
-
   test('shoud return url with absolute path', () => {
     const { getPathToResource } = require('../resourcesService')
 
@@ -53,8 +46,8 @@ describe('getPathToResource', () => {
   })
 
   test('shoud return origin with not absolute path', () => {
-    process.env.RI_APP_TYPE = 'web'
-    process.env.NODE_ENV = 'production'
+    window.riConfig.app.type = 'web'
+    window.riConfig.app.env = 'production'
 
     const { getPathToResource } = require('../resourcesService')
     expect(getPathToResource('data/file.txt')).toEqual('http://localhost/data/file.txt')

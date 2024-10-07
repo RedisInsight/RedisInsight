@@ -46,8 +46,8 @@ const PubSubConfig = ({ retryDelay = 5000 } : IProps) => {
         ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
-      transports: process.env.RI_SOCKET_TRANSPORTS?.split(','),
-      withCredentials: process.env.RI_SOCKET_CREDENTIALS === 'true',
+      transports: window.riConfig.api.socketTransports?.split(','),
+      withCredentials: window.riConfig.api.socketCredentials,
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

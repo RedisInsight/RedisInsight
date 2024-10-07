@@ -138,6 +138,7 @@
     "css-minimizer-webpack-plugin": "^6.0.0",
     "csv-parser": "^3.0.0",
     "csv-stringify": "^6.4.0",
+    "dotenv": "^16.4.5",
     "electron": "31.0.2",
     "electron-builder": "^24.13.3",
     "electron-builder-notarize": "^1.5.2",

@@ -16,6 +16,7 @@ const keyName = Common.generateWord(10);
 let keyNames: string[];
 let indexName1: string;
 let indexName2: string;
+let indexName3: string;
 
 fixture `Autocomplete for entered commands in search and query`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -24,6 +25,7 @@ fixture `Autocomplete for entered commands in search and query`
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         indexName1 = `idx1:${keyName}`;
         indexName2 = `idx2:${keyName}`;
+        indexName3 = `idx3:${keyName}`;
         keyNames = [`${keyName}:1`, `${keyName}:2`, `${keyName}:3`];
         const commands = [
             `HSET ${keyNames[0]} "name" "Hall School" "description" " Spanning 10 states" "class" "independent" "type" "traditional" "address_city" "London" "address_street" "Manor Street" "students" 342 "location" "51.445417, -0.258352"`,
@@ -247,7 +249,7 @@ test('Verify commands suggestions for APPLY and FILTER', async t => {
     await t.typeText(searchAndQueryPage.queryInput, '*');
     await t.pressKey('right');
     await t.pressKey('space');
-    //Verify APPLY command
+    // Verify APPLY command
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('APPLY').exists).ok('Apply is not suggested');
     await t.pressKey('enter');
 
@@ -266,7 +268,7 @@ test('Verify commands suggestions for APPLY and FILTER', async t => {
     await t.typeText(searchAndQueryPage.queryInput, 'apply_key', { replace: false });
 
     await t.pressKey('space');
-    //Verify Filter command
+    // Verify Filter command
     await t.typeText(searchAndQueryPage.queryInput, 'F');
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('FILTER').exists).ok('FILTER is not suggested');
     await t.pressKey('enter');
@@ -296,7 +298,7 @@ test('Verify REDUCE commands', async t => {
     await t.pressKey('enter');
     await t.typeText(searchAndQueryPage.queryInput, 'item_count ');
 
-    //add additional reduce
+    // add additional reduce
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.withExactText('REDUCE').exists).ok('Apply is not suggested');
     await t.typeText(searchAndQueryPage.queryInput, 'R');
     await t.pressKey('enter');
@@ -320,12 +322,12 @@ test('Verify suggestions for fields', async t => {
     await t.typeText(searchAndQueryPage.queryInput, '@');
     await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
 
-    //verify suggestions for geo
+    // verify suggestions for geo
     await t.typeText(searchAndQueryPage.queryInput, 'l');
     await t.pressKey('tab');
     await t.expect((await searchAndQueryPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE "${indexName1}" "@location:[lon lat radius unit]"`);
 
-    //verify for numeric
+    // verify for numeric
     await t.typeText(searchAndQueryPage.queryInput, 'FT.AGGREGATE ', { replace: true });
     await t.typeText(searchAndQueryPage.queryInput, 'idx1');
     await t.pressKey('enter');
@@ -336,3 +338,43 @@ test('Verify suggestions for fields', async t => {
     await t.pressKey('tab');
     await t.expect((await searchAndQueryPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE "${indexName1}" "@students:[range]"`);
 });
+
+test
+    .after(async() => {
+    // Clear and delete database
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
+        await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `FT.DROPINDEX ${indexName1}`]);
+        await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `FT.DROPINDEX ${indexName2}`]);
+        await browserPage.Cli.sendCommandsInCli([`DEL ${keyNames.join(' ')}`, `FT.DROPINDEX ${indexName3}`]);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
+    })('Verify commands suggestions for CREATE', async t => {
+        await t.typeText(searchAndQueryPage.queryInput, 'FT.CREATE ', { replace: true });
+        await t.pressKey('enter');
+        // Verify that indexes are not suggested for FT.CREATE
+        await t.expect(searchAndQueryPage.MonacoEditor.monacoSuggestion.exists).notOk('Existing index suggested');
+
+        // Enter index name
+        await t.typeText(searchAndQueryPage.queryInput, indexName3);
+        await t.pressKey('space');
+
+        // Select FILTER keyword
+        await t.typeText(searchAndQueryPage.queryInput, 'FI');
+        await t.pressKey('tab');
+        await t.typeText(searchAndQueryPage.queryInput, 'filterNew', { replace: false });
+        await t.pressKey('space');
+
+        // Select SCHEMA keyword
+        await t.typeText(searchAndQueryPage.queryInput, 'SCH');
+        await t.pressKey('tab');
+        await t.typeText(searchAndQueryPage.queryInput, 'field_name', { replace: false });
+        await t.pressKey('space');
+
+        // Select TEXT keyword
+        await t.typeText(searchAndQueryPage.queryInput, 'te', { replace: false });
+        await t.pressKey('tab');
+
+        // Select SORTABLE
+        await t.typeText(searchAndQueryPage.queryInput, 'so', { replace: false });
+        await t.pressKey('tab');
+        await t.expect((await searchAndQueryPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.CREATE ${indexName3} FILTER filterNew SCHEMA field_name TEXT SORTABLE`);
+    });

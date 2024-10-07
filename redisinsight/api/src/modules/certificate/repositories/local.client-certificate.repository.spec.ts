@@ -11,7 +11,6 @@ import {
   mockClientCertificateId,
   mockClientCertificateKeyEncrypted,
   mockClientCertificateKeyPlain,
-  mockDatabaseRepository,
   mockEncryptionService,
   mockRepository,
   MockType,
@@ -29,6 +28,7 @@ describe('LocalClientCertificateRepository', () => {
   let service: LocalClientCertificateRepository;
   let encryptionService: MockType<EncryptionService>;
   let repository: MockType<Repository<ClientCertificateEntity>>;
+  let databaseRepository: MockType<Repository<DatabaseEntity>>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -42,7 +42,7 @@ describe('LocalClientCertificateRepository', () => {
         },
         {
           provide: getRepositoryToken(DatabaseEntity),
-          useFactory: mockDatabaseRepository,
+          useFactory: mockRepository,
         },
         {
           provide: EncryptionService,
@@ -52,6 +52,7 @@ describe('LocalClientCertificateRepository', () => {
     }).compile();
 
     repository = await module.get(getRepositoryToken(ClientCertificateEntity));
+    databaseRepository = await module.get(getRepositoryToken(DatabaseEntity));
     encryptionService = await module.get(EncryptionService);
     service = await module.get(LocalClientCertificateRepository);
 
@@ -133,13 +134,7 @@ describe('LocalClientCertificateRepository', () => {
     it('should delete client certificate and return affected databases', async () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(mockClientCertificate);
 
-      const mockQueryBuilder = {
-        leftJoinAndSelect: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })))
-      };
-      jest.spyOn(service['databaseRepository'], 'createQueryBuilder').mockReturnValue(mockQueryBuilder as any);
+      databaseRepository.createQueryBuilder().getMany.mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })));
 
       jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
 
@@ -148,9 +143,9 @@ describe('LocalClientCertificateRepository', () => {
       expect(result).toEqual({ affectedDatabases: mockAffectedDatabases });
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
       expect(service['databaseRepository'].createQueryBuilder).toHaveBeenCalledWith('d');
-      expect(mockQueryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('d.clientCert', 'c');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith({ clientCert: mockId });
-      expect(mockQueryBuilder.select).toHaveBeenCalledWith(['d.id']);
+      expect(databaseRepository.createQueryBuilder().leftJoinAndSelect).toHaveBeenCalledWith('d.clientCert', 'c');
+      expect(databaseRepository.createQueryBuilder().where).toHaveBeenCalledWith({ clientCert: mockId });
+      expect(databaseRepository.createQueryBuilder().select).toHaveBeenCalledWith(['d.id']);
       expect(repository.delete).toHaveBeenCalledWith(mockId);
     });
 

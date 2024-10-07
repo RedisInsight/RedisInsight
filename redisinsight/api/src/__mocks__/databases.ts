@@ -251,12 +251,6 @@ export const mockDatabaseRepository = jest.fn(() => ({
     pick(mockDatabase, 'id', 'name'),
     pick(mockDatabase, 'id', 'name'),
   ]),
-  createQueryBuilder: jest.fn().mockReturnThis(),
-  leftJoinAndSelect: jest.fn().mockReturnThis(),
-  where: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  getMany: jest.fn().mockResolvedValue([]),
-  findOneBy: jest.fn().mockResolvedValue(mockDatabase),
 }));
 
 export const mockDatabaseService = jest.fn(() => ({

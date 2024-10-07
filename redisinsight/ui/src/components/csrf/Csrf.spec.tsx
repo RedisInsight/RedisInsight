@@ -11,7 +11,7 @@ jest.mock('uiSrc/slices/app/csrf', () => ({
   appCsrfSelector: jest.fn().mockReturnValue(jest.requireActual('uiSrc/slices/app/csrf').initialState),
 }))
 
-const OLD_ENV_CONFIG = { ...riConfig }
+const OLD_ENV_CONFIG = { ...window.riConfig }
 let store: typeof mockedStore
 
 describe('Csrf', () => {

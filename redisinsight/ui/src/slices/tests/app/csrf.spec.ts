@@ -22,7 +22,7 @@ beforeEach(() => {
 })
 
 describe('slices', () => {
-  const OLD_ENV_CONFIG = cloneDeep(riConfig)
+  const OLD_ENV_CONFIG = cloneDeep(window.riConfig)
   beforeEach(() => {
     window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })

@@ -11,16 +11,15 @@ Object.defineProperty(window, 'location', {
   writable: true
 })
 
-const OLD_ENV = cloneDeep(riConfig)
+const OLD_ENV = cloneDeep(window.riConfig)
 
 beforeEach(() => {
   jest.resetModules()
-  // @ts-ignore
-  riConfig = cloneDeep(OLD_ENV)
+  window.riConfig = cloneDeep(OLD_ENV)
 })
 afterAll(() => {
   // @ts-ignore
-  riConfig = cloneDeep(OLD_ENV)
+  window.riConfig = cloneDeep(OLD_ENV)
 })
 
 describe('getOriginUrl', () => {

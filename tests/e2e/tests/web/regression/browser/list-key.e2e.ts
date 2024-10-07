@@ -46,9 +46,9 @@ test.requestHooks(logger)
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
 
         // Verify that telemetry event 'TREE_VIEW_KEY_VALUE_VIEWED' sent
+        await t.click(browserPage.browserViewButton);
         await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
 
-        await t.click(browserPage.browserViewButton);
         // Add custom element to the list key
         await browserPage.openKeyDetails(keyName);
         await browserPage.addElementToList(elementForSearch);

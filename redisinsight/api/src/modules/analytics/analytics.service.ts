@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { get } from 'lodash';
 import { Analytics } from '@segment/analytics-node';
-import { AppAnalyticsEvents } from 'src/constants';
-import config from 'src/utils/config';
+import { AppAnalyticsEvents, TelemetryEvents } from 'src/constants';
+import config, { Config } from 'src/utils/config';
 import axios from 'axios';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { ServerService } from 'src/modules/server/server.service';
 
 export const NON_TRACKING_ANONYMOUS_ID = '00000000-0000-0000-0000-000000000001';
-const ANALYTICS_CONFIG = config.get('analytics');
+
+const SERVER_CONFIG = config.get('server') as Config['server'];
+const ANALYTICS_CONFIG = config.get('analytics') as Config['analytics'];
 
 export interface ITelemetryEvent {
   event: string;
@@ -25,6 +28,7 @@ export interface ITelemetryInitEvent {
   controlNumber: number;
   controlGroup: string;
   appVersion: string;
+  firstStart?: boolean;
 }
 
 export enum Telemetry {
@@ -57,11 +61,11 @@ export class AnalyticsService {
     return this.anonymousId;
   }
 
-  @OnEvent(AppAnalyticsEvents.Initialize)
-  public initialize(payload: ITelemetryInitEvent) {
+  public async init(initConfig: ITelemetryInitEvent) {
     const {
-      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion,
-    } = payload;
+      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart,
+    } = initConfig;
+
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
     this.appType = appType;
@@ -77,6 +81,20 @@ export class AnalyticsService {
         data: requestInit.body,
       }),
     });
+
+    if (ANALYTICS_CONFIG.startEvents) {
+      this.sendEvent({
+        event: firstStart ? TelemetryEvents.ApplicationFirstStart : TelemetryEvents.ApplicationStarted,
+        eventData: {
+          appVersion: SERVER_CONFIG.appVersion,
+          osPlatform: process.platform,
+          buildType: SERVER_CONFIG.buildType,
+          port: SERVER_CONFIG.port,
+          packageType: ServerService.getPackageType(SERVER_CONFIG.buildType),
+        },
+        nonTracking: true,
+      }).catch();
+    }
   }
 
   @OnEvent(AppAnalyticsEvents.Track)

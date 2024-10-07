@@ -35,6 +35,7 @@ describe('CloudCapiKeyService', () => {
   let repository: MockType<CloudCapiKeyRepository>;
   let cloudUserApiService: MockType<CloudUserApiService>;
   let cloudSessionService: MockType<CloudSessionService>;
+  let serverService: MockType<ServerService>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -71,6 +72,7 @@ describe('CloudCapiKeyService', () => {
     repository = await module.get(CloudCapiKeyRepository);
     cloudUserApiService = await module.get(CloudUserApiService);
     cloudSessionService = await module.get(CloudSessionService);
+    serverService = await module.get(ServerService);
 
     when(mockedAxios.post).calledWith('/accounts/cloud-api/cloudApiKeys', expect.anything(), expect.anything())
       .mockResolvedValue({
@@ -86,16 +88,22 @@ describe('CloudCapiKeyService', () => {
 
   describe('generateName', () => {
     it('successfully generate capi key name', async () => {
-      expect(await service['generateName'](mockCloudCapiKey))
+      expect(await service['generateName'](mockSessionMetadata, mockCloudCapiKey))
         .toEqual(mockCloudCapiKey.name);
+      expect(serverService.getInfo).toHaveBeenCalledWith(mockSessionMetadata);
     });
     it('successfully generate capi key name when no createdAt field', async () => {
-      expect(await service['generateName']({ ...mockCloudCapiKey, createdAt: undefined }))
+      expect(await service['generateName'](
+        mockSessionMetadata,
+        { ...mockCloudCapiKey, createdAt: undefined },
+      ))
         .toEqual(`RedisInsight-${mockServer.id.slice(0, 13)}-undefined`);
+      expect(serverService.getInfo).toHaveBeenCalledWith(mockSessionMetadata);
     });
     it('successfully generate capi key name when no capi key was provided', async () => {
-      expect(await service['generateName'](null))
+      expect(await service['generateName'](mockSessionMetadata, null))
         .toEqual(`RedisInsight-${mockServer.id.slice(0, 13)}-undefined`);
+      expect(serverService.getInfo).toHaveBeenCalledWith(mockSessionMetadata);
     });
   });
 

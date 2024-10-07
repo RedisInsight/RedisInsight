@@ -5,11 +5,13 @@ import { ServerRepository } from 'src/modules/server/repositories/server.reposit
 import { LocalServerRepository } from 'src/modules/server/repositories/local.server.repository';
 import { FeatureModule } from 'src/modules/feature/feature.module';
 import { HealthController } from 'src/modules/server/health.controller';
+import { LocalServerService } from 'src/modules/server/local.server.service';
 
 @Module({})
 export class ServerModule {
   static register(
     serverRepository: Type<ServerRepository> = LocalServerRepository,
+    serverService: Type<ServerService> = LocalServerService,
   ) {
     return {
       module: ServerModule,
@@ -18,10 +20,13 @@ export class ServerModule {
         HealthController,
       ],
       providers: [
-        ServerService,
         {
           provide: ServerRepository,
           useClass: serverRepository,
+        },
+        {
+          provide: ServerService,
+          useClass: serverService,
         },
       ],
       imports: [FeatureModule],

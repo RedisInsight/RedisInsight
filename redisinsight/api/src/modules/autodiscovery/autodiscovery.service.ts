@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/autodiscovery/utils/autodiscovery.util';
 import { convertRedisInfoReplyToObject } from 'src/utils';
 import config, { Config } from 'src/utils/config';
@@ -14,7 +14,7 @@ import { ConstantsProvider } from 'src/modules/constants/providers/constants.pro
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
-export class AutodiscoveryService implements OnModuleInit {
+export class AutodiscoveryService {
   private logger = new Logger('AutoDiscoveryService');
 
   constructor(
@@ -27,7 +27,7 @@ export class AutodiscoveryService implements OnModuleInit {
   /**
    * Run auto discovery on first launch only
    */
-  async onModuleInit() {
+  async init() {
     try {
       // no need to auto discover for Redis Stack
       if (SERVER_CONFIG.buildType === 'REDIS_STACK') {

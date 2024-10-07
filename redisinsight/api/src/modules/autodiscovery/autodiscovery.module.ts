@@ -5,5 +5,8 @@ import { AutodiscoveryService } from 'src/modules/autodiscovery/autodiscovery.se
   providers: [
     AutodiscoveryService,
   ],
+  exports: [
+    AutodiscoveryService,
+  ],
 })
 export class AutodiscoveryModule {}

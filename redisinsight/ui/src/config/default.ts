@@ -18,7 +18,7 @@ const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
   ? 'https://localhost'
   : 'http://localhost'
 
-export const config = {
+export const defaultConfig = {
   api: {
     prefix: process.env.RI_API_PREFIX ?? 'api',
     port: intEnv('RI_APP_PORT', 5540),
@@ -48,4 +48,9 @@ export const config = {
   },
 }
 
-export type Config = typeof config
+export type Config = typeof defaultConfig
+
+type DeepPartial<T> = T extends object ? {
+  [P in keyof T]?: DeepPartial<T[P]>;
+} : T
+export type PartialConfig = DeepPartial<Config>

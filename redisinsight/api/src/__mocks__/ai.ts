@@ -1,16 +1,18 @@
 import {
   AiMessage, AiMessageType, AiIntermediateStep, AiIntermediateStepType,
-} from 'src/modules/ai/models';
+} from 'src/modules/ai/messages/models';
 import { Readable } from 'stream';
 import * as MockSocket from 'socket.io-mock';
 import { AxiosError } from 'axios';
-import { AiMessageDto } from 'src/modules/ai/dto/send.ai.message.dto';
+import { AiMessageDto } from 'src/modules/ai/messages/dto/send.ai.message.dto';
 import { mockCloudSession } from 'src/__mocks__/cloud-session';
-import { AiMessageEntity } from 'src/modules/ai/entities/ai.message.entity';
+import { AiMessageEntity } from 'src/modules/ai/messages/entities/ai.message.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { AiModule } from 'src/modules/ai/ai.module';
-import { AiAgreementEntity } from 'src/modules/ai/entities/ai.agreement.entity';
-import { AiAgreement } from 'src/modules/ai/models/ai.agreement';
+import { AiAgreementEntity } from 'src/modules/ai/agreements/entities/ai.agreement.entity';
+import { AiAgreement } from 'src/modules/ai/agreements/models/ai.agreement';
+import { AiDatabaseAgreementEntity } from 'src/modules/ai/agreements/entities/ai.database.agreement.entity';
+import { AiDatabaseAgreement } from 'src/modules/ai/agreements/models/ai.database.agreement';
 
 export const mockAiChatId = '0539879dc020add5abb33f6f60a07fe8d5a0b9d61c81c9d79d77f9b1b2f2e239';
 
@@ -526,7 +528,7 @@ export const mockConvAiProvider = jest.fn(() => ({
   reset: jest.fn(),
 }));
 
-export const mockAiProvider = jest.fn(() => ({
+export const mockAiMessageProvider = jest.fn(() => ({
   getSocket: jest.fn().mockResolvedValue(mockAiSocket.socketClient),
 }));
 
@@ -549,21 +551,34 @@ export const mockAiContextRepository = jest.fn(() => ({
 }));
 
 export const mockAiAgreementEntity = Object.assign(new AiAgreementEntity(), {
-  id: 'uuid-for-ai-agreement',
+  accountId: mockAiAccountId,
+  consent: true,
+});
+
+export const mockAiDatabaseAgreementEntity = Object.assign(new AiDatabaseAgreementEntity(), {
   databaseId: mockAiDatabaseId,
   accountId: mockAiAccountId,
-  createdAt: new Date('2024-09-09'),
+  dataConsent: true,
 });
 
 export const mockAiAgreement = Object.assign(new AiAgreement(), mockAiAgreementEntity);
-export const mockGeneralAiAgreement = Object.assign(new AiAgreement(), {
-  ...mockAiAgreementEntity,
-  id: 'uuid-for-general-ai-agreement',
-  databaseId: null,
-});
+
+export const mockAiDatabaseAgreement = Object.assign(new AiDatabaseAgreement(), mockAiDatabaseAgreementEntity);
+
 export const mockAiAgreementRepository = jest.fn(() => ({
-  list: jest.fn().mockResolvedValue([mockAiAgreement]),
   get: jest.fn().mockResolvedValue(mockAiAgreement),
-  create: jest.fn().mockResolvedValue(mockAiAgreement),
-  delete: jest.fn().mockResolvedValue(undefined),
+  save: jest.fn().mockResolvedValue(mockAiAgreement),
+}));
+
+export const mockAiDatabaseAgreementRepository = jest.fn(() => ({
+  get: jest.fn().mockResolvedValue(mockAiDatabaseAgreement),
+  save: jest.fn().mockResolvedValue(mockAiDatabaseAgreement),
+}));
+
+export const mockAiAgreementService = jest.fn(() => ({
+  getAiAgreement: jest.fn().mockResolvedValue(mockAiAgreement),
+}));
+
+export const mockAiDatabaseAgreementService = jest.fn(() => ({
+  getAiDatabaseAgreement: jest.fn().mockResolvedValue(mockAiDatabaseAgreement),
 }));

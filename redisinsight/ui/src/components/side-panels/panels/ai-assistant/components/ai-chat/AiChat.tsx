@@ -5,9 +5,11 @@ import {
   aiChatSelector,
   askAiChatbotAction,
   clearAiChatHistory,
-  getAiAgreementsAction,
+  getAiAgreementAction,
+  getAiDatabaseAgreementAction,
   getAiChatHistoryAction,
   removeAiChatHistoryAction,
+  clearAiDatabaseAgreement,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { getCommandsFromQuery, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -22,7 +24,7 @@ import ChatHeader from './components/chat-header'
 import styles from './styles.module.scss'
 
 const AiChat = () => {
-  const { messages, agreements, loading } = useSelector(aiChatSelector)
+  const { messages, generalAgreement, databaseAgreement, agreementLoading, loading } = useSelector(aiChatSelector)
   const { modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
@@ -33,16 +35,22 @@ const AiChat = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    if (!instanceId && databaseAgreement) {
+      dispatch(clearAiDatabaseAgreement())
+    }
+    if (instanceId && databaseAgreement?.databaseId !== instanceId) {
+      dispatch(getAiDatabaseAgreementAction(instanceId))
+    }
     dispatch(getAiChatHistoryAction(instanceId))
   }, [instanceId, userOAuthProfile?.id])
 
   useEffect(() => {
-    dispatch(getAiAgreementsAction())
+    dispatch(getAiAgreementAction())
   }, [userOAuthProfile?.id])
 
   const handleSubmit = useCallback((message: string) => {
     sendChatMessage(message)
-  }, [agreements, instanceId])
+  }, [instanceId])
 
   const sendChatMessage = (message: string) => {
     dispatch(askAiChatbotAction(
@@ -107,7 +115,9 @@ const AiChat = () => {
       <ChatHeader
         databaseId={instanceId}
         onRestart={onClearSession}
-        agreements={agreements}
+        generalAgreement={generalAgreement}
+        databaseAgreement={databaseAgreement}
+        agreementLoading={agreementLoading}
       />
       <div className={styles.chatHistory}>
         <ChatHistory
@@ -125,7 +135,7 @@ const AiChat = () => {
           isDisabled={inProgressMessage?.content === ''}
           onSubmit={handleSubmit}
           databaseId={instanceId}
-          isGeneralAgreementAccepted={agreements?.some((agr) => !agr?.databaseId)}
+          isGeneralAgreementAccepted={generalAgreement?.consent}
         />
       </div>
     </div>

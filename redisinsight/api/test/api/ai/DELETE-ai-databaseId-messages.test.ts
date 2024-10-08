@@ -16,7 +16,7 @@ const mainCheckFn = getMainCheckFn(endpoint);
 
 initApiUserProfileNockScope();
 
-describe('DELETE /ai/messages', (done) => {
+describe('DELETE /ai/:databaseId/messages', (done) => {
   describe('get history', (done) => {
     [
       {

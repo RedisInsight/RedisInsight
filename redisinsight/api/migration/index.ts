@@ -42,8 +42,7 @@ import { AiHistory1713515657364 } from './1713515657364-ai-history';
 import { AiHistorySteps1714501203616 } from './1714501203616-ai-history-steps';
 import { Rdi1716370509836 } from './1716370509836-rdi';
 import { AiHistory1718260230164 } from './1718260230164-ai-history';
-import { AiUnifyHistory1725029452055 } from './1725029452055-ai-unify-history';
-import { AiAgreement1725864091783 } from './1725864091783-ai-agreement';
+import { UnifyChatbotHistory1728287148494 } from './1728287148494-unify-chatbot-history';
 
 export default [
   initialMigration1614164490968,
@@ -90,6 +89,5 @@ export default [
   AiHistorySteps1714501203616,
   Rdi1716370509836,
   AiHistory1718260230164,
-  AiUnifyHistory1725029452055,
-  AiAgreement1725864091783,
+  UnifyChatbotHistory1728287148494,
 ];

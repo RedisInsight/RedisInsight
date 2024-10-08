@@ -6,24 +6,32 @@ import RestartIcon from 'uiSrc/assets/img/ai/Restart.svg?react'
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/ai-chat/components'
 
 import { Nullable } from 'uiSrc/utils'
-import { AiAgreement } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiDatabaseAgreement } from 'uiSrc/slices/interfaces/aiAssistant'
 import CopilotSettingsPopover from '../copilot-settings-popover'
 import styles from './styles.module.scss'
 
 export interface Props {
   databaseId: Nullable<string>
   onRestart: () => void
-  agreements: Nullable<AiAgreement[]>
+  generalAgreement: Nullable<AiAgreement>
+  databaseAgreement: Nullable<AiDatabaseAgreement>
+  agreementLoading: boolean
 }
 
 const ChatHeader = (props: Props) => {
-  const { databaseId, agreements, onRestart } = props
+  const { databaseId, generalAgreement, databaseAgreement, agreementLoading, onRestart } = props
 
   return (
     <div className={styles.header}>
       <div className={styles.headerActions}>
 
-        <CopilotSettingsPopover databaseId={databaseId} agreements={agreements} onRestart={onRestart} />
+        <CopilotSettingsPopover
+          databaseId={databaseId}
+          generalAgreement={generalAgreement}
+          databaseAgreement={databaseAgreement}
+          agreementLoading={agreementLoading}
+          onRestart={onRestart}
+        />
 
         <RestartChat
           button={(

@@ -13,21 +13,25 @@ import reducer, {
   getAiChatHistoryAction,
   removeAiChatHistoryAction,
   setHideCopilotSplashScreen,
-  getAiAgreements,
-  getAiAgreementsSuccess,
-  getAiAgreementsFailed,
+  getAiAgreement,
+  getAiAgreementSuccess,
+  getAiAgreementFailed,
+  getAiDatabaseAgreement,
+  getAiDatabaseAgreementSuccess,
+  getAiDatabaseAgreementFailed,
   updateAiAgreements,
   updateAiAgreementsSuccess,
   updateAiAgreementsFailed,
   removeAiChatHistory,
   removeAiChatHistorySuccess,
   removeAiChatHistoryFailed,
-  getAiAgreementsAction,
+  getAiAgreementAction,
+  getAiDatabaseAgreementAction,
   updateAiAgreementsAction,
   aiAssistantSelector,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { AiAgreement, AiChatMessage, AiChatMessageType } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiChatMessage, AiChatMessageType, AiDatabaseAgreement, IUpdateAiAgreementsItem } from 'uiSrc/slices/interfaces/aiAssistant'
 import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
@@ -74,7 +78,7 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('getAiAgreements', () => {
+    describe('getAiAgreement', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
@@ -83,7 +87,7 @@ describe('ai assistant slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getAiAgreements())
+        const nextState = reducer(initialState, getAiAgreement())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -93,18 +97,18 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('getAiAgreementsSuccess', () => {
+    describe('getAiAgreementSuccess', () => {
       it('should properly set state', () => {
         // Arrange
-        const aiAgreement = { id: 'testId', databaseId: null, accountId: '1234', createdAt: new Date('2024-12-11') }
+        const aiAgreement = { accountId: '1234', consent: true }
         const state = {
           ...initialState.ai,
           agreementLoading: false,
-          agreements: [aiAgreement]
+          generalAgreement: aiAgreement
         }
 
         // Act
-        const nextState = reducer(initialState, getAiAgreementsSuccess([aiAgreement]))
+        const nextState = reducer(initialState, getAiAgreementSuccess(aiAgreement))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -114,7 +118,7 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('getAiAgreementsFailed', () => {
+    describe('getAiAgreementFailed', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
@@ -123,7 +127,66 @@ describe('ai assistant slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getAiAgreementsFailed())
+        const nextState = reducer(initialState, getAiAgreementFailed())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiDatabaseAgreement', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          databaseAgreementLoading: true
+        }
+
+        // Act
+        const nextState = reducer(initialState, getAiDatabaseAgreement())
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiDatabaseAgreementSuccess', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const aiAgreement = { accountId: '1234', databaseId: 'dbId', dataConsent: true }
+        const state = {
+          ...initialState.ai,
+          agreementLoading: false,
+          databaseAgreement: aiAgreement
+        }
+
+        // Act
+        const nextState = reducer(initialState, getAiDatabaseAgreementSuccess(aiAgreement))
+
+        // Assert
+        const rootState = Object.assign(initialStateDefault, {
+          panels: { aiAssistant: nextState },
+        })
+        expect(aiChatSelector(rootState)).toEqual(state)
+      })
+    })
+
+    describe('getAiDatabaseAgreementFailed', () => {
+      it('should properly set state', () => {
+        // Arrange
+        const state = {
+          ...initialState.ai,
+          databaseAgreementLoading: false,
+        }
+
+        // Act
+        const nextState = reducer(initialState, getAiAgreementFailed())
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -154,16 +217,16 @@ describe('ai assistant slice', () => {
 
     describe('updateAiAgreementsSuccess', () => {
       it('should properly set state', () => {
-        const aiAgreement = { id: 'testId', databaseId: null, accountId: '1234', createdAt: new Date('2024-12-11') }
+        const updateAiAgreementResult = { generalAgreement: { accountId: '12345', consent: true }, databaseAgreement: { accountId: '12345', databaseId: 'dbId', dataConsent: true } }
         // Arrange
         const state = {
           ...initialState.ai,
           agreementLoading: false,
-          agreements: [aiAgreement]
+          ...updateAiAgreementResult
         }
 
         // Act
-        const nextState = reducer(initialState, updateAiAgreementsSuccess([aiAgreement]))
+        const nextState = reducer(initialState, updateAiAgreementsSuccess(updateAiAgreementResult))
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -197,7 +260,8 @@ describe('ai assistant slice', () => {
         // Arrange
         const state = {
           ...initialState.ai,
-          agreements: []
+          generalAgreement: null,
+          databaseAgreement: null,
         }
 
         // Act
@@ -493,22 +557,21 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('getAiAgreementsAction', () => {
+    describe('getAiAgreementAction', () => {
       it('should call proper actions with success result', async () => {
-        const aiAgreement: AiAgreement = { id: 'id', databaseId: 'dbId', accountId: '1234', createdAt: new Date('2024-11-11') }
-        const data = [aiAgreement]
+        const aiAgreement: AiAgreement = { accountId: '1234', consent: true }
 
-        const responsePayload = { data, status: 200 }
+        const responsePayload = { data: aiAgreement, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(getAiAgreementsAction())
+        await store.dispatch<any>(getAiAgreementAction())
 
         // Assert
         const expectedActions = [
-          getAiAgreements(),
-          getAiAgreementsSuccess(data),
+          getAiAgreement(),
+          getAiAgreementSuccess(aiAgreement),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -525,13 +588,57 @@ describe('ai assistant slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(getAiAgreementsAction())
+        await store.dispatch<any>(getAiAgreementAction())
 
         // Assert
         const expectedActions = [
-          getAiAgreements(),
+          getAiAgreement(),
           addErrorNotification(responsePayload),
-          getAiAgreementsFailed(),
+          getAiAgreementFailed(),
+        ]
+
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+    })
+
+    describe('getAiDatabaseAgreementAction', () => {
+      it('should call proper actions with success result', async () => {
+        const aiDatabaseAgreement: AiDatabaseAgreement = { accountId: '1234', databaseId: 'dbId', dataConsent: true }
+
+        const responsePayload = { data: aiDatabaseAgreement, status: 200 }
+
+        apiService.get = jest.fn().mockResolvedValueOnce(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getAiDatabaseAgreementAction('dbId'))
+
+        // Assert
+        const expectedActions = [
+          getAiDatabaseAgreement(),
+          getAiDatabaseAgreementSuccess(aiDatabaseAgreement),
+        ]
+        expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should call proper actions with failed result', async () => {
+        const errorMessage = 'Error'
+        const responsePayload = {
+          response: {
+            status: 500,
+            data: { message: errorMessage },
+          },
+        } as EnhancedAxiosError
+
+        apiService.get = jest.fn().mockRejectedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(getAiDatabaseAgreementAction('dbId'))
+
+        // Assert
+        const expectedActions = [
+          getAiDatabaseAgreement(),
+          addErrorNotification(responsePayload),
+          getAiDatabaseAgreementFailed(),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -539,11 +646,11 @@ describe('ai assistant slice', () => {
     })
 
     describe('updateAiAgreementsAction', () => {
-      const updateParams = { general: true, db: true }
+      const updateParams: IUpdateAiAgreementsItem[] = [{ entity: 'databaseAgreement', field: 'dataConsent', value: true }]
       it('should call proper actions with success result', async () => {
-        const aiAgreement: AiAgreement = { id: 'id', databaseId: '1', accountId: '1234', createdAt: new Date('2024-11-11') }
+        const aiAgreement: AiDatabaseAgreement = { accountId: '1234', databaseId: 'dbId', dataConsent: true }
 
-        const responsePayload = { data: [aiAgreement], status: 200 }
+        const responsePayload = { data: aiAgreement, status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
@@ -553,7 +660,7 @@ describe('ai assistant slice', () => {
         // Assert
         const expectedActions = [
           updateAiAgreements(),
-          updateAiAgreementsSuccess([aiAgreement]),
+          updateAiAgreementsSuccess({ databaseAgreement: aiAgreement }),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

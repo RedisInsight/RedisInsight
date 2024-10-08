@@ -10,8 +10,6 @@ import {
   screen,
   waitForEuiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
-import { aiChatSelector, getAiAgreements, getAiChatHistory } from 'uiSrc/slices/panels/aiAssistant'
-import { AiAgreement } from 'uiSrc/slices/interfaces/aiAssistant'
 import CopilotSettingsPopover, { Props } from './CopilotSettingsPopover'
 
 const mockedProps = mock<Props>()
@@ -21,7 +19,8 @@ jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   aiChatSelector: jest.fn().mockReturnValue({
     loading: false,
     messages: [],
-    agreements: [],
+    generalAgreement: null,
+    databaseAgreement: null,
   })
 }))
 
@@ -33,10 +32,17 @@ beforeEach(() => {
 })
 
 const mockDatabaseId = 'mockDatabaseId'
-const mockAgreements = [
-  { databaseId: null },
-  { databaseId: mockDatabaseId }
-] as AiAgreement[]
+
+const mockGeneralAgreement = {
+  accountId: 'mockedAccountId',
+  consent: true,
+}
+
+const mockDatabaseAgreement = {
+  accountId: 'mockedAccountId',
+  databaseId: mockDatabaseId,
+  dataConsent: true,
+}
 
 describe('CopilotSettingsPopover', () => {
   it('should render', () => {
@@ -44,7 +50,12 @@ describe('CopilotSettingsPopover', () => {
   })
 
   it('should open copilot settings popover if general agreement is not accepted', async () => {
-    render(<CopilotSettingsPopover {...mockedProps} agreements={[]} databaseId={mockDatabaseId} />)
+    render(<CopilotSettingsPopover
+      {...mockedProps}
+      generalAgreement={null}
+      agreementLoading={false}
+      databaseId={mockDatabaseId}
+    />)
 
     await waitForEuiPopoverVisible()
     expect(screen.getByTestId('check-ai-agreement')).toBeInTheDocument()
@@ -52,7 +63,12 @@ describe('CopilotSettingsPopover', () => {
   })
 
   it('should open copilot settings popover on click if general agreement accepted', async () => {
-    render(<CopilotSettingsPopover {...mockedProps} agreements={mockAgreements} databaseId={mockDatabaseId} />)
+    render(<CopilotSettingsPopover
+      {...mockedProps}
+      databaseAgreement={mockDatabaseAgreement}
+      generalAgreement={mockGeneralAgreement}
+      databaseId={mockDatabaseId}
+    />)
     expect(screen.queryAllByTestId('check-ai-agreement')).toHaveLength(0)
 
     fireEvent.click(screen.getByTestId('show-agreements-btn'))
@@ -62,7 +78,7 @@ describe('CopilotSettingsPopover', () => {
   })
 
   it('should not show database agreement checkbox if databaseId is null', async () => {
-    render(<CopilotSettingsPopover {...mockedProps} agreements={mockAgreements} databaseId={null} />)
+    render(<CopilotSettingsPopover {...mockedProps} generalAgreement={mockGeneralAgreement} databaseId={null} />)
     expect(screen.queryAllByTestId('check-ai-agreement')).toHaveLength(0)
 
     fireEvent.click(screen.getByTestId('show-agreements-btn'))
@@ -72,7 +88,12 @@ describe('CopilotSettingsPopover', () => {
   })
 
   it('should show warning message if database agreement unchecked', async () => {
-    render(<CopilotSettingsPopover {...mockedProps} agreements={mockAgreements} databaseId={mockDatabaseId} />)
+    render(<CopilotSettingsPopover
+      {...mockedProps}
+      generalAgreement={mockGeneralAgreement}
+      databaseAgreement={mockDatabaseAgreement}
+      databaseId={mockDatabaseId}
+    />)
     expect(screen.queryAllByTestId('check-ai-agreement')).toHaveLength(0)
 
     fireEvent.click(screen.getByTestId('show-agreements-btn'))

@@ -1,18 +1,23 @@
 import { Module, Type } from '@nestjs/common';
-import { AiProvider } from 'src/modules/ai/providers/ai.provider';
-import { AiService } from 'src/modules/ai/ai.service';
-import { AiAuthProvider } from 'src/modules/ai/providers/auth/ai-auth.provider';
-import { LocalAiAuthProvider } from 'src/modules/ai/providers/auth/local.ai-auth.provider';
-import { AiMessageRepository } from 'src/modules/ai/repositories/ai.message.repository';
-import { LocalAiMessageRepository } from 'src/modules/ai/repositories/local.ai.message.repository';
-import { AiContextRepository } from 'src/modules/ai/repositories/ai.context.repository';
-import {
-  InMemoryAiContextRepository,
-} from 'src/modules/ai/repositories/in-memory.ai.context.repository';
-import { AiController } from './ai.controller';
-import { AiDatabaseController } from './ai-database.controller';
-import { AiAgreementRepository } from './repositories/ai.agreement.repository';
-import { LocalAiAgreementRepository } from './repositories/local.ai.agreement.repository';
+import { AiMessageProvider } from 'src/modules/ai/messages/providers/ai.message.provider';
+import { AiAuthProvider } from 'src/modules/ai/auth/ai-auth.provider';
+import { LocalAiAuthProvider } from 'src/modules/ai/auth/local.ai-auth.provider';
+import { AiMessageRepository } from 'src/modules/ai/messages/repositories/ai.message.repository';
+import { AiContextRepository } from 'src/modules/ai/messages/repositories/ai.context.repository';
+
+import { AiAgreementRepository } from './agreements/repositories/ai.agreement.repository';
+import { LocalAiAgreementRepository } from './agreements/repositories/local.ai.agreement.repository';
+import { AiMessagesController } from './messages/ai-messages.controller';
+import { AiDatabaseMessagesController } from './messages/ai-database-messages.controller';
+import { AiAgreementsController } from './agreements/ai-agreements.controller';
+import { AiDatabaseAgreementsController } from './agreements/ai-database-agreements.controller';
+import { LocalAiMessageRepository } from './messages/repositories/local.ai.message.repository';
+import { InMemoryAiContextRepository } from './messages/repositories/in-memory.ai.context.repository';
+import { AiMessageService } from './messages/ai.message.service';
+import { AiAgreementService } from './agreements/ai.agreement.service';
+import { AiDatabaseAgreementService } from './agreements/ai.database.agreement.service';
+import { AiDatabaseAgreementRepository } from './agreements/repositories/ai.database.agreement.repository';
+import { LocalAiDatabaseAgreementRepository } from './agreements/repositories/local.ai.database.agreement.repository';
 
 @Module({})
 export class AiModule {
@@ -21,13 +26,21 @@ export class AiModule {
     aiMessageRepository: Type<AiMessageRepository> = LocalAiMessageRepository,
     aiContextRepository: Type<AiContextRepository> = InMemoryAiContextRepository,
     aiAgreementRepository: Type<AiAgreementRepository> = LocalAiAgreementRepository,
+    aiDatabaseAgreementRepository: Type<AiDatabaseAgreementRepository> = LocalAiDatabaseAgreementRepository,
   ) {
     return {
       module: AiModule,
-      controllers: [AiController, AiDatabaseController],
+      controllers: [
+        AiMessagesController,
+        AiDatabaseMessagesController,
+        AiAgreementsController,
+        AiDatabaseAgreementsController,
+      ],
       providers: [
-        AiProvider,
-        AiService,
+        AiMessageProvider,
+        AiMessageService,
+        AiAgreementService,
+        AiDatabaseAgreementService,
         {
           provide: AiAuthProvider,
           useClass: aiAuthProvider,
@@ -43,6 +56,10 @@ export class AiModule {
         {
           provide: AiAgreementRepository,
           useClass: aiAgreementRepository,
+        },
+        {
+          provide: AiDatabaseAgreementRepository,
+          useClass: aiDatabaseAgreementRepository,
         },
       ],
     };

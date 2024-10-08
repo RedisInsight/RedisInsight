@@ -16,7 +16,7 @@ import {
   AiRateLimitTokenException,
   AiUnauthorizedException,
 } from 'src/modules/ai/exceptions';
-import { AiServerErrors } from 'src/modules/ai/models';
+import { AiServerErrors } from 'src/modules/ai/messages/models';
 import { CustomErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { wrapAiError } from './ai.error.handler';

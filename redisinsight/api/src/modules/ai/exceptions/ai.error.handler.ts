@@ -8,7 +8,7 @@ import {
   AiInternalServerErrorException,
   AiRateLimitRequestException, AiRateLimitTokenException, AiRateLimitMaxTokensException,
 } from 'src/modules/ai/exceptions';
-import { AiServerErrors } from 'src/modules/ai/models';
+import { AiServerErrors } from 'src/modules/ai/messages/models';
 
 export const wrapAiError = (error: any, message?: string): HttpException => {
   if (error instanceof HttpException) {

@@ -2,7 +2,6 @@ import { Connection, createConnection, getConnectionManager } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { constants } from './constants';
 import { createCipheriv, createDecipheriv, createHash } from 'crypto';
-import { AiTools } from 'src/modules/ai/models';
 
 export const repositories = {
   DATABASE: 'DatabaseEntity',
@@ -24,6 +23,7 @@ export const repositories = {
   RDI: 'RdiEntity',
   AIMessage: 'AiMessageEntity',
   AiAgreement: 'AiAgreementEntity',
+  AiDatabaseAgreement: 'AiDatabaseAgreementEntity',
 }
 
 let localDbConnection;
@@ -706,30 +706,48 @@ export const clearAiAgreements = async () => {
   await rep.clear()
 }
 
+export const clearAiDatabaseAgreements = async () => {
+  const rep = await getRepository(repositories.AiDatabaseAgreement)
+  await rep.clear()
+}
+
 export const generateAiAgreement = async (
   partial: Record<string, any> = {},
   truncate: boolean = true,
 ) => {
-  const result = [];
   const rep = await getRepository(repositories.AiAgreement);
 
   if (truncate) {
     await rep.clear();
-    }
-
-    let db = null
-
-    if (partial.databaseId) {
-    // create db in order to avoid QueryFailedError: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed
-    db = await generateDatabase(partial.databaseId)
   }
 
-  result.push(await rep.save({
-    ...constants.TEST_AI_AGREEMENT,
-   ...partial,
-  }))
+  return await rep.save({
+...constants.TEST_AI_AGREEMENT,
+...partial,
+  })
+}
 
-  return result
+export const generateAiDatabaseAgreement = async (
+  partial: Record<string, any> = {},
+  truncate: boolean = true,
+) => {
+  const rep = await getRepository(repositories.AiDatabaseAgreement);
+
+  if (truncate) {
+    await rep.clear();
+  }
+
+  let db = null
+
+  // create db in order to avoid QueryFailedError: SQLITE_CONSTRAINT: FOREIGN KEY constraint failed
+  db = await generateDatabase(partial.databaseId || 'test_ai-db_id')
+
+
+  return await rep.save({
+    ...constants.TEST_AI_DATABASE_AGREEMENT,
+    databaseId: db.id,
+   ...partial,
+  })
 }
 
 export const getAllAiMessages = async () => {
@@ -752,7 +770,6 @@ export const generateAiDatabaseMessages = async (
     ...constants.TEST_AI_MESSAGE_HUMAN_2,
     content: encryptData(constants.TEST_AI_MESSAGE_HUMAN_2.content),
     databaseId: 'mockDBId',
-    tool: AiTools.Query,
     ...partial,
   }));
 
@@ -761,7 +778,6 @@ export const generateAiDatabaseMessages = async (
     steps: null,
     content: encryptData(constants.TEST_AI_MESSAGE_AI_RESPONSE_2.content),
     databaseId: 'mockDBId',
-    tool: AiTools.Query,
     ...partial,
   }));
 

@@ -6,7 +6,7 @@ import { useFormik } from 'formik'
 import AgreementIcon from 'uiSrc/assets/img/ai/Settings.svg?react'
 import Divider from 'uiSrc/components/divider/Divider'
 import WarningIcon from 'uiSrc/assets/img/ai/Info.svg'
-import { AiAgreement } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiDatabaseAgreement, IUpdateAiAgreementsItem } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable } from 'uiSrc/utils'
 import { updateAiAgreementsAction } from 'uiSrc/slices/panels/aiAssistant'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -20,24 +20,32 @@ interface InitialValues {
 
 export interface Props {
   databaseId: Nullable<string>
-  agreements: Nullable<AiAgreement[]>
+  generalAgreement: Nullable<AiAgreement>
+  databaseAgreement: Nullable<AiDatabaseAgreement>
+  agreementLoading: boolean
   onRestart: () => void
 }
 
-const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) => {
+const CopilotSettingsPopover = ({
+  databaseId,
+  generalAgreement,
+  databaseAgreement,
+  agreementLoading,
+  onRestart
+}: Props) => {
   const [agreementsPopoverOpen, setAgreementsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!agreements) return
-    const generalAgreementAccepted = agreements.some(
-      (agreement) => !agreement.databaseId
-    )
+    if (!generalAgreement && agreementLoading) {
+      agreementsPopoverOpen && triggerPopover(false)
+      return
+    }
 
-    if (!generalAgreementAccepted) {
+    if (!generalAgreement?.consent && !agreementLoading) {
       triggerPopover(true)
     }
-  }, [agreements])
+  }, [generalAgreement, agreementLoading])
 
   const triggerPopover = (value: boolean) => {
     if (value) {
@@ -50,19 +58,11 @@ const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) =>
     setAgreementsPopoverOpen(value)
   }
 
-  const getInitialValues = useMemo(() => {
-    const generalAgreementAccepted = agreements?.some(
-      (agreement) => !agreement.databaseId
-    )
-    const dbAgreementAccepted = agreements?.some(
-      (agreement) => agreement.databaseId === databaseId
-    )
-    return {
-      checkGeneralAgreement: !!generalAgreementAccepted,
-      checkDbAgreement: !!dbAgreementAccepted,
-      showWarningMessage: false,
-    }
-  }, [agreements])
+  const getInitialValues = useMemo(() => ({
+    checkGeneralAgreement: !!generalAgreement?.consent,
+    checkDbAgreement: !!databaseAgreement?.dataConsent,
+    showWarningMessage: false,
+  }), [generalAgreement, databaseAgreement])
 
   const formik = useFormik({
     initialValues: getInitialValues,
@@ -73,12 +73,25 @@ const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) =>
   })
 
   const submitForm = async (values: InitialValues) => {
-    const data = {
-      general: values.checkGeneralAgreement,
-      db: values.checkDbAgreement
+    const toUpdate: IUpdateAiAgreementsItem[] = []
+
+    if (!!generalAgreement?.consent !== values.checkGeneralAgreement) {
+      toUpdate.push({
+        entity: 'generalAgreement',
+        field: 'consent',
+        value: values.checkGeneralAgreement
+      })
     }
 
-    dispatch(updateAiAgreementsAction(databaseId, data, () => {
+    if (databaseId && (!!databaseAgreement?.dataConsent !== values.checkDbAgreement)) {
+      toUpdate.push({
+        entity: 'databaseAgreement',
+        field: 'dataConsent',
+        value: values.checkDbAgreement
+      })
+    }
+
+    dispatch(updateAiAgreementsAction(databaseId, toUpdate, () => {
       if (values.showWarningMessage) onRestart?.()
       formik.setSubmitting(false)
       setAgreementsPopoverOpen(false)
@@ -102,7 +115,7 @@ const CopilotSettingsPopover = ({ databaseId, agreements, onRestart }: Props) =>
   }
 
   const toggleDbAgreement = (value: boolean) => {
-    if (agreements?.some((agr) => agr.databaseId === databaseId)) formik.setFieldValue('showWarningMessage', !value)
+    if (databaseAgreement?.dataConsent) formik.setFieldValue('showWarningMessage', !value)
     formik.setFieldValue('checkDbAgreement', value)
   }
 

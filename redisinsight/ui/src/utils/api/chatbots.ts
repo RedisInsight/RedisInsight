@@ -1,3 +1,4 @@
+import { compact } from 'lodash'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { Nullable, isStatusSuccessful } from 'uiSrc/utils'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -63,8 +64,4 @@ export const getStreamedAnswer = async (
   }
 }
 
-export const getAiUrl = (instanceId: Nullable<string>, ...path: string[]) => {
-  let aiUrl: string = ApiEndpoints.AI_CHAT
-  if (instanceId) aiUrl += `/${instanceId}`
-  return `/${aiUrl}/messages/${path.join('/')}`
-}
+export const getAiUrl = (...path: Nullable<string>[]) => `/${ApiEndpoints.AI_CHAT}/${compact(path).join('/')}`

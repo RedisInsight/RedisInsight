@@ -6,7 +6,7 @@ import {
   expect,
 } from '../deps';
 import { initApiUserProfileNockScope,  } from '../cloud/constants';
-import { AiMessageType, AiTools } from 'src/modules/ai/models';
+import { AiMessageType } from 'src/modules/ai/messages/models';
 import { mockAiDatabaseId } from 'src/__mocks__';
 
 const { server, request, localDb } = deps;
@@ -17,7 +17,6 @@ const endpoint = (dbId?: string) => request(server).get(`/ai/${dbId || mockAiDat
 const responseSchema = Joi.array().items(Joi.object().keys({
   id: Joi.string().required(),
   type: Joi.string().allow(AiMessageType.HumanMessage, AiMessageType.AiMessage).required(),
-  tool: Joi.string().allow(AiTools.General, AiTools.Query).required(),
   databaseId: Joi.string().allow(null).required(),
   accountId: Joi.string().required(),
   conversationId: Joi.string().allow(null),

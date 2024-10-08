@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { AiAgreement, AiChatMessage, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiChatMessage, AiDatabaseAgreement, IUpdateAiAgreementPayload, IUpdateAiAgreementsItem, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
   getAxiosError,
@@ -26,7 +26,9 @@ export const initialState: StateAiAssistant = {
   ai: {
     loading: false,
     agreementLoading: false,
-    agreements: null,
+    generalAgreement: null,
+    databaseAgreementLoading: false,
+    databaseAgreement: null,
     messages: [],
   },
   hideCopilotSplashScreen: localStorageService.get(BrowserStorageItem.hideCopilotSplashScreen) ?? false,
@@ -42,27 +44,43 @@ const aiAssistantSlice = createSlice({
       localStorageService.set(BrowserStorageItem.hideCopilotSplashScreen, payload)
     },
 
-    getAiAgreements: (state) => {
+    getAiAgreement: (state) => {
       state.ai.agreementLoading = true
     },
-    getAiAgreementsSuccess: (state, { payload }: PayloadAction<AiAgreement[]>) => {
+    getAiAgreementSuccess: (state, { payload }: PayloadAction<AiAgreement>) => {
       state.ai.agreementLoading = false
-      state.ai.agreements = payload
+      state.ai.generalAgreement = payload
     },
-    getAiAgreementsFailed: (state) => {
+    getAiAgreementFailed: (state) => {
       state.ai.agreementLoading = false
     },
 
+    getAiDatabaseAgreement: (state) => {
+      state.ai.databaseAgreementLoading = true
+    },
+    getAiDatabaseAgreementSuccess: (state, { payload }: PayloadAction<AiDatabaseAgreement>) => {
+      state.ai.databaseAgreementLoading = false
+      state.ai.databaseAgreement = payload
+    },
+    getAiDatabaseAgreementFailed: (state) => {
+      state.ai.databaseAgreementLoading = false
+    },
+
     clearAiAgreements: (state) => {
-      state.ai.agreements = []
+      state.ai.generalAgreement = null
+      state.ai.databaseAgreement = null
+    },
+
+    clearAiDatabaseAgreement: (state) => {
+      state.ai.databaseAgreement = null
     },
 
     updateAiAgreements: (state) => {
       state.ai.agreementLoading = true
     },
-    updateAiAgreementsSuccess: (state, { payload }: PayloadAction<AiAgreement[]>) => {
-      state.ai.agreementLoading = false
-      state.ai.agreements = payload
+    // TODO add payload interface
+    updateAiAgreementsSuccess: (state, { payload }: PayloadAction<IUpdateAiAgreementPayload>) => {
+      state.ai = { ...state.ai, agreementLoading: false, ...payload }
     },
     updateAiAgreementsFailed: (state) => {
       state.ai.agreementLoading = false
@@ -123,9 +141,13 @@ export const aiAssistantSelector = (state: RootState) => state.panels.aiAssistan
 
 // Actions generated from the slice
 export const {
-  getAiAgreements,
-  getAiAgreementsSuccess,
-  getAiAgreementsFailed,
+  getAiAgreement,
+  getAiAgreementSuccess,
+  getAiAgreementFailed,
+
+  getAiDatabaseAgreement,
+  getAiDatabaseAgreementSuccess,
+  getAiDatabaseAgreementFailed,
 
   updateAiAgreements,
   updateAiAgreementsSuccess,
@@ -143,6 +165,7 @@ export const {
   setAiQuestionError,
   sendAiAnswer,
   clearAiAgreements,
+  clearAiDatabaseAgreement,
 
   clearAiChatHistory,
   setHideCopilotSplashScreen,
@@ -151,16 +174,16 @@ export const {
 // The reducer
 export default aiAssistantSlice.reducer
 
-export function getAiAgreementsAction(onSuccess?: () => void, onFailure?: () => void) {
+export function getAiAgreementAction(onSuccess?: () => void, onFailure?: () => void) {
   return async (dispatch: AppDispatch) => {
-    dispatch(getAiAgreements())
+    dispatch(getAiAgreement())
 
     try {
-      const aiUrl = getAiUrl(null, 'agreements')
+      const aiUrl = getAiUrl('agreements')
       const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
-        dispatch(getAiAgreementsSuccess(data))
+        dispatch(getAiAgreementSuccess(data))
       }
 
       onSuccess?.()
@@ -173,20 +196,43 @@ export function getAiAgreementsAction(onSuccess?: () => void, onFailure?: () => 
       }
 
       dispatch(addErrorNotification(err))
-      dispatch(getAiAgreementsFailed())
+      dispatch(getAiAgreementFailed())
       onFailure?.()
     }
   }
 }
 
-export interface UpdateAiAgreementsInterface {
-  general: boolean
-  db?: boolean
+export function getAiDatabaseAgreementAction(databaseId: string, onSuccess?: () => void, onFailure?: () => void) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getAiDatabaseAgreement())
+
+    try {
+      const aiUrl = getAiUrl(databaseId, 'agreements')
+      const { status, data } = await apiService.get<any>(aiUrl)
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getAiDatabaseAgreementSuccess(data))
+      }
+
+      onSuccess?.()
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
+      dispatch(getAiDatabaseAgreementFailed())
+      onFailure?.()
+    }
+  }
 }
 
 export function updateAiAgreementsAction(
   databaseId: Nullable<string>,
-  toUpdate: UpdateAiAgreementsInterface,
+  toUpdate: IUpdateAiAgreementsItem[],
   onSuccess?: () => void,
   onFailure?: () => void
 ) {
@@ -194,10 +240,19 @@ export function updateAiAgreementsAction(
     dispatch(updateAiAgreements())
 
     try {
-      const aiUrl = getAiUrl(databaseId, 'agreements')
-      const { status, data } = await apiService.post<any>(aiUrl, toUpdate)
-      if (isStatusSuccessful(status)) {
-        dispatch(updateAiAgreementsSuccess(data))
+      if (!toUpdate.length) {
+        onSuccess?.()
+      } else {
+        const promises = toUpdate.map(async (updateObj) => {
+          const { entity, field, value } = updateObj
+          const aiUrl = entity === 'generalAgreement' ? getAiUrl('agreements') : getAiUrl(databaseId, 'agreements')
+          const body = { [field]: value }
+          const { status, data } = await apiService.post<any>(aiUrl, body)
+          return isStatusSuccessful(status) ? { [entity]: data } : null
+        })
+
+        const results = await Promise.all(promises)
+        dispatch(updateAiAgreementsSuccess(Object.assign({}, ...results)))
         onSuccess?.()
       }
     } catch (error) {
@@ -220,7 +275,7 @@ export function getAiChatHistoryAction(databaseId: Nullable<string>, onSuccess?:
     dispatch(getAiChatHistory())
 
     try {
-      const aiUrl = getAiUrl(databaseId)
+      const aiUrl = getAiUrl(databaseId, 'messages')
       const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
@@ -259,7 +314,7 @@ export function askAiChatbotAction(
     onMessage?.(aiMessageProgressed)
 
     const baseUrl = getBaseUrl()
-    const aiUrl = getAiUrl(databaseId)
+    const aiUrl = getAiUrl(databaseId, 'messages')
     const url: string = `${baseUrl}${aiUrl}`
 
     await getStreamedAnswer(
@@ -304,7 +359,7 @@ export function removeAiChatHistoryAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(removeAiChatHistory())
-    const aiUrl = getAiUrl(databaseId)
+    const aiUrl = getAiUrl(databaseId, 'messages')
     try {
       const { status } = await apiService.delete<any>(aiUrl)
       if (isStatusSuccessful(status)) {

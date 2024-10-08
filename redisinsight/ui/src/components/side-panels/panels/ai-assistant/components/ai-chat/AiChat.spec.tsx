@@ -7,7 +7,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { aiChatSelector, getAiAgreements, getAiChatHistory } from 'uiSrc/slices/panels/aiAssistant'
+import { aiChatSelector, getAiAgreement, getAiChatHistory, getAiDatabaseAgreement } from 'uiSrc/slices/panels/aiAssistant'
 import AiChat from './AiChat'
 
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
@@ -41,20 +41,16 @@ describe('AiChat', () => {
 
   it('should get history', () => {
     (aiChatSelector as jest.Mock).mockReturnValue({
-      id: '1',
       messages: [],
-      agreements: []
     })
     render(<AiChat />, { store })
 
-    expect(store.getActions()).toEqual([getAiChatHistory(), getAiAgreements()])
+    expect(store.getActions()).toEqual([getAiDatabaseAgreement(), getAiChatHistory(), getAiAgreement()])
   })
 
   it('should show copilotSettings popover and have a disabled input if general Ai Agreement not accepted', () => {
     (aiChatSelector as jest.Mock).mockReturnValue({
-      id: '',
       messages: [],
-      agreements: []
     })
     render(<AiChat />, { store })
 
@@ -64,9 +60,8 @@ describe('AiChat', () => {
 
   it('should not show copilotSettings popover if general Ai Agreement accepted', () => {
     (aiChatSelector as jest.Mock).mockReturnValue({
-      id: '',
       messages: [],
-      agreements: [{ databaseId: null }]
+      generalAgreement: { consent: true }
     })
     render(<AiChat />, { store })
 

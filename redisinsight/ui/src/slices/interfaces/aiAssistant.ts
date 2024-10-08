@@ -25,19 +25,35 @@ export interface AiChatMessage {
     }
   }
 }
+export interface IUpdateAiAgreementsItem {
+  entity: 'generalAgreement' | 'databaseAgreement',
+  field: 'consent' | 'dataConsent',
+  value: boolean
+}
+
+export interface IUpdateAiAgreementPayload {
+  generalAgreement?: AiAgreement
+  databaseAgreement?: AiDatabaseAgreement
+}
 
 export interface AiAgreement {
-  id: string
-  databaseId: Nullable<string>
   accountId: string
-  createdAt: Date
+  consent: boolean
+}
+
+export interface AiDatabaseAgreement {
+  databaseId: string
+  accountId: string
+  dataConsent: boolean
 }
 
 export interface StateAiAssistant {
   ai: {
     loading: boolean
     agreementLoading: boolean
-    agreements: Nullable<AiAgreement[]>
+    databaseAgreementLoading: boolean
+    generalAgreement: Nullable<AiAgreement>
+    databaseAgreement: Nullable<AiDatabaseAgreement>
     messages: Array<AiChatMessage>
   },
   hideCopilotSplashScreen: boolean

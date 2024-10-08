@@ -63,7 +63,7 @@ test('Verify that user can add several fields and values during Stream key creat
         await t.scroll(scrollSelector, 'bottom');
         await t.expect(browserPage.streamField.count).eql(i + 1, 'Number of added fields not correct');
         if (i < Object.keys(streamData).length - 1) {
-            await t.click(browserPage.addStreamRow);
+            await t.click(browserPage.addAdditionalElement);
         }
     }
     await t.expect(browserPage.addKeyButton.withAttribute('disabled').exists).notOk('Clickable Add Key button');

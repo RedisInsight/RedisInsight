@@ -1,7 +1,10 @@
 import { AddElementInList, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage } from '../../../../pageObjects';
-import { commonUrl, ossStandaloneConfig, redisEnterpriseClusterConfig } from '../../../../helpers/conf';
+import {
+    commonUrl,
+    ossStandaloneV8Config,
+} from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { populateListWithElements } from '../../../../helpers/keys';
 import { Common } from '../../../../helpers/common';
@@ -12,24 +15,24 @@ const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
 const apiKeyRequests = new APIKeyRequests();
 
-const dbParameters = { host: ossStandaloneConfig.host, port: ossStandaloneConfig.port };
+const dbParameters = { host: ossStandaloneV8Config.host, port: ossStandaloneV8Config.port };
 const keyName = `TestListKey-${ Common.generateWord(10) }`;
 const elementForSearch = `SearchField-${ Common.generateWord(5) }`;
 const keyToAddParameters = { elementsCount: 500000, keyName, elementStartWith: 'listElement' };
 
 fixture `List Key verification`
-    .meta({ type: 'regression' })
+    .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
     .beforeEach(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
         await browserPage.addListKey(keyName, '2147476121', ['testElement']);
     })
     .afterEach(async() => {
-        await apiKeyRequests.deleteKeyByNameApi(keyName, redisEnterpriseClusterConfig.databaseName);
-        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
+        await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneV8Config.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
     });
 test
-    .meta({ rte: rte.standalone })('Verify that user can search per exact element index in List key in DB with 1 million of fields', async t => {
+   ('Verify that user can search per exact element index in List key in DB with 1 million of fields', async t => {
         // Add 1000000 elements to the list key
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
         await populateListWithElements(dbParameters.host, dbParameters.port, keyToAddParameters);
@@ -46,12 +49,12 @@ test
 // TODO unskip when the bug is fixed https://redislabs.atlassian.net/browse/RI-6188
 test.skip
     .before(async() => {
-        await databaseHelper.acceptLicenseTermsAndAddREClusterDatabase(redisEnterpriseClusterConfig);
+        await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
 
     })
     .after(async() => {
         await browserPage.Cli.sendCommandInCli('flushdb');
-        await databaseHelper.deleteDatabase(redisEnterpriseClusterConfig.databaseName);
+        await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV8Config);
     })
     ('Verify that user can add a multiple fields', async t => {
 
@@ -80,8 +83,7 @@ test.skip
         await t.expect(browserPage.listElementsList.nth(count - 1).textContent).eql(elementsValue[0], 'the last element is not corrected for add in tail');
 
     });
-test
-    .meta({ rte: rte.reCluster })('Verify that user can edit a multiple fields', async t => {
+test('Verify that user can edit a multiple fields', async t => {
         const elementsValue = [
             'element1',
             'element2',

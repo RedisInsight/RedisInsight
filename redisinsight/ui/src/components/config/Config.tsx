@@ -53,21 +53,19 @@ const Config = () => {
     setFavicon(favicon)
 
     dispatch(setCapability(localStorageService?.get(BrowserStorageItem.capability)))
+    if (disabledByEnvFeature?.flag) {
+      dispatch(fetchServerInfo())
+      dispatch(fetchNotificationsAction())
+      dispatch(fetchCustomTutorials())
+    }
 
-    dispatch(fetchServerInfo())
     dispatch(fetchUnsupportedCliCommandsAction())
     dispatch(fetchRedisCommandsInfo())
-    if (disabledByEnvFeature?.flag) {
-      dispatch(fetchNotificationsAction())
-    }
     dispatch(fetchContentRecommendations())
     dispatch(fetchGuideLinksAction())
 
     // get tutorials
     dispatch(fetchTutorials())
-    if (disabledByEnvFeature?.flag) {
-      dispatch(fetchCustomTutorials())
-    }
 
     dispatch(fetchFeatureFlags())
 
@@ -78,7 +76,7 @@ const Config = () => {
   }, [])
 
   useEffect(() => {
-    if (config && spec) {
+    if (config && spec && disabledByEnvFeature?.flag) {
       checkSettingsToShowPopup()
     }
   }, [spec])

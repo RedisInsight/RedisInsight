@@ -10,8 +10,8 @@ export interface Props<T> {
     item: T,
     index: number
   ) => React.ReactNode
-  isClearDisabled: (item: T) => boolean
-  onClickRemove: (item: T) => void
+  isClearDisabled: (item: T, index?: number) => boolean
+  onClickRemove: (item: T, index?: number) => void
   onClickAdd: () => void
 }
 
@@ -41,10 +41,10 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
           >
             <EuiButtonIcon
               iconType="trash"
-              isDisabled={isClearDisabled(item)}
+              isDisabled={isClearDisabled(item, index)}
               color="primary"
               aria-label="Remove Item"
-              onClick={() => onClickRemove(item)}
+              onClick={() => onClickRemove(item, index)}
               data-testid="remove-item"
             />
           </EuiToolTip>

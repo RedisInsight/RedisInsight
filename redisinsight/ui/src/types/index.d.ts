@@ -4,11 +4,13 @@ import { Buffer } from 'buffer'
 import { Nullable } from 'uiSrc/utils'
 import { KeyValueCompressor } from 'uiSrc/constants'
 import { RedisResponseBuffer, RedisString, UintArray } from 'uiSrc/slices/interfaces'
+import { Config } from 'uiSrc/config'
 import { IPCHandler } from '../../../desktop/preload'
 
 declare global {
   interface Window {
     ri: RedisInsight
+    riConfig: Config
     Buffer: typeof Buffer
     app: WindowApp
     windowId?: string

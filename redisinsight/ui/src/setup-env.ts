@@ -1,10 +1,10 @@
-import { config } from './config'
+import { defaultConfig } from 'uiSrc/config/default'
 
-window.riConfig = config
+window.riConfig = defaultConfig
 
 window.app = {
   ...window.app,
   config: {
-    apiPort: `${config.api.port}`,
+    apiPort: `${defaultConfig.api.port}`,
   }
 }

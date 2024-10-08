@@ -46,8 +46,7 @@ test
         await t.expect(result).eql(elementForSearch, 'List element not found');
     });
 
-// TODO unskip when the bug is fixed https://redislabs.atlassian.net/browse/RI-6188
-test.skip
+test
     .before(async() => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV8Config);
 

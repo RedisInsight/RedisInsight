@@ -60,7 +60,7 @@ const AddKeyList = (props: Props) => {
     }
   }
 
-  const isClearDisabled = (element:string) => elements.length === 1 && !element.length
+  const isClearDisabled = (item:string) => elements.length === 1 && !item.length
 
   const handleElementChange = (value: string, index: number) => {
     const newElements = [...elements]

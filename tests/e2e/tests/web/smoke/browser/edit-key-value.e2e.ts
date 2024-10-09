@@ -93,7 +93,7 @@ test('Verify that user can edit List Key element', async t => {
     keyName = Common.generateWord(10);
 
     // Add List key
-    await browserPage.addListKey(keyName, keyTTL, keyValueBefore);
+    await browserPage.addListKey(keyName, keyTTL, [keyValueBefore]);
     // Check the key value before edit
     let keyValue = await browserPage.getListKeyValue();
     await t.expect(keyValue).eql(keyValueBefore, 'The List value is incorrect');

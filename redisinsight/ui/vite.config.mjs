@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
@@ -6,22 +7,19 @@ import { reactClickToComponent } from 'vite-plugin-react-click-to-component'
 // import { compression } from 'vite-plugin-compression2'
 import { fileURLToPath, URL } from 'url'
 import path from 'path'
+import { defaultConfig } from './src/config/default'
 
-const isHostedApi = process.env.RI_IS_HOSTED_API === 'true'
-const isElectron = process.env.RI_APP_TYPE === 'electron'
+const isHostedApi = !!defaultConfig.api.hostedBaseUrl
+const isElectron = defaultConfig.app.type === 'electron'
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
 const outDir = isElectron ? '../dist/renderer' : './dist'
-
-const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
-  ? 'https://localhost'
-  : 'http://localhost'
 
 let base
 if (isHostedApi) {
   base = '/'
 } else {
-  base = process.env.NODE_ENV === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
+  base = defaultConfig.app.env === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 }
 
 /**
@@ -111,21 +109,10 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
-    'process.env': {
-      RI_API_PREFIX: 'api',
-      RI_APP_PORT: '5540',
-      RI_BASE_API_URL: apiUrl,
-      RI_RESOURCES_BASE_URL: apiUrl,
-      RI_PIPELINE_COUNT_DEFAULT: '5',
-      RI_SCAN_COUNT_DEFAULT: '500',
-      RI_SCAN_TREE_COUNT_DEFAULT: '10000',
-      RI_APP_TYPE: process.env.RI_APP_TYPE,
-      RI_CONNECTIONS_TIMEOUT_DEFAULT: 30 * 1000,
-      RI_SOCKET_TRANSPORTS: process.env.RI_SOCKET_TRANSPORTS,
-      RI_SOCKET_CREDENTIALS: process.env.RI_SOCKET_CREDENTIALS,
-      RI_HOSTED_SOCKET_PROXY_PATH: process.env.RI_HOSTED_SOCKET_PROXY_PATH,
-      RI_DEFAULT_THEME: process.env.RI_DEFAULT_THEME,
-    },
+    'process.env': {},
+    'window.riConfig': {
+      ...defaultConfig,
+    }
   },
   // hack: apply proxy path to monaco webworker
   experimental: {

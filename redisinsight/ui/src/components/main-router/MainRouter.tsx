@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, {Suspense, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch, useHistory, useLocation } from 'react-router-dom'
 
@@ -17,6 +17,7 @@ import { appContextSelector, setCurrentWorkspace } from 'uiSrc/slices/app/contex
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import RedisStackRoutes from './components/RedisStackRoutes'
 import DEFAULT_ROUTES from './constants/defaultRoutes'
+import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
 const MainRouter = () => {
   const { server } = useSelector(appInfoSelector)
@@ -62,18 +63,20 @@ const MainRouter = () => {
     <>
       {isShowConsents && (<ConsentsSettingsPopup />)}
       {!isRedisStack && <GlobalUrlHandler />}
-      <Switch>
-        {
-          isRedisStack
-            ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
-            : (
-              DEFAULT_ROUTES.map((route, i) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <RouteWithSubRoutes key={i} {...route} />
-              ))
-            )
-        }
-      </Switch>
+      <Suspense fallback={<SuspenseLoader />}>
+        <Switch>
+          {
+            isRedisStack
+              ? <RedisStackRoutes databaseId={server?.fixedDatabaseId} />
+              : (
+                DEFAULT_ROUTES.map((route, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <RouteWithSubRoutes key={i} {...route} />
+                ))
+              )
+          }
+        </Switch>
+      </Suspense>
     </>
   )
 }

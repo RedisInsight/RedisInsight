@@ -53,11 +53,11 @@ const INSTANCE_ROUTES: IRoute[] = [
     path: Pages.pubSub(':instanceId'),
     component: LAZY_LOAD ? LazyPubSubPage : PubSubPage,
   },
-  ...getRouteIncludedByEnv({
+  ...getRouteIncludedByEnv([{
     path: Pages.analytics(':instanceId'),
     component: LAZY_LOAD ? LazyAnalyticsPage : AnalyticsPage,
     routes: ANALYTICS_ROUTES,
-  })
+  }])
 ]
 
 const RDI_INSTANCE_ROUTES: IRoute[] = getRouteIncludedByEnv([

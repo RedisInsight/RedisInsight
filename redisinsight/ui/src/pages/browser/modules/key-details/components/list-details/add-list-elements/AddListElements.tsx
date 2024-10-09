@@ -112,7 +112,7 @@ const AddListElements = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-list-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
       >
         <EuiSuperSelect
           valueOfSelected={destination}

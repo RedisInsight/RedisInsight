@@ -75,9 +75,8 @@ export class LocalRdiRepository extends RdiRepository {
     const newEntity = classToClass(RdiEntity, rdi);
 
     const encrypted = await this.modelEncryptor.encryptEntity(this.repository.merge(oldEntity, newEntity));
-    await this.repository.save(encrypted);
 
-    return this.get(id);
+    return classToClass(Rdi, await this.modelEncryptor.decryptEntity(await this.repository.save(encrypted)));
   }
 
   /**

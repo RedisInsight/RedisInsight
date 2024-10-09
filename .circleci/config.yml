@@ -395,6 +395,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: sudo apt-get install net-tools
+      - run: sudo apt-get install xdotool
       - run:
           name: Install WM
           command: sudo apt install fluxbox

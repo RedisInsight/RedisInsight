@@ -47,9 +47,11 @@ const AddKeyList = (props: Props) => {
       submitData()
     }
   }
+
   const addField = () => {
     setElements([...elements, ''])
   }
+
   const onClickRemove = (_item: string, index?: number) => {
     if (elements.length === 1) {
       setElements([''])
@@ -58,7 +60,7 @@ const AddKeyList = (props: Props) => {
     }
   }
 
-  const isClearDisabled = (element:string, index?: number) => index === 0 && !element.length
+  const isClearDisabled = (element:string) => elements.length === 1 && !element.length
 
   const handleElementChange = (value: string, index: number) => {
     const newElements = [...elements]

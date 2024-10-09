@@ -16,7 +16,7 @@ import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.s
 
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import PatternsInfo from './components/patternsInfo'
-import AppendInfo from './components/append-info'
+import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
 
 const SubscriptionPanel = () => {
@@ -95,7 +95,7 @@ const SubscriptionPanel = () => {
               placeholder="Enter Pattern"
               aria-label="channel names for filtering"
               data-testid="channels-input"
-              append={<AppendInfo title={null} content="Subscribe to one or more channels or patterns by entering them, separated by spaces." />}
+              append={<ClickableAppendInfo />}
             />
           </EuiFlexItem>
           <EuiFlexItem grow={false}>

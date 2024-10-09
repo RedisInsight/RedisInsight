@@ -76,7 +76,7 @@ const AddListElements = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.List,
-        numberOfAdded: 1,
+        numberOfAdded: elements.length,
       }
     })
   }

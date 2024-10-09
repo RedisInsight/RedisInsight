@@ -69,6 +69,7 @@ test.skip('Verify that user can sign in using SSO via Google authorization', asy
     await t.pressKey('space');
     await t.pressKey('shift+tab');
     await t.pressKey('shift+tab');
+    await t.pressKey('shift+tab');
 
     // Open Chrome with a sample URL and save it to logs file
     openChromeWithUrl();

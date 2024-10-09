@@ -46,7 +46,7 @@
     "@typescript-eslint/parser": "4.28.2",
     "archiver": "^5.3.1",
     "chance": "1.1.8",
-    "chromedriver": "^124.0.1",
+    "chromedriver": "^129.0.2",
     "cli-argument-parser": "0.4.5",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^5.0.0",

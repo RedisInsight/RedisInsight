@@ -1,11 +1,35 @@
 import { Builder, By, Key, until } from 'selenium-webdriver';
 import open = require('open');
+import chrome = require('selenium-webdriver/chrome');
 import { googleUser, googleUserPassword } from './conf';
 
 export async function processGoogleSSO(urlToUse: string): Promise<void> {
+    // Set Chrome options
+    const chromeOptions = new chrome.Options();
+    chromeOptions.addArguments(
+        '--disable-web-security',
+        '--remote-allow-origins=*',
+        '--allow-running-insecure-content',
+        '--disable-client-side-phishing-detection',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-domain-reliability',
+        '--disable-default-apps',
+        '--no-default-browser-check',
+        '--no-sandbox',
+        '--disable-plugins-discovery',
+        '--disable-extensions',
+        '--disable-popup-blocking',
+        '--profile-directory=Default',
+        '--ignore-certificate-errors',
+        '--disable-blink-features=AutomationControlled',
+        '--incognito',
+        'user_agent=DN'
+    );
     // Create a WebDriver instance with ChromeDriver
     const driver = await new Builder()
         .forBrowser('chrome')
+        .setChromeOptions(chromeOptions)
         .build();
 
     const protocol = 'redisinsight://';

@@ -10,7 +10,15 @@ export interface IMonacoCommand {
 export interface IMonacoQuery {
   name: string
   fullQuery: string
-  args?: string[]
+  args: [string[], string[]],
+  cursor: {
+    isCursorInQuotes: boolean,
+    prevCursorChar: string,
+    nextCursorChar: string,
+    argLeftOffset: number,
+    argRightOffset: number
+  }
+  allArgs: string[]
   info?: ICommand
   commandPosition: any
   position?: monacoEditor.Position

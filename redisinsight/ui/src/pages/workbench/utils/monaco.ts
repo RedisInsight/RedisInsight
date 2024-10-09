@@ -1,8 +1,8 @@
 import { monaco } from 'react-monaco-editor'
 import * as monacoEditor from 'monaco-editor'
 import { isString } from 'lodash'
-import { generateDetail } from 'uiSrc/pages/search/utils/query'
-import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
+import { generateDetail } from 'uiSrc/pages/workbench/utils/query'
+import { SearchCommand, TokenType } from 'uiSrc/pages/workbench/types'
 import { Maybe } from 'uiSrc/utils'
 
 export const setCursorPositionAtTheEnd = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {

@@ -1,9 +1,16 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
+import { remove } from 'lodash'
+import { SearchCommand } from 'uiSrc/pages/workbench/types'
 
 const STRING_DOUBLE = 'string.double'
 
-export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.languages.IMonarchLanguage => (
-  {
+export const getRedisMonarchTokensProvider = (commands: SearchCommand[]): monacoEditor.languages.IMonarchLanguage => {
+  const commandRedisCommands = [...commands]
+  const searchCommands = remove(commandRedisCommands, ({ token }) => token?.startsWith('FT.'))
+  const COMMON_COMMANDS_REGEX = `(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
+  const SEARCH_COMMANDS_REGEX = `(${searchCommands.map(({ token }) => token).join('|')})\\b`
+
+  return {
     defaultToken: '',
     tokenPostfix: '.redis',
     ignoreCase: true,
@@ -11,26 +18,13 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
       { open: '[', close: ']', token: 'delimiter.square' },
       { open: '(', close: ')', token: 'delimiter.parenthesis' },
     ],
-    keywords: commands,
-    operators: [
-      // NOT SUPPORTED
-    ],
-    builtinFunctions: [
-      // NOT SUPPORTED
-    ],
-    builtinVariables: [
-      // NOT SUPPORTED
-    ],
-    pseudoColumns: [
-      // NOT SUPPORTED
-    ],
+    keywords: commands.map(({ token }) => token),
+    operators: [],
     tokenizer: {
       root: [
         { include: '@whitespace' },
-        { include: '@pseudoColumns' },
         { include: '@numbers' },
         { include: '@strings' },
-        { include: '@scopes' },
         { include: '@keyword' },
         [/[;,.]/, 'delimiter'],
         [/[()]/, '@brackets'],
@@ -40,8 +34,6 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
             cases: {
               '@keywords': 'keyword',
               '@operators': 'operator',
-              '@builtinVariables': 'predefined',
-              '@builtinFunctions': 'predefined',
               '@default': 'identifier',
             },
           },
@@ -49,25 +41,12 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
         [/[<>=!%&+\-*/|~^]/, 'operator'],
       ],
       keyword: [
-        [
-          `(${commands.join('|')})\\b`,
-          'keyword'
-        ]
+        [COMMON_COMMANDS_REGEX, { token: 'keyword' }],
+        [SEARCH_COMMANDS_REGEX, { token: '@rematch', nextEmbedded: 'redisearch', next: '@endRedisearch' }],
       ],
       whitespace: [
         [/\s+/, 'white'],
         [/\/\/.*$/, 'comment'],
-      ],
-      pseudoColumns: [
-        [
-          /[$][A-Za-z_][\w@#$]*/,
-          {
-            cases: {
-              '@pseudoColumns': 'predefined',
-              '@default': 'identifier',
-            },
-          },
-        ],
       ],
       numbers: [
         [/0[xX][0-9a-fA-F]*/, 'number'],
@@ -88,9 +67,10 @@ export const getRedisMonarchTokensProvider = (commands: string[]): monacoEditor.
         [/"/, { token: STRING_DOUBLE, next: '@pop' }],
         [/[^\\"]+/, STRING_DOUBLE],
       ],
-      scopes: [
-        // NOT SUPPORTED
-      ],
+      // TODO: can be tokens or functions the same - need to think how to avoid wrong ending
+      endRedisearch: [
+        [`^\\s*${COMMON_COMMANDS_REGEX}`, { token: '@rematch', next: '@root', nextEmbedded: '@pop', log: 'end' }],
+      ]
     },
   }
-)
+}

@@ -646,21 +646,17 @@ describe('ai assistant slice', () => {
     })
 
     describe('updateAiAgreementsAction', () => {
-      const updateParams: IUpdateAiAgreementsItem[] = [{ entity: 'databaseAgreement', field: 'dataConsent', value: true }]
       it('should call proper actions with success result', async () => {
-        const aiAgreement: AiDatabaseAgreement = { accountId: '1234', databaseId: 'dbId', dataConsent: true }
-
-        const responsePayload = { data: aiAgreement, status: 200 }
-
-        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+        const databaseAgreement: AiDatabaseAgreement = { accountId: '1234', databaseId: 'dbId', dataConsent: true }
+        const promises = [async () => Promise.resolve({ databaseAgreement })]
 
         // Act
-        await store.dispatch<any>(updateAiAgreementsAction('1', updateParams))
+        await store.dispatch<any>(updateAiAgreementsAction(promises))
 
         // Assert
         const expectedActions = [
           updateAiAgreements(),
-          updateAiAgreementsSuccess({ databaseAgreement: aiAgreement }),
+          updateAiAgreementsSuccess({ databaseAgreement }),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -674,10 +670,10 @@ describe('ai assistant slice', () => {
           },
         } as EnhancedAxiosError
 
-        apiService.post = jest.fn().mockRejectedValue(responsePayload)
+        const promises = [async () => Promise.reject(responsePayload)]
 
         // Act
-        await store.dispatch<any>(updateAiAgreementsAction('1', updateParams))
+        await store.dispatch<any>(updateAiAgreementsAction(promises))
 
         // Assert
         const expectedActions = [

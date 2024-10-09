@@ -56,7 +56,7 @@ export const getAttributeTopValues = async (client: RedisClient, index: string, 
       case 'text':
       case 'tag':
       case 'numeric':
-      case 'geo': {
+      case 'geo':
         const [distinct, ...top] = await client.sendCommand([
           'FT.AGGREGATE',
           index,
@@ -81,7 +81,6 @@ export const getAttributeTopValues = async (client: RedisClient, index: string, 
           distinct_count: parseInt(distinct, 10) || 0,
           top_values: top.map(([, value]) => ({ value })),
         };
-      }
       default:
         return {};
     }

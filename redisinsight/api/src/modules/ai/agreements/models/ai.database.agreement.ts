@@ -19,12 +19,6 @@ export class AiDatabaseAgreement {
   @IsNotEmpty()
   accountId: string;
 
-  // @ApiProperty({
-  //   type: Date,
-  // })
-  // @Expose()
-  // createdAt: Date;
-
   @ApiProperty({
     type: Boolean,
   })

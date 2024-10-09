@@ -25,11 +25,6 @@ export interface AiChatMessage {
     }
   }
 }
-export interface IUpdateAiAgreementsItem {
-  entity: 'generalAgreement' | 'databaseAgreement',
-  field: 'consent' | 'dataConsent',
-  value: boolean
-}
 
 export interface IUpdateAiAgreementPayload {
   generalAgreement?: AiAgreement

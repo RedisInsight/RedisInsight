@@ -6,10 +6,11 @@ import { useFormik } from 'formik'
 import AgreementIcon from 'uiSrc/assets/img/ai/Settings.svg?react'
 import Divider from 'uiSrc/components/divider/Divider'
 import WarningIcon from 'uiSrc/assets/img/ai/Info.svg'
-import { AiAgreement, AiDatabaseAgreement, IUpdateAiAgreementsItem } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiDatabaseAgreement } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable } from 'uiSrc/utils'
 import { updateAiAgreementsAction } from 'uiSrc/slices/panels/aiAssistant'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { createDatabaseAgreementFunc, createGeneralAgreementFunc } from 'uiSrc/utils/api'
 import styles from './styles.module.scss'
 
 interface InitialValues {
@@ -73,25 +74,17 @@ const CopilotSettingsPopover = ({
   })
 
   const submitForm = async (values: InitialValues) => {
-    const toUpdate: IUpdateAiAgreementsItem[] = []
+    const promises = []
 
     if (!!generalAgreement?.consent !== values.checkGeneralAgreement) {
-      toUpdate.push({
-        entity: 'generalAgreement',
-        field: 'consent',
-        value: values.checkGeneralAgreement
-      })
+      promises.push(createGeneralAgreementFunc({ consent: values.checkGeneralAgreement }))
     }
 
     if (databaseId && (!!databaseAgreement?.dataConsent !== values.checkDbAgreement)) {
-      toUpdate.push({
-        entity: 'databaseAgreement',
-        field: 'dataConsent',
-        value: values.checkDbAgreement
-      })
+      promises.push(createDatabaseAgreementFunc(databaseId, { dataConsent: values.checkDbAgreement }))
     }
 
-    dispatch(updateAiAgreementsAction(databaseId, toUpdate, () => {
+    dispatch(updateAiAgreementsAction(promises, () => {
       if (values.showWarningMessage) onRestart?.()
       formik.setSubmitting(false)
       setAgreementsPopoverOpen(false)

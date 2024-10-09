@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { AxiosError } from 'axios'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { AiAgreement, AiChatMessage, AiDatabaseAgreement, IUpdateAiAgreementPayload, IUpdateAiAgreementsItem, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
+import { AiAgreement, AiChatMessage, AiDatabaseAgreement, IUpdateAiAgreementPayload, StateAiAssistant } from 'uiSrc/slices/interfaces/aiAssistant'
 import {
   getApiErrorCode,
   getAxiosError,
@@ -20,6 +20,7 @@ import { generateAiMessage, generateHumanMessage } from 'uiSrc/utils/transformer
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
+import { AiChatPath } from 'uiSrc/constants/api'
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: StateAiAssistant = {
@@ -179,7 +180,7 @@ export function getAiAgreementAction(onSuccess?: () => void, onFailure?: () => v
     dispatch(getAiAgreement())
 
     try {
-      const aiUrl = getAiUrl('agreements')
+      const aiUrl = getAiUrl(AiChatPath.Agreements)
       const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
@@ -207,7 +208,7 @@ export function getAiDatabaseAgreementAction(databaseId: string, onSuccess?: () 
     dispatch(getAiDatabaseAgreement())
 
     try {
-      const aiUrl = getAiUrl(databaseId, 'agreements')
+      const aiUrl = getAiUrl(databaseId, AiChatPath.Agreements)
       const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
@@ -231,8 +232,7 @@ export function getAiDatabaseAgreementAction(databaseId: string, onSuccess?: () 
 }
 
 export function updateAiAgreementsAction(
-  databaseId: Nullable<string>,
-  toUpdate: IUpdateAiAgreementsItem[],
+  promises: Array<() => Promise<any>>,
   onSuccess?: () => void,
   onFailure?: () => void
 ) {
@@ -240,18 +240,10 @@ export function updateAiAgreementsAction(
     dispatch(updateAiAgreements())
 
     try {
-      if (!toUpdate.length) {
+      if (!promises.length) {
         onSuccess?.()
       } else {
-        const promises = toUpdate.map(async (updateObj) => {
-          const { entity, field, value } = updateObj
-          const aiUrl = entity === 'generalAgreement' ? getAiUrl('agreements') : getAiUrl(databaseId, 'agreements')
-          const body = { [field]: value }
-          const { status, data } = await apiService.post<any>(aiUrl, body)
-          return isStatusSuccessful(status) ? { [entity]: data } : null
-        })
-
-        const results = await Promise.all(promises)
+        const results = await Promise.all(promises.map(async (promiseFunc: any) => promiseFunc()))
         dispatch(updateAiAgreementsSuccess(Object.assign({}, ...results)))
         onSuccess?.()
       }
@@ -275,7 +267,7 @@ export function getAiChatHistoryAction(databaseId: Nullable<string>, onSuccess?:
     dispatch(getAiChatHistory())
 
     try {
-      const aiUrl = getAiUrl(databaseId, 'messages')
+      const aiUrl = getAiUrl(databaseId, AiChatPath.Messages)
       const { status, data } = await apiService.get<any>(aiUrl)
 
       if (isStatusSuccessful(status)) {
@@ -314,7 +306,7 @@ export function askAiChatbotAction(
     onMessage?.(aiMessageProgressed)
 
     const baseUrl = getBaseUrl()
-    const aiUrl = getAiUrl(databaseId, 'messages')
+    const aiUrl = getAiUrl(databaseId, AiChatPath.Messages)
     const url: string = `${baseUrl}${aiUrl}`
 
     await getStreamedAnswer(
@@ -359,7 +351,7 @@ export function removeAiChatHistoryAction(
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(removeAiChatHistory())
-    const aiUrl = getAiUrl(databaseId, 'messages')
+    const aiUrl = getAiUrl(databaseId, AiChatPath.Messages)
     try {
       const { status } = await apiService.delete<any>(aiUrl)
       if (isStatusSuccessful(status)) {

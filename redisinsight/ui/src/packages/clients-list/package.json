@@ -69,14 +69,15 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.12.0",
-    "@parcel/transformer-sass": "2.8.3",
+    "@parcel/transformer-sass": "^2.12.0",
     "@types/json-bigint": "^1.0.1",
     "@types/node": "^17.0.21",
     "@types/react": "^17.0.40",
     "@types/react-dom": "^17.0.13",
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
-    "parcel": "2.8.3",
+    "parcel": "^2.12.0",
+    "process": "^0.11.10",
     "rimraf": "^3.0.2",
     "terser": "^5.16.6",
     "typescript": ">=3.0.0"
@@ -88,12 +89,13 @@
     "classnames": "^2.3.1",
     "json-bigint": "^1.0.0",
     "lodash": "^4.17.21",
-    "moment": "^2.29.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "redisinsight-plugin-sdk": "^1.1.0"
   },
   "resolutions": {
+    "@parcel/**/micromatch": "^4.0.8",
+    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/semver": "^7.5.2"
   }

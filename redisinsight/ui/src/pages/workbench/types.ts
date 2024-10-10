@@ -1,37 +1,17 @@
+import { monaco as monacoEditor } from 'react-monaco-editor'
 import { Maybe } from 'uiSrc/utils'
-
-export enum TokenType {
-  PureToken = 'pure-token',
-  Block = 'block',
-  OneOf = 'oneof',
-  String = 'string',
-}
+import { IRedisCommand, IRedisCommandTree } from 'uiSrc/constants'
 
 export enum ArgName {
   NArgs = 'nargs'
 }
 
-export interface SearchCommand {
-  name?: string
-  summary?: string
-  expression?: boolean
-  type?: TokenType
-  token?: string
-  optional?: boolean
-  multiple?: boolean
-  arguments?: SearchCommand[]
-}
-
-export interface SearchCommandTree extends SearchCommand {
-  parent?: SearchCommandTree
-}
-
 export interface FoundCommandArgument {
   isComplete: boolean
-  stopArg: Maybe<SearchCommand>
+  stopArg: Maybe<IRedisCommand>
   isBlocked: boolean
-  append: Maybe<Array<SearchCommandTree[]>>
-  parent: Maybe<SearchCommand>
+  append: Maybe<Array<IRedisCommandTree[]>>
+  parent: Maybe<IRedisCommand>
 }
 
 export interface CursorContext {
@@ -42,4 +22,5 @@ export interface CursorContext {
   offset: number
   argLeftOffset: number
   argRightOffset: number
+  range: monacoEditor.IRange
 }

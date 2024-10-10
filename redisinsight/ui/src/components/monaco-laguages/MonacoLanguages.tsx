@@ -7,10 +7,11 @@ import { MonacoLanguage, redisLanguageConfig, Theme } from 'uiSrc/constants'
 import { getRedisMonarchTokensProvider } from 'uiSrc/utils'
 import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { TokenType } from 'uiSrc/pages/workbench/types'
 
 import { getRediSearchSubRedisMonarchTokensProvider } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensSubRedis'
 import SEARCH_COMMANDS_SPEC from 'uiSrc/pages/workbench/data/supported_commands.json'
+import { mergeRedisCommandsSpecs } from 'uiSrc/utils/transformers/redisCommands'
+import { SearchCommandTree } from 'uiSrc/pages/search/types'
 
 const MonacoLanguages = () => {
   const { theme } = useContext(ThemeContext)
@@ -42,16 +43,12 @@ const MonacoLanguages = () => {
     }
 
     monaco.languages.setLanguageConfiguration(MonacoLanguage.Redis, redisLanguageConfig)
-    const REDIS_COMMANDS = Object.keys(COMMANDS_SPEC).map((name) => ({
-      ...(name in SEARCH_COMMANDS_SPEC ? SEARCH_COMMANDS_SPEC[name] : (COMMANDS_SPEC[name] || {})),
-      name,
-      token: name,
-      type: TokenType.Block
-    }))
+    const REDIS_COMMANDS = mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC) as SearchCommandTree[]
+    const REDIS_SEARCH_COMMANDS = REDIS_COMMANDS.filter(({ name }) => name?.startsWith('FT.'))
 
     monaco.languages.setMonarchTokensProvider(
       MonacoLanguage.RediSearch,
-      getRediSearchSubRedisMonarchTokensProvider(REDIS_COMMANDS.filter(({ name }) => name.startsWith('FT.')))
+      getRediSearchSubRedisMonarchTokensProvider(REDIS_SEARCH_COMMANDS)
     )
     monaco.languages.setMonarchTokensProvider(
       MonacoLanguage.Redis,

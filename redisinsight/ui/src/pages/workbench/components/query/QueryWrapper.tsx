@@ -6,8 +6,10 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import Query from './Query'
+import { mergeRedisCommandsSpecs } from 'uiSrc/utils/transformers/redisCommands'
+import SEARCH_COMMANDS_SPEC from 'uiSrc/pages/workbench/data/supported_commands.json'
 import styles from './Query/styles.module.scss'
+import Query from './Query'
 
 export interface Props {
   query: string
@@ -36,6 +38,9 @@ const QueryWrapper = (props: Props) => {
   const { loading: isCommandsLoading, } = useSelector(appRedisCommandsSelector)
   const { id: connectedIndstanceId } = useSelector(connectedInstanceSelector)
   const { data: indexes = [] } = useSelector(redisearchListSelector)
+  const { spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
+
+  const REDIS_COMMANDS = mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC)
 
   const dispatch = useDispatch()
 
@@ -58,6 +63,7 @@ const QueryWrapper = (props: Props) => {
   ) : (
     <Query
       query={query}
+      commands={REDIS_COMMANDS}
       indexes={indexes}
       activeMode={activeMode}
       resultsMode={resultsMode}

@@ -1,9 +1,9 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { ICommand } from 'uiSrc/constants'
+import { IRedisCommand } from 'uiSrc/constants'
 
 export interface IMonacoCommand {
   name: string
-  info?: ICommand
+  info?: IRedisCommand
   position?: monacoEditor.Position
 }
 
@@ -19,8 +19,8 @@ export interface IMonacoQuery {
     argRightOffset: number
   }
   allArgs: string[]
-  info?: ICommand
+  info?: IRedisCommand
   commandPosition: any
   position?: monacoEditor.Position
-  commandCursorPosition?: number
+  commandCursorPosition: number
 }

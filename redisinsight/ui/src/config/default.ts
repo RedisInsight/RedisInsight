@@ -24,6 +24,7 @@ export const defaultConfig = {
     port: intEnv('RI_APP_PORT', 5540),
     baseUrl: process.env.RI_BASE_API_URL ?? apiUrl,
     hostedBaseUrl: process.env.RI_HOSTED_API_BASE_URL ?? '',
+    hostedBase: process.env.RI_HOSTED_BASE ?? '',
     csrfEndpoint: process.env.RI_CSRF_ENDPOINT ?? '',
     socketTransports: process.env.RI_SOCKET_TRANSPORTS,
     socketCredentials: booleanEnv('RI_SOCKET_CREDENTIALS', false),

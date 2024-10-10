@@ -48,13 +48,12 @@ describe('AiChat', () => {
     expect(store.getActions()).toEqual([getAiDatabaseAgreement(), getAiChatHistory(), getAiAgreement()])
   })
 
-  it('should show copilotSettings popover and have a disabled input if general Ai Agreement not accepted', () => {
+  it('should have a disabled input if general Ai Agreement not accepted', () => {
     (aiChatSelector as jest.Mock).mockReturnValue({
       messages: [],
     })
     render(<AiChat />, { store })
 
-    expect(screen.getByTestId('copilot-settings-action-btn')).toBeInTheDocument()
     expect(screen.getByTestId('ai-message-textarea')).toBeDisabled()
   })
 

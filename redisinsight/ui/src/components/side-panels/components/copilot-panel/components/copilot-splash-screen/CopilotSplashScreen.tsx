@@ -1,10 +1,8 @@
 import React from 'react'
 import { EuiButton, EuiButtonIcon } from '@elastic/eui'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import CopilotPreview from 'uiSrc/components/side-panels/components/copilot-panel/components/copilot-preview'
 import { setHideCopilotSplashScreen } from 'uiSrc/slices/panels/aiAssistant'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { ExternalLink } from 'uiSrc/components/base'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -15,20 +13,10 @@ export interface Props {
 }
 
 const CopilotSplashScreen = ({ onClose }: Props) => {
-  const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
   const dispatch = useDispatch()
 
   const onStartCopilot = () => {
     dispatch(setHideCopilotSplashScreen(true))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_OPENED,
-      eventData: {
-        action: 'open',
-        authenticated: !!userOAuthProfile?.id,
-        firstUse: true
-      }
-    })
   }
 
   return (

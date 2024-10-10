@@ -3,9 +3,15 @@ import { mock } from 'ts-mockito'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
 import { aiAssistantSelector } from 'uiSrc/slices/panels/aiAssistant'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import CopilotPanel, { Props } from './CopilotPanel'
 
 const mockedProps = mock<Props>()
+
+jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
+  sendEventTelemetry: jest.fn(),
+}))
 
 jest.mock('uiSrc/slices/panels/aiAssistant', () => ({
   ...jest.requireActual('uiSrc/slices/panels/aiAssistant'),
@@ -32,5 +38,22 @@ describe('CopilotPanel', () => {
     render(<CopilotPanel {...mockedProps} />)
 
     expect(screen.queryAllByTestId('copilot-get-started-btn')).toHaveLength(0)
+  })
+
+  it('should send telemetry with necessary data', () => {
+    const sendEventTelemetryMock = jest.fn();
+    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+
+    render(<CopilotPanel {...mockedProps} />)
+
+    expect(sendEventTelemetry).toBeCalledWith({
+      event: TelemetryEvent.AI_CHAT_OPENED,
+      eventData: {
+        action: 'open',
+        authenticated: false,
+        firstUse: true
+      }
+    });
+    (sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

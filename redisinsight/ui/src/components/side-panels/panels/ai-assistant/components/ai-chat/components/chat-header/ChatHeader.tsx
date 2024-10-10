@@ -15,39 +15,40 @@ export interface Props {
   onRestart: () => void
   generalAgreement: Nullable<AiAgreement>
   databaseAgreement: Nullable<AiDatabaseAgreement>
-  agreementLoading: boolean
+  settingsOpenedByDefault: boolean
 }
 
-const ChatHeader = (props: Props) => {
-  const { databaseId, generalAgreement, databaseAgreement, agreementLoading, onRestart } = props
+const ChatHeader = ({
+  databaseId,
+  generalAgreement,
+  databaseAgreement,
+  onRestart,
+  settingsOpenedByDefault
+}: Props) => (
+  <div className={styles.header}>
+    <div className={styles.headerActions}>
+      <CopilotSettingsPopover
+        databaseId={databaseId}
+        generalAgreement={generalAgreement}
+        databaseAgreement={databaseAgreement}
+        onRestart={onRestart}
+        settingsOpenedByDefault={settingsOpenedByDefault}
+      />
 
-  return (
-    <div className={styles.header}>
-      <div className={styles.headerActions}>
-
-        <CopilotSettingsPopover
-          databaseId={databaseId}
-          generalAgreement={generalAgreement}
-          databaseAgreement={databaseAgreement}
-          agreementLoading={agreementLoading}
-          onRestart={onRestart}
-        />
-
-        <RestartChat
-          button={(
-            <EuiButtonIcon
-              size="s"
-              iconSize="l"
-              iconType={RestartIcon}
-              aria-label="restart ai session button"
-              data-testid="ai-restart-session-btn"
-            />
+      <RestartChat
+        button={(
+          <EuiButtonIcon
+            size="s"
+            iconSize="l"
+            iconType={RestartIcon}
+            aria-label="restart ai session button"
+            data-testid="ai-restart-session-btn"
+          />
           )}
-          onConfirm={onRestart}
-        />
-      </div>
+        onConfirm={onRestart}
+      />
     </div>
-  )
-}
+  </div>
+)
 
 export default ChatHeader

@@ -107,15 +107,17 @@ const SidePanelsWrapper = (props: Props) => {
   const handleClose = () => {
     dispatch(changeSidePanel(null))
 
-    sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
-      eventData: {
-        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
-        provider,
-        page,
-        tab: tabSelected
-      },
-    })
+    if (openedPanel !== SidePanels.AiAssistant) {
+      sendEventTelemetry({
+        event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
+        eventData: {
+          databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
+          provider,
+          page,
+          tab: tabSelected
+        },
+      })
+    }
   }
 
   const handleFullScreen = () => {

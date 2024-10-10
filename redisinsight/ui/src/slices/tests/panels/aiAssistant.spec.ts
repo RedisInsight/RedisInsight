@@ -352,7 +352,7 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('getAiChatHistorySuccess', () => {
+    describe('removeAiChatHistorySuccess', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
@@ -372,7 +372,7 @@ describe('ai assistant slice', () => {
       })
     })
 
-    describe('getAiChatHistoryFailed', () => {
+    describe('removeAiChatHistoryFailed', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
@@ -559,6 +559,7 @@ describe('ai assistant slice', () => {
 
     describe('getAiAgreementAction', () => {
       it('should call proper actions with success result', async () => {
+        const onSuccess = jest.fn()
         const aiAgreement: AiAgreement = { accountId: '1234', consent: true }
 
         const responsePayload = { data: aiAgreement, status: 200 }
@@ -566,7 +567,7 @@ describe('ai assistant slice', () => {
         apiService.get = jest.fn().mockResolvedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(getAiAgreementAction())
+        await store.dispatch<any>(getAiAgreementAction(onSuccess))
 
         // Assert
         const expectedActions = [
@@ -574,6 +575,7 @@ describe('ai assistant slice', () => {
           getAiAgreementSuccess(aiAgreement),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+        expect(onSuccess).toBeCalledWith(aiAgreement)
       })
 
       it('should call proper actions with failed result', async () => {

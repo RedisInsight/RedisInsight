@@ -24,10 +24,11 @@ import ChatHeader from './components/chat-header'
 import styles from './styles.module.scss'
 
 const AiChat = () => {
-  const { messages, generalAgreement, databaseAgreement, agreementLoading, loading } = useSelector(aiChatSelector)
+  const { messages, generalAgreement, databaseAgreement, loading } = useSelector(aiChatSelector)
   const { modules, provider } = useSelector(connectedInstanceSelector)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(appRedisCommandsSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
+  const [settingsOpenedByDefault, setSettingsOpenedByDefault] = useState<boolean>(false)
 
   const [inProgressMessage, setinProgressMessage] = useState<Nullable<AiChatMessage>>(null)
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -38,14 +39,18 @@ const AiChat = () => {
     if (!instanceId && databaseAgreement) {
       dispatch(clearAiDatabaseAgreement())
     }
-    if (instanceId && databaseAgreement?.databaseId !== instanceId) {
+    if (instanceId) {
       dispatch(getAiDatabaseAgreementAction(instanceId))
     }
     dispatch(getAiChatHistoryAction(instanceId))
   }, [instanceId, userOAuthProfile?.id])
 
   useEffect(() => {
-    dispatch(getAiAgreementAction())
+    dispatch(getAiAgreementAction((agreement) => {
+      if (!agreement?.consent) setSettingsOpenedByDefault(true)
+    }))
+
+    return () => setSettingsOpenedByDefault(false)
   }, [userOAuthProfile?.id])
 
   const handleSubmit = useCallback((message: string) => {
@@ -117,7 +122,7 @@ const AiChat = () => {
         onRestart={onClearSession}
         generalAgreement={generalAgreement}
         databaseAgreement={databaseAgreement}
-        agreementLoading={agreementLoading}
+        settingsOpenedByDefault={settingsOpenedByDefault}
       />
       <div className={styles.chatHistory}>
         <ChatHistory

@@ -1,6 +1,8 @@
+import { Nullable } from 'uiSrc/utils'
+
 export enum AiChatType {
-  Assistance = 'document',
-  Query = 'database'
+  General = 'general',
+  Database = 'database'
 }
 
 export enum AiChatMessageType {
@@ -24,17 +26,30 @@ export interface AiChatMessage {
   }
 }
 
+export interface IUpdateAiAgreementPayload {
+  generalAgreement?: AiAgreement
+  databaseAgreement?: AiDatabaseAgreement
+}
+
+export interface AiAgreement {
+  accountId: string
+  consent: boolean
+}
+
+export interface AiDatabaseAgreement {
+  databaseId: string
+  accountId: string
+  dataConsent: boolean
+}
+
 export interface StateAiAssistant {
-  activeTab: AiChatType
-  assistant: {
+  ai: {
     loading: boolean
-    agreements: boolean
-    id: string
+    agreementLoading: boolean
+    databaseAgreementLoading: boolean
+    generalAgreement: Nullable<AiAgreement>
+    databaseAgreement: Nullable<AiDatabaseAgreement>
     messages: Array<AiChatMessage>
   },
-  expert: {
-    loading: boolean
-    agreements: string[]
-    messages: Array<AiChatMessage>
-  }
+  hideCopilotSplashScreen: boolean
 }

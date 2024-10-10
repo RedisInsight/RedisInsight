@@ -10,7 +10,6 @@ export const redisearchDarKThemeRules = [
   { token: 'argument.block.withToken.1', foreground: '#72B59B' },
   { token: 'argument.block.withToken.2', foreground: '#3A8365' },
   { token: 'argument.block.withToken.3', foreground: '#244F3E' },
-  { token: 'loadAll', foreground: '#8CD7B9' },
   { token: 'index', foreground: '#DE47BB' },
   { token: 'query', foreground: '#7B90E0' },
   { token: 'field', foreground: '#B02C30' },
@@ -28,7 +27,6 @@ export const redisearchLightThemeRules = [
   { token: 'argument.block.withToken.1', foreground: '#72B59B' },
   { token: 'argument.block.withToken.2', foreground: '#3A8365' },
   { token: 'argument.block.withToken.3', foreground: '#244F3E' },
-  { token: 'loadAll', foreground: '#8CD7B9' },
   { token: 'index', foreground: '#DE47BB' },
   { token: 'query', foreground: '#7B90E0' },
   { token: 'field', foreground: '#B02C30' },
@@ -40,7 +38,7 @@ export const darkThemeRules = [
   { token: 'function', foreground: 'BFBC4E' },
   ...redisearchDarKThemeRules.map((rule) => ({
     ...rule,
-    token: `${rule.token}.redisearch`
+    token: `${rule.token}`
   }))
 ]
 

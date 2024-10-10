@@ -6,7 +6,7 @@ import {
   generateTokensWithFunctions,
   getBlockTokens, isIndexAfterKeyword,
   isQueryAfterIndex
-} from 'uiSrc/utils/monaco/redisearch/utils'
+} from 'uiSrc/utils/monaco/redisearch/utils_old'
 import { generateQuery } from 'uiSrc/utils/monaco/monarchTokens/redisearchTokensTemplates'
 
 const STRING_DOUBLE = 'string.double'

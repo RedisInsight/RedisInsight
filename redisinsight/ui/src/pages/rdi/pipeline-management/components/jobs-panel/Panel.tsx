@@ -144,7 +144,18 @@ const DryRunJobPanel = (props: Props) => {
         className={styles.tab}
         data-testid="transformations-tab"
       >
-        <span className={styles.tabName}>Transformations</span>
+        <EuiToolTip
+          content={(
+            <EuiText color="subdued" size="s">
+              Displays the results of the transformations you defined. The data is presented in JSON format.
+              <br />
+              No data is written to the target database.
+            </EuiText>
+          )}
+          data-testid="transformation-output-tooltip"
+        >
+          <span className={styles.tabName}>Transformation output</span>
+        </EuiToolTip>
       </EuiTab>
       <EuiTab
         isSelected={selectedTab === PipelineJobsTabs.Output}
@@ -152,9 +163,18 @@ const DryRunJobPanel = (props: Props) => {
         className={styles.tab}
         data-testid="output-tab"
       >
-        <>
-          <span className={styles.tabName}>Output</span>
-        </>
+        <EuiToolTip
+          content={(
+            <EuiText color="subdued" size="s">
+              Displays the list of Redis commands that will be generated based on your job details.
+              <br />
+              No data is written to the target database.
+            </EuiText>
+          )}
+          data-testid="job-output-tooltip"
+        >
+          <span className={styles.tabName}>Job output</span>
+        </EuiToolTip>
       </EuiTab>
     </EuiTabs>
   ), [selectedTab, isFullScreen])
@@ -223,7 +243,6 @@ const DryRunJobPanel = (props: Props) => {
             </EuiFlexItem>
           </EuiFlexGroup>
           <div className={cx(styles.tabsWrapper, styles.codeLabel)}>
-            <EuiText>Results</EuiText>
             {isSelectAvailable && (
               <EuiSuperSelect
                 options={targetOptions}

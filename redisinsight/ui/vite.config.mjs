@@ -9,15 +9,14 @@ import { fileURLToPath, URL } from 'url'
 import path from 'path'
 import { defaultConfig } from './src/config/default'
 
-const isHostedApi = !!defaultConfig.api.hostedBaseUrl
 const isElectron = defaultConfig.app.type === 'electron'
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx'
 const outDir = isElectron ? '../dist/renderer' : './dist'
 
 let base
-if (isHostedApi) {
-  base = '/'
+if (defaultConfig.api.hostedBase) {
+  base = defaultConfig.api.hostedBase
 } else {
   base = defaultConfig.app.env === 'development' ? '/' : (isElectron ? '' : '/__RIPROXYPATH__')
 }

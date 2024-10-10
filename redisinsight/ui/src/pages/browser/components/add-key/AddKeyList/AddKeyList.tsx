@@ -9,17 +9,20 @@ import {
   EuiFlexItem,
   EuiPanel,
   EuiFieldText,
+  EuiSuperSelect,
 } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
-import { CreateListWithExpireDto } from 'apiSrc/modules/browser/list/dto'
+import { CreateListWithExpireDto, ListElementDestination } from 'apiSrc/modules/browser/list/dto'
 
 import {
   AddListFormConfig as config,
 } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import AddMultipleFields from '../../add-multiple-fields'
+import { optionsDestinations, TAIL_DESTINATION } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
+
 
 export interface Props {
   keyName: string
@@ -30,6 +33,7 @@ export interface Props {
 const AddKeyList = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const [elements, setElements] = useState<string[]>([''])
+  const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
@@ -70,6 +74,7 @@ const AddKeyList = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateListWithExpireDto = {
+      destination,
       keyName: stringToBuffer(keyName),
       elements: elements.map((el) => stringToBuffer(el)),
     }
@@ -81,6 +86,12 @@ const AddKeyList = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
+      <EuiSuperSelect
+        valueOfSelected={destination}
+        options={optionsDestinations}
+        onChange={(value) => setDestination(value as ListElementDestination)}
+        data-testid="destination-select"
+      />
       <AddMultipleFields
         items={elements}
         onClickRemove={onClickRemove}

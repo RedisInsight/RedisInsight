@@ -234,17 +234,25 @@ export class ListService {
     client: RedisClient,
     dto: PushElementToListDto,
   ): Promise<void> {
-    const { keyName, elements } = dto;
-    await client.sendCommand([BrowserToolListCommands.LPush, keyName, ...elements]);
+    const { keyName, elements, destination } = dto;
+    await client.sendCommand([
+      BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
+      keyName,
+      ...elements
+    ]);
   }
 
   public async createListWithExpiration(
     client: RedisClient,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
-    const { keyName, elements, expire } = dto;
+    const { keyName, elements, expire, destination } = dto;
     const transactionResults = await client.sendPipeline([
-      [BrowserToolListCommands.LPush, keyName, ...elements],
+      [
+        BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
+        keyName,
+        ...elements
+      ],
       [BrowserToolKeysCommands.Expire, keyName, expire],
     ]);
     catchMultiTransactionError(transactionResults);

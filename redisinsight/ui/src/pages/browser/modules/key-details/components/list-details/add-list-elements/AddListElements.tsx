@@ -36,7 +36,7 @@ export enum ListElementDestination {
 export const TAIL_DESTINATION: ListElementDestination = ListElementDestination.Tail
 export const HEAD_DESTINATION: ListElementDestination = ListElementDestination.Head
 
-const optionsDestinations: EuiSuperSelectOption<string>[] = [
+export const optionsDestinations: EuiSuperSelectOption<string>[] = [
   {
     value: TAIL_DESTINATION,
     inputDisplay: 'Push to tail',

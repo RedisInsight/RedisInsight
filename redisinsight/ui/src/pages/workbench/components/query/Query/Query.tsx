@@ -574,8 +574,6 @@ const Query = (props: Props) => {
       { fields: attributesRef.current, indexes: indexesRef.current }
     )
 
-    console.log(helpWidgetRef)
-
     if (helpWidget) {
       const { isOpen, parent, currentArg } = helpWidget
       helpWidgetRef.current = {

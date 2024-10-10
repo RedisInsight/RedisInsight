@@ -1,12 +1,13 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { remove } from 'lodash'
-import { SearchCommand } from 'uiSrc/pages/workbench/types'
+import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
+import { IRedisCommand } from 'uiSrc/constants'
 
 const STRING_DOUBLE = 'string.double'
 
-export const getRedisMonarchTokensProvider = (commands: SearchCommand[]): monacoEditor.languages.IMonarchLanguage => {
+export const getRedisMonarchTokensProvider = (commands: IRedisCommand[]): monacoEditor.languages.IMonarchLanguage => {
   const commandRedisCommands = [...commands]
-  const searchCommands = remove(commandRedisCommands, ({ token }) => token?.startsWith('FT.'))
+  const searchCommands = remove(commandRedisCommands, ({ token }) => token?.startsWith(ModuleCommandPrefix.RediSearch))
   const COMMON_COMMANDS_REGEX = `(${commandRedisCommands.map(({ token }) => token).join('|')})\\b`
   const SEARCH_COMMANDS_REGEX = `(${searchCommands.map(({ token }) => token).join('|')})\\b`
 

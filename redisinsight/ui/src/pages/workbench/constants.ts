@@ -68,25 +68,6 @@ export enum ModuleCommandPrefix {
   TDIGEST = 'TDIGEST.',
 }
 
-export const SUPPORTED_COMMANDS_LIST = [
-  'FT.SEARCH',
-  'FT.AGGREGATE',
-  'FT.PROFILE',
-  'FT.EXPLAIN',
-  'FT.INFO',
-  'FT._LIST',
-  'FT.ALIASADD',
-  'FT.ALIASDEL',
-  'FT.ALIASUPDATE',
-  'FT.ALTER',
-  'FT.CONFIG GET',
-  'FT.CONFIG SET',
-  'FT.CURSOR DEL',
-  'FT.CURSOR READ',
-  'FT.DICTADD',
-  'FT.DICTDEL',
-]
-
 export const COMMANDS_TO_GET_INDEX_INFO = [
   'FT.SEARCH',
   'FT.AGGREGATE',

@@ -12,7 +12,7 @@ import {
   getIndexesSuggestions,
   getNoIndexesSuggestion
 } from 'uiSrc/pages/workbench/utils/suggestions'
-import { DefinedArgumentName, FIELD_START_SYMBOL } from 'uiSrc/pages/workbench/constants'
+import { DefinedArgumentName, FIELD_START_SYMBOL, ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 
 export const findSuggestionsByArg = (
   listOfCommands: IRedisCommand[],
@@ -32,9 +32,7 @@ export const findSuggestionsByArg = (
 
   const foundArg = findCurrentArgument(listOfCommands, beforeOffsetArgs)
 
-  console.log(foundArg)
-
-  if (!command.name.startsWith('FT.')) {
+  if (!command.name.startsWith(ModuleCommandPrefix.RediSearch)) {
     return {
       helpWidget: { isOpen: !!foundArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg },
       suggestions: asSuggestionsRef([])
@@ -56,7 +54,6 @@ export const findSuggestionsByArg = (
       )
     }
     case DefinedArgumentName.query: {
-      console.log('handle query')
       return handleQuerySuggestions(foundArg)
     }
     default: {

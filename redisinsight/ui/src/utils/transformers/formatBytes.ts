@@ -3,11 +3,12 @@ const SIZES = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 export const formatBytes = (
   input: number,
   decimals: number = 3,
-  splitResult: boolean = false
+  splitResult: boolean = false,
+  baseK = 1024,
 ): string | [number, string] => {
   try {
     const bytes = parseFloat(String(input))
-    const k = 1024
+    const k = baseK
     const dm = decimals < 0 ? 0 : decimals
     if (Number.isNaN(bytes) || bytes < 0) return '-'
     if (bytes === 0) return `0 ${SIZES[0]}`

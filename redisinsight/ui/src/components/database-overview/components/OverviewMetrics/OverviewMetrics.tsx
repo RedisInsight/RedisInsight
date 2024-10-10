@@ -119,16 +119,21 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
     },
   }
 
-  const networkInKbpsItem = {
+  let [networkIn, networkInUnit] = formatBytes(networkInKbps * 1000, 3, true, 1000)
+  networkInUnit = networkInUnit ? `${networkInUnit.toLowerCase()}/s` : ''
+  let [networkOut, networkOutUnit] = formatBytes(networkOutKbps * 1000, 3, true, 1000)
+  networkOutUnit = networkOutUnit ? `${networkOutUnit.toLowerCase()}/s` : ''
+
+  const networkInItem = {
     id: 'network-input',
     groupId: opsPerSecItem.id,
     title: 'Network Input',
     icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
-    value: networkInKbps,
+    value: networkIn,
     content: (
       <>
-        <b>{networkInKbps}</b>
-        &nbsp;kb/s
+        <b>{networkIn}</b>
+        &nbsp;{networkInUnit}
       </>
     ),
     unavailableText: 'Network Input is not available',
@@ -137,23 +142,23 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
       icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
       content: (
         <>
-          <b>{networkInKbps}</b>
-          &nbsp;kb/s
+          <b>{networkIn}</b>
+          &nbsp;{networkInUnit}
         </>
       ),
     },
   }
 
-  const networkOutKbpsItem = {
+  const networkOutItem = {
     id: 'network-output-tip',
     groupId: opsPerSecItem.id,
     title: 'Network Output',
     icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
-    value: networkOutKbps,
+    value: networkOut,
     content: (
       <>
-        <b>{networkOutKbps}</b>
-        &nbsp;kb/s
+        <b>{networkOut}</b>
+        &nbsp;{networkOutUnit}
       </>
     ),
     unavailableText: 'Network Output is not available',
@@ -162,8 +167,8 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
       icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
       content: (
         <>
-          <b>{networkOutKbps}</b>
-          &nbsp;kb/s
+          <b>{networkOut}</b>
+          &nbsp;{networkOutUnit}
         </>
       ),
     },
@@ -179,8 +184,8 @@ export const getOverviewMetrics = ({ theme, items, db = 0 }: Props): Array<IMetr
         content: opsPerSecond,
         unavailableText: 'Commands/s are not available',
       },
-      networkInKbpsItem,
-      networkOutKbpsItem
+      networkInItem,
+      networkOutItem
     ]
   }
 

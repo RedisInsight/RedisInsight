@@ -3,6 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import AddKeyList, { Props } from './AddKeyList'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
+import { HEAD_DESTINATION } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
 
 const mockedProps = mock<Props>()
 
@@ -33,6 +34,16 @@ describe('AddKeyList', () => {
     expect(valueInput).toHaveValue(value)
   })
 
+  it('should set destination properly', () => {
+    render(<AddKeyList {...instance(mockedProps)} />)
+    const destinationSelect = screen.getByTestId('destination-select')
+    fireEvent.change(
+      destinationSelect,
+      { target: { value: HEAD_DESTINATION } }
+    )
+    expect(destinationSelect).toHaveValue(HEAD_DESTINATION)
+  })
+
   it('should render disabled add key button with empty keyName', () => {
     const { container } = render(<AddKeyList {...instance(mockedProps)} />)
     expect(container.querySelector('.btn-add')).toBeDisabled()
@@ -52,7 +63,6 @@ describe('AddKeyList', () => {
 
   it('should not allow deleting the last element', () => {
     render(<AddKeyList {...instance(mockedProps)} keyName="name" />)
-    fireEvent.click(screen.getByTestId('add-item'))
     const deleteButtons = screen.getAllByTestId('remove-item')
     expect(deleteButtons[0]).toBeDisabled()
   })

@@ -41,7 +41,6 @@ describe('AddListElements', () => {
 
   it('should not allow deleting the last element', () => {
     render(<AddListElements {...instance(mockedProps)} />)
-    fireEvent.click(screen.getByTestId('add-item'))
     const deleteButtons = screen.getAllByTestId('remove-item')
     expect(deleteButtons[0]).toBeDisabled()
   })

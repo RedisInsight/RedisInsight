@@ -93,6 +93,22 @@ describe('ListService', () => {
       ).resolves.not.toThrow();
       expect(service.createListWithExpiration).not.toHaveBeenCalled();
     });
+
+    it('create list with expiration and push at the head', async () => {
+      when(mockStandaloneRedisClient.sendCommand)
+        .calledWith([
+          BrowserToolListCommands.LPush,
+          mockPushElementDto.keyName,
+          ...mockPushElementDto.elements,
+        ])
+        .mockResolvedValue(1);
+
+      await expect(
+        service.createList(mockBrowserClientMetadata, mockPushElementDto),
+      ).resolves.not.toThrow();
+      expect(service.createListWithExpiration).not.toHaveBeenCalled();
+    });
+
     it('key with this name exist', async () => {
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, mockPushElementDto.keyName])
@@ -475,7 +491,7 @@ describe('ListService', () => {
     it("shouldn't throw error", async () => {
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
-          [BrowserToolListCommands.LPush, dto.keyName, ...dto.elements],
+          [BrowserToolListCommands.RPush, dto.keyName, ...dto.elements],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
         .mockResolvedValue([
@@ -490,11 +506,11 @@ describe('ListService', () => {
     it('should throw error', async () => {
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
-        command: 'LPUSH',
+        command: 'RPUSH',
       };
       when(mockStandaloneRedisClient.sendPipeline)
         .calledWith([
-          [BrowserToolListCommands.LPush, dto.keyName, ...dto.elements],
+          [BrowserToolListCommands.RPush, dto.keyName, ...dto.elements],
           [BrowserToolKeysCommands.Expire, dto.keyName, dto.expire],
         ])
         .mockResolvedValue([[replyError, []]]);

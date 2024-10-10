@@ -6,6 +6,8 @@ export enum Theme {
   System = 'SYSTEM',
 }
 
+export const DEFAULT_THEME = window.riConfig.app.defaultTheme
+
 export const THEMES: EuiSuperSelectOption<string>[] = [
   {
     inputDisplay: 'Match System',

@@ -170,7 +170,8 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
-      onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE
+      onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
+      featureFlag: FeatureFlags.disabledByEnv,
     },
   ]
 
@@ -313,35 +314,51 @@ const NavigationMenu = () => {
         <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
           <NotificationMenu />
         </FeatureFlagComponent>
-        <HelpMenu />
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <HelpMenu />
+        </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
-        <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
-        <Divider
-          colorVariable="separatorNavigationColor"
-          className="eui-showFor--xs--flex eui-showFor--s--flex"
-          variant="middle"
-          orientation="vertical"
-        />
-        <EuiToolTip
-          content="Redis Insight Repository"
-          position="right"
+        <FeatureFlagComponent
+          name={FeatureFlags.disabledByEnv}
+          enabledByDefault
+          otherwise={(
+            <Divider
+              color="transparent"
+              className="eui-hideFor--xs eui-hideFor--s"
+              variant="middle"
+            />
+          )}
         >
-          <span className={cx(styles.iconNavItem, styles.githubLink)}>
-            <EuiLink
-              external={false}
-              href={EXTERNAL_LINKS.githubRepo}
-              target="_blank"
-              data-test-subj="github-repo-btn"
-            >
-              <EuiIcon
-                className={styles.githubIcon}
-                aria-label="redis insight github repository"
-                type={GithubSVG}
-                data-testid="github-repo-icon"
-              />
-            </EuiLink>
-          </span>
-        </EuiToolTip>
+          <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+        </FeatureFlagComponent>
+        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <Divider
+            colorVariable="separatorNavigationColor"
+            className="eui-showFor--xs--flex eui-showFor--s--flex"
+            variant="middle"
+            orientation="vertical"
+          />
+          <EuiToolTip
+            content="Redis Insight Repository"
+            position="right"
+          >
+            <span className={cx(styles.iconNavItem, styles.githubLink)}>
+              <EuiLink
+                external={false}
+                href={EXTERNAL_LINKS.githubRepo}
+                target="_blank"
+                data-test-subj="github-repo-btn"
+              >
+                <EuiIcon
+                  className={styles.githubIcon}
+                  aria-label="redis insight github repository"
+                  type={GithubSVG}
+                  data-testid="github-repo-icon"
+                />
+              </EuiLink>
+            </span>
+          </EuiToolTip>
+        </FeatureFlagComponent>
       </div>
     </EuiPageSideBar>
   )

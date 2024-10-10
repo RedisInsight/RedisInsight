@@ -70,7 +70,9 @@ const appFeaturesSlice = createSlice({
       localStorageService.set(BrowserStorageItem.featuresHighlighting, { version, features })
     },
     setOnboarding: (state, { payload }) => {
-      if (payload.currentStep > payload.totalSteps) {
+      const disabledByEnv = state.featureFlags.features[FeatureFlags.disabledByEnv]?.flag ?? true
+      if (payload.currentStep > payload.totalSteps || !disabledByEnv) {
+        state.onboarding.isActive = false
         localStorageService.set(BrowserStorageItem.onboardingStep, null)
         return
       }

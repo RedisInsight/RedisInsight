@@ -17,7 +17,12 @@ import { ConstantsProvider } from 'src/modules/constants/providers/constants.pro
 
 const SOCKETS_CONFIG = config.get('sockets');
 
-@WebSocketGateway({ path: SOCKETS_CONFIG.path, cors: SOCKETS_CONFIG.cors, serveClient: SOCKETS_CONFIG.serveClient })
+@WebSocketGateway({
+  path: SOCKETS_CONFIG.path,
+  cors: SOCKETS_CONFIG.cors.enabled
+    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
+  serveClient: SOCKETS_CONFIG.serveClient
+})
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Server;
 

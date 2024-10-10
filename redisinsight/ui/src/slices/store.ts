@@ -23,6 +23,7 @@ import monitorReducer from './cli/monitor'
 import userSettingsReducer from './user/user-settings'
 import appInfoReducer from './app/info'
 import appContextReducer from './app/context'
+import appCsrfReducer from './app/csrf'
 import appRedisCommandsReducer from './app/redis-commands'
 import appPluginsReducer from './app/plugins'
 import appsSocketConnectionReducer from './app/socket-connection'
@@ -61,6 +62,7 @@ export const rootReducer = combineReducers({
     socketConnection: appsSocketConnectionReducer,
     features: appFeaturesReducer,
     urlHandling: appUrlHandlingReducer,
+    csrf: appCsrfReducer,
   }),
   connections: combineReducers({
     instances: instancesReducer,
@@ -126,7 +128,7 @@ export const rootReducer = combineReducers({
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
-  devTools: process.env.NODE_ENV !== 'production',
+  devTools: window.riConfig.app.env !== 'production',
 })
 
 export { store }

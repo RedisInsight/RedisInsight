@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RecommendationScanner } from 'src/modules/database-recommendation/scanner/recommendations.scanner';
 import { RecommendationProvider } from 'src/modules/database-recommendation/scanner/recommendation.provider';
 import { FeatureService } from 'src/modules/feature/feature.service';
-import { mockFeatureService, MockType } from 'src/__mocks__';
+import { mockFeatureService, mockSessionMetadata, MockType } from 'src/__mocks__';
+import { KnownFeatures } from 'src/modules/feature/constants';
 
 const mockRecommendationStrategy = () => ({
   isRecommendationReached: jest.fn(),
@@ -46,9 +47,15 @@ describe('RecommendationScanner', () => {
     it('should determine recommendation', async () => {
       recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
 
-      expect(await service.determineRecommendation('name', {
-        data: mockData,
-      })).toEqual({ name: 'name' });
+      expect(await service.determineRecommendation(
+        mockSessionMetadata,
+        'name',
+        {
+          data: mockData,
+        },
+      )).toEqual({ name: 'name' });
+      expect(featureService.isFeatureEnabled)
+        .toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.InsightsRecommendations);
     });
 
     it('should return null when feature disabled', async () => {
@@ -56,25 +63,37 @@ describe('RecommendationScanner', () => {
 
       recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
 
-      expect(await service.determineRecommendation('name', {
-        data: mockData,
-      })).toEqual(null);
+      expect(await service.determineRecommendation(
+        mockSessionMetadata,
+        'name',
+        {
+          data: mockData,
+        },
+      )).toEqual(null);
     });
 
     it('should return null when isRecommendationReached throw error', async () => {
       recommendationStrategy.isRecommendationReached.mockRejectedValueOnce(new Error());
 
-      expect(await service.determineRecommendation('name', {
-        data: mockData,
-      })).toEqual(null);
+      expect(await service.determineRecommendation(
+        mockSessionMetadata,
+        'name',
+        {
+          data: mockData,
+        },
+      )).toEqual(null);
     });
 
     it('should return null when isReached is false', async () => {
       recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: false });
 
-      expect(await service.determineRecommendation('name', {
-        data: mockData,
-      })).toEqual(null);
+      expect(await service.determineRecommendation(
+        mockSessionMetadata,
+        'name',
+        {
+          data: mockData,
+        },
+      )).toEqual(null);
     });
   });
 });

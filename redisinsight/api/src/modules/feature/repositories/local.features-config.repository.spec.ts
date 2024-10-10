@@ -5,6 +5,7 @@ import {
   mockFeaturesConfig,
   mockFeaturesConfigEntity,
   mockRepository,
+  mockSessionMetadata,
   MockType,
 } from 'src/__mocks__'
 import { LocalFeaturesConfigRepository } from 'src/modules/feature/repositories/local.features-config.repository';
@@ -104,7 +105,7 @@ describe('LocalFeaturesConfigRepository', () => {
 
   describe('update', () => {
     it('should update config', async () => {
-      const result = await service.update(defaultConfig);
+      const result = await service.update(mockSessionMetadata, defaultConfig);
 
       expect(result).toEqual(mockFeaturesConfig);
       expect(repository.update).toHaveBeenCalledWith(

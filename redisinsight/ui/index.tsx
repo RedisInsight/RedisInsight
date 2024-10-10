@@ -1,5 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import 'uiSrc/config'
 import App from 'uiSrc/App'
 import Router from 'uiSrc/Router'
 import { listenPluginsEvents } from 'uiSrc/plugins/pluginEvents'

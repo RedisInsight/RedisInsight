@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiTab, EuiTabs } from '@elastic/eui'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import cx from 'classnames'
 import { Header } from 'uiSrc/components/side-panels/components'
 import styles from 'uiSrc/components/side-panels/styles.module.scss'
@@ -13,6 +13,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 export interface Props {
   isFullScreen: boolean
@@ -24,9 +25,16 @@ const InsightsPanel = (props: Props) => {
   const { isFullScreen, onToggleFullScreen, onClose } = props
   const { tabSelected } = useSelector(insightsPanelSelector)
   const { data: { totalUnread } } = useSelector(recommendationsSelector)
+  const { provider } = useSelector(connectedInstanceSelector)
 
   const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
+
+  const { pathname } = useLocation()
+
+  const page = pathname
+    .replace(instanceId, '')
+    .replace(/^\//g, '')
 
   const handleChangeTab = (name: InsightsPanelTabs) => {
     if (tabSelected === name) return
@@ -41,6 +49,20 @@ const InsightsPanel = (props: Props) => {
         currentTab: name,
       },
     })
+  }
+
+  const handleClose = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
+      eventData: {
+        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
+        provider,
+        page,
+        tab: tabSelected
+      },
+    })
+
+    onClose?.()
   }
 
   const Tabs = useCallback(() => (
@@ -86,7 +108,7 @@ const InsightsPanel = (props: Props) => {
       <Header
         isFullScreen={isFullScreen}
         onToggleFullScreen={onToggleFullScreen}
-        onClose={onClose}
+        onClose={handleClose}
         panelName="insights"
       >
         <div className={styles.titleWrapper}>

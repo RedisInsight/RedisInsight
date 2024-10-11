@@ -54,6 +54,9 @@ If you have any issues occurring in Redis Insight, you can follow the steps belo
 
 * [How to debug](https://github.com/RedisInsight/RedisInsight/wiki/How-to-debug)
 
+## Redis Insight API (only for Docker)
+http://localhost:5540/api/docs
+
 ## Feedback
 
 * Request a new [feature](https://github.com/RedisInsight/RedisInsight/issues/new?assignees=&labels=&template=feature_request.md&title=%5BFeature+Request%5D%3A)

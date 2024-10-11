@@ -55,7 +55,7 @@ If you have any issues occurring in Redis Insight, you can follow the steps belo
 * [How to debug](https://github.com/RedisInsight/RedisInsight/wiki/How-to-debug)
 
 ## Redis Insight API (only for Docker)
-http://localhost:5540/api/docs
+If you are running Redis Insight from [Docker](https://hub.docker.com/r/redis/redisinsight), you can access the API from `http://localhost:5540/api/docs`.
 
 ## Feedback
 

@@ -36,7 +36,7 @@ export class RdiClientProvider {
       this.logger.error(`RDI with ${clientMetadata.id} was not Found`);
       throw new NotFoundException(ERROR_MESSAGES.INVALID_RDI_INSTANCE_ID);
     }
-    const rdiClient = this.rdiClientFactory.createClient(clientMetadata, rdi);
+    const rdiClient = await this.rdiClientFactory.createClient(clientMetadata, rdi);
     if (rdiClient) {
       this.updateLastConnection(clientMetadata);
     }

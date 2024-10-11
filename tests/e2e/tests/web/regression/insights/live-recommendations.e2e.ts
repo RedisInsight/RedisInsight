@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { BrowserPage, MemoryEfficiencyPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
-import { ExploreTabs, KeysInteractionTabs, RecommendationIds, rte } from '../../../../helpers/constants';
+import { ExploreTabs, RecommendationIds, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config, ossStandaloneV7Config } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
@@ -246,8 +246,7 @@ test
         //Verify that user is navigated to DB Analysis page via Analyze button and new report is generated
         await t.click(memoryEfficiencyPage.selectedReport);
         await t.expect(memoryEfficiencyPage.reportItem.visible).ok('Database analysis page not opened');
-        await t.click(memoryEfficiencyPage.NavigationPanel.browserButton);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(memoryEfficiencyPage.NavigationPanel.workbenchButton);
         await workbenchPage.NavigationHeader.togglePanel(true);
         tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
         await t.click(tab.analyzeDatabaseLink);

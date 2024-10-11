@@ -1,6 +1,6 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../../pageObjects';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
@@ -38,7 +38,7 @@ fixture `Workbench modes to non-auto guides`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database
@@ -47,7 +47,7 @@ fixture `Workbench modes to non-auto guides`
 test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandInWorkbench(`set ${keyName} "${keyValue}"`);
     })
     .after(async t => {

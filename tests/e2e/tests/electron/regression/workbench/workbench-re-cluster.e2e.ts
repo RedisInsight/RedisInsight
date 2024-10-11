@@ -1,5 +1,5 @@
 import { t } from 'testcafe';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, redisEnterpriseClusterConfig } from '../../../../helpers/conf';
@@ -18,8 +18,7 @@ const verifyCommandsInWorkbench = async(): Promise<void> => {
         'FT.SEARCH idx *'
     ];
 
-    await t.click(myRedisDatabasePage.NavigationPanel.browserButton);
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     // Send commands
     await workbenchPage.sendCommandInWorkbench(commandForSend1);
     await workbenchPage.sendCommandInWorkbench(commandForSend2);

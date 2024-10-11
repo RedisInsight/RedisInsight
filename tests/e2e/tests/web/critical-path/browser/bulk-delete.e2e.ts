@@ -1,4 +1,4 @@
-import { KeysInteractionTabs, KeyTypesTexts, rte } from '../../../../helpers/constants';
+import { KeyTypesTexts, rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../../helpers/conf';
@@ -99,9 +99,9 @@ test
         await t.click(browserPage.bulkActionsButton);
         await browserPage.BulkActions.startBulkDelete();
         // Go to Workbench page
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         // Go to Browser Page
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.BrowserAndFilter);
+        await t.click(browserPage.NavigationPanel.browserButton);
         await t.expect(browserPage.BulkActions.bulkStatusInProgress.exists).ok('Progress value not displayed', { timeout: 5000 });
     });
 test

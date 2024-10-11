@@ -1,5 +1,5 @@
 import { ClientFunction } from 'testcafe';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneV5Config } from '../../../../helpers/conf';
@@ -18,7 +18,7 @@ fixture `Redisearch module not available`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneV5Config);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Delete database

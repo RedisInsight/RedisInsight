@@ -1,6 +1,6 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { WorkbenchPage, BrowserPage } from '../../../../pageObjects';
-import { ExploreTabs, KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { ExploreTabs, rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -14,7 +14,7 @@ fixture `Workbench Auto-Execute button`
     .page(commonUrl)
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async() => {
         // Clear and delete database

@@ -1,6 +1,6 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { WorkbenchPage, MyRedisDatabasePage, BrowserPage } from '../../../../pageObjects';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig, ossStandaloneRedisearch } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
@@ -32,7 +32,7 @@ fixture `Workbench Raw mode`
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneConfig);
         // Go to Workbench page
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .afterEach(async t => {
         // Clear and delete database
@@ -65,7 +65,7 @@ test
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[0].databaseName);
         // Go to Workbench page
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .after(async() => {
         // Clear and delete database
@@ -82,7 +82,7 @@ test
         await t.click(myRedisDatabasePage.NavigationPanel.myRedisDBButton);
         await myRedisDatabasePage.clickOnDBByName(databasesForAdding[1].databaseName);
         // Go to Workbench page
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         // Verify that user can see saved Raw mode state after re-connection to another DB
         await workbenchPage.sendCommandInWorkbench(commandsForSend[1]);
         await workbenchPage.checkWorkbenchCommandResult(commandsForSend[1], `"${unicodeValue}"`);
@@ -94,7 +94,7 @@ test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Go to Workbench page
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .after(async t => {
         // Drop index, documents and database

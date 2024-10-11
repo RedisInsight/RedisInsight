@@ -75,9 +75,7 @@ export const appendTokenWithQuery = (
 ): languages.IMonarchLanguageRule[] =>
   args.map(({ token }) => [`(${token.token})\\b`, { token: `argument.block.${level}`, next: `@query.${token.token}` }])
 
-export const appendQueryWithNextFunctions = (
-  tokens: Array<{ token: SearchCommand, arguments: SearchCommand[] }>
-): {
+export const appendQueryWithNextFunctions = (tokens: Array<{ token: SearchCommand, arguments: SearchCommand[] }>): {
   [name: string]: languages.IMonarchLanguageRule[]
 } => {
   let result: { [name: string]: languages.IMonarchLanguageRule[] } = {}
@@ -93,19 +91,16 @@ export const appendQueryWithNextFunctions = (
 }
 
 export const generateTokensWithFunctions = (
-  name: string = '',
   tokens?: Array<Array<{ token: SearchCommand, arguments: SearchCommand[] }>>
 ): {
   [name: string]: languages.IMonarchLanguageRule[]
 } => {
-  if (!tokens) return {}
+  if (!tokens) return { 'argument.block.withFunctions': [] }
 
   const actualTokens = tokens.filter((tokens) => tokens.length)
 
-  if (!actualTokens.length) return {}
-
   return {
-    [`argument.block.${name}.withFunctions`]: [
+    'argument.block.withFunctions': [
       ...actualTokens
         .map((tokens, lvl) => appendTokenWithQuery(tokens, lvl))
         .flat()
@@ -115,7 +110,6 @@ export const generateTokensWithFunctions = (
 }
 
 export const getBlockTokens = (
-  name: string = '',
   pureTokens: Maybe<Array<SearchCommand>[]>
 ): languages.IMonarchLanguageRule[] => {
   if (!pureTokens) return []
@@ -132,14 +126,14 @@ export const getBlockTokens = (
       result.push([
         `(${tokensWithNextExpression.map(({ token }) => token).join('|')})\\b`,
         {
-          token: `argument.block.${lvl}.${name}`,
+          token: `argument.block.${lvl}`,
           next: '@query'
         },
       ])
     }
 
     if (restTokens.length) {
-      result.push([`(${restTokens.map(({ token }) => token).join('|')})\\b`, { token: `argument.block.${lvl}.${name}`, next: '@root' }])
+      result.push([`(${restTokens.map(({ token }) => token).join('|')})\\b`, { token: `argument.block.${lvl}`, next: '@root' }])
     }
 
     return result

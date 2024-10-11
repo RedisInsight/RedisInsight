@@ -1,3 +1,4 @@
+import { merge } from 'lodash'
 import { defaultMonacoOptions, TutorialsIds } from 'uiSrc/constants'
 
 export const argInQuotesRegExp = /^['"](.|[\r\n])*['"]$/
@@ -6,7 +7,16 @@ export const aroundQuotesRegExp = /(^["']|["']$)/g
 export const SYNTAX_CONTEXT_ID = 'syntaxWidgetContext'
 export const SYNTAX_WIDGET_ID = 'syntax.content.widget'
 
-export const options = { ...defaultMonacoOptions }
+export const options = merge(defaultMonacoOptions,
+  {
+    suggest: {
+      showWords: false,
+      showIcons: true,
+      insertMode: 'replace',
+      filterGraceful: false,
+      matchOnWordStartOnly: true
+    }
+  })
 
 export const TUTORIALS = [
   {

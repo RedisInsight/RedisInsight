@@ -7,7 +7,7 @@ import {
     ossStandaloneConfig,
     ossStandaloneV5Config
 } from '../../../../helpers/conf';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { verifyKeysDisplayingInTheList } from '../../../../helpers/keys';
@@ -242,8 +242,8 @@ test
         await t.click(browserPage.getKeySelectorByName(keyName));
 
         // Verify that Redisearch context (inputs, key selected, scroll, key details) saved after switching between pages
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.BrowserAndFilter);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
+        await t.click(browserPage.NavigationPanel.browserButton);
         await verifyContext();
 
         // Verify that Redisearch context saved when switching between browser/tree view

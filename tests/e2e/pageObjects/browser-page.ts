@@ -2,12 +2,10 @@ import { t, Selector } from 'testcafe';
 import { Common } from '../helpers/common';
 import { InstancePage } from './instance-page';
 import { BulkActions, TreeView } from './components/browser';
-import { KeysInteractionPanel } from './components/keys-interaction-panel';
 
 export class BrowserPage extends InstancePage {
     BulkActions = new BulkActions();
     TreeView = new TreeView();
-    KeysInteractionPanel = new KeysInteractionPanel();
 
     //CSS Selectors
     cssSelectorGrid = '[aria-label="grid"]';

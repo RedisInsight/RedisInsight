@@ -1,7 +1,7 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { WorkbenchPage, BrowserPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneRedisearch } from '../../../../helpers/conf';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
 import { WorkbenchActions } from '../../../../common-actions/workbench-actions';
@@ -25,7 +25,7 @@ fixture `Command results at Workbench`
     .beforeEach(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
         // Add index and data
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForIndex);
     })
     .afterEach(async t => {
@@ -114,7 +114,7 @@ test('Big output in workbench is visible in virtualized table', async t => {
 test
     .before(async t => {
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(ossStandaloneRedisearch);
-        await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+        await t.click(browserPage.NavigationPanel.workbenchButton);
     })
     .after(async t => {
         await t.switchToMainWindow();

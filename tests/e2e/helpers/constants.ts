@@ -83,12 +83,6 @@ export enum ExploreTabs {
     Tips = 'Tips',
 }
 
-export enum KeysInteractionTabs {
-    BrowserAndFilter  = 'Browser and filter',
-    SearchAndQuery = 'Search and query',
-    Workbench = 'Workbench'
-}
-
 export enum Compatibility {
     SearchAndQuery  = 'search',
     Json = 'json',

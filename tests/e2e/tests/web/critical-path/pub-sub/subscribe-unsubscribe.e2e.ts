@@ -1,7 +1,7 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, MyRedisDatabasePage, PubSubPage, WorkbenchPage } from '../../../../pageObjects';
 import { commonUrl, ossStandaloneConfig, ossStandaloneV5Config } from '../../../../helpers/conf';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { verifyMessageDisplayingInPubSub } from '../../../../helpers/pub-sub';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
@@ -121,8 +121,7 @@ test('Verify that user can see a internal link to pubsub window under word “Pu
     await t.expect(pubSubPage.pubSubPageContainer.exists).ok('Pubsub page is opened');
 
     // Verify that user can see a custom message when he tries to run SUBSCRIBE command in Workbench: “Use Pub/Sub tool to subscribe to channels.”
-    await t.click(pubSubPage.NavigationPanel.browserButton);
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     await workbenchPage.sendCommandInWorkbench(commandSecond);
     await t.expect(await workbenchPage.queryResult.textContent).eql('Use Pub/Sub tool to subscribe to channels.', 'Message is not displayed', { timeout: 10000 });
 

@@ -3,7 +3,7 @@ import {
     MyRedisDatabasePage,
     BrowserPage
 } from '../../../../pageObjects';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { commonUrl, ossStandaloneConfig } from '../../../../helpers/conf';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { Common } from '../../../../helpers/common';
@@ -53,9 +53,9 @@ test('Verify that when user reload the window with saved context(on any page), c
     // Create context modificaions and navigate to Workbench
     await browserPage.addStringKey(keyName);
     await browserPage.openKeyDetails(keyName);
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.Workbench);
+    await t.click(browserPage.NavigationPanel.workbenchButton);
     // Open Browser page and verify context
-    await browserPage.KeysInteractionPanel.setActiveTab(KeysInteractionTabs.BrowserAndFilter);
+    await t.click(browserPage.NavigationPanel.browserButton);
     await verifySearchFilterValue(keyName);
     await t.expect(browserPage.keyNameFormDetails.withExactText(keyName).exists).ok('The key details is not selected');
     // Navigate to Workbench and reload the window

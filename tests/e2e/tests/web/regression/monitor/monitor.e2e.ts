@@ -10,7 +10,7 @@ import {
     ossStandaloneBigConfig,
     ossStandaloneConfig,
 } from '../../../../helpers/conf';
-import { KeysInteractionTabs, rte } from '../../../../helpers/constants';
+import { rte } from '../../../../helpers/constants';
 import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();

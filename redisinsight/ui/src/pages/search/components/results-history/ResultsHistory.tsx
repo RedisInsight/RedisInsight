@@ -20,7 +20,7 @@ import { searchAndQuerySelector } from 'uiSrc/slices/search/searchAndQuery'
 import { CommandExecutionType, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
-import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils'
+import { generateProfileQueryForCommand } from 'uiSrc/pages/workbench/utils/profile'
 import { CodeButtonParams } from 'uiSrc/constants'
 import styles from './styles.module.scss'
 

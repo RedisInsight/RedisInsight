@@ -12,8 +12,8 @@ import { appContextSearchAndQuery, setSQScript } from 'uiSrc/slices/app/context'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import { SUPPORTED_COMMANDS_LIST } from 'uiSrc/pages/search/components/query/constants'
 import { SearchCommand } from 'uiSrc/pages/search/types'
+import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 import { TUTORIALS } from './constants'
 
 import REDIS_COMMANDS_SPEC from '../constants/supported_commands.json'
@@ -49,7 +49,7 @@ const QueryWrapper = (props: Props) => {
     (name in REDIS_COMMANDS_SPEC ? REDIS_COMMANDS_SPEC[name] : (spec[name] || {}))
 
   const SUPPORTED_COMMANDS = commandsArray
-    .filter((item) => item.startsWith('FT.'))
+    .filter((item) => item.startsWith(ModuleCommandPrefix.RediSearch))
     .map((name) => ({ ...getCommandByName(name), name })) as unknown as SearchCommand[]
 
   const { instanceId } = useParams<{ instanceId: string }>()

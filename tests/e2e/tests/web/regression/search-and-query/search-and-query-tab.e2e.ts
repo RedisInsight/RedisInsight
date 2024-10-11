@@ -61,7 +61,7 @@ test('Verify that user can use show more to see command fully in 2nd tooltip', a
         'required query',
         'optional [verbatim]'
     ];
-    await t.typeText(workbenchPage.queryInput, 'FT', { replace: true });
+    await t.typeText(workbenchPage.queryInput, 'FT.A', { replace: true });
     // Verify that user can use show more to see command fully in 2nd tooltip
     await t.pressKey('ctrl+space');
     await t.expect(workbenchPage.MonacoEditor.monacoCommandDetails.exists).ok('The "read more" about the command is not opened');
@@ -87,7 +87,7 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     // Verify basic commands suggestions FT.SEARCH and FT.AGGREGATE
     await t.typeText(workbenchPage.queryInput, 'FT', { replace: true });
     // Verify that the list with FT.SEARCH and FT.AGGREGATE auto-suggestions is displayed
-    await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT.SEARCH').exists).ok('FT.SEARCH auto-suggestions are not displayed');
+    await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT._LIST').exists).ok('FT._LIST auto-suggestions are not displayed');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT.AGGREGATE').exists).ok('FT.AGGREGATE auto-suggestions are not displayed');
 
     // Select command and check result

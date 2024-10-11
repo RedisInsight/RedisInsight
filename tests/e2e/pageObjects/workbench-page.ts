@@ -95,7 +95,7 @@ export class WorkbenchPage extends InstancePage {
     queryTextResult = Selector(this.cssQueryTextResult);
 
     getTutorialLinkLocator = (tutorialName: string): Selector =>
-        Selector(`[data-testid=query-tutorials-link_${tutorialName}]`);
+        Selector(`[data-testid=query-tutorials-link_${tutorialName}]`, { timeout: 1000 } );
 
 
     // Select view option in Workbench results

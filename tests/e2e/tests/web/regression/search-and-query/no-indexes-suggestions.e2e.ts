@@ -23,10 +23,10 @@ test
 
     })('Verify suggestions when there are no indexes', async t => {
 
-        // TODO add navigation to search and query Monaco
+        await t.click(browserPage.NavigationPanel.workbenchButton);
 
         await t.typeText(workbenchPage.queryInput, 'FT.SE', { replace: true });
-        await t.pressKey('enter');
+        await t.pressKey('tab');
 
         await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('No indexes to display').exists).ok('info text is not displayed');
 

@@ -15,7 +15,7 @@ export const mockListElement2 = Buffer.from('Lorem ipsum dolor sit amet2.');
 export const mockListElements = [mockListElement];
 export const mockPushElementDto: PushElementToListDto = {
   keyName: mockKeyDto.keyName,
-  element: mockListElement,
+  elements: mockListElements,
   destination: ListElementDestination.Tail,
 };
 export const mockGetListElementsDto: GetListElementsDto = {

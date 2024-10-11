@@ -263,6 +263,7 @@ test
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
     })('Verify that key name is displayed for Insights and DA recommendations', async t => {
         const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
+        await browserPage.Cli.sendCommandInCli('flushdb');
         await browserPage.Cli.sendCommandInCli(cliCommand);
         await t.click(browserPage.refreshKeysButton);
         await browserPage.NavigationHeader.togglePanel(true);

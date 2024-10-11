@@ -25,8 +25,13 @@
   "author": "",
   "dependencies": {
     "axios": "^1.6.0",
+    "brotli-unicode": "^1.0.2",
     "cli-argument-parser": "0.4.5",
-    "js-yaml": "^4.1.0"
+    "fflate": "^0.8.2",
+    "js-yaml": "^4.1.0",
+    "lz4js": "^0.2.0",
+    "msgpackr": "^1.11.0",
+    "protobufjs": "^7.4.0"
   },
   "resolutions": {
     "@types/lodash": "4.14.192",

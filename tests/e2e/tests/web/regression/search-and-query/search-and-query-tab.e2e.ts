@@ -48,7 +48,7 @@ fixture `Autocomplete for entered commands in search and query`
     });
 test('Verify that tutorials can be opened from Workbench', async t => {
     await t.click(browserPage.NavigationPanel.workbenchButton);
-    await t.click(workbenchPage.getTutorialLinkLocator('sq-exact-match'));
+    await t.click(workbenchPage.getTutorialLinkLocator('_sq-intro'));
     await t.expect(workbenchPage.InsightsPanel.sidePanel.exists).ok('Insight panel is not opened');
     const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
     await t.expect(tab.preselectArea.textContent).contains('EXACT MATCH', 'the tutorial page is incorrect');

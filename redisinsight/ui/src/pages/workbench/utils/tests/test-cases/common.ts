@@ -51,7 +51,7 @@ export const commonfindCurrentArgumentCases = [
   {
     input: 'FT.CREATE "idx:schools" ',
     result: expect.any(Object),
-    appendIncludes: ['FILTER', 'ON', 'SCHEMA', 'SCORE', 'NOHL'],
+    appendIncludes: ['FILTER', 'ON', 'SCHEMA', 'SCORE', 'NOHL', 'STOPWORDS'],
     appendNotIncludes: ['HASH', 'JSON'],
   },
   {
@@ -179,5 +179,23 @@ export const commonfindCurrentArgumentCases = [
     result: expect.any(Object),
     appendIncludes: ['WITHPAYLOADS', 'WITHSCORES'],
     appendNotIncludes: ['FUZZY', 'MAX'],
+  },
+  {
+    input: 'FT.ALTER index SKIPINITIALSCAN ',
+    result: expect.any(Object),
+    appendIncludes: ['SCHEMA'],
+    appendNotIncludes: ['ADD'],
+  },
+  {
+    input: 'FT.SPELLCHECK idx "" ',
+    result: expect.any(Object),
+    appendIncludes: ['DIALECT', 'DISTANCE', 'TERMS'],
+    appendNotIncludes: ['EXCLUDE', 'INCLUDE'],
+  },
+  {
+    input: 'FT.SEARCH index "" HIGHLIGHT FIELDS 1 f1 ',
+    result: expect.any(Object),
+    appendIncludes: ['TAGS', 'SUMMARIZE', 'DIALECT', 'FILTER', 'WITHSCORES', 'INKEYS'],
+    appendNotIncludes: ['FIELDS'],
   },
 ]

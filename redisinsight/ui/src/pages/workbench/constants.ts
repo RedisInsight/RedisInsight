@@ -76,7 +76,10 @@ export const COMMANDS_TO_GET_INDEX_INFO = [
   'FT.PROFILE',
   'FT.SPELLCHECK',
   'FT.TAGVALS',
-  'FT.ALTER',
+  'FT.ALTER'
+]
+
+export const COMMANDS_WITHOUT_INDEX_PROPOSE = [
   'FT.CREATE'
 ]
 

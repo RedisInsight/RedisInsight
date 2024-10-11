@@ -3,7 +3,8 @@ import { Maybe } from 'uiSrc/utils'
 import { IRedisCommand, IRedisCommandTree } from 'uiSrc/constants'
 
 export enum ArgName {
-  NArgs = 'nargs'
+  NArgs = 'nargs',
+  Count = 'count'
 }
 
 export interface FoundCommandArgument {

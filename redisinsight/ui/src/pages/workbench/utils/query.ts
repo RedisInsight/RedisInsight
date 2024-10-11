@@ -104,6 +104,7 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
 export const findCurrentArgument = (
   args: IRedisCommand[],
   prev: string[],
+  untilTokenArgs: string[] = [],
   parent?: IRedisCommandTree
 ): Nullable<FoundCommandArgument> => {
   for (let i = prev.length - 1; i >= 0; i--) {
@@ -112,7 +113,7 @@ export const findCurrentArgument = (
     const currentWithParent: IRedisCommandTree = { ...currentArg, parent }
 
     if (currentArg?.arguments && currentArg?.type === ICommandTokenType.Block) {
-      return findCurrentArgument(currentArg.arguments, prev.slice(i), currentWithParent)
+      return findCurrentArgument(currentArg.arguments, prev.slice(i), prev, currentWithParent)
     }
 
     const tokenIndex = args.findIndex((cArg) =>
@@ -126,7 +127,7 @@ export const findCurrentArgument = (
       // getArgByRest - here we preparing the list of arguments which can be inserted,
       // this is the main function which creates the list of arguments
       return {
-        ...getArgumentSuggestions({ tokenArgs: pastArgs, levelArgs: prev }, commandArgs, parent),
+        ...getArgumentSuggestions({ tokenArgs: pastArgs, untilTokenArgs }, commandArgs, parent),
         parent: parent || token
       }
     }
@@ -232,7 +233,7 @@ const findStopArgumentInQuery = (
       continue
     }
 
-    if (currentCommandArg?.name === ArgName.NArgs) {
+    if (currentCommandArg?.name === ArgName.NArgs || currentCommandArg?.name === ArgName.Count) {
       const numberOfArgs = toNumber(arg)
 
       if (numberOfArgs === 0) {
@@ -286,9 +287,9 @@ const findStopArgumentInQuery = (
 }
 
 export const getArgumentSuggestions = (
-  { tokenArgs, levelArgs }: {
+  { tokenArgs, untilTokenArgs }: {
     tokenArgs: string[],
-    levelArgs: string[]
+    untilTokenArgs: string[]
   },
   pastCommandArgs: IRedisCommand[],
   current?: IRedisCommandTree
@@ -340,7 +341,7 @@ export const getArgumentSuggestions = (
   const foundParent = isBlockHasParent ? { ...parent, parent: current } : (parent || current)
 
   const isBlockComplete = !stopArgument && current?.name === lastArgument?.name
-  const beforeMandatoryOptionalArgs = getAllRestArguments(foundParent, lastArgument, levelArgs, isBlockComplete)
+  const beforeMandatoryOptionalArgs = getAllRestArguments(foundParent, lastArgument, untilTokenArgs, isBlockComplete)
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
   return {
@@ -357,8 +358,11 @@ export const getRestArguments = (
 ): IRedisCommandTree[] => {
   const argumentIndexInArg = current?.arguments
     ?.findIndex(({ name }) => name === stopArgument?.name)
-  const nextMandatoryIndex = argumentIndexInArg && argumentIndexInArg > -1 ? current?.arguments
-    ?.findIndex(({ optional }, i) => !optional && i > argumentIndexInArg) : -1
+  const nextMandatoryIndex = stopArgument && !stopArgument.optional
+    ? argumentIndexInArg
+    : argumentIndexInArg && argumentIndexInArg > -1 ? current?.arguments
+      ?.findIndex(({ optional }, i) => !optional && i > argumentIndexInArg) : -1
+
   const prevMandatory = current?.arguments?.slice(0, argumentIndexInArg).reverse()
     .find(({ optional }) => !optional)
   const prevMandatoryIndex = current?.arguments?.findIndex(({ name }) => name === prevMandatory?.name)
@@ -387,12 +391,12 @@ export const getRestArguments = (
 export const getAllRestArguments = (
   current: Maybe<IRedisCommandTree>,
   stopArgument: Nullable<IRedisCommand>,
-  prevStringArgs: string[] = [],
+  untilTokenArgs: string[] = [],
   skipLevel = false
 ) => {
   const appendArgs: Array<IRedisCommand[]> = []
   const currentLvlNextArgs = removeNotSuggestedArgs(
-    prevStringArgs,
+    untilTokenArgs,
     getRestArguments(current, stopArgument)
   )
 
@@ -401,7 +405,7 @@ export const getAllRestArguments = (
   }
 
   if (current?.parent) {
-    const parentArgs = getAllRestArguments(current.parent, current, skipLevel ? prevStringArgs : [])
+    const parentArgs = getAllRestArguments(current.parent, current, untilTokenArgs)
     if (parentArgs?.length) {
       appendArgs.push(...parentArgs)
     }
@@ -421,7 +425,8 @@ export const removeNotSuggestedArgs = (args: string[], commandArgs: IRedisComman
     }
 
     if (arg.type === ICommandTokenType.Block) {
-      return arg.arguments?.[0]?.token && !args.includes(arg.arguments?.[0]?.token?.toUpperCase())
+      if (arg.token) return !args.includes(arg.token) || arg.multiple
+      return arg.arguments?.[0]?.token && (!args.includes(arg.arguments?.[0]?.token?.toUpperCase()) || arg.multiple)
     }
 
     return arg.token && !args.includes(arg.token)
@@ -437,6 +442,11 @@ export const fillArgsByType = (args: IRedisCommand[], expandBlock = true): IRedi
       result.push(...(currentArg?.arguments?.map((arg) => ({ ...arg, parent: currentArg })) || []))
     }
 
+    if (currentArg.token) {
+      result.push(currentArg)
+      continue
+    }
+
     if (currentArg.type === ICommandTokenType.Block) {
       result.push({
         multiple: currentArg.multiple,
@@ -445,7 +455,6 @@ export const fillArgsByType = (args: IRedisCommand[], expandBlock = true): IRedi
         ...(currentArg?.arguments?.[0] as IRedisCommand || {}),
       })
     }
-    if (currentArg.token) result.push(currentArg)
   }
 
   return result

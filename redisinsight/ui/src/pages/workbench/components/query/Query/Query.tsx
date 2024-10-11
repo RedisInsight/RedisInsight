@@ -112,6 +112,7 @@ const Query = (props: Props) => {
   const selectedArg = useRef('')
   const syntaxCommand = useRef<any>(null)
   const isDedicatedEditorOpenRef = useRef<boolean>(isDedicatedEditorOpen)
+  const isEscapedSuggestions = useRef<boolean>(false)
   let syntaxWidgetContext: Nullable<monacoEditor.editor.IContextKey<boolean>> = null
 
   const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
@@ -313,6 +314,10 @@ const Query = (props: Props) => {
 
     if (e.keyCode === monacoEditor.KeyCode.Enter || e.keyCode === monacoEditor.KeyCode.Space) {
       onExitSnippetMode()
+    }
+
+    if (e.keyCode === monacoEditor.KeyCode.Escape && isSuggestionsOpened()) {
+      isEscapedSuggestions.current = true
     }
   }
 
@@ -564,6 +569,8 @@ const Query = (props: Props) => {
 
     if (COMMANDS_TO_GET_INDEX_INFO.some((name) => name === command.name)) {
       setSelectedIndex(allArgs[1] || '')
+    } else {
+      setSelectedIndex('')
     }
 
     const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset: command.commandCursorPosition, range }
@@ -571,7 +578,8 @@ const Query = (props: Props) => {
       REDIS_COMMANDS,
       command,
       cursorContext,
-      { fields: attributesRef.current, indexes: indexesRef.current }
+      { fields: attributesRef.current, indexes: indexesRef.current },
+      isEscapedSuggestions.current
     )
 
     if (helpWidget) {

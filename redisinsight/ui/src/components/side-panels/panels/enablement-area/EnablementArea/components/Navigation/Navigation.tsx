@@ -43,7 +43,7 @@ const PATHS = {
 const Navigation = (props: Props) => {
   const { tutorials, customTutorials, isInternalPageVisible } = props
   const {
-    [FeatureFlags.disabledByEnv]: disabledByEnvFeature
+    [FeatureFlags.envDependent]: envDependentFeature
   } = useSelector(appFeatureFlagsFeaturesSelector)
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -182,7 +182,7 @@ const Navigation = (props: Props) => {
     >
       {tutorials && renderTreeView(getManifestItems(tutorials), PATHS.tutorials)}
       {customTutorials
-        && disabledByEnvFeature?.flag
+        && envDependentFeature?.flag
         && renderTreeView(getManifestItems(customTutorials), PATHS.customTutorials)}
     </EuiListGroup>
   )

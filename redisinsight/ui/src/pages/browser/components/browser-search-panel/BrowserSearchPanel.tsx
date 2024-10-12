@@ -231,7 +231,7 @@ const BrowserSearchPanel = (props: Props) => {
         <SearchKeyList />
       </div>
       <div style={{ flexShrink: 0 }}>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           {BulkActionsBtn}
         </FeatureFlagComponent>
         {AddKeyBtn}

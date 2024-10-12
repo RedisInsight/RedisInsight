@@ -7,7 +7,7 @@ import UseProfilerLink from './UseProfilerLink'
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
-    disabledByEnv: {
+    envDependent: {
       flag: true,
     }
   }),
@@ -26,23 +26,19 @@ const props = {
 }
 
 describe('UseProfilerLink', () => {
-  beforeAll(() => {
-  })
-
   it('should render', () => {
     expect(render(<UseProfilerLink {...props} />)).toBeTruthy()
   })
 
-  // todo: revise flag naming
-  it('should show the link when isDisabledByEnv = true', () => {
+  it('should show the link when envDependent.flag = true', () => {
     render(<UseProfilerLink {...props} />)
 
     expect(screen.getByText('tool to see all the requests processed by the server.', { exact: false })).toBeInTheDocument()
   })
 
-  it('should not show the link when isDisabledByEnv = false', () => {
+  it('should not show the link when envDependent.flag = false', () => {
     (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
-      disabledByEnv: {
+      envDependent: {
         flag: false,
       }
     })

@@ -14,7 +14,7 @@ const GlobalSubscriptions = () => (
     <CommonAppSubscription />
     <MonitorConfig />
     <PubSubConfig />
-    <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+    <FeatureFlagComponent name={FeatureFlags.envDependent}>
       <BulkActionsConfig />
     </FeatureFlagComponent>
     <FeatureFlagComponent name={FeatureFlags.cloudSso}>

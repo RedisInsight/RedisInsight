@@ -111,7 +111,7 @@ const BottomGroupMinimized = () => {
             <span>Command Helper</span>
           </EuiBadge>
         </EuiFlexItem>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <EuiFlexItem
             className={styles.componentBadgeItem}
             grow={false}
@@ -129,7 +129,7 @@ const BottomGroupMinimized = () => {
           </EuiFlexItem>
         </FeatureFlagComponent>
       </EuiFlexGroup>
-      <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+      <FeatureFlagComponent name={FeatureFlags.envDependent}>
         <a
           className={styles.surveyLink}
           target="_blank"

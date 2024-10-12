@@ -126,7 +126,7 @@ const BrowserRightPanel = (props: Props) => {
         />
       )}
       {isBulkActionsPanelOpen && every([!isAddKeyPanelOpen, !isCreateIndexPanelOpen], Boolean) && (
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <BulkActions
             isFullScreen={isBrowserFullScreen}
             arePanelsCollapsed={arePanelsCollapsed}

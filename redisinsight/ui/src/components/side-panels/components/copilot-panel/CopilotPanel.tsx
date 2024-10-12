@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Header } from 'uiSrc/components/side-panels/components'
 import styles from 'uiSrc/components/side-panels/styles.module.scss'
@@ -6,6 +6,8 @@ import AiAssistant from 'uiSrc/components/side-panels/panels/ai-assistant'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
 import { aiAssistantSelector } from 'uiSrc/slices/panels/aiAssistant'
+import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import CopilotSplashScreen from './components/copilot-splash-screen'
 
 export interface Props {
@@ -17,6 +19,30 @@ export interface Props {
 const CopilotPanel = (props: Props) => {
   const { isFullScreen, onToggleFullScreen, onClose } = props
   const { hideCopilotSplashScreen } = useSelector(aiAssistantSelector)
+  const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
+
+  useEffect(() => {
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_OPENED,
+      eventData: {
+        action: 'open',
+        authenticated: !!userOAuthProfile?.id,
+        firstUse: !hideCopilotSplashScreen
+      }
+    })
+  }, [])
+
+  const handleClose = () => {
+    sendEventTelemetry({
+      event: TelemetryEvent.AI_CHAT_OPENED,
+      eventData: {
+        action: 'close',
+        authenticated: !!userOAuthProfile?.id,
+        firstUse: !hideCopilotSplashScreen
+      }
+    })
+    onClose?.()
+  }
 
   const CopilotHeader = useCallback(() => (
     <div className={styles.assistantHeader}>
@@ -37,7 +63,7 @@ const CopilotPanel = (props: Props) => {
 
   if (!hideCopilotSplashScreen) {
     return (
-      <CopilotSplashScreen onClose={onClose} />
+      <CopilotSplashScreen onClose={handleClose} />
     )
   }
 
@@ -46,7 +72,7 @@ const CopilotPanel = (props: Props) => {
       <Header
         isFullScreen={isFullScreen}
         onToggleFullScreen={onToggleFullScreen}
-        onClose={onClose}
+        onClose={handleClose}
         panelName="copilot"
       >
         <CopilotHeader />

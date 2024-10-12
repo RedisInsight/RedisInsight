@@ -14,7 +14,7 @@ import {
 } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { connectedInstanceCDSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
 import { appContextCapability } from 'uiSrc/slices/app/context'
 import { getTutorialCapability } from 'uiSrc/utils'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
@@ -34,7 +34,6 @@ const SidePanelsWrapper = (props: Props) => {
   const { panelClassName } = props
   const { openedPanel } = useSelector(sidePanelsSelector)
   const { tabSelected } = useSelector(insightsPanelSelector)
-  const { provider } = useSelector(connectedInstanceSelector)
   const { source: capabilitySource } = useSelector(appContextCapability)
   const { free = false } = useSelector(connectedInstanceCDSelector) ?? {}
   const {
@@ -50,10 +49,6 @@ const SidePanelsWrapper = (props: Props) => {
   const dispatch = useDispatch()
   const { instanceId } = useParams<{ instanceId: string }>()
   const pathnameRef = useRef<string>(pathname)
-
-  const page = pathname
-    .replace(instanceId, '')
-    .replace(/^\//g, '')
 
   useEffect(() => {
     if (openedPanel === SidePanels.AiAssistant && !isAnyChatAvailable) {
@@ -106,16 +101,6 @@ const SidePanelsWrapper = (props: Props) => {
 
   const handleClose = () => {
     dispatch(changeSidePanel(null))
-
-    sendEventTelemetry({
-      event: TelemetryEvent.INSIGHTS_PANEL_CLOSED,
-      eventData: {
-        databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
-        provider,
-        page,
-        tab: tabSelected
-      },
-    })
   }
 
   const handleFullScreen = () => {

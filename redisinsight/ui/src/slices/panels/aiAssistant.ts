@@ -102,6 +102,7 @@ const aiAssistantSlice = createSlice({
       state.ai.loading = true
     },
     removeAiChatHistorySuccess: (state) => {
+      state.ai.loading = false
       state.ai.messages = []
     },
     removeAiChatHistoryFailed: (state) => {
@@ -175,7 +176,7 @@ export const {
 // The reducer
 export default aiAssistantSlice.reducer
 
-export function getAiAgreementAction(onSuccess?: () => void, onFailure?: () => void) {
+export function getAiAgreementAction(onSuccess?: (data: Nullable<AiAgreement>) => void, onFailure?: () => void) {
   return async (dispatch: AppDispatch) => {
     dispatch(getAiAgreement())
 
@@ -185,9 +186,8 @@ export function getAiAgreementAction(onSuccess?: () => void, onFailure?: () => v
 
       if (isStatusSuccessful(status)) {
         dispatch(getAiAgreementSuccess(data))
+        onSuccess?.(data)
       }
-
-      onSuccess?.()
     } catch (error) {
       const err = getAxiosError(error as EnhancedAxiosError)
       const errorCode = getApiErrorCode(error as AxiosError)

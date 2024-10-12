@@ -23,7 +23,7 @@ const RestartChat = (props: Props) => {
   }
 
   const onClickAnchor = () => {
-    setIsPopoverOpen(true)
+    setIsPopoverOpen((prevVal) => !prevVal)
   }
 
   const extendedButton = React.cloneElement(button, { onClick: onClickAnchor })

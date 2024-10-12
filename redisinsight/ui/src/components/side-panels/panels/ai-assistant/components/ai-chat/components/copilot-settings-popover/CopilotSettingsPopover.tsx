@@ -23,30 +23,23 @@ export interface Props {
   databaseId: Nullable<string>
   generalAgreement: Nullable<AiAgreement>
   databaseAgreement: Nullable<AiDatabaseAgreement>
-  agreementLoading: boolean
   onRestart: () => void
+  settingsOpenedByDefault: boolean
 }
 
 const CopilotSettingsPopover = ({
   databaseId,
   generalAgreement,
   databaseAgreement,
-  agreementLoading,
-  onRestart
+  onRestart,
+  settingsOpenedByDefault,
 }: Props) => {
   const [agreementsPopoverOpen, setAgreementsPopoverOpen] = useState(false)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!generalAgreement && agreementLoading) {
-      agreementsPopoverOpen && triggerPopover(false)
-      return
-    }
-
-    if (!generalAgreement?.consent && !agreementLoading) {
-      triggerPopover(true)
-    }
-  }, [generalAgreement, agreementLoading])
+    if (settingsOpenedByDefault) triggerPopover(true)
+  }, [settingsOpenedByDefault])
 
   const triggerPopover = (value: boolean) => {
     if (value) {
@@ -125,7 +118,7 @@ const CopilotSettingsPopover = ({
       anchorPosition="downRight"
       isOpen={agreementsPopoverOpen}
       panelPaddingSize="m"
-      closePopover={() => {}}
+      closePopover={() => setAgreementsPopoverOpen(false)}
       panelClassName={styles.agreementsPopover}
       button={(
         <EuiButtonIcon
@@ -147,8 +140,10 @@ const CopilotSettingsPopover = ({
           <EuiText className={styles.aiAgreementSubtitle} color="subdued">General terms</EuiText>
           <EuiSpacer size="m" />
           <EuiText className={styles.aiAgreementText} color="subdued">
-            Redis Copilot is powered by OpenAI API and is designed for general information only.
-            Please do not input any personal data or confidential information.
+            Redis Copilot is powered by OpenAI API.
+          </EuiText>
+          <EuiSpacer size="s" />
+          <EuiText className={styles.aiAgreementText} color="subdued">
             By accessing and/or using Redis Copilot, you acknowledge that you agree to the
             {' '}
             <EuiLink
@@ -157,7 +152,7 @@ const CopilotSettingsPopover = ({
               target="_blank"
               href="https://redis.io/legal/redis-copilot-terms-of-use/"
             >
-              Redis Copilot Terms
+              REDIS COPILOT TERMS
             </EuiLink>
             {' '}
             and

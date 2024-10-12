@@ -49,12 +49,12 @@ describe('CopilotSettingsPopover', () => {
     expect(render(<CopilotSettingsPopover {...mockedProps} />)).toBeTruthy()
   })
 
-  it('should open copilot settings popover if general agreement is not accepted', async () => {
+  it('should open copilot settings popover if settingsOpenedByDefault is set to true', async () => {
     render(<CopilotSettingsPopover
       {...mockedProps}
       generalAgreement={null}
-      agreementLoading={false}
       databaseId={mockDatabaseId}
+      settingsOpenedByDefault
     />)
 
     await waitForEuiPopoverVisible()

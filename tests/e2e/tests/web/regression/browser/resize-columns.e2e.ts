@@ -54,7 +54,7 @@ fixture `Resize columns in Key details`
         await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(databasesForAdding[0]);
         await databaseAPIRequests.addNewStandaloneDatabaseApi(databasesForAdding[1]);
         await browserPage.addHashKey(keys[0].name, '2147476121', longFieldName, longFieldName);
-        await browserPage.addListKey(keys[1].name, '2147476121', 'element');
+        await browserPage.addListKey(keys[1].name, '2147476121', ['element']);
         await browserPage.addZSetKey(keys[2].name, '1', '2147476121', 'member');
     })
     .afterEach(async() => {

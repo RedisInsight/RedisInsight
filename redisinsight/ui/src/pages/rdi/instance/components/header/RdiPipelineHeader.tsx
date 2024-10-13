@@ -2,7 +2,7 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
 } from '@elastic/eui'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -14,6 +14,7 @@ import PipelineActions from './components/pipeline-actions'
 import styles from './styles.module.scss'
 
 const RdiPipelineHeader = () => {
+  const [headerLoading, setHeaderLoading] = useState(true)
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
   const { data: statusData, error: statusError } = useSelector(rdiPipelineStatusSelector)
   const dispatch = useDispatch()
@@ -22,7 +23,7 @@ const RdiPipelineHeader = () => {
 
   useEffect(() => {
     if (!intervalId) {
-      dispatch(getPipelineStatusAction(rdiInstanceId))
+      dispatch(getPipelineStatusAction(rdiInstanceId, () => setHeaderLoading(false), () => setHeaderLoading(false)))
       intervalId = setInterval(() => {
         dispatch(getPipelineStatusAction(rdiInstanceId))
       }, 10000)
@@ -40,6 +41,7 @@ const RdiPipelineHeader = () => {
         <CurrentPipelineStatus
           pipelineState={pipelineState}
           statusError={statusError}
+          headerLoading={headerLoading}
         />
       </EuiFlexItem>
       <PipelineActions

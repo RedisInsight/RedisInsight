@@ -1448,7 +1448,7 @@ describe('keys slice', () => {
         const data: CreateListWithExpireDto = {
           keyName: 'keyName',
           destination: 'TAIL' as ListElementDestination,
-          element: '1',
+          elements: ['1'],
         }
         const responsePayload = { data, status: 200 }
 

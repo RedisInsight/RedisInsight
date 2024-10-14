@@ -53,11 +53,11 @@
     "concurrently": "^7.6.0",
     "cross-env": "^7.0.3",
     "esbuild": "^0.17.12",
-    "jest": "^27.5.1",
+    "jest": "^29.7.0",
     "less": "^4.1.2",
     "parcel": "^2.8.3",
     "rimraf": "^3.0.2",
-    "ts-jest": "^27.1.4"
+    "ts-jest": "^29.2.5"
   },
   "dependencies": {
     "@elastic/eui": "34.6.0",
@@ -71,6 +71,9 @@
     "react-dom": "^17.0.2"
   },
   "resolutions": {
+    "@parcel/**/micromatch": "^4.0.8",
+    "jest/**/micromatch": "^4.0.8",
+    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/semver": "^7.5.2"
   }

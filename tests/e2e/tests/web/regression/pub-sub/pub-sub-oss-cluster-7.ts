@@ -12,19 +12,20 @@ const databaseAPIRequests = new DatabaseAPIRequests();
 
 fixture `PubSub OSS Cluster 7 tests`
     .meta({ type: 'regression' })
-    .page(commonUrl);
+    .page(commonUrl)
 
-test
-    .before(async t => {
+    .beforeEach(async t => {
         await databaseHelper.acceptLicenseTerms();
         await databaseAPIRequests.addNewOSSClusterDatabaseApi(ossClusterConfig);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossClusterConfig.ossClusterDatabaseName);
         await t.click(myRedisDatabasePage.NavigationPanel.pubSubButton);
     })
-    .after(async() => {
+    .afterEach(async() => {
         await databaseAPIRequests.deleteOSSClusterDatabaseApi(ossClusterConfig);
-    })
+    });
+test
+
     .meta({ rte: rte.ossCluster })('Verify that SPUBLISH message is displayed for OSS Cluster 7 database', async t => {
         await t.expect(pubSubPage.ossClusterEmptyMessage.exists).ok('SPUBLISH message not displayed');
         // Verify that user can see published messages for OSS Cluster 7
@@ -54,3 +55,22 @@ test
         await pubSubPage.Cli.sendCommandInCli('10 spublish channel oss_cluster_message_spublish');
         await verifyMessageDisplayingInPubSub('oss_cluster_message_spublish', false);
     });
+
+test.meta({ rte: rte.ossCluster })('Verify that PSUBSCRIBE works, that user can specify channel name to subscribe', async t => {
+    const channelsName = 'first second third';
+    const namesList = channelsName.split(' ');
+
+    await t.expect(pubSubPage.channelsSubscribeInput.value).eql('*', 'the default value is not set');
+    await t.typeText(pubSubPage.channelsSubscribeInput, channelsName, { replace: true });
+    await t.click(pubSubPage.subscribeButton);
+    await t.expect(pubSubPage.channelsSubscribeInput.hasAttribute('disabled')).ok('the field is not disabled after subscribe');
+    await pubSubPage.publishMessage(namesList[0], 'published message');
+    await verifyMessageDisplayingInPubSub('published message', true);
+    await pubSubPage.publishMessage(namesList[1], 'second message');
+    await verifyMessageDisplayingInPubSub('second message', true);
+    await pubSubPage.publishMessage('not exist', 'not exist message');
+    await verifyMessageDisplayingInPubSub('not exist message', false);
+
+    await t.expect(pubSubPage.patternsCount.textContent).contains(namesList.length.toString(), 'patterns count is not calculated correctly');
+    await t.expect(pubSubPage.messageCount.textContent).contains('2', 'message count is not calculated correctly');
+});

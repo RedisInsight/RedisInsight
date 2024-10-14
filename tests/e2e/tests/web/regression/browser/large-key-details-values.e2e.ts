@@ -94,7 +94,7 @@ test('Verify that user can expand/collapse for sorted set data type', async t =>
 test('Verify that user can expand/collapse for list data type', async t => {
     const elementValueCell = browserPage.listElementsList.parent(2);
     // Create list key
-    await browserPage.addListKey(keyName, keyTTL, value);
+    await browserPage.addListKey(keyName, keyTTL, [value]);
     // Remember height of the cell with long value
     const startLongCellHeight = await elementValueCell.clientHeight;
     // Verify that user can expand a row of list data type
@@ -107,7 +107,7 @@ test('Verify that user can expand/collapse for list data type', async t => {
 test('Verify that user can work in full mode with expanded/collapsed value', async t => {
     const elementValueCell = browserPage.listElementsList.parent(2);
     // Create list key
-    await browserPage.addListKey(keyName, keyTTL, value);
+    await browserPage.addListKey(keyName, keyTTL, [value]);
     // Open full mode for key details
     await t.click(browserPage.fullScreenModeButton);
     // Remember height of the cell with long value

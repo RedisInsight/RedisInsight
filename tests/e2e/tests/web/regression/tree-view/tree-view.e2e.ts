@@ -1,5 +1,6 @@
 import { DatabaseHelper } from '../../../../helpers/database';
 import { BrowserPage, WorkbenchPage } from '../../../../pageObjects';
+import { Telemetry } from '../../../../helpers/telemetry';
 import {
     commonUrl,
     ossStandaloneBigConfig,
@@ -16,8 +17,17 @@ const browserPage = new BrowserPage();
 const workbenchPage = new WorkbenchPage();
 const databaseHelper = new DatabaseHelper();
 const databaseAPIRequests = new DatabaseAPIRequests();
+const telemetry = new Telemetry();
 
 let keyNames: string[] = [];
+const telemetryEvent = 'TREE_VIEW_KEY_VALUE_VIEWED';
+const logger = telemetry.createLogger();
+
+const expectedProperties = [
+    'databaseId',
+    'keyType',
+    'provider'
+];
 
 fixture `Tree view verifications`
     .meta({ type: 'regression', rte: rte.standalone })
@@ -101,17 +111,21 @@ test
         await t.expect(totalKeysValue).gte(10, 'the info message after upload does not appear');
     });
 
-test('Verify that user can see the total number of keys, the number of keys scanned, the “Scan more” control displayed at the top of Tree view and Browser view', async t => {
-    await browserPage.selectFilterGroupType(KeyTypesTexts.Hash);
+test.requestHooks(logger)('Verify that user can see the total number of keys, the number of keys scanned, the “Scan more” control displayed at the top of Tree view and Browser view', async t => {
+    await browserPage.selectFilterGroupType(KeyTypesTexts.ReJSON);
     // Verify the controls on the Browser view
     await t.expect(browserPage.totalKeysNumber.visible).ok('The total number of keys is not displayed on the Browser view');
     await t.expect(browserPage.scannedValue.visible).ok('The number of keys scanned is not displayed on the Browser view');
     await t.expect(browserPage.scanMoreButton.visible).ok('The scan more button is not displayed on the Browser view');
-    // Verify the controls on the Tree view
+    //Verify the controls on the Tree view
     await t.click(browserPage.treeViewButton);
     await t.expect(browserPage.totalKeysNumber.visible).ok('The total number of keys is not displayed on the Tree view');
     await t.expect(browserPage.scannedValue.visible).ok('The number of keys scanned is not displayed on the Tree view');
     await t.expect(browserPage.scanMoreButton.visible).ok('The scan more button is not displayed on the Tree view');
+
+    // Verify that telemetry event 'TREE_VIEW_KEY_VALUE_VIEWED' sent
+    await t.click(browserPage.keyItem);
+    await telemetry.verifyEventHasProperties(telemetryEvent, expectedProperties, logger);
 });
 test('Verify that when user deletes the key he can see the key is removed from the folder, the number of keys is reduced, the percentage is recalculated', async t => {
     const mainFolder = browserPage.TreeView.getFolderSelectorByName('device');

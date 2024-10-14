@@ -35,6 +35,12 @@ export abstract class RdiClient {
 
   abstract deploy(pipeline: RdiPipeline): Promise<void>;
 
+  abstract stopPipeline(): Promise<void>;
+
+  abstract startPipeline(): Promise<void>;
+
+  abstract resetPipeline(): Promise<void>;
+
   abstract dryRunJob(data: RdiDryRunJobDto): Promise<RdiDryRunJobResponseDto>;
 
   abstract testConnections(config: object): Promise<RdiTestConnectionsResponseDto>;

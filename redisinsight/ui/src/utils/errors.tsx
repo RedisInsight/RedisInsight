@@ -5,7 +5,8 @@ import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
-import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { EXTERNAL_LINKS, UTM_CAMPAINGS, UTM_MEDIUMS } from 'uiSrc/constants/links'
+import { getUtmExternalLink } from './links'
 
 export const getRdiValidationMessage = (message: string = '', loc?: Array<string | number>): string => {
   // first item is always "body"
@@ -178,7 +179,18 @@ export const parseCustomError = (err: CustomError | string = DEFAULT_ERROR_MESSA
         <>
           You already have a free Redis Cloud database running.
           <EuiSpacer size="s" />
-          Check out your <a href="https://app.redislabs.com/#/databases/?utm_source=redisinsight&utm_medium=main&utm_campaign=main" target="_blank" rel="noreferrer">Cloud console</a> for connection details.
+          Check out your
+          <a
+            href={getUtmExternalLink(
+              EXTERNAL_LINKS.cloudConsole,
+              { campaign: UTM_CAMPAINGS.Main, medium: UTM_MEDIUMS.Main }
+            )}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {' Cloud console '}
+          </a>
+          for connection details.
         </>
       )
       break

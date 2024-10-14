@@ -13,7 +13,7 @@ import DatabasePanel from 'uiSrc/pages/home/components/database-panel'
 import { clusterSelector, resetDataRedisCluster, resetInstancesRedisCluster, } from 'uiSrc/slices/instances/cluster'
 import { Nullable, setTitle } from 'uiSrc/utils'
 import { HomePageTemplate } from 'uiSrc/templates'
-import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
+import { BrowserStorageItem } from 'uiSrc/constants'
 import { resetKeys } from 'uiSrc/slices/browser/keys'
 import { resetCliHelperSettings, resetCliSettingsAction } from 'uiSrc/slices/cli/cli-settings'
 import { resetRedisearchKeysData } from 'uiSrc/slices/browser/redisearch'
@@ -34,11 +34,6 @@ import { sendEventTelemetry, sendPageViewTelemetry, TelemetryEvent, TelemetryPag
 import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import HighlightedFeature from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
-import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import AiChatbotMessage from 'uiSrc/components/hightlighted-feature/components/ai-chatbot-message'
-import { appFeatureFlagsFeaturesSelector, appFeatureHighlightingSelector } from 'uiSrc/slices/app/features'
-import { getHighlightingFeatures, isAnyFeatureEnabled } from 'uiSrc/utils/features'
 
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
@@ -55,15 +50,6 @@ enum RightPanelName {
 const HomePage = () => {
   const [width, setWidth] = useState(0)
   const [openRightPanel, setOpenRightPanel] = useState<Nullable<RightPanelName>>(null)
-
-  const { features } = useSelector(appFeatureHighlightingSelector)
-  const { aiChatbot: aiChatbotHighlighting } = getHighlightingFeatures(features)
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
-
   const initialDbTypeRef = useRef<AddDbType>(AddDbType.manual)
 
   const dispatch = useDispatch()
@@ -234,14 +220,7 @@ const HomePage = () => {
 
   return (
     <HomePageTemplate>
-      <HighlightedFeature
-        isHighlight={isAnyChatAvailable && aiChatbotHighlighting}
-        {...(BUILD_FEATURES.aiChatbot || {})}
-      >
-        <AiChatbotMessage />
-      </HighlightedFeature>
       <div className={styles.pageWrapper}>
-
         <EuiPage className={styles.page}>
           <EuiPageBody component="div">
             <DatabaseListHeader

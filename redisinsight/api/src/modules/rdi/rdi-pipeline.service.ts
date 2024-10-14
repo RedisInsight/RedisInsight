@@ -70,6 +70,27 @@ export class RdiPipelineService {
     }
   }
 
+  async stopPipeline(rdiClientMetadata: RdiClientMetadata): Promise<void> {
+    this.logger.log('Stopping running pipeline');
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.stopPipeline();
+  }
+
+  async startPipeline(rdiClientMetadata: RdiClientMetadata): Promise<void> {
+    this.logger.log('Starting stopped pipeline');
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.startPipeline();
+  }
+
+  async resetPipeline(rdiClientMetadata: RdiClientMetadata): Promise<void> {
+    this.logger.log('Resetting default pipeline');
+    const client = await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
+
+    return await client.resetPipeline();
+  }
+
   async testConnections(rdiClientMetadata: RdiClientMetadata, config: object): Promise<RdiTestConnectionsResponseDto> {
     this.logger.log('Trying to test connections');
 

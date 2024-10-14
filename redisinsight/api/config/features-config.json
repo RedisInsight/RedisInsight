@@ -1,5 +1,5 @@
 {
-  "version": 2.5403,
+  "version": 2.56,
   "features": {
     "redisDataIntegration": {
       "flag": true,
@@ -63,11 +63,11 @@
             "redisStackPreview": [
               {
                 "provider": "AWS",
-                "regions": ["us-east-2", "ap-southeast-1", "sa-east-1"]
+                "regions": []
               },
               {
                 "provider": "GCP",
-                "regions": ["asia-northeast1", "europe-west1", "us-central1"]
+                "regions": []
               }
             ]
           }

@@ -1,7 +1,8 @@
-import { t, Selector } from 'testcafe';
+import { Selector, t } from 'testcafe';
 import { Common } from '../helpers/common';
 import { InstancePage } from './instance-page';
 import { BulkActions, TreeView } from './components/browser';
+import { AddElementInList } from '../helpers/constants';
 
 export class BrowserPage extends InstancePage {
     BulkActions = new BulkActions();
@@ -12,7 +13,6 @@ export class BrowserPage extends InstancePage {
     cssSelectorRows = '[aria-label="row"]';
     cssSelectorKey = '[data-testid^=key-]';
     cssFilteringLabel = '[data-testid=multi-search]';
-    cssPrimitiveJsonValue = '[data-testid=json-primitive-value]';
     cssJsonValue = '[data-testid=value-as-json]';
     cssRowInVirtualizedTable = '[role=gridcell]';
     cssVirtualTableRow = '[aria-label=row]';
@@ -20,23 +20,13 @@ export class BrowserPage extends InstancePage {
     cssKeyTtl = '[data-testid^=ttl-]';
     cssKeySize = '[data-testid^=size-]';
     cssRemoveSuggestionItem = '[data-testid^=remove-suggestion-item-]';
-    //-------------------------------------------------------------------------------------------
-    //DECLARATION OF SELECTORS
-    //*Declare all elements/components of the relevant page.
-    //*Target any element/component via data-id, if possible!
-    //*The following categories are ordered alphabetically (Alerts, Buttons, Checkboxes, etc.).
-    //-------------------------------------------------------------------------------------------
+
     //BUTTONS
-    hashDeleteButton = Selector('[data-testid=hash-delete-btn]');
-    setDeleteButton = Selector('[data-testid=set-delete-btn]');
-    streamDeleteButton = Selector('[data-testid=stream-delete-btn]');
     applyButton = Selector('[data-testid=apply-btn]');
     deleteKeyButton = Selector('[data-testid=delete-key-btn]');
     submitDeleteKeyButton = Selector('[data-testid=submit-delete-key]');
     confirmDeleteKeyButton = Selector('[data-testid=delete-key-confirm-btn]');
     editKeyTTLButton = Selector('[data-testid=edit-ttl-btn]');
-    closeEditTTL = Selector('[data-testid=cancel-btn]');
-    saveTTLValue = Selector('[data-testid=apply-btn]');
     refreshKeysButton = Selector('[data-testid=keys-refresh-btn]');
     refreshKeyButton = Selector('[data-testid=key-refresh-btn]');
     editKeyNameButton = Selector('[data-testid=edit-key-btn]');
@@ -52,9 +42,9 @@ export class BrowserPage extends InstancePage {
     confirmRemoveHashFieldButton = Selector('[data-testid^=remove-hash-button-] span');
     removeSetMemberButton = Selector('[data-testid^=set-remove-btn]');
     removeHashFieldButton = Selector('[data-testid^=remove-hash-button]');
-    removeZserMemberButton = Selector('[data-testid^=zset-remove-button]');
+    removeZsetMemberButton = Selector('[data-testid^=zset-remove-button]');
     confirmRemoveSetMemberButton = Selector('[data-testid^=set-remove-btn-] span');
-    confirmRemovZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
+    confirmRemoveZSetMemberButton = Selector('[data-testid^=zset-remove-button-] span');
     saveElementButton = Selector('[data-testid=save-elements-btn]');
     removeElementFromListIconButton = Selector('[data-testid=remove-key-value-items-btn]');
     removeElementFromListButton = Selector('[data-testid=remove-elements-btn]');
@@ -73,7 +63,6 @@ export class BrowserPage extends InstancePage {
     browserViewButton = Selector('[data-testid=view-type-browser-btn]');
     searchButton = Selector('[data-testid=search-btn]');
     clearFilterButton = Selector('[data-testid=reset-filter-btn]');
-    clearSelectionButton = Selector('[data-testid=clear-selection-btn]');
     fullScreenModeButton = Selector('[data-testid=toggle-full-screen]');
     closeRightPanel = Selector('[data-testid=close-right-panel-btn]');
     addNewStreamEntry = Selector('[data-testid=add-key-value-items-btn]');
@@ -107,7 +96,8 @@ export class BrowserPage extends InstancePage {
     backToBrowserBtn = Selector('[data-testid=back-right-panel-btn]');
     loadAllBtn = Selector('[data-testid=load-all-value-btn]');
     downloadAllValueBtn = Selector('[data-testid=download-all-value-btn]');
-    openTutorialsBtn = Selector('[data-testid=explore-msg-btn]');
+    openTutorialsBtn = Selector('[data-testid=explore-msg-btn]')
+    keyItem = Selector('[data-testid*="node-item"][data-testid*="keys:"]');
     //CONTAINERS
     streamGroupsContainer = Selector('[data-testid=stream-groups-container]');
     streamConsumersContainer = Selector('[data-testid=stream-consumers-container]');
@@ -162,7 +152,6 @@ export class BrowserPage extends InstancePage {
     hashFieldNameInput = Selector('[data-testid=field-name]');
     hashFieldValueEditor = Selector('[data-testid^=hash_value-editor]');
     hashTtlFieldInput = Selector('[data-testid=hash-ttl]');
-    listKeyElementInput = Selector('[data-testid=element]');
     listKeyElementEditorInput = Selector('[data-testid^=list_value-editor-]');
     stringKeyValueInput = Selector('[data-testid=string-value]');
     jsonKeyValueInput = Selector('[data-mode-id=json]');
@@ -173,17 +162,15 @@ export class BrowserPage extends InstancePage {
     hashFieldInput = Selector('[data-testid=hash-field]');
     hashValueInput = Selector('[data-testid=hash-value]');
     searchInput = Selector('[data-testid=search]');
-    addListKeyElementInput = Selector('[data-testid=elements-input]');
     jsonKeyInput = Selector('[data-testid=json-key]');
     jsonValueInput = Selector('[data-testid=json-value]');
     countInput = Selector('[data-testid=count-input]');
     streamEntryId = Selector('[data-testid=entryId]');
     streamField = Selector('[data-testid=field-name]');
     streamValue = Selector('[data-testid=field-value]');
-    addStreamRow = Selector('[data-testid=add-item]');
+    addAdditionalElement = Selector('[data-testid=add-item]');
     streamFieldsValues = Selector('[data-testid^=stream-entry-field-]');
     streamEntryIDDateValue = Selector('[data-testid^=stream-entry-][data-testid$=date]');
-    streamRangeEndInput = Selector('[data-testid=range-end-input]');
     groupNameInput = Selector('[data-testid=group-name-field]');
     consumerIdInput = Selector('[data-testid=id-field]');
     streamMinIdleTimeInput = Selector('[data-testid=min-idle-time]');
@@ -194,7 +181,6 @@ export class BrowserPage extends InstancePage {
     indexNameInput = Selector('[data-testid=index-name]');
     prefixFieldInput = Selector('[data-test-subj=comboBoxInput]');
     indexIdentifierInput = Selector('[data-testid^=identifier-]');
-    indexFieldType = Selector('[data-testid^=field-type-]');
     //TEXT ELEMENTS
     keySizeDetails = Selector('[data-testid=key-size-text]');
     keyLengthDetails = Selector('[data-testid=key-length-text]');
@@ -217,9 +203,6 @@ export class BrowserPage extends InstancePage {
     keysNumberOfResults = Selector('[data-testid=keys-number-of-results]');
     scannedValue = Selector('[data-testid=keys-number-of-scanned]');
     totalKeysNumber = Selector('[data-testid=keys-total]');
-    databaseInfoToolTip = Selector('[data-testid=db-info-tooltip]');
-    ttlValueInKeysTable = Selector('[data-testid^=ttl-]');
-    stringKeyValue = Selector('.key-details-body pre');
     keyDetailsBadge = Selector('.key-details-header .euiBadge__text');
     modulesTypeDetails = Selector('[data-testid=modules-type-details]');
     filteringLabel = Selector('[data-testid^=badge-]');
@@ -235,16 +218,12 @@ export class BrowserPage extends InstancePage {
     progressKeyList = Selector('[data-testid=progress-key-list]');
     jsonScalarValue = Selector('[data-testid=json-scalar-value]');
     noKeysToDisplayText = Selector('[data-testid=no-result-found-msg]');
-    streamEntryColumns = Selector(this.streamEntriesContainer.find('[aria-colcount]'));
-    streamEntryRows = Selector(this.streamEntriesContainer.find('[aria-rowcount]'));
     streamEntryDate = Selector('[data-testid*=-date][data-testid*=stream-entry]');
     streamEntryIdValue = Selector('.streamItemId[data-testid*=stream-entry]');
     streamFields = Selector('[data-testid=stream-entries-container] .truncateText');
     streamVirtualContainer = Selector('[data-testid=virtual-grid-container] div div').nth(0);
     streamEntryFields = Selector('[data-testid^=stream-entry-field]');
     confirmationMessagePopover = Selector('div.euiPopover__panel .euiText ');
-    streamRangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
-    streamRangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
     streamGroupId = Selector('.streamItemId[data-testid^=stream-group-id]');
     streamGroupName = Selector('[data-testid^=stream-group-name]');
     streamMessage = Selector('[data-testid*=-date][data-testid^=stream-message]');
@@ -253,7 +232,6 @@ export class BrowserPage extends InstancePage {
     entryIdInfoIcon = Selector('[data-testid=entry-id-info-icon]');
     entryIdError = Selector('[data-testid=id-error]');
     pendingCount = Selector('[data-testid=pending-count]');
-    lastRefreshMessage = Selector('[data-testid=refresh-message]');
     streamRangeBar = Selector('[data-testid=mock-fill-range]');
     rangeLeftTimestamp = Selector('[data-testid=range-left-timestamp]');
     rangeRightTimestamp = Selector('[data-testid=range-right-timestamp]');
@@ -265,12 +243,14 @@ export class BrowserPage extends InstancePage {
     keyListItem = Selector('[role=rowgroup] [role=row]');
     // Dialog
     noReadySearchDialogTitle = Selector('[data-testid=welcome-page-title]');
+    //checkbox
+    showTtlCheckbox =  Selector('[data-testid=test-check-ttl]~label');
 
     //Get Hash key field ttl value
     //for Redis databases 7.4 and higher
     getHashTtlFieldInput = (fieldName: string): Selector => (Selector(`[data-testid=hash-ttl_content-value-${fieldName}]`));
-    //checkbox
-    showTtlCheckbox =  Selector('[data-testid=test-check-ttl]~label');
+    getListElementInput = (count: number): Selector => (Selector(`[data-testid*=element-${count}]`));
+
 
     /**
      * Common part for Add any new key
@@ -385,7 +365,7 @@ export class BrowserPage extends InstancePage {
      * @param TTL The Time to live value of the key
      * @param element The key element
      */
-    async addListKey(keyName: string, TTL = ' ', element = ' '): Promise<void> {
+    async addListKey(keyName: string, TTL = ' ', element: string[] = [' '], position: AddElementInList = AddElementInList.Tail): Promise<void> {
         await Common.waitForElementNotVisible(this.progressLine);
         await Common.waitForElementNotVisible(this.loader);
         await t.click(this.plusAddKeyButton);
@@ -395,8 +375,21 @@ export class BrowserPage extends InstancePage {
         await t.typeText(this.addKeyNameInput, keyName, { replace: true, paste: true });
         await t.click(this.keyTTLInput);
         await t.typeText(this.keyTTLInput, TTL, { replace: true, paste: true });
-        await t.click(this.listKeyElementInput);
-        await t.typeText(this.listKeyElementInput, element, { replace: true, paste: true });
+
+        if(position === AddElementInList.Head){
+            await t.click(this.removeElementFromListSelect);
+            await t.click(this.removeFromHeadSelection);
+            await t.expect(this.removeFromHeadSelection.exists).notOk();
+        }
+
+        for(let i = 0; i < element.length; i++ ) {
+            await t.click(this.getListElementInput(i));
+            await t.typeText(this.getListElementInput(i), element[i], { replace: true, paste: true });
+            // If there's more than one element and it's not the last element, add a new row
+            if (element.length > 1 && i < element.length - 1) {
+                await t.click(this.addAdditionalElement);
+            }
+        }
         await t.click(this.addKeyButton);
     }
 
@@ -480,7 +473,7 @@ export class BrowserPage extends InstancePage {
             await t.typeText(this.streamField.nth(-1), fields[i], { replace: true, paste: true })
                 .typeText(this.streamValue.nth(-1), values[i], { replace: true, paste: true });
             if (i < fields.length - 1) {
-                await t.click(this.addStreamRow);
+                await t.click(this.addAdditionalElement);
             }
         }
         if (entryId !== undefined) {
@@ -515,24 +508,6 @@ export class BrowserPage extends InstancePage {
         await t.click(this.filterByPatterSearchInput);
         await t.typeText(this.filterByPatterSearchInput, keyName, { replace: true, paste: true });
         await t.pressKey('enter');
-    }
-
-    /**
-     * Searching by Key name in the list and clicking Scan More until find
-     * @param searchPattern Search pattern to enter
-     * @param keyName The name of the key
-     */
-    async searchByKeyNameWithScanMore(searchPattern: string, keyName: string): Promise<void> {
-        await this.searchByKeyName(searchPattern);
-        const scannedValueText = Number(await this.scannedValue.textContent);
-        const totalKeysValue = Number(await this.totalKeysNumber.textContent);
-        // Scan until finding element or all keys scanned
-        while (true) {
-            await t.click(this.scanMoreButton);
-            if (await this.isKeyIsDisplayedInTheList(keyName) || scannedValueText === totalKeysValue) {
-                break;
-            }
-        }
     }
 
     /**
@@ -623,18 +598,6 @@ export class BrowserPage extends InstancePage {
         return this.stringKeyValueInput.textContent;
     }
 
-    /**
-     * Edit Zset key  the firstscore from details
-     * @param value The new value of the key
-     */
-    async editZsetKeyScore(value: string): Promise<void> {
-        await t
-            .hover(this.zsetScoresList)
-            .click(this.editZsetButton)
-            .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.EditorButton.applyBtn);
-    }
-
     //Get Zset key score from details
     async getZsetKeyScore(): Promise<string> {
         return this.zsetScoresList.textContent;
@@ -704,17 +667,6 @@ export class BrowserPage extends InstancePage {
     //Get List key value from details
     async getListKeyValue(): Promise<string> {
         return this.listElementsList.textContent;
-    }
-
-    /**
-     * Edit JSON key value from details
-     * @param value The value of the key
-     */
-    async editJsonKeyValue(value: string): Promise<void> {
-        await t
-            .click(this.jsonScalarValue)
-            .typeText(this.inlineItemEditor, value, { replace: true, paste: true })
-            .click(this.EditorButton.applyBtn);
     }
 
     //Get JSON key value from details
@@ -806,23 +758,25 @@ export class BrowserPage extends InstancePage {
      * Add element to the List key
      * @param element The value of the list element
      */
-    async addElementToList(element: string): Promise<void> {
+    async addElementToList(element: string[], position: AddElementInList = AddElementInList.Tail ): Promise<void> {
         if (await this.Toast.toastCloseButton.exists) {
             await t.click(this.Toast.toastCloseButton);
         }
         await t
             .click(this.addKeyValueItemsButton)
-            .typeText(this.addListKeyElementInput, element, { replace: true, paste: true })
-            .click(this.saveElementButton);
-    }
-
-    //Remove List element from tail for Redis databases less then v. 6.2.
-    async removeListElementFromTailOld(): Promise<void> {
-        await t
-            .click(this.removeElementFromListIconButton)
-            .expect(this.countInput.withAttribute('disabled').exists).ok('Input field not disabled')
-            .click(this.removeElementFromListButton)
-            .click(this.confirmRemoveListElementButton);
+        if(position === AddElementInList.Head){
+            await t.click(this.removeElementFromListSelect);
+            await t.click(this.removeFromHeadSelection);
+            await t.expect(this.removeFromHeadSelection.exists).notOk();
+        }
+        for (let i = 0; i < element.length; i ++){
+            await t.typeText(this.getListElementInput(i), element[i], { replace: true, paste: true });
+            // If there's more than one element and it's not the last element, add a new row
+            if (element.length > 1 && i < element.length - 1) {
+                await t.click(this.addAdditionalElement);
+            }
+        }
+        await t.click(this.saveElementButton);
     }
 
     //Remove List element from head for Redis databases less then v. 6.2.

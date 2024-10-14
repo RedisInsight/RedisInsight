@@ -6,6 +6,7 @@ import { DatabaseAPIRequests } from '../../../../helpers/api/api-database';
 import { sshPrivateKey, sshPrivateKeyWithPasscode } from '../../../../test-data/sshPrivateKeys';
 import { Common } from '../../../../helpers/common';
 import { BrowserActions } from '../../../../common-actions/browser-actions';
+import { goBackHistory } from '../../../../helpers/utils';
 
 const myRedisDatabasePage = new MyRedisDatabasePage();
 const browserPage = new BrowserPage();
@@ -188,7 +189,7 @@ test
         await databaseHelper.acceptLicenseTerms();
     })('Verify that user can see the No databases message on the empty databases list', async t => {
         const noDatabasesMessage = 'No databases yet, let\'s add one!';
-        // const externalPageLink = 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
+        const externalPageLink = 'https://redis.io/try-free?utm_source=redisinsight&utm_medium=main&utm_campaign=empty_db_list'
 
         await t.expect(myRedisDatabasePage.emptyListMessage.withText(noDatabasesMessage).exists).ok('Empty databases list message not displayed');
 
@@ -196,8 +197,7 @@ test
         await t.expect(myRedisDatabasePage.AddRedisDatabase.testConnectionBtn.exists).ok('Add database form not opened');
         await t.click(myRedisDatabasePage.AddRedisDatabase.cancelButton);
 
-        // Unskip after updating testcafe with opening links support https://redislabs.atlassian.net/browse/RI-5565
-        // await t.click(myRedisDatabasePage.emptyDbCloudBtn);
-        // await Common.checkURL(externalPageLink);
-        // await goBackHistory();
+        await t.click(myRedisDatabasePage.emptyDbCloudBtn);
+        await Common.checkURL(externalPageLink);
+        await goBackHistory();
     });

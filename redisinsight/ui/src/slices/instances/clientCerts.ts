@@ -30,6 +30,19 @@ const clientCertsSlice = createSlice({
       state.loading = false
       state.error = payload
     },
+
+    // delete client certificate
+    deleteClientCert: (state) => {
+      state.loading = true
+      state.error = ''
+    },
+    deleteClientCertSuccess: (state) => {
+      state.loading = false
+    },
+    deleteClientCertFailure: (state, { payload }) => {
+      state.loading = false
+      state.error = payload
+    },
   },
 })
 
@@ -38,6 +51,10 @@ export const {
   loadClientCerts,
   loadClientCertsSuccess,
   loadClientCertsFailure,
+
+  deleteClientCert,
+  deleteClientCertSuccess,
+  deleteClientCertFailure,
 } = clientCertsSlice.actions
 
 // A selector
@@ -64,6 +81,25 @@ export function fetchClientCerts() {
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadClientCertsFailure(errorMessage))
       dispatch(addErrorNotification(error))
+    }
+  }
+}
+
+export function deleteClientCertAction(id: string, onSuccessAction?: (id: string) => void,) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { status } = await apiService.delete(
+        `${ApiEndpoints.CLIENT_CERTIFICATES}/${id}`
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(deleteClientCertSuccess())
+        onSuccessAction?.(id)
+        dispatch(fetchClientCerts())
+      }
+    } catch (error) {
+      dispatch(addErrorNotification(error))
+      dispatch(deleteClientCertFailure(getApiErrorMessage(error)))
     }
   }
 }

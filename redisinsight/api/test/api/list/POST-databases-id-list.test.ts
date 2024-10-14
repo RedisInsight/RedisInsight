@@ -10,6 +10,7 @@ import {
   validateInvalidDataTestCase,
   validateApiCall, getMainCheckFn,
 } from '../deps';
+import { ListElementDestination } from 'src/modules/browser/list/dto';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
@@ -19,13 +20,22 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  element: Joi.string().required(),
+  elements: Joi.array().items(
+    Joi.custom((value, helpers) => {
+      if (typeof value === 'string' || Buffer.isBuffer(value)) {
+        return value;
+      }
+      return helpers.error('any.invalid');
+    }).messages({
+      'any.invalid': 'elements must be a string or a Buffer',
+    })
+  ).required(),
   expire: Joi.number().integer().allow(null).min(1).max(2147483647),
 }).strict();
 
 const validInputData = {
   keyName: constants.TEST_LIST_KEY_1,
-  element: constants.TEST_LIST_ELEMENT_1,
+  elements: [constants.TEST_LIST_ELEMENT_1],
   expire: constants.TEST_LIST_EXPIRE_1,
 };
 
@@ -53,7 +63,7 @@ const createCheckFn = async (testCase) => {
     } else {
       if (testCase.statusCode === 201) {
         expect(await rte.client.exists(testCase.data.keyName)).to.eql(1);
-        expect(await rte.client.lrange(testCase.data.keyName, 0, 100)).to.eql([testCase.data.element]);
+        expect(await rte.client.lrange(testCase.data.keyName, 0, 100)).to.eql(testCase.data.elements);
         if (testCase.data.expire) {
           expect(await rte.client.ttl(testCase.data.keyName)).to.gte(testCase.data.expire - 5);
         } else {
@@ -74,7 +84,7 @@ describe('POST /databases/:databases/list', () => {
         name: 'Should create list from buff',
         data: {
           keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
-          element: constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
+          elements: [constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1],
         },
         statusCode: 201,
         after: async () => {
@@ -88,7 +98,7 @@ describe('POST /databases/:databases/list', () => {
         name: 'Should create list from ascii',
         data: {
           keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
-          element: constants.TEST_LIST_ELEMENT_BIN_ASCII_1,
+          elements: [constants.TEST_LIST_ELEMENT_BIN_ASCII_1],
         },
         statusCode: 201,
         after: async () => {
@@ -116,7 +126,7 @@ describe('POST /databases/:databases/list', () => {
           name: 'Should create item with empty value',
           data: {
             keyName: constants.getRandomString(),
-            element: '',
+            elements: [''],
           },
           statusCode: 201,
         },
@@ -124,7 +134,7 @@ describe('POST /databases/:databases/list', () => {
           name: 'Should create item with key ttl',
           data: {
             keyName: constants.getRandomString(),
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
             expire: constants.TEST_STRING_EXPIRE_1,
           },
           statusCode: 201,
@@ -133,7 +143,7 @@ describe('POST /databases/:databases/list', () => {
           name: 'Should create regular item',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.TEST_LIST_ELEMENT_1,
+            elements: [constants.TEST_LIST_ELEMENT_1],
           },
           statusCode: 201,
         },
@@ -141,7 +151,7 @@ describe('POST /databases/:databases/list', () => {
           name: 'Should return conflict error if key already exists',
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
           },
           statusCode: 409,
           responseBody: {
@@ -158,7 +168,7 @@ describe('POST /databases/:databases/list', () => {
           endpoint: () => endpoint(constants.TEST_NOT_EXISTED_INSTANCE_ID),
           data: {
             keyName: constants.TEST_LIST_KEY_1,
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
           },
           statusCode: 404,
           responseBody: {
@@ -183,7 +193,8 @@ describe('POST /databases/:databases/list', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            element: constants.TEST_LIST_ELEMENT_1,
+            elements: [constants.TEST_LIST_ELEMENT_1],
+            destination: ListElementDestination.Head,
           },
           statusCode: 201,
         },
@@ -192,7 +203,8 @@ describe('POST /databases/:databases/list', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
+            destination: ListElementDestination.Head,
           },
           statusCode: 403,
           responseBody: {
@@ -206,7 +218,8 @@ describe('POST /databases/:databases/list', () => {
           endpoint: () => endpoint(constants.TEST_INSTANCE_ACL_ID),
           data: {
             keyName: constants.getRandomString(),
-            element: constants.getRandomString(),
+            elements: [constants.getRandomString()],
+            destination: ListElementDestination.Head,
           },
           statusCode: 403,
           responseBody: {

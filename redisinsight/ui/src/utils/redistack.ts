@@ -3,6 +3,7 @@ import { Instance, RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { isVersionHigherOrEquals, Nullable } from 'uiSrc/utils'
 
 const REDISTACK_VERSION = '6.2.5'
+const NON_REDISTACK_VERSION = '7.9'
 
 const REDISTACK_REQUIRE_MODULES: Array<string | Array<string>> = [
   RedisDefaultModules.ReJSON,
@@ -59,6 +60,10 @@ const checkRediStackModules = (modules: any[]) => {
 const isRediStack = (modules: any[], version?: Nullable<string>): boolean => {
   if (!version) {
     return checkRediStackModules(modules)
+  }
+
+  if (isVersionHigherOrEquals(version, NON_REDISTACK_VERSION)) {
+    return false
   }
 
   if (isVersionHigherOrEquals(version, REDISTACK_VERSION)) {

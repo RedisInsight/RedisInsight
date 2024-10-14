@@ -119,7 +119,7 @@ const getAdditionalAddedEventData = (endpoint: ApiEndpoints, data: any) => {
     case ApiEndpoints.LIST:
       return {
         keyType: KeyTypes.List,
-        length: 1,
+        length: data.elements?.length,
         TTL: data.expire || -1
       }
     case ApiEndpoints.REJSON:

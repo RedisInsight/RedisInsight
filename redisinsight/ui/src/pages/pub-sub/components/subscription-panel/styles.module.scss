@@ -20,3 +20,11 @@
     height: 18px;
   }
 }
+
+.channels {
+  margin-right: 8px;
+
+  :global(.euiFormControlLayout--compressed .inputAppendIcon > svg) {
+    height: 31px !important;
+  }
+}

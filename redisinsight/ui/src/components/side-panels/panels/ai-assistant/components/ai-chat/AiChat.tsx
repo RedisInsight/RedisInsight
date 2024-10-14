@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import {
   aiChatSelector,
   askAiChatbotAction,
-  clearAiChatHistory,
   getAiAgreementAction,
   getAiDatabaseAgreementAction,
   getAiChatHistoryAction,
@@ -87,20 +86,14 @@ const AiChat = () => {
   }
 
   const onClearSession = useCallback(() => {
-    if (!messages?.length) {
-      dispatch(clearAiChatHistory())
-      return
-    }
-
     dispatch(removeAiChatHistoryAction(instanceId))
-
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
         chatBot: instanceId ? AiChatType.Database : AiChatType.General,
       }
     })
-  }, [messages])
+  }, [instanceId])
 
   const onRunCommand = useCallback((query: string) => {
     const command = getCommandsFromQuery(query, REDIS_COMMANDS_ARRAY) || ''

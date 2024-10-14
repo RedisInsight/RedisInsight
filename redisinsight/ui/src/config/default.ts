@@ -49,6 +49,11 @@ export const defaultConfig = {
     scanCountDefault: intEnv('RI_SCAN_COUNT_DEFAULT', 500),
     scanTreeCountDefault: intEnv('RI_SCAN_TREE_COUNT_DEFAULT', 10_000),
   },
+  features: {
+    envDependent: {
+      defaultFlag: booleanEnv('RI_FEATURES_ENV_DEPENDENT_DEFAULT_FLAG', true)
+    }
+  }
 }
 
 export type Config = typeof defaultConfig

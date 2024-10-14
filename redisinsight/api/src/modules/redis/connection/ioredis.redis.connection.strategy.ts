@@ -190,7 +190,7 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             reject(new InternalServerErrorException(ERROR_MESSAGES.SERVER_CLOSED_CONNECTION));
           });
           connection.on('ready', (): void => {
-            this.logger.log('Successfully connected to the redis database', clientMetadata);
+            this.logger.log('Successfully connected to the redis database');
             resolve(new StandaloneIoredisClient(
               clientMetadata,
               connection,

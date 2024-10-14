@@ -9,11 +9,11 @@ import { RedisClient } from 'src/modules/redis/client';
 import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
-type ClientIdMapBool = {
+type IsClientConnectingMap = {
   [key: string]: boolean
 };
 
-type ClientIdMapPromises = {
+type PendingGetByClientIdMap = {
   [key: string]: { resolve: (value: RedisClient) => void, reject: (reason?: any) => void }[]
 };
 
@@ -21,9 +21,9 @@ type ClientIdMapPromises = {
 export class DatabaseClientFactory {
   private logger = new Logger('DatabaseClientFactory');
 
-  private isConnecting: ClientIdMapBool = {};
+  private isConnecting: IsClientConnectingMap = {};
 
-  private pendingGetClient: ClientIdMapPromises = {};
+  private pendingGetClient: PendingGetByClientIdMap = {};
 
   constructor(
     private readonly databaseService: DatabaseService,

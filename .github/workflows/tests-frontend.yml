@@ -3,7 +3,7 @@ on:
   workflow_call:
 
 env:
-  SLACK_AUDIT_REPORT_KEY: ${secrets.SLACK_AUDIT_REPORT_KEY }}
+  SLACK_AUDIT_REPORT_KEY: ${{ secrets.SLACK_AUDIT_REPORT_KEY }}
 
 jobs:
   unit-tests:

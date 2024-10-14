@@ -1,9 +1,9 @@
 name: Tests
 
 on:
-  push:
-    branches-ignore:
-      - main
+  # push:
+  #   branches-ignore:
+  #     - main
 
   workflow_dispatch:
     inputs:
@@ -41,7 +41,7 @@ jobs:
     # TODO: concurrency
     # concurrency: build
     needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' || inputs.all-tests }}
+    if: needs.changes.outputs.frontend == 'true' || inputs.all-tests
     uses: ./.github/workflows/tests-frontend.yml
     # secrets: inherit
 
@@ -49,6 +49,6 @@ jobs:
     # TODO: concurrency
     # concurrency: build
     needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' || inputs.all-tests }}
+    if: needs.changes.outputs.backend == 'true' || inputs.all-tests
     uses: ./.github/workflows/tests-backend.yml
     # secrets: inherit

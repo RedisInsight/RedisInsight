@@ -21,17 +21,6 @@ const CopilotPanel = (props: Props) => {
   const { hideCopilotSplashScreen } = useSelector(aiAssistantSelector)
   const { data: userOAuthProfile } = useSelector(oauthCloudUserSelector)
 
-  useEffect(() => {
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_OPENED,
-      eventData: {
-        action: 'open',
-        authenticated: !!userOAuthProfile?.id,
-        firstUse: !hideCopilotSplashScreen
-      }
-    })
-  }, [])
-
   const handleClose = () => {
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_OPENED,

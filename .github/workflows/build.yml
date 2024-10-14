@@ -1,10 +1,6 @@
 name: Build
 
 on:
-  push:
-    branches:
-      - 'feature/**'
-
   workflow_dispatch:
     inputs:
       target:
@@ -32,28 +28,26 @@ on:
 
 jobs:
   build_linux:
-    # if: startsWith(inputs.target, 'linux') || inputs.target == 'all'
+    if: startsWith(inputs.target, 'linux') || inputs.target == 'all'
     # concurrency: build
     uses: ./.github/workflows/pipeline-build-linux.yml
     secrets: inherit
     with:
-      target: 'all'
-      # target: ${{ inputs.target }}
+      target: ${{ inputs.target }}
 
   build_macos:
-    # if: startsWith(inputs.target, 'macos') || inputs.target == 'all'
+    if: startsWith(inputs.target, 'macos') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-macos.yml
     secrets: inherit
     with:
-      target: 'all'
-      # target: ${{ inputs.target }}
+      target: ${{ inputs.target }}
 
   build_windows:
-    # if: startsWith(inputs.target, 'windows') || inputs.target == 'all'
+    if: startsWith(inputs.target, 'windows') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-windows.yml
     secrets: inherit
 
   build_docker:
-    # if: startsWith(inputs.target, 'docker') || inputs.target == 'all'
+    if: startsWith(inputs.target, 'docker') || inputs.target == 'all'
     uses: ./.github/workflows/pipeline-build-docker.yml
     secrets: inherit

@@ -556,12 +556,11 @@ const Query = (props: Props) => {
     if (position.column === 1) {
       helpWidgetRef.current.isOpen = false
       if (command) return asSuggestionsRef([])
-
       return asSuggestionsRef(getCommandsSuggestions(REDIS_COMMANDS, range), false)
     }
 
     if (!command) {
-      return asSuggestionsRef([], false)
+      return asSuggestionsRef(getCommandsSuggestions(REDIS_COMMANDS, range), false)
     }
 
     const { allArgs, args, cursor } = command

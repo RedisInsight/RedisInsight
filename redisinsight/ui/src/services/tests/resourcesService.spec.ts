@@ -3,9 +3,6 @@
 */
 
 import { cloneDeep } from 'lodash'
-import { getConfig } from 'uiSrc/config'
-
-let riConfig = getConfig()
 
 Object.defineProperty(window, 'location', {
   value: {

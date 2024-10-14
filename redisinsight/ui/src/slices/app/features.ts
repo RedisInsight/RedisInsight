@@ -8,6 +8,9 @@ import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { getPagesForFeatures } from 'uiSrc/utils/features'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getConfig } from 'uiSrc/config'
+
+const riConfig = getConfig()
 
 export const initialState: StateAppFeatures = {
   highlighting: {
@@ -45,7 +48,7 @@ export const initialState: StateAppFeatures = {
         flag: false
       },
       [FeatureFlags.envDependent]: {
-        flag: true
+        flag: riConfig.features.envDependent.defaultFlag
       }
     }
   }
@@ -122,7 +125,7 @@ const appFeaturesSlice = createSlice({
       // make sure that feature was defined and enabled by default
       if (!payload.features[FeatureFlags.envDependent]) {
         payload.features[FeatureFlags.envDependent] = {
-          flag: true
+          flag: riConfig.features.envDependent.defaultFlag
         }
       }
 

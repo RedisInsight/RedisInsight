@@ -1,0 +1,100 @@
+name: Build linux pipeline
+
+on:
+  workflow_call:
+    inputs:
+      target:
+        description: Build target
+        required: false
+        default: 'all'
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    name: Build linux job
+
+    steps:
+    #TODO: some debug information
+    # - uses: crazy-max/ghaction-dump-context@v2
+    # - uses: hmarr/debug-action@v3
+    # ssh
+    # - run: sudo apt-get update -qy && sudo apt-get install -qy tmux;
+    # - name: Setup upterm session
+    # - uses: mxschmitt/action-tmate #1 better
+    #   uses: lhotari/action-upterm@v1 #2
+    #   with:
+    #     limit-access-to-actor: true
+    #     limit-access-to-users: zalenskiSofteq
+
+    - uses: actions/checkout@v4.1.0
+
+    - name: Install all libs and dependencies
+      uses: ./.github/actions/install-all-build-libs
+      with:
+        keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
+        sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
+
+    # TODO: Is it needed?
+    # - run: |
+    #     mkdir electron
+    #     CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
+    #     echo "Build version: $CURRENT_VERSION"
+    #     cp ./redisinsight/package.json ./electron/package.json
+    #     echo "$VERSION" > electron/version
+    #     exit 0
+    # - uses: actions/download-artifact@v4.1.0
+    #   with:
+    #     path: "."
+    # - run: cp ./electron/package.json ./redisinsight/
+
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics
+
+    - name: Build linux packages (production)
+      if: vars.ENV == 'production' && inputs.target == 'all'
+      run: yarn package:prod
+
+    - name: Build linux packages (staging)
+      if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == 'all'
+      run: yarn package:stage
+
+    - name: Build linux packages (development)
+      if: inputs.target != 'all'
+      run: |
+        target=""
+        if [ ${{ startsWith(inputs.target, 'linux:') }} == 'true' ]; then
+          inputsTarget=${{inputs.target}}
+          target=${inputsTarget#linux:}
+        fi
+
+        yarn package:stage --linux $target
+
+    - uses: actions/upload-artifact@v4.1.0
+      name: Upload AppImage artifact
+      with:
+        name: 'linux-appimage-build'
+        path: |
+          ./release/Redis-Insight*.AppImage
+          ./release/*-linux.yml
+
+    - uses: actions/upload-artifact@v4.1.0
+      name: Upload Deb artifact
+      with:
+        name: 'linux-deb-build'
+        path: |
+          ./release/Redis-Insight*.deb
+
+    - uses: actions/upload-artifact@v4.1.0
+      name: Upload rpm artifacts
+      with:
+        name: 'linux-rpm-build'
+        path: |
+          ./release/Redis-Insight*.rpm
+
+    - uses: actions/upload-artifact@v4.1.0
+      name: Upload snap artifact
+      with:
+        name: 'linux-snap-builds'
+        path: |
+          ./release/Redis-Insight*.snap

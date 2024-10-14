@@ -22,6 +22,7 @@ jobs:
     - name: Build sources
       run: ./.circleci/build/build.sh
 
+    # todo: matrix
     - name: Build web archives
       run: |
         unset npm_config_keytar_binary_host_mirror
@@ -39,6 +40,7 @@ jobs:
         PLATFORM=win32 ARCH=x64 .circleci/build/build_modules.sh
     - name: Build Docker (x64, arm64)
       env:
+        ENV: ${{ vars.ENV }}
         RI_SEGMENT_WRITE_KEY: ${{ secrets.RI_SEGMENT_WRITE_KEY }}
       run: |
         # Build alpine x64 image
@@ -46,7 +48,7 @@ jobs:
         -f .circleci/build/build.Dockerfile \
         --platform linux/amd64 \
         --build-arg DIST=release/web/Redis-Insight-web-linux-musl.x64.tar.gz \
-        --build-arg NODE_ENV="$env" \
+        --build-arg NODE_ENV="$ENV" \
         --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
         -t redisinsight:amd64 \
         .
@@ -56,7 +58,7 @@ jobs:
         -f .circleci/build/build.Dockerfile \
         --platform linux/arm64 \
         --build-arg DIST=release/web/Redis-Insight-web-linux-musl.arm64.tar.gz \
-        --build-arg NODE_ENV="$env" \
+        --build-arg NODE_ENV="$ENV" \
         --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
         -t redisinsight:arm64 \
         .

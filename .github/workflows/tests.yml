@@ -2,11 +2,8 @@ name: Tests Pipeline
 
 on:
   push:
-    branches:
-      - 'gh/**'
-    # todo uncomment
-    # branches-ignore:
-    #   - main
+    branches-ignore:
+      - main
 
   workflow_dispatch:
     inputs:

@@ -25,9 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.0
 
-    # Install libsecret
-    # - run: brew install libsecret
-
     - name: Add certificates to the keychain
       uses: ./.github/actions/install-apple-certs
       with:
@@ -44,10 +41,8 @@ jobs:
         keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
         sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
 
-
-    #TODO uncomment
-    # - name: Install plugins dependencies and build plugins
-    #   run: yarn build:statics
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics
 
     - name: Build macos dmg (prod)
       if: vars.ENV == 'production' && inputs.target == 'all'

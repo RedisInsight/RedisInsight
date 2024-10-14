@@ -14,5 +14,3 @@ runs:
       run: |
         mkdir -p certs
         echo "$WIN_CSC_PFX_BASE64" | base64 -d > certs/redislabs_win.pfx
-
-

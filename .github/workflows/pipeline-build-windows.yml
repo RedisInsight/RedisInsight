@@ -21,9 +21,8 @@ jobs:
       with:
         WIN_CSC_PFX_BASE64: ${{ secrets.WIN_CSC_PFX_BASE64 }}
 
-    #TODO uncomment
-    # - name: Install plugins dependencies and build plugins
-    #   run: yarn build:statics:win
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics:win
 
     - name: Build windows exe (production)
       if: vars.ENV == 'production'

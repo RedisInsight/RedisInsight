@@ -55,7 +55,7 @@ const NoRecommendationsScreen = () => {
       <WelcomeIcon className={styles.icon} />
       { instanceId
         ? (
-          <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
             <EuiText className={styles.text} data-testid="no-recommendations-analyse-text">
               Eager for more tips? Run Database Analysis to get started.
             </EuiText>

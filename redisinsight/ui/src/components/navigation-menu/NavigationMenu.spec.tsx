@@ -29,6 +29,9 @@ jest.mock('uiSrc/slices/app/features', () => ({
     appSettings: {
       flag: true,
     },
+    envDependent: {
+      flag: true,
+    }
   }),
 }))
 

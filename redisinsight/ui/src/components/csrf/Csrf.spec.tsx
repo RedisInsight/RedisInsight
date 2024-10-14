@@ -5,18 +5,22 @@ import { render, screen, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
 import Csrf from 'uiSrc/components/csrf/Csrf'
 import { appCsrfSelector, fetchCsrfToken, initialState } from 'uiSrc/slices/app/csrf'
 import { apiService } from 'uiSrc/services'
+import { getConfig } from 'uiSrc/config'
+
+const riConfig = getConfig()
 
 jest.mock('uiSrc/slices/app/csrf', () => ({
   ...jest.requireActual('uiSrc/slices/app/csrf'),
   appCsrfSelector: jest.fn().mockReturnValue(jest.requireActual('uiSrc/slices/app/csrf').initialState),
 }))
 
-const OLD_ENV_CONFIG = { ...window.riConfig }
+const OLD_ENV_CONFIG = cloneDeep(riConfig)
+
 let store: typeof mockedStore
 
 describe('Csrf', () => {
   beforeEach(() => {
-    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
 
     apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
@@ -29,7 +33,7 @@ describe('Csrf', () => {
     store.clearActions()
   })
   afterAll(() => {
-    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })
 
   it('should render children when not loading and no csrf endpoint set', () => {
@@ -57,7 +61,7 @@ describe('Csrf', () => {
 
   it('should render children when csrf endpoint is present, token is present, and not loading', async () => {
     const csrfEndpoint = 'csrf'
-    window.riConfig.api.csrfEndpoint = csrfEndpoint;
+    riConfig.api.csrfEndpoint = csrfEndpoint;
     (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(
@@ -106,7 +110,7 @@ describe('Csrf', () => {
 
   it('should not throw and render placeholder when erroring', async () => {
     const csrfEndpoint = 'csrf'
-    window.riConfig.api.csrfEndpoint = csrfEndpoint;
+    riConfig.api.csrfEndpoint = csrfEndpoint;
     (appCsrfSelector as jest.Mock).mockReturnValue({ ...initialState, csrfEndpoint, token: 'csrf-token' })
 
     render(

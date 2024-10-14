@@ -1,6 +1,6 @@
 import { defaultConfig } from 'uiSrc/config/default'
 
-window.riConfig = defaultConfig
+riConfig = defaultConfig
 
 window.app = {
   ...window.app,

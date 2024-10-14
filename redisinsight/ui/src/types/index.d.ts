@@ -10,13 +10,16 @@ import { IPCHandler } from '../../../desktop/preload'
 declare global {
   interface Window {
     ri: RedisInsight
-    riConfig: Config
     Buffer: typeof Buffer
     app: WindowApp
     windowId?: string
     MonacoEnvironment: Environment;
     readonly __RI_PROXY_PATH__: string
   }
+}
+
+declare global {
+  let riConfig: Config
 }
 
 export interface RedisInsight {

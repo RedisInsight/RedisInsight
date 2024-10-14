@@ -79,10 +79,22 @@ jobs:
           ./release/*-linux.yml
 
     - uses: actions/upload-artifact@v4.1.0
-      name: Upload artifacts
+      name: Upload Deb artifact
       with:
-        name: 'linux-builds'
+        name: 'linux-deb-build'
         path: |
           ./release/Redis-Insight*.deb
+
+    - uses: actions/upload-artifact@v4.1.0
+      name: Upload rpm artifacts
+      with:
+        name: 'linux-rpm-build'
+        path: |
           ./release/Redis-Insight*.rpm
+
+    - uses: actions/upload-artifact@v4.1.0
+      name: Upload snap artifact
+      with:
+        name: 'linux-snap-builds'
+        path: |
           ./release/Redis-Insight*.snap

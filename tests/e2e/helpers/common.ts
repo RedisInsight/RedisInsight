@@ -16,11 +16,12 @@ declare global {
 const settingsApiUrl = `${apiUrl}/settings`;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 const mockedSettingsResponse = {
-    agreements: {
-        version: '0',
-        eula: false,
-        analytics: false
-    }
+    "theme": null,
+    "dateFormat": null,
+    "timezone": null,
+    "scanThreshold": 10000,
+    "batchSize": 5,
+    "agreements": null
 };
 
 export class Common {

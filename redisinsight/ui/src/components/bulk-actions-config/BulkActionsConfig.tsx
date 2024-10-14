@@ -22,6 +22,9 @@ import { BrowserStorageItem, BulkActionsServerEvent, BulkActionsStatus, BulkActi
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { CustomHeaders } from 'uiSrc/constants/api'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
+import { getConfig } from 'uiSrc/config'
+
+const riConfig = getConfig()
 
 const BulkActionsConfig = () => {
   const { id: instanceId = '', db } = useSelector(connectedInstanceSelector)
@@ -49,8 +52,8 @@ const BulkActionsConfig = () => {
         ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
-      transports: window.riConfig.api.socketTransports?.split(','),
-      withCredentials: window.riConfig.api.socketCredentials,
+      transports: riConfig.api.socketTransports?.split(','),
+      withCredentials: riConfig.api.socketCredentials,
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

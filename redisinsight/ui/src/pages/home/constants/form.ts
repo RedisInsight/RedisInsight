@@ -1,3 +1,5 @@
+import { getConfig } from 'uiSrc/config'
+
 export const ADD_NEW_CA_CERT = 'ADD_NEW_CA_CERT'
 export const NO_CA_CERT = 'NO_CA_CERT'
 export const ADD_NEW = 'ADD_NEW'
@@ -29,7 +31,7 @@ export const fieldDisplayNames = {
   sshUsername: 'SSH Username',
 }
 
-export const DEFAULT_TIMEOUT = window.riConfig.database.defaultConnectionTimeout
+export const DEFAULT_TIMEOUT = getConfig().database.defaultConnectionTimeout
 
 export enum SubmitBtnText {
   AddDatabase = 'Add Redis Database',

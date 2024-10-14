@@ -1,9 +1,11 @@
 import { IpcInvokeEvent } from 'uiSrc/electron/constants'
+import { getConfig } from 'uiSrc/config'
 
-const isDevelopment = window.riConfig.app.env === 'development'
-const isWebApp = window.riConfig.app.type === 'web'
-const { apiPort } = window.app?.config || { apiPort: window.riConfig.api.port }
-const hostedApiBaseUrl = window.riConfig.api.hostedBaseUrl
+const riConfig = getConfig()
+const isDevelopment = riConfig.app.env === 'development'
+const isWebApp = riConfig.app.type === 'web'
+const { apiPort } = window.app?.config || { apiPort: riConfig.api.port }
+const hostedApiBaseUrl = riConfig.api.hostedBaseUrl
 
 export const getBaseApiUrl = () => {
   if (hostedApiBaseUrl) {
@@ -12,7 +14,7 @@ export const getBaseApiUrl = () => {
 
   return (!isDevelopment && isWebApp
     ? window.location.origin
-    : `${window.riConfig.api.baseUrl}:${apiPort}`)
+    : `${riConfig.api.baseUrl}:${apiPort}`)
 }
 
 export const getProxyPath = () => {
@@ -20,8 +22,8 @@ export const getProxyPath = () => {
     return `/${window.__RI_PROXY_PATH__}/socket.io`
   }
 
-  if (window.riConfig.api.hostedSocketProxyPath) {
-    return window.riConfig.api.hostedSocketProxyPath
+  if (riConfig.api.hostedSocketProxyPath) {
+    return riConfig.api.hostedSocketProxyPath
   }
 
   return '/socket.io'

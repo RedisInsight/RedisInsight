@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '../store'
 import { RedisResponseEncoding, StateAppInfo } from '../interfaces'
 
 export const initialState: StateAppInfo = {
-  loading: false,
+  loading: true,
   error: '',
   server: null,
   encoding: RedisResponseEncoding.Buffer,

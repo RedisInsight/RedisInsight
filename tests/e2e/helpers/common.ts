@@ -28,7 +28,11 @@ export class Common {
     static mockSettingsResponse(): RequestMock {
         return RequestMock()
             .onRequestTo(settingsApiUrl)
-            .respond(mockedSettingsResponse, 200);
+            .respond(mockedSettingsResponse, 200, {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Allow-Headers': 'x-window-id'
+            });
     }
 
     static async waitForElementNotVisible(elm: Selector): Promise<void> {

@@ -13,6 +13,7 @@ import {
   mockedStore,
 } from 'uiSrc/utils/test-utils'
 import { apiService } from 'uiSrc/services'
+import { getConfig } from 'uiSrc/config'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -21,13 +22,15 @@ beforeEach(() => {
   store.clearActions()
 })
 
+const riConfig = getConfig()
+
 describe('slices', () => {
-  const OLD_ENV_CONFIG = cloneDeep(window.riConfig)
+  const OLD_ENV_CONFIG = cloneDeep(riConfig)
   beforeEach(() => {
-    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })
   afterAll(() => {
-    window.riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
+    riConfig.api.csrfEndpoint = OLD_ENV_CONFIG.api.csrfEndpoint
   })
 
   it('fetch token reducer should properly set the token', () => {
@@ -76,7 +79,7 @@ describe('slices', () => {
   })
 
   it('fetchCsrfToken should fetch the token', async () => {
-    window.riConfig.api.csrfEndpoint = 'http://localhost'
+    riConfig.api.csrfEndpoint = 'http://localhost'
 
     apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
@@ -96,7 +99,7 @@ describe('slices', () => {
   })
 
   it('fetchCsrfToken should handle failure', async () => {
-    window.riConfig.api.csrfEndpoint = 'http://localhost'
+    riConfig.api.csrfEndpoint = 'http://localhost'
 
     apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
     const successFn = jest.fn()

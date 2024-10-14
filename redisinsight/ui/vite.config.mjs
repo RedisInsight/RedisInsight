@@ -109,9 +109,7 @@ export default defineConfig({
   define: {
     global: 'globalThis',
     'process.env': {},
-    'window.riConfig': {
-      ...defaultConfig,
-    }
+    riConfig: defaultConfig,
   },
   // hack: apply proxy path to monaco webworker
   experimental: {

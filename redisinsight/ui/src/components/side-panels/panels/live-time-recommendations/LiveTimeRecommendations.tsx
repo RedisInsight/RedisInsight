@@ -153,7 +153,7 @@ const LiveTimeRecommendations = () => {
             data-testid="recommendations-info-icon"
           />
         </EuiToolTip>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <EuiLink
             external={false}
             href={EXTERNAL_LINKS.githubRepo}
@@ -198,7 +198,7 @@ const LiveTimeRecommendations = () => {
           : renderBody()}
       </div>
       {instanceId && (
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <div className={styles.footer}>
             <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
             <EuiText className={styles.text}>

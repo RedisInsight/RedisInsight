@@ -1,8 +1,11 @@
 import { IRoute } from 'uiSrc/constants'
+import { getConfig } from 'uiSrc/config'
 
-export const LAZY_LOAD = window.riConfig?.app?.lazyLoad
+const riConfig = getConfig()
 
-export const ROUTES_EXCLUDED_BY_ENV = window.riConfig?.app?.routesExcludedByEnv
+export const LAZY_LOAD = riConfig?.app?.lazyLoad
+
+export const ROUTES_EXCLUDED_BY_ENV = riConfig?.app?.routesExcludedByEnv
 
 export const getRouteIncludedByEnv = (routeDefinition: IRoute[]) => {
   if (ROUTES_EXCLUDED_BY_ENV) {

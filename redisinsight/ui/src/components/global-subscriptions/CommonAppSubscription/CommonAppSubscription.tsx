@@ -16,7 +16,10 @@ import { CustomHeaders } from 'uiSrc/constants/api'
 import { oauthCloudJobSelector, setJob } from 'uiSrc/slices/oauth/cloud'
 import { CloudJobName } from 'uiSrc/electron/constants'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
+import { getConfig } from 'uiSrc/config'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
+
+const riConfig = getConfig()
 
 const CommonAppSubscription = () => {
   const { id: jobId = '' } = useSelector(oauthCloudJobSelector) ?? {}
@@ -41,8 +44,8 @@ const CommonAppSubscription = () => {
         ...(token ? { [CustomHeaders.CsrfToken]: token } : {}),
       },
       rejectUnauthorized: false,
-      transports: window.riConfig.api.socketTransports?.split(','),
-      withCredentials: window.riConfig.api.socketCredentials,
+      transports: riConfig.api.socketTransports?.split(','),
+      withCredentials: riConfig.api.socketCredentials,
     })
 
     socketRef.current.on(SocketEvent.Connect, () => {

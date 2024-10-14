@@ -9,8 +9,7 @@ export interface Props {
 
 const UseProfilerLink = ({ onClick }: Props) => (
   <FeatureFlagComponent
-    name={FeatureFlags.disabledByEnv}
-    enabledByDefault
+    name={FeatureFlags.envDependent}
     otherwise={<EuiTextColor color="accent">Monitor not supported in this environment.</EuiTextColor>}
   >
     <EuiTextColor color="danger" key={Date.now()}>

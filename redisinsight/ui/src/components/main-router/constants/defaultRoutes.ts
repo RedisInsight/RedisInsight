@@ -79,7 +79,7 @@ const ROUTES: IRoute[] = [
       exact: true,
       component: LAZY_LOAD ? LazyHomePage : HomePage,
       isAvailableWithoutAgreements: true,
-      featureFlag: FeatureFlags.disabledByEnv
+      featureFlag: FeatureFlags.envDependent
     },
     ...COMMON_ROUTES,
     {

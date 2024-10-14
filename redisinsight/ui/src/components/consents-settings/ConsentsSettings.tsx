@@ -233,7 +233,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             <EuiSpacer size="m" />
             <EuiText className={styles.smallText} size="s" color="subdued">
               To optimize your experience, Redis Insight uses third-party tools.
-              All data collected is anonymized and will not be used for any purpose without your consent.
             </EuiText>
             <EuiSpacer size="l" />
           </>

@@ -457,8 +457,8 @@ export const findArgByToken = (list: SearchCommand[], arg: string): Maybe<Search
       ? cArg.arguments?.some((oneOfArg: SearchCommand) => oneOfArg?.token?.toLowerCase() === arg?.toLowerCase())
       : cArg.arguments?.[0]?.token?.toLowerCase() === arg.toLowerCase()))
 
-export const isCompositeArgument = (arg: string, prevArg?: string) =>
-  COMPOSITE_ARGS.includes([prevArg?.toUpperCase(), arg?.toUpperCase()].join(' '))
+export const isCompositeArgument = (arg: string, prevArg?: string, args: string[] = []) =>
+  args.includes([prevArg?.toUpperCase(), arg?.toUpperCase()].join(' '))
 
 export const generateDetail = (command: Maybe<SearchCommand>) => {
   if (!command) return ''

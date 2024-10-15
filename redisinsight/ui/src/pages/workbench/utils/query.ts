@@ -1,105 +1,9 @@
 /* eslint-disable no-continue */
 
-import { isNumber, toNumber } from 'lodash'
+import { findLastIndex, isNumber, toNumber } from 'lodash'
 import { generateArgsNames, Maybe, Nullable } from 'uiSrc/utils'
 import { CommandProvider, IRedisCommand, IRedisCommandTree, ICommandTokenType } from 'uiSrc/constants'
-import { COMPOSITE_ARGS } from 'uiSrc/pages/workbench/constants'
 import { ArgName, FoundCommandArgument } from '../types'
-
-export const splitQueryByArgs = (query: string, position: number = 0) => {
-  const args: [string[], string[]] = [[], []]
-  let arg = ''
-  let inQuotes = false
-  let escapeNextChar = false
-  let quoteChar = ''
-  let isCursorInQuotes = false
-  let lastArg = ''
-  let argLeftOffset = 0
-  let argRightOffset = 0
-
-  const pushToProperTuple = (isAfterOffset: boolean, arg: string) => {
-    lastArg = arg
-    isAfterOffset ? args[1].push(arg) : args[0].push(arg)
-  }
-
-  const updateLastArgument = (isAfterOffset: boolean, arg: string) => {
-    const argsBySide = args[isAfterOffset ? 1 : 0]
-    argsBySide[argsBySide.length - 1] = `${argsBySide[argsBySide.length - 1]} ${arg}`
-  }
-
-  const updateArgOffsets = (left: number, right: number) => {
-    argLeftOffset = left
-    argRightOffset = right
-  }
-
-  for (let i = 0; i < query.length; i++) {
-    const char = query[i]
-    const isAfterOffset = i >= position + (inQuotes ? -1 : 0)
-
-    if (escapeNextChar) {
-      arg += char
-      escapeNextChar = !quoteChar
-    } else if (char === '\\') {
-      escapeNextChar = true
-    } else if (inQuotes) {
-      if (char === quoteChar) {
-        inQuotes = false
-        const argWithChat = arg + char
-
-        if (isAfterOffset && !argLeftOffset) {
-          updateArgOffsets(i - arg.length, i + 1)
-        }
-
-        if (isCompositeArgument(argWithChat, lastArg)) {
-          updateLastArgument(isAfterOffset, argWithChat)
-        } else {
-          pushToProperTuple(isAfterOffset, argWithChat)
-        }
-
-        arg = ''
-      } else {
-        arg += char
-      }
-    } else if (char === '"' || char === "'") {
-      inQuotes = true
-      quoteChar = char
-      arg += char
-    } else if (char === ' ' || char === '\n') {
-      if (arg.length > 0) {
-        if (isAfterOffset && !argLeftOffset) {
-          updateArgOffsets(i - arg.length, i)
-        }
-
-        if (isCompositeArgument(arg, lastArg)) {
-          updateLastArgument(isAfterOffset, arg)
-        } else {
-          pushToProperTuple(isAfterOffset, arg)
-        }
-
-        arg = ''
-      }
-    } else {
-      arg += char
-    }
-
-    if (i === position - 1) isCursorInQuotes = inQuotes
-  }
-
-  if (arg.length > 0) {
-    if (!argLeftOffset) updateArgOffsets(query.length - arg.length, query.length)
-    pushToProperTuple(true, arg)
-  }
-
-  const cursor = {
-    isCursorInQuotes,
-    prevCursorChar: query[position - 1]?.trim() || '',
-    nextCursorChar: query[position]?.trim() || '',
-    argLeftOffset,
-    argRightOffset
-  }
-
-  return { args, cursor }
-}
 
 export const findCurrentArgument = (
   args: IRedisCommand[],
@@ -340,7 +244,7 @@ export const getArgumentSuggestions = (
   const isBlockHasParent = current?.arguments?.some(({ name }) => parent?.name && name === parent?.name)
   const foundParent = isBlockHasParent ? { ...parent, parent: current } : (parent || current)
 
-  const isBlockComplete = !stopArgument && current?.name === lastArgument?.name
+  const isBlockComplete = !stopArgument && isPrevArgWasMandatory
   const beforeMandatoryOptionalArgs = getAllRestArguments(foundParent, lastArgument, untilTokenArgs, isBlockComplete)
   const requiredArgsLength = restNotFilledArgs.filter((arg) => !arg.optional).length
 
@@ -395,8 +299,14 @@ export const getAllRestArguments = (
   skipLevel = false
 ) => {
   const appendArgs: Array<IRedisCommand[]> = []
-  const currentLvlNextArgs = removeNotSuggestedArgs(
+
+  const currentToken = current?.type === ICommandTokenType.Block ? current?.arguments?.[0].token : current?.token
+  const lastTokenIndex = findLastIndex(
     untilTokenArgs,
+    (arg) => arg?.toLowerCase() === currentToken?.toLowerCase()
+  )
+  const currentLvlNextArgs = removeNotSuggestedArgs(
+    untilTokenArgs.slice(lastTokenIndex > 0 ? lastTokenIndex : 0),
     getRestArguments(current, stopArgument)
   )
 
@@ -464,10 +374,7 @@ export const findArgByToken = (list: IRedisCommand[], arg: string): Maybe<IRedis
   list.find((cArg) =>
     (cArg.type === ICommandTokenType.OneOf
       ? cArg.arguments?.some((oneOfArg: IRedisCommand) => oneOfArg?.token?.toLowerCase() === arg?.toLowerCase())
-      : cArg.arguments?.[0]?.token?.toLowerCase() === arg.toLowerCase()))
-
-export const isCompositeArgument = (arg: string, prevArg?: string) =>
-  COMPOSITE_ARGS.includes([prevArg?.toUpperCase(), arg?.toUpperCase()].join(' '))
+      : cArg.arguments?.[0]?.token?.toLowerCase() === arg?.toLowerCase()))
 
 export const generateDetail = (command: Maybe<IRedisCommand>) => {
   if (!command) return ''

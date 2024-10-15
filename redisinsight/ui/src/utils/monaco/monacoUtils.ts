@@ -1,7 +1,7 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { first, isEmpty, isUndefined, reject, without } from 'lodash'
 import { decode } from 'html-entities'
-import { ICommands, ICommand } from 'uiSrc/constants'
+import { ICommand, ICommands } from 'uiSrc/constants'
 import {
   generateArgsForInsertText,
   generateArgsNames,
@@ -10,7 +10,6 @@ import {
   IMonacoQuery
 } from 'uiSrc/utils'
 import { TJMESPathFunctions } from 'uiSrc/slices/interfaces'
-import { isCompositeArgument } from 'uiSrc/pages/search/utils'
 import { Nullable } from '../types'
 import { getCommandRepeat, isRepeatCountCorrect } from '../commands'
 
@@ -97,16 +96,21 @@ export const findCommandEarlier = (
     return null
   }
 
-  const command:IMonacoCommand = {
+  return {
     position,
     name: matchedCommand,
     info: commandsSpec[matchedCommand]
   }
-
-  return command
 }
 
-export const splitQueryByArgs = (query: string, position: number = 0) => {
+export const isCompositeArgument = (arg: string, prevArg?: string, args: string[] = []) =>
+  args.includes([prevArg?.toUpperCase(), arg?.toUpperCase()].join(' '))
+
+export const splitQueryByArgs = (
+  query: string,
+  position: number = 0,
+  compositeArgs: string[] = []
+) => {
   const args: [string[], string[]] = [[], []]
   let arg = ''
   let inQuotes = false
@@ -144,16 +148,16 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
     } else if (inQuotes) {
       if (char === quoteChar) {
         inQuotes = false
-        const argWithChat = arg + char
+        const argWithChar = arg + char
 
         if (isAfterOffset && !argLeftOffset) {
           updateArgOffsets(i - arg.length, i + 1)
         }
 
-        if (isCompositeArgument(argWithChat, lastArg)) {
-          updateLastArgument(isAfterOffset, argWithChat)
+        if (isCompositeArgument(argWithChar, lastArg, compositeArgs)) {
+          updateLastArgument(isAfterOffset, argWithChar)
         } else {
-          pushToProperTuple(isAfterOffset, argWithChat)
+          pushToProperTuple(isAfterOffset, argWithChar)
         }
 
         arg = ''
@@ -170,7 +174,7 @@ export const splitQueryByArgs = (query: string, position: number = 0) => {
           updateArgOffsets(i - arg.length, i)
         }
 
-        if (isCompositeArgument(arg, lastArg)) {
+        if (isCompositeArgument(arg, lastArg, compositeArgs)) {
           updateLastArgument(isAfterOffset, arg)
         } else {
           pushToProperTuple(isAfterOffset, arg)
@@ -205,7 +209,8 @@ export const findCompleteQuery = (
   model: monacoEditor.editor.ITextModel,
   position: monacoEditor.Position,
   commandsSpec: ICommands = {},
-  commandsArray: string[] = []
+  commandsArray: string[] = [],
+  compositeArgs: string[] = []
 ): Nullable<IMonacoQuery> => {
   const { lineNumber } = position
   let commandName = ''
@@ -262,7 +267,11 @@ export const findCompleteQuery = (
     fullQuery += lineAfterPosition
   }
 
-  const { args, cursor } = splitQueryByArgs(fullQuery, commandCursorPosition)
+  const { args, cursor } = splitQueryByArgs(
+    fullQuery,
+    commandCursorPosition,
+    compositeArgs,
+  )
 
   return {
     position,

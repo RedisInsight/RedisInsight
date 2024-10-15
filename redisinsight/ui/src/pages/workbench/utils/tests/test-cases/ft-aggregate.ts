@@ -258,7 +258,7 @@ export const findArgumentftAggreageTests = [
     args: ['index', '"query"', 'LOAD', '4', '1', '2', '3', '4'],
     result: {
       stopArg: undefined,
-      append: [[]],
+      append: [],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)

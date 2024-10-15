@@ -1,8 +1,8 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { isNumber } from 'lodash'
-import { IMonacoQuery, Nullable } from 'uiSrc/utils'
+import { IMonacoQuery, Nullable, splitQueryByArgs } from 'uiSrc/utils'
 import { CursorContext, FoundCommandArgument } from 'uiSrc/pages/workbench/types'
-import { findCurrentArgument, splitQueryByArgs } from 'uiSrc/pages/workbench/utils/query'
+import { findCurrentArgument } from 'uiSrc/pages/workbench/utils/query'
 import { IRedisCommand } from 'uiSrc/constants'
 import {
   asSuggestionsRef,
@@ -49,28 +49,27 @@ export const findSuggestionsByArg = (
     return handleFieldSuggestions(additionData.fields || [], foundArg, cursorContext.range)
   }
 
+  if (foundArg?.stopArg?.token && !foundArg?.isBlocked) {
+    return handleCommonSuggestions(
+      command.fullQuery,
+      foundArg,
+      allArgs,
+      additionData.fields || [],
+      cursorContext,
+      isEscaped
+    )
+  }
+
+  const { indexes, fields } = additionData
   switch (foundArg?.stopArg?.name) {
     case DefinedArgumentName.index: {
-      return handleIndexSuggestions(
-        additionData.indexes || [],
-        command,
-        foundArg,
-        currentOffsetArg,
-        cursorContext.range
-      )
+      return handleIndexSuggestions(indexes, command, foundArg, currentOffsetArg, cursorContext)
     }
     case DefinedArgumentName.query: {
       return handleQuerySuggestions(foundArg)
     }
     default: {
-      return handleCommonSuggestions(
-        command.fullQuery,
-        foundArg,
-        allArgs,
-        additionData.fields || [],
-        cursorContext,
-        isEscaped
-      )
+      return handleCommonSuggestions(command.fullQuery, foundArg, allArgs, fields, cursorContext, isEscaped)
     }
   }
 }
@@ -88,11 +87,11 @@ const handleFieldSuggestions = (
 }
 
 const handleIndexSuggestions = (
-  indexes: any[],
+  indexes: any[] = [],
   command: IMonacoQuery,
   foundArg: FoundCommandArgument,
   currentOffsetArg: Nullable<string>,
-  range: monacoEditor.IRange
+  cursorContext: CursorContext
 ) => {
   const isIndex = indexes.length > 0
   const helpWidget = { isOpen: isIndex, parent: command.info, currentArg: foundArg?.stopArg }
@@ -109,7 +108,7 @@ const handleIndexSuggestions = (
     helpWidget.isOpen = !!currentOffsetArg
 
     return {
-      suggestions: asSuggestionsRef(!currentOffsetArg ? getNoIndexesSuggestion(range) : [], true),
+      suggestions: asSuggestionsRef(!currentOffsetArg ? getNoIndexesSuggestion(cursorContext.range) : [], true),
       helpWidget
     }
   }
@@ -127,7 +126,7 @@ const handleIndexSuggestions = (
     && currentCommand?.arguments?.[argumentIndex + 1]?.name === DefinedArgumentName.query
 
   return {
-    suggestions: asSuggestionsRef(getIndexesSuggestions(indexes, range, isNextArgQuery)),
+    suggestions: asSuggestionsRef(getIndexesSuggestions(indexes, cursorContext.range, isNextArgQuery)),
     helpWidget
   }
 }
@@ -171,11 +170,13 @@ const handleCommonSuggestions = (
   value: string,
   foundArg: Nullable<FoundCommandArgument>,
   allArgs: string[],
-  fields: any[],
+  fields: any[] = [],
   cursorContext: CursorContext,
   isEscaped: boolean
 ) => {
-  if (foundArg?.stopArg?.expression) return handleExpressionSuggestions(value, foundArg, cursorContext)
+  if (foundArg?.stopArg?.expression && foundArg.isBlocked) {
+    return handleExpressionSuggestions(value, foundArg, cursorContext)
+  }
 
   const { prevCursorChar, nextCursorChar, isCursorInQuotes } = cursorContext
   const shouldHideSuggestions = isCursorInQuotes || nextCursorChar || (prevCursorChar && isEscaped)

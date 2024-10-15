@@ -25,6 +25,22 @@ export const commonfindCurrentArgumentCases = [
     appendNotIncludes: ['AS'],
   },
   {
+    input: 'FT.AGGREGATE \'idx1:vd\' "*" GROUPBY 1 @location REDUCE COUNT 0 AS item_count REDUCE SUM 1 @students ',
+    result: {
+      stopArg: {
+        name: 'name',
+        optional: true,
+        token: 'AS',
+        type: 'string'
+      },
+      append: expect.any(Array),
+      isBlocked: false,
+      isComplete: true,
+      parent: expect.any(Object)
+    },
+    appendIncludes: ['AS', 'REDUCE', 'APPLY', 'SORTBY', 'GROUPBY'],
+  },
+  {
     input: 'FT.SEARCH "idx:bicycle" "*" ',
     result: {
       stopArg: expect.any(Object),
@@ -47,6 +63,18 @@ export const commonfindCurrentArgumentCases = [
     result: expect.any(Object),
     appendIncludes: ['LIMITED', 'QUERY'],
     appendNotIncludes: ['AGGREGATE', 'SEARCH'],
+  },
+  {
+    input: 'FT.PROFILE idx AGGREGATE LIMITED ',
+    result: expect.any(Object),
+    appendIncludes: ['QUERY'],
+    appendNotIncludes: ['LIMITED', 'SEARCH'],
+  },
+  {
+    input: 'FT.PROFILE \'idx:schools\' SEARCH QUERY \'q\' ',
+    result: expect.any(Object),
+    appendIncludes: [],
+    appendNotIncludes: ['LIMITED'],
   },
   {
     input: 'FT.CREATE "idx:schools" ',

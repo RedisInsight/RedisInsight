@@ -1,0 +1,48 @@
+name: Build windows pipeline
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    name: Build windows job
+    env:
+      WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+      WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+
+    steps:
+    - uses: actions/checkout@v4.1.0
+
+    - name: Install all libs and dependencies
+      uses: ./.github/actions/install-all-build-libs
+
+    - name: Setup certs
+      uses: ./.github/actions/install-windows-certs
+      with:
+        WIN_CSC_PFX_BASE64: ${{ secrets.WIN_CSC_PFX_BASE64 }}
+
+    - name: Install plugins dependencies and build plugins
+      run: yarn build:statics:win
+
+    - name: Build windows exe (production)
+      if: vars.ENV == 'production'
+      run: |
+        yarn package:prod
+        rm -rf release/win-unpacked
+      shell: bash
+
+    - name: Build windows exe (staging)
+      if: (vars.ENV == 'staging' ||  vars.ENV == 'development')
+      run: |
+        yarn package:stage
+        rm -rf release/win-unpacked
+      shell: bash
+
+    - uses: actions/upload-artifact@v4.1.0
+      with:
+        name: 'windows-builds'
+        if-no-files-found: error
+        path: |
+          ./release/Redis-Insight*.exe
+          ./release/Redis-Insight*.exe.blockmap
+          ./release/*.yml

@@ -78,6 +78,8 @@
     "redisinsight-plugin-sdk": "^1.0.0"
   },
   "resolutions": {
+    "@parcel/**/micromatch": "^4.0.8",
+    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/braces": "^3.0.3"
   }

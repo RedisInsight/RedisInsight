@@ -16,18 +16,23 @@ declare global {
 const settingsApiUrl = `${apiUrl}/settings`;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // lgtm[js/disabling-certificate-validation]
 const mockedSettingsResponse = {
-    agreements: {
-        version: '0',
-        eula: false,
-        analytics: false
-    }
+    "theme": null,
+    "dateFormat": null,
+    "timezone": null,
+    "scanThreshold": 10000,
+    "batchSize": 5,
+    "agreements": null
 };
 
 export class Common {
     static mockSettingsResponse(): RequestMock {
         return RequestMock()
             .onRequestTo(settingsApiUrl)
-            .respond(mockedSettingsResponse, 200);
+            .respond(mockedSettingsResponse, 200, {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': 'true',
+                'Access-Control-Allow-Headers': 'x-window-id'
+            });
     }
 
     static async waitForElementNotVisible(elm: Selector): Promise<void> {

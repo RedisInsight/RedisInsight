@@ -89,7 +89,7 @@ const MonitorConfig = ({ retryDelay = 15000 } : IProps) => {
       }
 
       payloadsRef.current.push({ isError: true, time: `${Date.now()}`, ...payload })
-      setNewItems(payloadsRef.current, () => { payloads.length = 0 })
+      setNewItems(payloadsRef.current, () => { payloadsRef.current.length = 0 })
       dispatch(pauseMonitor())
     })
 

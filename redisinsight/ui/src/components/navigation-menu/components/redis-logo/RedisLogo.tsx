@@ -15,10 +15,10 @@ type Props = {
 }
 
 export const RedisLogo = ({ isRdiWorkspace }: Props) => {
-  const { disabledByEnv } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
   const { server } = useSelector(appInfoSelector)
 
-  if (disabledByEnv) {
+  if (envDependent?.flag) {
     return (
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
         <EuiIcon aria-label="redisinsight home page" type={LogoSVG} />

@@ -110,7 +110,7 @@ const HelpMenu = () => {
           gutterSize="m"
           responsive={false}
         >
-          <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+          <FeatureFlagComponent name={FeatureFlags.envDependent}>
             <EuiFlexItem grow={2} className={styles.helpMenuItem}>
               <EuiLink
                 external={false}
@@ -161,7 +161,7 @@ const HelpMenu = () => {
                 <EuiText size="xs" className={styles.helpMenuTextLink}>Release Notes</EuiText>
               </EuiLink>
             </div>
-            <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+            <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <div className={styles.helpMenuItemLink}>
                 <EuiIcon type={BulbSVG} size="l" />
                 <EuiText

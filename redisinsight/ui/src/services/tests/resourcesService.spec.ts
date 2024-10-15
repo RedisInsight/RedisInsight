@@ -11,15 +11,14 @@ Object.defineProperty(window, 'location', {
   writable: true
 })
 
-const OLD_ENV = cloneDeep(window.riConfig)
+const OLD_ENV = cloneDeep(riConfig)
 
 beforeEach(() => {
   jest.resetModules()
-  window.riConfig = cloneDeep(OLD_ENV)
+  riConfig = cloneDeep(OLD_ENV)
 })
 afterAll(() => {
-  // @ts-ignore
-  window.riConfig = cloneDeep(OLD_ENV)
+  riConfig = cloneDeep(OLD_ENV)
 })
 
 describe('getOriginUrl', () => {
@@ -30,8 +29,8 @@ describe('getOriginUrl', () => {
   })
 
   test('shoud return origin with not absolute path', () => {
-    window.riConfig.app.type = 'web'
-    window.riConfig.app.env = 'production'
+    riConfig.app.type = 'web'
+    riConfig.app.env = 'production'
 
     const { getOriginUrl } = require('../resourcesService')
     expect(getOriginUrl()).toEqual('http://localhost')
@@ -46,8 +45,8 @@ describe('getPathToResource', () => {
   })
 
   test('shoud return origin with not absolute path', () => {
-    window.riConfig.app.type = 'web'
-    window.riConfig.app.env = 'production'
+    riConfig.app.type = 'web'
+    riConfig.app.env = 'production'
 
     const { getPathToResource } = require('../resourcesService')
     expect(getPathToResource('data/file.txt')).toEqual('http://localhost/data/file.txt')

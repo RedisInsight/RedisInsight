@@ -154,7 +154,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
       },
-      featureFlag: FeatureFlags.disabledByEnv,
+      featureFlag: FeatureFlags.envDependent,
     },
     {
       tooltipText: 'Pub/Sub',
@@ -171,7 +171,7 @@ const NavigationMenu = () => {
         return this.isActivePage ? PubSubActiveSVG : PubSubSVG
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
-      featureFlag: FeatureFlags.disabledByEnv,
+      featureFlag: FeatureFlags.envDependent,
     },
   ]
 
@@ -220,7 +220,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? SettingsActiveSVG : SettingsSVG
       },
-      featureFlag: FeatureFlags.disabledByEnv,
+      featureFlag: FeatureFlags.envDependent,
     },
   ]
 
@@ -311,16 +311,15 @@ const NavigationMenu = () => {
         {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
       </div>
       <div className={styles.bottomContainer}>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <NotificationMenu />
         </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <HelpMenu />
         </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
         <FeatureFlagComponent
-          name={FeatureFlags.disabledByEnv}
-          enabledByDefault
+          name={FeatureFlags.envDependent}
           otherwise={(
             <Divider
               color="transparent"
@@ -331,7 +330,7 @@ const NavigationMenu = () => {
         >
           <Divider colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
         </FeatureFlagComponent>
-        <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>
+        <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <Divider
             colorVariable="separatorNavigationColor"
             className="eui-showFor--xs--flex eui-showFor--s--flex"

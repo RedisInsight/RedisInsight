@@ -8,6 +8,9 @@ import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { getPagesForFeatures } from 'uiSrc/utils/features'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { isStatusSuccessful, Maybe } from 'uiSrc/utils'
+import { getConfig } from 'uiSrc/config'
+
+const riConfig = getConfig()
 
 export const initialState: StateAppFeatures = {
   highlighting: {
@@ -43,6 +46,9 @@ export const initialState: StateAppFeatures = {
       },
       [FeatureFlags.rdi]: {
         flag: false
+      },
+      [FeatureFlags.envDependent]: {
+        flag: riConfig.features.envDependent.defaultFlag
       }
     }
   }
@@ -70,8 +76,8 @@ const appFeaturesSlice = createSlice({
       localStorageService.set(BrowserStorageItem.featuresHighlighting, { version, features })
     },
     setOnboarding: (state, { payload }) => {
-      const disabledByEnv = state.featureFlags.features[FeatureFlags.disabledByEnv]?.flag ?? true
-      if (payload.currentStep > payload.totalSteps || !disabledByEnv) {
+      const enabledByEnv = state.featureFlags.features[FeatureFlags.envDependent]?.flag ?? true
+      if (payload.currentStep > payload.totalSteps || !enabledByEnv) {
         state.onboarding.isActive = false
         localStorageService.set(BrowserStorageItem.onboardingStep, null)
         return
@@ -115,6 +121,14 @@ const appFeaturesSlice = createSlice({
     },
     getFeatureFlagsSuccess: (state, { payload }) => {
       state.featureFlags.loading = false
+
+      // make sure that feature was defined and enabled by default
+      if (!payload.features[FeatureFlags.envDependent]) {
+        payload.features[FeatureFlags.envDependent] = {
+          flag: riConfig.features.envDependent.defaultFlag
+        }
+      }
+
       state.featureFlags.features = payload.features
     },
     getFeatureFlagsFailure: (state) => {

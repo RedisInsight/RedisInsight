@@ -44,7 +44,7 @@ const Config = () => {
   const { config, spec } = useSelector(userSettingsSelector)
   const {
     [FeatureFlags.cloudSso]: cloudSsoFeature,
-    [FeatureFlags.disabledByEnv]: disabledByEnvFeature
+    [FeatureFlags.envDependent]: envDependentFeature
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const { pathname } = useLocation()
 
@@ -53,7 +53,7 @@ const Config = () => {
     setFavicon(favicon)
 
     dispatch(setCapability(localStorageService?.get(BrowserStorageItem.capability)))
-    if (disabledByEnvFeature?.flag) {
+    if (envDependentFeature?.flag) {
       dispatch(fetchServerInfo())
       dispatch(fetchNotificationsAction())
       dispatch(fetchCustomTutorials())
@@ -76,7 +76,7 @@ const Config = () => {
   }, [])
 
   useEffect(() => {
-    if (config && spec && disabledByEnvFeature?.flag) {
+    if (config && spec && envDependentFeature?.flag) {
       checkSettingsToShowPopup()
     }
   }, [spec])

@@ -37,7 +37,6 @@ fixture `Autocomplete for entered commands in search and query`
         // Create 3 keys and index
         await browserPage.Cli.sendCommandsInCli(commands);
         await t.click(browserPage.NavigationPanel.workbenchButton);
-        await t.pressKey('ctrl+space');
     })
     .afterEach(async() => {
         // Clear and delete database

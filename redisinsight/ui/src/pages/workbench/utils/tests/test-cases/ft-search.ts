@@ -133,9 +133,7 @@ export const findArgumentftSearchTests = [
     args: ['', '', 'RETURN', '1', 'iden'],
     result: {
       stopArg: undefined,
-      append: [
-        []
-      ],
+      append: [],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -171,9 +169,7 @@ export const findArgumentftSearchTests = [
     args: ['', '', 'RETURN', '2', 'iden', 'iden'],
     result: {
       stopArg: undefined,
-      append: [
-        []
-      ],
+      append: [],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -209,9 +205,7 @@ export const findArgumentftSearchTests = [
     args: ['', '', 'RETURN', '3', 'iden', 'iden', 'AS', 'iden2'],
     result: {
       stopArg: undefined,
-      append: [
-        []
-      ],
+      append: [],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)
@@ -262,7 +256,7 @@ export const findArgumentftSearchTests = [
     args: ['', '', 'SORTBY', 'f', 'DESC'],
     result: {
       stopArg: undefined,
-      append: [],
+      append: [[]],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object)

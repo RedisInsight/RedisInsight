@@ -5,17 +5,11 @@ import cx from 'classnames'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
 
-import {
-  Theme,
-  MonacoLanguage,
-  DSLNaming,
-  IRedisCommand,
-} from 'uiSrc/constants'
+import { DSLNaming, ICommandTokenType, IRedisCommand, MonacoLanguage, Theme, } from 'uiSrc/constants'
 import {
   actionTriggerParameterHints,
   createSyntaxWidget,
   decoration,
-  findArgIndexByCursor,
   findCompleteQuery,
   getMonacoAction,
   IMonacoQuery,
@@ -28,35 +22,26 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
 import { CommandExecutionUI, RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
+import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/monaco-editor/components/dedicated-editor'
 import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 
-import {
-  addOwnTokenToArgs,
-} from 'uiSrc/pages/workbench/utils/query'
+import { addOwnTokenToArgs, findCurrentArgument, } from 'uiSrc/pages/workbench/utils/query'
 import { getRange, getRediSearchSignutureProvider, } from 'uiSrc/pages/workbench/utils/monaco'
 import { CursorContext } from 'uiSrc/pages/workbench/types'
-import {
-  asSuggestionsRef,
-  getCommandsSuggestions,
-  isIndexComplete
-} from 'uiSrc/pages/workbench/utils/suggestions'
-import {
-  COMMANDS_TO_GET_INDEX_INFO,
-  EmptySuggestionsIds,
-} from 'uiSrc/pages/workbench/constants'
+import { asSuggestionsRef, getCommandsSuggestions, isIndexComplete } from 'uiSrc/pages/workbench/utils/suggestions'
+import { COMMANDS_TO_GET_INDEX_INFO, COMPOSITE_ARGS, EmptySuggestionsIds, } from 'uiSrc/pages/workbench/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { findSuggestionsByArg } from 'uiSrc/pages/workbench/utils/searchSuggestions'
 import {
-  aroundQuotesRegExp,
   argInQuotesRegExp,
+  aroundQuotesRegExp,
+  options,
   SYNTAX_CONTEXT_ID,
   SYNTAX_WIDGET_ID,
-  options,
   TUTORIALS
 } from './constants'
 import styles from './styles.module.scss'
@@ -343,7 +328,7 @@ const Query = (props: Props) => {
       return
     }
 
-    const command = findCompleteQuery(model, e.position, REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY)
+    const command = findCompleteQuery(model, e.position, REDIS_COMMANDS_SPEC, REDIS_COMMANDS_ARRAY, COMPOSITE_ARGS)
     handleSuggestions(editor, command)
     handleDslSyntax(e, command)
   }
@@ -427,33 +412,30 @@ const Query = (props: Props) => {
       return
     }
 
-    const queryArgIndex = command.info?.arguments?.findIndex((arg) => arg.dsl) || -1
-    const cursorPosition = command.commandCursorPosition || 0
-    const { allArgs } = command || {}
-    if (!allArgs.length || queryArgIndex < 0) {
+    const isContainsDSL = command.info?.arguments?.some((arg) => arg.dsl)
+    if (!isContainsDSL) {
       isWidgetEscaped.current = false
       return
     }
 
-    const argIndex = findArgIndexByCursor(allArgs, command.fullQuery, cursorPosition)
-    if (argIndex === null) {
-      isWidgetEscaped.current = false
-      return
-    }
+    const [beforeOffsetArgs, [currentOffsetArg]] = command.args
+    const foundArg = findCurrentArgument([{
+      ...command.info,
+      type: ICommandTokenType.Block,
+      token: command.name,
+      arguments: command.info?.arguments
+    }], beforeOffsetArgs)
 
-    const queryArg = allArgs[argIndex]
-    const argDSL = command.info?.arguments?.[argIndex]?.dsl || ''
-
-    if (queryArgIndex === argIndex && argInQuotesRegExp.test(queryArg)) {
+    const DSL = foundArg?.stopArg?.dsl
+    if (DSL && argInQuotesRegExp.test(currentOffsetArg)) {
       if (isWidgetEscaped.current) return
-      const lang = DSLNaming[argDSL] ?? null
+
+      const lang = DSLNaming[DSL] ?? null
       lang && showSyntaxWidget(editor, e.position, lang)
-      selectedArg.current = queryArg
-      syntaxCommand.current = {
-        ...command,
-        lang: argDSL,
-        argToReplace: queryArg
-      }
+      selectedArg.current = currentOffsetArg
+      syntaxCommand.current = { ...command, lang: DSL, argToReplace: currentOffsetArg }
+    } else {
+      isWidgetEscaped.current = false
     }
   }
 

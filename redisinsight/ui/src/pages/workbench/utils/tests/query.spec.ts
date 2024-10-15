@@ -1,13 +1,14 @@
 import { SearchCommand, TokenType } from 'uiSrc/pages/search/types'
-import { Maybe } from 'uiSrc/utils'
+import { Maybe, splitQueryByArgs } from 'uiSrc/utils'
 import { MOCKED_REDIS_COMMANDS } from 'uiSrc/mocks/data/mocked_redis_commands'
 import { IRedisCommand } from 'uiSrc/constants'
+import { COMPOSITE_ARGS } from 'uiSrc/pages/workbench/constants'
 import {
   commonfindCurrentArgumentCases,
   findArgumentftAggreageTests,
   findArgumentftSearchTests
 } from './test-cases'
-import { addOwnTokenToArgs, findCurrentArgument, generateDetail, splitQueryByArgs } from '../query'
+import { addOwnTokenToArgs, findCurrentArgument, generateDetail } from '../query'
 
 const ftSearchCommand = MOCKED_REDIS_COMMANDS['FT.SEARCH']
 const ftAggregateCommand = MOCKED_REDIS_COMMANDS['FT.AGGREGATE']
@@ -20,7 +21,7 @@ describe('findCurrentArgument', () => {
   describe('with list of commands', () => {
     commonfindCurrentArgumentCases.forEach(({ input, result, appendIncludes, appendNotIncludes }) => {
       it(`should return proper suggestions for ${input}`, () => {
-        const { args } = splitQueryByArgs(input)
+        const { args } = splitQueryByArgs(input, 0, COMPOSITE_ARGS)
         const COMMANDS_LIST = COMMANDS.map((command) => ({
           ...addOwnTokenToArgs(command.name!, command),
           token: command.name!,
@@ -73,84 +74,6 @@ describe('findCurrentArgument', () => {
         expect(testResult).toEqual(result)
       })
     })
-  })
-})
-
-const splitQueryByArgsTests: Array<{
-  input: [string, number?]
-  result: any
-}> = [
-  {
-    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS'],
-    result: {
-      args: [[], ['FT.SEARCH', '"idx:bicycle"', '""', 'WITHSORTKEYS']],
-      cursor: {
-        argLeftOffset: 10,
-        argRightOffset: 23,
-        isCursorInQuotes: false,
-        nextCursorChar: 'F',
-        prevCursorChar: ''
-      }
-    }
-  },
-  {
-    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS', 17],
-    result: {
-      args: [['FT.SEARCH'], ['"idx:bicycle"', '""', 'WITHSORTKEYS']],
-      cursor: {
-        argLeftOffset: 10,
-        argRightOffset: 23,
-        isCursorInQuotes: true,
-        nextCursorChar: 'c',
-        prevCursorChar: 'i'
-      }
-    }
-  },
-  {
-    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS', 39],
-    result: {
-      args: [['FT.SEARCH', '"idx:bicycle"', '""'], ['WITHSORTKEYS']],
-      cursor: {
-        argLeftOffset: 27,
-        argRightOffset: 39,
-        isCursorInQuotes: false,
-        nextCursorChar: '',
-        prevCursorChar: 'S'
-      }
-    }
-  },
-  {
-    input: ['FT.SEARCH "idx:bicycle" "" WITHSORTKEYS ', 40],
-    result: {
-      args: [['FT.SEARCH', '"idx:bicycle"', '""', 'WITHSORTKEYS'], []],
-      cursor: {
-        argLeftOffset: 0,
-        argRightOffset: 0,
-        isCursorInQuotes: false,
-        nextCursorChar: '',
-        prevCursorChar: ''
-      }
-    }
-  },
-  {
-    input: ['FT.SEARCH "idx:bicycle \\" \\"" "" WITHSORTKEYS ', 46],
-    result: {
-      args: [['FT.SEARCH', '"idx:bicycle " ""', '""', 'WITHSORTKEYS'], []],
-      cursor: {
-        argLeftOffset: 0,
-        argRightOffset: 0,
-        isCursorInQuotes: false,
-        nextCursorChar: '',
-        prevCursorChar: ''
-      }
-    }
-  }
-]
-
-describe('splitQueryByArgs', () => {
-  it.each(splitQueryByArgsTests)('should return for %input proper result', ({ input, result }) => {
-    const testResult = splitQueryByArgs(...input)
-    expect(testResult).toEqual(result)
   })
 })
 

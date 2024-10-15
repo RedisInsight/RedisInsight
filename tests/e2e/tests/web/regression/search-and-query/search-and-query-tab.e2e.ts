@@ -151,7 +151,7 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.expect((await workbenchPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
 test('Verify full commands suggestions with index and query for FT.SEARCH', async t => {
-    await t.typeText(workbenchPage.queryInput, '', { replace: true });
+    await t.typeText(workbenchPage.queryInput, 'FT.SEA', { replace: true });
     // Select command and check result
     await t.pressKey('enter');
     const script = await workbenchPage.queryInputScriptArea.textContent;
@@ -341,7 +341,8 @@ test('Verify suggestions for fields', async t => {
     await t.pressKey('tab');
     await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE '${indexName1}' '@students:[range] '`);
 });
-test
+// Unskip after fixing https://redislabs.atlassian.net/browse/RI-6212
+test.skip
     .after(async() => {
     // Clear and delete database
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);

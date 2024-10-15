@@ -11,7 +11,7 @@ export const formatBytes = (
     const k = baseK
     const dm = decimals < 0 ? 0 : decimals
     if (Number.isNaN(bytes) || bytes < 0) return '-'
-    if (bytes === 0) return `0 ${SIZES[0]}`
+    if (bytes === 0) return splitResult ? [0, SIZES[0]] : `0 ${SIZES[0]}`
 
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     const sizeIndex = Math.min(i, SIZES.length - 1)

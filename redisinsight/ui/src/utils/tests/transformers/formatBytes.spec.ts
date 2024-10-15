@@ -46,6 +46,12 @@ describe('formatBytes', () => {
   it('should return proper array with splitResults', () => {
     expect(formatBytes(1572864, 0, true)).toEqual([2, 'MB'])
     expect(formatBytes(1347545989, 3, true)).toEqual([1.255, 'GB'])
+    expect(formatBytes(0, 3, true)).toEqual([0, 'B'])
+  })
+
+  it('should properly set the baseK', () => {
+    expect(formatBytes(1347545989, 3, true)).toEqual([1.255, 'GB']) // default uses 1024
+    expect(formatBytes(1347545989, 3, true, 1000)).toEqual([1.348, 'GB'])
   })
 })
 

@@ -113,6 +113,7 @@ export class WorkbenchPage extends InstancePage {
         for (const command of commands) {
             await t
                 .typeText(this.queryInput, command, { replace: false, speed: 1, paste: true })
+                .pressKey('esc')
                 .pressKey('enter');
         }
         await t.click(this.submitCommandButton);
@@ -194,6 +195,7 @@ export class WorkbenchPage extends InstancePage {
         await t.expect(this.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
         await t.typeText(this.queryInput, value, { replace: false });
         // Select query option into autosuggest and go out of quotes
+        await t.pressKey('tab');
         await t.pressKey('tab');
         await t.pressKey('right');
         await t.pressKey('space');

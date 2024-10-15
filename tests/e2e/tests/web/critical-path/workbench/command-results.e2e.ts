@@ -175,7 +175,8 @@ test
         await t
             .click(workbenchPage.queryInput)
             .pressKey('ctrl+a')
-            .pressKey('delete');
+            .pressKey('delete')
+            .pressKey('esc');
         // Verify the quick access to command history by up button
         for (const command of commands.reverse()) {
             await t.pressKey('up');

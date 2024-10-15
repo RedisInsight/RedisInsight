@@ -51,7 +51,7 @@ test('Verify that tutorials can be opened from Workbench', async t => {
     await t.click(workbenchPage.getTutorialLinkLocator('sq-intro'));
     await t.expect(workbenchPage.InsightsPanel.sidePanel.exists).ok('Insight panel is not opened');
     const tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tutorials);
-    await t.expect(tab.preselectArea.textContent).contains('EXACT MATCH', 'the tutorial page is incorrect');
+    await t.expect(tab.preselectArea.textContent).contains('INTRODUCTION', 'the tutorial page is incorrect');
 });
 test('Verify that user can use show more to see command fully in 2nd tooltip', async t => {
     const commandDetails = [
@@ -92,12 +92,13 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withText('FT.AGGREGATE').exists).ok('FT.AGGREGATE auto-suggestions are not displayed');
 
     // Select command and check result
+    await t.typeText(workbenchPage.queryInput, '.AG', { replace: false });
     await t.pressKey('enter');
     let script = await workbenchPage.queryInputScriptArea.textContent;
     await t.expect(script.replace(/\s/g, ' ')).contains('FT.AGGREGATE ', 'Result of sent command exists');
 
     // Verify that user can see the list of all the indexes in database when put a space after only FT.SEARCH and FT.AGGREGATE commands
-    await t.expect(script.replace(/\s/g, ' ')).contains(`"${indexName1}" "" `, 'Index not suggested into input');
+    await t.expect(script.replace(/\s/g, ' ')).contains(`'${indexName1}' 'query to search' `, 'Index not suggested into input');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText(indexName1).exists).ok('Index not auto-suggested');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText(indexName2).exists).ok('All indexes not auto-suggested');
 
@@ -115,10 +116,12 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('city').exists).ok('Index field not auto-suggested after starting typing');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.count).eql(1, 'Wrong index fields suggested after typing first letter');
 
-    // Verify contextual suggestions after typing letters for commands
+    // Go out of index field
+    await t.pressKey('tab');
     await t.pressKey('tab');
     await t.pressKey('right');
     await t.pressKey('space');
+    // Verify contextual suggestions after typing letters for commands
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('APPLY').exists).ok('FT.AGGREGATE arguments not suggested');
     await t.typeText(workbenchPage.queryInput, 'g', { replace: false });
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.nth(0).textContent).contains('GROUPBY', 'Argument not suggested after typing first letters');
@@ -141,23 +144,22 @@ test('Verify full commands suggestions with index and query for FT.AGGREGATE', a
     await t.typeText(workbenchPage.queryInput, 'stud', { replace: false });
 
     await t.pressKey('space');
-    await t.debug();
     // Verify multiple argument option suggestions
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.nth(0).textContent).contains('REDUCE', 'Incorrect order of suggested arguments');
     // Verify complex command sequences like nargs and properties are suggested accurately for GROUPBY
-    const expectedText = `FT.AGGREGATE "${indexName1}" "@city" GROUPBY 1 "London" REDUCE SUM 1 @students AS stud REDUCE`.trim().replace(/\s+/g, ' ');
+    const expectedText = `FT.AGGREGATE '${indexName1}' '@city:{tag} ' GROUPBY 1 "London" REDUCE SUM 1 @students AS stud REDUCE`.trim().replace(/\s+/g, ' ');
     await t.expect((await workbenchPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
 test('Verify full commands suggestions with index and query for FT.SEARCH', async t => {
-    await t.typeText(workbenchPage.queryInput, 'FT.SE', { replace: true });
+    await t.typeText(workbenchPage.queryInput, '', { replace: true });
     // Select command and check result
     await t.pressKey('enter');
     const script = await workbenchPage.queryInputScriptArea.textContent;
     await t.expect(script.replace(/\s/g, ' ')).contains('FT.SEARCH ', 'Result of sent command exists');
 
-    await t.pressKey('tab');
+    await t.pressKey('tab')
     // Select '@city' field
-    await workbenchPage.selectFieldUsingAutosuggest('city');
+    await workbenchPage.selectFieldUsingAutosuggest('city')
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('DIALECT').exists).ok('FT.SEARCH arguments not suggested');
     await t.typeText(workbenchPage.queryInput, 'n', { replace: false });
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.nth(0).textContent).contains('NOCONTENT', 'Argument not suggested after typing first letters');
@@ -199,7 +201,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(SEARC
     await workbenchPage.selectFieldUsingAutosuggest('city');
     // Verify that there are no more suggestions
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
-    const expectedText = `FT.PROFILE "${indexName1}" SEARCH QUERY "@city"`.trim().replace(/\s+/g, ' ');
+    const expectedText = `FT.PROFILE '${indexName1}' SEARCH QUERY '@city:{tag} '`.trim().replace(/\s+/g, ' ');
     // Verify command entered correctly
     await t.expect((await workbenchPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
@@ -220,7 +222,7 @@ test('Verify full commands suggestions with index and query for FT.PROFILE(AGGRE
     await workbenchPage.selectFieldUsingAutosuggest('city');
     // Verify that there are no more suggestions
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
-    const expectedText = `FT.PROFILE "${indexName1}" AGGREGATE QUERY "@city"`.trim().replace(/\s+/g, ' ');
+    const expectedText = `FT.PROFILE '${indexName1}' AGGREGATE QUERY '@city:{tag} '`.trim().replace(/\s+/g, ' ');
     // Verify command entered correctly
     await t.expect((await workbenchPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
@@ -238,7 +240,7 @@ test('Verify full commands suggestions with index and query for FT.EXPLAIN', asy
     // Verify that there are no more suggestions
     await t.pressKey('space');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.exists).notOk('Additional invalid commands suggested');
-    const expectedText = `FT.EXPLAIN "${indexName1}" "@city" DIALECT dialectTest`.trim().replace(/\s+/g, ' ');
+    const expectedText = `FT.EXPLAIN '${indexName1}' '@city:{tag} ' DIALECT dialectTest`.trim().replace(/\s+/g, ' ');
     // Verify command entered correctly
     await t.expect((await workbenchPage.queryInputForText.innerText).trim().replace(/\s+/g, ' ')).contains(expectedText, 'Incorrect order of entered arguments');
 });
@@ -259,11 +261,12 @@ test('Verify commands suggestions for APPLY and FILTER', async t => {
     await t.typeText(workbenchPage.queryInput, '@', { replace: false });
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
     await t.typeText(workbenchPage.queryInput, 'location', { replace: false });
-    await t.typeText(workbenchPage.queryInput, ', \'40.7128,-74.0060\'');
+    await t.typeText(workbenchPage.queryInput, ', "40.7128,-74.0060"');
     for (let i = 0; i < 3; i++) {
         await t.pressKey('right');
     }
     await t.pressKey('space');
+    await t.typeText(workbenchPage.queryInput, 'a');
     await t.pressKey('tab');
     await t.typeText(workbenchPage.queryInput, 'apply_key', { replace: false });
 
@@ -277,7 +280,6 @@ test('Verify commands suggestions for APPLY and FILTER', async t => {
     await t.pressKey('space');
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('GROUPBY').exists).ok('query can not be prolong');
 });
-
 test('Verify REDUCE commands', async t => {
     await t.typeText(workbenchPage.queryInput, `FT.AGGREGATE ${indexName1} "*" GROUPBY 1 @location`, { replace: true });
     await t.pressKey('space');
@@ -288,6 +290,7 @@ test('Verify REDUCE commands', async t => {
 
     // set value of reduce
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.visible).ok('Suggestions not displayed');
+    // Select COUNT
     await t.typeText(workbenchPage.queryInput, 'CO');
     await t.pressKey('enter');
     await t.typeText(workbenchPage.queryInput, '0');
@@ -325,7 +328,7 @@ test('Verify suggestions for fields', async t => {
     // verify suggestions for geo
     await t.typeText(workbenchPage.queryInput, 'l');
     await t.pressKey('tab');
-    await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE "${indexName1}" "@location:[lon lat radius unit]"`);
+    await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE '${indexName1}' '@location:[lon lat radius unit] '`);
 
     // verify for numeric
     await t.typeText(workbenchPage.queryInput, 'FT.AGGREGATE ', { replace: true });
@@ -336,9 +339,8 @@ test('Verify suggestions for fields', async t => {
     await t.typeText(workbenchPage.queryInput, '@');
     await t.typeText(workbenchPage.queryInput, 's');
     await t.pressKey('tab');
-    await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE "${indexName1}" "@students:[range]"`);
+    await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.AGGREGATE '${indexName1}' '@students:[range] '`);
 });
-
 test
     .after(async() => {
     // Clear and delete database
@@ -349,7 +351,6 @@ test
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     })('Verify commands suggestions for CREATE', async t => {
         await t.typeText(workbenchPage.queryInput, 'FT.CREATE ', { replace: true });
-        await t.pressKey('enter');
         // Verify that indexes are not suggested for FT.CREATE
         await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.exists).notOk('Existing index suggested');
 
@@ -376,5 +377,15 @@ test
         // Select SORTABLE
         await t.typeText(workbenchPage.queryInput, 'so', { replace: false });
         await t.pressKey('tab');
-        await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.CREATE ${indexName3} FILTER filterNew SCHEMA field_name TEXT SORTABLE`);
+
+        // Enter second field to SCHEMA
+        await t.typeText(workbenchPage.queryInput, 'field2_num', { replace: false });
+        await t.pressKey('space');
+        await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.withExactText('NUMERIC').exists).ok('query can not be prolong');
+        
+        // Select NUMERIC keyword
+        await t.typeText(workbenchPage.queryInput, 'so', { replace: false });        
+        await t.pressKey('tab');
+
+        await t.expect((await workbenchPage.MonacoEditor.getTextFromMonaco()).trim()).eql(`FT.CREATE ${indexName3} FILTER filterNew SCHEMA field_name TEXT SORTABLE field2_num NUMERIC`);
     });

@@ -22,7 +22,7 @@ fixture `Autocomplete for entered commands`
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
 test('Verify that user can open the "read more" about the command by clicking on the ">" icon or "ctrl+space"', async t => {
-    const command = 'HSET';
+    const command = 'HSE';
     const commandDetails = [
         'HSET key field value [field value ...]',
         'Creates or modifies the value of a field in a hash.',
@@ -66,7 +66,7 @@ test('Verify that user can see static list of arguments is displayed when he ent
     await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.visible).notOk('Hints with arguments are still displayed');
 });
 test('Verify that user can see the static list of arguments when he uses “Ctrl+Shift+Space” combination for already entered command for Windows', async t => {
-    const command = 'JSON.ARRAPPEND';
+    const command = 'JSON.ARRAPPEN';
     await t.typeText(workbenchPage.queryInput, command, { replace: true });
     // Verify that the list with auto-suggestions is displayed
     await t.expect(workbenchPage.MonacoEditor.monacoSuggestion.exists).ok('Auto-suggestions are not displayed');
@@ -74,9 +74,9 @@ test('Verify that user can see the static list of arguments when he uses “Ctrl
     await t.pressKey('enter');
     // Check that the command is displayed in Editing area after selecting
     const script = await workbenchPage.queryInputScriptArea.textContent;
-    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND key value', 'Result of sent command not exists');
+    await t.expect(script.replace(/\s/g, ' ')).eql('JSON.ARRAPPEND ', 'Result of sent command not exists');
     // Check that hint with arguments are displayed
-    await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.visible).ok('Hints with arguments are not displayed');
+    await t.expect(workbenchPage.MonacoEditor.monacoHintWithArguments.textContent).contains('JSON.ARRAPPEND key [path] value', `The required argument is not suggested`);
     // Remove hints with arguments
     await t.pressKey('esc');
     // Check no hints are displayed

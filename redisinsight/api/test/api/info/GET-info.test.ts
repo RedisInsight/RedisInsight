@@ -20,8 +20,6 @@ const responseSchema = Joi.object().keys({
   appType: Joi.string().valid('ELECTRON', 'DOCKER', 'REDIS_STACK_WEB', 'UNKNOWN').required(),
   encryptionStrategies: Joi.array().items(Joi.string()),
   sessionId: Joi.number().required(),
-  controlNumber: Joi.number().required(),
-  controlGroup: Joi.string().required(),
 }).required();
 
 const mainCheckFn = async (testCase) => {

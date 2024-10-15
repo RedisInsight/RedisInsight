@@ -29,8 +29,8 @@ export class CloudCapiKeyService {
     private readonly analytics: CloudCapiKeyAnalytics,
   ) {}
 
-  private async generateName(capiKey: Partial<CloudCapiKey>): Promise<string> {
-    const serverInfo = await this.serverService.getInfo();
+  private async generateName(sessionMetadata: SessionMetadata, capiKey: Partial<CloudCapiKey>): Promise<string> {
+    const serverInfo = await this.serverService.getInfo(sessionMetadata);
 
     return `RedisInsight-${serverInfo.id.substring(0, 13)}-${capiKey?.createdAt?.getTime()}`;
   }
@@ -81,7 +81,7 @@ export class CloudCapiKeyService {
             capiKey: currentAccount.capiKey,
             createdAt: new Date(),
           } as CloudCapiKey;
-          capiKey.name = await this.generateName(capiKey);
+          capiKey.name = await this.generateName(sessionMetadata, capiKey);
 
           capiKey = await this.repository.create(plainToClass(CloudCapiKey, capiKey));
 

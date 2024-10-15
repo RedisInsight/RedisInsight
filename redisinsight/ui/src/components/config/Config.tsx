@@ -23,6 +23,7 @@ import {
 import {
   fetchServerInfo,
   appServerInfoSelector,
+  setServerLoaded
 } from 'uiSrc/slices/app/info'
 
 import { setFavicon, isDifferentConsentsExists } from 'uiSrc/utils'
@@ -57,6 +58,8 @@ const Config = () => {
       dispatch(fetchServerInfo())
       dispatch(fetchNotificationsAction())
       dispatch(fetchCustomTutorials())
+    } else {
+      dispatch(setServerLoaded())
     }
 
     dispatch(fetchUnsupportedCliCommandsAction())

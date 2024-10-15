@@ -11,7 +11,9 @@ import CommonAppSubscription from './CommonAppSubscription'
 
 const GlobalSubscriptions = () => (
   <>
-    <CommonAppSubscription />
+    <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault >
+      <CommonAppSubscription />
+    </FeatureFlagComponent>
     <MonitorConfig />
     <PubSubConfig />
     <FeatureFlagComponent name={FeatureFlags.disabledByEnv} enabledByDefault>

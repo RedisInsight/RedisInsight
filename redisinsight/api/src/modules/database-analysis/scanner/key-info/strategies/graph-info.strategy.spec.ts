@@ -18,7 +18,7 @@ describe('GraphInfoStrategy', () => {
 
   beforeEach(async () => {
     when(client.sendCommand)
-      .calledWith(jasmine.arrayContaining(['graph.query']), expect.anything())
+      .calledWith(expect.arrayContaining(['graph.query']), expect.anything())
       .mockResolvedValue(mockRedisResponse);
   });
 

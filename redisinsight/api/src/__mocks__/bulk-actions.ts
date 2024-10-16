@@ -48,7 +48,7 @@ export const mockCombinedStream = {
 
 export const mockBulkActionOverviewMatcher = {
   ...mockBulkActionOverview,
-  duration: jasmine.any(Number),
+  duration: expect.any(Number),
 };
 
 export const mockBulkActionFilter = new BulkActionFilter();

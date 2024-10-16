@@ -34,7 +34,7 @@ describe('SearchJSONStrategy', () => {
     describe('with search module', () => {
       it('should return true when there is JSON key', async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['FT._LIST']), expect.anything())
+          .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockResolvedValue(mockEmptyIndexes);
 
         expect(await strategy.isRecommendationReached({
@@ -54,7 +54,7 @@ describe('SearchJSONStrategy', () => {
 
       it('should return false when FT._LIST return indexes', async () => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['FT._LIST']), expect.anything())
+          .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockResolvedValue(mockIndexes);
 
         expect(await strategy.isRecommendationReached({
@@ -68,7 +68,7 @@ describe('SearchJSONStrategy', () => {
     describe('without search module', () => {
       beforeEach(() => {
         when(client.sendCommand)
-          .calledWith(jasmine.arrayContaining(['FT._LIST']), expect.anything())
+          .calledWith(expect.arrayContaining(['FT._LIST']), expect.anything())
           .mockReturnValue(new Error('Unsupported command'));
       });
 

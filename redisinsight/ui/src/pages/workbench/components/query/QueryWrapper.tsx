@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiLoadingContent } from '@elastic/eui'
 
@@ -40,7 +40,10 @@ const QueryWrapper = (props: Props) => {
   const { data: indexes = [] } = useSelector(redisearchListSelector)
   const { spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
 
-  const REDIS_COMMANDS = mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC)
+  const REDIS_COMMANDS = useMemo(
+    () => mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC),
+    [COMMANDS_SPEC, SEARCH_COMMANDS_SPEC]
+  )
 
   const dispatch = useDispatch()
 

@@ -182,7 +182,7 @@ const handleCommonSuggestions = (
   const shouldHideSuggestions = isCursorInQuotes || nextCursorChar || (prevCursorChar && isEscaped)
   if (shouldHideSuggestions) {
     return {
-      helpWidget: { isOpen: true, parent: foundArg?.parent, currentArg: foundArg?.stopArg },
+      helpWidget: { isOpen: !!foundArg, parent: foundArg?.parent, currentArg: foundArg?.stopArg },
       suggestions: asSuggestionsRef([])
     }
   }

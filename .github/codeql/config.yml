@@ -1,0 +1,6 @@
+paths-ignore:
+  - 'tests/**'
+  - '**/*.test.ts'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - '**/__mocks__/**'

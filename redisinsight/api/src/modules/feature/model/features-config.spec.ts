@@ -2,7 +2,7 @@ import {
   mockFeaturesConfig, mockFeaturesConfigComplex, mockFeaturesConfigEntity, mockFeaturesConfigEntityComplex,
   mockFeaturesConfigJson, mockFeaturesConfigJsonComplex,
 } from 'src/__mocks__';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
 import { classToClass } from 'src/utils';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
@@ -50,8 +50,8 @@ describe('FeaturesConfig', () => {
   describe('transform', () => {
     testCases.forEach((tc) => {
       it(`input ${JSON.stringify(tc.plain)}`, async () => {
-        const modelFromPlain = plainToClass(FeaturesConfig, tc.plain);
-        const plainFromModel = classToPlain(modelFromPlain);
+        const modelFromPlain = plainToInstance(FeaturesConfig, tc.plain);
+        const plainFromModel = instanceToPlain(modelFromPlain);
         const entityFromModel = classToClass(FeaturesConfigEntity, modelFromPlain);
         const modelFromEntity = classToClass(FeaturesConfig, entityFromModel);
 

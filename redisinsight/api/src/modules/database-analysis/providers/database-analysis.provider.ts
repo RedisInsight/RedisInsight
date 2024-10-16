@@ -4,7 +4,7 @@ import { isUndefined } from 'lodash';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
 import { RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { classToClass } from 'src/utils';
@@ -43,7 +43,7 @@ export class DatabaseAnalysisProvider {
    */
   async create(analysis: Partial<DatabaseAnalysis>): Promise<DatabaseAnalysis> {
     const entity = await this.repository.save(
-      await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, analysis)),
+      await this.encryptEntity(plainToInstance(DatabaseAnalysisEntity, analysis)),
     );
 
     // cleanup history and ignore error if any
@@ -91,7 +91,7 @@ export class DatabaseAnalysisProvider {
     entity.recommendations = entity.recommendations.map((recommendation) => (
       recommendation.name === name ? { ...recommendation, vote } : recommendation));
 
-    await this.repository.update(id, await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, entity)));
+    await this.repository.update(id, await this.encryptEntity(plainToInstance(DatabaseAnalysisEntity, entity)));
 
     return entity;
   }

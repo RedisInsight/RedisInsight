@@ -1,4 +1,4 @@
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
 import {
   mockDatabase,
@@ -26,7 +26,7 @@ export const mockBrowserHistoryRepository = jest.fn(() => ({
 
 export const mockCreateBrowserHistoryDto: CreateBrowserHistoryDto = {
   mode: BrowserHistoryMode.Pattern,
-  filter: plainToClass(ScanFilter, {
+  filter: plainToInstance(ScanFilter, {
     type: RedisDataType.String,
     match: 'key*',
   }),

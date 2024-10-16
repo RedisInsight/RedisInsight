@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SessionMetadata } from 'src/common/models';
 import { ConvAiProvider } from 'src/modules/ai/chat/providers/conv-ai.provider';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { AiChat } from 'src/modules/ai/chat/models';
 import { SendAiChatMessageDto } from 'src/modules/ai/chat/dto/send.ai-chat.message.dto';
 
@@ -14,7 +14,7 @@ export class AiChatService {
 
   async create(sessionMetadata: SessionMetadata): Promise<Partial<AiChat>> {
     const id = await this.convAiProvider.auth(sessionMetadata);
-    return plainToClass(AiChat, { id });
+    return plainToInstance(AiChat, { id });
   }
 
   async postMessage(sessionMetadata: SessionMetadata, chatId: string, dto: SendAiChatMessageDto) {
@@ -22,7 +22,7 @@ export class AiChatService {
   }
 
   async getHistory(sessionMetadata: SessionMetadata, chatId: string): Promise<AiChat> {
-    return plainToClass(AiChat, {
+    return plainToInstance(AiChat, {
       id: chatId,
       messages: await this.convAiProvider.getHistory(sessionMetadata, chatId),
     });

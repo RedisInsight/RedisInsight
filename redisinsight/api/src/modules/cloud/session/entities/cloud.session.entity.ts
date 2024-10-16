@@ -6,7 +6,7 @@ import { Column, Entity } from 'typeorm';
 export class CloudSessionEntity {
   @Column({ nullable: false, primary: true })
   @Expose()
-  id: number;
+  id: string;
 
   @Column({ nullable: true })
   @DataAsJsonString()

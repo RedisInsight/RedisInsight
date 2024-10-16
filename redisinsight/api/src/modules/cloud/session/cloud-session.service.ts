@@ -31,7 +31,7 @@ export class CloudSessionService {
         // ignore
       }
     }
-    return cloud;
+    return cloud || null;
   }
 
   async updateSessionData(id: string, cloud: any): Promise<CloudSession> {

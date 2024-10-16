@@ -345,6 +345,7 @@ describe('CloudAuthService', () => {
         {
           accessToken: mockCloudAccessTokenNew,
           refreshToken: mockCloudRefreshTokenNew,
+          idpType: mockCloudApiAuthDto.idpType,
           csrf: null,
           apiSessionId: null,
         },

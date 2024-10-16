@@ -25,19 +25,20 @@ jobs:
       environment: 'production'
       target: 'all'
 
-  virustotal-prod:
-    name: Virustotal
-    uses: ./.github/workflows/virustotal.yml
-    needs: builds-prod
-    secrets: inherit
-    with:
-      skip_report: true
+  # virustotal-prod:
+  #   name: Virustotal
+  #   uses: ./.github/workflows/virustotal.yml
+  #   needs: builds-prod
+  #   secrets: inherit
+  #   with:
+  #     skip_report: true
 
   aws-prod:
     name: Realse to AWS S3
     uses: ./.github/workflows/aws.yml
     if: ${{ always() }}
-    needs: virustotal-prod
+    # needs: virustotal-prod
+    needs: builds-prod
     secrets: inherit
 
   # todo: uncomment

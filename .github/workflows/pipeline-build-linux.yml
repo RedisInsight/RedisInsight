@@ -79,13 +79,6 @@ jobs:
         yarn package:stage --linux $target
 
     - uses: actions/upload-artifact@v4
-      name: Upload latest-linux.yml artifact
-      with:
-        name: linux-latest
-        path: |
-          ./release/latest-linux.yml
-
-    - uses: actions/upload-artifact@v4
       name: Upload AppImage artifact
       with:
         name: linux-appimage-build
@@ -112,6 +105,7 @@ jobs:
         name: linux-snap-builds
         path: |
           ./release/Redis-Insight*.snap
+          ./release/latest-linux.yml
 
     env:
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}

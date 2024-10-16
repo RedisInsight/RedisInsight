@@ -10,7 +10,7 @@ env:
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
+  AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
 jobs:
   release-private:
@@ -30,6 +30,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: ./release
+
+    - run: ls -R ./release
 
     - name: Publish private
       run: |
